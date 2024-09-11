@@ -4918,7 +4918,8 @@ class LogistikController extends ApiController{
             $qtyJumlahSisa = 0;
             
                 foreach ($req['details'] as $item) {
-                    if(($request['struk']['nostruk'] != '' && $item['jumlah'] != 0 && $item['sisa'] != 0) || ($request['struk']['nostruk'] == '' && $item['jumlah'] != 0 && $item['sisa'] != 0) || ($request['struk']['nostruk'] != '' && $item['jumlah'] == 0 && $item['sisa'] == 0)){
+                    // return $req['details'];
+                    if(($request['struk']['nostruk'] != '' && $item['jumlah'] != 0 && $item['sisa'] != 0) || ($request['struk']['nostruk'] == '' && $item['jumlah'] != 0 && $item['sisa'] != 0) || ($request['struk']['nostruk'] != '')){
                         $qtyJumlah=0;
                         $qtyJumlah = (float)$item['jumlah'] * (float)$item['nilaikonversi'];
                         $qtyJumlahSisa = (float)$item['sisa'] * (float)$item['nilaikonversi'];
@@ -7088,26 +7089,33 @@ class LogistikController extends ApiController{
         $length = 1;
         try{
             if ($request['strukorder']['norecorder'] == '') {
-                $romawi = DB::select(DB::raw("SELECT to_char(date '".date('Y-m-d H:i:s')."', 'RM') as rm;"));
-                $spb = DB::table('seqnumberkeu_t')->where('seqnumber', 'LIKE', $prefix.'%')
-                        ->where('seqname','spb')
-                        ->where('kdprofile',30)
-                        // ->where(DB::raw("date_part('month', ".date('Y-m-d H:i:s').")"))
-                        // ->where(DB::raw("date_part('month', '2023-07-01'::date) = ".date('m')))
-                        ->where(DB::raw("date_part('month', tgljamseq::date)"), date('m'))
-                        ->max(DB::raw("seqnumber::integer"));
+               $romawi = DB::select(DB::raw("SELECT to_char(date '".date('Y-m-d H:i:s')."', 'RM') as rm;"));
+                $bulanIni = date('m');
+
+                $spb = DB::table('seqnumberkeu_t')
+                    ->where('seqname', 'spb')
+                    ->where('kdprofile', 30)
+                    ->where(DB::raw("date_part('month', tgljamseq::date)"), $bulanIni)
+                    ->max(DB::raw("seqnumber::integer"));
+
+                if (!$spb) {
+                    $SN = $prefix . str_pad(1, $length - strlen($prefix), "0", STR_PAD_LEFT);
+                } else {
                     $prefixLen = strlen($prefix);
-                $subPrefix = substr(trim($spb),$prefixLen);
-                $SN = $prefix.(str_pad((int)$subPrefix+1, $length-$prefixLen, "0", STR_PAD_LEFT));
-                $spbnya = '020/'.$SN.'/'.$romawi[0]->rm."/SPB/".date("Y");
-                $spbnya =  str_replace(' ', '', $spbnya);
+                    $subPrefix = substr(trim($spb), $prefixLen);
+                    $SN = $prefix . str_pad((int)$subPrefix + 1, $length - $prefixLen, "0", STR_PAD_LEFT);
+                }
+
+                $spbnya = '020/' . $SN . '/' . $romawi[0]->rm . "/SPB/" . date("Y");
+                $spbnya = str_replace(' ', '', $spbnya);
+
                 DB::table('seqnumberkeu_t')->insert(
                     [
-                        'kdprofile'=> $idProfile,
-                        'seqnumber'=> $SN,
-                        'tgljamseq'=> date('Y-m-d H:i:s'),
-                        'seqname'=> 'spb',
-                        'norec'=> substr(\Webpatser\Uuid\Uuid::generate(), 0, 32),
+                        'kdprofile' => $idProfile,
+                        'seqnumber' => $SN,
+                        'tgljamseq' => date('Y-m-d H:i:s'),
+                        'seqname' => 'spb',
+                        'norec' => substr(\Webpatser\Uuid\Uuid::generate(), 0, 32),
                     ]
                 );
                 $noOrder = $spbnya;

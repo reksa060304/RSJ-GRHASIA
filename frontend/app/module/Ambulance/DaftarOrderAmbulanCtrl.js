@@ -1,15 +1,20 @@
 define(['initialize'], function (initialize) {
     'use strict';
-    initialize.controller('DaftarOrderAmbulanCtrl', ['$scope', '$state', 'CacheHelper', 'DateHelper', '$window', 'MedifirstService',
-        function ($scope, $state, cacheHelper, dateHelper, $window, medifirstService) {
+    initialize.controller('DaftarOrderAmbulanCtrl', ['$scope', '$state', 'CacheHelper','$parse', 'DateHelper', '$window', 'MedifirstService',
+        function ($scope, $state, cacheHelper,$parse, dateHelper, $window, medifirstService) {
             $scope.item = {};
             $scope.isRouteLoading = false;
             $scope.now = new Date();
+            $scope.item.jumlah = 1
+			$scope.item.QtyPerOrang = 1
             $scope.item.tglAwal = $scope.now;
             $scope.pegawai = JSON.parse(window.localStorage.getItem('pegawai'));
             $scope.item.tglAkhir = $scope.now;
             $scope.btnSimpanVis = false;
             $scope.headerVerif = {}
+
+            let dataOrder = []
+
             $scope.item.belumVerifikasi = true;
             var loginRadiologi = false
             if ($scope.item.belumVerifikasi)
@@ -42,6 +47,17 @@ define(['initialize'], function (initialize) {
                     + "&noorder=" + $scope.dataSelected.noorder + "&idruangan=" + $scope.dataSelected.objectruangantujuanfk).then(function (e) {                        
                         $scope.norec_apd = e.data.data[0].norec_apd
                     })
+            }
+
+            function ClearIsian(){
+                $scope.item.namaprodukInput = null
+                $scope.item.KeteranganProduk = null
+                $scope.item.jumlah = null
+                $scope.item.hargabahanbakar = null
+                $scope.item.Harga = null
+                $scope.item.Total = null
+                $scope.item.jenisPelaksana = null
+                $scope.selectedPegawai = []
             }
 
             LoadCache();
@@ -79,6 +95,15 @@ define(['initialize'], function (initialize) {
                 medifirstService.getPart("sysadmin/general/get-combo-pegawai", true, true, 20).then(function (data) {
                     $scope.listDokter = data;
                 });
+
+                medifirstService.get("tatarekening/tindakan/get-combo")
+				.then(function (da) {
+					$scope.listJenisPelaksana = da.data.jenispelaksana;
+					if($scope.item.iddpjp != undefined) {
+                        $scope.item.jenisPelaksana = { id: 4, jenispetugaspe: 'Dokter Pemeriksa' };
+                        $scope.init2();
+                    }
+				})
             }
             function init() {
                 $scope.isRouteLoading = true;
@@ -777,6 +802,555 @@ define(['initialize'], function (initialize) {
                     },
                 ]
             }
+
+            $scope.verifikasiNew = function () {
+                if ($scope.dataSelected == undefined) {
+                    toastr.error('Pilih data dulu');
+                    return
+                }
+                // delete $scope.item.dokterVerif
+                // $scope.btnSimpanVis = false
+                // $scope.headerVerif = $scope.dataSelected;
+                // $scope.item.noOrder = $scope.dataSelected.noorder;
+                // $scope.item.namaPasiens = $scope.dataSelected.namapasien;
+                // $scope.item.dokterOrder = { id: $scope.dataSelected.objectpegawaiorderfk, namalengkap: $scope.dataSelected.pegawaiorder };
+                // loadDiagnosa($scope.dataSelected.noregistrasi)
+                $scope.popUpVerifNew.center().open();
+                // loadDataVerif();
+            }
+          
+            $scope.selectOptions = {
+				placeholder: "Pilih Pegawai...",
+				dataTextField: "namaLengkap",
+				dataValueField: "id",
+				filter: "contains"
+			};
+
+			$scope.tambah1 = function () {
+				$scope.pelaksanaAmbulan2 = true;
+				$scope.show = false;
+				$scope.show2 = true;
+			};
+
+			$scope.show = true;
+			$scope.tambah2 = function () {
+				$scope.showJenisPelaksana2 = true;
+				$scope.show = false;
+				$scope.show2 = true;
+			};
+			$scope.hapusPelaksanaAmbulan2 = function () {
+				$scope.show = true;
+				$scope.show2 = false;
+				$scope.pelaksanaAmbulan2 = false;
+				$scope.item.jenisPelaksana2 = "";
+				$scope.selectedPegawai2 = [];
+			};
+
+			$scope.isInArray = function (value, array) {
+				return array.indexOf(value) > -1;
+			}
+			
+			$scope.listIdPetugas = [13827, 176873]
+			$scope.init1 = function () {
+				var id = $scope.item.jenisPelaksana.id;
+				var model = 'dataSource';
+				var listArray = 'selectedPegawai';
+				var isInList = $scope.isInArray(id, $scope.listIdPetugas);
+				if (isInList) {
+					getGenericPegawai(model, listArray);
+				} else {
+					getPegawaiById(id, model, listArray);
+				}
+			};
+			$scope.selectedPegawai = [];
+			$scope.init2 = function () {
+				var id = $scope.item.jenisPelaksana2.id;
+				var model = 'dataSource2';
+				var listArray = 'selectedPegawai2';
+				var isInList = $scope.isInArray(id, $scope.listIdPetugas);
+				if (isInList) {
+					getGenericPegawai(model, listArray);
+				} else {
+					getPegawaiById(id, model, listArray);
+				}
+			};
+
+            $scope.columnDaftarTagihan = [
+				{
+					"field": "no",
+					"title": "No",
+					"width": "45px"
+				},
+				{
+					"field": "namaproduk",
+					"title": "Tagihan",
+					"width": "200px"
+				},
+				{
+					"field": "keterangan",
+					"title": "Keterangan",
+				},
+				{
+					"field": "jumlah",
+					"title": "Qty",
+					"width": "90px"
+				},
+				{
+					"field": "penambahantarif",
+					"title": "Qty Per Org/Per Km",
+					"width": "90px"
+				},
+				{
+					"field": "harga",
+					"title": "Harga",
+					"width": "110px"
+				},
+				{
+					"field": "total",
+					"title": "Total",
+					"width": "110px"
+				},
+				{
+					command: {
+						text: "Hapus",
+						width: "50px",
+						align: "center",
+						attributes: { align: "center" },
+						click: hapusLayanan,
+					},
+					title: "",
+					width: "80px",
+				}
+			];
+			
+			$scope.columnDaftarProduk = [
+				{
+					"field": "namaproduk",
+					"title": "Nama Layanan",
+					"width": "300px"
+				}
+			];
+
+            function hapusLayanan(e) {
+				e.preventDefault();
+				var grid = this;
+				var row = $(e.currentTarget).closest("tr");
+				var tr = $(e.target).closest("tr");
+				var dataItem = this.dataItem(tr);
+				if (!dataItem) return
+
+				
+				$scope.dataDaftarTagihan.remove(dataItem);
+				for (var i = dataProduk.length - 1; i >= 0; i--) {
+					if (dataProduk[i].no == dataItem.no) {
+
+						dataProduk.splice(i, 1);
+						
+						for (var j = dataProduk.length - 1; j >= 0; j--) {
+							
+						}
+						
+
+					}
+				}
+
+		
+
+				var subTotal = 0;
+				for (var i = dataProduk.length - 1; i >= 0; i--) {
+					subTotal = subTotal + parseFloat(dataProduk[i].subTotal);
+				}
+				$scope.item.totalBilling = parseFloat(subTotal).toFixed(2).replace(/(\d)(?=(\d{3})+\.)/g, "$1,");
+
+
+				if (
+					$scope.gridPetugasPelaksana._data != null || $scope.gridPetugasPelaksana._data != undefined
+					) {
+					var gridPetugas = $scope.gridPetugasPelaksana._data;
+					if (gridPetugas.length != 0) {
+						for (var i = gridPetugas.length - 1; i >= 0; i--) {
+							if (gridPetugas[i].idParent == dataItem.no) {
+								gridPetugas.splice(i, 1);
+							
+								}
+						}
+					}
+				}
+			}
+
+            $scope.CariProduk = function () {
+				medifirstService.get("kasir/get-data-produk?namaproduk=" + $scope.item.namaproduk + "&take=50", false).then(function (data) {
+					$scope.dataDaftarProduk = data.data.data;
+				})
+			}
+
+            $scope.klikGrid = function(dataSelectedProduk){	
+
+				if (dataSelectedProduk == undefined) {
+					messageContainer.error("Layanan Belum Dipilih")
+                    return
+				}
+				$scope.dataSelectedProduk = dataSelectedProduk;
+				$scope.item.namaprodukInput = $scope.dataSelectedProduk.namaproduk;
+				if ($scope.dataSelectedProduk.namaproduk != "Pelayanan Lainnya") {
+					$scope.item.KeteranganProduk = "-";
+					$scope.disHarga = true;
+				}else{	
+					$scope.disHarga = false;									
+				}
+				
+				// if (
+				// 	$scope.dataSelectedProduk.id == 2329 && $scope.dataSelectedProduk.namaproduk == 'AMBULAN JENAZAH' ||
+				// 	$scope.dataSelectedProduk.id == 2328 && $scope.dataSelectedProduk.namaproduk == 'AMBULAN'
+				// ) {
+				// 	$scope.QtyOrang = false;
+				// 	$scope.checkQtyOrg = false;
+				// 	$scope.noPolAmbulan = false;
+				// 	$scope.hargabahanbakar = false;
+				// 	$scope.pelaksanaAmbulan1 = false;
+				// } else {
+				// 	$scope.QtyOrang = true;
+				// 	$scope.checkQtyOrg = true;
+				// 	$scope.noPolAmbulan = true;
+				// 	$scope.hargabahanbakar = true;
+				// 	$scope.pelaksanaAmbulan1 = true;
+				// 	$scope.item.noPolAmbulan = undefined;
+				// }
+
+				$scope.item.Harga = $scope.dataSelectedProduk.harga;
+				$scope.item.idProduk = $scope.dataSelectedProduk.id;
+				// $scope.item.jumlah = 1;
+				// $scope.item.QtyPerOrang = 1;
+			}
+
+            function getPegawaiById(id, input, output) {
+				var selectedData = $parse(output);
+				selectedData.assign($scope, []);
+				var model = $parse(input);
+				medifirstService.get("tatarekening/tindakan/get-pegawaibyjenispetugas?idJenisPetugas=" + id, true).then(function (dat) {
+					$scope.listPegawai = new kendo.data.DataSource({
+						data: dat.data.jenispelaksana
+					});
+					$scope.pegawaiLogin = medifirstService.getPegawaiLogin();
+					model.assign($scope, $scope.listPegawai);
+
+					var cookie = document.cookie.split(';');
+					cookie = cookie[0].split('=');
+					if (cookie[1] == 'dokter') {
+						$scope.listPegawai.read();
+						$scope.selectedPegawai = [($scope.listPegawai._view[dat.data.jenispelaksana.map(x => x.id).indexOf($scope.pegawaiLogin.id)])]//[({ id: $scope.pegawaiLogin.id, namalengkap: $scope.pegawaiLogin.namaLengkap })]
+					}
+
+					if ($scope.item.iddpjp != undefined && id == 4) {
+						$scope.listPegawai.read();
+						$scope.selectedPegawai = [($scope.listPegawai._view[dat.data.jenispelaksana.map(x => x.id).indexOf($scope.item.iddpjp)])]
+					}
+				});
+			}
+
+            $scope.tambah = function () {
+				if ($scope.item.namaprodukInput == undefined) {
+					alert("pilih produk terlebih dahulu !!")
+					return;
+				}
+
+				if ($scope.item.namaprodukInput == "Pelayanan Lainnya" && $scope.item.KeteranganProduk == undefined) {
+					alert("Keterangan Pelayanan Harus Diisi !!")
+					return;
+				}
+
+				if ($scope.item.namaprodukInput == "Pelayanan Lainnya" && $scope.item.Harga == 0 || $scope.item.Harga == 0.0) {
+					alert("Harga Tidak Boleh Nol !!")
+					return;
+				}
+
+				var no = 0
+				if (dataOrder.length == 0) {
+					no = 1
+				} else {
+					no = dataOrder[dataOrder.length - 1].no + 1
+				}
+
+				if ($scope.item.no != undefined) {
+					no = $scope.item.no
+				}
+				var data = {};
+
+				if ($scope.item.no != undefined) {//LAMA
+					for (var i = dataOrder.length - 1; i >= 0; i--) {
+						if (dataOrder[i].no == $scope.item.no) {
+							data.no = $scope.item.no
+							var bensin = null;
+							var objectprodukasetfk = null;
+							if ($scope.item.noPolAmbulan != undefined) {
+								bensin = {
+									id: $scope.item.noPolAmbulan.id,
+									nopolisi: $scope.item.noPolAmbulan.nopolisi,
+									harga: $scope.item.noPolAmbulan.harga,
+									namaproduk: $scope.item.noPolAmbulan.namaproduk
+								}
+							}
+							if (bensin != undefined) {
+								if ($scope.item.noPolAmbulan.id != undefined) {
+									objectprodukasetfk = $scope.item.noPolAmbulan.id;
+								}
+							}
+							data.id = $scope.item.idProduk
+							data.namaproduk = $scope.item.namaprodukInput
+							data.jumlah = parseFloat($scope.item.jumlah)
+							data.qtyoranglast = parseFloat($scope.item.QtyPerOrang)
+							data.harga = parseFloat($scope.item.Harga)							
+							data.totalK = $scope.item.Total //parseFloat($scope.item.jumlah) * parseFloat($scope.item.Harga)
+							data.keterangan = $scope.item.KeteranganProduk
+							data.objectprodukasetfk = objectprodukasetfk;
+							data.bahanbakar = bensin
+                            data.penambahantarif = parseFloat($scope.item.hargabahanbakar)
+                            data.total = (parseFloat($scope.item.jumlah) * parseFloat($scope.item.Harga)) + parseFloat($scope.item.hargabahanbakar)
+                            data.jenispelaksana = $scope.item.jenisPelaksana
+                            
+                            data.petugas = $scope.selectedPegawai
+
+							dataOrder[i] = data;
+							$scope.dataDaftarTagihan = new kendo.data.DataSource({
+								data: dataOrder
+							});
+							var subTotal = 0;
+							for (var i = dataOrder.length - 1; i >= 0; i--) {
+								subTotal = subTotal + parseFloat(dataOrder[i].totalK)
+							}
+							$scope.item.totalBilling = parseFloat(subTotal).toFixed(2).replace(/(\d)(?=(\d{3})+\.)/g, "$1,")
+							ClearIsian();
+
+						}
+						// break;
+					}
+				} else {//BARU
+					var bahanbakar = null;
+					var objectprodukasetfk = null;
+					if ($scope.item.noPolAmbulan != undefined) {
+						bahanbakar = {
+							id: $scope.item.noPolAmbulan.id,
+							nopolisi: $scope.item.noPolAmbulan.nopolisi,
+							harga: $scope.item.noPolAmbulan.harga,
+							namaproduk: $scope.item.noPolAmbulan.namaproduk
+						}
+					}
+
+					if (bahanbakar != undefined) {
+						if ($scope.item.noPolAmbulan.id != undefined) {
+							objectprodukasetfk = $scope.item.noPolAmbulan.id;
+						}
+					}
+
+					data = {
+						no: no,
+						idproduk: $scope.item.idProduk,
+						namaproduk: $scope.item.namaprodukInput,
+						jumlah: parseFloat($scope.item.jumlah),
+						qtyoranglast: parseFloat($scope.item.QtyPerOrang),
+						harga: parseFloat($scope.item.Harga),
+						keterangan: $scope.item.KeteranganProduk,
+						totalK: $scope.item.Total, //parseFloat($scope.item.jumlah) * parseFloat($scope.item.Harga)
+						objectprodukasetfk: objectprodukasetfk,
+						bahanbakar: bahanbakar,
+                        penambahantarif: parseFloat($scope.item.hargabahanbakar),
+                        total: (parseFloat($scope.item.jumlah) * parseFloat($scope.item.Harga)) + parseFloat($scope.item.hargabahanbakar),
+                        jenispelaksana: $scope.item.jenisPelaksana,
+                        petugas: $scope.selectedPegawai,
+					}
+					dataOrder.push(data)
+					// $scope.dataGrid.add($scope.dataSelectedProduk)
+					$scope.dataDaftarTagihan = new kendo.data.DataSource({
+						data: dataOrder
+					});
+					var subTotal = 0;
+					for (var i = dataOrder.length - 1; i >= 0; i--) {
+						subTotal = subTotal + parseFloat(dataOrder[i].totalK)
+					}
+					$scope.item.totalBilling = parseFloat(subTotal).toFixed(2).replace(/(\d)(?=(\d{3})+\.)/g, "$1,")
+					ClearIsian();
+				}
+
+				if ($scope.item.jenisPelaksana && $scope.selectedPegawai) {
+					var pushData = {
+						"idParent": data.no,
+						"jenisPetugas": {
+							"id": $scope.item.jenisPelaksana.id,
+							"jenisPelaksana": $scope.item.jenisPelaksana.jenispetugaspe
+						},
+						"listPetugas": $scope.selectedPegawai
+					}
+					$scope.gridPetugasPelaksana.add(pushData);
+				}
+
+				if ($scope.item.jenisPelaksana2 && $scope.selectedPegawai2) {
+					var pushData = {
+						"idParent": data.no,
+						"jenisPetugas": {
+							"id": $scope.item.jenisPelaksana2.id,
+							"jenisPelaksana": $scope.item.jenisPelaksana2.jenispetugaspe
+						},
+						"listPetugas": $scope.selectedPegawai2
+					}
+					$scope.gridPetugasPelaksana.add(pushData);
+				}
+			}
+
+            $scope.klikGridDetail = function(data){
+                // console.log(data)
+
+                // data yang dipilih ke form
+                $scope.item.no = data.no
+                $scope.item.namaprodukInput = data.namaproduk
+                $scope.item.KeteranganProduk = data.keterangan
+                $scope.item.jumlah = data.jumlah
+                $scope.item.hargabahanbakar = data.penambahantarif
+                $scope.item.Harga = data.harga
+                $scope.item.Total = data.total
+                $scope.item.jenisPelaksana = data.jenispelaksana
+                $scope.selectedPegawai = data.petugas
+            }
+
+
+            $scope.$watch('item.jumlah', function(newValue, oldValue) {
+				if (newValue != oldValue) {
+					if ($scope.item.jumlah > 0) {
+						if ($scope.dataSelected != undefined) {
+							if ($scope.dataSelected.namaproduk == 'AMBULAN') {
+								if ($scope.item.QtyPerOrang <= 5) {
+									$scope.item.Total = parseFloat($scope.dataSelected.harga) * parseFloat($scope.item.jumlah)
+								} else {
+									$scope.item.Total = (((parseFloat($scope.item.QtyPerOrang) - 5) * parseFloat($scope.item.hargabahanbakar) * 1.5 + parseFloat($scope.dataSelected.harga)) * parseFloat($scope.item.jumlah));
+									console.log($scope.item.Total)
+								}
+							}else if ($scope.dataSelected.namaproduk == 'AMBULAN JENAZAH'){
+								if ($scope.item.QtyPerOrang <= 5) {
+									$scope.item.Total = parseFloat($scope.dataSelected.harga) * parseFloat($scope.item.jumlah)
+								} else {
+									$scope.item.Total = (((parseFloat($scope.item.QtyPerOrang) - 5) * parseFloat($scope.item.hargabahanbakar) * 2 + parseFloat($scope.dataSelected.harga)) * parseFloat($scope.item.jumlah));
+								}
+							} else {
+								$scope.item.Total = ((parseFloat($scope.item.Harga) * parseFloat($scope.item.QtyPerOrang)) * parseFloat($scope.item.jumlah))
+							}
+						} else if ($scope.dataSelectedProduk != undefined) {
+							if ($scope.dataSelectedProduk.namaproduk == 'AMBULAN') {
+								if ($scope.item.QtyPerOrang <= 5) {
+									$scope.item.Total = parseFloat($scope.dataSelectedProduk.harga) * parseFloat($scope.item.jumlah)
+								} else {
+									$scope.item.Total = (((parseFloat($scope.item.QtyPerOrang) - 5) * parseFloat($scope.item.hargabahanbakar) * 1.5 + parseFloat($scope.dataSelectedProduk.harga)) * parseFloat($scope.item.jumlah));
+								}
+							} else if ($scope.dataSelectedProduk.namaproduk == 'AMBULAN JENAZAH'){
+								if ($scope.item.QtyPerOrang <= 5) {
+									$scope.item.Total = parseFloat($scope.dataSelectedProduk.harga) * parseFloat($scope.item.jumlah)
+								} else {
+									$scope.item.Total = (((parseFloat($scope.item.QtyPerOrang) - 5) * parseFloat($scope.item.hargabahanbakar) * 2 + parseFloat($scope.dataSelectedProduk.harga)) * parseFloat($scope.item.jumlah));
+								}
+							} else {
+								$scope.item.Total = ((parseFloat($scope.item.Harga) * parseFloat($scope.item.QtyPerOrang)) * parseFloat($scope.item.jumlah))
+							}
+						}
+					}
+				}
+			});
+
+			$scope.$watch('item.QtyPerOrang', function(newValue, oldValue) {
+				if (newValue != oldValue) {
+					if ($scope.item.jumlah > 0) {
+						if ($scope.dataSelected != undefined) {
+							if ($scope.dataSelected.namaproduk == 'AMBULAN') {
+								if ($scope.item.QtyPerOrang <= 5) {
+									$scope.item.Total = parseFloat($scope.dataSelected.harga) * parseFloat($scope.item.jumlah)
+								} else {
+									$scope.item.Total = (((parseFloat($scope.item.QtyPerOrang) - 5) * parseFloat($scope.item.hargabahanbakar) * 1.5 + parseFloat($scope.dataSelected.harga)) * parseFloat($scope.item.jumlah));
+								}
+							} else if ($scope.dataSelected.namaproduk == 'AMBULAN JENAZAH'){
+								if ($scope.item.QtyPerOrang <= 5) {
+									$scope.item.Total = parseFloat($scope.dataSelected.harga) * parseFloat($scope.item.jumlah)
+								} else {
+									$scope.item.Total = (((parseFloat($scope.item.QtyPerOrang) - 5) * parseFloat($scope.item.hargabahanbakar) * 2 + parseFloat($scope.dataSelected.harga)) * parseFloat($scope.item.jumlah));
+								}
+							}else {
+								$scope.item.Total = ((parseFloat($scope.item.Harga) * parseFloat($scope.item.QtyPerOrang)) * parseFloat($scope.item.jumlah))
+							}
+						} else if ($scope.dataSelectedProduk != undefined) {
+							if ($scope.dataSelectedProduk.namaproduk == 'AMBULAN') {
+								if ($scope.item.QtyPerOrang <= 5) {
+									$scope.item.Total = parseFloat($scope.dataSelectedProduk.harga) * parseFloat($scope.item.jumlah)
+								} else {
+									$scope.item.Total = (((parseFloat($scope.item.QtyPerOrang) - 5) * parseFloat($scope.item.hargabahanbakar) * 1.5 + parseFloat($scope.dataSelectedProduk.harga)) * parseFloat($scope.item.jumlah));
+								}
+							} else if ($scope.dataSelectedProduk.namaproduk == 'AMBULAN JENAZAH'){
+								if ($scope.item.QtyPerOrang <= 5) {
+									$scope.item.Total = parseFloat($scope.dataSelectedProduk.harga) * parseFloat($scope.item.jumlah)
+								} else {
+									$scope.item.Total = (((parseFloat($scope.item.QtyPerOrang) - 5) * parseFloat($scope.item.hargabahanbakar) * 2 + parseFloat($scope.dataSelectedProduk.harga)) * parseFloat($scope.item.jumlah));
+								}
+							}else {
+								$scope.item.Total = ((parseFloat($scope.item.Harga) * parseFloat($scope.item.QtyPerOrang)) * parseFloat($scope.item.jumlah))
+							}
+						}
+					}
+				}
+			});
+
+			
+            $scope.$watch('item.hargabahanbakar', function(newValue, oldValue) {
+                if (newValue != oldValue) {
+                    $scope.item.Total = parseFloat($scope.dataSelectedProduk.harga) +  parseFloat($scope.item.hargabahanbakar)
+                }
+            })
+           
+			$scope.$watch('item.Harga', function(newValue, oldValue) {
+				if (newValue != oldValue) {
+					if ($scope.item.jumlah > 0) {
+						if ($scope.dataSelected != undefined) {
+							if ($scope.dataSelected.namaproduk == 'AMBULAN') {
+								if ($scope.item.QtyPerOrang <= 5) {
+									$scope.item.Total = parseFloat($scope.dataSelected.harga) * parseFloat($scope.item.jumlah)
+								} else {
+									$scope.item.Total = (((parseFloat($scope.item.QtyPerOrang) - 5) * parseFloat($scope.item.hargabahanbakar) * 1.5 + parseFloat($scope.dataSelected.harga)) * parseFloat($scope.item.jumlah));
+								}
+							} else if ($scope.dataSelected.namaproduk == 'AMBULAN JENAZAH'){
+								if ($scope.item.QtyPerOrang <= 5) {
+									$scope.item.Total = parseFloat($scope.dataSelected.harga) * parseFloat($scope.item.jumlah)
+								} else {
+									$scope.item.Total = (((parseFloat($scope.item.QtyPerOrang) - 5) * parseFloat($scope.item.hargabahanbakar) * 2 + parseFloat($scope.dataSelected.harga)) * parseFloat($scope.item.jumlah));
+								}
+							}else {
+								$scope.item.Total = ((parseFloat($scope.item.Harga) * parseFloat($scope.item.QtyPerOrang)) * parseFloat($scope.item.jumlah))
+							}
+						} else if ($scope.dataSelectedProduk != undefined) {
+							if ($scope.dataSelectedProduk.namaproduk == 'AMBULAN') {
+								if ($scope.item.QtyPerOrang <= 5) {
+									$scope.item.Total = parseFloat($scope.dataSelectedProduk.harga) * parseFloat($scope.item.jumlah)
+								} else {
+									$scope.item.Total = (((parseFloat($scope.item.QtyPerOrang) - 5) * parseFloat($scope.item.hargabahanbakar) * 1.5 + parseFloat($scope.dataSelectedProduk.harga)) * parseFloat($scope.item.jumlah));
+								}
+							} else if ($scope.dataSelectedProduk.namaproduk == 'AMBULAN JENAZAH') {
+								if ($scope.item.QtyPerOrang <= 5) {
+									$scope.item.Total = parseFloat($scope.dataSelectedProduk.harga) * parseFloat($scope.item.jumlah)
+								} else {
+									$scope.item.Total = (((parseFloat($scope.item.QtyPerOrang) - 5) * parseFloat($scope.item.hargabahanbakar) * 2 + parseFloat($scope.dataSelectedProduk.harga)) * parseFloat($scope.item.jumlah));
+								}
+							}else {
+								$scope.item.Total = ((parseFloat($scope.item.Harga) * parseFloat($scope.item.QtyPerOrang)) * parseFloat($scope.item.jumlah))
+							}
+						}
+					}
+				}
+			});
+
+			$scope.changePage = function (stateName) {				
+				var obj = {
+					pageFrom: "InputTagihanNonLayanan",
+					noRegistrasi: noRegistrasi2
+				}
+
+				$state.go(stateName, {
+					dataPasien: JSON.stringify(obj)
+				});
+			}
+
 
             //********************************  $scope.cekBelumVerifs=true;***
 

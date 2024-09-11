@@ -813,14 +813,14 @@ define(['initialize','Configuration'], function (initialize,configuration) {
             }
 
             $scope.hapus = function () {
-                if ($scope.item.jumlah == 0) {
-                    alert("Jumlah harus di isi!")
-                    return;
-                }
-                if ($scope.item.total == 0) {
-                    alert("Stok tidak ada harus di isi!")
-                    return;
-                }
+                // if ($scope.item.jumlah == 0) {
+                //     alert("Jumlah harus di isi!")
+                //     return;
+                // }
+                // if ($scope.item.total == 0) {
+                //     alert("Stok tidak ada harus di isi!")
+                //     return;
+                // }
                 // if ($scope.item.jenisKemasan == undefined) {
                 //     alert("Pilih Jenis Kemasan terlebih dahulu!!")
                 //     return;

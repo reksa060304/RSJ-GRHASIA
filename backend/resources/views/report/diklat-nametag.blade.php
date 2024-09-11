@@ -64,9 +64,9 @@
                 <tr>
                     <td style="text-align: center;">
                         @if (stripos(\Request::url(), 'localhost') !== FALSE)
-                            <img src="{{ asset('img/LOGO GRHASIA.png') }}" style="width: 70px; padding: 3px">
+                            <img src="{{ asset('img/LOGO GRHASIA.png') }}" style="width: 70px; padding: 3px;">
                         @else
-                            <img src="{{ asset('service/img/LOGO GRHASIA.png') }}" style="width: 70px; padding: 3px">
+                            <img src="{{ asset('service/img/LOGO GRHASIA.png') }}" style="width: 70px; padding: 3px;">
                         @endif
                     </td>
                     <td>
@@ -83,17 +83,17 @@
                     <td>
                         @if ($d->image == null)
                             @if(stripos(\Request::url(), 'localhost') !== FALSE)
-                                <img src="{{ asset("img/avatar.jpg") }}" alt="" width="75" height="100"
-                                    style="padding: 5px 20px 5px 20px; text-align: center">
+                                <img src="{{ asset("img/avatar.jpg") }}" alt=""
+                                    style="padding: 5px 20px 5px 20px; text-align: center; width: 4cm; height: 4cm; object-fit:cover; object-position:center;">
                             @else
-                                <img src="{{ asset("service/img/avatar.jpg") }}" alt="" width="75" height="100"
-                                    style="padding: 5px 20px 5px 20px; text-align: center">
+                                <img src="{{ asset("service/img/avatar.jpg") }}" alt=""
+                                    style="padding: 5px 20px 5px 20px; text-align: center; width: 4cm; height: 4cm; object-fit:cover; object-position:center;">
                             @endif
                         @else
                             @if (stripos(\Request::url(), 'localhost') !== FALSE)
-                                <img src="{{ asset("img/DIKLAT/FileFoto/" . $d->email . "/" . $d->image) }}" alt="" style="padding: 5px 20px 5px 20px; text-align: center; width: 4cm; height: 4cm">
+                                <img src="{{ asset("img/DIKLAT/FileFoto/" . $d->email . "/" . $d->image) }}" alt="" style="padding: 5px 20px 5px 20px; text-align: center; width: 4cm; height: 4cm; object-fit:fill; object-position:center;">
                             @else
-                                <img src="{{ asset("service/img/DIKLAT/FileFoto/" . $d->email . "/" . $d->image) }}" alt="" style="padding: 5px 20px 5px 20px; text-align: center; width: 4cm; height: 4cm">
+                                <img src="{{ asset("service/img/DIKLAT/FileFoto/" . $d->email . "/" . $d->image) }}" alt="" style="padding: 5px 20px 5px 20px; text-align: center; width: 4cm; height: 4cm; object-fit:fill; object-position:center;">
                             @endif
                         @endif
                     </td>

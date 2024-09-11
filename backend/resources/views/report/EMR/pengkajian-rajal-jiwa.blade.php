@@ -977,7 +977,7 @@
                         @endphp
                         @foreach ($res['d'] as $item)
                         @if ($item->emrdfk == 300000035 && !empty($item->value))
-                        {!! $item->value !!} oC
+                        {!! $item->value !!} &deg;C
                         @php
                         $found = true;
                         @endphp

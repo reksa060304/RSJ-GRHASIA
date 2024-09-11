@@ -143,6 +143,12 @@
                     <input style="width: 100%" k-ng-model="item.tglAkhir" kendo-datepicker
                         k-format="'yyyy-MM-dd HH:mm:ss'" />
                 </div>
+                <div class="grid_2">
+                    <label c-label item="item">Status Verifikasi</label>
+                    <input kendo-combo-box k-ng-model="item.statusverif" k-data-value-field="'value'"
+                    k-data-text-field="'name'" k-filter="'contains'" k-auto-bind="false"
+                    k-data-source="listVerifikasi" />
+                </div>
                 <div class="grid_1" style="margin-top: 12px;">
                     <button class="btnTemplate1" ng-click="cari()">Cari</button>
                 </div>
@@ -214,10 +220,9 @@
                         SUB SUB KEGIATAN
                     </div>
                     <div class="grid_9" style="margin-top: -10px;">
-                        <input disabled id="subusbinput" kendo-combo-box k-ng-model="item.subSubKegiatanSPJ"
+                        <input disabled id="subusbinput" kendo-combo-box k-ng-model="item.subSubKegiatan"
                             k-data-text-field="'keterangan'" k-data-value-field="'id'"
-                            k-filter="'contains'" k-auto-bind="false"
-                            k-data-source="listSubSubKegiatanSPJ"  />
+                            k-filter="'contains'" k-data-source="listSubSubKegiatan"  />
                     </div>
                 </div>
             </div>
@@ -237,6 +242,19 @@
                             k-ng-model="item.tahunAnggaran" 
                             k-format="'yyyy'" 
                             />
+                    </div>
+                </div>
+            </div>
+
+            <div class="grid12">
+                <div class="grid_12">
+                    <div class="grid_12">
+                        <div class="grid_3">
+                            Keterangan
+                        </div>
+                        <div class="grid_3">
+                            <input c-text-box type="input" class="k-textbox" ng-model="item.keterangan"  style="width: 100%;" />
+                        </div>
                     </div>
                 </div>
             </div>
@@ -264,18 +282,6 @@
                             kendo-combo-box k-ng-model="item.prioritas"
                             k-data-value-field="'id'" k-data-text-field="'nama'" k-filter="'contains'" 
                             k-auto-bind="false" k-data-source="listPrioritas"
-                        />
-                    </div>
-                </div>
-                <div class="grid_3">
-                    <div class="grid_4">
-                        Sumber Dana
-                    </div>
-                    <div class="grid_12">
-                        <input 
-                            kendo-combo-box k-ng-model="item.asalproduk"
-                            k-data-value-field="'id'" k-data-text-field="'asalproduk'" k-filter="'contains'" 
-                            k-auto-bind="false" k-data-source="listAsalProduk"
                         />
                     </div>
                 </div>
@@ -383,7 +389,7 @@
             <div class="grid_12">
                 <div class="grid_2">
                     <div class="grid_12">
-                        Reverensi
+                        Referensi
                     </div>
                     <div class="grid_12">
                         <input c-text-box disabled type="input" class="k-textbox" ng-model="item.listReverensi"  style="width: 100%;" />
@@ -397,15 +403,26 @@
                         <input 
                             kendo-combo-box 
                             k-ng-model="item.mataAnggaran"
-                            k-data-text-field="'text'" 
+                            k-data-text-field="'namaanggaran'" 
                             k-data-value-field="'id'"
                             k-filter="'contains'" 
                             k-auto-bind="false" 
-                            k-data-source="listMataAnggaranSPJ"
+                            k-data-source="listMataAnggaran"
                         />
                     </div>
                 </div>
-
+                <div class="grid_2">
+                    <div class="grid_12">
+                        Sumber Dana
+                    </div>
+                    <div class="grid_12">
+                        <input 
+                            kendo-combo-box k-ng-model="item.asalproduk"
+                            k-data-value-field="'id'" k-data-text-field="'asalproduk'" k-filter="'contains'" 
+                            k-auto-bind="false" k-data-source="listAsalProduk"
+                        />
+                    </div>
+                </div>
                 <div class="grid_3">
                     <div class="grid_12">
                         Verifikasi
@@ -453,25 +470,17 @@
     
             <!-- Simpan hapus update -->
             <div class="grid_12">
-                <div class="grid_6"></div>
-                <div class="grid_6">
-                    <div class="grid_12" style="margin-top: 10px">
-                        
-                        <div class="grid_6">
-                            <button class="btnTemplate1 cancel" ng-click="tutup()">
-                                <i class="fa fa-trash"></i>
-                                Tutup
-                            </button>
-                        </div>
-                        
-                        <div class="grid_6">
-                            <button class="btnTemplate1" ng-click="verifikasiPerencanaan()">
-                                <i class="fa fa-refresh"></i>
-                                Validasi
-                            </button>
-                        </div>
-                    </div>
-                </div>
+                <div class="grid_2" style="margin-right: 10px;">
+                    <button class="btnTemplate1 cancel" ng-click="tutup()">
+                        <i class="fa fa-close"></i>
+                        Tutup
+                    </button>
+                </div>              
+                <div class="grid_2" style="margin-right: 10px;">
+                    <button class="btnTemplate1" ng-click="verifikasiPerencanaan()">
+                        <i class="fa fa-refresh"></i>
+                        Validasi
+                    </button>
             </div>
         </div>
     </div>
@@ -484,7 +493,7 @@
             <div class="grid_12" style="width: 100%;">
                 <div class="grid_12">
                     <div class="grid_10">
-                        Reverensi
+                        Referensi
                     </div>
                     <div class="grid_12">
                         <input c-text-box type="input" class="k-textbox" ng-model="item.reverensi"  style="width: 100%;" />
@@ -521,12 +530,21 @@
             <legend id="filterData">
                 <a ng-click="showAndHide()">List Sub Sub Kegiatan</a>
             </legend>
-            <div class="grid_12" ng-repeat="item in listSubSubKegiatan track by $index">
-                <input type="checkbox" ng-checked="item.isChecked" class="k-checkbox" name="{{item.idsubsubkegiatan}}"
-                    id="{{item.idsubsubkegiatan}}" ng-model="bool" value="{{item.idsubsubkegiatan}}" ng-click="ceklisOne(bool,item)">
+            <div class="grid_12">
+                <div ng-if="listSubSubKegiatanTransfer.length > 0">
+                    <div class="grid_12" ng-repeat="item in listSubSubKegiatan track by $index">
     
-                <label class="k-checkbox-label {{item.style}}" for="{{item.idsubsubkegiatan}}">{{item.idsubsubkegiatan}} -
-                    {{item.kodesubsubkegiatan}} ~ {{item.keterangansubsubkegiatan}}</label>
+                        <input type="checkbox" ng-checked="item.isChecked" class="k-checkbox" name="{{item.idsubsubkegiatan}}"
+                            id="{{item.idsubsubkegiatan}}" ng-model="bool" value="{{item.idsubsubkegiatan}}" ng-click="ceklisOne(bool,item)">
+            
+                        <label class="k-checkbox-label {{item.style}}" for="{{item.idsubsubkegiatan}}">{{item.idsubsubkegiatan}} -
+                            {{item.kodesubsubkegiatan}} ~ {{item.keterangansubsubkegiatan}}</label>
+                    </div>
+                </div>
+    
+                <div ng-if="listSubSubKegiatanTransfer.length == 0">
+                    <p>Belum ada perencanaan yang diinput dan divalidasi</p>
+                </div>
             </div>
         </div>
         <div class="grid_12">

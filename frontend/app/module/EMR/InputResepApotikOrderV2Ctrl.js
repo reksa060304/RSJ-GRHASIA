@@ -684,7 +684,7 @@ define(['initialize', 'Configuration'], function (initialize, config) {
                 //     toastr.error("Data Sudah Diclosing, Hubungi Tatarekening!");
                 //     return;
                 // }
-                if ($scope.item.jumlah == NaN || $scope.item.jumlah == undefined || $scope.item.jumlah == '') {
+                if ($scope.item.jumlah == NaN || $scope.item.jumlah == undefined || $scope.item.jumlah == '' || $scope.item.jumlah == '0') {
                     alert("Jumlah harus di isi!")
                     return;
                 }
@@ -721,8 +721,8 @@ define(['initialize', 'Configuration'], function (initialize, config) {
                     alert("Sediaan Obat Belum diisi!!")
                     return;
                 }
-                if ($scope.item.dosis == undefined || $scope.item.dosis == '') {
-                    alert("Sediaan Belum diisi!!")
+                if ($scope.item.dosis == undefined || $scope.item.dosis == '' || $scope.item.dosis == 0) {
+                    toastr.error("Dosis Belum diisi atau tidak boleh diisi angka 0 !!");                
                     return;
                 }
                 if ($scope.item.KeteranganPakai == undefined || $scope.item.KeteranganPakai == '') {
@@ -1237,7 +1237,7 @@ define(['initialize', 'Configuration'], function (initialize, config) {
                 window.history.back();
             }
 
-            $scope.save = function () {
+        $scope.save = function () {
                 if ($scope.dataGridRiwayat != undefined && $scope.dataGridRiwayat._data.length > 0 && $scope.norecOrder == '' && $scope.item.ruangan.id == 94) {
                     var confirm = $mdDialog.confirm()
                         .title('Peringatan')

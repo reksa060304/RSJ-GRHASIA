@@ -405,7 +405,7 @@ define(['initialize', 'Configuration'], function (initialize, config) {
 			function getNotifSEP(unitBpjs,unitSep,unitDept,unitPpk){
                 if (unitBpjs.indexOf("BPJS") > -1 && (unitSep==null || unitSep==undefined || unitSep=="")) {
                     return "red";
-                }else if(unitBpjs.indexOf("BPJS") > -1 && unitDept=="16" && unitPpk !="1004R002"){
+                }else if(unitBpjs.indexOf("BPJS") > -1 && unitDept=="16" && unitPpk !="1202R003"){
                     return "koneng";
 				}
 				// else if(unitBpjs.indexOf("BPJS") > -1 &&  (unitSep!=null && unitSep!=undefined && unitSep!="") ){

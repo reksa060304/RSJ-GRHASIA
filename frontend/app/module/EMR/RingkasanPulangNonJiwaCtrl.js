@@ -17,7 +17,7 @@ define(['initialize', 'Configuration'], function (initialize, config) {
             $scope.cc.emrfk = emrfk_
             var dataLoad = []
             var dataDump = []
-             $scope.isCetak = true
+             $scope.isCetak = false
             var norecEMR = ''
             var cacheNomorEMR = cacheHelper.get('cacheNomorEMR');
             var cacheNoREC = cacheHelper.get('cacheNOREC_EMR');
@@ -40,6 +40,12 @@ define(['initialize', 'Configuration'], function (initialize, config) {
                     anHttpRequest.open("GET", aUrl, true);
                     anHttpRequest.send(null);
                 }
+            }
+
+            $scope.isTTD_E = true
+            if(medifirstService.getKelompokUser() == 'mahasiswadiklat'){
+                $scope.tombolSimpanVis = false
+                $scope.isTTD_E = false
             }
             // $scope.cetakPdf = function () {
             //     if (norecEMR == '') return
@@ -490,6 +496,11 @@ define(['initialize', 'Configuration'], function (initialize, config) {
                 }
                 medifirstService.post('emr/save-emr-dinamis', jsonSave).then(function (e) {
 
+                    // agar bisa langsung cetak dan tte
+                    if(norecEMR == '-' || norecEMR == null || norecEMR == ''){
+                        norecEMR = e.data.norecEMR
+                    }
+
                     // $rootScope.loadRiwayat()
                     medifirstService.postLogging('EMR', 'norec emrpasien_t', e.data.data.norec,  
                     'RingkasanPulangNonJiwaCtrl' + ' dengan No EMR - ' +e.data.data.noemr +  ' pada No Registrasi ' 
@@ -502,16 +513,56 @@ define(['initialize', 'Configuration'], function (initialize, config) {
             $scope.cetakBlade = function(){
                 if (norecEMR == '') return
             
-              var local =JSON.parse(localStorage.getItem('profile')) 
-              var nama = medifirstService.getPegawaiLogin().namaLengkap
+                var local =JSON.parse(localStorage.getItem('profile')) 
+                var nama = medifirstService.getPegawaiLogin().namaLengkap
           
-               window.open(config.baseApiBackend + 'report/cetak-ringkasan-pulang-nonjiwa?nocm='
-                   + $scope.cc.nocm + '&norec_apd='+  $scope.cc.norec +'&emr=' + norecEMR
-                   + '&emrfk='+  $scope.cc.emrfk
-                   +'&kdprofile='+local.id 
-                   +'&nama='+nama,  '_blank');
+                window.open(config.baseApiBackend + 'report/cetak-ringkasan-pulang-nonjiwa?nocm='
+                    + $scope.cc.nocm + '&norec_apd='+  $scope.cc.norec +'&emr=' + norecEMR
+                    + '&emrfk='+  $scope.cc.emrfk
+                    + '&kdprofile='+local.id 
+                    + '&nama='+nama);
                    
             } 
+
+            $scope.ttdElek = function () {
+
+                if ($scope.item.obj[30008032] != undefined) {
+                    $scope.listPegawai.add($scope.item.obj[30008032])
+                    $scope.item.pegawai = $scope.item.obj[30008032]
+                }
+
+                $scope.winDialog.center().open()
+                
+            }
+
+            $scope.savePengajuanTTE = function (pegawai) {
+                if (pegawai == undefined) {
+                    return
+                }
+                var local = JSON.parse(localStorage.getItem('profile'))
+                var nama = medifirstService.getPegawaiLogin().namaLengkap
+                $scope.isRouteLoading = true
+                medifirstService.get('report/cetak-ringkasan-pulang-nonjiwa?emr=' + norecEMR +
+                        '&isttd=true'+
+                        '&kdprofile=' + local.id +
+                        '&emrfk=' +  $scope.cc.emrfk +
+                        "&pegawaittd=" + pegawai.id+
+                        '&noregistrasi=' + $scope.cc.noregistrasi+
+                        '&pegawaittd=' + pegawai.value +
+                        '&nocm=' + $scope.cc.nocm + '&norec_pd=' + $scope.cc.norec_pd
+
+                ).then(function (e) {
+                    console.log(e);
+                    if (e.data.status == 201) {
+                        toastr.success(e.data.message)
+                        $scope.winDialog.close()
+                    } else {
+                        toastr.error(e.data.message)
+                    }
+                    $scope.isRouteLoading = false
+
+                })
+            }
 
         }
     ]);

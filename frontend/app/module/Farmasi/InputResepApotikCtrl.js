@@ -490,6 +490,7 @@ define(['initialize'], function (initialize) {
                     $scope.item.TglMeninggal = e.data.tglmeninggal;
                     $scope.item.StatKeluar = e.data.statuskeluar;
                     $scope.item.StatPulang = e.data.statuspulang;
+                    $scope.item.norec_pd = e.data.norec_pd
                     if (e.data.noreservasi != ''){
                         $scope.item.noreservasi = e.data.noreservasi;
                         
@@ -1091,7 +1092,7 @@ Which will check for empty strings (""), null, undefined, false and the numbers 
                             $scope.item.jumlah = parseFloat($scope.dataSelected.jumlahobat)
                             $scope.item.jumlahbulat = Math.ceil($scope.dataSelected.jumlah);
                             $scope.item.dosis = parseFloat($scope.dataSelected.dosis)
-                            $scope.item.jumlahxmakan = ((parseFloat($scope.item.jumlah) / parseFloat($scope.item.dosis)) * parseFloat($scope.item.kekuatan)).toFixed(2)
+                            $scope.item.jumlahxmakan = ((parseFloat($scope.item.jumlah) / parseFloat($scope.item.dosis)) * parseFloat($scope.item.kekuatan))
                             $scope.item.nilaiKonversi = $scope.dataSelected.nilaikonversi
 
                             //$scope.item.satuan = { ssid: $scope.dataSelected.satuanviewfk, satuanstandar: $scope.dataSelected.satuanview }
@@ -2391,7 +2392,7 @@ Which will check for empty strings (""), null, undefined, false and the numbers 
                             if ($scope.item.noreservasi != undefined && $scope.item.noreservasi != '' && $scope.item.noreservasi != 'Kios-K') {
                                 params = $scope.item.noreservasi
                             }
-                            saveAntrol(params, 5, $scope.item.norec_pd) //waktu mulai farmasi
+                            saveAntrol(params, 6, $scope.item.norec_pd) //waktu mulai farmasi
                             $scope.isRouteLoading = false;
                             $scope.tombolSimpanVis = true;
                             window.history.back();

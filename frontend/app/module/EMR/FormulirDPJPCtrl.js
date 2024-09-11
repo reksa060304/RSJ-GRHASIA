@@ -25,7 +25,7 @@ define(['initialize'], function (initialize) {
                 $scope.listPegawai = data
             })
 
-             medifirstService.get("emr/get-rekam-medis-dynamic?emrid=" + $scope.cc.emrfk).then(function (e) {
+            medifirstService.get("emr/get-rekam-medis-dynamic?emrid=" + $scope.cc.emrfk).then(function (e) {
 
                 var datas = e.data.kolom4
 
@@ -124,6 +124,8 @@ define(['initialize'], function (initialize) {
                 } else {
                     $scope.cc.norec_emr = nomorEMR
                 }
+
+                // console.log('norec_apd = ' + $scope.cc.norec)
             }
             var chekedd = false
 
@@ -183,6 +185,7 @@ define(['initialize'], function (initialize) {
                         if (dataLoad[i].type == "textarea") {
                             $scope.item.obj[dataLoad[i].emrdfk] = dataLoad[i].value
                         }
+                        // pengeculian untuk combo dpjp dan ttdpjp karena mengambil dari apd
                         if (dataLoad[i].type == "combobox") {
                             var str = dataLoad[i].value
                             if(str != undefined){
@@ -192,10 +195,14 @@ define(['initialize'], function (initialize) {
                             }
 
                         }
-                        // pegawaiInputDetail = dataLoad[i].pegawaifk
+
                     }
 
                 }
+
+                // dpjp
+                // $scope.item.obj[1901308400] = {value: $scope.cc.iddpjp, text: $scope.cc.dokterdpjp}
+                // $scope.item.obj[1901308410] = {value: $scope.cc.iddpjp, text: $scope.cc.dokterdpjp}
             })
             $scope.totalSkor5 = 0
             $scope.getSkor5 = function (stat) {
@@ -734,9 +741,9 @@ define(['initialize'], function (initialize) {
                         .ok('Ya')
                     $mdDialog.show(confirm).then(function () {
                         medifirstService.postLogging('EMR', 'norec emrpasien_t', e.data.data.norec,  
-                    'RM.29.01 Formulir DPJP ' + ' dengan No EMR - ' +e.data.data.noemr +  ' Sudah Klik Ya pada EMR No Registrasi ' 
-                    + $scope.cc.noregistrasi).then(function (res) {
-                    })
+                        'RM.29.01 Formulir DPJP ' + ' dengan No EMR - ' +e.data.data.noemr +  ' Sudah Klik Ya pada EMR No Registrasi ' 
+                        + $scope.cc.noregistrasi).then(function (res) {
+                        })
                     })
                     // $state.go("RekamMedis.OrderJadwalBedah.ProsedurKeselamatan", {
                     //     namaEMR : $scope.cc.emrfk,
@@ -751,6 +758,39 @@ define(['initialize'], function (initialize) {
                         0: e.data.data.noemr
                     }
                     cacheHelper.set('cacheNomorEMR', arrStr);
+
+                    // Update dpjp
+                    // let arrDPJPPeralihan = [1901308530, 1901308570, 1901308610, 1901308650, 1901308690]
+                    // let id = 1901308530
+                    
+                    // // mendapatkan yang sudah di diisi yang terbesar
+                    // arrDPJPPeralihan.map(function(row){
+                    //     if($scope.item.obj[row] !== undefined && $scope.item.obj[row] !== null){
+                    //         if($scope.item.obj[row].hasOwnProperty('value')){
+                    //             if(row > id){
+                    //                 id = row
+                    //             }
+                    //         }
+
+                    //     }
+                    // })
+
+                    // // console.log('id = ' + id)
+
+                    // if(id > 0){
+                    //     // update dpjp menggunakan fungsi di DaftarAntrianSusterRanap
+                    //     var tmpData = {
+                    //         norec_apd: $scope.cc.norec,
+                    //         iddokter: $scope.item.obj[id].value
+                    //     }
+
+                    //     medifirstService.post('rawatinap/save-update-dokter-antrian', tmpData)
+                    //         .then(function (res) {
+                    //             if(res.status == 201){
+                    //                 toastr.success("Berhasil mengganti dokter")
+                    //             }
+                    //         });
+                    // }
                 });
             }
 

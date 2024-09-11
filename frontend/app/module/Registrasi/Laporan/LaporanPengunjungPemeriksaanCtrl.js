@@ -35,6 +35,9 @@ define(['initialize'], function (initialize) {
                     jenispasien: 'Napza'
                 }
             ]
+
+            $scope.listStatusPasien = [{ status: "Lama" }, { status: "Baru" }]
+
             loadCombo()
 
             function loadCombo() {
@@ -132,10 +135,11 @@ define(['initialize'], function (initialize) {
                     namaruangan = "&ruanganId=" + $scope.item.ruangan.id
                 }
 
-              var departemen = ""
-              if ($scope.item.departemen != undefined) {
-                  departemen = "&departemen=" + $scope.item.departemen.id
-              }
+                var departemen = ""
+                if ($scope.item.departemen != undefined) {
+                    departemen = "&departemen=" + $scope.item.departemen.id
+                }
+
                 var kelompokpasien = ""
                 if ($scope.item.kelompokpasien != undefined) {
                     kelompokpasien = "&kelompokpasien=" + $scope.item.kelompokpasien.id
@@ -152,13 +156,23 @@ define(['initialize'], function (initialize) {
                 if ($scope.item.jenispasien != undefined) {
                     jenisranap = "&jenisranap=" + $scope.item.jenispasien.id
                 }
+
+                var statuspasien = ""
+                if($scope.item.statuspasien !== undefined && $scope.item.statuspasien !== null){
+                    statuspasien = "&statuspasien=" + $scope.item.statuspasien.status
+                }
+
                 medifirstService.get("registrasi/laporan/get-data-lap-pengunjung-pemeriksaan?" +
                         "tglAwal=" + tglAwal +
                         "&tglAkhir=" + tglAkhir + kelompokpasien +
                         rm +
                         pasien +
                         namaruangan +
-                        departemen+carakeluar + jenisranap+kondisipasien)
+                        departemen + 
+                        carakeluar + 
+                        jenisranap + 
+                        kondisipasien +
+                        statuspasien)
                     .then(function (data) {
                         $scope.isRouteLoading = false;
                         for (var i = 0; i < data.data.data.length; i++) {
@@ -519,6 +533,11 @@ define(['initialize'], function (initialize) {
                         field: "lamahari",
                         title: "LAMA HARI",
                         width: "125px",
+                    },
+                    {
+                        field: "statuspasien",
+                        title: "Status Pasien",
+                        width: "100px",
                     },
                     {
                         field: "statuskeluar",

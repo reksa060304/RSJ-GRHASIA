@@ -243,6 +243,7 @@ class MasterController extends ApiController{
             $prod->status = $data['status'];
             $prod->verifikasianggaran = $data['verifikasianggaran'];
             $prod->objectprodukassetfk = $data['objectProductAsset'];
+            $prod->estimasikg = (isset($data['estimasikg'])) ? $data['estimasikg'] : null;
             if (isset($request['isprodukintern'])){
                 $prod->isprodukintern = $data['isprodukintern'];
             }
@@ -1800,6 +1801,10 @@ class MasterController extends ApiController{
         }
         if(isset($request['objectpenjaminfk']) && $request['objectpenjaminfk']!="" && $request['objectpenjaminfk']!="undefined" && $request['objectpenjaminfk']!='null'){
             $data = $data->where('ht.objectpenjaminfk', $request['objectpenjaminfk'] );
+        }
+
+        if(isset($request['objectpenjaminfk']) && $request['objectpenjaminfk']!="" && $request['objectpenjaminfk']!="undefined" && $request['objectpenjaminfk']=='null'){
+            $data = $data->whereNull('ht.objectpenjaminfk');
         }
 
         $data = $data->get();

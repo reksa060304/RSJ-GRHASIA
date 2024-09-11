@@ -14,7 +14,7 @@
     <style>
         @page {
             size: A4;
-            margin-top: 5mm;
+            margin: 5mm;
         }
 
         @page: first {
@@ -120,12 +120,29 @@
            
             /* Juga pastikan padding disetel ke nol jika Anda ingin menghilangkan padding */
         }
+
+        .footer3 {
+            text-align: center;
+            position: absolute;
+            left: 1%;
+            bottom: 15mm;
+            right: 1%;
+        }
+
+        #footer {
+            height: 30px;
+        }
+        
+        #page {
+            height: calc(100vh - 30px); //viewport height - footer height
+        }
       
     </style>
 </head>
 
 <body class="A4" style="font-family:Tahoma;height: auto" >
-    <section style="font-family:Arial;padding:5mm 5mm 5mm 5mm;page-break-after: page;">
+    <section id="page" style="font-family:Arial;padding:5mm 5mm 5mm 5mm;page-break-after: page;">
+        {{-- KOP --}}
         <table cellspacing="0" cellpadding="0" border="0" width="100%">
             <tbody>
                 <tr>
@@ -199,646 +216,676 @@
                     <th colspan="3" >DISCHARGE SUMMARY</th>
 
                 </tr>
-             
+            </tbody> 
               
 
         </table>
-<table  cellspacing="0" cellpadding="0"  width="100%" style="padding: 3px; ">
-    <tr >
-        <td style="font-size: 8pt;padding-left:5px;"> 
-            <font style="font-size: 9px; font-weight: 400;">
-               Tanggal Masuk :
-            </font>
-            &nbsp;&nbsp;&nbsp;<font style="font-size: 9px; ">
-                @php
-                $found = false;
-                @endphp
-                @foreach ($res['d'] as $item)
-                @if ($item->emrdfk == 30008000 && !empty($item->value))
-                {!! $item->value !!}
-                @php
-                $found = true;
-                @endphp
-                @break
-                @endif
-                @endforeach
-                @if (!$found)
-                ................
-                @endif
-            </font>
-         </td>       
-         <td style="font-size: 8pt;padding-left:5px;"> 
-            <font style="font-size: 9px; font-weight: 400;">
-                Tanggal Pulang :
-             </font>
-            &nbsp;&nbsp;&nbsp;<font style="font-size: 9px; ">
-                @php
-                $found = false;
-                @endphp
-                @foreach ($res['d'] as $item)
-                @if ($item->emrdfk == 30008001 && !empty($item->value))
-                {!! $item->value !!}
-                @php
-                $found = true;
-                @endphp
-                @break
-                @endif
-                @endforeach
-                @if (!$found)
-                ................
-                @endif
-            </font>
-         </td>    
-         <td style="font-size: 8pt;padding-left:5px;"> 
-            <font style="font-size: 9px; font-weight: 400;">
-               Wisma :
-             </font>
-            &nbsp;&nbsp;&nbsp;<font style="font-size: 9px; ">
-                @php
-                $found = false;
-                @endphp
-                @foreach ($res['d'] as $item)
-                @if ($item->emrdfk == 30008002 && !empty($item->value))
-                {!! $item->split !!}
-                @php
-                $found = true;
-                @endphp
-                @break
-                @endif
-                @endforeach
-                @if (!$found)
-                ................
-                @endif
-            </font>
-         </td>    
-         <td style="font-size: 8pt;padding-left:5px;"> 
-            <font style="font-size: 9px; font-weight: 400;">
-                Kelas :
-             </font>
-            &nbsp;&nbsp;&nbsp;<font style="font-size: 9px; ">
-                @php
-                $found = false;
-                @endphp
-                @foreach ($res['d'] as $item)
-                @if ($item->emrdfk == 30008003 && !empty($item->value))
-                {!! $item->split !!}
-                @php
-                $found = true;
-                @endphp
-                @break
-                @endif
-                @endforeach
-                @if (!$found)
-                ................
-                @endif
-            </font>
-         </td>    
-        
 
-    </tr>
-    <tr>
-        <td style="font-size: 8pt;padding-left:5px;" colspan="3"> 
-          <font style="font-size: 9px; font-weight: 400;">
-                1. Indikasi pasien dirawat inap/diagnosis masuk :
-            </font>
-            <br>
-            &nbsp;&nbsp;&nbsp;<font style="font-size: 9px; ">
-                @php
-                $found = false;
-                @endphp
-                @foreach ($res['d'] as $item)
-                @if ($item->emrdfk == 30008004 && !empty($item->value))
-                {!! $item->value !!}
-                @php
-                $found = true;
-                @endphp
-                @break
-                @endif
-                @endforeach
-                @if (!$found)
-                ................
-                @endif
-            </font>
-         </td>
-  
-    </tr>
-    <tr>
-        <td style="font-size: 8pt;padding-left:5px;" colspan="3"> 
-          <font style="font-size: 9px; font-weight: 400;">
-            2. Pemeriksaan fisik yang penting :
-            </font>
-            <br>
-            &nbsp;&nbsp;&nbsp;<font style="font-size: 9px; ">
-                @php
-                $found = false;
-                @endphp
-                @foreach ($res['d'] as $item)
-                @if ($item->emrdfk == 30008005 && !empty($item->value))
-                {!! $item->value !!}
-                @php
-                $found = true;
-                @endphp
-                @break
-                @endif
-                @endforeach
-                @if (!$found)
-                ................
-                @endif
-            </font>
-         </td>
-  
-    </tr>
-    <tr>
-        <td style="font-size: 8pt;padding-left:5px;" colspan="3"> 
-          <font style="font-size: 9px; font-weight: 400;">
-            3. Riwayat kesehatan :
-            </font>
-            <br>
-            &nbsp;&nbsp;&nbsp;<font style="font-size: 9px; ">
-                @php
-                $found = false;
-                @endphp
-                @foreach ($res['d'] as $item)
-                @if ($item->emrdfk == 30008006 && !empty($item->value))
-                {!! $item->value !!}
-                @php
-                $found = true;
-                @endphp
-                @break
-                @endif
-                @endforeach
-                @if (!$found)
-                ................
-                @endif
-            </font>
-         </td>
-  
-    </tr>
-    <tr>
-        <td colspan="3" style="font-size: 8pt;padding-left:5px;">
-            <font style="font-size: 9px; font-weight: 400;">
-                4. Alergi :
-            </font>
-            <br>
-            <font style="font-size: 9px;  margin-top: -3px" align="center" color="#000000">
-                <input type="checkbox" style="transform: scale(0.8); margin-top:6.5px; !important;" @foreach ($res['d'] as $item)
-                    @if ($item->emrdfk == '30008007' && $item->value == 1)
-                checked
-                @endif
-                @endforeach
-                ng-model="item.obj[30008007]"/>Tidak
-            </font>
-            <font style="font-size: 9px;  margin-top: -3px" align="center" color="#000000">
-                <input type="checkbox" style="transform: scale(0.8); margin-top:6.5px; !important;" @foreach ($res['d'] as $item)
-                    @if ($item->emrdfk == '30008008' && $item->value == 1)
-                checked
-                @endif
-                @endforeach
-                ng-model="item.obj[30008008]"/>Ya,Sebutkan:
-                <font style="font-size: 9px; ">
-                    @php
-                    $found = false;
-                    @endphp
-                    @foreach ($res['d'] as $item)
-                    @if ($item->emrdfk == 30008009 && !empty($item->value))
-                    {!! $item->value !!}
-                    @php
-                    $found = true;
-                    @endphp
-                    @break
-                    @endif
-                    @endforeach
-                    @if (!$found)
-                    ................
-                    @endif
-                </font>
-            </font>
-            
-            
-        </td>
-    </tr>
-    <tr>
-        <td style="font-size: 8pt;padding-left:5px;" colspan="3"> 
-          <font style="font-size: 9px; font-weight: 400;">
-            5. Hasil pemeriksaan diagnostik / penunjang yang mendukung diagnosis:
-            </font>
-            <br>
-            &nbsp;&nbsp;&nbsp;<font style="font-size: 9px; ">
-                @php
-                $found = false;
-                @endphp
-                @foreach ($res['d'] as $item)
-                @if ($item->emrdfk == 30008010 && !empty($item->value))
-                {!! $item->value !!}
-                @php
-                $found = true;
-                @endphp
-                @break
-                @endif
-                @endforeach
-                @if (!$found)
-                ................
-                @endif
-            </font>
-         </td>
-  
-    </tr>
-    <tr>
-        <td style="font-size: 8pt;padding-left:5px;" colspan="3"> 
-          <font style="font-size: 9px; font-weight: 400;">
-            6. Diagnosis
-            </font>
-            <br>
-            <font style="font-size: 9px; font-weight: 400;">
-             a. Diagnosis Utama
-            </font>
-            <br>
-            &nbsp;&nbsp;&nbsp;<font style="font-size: 9px; ">
-                @php
-                $found = false;
-                @endphp
-                @foreach ($res['d'] as $item)
-                @if ($item->emrdfk == 30008011 && !empty($item->value))
-                {!! $item->split !!}
-                @php
-                $found = true;
-                @endphp
-                @break
-                @endif
-                @endforeach
-                @if (!$found)
-                ................
-                @endif
-            </font>
-            <br>
-            <font style="font-size: 9px; font-weight: 400;">
-                b. Diagnosis Sekunder
-            </font>
-            <br>
-            &nbsp;&nbsp;&nbsp;<font style="font-size: 9px; ">
-                @php
-                $found = false;
-                @endphp
-                @foreach ($res['d'] as $item)
-                @if ($item->emrdfk == 30008012 && !empty($item->value))
-                {!! $item->split !!}
-                @php
-                $found = true;
-                @endphp
-                @break
-                @endif
-                @endforeach
-                @if (!$found)
-                ................
-                @endif
-            </font>
-         </td>
-  
-    </tr>
-   <tr>
-        <td style="font-size: 8pt;padding-left:5px;" colspan="3"> 
-          <font style="font-size: 9px; font-weight: 400;">
-           7. Tindakan diagnostik dan prosedur terapi :
-            </font>
-            <br>
-            &nbsp;&nbsp;&nbsp;<font style="font-size: 9px; ">
-                @php
-                $found = false;
-                @endphp
-                @foreach ($res['d'] as $item)
-                @if ($item->emrdfk == 30008013 && !empty($item->value))
-                {!! $item->value !!}
-                @php
-                $found = true;
-                @endphp
-                @break
-                @endif
-                @endforeach
-                @if (!$found)
-                ................
-                @endif
-            </font>
-         </td>
-  
-    </tr>
-    <tr>
-        <td style="font-size: 8pt;padding-left:5px;" colspan="3"> 
-          <font style="font-size: 9px; font-weight: 400;">
-            8. Pemberian obat selama perawatan :
-            </font>
-            <br>
-            &nbsp;&nbsp;&nbsp;<font style="font-size: 9px; ">
-                @php
-                $found = false;
-                @endphp
-                @foreach ($res['d'] as $item)
-                @if ($item->emrdfk == 30008014 && !empty($item->value))
-                {!! $item->value !!}
-                @php
-                $found = true;
-                @endphp
-                @break
-                @endif
-                @endforeach
-                @if (!$found)
-                ................
-                @endif
-            </font>
-         </td>
-  
-    </tr>
-    <tr>
-        <td style="font-size: 8pt;padding-left:5px;" colspan="3"> 
-          <font style="font-size: 9px; font-weight: 400;">
-            9. Instruksi tindak lanjut :
-            </font>
-            <br>
-            <font style="font-size: 9px; font-weight: 400;">
-                a. Pemberian obat waktu pulang :
-            </font>
-            <br>
-            &nbsp;&nbsp;&nbsp;<font style="font-size: 9px; ">
-                @php
-                $found = false;
-                @endphp
-                @foreach ($res['d'] as $item)
-                @if ($item->emrdfk == 30008015 && !empty($item->value))
-                {!! $item->value !!}
-                @php
-                $found = true;
-                @endphp
-                @break
-                @endif
-                @endforeach
-                @if (!$found)
-                ................
-                @endif
-            </font>
-            <br>
-            <font style="font-size: 9px; font-weight: 400;">
-                Edukasi waktu pulang :
-            </font>
-            <br>
-            <font style="font-size: 9px;  margin-top: -3px" align="center" color="#000000">
-                <input type="checkbox" style="transform: scale(0.8); margin-top:6.5px; !important;" @foreach ($res['d'] as $item)
-                    @if ($item->emrdfk == '30008016' && $item->value == 1)
-                checked
-                @endif
-                @endforeach
-                ng-model="item.obj[30008016]"/>Perawatan di rumah:
-                <font style="font-size: 9px; ">
-                    @php
-                    $found = false;
-                    @endphp
-                    @foreach ($res['d'] as $item)
-                    @if ($item->emrdfk == 30008017 && !empty($item->value))
-                    {!! $item->value !!}
-                    @php
-                    $found = true;
-                    @endphp
-                    @break
-                    @endif
-                    @endforeach
-                    @if (!$found)
-                    ................
-                    @endif
-                </font>
-            </font>
-            <br>
-            <br>
-            <font style="font-size: 9px;  margin-top: -3px" align="center" color="#000000">
-                <input type="checkbox" style="transform: scale(0.8); margin-top:6.5px; !important;" @foreach ($res['d'] as $item)
-                    @if ($item->emrdfk == '30008018' && $item->value == 1)
-                checked
-                @endif
-                @endforeach
-                ng-model="item.obj[30008019]"/>
-                <font style="font-size: 9px; ">
-                    @php
-                    $found = false;
-                    @endphp
-                    @foreach ($res['d'] as $item)
-                    @if ($item->emrdfk == 30008019 && !empty($item->value))
-                    {!! $item->value !!}
-                    @php
-                    $found = true;
-                    @endphp
-                    @break
-                    @endif
-                    @endforeach
-                    @if (!$found)
-                    ................
-                    @endif
-                </font>
-            </font>
-         </td>
-  
-    </tr>
-    <tr>
-        <td style="font-size: 8pt;padding-left:5px;" colspan="3"> 
-         
-            <font style="font-size: 9px; font-weight: 400;">
-                10. Keadaan keluar :
-            </font>
-            <br>
-            <font style="font-size: 9px;  margin-top: -3px" align="center" color="#000000">
-                <input type="checkbox" style="transform: scale(0.8); margin-top:6.5px; !important;" @foreach ($res['d'] as $item)
-                    @if ($item->emrdfk == '30008020' && $item->value == 1)
-                checked
-                @endif
-                @endforeach
-                ng-model="item.obj[30008020]"/>Perbaikan
-            </font>
-            <font style="font-size: 9px;  margin-top: -3px" align="center" color="#000000">
-                <input type="checkbox" style="transform: scale(0.8); margin-top:6.5px; !important;" @foreach ($res['d'] as $item)
-                    @if ($item->emrdfk == '30008021' && $item->value == 1)
-                checked
-                @endif
-                @endforeach
-                ng-model="item.obj[30008021]"/>Sembuh
-            </font>
-            <font style="font-size: 9px;  margin-top: -3px" align="center" color="#000000">
-                <input type="checkbox" style="transform: scale(0.8); margin-top:6.5px; !important;" @foreach ($res['d'] as $item)
-                    @if ($item->emrdfk == '30008022' && $item->value == 1)
-                checked
-                @endif
-                @endforeach
-                ng-model="item.obj[30008022]"/>Pulang
-            </font>
-         </td>
-  
-    </tr>
-    <tr>
-        <td style="font-size: 8pt;padding-left:5px;" colspan="3"> 
-         
-            <font style="font-size: 9px; font-weight: 400;">
-                11. Cara keluar :
-            </font>
-            <br>
-            <font style="font-size: 9px;  margin-top: -3px" align="center" color="#000000">
-                <input type="checkbox" style="transform: scale(0.8); margin-top:6.5px; !important;" @foreach ($res['d'] as $item)
-                    @if ($item->emrdfk == '30008023' && $item->value == 1)
-                checked
-                @endif
-                @endforeach
-                ng-model="item.obj[30008023]"/>Atas persetujuan dokter
-            </font>
-            <font style="font-size: 9px;  margin-top: -3px" align="center" color="#000000">
-                <input type="checkbox" style="transform: scale(0.8); margin-top:6.5px; !important;" @foreach ($res['d'] as $item)
-                    @if ($item->emrdfk == '30008024' && $item->value == 1)
-                checked
-                @endif
-                @endforeach
-                ng-model="item.obj[30008024]"/>Rujuk:
-                <font style="font-size: 9px; ">
-                    @php
-                    $found = false;
-                    @endphp
-                    @foreach ($res['d'] as $item)
-                    @if ($item->emrdfk == 30008025 && !empty($item->value))
-                    {!! $item->value !!}
-                    @php
-                    $found = true;
-                    @endphp
-                    @break
-                    @endif
-                    @endforeach
-                    @if (!$found)
-                    ................
-                    @endif
-                </font>
-            </font>
-            <font style="font-size: 9px;  margin-top: -3px" align="center" color="#000000">
-                <input type="checkbox" style="transform: scale(0.8); margin-top:6.5px; !important;" @foreach ($res['d'] as $item)
-                    @if ($item->emrdfk == '30008026' && $item->value == 1)
-                checked
-                @endif
-                @endforeach
-                ng-model="item.obj[30008026]"/>Atas permintaan sendiri
-            </font>
-            <font style="font-size: 9px;  margin-top: -3px" align="center" color="#000000">
-                <input type="checkbox" style="transform: scale(0.8); margin-top:6.5px; !important;" @foreach ($res['d'] as $item)
-                    @if ($item->emrdfk == '30008027' && $item->value == 1)
-                checked
-                @endif
-                @endforeach
-                ng-model="item.obj[30008027]"/>Lain - lain:
-                <font style="font-size: 9px; ">
-                    @php
-                    $found = false;
-                    @endphp
-                    @foreach ($res['d'] as $item)
-                    @if ($item->emrdfk == 30008028 && !empty($item->value))
-                    {!! $item->value !!}
-                    @php
-                    $found = true;
-                    @endphp
-                    @break
-                    @endif
-                    @endforeach
-                    @if (!$found)
-                    ................
-                    @endif
-                </font>
-            </font>
-         </td>
-  
-    </tr>
-    
-        <tr>
-            <td style="font-size: 8pt;padding-left:5px;" colspan="3"> 
-             
+        {{-- Isi --}}
+        <table  cellspacing="0" cellpadding="0"  width="100%" style="padding: 3px; ">
+            <tr >
+                <td style="font-size: 8pt;padding-left:5px;"> 
+                    <font style="font-size: 9px; font-weight: 400;">
+                    Tanggal Masuk :
+                    </font>
+                    &nbsp;&nbsp;&nbsp;<font style="font-size: 9px; ">
+                        @php
+                        $found = false;
+                        @endphp
+                        @foreach ($res['d'] as $item)
+                        @if ($item->emrdfk == 30008000 && !empty($item->value))
+                        {!! $item->value !!}
+                        @php
+                        $found = true;
+                        @endphp
+                        @break
+                        @endif
+                        @endforeach
+                        @if (!$found)
+                        ................
+                        @endif
+                    </font>
+                </td>       
+                <td style="font-size: 8pt;padding-left:5px;"> 
+                    <font style="font-size: 9px; font-weight: 400;">
+                        Tanggal Pulang :
+                    </font>
+                    &nbsp;&nbsp;&nbsp;<font style="font-size: 9px; ">
+                        @php
+                        $found = false;
+                        @endphp
+                        @foreach ($res['d'] as $item)
+                        @if ($item->emrdfk == 30008001 && !empty($item->value))
+                        {!! $item->value !!}
+                        @php
+                        $found = true;
+                        @endphp
+                        @break
+                        @endif
+                        @endforeach
+                        @if (!$found)
+                        ................
+                        @endif
+                    </font>
+                </td>    
+                <td style="font-size: 8pt;padding-left:5px;"> 
+                    <font style="font-size: 9px; font-weight: 400;">
+                    Wisma :
+                    </font>
+                    &nbsp;&nbsp;&nbsp;<font style="font-size: 9px; ">
+                        @php
+                        $found = false;
+                        @endphp
+                        @foreach ($res['d'] as $item)
+                        @if ($item->emrdfk == 30008002 && !empty($item->value))
+                        {!! $item->split !!}
+                        @php
+                        $found = true;
+                        @endphp
+                        @break
+                        @endif
+                        @endforeach
+                        @if (!$found)
+                        ................
+                        @endif
+                    </font>
+                </td>    
+                <td style="font-size: 8pt;padding-left:5px;"> 
+                    <font style="font-size: 9px; font-weight: 400;">
+                        Kelas :
+                    </font>
+                    &nbsp;&nbsp;&nbsp;<font style="font-size: 9px; ">
+                        @php
+                        $found = false;
+                        @endphp
+                        @foreach ($res['d'] as $item)
+                        @if ($item->emrdfk == 30008003 && !empty($item->value))
+                        {!! $item->split !!}
+                        @php
+                        $found = true;
+                        @endphp
+                        @break
+                        @endif
+                        @endforeach
+                        @if (!$found)
+                        ................
+                        @endif
+                    </font>
+                </td>    
+                
+
+            </tr>
+            <tr>
+                <td style="font-size: 8pt;padding-left:5px;" colspan="3"> 
                 <font style="font-size: 9px; font-weight: 400;">
-                    Saya telah menerima informasi tersebut di atas dan menyetujui bahwa Ringkasan Pulang ini hanya dapat digunakan
-                    untuk kepentingan pengobatan, serta TIDAK DAPAT digunakan untuk kepentingan lainnya
-                </font>
-            </td>
-        </tr>
-        <tr>
-            <td></td>
-            <td></td>
-            <td></td>
-            <td width="35%" style="font-size: 8pt;padding-left:5px;" colspan="3">
+                        1. Indikasi pasien dirawat inap/diagnosis masuk :
+                    </font>
+                    <br>
+                    &nbsp;&nbsp;&nbsp;<font style="font-size: 9px; ">
+                        @php
+                        $found = false;
+                        @endphp
+                        @foreach ($res['d'] as $item)
+                        @if ($item->emrdfk == 30008004 && !empty($item->value))
+                        {!! $item->value !!}
+                        @php
+                        $found = true;
+                        @endphp
+                        @break
+                        @endif
+                        @endforeach
+                        @if (!$found)
+                        ................
+                        @endif
+                    </font>
+                </td>
+        
+            </tr>
+            <tr>
+                <td style="font-size: 8pt;padding-left:5px;" colspan="3"> 
                 <font style="font-size: 9px; font-weight: 400;">
-                    Yogyakarta, @foreach ($res['d'] as $item)
-                    @if ($item->emrdfk == 30008029 && !empty($item->value))
-                    {!! $item->value !!}
-                    @break
-                    @endif
-                    @endforeach
-                </font>
-            </td>
-        </tr>
-        <tr>
-            <td style="font-size: 8pt;padding-left:5px;text-align: center;">
+                    2. Pemeriksaan fisik yang penting :
+                    </font>
+                    <br>
+                    &nbsp;&nbsp;&nbsp;<font style="font-size: 9px; ">
+                        @php
+                        $found = false;
+                        @endphp
+                        @foreach ($res['d'] as $item)
+                        @if ($item->emrdfk == 30008005 && !empty($item->value))
+                        {!! $item->value !!}
+                        @php
+                        $found = true;
+                        @endphp
+                        @break
+                        @endif
+                        @endforeach
+                        @if (!$found)
+                        ................
+                        @endif
+                    </font>
+                </td>
+        
+            </tr>
+            <tr>
+                <td style="font-size: 8pt;padding-left:5px;" colspan="3"> 
                 <font style="font-size: 9px; font-weight: 400;">
-                    Penerima Informasi
-                </font>
-            </td>
-            <td style="font-size: 8pt;padding-left:5px;text-align: center;">
+                    3. Riwayat kesehatan :
+                    </font>
+                    <br>
+                    &nbsp;&nbsp;&nbsp;<font style="font-size: 9px; ">
+                        @php
+                        $found = false;
+                        @endphp
+                        @foreach ($res['d'] as $item)
+                        @if ($item->emrdfk == 30008006 && !empty($item->value))
+                        {!! $item->value !!}
+                        @php
+                        $found = true;
+                        @endphp
+                        @break
+                        @endif
+                        @endforeach
+                        @if (!$found)
+                        ................
+                        @endif
+                    </font>
+                </td>
+        
+            </tr>
+            <tr>
+                <td colspan="3" style="font-size: 8pt;padding-left:5px;">
+                    <font style="font-size: 9px; font-weight: 400;">
+                        4. Alergi :
+                    </font>
+                    <br>
+                    <font style="font-size: 9px;  margin-top: -3px" align="center" color="#000000">
+                        <input type="checkbox" style="transform: scale(0.8); margin-top:6.5px; !important;" @foreach ($res['d'] as $item)
+                            @if ($item->emrdfk == '30008007' && $item->value == 1)
+                        checked
+                        @endif
+                        @endforeach
+                        ng-model="item.obj[30008007]"/>Tidak
+                    </font>
+                    <font style="font-size: 9px;  margin-top: -3px" align="center" color="#000000">
+                        <input type="checkbox" style="transform: scale(0.8); margin-top:6.5px; !important;" @foreach ($res['d'] as $item)
+                            @if ($item->emrdfk == '30008008' && $item->value == 1)
+                        checked
+                        @endif
+                        @endforeach
+                        ng-model="item.obj[30008008]"/>Ya,Sebutkan:
+                        <font style="font-size: 9px; ">
+                            @php
+                            $found = false;
+                            @endphp
+                            @foreach ($res['d'] as $item)
+                            @if ($item->emrdfk == 30008009 && !empty($item->value))
+                            {!! $item->value !!}
+                            @php
+                            $found = true;
+                            @endphp
+                            @break
+                            @endif
+                            @endforeach
+                            @if (!$found)
+                            ................
+                            @endif
+                        </font>
+                    </font>
+                    
+                    
+                </td>
+            </tr>
+            <tr>
+                <td style="font-size: 8pt;padding-left:5px;" colspan="3"> 
                 <font style="font-size: 9px; font-weight: 400;">
-                    Pemberi Informasi
-                </font>
-            </td>
-            <td></td>
-            <td width="35%"  style="font-size: 8pt;padding-left:5px;" colspan="3">
+                    5. Hasil pemeriksaan diagnostik / penunjang yang mendukung diagnosis:
+                    </font>
+                    <br>
+                    &nbsp;&nbsp;&nbsp;<font style="font-size: 9px; ">
+                        @php
+                        $found = false;
+                        @endphp
+                        @foreach ($res['d'] as $item)
+                        @if ($item->emrdfk == 30008010 && !empty($item->value))
+                        {!! $item->value !!}
+                        @php
+                        $found = true;
+                        @endphp
+                        @break
+                        @endif
+                        @endforeach
+                        @if (!$found)
+                        ................
+                        @endif
+                    </font>
+                </td>
+        
+            </tr>
+            <tr>
+                <td style="font-size: 8pt;padding-left:5px;" colspan="3"> 
                 <font style="font-size: 9px; font-weight: 400;">
-                    Dokter Penanggung Jawab Pasien
-                </font>
-            </td>
-        </tr>
-        <tr>
-            <td></td>
-            <td></td>
-            <td></td>
-            <td height="60px"> </td>
-        </tr>
-        <tr>
-            <td style="font-size: 8pt;padding-left:5px;text-align: center;">
+                    6. Diagnosis
+                    </font>
+                    <br>
+                    <font style="font-size: 9px; font-weight: 400;">
+                    a. Diagnosis Utama
+                    </font>
+                    <br>
+                    &nbsp;&nbsp;&nbsp;<font style="font-size: 9px; ">
+                        @php
+                        $found = false;
+                        @endphp
+                        @foreach ($res['d'] as $item)
+                        @if ($item->emrdfk == 30008011 && !empty($item->value))
+                        {!! $item->split !!}
+                        @php
+                        $found = true;
+                        @endphp
+                        @break
+                        @endif
+                        @endforeach
+                        @if (!$found)
+                        ................
+                        @endif
+                    </font>
+                    <br>
+                    <font style="font-size: 9px; font-weight: 400;">
+                        b. Diagnosis Sekunder
+                    </font>
+                    <br>
+                    &nbsp;&nbsp;&nbsp;<font style="font-size: 9px; ">
+                        @php
+                        $found = false;
+                        @endphp
+                        @foreach ($res['d'] as $item)
+                        @if ($item->emrdfk == 30008012 && !empty($item->value))
+                        {!! $item->split !!}
+                        @php
+                        $found = true;
+                        @endphp
+                        @break
+                        @endif
+                        @endforeach
+                        @if (!$found)
+                        ................
+                        @endif
+                    </font>
+                </td>
+        
+            </tr>
+            <tr>
+                <td style="font-size: 8pt;padding-left:5px;" colspan="3"> 
                 <font style="font-size: 9px; font-weight: 400;">
-                    (   @foreach ($res['d'] as $item)
-                                @if ($item->emrdfk == 30008030 && !empty($item->value))
-                                {!! $item->value !!}
-                                @break
-                                @endif
-                                @endforeach
-                                {{-- {{isset($item[3018854]) ? $item[3018854]:''}} --}}
-                             )
-                </font>
-            </td>
-            <td style="font-size: 8pt;padding-left:5px;text-align: center;">
+                7. Tindakan diagnostik dan prosedur terapi :
+                    </font>
+                    <br>
+                    &nbsp;&nbsp;&nbsp;<font style="font-size: 9px; ">
+                        @php
+                        $found = false;
+                        @endphp
+                        @foreach ($res['d'] as $item)
+                        @if ($item->emrdfk == 30008013 && !empty($item->value))
+                        {!! $item->value !!}
+                        @php
+                        $found = true;
+                        @endphp
+                        @break
+                        @endif
+                        @endforeach
+                        @if (!$found)
+                        ................
+                        @endif
+                    </font>
+                </td>
+        
+            </tr>
+            <tr>
+                <td style="font-size: 8pt;padding-left:5px;" colspan="3"> 
+                    <font style="font-size: 9px; font-weight: 400;">
+                        8. Pemberian obat selama perawatan :
+                    </font>
+                    <br>
+                    &nbsp;&nbsp;&nbsp;
+                    <font style="font-size: 9px; ">
+                        @php
+                        $found = false;
+                        @endphp
+                        @foreach ($res['d'] as $item)
+                        @if ($item->emrdfk == 30008014 && !empty($item->value))
+                        {!! $item->value !!}
+                        @php
+                        $found = true;
+                        @endphp
+                        @break
+                        @endif
+                        @endforeach
+                        @if (!$found)
+                        ................
+                        @endif
+                    </font>
+                </td>
+        
+            </tr>
+            <tr>
+                <td style="font-size: 8pt;padding-left:5px;" colspan="3"> 
                 <font style="font-size: 9px; font-weight: 400;">
-                    (  @foreach ($res['d'] as $item)
-                                @if ($item->emrdfk == 30008031 && !empty($item->value))
-                                {!! $item->value !!}
-                                @break
-                                @endif
-                                @endforeach
-                                {{-- {{isset($item[3018854]) ? $item[3018854]:''}} --}}
-                             )
-                </font>
-            </td>
-            <td></td>
-            <td width="35%"  style="font-size: 8pt;padding-left:10px;" colspan="3">
-                <font style="font-size: 9px; font-weight: 400;">
-                    ( @foreach ($res['d'] as $item)
-                                @if ($item->emrdfk == 30008032 && !empty($item->value))
-                                {!! $item->split !!}
-                                @break
-                                @endif
-                                @endforeach
-                                {{-- {{isset($item[3018854]) ? $item[3018854]:''}} --}}
-                               )
-                </font>
-            </td>
-        </tr> 
-                      
-</table>
-      
-       
-     
+                    9. Instruksi tindak lanjut :
+                    </font>
+                    <br>
+                    <font style="font-size: 9px; font-weight: 400;">
+                        a. Pemberian obat waktu pulang :
+                    </font>
+                    <br>
+                    &nbsp;&nbsp;&nbsp;<font style="font-size: 9px; ">
+                        @php
+                        $found = false;
+                        @endphp
+                        @foreach ($res['d'] as $item)
+                        @if ($item->emrdfk == 30008015 && !empty($item->value))
+                        {!! $item->value !!}
+                        @php
+                        $found = true;
+                        @endphp
+                        @break
+                        @endif
+                        @endforeach
+                        @if (!$found)
+                        ................
+                        @endif
+                    </font>
+                    <br>
+                    <font style="font-size: 9px; font-weight: 400;">
+                        Edukasi waktu pulang :
+                    </font>
+                    <br>
+                    <font style="font-size: 9px;  margin-top: -3px" align="center" color="#000000">
+                        <input type="checkbox" style="transform: scale(0.8); margin-top:6.5px; !important;" @foreach ($res['d'] as $item)
+                            @if ($item->emrdfk == '30008016' && $item->value == 1)
+                        checked
+                        @endif
+                        @endforeach
+                        ng-model="item.obj[30008016]"/>Perawatan di rumah:
+                        <font style="font-size: 9px; ">
+                            @php
+                            $found = false;
+                            @endphp
+                            @foreach ($res['d'] as $item)
+                            @if ($item->emrdfk == 30008017 && !empty($item->value))
+                            {!! $item->value !!}
+                            @php
+                            $found = true;
+                            @endphp
+                            @break
+                            @endif
+                            @endforeach
+                            @if (!$found)
+                            ................
+                            @endif
+                        </font>
+                    </font>
+                    <br>
+                    <br>
+                    <font style="font-size: 9px;  margin-top: -3px" align="center" color="#000000">
+                        <input type="checkbox" style="transform: scale(0.8); margin-top:6.5px; !important;" @foreach ($res['d'] as $item)
+                            @if ($item->emrdfk == '30008018' && $item->value == 1)
+                        checked
+                        @endif
+                        @endforeach
+                        ng-model="item.obj[30008019]"/>
+                        <font style="font-size: 9px; ">
+                            @php
+                            $found = false;
+                            @endphp
+                            @foreach ($res['d'] as $item)
+                            @if ($item->emrdfk == 30008019 && !empty($item->value))
+                            {!! $item->value !!}
+                            @php
+                            $found = true;
+                            @endphp
+                            @break
+                            @endif
+                            @endforeach
+                            @if (!$found)
+                            ................
+                            @endif
+                        </font>
+                    </font>
+                </td>
+        
+            </tr>
+            <tr>
+                <td style="font-size: 8pt;padding-left:5px;" colspan="3"> 
+                
+                    <font style="font-size: 9px; font-weight: 400;">
+                        10. Keadaan keluar :
+                    </font>
+                    <br>
+                    <font style="font-size: 9px;  margin-top: -3px" align="center" color="#000000">
+                        <input type="checkbox" style="transform: scale(0.8); margin-top:6.5px; !important;" @foreach ($res['d'] as $item)
+                            @if ($item->emrdfk == '30008020' && $item->value == 1)
+                        checked
+                        @endif
+                        @endforeach
+                        ng-model="item.obj[30008020]"/>Perbaikan
+                    </font>
+                    <font style="font-size: 9px;  margin-top: -3px" align="center" color="#000000">
+                        <input type="checkbox" style="transform: scale(0.8); margin-top:6.5px; !important;" @foreach ($res['d'] as $item)
+                            @if ($item->emrdfk == '30008021' && $item->value == 1)
+                        checked
+                        @endif
+                        @endforeach
+                        ng-model="item.obj[30008021]"/>Sembuh
+                    </font>
+                    <font style="font-size: 9px;  margin-top: -3px" align="center" color="#000000">
+                        <input type="checkbox" style="transform: scale(0.8); margin-top:6.5px; !important;" @foreach ($res['d'] as $item)
+                            @if ($item->emrdfk == '30008022' && $item->value == 1)
+                        checked
+                        @endif
+                        @endforeach
+                        ng-model="item.obj[30008022]"/>Pulang
+                    </font>
+                </td>
+        
+            </tr>
+            <tr>
+                <td style="font-size: 8pt;padding-left:5px;" colspan="3"> 
+                
+                    <font style="font-size: 9px; font-weight: 400;">
+                        11. Cara keluar :
+                    </font>
+                    <br>
+                    <font style="font-size: 9px;  margin-top: -3px" align="center" color="#000000">
+                        <input type="checkbox" style="transform: scale(0.8); margin-top:6.5px; !important;" @foreach ($res['d'] as $item)
+                            @if ($item->emrdfk == '30008023' && $item->value == 1)
+                        checked
+                        @endif
+                        @endforeach
+                        ng-model="item.obj[30008023]"/>Atas persetujuan dokter
+                    </font>
+                    <font style="font-size: 9px;  margin-top: -3px" align="center" color="#000000">
+                        <input type="checkbox" style="transform: scale(0.8); margin-top:6.5px; !important;" @foreach ($res['d'] as $item)
+                            @if ($item->emrdfk == '30008024' && $item->value == 1)
+                        checked
+                        @endif
+                        @endforeach
+                        ng-model="item.obj[30008024]"/>Rujuk:
+                        <font style="font-size: 9px; ">
+                            @php
+                            $found = false;
+                            @endphp
+                            @foreach ($res['d'] as $item)
+                            @if ($item->emrdfk == 30008025 && !empty($item->value))
+                            {!! $item->value !!}
+                            @php
+                            $found = true;
+                            @endphp
+                            @break
+                            @endif
+                            @endforeach
+                            @if (!$found)
+                            ................
+                            @endif
+                        </font>
+                    </font>
+                    <font style="font-size: 9px;  margin-top: -3px" align="center" color="#000000">
+                        <input type="checkbox" style="transform: scale(0.8); margin-top:6.5px; !important;" @foreach ($res['d'] as $item)
+                            @if ($item->emrdfk == '30008026' && $item->value == 1)
+                        checked
+                        @endif
+                        @endforeach
+                        ng-model="item.obj[30008026]"/>Atas permintaan sendiri
+                    </font>
+                    <font style="font-size: 9px;  margin-top: -3px" align="center" color="#000000">
+                        <input type="checkbox" style="transform: scale(0.8); margin-top:6.5px; !important;" @foreach ($res['d'] as $item)
+                            @if ($item->emrdfk == '30008027' && $item->value == 1)
+                        checked
+                        @endif
+                        @endforeach
+                        ng-model="item.obj[30008027]"/>Lain - lain:
+                        <font style="font-size: 9px; ">
+                            @php
+                            $found = false;
+                            @endphp
+                            @foreach ($res['d'] as $item)
+                            @if ($item->emrdfk == 30008028 && !empty($item->value))
+                            {!! $item->value !!}
+                            @php
+                            $found = true;
+                            @endphp
+                            @break
+                            @endif
+                            @endforeach
+                            @if (!$found)
+                            ................
+                            @endif
+                        </font>
+                    </font>
+                </td>
+        
+            </tr>
+            <tr>
+                <td style="font-size: 8pt;padding-left:5px;" colspan="3"> 
+                
+                    <font style="font-size: 9px; font-weight: 400;">
+                        Saya telah menerima informasi tersebut di atas dan menyetujui bahwa Ringkasan Pulang ini hanya dapat digunakan
+                        untuk kepentingan pengobatan, serta TIDAK DAPAT digunakan untuk kepentingan lainnya
+                    </font>
+                </td>
+            </tr>
+        </table>
+
+        {{-- ttd --}}
+        <table style="width: 100%;">
+            <tr>
+                <td></td>
+                <td></td>
+                <td style="font-size: 8pt;text-align: center;">
+                    <font style="font-size: 9px; font-weight: 400;">
+                        Yogyakarta, @foreach ($res['d'] as $item)
+                        @if ($item->emrdfk == 30008029 && !empty($item->value))
+                        {!! $item->value !!}
+                        @break
+                        @endif
+                        @endforeach
+                    </font>
+                </td>
+            </tr>
+            <tr>
+                <td style="font-size: 8pt;text-align: center;">
+                    <font style="font-size: 9px; font-weight: 400;">
+                        Penerima Informasi
+                    </font>
+                </td>
+                <td style="font-size: 8pt;text-align: center;">
+                    <font style="font-size: 9px; font-weight: 400;">
+                        Pemberi Informasi
+                    </font>
+                </td>
+                <td style="font-size: 8pt;text-align: center;">
+                    <font style="font-size: 9px; font-weight: 400;">
+                        Dokter Penanggung Jawab Pasien
+                    </font>
+                </td>
+            </tr>
+            @if ($tte == 'true')
+                <tr>
+                    <td></td>
+                    <td></td>
+                    <td style="text-align:center;">
+                        <p style="text-align: center; color:grey;">
+                            Ditandatangani Secara<br>Elektronik
+                        </p>
+                    </td>
+                </tr>
+            @else
+                <tr>
+                    <td></td>
+                    <td></td>
+                    <td style="text-align:center; padding: 2em 0em;">
+                        
+                    </td>
+                </tr>
+            @endif
+            <tr>
+                <td style="font-size: 8pt;text-align: center;">
+                    <font style="font-size: 9px; font-weight: 400;">
+                        (   @foreach ($res['d'] as $item)
+                                    @if ($item->emrdfk == 30008030 && !empty($item->value))
+                                    {!! $item->value !!}
+                                    @break
+                                    @endif
+                                    @endforeach
+                                    {{-- {{isset($item[3018854]) ? $item[3018854]:''}} --}}
+                                )
+                    </font>
+                </td>
+                <td style="font-size: 8pt;text-align: center;">
+                    <font style="font-size: 9px; font-weight: 400;">
+                        (  @foreach ($res['d'] as $item)
+                                    @if ($item->emrdfk == 30008031 && !empty($item->value))
+                                    {!! $item->value !!}
+                                    @break
+                                    @endif
+                                    @endforeach
+                                    {{-- {{isset($item[3018854]) ? $item[3018854]:''}} --}}
+                                )
+                    </font>
+                </td>
+                <td style="font-size: 8pt;text-align: center;">
+                    <font style="font-size: 9px; font-weight: 400;">
+                        ( @foreach ($res['d'] as $item)
+                                    @if ($item->emrdfk == 30008032 && !empty($item->value))
+                                    {!! $item->split !!}
+                                    @break
+                                    @endif
+                                    @endforeach
+                                    {{-- {{isset($item[3018854]) ? $item[3018854]:''}} --}}
+                                )
+                    </font>
+                </td>
+            </tr> 
+        </table>
     </section>
-  
+    
+    @if ($tte == 'true')
+        <div id="footer" class="footer3">
+            <table border="0">
+                <tr>
+                    <td style="width: 15%; text-align:center;">
+                        <img src="img/bsre.png" alt="Logo" style="width: 50%; object-fit:contain; object-position:center; margin-bottom:10px;">
+                    </td>
+                    <td style="width: 15%; text-align: center;">
+                        <p>$</p>
+                    </td>
+                    <td style="width: 70%;">
+                        <p><i>Dokumen ini ditandatangani secara elektronik menggunakan sertifikat elektronik
+                            yang diterbitkan oleh Balai Sertifikasi Elektronik (BSrE) Badan Siber dan Sandi Negara</i></p>
+                    </td>
+                </tr>
+            </table>
+        </div>
+    @endif
 </body>
 
 </html>

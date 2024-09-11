@@ -16,12 +16,19 @@ define(['initialize','Configuration'], function (initialize, configuration) {
             $scope.totalSkor4 = 0
             $scope.cc = {}
             var nomorEMR = '-'
+            var norecEMR = ''
             $scope.cc.emrfk = 3000425
             var dataLoad = []
             var pegawaiInputDetail= ''
             $scope.item.kasusbaru = true
             $scope.item.kasuslama = false
             $scope.now = new Date();
+            $scope.isTTD_E = true
+            if(medifirstService.getKelompokUser() == 'mahasiswadiklat'){
+                $scope.tombolSimpanVis = false
+                $scope.isTTD_E = false
+
+            }
             if(medifirstService.getKelompokUser() == 'mahasiswadiklat'){
                 $scope.tombolSimpanVis = false
             }
@@ -143,8 +150,15 @@ define(['initialize','Configuration'], function (initialize, configuration) {
             })
 
             var cacheNomorEMR = cacheHelper.get('cacheNomorEMR');
+            var cacheNoREC = cacheHelper.get('cacheNOREC_EMR');
+
+            if (cacheNoREC != undefined) {
+                norecEMR = cacheNomorEMR[1]
+            }
+            
             if (cacheNomorEMR != undefined) {
                 nomorEMR = cacheNomorEMR[0]
+                norecEMR = cacheNomorEMR[1]
                 $scope.cc.norec_emr = nomorEMR
                 $scope.cc.tanggalEmrl = cacheNomorEMR[2]
             }
@@ -279,6 +293,7 @@ define(['initialize','Configuration'], function (initialize, configuration) {
                 $scope.item.obj[116062]=$scope.now
                 $scope.item.obj[116068]={text:$scope.cc.namaruangan,value: $scope.cc.objectruanganfk}
 
+                $scope.item.obj[3003970]=$scope.cc.nocm
                 $scope.item.obj[3003977]=$scope.cc.namapasien
                 $scope.item.obj[3003978]=$scope.cc.tempatLahir +"/"+ moment($scope.cc.tglLahir).format('DD-MMMM-YYYY ');
                 $scope.item.obj[3003979]=$scope.cc.jeniskelamin
@@ -940,13 +955,20 @@ define(['initialize','Configuration'], function (initialize, configuration) {
                     data: arrSave
                 }
                 medifirstService.post('emr/save-emr-dinamis', jsonSave).then(function (e) {
+
+                    // agar bisa langsung cetak dan tte
+                    if(norecEMR == '-' || norecEMR == null || norecEMR == ''){
+                        norecEMR = e.data.norecEMR
+                    }
+
                     var confirm = $mdDialog.confirm()
                     .title('Peringatan')
                     .textContent('EMR SUDAH TERSIMPAN, KLIK YA UNTUK KONFIRMASI')
                     .ariaLabel('Lucky day')
                     .cancel('Tidak')
                     .ok('Ya')
-                $mdDialog.show(confirm).then(function () {})
+
+                    $mdDialog.show(confirm).then(function () {})
                    
                     // $state.go("RekamMedis.OrderJadwalBedah.ProsedurKeselamatan", {
                     //     namaEMR : $scope.cc.emrfk,
@@ -965,17 +987,74 @@ define(['initialize','Configuration'], function (initialize, configuration) {
             }
 
             $scope.cetakBlade = function () {
-                               console.log(nomorEMR, $scope.cc.emrfk)
 
-
-                if (nomorEMR == '-') return
+                if (norecEMR == '') {
+                    toastr.error('Dokumen belum pernah di isi')
+                    return
+                }
 
                 var local = JSON.parse(localStorage.getItem('profile'))
                 var nama = medifirstService.getPegawaiLogin().namaLengkap
 
-                window.open(configuration.baseApiBackend + 'report/get-cetak-suratketerangannapza?noemr=' + nomorEMR + '&emfk=' + $scope.cc.emrfk +
+                window.open(configuration.baseApiBackend + 'report/get-cetak-suratketerangannapza' 
+                    + '?nocm=' + $scope.cc.nocm 
+                    + '&norec_apd=' + $scope.cc.norec
+                    + '&emr=' + norecEMR 
+                    + '&emrfk=' + $scope.cc.emrfk 
+                    + '&kdprofile=' + local.id, '_blank');
+            }
+
+            $scope.ttdElek = function () {
+                if (norecEMR == '') {
+                    toastr.error('Dokumen belum pernah di isi')
+                    return
+                }
+
+                // var confirm = $mdDialog.confirm()
+                //   .title('Info')
+                //   .textContent('Yakin mau tanda tangani dokumen ini ? ')
+                //   .ariaLabel('Lucky day')
+                //   .cancel('Tidak')
+                //   .ok('Ya')
+                // $mdDialog.show(confirm).then(function () {
+
+                if ($scope.item.obj[3003976] != undefined) {
+                    $scope.listPegawai.add($scope.item.obj[3003976])
+                    $scope.item.pegawai = $scope.item.obj[3003976]
+                }
+                $scope.winDialog.center().open()
+                // })
+            }
+
+            $scope.savePengajuanTTE = function (pegawai) {
+                if (pegawai == undefined) {
+                    return
+                }
+                var local = JSON.parse(localStorage.getItem('profile'))
+                var nama = medifirstService.getPegawaiLogin().namaLengkap
+                $scope.isRouteLoading = true
+                medifirstService.get('report/get-cetak-suratketerangannapza' + 
+                    '?noemr=' + nomorEMR +
+                    'nocm=' + $scope.cc.nocm +
+                    '&norec_apd=' + $scope.cc.norec +
+                    '&emr=' + norecEMR +
+                    '&emrfk=' + $scope.cc.emrfk +
                     '&kdprofile=' + local.id +
-                    '&nama=' + nama, '_blank');
+                    '&nama=' + nama +
+                    '&isttd=true' +
+                    '&pegawaittd=' + pegawai.value +
+                    '&noregistrasi=' + $scope.cc.noregistrasi +
+                    '&norec_pd=' + $scope.cc.norec_pd
+                ).then(function (e) {
+                    if (e.data.status == 201) {
+                        toastr.success(e.data.message)
+                        $scope.winDialog.close()
+                    } else {
+                        toastr.error(e.data.message)
+                    }
+                    $scope.isRouteLoading = false
+
+                })
             }
 
         }

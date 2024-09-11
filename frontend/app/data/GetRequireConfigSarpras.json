@@ -1373,6 +1373,14 @@
         {
             "nameDep": "DaftarPengemasanCtrl",
             "urlDep": "module/pengemasan/DaftarPengemasanCtrl"
+        },
+        {
+            "nameDep": "DaftarUsulanDiTolakCtrl",
+            "urlDep": "module/Perencanaan/DaftarUsulanDiTolakCtrl"
+        },
+        {
+            "nameDep": "RekapSPJDetailCtrl",
+            "urlDep": "module/Perencanaan/RekapSPJDetailCtrl"
         }
 
     ]

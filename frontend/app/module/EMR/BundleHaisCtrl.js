@@ -306,6 +306,8 @@ define(['initialize'], function (initialize) {
             $scope.klikGrid = function(dataSelected){
                 if (dataSelected != undefined) {
                     $scope.dataSelected = dataSelected;
+
+                    // console.log($scope.dataSelected)
                 }
             }
 
@@ -319,6 +321,8 @@ define(['initialize'], function (initialize) {
                     $scope.item.suhu = $scope.dataSelected.suhu;
                     $scope.item.diagnosa = $scope.dataSelected.diagnosa;
                     $scope.item.tirahbaring = $scope.dataSelected.tirahbaring;
+                    $scope.item.pemeriksaan = $scope.dataSelected.pemeriksaan
+                    $scope.item.terapi = $scope.dataSelected.terapi
                     LoadHistory();
                 } else {
                     window.messageContainer.error("Data Belum Dipilih!");
@@ -351,8 +355,30 @@ define(['initialize'], function (initialize) {
             }
 
             function LoadHistory(){
-                medifirstService.get("emr/get-data-trans-bundlehais-detail?norec=" + norecTransaksi + "&jenis=" + jenisBundle, true).then(function (dat) {
+                medifirstService.get("emr/get-data-trans-bundlehais-detail?norec=" + norecTransaksi, true).then(function (dat) {
                     var datas = dat.data;
+
+                    // list tindakan yang dipilih
+                    let listTindakan = {}
+                    let listInfeksiRS = {}
+                    datas.forEach(function(detail){
+                        $scope.listTindakan.forEach(function(tindakan){
+                            if(tindakan.idbundle == detail.idbundle){
+                                listTindakan[detail.idbundle] = "true"
+                            }
+
+                        })
+
+                        $scope.listInfeksiRS.forEach(function(infeksi){
+                            if(infeksi.idbundle == detail.idbundle){
+                                listInfeksiRS[detail.idbundle] = "true"
+                            }
+                        })
+                    })
+
+                    $scope.item.tindakan = listTindakan
+                    $scope.item.infeksiRS = listInfeksiRS
+
                     if (jenisBundle == "IAD") {
                         $scope.item.norecIAD = norecTransaksi;
                         $scope.myVar = 2;
@@ -446,19 +472,32 @@ define(['initialize'], function (initialize) {
                         $scope.myVar = 2;
                         $scope.myVarD = 0;                        
                         dataTINDAKAN = datas;
-                        $scope.listTindakan = datas
-                        $scope.dataSource6 = new kendo.data.DataSource({
-                            data: dataTINDAKAN,                        
-                            pageSize: dataTINDAKAN.length,
-                            total: dataTINDAKAN.length,
-                            serverPaging: false,
-                            schema: {
-                                model: {
-                                    fields: {
-                                    }
-                                }
-                            }                        
-                        });
+                        // $scope.listTindakan = datas
+                        
+
+
+                        // let list = {}
+                        // datas.forEach(function(detail){
+                        //     list[detail.idbundle] = "true"
+                        // })
+
+                        // $scope.item.tindakan = list
+
+                        // $scope.dataSource6 = new kendo.data.DataSource({
+                        //     data: dataTINDAKAN,                        
+                        //     pageSize: dataTINDAKAN.length,
+                        //     total: dataTINDAKAN.length,
+                        //     serverPaging: false,
+                        //     schema: {
+                        //         model: {
+                        //             fields: {
+                        //             }
+                        //         }
+                        //     }                        
+                        // });
+
+
+
                     }else if (jenisBundle == "INFEKSIRUMAHSAKIT") {
                         $scope.item.norecINFEKSIRUMAHSAKIT = norecTransaksi;
                         $scope.myVar = 2;

@@ -3724,6 +3724,22 @@
         {
             "nameDep": "ResumeRINonJiwaCtrl",
             "urlDep": "module/EMR/ResumeRINonJiwaCtrl"
+        },
+        {
+            "nameDep": "HistoriEMRCtrl",
+            "urlDep": "module/Registrasi/HistoriEMRCtrl"
+        },
+        {
+            "nameDep": "LaporanRekapKunjunganRSCtrl",
+            "urlDep": "module/Registrasi/Laporan/LaporanRekapKunjunganRSCtrl"
+        },
+        {
+          "nameDep": "CatatanKlinikNewCtrl",
+          "urlDep": "module/EMR/CatatanKlinikNewCtrl"
+        },
+        {
+            "nameDep": "UpdateAntrolOtomatisCtrl",
+            "urlDep": "module/RawatJalan/UpdateAntrolOtomatisCtrl"
         }
     ]
 }

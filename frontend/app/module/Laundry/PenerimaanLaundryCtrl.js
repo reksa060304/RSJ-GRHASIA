@@ -98,7 +98,8 @@ define(['initialize'], function (initialize) {
                     if (statusLoad == 'EditKirim') {
                         medifirstService.get("laundry/get-detail-kirim-laundry-ruangan?norec=" + noreckirim, true).then(function (data_ih) {
                             $scope.isRouteLoading = false;
-                            $scope.item.noKirim = data_ih.data.head.nokirim
+                            // $scope.item.noKirim = data_ih.data.head.nokirim
+                            $scope.item.noKirim = data_ih.data.head.norecstrukkirim
                             $scope.item.tglAwal = new Date(data_ih.data.head.tglkirim)
                             $scope.item.ruangan = { id: data_ih.data.head.id, namaruangan: data_ih.data.head.namaruangan }
                             $scope.item.ruanganTujuan = { id: data_ih.data.head.ruid2, namaruangan: data_ih.data.head.namaruangan2 }
@@ -113,6 +114,7 @@ define(['initialize'], function (initialize) {
                             })
 
                             $scope.item.Keterangan = cariKeterangan;
+                            norecOrder = data_ih.data.head.noorderfk
 
                             $scope.dataGrid = new kendo.data.DataSource({
                                 data: data2,
@@ -160,7 +162,8 @@ define(['initialize'], function (initialize) {
                         $scope.hideBukanKirimBalik = true
                         medifirstService.get("laundry/get-detail-kirim-laundry-ruangan?norec=" + noreckirim, true).then(function (data_ih) {
                             $scope.isRouteLoading = false;
-                            $scope.item.noKirim = data_ih.data.head.nokirim
+                            // $scope.item.noKirim = data_ih.data.head.nokirim
+                            $scope.item.noKirim = data_ih.data.head.norecstrukkirim
                             $scope.item.tglAwal = new Date(data_ih.data.head.tglkirim)
 
                             var ruanganAsal = $scope.listRuanganTujuan
@@ -182,6 +185,7 @@ define(['initialize'], function (initialize) {
                             //tambahan dadakan untuk seting daftar dan laporan tambah kelompok transaksi
                             statuskirim = 'Kirim'
                             kelompoktransaksi = 120
+                            norecOrder = data_ih.data.head.noorderfk
 
                             data2 = data_ih.data.detail
 
@@ -286,6 +290,11 @@ define(['initialize'], function (initialize) {
             }
 
             $scope.tambah = function () {
+                if ($scope.item.ruangan == undefined || $scope.item.ruangan == null) {
+                    toastr.error("Ruangan harus dipilih")
+                    return;
+                }
+
                 if ($scope.item.jumlah == 0) {
                     toastr.error("Jumlah harus di isi!")
                     return;
@@ -331,6 +340,7 @@ define(['initialize'], function (initialize) {
                             data.jmlstok = String($scope.item.stok)
                             data.jumlah = $scope.item.jumlah
                             data.qtyorder = data2[i].qtyorder
+                            data.qtyprodukterima = data2[i].qtyprodukterima
                             data.qtyTidakKirim = $scope.item.jumlahTidakKirim ? parseFloat($scope.item.jumlahTidakKirim) : 0
                             // data.hargasatuan = String($scope.item.hargaSatuan)
                             // data.hargadiscount = String($scope.item.hargadiskon)
@@ -525,6 +535,7 @@ define(['initialize'], function (initialize) {
                     $scope.saveShow = true;
                     window.history.back();
                     // $scope.popUp.center().open();
+                    $state.go("DaftarTerimaLaundry")
                 }, function (error) {
                     $scope.saveShow = true;
                 });
@@ -583,12 +594,17 @@ define(['initialize'], function (initialize) {
 
             $scope.simpan = function () {
 
-                if ($scope.item.ruangan == undefined) {
+                if ($scope.item.ruangan == undefined || $scope.item.ruangan == null) {
                     toastr.error("Pilih Ruanganan Pengirim!!")
                     return
                 }
-                if ($scope.item.ruanganTujuan == undefined) {
+                if ($scope.item.ruanganTujuan == undefined || $scope.item.ruanganTujuan == null) {
                     toastr.error("Pilih Ruanganan Tujuan!!")
+                    return
+                }
+
+                if ($scope.item.Keterangan == undefined) {
+                    toastr.error("Pilih dan isi Jenis Linen Dulu!!")
                     return
                 }
 
@@ -600,6 +616,12 @@ define(['initialize'], function (initialize) {
                     toastr.error("Pilih Produk terlebih dahulu!!")
                     return
                 }
+
+                if($scope.item.Keterangan == undefined || $scope.item.Keterangan == null){
+                    toastr.error('Pilih Jenis Linen dahulu')
+                    return
+                }
+
                 var objSave =
                 {
                     objectruanganfk: $scope.item.ruangan.id,

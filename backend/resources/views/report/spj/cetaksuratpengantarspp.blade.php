@@ -40,7 +40,7 @@
 <body style="background-color: #CCCCCC">
 <div align="center" >
     <section >
-    <table  class="bayangprint" cellspacing="0" cellpadding="0" bgcolor="#FFFFFF" border="0" width="{{$pageWidth}}" style="height: 700px;padding-right: 70px;padding-left: 100px;">
+    <table  cellspacing="0" cellpadding="0" bgcolor="#FFFFFF" border="0" width="{{$pageWidth}}" style="height: 700px;padding-right: 70px;padding-left: 100px;">
         <tbody>
         <tr style="padding: 5px;">
             <td align="center" colspan="4" style="padding: 5px;height:20px;"></td>

@@ -485,6 +485,156 @@
                  </td>
           
             </tr>
+
+            {{-- vital sign --}}
+            <tr>
+                <td style="font-size: 8pt;padding-left:5px;" > 
+                    <font style="font-size: 9px; font-weight: 400;">
+                        3. Vital sign :
+                    </font>
+                    
+                    <br>
+                    
+                    <div>
+                        <font style="font-size: 9px; font-weight: 400;">
+                             Tekanan Darah :
+                        </font>
+                        
+                        <font style="font-size: 9px; ">
+                            @php
+                            $found = false;
+                            @endphp
+                            @foreach ($res['d'] as $item)
+                            @if ($item->emrdfk == 3017348 && !empty($item->value))
+                            {!! $item->value !!} mmHg
+                            @php
+                            $found = true;
+                            @endphp
+                            @break
+                            @endif
+                            @endforeach
+                            @if (!$found)
+                            ................
+                            @endif
+                        </font>
+                       
+                        <font style="font-size: 9px; font-weight: 400;">
+                             Nadi :
+                        </font>
+                        
+                        <font style="font-size: 9px; ">
+                            @php
+                            $found = false;
+                            @endphp
+                            @foreach ($res['d'] as $item)
+                            @if ($item->emrdfk == 3017349 && !empty($item->value))
+                            {!! $item->value !!} x/menit
+                            @php
+                            $found = true;
+                            @endphp
+                            @break
+                            @endif
+                            @endforeach
+                            @if (!$found)
+                            ................
+                            @endif
+                        </font>
+                       
+                        <font style="font-size: 9px; font-weight: 400;">
+                             Suhu :
+                        </font>
+                        
+                        <font style="font-size: 9px; ">
+                            @php
+                            $found = false;
+                            @endphp
+                            @foreach ($res['d'] as $item)
+                            @if ($item->emrdfk == 3017350 && !empty($item->value))
+                            {!! $item->value !!} oC
+                            @php
+                            $found = true;
+                            @endphp
+                            @break
+                            @endif
+                            @endforeach
+                            @if (!$found)
+                            ................
+                            @endif
+                        </font>
+                       
+                        <font style="font-size: 9px; font-weight: 400;">
+                             Respirasi :
+                        </font>
+                        
+                        <font style="font-size: 9px; ">
+                            @php
+                            $found = false;
+                            @endphp
+                            @foreach ($res['d'] as $item)
+                            @if ($item->emrdfk == 3017351 && !empty($item->value))
+                            {!! $item->value !!} x/menit
+                            @php
+                            $found = true;
+                            @endphp
+                            @break
+                            @endif
+                            @endforeach
+                            @if (!$found)
+                            ................
+                            @endif
+                        </font>
+                    </div>
+                    
+                    <div>
+                        <font style="font-size: 9px; font-weight: 400;">
+                             Tinggi badan :
+                        </font>
+                        
+                        <font style="font-size: 9px; ">
+                            @php
+                            $found = false;
+                            @endphp
+                            @foreach ($res['d'] as $item)
+                            @if ($item->emrdfk == 3017352 && !empty($item->value))
+                            {!! $item->value !!} Cm
+                            @php
+                            $found = true;
+                            @endphp
+                            @break
+                            @endif
+                            @endforeach
+                            @if (!$found)
+                            ................
+                            @endif
+                        </font>
+    
+                        <font style="font-size: 9px; font-weight: 400;">
+                             Berat badan :
+                        </font>
+                        
+                        <font style="font-size: 9px; ">
+                            @php
+                            $found = false;
+                            @endphp
+                            @foreach ($res['d'] as $item)
+                            @if ($item->emrdfk == 3017353 && !empty($item->value))
+                            {!! $item->value !!} Kg
+                            @php
+                            $found = true;
+                            @endphp
+                            @break
+                            @endif
+                            @endforeach
+                            @if (!$found)
+                            ................
+                            @endif
+                        </font>
+                    </div>
+                    
+                </td>
+                
+            </tr>
+
             <tr>
                 <td colspan="3" style="background-color: #a5a2a2;font-size: 9pt; border-top:1px solid #000; border-bottom:1px solid #000;text-align:left;padding-left:5px;font-weight:bold; ">C. DIAGNOSIS
             </tr>

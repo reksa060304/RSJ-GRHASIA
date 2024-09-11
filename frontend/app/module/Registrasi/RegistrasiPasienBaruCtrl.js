@@ -13,6 +13,9 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
             $scope.item.jenisPeserta = "";
             $scope.disableCekKepesertaan = false; /* disable ketika pertama load edit pasien */
             $scope.reservasi = {}
+            $scope.agamaLain = false
+            $scope.pekerjaanLain = false
+            $scope.isDomisili = false
             $scope.item.image = "../app/images/avatar.jpg"
             loadCombo()
             init()
@@ -487,26 +490,79 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
                         $scope.item.hambatan = { id: result.hambatankomunikasifk, hambatankomunikasi: result.hambatankomunikasi }
 
 
-                     if (result.penanggungjawab2)
+                    if (result.penanggungjawab2)
                         $scope.item.PenanggungJawab2 = result.penanggungjawab2
-                     if (result.hubungankeluargapj2)
+                    if (result.hubungankeluargapj2)
                         $scope.item.Hubungan2 = result.hubungankeluargapj2
-                     if (result.teleponpenanggungjawab2)
+                    if (result.teleponpenanggungjawab2)
                         $scope.item.TeleponP2 = result.teleponpenanggungjawab2
-                     if (result.bahasa2)
+                    if (result.bahasa2)
                         $scope.item.Bahasa2 = result.bahasa2
-                     if (result.jeniskelaminpenanggungjawab2){
+                    if (result.jeniskelaminpenanggungjawab2){
                         $scope.item.jenisKelaminP2 = { id: result.idjk2, jeniskelamin: result.jeniskelaminpenanggungjawab2 };
-                     }
-                       
+                    }
+                    
                     if (result.umurpenanggungjawab2)
                         $scope.item.UmurP2 = result.umurpenanggungjawab2
                     if (result.alamatrmh2)
                         $scope.item.alamatRumah2 = result.alamatrmh2
                     if (result.pekerjaanpenangggungjawab2){
-                       $scope.item.pekerjaanP2 = { id: result.idpek2, pekerjaan: result.pekerjaanpenangggungjawab2 };
-                 
+                    $scope.item.pekerjaanP2 = { id: result.idpek2, pekerjaan: result.pekerjaanpenangggungjawab2 };
+                
                     }
+                    $scope.item.pekerjaanLain = result.pekerjaanlain
+                    $scope.item.agamaLain = result.agamalain
+                    $scope.item.noAsuransiLain = result.noidentitaslain
+
+                    // Alamat domisili
+                    $scope.item.alamatDomisili = result.alamatdomisili
+                    $scope.item.rtrwDomisili = result.rtrwdomisili
+                    $scope.item.kodePosDomisili = result.kodeposdomisili
+                    if (result.objectdesakelurahandomisilifk) {
+                        medifirstService.get("registrasi/get-desa-kelurahan-paging?iddesakelurahan=" + result.objectdesakelurahandomisilifk).then(function (re) {
+                            if (re.data[0] != undefined) {
+                                var data = {
+                                    id: re.data[0].id,
+                                    namadesakelurahan: re.data[0].namadesakelurahan,
+                                    kodepos: re.data[0].kodepos,
+                                    namakecamatan: re.data[0].namakecamatan,
+                                    namakotakabupaten: re.data[0].namakotakabupaten,
+                                    namapropinsi: re.data[0].namapropinsi,
+                                    objectkecamatanfk: re.data[0].objectkecamatanfk,
+                                    objectkotakabupatenfk: re.data[0].objectkotakabupatenfk,
+                                    objectpropinsifk: re.data[0].objectpropinsifk,
+                                    desa: re.data[0].namadesakelurahan,
+                                }
+                                $scope.listDataKelurahan.add(data)
+                                $scope.item.desaKelurahanDomisili = data
+                            }
+                        });
+                    }
+                    if (result.objectkecamatandomisilifk) {
+                        $scope.item.kecamatanDomisili = {
+                            id: result.objectkecamatandomisilifk,
+                            namakecamatan: result.namakecamatandomisili
+                        }
+                    }
+                    if (result.objectkotakabupatendomisilifk) {
+                        $scope.item.kotaKabupatenDomisili = {
+                            id: result.objectkotakabupatendomisilifk,
+                            namakotakabupaten: result.namakotakabupatendomisili
+                        }
+                    }
+                    if (result.objectpropinsidomisilifk) {
+                        $scope.item.propinsiDomisili = {
+                            id: result.objectpropinsidomisilifk,
+                            namapropinsi: result.namapropinsidomisili
+                        }
+                    }
+                    if (result.objectnegaradomisilifk) {
+                        $scope.item.negaraDomisili = {
+                            id: result.objectnegaradomisilifk,
+                            namanegara: result.namanegaradomisili
+                        }
+                    }
+
                     $scope.item.isAlamat = false
                     if (result.alamatd.length>0){
                     $scope.item.isAlamat = true
@@ -714,6 +770,7 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
                     "item.tglLahir|k-ng-model|Tgl Lahir",
                     "item.jenisKelamin|k-ng-model|Jenis Kelamin",
                     "item.alamatLengkap|ng-model|Alamat",
+                    // "item.alamatDomisili|ng-model|Alamat Domisili",
                     // "item.desaKelurahan|k-ng-model|Kelurahan",
                     "item.noHp|ng-model|No. HP / Ponsel",
                 ];
@@ -852,17 +909,20 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
                                                 'tempatLahir': $scope.item.tempatLahir,
                                                 'namaKeluarga': $scope.item.namaKeluarga != undefined ? $scope.item.namaKeluarga : null,
                                                 'tglLahir': moment($scope.item.tglLahir).format('YYYY-MM-DD HH:mm'),
-                                                'image': $scope.item.image != undefined && $scope.item.image != "../app/images/avatar.jpg" ? $scope.item.image : null
+                                                'image': $scope.item.image != undefined && $scope.item.image != "../app/images/avatar.jpg" ? $scope.item.image : null,
+                                                'noIdentitasLain': $scope.item.noidentitaslain ? $scope.item.noidentitaslain : null
                                             },
                                             'agama': {
                                                 'id': $scope.item.agama != undefined ? $scope.item.agama.id : null,
                                             },
+                                            'agamaLain': $scope.item.agamaLain ? $scope.item.agamaLain : null,
                                             'jenisKelamin': {
                                                 'id': $scope.item.jenisKelamin != undefined ? $scope.item.jenisKelamin.id : null,
                                             },
                                             'pekerjaan': {
                                                 'id': $scope.item.pekerjaan != undefined ? $scope.item.pekerjaan.id : null,
                                             },
+                                            'pekerjaanLain': $scope.item.pekerjaanLain != undefined ? $scope.item.pekerjaanLain : null,
                                             'pendidikan': {
                                                 'id': $scope.item.pendidikan != undefined ? $scope.item.pendidikan.id : null,
                                             },
@@ -903,6 +963,29 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
                                                 'id': $scope.item.propinsi != undefined ? $scope.item.propinsi.id : null,
                                             },
                                             'kodePos': $scope.item.kodePos != undefined ? $scope.item.kodePos : null,
+                                            'rtRw': $scope.item.rtrw != undefined ? $scope.item.rtrw : null,
+
+                                            'alamatDomisili': $scope.item.alamatDomisili,
+                                            'desaKelurahanDomisili': {
+                                                'id': $scope.item.desaKelurahanDomisili != undefined ? $scope.item.desaKelurahanDomisili.id : null,
+                                                'namaDesaKelurahan': $scope.item.desaKelurahanDomisili != undefined ? $scope.item.desaKelurahanDomisili.namadesakelurahan : null,
+                                            },
+                                            'kecamatanDomisili': {
+                                                'id': $scope.item.kecamatanDomisili != undefined ? $scope.item.kecamatanDomisili.id : null,
+                                                'namaKecamatan': $scope.item.kecamatanDomisili != undefined ? $scope.item.kecamatanDomisili.namakecamatan : null,
+                                            },
+                                            'kotaKabupatenDomisili': {
+                                                'id': $scope.item.kotaKabupatenDomisili != undefined ? $scope.item.kotaKabupatenDomisili.id : null,
+                                                'namaKotaKabupaten': $scope.item.kotaKabupatenDomisili != undefined ? $scope.item.kotaKabupatenDomisili.namakotakabupaten : null,
+                                            },
+                                            'propinsiDomisili': {
+                                                'id': $scope.item.propinsiDomisili != undefined ? $scope.item.propinsiDomisili.id : null,
+                                            },
+                                            'negaraDomisili': {
+                                                'id': $scope.item.negaraDomisili != undefined ? $scope.item.negaraDomisili.id : null,
+                                            },
+                                            'kodePosDomisili': $scope.item.kodePosDomisili != undefined ? $scope.item.kodePosDomisili : null,
+                                            'rtrwDomisili': $scope.item.rtrwDomisili != undefined ? $scope.item.rtrwDomisili : null,
 
                                             'penanggungjawab': $scope.item.PenanggungJawab != undefined ? $scope.item.PenanggungJawab : null,
                                             'hubungankeluargapj': $scope.item.Hubungan != undefined ? $scope.item.Hubungan : null,
@@ -1006,17 +1089,20 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
                                     'tempatLahir': $scope.item.tempatLahir,
                                     'namaKeluarga': $scope.item.namaKeluarga != undefined ? $scope.item.namaKeluarga : null,
                                     'tglLahir': moment($scope.item.tglLahir).format('YYYY-MM-DD HH:mm'),
-                                    'image': $scope.item.image != undefined && $scope.item.image != "../app/images/avatar.jpg" ? $scope.item.image : null
+                                    'image': $scope.item.image != undefined && $scope.item.image != "../app/images/avatar.jpg" ? $scope.item.image : null,
+                                    'noIdentitasLain': $scope.item.noidentitaslain ? $scope.item.noidentitaslain : null
                                 },
                                 'agama': {
                                     'id': $scope.item.agama != undefined ? $scope.item.agama.id : null,
                                 },
+                                'agamaLain': $scope.item.agamaLain ? $scope.item.agamaLain : null,
                                 'jenisKelamin': {
                                     'id': $scope.item.jenisKelamin != undefined ? $scope.item.jenisKelamin.id : null,
                                 },
                                 'pekerjaan': {
                                     'id': $scope.item.pekerjaan != undefined ? $scope.item.pekerjaan.id : null,
                                 },
+                                'pekerjaanLain': $scope.item.pekerjaanLain != undefined ? $scope.item.pekerjaanLain : null,
                                 'pendidikan': {
                                     'id': $scope.item.pendidikan != undefined ? $scope.item.pendidikan.id : null,
                                 },
@@ -1057,6 +1143,28 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
                                     'id': $scope.item.propinsi != undefined ? $scope.item.propinsi.id : null,
                                 },
                                 'kodePos': $scope.item.kodePos != undefined ? $scope.item.kodePos : null,
+                                'rtRw': $scope.item.rtrw != undefined ? $scope.item.rtrw : null,
+                                'alamatDomisili': $scope.item.alamatDomisili,
+                                'desaKelurahanDomisili': {
+                                    'id': $scope.item.desaKelurahanDomisili != undefined ? $scope.item.desaKelurahanDomisili.id : null,
+                                    'namaDesaKelurahan': $scope.item.desaKelurahanDomisili != undefined ? $scope.item.desaKelurahanDomisili.namadesakelurahan : null,
+                                },
+                                'kecamatanDomisili': {
+                                    'id': $scope.item.kecamatanDomisili != undefined ? $scope.item.kecamatanDomisili.id : null,
+                                    'namaKecamatan': $scope.item.kecamatanDomisili != undefined ? $scope.item.kecamatanDomisili.namakecamatan : null,
+                                },
+                                'kotaKabupatenDomisili': {
+                                    'id': $scope.item.kotaKabupatenDomisili != undefined ? $scope.item.kotaKabupatenDomisili.id : null,
+                                    'namaKotaKabupaten': $scope.item.kotaKabupatenDomisili != undefined ? $scope.item.kotaKabupatenDomisili.namakotakabupaten : null,
+                                },
+                                'propinsiDomisili': {
+                                    'id': $scope.item.propinsiDomisili != undefined ? $scope.item.propinsiDomisili.id : null,
+                                },
+                                'negaraDomisili': {
+                                    'id': $scope.item.negaraDomisili != undefined ? $scope.item.negaraDomisili.id : null,
+                                },
+                                'kodePosDomisili': $scope.item.kodePosDomisili != undefined ? $scope.item.kodePosDomisili : null,
+                                'rtrwDomisili': $scope.item.rtrwDomisili != undefined ? $scope.item.rtrwDomisili : null,
                                 'penanggungjawab': $scope.item.PenanggungJawab != undefined ? $scope.item.PenanggungJawab : null,
                                 'hubungankeluargapj': $scope.item.Hubungan != undefined ? $scope.item.Hubungan : null,
                                 'pekerjaanpenangggungjawab': pekerjaanPj,
@@ -2000,6 +2108,115 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
                $scope.alamat = {};
                $scope.alamat.no = undefined
                $scope.popUpAlamat.close();
+            }
+
+            $scope.changeAgama = function (data) {
+                if (data.id == 8) { // cek agama lain lain
+                    $scope.agamaLain = true
+                } else {
+                    $scope.agamaLain = false
+                    $scope.item.agamaLain = undefined
+                }
+            }
+
+            $scope.$watch('item.agama', function (newValue, oldValue) {
+                if (newValue != oldValue) {
+                    if (newValue.id == 8) { // cek agama lain lain
+                        $scope.agamaLain = true
+                    } else {
+                        $scope.agamaLain = false
+                    }
+                }
+            });
+
+            $scope.changePekerjaan = function (data) {
+                if (data.id == 10) { // cek pekerjaan lain lain
+                    $scope.pekerjaanLain = true
+                } else {
+                    $scope.pekerjaanLain = false
+                    $scope.item.pekerjaanLain = undefined
+                }
+            }
+
+            $scope.$watch('item.pekerjaan', function (newValue, oldValue) {
+                if (newValue != oldValue) {
+                    if (newValue.id == 10) { // cek pekerjaan lain lain
+                        $scope.pekerjaanLain = true
+                    } else {
+                        $scope.pekerjaanLain = false
+                    }
+                }
+            });
+
+            $scope.$watch('item.kebangsaan', function (newValue, oldValue) {
+                if (newValue != oldValue) {
+                    if (newValue === undefined) return;
+                    if (newValue.name === 'WNI')
+                        $scope.item.negara = { id: 0 };
+                    if (newValue.name === 'WNA')
+                        $scope.item.negara = newValue;
+                }
+            });
+
+            $scope.salinAlamat = function (data) {
+                if (data == true) {
+                    if ($scope.item.alamatLengkap != undefined) {
+                        $scope.item.alamatDomisili = $scope.item.alamatLengkap
+                    } else {
+                        toastr.info('Alamat lengkap belum diisi', 'Info')
+                    }
+
+                    if ($scope.item.rtrw != undefined) {
+                        $scope.item.rtrwDomisili = $scope.item.rtrw
+                    } else {
+                        toastr.info('RT / RW belum diisi', 'Info')
+                    }
+
+                    if ($scope.item.kodePos != undefined) {
+                        $scope.item.kodePosDomisili = $scope.item.kodePos
+                    } else {
+                        toastr.info('Kode POS belum diisi', 'Info')
+                    }
+
+                    if ($scope.item.desaKelurahan != undefined) {
+                        $scope.item.desaKelurahanDomisili = $scope.item.desaKelurahan
+                    } else {
+                        toastr.info('Desa/Kelurahan belum diisi', 'Info')
+                    }
+
+                    if ($scope.item.kecamatan != undefined) {
+                        $scope.item.kecamatanDomisili = $scope.item.kecamatan
+                    } else {
+                        toastr.info('Kecamatan belum diisi', 'Info')
+                    }
+
+                    if ($scope.item.kotaKabupaten != undefined) {
+                        $scope.item.kotaKabupatenDomisili = $scope.item.kotaKabupaten
+                    } else {
+                        toastr.info('Kota/kabupaten belum diisi', 'info')
+                    }
+
+                    if ($scope.item.propinsi != undefined) {
+                        $scope.item.propinsiDomisili = $scope.item.propinsi
+                    } else {
+                        toastr.info('Propinsi belum diisi', 'info')
+                    }
+
+                    if ($scope.item.negara != undefined) {
+                        $scope.item.negaraDomisili = $scope.item.negara
+                    } else {
+                        toastr.info('Negara belum diisi', 'info')
+                    }
+                } else {
+                    $scope.item.alamatDomisili = undefined
+                    $scope.item.rtrwDomisili = undefined
+                    $scope.item.kodePosDomisili = undefined
+                    $scope.item.desaKelurahanDomisili = undefined
+                    $scope.item.kecamatanDomisili = undefined
+                    $scope.item.kotaKabupatenDomisili = undefined
+                    $scope.item.propinsiDomisili = undefined
+                    $scope.item.negaraDomisili = undefined
+                }
             }
         }
     ]);

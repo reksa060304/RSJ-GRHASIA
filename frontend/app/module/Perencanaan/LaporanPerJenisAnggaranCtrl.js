@@ -230,7 +230,10 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
                 if($scope.item.terhadap == undefined || tahap == terhadap){
                     window.open(baseTransaksi + "report/get-cetak-per-jenis-anggaran?tahap="+tahap+"&tahun="+moment($scope.item.tahun).format('YYYY')+"&tglcetak="+moment($scope.item.tglCetak1).format('YYYY-MM-DD HH:mm'), '_blank');
                 } else if($scope.item.terhadap != undefined){
-                    window.open(baseTransaksi + "report/get-cetak-per-jenis-anggaran-sebelum-sesudah?tahap="+tahap+"&tahun="+moment($scope.item.tahun).format('YYYY') +"&terhadap="+terhadap+"&tglcetak="+moment($scope.item.tglCetak1).format('YYYY-MM-DD HH:mm'), '_blank');
+                    window.open(baseTransaksi + "report/cetak-rba-rekap-subsub?tahapsesudah="+tahap+"&tahun="+moment($scope.item.tahun).format('YYYY') +"&tahapsebelum="+terhadap+"&tglcetak="+moment($scope.item.tglCetak1).format('YYYY-MM-DD HH:mm'), '_blank');
+                    
+                    // route dan fungsi masih ada 
+                    // window.open(baseTransaksi + "report/get-cetak-per-jenis-anggaran-sebelum-sesudah?tahap="+tahap+"&tahun="+moment($scope.item.tahun).format('YYYY') +"&terhadap="+terhadap+"&tglcetak="+moment($scope.item.tglCetak1).format('YYYY-MM-DD HH:mm'), '_blank');
                 }
             }
 

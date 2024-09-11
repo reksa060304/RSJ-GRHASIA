@@ -645,6 +645,29 @@ class PerencanaanController extends ApiController {
         dp.objectjenisbelanjafk, dp.objectpptkfk, dp.id, dp.keterangan
         order by dp.kode"));
 
+        $kegiatansubsubspj = DB::select(DB::raw("select dp.headfk, dp.idrelasi, dp.tahun tahunsubsubkegiatan, dp.id idsubsubkegiatan, dp.kode kodesubsubkegiatan, dp.id || '-' || dp.keterangan keterangansubsubkegiatan,
+        dp.indikatormasuk, dp.indikatorkeluaran, dp.indikatorhasil, dp.targetmasuk, dp.targetkeluaran, dp.targethasil, dp.div,
+        dp.objectjenisbelanjafk, dp.objectpptkfk, dp.id, dp.keterangan
+        from kegiatananggaran_m as dp
+        inner join kegiatananggaran_m as dp2 on dp.kode ilike dp2.kode || '%'
+        inner join keteranganbelanja_t as ktb on ktb.objectkegiatanfk = dp.id 
+        where dp.kdprofile = $idProfile
+        and dp.statusenabled = true
+        and dp2.kdprofile = $idProfile 
+        and dp2.statusenabled = true 
+        and ktb.kdprofile = $idProfile
+        and ktb.statusenabled = true
+        and dp.div = 4
+        and dp2.div = 3
+        and ktb.objecttahapfk = ".$setting[0]->objecttahapaktivfk."
+        $ktahap
+        $ktahun
+        $ksubkegiatan
+        $pptk
+        group by dp.id, dp.kode, dp.id || '-' || dp.keterangan, dp.tahun, dp.indikatormasuk, dp.indikatorkeluaran, dp.indikatorhasil, dp.targetmasuk, dp.targetkeluaran, dp.targethasil, dp.div,
+        dp.objectjenisbelanjafk, dp.objectpptkfk, dp.id, dp.keterangan
+        order by dp.kode"));
+
         $subsubkegiatanangkas = \DB::table('kegiatananggaran_m as dp')
             ->select('dp.id', 'dp.kode', 'dp.keterangan', 'dp.norec')
             ->where('dp.kdprofile', $idProfile)
@@ -1118,6 +1141,7 @@ class PerencanaanController extends ApiController {
             'kegiatan' => $kegiatan,
             'subsubkegiatanangkas' => $subsubkegiatanangkas,
             'kegiatansubsub' => $kegiatansubsub,
+            'kegiatansubsubspj' => $kegiatansubsubspj,
             'kegiatansubsubcombo' => $kegiatansubsubcombo,
             'kegiatancombo' => $kegiatancombo,
             'mataanggarancombo' => $mataanggarancombo,
@@ -3494,7 +3518,16 @@ class PerencanaanController extends ApiController {
                         $MA->norec = $norecKS;
                         $MA->kdprofile = $idProfile;
                         $MA->statusenabled = true;
-                        $noas = $this->generateCode(new PemungutanPajak, 'nopajak', 3, '', $idProfile);
+                        
+                        $nopemungutan = DB::select(DB::raw("
+                            SELECT 
+                                COALESCE(MAX(CAST(SPLIT_PART(pp.nopajak, '/', 1) as INTEGER)), 0) as max
+                            FROM pemungutanpajak_t pp 
+                            WHERE pp.kdprofile = 30
+                        "));
+                        $noas = $nopemungutan[0]->max + 1;
+
+                        // $noas = $this->generateCode(new PemungutanPajak, 'nopajak', 3, '', $idProfile);
                         $noa = $this->generateCode(new PemungutanPajak, 'nopajak', 30, '/PJK/1.02.2.22.0.00.01.', $idProfile);
                         $MA->nopajak = $noas.$noa.'/'.$month.'/'.$year;
 
@@ -3503,7 +3536,16 @@ class PerencanaanController extends ApiController {
                         $MP->norec = $norecKS;
                         $MP->kdprofile = $idProfile;
                         $MP->statusenabled = true;
-                        $nops = $this->generateCode(new PenyetoranPajak, 'nopajak', 3, '', $idProfile);
+
+                        $nopenyetoran = DB::select(DB::raw("
+                            SELECT 
+                                COALESCE(MAX(CAST(SPLIT_PART(pep.nopajak, '/', 1) as integer)), 0) as max
+                            FROM penyetoranpajak_t pep 
+                            where pep.kdprofile = 30
+                        "));
+                        $nops = $nopenyetoran[0]->max + 1;
+
+                        // $nops = $this->generateCode(new PenyetoranPajak, 'nopajak', 3, '', $idProfile);
                         $nop = $this->generateCode(new PenyetoranPajak, 'nopajak', 33, '/STRPJK/1.02.2.22.0.00.01.', $idProfile);
                         $MP->nopajak = $nops.$nop.'/'.$month.'/'.$year;
                     } else{
@@ -3552,7 +3594,16 @@ class PerencanaanController extends ApiController {
                     $MA->norec = $norecKS;
                     $MA->kdprofile = $idProfile;
                     $MA->statusenabled = true;
-                    $noas = $this->generateCode(new PemungutanPajak, 'nopajak', 3, '', $idProfile);
+                    
+                    $nopemungutan = DB::select(DB::raw("
+                    SELECT 
+                        COALESCE(MAX(CAST(SPLIT_PART(pp.nopajak, '/', 1) as integer)), 0) as max
+                    FROM pemungutanpajak_t pp 
+                    WHERE pp.kdprofile = 30
+                    "));
+                    $noas = $nopemungutan[0]->max + 1;
+                    
+                    // $noas = $this->generateCode(new PemungutanPajak, 'nopajak', 3, '', $idProfile);
                     $noa = $this->generateCode(new PemungutanPajak, 'nopajak', 30, '/PJK/1.02.2.22.0.00.01.', $idProfile);
                     $MA->nopajak = $noas.$noa.'/'.$month.'/'.$year;
 
@@ -3561,7 +3612,16 @@ class PerencanaanController extends ApiController {
                     $MP->norec = $norecKS;
                     $MP->kdprofile = $idProfile;
                     $MP->statusenabled = true;
-                    $nops = $this->generateCode(new PenyetoranPajak, 'nopajak', 3, '', $idProfile);
+
+                    $nopenyetoran = DB::select(DB::raw("
+                        SELECT 
+                            COALESCE(MAX(CAST(SPLIT_PART(pep.nopajak, '/', 1) as integer)), 0) as max
+                        FROM penyetoranpajak_t pep 
+                        WHERE pep.kdprofile = 30
+                    "));
+                    $nops = $nopenyetoran[0]->max + 1;
+
+                    // $nops = $this->generateCode(new PenyetoranPajak, 'nopajak', 3, '', $idProfile);
                     $nop = $this->generateCode(new PenyetoranPajak, 'nopajak', 33, '/STRPJK/1.02.2.22.0.00.01.', $idProfile);
                     $MP->nopajak = $nops.$nop.'/'.$month.'/'.$year;
                 } else{
@@ -5358,6 +5418,8 @@ class PerencanaanController extends ApiController {
                 select *
                 from panjar_t 
                 where nopanjar = '$nopanjar'
+                AND statusenabled = TRUE
+                AND kdprofile = '$idProfile'
             ")
         );
 
@@ -6344,31 +6406,39 @@ order by  split_part(kode, '.', 1)asc, split_part(kode, '.', 2)asc,  split_part(
             array_push($arrIdKegiatan, $item->id);
         }
         
+        $sumberdanaspj = '';
+        $sumberdanaanggaran = '';
+        if(isset($request['sumberdana']) && $request['sumberdana'] !== '' && $request['sumberdana'] !== 'undefined'){
+            $sumberdanaspj = "and sr.objectasalprodukfk = ".$request['sumberdana'];
+            $sumberdanaanggaran = "and kb.objectasalprodukfk = ".$request['sumberdana'];
+        }
+
         $spj = collect(
             DB::select(DB::raw("
                 SELECT 
-                    COALESCE(SUM(rd.subtotal),0) AS totalspj
+                    COALESCE(SUM(sr.totalbelanja),0) AS totalspj
                 FROM strukrealisasi_t AS sr
-                JOIN realisasidetail_t AS rd ON rd.strukrealisasifk = sr.norec AND rd.statusenabled = TRUE
-                JOIN keteranganbelanja_t AS kb ON kb.norec = rd.keteranganbelanjafk AND kb.statusenabled = TRUE
                 WHERE 
                     sr.statusenabled = TRUE
                     AND sr.kdprofile = ".$idProfile."
                     AND sr.objectkegiatanfk IN (".implode(',', $arrIdKegiatan).")
                     AND sr.objectmataanggaranfk = ".$request['mataanggaran']."
-                    AND sr.objectasalprodukfk = ".$request['sumberdana']."
+                    $sumberdanaspj
             "))
         )->first();
 
         $panjar = collect(
             DB::select(DB::raw("
                 SELECT 
-                    COALESCE ( SUM ( pj.jumlah ), 0 ) - COALESCE ( SUM ( pengpj.jumlahpengembalian ), 0 ) - COALESCE ( SUM ( spjtopanjar.jumlahspj ), 0 ) AS panjar
+                    COALESCE ( SUM ( pj.jumlah ), 0 ) - COALESCE ( SUM ( pengpj.jumlahpengembalian ), 0 ) - COALESCE ( SUM ( spjtopanjar.jumlahspj ), 0 ) AS totalpanjar
                 FROM panjar_t AS pj
-                LEFT JOIN pengembalianpanjar_t AS pengpj ON pengpj.objectpanjarfk = pj.norec AND pengpj.statusenabled = TRUE
-                LEFT JOIN spjtopanjar_t AS spjtopanjar ON spjtopanjar.objectpanjarfk = pj.norec AND spjtopanjar.statusenabled = TRUE
-                WHERE pj.objectsubsubkegiatanfk IN (".implode(',', $arrIdKegiatan).")
-                AND pj.objectmataanggaranfk = ".$request['mataanggaran']."
+                LEFT JOIN pengembalianpanjar_t AS pengpj ON pengpj.objectpanjarfk = pj.norec AND pengpj.statusenabled = TRUE AND pengpj.kdprofile=".$idProfile."
+                LEFT JOIN spjtopanjar_t AS spjtopanjar ON spjtopanjar.objectpanjarfk = pj.norec AND spjtopanjar.statusenabled = TRUE AND spjtopanjar.kdprofile = ".$idProfile."
+                WHERE 
+                    pj.statusenabled = TRUE 
+                    AND pj.kdprofile =  ".$idProfile."
+                    AND pj.objectsubsubkegiatanfk IN (".implode(',', $arrIdKegiatan).")
+                    AND pj.objectmataanggaranfk = ".$request['mataanggaran']."
             "))
         )->first();
 
@@ -6381,15 +6451,14 @@ order by  split_part(kode, '.', 1)asc, split_part(kode, '.', 2)asc,  split_part(
             WHERE
                 ka.statusenabled = TRUE 
                 AND ka.kdprofile = ".$idProfile." 
-                AND ka.kode = '".$kegiatan->kode."'
+                AND ka.id IN (".implode(',', $arrIdKegiatan).")
                 AND ka.tahun = '".$setting->tahunanggaran."'
-                AND kb.objectmataanggaranfk = ".$request['mataanggaran']."
-                AND kb.objectasalprodukfk = ".$request['sumberdana']."
                 AND kb.objecttahapfk = ".$setting->objecttahapaktivfk."
-             
+                AND kb.objectmataanggaranfk = ".$request['mataanggaran']."
+                $sumberdanaanggaran
         ")))->first();
 
-        $total = $spj->totalspj + $panjar->panjar;
+        $total = $spj->totalspj + $panjar->totalpanjar;
         
         $sisa = $anggaran->totalanggaran - $total;
 
@@ -6588,7 +6657,9 @@ order by  split_part(kode, '.', 1)asc, split_part(kode, '.', 2)asc,  split_part(
         and subkeg.statusenabled = true
         and subsubkeg.kdprofile = 30
         and subsubkeg.statusenabled = true
+        and NOT EXISTS ( SELECT * FROM spjtopanjar_t stp WHERE stp.objectpanjarfk = pj.norec AND stp.statusenabled = TRUE and stp.kdprofile = ".$idProfile." )
         --and ma.kodemataanggaran = '$kode'--munculkan semunya 23-042024
+        ORDER BY cast(split_part(nopanjar, '/', 1)  as integer) desc
         ")
         );
 
@@ -7909,6 +7980,11 @@ order by  split_part(kode, '.', 1)asc, split_part(kode, '.', 2)asc,  split_part(
             $pegawai = "and ka.objectpptkfk = ".$request['idpegawai'];
         }
 
+        $sub = '';
+        if(isset($request['subkegiatan']) && $request['subkegiatan'] != "undefined" && $request['subkegiatan'] != ''){
+            $sub = "and sr.objectkegiatanfk = ".$request['subkegiatan'];
+        }
+
         $status = '';
         if(isset($request['status']) && $request['status'] != "undefined" && $request['status'] != '' && $request['status'] == 0){
             $status = "";
@@ -7918,6 +7994,16 @@ order by  split_part(kode, '.', 1)asc, split_part(kode, '.', 2)asc,  split_part(
             $status = "and sr.status = 'Revisi'";
         } else if(isset($request['status']) && $request['status'] != "undefined" && $request['status'] != '' && $request['status'] == 3){
             $status = "and sr.status = 'Sudah Diverifikasi'";
+        }
+
+        $cari = '';
+        if(isset($request['cari']) && $request['cari'] != "undefined" && $request['cari'] != ''){
+            $cari = "and( 
+                ma.kodemataanggaran ILIKE '%".$request['cari']."%' OR 
+                ma.namamataanggaran ILIKE '%".$request['cari']."%' OR
+                rd.uraian ILIKE '%".$request['cari']."%' OR
+                CAST(sr.totalbelanja as VARCHAR) ILIKE '%".$request['cari']."%'
+            )";
         }
 
         $data = DB::select(DB::raw("
@@ -7943,8 +8029,10 @@ order by  split_part(kode, '.', 1)asc, split_part(kode, '.', 2)asc,  split_part(
                 and sr.statusenabled = true
                 and rd.statusenabled = true
                 and rd.kdprofile = 30
+                $sub
                 $pegawai
                 $status
+                $cari
 				group by dp0.kode, dp0.keterangan, sr.norec, cbs.carabayar, sr.tglverif, sr.keterangan, sr.jumlahdibayarverif, sr.kdprofile, sr.statusenabled, sr.tglrealisasi, sr.norealisasi, sr.status, sr.totalbelanja, sr.objectcarabayarfk, sr.rekananfk, sr.deskripsi, sr.objectkegiatanfk, sr.objectmataanggaranfk, sr.bendaharafk, sr.penerimafk, sr.pph, sr.ppn, pg1.namalengkap, pg2.namalengkap, rkn.namarekanan ,
                 ka.kode || '~' || ka.keterangan, ma.kodemataanggaran || '~' || ma.namamataanggaran, ka.tahun, ma.kodemataanggaran, ma.namamataanggaran, dp0.id, ka.keterangan, ka.id, ap.id, ap.asalproduk, sr.objectbkufk
                 order by sr.norealisasi desc
@@ -8315,7 +8403,7 @@ order by  split_part(kode, '.', 1)asc, split_part(kode, '.', 2)asc,  split_part(
             from strukrealisasi_t sr 
             left join realisasidetail_t rd on rd.strukrealisasifk = sr.norec
             left join pemungutanpajak_t pp on pp.objectspjfk = sr.norec and pp.statusenabled = true and pp.kdprofile = 30
-            left join penyetoranpajak_t pep on pep.objectspjfk = sr.norec and pep.statusenabled = true and pep.kdprofile = 30
+            left join penyetoranpajak_t pep on split_part(pep.nopajak, '/', 1) = split_part(pp.nopajak, '/', 1) and pep.statusenabled = true and pep.kdprofile = 30
             left join jenispajak_m jp on jp.id = pp.objectjenispphfk and jp.statusenabled = true and jp.kdprofile = 30
             where sr.norec = '$norec'
                 and jp.namaexternal ilike '%pph%'
@@ -8325,7 +8413,7 @@ order by  split_part(kode, '.', 1)asc, split_part(kode, '.', 2)asc,  split_part(
             from strukrealisasi_t sr 
             left join realisasidetail_t rd on rd.strukrealisasifk = sr.norec
             left join pemungutanpajak_t pp on pp.objectspjfk = sr.norec and pp.statusenabled = true and pp.kdprofile = 30
-            left join penyetoranpajak_t pep on pep.objectspjfk = sr.norec and pep.statusenabled = true and pep.kdprofile = 30
+            left join penyetoranpajak_t pep on split_part(pep.nopajak, '/', 1) = split_part(pp.nopajak, '/', 1) and pep.statusenabled = true and pep.kdprofile = 30
             left join jenispajak_m jp on jp.id = pp.objectjenispphfk and jp.statusenabled = true and jp.kdprofile = 30
             where sr.norec = '$norec'
                 and jp.namaexternal ilike '%ppn%'
@@ -8352,7 +8440,7 @@ order by  split_part(kode, '.', 1)asc, split_part(kode, '.', 2)asc,  split_part(
         pep.norec norecpep
             from strukrealisasi_t sr 
         inner join pemungutanpajak_t pp on pp.objectspjfk = sr.norec and pp.statusenabled = true and pp.kdprofile = 30 
-        inner join penyetoranpajak_t pep on left(pep.nopajak, 3) = left(pp.nopajak, 3) and pep.statusenabled = true and pep.kdprofile = 30
+        inner join penyetoranpajak_t pep on split_part(pep.nopajak, '/', 1) = split_part(pp.nopajak, '/', 1) and pep.statusenabled = true and pep.kdprofile = 30
         left join jenispajak_m jp on jp.id = pp.objectjenispphfk and jp.statusenabled = true and jp.kdprofile = 30
         where sr.norec = '$norec'
         and pp.objectjenispphfk is not null
@@ -8366,7 +8454,7 @@ order by  split_part(kode, '.', 1)asc, split_part(kode, '.', 2)asc,  split_part(
         pp.norec norecpp, pep.norec norecpep
             from strukrealisasi_t sr 
         inner join pemungutanpajak_t pp on pp.objectspjfk = sr.norec and pp.statusenabled = true and pp.kdprofile = 30
-        inner join penyetoranpajak_t pep on left(pep.nopajak, 3) = left(pp.nopajak, 3) and pep.statusenabled = true and pep.kdprofile = 30
+        inner join penyetoranpajak_t pep on split_part(pep.nopajak, '/', 1) = split_part(pp.nopajak, '/', 1) and pep.statusenabled = true and pep.kdprofile = 30
         where sr.norec = '$norec'
         and pp.objectjenispphfk is null
 
@@ -8437,7 +8525,7 @@ order by  split_part(kode, '.', 1)asc, split_part(kode, '.', 2)asc,  split_part(
             ->first();
 
         // ambil kegiatan dengan kode yang sama
-        $kegiatan = DB::table('kegiatananggaran_m')
+        $kegiatanSemua = DB::table('kegiatananggaran_m')
             ->where('statusenabled', true)
             ->where('kode', $kegiatan->kode)
             ->where('tahun', $settingRBA->tahunanggaran)
@@ -8446,25 +8534,63 @@ order by  split_part(kode, '.', 1)asc, split_part(kode, '.', 2)asc,  split_part(
         $idKegiatan = [];
 
         // masukkan setiap id kegiatan ke ada dalam array
-        foreach($kegiatan as $kegi){
+        foreach($kegiatanSemua as $kegi){
             array_push($idKegiatan, $kegi->id);
         }
 
         // menghitung spj dari semua tahap
-        $sisa_semua_tahap = DB::select(DB::raw("
+        $spj = DB::select(DB::raw("
             SELECT
-                SUM(rd.subtotal) AS total_sisa
+                sr.norec, sr.norealisasi, sr.totalbelanja, SUM(rd.subtotal) as totaldetailspj
             FROM keteranganbelanja_t AS kb 
-            JOIN realisasidetail_t AS rd ON rd.keteranganbelanjafk = kb.norec 
-                AND rd.statusenabled = TRUE 
-                AND rd.kdprofile = 30
+            JOIN realisasidetail_t AS rd ON rd.keteranganbelanjafk = kb.norec AND rd.statusenabled = TRUE AND rd.kdprofile = ".$idProfile."
+            JOIN strukrealisasi_t as sr ON sr.norec = rd.strukrealisasifk AND sr.statusenabled = TRUE AND sr.kdprofile = ".$idProfile."
             WHERE
                 kb.statusenabled = TRUE 
-                AND kb.kdprofile = 30
-                AND kb.objectkegiatanfk IN (".implode(',', $idKegiatan).") 
-                AND kb.keteranganbelanja = '".$keterangan->keteranganbelanja."'
+                AND kb.kdprofile = ".$idProfile."
+                AND kb.objectkegiatanfk IN (".implode(',', $idKegiatan).")
+                AND kb.keteranganbelanja ILIKE '".$keterangan->keteranganbelanja."'
+                AND sr.objectmataanggaranfk = ".$keterangan->objectmataanggaranfk."
+                AND sr.objectasalprodukfk = ".$keterangan->objectasalprodukfk." 
+            GROUP BY
+                sr.norec
         "));
+
+        // menghitung panjar
+        $panjar = collect(
+            DB::select(DB::raw("
+                SELECT 
+                    COALESCE ( SUM ( pj.jumlah ), 0 ) - COALESCE ( SUM ( pengpj.jumlahpengembalian ), 0 ) - COALESCE ( SUM ( spjtopanjar.jumlahspj ), 0 ) AS totalpanjar
+                FROM panjar_t AS pj
+                LEFT JOIN pengembalianpanjar_t AS pengpj ON pengpj.objectpanjarfk = pj.norec AND pengpj.statusenabled = TRUE AND pengpj.kdprofile=".$idProfile."
+                LEFT JOIN spjtopanjar_t AS spjtopanjar ON spjtopanjar.objectpanjarfk = pj.norec AND spjtopanjar.statusenabled = TRUE AND spjtopanjar.kdprofile = ".$idProfile."
+                WHERE 
+                    pj.statusenabled = TRUE 
+                    AND pj.kdprofile =  ".$idProfile."
+                    AND pj.objectsubsubkegiatanfk IN (".implode(',', $idKegiatan).")
+                    AND pj.objectmataanggaranfk = ".$keterangan->objectmataanggaranfk."
+            "))
+        )->first();
+
+        $sisa = 0;
+        foreach($spj as $row){
+            $sisa += (int)$row->totaldetailspj;
+        }
+
         
+        
+              
+        // $sisa_semua_tahap = DB::select(DB::raw("
+        //     SELECT 
+        //         COALESCE(SUM(sr.totalbelanja),0) AS total_sisa
+        //     FROM strukrealisasi_t AS sr
+        //     WHERE 
+        //         sr.statusenabled = TRUE
+        //         AND sr.kdprofile = ".$idProfile."
+        //         AND sr.objectkegiatanfk IN (".implode(',', $idKegiatan).")
+        //         AND sr.objectmataanggaranfk = ".$keterangan->objectmataanggaranfk."
+        //         AND sr.objectasalprodukfk = ".$keterangan->objectasalprodukfk."
+        // "));
     
         // foreach ($data as $d) {
         //     $sisa = DB::select(DB::raw("
@@ -8475,7 +8601,7 @@ order by  split_part(kode, '.', 1)asc, split_part(kode, '.', 2)asc,  split_part(
             // 'data' => $data,
             // 'sisa' => $sisa,
             'keterangan' => $keterangan,
-            'sisa' => $sisa_semua_tahap[0],
+            'sisa' => $sisa + $panjar->totalpanjar,
             'message' => '@epic',
         );
 
@@ -9186,18 +9312,31 @@ order by  split_part(kode, '.', 1)asc, split_part(kode, '.', 2)asc,  split_part(
         return $this->setStatusCode($result['status'])->respond($result, $transMessage);
     }
     
-public function loadComboRincian(Request $request)
+    public function loadComboRincian(Request $request)
     {
-        $sumberpendapatan = \DB::table('asalproduk_m')->where('kdprofile', 30)->where('statusenabled', true)->where('isanggaran', null)->orderBy('id', 'asc')->get();        $uraianpendapatan = \DB::table('uraianpendapatan_m')->where('kdprofile', 30)->where('statusenabled', true);
+        $kdProfile = $this->getDataKdProfile($request);
+        $idProfile = (int) $kdProfile;
+
+        $sumberpendapatan = \DB::table('asalproduk_m')->where('kdprofile', $idProfile)->where('statusenabled', true)->where('isanggaran', null)->orderBy('id', 'asc')->get();        
+        $uraianpendapatan = \DB::table('uraianpendapatan_m')->where('kdprofile', $idProfile)->where('statusenabled', true);
         $rincianpendapatan = \DB::table('rincianpendapatan_t as rp')
         ->join('asalproduk_m as ap','ap.id','=','rp.objectasalprodukfk')
         ->join('uraianpendapatan_m as up','up.id','=','rp.objecturaianpendapatanfk')
         ->select('rp.norec','rp.isperubahan', 'rp.jumlahpendapatan','rp.tahun', 'rp.tglinput', 'rp.keterangan', 'rp.objectasalprodukfk', 'rp.objecturaianpendapatanfk','up.uraianpendapatan','ap.namaexternal', 'rp.uraianpendapatan as uraian')
-        ->where('rp.kdprofile', 30)->where('rp.statusenabled', true)->get();
+        ->where('rp.kdprofile', $idProfile)->where('rp.statusenabled', true)->get();
+        //menambahkan tahap anggaran tabel
+        $tahapanggaran = \DB::table('tahapanggaran_m')->where('kdprofile', $idProfile)->where('statusenabled', true)->get();
 
         if(isset($request['tahun']) && $request['tahun'] != ''){
             $uraianpendapatan = $uraianpendapatan->where('tahun', $request['tahun']);
         }
+
+        $uraianpendapatanbaru = DB::table('char_akun_pendapatan_m')
+            ->where('statusenabled', true)
+            ->where('kdprofile', $idProfile)
+            ->where('level', 12)
+            ->orderBy('nourut', 'asc')
+            ->get();
 
         $uraianpendapatan = $uraianpendapatan->orderBy('nourut')->get();
 
@@ -9205,6 +9344,9 @@ public function loadComboRincian(Request $request)
             'sumberpendapatan'=> $sumberpendapatan,
             'uraianpendapatan'=> $uraianpendapatan,
             'rincianpendapatan'=> $rincianpendapatan,
+            //menampilkan tahap anggaran
+            'tahapanggaran' => $tahapanggaran,
+            'urianpendapatanbaru' => $uraianpendapatanbaru,
             'as'=> 'FiziLucky'
         );
         return $this->respond($result);
@@ -9229,7 +9371,8 @@ public function loadComboRincian(Request $request)
                 'objecturaianpendapatanfk'=> $request['objecturaianpendapatanfk'],
                 'keterangan'=> $request['keterangan'],
                 'isperubahan'=> $request['isperubahan'],
-                'tahun'=> date('Y', strtotime($request['tahun']))
+                'tahun'=> date('Y', strtotime($request['tahun'])),
+                'objecttahapfk' => $request['objecttahapfk']
                 ]);
             } else {
                 $data = \DB::table('rincianpendapatan_t')->where('norec',$request['norec'])->update([
@@ -9243,7 +9386,8 @@ public function loadComboRincian(Request $request)
                     'objecturaianpendapatanfk'=> $request['objecturaianpendapatanfk'],
                     'keterangan'=> $request['keterangan'],
                     'isperubahan'=> $request['isperubahan'],
-                    'tahun'=> date('Y', strtotime($request['tahun']))
+                    'tahun'=> date('Y', strtotime($request['tahun'])),
+                    'objecttahapfk' => $request['objecttahapfk']
                 ]);
             }
             
@@ -9276,9 +9420,167 @@ public function loadComboRincian(Request $request)
     }
     public function loadDataRincian(Request $request)
     {
-        $data = \DB::select(DB::raw("SELECT * FROM rincianpendapatan_t rp 
-        where rp.statusenabled = true and rp.kdprofile = 30 and rp.objectasalprodukfk = 2 and isperubahan = true and rp.norec ilike '74d3fce0-0189-11ed-b9a4-bff4c5c2'"));
+        $kdProfile = $this->getDataKdProfile($request);
+        $idProfile = (int) $kdProfile;
+
+        $sumberpendapatan = '';
+        if(isset($request['sumberpendapatan']) && $request['sumberpendapatan'] !== '' && $request['sumberpendapatan'] !== "undefined"){
+            $sumberpendapatan = "AND rp.objectasalprodukfk = ".$request['sumberpendapatan'];
+        }
+
+        $tahap = '';
+        if(isset($request['tahap']) && $request['tahap'] !== '' && $request['tahap'] !== "undefined"){
+            $tahap = "AND rp.objecttahapfk = ". $request['tahap'];
+        }
+
+        $tahun = '';
+        if(isset($request['tahun']) && $request['tahun'] !== '' && $request['tahun'] !== "undefined"){
+            $tahun = "AND rp.tahun = '". $request['tahun']."'";
+        }
+
+        $data = \DB::select(DB::raw("
+            SELECT
+                rp.norec,
+                rp.keterangan,
+                rp.uraianpendapatan,
+                rp.tahun,
+                rp.objectasalprodukfk,
+                rp.jumlahpendapatan,
+                rp.objecturaianpendapatanfk,
+                rp.objecttahapfk,
+                cap.koderekening,
+                cap.namarekening,
+                ta.tahap 
+            FROM rincianpendapatan_t rp
+            JOIN char_akun_pendapatan_m AS cap ON cap.id = rp.objecturaianpendapatanfk AND cap.statusenabled = TRUE AND cap.kdprofile = ".$idProfile."
+            JOIN tahapanggaran_m AS ta ON ta.id = rp.objecttahapfk AND ta.statusenabled = true AND ta.kdprofile = ".$idProfile."
+            JOIN asalproduk_m AS ap ON ap.id = rp.objectasalprodukfk AND ap.statusenabled = true AND ap.kdprofile = ".$idProfile."
+            WHERE 
+                rp.statusenabled = true 
+                AND rp.kdprofile = ".$idProfile."
+                ".$sumberpendapatan."
+                ".$tahap."
+                ".$tahun."
+            ORDER BY
+                cap.nourut,
+                CAST(rp.tahun AS INTEGER) asc
+        "));
+
+        return $this->respond($data);
     }
+
+    public function getTransferTarget(Request $request)
+    {
+        $kdProfile = $this->getDataKdProfile($request);
+        $idProfile = (int) $kdProfile;
+
+        $tahun = '';
+        if(isset($request['tahunawal']) && $request['tahunawal'] !== '' && $request['tahunawal'] !== "undefined"){
+            $tahun = "AND rp.tahun = '". $request['tahunawal']."'";
+        }
+
+        $tahap = '';
+        if(isset($request['tahapawal']) && $request['tahapawal'] !== '' && $request['tahapawal'] !== "undefined"){
+            $tahap = "AND rp.objecttahapfk = ".$request['tahapawal'];
+        }
+
+        $data = DB::select(DB::raw("
+            SELECT
+                ap.id,
+                ap.asalproduk,
+                SUM(rp.jumlahpendapatan) AS totaltarget
+            FROM rincianpendapatan_t rp
+            JOIN char_akun_pendapatan_m AS cap ON cap.id = rp.objecturaianpendapatanfk AND cap.statusenabled = TRUE AND cap.kdprofile = ".$idProfile."
+            JOIN tahapanggaran_m AS ta ON ta.id = rp.objecttahapfk AND ta.statusenabled = true AND ta.kdprofile = ".$idProfile."
+            JOIN asalproduk_m AS ap ON ap.id = rp.objectasalprodukfk AND ap.statusenabled = true AND ap.kdprofile = ".$idProfile."
+            WHERE 
+                rp.statusenabled = true 
+                AND rp.kdprofile = ".$idProfile."
+                AND rp.tanggaltransfer IS NULL
+                ".$tahun."
+                ".$tahap."
+            GROUP BY 
+                ap.id,
+                ap.asalproduk
+        "));
+        
+        return $this->respond($data);
+
+    }
+
+    public function simpanTransferTarget(Request $request)
+    {
+        $kdProfile = $this->getDataKdProfile($request);
+        $idProfile = (int) $kdProfile;
+
+        DB::beginTransaction();
+        try {
+            
+            // target pendapatan
+            $target = DB::select(DB::raw("
+                SELECT 
+                    rp.* 
+                FROM rincianpendapatan_t rp 
+                WHERE 
+                    rp.statusenabled = TRUE 
+                    AND rp.kdprofile = ".$idProfile."
+                    AND rp.tahun = '".$request['tahunawal']."'
+                    AND rp.objecttahapfk = ".$request['tahapawal']."
+                    AND rp.tanggaltransfer IS NULL
+            "));
+
+            // loop list
+            foreach($target as $item){
+                // update tgl transfer
+                $update = DB::table('rincianpendapatan_t')
+                    ->where('norec', $item->norec)
+                    ->update([
+                        'tanggaltransfer' => $request['tanggaltransfer']
+                    ]);
+                
+                // transfer
+                $data = DB::table('rincianpendapatan_t')->insert([
+                    'norec'=>substr(\Webpatser\Uuid\Uuid::generate(), 0, 32),
+                    'kdprofile'=> $idProfile,
+                    'statusenabled'=> true,
+                    'tglinput'=> $item->tglinput,
+                    'uraianpendapatan'=> $item->uraianpendapatan,
+                    'jumlahpendapatan'=> $item->jumlahpendapatan,
+                    'objectasalprodukfk'=> $item->objectasalprodukfk,
+                    'objecturaianpendapatanfk'=> $item->objecturaianpendapatanfk,
+                    'keterangan'=> $item->keterangan,
+                    'tahun'=> $request['tahunakhir'],
+                    'objecttahapfk' => $request['tahapakhir'],
+                    'norectransfer' => $item->norec
+                ]);
+
+            }
+
+            $transStatus = 'true';
+        } catch (\Throwable $th) {
+            $transStatus = 'false';
+        }
+        if ($transStatus == 'true') {
+            $transMessage = "Simpan";
+            DB::commit();
+            $result = array(
+                'status' => 201,
+                'message' => $transMessage,
+                'as' => '@epic',
+            );
+        } else {
+            $transMessage = "Simpan Gagal";
+            DB::rollBack();
+            $result = array(
+                'status' => 400,
+                'line'=> $th->getLine(),
+                'message'=> $th->getMessage(),
+                'as' => 'Fizi@epic',
+            );
+        }
+        return $this->setStatusCode($result['status'])->respond($result, $transMessage);
+    }
+
     public function hapusRincianPendapatan(Request $request)
     {
         DB::beginTransaction();
@@ -9286,7 +9588,9 @@ public function loadComboRincian(Request $request)
         $idProfile = (int) $kdProfile;
         $data = "";
         try {
-            $data = \DB::table('rincianpendapatan_t')->where('norec', $request['norec'])->delete();
+            $data = \DB::table('rincianpendapatan_t')->where('norec', $request['norec'])->update([
+                'statusenabled' => false
+            ]);
             $transStatus = 'true';
         } catch (\Throwable $th) {
             $transStatus = 'false';

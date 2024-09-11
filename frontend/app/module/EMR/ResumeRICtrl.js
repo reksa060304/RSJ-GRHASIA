@@ -1085,15 +1085,19 @@ define(['initialize', 'Configuration'], function (initialize, config) {
                 var local = JSON.parse(localStorage.getItem('profile'))
                 var nama = medifirstService.getPegawaiLogin().namaLengkap
 
-                window.open(config.baseApiBackend + "report/cetak-resume-medis-v3?norec=" +
-                    $scope.modelGrid.norec + '&kdprofile=' + local.id +
-                    '&nama=' + nama, '_blank');
+                window.open(config.baseApiBackend + "report/cetak-resume-medis-v3" 
+                    + "?norec=" + $scope.modelGrid.norec 
+                    + "&kdprofile=" + local.id 
+                    + "&nama=" + nama);
             }
             $scope.ttdElek = function () {
                 if ($scope.modelGrid == undefined) {
                     toastr.error('Pilih data dulu')
                     return
                 }
+
+                $scope.listDokter = [{id: $scope.modelGrid.pegawaifk, namalengkap: $scope.modelGrid.namadokter}]
+                $scope.item.pegawai = $scope.listDokter[0]
 
                 // var confirm = $mdDialog.confirm()
                 //   .title('Info')
@@ -1112,11 +1116,16 @@ define(['initialize', 'Configuration'], function (initialize, config) {
                 var local = JSON.parse(localStorage.getItem('profile'))
                 var nama = medifirstService.getPegawaiLogin().namaLengkap
                 $scope.isRouteLoading = true
-                medifirstService.get('report/cetak-resume-medis-v3?norec=' + $scope.modelGrid.norec +
-                    '&isttd=true'+'&kdprofile=' + local.id +
-                        '&nama=' + nama + "&emrfk=" + 104 + "&pegawaittd=" + pegawai.id+
-                        '&noregistrasi=' + $scope.cc.noregistrasi+
-                        '&nocm=' + $scope.cc.nocm + '&norec_pd=' + $scope.cc.norec_pd
+                medifirstService.get('report/cetak-resume-medis-v3' 
+                    + '?norec=' + $scope.modelGrid.norec 
+                    + '&isttd=true' 
+                    + '&kdprofile=' + local.id 
+                    + '&nama=' + nama 
+                    + '&emrfk=' + 104 
+                    + '&pegawaittd=' + pegawai.id
+                    + '&noregistrasi=' + $scope.modelGrid.noregistrasi 
+                    + '&nocm=' + $scope.cc.nocm 
+                    + '&norec_pd=' + $scope.cc.norec_pd
 
                 ).then(function (e) {
                     console.log(e);

@@ -4966,207 +4966,207 @@ class PelayananResepController extends ApiController
                 }
 
                 if ($layanan->bulan == 'January' && ($layanan->namaproduk == 'Pelayanan Resep Obat Dikapsul < 30 kapsul' || $layanan->namaproduk == 'Pelayanan Resep Obat di kapsul < 30 Kapsul')){
-                    $jumlahtotalkapsulkurangjanuary += $layanan->jumlah;
-                    $totalkapsulkurang=$jumlahtotalkapsulkurangjanuary;
+                    $jumlahtotalkapsulkurangjanuary = $layanan->jumlah;
+                    $totalkapsulkurang+=$jumlahtotalkapsulkurangjanuary;
                 }
                 if ($layanan->bulan == 'February' && ($layanan->namaproduk == 'Pelayanan Resep Obat Dikapsul < 30 kapsul' || $layanan->namaproduk == 'Pelayanan Resep Obat di kapsul < 30 Kapsul')){
-                    $jumlahtotalkapsulkurangfebruary += $layanan->jumlah;
-                    $totalkapsulkurang=$jumlahtotalkapsulkurangfebruary;
+                    $jumlahtotalkapsulkurangfebruary = $layanan->jumlah;
+                    $totalkapsulkurang+=$jumlahtotalkapsulkurangfebruary;
                 }
                 if ($layanan->bulan == 'March' && ($layanan->namaproduk == 'Pelayanan Resep Obat Dikapsul < 30 kapsul' || $layanan->namaproduk == 'Pelayanan Resep Obat di kapsul < 30 Kapsul')){
-                    $jumlahtotalkapsulkurangmarch += $layanan->jumlah;
-                    $totalkapsulkurang=$jumlahtotalkapsulkurangmarch;
+                    $jumlahtotalkapsulkurangmarch = $layanan->jumlah;
+                    $totalkapsulkurang+=$jumlahtotalkapsulkurangmarch;
                 }
                 if ($layanan->bulan == 'April' && ($layanan->namaproduk == 'Pelayanan Resep Obat Dikapsul < 30 kapsul' || $layanan->namaproduk == 'Pelayanan Resep Obat di kapsul < 30 Kapsul')){
-                    $jumlahtotalkapsulkurangapril += $layanan->jumlah;
-                    $totalkapsulkurang=$jumlahtotalkapsulkurangapril;
+                    $jumlahtotalkapsulkurangapril = $layanan->jumlah;
+                    $totalkapsulkurang+=$jumlahtotalkapsulkurangapril;
                 }
                 if ($layanan->bulan == 'May' && ($layanan->namaproduk == 'Pelayanan Resep Obat Dikapsul < 30 kapsul' || $layanan->namaproduk == 'Pelayanan Resep Obat di kapsul < 30 Kapsul')){
-                    $jumlahtotalkapsulkurangmay += $layanan->jumlah;
-                    $totalkapsulkurang=$jumlahtotalkapsulkurangmay;
+                    $jumlahtotalkapsulkurangmay = $layanan->jumlah;
+                    $totalkapsulkurang+=$jumlahtotalkapsulkurangmay;
                 }
                 if ($layanan->bulan == 'June'&& ($layanan->namaproduk == 'Pelayanan Resep Obat Dikapsul < 30 kapsul' || $layanan->namaproduk == 'Pelayanan Resep Obat di kapsul < 30 Kapsul')){
-                    $jumlahtotalkapsulkurangjune += $layanan->jumlah;
-                    $totalkapsulkurang=$jumlahtotalkapsulkurangjune;
+                    $jumlahtotalkapsulkurangjune = $layanan->jumlah;
+                    $totalkapsulkurang+=$jumlahtotalkapsulkurangjune;
                 }
                 if ($layanan->bulan == 'July' && ($layanan->namaproduk == 'Pelayanan Resep Obat Dikapsul < 30 kapsul' || $layanan->namaproduk == 'Pelayanan Resep Obat di kapsul < 30 Kapsul')){
-                    $jumlahtotalkapsulkurangjuly += $layanan->jumlah;
-                    $totalkapsulkurang=$jumlahtotalkapsulkurangjuly;
+                    $jumlahtotalkapsulkurangjuly = $layanan->jumlah;
+                    $totalkapsulkurang+=$jumlahtotalkapsulkurangjuly;
                 }
                 if ($layanan->bulan == 'August' && ($layanan->namaproduk == 'Pelayanan Resep Obat Dikapsul < 30 kapsul' || $layanan->namaproduk == 'Pelayanan Resep Obat di kapsul < 30 Kapsul')){
-                    $jumlahtotalkapsulkurangaugust += $layanan->jumlah;
-                    $totalkapsulkurang=$jumlahtotalkapsulkurangaugust;
+                    $jumlahtotalkapsulkurangaugust = $layanan->jumlah;
+                    $totalkapsulkurang+=$jumlahtotalkapsulkurangaugust;
                 }
                 if ($layanan->bulan == 'September' && ($layanan->namaproduk == 'Pelayanan Resep Obat Dikapsul < 30 kapsul' || $layanan->namaproduk == 'Pelayanan Resep Obat di kapsul < 30 Kapsul')){
-                    $jumlahtotalkapsulkurangseptember += $layanan->jumlah;
-                    $totalkapsulkurang=$jumlahtotalkapsulkurangseptember;
+                    $jumlahtotalkapsulkurangseptember = $layanan->jumlah;
+                    $totalkapsulkurang+=$jumlahtotalkapsulkurangseptember;
 
                 }
                 if ($layanan->bulan == 'October' && ($layanan->namaproduk == 'Pelayanan Resep Obat Dikapsul < 30 kapsul' || $layanan->namaproduk == 'Pelayanan Resep Obat di kapsul < 30 Kapsul')){
-                    $jumlahtotalkapsulkurangoctober += $layanan->jumlah;
-                    $totalkapsulkurang=$jumlahtotalkapsulkurangoctober;
+                    $jumlahtotalkapsulkurangoctober = $layanan->jumlah;
+                    $totalkapsulkurang+=$jumlahtotalkapsulkurangoctober;
 
                 }
                 if ($layanan->bulan == 'November' && ($layanan->namaproduk == 'Pelayanan Resep Obat Dikapsul < 30 kapsul' || $layanan->namaproduk == 'Pelayanan Resep Obat di kapsul < 30 Kapsul')){
-                    $jumlahtotalkapsulkurangnovember += $layanan->jumlah;
-                    $totalkapsulkurang=$jumlahtotalkapsulkurangnovember;
+                    $jumlahtotalkapsulkurangnovember = $layanan->jumlah;
+                    $totalkapsulkurang+=$jumlahtotalkapsulkurangnovember;
                 }
                 if ($layanan->bulan == 'December' && ($layanan->namaproduk == 'Pelayanan Resep Obat Dikapsul < 30 kapsul' || $layanan->namaproduk == 'Pelayanan Resep Obat di kapsul < 30 Kapsul')){
-                    $jumlahtotalkapsulkurangdecember += $layanan->jumlah;
-                    $totalkapsulkurang=$jumlahtotalkapsulkurangdecember;
+                    $jumlahtotalkapsulkurangdecember = $layanan->jumlah;
+                    $totalkapsulkurang+=$jumlahtotalkapsulkurangdecember;
                 }
 
                 if ($layanan->bulan == 'January' && ($layanan->namaproduk == 'Pelayanan Resep Obat Dikapsul > 30 kapsul' || $layanan->namaproduk == 'Pelayanan Resep Obat di kapsul > 30 Kapsul')){
-                    $jumlahtotalkapsullebihjanuary += $layanan->jumlah;
-                    $totalkapsullebih=$jumlahtotalkapsullebihjanuary;
+                    $jumlahtotalkapsullebihjanuary = $layanan->jumlah;
+                    $totalkapsullebih+=$jumlahtotalkapsullebihjanuary;
                 }
                 if ($layanan->bulan == 'February' && ($layanan->namaproduk == 'Pelayanan Resep Obat Dikapsul > 30 kapsul' || $layanan->namaproduk == 'Pelayanan Resep Obat di kapsul > 30 Kapsul')){
-                    $jumlahtotalkapsullebihfebruary += $layanan->jumlah;
-                    $totalkapsullebih=$jumlahtotalkapsullebihfebruary;
+                    $jumlahtotalkapsullebihfebruary = $layanan->jumlah;
+                    $totalkapsullebih+=$jumlahtotalkapsullebihfebruary;
                 }
                 if ($layanan->bulan == 'March' && ($layanan->namaproduk == 'Pelayanan Resep Obat Dikapsul > 30 kapsul' || $layanan->namaproduk == 'Pelayanan Resep Obat di kapsul > 30 Kapsul')){
-                    $jumlahtotalkapsullebihmarch += $layanan->jumlah;
-                    $totalkapsullebih=$jumlahtotalkapsullebihmarch;
+                    $jumlahtotalkapsullebihmarch = $layanan->jumlah;
+                    $totalkapsullebih+=$jumlahtotalkapsullebihmarch;
                 }
                 if ($layanan->bulan == 'April' && ($layanan->namaproduk == 'Pelayanan Resep Obat Dikapsul > 30 kapsul' || $layanan->namaproduk == 'Pelayanan Resep Obat di kapsul > 30 Kapsul')){
-                    $jumlahtotalkapsullebihapril += $layanan->jumlah;
-                    $totalkapsullebih=$jumlahtotalkapsullebihapril;
+                    $jumlahtotalkapsullebihapril = $layanan->jumlah;
+                    $totalkapsullebih+=$jumlahtotalkapsullebihapril;
                 }
                 if ($layanan->bulan == 'May' && ($layanan->namaproduk == 'Pelayanan Resep Obat Dikapsul > 30 kapsul' || $layanan->namaproduk == 'Pelayanan Resep Obat di kapsul > 30 Kapsul')){
-                    $jumlahtotalkapsullebihmay += $layanan->jumlah;
-                    $totalkapsullebih=$jumlahtotalkapsullebihmay;
+                    $jumlahtotalkapsullebihmay = $layanan->jumlah;
+                    $totalkapsullebih+=$jumlahtotalkapsullebihmay;
                 }
                 if ($layanan->bulan == 'June'&& ($layanan->namaproduk == 'Pelayanan Resep Obat Dikapsul > 30 kapsul' || $layanan->namaproduk == 'Pelayanan Resep Obat di kapsul > 30 Kapsul')){
-                    $jumlahtotalkapsullebihjune += $layanan->jumlah;
-                    $totalkapsullebih=$jumlahtotalkapsullebihjune;
+                    $jumlahtotalkapsullebihjune = $layanan->jumlah;
+                    $totalkapsullebih+=$jumlahtotalkapsullebihjune;
                 }
                 if ($layanan->bulan == 'July' && ($layanan->namaproduk == 'Pelayanan Resep Obat Dikapsul > 30 kapsul' || $layanan->namaproduk == 'Pelayanan Resep Obat di kapsul > 30 Kapsul')){
-                    $jumlahtotalkapsullebihjuly += $layanan->jumlah;
-                    $totalkapsullebih=$jumlahtotalkapsullebihjuly;
+                    $jumlahtotalkapsullebihjuly = $layanan->jumlah;
+                    $totalkapsullebih+=$jumlahtotalkapsullebihjuly;
                 }
                 if ($layanan->bulan == 'August' && ($layanan->namaproduk == 'Pelayanan Resep Obat Dikapsul > 30 kapsul' || $layanan->namaproduk == 'Pelayanan Resep Obat di kapsul > 30 Kapsul')){
-                    $jumlahtotalkapsullebihaugust += $layanan->jumlah;
-                    $totalkapsullebih=$jumlahtotalkapsullebihaugust;
+                    $jumlahtotalkapsullebihaugust = $layanan->jumlah;
+                    $totalkapsullebih+=$jumlahtotalkapsullebihaugust;
                 }
                 if ($layanan->bulan == 'September' && ($layanan->namaproduk == 'Pelayanan Resep Obat Dikapsul > 30 kapsul' || $layanan->namaproduk == 'Pelayanan Resep Obat di kapsul > 30 Kapsul')){
-                    $jumlahtotalkapsullebihseptember += $layanan->jumlah;
-                    $totalkapsullebih=$jumlahtotalkapsullebihseptember;
+                    $jumlahtotalkapsullebihseptember = $layanan->jumlah;
+                    $totalkapsullebih+=$jumlahtotalkapsullebihseptember;
 
                 }
                 if ($layanan->bulan == 'October' && ($layanan->namaproduk == 'Pelayanan Resep Obat Dikapsul > 30 kapsul' || $layanan->namaproduk == 'Pelayanan Resep Obat di kapsul > 30 Kapsul')){
-                    $jumlahtotalkapsullebihoctober += $layanan->jumlah;
-                    $totalkapsullebih=$jumlahtotalkapsullebihoctober;
+                    $jumlahtotalkapsullebihoctober = $layanan->jumlah;
+                    $totalkapsullebih+=$jumlahtotalkapsullebihoctober;
 
                 }
                 if ($layanan->bulan == 'November' && ($layanan->namaproduk == 'Pelayanan Resep Obat Dikapsul > 30 kapsul' || $layanan->namaproduk == 'Pelayanan Resep Obat di kapsul > 30 Kapsul')){
-                    $jumlahtotalkapsullebihnovember += $layanan->jumlah;
-                    $totalkapsullebih=$jumlahtotalkapsullebihnovember;
+                    $jumlahtotalkapsullebihnovember = $layanan->jumlah;
+                    $totalkapsullebih+=$jumlahtotalkapsullebihnovember;
                 }
                 if ($layanan->bulan == 'December' && ($layanan->namaproduk == 'Pelayanan Resep Obat Dikapsul > 30 kapsul' || $layanan->namaproduk == 'Pelayanan Resep Obat di kapsul > 30 Kapsul')){
-                    $jumlahtotalkapsullebihdecember += $layanan->jumlah;
-                    $totalkapsullebih=$jumlahtotalkapsullebihdecember;
+                    $jumlahtotalkapsullebihdecember = $layanan->jumlah;
+                    $totalkapsullebih+=$jumlahtotalkapsullebihdecember;
                 }
 
                 if ($layanan->bulan == 'January' && ($layanan->namaproduk == 'Pelayanan Resep Obat Racik < 30 bungkus' || $layanan->namaproduk == 'Pelayanan Resep Obat Racik < 30 Bungkus')){
-                    $jumlahtotalracikkurangjanuary += $layanan->jumlah;
-                    $totalracikkurang=$jumlahtotalracikkurangjanuary;
+                    $jumlahtotalracikkurangjanuary = $layanan->jumlah;
+                    $totalracikkurang+=$jumlahtotalracikkurangjanuary;
                 }
                 if ($layanan->bulan == 'February' && ($layanan->namaproduk == 'Pelayanan Resep Obat Racik < 30 bungkus' || $layanan->namaproduk == 'Pelayanan Resep Obat Racik < 30 Bungkus')){
-                    $jumlahtotalracikkurangfebruary += $layanan->jumlah;
-                    $totalracikkurang=$jumlahtotalracikkurangfebruary;
+                    $jumlahtotalracikkurangfebruary = $layanan->jumlah;
+                    $totalracikkurang+=$jumlahtotalracikkurangfebruary;
                 }
                 if ($layanan->bulan == 'March' && ($layanan->namaproduk == 'Pelayanan Resep Obat Racik < 30 bungkus' || $layanan->namaproduk == 'Pelayanan Resep Obat Racik < 30 Bungkus')){
-                    $jumlahtotalracikkurangmarch += $layanan->jumlah;
-                    $totalracikkurang=$jumlahtotalracikkurangmarch;
+                    $jumlahtotalracikkurangmarch = $layanan->jumlah;
+                    $totalracikkurang+=$jumlahtotalracikkurangmarch;
                 }
                 if ($layanan->bulan == 'April' && ($layanan->namaproduk == 'Pelayanan Resep Obat Racik < 30 bungkus' || $layanan->namaproduk == 'Pelayanan Resep Obat Racik < 30 Bungkus')){
-                    $jumlahtotalracikkurangapril += $layanan->jumlah;
-                    $totalracikkurang=$jumlahtotalracikkurangapril;
+                    $jumlahtotalracikkurangapril = $layanan->jumlah;
+                    $totalracikkurang+=$jumlahtotalracikkurangapril;
                 }
                 if ($layanan->bulan == 'May' && ($layanan->namaproduk == 'Pelayanan Resep Obat Racik < 30 bungkus' || $layanan->namaproduk == 'Pelayanan Resep Obat Racik < 30 Bungkus')){
-                    $jumlahtotalracikkurangmay += $layanan->jumlah;
-                    $totalracikkurang=$jumlahtotalracikkurangmay;
+                    $jumlahtotalracikkurangmay = $layanan->jumlah;
+                    $totalracikkurang+=$jumlahtotalracikkurangmay;
                 }
                 if ($layanan->bulan == 'June'&& ($layanan->namaproduk == 'Pelayanan Resep Obat Racik < 30 bungkus' || $layanan->namaproduk == 'Pelayanan Resep Obat Racik < 30 Bungkus')){
-                    $jumlahtotalracikkurangjune += $layanan->jumlah;
-                    $totalracikkurang=$jumlahtotalracikkurangjune;
+                    $jumlahtotalracikkurangjune = $layanan->jumlah;
+                    $totalracikkurang+=$jumlahtotalracikkurangjune;
                 }
                 if ($layanan->bulan == 'July' && ($layanan->namaproduk == 'Pelayanan Resep Obat Racik < 30 bungkus' || $layanan->namaproduk == 'Pelayanan Resep Obat Racik < 30 Bungkus')){
-                    $jumlahtotalracikkurangjuly += $layanan->jumlah;
-                    $totalracikkurang=$jumlahtotalracikkurangjuly;
+                    $jumlahtotalracikkurangjuly = $layanan->jumlah;
+                    $totalracikkurang+=$jumlahtotalracikkurangjuly;
                 }
                 if ($layanan->bulan == 'August' && ($layanan->namaproduk == 'Pelayanan Resep Obat Racik < 30 bungkus' || $layanan->namaproduk == 'Pelayanan Resep Obat Racik < 30 Bungkus')){
-                    $jumlahtotalracikkurangaugust += $layanan->jumlah;
-                    $totalracikkurang=$jumlahtotalracikkurangaugust;
+                    $jumlahtotalracikkurangaugust = $layanan->jumlah;
+                    $totalracikkurang+=$jumlahtotalracikkurangaugust;
                 }
                 if ($layanan->bulan == 'September' && ($layanan->namaproduk == 'Pelayanan Resep Obat Racik < 30 bungkus' || $layanan->namaproduk == 'Pelayanan Resep Obat Racik < 30 Bungkus')){
-                    $jumlahtotalracikkurangseptember += $layanan->jumlah;
-                    $totalracikkurang=$jumlahtotalracikkurangseptember;
+                    $jumlahtotalracikkurangseptember = $layanan->jumlah;
+                    $totalracikkurang+=$jumlahtotalracikkurangseptember;
 
                 }
                 if ($layanan->bulan == 'October' && ($layanan->namaproduk == 'Pelayanan Resep Obat Racik < 30 bungkus' || $layanan->namaproduk == 'Pelayanan Resep Obat Racik < 30 Bungkus')){
-                    $jumlahtotalracikkurangoctober += $layanan->jumlah;
-                    $totalracikkurang=$jumlahtotalracikkurangoctober;
+                    $jumlahtotalracikkurangoctober = $layanan->jumlah;
+                    $totalracikkurang+=$jumlahtotalracikkurangoctober;
 
                 }
                 if ($layanan->bulan == 'November' && ($layanan->namaproduk == 'Pelayanan Resep Obat Racik < 30 bungkus' || $layanan->namaproduk == 'Pelayanan Resep Obat Racik < 30 Bungkus')){
-                    $jumlahtotalracikkurangnovember += $layanan->jumlah;
-                    $totalracikkurang=$jumlahtotalracikkurangnovember;
+                    $jumlahtotalracikkurangnovember = $layanan->jumlah;
+                    $totalracikkurang+=$jumlahtotalracikkurangnovember;
                 }
                 if ($layanan->bulan == 'December' && ($layanan->namaproduk == 'Pelayanan Resep Obat Racik < 30 bungkus' || $layanan->namaproduk == 'Pelayanan Resep Obat Racik < 30 Bungkus')){
-                    $jumlahtotalracikkurangdecember += $layanan->jumlah;
-                    $totalracikkurang=$jumlahtotalracikkurangdecember;
+                    $jumlahtotalracikkurangdecember = $layanan->jumlah;
+                    $totalracikkurang+=$jumlahtotalracikkurangdecember;
                 }
 
                 if ($layanan->bulan == 'January' && ($layanan->namaproduk == 'Pelayanan Resep Obat Racik > 30 bungkus' || $layanan->namaproduk == 'Pelayanan Resep Obat Racik > 30 Bungkus')){
-                    $jumlahtotalraciklebihjanuary += $layanan->jumlah;
-                    $totalraciklebih=$jumlahtotalraciklebihjanuary;
+                    $jumlahtotalraciklebihjanuary = $layanan->jumlah;
+                    $totalraciklebih+=$jumlahtotalraciklebihjanuary;
                 }
                 if ($layanan->bulan == 'February' && ($layanan->namaproduk == 'Pelayanan Resep Obat Racik > 30 bungkus' || $layanan->namaproduk == 'Pelayanan Resep Obat Racik > 30 Bungkus')){
-                    $jumlahtotalraciklebihfebruary += $layanan->jumlah;
-                    $totalraciklebih=$jumlahtotalraciklebihfebruary;
+                    $jumlahtotalraciklebihfebruary = $layanan->jumlah;
+                    $totalraciklebih+=$jumlahtotalraciklebihfebruary;
                 }
                 if ($layanan->bulan == 'March' && ($layanan->namaproduk == 'Pelayanan Resep Obat Racik > 30 bungkus' || $layanan->namaproduk == 'Pelayanan Resep Obat Racik > 30 Bungkus')){
-                    $jumlahtotalraciklebihmarch += $layanan->jumlah;
-                    $totalraciklebih=$jumlahtotalraciklebihmarch;
+                    $jumlahtotalraciklebihmarch = $layanan->jumlah;
+                    $totalraciklebih+=$jumlahtotalraciklebihmarch;
                 }
                 if ($layanan->bulan == 'April' && ($layanan->namaproduk == 'Pelayanan Resep Obat Racik > 30 bungkus' || $layanan->namaproduk == 'Pelayanan Resep Obat Racik > 30 Bungkus')){
-                    $jumlahtotalraciklebihapril += $layanan->jumlah;
-                    $totalraciklebih=$jumlahtotalraciklebihapril;
+                    $jumlahtotalraciklebihapril = $layanan->jumlah;
+                    $totalraciklebih+=$jumlahtotalraciklebihapril;
                 }
                 if ($layanan->bulan == 'May' && ($layanan->namaproduk == 'Pelayanan Resep Obat Racik > 30 bungkus' || $layanan->namaproduk == 'Pelayanan Resep Obat Racik > 30 Bungkus')){
-                    $jumlahtotalraciklebihmay += $layanan->jumlah;
-                    $totalraciklebih=$jumlahtotalraciklebihmay;
+                    $jumlahtotalraciklebihmay = $layanan->jumlah;
+                    $totalraciklebih+=$jumlahtotalraciklebihmay;
                 }
                 if ($layanan->bulan == 'June'&& ($layanan->namaproduk == 'Pelayanan Resep Obat Racik > 30 bungkus' || $layanan->namaproduk == 'Pelayanan Resep Obat Racik > 30 Bungkus')){
-                    $jumlahtotalraciklebihjune += $layanan->jumlah;
-                    $totalraciklebih=$jumlahtotalraciklebihjune;
+                    $jumlahtotalraciklebihjune = $layanan->jumlah;
+                    $totalraciklebih+=$jumlahtotalraciklebihjune;
                 }
                 if ($layanan->bulan == 'July' && ($layanan->namaproduk == 'Pelayanan Resep Obat Racik > 30 bungkus' || $layanan->namaproduk == 'Pelayanan Resep Obat Racik > 30 Bungkus')){
-                    $jumlahtotalraciklebihjuly += $layanan->jumlah;
-                    $totalraciklebih=$jumlahtotalraciklebihjuly;
+                    $jumlahtotalraciklebihjuly = $layanan->jumlah;
+                    $totalraciklebih+=$jumlahtotalraciklebihjuly;
                 }
                 if ($layanan->bulan == 'August' && ($layanan->namaproduk == 'Pelayanan Resep Obat Racik > 30 bungkus' || $layanan->namaproduk == 'Pelayanan Resep Obat Racik > 30 Bungkus')){
-                    $jumlahtotalraciklebihaugust += $layanan->jumlah;
-                    $totalraciklebih=$jumlahtotalraciklebihaugust;
+                    $jumlahtotalraciklebihaugust = $layanan->jumlah;
+                    $totalraciklebih+=$jumlahtotalraciklebihaugust;
                 }
                 if ($layanan->bulan == 'September' && ($layanan->namaproduk == 'Pelayanan Resep Obat Racik > 30 bungkus' || $layanan->namaproduk == 'Pelayanan Resep Obat Racik > 30 Bungkus')){
-                    $jumlahtotalraciklebihseptember += $layanan->jumlah;
-                    $totalraciklebih=$jumlahtotalraciklebihseptember;
+                    $jumlahtotalraciklebihseptember = $layanan->jumlah;
+                    $totalraciklebih+=$jumlahtotalraciklebihseptember;
 
                 }
                 if ($layanan->bulan == 'October' && ($layanan->namaproduk == 'Pelayanan Resep Obat Racik > 30 bungkus' || $layanan->namaproduk == 'Pelayanan Resep Obat Racik > 30 Bungkus')){
-                    $jumlahtotalraciklebihoctober += $layanan->jumlah;
-                    $totalraciklebih=$jumlahtotalraciklebihoctober;
+                    $jumlahtotalraciklebihoctober = $layanan->jumlah;
+                    $totalraciklebih+=$jumlahtotalraciklebihoctober;
 
                 }
                 if ($layanan->bulan == 'November' && ($layanan->namaproduk == 'Pelayanan Resep Obat Racik > 30 bungkus' || $layanan->namaproduk == 'Pelayanan Resep Obat Racik > 30 Bungkus')){
-                    $jumlahtotalraciklebihnovember += $layanan->jumlah;
-                    $totalraciklebih=$jumlahtotalraciklebihnovember;
+                    $jumlahtotalraciklebihnovember = $layanan->jumlah;
+                    $totalraciklebih+=$jumlahtotalraciklebihnovember;
                 }
                 if ($layanan->bulan == 'December' && ($layanan->namaproduk == 'Pelayanan Resep Obat Racik > 30 bungkus' || $layanan->namaproduk == 'Pelayanan Resep Obat Racik > 30 Bungkus')){
-                    $jumlahtotalraciklebihdecember += $layanan->jumlah;
-                    $totalraciklebih=$jumlahtotalraciklebihdecember;
+                    $jumlahtotalraciklebihdecember = $layanan->jumlah;
+                    $totalraciklebih+=$jumlahtotalraciklebihdecember;
                 }
 
                 if ($layanan->bulan == 'January' && $layanan->namaproduk == 'Pelayanan Resep Racik Salep'){
@@ -5323,54 +5323,54 @@ class PelayananResepController extends ApiController
                 }
 
                 if ($layanan->bulan == 'January' && ($layanan->namaproduk == 'Pelayanan Informasi Obat' || $layanan->namaproduk == 'Petunjuk Informasi Obat')){
-                    $jumlahtotalpetunjukjanuary += $layanan->jumlah;
-                    $totalpetunjuk=$jumlahtotalpetunjukjanuary;
+                    $jumlahtotalpetunjukjanuary = $layanan->jumlah;
+                    $totalpetunjuk+=$jumlahtotalpetunjukjanuary;
                 }
                 if ($layanan->bulan == 'February' && ($layanan->namaproduk == 'Pelayanan Informasi Obat' || $layanan->namaproduk == 'Petunjuk Informasi Obat')){
-                    $jumlahtotalpetunjukfebruary += $layanan->jumlah;
-                    $totalpetunjuk=$jumlahtotalpetunjukfebruary;
+                    $jumlahtotalpetunjukfebruary = $layanan->jumlah;
+                    $totalpetunjuk+=$jumlahtotalpetunjukfebruary;
                 }
                 if ($layanan->bulan == 'March' && ($layanan->namaproduk == 'Pelayanan Informasi Obat' || $layanan->namaproduk == 'Petunjuk Informasi Obat')){
-                    $jumlahtotalpetunjukmarch += $layanan->jumlah;
-                    $totalpetunjuk=$jumlahtotalpetunjukmarch;
+                    $jumlahtotalpetunjukmarch = $layanan->jumlah;
+                    $totalpetunjuk+=$jumlahtotalpetunjukmarch;
                 }
                 if ($layanan->bulan == 'April' && ($layanan->namaproduk == 'Pelayanan Informasi Obat' || $layanan->namaproduk == 'Petunjuk Informasi Obat')){
-                    $jumlahtotalpetunjukapril += $layanan->jumlah;
-                    $totalpetunjuk=$jumlahtotalpetunjukapril;
+                    $jumlahtotalpetunjukapril = $layanan->jumlah;
+                    $totalpetunjuk+=$jumlahtotalpetunjukapril;
                 }
                 if ($layanan->bulan == 'May' && ($layanan->namaproduk == 'Pelayanan Informasi Obat' || $layanan->namaproduk == 'Petunjuk Informasi Obat')){
-                    $jumlahtotalpetunjukmay += $layanan->jumlah;
-                    $totalpetunjuk=$jumlahtotalpetunjukmay;
+                    $jumlahtotalpetunjukmay = $layanan->jumlah;
+                    $totalpetunjuk+=$jumlahtotalpetunjukmay;
                 }
                 if ($layanan->bulan == 'June'&& ($layanan->namaproduk == 'Pelayanan Informasi Obat' || $layanan->namaproduk == 'Petunjuk Informasi Obat')){
-                    $jumlahtotalpetunjukjune += $layanan->jumlah;
-                    $totalpetunjuk=$jumlahtotalpetunjukjune;
+                    $jumlahtotalpetunjukjune = $layanan->jumlah;
+                    $totalpetunjuk+=$jumlahtotalpetunjukjune;
                 }
                 if ($layanan->bulan == 'July' && ($layanan->namaproduk == 'Pelayanan Informasi Obat' || $layanan->namaproduk == 'Petunjuk Informasi Obat')){
-                    $jumlahtotalpetunjukjuly += $layanan->jumlah;
-                    $totalpetunjuk=$jumlahtotalpetunjukjuly;
+                    $jumlahtotalpetunjukjuly = $layanan->jumlah;
+                    $totalpetunjuk+=$jumlahtotalpetunjukjuly;
                 }
                 if ($layanan->bulan == 'August' && ($layanan->namaproduk == 'Pelayanan Informasi Obat' || $layanan->namaproduk == 'Petunjuk Informasi Obat')){
-                    $jumlahtotalpetunjukaugust += $layanan->jumlah;
-                    $totalpetunjuk=$jumlahtotalpetunjukaugust;
+                    $jumlahtotalpetunjukaugust = $layanan->jumlah;
+                    $totalpetunjuk+=$jumlahtotalpetunjukaugust;
                 }
                 if ($layanan->bulan == 'September' && ($layanan->namaproduk == 'Pelayanan Informasi Obat' || $layanan->namaproduk == 'Petunjuk Informasi Obat')){
-                    $jumlahtotalpetunjukseptember += $layanan->jumlah;
-                    $totalpetunjuk=$jumlahtotalpetunjukseptember;
+                    $jumlahtotalpetunjukseptember = $layanan->jumlah;
+                    $totalpetunjuk+=$jumlahtotalpetunjukseptember;
 
                 }
                 if ($layanan->bulan == 'October' && ($layanan->namaproduk == 'Pelayanan Informasi Obat' || $layanan->namaproduk == 'Petunjuk Informasi Obat')){
-                    $jumlahtotalpetunjukoctober += $layanan->jumlah;
-                    $totalpetunjuk=$jumlahtotalpetunjukoctober;
+                    $jumlahtotalpetunjukoctober = $layanan->jumlah;
+                    $totalpetunjuk+=$jumlahtotalpetunjukoctober;
 
                 }
                 if ($layanan->bulan == 'November' && ($layanan->namaproduk == 'Pelayanan Informasi Obat' || $layanan->namaproduk == 'Petunjuk Informasi Obat')){
-                    $jumlahtotalpetunjuknovember += $layanan->jumlah;
-                    $totalpetunjuk=$jumlahtotalpetunjuknovember;
+                    $jumlahtotalpetunjuknovember = $layanan->jumlah;
+                    $totalpetunjuk+=$jumlahtotalpetunjuknovember;
                 }
                 if ($layanan->bulan == 'December' && ($layanan->namaproduk == 'Pelayanan Informasi Obat' || $layanan->namaproduk == 'Petunjuk Informasi Obat')){
-                    $jumlahtotalpetunjukdecember += $layanan->jumlah;
-                    $totalpetunjuk=$jumlahtotalpetunjukdecember;
+                    $jumlahtotalpetunjukdecember = $layanan->jumlah;
+                    $totalpetunjuk+=$jumlahtotalpetunjukdecember;
                 }
 
                 if ($layanan->bulan == 'January' && $layanan->namaproduk == 'Visite Apoteker'){
@@ -6153,10 +6153,10 @@ class PelayananResepController extends ApiController
                 'totalinjeksi' =>   $totalinjeksi,
                 'totalinfus' =>   $totalinfus,
                 'totalrekon' =>   $totalrekon,
-                'totalrekonobat' =>   $totalrekon,
-                'totalkonsulonline' =>   $totalrekon,
-                'totalperbekalan' =>   $totalrekon,
-                'totaludd' =>   $totalrekon,
+                'totalrekonobat' =>   $totalrekonobat,
+                'totalkonsulonline' =>   $totalkonsulonline,
+                'totalperbekalan' =>   $totalperbekalan,
+                'totaludd' =>   $totaludd,
                 'totalrke' =>   $totalrke,
                 'totalresep' =>   $totalresep,
             );

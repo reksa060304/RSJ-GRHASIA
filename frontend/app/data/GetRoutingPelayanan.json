@@ -20621,6 +20621,87 @@
         "define": "RekamMedisCtrl"
       }
     ]
+  },
+  {
+    "name": "HistoriEMR",
+    "url": "/HistoriEMR",
+    "templateurl": "module/Registrasi/HistoriEMR.html",
+    "controller": "HistoriEMRCtrl",
+    "deps": [{
+        "module": "Services",
+        "define": "Service"
+      },
+      {
+        "module": "LoginServices",
+        "define": "LoginService"
+      },
+      {
+        "module": "MedifirstService",
+        "define": "MedifirstService"
+      }
+    ]
+  },
+  {
+    "name": "LaporanRekapKunjunganRS",
+    "url": "/TGFwb3JhblJla2FwS3VuanVuZ2FuUlM=",
+    "templateurl": "module/Registrasi/Laporan/LaporanRekapKunjunganRS.html",
+    "controller": "LaporanRekapKunjunganRSCtrl",
+    "deps": [{
+        "module": "Services",
+        "define": "Service"
+      },
+      {
+        "module": "LoginServices",
+        "define": "LoginService"
+      },
+      {
+        "module": "MedifirstService",
+        "define": "MedifirstService"
+      }
+    ]
+  },
+  {
+    "name": "RekamMedis.CatatanKlinikNew",
+    "url": "/CatatanKlinikNew",
+    "templateurl": "module/EMR/CatatanKlinikNew.html",
+    "controller": "CatatanKlinikNewCtrl",
+    "deps": [
+      {
+        "module": "Services",
+        "define": "Service"
+      },
+      {
+        "module": "LoginServices",
+        "define": "LoginService"
+      },
+      {
+        "module": "MedifirstService",
+        "define": "MedifirstService"
+      },
+      {
+        "define": "RekamMedisCtrl"
+      }
+    ]
+  },
+  {
+    "name": "UpdateAntrolOtomatis",
+    "url": "/VXBkYXRlQW50cm9sT3RvbWF0aXM=",
+    "templateurl": "module/RawatJalan/UpdateAntrolOtomatis.html",
+    "controller": "UpdateAntrolOtomatisCtrl",
+    "deps": [
+      {
+        "module": "Services",
+        "define": "Service"
+      },
+      {
+        "module": "LoginServices",
+        "define": "LoginService"
+      },
+      {
+        "module": "MedifirstService",
+        "define": "MedifirstService"
+      }
+    ]
   }
 ]
 

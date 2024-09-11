@@ -462,7 +462,7 @@ define(['initialize'], function (initialize) {
 				if ($scope.item.warnaProduk != undefined) {
 					objectwarnaprodukfk = $scope.item.warnaProduk.id
 				}
-				var kekuatan = ''
+				var kekuatan = '1'
 				if ($scope.item.kekuatan != undefined) {
 					kekuatan = $scope.item.kekuatan
 				}

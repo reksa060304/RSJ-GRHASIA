@@ -26,6 +26,11 @@ class RBAController extends ApiController
         $kdProfile = $this->getDataKdProfile($request);
         $idProfile = (int) $kdProfile;
 
+        $settingAnggaran = DB::table('settinganggaran_t')
+            ->where('statusenabled', true)
+            ->where('kdprofile', $idProfile)
+            ->get();
+
         // SubSub
         $subSubKegiatan = DB::select(DB::raw("
             SELECT ka.id, ka.id || '-' || ka.keterangan as keterangan
@@ -51,17 +56,20 @@ class RBAController extends ApiController
         foreach ($kdjenisobat as $it){
             $arrkdjenisobat []=  (int)$it;
         }
+        $id = array_merge($arrkdjenisobat, [133]);
+        // var_dump($id);
         $dataProdukAll = DB::table('produk_m as pr')
             ->JOIN('detailjenisproduk_m as djp','djp.id','=','pr.objectdetailjenisprodukfk')
             ->JOIN('jenisproduk_m as jp','jp.id','=','djp.objectjenisprodukfk')
             ->leftJOIN('satuanstandar_m as ss','ss.id','=','pr.objectsatuanstandarfk')
-            ->JOIN('stokprodukdetail_t as spd','spd.objectprodukfk','=','pr.id')
-            ->select('pr.id','pr.namaproduk')
+            ->leftJoin('stokprodukdetail_t as spd','spd.objectprodukfk','=','pr.id')
+            ->leftJOIN('charkodeakunasset_m AS ak', 'ak.id', '=', 'pr.objectprodukassetfk')
+            ->select('pr.id','pr.namaproduk', 'ak.kodeakun as kodebmn')
             ->where('pr.kdprofile', $idProfile)
             ->where('pr.statusenabled',true)
-            // ->whereIn('jp.id',[97,283])
-            ->whereIn('jp.id',$arrkdjenisobat)
-            ->groupBy('pr.id','pr.namaproduk')
+            ->whereIn('jp.id', $id)
+            // ->whereIn('jp.id',$arrkdjenisobat)
+            ->groupBy('pr.id','pr.namaproduk', 'ak.kodeakun')
             ->orderBy('pr.namaproduk')
             ->get();
         
@@ -76,12 +84,59 @@ class RBAController extends ApiController
             ->where('kdprofile', $idProfile)
             ->get();
 
+        // mataanggaran 
+        $mataanggarancombo = DB::select(DB::raw("
+            select 
+                ma.id, 
+                ma.kodemataanggaran, 
+                ma.namamataanggaran, 
+                map.id as idmap, 
+                map.mataanggaranpermen, 
+                coalesce(sum(kt.subtotal),0) as total,
+                split_part(ma.kodemataanggaran, '.', 1) as subkodepertama,
+                split_part(ma.kodemataanggaran, '.', 2) as subkodekedua,
+                case when split_part(ma.kodemataanggaran, '.', 3) = '' then '0' else split_part(ma.kodemataanggaran, '.', 3)::int4 end as subkodeketiga,
+                case when split_part(ma.kodemataanggaran, '.', 4) = '' then '0' else split_part(ma.kodemataanggaran, '.', 4)::int4 end as subkodekeempat,
+                case when split_part(ma.kodemataanggaran, '.', 5) = '' then '0' else split_part(ma.kodemataanggaran, '.', 5)::int4 end as subkodekelima,
+                ma.kodemataanggaran || ' - ' || ma.namamataanggaran as namaanggaran
+            from 
+                mataanggaran_m ma 
+            left join 
+                mataanggaranpermen_m map on map.id = ma.mataanggaranpermenfk
+            left join 
+                keteranganbelanja_t kt on kt.objectmataanggaranfk = ma.id
+            where 
+                ma.statusenabled = true 
+                and ma.kdprofile = 30
+                and case 
+                    when ma.kodemataanggaran ilike 'I.%' then length(ma.kodemataanggaran) in (9,10)
+                    when ma.kodemataanggaran ilike 'III.%' then length(ma.kodemataanggaran) in (9,10)
+                end
+            group by 
+                ma.id, ma.kodemataanggaran, ma.namamataanggaran, map.id, map.mataanggaranpermen,
+                split_part(ma.kodemataanggaran, '.', 1),
+                split_part(ma.kodemataanggaran, '.', 2),
+                case when split_part(ma.kodemataanggaran, '.', 3) = '' then '0' else split_part(ma.kodemataanggaran, '.', 3)::int4 end,
+                case when split_part(ma.kodemataanggaran, '.', 4) = '' then '0' else split_part(ma.kodemataanggaran, '.', 4)::int4 end,
+                case when split_part(ma.kodemataanggaran, '.', 5) = '' then '0' else split_part(ma.kodemataanggaran, '.', 5)::int4 end
+            order by 
+                subkodepertama asc, 
+                subkodekedua asc, 
+                subkodeketiga asc, 
+                subkodekeempat asc, 
+                subkodekelima asc;
+        "));
+
+
+
         $result = [
             'subSubKegiatan' => $subSubKegiatan,
             'dataProdukAll' => $dataProdukAll,
             'asalProduk' => $asalProduk,
             'prioritas' => $prioritas,
-            'satuan' => $satuan
+            'satuan' => $satuan,
+            'mataanggarancombo' => $mataanggarancombo,
+            'settinganggaran' => $settingAnggaran
         ];
 
         return $this->respond($result);
@@ -148,7 +203,8 @@ class RBAController extends ApiController
                 'objectruanganasalfk' => $request['idRuangan'],
                 'keteranganlainnya' => 'Rencana Usulan Pengadaan',
                 'objectsubkegiatanfk' => $request['idSubSubKegiatan'],
-                'tahunanggaran' => $request['tahunanggaran']
+                'tahunanggaran' => $request['tahunanggaran'],
+                'objectketeranganfk' => $request['keterangan']
             ]);
 
             foreach($request['dataPerencanaan'] as $item){
@@ -168,7 +224,7 @@ class RBAController extends ApiController
                     'totalharga' => $item['totalHarga'],
                     'objectsatuanfk' => $item['satuan']['id'],
                     'keteranganlainnya' => $item['listReverensi'],
-                    'isverifikasi' => FALSE,
+                    'statusverif' => FALSE,
                     'tahunanggaran' => $request['tahunanggaran']
                 ]);
             }
@@ -212,7 +268,7 @@ class RBAController extends ApiController
         $tglAkhir = $request['tglAkhir'];
 
         $rencana = DB::table('strukperencanaan_t as sp')
-            ->select(DB::raw("sp.tglverifikasi, sp.statusenabled, sp.objectsubkegiatanfk, sp.norec, sp.tgldokumen, sp.nostruk, 
+            ->select(DB::raw("sp.tglverifikasi, sp.statusenabled, sp.objectsubkegiatanfk, sp.norec, sp.tgldokumen, sp.nostruk,  sp.keterangan As keteranganp, 
                 pg.namalengkap, 
                 ka.id || '-' || ka.keterangan AS keterangan, 
                 ru.namaruangan"))
@@ -230,21 +286,76 @@ class RBAController extends ApiController
         foreach($rencana as $key=>$item){
             $detail = DB::table('strukperencanaandetail_t as spd')
                 ->select(DB::raw("spd.qtyverifikasi, spd.namakegiatan, spd.hargasatuan, 
-                    spd.isverifikasi, spd.norec, spd.nostrukfk, spd.objectprodukfk, 
+                    spd.statusverif, spd.norec, spd.nostrukfk, spd.objectprodukfk, 
                     spd.qtyrencana, spd.qtystok, spd.keteranganlainnya, pr.namaproduk"))
                 ->leftJoin('produk_m as pr', 'pr.id', '=', 'spd.objectprodukfk')
                 ->where('spd.nostrukfk', $item->norec)
-                ->where('spd.statusenabled', true)
-                ->where('spd.kdprofile', $idProfile)
-                ->get();
+                ->where('spd.statusenabled', true);
+                if(isset($request['statusverif']) && $request['statusverif'] !== '' && $request['tahap'] != "undefined"){
+                    $detail = $detail->where('spd.statusverif', $request['statusverif']);
+                }
+            $detail = $detail->where('spd.kdprofile', $idProfile)->get();
             
-            $data[$key]['rencana'] = $item;
-            $data[$key]['details'] = $detail;
+            if (count($detail) > 0) { 
+                array_push($data, [
+                    'rencana' => $item,
+                    'details' => $detail
+                ]);        
+                
+            }
         }
 
         return $this->respond($data);
     }
 
+    public function getUsulanDiTolak(Request $request)
+    {
+        $kdProfile = $this->getDataKdProfile($request);
+        $idProfile = (int) $kdProfile;
+
+        $tglAwal = $request['tglAwal'];
+        $tglAkhir = $request['tglAkhir'];
+
+        $rencana = DB::table('strukperencanaan_t as sp')
+        ->select(DB::raw("sp.tglverifikasi, sp.statusenabled, sp.objectsubkegiatanfk, sp.norec, sp.tgldokumen, sp.nostruk, 
+            pg.namalengkap, 
+            ka.id || '-' || ka.keterangan AS keterangan, 
+            ru.namaruangan"))
+        ->leftJoin('pegawai_m as pg', 'pg.id', '=', 'sp.objectpegawaifk')
+        ->leftJoin('kegiatananggaran_m as ka', 'ka.id', '=', 'sp.objectsubkegiatanfk')
+        ->leftJoin('ruangan_m as ru', 'ru.id', '=', 'sp.objectruanganasalfk')
+        ->where('sp.keteranganlainnya', 'Rencana Usulan Pengadaan')
+        ->where('sp.statusenabled', true)
+        ->where('sp.kdprofile', $idProfile)
+        ->whereBetween('sp.tgldokumen', [$tglAwal, $tglAkhir])
+        ->orderBy('sp.nostruk')
+        ->get();
+    
+    $data = [];
+    foreach($rencana as $item) {
+        $detail = DB::table('strukperencanaandetail_t as spd')
+            ->select(DB::raw("spd.qtyverifikasi, spd.namakegiatan, spd.hargasatuan, 
+                spd.statusverif, spd.norec, spd.nostrukfk, spd.objectprodukfk, 
+                spd.qtyrencana, spd.qtystok, spd.keteranganlainnya, pr.namaproduk"))
+            ->leftJoin('produk_m as pr', 'pr.id', '=', 'spd.objectprodukfk')
+            ->where('spd.nostrukfk', $item->norec)
+            ->where('spd.statusenabled', true)
+            ->where('spd.kdprofile', $idProfile)
+            ->where('spd.statusverif', 2)            
+            ->get(); 
+            
+            //buat kondisi untuk mengecek apakah detail tidak kosong
+            if (count($detail) > 0) { 
+                array_push($data, [
+                    'rencana' => $item,
+                    'details' => $detail
+                ]);        
+                
+            }  
+        }
+
+        return $this->respond($data);
+    }
     /**
      * Delete data rencana belanja
      */
@@ -306,8 +417,8 @@ class RBAController extends ApiController
         $rencana = DB::table('strukperencanaan_t as sp')
             ->select(DB::raw("sp.statusenabled, sp.objectsubkegiatanfk, sp.norec, 
                 sp.tgldokumen, sp.nostruk, sp.objectruanganasalfk, sp.tahunanggaran, 
-                pg.namalengkap, ka.id || '-' || ka.keterangan AS keterangan, 
-                ru.namaruangan, dp.namadepartemen AS departemen, ru.objectdepartemenfk"))
+                pg.namalengkap, ka.id || '-' || ka.keterangan AS keterangan, sp.objectprioritasfk, 
+                ru.namaruangan, dp.namadepartemen AS departemen, ru.objectdepartemenfk, sp.objectketeranganfk, sp.keterangan AS keteranganp"))
             ->leftJoin('pegawai_m as pg', 'pg.id', '=', 'sp.objectpegawaifk')
             ->leftJoin('kegiatananggaran_m as ka', 'ka.id', '=', 'sp.objectsubkegiatanfk')
             ->leftJoin('ruangan_m as ru', 'ru.id', '=', 'sp.objectruanganasalfk')
@@ -322,8 +433,9 @@ class RBAController extends ApiController
         // Detail rencana 
         $detail = DB::table('strukperencanaandetail_t as spd')
             ->select(DB::raw("
-                spd.*, pr.namaproduk"))
+                spd.*, pr.namaproduk, ak.kodeakun as kdbmn"))
             ->leftJoin('produk_m as pr', 'pr.id', '=', 'spd.objectprodukfk')
+            ->leftJoin('charkodeakunasset_m as ak', 'ak.id', '=', 'pr.objectprodukassetfk')
             ->leftJoin('satuanstandar_m as sa', 'sa.id', '=', 'spd.objectsatuanfk')
             ->where('spd.nostrukfk', $rencana->norec)
             ->where('spd.statusenabled', true)
@@ -410,7 +522,7 @@ class RBAController extends ApiController
                     'totalharga' => $item['totalHarga'],
                     'objectsatuanfk' => $item['satuan']['id'],
                     'keteranganlainnya' => $item['listReverensi'],
-                    'isverifikasi' => FALSE,
+                    'statusverif' => FALSE,
                 ]);
             }
             $transStatus = true;
@@ -458,12 +570,13 @@ class RBAController extends ApiController
                 'statusenabled' => true,
                 'objectpegawaiveriffk' => $request['idLogin'],
                 'tglverifikasi' => $request['tglVerifikasi'],
-                'objectprioritasfk' => $request['idPrioritas']
+                'objectprioritasfk' => $request['idPrioritas'],
+                'keterangan' => $request['keterangan']
             ]);
 
             foreach($request['dataPerencanaan'] as $item){
                 $strukPerencanaanDetail = new StrukPerencanaanDetail();
-                // $keteranganBelanja = new KeteranganBelanja();
+                $keteranganBelanja = new KeteranganBelanja();
 
                 /**
                  * Kode ini akan meupdate setiap detail struk pengajuan berdasarkan norec nya
@@ -483,10 +596,10 @@ class RBAController extends ApiController
                         'hargasatuan' => $item['hargaSatuan'],
                         'totalharga' =>  $item['jumlahVerifikasi'] * $item['hargaSatuan'],
                         'keteranganlainnya' => $item['listReverensi'],
-                        'isverifikasi' => ($item['isVerifikasi']['value'] == 1) ? true : false,
+                        'statusverif' => ($item['statusverif']['value']) ? $item['statusverif']['value'] : 0,
                         'objectkegiatanfk' => $request['idKegiatan'],
                         'objectmataanggaranfk' => $item['mataAnggaran']['id'],
-                        'objectasalprodukfk' => $request['idAsalProduk'],
+                        'objectasalprodukfk' => $item['sumberdana']['id'],
                         'objectsatuanfk' => $item['satuan']['id'],
                         'objecttahapfk' => $request['idTahap'],
                         'istransfer' => false
@@ -507,15 +620,16 @@ class RBAController extends ApiController
                         'hargasatuan' => $item['hargaSatuan'],
                         'totalharga' =>  $item['jumlahVerifikasi'] * $item['hargaSatuan'],
                         'keteranganlainnya' => $item['listReverensi'],
-                        'isverifikasi' => ($item['isVerifikasi']['value'] == 1) ? true : false,
+                        'statusverif' => ($item['statusverif']['value']) ? $item['statusverif']['value'] : 0,
                         'objectkegiatanfk' => $request['idKegiatan'],
                         'objectmataanggaranfk' => $item['mataAnggaran']['id'],
-                        'objectasalprodukfk' => $request['idAsalProduk'],
+                        'objectasalprodukfk' => $item['sumberdana']['id'],
                         'objectsatuanfk' => $item['satuan']['id'],
                         'objecttahapfk' => $request['idTahap'],
                         'istransfer' => false
                     ]);
                 }
+
 
                 /**
                  * Simpan ke keterangan belanja
@@ -819,7 +933,7 @@ class RBAController extends ApiController
                     ->leftJoin('satuanstandar_m as sa', 'sa.id', '=', 'spd.objectsatuanfk')
                     ->where('sp.statusenabled', true)->where('spd.statusenabled', true)
                     ->where('sp.kdprofile', $idProfile)->where('spd.kdprofile', $idProfile)
-                    ->where('spd.isverifikasi', true)->where('spd.istransfer', false)
+                    ->where('spd.statusverif', true)->where('spd.istransfer', false)
                     ->where('spd.objectkegiatanfk', $dt['idsubsubkegiatan'])
                     ->get();
                 
@@ -900,7 +1014,7 @@ class RBAController extends ApiController
             ->where('ka1.kdprofile', $idProfile)->where('ka2.kdprofile', $idProfile)->where('spd.kdprofile', $idProfile)
             ->where('ka1.statusenabled', true)->where('ka2.statusenabled', true)->where('spd.statusenabled', true)
             ->where('ka1.div', 4)->where('ka2.div', 3)
-            ->where('spd.istransfer', false)->where('spd.isverifikasi', true)  //mendapatkan sub sub jika strukperencanaan detail belum ada yang ditransfer
+            ->where('spd.istransfer', false)->where('spd.statusverif', true)  //mendapatkan sub sub jika strukperencanaan detail belum ada yang ditransfer
             ->when($request['tahap'], function($query) use ($request){
                 return $query->where('spd.objecttahapfk', $request['tahap']);
             })

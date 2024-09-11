@@ -303,6 +303,126 @@ class LaundryController extends ApiController
         }
         return $this->setStatusCode($result['status'])->respond($result, $transMessage);
     }
+
+    public function getDaftarDistribusiLaundry(Request $request) {
+        $kdProfile = $this->getDataKdProfile($request);
+        $idProfile = (int) $kdProfile;
+        $dataLogin = $request->all();
+//        $dataPegawaiUser = \DB::select(DB::raw("select pg.id,pg.namalengkap from loginuser_s as lu
+//                INNER JOIN pegawai_m as pg on lu.objectpegawaifk=pg.id
+//                where lu.id=:idLoginUser"),
+//            array(
+//                'idLoginUser' => $request['userData']['id'],
+//            )
+//        );
+//        $dataRuangan = \DB::table('maploginusertoruangan_s as mlu')
+//            ->JOIN('ruangan_m as ru','ru.id','=','mlu.objectruanganfk')
+//            ->select('ru.id')
+//            ->where('mlu.objectloginuserfk',$dataLogin['userData']['id'])
+//            ->get();
+//        $strRuangan = [];
+//        foreach ($dataRuangan as $epic){
+//            $strRuangan[] = $epic->id;
+//        }
+        $data = \DB::table('strukkirim_t as sp')
+            ->LEFTJOIN ('kirimproduk_t as kp','kp.nokirimfk','=','sp.norec')
+            ->LEFTJOIN('pegawai_m as pg','pg.id','=','sp.objectpegawaipengirimfk')
+            ->LEFTJOIN('ruangan_m as ru','ru.id','=','sp.objectruanganasalfk')
+            ->LEFTJOIN('ruangan_m as ru2','ru2.id','=','sp.objectruangantujuanfk')
+            ->LEFTJOIN('pencucianlinen_t as penc','penc.strukkirimfk','=','sp.norec')
+            ->select('sp.norec','sp.tglkirim','sp.nokirim','sp.jenispermintaanfk','pg.namalengkap','sp.noorderfk',
+                'ru.id as ruasalid','ru.namaruangan as ruanganasal','ru2.id as rutujuanid','ru2.namaruangan as ruangantujuan','sp.keteranganlainnyakirim','sp.statuskirim',
+                'penc.tgl as tglcuci',
+                DB::raw('count(kp.objectprodukfk) as jmlitem')
+            )
+            ->where('sp.kdprofile', $idProfile)
+            ->whereRaw('sp.objectkelompoktransaksifk in(120)')
+            // ->where('keteranganlainnyakirim', 'like', '%Linen%')
+            ->groupBy('sp.norec','sp.tglkirim','sp.nokirim','sp.jenispermintaanfk','pg.namalengkap','sp.noorderfk','ru.id',
+                'ru.namaruangan','ru2.id','ru2.namaruangan','sp.keteranganlainnyakirim','sp.statuskirim','penc.tgl');
+
+        if(isset($request['tglAwal']) && $request['tglAwal']!="" && $request['tglAwal']!="undefined"){
+            $data = $data->where('sp.tglkirim','>=', $request['tglAwal']);
+        }
+        if(isset($request['tglAkhir']) && $request['tglAkhir']!="" && $request['tglAkhir']!="undefined"){
+            $tgl= $request['tglAkhir'];
+            $data = $data->where('sp.tglkirim','<=', $tgl);
+        }
+        if(isset($request['nokirim']) && $request['nokirim']!="" && $request['nokirim']!="undefined"){
+            $data = $data->where('sp.nokirim','ilike','%'. $request['nokirim'].'%');
+        }
+        if(isset($request['ruangantujuanfk']) && $request['ruangantujuanfk']!="" && $request['ruangantujuanfk']!="undefined"){
+            $data = $data->where('ru.namaruangan','ilike', '%'.$request['ruangantujuanfk'].'%');
+        }
+        if(isset($request['produkfk']) && $request['produkfk']!="" && $request['produkfk']!="undefined"){
+            $data = $data->where('kp.objectprodukfk','=', $request['produkfk']);
+        }
+
+        $data = $data->where('sp.statusenabled',true);
+        //untuk menampilkan semua data dihijaukan
+        $data = $data->where('sp.objectkelompoktransaksifk',$request['kelompokTransaksi']);
+//        $data = $data->wherein('sp.objectruanganasalfk',$strRuangan);
+        $data = $data->orderByRaw('sp.tglkirim DESC');
+        $data = $data->get();
+
+        $results =array();
+        foreach ($data as $item){
+            $details = DB::select(DB::raw("
+                     select  pr.id as kdproduk,pr.kdproduk as kdsirs,pr.namaproduk,
+                    ss.satuanstandar,spd.qtyorder, spd.qtyproduk, spd.qtyprodukretur, spd.qtyprodukterima, spd.objectprodukfk
+                     from kirimproduk_t as spd 
+                    left JOIN produk_m as pr on pr.id=spd.objectprodukfk
+                    left JOIN satuanstandar_m as ss on ss.id=spd.objectsatuanstandarfk
+                    where spd.kdprofile = $idProfile and nokirimfk=:norec and spd.qtyproduk > 0"),
+                array(
+                    'norec' => $item->norec,
+                )
+            );
+            $jeniskirim ='';
+            if ($item->jenispermintaanfk == 1){
+                $jeniskirim ='Amprahan';
+            }
+            if ($item->jenispermintaanfk == 2){
+                $jeniskirim ='Transfer';
+            }
+            $sttaus ='';
+            if($request['kelompokTransaksi'] == 120){
+                $sttaus = 'Kirim Linen';
+            }
+            if($request['kelompokTransaksi'] == 119){
+                $sttaus = 'Terima Linen';
+            }
+            $results[] = array(
+                'status' => $sttaus,
+                'tglstruk' => $item->tglkirim,
+                'nostruk' => $item->nokirim,
+                'noorderfk' => $item->noorderfk,
+                'jenispermintaanfk' => $item->jenispermintaanfk,
+                'jeniskirim' => $jeniskirim,
+                'norec' => $item->norec,
+                'ruasalid'=> $item->ruasalid,
+                'namaruanganasal' => $item->ruanganasal,
+                'rutujuanid'=> $item->rutujuanid,
+                'namaruangantujuan' => $item->ruangantujuan,
+                'petugas' => $item->namalengkap,
+                'keterangan' => $item->keteranganlainnyakirim,
+                'jmlitem' => $item->jmlitem,
+                'statuskirim' =>$item->statuskirim,
+                'tglcuci' =>$item->tglcuci,
+                'details' => $details,
+            );
+        }
+
+        $result = array(
+            'daftar' => $results,
+            'message' => 'as@epic',
+//            'str' => $strRuangan,
+        );
+
+        return $this->respond($result);
+    }
+
+
     public function getDaftarKirimLaundry(Request $request) {
         $kdProfile = $this->getDataKdProfile($request);
         $idProfile = (int) $kdProfile;
@@ -335,6 +455,7 @@ class LaundryController extends ApiController
                 DB::raw('count(kp.objectprodukfk) as jmlitem')
             )
             ->where('sp.kdprofile', $idProfile)
+            ->whereRaw('sp.objectkelompoktransaksifk in(119,120)')
             ->groupBy('sp.norec','sp.tglkirim','sp.nokirim','sp.jenispermintaanfk','pg.namalengkap','sp.noorderfk','ru.id',
                 'ru.namaruangan','ru2.id','ru2.namaruangan','sp.keteranganlainnyakirim','sp.statuskirim','penc.tgl');
 
@@ -358,19 +479,20 @@ class LaundryController extends ApiController
         $data = $data->where('sp.statusenabled',true);
         //untuk menampilkan semua data dihijaukan
         //$data = $data->where('sp.objectkelompoktransaksifk',$request['kelompokTransaksi']);
-//        $data = $data->wherein('sp.objectruanganasalfk',$strRuangan);
-        $data = $data->orderBy('sp.nokirim');
+        // $data = $data->where('sp.objectkelompoktransaksifk', '=',120);
+        // $data = $data->wherein('sp.objectruanganasalfk',$strRuangan);
+        $data = $data->orderByRaw('sp.tglkirim DESC');
         $data = $data->get();
 
         $results =array();
         foreach ($data as $item){
             $details = DB::select(DB::raw("
                      select  pr.id as kdproduk,pr.kdproduk as kdsirs,pr.namaproduk,
-                    ss.satuanstandar,spd.qtyorder, spd.qtyproduk, spd.qtyprodukretur,spd.objectprodukfk
+                    ss.satuanstandar,spd.qtyprodukterima, spd.qtyproduk, spd.qtyprodukretur,spd.objectprodukfk
                      from kirimproduk_t as spd 
                     left JOIN produk_m as pr on pr.id=spd.objectprodukfk
                     left JOIN satuanstandar_m as ss on ss.id=spd.objectsatuanstandarfk
-                    where spd.kdprofile = $idProfile and nokirimfk=:norec and spd.qtyorder > 0"),
+                    where spd.kdprofile = $idProfile and nokirimfk=:norec"),
                 array(
                     'norec' => $item->norec,
                 )
@@ -425,7 +547,7 @@ class LaundryController extends ApiController
             ->JOIN('pegawai_m as pg','pg.id','=','sr.objectpegawaipengirimfk')
             ->JOIN('ruangan_m as ru','ru.id','=','sr.objectruanganfk')
             ->JOIN('ruangan_m as ru2','ru2.id','=','sr.objectruangantujuanfk')
-            ->select('sr.nokirim','pg.id as pgid','pg.namalengkap','ru.id','ru.namaruangan','ru2.id as ruid2','ru2.namaruangan as namaruangan2',
+            ->select('sr.nokirim', 'sr.norec as norecstrukkirim', 'sr.noorderfk', 'pg.id as pgid','pg.namalengkap','ru.id','ru.namaruangan','ru2.id as ruid2','ru2.namaruangan as namaruangan2',
                 'sr.jenispermintaanfk','sr.tglkirim','sr.keteranganlainnyakirim as keterangan')
             ->where('sr.kdprofile', $idProfile);
         if(isset($request['norec']) && $request['norec']!="" && $request['norec']!="undefined"){
@@ -439,10 +561,10 @@ class LaundryController extends ApiController
 //            ->JOIN('jeniskemasan_m as jk','jk.id','=','spd.objectjeniskemasanfk')
             ->JOIN('produk_m as pr','pr.id','=','spd.objectprodukfk')
             ->JOIN('satuanstandar_m as ss','ss.id','=','spd.objectsatuanstandarfk')
-            ->select('sp.nokirim','spd.hargasatuan','spd.qtyprodukoutext','sp.objectruanganfk','ru.namaruangan','spd.nostrukterimafk',
+            ->select('sp.noorderfk', 'sp.nokirim','spd.hargasatuan','spd.qtyprodukoutext','sp.objectruanganfk','ru.namaruangan','spd.nostrukterimafk',
                 'spd.objectprodukfk as produkfk','pr.kdproduk','pr.namaproduk','spd.hasilkonversi as nilaikonversi',
                 'spd.objectsatuanstandarfk','ss.satuanstandar','spd.objectsatuanstandarfk as satuanviewfk','ss.satuanstandar as ssview',
-                'spd.qtyproduk as jumlah','spd.hargadiscount','spd.hargatambahan as jasa','spd.hargasatuan as hargajual','spd.harganetto','spd.qtyprodukretur')
+                'spd.qtyproduk as jumlah','spd.qtyprodukterima', 'spd.hargadiscount','spd.hargatambahan as jasa','spd.hargasatuan as hargajual','spd.harganetto','spd.qtyprodukretur')
             ->where('sp.kdprofile', $idProfile);
 
         if(isset($request['norec']) && $request['norec']!="" && $request['norec']!="undefined"){
@@ -482,8 +604,10 @@ class LaundryController extends ApiController
                     'jumlah' => $item->jumlah,
                     'qtyorder' => $item->jumlah,
                     'qtyretur' => $item->qtyprodukretur,
+                    'qtyprodukterima' => $item->qtyprodukterima,
                     'jasa' => $item->jasa,
-                    'nostrukterimafk' => $item->nostrukterimafk
+                    'nostrukterimafk' => $item->nostrukterimafk,
+                    'noorderfk' => $item->noorderfk
                 );
             }
 
@@ -1653,7 +1777,7 @@ class LaundryController extends ApiController
         $idProfile = (int) $kdProfile;
         
         if($request['strukkirim']['jenis'] =='terima'){
-            $noKirim = $this->generateCodeBySeqTable(new StrukKirim, 'nokirim', 13, 'RL-' . $this->getDateTime()->format('ym'), $idProfile);
+            $noKirim = $this->generateCode(new StrukKirim, 'nokirim', 13, 'RL-' . $this->getDateTime()->format('ym'), $idProfile);
         }
         if($request['strukkirim']['jenis'] =='kirim'){
             $noKirim = $this->generateCodeBySeqTable(new StrukKirim, 'nokirim', 13, 'SL-' . $this->getDateTime()->format('ym'), $idProfile);
@@ -1732,7 +1856,7 @@ class LaundryController extends ApiController
             }else{
 
                 $dataSK = StrukKirim::where('norec',$request['strukkirim']['noreckirim'])->where('kdprofile', $idProfile)->first();
-                $norecSK = $dataSK->norec;
+                $norecStrukOrder = $dataSK->norec;
 
                 // delete kirim produk
                 KirimProduk::where('nokirimfk',$request['strukkirim']['noreckirim'])->delete();
@@ -1801,7 +1925,7 @@ class LaundryController extends ApiController
                 $dataKP->qtyprodukretur = 0;
                 $dataKP->qtyorder = $item['qtyorder'];
                 $dataKP->qtyproduk = $jumlah;
-                $dataKP->qtyprodukterima = $jumlah;
+                $dataKP->qtyprodukterima = ($request['strukkirim']['status'] == 'Kirim') ? (int)$item['qtyprodukterima'] : $jumlah;
                 $dataKP->objectruanganfk = $request['strukkirim']['objectruangantujuanfk'];
                 $dataKP->objectruanganpengirimfk = $request['strukkirim']['objectruanganfk'];
                 $dataKP->satuan = '-';
@@ -2097,14 +2221,14 @@ class LaundryController extends ApiController
         $data = $data->where('sp.statusenabled',true);
 
 //        $data = $data->wherein('sp.objectruanganasalfk',$strRuangan);
-        $data = $data->orderBy('sp.nokirim');
+        $data = $data->orderByRaw('sp.tglkirim DESC');
         $data = $data->get();
 
         $results =array();
         foreach ($data as $item){
             $details = DB::select(DB::raw("
                      select  pr.id as kdproduk,pr.kdproduk as kdsirs,pr.namaproduk,
-                    ss.satuanstandar,spd.qtyorder as qtyproduk,spd.qtyprodukretur,spd.objectprodukfk
+                    ss.satuanstandar,spd.qtyprodukterima as qtyproduk,spd.qtyprodukretur,spd.objectprodukfk
                      from kirimproduk_t as spd 
                     left JOIN produk_m as pr on pr.id=spd.objectprodukfk
                     left JOIN satuanstandar_m as ss on ss.id=spd.objectsatuanstandarfk
