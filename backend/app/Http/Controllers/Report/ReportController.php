@@ -23722,4 +23722,233 @@ public function suratBuktiPengembalian(Request $request)
         return view('report.cppt-ranap-new', compact('res', 'profile', 'pageWidth'));
     }
 
+    public function cetakSKDPSPRI(Request $request)
+    {
+        $kdProfile = (int)$request['kdprofile'];
+        $ppkPelayanan = $this->settingDataFixed('namaPPKRujukan', $kdProfile);
+        $noregistrasi = $request['noregistrasi'];
+        $qbinary = base64_decode($request['qbinary']);
+        $dataSurat = json_decode($qbinary);
+        $tglAyeuna = date('Y-m-d H:i:s');
+
+        $datas = DB::table("pasiendaftar_t as pd")
+        ->select("pd.norec as norec_pd", "jk.jeniskelamin", "ps.tgllahir",
+            DB::raw("CASE WHEN dg.kddiagnosa IS NULL THEN '-' ELSE dg.kddiagnosa END || '-' || ( CASE WHEN dg.namadiagnosa IS NULL THEN '-' ELSE dg.namadiagnosa END ) AS namadiagnosa")
+        )
+        ->leftjoin("pemakaianasuransi_t as pa", "pd.norec", "=", "pa.noregistrasifk")
+        ->leftjoin("diagnosa_m as dg", "dg.id", "=", "pa.diagnosisfk")
+        ->join("pasien_m as ps", "ps.id", "=", "pd.nocmfk")
+        ->leftjoin("jeniskelamin_m as jk", "jk.id", "=", "ps.objectjeniskelaminfk")
+        ->where("pd.noregistrasi", $noregistrasi)
+        ->where("pd.statusenabled", true)
+        ->where("pd.kdprofile", $kdProfile)
+        ->first();
+
+        if(empty($datas)) {
+            echo '
+            <script language="javascript">
+                window.alert("Tidak ada data.");
+                window.close()
+            </script>';
+            die;
+        }
+
+        $pageWidth = 719;
+
+        if(isset($request["issimpanberkas"])) {
+            $dataSuratlokal = DB::table("bpjsrencanakontrol_t as br")
+            ->select('br.namadokter as namaDokter'
+            ,'br.tglrencanakontrol as tglRencanaKontrol'
+            ,'br.tglterbitkontrol as tglTerbitKontrol'
+            ,'br.nama'
+            ,'br.nokartu as noKartu'
+            ,'br.namapolitujuan as namaPoliTujuan'
+            ,'br.nosuratkontrol as noSuratKontrol'
+            ,'br.jnskontrol as jnsKontrol'
+            )
+            ->join("pasiendaftar_t as pd", "pd.norec", "=", "br.norec_pd")
+            ->where("br.statusenabled", true)
+            ->where("pd.noregistrasi", $noregistrasi)
+            ->first();
+
+            if(empty($dataSuratlokal)) {
+                echo '
+                <script language="javascript">
+                    window.alert("Tidak ada data.");
+                    window.close()
+                </script>';
+                die;
+            }
+
+            $dataReport2 = array(
+                'ppkPelayanan' => $ppkPelayanan,
+                'dataSurat' => $dataSuratlokal,
+                'tglAyeuna' => $tglAyeuna,
+                'data' => $datas
+            );
+
+            $pdf = PDF::loadView('report.pendaftaran.skdpspri', array(
+                'dataReport' => $dataReport2,
+                'pageWidth' => $pageWidth,
+            ));
+    
+            $this->saveDokumenKlaim($pdf, $request);
+            return;
+        }
+
+        if(isset($request["q"])) {
+            $dataSuratlokal = DB::table("bpjsrencanakontrol_t as br")
+            ->select('br.namadokter as namaDokter'
+            ,'br.tglrencanakontrol as tglRencanaKontrol'
+            ,'br.tglterbitkontrol as tglTerbitKontrol'
+            ,'br.nama'
+            ,'br.nokartu as noKartu'
+            ,'br.namapolitujuan as namaPoliTujuan'
+            ,'br.nosuratkontrol as noSuratKontrol'
+            ,'br.jnskontrol as jnsKontrol'
+            )
+            ->join("pasiendaftar_t as pd", "pd.norec", "=", "br.norec_pd")
+            ->where("br.statusenabled", true)
+            ->where("pd.noregistrasi", $noregistrasi)
+            ->first();
+
+            if(empty($dataSuratlokal)) {
+                echo '
+                <script language="javascript">
+                    window.alert("Tidak ada data.");
+                    window.close()
+                </script>';
+                die;
+            }
+
+            $dataReport2 = array(
+                'ppkPelayanan' => $ppkPelayanan,
+                'dataSurat' => $dataSuratlokal,
+                'tglAyeuna' => $tglAyeuna,
+                'data' => $datas
+            );
+
+            $pdf = PDF::loadView('report.pendaftaran.skdpspri', array(
+                'dataReport' => $dataReport2,
+                'pageWidth' => $pageWidth,
+            ));
+
+            return $pdf->stream();
+        }
+
+        $dataReport = array(
+            'ppkPelayanan' => $ppkPelayanan,
+            'dataSurat' => $dataSurat,
+            'tglAyeuna' => $tglAyeuna,
+            'data' => $datas
+        );
+        $pdf = PDF::loadView('report.pendaftaran.skdpspri', array(
+            'dataReport' => $dataReport,
+            'pageWidth' => $pageWidth,
+        ));
+
+        return $pdf->stream();
+    }
+
+    public function cetakSEPV3(Request $request)
+    {
+        $kdProfile = (int)$request['kdprofile'];
+        $Noregistrasi = $request['noregistrasi'];
+        $tglAyeuna = date('Y-m-d H:i:s');
+        $ppkPelayanan = $this->settingDataFixed('namaPPKRujukan', $kdProfile);
+
+        $registrasi = collect(DB::select("
+             SELECT pa.nosep,to_char(pa.tanggalsep, 'DD-MM-YYYY HH:mm') AS tanggalsep,pa.nokepesertaan,pi.nocm,pd.noregistrasi,
+                    pa.norujukan,ap.namapeserta,to_char(pi.tgllahir, 'DD-MM-YYYY') AS tgllahir,jk.jeniskelamin, 
+                    rp.namaruangan,rp.kodeexternal as namapoli,pa.ppkrujukan,  
+                    (CASE WHEN rp.objectdepartemenfk=16 then 'Rawat Inap' else 'Rawat Jalan' END) as jenisrawat, 
+                    dg.kddiagnosa, (case when dg.namadiagnosa is null then '-' else dg.namadiagnosa end) as namadiagnosa ,  
+                    ap.jenispeserta,ap.kdprovider,ap.nmprovider,kls.namakelas,pa.catatan,pa.tglcreate,rp.objectdepartemenfk,
+                    CASE WHEN pa.statuskunjungan = 1 THEN 'Konsultasi dokter (pertama)'
+                    WHEN pa.statuskunjungan = 2 THEN  'Kunjungan rujukan internal'
+                    WHEN pa.statuskunjungan = 3 THEN 'Kunjungan Kontrol (ulangan)'
+                    ELSE '' END AS kunjungan,ap.notelpmobile,pa.namadjpjpmelayanni,
+                    CASE WHEN pa.flagprocedure = '0' THEN 'Prosedur tidak berkelanjutan'
+                    WHEN pa.flagprocedure = '1' THEN 'Prosedur dan terapi berkelanjutan'
+                    END AS procedures,kls.namakelas AS haknamakelas,
+                    CASE WHEN rp.objectdepartemenfk = 18 THEN pa.polirujukannama ELSE '-' END AS polirujukannama,
+                    CASE WHEN pa.penjaminlaka = '1' THEN 'Jasa Raharja PT' 
+                    WHEN pa.penjaminlaka = '2' THEN 'BPJS Ketenagakerjaan'
+                    WHEN pa.penjaminlaka = '3' THEN 'TASPEN PT'
+                    WHEN pa.penjaminlaka = '4' THEN 'ASABRI PT'
+                    ELSE '-' END AS penjaminlakalantas
+             FROM pemakaianasuransi_t pa  
+             LEFT JOIN asuransipasien_m ap on pa.objectasuransipasienfk= ap.id  
+             LEFT JOIN pasiendaftar_t pd on pd.norec=pa.noregistrasifk  
+             LEFT JOIN pasien_m pi on pi.id=pd.nocmfk  
+             LEFT JOIN jeniskelamin_m jk on jk.id=pi.objectjeniskelaminfk  
+             LEFT JOIN ruangan_m rp on rp.id=pd.objectruanganlastfk  
+             LEFT JOIN diagnosa_m dg on pa.diagnosisfk=dg.id 
+             LEFT JOIN kelas_m kls on kls.id=ap.objectkelasdijaminfk  
+             where pd.noregistrasi ='$Noregistrasi' 
+        "))->first();
+
+        if(empty($registrasi)) {
+            echo '
+            <script language="javascript">
+                window.alert("Tidak ada data.");
+                window.close()
+            </script>';
+            die;
+        }
+
+        $qrcode = "";//base64_encode(QrCode::format('svg')->size(50)->generate($registrasi->nokepesertaan));
+        $pageWidth = 719;
+        $dataReport = array(
+            'ppkPelayanan' => $ppkPelayanan,
+            'nosep' => $registrasi->nosep,
+            'tanggalsep' => $registrasi->tanggalsep,
+            'nokepesertaan' => $registrasi->nokepesertaan,
+            'norm' => $registrasi->nocm,
+            'noregistrasi' => $registrasi->noregistrasi,
+            'jenispeserta' => $registrasi->jenispeserta,
+            'namapeserta' => $registrasi->namapeserta,
+            'cob' => "",
+            'tgllahir' => $registrasi->tgllahir,
+            'jeniskelamin' => $registrasi->jeniskelamin,
+            'norujukan' => $registrasi->norujukan,
+            'namaruangan' => $registrasi->namaruangan,
+            'namapoli' => $registrasi->namapoli,
+            'ppkrujukan' => $registrasi->ppkrujukan,
+            'jenisrawat' => $registrasi->jenisrawat,
+            'kddiagnosa' => $registrasi->kddiagnosa,
+            'namadiagnosa' => $registrasi->namadiagnosa,
+            'kdprovider' => $registrasi->kdprovider,
+            'nmprovider' => $registrasi->nmprovider,
+            'namakelas' => $registrasi->namakelas,
+            'catatan' => $registrasi->catatan,
+            'tanggal' => $tglAyeuna,
+            'tglcreate' => $registrasi->tglcreate,
+            'kunjungan' => $registrasi->kunjungan,
+            'notelpmobile' => $registrasi->notelpmobile,
+            'procedures' => $registrasi->procedures,
+            'polirujukannama' => $registrasi->polirujukannama,
+            'namadjpjpmelayanni' => $registrasi->namadjpjpmelayanni,
+            'haknamakelas' => $registrasi->haknamakelas,
+            'penjaminlakalantas' => $registrasi->penjaminlakalantas,
+            'objectdepartemenfk' => $registrasi->objectdepartemenfk,
+        );
+        $pdf = PDF::loadView('report.pendaftaran.sepv2', array(
+            'dataReport' => $dataReport,
+            'pageWidth' => $pageWidth,
+            'qrcode' => $qrcode,
+        ));
+
+        if(isset($request["issimpanberkas"])) {
+            $this->saveDokumenKlaim($pdf, $request);
+            return;
+        }
+
+        return $pdf->stream();
+    }
+
+    public function saveDokumenKlaim($pdf, $request) {
+
+    }
+
 }

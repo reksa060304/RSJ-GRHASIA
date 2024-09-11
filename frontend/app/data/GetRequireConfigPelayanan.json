@@ -3740,6 +3740,10 @@
         {
             "nameDep": "UpdateAntrolOtomatisCtrl",
             "urlDep": "module/RawatJalan/UpdateAntrolOtomatisCtrl"
+        },
+        {
+            "nameDep": "PemakaianAsuransiV3Ctrl",
+            "urlDep": "module/Registrasi/PemakaianAsuransiV3Ctrl"
         }
     ]
 }
