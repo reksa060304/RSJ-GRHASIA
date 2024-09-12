@@ -5389,6 +5389,14 @@ class ReportController extends ApiController{
         //         order by subkodepertama asc, subkodekedua asc, subkodeketiga asc, subkodekeempat asc, subkodekelima asc      
         // "));
 
+        $asalproduk_kb = "";
+        $asalproduk_sr = "";
+        if (isset($request['asalproduk']) && $request['tahun'] != "" && $request['asalproduk'] != "undefined") {
+            $asalproduk_kb = "and kb.objectasalprodukfk = ".$request['asalproduk'];
+            $asalproduk_sr = "and sr.objectasalprodukfk = ".$request['asalproduk'];
+        }
+
+
         $data = DB::select(DB::raw("
                 SELECT
                     split_part(x.kodemataanggaran, '.', 1) as subkodepertama
@@ -5427,7 +5435,8 @@ class ReportController extends ApiController{
                         AND ka.statusenabled = TRUE 
                         AND ka.kdprofile = 30 
                         AND ma.statusenabled = TRUE 
-                        AND ma.kdprofile = 30 
+                        AND ma.kdprofile = 30
+                        $asalproduk_kb 
                     GROUP BY
                         ka.ID,
                         ma.ID,
@@ -5470,6 +5479,7 @@ class ReportController extends ApiController{
                         AND ka.kdprofile = 30 
                         AND ma.statusenabled = TRUE 
                         AND ma.kdprofile = 30 
+                        $asalproduk_sr
                     GROUP BY
                         ka.ID,
                         ma.ID,
