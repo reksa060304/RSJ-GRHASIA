@@ -90,6 +90,11 @@ Route::group(['middleware' => 'cors', 'prefix' => 'service'], function () {
         Route::get('anggaran/get-master-pendapatan', 'Perencanaan\PerencanaanController@getComboPendapatan');
         // End Rencana Belanja Route-------------------------------------------------------------------------------------------
 
+
+        // bendahara penerimaan
+        Route::get('report/cetak-stsv2', 'Report\ReportController@cetakSTSV2');
+
+
 		Route::get('registrasi/laporan/get-rekap-kunjunganrs', 'Registrasi\LaporanRegistrasiController@getRekapKunjunganRS');
 
         Route::get('get-profile-login', function(){
