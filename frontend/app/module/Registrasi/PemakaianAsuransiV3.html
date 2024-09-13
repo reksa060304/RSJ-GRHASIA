@@ -1,0 +1,2110 @@
+
+<center>
+    <c-panel item="item" header="'Pemakaian Asuransi'" disabled>
+</center>
+<div style="padding-top: 5rem;"></div>
+<div class="container-fluid">
+    <div class="row-lte" style="padding-bottom: 0.25rem;">
+        <div class="col-md-3">
+            <button kendo-button class="primary" ng-click="pasienLama()">
+                <i class="fa fa-user-plus fa-2x" aria-hidden="true" style="display: contents;"></i> 
+            </button>
+        </div>
+    </div>
+    <div class="row-lte">
+        <div class="col-md-3">
+            <div class="card-lte card-outline card-primary">
+                <div class="card-body">
+                    <div class="row-lte">
+                        <div class="col-md-3">
+                            <div class="widget-user-image">
+                                <img class="profile-user-img img-fluid img-circle" src="../app/images/avatar-new.png">
+                            </div>
+                        </div>
+                        <div class="col-md-9">
+                            <h2 class="widget-user-username">{{ item.pasienbpjs.nama }}</h2>
+                            <div class="widget-user-desc" style="font-size: 1.2em;">{{ item.pasienbpjs.noKartu }}</div>
+                        </div>
+                    </div>
+                    <div class="row-lte" style="margin-top: 10px;">
+                        <div class="col-md-12">
+                            <md-content>
+                                <md-tabs md-dynamic-height md-border-bottom md-selected="myVar">
+                                    <md-tab id="tab1">
+                                        <md-tab-label><i class="fa fa-user hitam" aria-hidden="true"></i></md-tab-label>
+                                        <md-tab-body>
+                                            <div class="md-padding">
+                                                <ul class="list-group list-group-unbordered">
+                                                    <li class="list-group-item">
+                                                      <i class="fa fa-address-card hitam2" aria-hidden="true"></i>&nbsp;
+                                                      <a title="NIK" class="pull-right-container">{{ item.pasienbpjs.nik }}</a>
+                                                    </li>
+                                                    <li class="list-group-item">
+                                                      <i class="fa fa-credit-card hitam2" aria-hidden="true"></i>&nbsp;
+                                                      <a title="No.Kartu Bapel JKK" class="pull-right-container">{{ item.pasienbpjs.noKartu }}</a>
+                                                    </li>
+                                                    <li class="list-group-item">
+                                                      <i class="fa fa-calendar hitam2" aria-hidden="true"></i>&nbsp;
+                                                      <a title="Tanggal Lahir" class="pull-right-container">{{ item.pasienbpjs.tglLahir }}</a>
+                                                    </li>
+                                                    <li class="list-group-item">
+                                                      <i class="fa fa-info-circle hitam2" aria-hidden="true"></i>&nbsp;
+                                                      <a title="PISA" class="pull-right-container">{{ item.pasienbpjs.statusPeserta.keterangan }}</a>
+                                                    </li>
+                                                    <li class="list-group-item">
+                                                      <i class="fa fa-hospital-o hitam2" aria-hidden="true"></i>&nbsp;
+                                                      <a title="Hak Kelas Rawat" class="pull-right-container">{{ item.pasienbpjs.hakKelas.keterangan }}</a>
+                                                    </li>
+                                                    <li class="list-group-item">
+                                                      <i class="fa fa-stethoscope hitam2" aria-hidden="true"></i>&nbsp;
+                                                      <a title="Faskes Tingkat 1" class="pull-right-container">{{ item.pasienbpjs.provUmum.kdProvider + " - " + item.pasienbpjs.provUmum.nmProvider }}</a>
+                                                    </li>
+                                                    <li class="list-group-item">
+                                                      <i class="fa fa-calendar hitam2" aria-hidden="true"></i>&nbsp;
+                                                      <a title="TMT dan TAT Peserta" class="pull-right-container">{{ item.pasienbpjs.tglTMT }} s.d {{ item.pasienbpjs.tglTAT }}</a>
+                                                    </li>
+                                                    <li class="list-group-item">
+                                                      <i class="fa fa-calendar hitam2" aria-hidden="true"></i>&nbsp;
+                                                      <a title="Jenis Peserta" class="pull-right-container">{{ item.pasienbpjs.jenisPeserta.keterangan }}</a>
+                                                    </li>
+                                                </ul>
+                                            </div>
+                                        </md-tab-body>
+                                    </md-tab>
+                                    <md-tab id="tab2">
+                                        <md-tab-label><i class="fa fa-building hitam" aria-hidden="true"></i></md-tab-label>
+                                        <md-tab-body>
+                                            <div class="md-padding">
+                                                <ul class="list-group list-group-unbordered">
+                                                    <li class="list-group-item">
+                                                      <i class="fa fa-sort-numeric-asc hitam2" aria-hidden="true"></i>
+                                                      <a title="No. Asuransi" class="pull-right-container">{{ item.pasienbpjs.cob.noAsuransi }}</a>
+                                                    </li>
+                                                    <li class="list-group-item">
+                                                      <i class="fa fa-windows hitam2" aria-hidden="true"></i>
+                                                      <a title="Nama Asuransi" class="pull-right-container">{{ item.pasienbpjs.cob.nmAsuransi }}</a>
+                                                    </li>
+                                                    <li class="list-group-item">
+                                                      <i class="fa fa-calendar hitam2" aria-hidden="true"></i>
+                                                      <a title="TMT dan TAT Asuransi" class="pull-right-container">{{ item.pasienbpjs.cob.tglTMT }} s.d {{ item.pasienbpjs.cob.tglTAT }}</a>
+                                                    </li>
+                                                    <li class="list-group-item">
+                                                      <i class="fa fa-bank hitam2" aria-hidden="true"></i>
+                                                      <a title="Nama Badan Usaha" class="pull-right-container">-</a>
+                                                    </li>
+                                                </ul>
+                                            </div>
+                                        </md-tab-body>
+                                    </md-tab>
+                                    <md-tab id="tab3" ng-click="getHistoryPelayanan()">
+                                        <md-tab-label><i class="fa fa-list hitam" aria-hidden="true"></i></md-tab-label>
+                                        <md-tab-body>
+                                            <div class="md-padding">
+                                                <div class="row-lte">
+                                                    <div class="col-md-12" ng-show="listHistoryPelayanan.length == 0">
+                                                        <div class="skeleton"></div>
+                                                    </div>
+                                                    <div class="col-md-12" ng-show="listHistoryPelayanan.length > 0">
+                                                        <div class="list-group" style="height: 50vh; overflow: auto;">
+                                                            <a class="list-group-item"  ng-repeat="plyn in listHistoryPelayanan">
+                                                                <h5 class="list-group-item-heading">
+                                                                    <b><u>{{ plyn.noSep }}</u></b>
+                                                                </h5>
+                                                                <div>
+                                                                    <small>{{ plyn.namajnsPelayanan }}</small>
+                                                                    <p class="list-group-item-text">
+                                                                        <small></small>
+                                                                    </p>
+                                                                    <p class="list-group-item-text">
+                                                                        <small>{{ plyn.poli }}</small>
+                                                                    </p>
+                                                                    <p class="list-group-item-text">
+                                                                        <small> Tgl.SEP. {{ plyn.tglSep }}</small>
+                                                                    </p>
+                                                                    <p class="list-group-item-text">
+                                                                        <small>{{ plyn.noRujukan }}</small>
+                                                                    </p>
+                                                                    <p class="list-group-item-text">
+                                                                        <small>{{ plyn.diagnosa }}</small>
+                                                                    </p>
+                                                                    <p class="list-group-item-text">
+                                                                        <small>{{ plyn.ppkPelayanan }}</small>
+                                                                    </p>
+                                                                </div>
+                                                            </a>
+                                                        </div>
+                                                    </div>
+                                                    <div class="col-md-12">
+                                                        <button kendo-button style="width: 100%" class="primary">
+                                                            <i class="fa fa-cubes" style="display: contents;"></i>&nbsp; Histori
+                                                        </button>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </md-tab-body>
+                                    </md-tab>
+                                </md-tabs>
+                            </md-tabs>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-9">
+            <div class="row-lte">
+                <div class="col-md-12">
+                    <div class="card-lte card-outline card-primary">
+                        <div class="card-body">
+                            <div class="row-lte">
+                                <div class="col-md-12">
+                                    <div class="row-lte">
+                                        <div class="col-md-3" style="margin-top: 10px;text-align:right;">
+                                            <label>Pilih</label>
+                                        </div>
+                                        <div class="col-md-6" style="margin-top: 10px;">
+                                            <div style="margin-left: 5px; display: inline-block;" ng-repeat="stat in listPilih | orderBy:'id'">
+                                                <md-radio-group ng-model="item.pilih" ng-change="resetPilihForm()">
+                                                    <md-radio-button ng-value="stat" class="md-primary">{{stat.name}}
+                                                    </md-radio-button>
+                                                </md-radio-group>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-md-12" ng-if="isRujukanManual">
+                                    <div class="row-lte">
+                                        <div class="col-md-3" style="margin-top: 10px;text-align:right;">
+                                            <label>Pelayanan</label>
+                                        </div>
+                                        <div class="col-md-4">
+                                            <input kendo-combo-box
+                                                k-ng-model="item.pelayanan"
+                                                k-data-text-field="'name'"
+                                                k-filter="'contains'"
+                                                k-data-value-field="'id'"
+                                                k-auto-bind="false"
+                                                k-data-source="listPelayanan"
+                                                k-on-change="changePelayanan(item.pelayanan)" />
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-md-12">
+                                    <div class="row-lte">
+                                        <div class="col-md-3" style="margin-top: 10px;text-align:right;">
+                                            <label><small>(yyyy-mm-dd)</small> Tgl.Sep</label>
+                                        </div>
+                                        <div class="col-md-4">
+                                            <input style="width: 100%"
+                                                k-ng-model='item.tglSep'
+                                                kendo-date-picker
+                                                k-format="'yyyy-MM-dd'" />
+                                        </div>
+                                    </div>
+                                </div>
+                                <!-- <div class="col-md-12" ng-if="isRujukanManual">
+                                    <div class="row-lte">
+                                        <div class="col-md-3" style="margin-top: 10px;text-align:right;">
+                                            <label>PPK Asal Peserta</label>
+                                        </div>
+                                        <div class="col-md-6">
+                                            <input kendo-combo-box="combobox" tyle="width:100%"
+                                                k-ng-model="model.ppkAsalPeserta"
+                                                k-data-text-field="'nama'"
+                                                k-data-value-field="'kode'"
+                                                k-filter="'contains'"
+                                                k-auto-bind="false"
+                                                k-data-source="listPpkRujukan"
+                                                k-options="comboBoxOptionsAsalRujukan" />
+                                        </div>
+                                    </div>
+                                </div> -->
+                                <div class="col-md-12" ng-if="isRujukan">
+                                    <div class="row-lte">
+                                        <div class="col-md-3" style="margin-top: 10px;text-align:right;">
+                                            <label>Asal Rujukan</label>
+                                        </div>
+                                        <div class="col-md-4">
+                                            <input kendo-combo-box
+                                                k-ng-model="item.asalRujukan"
+                                                k-data-text-field="'name'"
+                                                k-filter="'contains'"
+                                                k-data-value-field="'id'"
+                                                k-auto-bind="false"
+                                                k-data-source="listAsalRujukan" />
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-md-12" ng-if="isRujukan">
+                                    <div class="row-lte">
+                                        <div class="col-md-3" style="margin-top: 10px;text-align:right;">
+                                            <label required>No.Rujukan</label>
+                                        </div>
+                                        <div class="col-md-5">
+                                            <input c-text-box type="input" filter="" class="k-textbox" ng-model="item.noRujukan" />
+                                        </div>
+                                        <div class="col-md-2" style="margin-top: 5px;">
+                                            <button class="k-button k-button-icontext k-primary k-grid-update" ng-click="popUpRujukan()" ng-hide="isSaves">
+                                                <i class="fa fa-list" aria-hidden="true" style="margin-top: 3px;"></i> &nbsp; List Rujukan
+                                            </button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-12" ng-if="formRawatJalan">
+                    <div class="card-lte card-outline card-primary">
+                        <div class="card-header">
+                            <div class="card-title">{{ dataSep.noSep }}</div>
+                            <div class="card-title" style="float: right;">Rawat Jalan</div>
+                        </div>
+                        <div class="card-body">
+                            <div class="row-lte">
+                                <div class="col-md-12">
+                                    <div class="row-lte">
+                                        <div class="col-md-3" style="margin-top: 10px;text-align:right;">
+                                            <label required>Sub/Spesialis</label>
+                                        </div>
+                                        <div class="col-md-2">
+                                            <div class="cekbox">
+                                                <input type="checkbox" class="k-checkbox" id="subSpesialis" ng-model="item.isEksekutif">
+                                                <label class="k-checkbox-label" for="subSpesialis">Eksekutif</label>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-4">
+                                            <input kendo-combo-box
+                                                k-ng-model="item.subSpesialis"
+                                                k-data-text-field="'namaruangan'"
+                                                k-filter="'contains'"
+                                                k-data-value-field="'id'"
+                                                k-auto-bind="false"
+                                                k-data-source="listRuanganPoli" />
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-md-12">
+                                    <div class="row-lte">
+                                        <div class="col-md-3" style="margin-top: 10px;text-align:right;">
+                                            <label required>DPJP yang Melayani</label>
+                                        </div>
+                                        <div class="col-md-6">
+                                            <input kendo-combo-box tyle="width:100%"
+                                                k-ng-model="item.dpjpMelayani"
+                                                k-data-text-field="'nama'"
+                                                k-data-value-field="'kode'"
+                                                k-filter="'contains'"
+                                                k-auto-bind="false"
+                                                k-data-source="listDPJP"
+                                                k-options="comboBoxOptionsDPJPMelayani" />
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-md-12">
+                                    <div class="row-lte">
+                                        <div class="col-md-3" style="margin-top: 10px;text-align:right;">
+                                            <label required>PPK Asal Rujukan</label>
+                                        </div>
+                                        <div class="col-md-6">
+                                            <input c-text-box type="hidden" filter="" class="k-textbox" ng-model="item.kodeppkAsalRujukan" />
+                                            <input c-text-box type="input" filter="" class="k-textbox" ng-model="item.ppkAsalRujukan" disabled />
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-md-12">
+                                    <div class="row-lte">
+                                        <div class="col-md-3" style="margin-top: 10px;text-align:right;">
+                                            <label><small>(yyyy-mm-dd)</small> Tgl.Rujukan</label>
+                                        </div>
+                                        <div class="col-md-3">
+                                            <input style="width: 100%"
+                                                k-ng-model='item.tglRujukan'
+                                                kendo-date-picker
+                                                k-format="'yyyy-MM-dd'" />
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-md-12">
+                                    <div class="row-lte">
+                                        <div class="col-md-3" style="margin-top: 10px;text-align:right;">
+                                            <label>No.Surat Kontrol/SKDP</label>
+                                        </div>
+                                        <div class="col-md-5">
+                                            <input c-text-box type="input" filter="" class="k-textbox" ng-model="item.noSurkon" />
+                                        </div>
+                                        <div class="col-md-1" style="margin-top: 5px;">
+                                            <button kendo-button style="width: 100%" class="primary" ng-click="cariSurkonSpri()">
+                                                <i class="fa fa-search" style="display: contents;"></i>
+                                            </button>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-md-12">
+                                    <div class="row-lte">
+                                        <div class="col-md-3" style="margin-top: 10px;text-align:right;">
+                                            <label>DPJP Pemberi Surat SKDP/SPRI</label>
+                                        </div>
+                                        <div class="col-md-6">
+                                            <input c-text-box type="hidden" filter="" class="k-textbox" ng-model="item.kodedpjpSurkon" disabled />
+                                            <input c-text-box type="input" filter="" class="k-textbox" ng-model="item.dpjpSurkon" disabled />
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-md-12">
+                                    <div class="row-lte">
+                                        <div class="col-md-3" style="margin-top: 10px;text-align:right;">
+                                            <label required>Diagnosa</label>
+                                        </div>
+                                        <div class="col-md-6">
+                                            <input kendo-combo-box
+                                                k-ng-model="item.diagnosa"
+                                                k-data-text-field="'nama'"
+                                                k-filter="'contains'"
+                                                k-data-value-field="'id'"
+                                                k-auto-bind="false"
+                                                k-data-source="sourceDiagnosa" />
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-md-12">
+                                    <div class="row-lte">
+                                        <div class="col-md-3" style="margin-top: 10px;text-align:right;">
+                                            <label required>No Telepon</label>
+                                        </div>
+                                        <div class="col-md-4">
+                                            <input c-text-box type="input" filter="" class="k-textbox" ng-model="item.noTelepon" />
+                                        </div>
+                                        <div class="col-md-2">
+                                            <div class="cekbox">
+                                                <input type="checkbox" class="k-checkbox" id="COB" ng-model="item.isCOB">
+                                                <label class="k-checkbox-label" for="COB">Peserta COB</label>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-md-12">
+                                    <div class="row-lte">
+                                        <div class="col-md-3" style="margin-top: 10px;text-align:right;">
+                                            <label>Catatan</label>
+                                        </div>
+                                        <div class="col-md-6">
+                                            <textarea ng-model="item.catatan" type="string" class="k-textbox" rows="3" style="width:100%; margin-top:5px"></textarea>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-md-12">
+                                    <div class="row-lte">
+                                        <div class="col-md-3" style="margin-top: 10px;text-align:right;">
+                                            <label required>Status Kecelakaan</label>
+                                        </div>
+                                        <div class="col-md-6">
+                                            <input kendo-combo-box
+                                                k-ng-model="item.statusKecelakaan"
+                                                k-data-text-field="'name'"
+                                                k-filter="'contains'"
+                                                k-data-value-field="'id'"
+                                                k-auto-bind="false"
+                                                k-data-source="listlakaLantas"
+                                                k-on-change="changeStatusKecelakaan(item.statusKecelakaan)" />
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-md-12" style="margin-top: 20px;" ng-if="lakaLantas">
+                                    <div class="row-lte">
+                                        <div class="col-md-3" style="margin-top: 10px;text-align:right;">
+                                            <label>Tanggal Kejadian</label>
+                                        </div>
+                                        <div class="col-md-3">
+                                            <input style="width: 100%"
+                                                k-ng-model='item.tglKejadian'
+                                                kendo-date-picker
+                                                k-format="'yyyy-MM-dd'" />
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-md-12" ng-if="lakaLantas">
+                                    <div class="row-lte">
+                                        <div class="col-md-3" style="margin-top: 10px;text-align:right;">
+                                            <label required>No. LP</label>
+                                        </div>
+                                        <div class="col-md-5">
+                                            <input c-text-box type="input" filter="" class="k-textbox" ng-model="item.noLP" />
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-md-12" ng-if="lakaLantas">
+                                    <div class="row-lte">
+                                        <div class="col-md-3" style="margin-top: 10px;text-align:right;">
+                                            <label>Lokasi</label>
+                                        </div>
+                                        <div class="col-md-5">
+                                            <input kendo-combo-box
+                                                k-ng-model="item.provinsi"
+                                                k-data-text-field="'nama'"
+                                                k-filter="'contains'"
+                                                k-data-value-field="'kode'"
+                                                k-auto-bind="false"
+                                                k-data-source="listPropinsi" 
+                                                k-on-change="getDataKabKota(item.provinsi)"/>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-md-12" ng-if="lakaLantas">
+                                    <div class="row-lte">
+                                        <div class="col-md-3" style="margin-top: 10px;text-align:right;">
+                                        </div>
+                                        <div class="col-md-5">
+                                            <input kendo-combo-box
+                                                k-ng-model="item.kabkota"
+                                                k-data-text-field="'nama'"
+                                                k-filter="'contains'"
+                                                k-data-value-field="'kode'"
+                                                k-auto-bind="false"
+                                                k-data-source="listKabupaten" 
+                                                k-on-change="getDataKecamatan(item.kabkota)"/>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-md-12" ng-if="lakaLantas">
+                                    <div class="row-lte">
+                                        <div class="col-md-3" style="margin-top: 10px;text-align:right;">
+                                        </div>
+                                        <div class="col-md-5">
+                                            <input kendo-combo-box
+                                                k-ng-model="item.kecamatan"
+                                                k-data-text-field="'nama'"
+                                                k-filter="'contains'"
+                                                k-data-value-field="'kode'"
+                                                k-auto-bind="false"
+                                                k-data-source="listKecamatan" />
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-md-12" ng-if="lakaLantas">
+                                    <div class="row-lte">
+                                        <div class="col-md-3" style="margin-top: 10px;text-align:right;">
+                                            <label>Keterangan Kejadian</label>
+                                        </div>
+                                        <div class="col-md-5">
+                                            <textarea ng-model="item.ketkejadian" type="string" class="k-textbox" rows="3" style="width:100%; margin-top:5px"></textarea>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-md-12">
+                                    <div class="row-lte">
+                                        <div class="col-md-3" style="margin-top: 10px;text-align:right;">
+                                            <label>Tujuan Kunjungan</label>
+                                        </div>
+                                        <div class="col-md-6">
+                                            <input kendo-combo-box
+                                                k-ng-model="item.tujuanKunj"
+                                                k-data-text-field="'name'"
+                                                k-filter="'contains'"
+                                                k-data-value-field="'id'"
+                                                k-auto-bind="false"
+                                                k-data-source="listTujuan"
+                                                k-on-change="changeTujuanKunjungan(item.tujuanKunj)" />
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-md-12" ng-if="isProsedur">
+                                    <div class="row-lte">
+                                        <div class="col-md-3" style="margin-top: 10px;text-align:right;">
+                                            <label>Prosedur</label>
+                                        </div>
+                                        <div class="col-md-6">
+                                            <input kendo-combo-box
+                                                k-ng-model="item.prosedur"
+                                                k-data-text-field="'name'"
+                                                k-filter="'contains'"
+                                                k-data-value-field="'id'"
+                                                k-auto-bind="false"
+                                                k-data-source="listFlag"
+                                                k-on-change="changeProsedur(item.prosedur)" />
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-md-12" ng-if="isProsedur">
+                                    <div class="row-lte">
+                                        <div class="col-md-3" style="margin-top: 10px;text-align:right;">
+                                            <label>Penunjang</label>
+                                        </div>
+                                        <div class="col-md-6">
+                                            <input kendo-combo-box
+                                                k-ng-model="item.penunjang"
+                                                k-data-text-field="'name'"
+                                                k-filter="'contains'"
+                                                k-data-value-field="'id'"
+                                                k-auto-bind="false"
+                                                k-data-source="listPenunjang" />
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-md-12" ng-if="!isProsedur">
+                                    <div class="row-lte">
+                                        <div class="col-md-3" style="margin-top: 10px;text-align:right;">
+                                            <label>Assesment</label>
+                                        </div>
+                                        <div class="col-md-6">
+                                            <input kendo-combo-box
+                                                k-ng-model="item.assesment"
+                                                k-data-text-field="'name'"
+                                                k-filter="'contains'"
+                                                k-data-value-field="'id'"
+                                                k-auto-bind="false"
+                                                k-data-source="listAsesmen" />
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-md-12" style="margin-top: 10px;">
+                                    <div class="row-lte">
+                                        <div class="col-md-3"></div>
+                                        <div class="col-md-9" ng-if="isUpdate">
+                                            <button kendo-button class="success" ng-click="saveAsuransi('RawatJalan')">
+                                                <i class="fa fa-floppy-o" aria-hidden="true" style="display: contents;"></i> &nbsp; Update 
+                                            </button>
+                                            <!-- <button kendo-button class="cancel" ng-click="hapusAsuransi()">
+                                                <i class="fa fa-trash" aria-hidden="true" style="display: contents;"></i> &nbsp; Hapus 
+                                            </button> -->
+                                            <button kendo-button class="primary" ng-click="cetakAsuransi()">
+                                                <i class="fa fa-print" aria-hidden="true" style="display: contents;"></i> &nbsp; Cetak
+                                            </button>
+                                            <button kendo-button class="primary" ng-click="iCare()">
+                                                <i class="fa fa-external-link" aria-hidden="true" style="display: contents;"></i> &nbsp; I-Care 
+                                            </button>
+                                            <!-- <button kendo-button class="primary" ng-click="rujukAsuransi()">
+                                                <i class="fa fa-stethoscope" aria-hidden="true" style="display: contents;"></i> &nbsp; Rujukan
+                                            </button> -->
+                                            <button kendo-button class="primary" is-back>
+                                                <i class="fa fa-long-arrow-left" aria-hidden="true" style="display: contents;"></i> &nbsp; Kembali
+                                            </button>
+                                        </div>
+                                        <div class="col-md-9" ng-if="!isUpdate">
+                                            <button kendo-button class="success" ng-click="saveAsuransi('RawatJalan')">
+                                                <i class="fa fa-floppy-o" aria-hidden="true" style="display: contents;"></i> &nbsp; Simpan 
+                                            </button>
+                                            <button kendo-button class="primary" is-back>
+                                                <i class="fa fa-long-arrow-left" aria-hidden="true" style="display: contents;"></i> &nbsp; Kembali
+                                            </button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-12" ng-if="formRawatInap">
+                    <div class="card-lte card-outline card-primary">
+                        <div class="card-header">
+                            <div class="card-title">{{ dataSep.noSep }}</div>
+                            <div class="card-title" style="float: right;">Rawat Inap</div>
+                        </div>
+                        <div class="card-body">
+                            <div class="row-lte">
+                                <div class="col-md-12">
+                                    <div class="row-lte">
+                                        <div class="col-md-3" style="margin-top: 10px;text-align:right;">
+                                            <label>Asal Rujukan</label>
+                                        </div>
+                                        <div class="col-md-6">
+                                            <input kendo-combo-box
+                                                k-ng-model="item.asalRujukan"
+                                                k-data-text-field="'name'"
+                                                k-filter="'contains'"
+                                                k-data-value-field="'id'"
+                                                k-auto-bind="false"
+                                                k-data-source="listAsalRujukan" disabled />
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-md-12">
+                                    <div class="row-lte">
+                                        <div class="col-md-3" style="margin-top: 10px;text-align:right;">
+                                            <label required>PPK Asal Rujukan</label>
+                                        </div>
+                                        <div class="col-md-6">
+                                            <input c-text-box type="hidden" filter="" class="k-textbox" ng-model="item.kodeppkAsalRujukan" />
+                                            <input c-text-box type="input" filter="" class="k-textbox" ng-model="item.ppkAsalRujukan" disabled />
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-md-12">
+                                    <div class="row-lte">
+                                        <div class="col-md-3" style="margin-top: 10px;text-align:right;">
+                                            <label><small>(yyyy-mm-dd)</small> Tgl.Rujukan</label>
+                                        </div>
+                                        <div class="col-md-3">
+                                            <input style="width: 100%"
+                                                k-ng-model='item.tglRujukan'
+                                                kendo-date-picker
+                                                k-format="'yyyy-MM-dd'" />
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-md-12">
+                                    <div class="row-lte">
+                                        <div class="col-md-3" style="margin-top: 10px;text-align:right;">
+                                            <label required>No. Rujukan</label>
+                                        </div>
+                                        <div class="col-md-6">
+                                            <input c-text-box type="input" filter="" class="k-textbox" ng-model="item.noRujukan" />
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-md-12">
+                                    <div class="row-lte">
+                                        <div class="col-md-3" style="margin-top: 10px;text-align:right;">
+                                            <label required>No.SPRI</label>
+                                        </div>
+                                        <div class="col-md-5">
+                                            <input c-text-box type="input" filter="" class="k-textbox" ng-model="item.noSurkon" />
+                                        </div>
+                                        <div class="col-md-1" style="margin-top: 5px;">
+                                            <button kendo-button style="width: 100%" class="primary" ng-click="cariSurkonSpri()">
+                                                <i class="fa fa-search" style="display: contents;"></i>
+                                            </button>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-md-12">
+                                    <div class="row-lte">
+                                        <div class="col-md-3" style="margin-top: 10px;text-align:right;">
+                                            <label required>DPJP Pemberi Surat SKDP/SPRI</label>
+                                        </div>
+                                        <div class="col-md-6">
+                                            <input c-text-box type="hidden" filter="" class="k-textbox" ng-model="item.kodedpjpSurkon" disabled />
+                                            <input c-text-box type="input" filter="" class="k-textbox" ng-model="item.dpjpSurkon" disabled />
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-md-12">
+                                    <div class="row-lte">
+                                        <div class="col-md-3" style="margin-top: 10px;text-align:right;">
+                                            <label>Kelas Rawat</label>
+                                        </div>
+                                        <div class="col-md-4">
+                                            <input kendo-combo-box
+                                                k-ng-model="item.kelasDitanggung"
+                                                k-data-text-field="'namakelas'"
+                                                k-filter="'contains'"
+                                                k-data-value-field="'id'"
+                                                k-auto-bind="false"
+                                                k-data-source="sourceKelas" />
+                                        </div>
+                                        <div class="col-md-2">
+                                            <div class="cekbox">
+                                                <input type="checkbox" class="k-checkbox" id="isNaikKelas" ng-model="item.isNaikKelas" ng-click="checkNaikKelas(item.isNaikKelas)">
+                                                <label class="k-checkbox-label" for="isNaikKelas">Naik Kelas</label>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-md-12">
+                                    <div class="row-lte">
+                                        <div class="col-md-3"></div>
+                                        <div class="col-md-6">
+                                            <label for="notes" class="label-danger" style="font-weight: bold;">Ketentuan kenaikan kelas dikecualikan untuk Peserta kelas 3 (Permenkes 3/2023)</label>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-md-12" style="margin-top: 10px;" ng-if="naikKelas">
+                                    <div class="row-lte">
+                                        <div class="col-md-3" style="margin-top: 10px;text-align:right;">
+                                            <label>Kelas Rawat Inap</label>
+                                        </div>
+                                        <div class="col-md-4">
+                                            <input kendo-combo-box
+                                                k-ng-model="item.naikKelas"
+                                                k-data-text-field="'namakelas'"
+                                                k-filter="'contains'"
+                                                k-data-value-field="'id'"
+                                                k-auto-bind="false"
+                                                k-data-source="sourceKelas" />
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-md-12" ng-if="naikKelas">
+                                    <div class="row-lte">
+                                        <div class="col-md-3" style="margin-top: 10px;text-align:right;">
+                                            <label>Pembiayaan</label>
+                                        </div>
+                                        <div class="col-md-4">
+                                            <input kendo-combo-box
+                                                k-ng-model="item.pembiayaan"
+                                                k-data-text-field="'nama'"
+                                                k-filter="'contains'"
+                                                k-data-value-field="'id'"
+                                                k-auto-bind="false"
+                                                k-data-source="listPembiaya" />
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-md-12" style="margin-bottom: 10px;" ng-if="naikKelas">
+                                    <div class="row-lte">
+                                        <div class="col-md-3" style="margin-top: 10px;text-align:right;">
+                                            <label required>Penanggung Jawab</label>
+                                        </div>
+                                        <div class="col-md-6">
+                                            <textarea ng-model="item.penanggungJawab" type="string" class="k-textbox" rows="3" style="width:100%; margin-top:5px" placeholder="Jika Pembiayaan Oleh [Pemberi Kerja] atau [Asuransi Kesehatan Tambahan]"></textarea>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-md-12">
+                                    <div class="row-lte">
+                                        <div class="col-md-3" style="margin-top: 10px;text-align:right;">
+                                            <label required>Diagnosa</label>
+                                        </div>
+                                        <div class="col-md-6">
+                                            <input kendo-combo-box
+                                                k-ng-model="item.diagnosa"
+                                                k-data-text-field="'nama'"
+                                                k-filter="'contains'"
+                                                k-data-value-field="'id'"
+                                                k-auto-bind="false"
+                                                k-data-source="sourceDiagnosa" />
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-md-12">
+                                    <div class="row-lte">
+                                        <div class="col-md-3" style="margin-top: 10px;text-align:right;">
+                                            <label required>No Telepon</label>
+                                        </div>
+                                        <div class="col-md-4">
+                                            <input c-text-box type="input" filter="" class="k-textbox" ng-model="item.noTelepon" />
+                                        </div>
+                                        <div class="col-md-2">
+                                            <div class="cekbox">
+                                                <input type="checkbox" class="k-checkbox" id="COB" ng-model="item.isCOB">
+                                                <label class="k-checkbox-label" for="COB">Peserta COB</label>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-md-12">
+                                    <div class="row-lte">
+                                        <div class="col-md-3" style="margin-top: 10px;text-align:right;">
+                                            <label>Catatan</label>
+                                        </div>
+                                        <div class="col-md-6">
+                                            <textarea ng-model="item.catatan" type="string" class="k-textbox" rows="3" style="width:100%; margin-top:5px"></textarea>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-md-12">
+                                    <div class="row-lte">
+                                        <div class="col-md-3" style="margin-top: 10px;text-align:right;">
+                                            <label>Katarak</label>
+                                        </div>
+                                        <div class="col-md-6">
+                                            <div class="cekbox">
+                                                <input type="checkbox" class="k-checkbox" id="isKatarak" ng-model="item.isKatarak">
+                                                <label class="k-checkbox-label" for="isKatarak">Cetang Katarak ✔, Jika Peserta Tersebut Mendapatkan Surat Perintah Operasi katarak</label>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-md-12">
+                                    <div class="row-lte">
+                                        <div class="col-md-3" style="margin-top: 10px;text-align:right;">
+                                            <label required>Status Kecelakaan</label>
+                                        </div>
+                                        <div class="col-md-6">
+                                            <input kendo-combo-box
+                                                k-ng-model="item.statusKecelakaan"
+                                                k-data-text-field="'name'"
+                                                k-filter="'contains'"
+                                                k-data-value-field="'id'"
+                                                k-auto-bind="false"
+                                                k-data-source="listlakaLantas"
+                                                k-on-change="changeStatusKecelakaan(item.statusKecelakaan)" />
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-md-12" style="margin-top: 20px;" ng-if="lakaLantas">
+                                    <div class="row-lte">
+                                        <div class="col-md-3" style="margin-top: 10px;text-align:right;">
+                                            <label>Tanggal Kejadian</label>
+                                        </div>
+                                        <div class="col-md-3">
+                                            <input style="width: 100%"
+                                                k-ng-model='item.tglKejadian'
+                                                kendo-date-picker
+                                                k-format="'yyyy-MM-dd'" />
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-md-12" ng-if="lakaLantas">
+                                    <div class="row-lte">
+                                        <div class="col-md-3" style="margin-top: 10px;text-align:right;">
+                                            <label required>No. LP</label>
+                                        </div>
+                                        <div class="col-md-5">
+                                            <input c-text-box type="input" filter="" class="k-textbox" ng-model="item.noLP" />
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-md-12" ng-if="lakaLantas">
+                                    <div class="row-lte">
+                                        <div class="col-md-3" style="margin-top: 10px;text-align:right;">
+                                            <label>Lokasi</label>
+                                        </div>
+                                        <div class="col-md-5">
+                                            <input kendo-combo-box
+                                                k-ng-model="item.provinsi"
+                                                k-data-text-field="'nama'"
+                                                k-filter="'contains'"
+                                                k-data-value-field="'kode'"
+                                                k-auto-bind="false"
+                                                k-data-source="listPropinsi" 
+                                                k-on-change="getDataKabKota(item.provinsi)"/>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-md-12" ng-if="lakaLantas">
+                                    <div class="row-lte">
+                                        <div class="col-md-3" style="margin-top: 10px;text-align:right;">
+                                        </div>
+                                        <div class="col-md-5">
+                                            <input kendo-combo-box
+                                                k-ng-model="item.kabkota"
+                                                k-data-text-field="'nama'"
+                                                k-filter="'contains'"
+                                                k-data-value-field="'kode'"
+                                                k-auto-bind="false"
+                                                k-data-source="listKabupaten" 
+                                                k-on-change="getDataKecamatan(item.kabkota)"/>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-md-12" ng-if="lakaLantas">
+                                    <div class="row-lte">
+                                        <div class="col-md-3" style="margin-top: 10px;text-align:right;">
+                                        </div>
+                                        <div class="col-md-5">
+                                            <input kendo-combo-box
+                                                k-ng-model="item.kecamatan"
+                                                k-data-text-field="'nama'"
+                                                k-filter="'contains'"
+                                                k-data-value-field="'kode'"
+                                                k-auto-bind="false"
+                                                k-data-source="listKecamatan" />
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-md-12" ng-if="lakaLantas">
+                                    <div class="row-lte">
+                                        <div class="col-md-3" style="margin-top: 10px;text-align:right;">
+                                            <label>Keterangan Kejadian</label>
+                                        </div>
+                                        <div class="col-md-5">
+                                            <textarea ng-model="item.ketkejadian" type="string" class="k-textbox" rows="3" style="width:100%; margin-top:5px"></textarea>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-md-12" style="margin-top: 10px;">
+                                    <div class="row-lte">
+                                        <div class="col-md-3"></div>
+                                        <div class="col-md-9" ng-if="isUpdate">
+                                            <button kendo-button class="success" ng-click="saveAsuransi('RawatInap')">
+                                                <i class="fa fa-floppy-o" aria-hidden="true" style="display: contents;"></i> &nbsp; Update 
+                                            </button>
+                                            <!-- <button kendo-button class="cancel" ng-click="hapusAsuransi()">
+                                                <i class="fa fa-trash" aria-hidden="true" style="display: contents;"></i> &nbsp; Hapus 
+                                            </button> -->
+                                            <button kendo-button class="primary" ng-click="cetakAsuransi()">
+                                                <i class="fa fa-print" aria-hidden="true" style="display: contents;"></i> &nbsp; Cetak
+                                            </button>
+                                            <button kendo-button class="primary" ng-click="iCare()">
+                                                <i class="fa fa-external-link" aria-hidden="true" style="display: contents;"></i> &nbsp; I-Care 
+                                            </button>
+                                            <!-- <button kendo-button class="primary" ng-click="rujukAsuransi()">
+                                                <i class="fa fa-stethoscope" aria-hidden="true" style="display: contents;"></i> &nbsp; Rujukan
+                                            </button> -->
+                                            <button kendo-button class="primary" is-back>
+                                                <i class="fa fa-long-arrow-left" aria-hidden="true" style="display: contents;"></i> &nbsp; Kembali
+                                            </button>
+                                        </div>
+                                        <div class="col-md-9" ng-if="!isUpdate">
+                                            <button kendo-button class="success" ng-click="saveAsuransi('RawatInap')">
+                                                <i class="fa fa-floppy-o" aria-hidden="true" style="display: contents;"></i> &nbsp; Simpan 
+                                            </button>
+                                            <button kendo-button class="primary" is-back>
+                                                <i class="fa fa-long-arrow-left" aria-hidden="true" style="display: contents;"></i> &nbsp; Kembali
+                                            </button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-12" ng-if="formIgd">
+                    <div class="card-lte card-outline card-primary">
+                        <div class="card-header">
+                            <div class="card-title">{{ dataSep.noSep }}</div>
+                            <div class="card-title" style="float: right;">Rawat Jalan</div>
+                        </div>
+                        <div class="card-body">
+                            <div class="row-lte">
+                                <div class="col-md-12">
+                                    <div class="row-lte">
+                                        <div class="col-md-3" style="margin-top: 10px;text-align:right;">
+                                            <label required>Sub/Spesialis</label>
+                                        </div>
+                                        <div class="col-md-6">
+                                            <input kendo-combo-box
+                                                k-ng-model="item.subSpesialis"
+                                                k-data-text-field="'namaruangan'"
+                                                k-filter="'contains'"
+                                                k-data-value-field="'id'"
+                                                k-auto-bind="false"
+                                                k-data-source="listRuanganIGD" />
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-md-12">
+                                    <div class="row-lte">
+                                        <div class="col-md-3" style="margin-top: 10px;text-align:right;">
+                                            <label required>DPJP yang Melayani</label>
+                                        </div>
+                                        <div class="col-md-6">
+                                            <input kendo-combo-box tyle="width:100%"
+                                                k-ng-model="item.dpjpMelayani"
+                                                k-data-text-field="'nama'"
+                                                k-data-value-field="'kode'"
+                                                k-filter="'contains'"
+                                                k-auto-bind="false"
+                                                k-data-source="listDPJP"
+                                                k-options="comboBoxOptionsDPJPMelayani" />
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-md-12">
+                                    <div class="row-lte">
+                                        <div class="col-md-3" style="margin-top: 10px;text-align:right;">
+                                            <label required>Diagnosa</label>
+                                        </div>
+                                        <div class="col-md-6">
+                                            <input kendo-combo-box
+                                                k-ng-model="item.diagnosa"
+                                                k-data-text-field="'nama'"
+                                                k-filter="'contains'"
+                                                k-data-value-field="'id'"
+                                                k-auto-bind="false"
+                                                k-data-source="sourceDiagnosa" />
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-md-12">
+                                    <div class="row-lte">
+                                        <div class="col-md-3" style="margin-top: 10px;text-align:right;">
+                                            <label required>No Telepon</label>
+                                        </div>
+                                        <div class="col-md-4">
+                                            <input c-text-box type="input" filter="" class="k-textbox" ng-model="item.noTelepon" />
+                                        </div>
+                                        <div class="col-md-2">
+                                            <div class="cekbox">
+                                                <input type="checkbox" class="k-checkbox" id="COB" ng-model="item.isCOB">
+                                                <label class="k-checkbox-label" for="COB">Peserta COB</label>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-md-12">
+                                    <div class="row-lte">
+                                        <div class="col-md-3" style="margin-top: 10px;text-align:right;">
+                                            <label>Catatan</label>
+                                        </div>
+                                        <div class="col-md-6">
+                                            <textarea ng-model="item.catatan" type="string" class="k-textbox" rows="3" style="width:100%; margin-top:5px"></textarea>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-md-12">
+                                    <div class="row-lte">
+                                        <div class="col-md-3" style="margin-top: 10px;text-align:right;">
+                                            <label required>Status Kecelakaan</label>
+                                        </div>
+                                        <div class="col-md-6">
+                                            <input kendo-combo-box
+                                                k-ng-model="item.statusKecelakaan"
+                                                k-data-text-field="'name'"
+                                                k-filter="'contains'"
+                                                k-data-value-field="'id'"
+                                                k-auto-bind="false"
+                                                k-data-source="listlakaLantas"
+                                                k-on-change="changeStatusKecelakaan(item.statusKecelakaan)" />
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-md-12" style="margin-top: 20px;" ng-if="lakaLantas">
+                                    <div class="row-lte">
+                                        <div class="col-md-3" style="margin-top: 10px;text-align:right;">
+                                            <label>Tanggal Kejadian</label>
+                                        </div>
+                                        <div class="col-md-3">
+                                            <input style="width: 100%"
+                                                k-ng-model='item.tglKejadian'
+                                                kendo-date-picker
+                                                k-format="'yyyy-MM-dd'" />
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-md-12" ng-if="lakaLantas">
+                                    <div class="row-lte">
+                                        <div class="col-md-3" style="margin-top: 10px;text-align:right;">
+                                            <label required>No. LP</label>
+                                        </div>
+                                        <div class="col-md-5">
+                                            <input c-text-box type="input" filter="" class="k-textbox" ng-model="item.noLP" />
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-md-12" ng-if="lakaLantas">
+                                    <div class="row-lte">
+                                        <div class="col-md-3" style="margin-top: 10px;text-align:right;">
+                                            <label>Lokasi</label>
+                                        </div>
+                                        <div class="col-md-5">
+                                            <input kendo-combo-box
+                                                k-ng-model="item.provinsi"
+                                                k-data-text-field="'nama'"
+                                                k-filter="'contains'"
+                                                k-data-value-field="'kode'"
+                                                k-auto-bind="false"
+                                                k-data-source="listPropinsi" 
+                                                k-on-change="getDataKabKota(item.provinsi)"/>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-md-12" ng-if="lakaLantas">
+                                    <div class="row-lte">
+                                        <div class="col-md-3" style="margin-top: 10px;text-align:right;">
+                                        </div>
+                                        <div class="col-md-5">
+                                            <input kendo-combo-box
+                                                k-ng-model="item.kabkota"
+                                                k-data-text-field="'nama'"
+                                                k-filter="'contains'"
+                                                k-data-value-field="'kode'"
+                                                k-auto-bind="false"
+                                                k-data-source="listKabupaten" 
+                                                k-on-change="getDataKecamatan(item.kabkota)"/>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-md-12" ng-if="lakaLantas">
+                                    <div class="row-lte">
+                                        <div class="col-md-3" style="margin-top: 10px;text-align:right;">
+                                        </div>
+                                        <div class="col-md-5">
+                                            <input kendo-combo-box
+                                                k-ng-model="item.kecamatan"
+                                                k-data-text-field="'nama'"
+                                                k-filter="'contains'"
+                                                k-data-value-field="'kode'"
+                                                k-auto-bind="false"
+                                                k-data-source="listKecamatan" />
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-md-12" ng-if="lakaLantas">
+                                    <div class="row-lte">
+                                        <div class="col-md-3" style="margin-top: 10px;text-align:right;">
+                                            <label>Keterangan Kejadian</label>
+                                        </div>
+                                        <div class="col-md-5">
+                                            <textarea ng-model="item.ketkejadian" type="string" class="k-textbox" rows="3" style="width:100%; margin-top:5px"></textarea>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-md-12" style="margin-top: 10px;">
+                                    <div class="row-lte">
+                                        <div class="col-md-3"></div>
+                                        <div class="col-md-9" ng-if="isUpdate">
+                                            <button kendo-button class="success" ng-click="saveAsuransi('Igd')">
+                                                <i class="fa fa-floppy-o" aria-hidden="true" style="display: contents;"></i> &nbsp; Update 
+                                            </button>
+                                            <!-- <button kendo-button class="cancel" ng-click="hapusAsuransi()">
+                                                <i class="fa fa-trash" aria-hidden="true" style="display: contents;"></i> &nbsp; Hapus 
+                                            </button> -->
+                                            <button kendo-button class="primary" ng-click="cetakAsuransi()">
+                                                <i class="fa fa-print" aria-hidden="true" style="display: contents;"></i> &nbsp; Cetak
+                                            </button>
+                                            <button kendo-button class="primary" ng-click="iCare()">
+                                                <i class="fa fa-external-link" aria-hidden="true" style="display: contents;"></i> &nbsp; I-Care 
+                                            </button>
+                                            <!-- <button kendo-button class="primary" ng-click="rujukAsuransi()">
+                                                <i class="fa fa-stethoscope" aria-hidden="true" style="display: contents;"></i> &nbsp; Rujukan
+                                            </button> -->
+                                            <button kendo-button class="primary" is-back>
+                                                <i class="fa fa-long-arrow-left" aria-hidden="true" style="display: contents;"></i> &nbsp; Kembali
+                                            </button>
+                                        </div>
+                                        <div class="col-md-9" ng-if="!isUpdate">
+                                            <button kendo-button class="success" ng-click="saveAsuransi('Igd')">
+                                                <i class="fa fa-floppy-o" aria-hidden="true" style="display: contents;"></i> &nbsp; Simpan 
+                                            </button>
+                                            <button kendo-button class="primary" is-back>
+                                                <i class="fa fa-long-arrow-left" aria-hidden="true" style="display: contents;"></i> &nbsp; Kembali
+                                            </button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-12" ng-if="formPascaRI">
+                    <div class="card-lte card-outline card-primary">
+                        <div class="card-header">
+                            <div class="card-title">{{ dataSep.noSep }}</div>
+                            <div class="card-title" style="float: right;">Rawat Jalan</div>
+                        </div>
+                        <div class="card-body">
+                            <div class="row-lte">
+                                <div class="col-md-12">
+                                    <div class="row-lte">
+                                        <div class="col-md-3" style="margin-top: 10px;text-align:right;">
+                                            <label required>Sub/Spesialis</label>
+                                        </div>
+                                        <div class="col-md-2">
+                                            <div class="cekbox">
+                                                <input type="checkbox" class="k-checkbox" id="subSpesialis" ng-model="item.isEksekutif">
+                                                <label class="k-checkbox-label" for="subSpesialis">Eksekutif</label>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-4">
+                                            <input kendo-combo-box
+                                                k-ng-model="item.subSpesialis"
+                                                k-data-text-field="'namaruangan'"
+                                                k-filter="'contains'"
+                                                k-data-value-field="'id'"
+                                                k-auto-bind="false"
+                                                k-data-source="listRuanganPoli" />
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-md-12">
+                                    <div class="row-lte">
+                                        <div class="col-md-3" style="margin-top: 10px;text-align:right;">
+                                            <label required>DPJP yang Melayani</label>
+                                        </div>
+                                        <div class="col-md-6">
+                                            <input kendo-combo-box tyle="width:100%"
+                                                k-ng-model="item.dpjpMelayani"
+                                                k-data-text-field="'nama'"
+                                                k-data-value-field="'kode'"
+                                                k-filter="'contains'"
+                                                k-auto-bind="false"
+                                                k-data-source="listDPJP"
+                                                k-options="comboBoxOptionsDPJPMelayani" />
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-md-12">
+                                    <div class="row-lte">
+                                        <div class="col-md-3" style="margin-top: 10px;text-align:right;">
+                                            <label>Asal Rujukan</label>
+                                        </div>
+                                        <div class="col-md-6">
+                                            <input kendo-combo-box
+                                                k-ng-model="item.asalRujukan"
+                                                k-data-text-field="'name'"
+                                                k-filter="'contains'"
+                                                k-data-value-field="'id'"
+                                                k-auto-bind="false"
+                                                k-data-source="listAsalRujukan" disabled />
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-md-12">
+                                    <div class="row-lte">
+                                        <div class="col-md-3" style="margin-top: 10px;text-align:right;">
+                                            <label required>PPK Asal Rujukan</label>
+                                        </div>
+                                        <div class="col-md-6">
+                                            <input c-text-box type="hidden" filter="" class="k-textbox" ng-model="item.kodeppkAsalRujukan" />
+                                            <input c-text-box type="input" filter="" class="k-textbox" ng-model="item.ppkAsalRujukan" disabled />
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-md-12">
+                                    <div class="row-lte">
+                                        <div class="col-md-3" style="margin-top: 10px;text-align:right;">
+                                            <label><small>(yyyy-mm-dd)</small> Tgl.Rujukan</label>
+                                        </div>
+                                        <div class="col-md-3">
+                                            <input style="width: 100%"
+                                                k-ng-model='item.tglRujukan'
+                                                kendo-date-picker
+                                                k-format="'yyyy-MM-dd'" />
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-md-12">
+                                    <div class="row-lte">
+                                        <div class="col-md-3" style="margin-top: 10px;text-align:right;">
+                                            <label required>No. Rujukan</label>
+                                        </div>
+                                        <div class="col-md-6">
+                                            <input c-text-box type="input" filter="" class="k-textbox" ng-model="item.noRujukan" />
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-md-12">
+                                    <div class="row-lte">
+                                        <div class="col-md-3" style="margin-top: 10px;text-align:right;">
+                                            <label>No.Surat Kontrol/SKDP</label>
+                                        </div>
+                                        <div class="col-md-5">
+                                            <input c-text-box type="input" filter="" class="k-textbox" ng-model="item.noSurkon" />
+                                        </div>
+                                        <div class="col-md-1" style="margin-top: 5px;">
+                                            <button kendo-button style="width: 100%" class="primary" ng-click="cariSurkonSpri()">
+                                                <i class="fa fa-search" style="display: contents;"></i>
+                                            </button>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-md-12">
+                                    <div class="row-lte">
+                                        <div class="col-md-3" style="margin-top: 10px;text-align:right;">
+                                            <label>DPJP Pemberi Surat SKDP/SPRI</label>
+                                        </div>
+                                        <div class="col-md-6">
+                                            <input c-text-box type="hidden" filter="" class="k-textbox" ng-model="item.kodedpjpSurkon" disabled />
+                                            <input c-text-box type="input" filter="" class="k-textbox" ng-model="item.dpjpSurkon" disabled />
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-md-12">
+                                    <div class="row-lte">
+                                        <div class="col-md-3" style="margin-top: 10px;text-align:right;">
+                                            <label required>Diagnosa</label>
+                                        </div>
+                                        <div class="col-md-6">
+                                            <input kendo-combo-box
+                                                k-ng-model="item.diagnosa"
+                                                k-data-text-field="'nama'"
+                                                k-filter="'contains'"
+                                                k-data-value-field="'id'"
+                                                k-auto-bind="false"
+                                                k-data-source="sourceDiagnosa" />
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-md-12">
+                                    <div class="row-lte">
+                                        <div class="col-md-3" style="margin-top: 10px;text-align:right;">
+                                            <label required>No Telepon</label>
+                                        </div>
+                                        <div class="col-md-4">
+                                            <input c-text-box type="input" filter="" class="k-textbox" ng-model="item.noTelepon" />
+                                        </div>
+                                        <div class="col-md-2">
+                                            <div class="cekbox">
+                                                <input type="checkbox" class="k-checkbox" id="COB" ng-model="item.isCOB">
+                                                <label class="k-checkbox-label" for="COB">Peserta COB</label>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-md-12">
+                                    <div class="row-lte">
+                                        <div class="col-md-3" style="margin-top: 10px;text-align:right;">
+                                            <label>Catatan</label>
+                                        </div>
+                                        <div class="col-md-6">
+                                            <textarea ng-model="item.catatan" type="string" class="k-textbox" rows="3" style="width:100%; margin-top:5px"></textarea>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-md-12">
+                                    <div class="row-lte">
+                                        <div class="col-md-3" style="margin-top: 10px;text-align:right;">
+                                            <label required>Status Kecelakaan</label>
+                                        </div>
+                                        <div class="col-md-6">
+                                            <input kendo-combo-box
+                                                k-ng-model="item.statusKecelakaan"
+                                                k-data-text-field="'name'"
+                                                k-filter="'contains'"
+                                                k-data-value-field="'id'"
+                                                k-auto-bind="false"
+                                                k-data-source="listlakaLantas"
+                                                k-on-change="changeStatusKecelakaan(item.statusKecelakaan)" />
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-md-12" style="margin-top: 20px;" ng-if="lakaLantas">
+                                    <div class="row-lte">
+                                        <div class="col-md-3" style="margin-top: 10px;text-align:right;">
+                                            <label>Tanggal Kejadian</label>
+                                        </div>
+                                        <div class="col-md-3">
+                                            <input style="width: 100%"
+                                                k-ng-model='item.tglKejadian'
+                                                kendo-date-picker
+                                                k-format="'yyyy-MM-dd'" />
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-md-12" ng-if="lakaLantas">
+                                    <div class="row-lte">
+                                        <div class="col-md-3" style="margin-top: 10px;text-align:right;">
+                                            <label required>No. LP</label>
+                                        </div>
+                                        <div class="col-md-5">
+                                            <input c-text-box type="input" filter="" class="k-textbox" ng-model="item.noLP" />
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-md-12" ng-if="lakaLantas">
+                                    <div class="row-lte">
+                                        <div class="col-md-3" style="margin-top: 10px;text-align:right;">
+                                            <label>Lokasi</label>
+                                        </div>
+                                        <div class="col-md-5">
+                                            <input kendo-combo-box
+                                                k-ng-model="item.provinsi"
+                                                k-data-text-field="'nama'"
+                                                k-filter="'contains'"
+                                                k-data-value-field="'kode'"
+                                                k-auto-bind="false"
+                                                k-data-source="listPropinsi" 
+                                                k-on-change="getDataKabKota(item.provinsi)"/>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-md-12" ng-if="lakaLantas">
+                                    <div class="row-lte">
+                                        <div class="col-md-3" style="margin-top: 10px;text-align:right;">
+                                        </div>
+                                        <div class="col-md-5">
+                                            <input kendo-combo-box
+                                                k-ng-model="item.kabkota"
+                                                k-data-text-field="'nama'"
+                                                k-filter="'contains'"
+                                                k-data-value-field="'kode'"
+                                                k-auto-bind="false"
+                                                k-data-source="listKabupaten" 
+                                                k-on-change="getDataKecamatan(item.kabkota)"/>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-md-12" ng-if="lakaLantas">
+                                    <div class="row-lte">
+                                        <div class="col-md-3" style="margin-top: 10px;text-align:right;">
+                                        </div>
+                                        <div class="col-md-5">
+                                            <input kendo-combo-box
+                                                k-ng-model="item.kecamatan"
+                                                k-data-text-field="'nama'"
+                                                k-filter="'contains'"
+                                                k-data-value-field="'kode'"
+                                                k-auto-bind="false"
+                                                k-data-source="listKecamatan" />
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-md-12" ng-if="lakaLantas">
+                                    <div class="row-lte">
+                                        <div class="col-md-3" style="margin-top: 10px;text-align:right;">
+                                            <label>Keterangan Kejadian</label>
+                                        </div>
+                                        <div class="col-md-5">
+                                            <textarea ng-model="item.ketkejadian" type="string" class="k-textbox" rows="3" style="width:100%; margin-top:5px"></textarea>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-md-12">
+                                    <div class="row-lte">
+                                        <div class="col-md-3" style="margin-top: 10px;text-align:right;">
+                                            <label>Tujuan Kunjungan</label>
+                                        </div>
+                                        <div class="col-md-6">
+                                            <input kendo-combo-box
+                                                k-ng-model="item.tujuanKunj"
+                                                k-data-text-field="'name'"
+                                                k-filter="'contains'"
+                                                k-data-value-field="'id'"
+                                                k-auto-bind="false"
+                                                k-data-source="listTujuan"
+                                                k-on-change="changeTujuanKunjungan(item.tujuanKunj)" />
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-md-12" ng-if="isProsedur">
+                                    <div class="row-lte">
+                                        <div class="col-md-3" style="margin-top: 10px;text-align:right;">
+                                            <label>Prosedur</label>
+                                        </div>
+                                        <div class="col-md-6">
+                                            <input kendo-combo-box
+                                                k-ng-model="item.prosedur"
+                                                k-data-text-field="'name'"
+                                                k-filter="'contains'"
+                                                k-data-value-field="'id'"
+                                                k-auto-bind="false"
+                                                k-data-source="listFlag"
+                                                k-on-change="changeProsedur(item.prosedur)" />
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-md-12" ng-if="isProsedur">
+                                    <div class="row-lte">
+                                        <div class="col-md-3" style="margin-top: 10px;text-align:right;">
+                                            <label>Penunjang</label>
+                                        </div>
+                                        <div class="col-md-6">
+                                            <input kendo-combo-box
+                                                k-ng-model="item.penunjang"
+                                                k-data-text-field="'name'"
+                                                k-filter="'contains'"
+                                                k-data-value-field="'id'"
+                                                k-auto-bind="false"
+                                                k-data-source="listPenunjang" />
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-md-12" ng-if="!isProsedur">
+                                    <div class="row-lte">
+                                        <div class="col-md-3" style="margin-top: 10px;text-align:right;">
+                                            <label>Assesment</label>
+                                        </div>
+                                        <div class="col-md-6">
+                                            <input kendo-combo-box
+                                                k-ng-model="item.assesment"
+                                                k-data-text-field="'name'"
+                                                k-filter="'contains'"
+                                                k-data-value-field="'id'"
+                                                k-auto-bind="false"
+                                                k-data-source="listAsesmen" />
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-md-12" style="margin-top: 10px;">
+                                    <div class="row-lte">
+                                        <div class="col-md-3"></div>
+                                        <div class="col-md-9" ng-if="isUpdate">
+                                            <button kendo-button class="success" ng-click="saveAsuransi('PascaRI')">
+                                                <i class="fa fa-floppy-o" aria-hidden="true" style="display: contents;"></i> &nbsp; Update 
+                                            </button>
+                                            <!-- <button kendo-button class="cancel" ng-click="hapusAsuransi()">
+                                                <i class="fa fa-trash" aria-hidden="true" style="display: contents;"></i> &nbsp; Hapus 
+                                            </button> -->
+                                            <button kendo-button class="primary" ng-click="cetakAsuransi()">
+                                                <i class="fa fa-print" aria-hidden="true" style="display: contents;"></i> &nbsp; Cetak
+                                            </button>
+                                            <button kendo-button class="primary" ng-click="iCare()">
+                                                <i class="fa fa-external-link" aria-hidden="true" style="display: contents;"></i> &nbsp; I-Care 
+                                            </button>
+                                            <!-- <button kendo-button class="primary" ng-click="rujukAsuransi()">
+                                                <i class="fa fa-stethoscope" aria-hidden="true" style="display: contents;"></i> &nbsp; Rujukan
+                                            </button> -->
+                                            <button kendo-button class="primary" is-back>
+                                                <i class="fa fa-long-arrow-left" aria-hidden="true" style="display: contents;"></i> &nbsp; Kembali
+                                            </button>
+                                        </div>
+                                        <div class="col-md-9" ng-if="!isUpdate">
+                                            <button kendo-button class="success" ng-click="saveAsuransi('PascaRI')">
+                                                <i class="fa fa-floppy-o" aria-hidden="true" style="display: contents;"></i> &nbsp; Simpan 
+                                            </button>
+                                            <button kendo-button class="primary" is-back>
+                                                <i class="fa fa-long-arrow-left" aria-hidden="true" style="display: contents;"></i> &nbsp; Kembali
+                                            </button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<div ng-include=' "../app/template/Shared/TemplateLoadingOverlay" '></div>
+
+<!-- List pop up html  -->
+<div kendo-window="popupRujukan" k-title="'Riwayat Rujukan'" k-width="1200" k-visible="false" k-on-open="win2visible = true" k-on-close="win2visible = false">
+    <div class="panel panel-default container_12" style="padding: 0px 10px;">
+        <fieldset class="effect-shadow" style=" border-radius: 4px">
+            <legend id="filterData">
+                Daftar Rujukan
+            </legend>
+            <div class="grid_12">
+
+                <kendo-grid id="kGrids" data-source="sourceNoRujukanMulti" options="columnNoRujukanMulti"
+                    k-pageable="'true'" k-sortable="'true'" k-resizable="'true'" k-ng-model="dataNoRujukanMulti"
+                    ng-click="klikRuj(dataNoRujukanMulti)">
+                </kendo-grid>
+
+            </div>
+        </fieldset>
+    </div>
+
+</div>
+<div kendo-window="popUpRSPRI" k-title="'Rencana Kontrol/SPRI'" k-width="945" k-visible="false" k-on-open="win2visible = true" k-on-close="win2visible = false">
+    <div class="panel panel-default container_12" style="padding: 0px 10px;">
+        <div ng-cloak  class="panel panel-default container_12">
+            <md-content>
+                <md-tabs md-dynamic-height md-border-bottom md-selected="myVar2">
+                    <md-tab label="Riwayat">
+                        <md-content class="md-padding">
+                            <div class="panel panel-default container_12">
+                                <div class="panel-body">
+                                    <div class="grid_12">
+                                        <div class="grid_3">
+                                            <label c-label>Filter</label>
+                                            <div class="grid_12">
+                                                <input style="width: 100%; " kendo-combo-box
+                                                    k-ng-model="kontrol.filter"
+                                                    k-data-text-field="'nama'"
+                                                    k-filter="'contains'"
+                                                    k-data-value-field="'kode'"
+                                                    k-auto-bind="false"
+                                                    k-data-source="listFilter" />
+                                            </div>
+                                        </div>
+                                        <div class="grid_3">
+
+                                            <label c-label c-label-text="Bulan" real></label>
+                                            <div class="grid_12">
+                                                <input style="width: 100%"
+                                                    k-ng-model='kontrol.bulan' kendo-date-picker
+                                                    k-format="'MM-yyyy'" k-options="{ start: 'year', depth: 'year' }" />
+                                            </div>
+                    
+                                        </div>
+                                        <div class="grid_1" style="margin-top: 20px">
+                                            <button class="k-button k-primary k-button-icon" ng-click="cariRencana()">
+                                                <span class="k-sprite k-icon k-i-search ">Find</span>
+                                            </button>
+                                        </div>
+                                        <div class="grid_12">
+                                            <kendo-grid id="kGrids" data-source="dataSourceSPRI" options="columnSPRI" k-pageable="'true'"
+                                            k-sortable="'true'" k-resizable="'true'" k-ng-model="dataSPRI">
+                                        </kendo-grid>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </md-content>
+                    </md-tab>
+                    <md-tab label="Buat Baru">
+                        <md-content class="md-padding">
+                            <div class="panel panel-default container_12" style="padding: 0px 10px;">
+                                <div class="grid_12">
+                                    <div class="grid_3" style="margin-top: 10px;text-align:right;">
+                                        <label c-label>Pilih</label>
+                                    </div>
+                                    <div class="grid_7">
+                                        <div class="grid_4" ng-repeat="stat in listJenis | orderBy:'name'" style="margin-top: 5px;">
+                                            <md-radio-group ng-model="kontrol.jenisPelayanan" ng-change="resetFormSurkon()">
+                                                <md-radio-button ng-value="stat" class="md-primary">{{stat.name}}
+                                                </md-radio-button>
+                                            </md-radio-group>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="grid_12" ng-if="kontrol.jenisPelayanan.id == '2'">
+                                    <div class="grid_3" style="margin-top: 10px;text-align:right;">
+                                        <label c-label item="item">No SEP</label>
+                                    </div>
+                                    <div class="grid_6">
+                                        <input c-text-box type="input" filter="" class="k-textbox" ng-model="kontrol.sep" />
+                                    </div>
+                                </div>
+                                <div class="grid_12">
+                                    <div class="grid_3" style="margin-top: 10px;text-align:right;">
+                                        <label c-label item="item">Tgl Rencana Kontrol / Inap</label>
+                                    </div>
+                                    <div class="grid_6">
+                                        <input style="width: 100%"
+                                        k-ng-model='kontrol.tglRencanaKontrol'
+                                        kendo-date-picker
+                                        k-format="'yyyy-MM-dd'"
+                                        k-on-change="getJadwalDok(kontrol.poliKontrol)" />
+                                    </div>
+                                </div>
+                                <div class="grid_12">
+                                    <div class="grid_3" style="margin-top: 10px;text-align:right;">
+                                        <label c-label item="item">Spesialis / SubSpesialis</label>
+                                    </div>
+                                    <div class="grid_6">
+                                        <input kendo-combo-box
+                                        k-ng-model="kontrol.poliKontrol"
+                                        k-data-text-field="'nmsubspesialis'"
+                                        k-filter="'contains'"
+                                        k-data-value-field="'kdsubspesialis'"
+                                        k-auto-bind="false"
+                                        k-on-change="getJadwalDok(kontrol.poliKontrol)"
+                                        k-data-source="listSpesialKontrol" />
+                                    </div>
+                                </div>
+                                <div class="grid_12">
+                                    <div class="grid_3" style="margin-top: 10px;text-align:right;">
+                                        <label c-label item="item">DPJP Tujuan Kontrol / Inap</label>
+                                    </div>
+                                    <div class="grid_6">
+                                        <input style="width: 100%; "
+                                        kendo-combo-box
+                                        k-ng-model="kontrol.kodeDokter"
+                                        k-data-text-field="'nama'"
+                                        k-filter="'contains'"
+                                        k-data-value-field="'kode'"
+                                        k-auto-bind="false"
+                                        k-data-source="listDPJPKontrol" />
+                                    </div>
+                                </div>
+                                <div class="grid_12" style="margin-top:10px">
+                                    <div class="grid_3"></div>
+                                    <div class="grid_9">
+                                        <button class="k-button k-button-icontext k-primary k-grid-update" ng-click="saveSPRI()" ng-hide="isSaves">
+                                            <span class="k-icon k-update"></span>Simpan 
+                                        </button>
+                                        <button class="k-button k-button-icontext k-grid-cancel" ng-click="batalSPRI()">
+                                            <span class="k-icon k-cancel"></span>Batal
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                        </md-content>
+                    </md-tab>
+                </md-tabs>
+            </md-content>
+        </div>
+    </div>
+</div>
+<!-- End list pop up html  -->
+<div id="qr_code" style="display: none;"></div>
+<style>
+    *,
+    ::after,
+    ::before {
+        box-sizing: border-box;
+    }
+    html {
+        font-family: sans-serif;
+        line-height: 1.15;
+        -webkit-text-size-adjust: 100%;
+        -webkit-tap-highlight-color: transparent;
+    }
+    article,
+    aside,
+    figcaption,
+    figure,
+    footer,
+    header,
+    hgroup,
+    main,
+    nav,
+    section {
+        display: block;
+    }
+    h1, h2, h3, h4, h5, h6 {
+        font-family: 'Comfortaa', cursive, 'OpenSans-Regular';
+        text-align: left;
+    }
+    ::-webkit-scrollbar {
+        -webkit-appearance: none;
+        width: 0px;
+        height: 7px;
+    }
+    ::-webkit-scrollbar-thumb {
+        border-radius: 4px;
+        background-color: rgba(0, 0, 0, .5);
+        -webkit-box-shadow: 0 0 1px rgba(255, 255, 255, .5);
+    }
+    p {
+        display: block;
+        margin-block-start: .5em;
+        margin-block-end: .5em;
+        margin-inline-start: 0px;
+        margin-inline-end: 0px;
+    }
+    label[required]:after {
+        content: ' *';
+        color: red;
+    }
+    .container, .container-fluid, .container-lg, .container-md, .container-sm, .container-xl {
+        width: 100%;
+        padding-right: 2.25rem;
+        padding-left: 2.25rem;
+        margin-right: auto;
+        margin-left: auto
+    }
+    .row-lte {
+        display: -ms-flexbox;
+        display: flex;
+        -ms-flex-wrap: wrap;
+        flex-wrap: wrap;
+        margin-right: -7.5px;
+        margin-left: -7.5px;
+    }
+    .col,
+    .col-1,
+    .col-10,
+    .col-11,
+    .col-12,
+    .col-2,
+    .col-3,
+    .col-4,
+    .col-5,
+    .col-6,
+    .col-7,
+    .col-8,
+    .col-9,
+    .col-auto,
+    .col-lg,
+    .col-lg-1,
+    .col-lg-10,
+    .col-lg-11,
+    .col-lg-12,
+    .col-lg-2,
+    .col-lg-3,
+    .col-lg-4,
+    .col-lg-5,
+    .col-lg-6,
+    .col-lg-7,
+    .col-lg-8,
+    .col-lg-9,
+    .col-lg-auto,
+    .col-md,
+    .col-md-1,
+    .col-md-10,
+    .col-md-11,
+    .col-md-12,
+    .col-md-2,
+    .col-md-3,
+    .col-md-4,
+    .col-md-5,
+    .col-md-6,
+    .col-md-7,
+    .col-md-8,
+    .col-md-9,
+    .col-md-auto,
+    .col-sm,
+    .col-sm-1,
+    .col-sm-10,
+    .col-sm-11,
+    .col-sm-12,
+    .col-sm-2,
+    .col-sm-3,
+    .col-sm-4,
+    .col-sm-5,
+    .col-sm-6,
+    .col-sm-7,
+    .col-sm-8,
+    .col-sm-9,
+    .col-sm-auto,
+    .col-xl,
+    .col-xl-1,
+    .col-xl-10,
+    .col-xl-11,
+    .col-xl-12,
+    .col-xl-2,
+    .col-xl-3,
+    .col-xl-4,
+    .col-xl-5,
+    .col-xl-6,
+    .col-xl-7,
+    .col-xl-8,
+    .col-xl-9,
+    .col-xl-auto {
+        position: relative;
+        width: 100%;
+        padding-right: 7.5px;
+        padding-left: 7.5px;
+    }
+    .col {
+        -ms-flex-preferred-size: 0;
+        flex-basis: 0;
+        -ms-flex-positive: 1;
+        flex-grow: 1;
+        max-width: 100%;
+    }
+    .col-md-auto {
+        -ms-flex: 0 0 auto;
+        flex: 0 0 auto;
+        width: auto;
+        max-width: 100%;
+    }
+    .col-md-1 {
+        -ms-flex: 0 0 8.333333%;
+        flex: 0 0 8.333333%;
+        max-width: 8.333333%;
+    }
+    .col-md-2 {
+        -ms-flex: 0 0 16.666667%;
+        flex: 0 0 16.666667%;
+        max-width: 16.666667%;
+    }
+    .col-md-3 {
+        -ms-flex: 0 0 25%;
+        flex: 0 0 25%;
+        max-width: 25%;
+    }
+    .col-md-4 {
+        -ms-flex: 0 0 33.333333%;
+        flex: 0 0 33.333333%;
+        max-width: 33.333333%;
+    }
+    .col-md-5 {
+        -ms-flex: 0 0 41.666667%;
+        flex: 0 0 41.666667%;
+        max-width: 41.666667%;
+    }
+    .col-md-6 {
+        -ms-flex: 0 0 50%;
+        flex: 0 0 50%;
+        max-width: 50%;
+    }
+    .col-md-7 {
+        -ms-flex: 0 0 58.333333%;
+        flex: 0 0 58.333333%;
+        max-width: 58.333333%;
+    }
+    .col-md-8 {
+        -ms-flex: 0 0 66.666667%;
+        flex: 0 0 66.666667%;
+        max-width: 66.666667%;
+    }
+    .col-md-9 {
+        -ms-flex: 0 0 75%;
+        flex: 0 0 75%;
+        max-width: 75%;
+    }
+    .col-md-10 {
+        -ms-flex: 0 0 83.333333%;
+        flex: 0 0 83.333333%;
+        max-width: 83.333333%;
+    }
+    .col-md-11 {
+        -ms-flex: 0 0 91.666667%;
+        flex: 0 0 91.666667%;
+        max-width: 91.666667%;
+    }
+    .col-md-12 {
+        -ms-flex: 0 0 100%;
+        flex: 0 0 100%;
+        max-width: 100%;
+    }
+    .card-lte {
+        box-shadow: 0 0 1px rgba(0,0,0,.125), 0 1px 3px rgba(0,0,0,.2);
+        margin-bottom: 1rem;
+    }
+    .card-lte {
+        position: relative;
+        display: -ms-flexbox;
+        display: flex;
+        -ms-flex-direction: column;
+        flex-direction: column;
+        min-width: 0;
+        word-wrap: break-word;
+        background-color: #fff;
+        background-clip: border-box;
+        border: 0 solid rgba(0, 0, 0, 0.125);
+        border-radius: 0.25rem;
+    }
+    .card-primary.card-outline {
+        border-top: 3px solid #007bff;
+    }
+    .card-header:first-child {
+        border-radius: calc(.25rem - 0) calc(.25rem - 0) 0 0;
+    }
+    .card-header {
+        background-color: transparent;
+        border-bottom: 1px solid rgba(0,0,0,.125);
+        padding: 0.75rem 1.25rem;
+        position: relative;
+        border-top-left-radius: 0.25rem;
+        border-top-right-radius: 0.25rem;
+    }
+    .card-header {
+        padding: 0.75rem 1.25rem;
+        margin-bottom: 0;
+        background-color: rgba(0,0,0,.03);
+        border-bottom: 0 solid rgba(0,0,0,.125);
+    }
+    .card-title {
+        float: left;
+        font-size: 1.1rem;
+        font-weight: 400;
+        margin: 0;
+    }
+    .card-body {
+        -ms-flex: 1 1 auto;
+        flex: 1 1 auto;
+        min-height: 1px;
+        padding: 1.25rem;
+    }
+    .img-circle {
+        border-radius: 50%;
+    }
+    .profile-user-img {
+        border: 3px solid #f5eee5;
+        margin: 0 auto;
+        padding: 3px;
+        width: 100px;
+    }
+
+    .img-fluid {
+        max-width: 100%;
+        height: auto;
+    }
+    .hitam {
+        color: black !important;
+        font-size: 1.1em;
+    }
+    .hitam2 {
+        color: black !important;
+        font-size: 1.1em;
+    }
+    .md-padding {
+       padding: 16px; 
+    }
+    .list-group {
+        margin-bottom: 20px;
+        padding-left: 0;
+    }
+    .list-group-item:first-child {
+        border-top-right-radius: 4px;
+        border-top-left-radius: 4px;
+    }
+    .list-group-item:first-child {
+        border-top-right-radius: 4px;
+        border-top-left-radius: 4px;
+    }
+    .list-group-unbordered > .list-group-item {
+        border-left: 0;
+        border-right: 0;
+        border-radius: 0;
+        padding-left: 0;
+        padding-right: 0;
+    }
+    .list-group-item {
+        position: relative;
+        display: block;
+        padding: 10px 15px;
+        margin-bottom: -1px;
+        background-color: #fff;
+        border: 1px solid #ddd;
+    }
+    .list-group-item-heading {
+        margin-top: 0;
+        margin-bottom: 10px;
+        color: #333 !important;
+        font-size: 0.85rem;
+    }
+    .cekbox {
+        font-size: 12px;
+        font-weight: normal;
+        color: #555;
+        text-align: center;
+        background-color: #eee;
+        border: 1px solid #ccc;
+        border-radius: 4px;
+        padding: 6px 10px;
+        margin-top: 5px;
+    }
+    .label-danger {
+        color: crimson;
+        margin-top: 6px;
+        display: inline-block;
+    }
+
+    .skeleton:empty {
+        position: relative;
+        height: 400px;
+        background-color: #ffffff;
+        border-radius: 0px 0px 0px 0px;
+        background-image: linear-gradient(#f5f7f9 6px, transparent 0),
+            linear-gradient(#f5f7f9 6px, transparent 0),
+            linear-gradient(#f5f7f9 6px, transparent 0),
+            linear-gradient(#f5f7f9 6px, transparent 0),
+            linear-gradient(#f5f7f9 6px, transparent 0),
+            radial-gradient(circle 20px at 20px 20px, #f5f7f9 99%, transparent 0);
+        background-repeat: repeat-y;
+        background-size: 43% 133px, 90% 133px, 74% 133px, 52px 133px, 88px 133px,
+            40px 133px;
+        background-position: left 12px top 111px, left 12px top 92px,
+            left 12px top 73px, left 59px top 39px, left 59px top 21px,
+            left 12px top 12px;
+    }
+    .skeleton:empty:before {
+        content: " ";
+        position: absolute;
+        z-index: 1000;
+        width: 100%;
+        height: 400px;
+        -webkit-mask-image: linear-gradient(
+            100deg,
+            rgba(255, 255, 255, 0),
+            rgba(255, 255, 255, 0.5) 50%,
+            rgba(255, 255, 255, 0) 80%
+        );
+        -webkit-mask-repeat: repeat-y;
+        -webkit-mask-size: 50px 400px;
+        -webkit-mask-position: -20% 0;
+        background-image: linear-gradient(rgba(102, 102, 102, 1) 6px, transparent 0),
+            linear-gradient(rgba(102, 102, 102, 1) 6px, transparent 0),
+            linear-gradient(rgba(102, 102, 102, 1) 6px, transparent 0),
+            linear-gradient(rgba(102, 102, 102, 1) 6px, transparent 0),
+            linear-gradient(rgba(102, 102, 102, 1) 6px, transparent 0),
+            radial-gradient(
+            circle 20px at 20px 20px,
+            rgba(102, 102, 102, 1) 99%,
+            transparent 0
+            );
+        background-repeat: repeat-y;
+        background-size: 43% 133px, 90% 133px, 74% 133px, 52px 133px, 88px 133px,
+            40px 133px;
+        background-position: left 12px top 111px, left 12px top 92px,
+            left 12px top 73px, left 59px top 39px, left 59px top 21px,
+            left 12px top 12px;
+        animation: shineForSkeleton 2s infinite;
+    }
+    @keyframes shineForSkeleton {
+        to {
+            -webkit-mask-position: 120% 0;
+        }
+    }
+
+    .k-grid .k-grid-header .k-header .k-link {
+        height: auto;
+    }
+
+    .k-grid .k-grid-header .k-header {
+        white-space: normal;
+    }
+
+    .k-grid .k-grid-header .k-header {
+        text-align: center;
+    }
+
+    .custom-button {
+        margin: 0 0 10px;
+        background: none;
+        color: black;
+        border-radius: 0.8em;
+        border: 1px solid;
+        background-color: white;
+    }
+
+    .green {
+        background-color: #98FB98;
+        color: #000000;
+        /*font-weight: bold;*/
+    }
+
+    .red {
+        background-color: #ff3860;
+        color: #FFFFFF;
+        /*font-weight: bold;*/
+    }
+</style>

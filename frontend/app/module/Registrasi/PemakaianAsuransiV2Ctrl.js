@@ -275,17 +275,17 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
 
                         }
 
-                        var cekAntrol = {
-                            "url": `antrean/pendaftaran/kodebooking/${$scope.model.kodebooking}`,
-                            "jenis": "antrean",
-                            "method": "GET",
-                            "data": null
-                        }
-                        let resCekAntrol = await medifirstService.postNonMessage('bridging/bpjs/tools', cekAntrol)
-                        if(resCekAntrol.data.metaData.code == 200){
-                            $scope.isKirimAntrian = true;
-                            $scope.pesenpengingat = "";
-                        }
+                        // var cekAntrol = {
+                        //     "url": `antrean/pendaftaran/kodebooking/${$scope.model.kodebooking}`,
+                        //     "jenis": "antrean",
+                        //     "method": "GET",
+                        //     "data": null
+                        // }
+                        // let resCekAntrol = await medifirstService.postNonMessage('bridging/bpjs/tools', cekAntrol)
+                        // if(resCekAntrol.data.metaData.code == 200){
+                        //     $scope.isKirimAntrian = true;
+                        //     $scope.pesenpengingat = "";
+                        // }
 
                         let formattedDate = new moment(new Date(e.data[0].tglregistrasi)).format('YYYY-MM-DD')
                         medifirstService.get(`registrasi/get-total-pasien-poli-bpjs?idruangan=${$scope.item.pasien.idruangan}&tglRegis=${formattedDate}`).then(function (dat) {
@@ -5621,6 +5621,15 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
                 }
               
                 return randomString;
+            }
+
+            $scope.gotoPemakaianAsuransiBaru = function() { 
+                $state.go('UGVtYWthaWFuQXN1cmFuc2lWMw==', {
+                    norecPD: $scope.currentNorecPD,
+                    norecAPD: $scope.currentNorecAPD,
+                });
+                var cacheSet = undefined;
+                cacheHelper.set('CachePemakaianAsuransi', cacheSet);
             }
         }
 

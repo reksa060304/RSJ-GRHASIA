@@ -1253,12 +1253,14 @@ class RegistrasiController extends ApiController
                 'apd.objectasalrujukanfk',
                 'ru.kdinternal',
                 'ru.id as idruangan',
+                'ru.noruangan',
                 'jpl.kodeinternal as objectjenispelayananfk',
                 'pd.objectpegawaifk',
                 'pd.statuspasien',
                 'ps.nobpjs',
                 'pd.statuspasien',
                 'ru.namaexternal',
+                'peg.kddokterbpjs',
                 'apd.noantrian',
                 DB::raw('case when ru.objectdepartemenfk in (16,35,17) then \'true\' else \'false\' end as israwatinap'),
                 DB::raw("case when pd.statusschedule = '' then pd.noregistrasi when pd.statusschedule = 'Kios-K' then pd.noregistrasi else pd.statusschedule end as kodebooking")
@@ -3347,7 +3349,7 @@ class RegistrasiController extends ApiController
     {
         $dataLogin = $request->all();
         $data = \DB::table('kelas_m as kls')
-            ->select('kls.id', 'kls.namakelas')
+            ->select('kls.id', 'kls.namakelas','kls.kodebpjsnaikkelas')
             ->where('kls.statusenabled', true)
             ->orderBy('kls.namakelas')
             ->get();

@@ -5389,6 +5389,14 @@ class ReportController extends ApiController{
         //         order by subkodepertama asc, subkodekedua asc, subkodeketiga asc, subkodekeempat asc, subkodekelima asc      
         // "));
 
+        $asalproduk_kb = "";
+        $asalproduk_sr = "";
+        if (isset($request['asalproduk']) && $request['tahun'] != "" && $request['asalproduk'] != "undefined") {
+            $asalproduk_kb = "and kb.objectasalprodukfk = ".$request['asalproduk'];
+            $asalproduk_sr = "and sr.objectasalprodukfk = ".$request['asalproduk'];
+        }
+
+
         $data = DB::select(DB::raw("
                 SELECT
                     split_part(x.kodemataanggaran, '.', 1) as subkodepertama
@@ -5427,7 +5435,8 @@ class ReportController extends ApiController{
                         AND ka.statusenabled = TRUE 
                         AND ka.kdprofile = 30 
                         AND ma.statusenabled = TRUE 
-                        AND ma.kdprofile = 30 
+                        AND ma.kdprofile = 30
+                        $asalproduk_kb 
                     GROUP BY
                         ka.ID,
                         ma.ID,
@@ -5470,6 +5479,7 @@ class ReportController extends ApiController{
                         AND ka.kdprofile = 30 
                         AND ma.statusenabled = TRUE 
                         AND ma.kdprofile = 30 
+                        $asalproduk_sr
                     GROUP BY
                         ka.ID,
                         ma.ID,
@@ -23720,6 +23730,542 @@ public function suratBuktiPengembalian(Request $request)
         $res['d'] = $data;
         // dd(json_encode($res['d']));
         return view('report.cppt-ranap-new', compact('res', 'profile', 'pageWidth'));
+    }
+
+    public function cetakSKDPSPRI(Request $request)
+    {
+        $kdProfile = (int)$request['kdprofile'];
+        $ppkPelayanan = $this->settingDataFixed('namaPPKRujukan', $kdProfile);
+        $noregistrasi = $request['noregistrasi'];
+        $qbinary = base64_decode($request['qbinary']);
+        $dataSurat = json_decode($qbinary);
+        $tglAyeuna = date('Y-m-d H:i:s');
+
+        $datas = DB::table("pasiendaftar_t as pd")
+        ->select("pd.norec as norec_pd", "jk.jeniskelamin", "ps.tgllahir",
+            DB::raw("CASE WHEN dg.kddiagnosa IS NULL THEN '-' ELSE dg.kddiagnosa END || '-' || ( CASE WHEN dg.namadiagnosa IS NULL THEN '-' ELSE dg.namadiagnosa END ) AS namadiagnosa")
+        )
+        ->leftjoin("pemakaianasuransi_t as pa", "pd.norec", "=", "pa.noregistrasifk")
+        ->leftjoin("diagnosa_m as dg", "dg.id", "=", "pa.diagnosisfk")
+        ->join("pasien_m as ps", "ps.id", "=", "pd.nocmfk")
+        ->leftjoin("jeniskelamin_m as jk", "jk.id", "=", "ps.objectjeniskelaminfk")
+        ->where("pd.noregistrasi", $noregistrasi)
+        ->where("pd.statusenabled", true)
+        ->where("pd.kdprofile", $kdProfile)
+        ->first();
+
+        if(empty($datas)) {
+            echo '
+            <script language="javascript">
+                window.alert("Tidak ada data.");
+                window.close()
+            </script>';
+            die;
+        }
+
+        $pageWidth = 719;
+
+        if(isset($request["issimpanberkas"])) {
+            $dataSuratlokal = DB::table("bpjsrencanakontrol_t as br")
+            ->select('br.namadokter as namaDokter'
+            ,'br.tglrencanakontrol as tglRencanaKontrol'
+            ,'br.tglterbitkontrol as tglTerbitKontrol'
+            ,'br.nama'
+            ,'br.nokartu as noKartu'
+            ,'br.namapolitujuan as namaPoliTujuan'
+            ,'br.nosuratkontrol as noSuratKontrol'
+            ,'br.jnskontrol as jnsKontrol'
+            )
+            ->join("pasiendaftar_t as pd", "pd.norec", "=", "br.norec_pd")
+            ->where("br.statusenabled", true)
+            ->where("pd.noregistrasi", $noregistrasi)
+            ->first();
+
+            if(empty($dataSuratlokal)) {
+                echo '
+                <script language="javascript">
+                    window.alert("Tidak ada data.");
+                    window.close()
+                </script>';
+                die;
+            }
+
+            $dataReport2 = array(
+                'ppkPelayanan' => $ppkPelayanan,
+                'dataSurat' => $dataSuratlokal,
+                'tglAyeuna' => $tglAyeuna,
+                'data' => $datas
+            );
+
+            $pdf = PDF::loadView('report.pendaftaran.skdpspri', array(
+                'dataReport' => $dataReport2,
+                'pageWidth' => $pageWidth,
+            ));
+    
+            $this->saveDokumenKlaim($pdf, $request);
+            return;
+        }
+
+        if(isset($request["q"])) {
+            $dataSuratlokal = DB::table("bpjsrencanakontrol_t as br")
+            ->select('br.namadokter as namaDokter'
+            ,'br.tglrencanakontrol as tglRencanaKontrol'
+            ,'br.tglterbitkontrol as tglTerbitKontrol'
+            ,'br.nama'
+            ,'br.nokartu as noKartu'
+            ,'br.namapolitujuan as namaPoliTujuan'
+            ,'br.nosuratkontrol as noSuratKontrol'
+            ,'br.jnskontrol as jnsKontrol'
+            )
+            ->join("pasiendaftar_t as pd", "pd.norec", "=", "br.norec_pd")
+            ->where("br.statusenabled", true)
+            ->where("pd.noregistrasi", $noregistrasi)
+            ->first();
+
+            if(empty($dataSuratlokal)) {
+                echo '
+                <script language="javascript">
+                    window.alert("Tidak ada data.");
+                    window.close()
+                </script>';
+                die;
+            }
+
+            $dataReport2 = array(
+                'ppkPelayanan' => $ppkPelayanan,
+                'dataSurat' => $dataSuratlokal,
+                'tglAyeuna' => $tglAyeuna,
+                'data' => $datas
+            );
+
+            $pdf = PDF::loadView('report.pendaftaran.skdpspri', array(
+                'dataReport' => $dataReport2,
+                'pageWidth' => $pageWidth,
+            ));
+
+            return $pdf->stream();
+        }
+
+        $dataReport = array(
+            'ppkPelayanan' => $ppkPelayanan,
+            'dataSurat' => $dataSurat,
+            'tglAyeuna' => $tglAyeuna,
+            'data' => $datas
+        );
+        $pdf = PDF::loadView('report.pendaftaran.skdpspri', array(
+            'dataReport' => $dataReport,
+            'pageWidth' => $pageWidth,
+        ));
+
+        return $pdf->stream();
+    }
+
+    public function cetakSEPV3(Request $request)
+    {
+        $kdProfile = (int)$request['kdprofile'];
+        $Noregistrasi = $request['noregistrasi'];
+        $tglAyeuna = date('Y-m-d H:i:s');
+        $ppkPelayanan = $this->settingDataFixed('namaPPKRujukan', $kdProfile);
+
+        $registrasi = collect(DB::select("
+             SELECT pa.nosep,to_char(pa.tanggalsep, 'DD-MM-YYYY HH:mm') AS tanggalsep,pa.nokepesertaan,pi.nocm,pd.noregistrasi,
+                    pa.norujukan,ap.namapeserta,to_char(pi.tgllahir, 'DD-MM-YYYY') AS tgllahir,jk.jeniskelamin, 
+                    rp.namaruangan,rp.kodeexternal as namapoli,pa.ppkrujukan,  
+                    (CASE WHEN rp.objectdepartemenfk=16 then 'Rawat Inap' else 'Rawat Jalan' END) as jenisrawat, 
+                    dg.kddiagnosa, (case when dg.namadiagnosa is null then '-' else dg.namadiagnosa end) as namadiagnosa ,  
+                    ap.jenispeserta,ap.kdprovider,ap.nmprovider,kls.namakelas,pa.catatan,pa.tglcreate,rp.objectdepartemenfk,
+                    CASE WHEN pa.statuskunjungan = 1 THEN 'Konsultasi dokter (pertama)'
+                    WHEN pa.statuskunjungan = 2 THEN  'Kunjungan rujukan internal'
+                    WHEN pa.statuskunjungan = 3 THEN 'Kunjungan Kontrol (ulangan)'
+                    ELSE '' END AS kunjungan,ap.notelpmobile,pa.namadjpjpmelayanni,
+                    CASE WHEN pa.flagprocedure = '0' THEN 'Prosedur tidak berkelanjutan'
+                    WHEN pa.flagprocedure = '1' THEN 'Prosedur dan terapi berkelanjutan'
+                    END AS procedures,kls.namakelas AS haknamakelas,
+                    CASE WHEN rp.objectdepartemenfk = 18 THEN pa.polirujukannama ELSE '-' END AS polirujukannama,
+                    CASE WHEN pa.penjaminlaka = '1' THEN 'Jasa Raharja PT' 
+                    WHEN pa.penjaminlaka = '2' THEN 'BPJS Ketenagakerjaan'
+                    WHEN pa.penjaminlaka = '3' THEN 'TASPEN PT'
+                    WHEN pa.penjaminlaka = '4' THEN 'ASABRI PT'
+                    ELSE '-' END AS penjaminlakalantas
+             FROM pemakaianasuransi_t pa  
+             LEFT JOIN asuransipasien_m ap on pa.objectasuransipasienfk= ap.id  
+             LEFT JOIN pasiendaftar_t pd on pd.norec=pa.noregistrasifk  
+             LEFT JOIN pasien_m pi on pi.id=pd.nocmfk  
+             LEFT JOIN jeniskelamin_m jk on jk.id=pi.objectjeniskelaminfk  
+             LEFT JOIN ruangan_m rp on rp.id=pd.objectruanganlastfk  
+             LEFT JOIN diagnosa_m dg on pa.diagnosisfk=dg.id 
+             LEFT JOIN kelas_m kls on kls.id=ap.objectkelasdijaminfk  
+             where pd.noregistrasi ='$Noregistrasi' 
+        "))->first();
+
+        if(empty($registrasi)) {
+            echo '
+            <script language="javascript">
+                window.alert("Tidak ada data.");
+                window.close()
+            </script>';
+            die;
+        }
+
+        $qrcode = "";//base64_encode(QrCode::format('svg')->size(50)->generate($registrasi->nokepesertaan));
+        $pageWidth = 719;
+        $dataReport = array(
+            'ppkPelayanan' => $ppkPelayanan,
+            'nosep' => $registrasi->nosep,
+            'tanggalsep' => $registrasi->tanggalsep,
+            'nokepesertaan' => $registrasi->nokepesertaan,
+            'norm' => $registrasi->nocm,
+            'noregistrasi' => $registrasi->noregistrasi,
+            'jenispeserta' => $registrasi->jenispeserta,
+            'namapeserta' => $registrasi->namapeserta,
+            'cob' => "",
+            'tgllahir' => $registrasi->tgllahir,
+            'jeniskelamin' => $registrasi->jeniskelamin,
+            'norujukan' => $registrasi->norujukan,
+            'namaruangan' => $registrasi->namaruangan,
+            'namapoli' => $registrasi->namapoli,
+            'ppkrujukan' => $registrasi->ppkrujukan,
+            'jenisrawat' => $registrasi->jenisrawat,
+            'kddiagnosa' => $registrasi->kddiagnosa,
+            'namadiagnosa' => $registrasi->namadiagnosa,
+            'kdprovider' => $registrasi->kdprovider,
+            'nmprovider' => $registrasi->nmprovider,
+            'namakelas' => $registrasi->namakelas,
+            'catatan' => $registrasi->catatan,
+            'tanggal' => $tglAyeuna,
+            'tglcreate' => $registrasi->tglcreate,
+            'kunjungan' => $registrasi->kunjungan,
+            'notelpmobile' => $registrasi->notelpmobile,
+            'procedures' => $registrasi->procedures,
+            'polirujukannama' => $registrasi->polirujukannama,
+            'namadjpjpmelayanni' => $registrasi->namadjpjpmelayanni,
+            'haknamakelas' => $registrasi->haknamakelas,
+            'penjaminlakalantas' => $registrasi->penjaminlakalantas,
+            'objectdepartemenfk' => $registrasi->objectdepartemenfk,
+        );
+        $pdf = PDF::loadView('report.pendaftaran.sepv2', array(
+            'dataReport' => $dataReport,
+            'pageWidth' => $pageWidth,
+            'qrcode' => $qrcode,
+        ));
+
+        if(isset($request["issimpanberkas"])) {
+            $this->saveDokumenKlaim($pdf, $request);
+            return;
+        }
+
+        return $pdf->stream();
+    }
+
+    public function saveDokumenKlaim($pdf, $request) {
+
+    }
+
+    public function cetakSTSV2(Request $request)
+    {
+        $nosts = $request['nosts'];
+        $data = [];
+
+        $rekening = DB::select(DB::raw("
+            SELECT 
+                cap.id as idrekening,
+                cap.koderekening,
+                cap.namarekening,
+                cap.headfk,
+                cap7.id as idlevel7,
+                cap7.koderekening as koderekeninglevel7,
+                cap7.namarekening as namarekeninglevel7,
+                cap7.headfk as headfklevel7,
+                cap6.id as idlevel6,
+                cap6.koderekening as koderekeninglevel6,
+                cap6.namarekening as namarekeninglevel6,
+                cap6.headfk as headfklevel6,
+                cap5.id as idlevel5,
+                cap5.koderekening as koderekeninglevel5,
+                cap5.namarekening as namarekeninglevel5,
+                cap5.headfk as headfklevel5,
+                cap4.id as idlevel4,
+                cap4.koderekening as koderekeninglevel4,
+                cap4.namarekening as namarekeninglevel4,
+                cap4.headfk as headfklevel4,
+                cap3.id as idlevel3,
+                cap3.koderekening as koderekeninglevel3,
+                cap3.namarekening as namarekeninglevel3,
+                cap3.headfk as headfklevel3,
+                cap2.id as idlevel2,
+                cap2.koderekening as koderekeninglevel2,
+                cap2.namarekening as namarekeninglevel2,
+                cap2.headfk as headfklevel2,
+                cap1.id as idlevel1,
+                cap1.koderekening as koderekeninglevel1,
+                cap1.namarekening as namarekeninglevel1,
+                cap1.headfk as headfklevel1
+            FROM char_akun_pendapatan_m cap
+            LEFT JOIN char_akun_pendapatan_m cap7 ON cap7.id = cap.headfk
+            LEFT JOIN char_akun_pendapatan_m cap6 ON cap6.id = cap7.headfk
+            LEFT JOIN char_akun_pendapatan_m cap5 ON cap5.id = cap6.headfk
+            LEFT JOIN char_akun_pendapatan_m cap4 ON cap4.id = cap5.headfk
+            LEFT JOIN char_akun_pendapatan_m cap3 ON cap3.id = cap4.headfk
+            LEFT JOIN char_akun_pendapatan_m cap2 ON cap2.id = cap3.headfk
+            LEFT JOIN char_akun_pendapatan_m cap1 ON cap1.id = cap2.headfk
+            WHERE 
+                cap.statusenabled = TRUE
+                AND cap.kdprofile = 30
+                AND cap.level = 8
+            ORDER BY cap.id ASC
+        "));
+
+        $detailv2 = DB::select(DB::raw("
+            SELECT
+                cap_stsd.id as idrekening,
+                cap_stsd.koderekening,
+                cap_stsd.namarekening,
+                stsd2.totalsetoran as totaldibayarclosing,
+                cap7.id as idlevel7,
+                cap6.id as idlevel6,
+                cap5.id as idlevel5,
+                cap4.id as idlevel4,
+                cap3.id as idlevel3,
+                cap2.id as idlevel2,
+                cap1.id as idlevel1
+            FROM surattandasetoran_t sts
+            JOIN surattandasetorandetailv2_t stsd2 ON stsd2.objectstsfk = sts.nosts AND stsd2.statusenabled = TRUE AND stsd2.kdprofile = 30
+            JOIN char_akun_pendapatan_m cap_stsd ON cap_stsd.id = stsd2.objectakunpendapatanfk AND cap_stsd.statusenabled = TRUE AND cap_stsd.kdprofile = 30
+            LEFT JOIN char_akun_pendapatan_m cap7 ON cap7.id = cap_stsd.headfk
+            LEFT JOIN char_akun_pendapatan_m cap6 ON cap6.id = cap7.headfk
+            LEFT JOIN char_akun_pendapatan_m cap5 ON cap5.id = cap6.headfk
+            LEFT JOIN char_akun_pendapatan_m cap4 ON cap4.id = cap5.headfk
+            LEFT JOIN char_akun_pendapatan_m cap3 ON cap3.id = cap4.headfk
+            LEFT JOIN char_akun_pendapatan_m cap2 ON cap2.id = cap3.headfk
+            LEFT JOIN char_akun_pendapatan_m cap1 ON cap1.id = cap2.headfk
+            WHERE 
+                sts.statusenabled = TRUE
+                AND sts.kdprofile = 30
+                AND sts.nosts = '".$nosts."'
+        "));
+
+        // check jika punya detailv2
+        if(count($detailv2) > 0){
+            $data = $detailv2;
+        }else {
+            $detail = DB::select(DB::raw("
+    
+                SELECT 
+                    x.id as idrekening, x.namarekening, x.koderekening, x.idlevel7, x.idlevel6, x.idlevel5, x.idlevel4, x.idlevel3, x.idlevel2, x.idlevel1, SUM(x.totaldibayarclosing)::DECIMAL as totaldibayarclosing
+                FROM (	
+                    SELECT
+                        cap.id,
+                        cap.koderekening, 
+                        cap.namarekening,
+                        cap7.id as idlevel7,
+                        cap6.id as idlevel6,
+                        cap5.id as idlevel5,
+                        cap4.id as idlevel4,
+                        cap3.id as idlevel3,
+                        cap2.id as idlevel2,
+                        cap1.id as idlevel1,
+                        COALESCE(SUM(
+                                    (((COALESCE(pp.hargajual::DECIMAL, 0) - COALESCE(pp.hargadiscount::DECIMAL, 0)) * pp.jumlah::DECIMAL) + COALESCE(pp.jasa::DECIMAL, 0))
+                            ), 0) AS totaldibayarclosing
+                    FROM pasiendaftar_t pd 
+                    JOIN antrianpasiendiperiksa_t apd ON apd.noregistrasifk = pd.norec AND apd.statusenabled = TRUE AND apd.kdprofile = 30
+                    JOIN pelayananpasien_t pp ON pp.noregistrasifk = apd.norec AND pp.statusenabled = TRUE AND pp.kdprofile = 30
+                    JOIN ruangan_m ru ON ru.id = apd.objectruanganfk AND ru.statusenabled = TRUE AND ru.kdprofile = 30
+                    JOIN produk_m pr ON pr.id = pp.produkfk
+                    JOIN detailjenisproduk_m djp ON djp.id = pr.objectdetailjenisprodukfk
+                    JOIN strukpelayanan_t sp ON sp.norec = pp.strukfk AND sp.statusenabled = TRUE AND sp.kdprofile = 30
+                    JOIN strukbuktipenerimaan_t sbm ON sbm.nostrukfk = sp.norec AND sbm.statusenabled = TRUE AND sbm.kdprofile = 30
+                    JOIN strukbuktipenerimaancarabayar_t sbmcr ON sbmcr.nosbmfk = sbm.norec AND sbmcr.statusenabled = TRUE AND sbmcr.kdprofile = 30
+                    JOIN carabayar_m cb ON cb.id = sbmcr.objectcarabayarfk AND cb.statusenabled = TRUE AND cb.kdprofile = 30
+                    JOIN strukclosing_t AS sc ON sc.norec = sbm.noclosingfk AND sc.statusenabled = TRUE AND sc.kdprofile = 30
+                    JOIN strukclosingkasir_t sck ON sck.noclosingfk = sc.norec
+                    JOIN ststosck_t as ssc on ssc.objectsckfk = sck.norec
+                    JOIN surattandasetoran_t as sts on sts.norec = ssc.objectstsfk AND sts.statusenabled = TRUE AND sts.kdprofile = 30
+                    LEFT JOIN mapbkuakun_t mba 
+                        ON pd.objectkelompokpasienlastfk::VARCHAR = ANY(string_to_array(mba.objectkelompokpasienfk, ','))
+                        AND apd.objectruanganfk::VARCHAR = ANY(string_to_array(mba.objectruanganfk , ','))
+                        AND mba.statusenabled = TRUE
+                    LEFT JOIN char_akun_pendapatan_m cap ON cap.id = mba.objectakunpendapatanfk
+                    LEFT JOIN char_akun_pendapatan_m cap7 ON cap7.id = cap.headfk
+                    LEFT JOIN char_akun_pendapatan_m cap6 ON cap6.id = cap7.headfk
+                    LEFT JOIN char_akun_pendapatan_m cap5 ON cap5.id = cap6.headfk
+                    LEFT JOIN char_akun_pendapatan_m cap4 ON cap4.id = cap5.headfk
+                    LEFT JOIN char_akun_pendapatan_m cap3 ON cap3.id = cap4.headfk
+                    LEFT JOIN char_akun_pendapatan_m cap2 ON cap2.id = cap3.headfk
+                    LEFT JOIN char_akun_pendapatan_m cap1 ON cap1.id = cap2.headfk
+                    WHERE 
+                        sts.nosts = '".$nosts."'
+                        AND pd.statusenabled = TRUE
+                        AND pd.kdprofile = 30
+                        AND (
+                                    (mba.isobat IS NOT TRUE AND pp.isobat IS NULL) 
+                                    OR 
+                                    (mba.isobat = TRUE AND pp.isobat = TRUE)
+                            )
+                        AND pp.kelasfk::VARCHAR = ANY(string_to_array(mba.objectkelasfk , ','))
+                    GROUP BY
+                        cap.id,
+                        cap.koderekening,
+                        cap.namarekening,
+                        pp.isobat,
+                        cap7.id,
+                        cap6.id,
+                        cap5.id,
+                        cap4.id,
+                        cap3.id,
+                        cap2.id,
+                        cap1.id
+                    
+                    -- untuk berdasarkan produk
+                    UNION
+                    SELECT
+                        cap.id,
+                        cap.koderekening, 
+                        cap.namarekening,
+                        cap7.id as idlevel7,
+                        cap6.id as idlevel6,
+                        cap5.id as idlevel5,
+                        cap4.id as idlevel4,
+                        cap3.id as idlevel3,
+                        cap2.id as idlevel2,
+                        cap1.id as idlevel1,
+                        SUM(((COALESCE(pp.hargajual::DECIMAL, 0) - COALESCE(pp.hargadiscount::DECIMAL, 0)) * pp.jumlah::DECIMAL) + COALESCE(pp.jasa::DECIMAL, 0))
+                    FROM pasiendaftar_t pd 
+                    JOIN antrianpasiendiperiksa_t apd ON apd.noregistrasifk = pd.norec AND apd.statusenabled = TRUE AND apd.kdprofile = 30
+                    JOIN pelayananpasien_t pp ON pp.noregistrasifk = apd.norec AND pp.statusenabled = TRUE AND pp.kdprofile = 30
+                    JOIN ruangan_m ru ON ru.id = apd.objectruanganfk AND ru.statusenabled = TRUE AND ru.kdprofile = 30
+                    JOIN produk_m pr ON pr.id = pp.produkfk
+                    JOIN detailjenisproduk_m djp ON djp.id = pr.objectdetailjenisprodukfk --AND djp.statusenabled = TRUE AND djp.kdprofile = 30
+                    JOIN strukpelayanan_t sp ON sp.norec = pp.strukfk AND sp.statusenabled = TRUE AND sp.kdprofile = 30
+                    JOIN strukbuktipenerimaan_t sbm ON sbm.nostrukfk = sp.norec AND sbm.statusenabled = TRUE AND sbm.kdprofile = 30
+                    JOIN strukbuktipenerimaancarabayar_t sbmcr ON sbmcr.nosbmfk = sbm.norec AND sbmcr.statusenabled = TRUE AND sbmcr.kdprofile = 30
+                    JOIN carabayar_m cb ON cb.id = sbmcr.objectcarabayarfk AND cb.statusenabled = TRUE AND cb.kdprofile = 30
+                    JOIN strukclosing_t AS sc ON sc.norec = sbm.noclosingfk AND sc.statusenabled = TRUE AND sc.kdprofile = 30
+                    JOIN strukclosingkasir_t sck ON sck.noclosingfk = sc.norec
+                    JOIN ststosck_t as ssc on ssc.objectsckfk = sck.norec
+                    JOIN surattandasetoran_t as sts on sts.norec = ssc.objectstsfk AND sts.statusenabled = TRUE AND sts.kdprofile = 30
+                    JOIN mapbkuakun3_t mba3 
+                        ON pp.produkfk::VARCHAR = ANY(string_to_array(mba3.objectprodukfk, ','))
+                        AND pd.objectkelompokpasienlastfk IN (1,12) 
+                        AND mba3.statusenabled = TRUE
+                    JOIN char_akun_pendapatan_m cap ON cap.id = mba3.objectakunpendapatanfk
+                    JOIN char_akun_pendapatan_m cap7 ON cap7.id = cap.headfk
+                    JOIN char_akun_pendapatan_m cap6 ON cap6.id = cap7.headfk
+                    JOIN char_akun_pendapatan_m cap5 ON cap5.id = cap6.headfk
+                    JOIN char_akun_pendapatan_m cap4 ON cap4.id = cap5.headfk
+                    JOIN char_akun_pendapatan_m cap3 ON cap3.id = cap4.headfk
+                    JOIN char_akun_pendapatan_m cap2 ON cap2.id = cap3.headfk
+                    JOIN char_akun_pendapatan_m cap1 ON cap1.id = cap2.headfk
+                    WHERE 
+                        sts.nosts = '".$nosts."'
+                        AND pd.statusenabled = TRUE
+                        AND pd.kdprofile = 30
+                    GROUP BY
+                        cap.id,
+                        cap.koderekening,
+                        cap.namarekening,
+                        pp.isobat,
+                        cap7.id,
+                        cap6.id,
+                        cap5.id,
+                        cap4.id,
+                        cap3.id,
+                        cap2.id,
+                        cap1.id
+                    
+                    -- untuk non layanan
+                    UNION
+                    SELECT DISTINCT
+                        cap.id,
+                        cap.koderekening,
+                        cap.namarekening,
+                        cap7.id as idlevel7,
+                        cap6.id as idlevel6,
+                        cap5.id as idlevel5,
+                        cap4.id as idlevel4,
+                        cap3.id as idlevel3,
+                        cap2.id as idlevel2,
+                        cap1.id as idlevel1,
+                        SUM(spd.qtyproduk * spd.hargasatuan * spd.qtyoranglast) as totaldibayarclosing
+                    FROM strukclosingkasir_t AS sck
+                    JOIN strukclosing_t AS sc ON sc.norec = sck.noclosingfk
+                    JOIN strukbuktipenerimaan_t AS sbm ON sbm.noclosingfk = sc.norec
+                    JOIN strukbuktipenerimaancarabayar_t sbmcr ON sbmcr.nosbmfk = sbm.norec
+                    JOIN strukpelayanan_t AS sp ON sbm.nostrukfk = sp.norec
+                    JOIN strukpelayanandetail_t AS spd ON sp.norec = spd.nostrukfk
+                    JOIN produk_m pr ON pr.id = spd.objectprodukfk
+                    JOIN carabayar_m AS cb ON cb.id = sck.carabayarfk
+                    JOIN detailjenisproduk_m djp ON djp.id = pr.objectdetailjenisprodukfk
+                    JOIN jenisproduk_m jpr ON jpr.id = djp.objectjenisprodukfk
+                    left join ruangan_m as ru on ru.id = spd.objectruanganasalfk
+                    left join pasiendaftar_t as pd on sp.noregistrasifk = pd.norec
+                    left join antrianpasiendiperiksa_t apd on pd.norec=apd.noregistrasifk
+                    left join pelayananpasien_t pp on apd.norec=pp.noregistrasifk
+                    JOIN ststosck_t as ssc on ssc.objectsckfk = sck.norec
+                    JOIN surattandasetoran_t as sts on sts.norec = ssc.objectstsfk AND sts.statusenabled = TRUE AND sts.kdprofile = 30
+                    JOIN mapbkuakun2_t mba2 
+                        ON spd.objectprodukfk::VARCHAR = ANY(string_to_array(mba2.objectprodukfk, ',')) 
+                        AND mba2.statusenabled = TRUE
+                    JOIN char_akun_pendapatan_m cap ON cap.id = mba2.objectakunpendapatanfk
+                    LEFT JOIN char_akun_pendapatan_m cap7 ON cap7.id = cap.headfk
+                    LEFT JOIN char_akun_pendapatan_m cap6 ON cap6.id = cap7.headfk
+                    LEFT JOIN char_akun_pendapatan_m cap5 ON cap5.id = cap6.headfk
+                    LEFT JOIN char_akun_pendapatan_m cap4 ON cap4.id = cap5.headfk
+                    LEFT JOIN char_akun_pendapatan_m cap3 ON cap3.id = cap4.headfk
+                    LEFT JOIN char_akun_pendapatan_m cap2 ON cap2.id = cap3.headfk
+                    LEFT JOIN char_akun_pendapatan_m cap1 ON cap1.id = cap2.headfk
+                    WHERE 
+                        sts.nosts = '".$nosts."'
+                    GROUP BY
+                        cap.id,
+                        cap.koderekening,
+                        cap.namarekening,
+                        cap7.id,
+                        cap6.id,
+                        cap5.id,
+                        cap4.id,
+                        cap3.id,
+                        cap2.id,
+                        cap1.id
+                    ) as x
+                    GROUP BY
+                        x.id,
+                        x.koderekening,
+                        x.namarekening,
+                        x.idlevel7,
+                        x.idlevel6,
+                        x.idlevel5,
+                        x.idlevel4,
+                        x.idlevel3,
+                        x.idlevel2,
+                        x.idlevel1
+                    ORDER BY
+                        split_part(x.koderekening, '.', 3)::DECIMAL,
+                        split_part(x.koderekening, '.', 4)::DECIMAL,
+                        split_part(x.koderekening, '.', 5)::DECIMAL,
+                        split_part(x.koderekening, '.', 6)::DECIMAL,
+                        split_part(x.koderekening, '.', 7)::DECIMAL,
+                        split_part(x.koderekening, '.', 8)::DECIMAL ASC
+            
+            
+            "));
+
+            $data = $detail;
+
+        }
+
+
+        $sts = DB::select(DB::raw("
+            SELECT * 
+            FROM surattandasetoran_t sts 
+            WHERE 
+                sts.statusenabled = TRUE 
+                AND sts.kdprofile = 30 
+                AND sts.nosts = '".$request['nosts']."'  
+        "));
+
+        return view('report.spj.cetak-stsv2',compact('rekening', 'data', 'sts'));
+
     }
 
 }

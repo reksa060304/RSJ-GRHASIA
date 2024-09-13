@@ -89,6 +89,7 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
             medifirstService.get("perencanaan/get-data-combo?&idpegawai=" + idpegawai).then(function (e) {
                 $scope.listTahap = e.data.tahap
                 $scope.listKegiatan = e.data.kegiatancombo
+                $scope.listAsalProduk = e.data.asalproduk
             });
 
             $scope.changeKegiatan = function () {
@@ -135,11 +136,21 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
                 if ($scope.item.tahunmonev != undefined){
                     tahun = moment($scope.item.tahunmonev).format('YYYY')
                 }
+
+                var asalproduk = ""
+                if($scope.item.asalprodulmonev !== undefined && $scope.item.asalprodulmonev !== null){
+                    asalproduk = "&asalproduk=" + $scope.item.asalprodulmonev.id
+                }
                 
                 if($scope.item.jenisrekeningmonev.id == 2){
                     window.open(baseTransaksi + "report/get-cetak-spj-dan-monev?tahun="+tahun+"&jenisrekening="+$scope.item.jenisrekeningmonev+"&subkegiatan="+$scope.item.kegiatanmonev.id+"&subsubkegiatan="+$scope.item.subkegiatanmonev.id, '_blank');
                 } else if($scope.item.jenisrekeningmonev.id == 1){
-                    window.open(baseTransaksi + "report/get-cetak-spj-dan-monev-rba?tahun="+tahun+"&jenisrekening="+$scope.item.jenisrekeningmonev+"&subkegiatan="+$scope.item.kegiatanmonev.id+"&subsubkegiatan="+$scope.item.subkegiatanmonev.id, '_blank');
+                    window.open(baseTransaksi + "report/get-cetak-spj-dan-monev-rba?tahun="
+                        +tahun
+                        +"&jenisrekening="+$scope.item.jenisrekeningmonev
+                        +"&subkegiatan="+$scope.item.kegiatanmonev.id
+                        +"&subsubkegiatan="+$scope.item.subkegiatanmonev.id
+                        +asalproduk,'_blank');
                 }
                 
                 

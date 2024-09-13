@@ -191,12 +191,7 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
 
             
 
-            var objSave =
-            {
-                setoran: $scope.selectedData2
-            }
-
-            console.log(objSave.setoran.length);
+            // console.log(objSave.setoran.length);
 
             $scope.detailpenerimaan = function () {
 
@@ -237,7 +232,7 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
             }
 
             $scope.cetakpdf = function(){
-                console.log($scope.selectedData2)
+                // console.log($scope.selectedData2)
                 window.open(baseTransaksi + "report/get-cetak-sts-pdf?nosts="+$scope.selectedData2[0].nosts, '_blank');
             }
 
@@ -289,6 +284,15 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
             };
 
             $scope.simpan = function () {
+
+                var objSave =
+                {
+                    setoran: $scope.selectedData2 
+                    // idrekeningSTS: $scope.item.rekeningSTS.id
+                }
+
+                $scope.isRouteLoading = true;
+
                 $scope.selectedData2[0].terbilang =  $scope.item.terbilang;
                 $scope.selectedData2[0].tanggalSTS =  moment($scope.item.tanggalSTS).format('YYYY-MM-DD HH:mm:ss');
                 var cektunai = 789;
@@ -306,8 +310,6 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
 					}
 				}
 
-                // console.log($scope.selectedData2);
-
                 if(cektunai == 111 && cektransfer == 123){
                     toastr.error('Cara Bayar Transfer dan Tunai Tercampur');
                 }
@@ -315,7 +317,6 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
                     toastr.error('Data sudah ada yang di STS');
                 }                
                 else{
-                    // console.log(objSave)
                     medifirstService.post('bendaharapenerimaan/save-sts', objSave).then(function (dat) {
                         $scope.isRouteLoading = false;
                         for (var i = 0; i < dat.data.data.length; i++) {
@@ -755,6 +756,12 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
             $scope.formatRupiah = function (value, currency) {
                 return currency + " " + value.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".");
             }
+
+            $scope.cetakpdfV2 = function(){
+                // console.log($scope.selectedData2)
+                window.open(baseTransaksi + "report/cetak-stsv2?nosts="+$scope.selectedData2[0].nosts, '_blank');
+            }
+
             //////////////////////////////////////////////////////////////          END             /////////////////////////////////////////////////////////////////////////////////////       
         }
     ]);
