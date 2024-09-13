@@ -662,13 +662,16 @@ class TagihanController  extends ApiController
 //                if(isset($request['idruangan']) && $request['idruangan']!="" && $request['idruangan']!="undefined"){
 //                    $pelayanan = $pelayanan->where('apd.objectruanganfk',$request['idruangan']);
 //                };
-                $pelayanan = $pelayanan->whereNotNull('pp.aturanpakai');
+                //$pelayanan = $pelayanan->whereNotNull('pp.aturanpakai');
+                $pelayanan = $pelayanan->whereNotNull('pp.strukresepfk');
             }
             if ($request['jenisdata'] == 'layanan'){
                 if(isset($request['idruangan']) && $request['idruangan']!="" && $request['idruangan']!="undefined"){
                     $pelayanan = $pelayanan->where('apd.objectruanganfk',$request['idruangan']);
                 };
-                $pelayanan = $pelayanan->whereNull('pp.aturanpakai');
+                //$pelayanan = $pelayanan->whereNull('pp.aturanpakai');
+               $pelayanan = $pelayanan->whereNull('pp.strukresepfk');
+
             }
             $pelayanan = $pelayanan->get();
 
