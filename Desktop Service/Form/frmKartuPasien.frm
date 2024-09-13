@@ -1,5 +1,5 @@
 VERSION 5.00
-Object = "{F9043C88-F6F2-101A-A3C9-08002B2F49FB}#1.2#0"; "comdlg32.ocx"
+Object = "{F9043C88-F6F2-101A-A3C9-08002B2F49FB}#1.2#0"; "ComDlg32.ocx"
 Begin VB.Form frmKartuPasien 
    BorderStyle     =   1  'Fixed Single
    Caption         =   "Foto"
@@ -355,7 +355,7 @@ strSQL = "SELECT ps.namapasien  ||  ' ( '  ||   jk.reportdisplay  ||  ' ) ' as n
      
      Printer.FontBold = True
      Printer.CurrentX = 4750 - Printer.TextWidth(rs!noCm)
-     Printer.Print rs!noCm
+     Printer.Print rs!noCm & "  "
      Printer.Print ""
 '     Printer.Print "                                                                                                              " & rs!noCm
      Printer.CurrentX = 4750 - Printer.TextWidth(rs!namapasien)
