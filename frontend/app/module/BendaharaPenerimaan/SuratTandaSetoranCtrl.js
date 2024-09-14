@@ -287,8 +287,7 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
 
                 var objSave =
                 {
-                    setoran: $scope.selectedData2 
-                    // idrekeningSTS: $scope.item.rekeningSTS.id
+                    setoran: $scope.selectedData2,
                 }
 
                 $scope.isRouteLoading = true;
@@ -418,6 +417,11 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
             }
 
             $scope.batal = function () {
+                var objSave =
+                {
+                    setoran: $scope.selectedData2
+                }
+
                 medifirstService.post('sysadmin/logging/save-log-batal-sts', objSave).then(function (data) {
                 })
             }
