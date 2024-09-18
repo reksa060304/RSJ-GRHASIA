@@ -11968,6 +11968,7 @@ class EMRController  extends ApiController
                         // 'islanjutaturansama'=> $data2['islanjutaturansama'],
                         // 'lanjutaturanperubahan'=> $data2['lanjutaturanperubahan'],
                         // 'isstop'=> $data2['isstop'],
+                        'statusobat'=> $data2['statusobat'],
                         'objectpegawaifk'=> $data2['objectpegawaifk'],
                     ]);
                 }
