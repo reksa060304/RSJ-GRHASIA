@@ -8,6 +8,7 @@ define(['initialize'], function (initialize) {
             $scope.now = new Date();
             $scope.date = new Date();
             $scope.item.tglAwal = moment($scope.now).format('YYYY-MM-DD 00:00');
+            $scope.item.tglAkhir = moment($scope.now).format('YYYY-MM-DD 23:59:59');
             $scope.dataSelected = {};
             $scope.item.jmlRows = 50;
             FormLoad();
@@ -32,6 +33,8 @@ define(['initialize'], function (initialize) {
             function init() {
                 $scope.isRouteLoading = true;
                 var tglAwal = moment($scope.item.tglAwal).format('YYYY-MM-DD HH:mm:ss');
+                var tglAkhir = moment($scope.item.tglAkhir).format('YYYY-MM-DD HH:mm:ss');
+
 
                 var kp = ""
                 if ($scope.item.kelompokPasien != undefined) {
@@ -44,7 +47,7 @@ define(['initialize'], function (initialize) {
                 }
 
                 medifirstService.get("farmasi/get-laporan-kegiatan-pelayanan-resep?" +
-                    "tglAwal=" + tglAwal + "&kpid=" + kp + "&rajalRanap=" + rajalRanap
+                    "tglAwal=" + tglAwal + "&tglAkhir=" + tglAkhir +  "&kpid=" + kp + "&rajalRanap=" + rajalRanap
                     , true).then(function (data) {
                         $scope.isRouteLoading = false;
                         var datas = data.data.detail;

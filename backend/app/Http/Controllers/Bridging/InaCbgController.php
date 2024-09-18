@@ -1278,7 +1278,7 @@ class InaCbgController   extends ApiController
     public function saveProposiBridgingINACBG(Request $request)
     {
         DB::beginTransaction();
-        try {
+        // try {
 
 
             $noregistrasifk=$request['noregistrasifk'];
@@ -1341,16 +1341,21 @@ class InaCbgController   extends ApiController
             $new->totalbiayars = $TotalBiayaRS;
             $new->totalpiutangpenjamin = $totaldijamin;
             $new->biayanaikkelas = $biayanaikkelas;
+            // $new->response = json_encode($response);
+            $new->tglgrouping = date('Y-m-d H:i');
+            // if(isset($request['special_cmg'])) {
+            //     $new->special_cmg = $request['special_cmg'];
+            // }
             // return($newRujukan);
             // die();
             $new->save();
 
             $transStatus = 'true';
             $transMessage = "Simpan Proposi Berhasil...! ";
-        } catch (\Exception $e) {
-            $transStatus = 'false';
-            $transMessage = "Gagal Simpan Data ...! ";
-        }
+        // } catch (\Exception $e) {
+        //     $transStatus = 'false';
+        //     $transMessage = "Gagal Simpan Data ...! ";
+        // }
 
         if ($transStatus != 'false') {
             DB::commit();
@@ -1374,6 +1379,8 @@ class InaCbgController   extends ApiController
     {
         $kdProfile = (int)$this->getDataKdProfile($request);
         $deptRanap = explode (',',$this->settingDataFixed('kdDepartemenRanapFix',$kdProfile));
+        $number = 1000;
+        ini_set('max_execution_time',$number);
         $kdDepartemenRawatInap = [];
         foreach ($deptRanap as $itemRanap){
             $kdDepartemenRawatInap []=  (int)$itemRanap;
@@ -1401,56 +1408,112 @@ class InaCbgController   extends ApiController
         $data = \DB::table('pasiendaftar_t as pd')
             ->join('pasien_m as ps', 'ps.id', '=', 'pd.nocmfk')
             ->join('ruangan_m as ru', 'ru.id', '=', 'pd.objectruanganlastfk')
+            ->join('departemen_m as dp', 'dp.id', '=', 'ru.objectdepartemenfk')
             ->leftjoin('pegawai_m as pg', 'pg.id', '=', 'pd.objectpegawaifk')
             ->leftJoin('kelompokpasien_m as kp', 'kp.id', '=', 'pd.objectkelompokpasienlastfk')
             ->leftJoin('departemen_m as dept', 'dept.id', '=', 'ru.objectdepartemenfk')
-//            ->join('antrianpasiendiperiksa_t as apd', 'pd.norec', '=', 'apd.noregistrasifk')
+            // ->join('antrianpasiendiperiksa_t as apd', 'pd.norec', '=', 'apd.noregistrasifk')
+            ->join(DB::raw('antrianpasiendiperiksa_t as apd'), function ($join) {
+                $join->on('apd.noregistrasifk', '=', 'pd.norec')
+                     ->on('apd.objectruanganfk', '=', 'pd.objectruanganlastfk')
+                     ->on('apd.tglkeluar','=','pd.tglpulang');
+                    //  ->on(DB::raw('apd.tglmasuk'), '=', DB::raw('(SELECT tglmasuk FROM antrianpasiendiperiksa_t WHERE noregistrasifk = pd.norec and objectruanganfk = pd.objectruanganlastfk order by tglmasuk desc limit 1)'));
+            })
+            ->leftjoin('asalrujukan_m as asl', 'asl.id', '=', 'apd.objectasalrujukanfk')
             // ->leftJoin('strukpelayanan_t as sp', 'sp.norec', '=', 'pd.nostruklastfk')
             // ->leftJoin('strukbuktipenerimaan_t as sbm', 'sbm.norec', '=', 'pd.nosbmlastfk')
             // ->leftjoin('loginuser_s as lu', 'lu.id', '=', 'sbm.objectpegawaipenerimafk')
             // ->leftjoin('pegawai_m as pgs', 'pgs.id', '=', 'lu.objectpegawaifk')
             ->leftjoin('pemakaianasuransi_t as pas', 'pas.noregistrasifk', '=', 'pd.norec')
-            ->leftjoin('asuransipasien_m as asu', 'asu.id', '=', 'pas.objectasuransipasienfk')
+            ->leftjoin('asuransipasien_m as asu', 'asu.noasuransi', '=', 'ps.nobpjs')
             ->leftjoin('kelas_m as kls', 'kls.id', '=', 'pd.objectkelasfk')
             ->leftjoin('kelas_m as kls2', 'kls2.id', '=', 'asu.objectkelasdijaminfk')
             // ->leftjoin('batalregistrasi_t as br', 'br.pasiendaftarfk', '=', 'pd.norec')
             ->leftjoin('hasilgrouping_t as hg', 'hg.noregistrasifk', '=', 'pd.norec')
             ->leftjoin('diagnosaberatbadanbayi_t as dbb', 'dbb.noregistrasifk', '=', 'pd.norec')
             ->leftjoin('rekanan_m as rk', 'rk.id', '=', 'pd.objectrekananfk')
-            ->select('pd.norec', 'pd.tglregistrasi', 'ps.nocm', 'pd.noregistrasi', 'ru.namaruangan', 'ps.namapasien', 'kp.kelompokpasien',
-                'pd.tglpulang', 'pd.statuspasien', 'pd.tglgrouping',
+            ->leftjoin('apgarscore_t as aps', 'aps.noregistrasifk', '=', 'pd.norec')
+            ->leftjoin('statuspulang_m as stp', 'stp.id', '=', 'pd.objectstatuspulangfk')
+            ->LEFTJoin ('strukverifikasi_t as sv', 'sv.norec', '=' ,'pd.closingpemeriksaanfk')
+            ->LEFTJoin ('pegawai_m as pg2', 'pg2.id', '=' ,'sv.objectpegawaipjawabfk')
+            // ->leftjoin('emrpasien_t as emrp',function($j){
+            //     $j->on('emrp.noregistrasifk','=','pd.noregistrasi')
+            //         ->where('emrp.jenisemr','=','asesmen');
+            //     })
+            // ->leftjoin('emrpasiend_t as emrdp',function($jn){
+            //     $jn->on('emrdp.emrpasienfk','=','emrp.noemr')
+            //         ->where('emrdp.emrfk','=',460006)
+            //         ->where('emrdp.emrdfk','=',1001433);
+            //     })
+            ->leftjoin('dokklaim_t as dok','dok.noregistrasifk','=','pd.norec')
+            ->distinct()
+            ->select('pd.norec',  'ps.nocm', 'pd.noregistrasi', 'ru.namaruangan', 'ps.namapasien', 'kp.kelompokpasien', 'pg2.namalengkap as pebilling',
+               'pd.statuspasien','apd.norec as norec_apd',  'usiakehamilan','gravida','partus','abortus',
+                // 'emrdp.value as tglpulangresume','stp.namaexternal as statuspulang',
                 // 'sp.nostruk', 'sbm.nosbm', 
-                'pg.id as pgid', 'pg.namalengkap as namadokter','kp.id as kpid','pas.objectasuransipasienfk',
-                // 'pgs.namalengkap as kasir',
-                'pd.objectruanganlastfk as ruanganid','pas.nosep','pas.norec as norec_pa',
+                'pd.pegawaikirim','pd.pegawaisimpan','pd.pegawaigrouper','pd.pegawaifinalklaim','pd.pegeditklaim', 'pd.tgledit','pd.tglklaim',
+                'pg.id as pgid', 'pg.namalengkap as namadokter','kp.id as kpid', 'asl.caramasuk_inacbg', 'ru.objectdepartemenfk', 'hg.special_cmg', 'hg.response', 'dp.namadepartemen',
+                // 'pgs.namalengkap as kasir','stp.kodeexternal',
+                'pd.objectruanganlastfk as ruanganid',DB::raw("case when pas.nosep is null then '-' else pas.nosep end as nosep"),'pas.norec as norec_pa', DB::raw("null as los, null as jam"),
+                DB::raw(" EXTRACT ( YEAR FROM AGE( pd.tglregistrasi, ps.tgllahir ) )|| ' Tahun ' as umur"),
                 // 'br.norec as norec_br',
-                'pas.nokepesertaan','ps.tgllahir','ps.objectjeniskelaminfk','dept.id as deptid','kls.nourut as nokelasdaftar','kls2.nourut as nokelasdijamin',
-                'kls.reportdisplay as namakelasdaftar','kls2.reportdisplay as namakelas','pd.objectstatuspulangfk',
+                'ps.nobpjs as nokepesertaan','ps.tgllahir','ps.objectjeniskelaminfk','dept.id as deptid','kls.nourut as nokelasdaftar','kls2.nourut as nokelasdijamin',
+                'kls.reportdisplay as namakelasdaftar','kls2.reportdisplay as namakelas',//'pd.objectstatuspulangfk',
                 // 'ru.jenis as statuscovid',
                 'hg.biayanaikkelas','dbb.beratbadan','rk.id as idrekanan','hg.status as statusgrouping','pas.statuscovid','ps.noidentitas',
+                'aps.1menit_appear as menit1_appear','aps.1menit_pulse as menit1_pulse','aps.1menit_grimace as menit1_grimace','aps.1menit_activity as menit1_activity','aps.1menit_resp as menit1_resp',
+                'aps.5menit_appear as menit5_appear','aps.5menit_pulse as menit5_pulse','aps.5menit_grimace as menit5_grimace','aps.5menit_activity as menit5_activity','aps.5menit_resp as menit5_resp',
                 DB::raw(" 'verifikasi'  as status, pas.loscovid,pd.statusklaim"),
-                DB::raw("case when hg.totalpiutangpenjamin is null then 1 else hg.totalpiutangpenjamin end as totalpiutangpenjamin,statuskelengkapandok"))
+                DB::raw("case when hg.totalpiutangpenjamin is null then '0' else hg.totalpiutangpenjamin end as totalpiutangpenjamin,statuskelengkapandok, COUNT ( dok.* ) || ' Dokumen' as hitungdok"),
+                DB::raw("to_char(pd.tglregistrasi,'YYYY-MM-DD HH24:MI') as tglregistrasi"),
+                DB::raw("case when pd.objectstatuspulangfk  is null then 'Diketahui / diizinkan oleh dokter'else stp.namaexternal   end as statuspulang "),
+                DB::raw("case when pd.objectstatuspulangfk  is null then '1'else pd.objectstatuspulangfk  end as objectstatuspulangfk "),
+                DB::raw("case when pd.objectstatuspulangfk  is null then '1'else stp.kodeexternal   end as kodeexternal "),
+                DB::raw("case when pd.statusklaim  is null then NULL when pd.statusklaim  ='new_claim' then NULL else hg.tglgrouping   end as tglgrouping "),
+                DB::raw("case when pg.kdkelasdokterbpjs = 'BP'then case when pd.objectruanganlastfk = '765'then 'AP'else 'BP'end else 'AP'end as kodetarif "),
+                DB::raw("to_char(pd.tglpulang,'YYYY-MM-DD HH24:MI') as tglpulang"))
             ->where('pd.statusenabled',true)
             ->where('pd.kdprofile',$kdProfile)
             // ->where('pas.nosep','<>','')
             // ->whereNotNull('pas.nosep')
             ->whereNotNull('pd.tglpulang');
 
+
 //            ->where('apd.objectruanganasalfk',null);
 
         $filter = $request->all();
-        if (isset($filter['tglAwal']) && $filter['tglAwal'] != "" && $filter['tglAwal'] != "undefined") {
-            $data = $data->where('pd.tglregistrasi', '>=', $filter['tglAwal']);
+     
+        if (isset($filter['ispulang']) && $filter['ispulang'] == true) {
+            if (isset($filter['tglAwal']) && $filter['tglAwal'] != "" && $filter['tglAwal'] != "undefined") {
+                $data = $data->where('pd.tglpulang', '>=', $filter['tglAwal']);
+            }
+        } else {
+            if (isset($filter['tglAwal']) && $filter['tglAwal'] != "" && $filter['tglAwal'] != "undefined") {
+                $data = $data->where('pd.tglregistrasi', '>=', $filter['tglAwal']);
+            }
         }
-        if (isset($filter['tglAkhir']) && $filter['tglAkhir'] != "" && $filter['tglAkhir'] != "undefined") {
-            $tgl = $filter['tglAkhir'];//." 23:59:59";
-            $data = $data->where('pd.tglregistrasi', '<=', $tgl);
+
+        if (isset($filter['ispulang']) && $filter['ispulang'] == true) {
+            if (isset($filter['tglAkhir']) && $filter['tglAkhir'] != "" && $filter['tglAkhir'] != "undefined") {
+                $tgl = $filter['tglAkhir'];//." 23:59:59";
+                $data = $data->where('pd.tglpulang', '<=', $tgl);
+            }
+        } else {
+            
+            if (isset($filter['tglAkhir']) && $filter['tglAkhir'] != "" && $filter['tglAkhir'] != "undefined") {
+                $tgl = $filter['tglAkhir'];//." 23:59:59";
+                $data = $data->where('pd.tglregistrasi', '<=', $tgl);
+            }
+
         }
         if (isset($filter['deptId']) && $filter['deptId'] != "" && $filter['deptId'] != "undefined") {
             $data = $data->where('dept.id', '=', $filter['deptId']);
         }
         if (isset($filter['ruangId']) && $filter['ruangId'] != "" && $filter['ruangId'] != "undefined") {
             $data = $data->where('ru.id', '=', $filter['ruangId']);
+        }
+        if (isset($filter['dokterid']) && $filter['dokterid'] != "" && $filter['dokterid'] != "undefined") {
+            $data = $data->where('pg.id', '=', $filter['dokterid']);
         }
         // if (isset($filter['kelId']) && $filter['kelId'] != "" && $filter['kelId'] != "undefined") {
         //     if($filter['kelId'] == 2){
@@ -1475,35 +1538,152 @@ class InaCbgController   extends ApiController
         if (isset($filter['sttts']) && $filter['sttts'] != "" && $filter['sttts'] != "undefined") {
             $data = $data->where('pd.statuspasien', '=', $filter['sttts']);
         }
+        // $noreg = "";
         if (isset($filter['noreg']) && $filter['noreg'] != "" && $filter['noreg'] != "undefined") {
-            $data = $data->where('pd.noregistrasi', 'like', '%' . $filter['noreg'] . '%');
+            $data = $data->where('pd.noregistrasi', 'ilike', '%' . $filter['noreg'] . '%');
+            // $noreg = " AND pd.noregistrasi', 'like', '%' . $filter['noreg'] . '%";
         }
         if (isset($filter['norm']) && $filter['norm'] != "" && $filter['norm'] != "undefined") {
-            $data = $data->where('ps.nocm', 'like', '%' . $filter['norm'] . '%');
+            $data = $data->where('ps.nocm', 'ilike', '%' . $filter['norm'] . '%');
         }
         if (isset($filter['nama']) && $filter['nama'] != "" && $filter['nama'] != "undefined") {
-            $data = $data->where('ps.namapasien', 'like', '%' . $filter['nama'] . '%');
+            $data = $data->where('ps.namapasien', 'ilike', '%' . $filter['nama'] . '%');
         }
         if (isset($filter['nosep']) && $filter['nosep'] != "" && $filter['nosep'] != "undefined") {
-            $data = $data->where('pas.nosep', '=', $filter['nosep']);
+            $data = $data->where('pas.nosep','ilike', '%' . $filter['nosep'].'%');
         }
         if (isset($filter['status']) && $filter['status'] != "" && $filter['status'] != "undefined") {
             $data = $data->where('pd.statusklaim', '=', $filter['status']);
+        }
+        if (isset($filter['pegklaim']) && $filter['pegklaim'] != "" && $filter['pegklaim'] != "undefined") {
+            $data = $data->where('pd.pegawaifinalklaim', 'ilike', '%'. $filter['pegklaim'] . '%');
         }
 //        if (isset($filter['jmlRows']) && $filter['jmlRows'] != "" && $filter['jmlRows'] != "undefined") {
 //            $data = $data->take($filter['jmlRows']);
 //        }
         $data = $data->orderBy('pd.noregistrasi');
-
+        $data = $data->groupBy('pd.norec','pd.tglregistrasi', 'ps.nocm', 'pd.noregistrasi', 'ru.namaruangan', 'ps.namapasien', 'kp.kelompokpasien',
+                                'pd.tglpulang', 'pd.statuspasien','apd.norec', 'stp.namaexternal', 'usiakehamilan','gravida','partus','abortus',
+                                // 'emrdp.value',
+                                'pg.id', 'pg.namalengkap','kp.id', 'asl.caramasuk_inacbg', 'pd.tglklaim','pd.tgledit', 'pg2.namalengkap',
+                                'pd.pegawaikirim','pd.pegawaisimpan','pd.pegawaigrouper','pd.pegawaifinalklaim','pd.pegeditklaim',
+                                'stp.kodeexternal', 'ru.objectdepartemenfk', 'hg.tglgrouping', 'hg.special_cmg', 'hg.response', 'dp.namadepartemen',
+                                'pd.objectruanganlastfk','pas.nosep','pas.norec',
+                                'ps.nobpjs','ps.tgllahir','ps.objectjeniskelaminfk','dept.id',
+                                'kls.nourut','kls2.nourut', 'hg.totalpiutangpenjamin',
+                                'kls.reportdisplay','kls2.reportdisplay','pd.objectstatuspulangfk',
+                                'hg.biayanaikkelas','dbb.beratbadan','rk.id','hg.status','pas.statuscovid','ps.noidentitas',
+                                'aps.1menit_appear','aps.1menit_pulse','aps.1menit_grimace','aps.1menit_activity','aps.1menit_resp',
+                                'aps.5menit_appear','aps.5menit_pulse','aps.5menit_grimace','aps.5menit_activity','aps.5menit_resp','ru.kodekelasbpjs');
         $data = $data->get();
+
+        foreach ($data as $key => $d) {
+            $selisih = date_diff( date_create($d->tglregistrasi), date_create($d->tglpulang) );
+            $selisih2 = strtotime($d->tglpulang) - strtotime($d->tglregistrasi);
+            $jam   = floor($selisih2 / (60 * 60));
+
+            $d->jam = $jam . ':'. $selisih->i;
+            $d->los = $selisih->days + 1;
+        }
+
+        $noregistrasi = '';
+        $norecaPd = '';
+        foreach ($data as $item){
+            $noregistrasi = $noregistrasi.",'".$item->noregistrasi . "'";
+            $norecaPd = $norecaPd.",'".$item->norec_apd . "'";
+        }
+        $noregistrasi = substr($noregistrasi, 1, strlen($noregistrasi)-1);
+        $norecaPd = substr($norecaPd, 1, strlen($norecaPd)-1);
+
+        if($noregistrasi != '') { 
+            $dataTotalBill = DB::select(DB::raw("
+                select pd.noregistrasi, sum(((case when pp.hargajual is null then 0 else pp.hargajual  end - case when pp.hargadiscount is null then 0 else pp.hargadiscount end) * pp.jumlah) + case when pp.jasa is null then 0 else pp.jasa end) as total
+                from pasiendaftar_t as pd
+                INNER JOIN antrianpasiendiperiksa_t as apd on apd.noregistrasifk=pd.norec
+                INNER JOIN pelayananpasien_t as pp on pp.noregistrasifk=apd.norec
+                where pd.kdprofile = $kdProfile and pd.noregistrasi in ($noregistrasi) and pp.produkfk not in (402611)
+                group by pd.noregistrasi;
+            "));
+            $i = 0;
+            foreach ($data as $h){
+                $data[$i]->totalbiayars = 0;
+                foreach ($dataTotalBill as $d){
+                    if($data[$i]->noregistrasi == $d->noregistrasi){
+                       $data[$i]->totalbiayars = ceil($d->total);
+                    }
+                }
+                $i++;
+            }
+        }
 
         $i = 0 ;
         $dtdt = '';
+        $tglawalawal = $filter['tglAwal'];
+        $tglakhirakhir = $filter['tglAkhir'];
+        if (isset($filter['ispulang']) && $filter['ispulang'] == true) {
+            // if (isset($filter['tglAwal']) && $filter['tglAwal'] != "" && $filter['tglAwal'] != "undefined") {
+                $periode = " and pd.tglpulang >= '$tglawalawal' and pd.tglpulang <= '$tglakhirakhir' ";
+                
+            // }
+        } else {
+            // if (isset($filter['tglAwal']) && $filter['tglAwal'] != "" && $filter['tglAwal'] != "undefined") {
+                $periode = " and pd.tglregistrasi >= '$tglawalawal' and pd.tglregistrasi <= '$tglakhirakhir' ";
+            // }
+        }
+
+        $VitalSign = DB::select(DB::raw("
+            SELECT* FROM (
+                SELECT epd.VALUE, epd.emrdfk, pd.noregistrasi,
+                    ROW_NUMBER ( ) OVER ( PARTITION BY epd.emrdfk, pd.noregistrasi ORDER BY epd.tgl DESC ) AS nourut 
+                    FROM emrpasiend_t AS epd
+                        LEFT JOIN emrpasien_t AS ep ON ep.noemr = epd.emrpasienfk 
+                        INNER JOIN pasiendaftar_t AS pd ON pd.noregistrasi = ltrim(rtrim(ep.noregistrasifk))
+                    WHERE
+                        epd.kdprofile = $kdProfile
+                        AND epd.emrfk=147
+                        $periode
+                        AND ep.statusenabled = TRUE 
+                    ORDER BY
+                        epd.emrdfk DESC   
+                    ) AS x 
+                WHERE
+                    x.nourut = 1 
+                ORDER BY
+            x.emrdfk
+        "));
 
 
+         $ventilator = DB::select(DB::raw("
+                SELECT x.noregistrasifk, '1' as use_ind,case when x.ventilator_hour<1 then 1 ELSE x.ventilator_hour end as ventilator_hour, x.stop_dttm,x.start_dttm FROM(SELECT ep.noregistrasifk,epd.emrpasienfk, EXTRACT(HOUR FROM (lps.stop_dttm::TIMESTAMP - epd.value::TIMESTAMP)) AS ventilator_hour, epd.value as start_dttm,lps.stop_dttm FROM emrpasiend_t as epd
+                INNER JOIN (SELECT emrpasienfk,
+                 value as stop_dttm FROM emrpasiend_t 
+                WHERE emrfk = 291042 and emrdfk in (318182)) as lps ON lps.emrpasienfk = epd.emrpasienfk
+                INNER JOIN emrpasien_t as ep on ep.noemr = epd.emrpasienfk
+                WHERE epd.emrfk = 291042 and epd.emrdfk in (318179)) as x 
+        "));
 
+       
 
-
+        foreach($data as $item) {
+            $item->response = json_decode($item->response);
+            $item->sistole = 0;
+            $item->diastole = 0;
+            $item->birth_weight = 0;
+            foreach ($VitalSign as $item2) {
+                if($item->noregistrasi == $item2->noregistrasi) {
+                    if($item2->emrdfk == 4241) {
+                        if(str_contains($item2->value, '/')) {
+                            $tekanandarah = explode("/", $item2->value);
+                            $item->sistole = is_nan((float)$tekanandarah[0]) ? 0 : (float)$tekanandarah[0];
+                            $item->diastole = is_nan((float)$tekanandarah[1]) ? 0 : (float)$tekanandarah[1];
+                        }
+                    }
+                    if($item2->emrdfk == 4243) {
+                        $item->birth_weight = is_nan((float)$item2->value) ? 0 : (float)$item2->value;
+                    }
+                }
+            }
+        }
 
         $dataDiagnosa = \DB::table('detaildiagnosapasien_t as dp')
             ->join('diagnosa_m as dg', 'dg.id', '=', 'dp.objectdiagnosafk')
@@ -1512,13 +1692,37 @@ class InaCbgController   extends ApiController
             ->select('dg.kddiagnosa','apd.objectasalrujukanfk','pd.norec')
 //            ->where('apd.noregistrasifk',$data[$i]->norec)
             ->wherein('dp.objectjenisdiagnosafk',array(1,2))
-            ->where('pd.tglregistrasi', '>=', $filter['tglAwal'])
-            ->where('pd.tglregistrasi', '<=', $filter['tglAkhir'])
+            // ->where('pd.tglregistrasi', '>=', $filter['tglAwal'])
+            // ->where('pd.tglregistrasi', '<=', $filter['tglAkhir'])
             ->where('pd.kdprofile',$kdProfile)
             ->orderBy('dp.objectjenisdiagnosafk', 'asc');
 
         if (isset($filter['noreg']) && $filter['noreg'] != "" && $filter['noreg'] != "undefined") {
             $dataDiagnosa = $dataDiagnosa->where('pd.noregistrasi', 'ilike', '%' . $filter['noreg'] . '%');
+        }
+        if (isset($filter['ispulang']) && $filter['ispulang'] == true) {
+            if (isset($filter['tglAwal']) && $filter['tglAwal'] != "" && $filter['tglAwal'] != "undefined") {
+                $dataDiagnosa = $dataDiagnosa->where('pd.tglpulang', '>=', $filter['tglAwal']);
+                
+            }
+        } else {
+            if (isset($filter['tglAwal']) && $filter['tglAwal'] != "" && $filter['tglAwal'] != "undefined") {
+                $dataDiagnosa = $dataDiagnosa->where('pd.tglregistrasi', '>=', $filter['tglAwal']);
+            }
+        }
+
+        if (isset($filter['ispulang']) && $filter['ispulang'] == true) {
+            if (isset($filter['tglAkhir']) && $filter['tglAkhir'] != "" && $filter['tglAkhir'] != "undefined") {
+                $tgl = $filter['tglAkhir'];//." 23:59:59";
+                $dataDiagnosa = $dataDiagnosa->where('pd.tglpulang', '<=', $tgl);
+            }
+        } else {
+            
+            if (isset($filter['tglAkhir']) && $filter['tglAkhir'] != "" && $filter['tglAkhir'] != "undefined") {
+                $tgl = $filter['tglAkhir'];//." 23:59:59";
+                $dataDiagnosa = $dataDiagnosa->where('pd.tglregistrasi', '<=', $tgl);
+            }
+
         }
         // if (isset($filter['norm']) && $filter['norm'] != "" && $filter['norm'] != "undefined") {
         //     $dataDiagnosa = $dataDiagnosa->where('ps.nocm', 'like', '%' . $filter['norm'] . '%');
@@ -1546,12 +1750,13 @@ class InaCbgController   extends ApiController
             $data[$i]->icd10 = substr($dtdt,1,strlen($dtdt)-1);
             $data[$i]->codernik = $codernik;
             $data[$i]->objectasalrujukanfk = $asalRujukan;
-            $data[$i]->kodetarif = $kodetarif;
+            $data[$i]->kodetarif = $item->kodetarif ;//$kodetarif;
             $i= $i + 1 ;
         }
 
         $i = 0 ;
         $dtdt = '';
+        
         $dataICD9 = \DB::table('diagnosatindakanpasien_t as dpa')
             ->join('detaildiagnosatindakanpasien_t as dp', 'dpa.norec', '=', 'dp.objectdiagnosatindakanpasienfk')
             ->join('diagnosatindakan_m as dg', 'dg.id', '=', 'dp.objectdiagnosatindakanfk')
@@ -1559,12 +1764,38 @@ class InaCbgController   extends ApiController
             ->join('pasiendaftar_t as pd', 'pd.norec', '=', 'apd.noregistrasifk')
             ->select('dg.kddiagnosatindakan','pd.norec')
 //            ->where('apd.noregistrasifk',$data[$i]->norec)
-            ->where('pd.tglregistrasi', '>=', $filter['tglAwal'])
-            ->where('pd.tglregistrasi', '<=', $filter['tglAkhir'])
+            // ->where('pd.tglregistrasi', '>=', $filter['tglAwal'])
+            // ->where('pd.tglregistrasi', '<=', $filter['tglAkhir'])
             ->where('pd.kdprofile',$kdProfile);
         if (isset($filter['noreg']) && $filter['noreg'] != "" && $filter['noreg'] != "undefined") {
             $dataICD9 = $dataICD9->where('pd.noregistrasi', 'ilike', '%' . $filter['noreg'] . '%');
         }
+
+        if (isset($filter['ispulang']) && $filter['ispulang'] == true) {
+            if (isset($filter['tglAwal']) && $filter['tglAwal'] != "" && $filter['tglAwal'] != "undefined") {
+                $dataICD9 = $dataICD9->where('pd.tglpulang', '>=', $filter['tglAwal']);
+                
+            }
+        } else {
+            if (isset($filter['tglAwal']) && $filter['tglAwal'] != "" && $filter['tglAwal'] != "undefined") {
+                $dataICD9 = $dataICD9->where('pd.tglregistrasi', '>=', $filter['tglAwal']);
+            }
+        }
+
+        if (isset($filter['ispulang']) && $filter['ispulang'] == true) {
+            if (isset($filter['tglAkhir']) && $filter['tglAkhir'] != "" && $filter['tglAkhir'] != "undefined") {
+                $tgl = $filter['tglAkhir'];//." 23:59:59";
+                $dataICD9 = $dataICD9->where('pd.tglpulang', '<=', $tgl);
+            }
+        } else {
+            
+            if (isset($filter['tglAkhir']) && $filter['tglAkhir'] != "" && $filter['tglAkhir'] != "undefined") {
+                $tgl = $filter['tglAkhir'];//." 23:59:59";
+                $dataICD9 = $dataICD9->where('pd.tglregistrasi', '<=', $tgl);
+            }
+
+        }
+
         $dataICD9=$dataICD9->get();
         foreach ($data as $item){
             $data[$i]->jenis_rawat = 2;
@@ -1605,6 +1836,18 @@ class InaCbgController   extends ApiController
         if (isset($filter['nama']) && $filter['nama'] != "" && $filter['nama'] != "undefined") {
             $namas = " and ps.namapasien ilike '%".$filter['nama']."%'";
         }
+
+        if (isset($filter['ispulang']) && $filter['ispulang'] == true) {
+            // if (isset($filter['tglAwal']) && $filter['tglAwal'] != "" && $filter['tglAwal'] != "undefined") {
+                $periode = " and pd.tglpulang >= '$tglawalawal' and pd.tglpulang <= '$tglakhirakhir' ";
+                
+            // }
+        } else {
+            // if (isset($filter['tglAwal']) && $filter['tglAwal'] != "" && $filter['tglAwal'] != "undefined") {
+                $periode = " and pd.tglregistrasi >= '$tglawalawal' and pd.tglregistrasi <= '$tglakhirakhir' ";
+            // }
+        }
+
         $dataTarif16 = DB::select(DB::raw("select pd.norec, sum(((pp.hargajual - case when pp.hargadiscount is null then 0 else pp.hargadiscount end) * pp.jumlah)+ case when pp.jasa is null then 0 else pp.jasa end) as ttl,kpb.namaexternal
             from pasiendaftar_t as pd
             inner join pasien_m as ps on ps.id = pd.nocmfk
@@ -1616,7 +1859,8 @@ class InaCbgController   extends ApiController
             left join batalregistrasi_t as br on br.pasiendaftarfk = pd.norec
             where br.norec is null   
             and pd.kdprofile=$kdProfile
-            and pd.tglregistrasi >= '$tglawalawal' and pd.tglregistrasi <= '$tglakhirakhir'  and kp.id in ($kelompokPasien)
+            and kp.id in ($kelompokPasien) and  pr.id <> 402611
+            $periode
             $noregs
             $namas
             $norms
@@ -1653,7 +1897,7 @@ class InaCbgController   extends ApiController
                         $prosedur_bedah = (float)$itm->ttl;
                     }
                     if ($itm->namaexternal == 'konsultasi'){
-                        $konsultasi = (float)$itm->ttl;
+                           $konsultasi = (float)$itm->ttl;
                     }
                     if ($itm->namaexternal == 'tenaga_ahli'){
                         $tenaga_ahli = (float)$itm->ttl;

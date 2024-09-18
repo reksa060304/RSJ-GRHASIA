@@ -811,10 +811,11 @@ define(['initialize'], function (initialize) {
                 // delete $scope.item.dokterVerif
                 // $scope.btnSimpanVis = false
                 // $scope.headerVerif = $scope.dataSelected;
-                // $scope.item.noOrder = $scope.dataSelected.noorder;
-                // $scope.item.namaPasiens = $scope.dataSelected.namapasien;
+                $scope.item.noOrderA = $scope.dataSelected.noorder;
+                $scope.item.namaPasienA = $scope.dataSelected.namapasien;
+                $scope.item.nocmA = $scope.dataSelected.nocm;
                 // $scope.item.dokterOrder = { id: $scope.dataSelected.objectpegawaiorderfk, namalengkap: $scope.dataSelected.pegawaiorder };
-                // loadDiagnosa($scope.dataSelected.noregistrasi)
+                loadDiagnosa($scope.dataSelected.noregistrasi)
                 $scope.popUpVerifNew.center().open();
                 // loadDataVerif();
             }
@@ -1350,6 +1351,92 @@ define(['initialize'], function (initialize) {
 					dataPasien: JSON.stringify(obj)
 				});
 			}
+
+            $scope.simpanVerifikasiNew = function () {
+				if (dataOrder.length == 0) {
+					alert("Pilih produk terlebih dahulu !")
+					return;
+				}
+				var subTotal = 0;
+				for (var i = dataOrder.length - 1; i >= 0; i--) {
+					var petugasLayanan = [];
+					subTotal = subTotal + parseFloat(dataOrder[i].totalK)
+					if (dataOrder[i].petugas != undefined) {
+						dataOrder[i].petugas.forEach(function (a) {
+							if (dataOrder[i].no == a.idParent) {
+								petugasLayanan.push({
+									// "objectjenispetugaspefk": a.jenisPetugas.id,
+                                    "objectpegawaifk": a.petugas.id,
+                                    "objectjenispegawaifk": a.petugas.objectjenispegawaifk,
+									// "listpegawai": a.listPetugas,
+								})
+							}
+						})
+					} else {
+						petugasLayanan = [];
+					}
+					dataOrder[i].petugas = petugasLayanan
+				}
+				if (subTotal == undefined || subTotal == 0) {
+					alert("Total tidak Boleh Kosong !")
+					return;
+				}
+				var objSave = {
+					norec: norec ?? null,
+					kelompoktransaksifk: 9,
+					keteranganlainnya: $scope.item.keterangan,
+					namapasien: $scope.item.namaPasien_klien,
+					notelp_klien: $scope.item.noTelp_klien,
+					tglstruk: moment($scope.item.tglStruk).format('YYYY-MM-DD hh:mm:ss'),
+					totalharusdibayar: parseFloat(subTotal),//parseFloat($scope.item.totalBilling),
+					details: dataOrder,
+				}
+                console.log(objSave);
+				medifirstService.post('ambulance/save-input-non-layanan-verif',objSave).then(function (data) {
+					// if ($scope.KelompokUser != $scope.KelompokUserDiklit) {
+					// 	noRegistrasi2 = data.data.data.norec
+					// 	// $scope.changePage("PenerimaanPembayaranKasir");
+					// }else{
+					// 	window.history.back();
+					// }
+					
+				})
+			}
+
+            $scope.gridPetugasPelaksana = new kendo.data.DataSource({
+				data: []
+			})
+
+            $scope.detailGridOptions = function (dataItem) {
+				return {
+                dataSource: {
+                    data: $scope.gridPetugasPelaksana._data,
+                    filter: { field: "idParent", operator: "eq", value: dataItem.no }
+                },
+                columns: [
+                    {
+                    field: "jenisPetugas.jenisPelaksana",
+                    title: "Jenis Pelaksana",
+                    width: "100px",
+                    template: "#= jenisPetugas.jenisPelaksana #"
+                    },
+                    {
+                    field: "listPetugas[0].namalengkap",
+                    title: "Nama Pegawai",
+                    width: "200px",
+                    template: multiSelectArrayToString
+                    }
+                ]
+                };
+			}
+
+            function multiSelectArrayToString(item) {
+				if (item.listPetugas !== "") {
+					return item.listPetugas.map(function (elem) {
+						return elem.namalengkap
+					}).join(", ");
+				}
+			};
 
 
             //********************************  $scope.cekBelumVerifs=true;***

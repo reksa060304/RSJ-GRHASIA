@@ -1792,4 +1792,129 @@ class AmbulanController extends ApiController{
         );
         return $this->respond($result);
     }
+
+    public function SaveInputTagihanVerif(Request $request) {
+        $kdProfile = (int) $this->getDataKdProfile($request);
+        \DB::beginTransaction();
+        $transMessage='';
+        $req = $request->all();
+//        return $this->respond($req);
+        try {
+
+            if($req['norec'] == ''){
+                $SP = new StrukPelayanan();
+                $norecSP = $SP->generateNewId();
+                $noStruk = $this->generateCode(new StrukPelayanan, 'nostruk', 10, 'NLA'.$this->getDateTime()->format('ym'), $kdProfile);
+                $SP->norec = $norecSP;
+                $SP->kdprofile = $kdProfile;
+                $SP->statusenabled = true;
+                $SP->nostruk = $noStruk;
+            }else{
+                $SP = StrukPelayanan::where('norec', $req['norec'])->where('kprofile', $kdProfile)->first();
+                $DelSPD = StrukPelayananDetail::where('nostrukfk', $req['norec'])->where('kdprofile', $kdProfile)->delete();
+            }
+            $SP->objectkelompoktransaksifk = $req['kelompoktransaksifk'];
+            $SP->keteranganlainnya = $req['keteranganlainnya'];
+            $SP->namapasien_klien = $req['namaPasien_klien'];
+            $SP->nostruk_intern = $req['nocm'];
+            if (isset($req['notelp_klien'])){
+                $SP->noteleponfaks = $req['notelp_klien'];
+            }
+            if (isset($req['alamat'])){
+                $SP->namatempattujuan =  $req['alamat'];//alamat
+            }
+            if (isset($req['tglLahir'])){
+                $SP->tglfaktur =  $req['tglLahir'];//tgllahir
+            }
+            $SP->tglstruk = $req['tglstruk'];
+            $SP->totalharusdibayar = $req['totalharusdibayar'];
+            $SP->save();
+
+            $hargaTambahanP = 0;
+            $hargaTambahanD = 0;
+
+            foreach ($req['details'] as $item) {
+                if ($req['perawat'] == true || $req['perawat'] == 'true'){
+                    $hargaTambahanP = (float) $item['harga'] * 25/100;
+                }
+                if ($req['dokter'] == true || $req['dokter'] == 'true'){
+                    $hargaTambahanD = (float) $item['harga'] * 25/100;
+                }
+                $SPD = new StrukPelayananDetail();
+                $norecKS = $SPD->generateNewId();
+                $SPD->norec = $norecKS;
+                $SPD->kdprofile = $kdProfile;
+                $SPD->statusenabled = true;
+                $SPD->nostrukfk = $SP->norec;
+                $SPD->objectprodukfk = $item['id'];
+                $SPD->hargadiscount = 0;
+                $SPD->hargadiscountgive = 0;
+                $SPD->hargadiscountsave = 0;
+                $SPD->harganetto = $item['harga'];
+                $SPD->hargapph = 0;
+                $SPD->hargappn = 0;
+                $SPD->hargasatuan = $item['harga'];
+                $SPD->hargasatuandijamin = 0;
+                $SPD->hargasatuanppenjamin = 0;
+                $SPD->hargasatuanpprofile = 0;
+                $SPD->hargatambahan = $hargaTambahanP + $hargaTambahanD;
+                $SPD->isonsiteservice = 0;
+                $SPD->kdpenjaminpasien = 0;
+                $SPD->persendiscount = 0;
+                $SPD->qtyproduk = $item['jumlah'];
+                $SPD->qtyoranglast = $item['qtyoranglast'];
+                $SPD->qtyprodukoutext = 0;
+                $SPD->qtyprodukoutint = 0;
+                $SPD->qtyprodukretur = 0;
+                $SPD->satuan = 0;
+                $SPD->tglpelayanan = $req['tglstruk'];
+                $SPD->is_terbayar = 0;
+                $SPD->linetotal = 0;
+                $SPD->keteranganlainnya = $item['keterangan'];
+                $SPD->isjasaperawat = $req['perawat'];
+                $SPD->isjasadokter = $req['dokter'];
+                $SPD->save();
+                if (isset($item['petugaspelaksana']) && $item['petugaspelaksana'] != null) {
+                    foreach ($item['petugaspelaksana'] as $itemP) {
+                        foreach ($itemP['listpegawai'] as $pegawai) {
+                            $pkd = new PetugasKendaraanDinas();
+                            $norecPKD = $pkd->generateNewId();
+                            $pkd->norec = $norecPKD;
+                            $pkd->kdprofile = $kdProfile;
+                            $pkd->statusenabled = true;
+                            $pkd->objectpetugasfk = $pegawai['id'];
+                            $pkd->objectjenispetugaspelaksanafk = $itemP['objectjenispetugaspefk'];
+                            $pkd->objectstrukpelayanandetailfk = $spd->norec;
+                            $pkd->save();
+                        }
+                    }
+                }
+            }
+
+            $transStatus = 'true';
+        } catch (\Exception $e) {
+            $transStatus = 'false';
+        }
+
+        if ($transStatus == 'true') {
+            $transMessage = "Simpan Tagihan Berhasil";
+            DB::commit();
+            $result = array(
+                "status" => 201,
+                "message" => $transMessage,
+                "data" => $SP,
+                "as" => 'as@epic',
+            );
+        } else {
+            $transMessage = "Simpan Tagihan Gagal!!";
+            DB::rollBack();
+            $result = array(
+                "status" => 400,
+                "message"  => $transMessage,
+                "data" => $SP,
+                "as" => 'as@epic',
+            );
+        }
+        return $this->setStatusCode($result['status'])->respond($result, $transMessage);
+    }
 }

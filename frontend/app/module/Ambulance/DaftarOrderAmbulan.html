@@ -373,7 +373,7 @@
             <div class="clear"></div>
 
             <div class="grid_12">
-                <input c-text-box type="input" filter="" class="k-textbox" ng-model="item.noOrder" ng-disabled="true" />
+                <input c-text-box type="input" filter="" class="k-textbox" ng-model="item.noOrderA" ng-disabled="true" />
             </div>
         </div>
         <div class="grid_4">
@@ -383,7 +383,7 @@
             <div class="clear"></div>
 
             <div class="grid_12">
-                <input c-text-box type="input" filter="" class="k-textbox" ng-model="headerVerif.nocm"
+                <input c-text-box type="input" filter="" class="k-textbox" ng-model="item.nocmA"
                     ng-disabled="true" />
             </div>
         </div>
@@ -394,7 +394,7 @@
             <div class="clear"></div>
 
             <div class="grid_12">
-                <input c-text-box type="input" filter="" class="k-textbox" ng-model="item.namaPasiens"
+                <input c-text-box type="input" filter="" class="k-textbox" ng-model="item.namaPasienA"
                     ng-disabled="true" />
             </div>
         </div>
@@ -567,7 +567,7 @@
                     </div>
                 </div>
             </div>
-            <div class="grid_12 borderBox">
+            <!-- <div class="grid_12 borderBox">
                 <kendo-grid 
                     id="kGrid" 
                     data-source="dataDaftarTagihan" 
@@ -579,10 +579,17 @@
                     k-selectable="'row'"
                     k-ng-model="dataSelectedDetail" 
                     ng-click="klikGridDetail(dataSelectedDetail)">
-                    <!-- <div k-detail-template>
-                        <div kendo-grid k-options="detailGridOptions(dataItem)"></div>
-                    </div> -->
+                   
                 </kendo-grid>
+            </div> -->
+
+            <div class="grid_12 borderBox">
+                <div id="kGrid" kendo-grid k-data-source="dataDaftarTagihan"
+                    k-columns="columnDaftarTagihan" k-ng-model="dataSelected">
+                    <div k-detail-template>
+                        <div kendo-grid k-options="detailGridOptions(dataItem)"></div>
+                    </div>
+                </div>
             </div>
             <!-- <div class="clear"></div> -->
         </div>
@@ -598,7 +605,7 @@
         <div class="grid_3" style="margin-top:35px;">
 
             <div class="pull-right">
-                <button class="k-button" ng-click="simpanVerifikasi()" ng-disabled='btnSimpanVis'>Simpan</button>
+                <button class="k-button" ng-click="simpanVerifikasiNew()" ng-disabled='btnSimpanVis'>Simpan</button>
                 <!-- <button class="k-button" ng-click="Tambah()" >Tambah</button> -->
                 <!-- <button class="k-button" ng-click="LihatHasil()">Lihat Hasil</button> -->
                 <!-- <button class="k-button" ng-click="cetakBuktiLayanan()">Bukti Layanan</button> -->

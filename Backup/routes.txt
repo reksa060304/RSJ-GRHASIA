@@ -2729,6 +2729,7 @@ Route::group(['middleware' => 'cors', 'prefix' => 'service'], function () {
         Route::post('sterilisasi/save-order-cssd-ruangan','Sterilisasi\SterilisasiController@saveOrderCSSD');
         Route::get('sterilisasi/get-daftar-order-cssd-ruangan', 'Sterilisasi\SterilisasiController@getDaftarOrderCSSD');
         Route::post('sterilisasi/post-pengemasan','Sterilisasi\SterilisasiController@savePengemasan');
+        Route::get('sterilisasi/get-daftar-pengemasan', 'Logistik\SterilisasiController@getDataBarangRegisterAset');
         // });
 
         // Route::group(['prefix' => 'sysadmin'], function () {
