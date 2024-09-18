@@ -921,7 +921,7 @@ define(['initialize','Configuration'], function (initialize, configuration) {
                     $scope.itemd.LPO = true
                 } else if (dataItem.statusobat == "H"){
                     $scope.itemd.HPO = true
-                }else(dataItem.statusobat == "T"){
+                }else if(dataItem.statusobat == "T"){
                     $scope.itemd.TPO = true
                 }
                 $scope.itemd.aturanpakai = dataItem.perubahanaturan
