@@ -2400,6 +2400,7 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
                     kodebpjs = 0
                 }
 
+                saveMonitoringTaksId(apd.noregistrasifk, 3, new Date().getTime(), false);
                 var json  = {
                     "url": "jadwaldokter/kodepoli/"+ kodebpjs +"/tanggal/"+ moment($scope.item.tglRegistrasi).format('YYYY-MM-DD'),
                     "jenis": "antrean",
