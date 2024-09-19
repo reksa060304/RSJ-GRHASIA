@@ -1226,6 +1226,7 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
 
             // Event Click
             $scope.saveAsuransi = async function (type) {
+                saveMonitoringTaksId($scope.currentNorecPD, 3, new Date().getTime(), false);
                 if (ceknobpjsdouble == true) {
                     toastr.error('No BPJS Terdeteksi Double, Sesuaikan No BPJS dengan pasiennya', 'Peringatan')
                     return;
