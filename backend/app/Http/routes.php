@@ -31,6 +31,7 @@ Route::group(['middleware' => 'cors', 'prefix' => 'service'], function () {
 
 		// Masih dalam percobaan. abaikan
 		Route::get('report/coba-lapung', 'Report\ReportController@cobaLapung');
+        Route::get('report/coba-lapung-v3', 'Report\ReportController@cobaLapungV3');
 		
         // terima laundry
 		Route::post('laundry/save-terima-laundryv2', 'Laundry\LaundryController@saveTerimaLaundryV2');

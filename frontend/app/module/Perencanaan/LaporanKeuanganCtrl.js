@@ -574,7 +574,13 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
                     jenisrekeningfungsional = $scope.item.jenisrekeningfungsional.id
                 }
 
-                window.open(baseTransaksi + "report/coba-lapung" 
+                // window.open(baseTransaksi + "report/coba-lapung" 
+                //     + "?tglcetak=" + tglcetakfungsional 
+                //     + "&tglbku=" + tglbkufungsional 
+                //     + "&asalproduk=" + asalprodukfungsional 
+                //     + "&jenisrekening=" + jenisrekeningfungsional, '_blank');
+
+                window.open(baseTransaksi + "report/coba-lapung-v3" 
                     + "?tglcetak=" + tglcetakfungsional 
                     + "&tglbku=" + tglbkufungsional 
                     + "&asalproduk=" + asalprodukfungsional 
