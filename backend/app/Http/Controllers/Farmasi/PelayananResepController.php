@@ -710,7 +710,7 @@ class PelayananResepController extends ApiController
             ->where('pr.statusenabled',true)
             // ->whereIn('jp.id',[97,283])
             ->whereIn('jp.id',$arrkdjenisobat)
-            ->where('spd.qtyproduk','>',0)
+            ->where('spd.qtyproduk', '>=', 0)
             ->groupBy('pr.id','pr.namaproduk','ss.id','ss.satuanstandar')
             ->orderBy('pr.namaproduk')
             ->get();
