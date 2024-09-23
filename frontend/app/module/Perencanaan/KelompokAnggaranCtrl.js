@@ -2191,7 +2191,7 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
                             keterangan: dataItem.subsubkegiatan
                         }
                         $scope.item.darirekeningpanjar = {
-                            namamataanggaran:dataItem.namamataanggaran,
+                            text:dataItem.kodemataanggaran + ' - ' + dataItem.namamataanggaran,
                             kodemataanggaran:dataItem.kodemataanggaran
                         }
                         $scope.norecpanjar = dataItem.norec
@@ -2443,12 +2443,11 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
                         // $scope.dataVOloaded = false;
 
                         // Check jika ada sisa anggaran
-                        if(e.data.sisa.total_sisa !== null){
+                        if(e.data.sisa !== null){
                             $scope.item.sisaa = parseInt(e.data.keterangan.subtotal) - parseInt(e.data.sisa)
                         }else{
                             $scope.item.sisaa = parseInt(e.data.keterangan.subtotal) - 0
                         }
-s
                         if(e.data.keterangan.password != null){
                             $scope.passrba = false
                             $scope.item.passwordbenar = e.data.keterangan.password
@@ -7237,6 +7236,22 @@ s
                 }
                 if($scope.item.penerimaSPJ == undefined){
                     $scope.isRouteLoading = false
+                    return
+                }
+
+                // validasi kegiatan,rekening,sumber dana
+                if(!$scope.item.subSubKegiatanSPJ){
+                    toastr.error("Pilih sub sub kegiatan dulu")
+                    return
+                }
+
+                if(!$scope.item.mataAnggaranSPJ){
+                    toastr.error("Pilih rekening dulu")
+                    return
+                }
+                
+                if(!$scope.item.sumberDanaSPJ.id){
+                    toastr.error("Pilih sumber dana dulu")
                     return
                 }
 
