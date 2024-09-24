@@ -7713,6 +7713,7 @@ class RegistrasiController extends ApiController
                 $join->on('apd.objectruanganfk', '=', 'pd.objectruanganlastfk');
                 $join->whereNull('apd.objectruanganasalfk');
             })
+            ->leftjoin('asalrujukan_m as ar', 'ar.id', '=', 'apd.objectasalrujukanfk')
             ->leftJoin('detaildiagnosapasien_t as ddt', function ($join) {
                 $join->on('ddt.noregistrasifk', '=', 'apd.norec');
                 $join->where('ddt.objectjenisdiagnosafk', '=', 1);
@@ -7774,6 +7775,7 @@ class RegistrasiController extends ApiController
                 'pa.poliasalkode',
                 'pa.tglcreate',
                 'asu.nmprovider',
+                'ar.asalrujukan',
                 DB::raw('coalesce(it.qtytracer,0) as qtytracer'),
                 DB::raw("pd.ismobilejkn,
                 case when pd.ismobilejkn = true then 
@@ -7851,6 +7853,9 @@ class RegistrasiController extends ApiController
         }
         if (isset($filter['jenisPel']) && $filter['jenisPel'] != "" && $filter['jenisPel'] != "undefined") {
             $data = $data->where('pd.jenispelayanan', '=', $filter['jenisPel']);
+        }
+        if (isset($filter['arId']) && $filter['arId'] != "" && $filter['arId'] != "undefined") {
+            $data = $data->where('ar.id', '=', $filter['arId']);
         }
 
         $data = $data->orderBy('pd.noregistrasi');

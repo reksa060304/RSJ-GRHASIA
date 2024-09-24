@@ -88,6 +88,11 @@ define(['initialize', 'Configuration'], function (initialize, config) {
 					$scope.listDataPegawai = e;
 				})
 				$scope.listJenis = [{ "id": 1, "name": "Hapus Semua" }, { "id": 2, "name": "Batal Rawat Inap" }]
+				
+				medifirstService.get("registrasi/get-data-combo-new", true)
+                .then(function (dat) {
+                    $scope.listAsalRujukan = dat.data.asalrujukan;
+                });
 			}
 			$scope.getIsiComboRuangan = function () {
 				$scope.listRuangan = $scope.item.instalasi.ruangan
@@ -306,7 +311,13 @@ define(['initialize', 'Configuration'], function (initialize, config) {
 					"template": '# if( ihs_number==null) {# - # } else {# #= ihs_number # #} #'
 
 				},
-				
+				{
+					"field": "asalrujukan",
+					"title": "Asal Rujukan",
+					"width": "80px",
+					"template": '# if( asalrujukan==null) {# - # } else {# #= asalrujukan # #} #'
+
+				},
 				// {
 				// 	"field": "statuspasien",
 				// 	"title": "Status Pasien",
@@ -391,14 +402,17 @@ define(['initialize', 'Configuration'], function (initialize, config) {
                 if ($scope.item.isbpjs != undefined) {
                     bpjs =  $scope.item.isbpjs.id
                 }
-
+				var ar = ""
+				if ($scope.item.asalRujukan != undefined) {
+					var ar = "&arId=" + $scope.item.asalRujukan.id
+				}
 
 				$q.all([
 					medifirstService.get("registrasi/daftar-registrasi/get-daftar-registrasi-pasien?" +
 						"tglAwal=" + tglAwal +
 						"&tglAkhir=" + tglAkhir +
 						reg + rm + nm + ins + rg + kp + dk
-						+ '&jmlRows=' + jmlRows +
+						+ '&jmlRows=' + jmlRows + ar +
 						isBlmInputSep + isSepTdkSesuai+blmInputDiag
 						+'&jenisPel='+jenisPel
 						+'&bpjs='+bpjs),

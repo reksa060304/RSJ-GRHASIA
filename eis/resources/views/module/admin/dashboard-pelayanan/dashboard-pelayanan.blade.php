@@ -422,7 +422,7 @@
                                 <div class="card">
                                     <div class="panel panel-info">
                                         <div class="panel-heading bg-info">
-                                            10 Besar Asal Perujuk Pasien
+                                            10 Besar Jenis Rujukan Pasien
                                         </div>
                                         <div class="panel-body">
                                             @php

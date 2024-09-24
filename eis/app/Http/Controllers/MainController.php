@@ -4454,15 +4454,37 @@ AND sp.statusenabled <> false
         $tglAwal =$tglAwal.' 00:00'; //Carbon::now()->startOfMonth()->subMonth(1);
         $tglAkhir = $tglAkhir.' 23:59';
         $bulan = Carbon::now()->format('F');
-        $data = DB::select(DB::raw("select aj.asalrujukan, count(apd.objectasalrujukanfk) as jumlah
-        from pasiendaftar_t pd
-        inner join antrianpasiendiperiksa_t apd on pd.norec=apd.noregistrasifk
-        inner join asalrujukan_m aj on aj.id = apd.objectasalrujukanfk
-        where apd.tglmasuk between '$tglAwal' and '$tglAkhir'
-        and pd.statusenabled = true and pd.kdprofile = $idProfile
-        group by aj.asalrujukan
-        order by jumlah desc
-        limit 10"));
+        // $data = DB::select(DB::raw("select aj.asalrujukan, count(apd.objectasalrujukanfk) as jumlah
+        // from pasiendaftar_t pd
+        // inner join antrianpasiendiperiksa_t apd on pd.norec=apd.noregistrasifk
+        // inner join asalrujukan_m aj on aj.id = apd.objectasalrujukanfk
+        // where apd.tglmasuk between '$tglAwal' and '$tglAkhir'
+        // and pd.statusenabled = true and pd.kdprofile = $idProfile
+        // group by aj.asalrujukan
+        // order by jumlah desc
+        // limit 10"));
+        $data = DB::select(DB::raw("
+            SELECT DISTINCT
+                ar.asalrujukan,
+                COUNT ( apd.objectasalrujukanfk ) AS jumlah 
+            FROM
+                pasiendaftar_t AS pd
+                LEFT JOIN batalregistrasi_t AS br ON br.pasiendaftarfk = pd.norec
+                LEFT JOIN antrianpasiendiperiksa_t AS apd ON apd.noregistrasifk = pd.norec 
+                AND apd.objectruanganfk = pd.objectruanganlastfk 
+                AND apd.objectruanganasalfk
+                IS NULL LEFT JOIN asalrujukan_m AS ar ON ar.ID = apd.objectasalrujukanfk 
+            WHERE
+                br.norec IS NULL 
+                AND pd.statusenabled = TRUE 
+                AND pd.kdprofile = $idProfile 
+                AND pd.tglregistrasi between '$tglAwal' AND '$tglAkhir'
+            GROUP BY
+                ar.asalrujukan 
+            ORDER BY
+                jumlah DESC 
+                LIMIT 6
+        "));
         if (count($data) > 0){
             $result = $data ;
         }else{
