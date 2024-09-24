@@ -80,7 +80,7 @@ define(['initialize'], function (initialize) {
             }
             function loadData() {
                 $scope.isRouteLoading = true;
-                updateAplicare();
+                // updateAplicare();
                 // var tglAwal = moment($scope.item.periodeAwal).format('YYYY-MM-DD HH:mm:ss');
                 // var tglAkhir = moment($scope.item.periodeAkhir).format('YYYY-MM-DD HH:mm:ss');
 

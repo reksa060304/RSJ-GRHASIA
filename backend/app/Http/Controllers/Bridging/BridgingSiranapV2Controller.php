@@ -632,6 +632,10 @@ class BridgingSiranapV2Controller  extends ApiController
             $user = '8271016'; //ternate
             $password ='S!rs2020!!';//
         }
+        else if($kdProfile==30){
+            $user = '3673004'; //ternate
+            $password ='S!rs2020!!';//
+        }
 
         date_default_timezone_set('UTC');
         $tStamp = strval(time()-strtotime('1970-01-01 00:00:00'));
