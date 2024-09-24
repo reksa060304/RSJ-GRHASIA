@@ -16,6 +16,8 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
             var ceknobpjsdouble = false;
             var namappkRumahSakit = ""
             var kodeppkRumahSakit = ""
+            $scope.dataRefPoliJKN = []
+            fetchRefPoliJKN()
             $scope.listRuanganPoli = []
             $scope.listRuanganIGD = []
             $scope.listHistoryPelayanan = []
@@ -1430,7 +1432,7 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
                     // kirim antrol sebelum buat sep
                     if(kdJenisPelayanan == "2" && $scope.item.pasien.kdinternal != 'IGD' && $scope.item.pasien.kdinternal != 'IRM'  ) 
                     {
-                        if (kdJenisPelayanan == "2" && $scope.item.pasien.kdinternal != 'HDL') {
+                        // if (kdJenisPelayanan == "2" && $scope.item.pasien.kdinternal != 'HDL') {
                             if(!dpjpLayan) {
                                 $scope.isSimpan = false;
                                 toastr.error("DPJP yang melayani belum diisi !")
@@ -1478,8 +1480,18 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
                                     nomorreferensi = $scope.item.noRujukan === undefined ? "" : $scope.item.noRujukan
                                 }
     
+                                var polinya = politujuan == "HDL" ? "INT" : politujuan;
+                                var polisubnya = politujuan == "HDL" ? "INT" : politujuan;
+                                for (let i = 0; i < $scope.dataRefPoliJKN.length; i++) {
+                                    const elpoli = $scope.dataRefPoliJKN[i];
+                                    if(elpoli.kdsubspesialis == polinya) {
+                                        polinya = elpoli.kdpoli
+                                        polisubnya = elpoli.kdsubspesialis
+                                        break;
+                                    }
+                                }
                                 var json  = {
-                                    "url": "jadwaldokter/kodepoli/"+ poliTujuans +"/tanggal/"+ moment($scope.item.tglRegistrasi).format('YYYY-MM-DD'),
+                                    "url": "jadwaldokter/kodepoli/"+ polinya +"/tanggal/"+ moment($scope.item.tglRegistrasi).format('YYYY-MM-DD'),
                                     "jenis": "antrean",
                                     "method": "GET",
                                     "data": null
@@ -1530,7 +1542,7 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
                                         "nomorkartu": noKartu,
                                         "nik": $scope.item.pasien.noidentitas,
                                         "nohp": $scope.item.noTelpons,
-                                        "kodepoli": $scope.item.pasien.kdinternal,
+                                        "kodepoli": polisubnya,
                                         "namapoli": $scope.item.pasien.namaruangan,
                                         "pasienbaru": statuspasien,
                                         "norm": $scope.item.pasien.nocm,
@@ -1566,7 +1578,7 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
                                     return
                                 }
                             }
-                        }
+                        // }
                         
                     }
 
@@ -2147,6 +2159,22 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
                 ).then(function (data) {
 
                 })
+            }
+
+            function fetchRefPoliJKN () {
+                let json = {
+                  "url": `ref/poli`,
+                  "jenis": "antrean",
+                  "method": "GET",
+                  "data": null
+                }
+                medifirstService.postNonMessage('bridging/bpjs/tools', json).then(async function (e) {
+                    if (e.data.response) {
+                        $scope.dataRefPoliJKN = e.data.response
+                    } else {
+                        $scope.dataRefPoliJKN = []
+                    }
+                });
             }
             // End Event Click
         }
