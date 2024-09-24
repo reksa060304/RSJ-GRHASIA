@@ -22795,7 +22795,7 @@ public function suratBuktiPengembalian(Request $request)
             $asalProduk = [2,15,21];
         }
 
-         $settingRBA = DB::table('settinganggaran_t')
+        $settingRBA = DB::table('settinganggaran_t')
             ->where('statusenabled', true)
             ->where('kdprofile', 30)
             ->first();
@@ -24267,5 +24267,155 @@ public function suratBuktiPengembalian(Request $request)
         return view('report.spj.cetak-stsv2',compact('rekening', 'data', 'sts'));
 
     }
+
+    public function cobaLapungV3(Request $request)
+    {
+        $asalproduk_kb = '';
+        $asalproduk_sr = '';
+        if (isset($request['asalproduk']) && $request['asalproduk'] != "" && $request['asalproduk'] != "undefined") {
+            $asalproduk_kb = 'and kb.objectasalprodukfk = '.$request['asalproduk'];
+            $asalproduk_sr = 'and sr.objectasalprodukfk = '.$request['asalproduk'];
+
+        }
+
+        $settingRBA = DB::table('settinganggaran_t')
+            ->where('statusenabled', true)
+            ->where('kdprofile', 30)
+            ->first();
+
+        $dataAnggaran = DB::select(DB::raw("
+            SELECT
+                ka.kode as kode_kegiatan,
+                MIN(ka.keterangan) AS keterangan_kegiatan,
+                ka3.kode AS kode_kegiatan3,
+                MIN(ka3.keterangan) AS keterangan_kegiatan3,
+                ka2.kode AS kode_kegiatan2,
+                MIN(ka2.keterangan) AS keterangan_kegiatan2,
+                ka1.kode AS kode_kegiatan1,
+                MIN(ka1.keterangan) AS keterangan_kegiatan1,
+                ma.kodemataanggaran AS kode_mataanggaran,
+                MIN(ma.namamataanggaran) AS nama_mataanggaran,
+                ma3.kodemataanggaran AS kode_mataanggaran3,
+                MIN(ma3.namamataanggaran) AS nama_mataanggaran3,
+                ma2.kodemataanggaran AS kode_mataanggaran2,
+                MIN(ma2.namamataanggaran) AS nama_mataanggaran2,
+                ma1.kodemataanggaran AS kode_mataanggaran1,
+                MIN(ma1.namamataanggaran) AS nama_mataanggaran1,
+                SUM(CAST(kb.subtotal AS DECIMAL)) AS total_anggaran
+            FROM keteranganbelanja2024_t kb
+            JOIN kegiatananggaran2024_m ka ON ka.id = kb.objectkegiatanfk AND ka.statusenabled = TRUE AND ka.kdprofile = 30
+            LEFT JOIN kegiatananggaran2024_m ka3 ON ka3.id = ka.headfk
+            LEFT JOIN kegiatananggaran2024_m ka2 ON ka2.id = ka3.headfk 
+            LEFT JOIN kegiatananggaran2024_m ka1 on ka1.id = ka2.headfk
+            JOIN mataanggaran2024_m ma ON ma.id = kb.objectmataanggaranfk AND ma.statusenabled = TRUE AND ma.kdprofile = 30
+            LEFT JOIN mataanggaran2024_m ma3 ON ma3.id = ma.headfk
+            LEFT JOIN mataanggaran2024_m ma2 ON ma2.id = ma3.headfk
+            LEFT JOIN mataanggaran2024_m ma1 ON ma1.id = ma2.headfk 
+            LEFT JOIN mataanggaranpermen_m mp ON mp.id = ma.mataanggaranpermenfk
+            LEFT JOIN asalproduk_m ap ON ap.id = kb.objectasalprodukfk AND ap.statusenabled = TRUE AND ap.kdprofile = 30
+            JOIN tahapanggaran_m ta ON ta.id = kb.objecttahapfk AND ta.statusenabled = TRUE AND ta.kdprofile = 30
+            WHERE 
+                kb.statusenabled = TRUE 
+                AND kb.kdprofile = 30
+                AND kb.objecttahapfk = 3
+                $asalproduk_kb
+            GROUP BY
+                ka.kode,
+                ka3.kode,
+                ka2.kode,
+                ka1.kode,
+                ma.kodemataanggaran,
+                ma3.kodemataanggaran,
+                ma2.kodemataanggaran,
+                ma1.kodemataanggaran,
+                mp.id,
+                mp.mataanggaranpermen
+            ORDER BY
+                SPLIT_PART(ka.kode, '.', 2),
+                SPLIT_PART(ka.kode, '.', 3),
+                SPLIT_PART(ka.kode, '.', 4),
+                SPLIT_PART(ka.kode, '.', 5),
+                SPLIT_PART(ka.kode, '.', 6),
+                SPLIT_PART(ka.kode, '.', 7),
+                SPLIT_PART(ma.kodemataanggaran, '.', 1),
+                SPLIT_PART(ma.kodemataanggaran, '.', 2),
+                SPLIT_PART(ma.kodemataanggaran, '.', 3),
+                case 
+                    when SPLIT_PART(ma.kodemataanggaran, '.', 5) = '' THEN cast(SPLIT_PART(ma.kodemataanggaran, '.', 4) as INTEGER)
+                    else cast(SPLIT_PART(ma.kodemataanggaran, '.', 5) as INTEGER)
+                END asc
+        "));
+
+        $dataSPJ = DB::select(DB::raw("
+            SELECT
+                ka.kode as kode_kegiatan,
+                MIN(ka.keterangan) AS keterangan_kegiatan,
+                ka3.kode AS kode_kegiatan3,
+                MIN(ka3.keterangan) AS keterangan_kegiatan3,
+                ka2.kode AS kode_kegiatan2,
+                MIN(ka2.keterangan) AS keterangan_kegiatan2,
+                ka1.kode AS kode_kegiatan1,
+                MIN(ka1.keterangan) AS keterangan_kegiatan1,
+                ma.kodemataanggaran AS kode_mataanggaran,
+                MIN(ma.namamataanggaran) AS nama_mataanggaran,
+                ma3.kodemataanggaran AS kode_mataanggaran3,
+                MIN(ma3.namamataanggaran) AS nama_mataanggaran3,
+                ma2.kodemataanggaran AS kode_mataanggaran2,
+                MIN(ma2.namamataanggaran) AS nama_mataanggaran2,
+                ma1.kodemataanggaran AS kode_mataanggaran1,
+                MIN(ma1.namamataanggaran) AS nama_mataanggaran1,
+                SUM(case when extract(year from bku.tglbku) = extract(year from timestamp '".$request['tglbku']."')
+                    and bku.tglbku <= DATE_TRUNC('MONTH', timestamp '".$request['tglbku']."')
+                then sr.totalbelanja else 0 end) as total_belanja_bulan_lalu,
+                SUM(case when extract(year from bku.tglbku) = extract(year from timestamp '".$request['tglbku']."')
+                    and extract(month from bku.tglbku) = extract(month from timestamp '".$request['tglbku']."')
+                then sr.totalbelanja else 0 end) as total_belanja_bulan_ini,
+                SUM(sr.totalbelanja) as total_belanja
+            FROM strukrealisasi2024_t sr
+            JOIN kegiatananggaran2024_m ka ON ka.id = sr.objectkegiatanfk AND ka.statusenabled = TRUE AND ka.kdprofile = 30
+            LEFT JOIN kegiatananggaran2024_m ka3 ON ka3.id = ka.headfk
+            LEFT JOIN kegiatananggaran2024_m ka2 ON ka2.id = ka3.headfk 
+            LEFT JOIN kegiatananggaran2024_m ka1 on ka1.id = ka2.headfk
+            JOIN mataanggaran2024_m ma ON ma.id = sr.objectmataanggaranfk
+            LEFT JOIN mataanggaran2024_m ma3 ON ma3.id = ma.headfk
+            LEFT JOIN mataanggaran2024_m ma2 ON ma2.id = ma3.headfk
+            LEFT JOIN mataanggaran2024_m ma1 ON ma1.id = ma2.headfk 
+            JOIN asalproduk_m ap ON ap.id = sr.objectasalprodukfk
+            JOIN bukukasumum_t bku ON bku.norec = sr.objectbkufk AND bku.statusenabled = TRUE AND bku.kdprofile = 30
+            WHERE 
+                sr.statusenabled = TRUE
+                AND sr.kdprofile = 30
+                $asalproduk_sr
+            GROUP BY
+                ka.kode,
+                ka3.kode,
+                ka2.kode,
+                ka1.kode,
+                ma.kodemataanggaran,
+                ma3.kodemataanggaran,
+                ma2.kodemataanggaran,
+                ma1.kodemataanggaran
+            ORDER BY
+                SPLIT_PART(ka.kode, '.', 2),
+                SPLIT_PART(ka.kode, '.', 3),
+                SPLIT_PART(ka.kode, '.', 4),
+                SPLIT_PART(ka.kode, '.', 5),
+                SPLIT_PART(ka.kode, '.', 6),
+                SPLIT_PART(ka.kode, '.', 7),
+                SPLIT_PART(ma.kodemataanggaran, '.', 1),
+                SPLIT_PART(ma.kodemataanggaran, '.', 2),
+                SPLIT_PART(ma.kodemataanggaran, '.', 3),
+                case 
+                    when SPLIT_PART(ma.kodemataanggaran, '.', 5) = '' THEN cast(SPLIT_PART(ma.kodemataanggaran, '.', 4) as INTEGER)
+                    else cast(SPLIT_PART(ma.kodemataanggaran, '.', 5) as INTEGER)
+                END asc
+        "));
+
+        return view('report.rba.cobalapungv3', [
+            'data' => $dataAnggaran,
+            'spjbku' => $dataSPJ,
+            // 'jenisAnggaran' => $dataJenisAnggaran
+        ]);
+    } 
 
 }
