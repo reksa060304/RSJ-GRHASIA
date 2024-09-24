@@ -1674,6 +1674,53 @@
                     slice = false;
                     jmlPasien = jmlPasien + parseFloat(this.datachartKunjungnJenisPasien.dataAll[i].jumlah)
                 }
+                // Highcharts.chart('chartKunjungnJenisPasien', {
+                //     chart: {
+                //         plotBackgroundColor: null,
+                //         plotBorderWidth: null,
+                //         plotShadow: false,
+                //         type: 'pie'
+                //     },
+                //     title: {
+                //         text: '',
+
+                //     },
+                //     // tooltip: {
+                //     //     pointFormat: '{series.name}: <b>{point.percentage:.1f}%</b>'
+                //     // },
+                //     plotOptions: {
+                //         pie: {
+                //             allowPointSelect: true,
+                //             cursor: 'pointer',
+                //             dataLabels: {
+                //                 enabled: true,
+                //                 color: '#000000',
+                //                 connectorColor: '#000000',
+                //                 formatter: function () {
+                //                     return this.percentage.toFixed(2) + ' %';
+                //                 }
+                //             },
+                //             showInLegend: true
+                //         },
+
+                //     },
+                //     credits: {
+                //         text: 'Total Pasien ' + jmlPasien,
+                //         // enabled: false
+                //     },
+                //     legend: {
+                //         enabled: true,
+                //         borderRadius: 5,
+                //         borderWidth: 1
+                //     },
+                //     series: [{
+                //         type: 'pie',
+                //         name: 'Persentase Kunjungan Pasien',
+                //         // colorByPoint: true,
+                //         data: dataz
+
+                //     }]
+                // })
                 Highcharts.chart('chartKunjungnJenisPasien', {
                     chart: {
                         plotBackgroundColor: null,
@@ -1682,12 +1729,8 @@
                         type: 'pie'
                     },
                     title: {
-                        text: '',
-
+                        text: ''
                     },
-                    // tooltip: {
-                    //     pointFormat: '{series.name}: <b>{point.percentage:.1f}%</b>'
-                    // },
                     plotOptions: {
                         pie: {
                             allowPointSelect: true,
@@ -1697,16 +1740,14 @@
                                 color: '#000000',
                                 connectorColor: '#000000',
                                 formatter: function () {
-                                    return this.percentage.toFixed(2) + ' %';
+                                    return this.point.name + ': ' + this.percentage.toFixed(2) + ' % (' + this.y + ' pasien)';
                                 }
                             },
                             showInLegend: true
-                        },
-
+                        }
                     },
                     credits: {
-                        text: 'Total Pasien ' + jmlPasien,
-                        // enabled: false
+                        text: 'Total Pasien ' + jmlPasien
                     },
                     legend: {
                         enabled: true,
@@ -1716,11 +1757,9 @@
                     series: [{
                         type: 'pie',
                         name: 'Persentase Kunjungan Pasien',
-                        // colorByPoint: true,
-                        data: dataz
-
+                        data: dataz 
                     }]
-                })
+                });
 
                 let categoriesss = [];
                 let bpjs = [];

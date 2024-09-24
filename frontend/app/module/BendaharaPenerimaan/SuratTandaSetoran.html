@@ -262,9 +262,8 @@
 						placeholer="dd-MM-yyyy HH:mm" k-format="'dd-MM-yyyy HH:mm'" />
 			</div>
 		</div>
-        <div class="grid_12">
-            <div class="grid_2" ng-include='"../app/template/Shared/TemplateLoading"'></div>
-            <div class="grid_10" style="float:right;">
+        <div class="grid">
+            <div class="grid_12">
                 <div class="grid_2">
                     <button class="c-button" ng-click="cetakpdf()">Cetak PDF</button>
                 </div>
@@ -282,6 +281,12 @@
                 </div>
                 <div class="grid_2">
                     <button class="c-button" ng-click="simpan()">Simpan</button>
+                </div>
+            </div>
+
+            <div class="grid_12">
+                <div class="grid_2">
+                    <button class="c-button" ng-click="popupSimpan()">Simpan V2</button>
                 </div>
             </div>
         </div>
@@ -314,6 +319,87 @@
             <input c-text-box type="input" filter="" class="k-textbox" ng-model="item.namasts" />
         </div>
     </div>
+
+
+
+    <div kendo-window="popupSimpanSTS" k-title="'Konfirmasi Rekening STS'" k-visible="false" k-width="800">
+        <div style="padding: 1.5em;" class="panel panel-default container_12">
+
+            <h1 style="font-size:1em; font-weight: bold;">Konfirmasi Rekening STS</h1>
+            
+            <div ng-repeat="rekening in detailSTSV2" style="margin-top: 1em;">
+                <div class="grid_12">
+                    <div class="grid_1">{{ $index + 1 }}</div>
+                    <div class="grid_3">{{ rekening.koderekening }}</div>
+                    <div class="grid_4">{{ rekening.namarekening }}</div>
+                    <div class="grid_3">{{ formatRupiah(rekening.totaldibayarclosing, 'Rp. ') }}</div>
+                </div>
+            </div>
+            
+            <hr style="border: 2px solid black;">
+
+            <div style="font-weight: bold;" class="grid_12">
+                <div class="grid_8">Total</div>
+                <div class="grid_3">{{ formatRupiah(totaldibayar, 'Rp. ') }}</div>
+            </div>
+
+            <div style="margin-top: 1em;" class="grid_12">
+                <p style="font-size: 1em; text-align: center; font-weight: bold;">Data STS yang akan disimpan</p>
+                <div ng-repeat="(index, value) in dataSTS">
+                    
+                    <div class="grid_12" style="margin-top: 1.5em;">
+                        <!-- <div class="grid_4">
+				            <label c-label>Rekening STS</label>
+                            <input c-text-box class="k-textbox" ng-model="value.rekening" />
+                        </div> -->
+
+                        <div class="grid_4">
+                            <label c-label item="item" c-label-text="Rekening STS"></label>
+                            <input style="width: 100%;" kendo-combo-box k-ng-model="value.rekening"
+                                k-data-text-field="'text'" k-data-value-field="'id'" k-filter="'contains'"
+                                k-auto-bind="false" k-data-source="listRekeningSTS" />
+                        </div>
+
+                        <div class="grid_4">
+				            <label c-label>Uraian STS</label>
+                            <input c-text-box class="k-textbox" ng-model="value.uraian" />
+                        </div>
+
+                        <div class="grid_4">
+				            <label c-label>Total Setoran</label>
+                            <input type="number" c-text-box class="k-textbox" ng-model="value.totalSetoran" />
+                        </div>
+                    </div>
+
+                </div>
+
+                <!-- <div class="grid_6">
+                    <label c-label item="item" c-label-text="Rekening STS"></label>
+                    <input style="width: 100%;" kendo-combo-box k-ng-model="item.rekeningSTS"
+                        k-data-text-field="'text'" k-data-value-field="'id'" k-filter="'contains'"
+                        k-auto-bind="false" k-data-source="listRekeningSTS" />
+                </div>
+                <div class="grid_6">
+                    <label c-label item="item" c-label-text="Uraian STS"></label>
+                    <input c-text-box type="input" filter="" class="k-textbox" />
+                </div> -->
+            </div>
+
+            <div class="grid_12" style="margin-top: 20px;">
+                <div class="grid_2">
+                    <button class="btnTemplate1" ng-click="simpanV2()">Simpan STS</button>
+                </div>
+                <div class="grid_1"></div>
+                <div class="grid_2">
+                    <button class="btnTemplate1" ng-click="batalSTS()">Batal</button>
+                </div>
+            </div>
+    
+        </div>
+    </div>
+
+    <div ng-include='"../app/template/Shared/TemplateLoading"'></div>
+
 </div>
 <script id="status-template" type="text/kendo-templ">
     # if (kolom1 !== null) { #

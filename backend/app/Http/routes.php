@@ -94,7 +94,9 @@ Route::group(['middleware' => 'cors', 'prefix' => 'service'], function () {
 
         // bendahara penerimaan
         Route::get('report/cetak-stsv2', 'Report\ReportController@cetakSTSV2');
-
+        Route::get('bendaharapenerimaan/get-konfirmasi-rekening-sts', 'BendaharaPenerimaan\BendaharaPenerimaanController@getKonfirmasiRekeningSTS');
+        Route::post('bendaharapenerimaan/save-detail-stsv2', 'BendaharaPenerimaan\BendaharaPenerimaanController@saveDetailSTSV2');
+        Route::post('bendaharapenerimaan/simpan-stsv2', 'BendaharaPenerimaan\BendaharaPenerimaanController@simpanSTSV2');
 
 		Route::get('registrasi/laporan/get-rekap-kunjunganrs', 'Registrasi\LaporanRegistrasiController@getRekapKunjunganRS');
 
