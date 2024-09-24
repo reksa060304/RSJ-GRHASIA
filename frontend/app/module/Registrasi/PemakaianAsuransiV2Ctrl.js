@@ -12,6 +12,8 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
             var dataKabupaten = '';
             var dataKecamatan = '';
             var dataobatgen = []
+            $scope.dataRefPoliJKN = []
+            fetchRefPoliJKN()
             loadCombo()
             loadPertama();
             $scope.item = {};
@@ -1672,8 +1674,16 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
                                     nomorreferensi = $scope.model.noRujukan === undefined ? "" : $scope.model.noRujukan
                                 }
 
+                                var polinya = poliTujuans == "HDL" ? "INT" : poliTujuans;
+                                for (let i = 0; i < $scope.dataRefPoliJKN.length; i++) {
+                                    const elpoli = $scope.dataRefPoliJKN[i];
+                                    if(elpoli.kdsubspesialis == polinya) {
+                                        polinya = elpoli.kdpoli
+                                        break;
+                                    }
+                                }
                                 var json  = {
-                                    "url": "jadwaldokter/kodepoli/"+ poliTujuans +"/tanggal/"+ moment($scope.item.tglRegistrasi).format('YYYY-MM-DD'),
+                                    "url": "jadwaldokter/kodepoli/"+ polinya +"/tanggal/"+ moment($scope.item.tglRegistrasi).format('YYYY-MM-DD'),
                                     "jenis": "antrean",
                                     "method": "GET",
                                     "data": null
@@ -5630,6 +5640,22 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
                 });
                 var cacheSet = undefined;
                 cacheHelper.set('CachePemakaianAsuransi', cacheSet);
+            }
+
+            function fetchRefPoliJKN () {
+                let json = {
+                  "url": `ref/poli`,
+                  "jenis": "antrean",
+                  "method": "GET",
+                  "data": null
+                }
+                medifirstService.postNonMessage('bridging/bpjs/tools', json).then(async function (e) {
+                    if (e.data.response) {
+                        $scope.dataRefPoliJKN = e.data.response
+                    } else {
+                        $scope.dataRefPoliJKN = []
+                    }
+                });
             }
         }
 

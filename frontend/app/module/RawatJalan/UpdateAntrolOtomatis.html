@@ -99,190 +99,261 @@
 	<div class="clear"></div>
 
 	<br />
-
-	<!-- Kriteria -->
 	<div class="grid_12">
-		<div class="grid_12 borderBox containerBorderBox">
-			<!-- Periode Registrasi -->
-			<div class="grid_2">
-				<div class="grid_12">
-					<label c-label item="item" c-label-text="Tanggal Registrasi"></label>
-				</div>
-				<div class="clear"></div>
+		<div ng-cloak>
+			<md-content>
+				<md-tabs md-dynamic-height md-border-bottom md-selected="myVar">
+			
+					<md-tab label="Data Terkirim">
+						<md-content>
+							<!-- Kriteria -->
+							<div class="grid_12">
+								<div class="grid_12 containerBorderBox">
+									<!-- Periode Registrasi -->
+									<div class="grid_2">
+										<div class="grid_12">
+											<label c-label item="item" c-label-text="Tanggal Registrasi"></label>
+										</div>
+										<div class="clear"></div>
 
-				<div class="grid_12 padDatePicker" style="margin-left: -5px;">
-					<input style="width: 100%; " k-ng-model="item.tanggal" kendo-datetimepicker k-max="now"
-						placeholer="yyyy-MM-dd" k-format="'yyyy-MM-dd'" parsedate="yyyy-MM-dd" />
-				</div>
-			</div>
+										<div class="grid_12 padDatePicker" style="margin-left: -5px;">
+											<input style="width: 100%; " k-ng-model="item.tanggal" kendo-datetimepicker k-max="now"
+												placeholer="yyyy-MM-dd" k-format="'yyyy-MM-dd'" parsedate="yyyy-MM-dd" />
+										</div>
+									</div>
 
-			<!-- <div class="grid_2">
-				<div class="grid_12">
-					<label c-label item="item" c-label-text="KelompokPasien"></label>
-				</div>
-				<div class="clear"></div>
+									<!-- <div class="grid_2">
+										<div class="grid_12">
+											<label c-label item="item" c-label-text="KelompokPasien"></label>
+										</div>
+										<div class="clear"></div>
 
-				<div class="grid_12">
-					<input style="width: 100%;" kendo-combo-box k-ng-model="item.kelompokpasien"
-						k-data-text-field="'value'" k-data-value-field="'id'" k-filter="'contains'" k-auto-bind="false"
-						k-data-source="listKelompokPasien" />
-				</div>
-			</div>
-
-
-			<div class="grid_1">
-				<div class="grid_12">
-					<label c-label item="item">Kode Booking</label>
-				</div>
-				<div class="clear"></div>
-
-				<div class="grid_12">
-					<input c-text-box type="input" filter="" class="k-textbox" ng-model="item.kdBooking" />
-				</div>
-			</div> -->
+										<div class="grid_12">
+											<input style="width: 100%;" kendo-combo-box k-ng-model="item.kelompokpasien"
+												k-data-text-field="'value'" k-data-value-field="'id'" k-filter="'contains'" k-auto-bind="false"
+												k-data-source="listKelompokPasien" />
+										</div>
+									</div>
 
 
-			<!-- Button Search -->
-			<div class="grid_1">
-				<div class="grid_12">
-					<label>&nbsp;</label>
-				</div>
-				<div class="clear"></div>
+									<div class="grid_1">
+										<div class="grid_12">
+											<label c-label item="item">Kode Booking</label>
+										</div>
+										<div class="clear"></div>
 
-				<div class="grid_12">
-					<button class="btnTemplate1" style="margin-left: 0;" ng-click="SearchData()">Cari</button>
-				</div>
-			</div>
-
-			<div class="grid_1">
-				<div class="grid_12">
-					<label>&nbsp;</label>
-				</div>
-				<div class="clear"></div>
-
-				<div class="grid_12">
-					<!-- <button class="btnTemplate1" style="margin-left: 0;" ng-click="syncData()"><i
-							class="fa fa-refresh"></i>Sync</button> -->
-				</div>
-			</div>
+										<div class="grid_12">
+											<input c-text-box type="input" filter="" class="k-textbox" ng-model="item.kdBooking" />
+										</div>
+									</div> -->
 
 
+									<!-- Button Search -->
+									<div class="grid_1">
+										<div class="grid_12">
+											<label>&nbsp;</label>
+										</div>
+										<div class="clear"></div>
+
+										<div class="grid_12">
+											<button class="btnTemplate1" style="margin-left: 0;" ng-click="SearchData()">Cari</button>
+										</div>
+									</div>
+
+									<div class="grid_1">
+										<div class="grid_12">
+											<label>&nbsp;</label>
+										</div>
+										<div class="clear"></div>
+
+										<div class="grid_12">
+											<!-- <button class="btnTemplate1" style="margin-left: 0;" ng-click="syncData()"><i
+													class="fa fa-refresh"></i>Sync</button> -->
+										</div>
+									</div>
+
+
+								</div>
+							</div>
+
+							<!-- DaftarPasien -->
+							<div class="grid_12">
+								<div class="grid_12">
+									<div class="headerBox">
+										<p>Data Antrian Masuk By WSBPJS</p>
+									</div>
+								</div>
+								<div class="clear"></div>
+
+								<!-- grid table -->
+
+								<div class="grid_12">
+									<div class="borderBox">
+										<kendo-grid id="kGrid" data-source="dataDaftarPasien" options="columnDaftarPasien" k-selectable="'row'"
+											k-sortable="'true'" k-resizable="'true'" k-ng-model="dataPasienSelected" class="max-height"
+											ng-click="klikGrid(dataPasienSelected)">
+										</kendo-grid>
+									</div>
+								</div>
+								<!-- <div class="clear"></div> -->
+							</div>
+							<!-- <div class="grid_12">
+								<div class="grid_1">
+									<button class="btnTemplate1 error" style="margin-left: 0;" ng-click="validasiData()"><i
+											class="fa fa-edit"></i>Validasi Data</button>
+								</div>
+								<div class="grid_1">
+									<button class="btnTemplate1 succes" style="margin-left: 0;" ng-click="closingData()"
+										ng-show="tombolSimpanVis"><i class="fa fa-floppy-o"></i>Closing</button>
+								</div>
+							</div> -->
+							<!-- <div class="grid_12">
+								<div class="grid_3">
+									<fieldset>
+										<legend>Jumlah Antrean JKN</legend>
+										<h4 style="font-size:19px"><b>{{jmlAntreanJKN}}</b></h4>
+									</fieldset>
+								</div>
+								<div class="grid_3">
+									<fieldset>
+										<legend>Jumlah Antrean Non JKN</legend>
+										<h4 style="font-size:19px"><b>{{jmlAntreanNonJKN}}</b></h4>
+									</fieldset>
+								</div>
+								<div class="grid_3">
+									<fieldset>
+										<legend>Jumlah Antrean By Sumber (Bridging)</legend>
+										<h4 style="font-size:19px"><b>{{jmlAntreanBySumber}}</b></h4>
+									</fieldset>
+								</div>
+								<div class="grid_3">
+									<fieldset>
+										<legend>Jumlah Antrean By Sumber (MJKN)</legend>
+										<h4 style="font-size:19px"><b>{{jmlAntreanByMJKN}}</b></h4>
+									</fieldset>
+								</div>
+							</div>
+							<div class="grid_12">
+								<div class="grid_4">
+									<fieldset>
+										<legend>Total SEP Terbit</legend>
+										<h4 style="font-size:19px"><b>{{totalSepTerbitByBridging}}</b></h4>
+									</fieldset>
+								</div>
+								<div class="grid_4">
+									<fieldset>
+										<legend>Jumlah Antrean Lengkap By Sumber (Bridging)</legend>
+										<h4 style="font-size:19px"><b>{{totalLengkapByBridging}}</b></h4>
+									</fieldset>
+								</div>
+								<div class="grid_4">
+									<fieldset>
+										<legend>Jumlah Antrean Lengkap By Sumber (MJKN)</legend>
+										<h4 style="font-size:19px"><b>{{totalLengkapByMJKN}}</b></h4>
+									</fieldset>
+								</div>
+
+							</div>
+							<div class="grid_12">
+								<div class="grid_6">
+									<fieldset>
+										<legend>Capaian Antrol</legend>
+										<h4 style="font-size:19px"><b>{{capaianAntrol}}%</b></h4>
+									</fieldset>
+								</div>
+								<div class="grid_6">
+									<fieldset>
+										<legend>Capaian MJKN</legend>
+										<h4 style="font-size:19px"><b>{{capaianMJKN}}%</b></h4>
+									</fieldset>
+								</div>
+							</div> -->
+
+							<!-- </div> -->
+							<div class="grid_12">
+								<div class="grid_12">
+									<div class="headerBox">
+										<p>Monitoring</p>
+									</div>
+								</div>
+								<div class="clear"></div>
+
+								<!-- grid table -->
+
+								<div class="grid_12">
+									<div class="borderBox">
+										<kendo-grid id="kGrid" data-source="dataMonitoring" options="columnMonitoring" k-selectable="'row'"
+											k-sortable="'true'" k-resizable="'true'" k-ng-model="dataMonitoringModel" class="max-height">
+										</kendo-grid>
+									</div>
+								</div>
+								<div class="clear"></div>
+							</div>
+						</md-content>
+					</md-tab>
+					<md-tab label="Data Belum Terkirim">
+						<md-content>
+							<!-- Kriteria -->
+							<div class="grid_12">
+								<div class="grid_12 containerBorderBox">
+									<!-- Periode Registrasi -->
+									<div class="grid_2">
+										<div class="grid_12">
+											<label c-label item="item" c-label-text="Tanggal Registrasi"></label>
+										</div>
+										<div class="clear"></div>
+
+										<div class="grid_12 padDatePicker" style="margin-left: -5px;">
+											<input style="width: 100%; " k-ng-model="item.tanggal" kendo-datetimepicker k-max="now"
+												placeholer="yyyy-MM-dd" k-format="'yyyy-MM-dd'" parsedate="yyyy-MM-dd" />
+										</div>
+									</div>
+
+									<div class="grid_1">
+										<div class="grid_12">
+											<label>&nbsp;</label>
+										</div>
+										<div class="clear"></div>
+
+										<div class="grid_12">
+											<button class="btnTemplate1" style="margin-left: 0;" ng-click="SearchData2()">Cari</button>
+										</div>
+									</div>
+								</div>
+							</div>
+							<!-- DaftarPasien -->
+							<div class="grid_12">
+								<div class="grid_12">
+									<div class="headerBox">
+										<p>Data Antrian Belum Masuk</p>
+									</div>
+								</div>
+								<div class="clear"></div>
+
+								<!-- grid table -->
+
+								<div class="grid_12">
+									<div class="borderBox">
+										<kendo-grid id="kGrid" data-source="dataDaftarPasien2" options="columnDaftarPasien2" k-selectable="'row'"
+											k-sortable="'true'" k-resizable="'true'" k-ng-model="dataPasienSelected2" class="max-height"
+											ng-click="klikGrid(dataPasienSelected2)">
+										</kendo-grid>
+									</div>
+								</div>
+								<!-- <div class="clear"></div> -->
+								<div class="grid_12">
+									<div class="grid_2">
+										<button class="btnTemplate1" style="margin-left: 0;" ng-click="liatJadwalHfis()">Lihat Jadwal Hfis</button>
+									</div>
+								</div>
+							</div>
+						</md-content>
+					</md-tab>
+				</md-tabs>
+			</md-content>
 		</div>
 	</div>
 
-	<!-- DaftarPasien -->
-	<div class="grid_12">
-		<div class="grid_12">
-			<div class="headerBox">
-				<p>Data Antrian Masuk By WSBPJS</p>
-			</div>
-		</div>
-		<div class="clear"></div>
-
-		<!-- grid table -->
-
-		<div class="grid_12">
-			<div class="borderBox">
-				<kendo-grid id="kGrid" data-source="dataDaftarPasien" options="columnDaftarPasien" k-selectable="'row'"
-					k-sortable="'true'" k-resizable="'true'" k-ng-model="dataPasienSelected" class="max-height"
-					ng-click="klikGrid(dataPasienSelected)">
-				</kendo-grid>
-			</div>
-		</div>
-		<!-- <div class="clear"></div> -->
-	</div>
-	<!-- <div class="grid_12">
-		<div class="grid_1">
-			<button class="btnTemplate1 error" style="margin-left: 0;" ng-click="validasiData()"><i
-					class="fa fa-edit"></i>Validasi Data</button>
-		</div>
-		<div class="grid_1">
-			<button class="btnTemplate1 succes" style="margin-left: 0;" ng-click="closingData()"
-				ng-show="tombolSimpanVis"><i class="fa fa-floppy-o"></i>Closing</button>
-		</div>
-	</div> -->
-	<!-- <div class="grid_12">
-		<div class="grid_3">
-			<fieldset>
-				<legend>Jumlah Antrean JKN</legend>
-				<h4 style="font-size:19px"><b>{{jmlAntreanJKN}}</b></h4>
-			</fieldset>
-		</div>
-		<div class="grid_3">
-			<fieldset>
-				<legend>Jumlah Antrean Non JKN</legend>
-				<h4 style="font-size:19px"><b>{{jmlAntreanNonJKN}}</b></h4>
-			</fieldset>
-		</div>
-		<div class="grid_3">
-			<fieldset>
-				<legend>Jumlah Antrean By Sumber (Bridging)</legend>
-				<h4 style="font-size:19px"><b>{{jmlAntreanBySumber}}</b></h4>
-			</fieldset>
-		</div>
-		<div class="grid_3">
-			<fieldset>
-				<legend>Jumlah Antrean By Sumber (MJKN)</legend>
-				<h4 style="font-size:19px"><b>{{jmlAntreanByMJKN}}</b></h4>
-			</fieldset>
-		</div>
-	</div>
-	<div class="grid_12">
-		<div class="grid_4">
-			<fieldset>
-				<legend>Total SEP Terbit</legend>
-				<h4 style="font-size:19px"><b>{{totalSepTerbitByBridging}}</b></h4>
-			</fieldset>
-		</div>
-		<div class="grid_4">
-			<fieldset>
-				<legend>Jumlah Antrean Lengkap By Sumber (Bridging)</legend>
-				<h4 style="font-size:19px"><b>{{totalLengkapByBridging}}</b></h4>
-			</fieldset>
-		</div>
-		<div class="grid_4">
-			<fieldset>
-				<legend>Jumlah Antrean Lengkap By Sumber (MJKN)</legend>
-				<h4 style="font-size:19px"><b>{{totalLengkapByMJKN}}</b></h4>
-			</fieldset>
-		</div>
-
-	</div>
-	<div class="grid_12">
-		<div class="grid_6">
-			<fieldset>
-				<legend>Capaian Antrol</legend>
-				<h4 style="font-size:19px"><b>{{capaianAntrol}}%</b></h4>
-			</fieldset>
-		</div>
-		<div class="grid_6">
-			<fieldset>
-				<legend>Capaian MJKN</legend>
-				<h4 style="font-size:19px"><b>{{capaianMJKN}}%</b></h4>
-			</fieldset>
-		</div>
-	</div> -->
-
-	<!-- </div> -->
-	<div class="grid_12">
-		<div class="grid_12">
-			<div class="headerBox">
-				<p>Monitoring</p>
-			</div>
-		</div>
-		<div class="clear"></div>
-
-		<!-- grid table -->
-
-		<div class="grid_12">
-			<div class="borderBox">
-				<kendo-grid id="kGrid" data-source="dataMonitoring" options="columnMonitoring" k-selectable="'row'"
-					k-sortable="'true'" k-resizable="'true'" k-ng-model="dataMonitoringModel" class="max-height">
-				</kendo-grid>
-			</div>
-		</div>
-		<div class="clear"></div>
-	</div>
 	<div class="grid_12" style="margin-top:60px">
 		<div ng-include='"../app/template/Shared/TemplateLoading"'></div>
 	</div>
@@ -296,4 +367,36 @@
 			</div>
 		</div>
 	</div>
+
+	<div kendo-window="modalJadwalHfis" k-title="'Jadwal Hfis'" k-width="900" k-visible="false"
+		k-on-open="win2visible = true" k-on-close="win2visible = false" k-z-index="-1">
+		<div class="panel panel-default container_12" style="padding: 10px 10px;">
+			<div class="grid_12">
+				<div class="borderBox">
+					<kendo-grid id="kGrid" data-source="dataJadwalHfis" options="columnJadwalHfis" k-selectable="'row'"
+						k-sortable="'true'" k-resizable="'true'" k-ng-model="dataJadwalHfisSelected" class="max-height"
+						ng-click="klikGrid(dataJadwalHfisSelected)">
+					</kendo-grid>
+				</div>
+			</div>
+			<!-- <div class="grid_12">
+				
+				<table>
+					<tr>
+						<th>kodedokter</th>
+						<th>namadokter</th>
+						<th>kodepoli</th>
+						<th>namapoli</th>
+						<th>kodesubspesialis</th>
+						<th>namasubspesialis</th>
+						<th>namahari</th>
+						<th>jadwal</th>
+						<th>kapasitaspasien</th>
+					</tr>
+
+				</table>
+			</div> -->
+		</div>
+	</div>
 	<!-- / popup log antrol -->
+</div>

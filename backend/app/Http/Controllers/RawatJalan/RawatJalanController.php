@@ -3718,4 +3718,40 @@ $ruangdokter = \DB::table('ruangan_m as ru')
 
         return $this->setStatusCode($result['status'])->respond($result, $transMessage);
     }
+
+    public function getInformasiMonitoringAntrean(Request $request)
+    {
+        $kdProfile = $this->getDataKdProfile($request);
+        $tglawal = $request['tanggal'] . " 00:00";
+        $tglakhir = $request['tanggal'] . " 23:59";
+
+        $data = DB::table('pasiendaftar_t as pd')
+        ->select(
+            'pd.tglregistrasi as tanggal',
+            'pd.noregistrasi',
+            'ps.nocm as norm',
+            'ps.namapasien',
+            'ps.noidentitas as nik',
+            'ps.nobpjs as nokartupeserta',
+            'rm.kdinternal as kodepoli',
+            'rm.noruangan',
+            'rm.namaruangan',
+            'pg.kddokterbpjs as kodedokter',
+            'pg.namalengkap as namadokter',
+            DB::raw('CASE WHEN pd.statusschedule <> \'\' THEN pd.statusschedule ELSE pd.noregistrasi END as kodebooking'),
+            DB::raw('CASE WHEN kp.id = 2 THEN \'JKN\' ELSE \'NON JKN\' END as kelompok')
+        )
+        ->join('pasien_m as ps', 'ps.id', '=', 'pd.nocmfk')
+        ->join('ruangan_m as rm', 'rm.id', '=', 'pd.objectruanganasalfk')
+        ->leftJoin('pegawai_m as pg', 'pg.id', '=', 'pd.objectpegawaifk')
+        ->leftJoin('kelompokpasien_m as kp', 'kp.id', '=', 'pd.objectkelompokpasienlastfk')
+        ->whereBetween('pd.tglregistrasi', [$tglawal, $tglakhir])
+        ->where('pd.kdprofile', $kdProfile)
+        ->where('pd.statusenabled', true)
+        ->where('rm.objectdepartemenfk', 18)
+        ->orderBy('pd.tglregistrasi')
+        ->get();
+
+        return $this->respond($data);
+    }
 }

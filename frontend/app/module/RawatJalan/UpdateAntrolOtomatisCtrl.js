@@ -27,6 +27,7 @@ define(['initialize'], function (initialize) {
 			$scope.jmlAntreanJKN = 0;
 			$scope.totalLengkapByBridging = 0
 			$scope.totalLengkapByMJKN = 0
+			$scope.myVar = 0
 
 			var data2 = [];
 			$scope.tombolSimpanVis = true;
@@ -295,6 +296,46 @@ define(['initialize'], function (initialize) {
 
 			}
 
+			async function loadData2() {
+				$scope.isRouteLoading = true;
+				var tanggal = moment($scope.item.tanggal).format("YYYY-MM-DD");
+
+				if($scope.dataDaftarPasien._data.length == 0){
+					await loadData();
+				}
+
+				medifirstService.get(`rawatjalan/get-informasi-monitoring-antrean?tanggal=${tanggal}`).then(function (e) {
+					$scope.isRouteLoading = false;
+					let results = []
+					for (let i = 0; i < e.data.length; i++) {
+						let element = e.data[i];
+						let belummasuk = true
+						for (let j = 0; j < $scope.dataDaftarPasien._data.length; j++) {
+							let element2 = $scope.dataDaftarPasien._data[j];
+							if(element2.kodebooking == element.kodebooking){
+								belummasuk = false
+							}
+						}
+						element.no = i + 1;
+						if(belummasuk) {
+							results.push(element);
+						}
+					}
+					$scope.dataDaftarPasien2 = new kendo.data.DataSource({
+						data: results,
+						pageSize: 10,
+						total: results.length,
+						serverPaging: false,
+						schema: {
+							model: {
+								fields: {
+								}
+							}
+						}
+					});
+				})
+			}
+
 
 			function filterByValue(array, string) {
 				return array.filter(o =>
@@ -341,6 +382,10 @@ define(['initialize'], function (initialize) {
 
 			$scope.SearchData = function () {
 				loadData()
+			}
+
+			$scope.SearchData2 = function () {
+				loadData2()
 			}
 
 			$scope.columnDaftarPasien = {
@@ -537,6 +582,92 @@ define(['initialize'], function (initialize) {
 					$scope.modalLogAntrol.open().center();
 				});
 			}
+
+			$scope.columnDaftarPasien2 = {
+				selectable: 'row',
+				pageable: true,
+				columns:
+					[
+						{
+							"field": "no",
+							"title": "No",
+							"width": "50px",
+							"template": "<span class='style-center'>#: no #</span>"
+						},
+						{
+							"field": "tanggal",
+							"title": "Tgl Registrasi",
+							"width": "100px",
+							"template": "<span class='style-left'>{{formatTanggal('#: tanggal #')}}</span>"
+						},
+						{
+							"field": "kodebooking",
+							"title": "Kode Booking",
+							"width": "130px",
+							"template": "<span class='style-center'>#: kodebooking #</span>"
+						},
+						{
+							"field": "kodepoli",
+							"title": "Kode Poli",
+							"width": "100px",
+							"template": "<span class='style-center'>#: kodepoli #</span>"
+						},
+						{
+							"field": "namaruangan",
+							"title": "Ruangan",
+							"width": "150px",
+							"template": "<span class='style-center'>#: namaruangan #</span>"
+						},
+						{
+							"field": "kodedokter",
+							"title": "Kode Dokter",
+							"width": "100px",
+							"template": "<span class='style-center'>#: kodedokter #</span>"
+						},
+						{
+							"field": "namadokter",
+							"title": "Dokter",
+							"width": "150px",
+							"template": "<span class='style-center'>#: namadokter #</span>"
+						},
+						{
+							"field": "norm",
+							"title": "No RM",
+							"width": "100px",
+							"template": "<span class='style-center'>#: norm #</span>"
+						},
+						{
+							"field": "namapasien",
+							"title": "Nama Pasien",
+							"width": "150px",
+							"template": "<span class='style-center'>#: namapasien #</span>"
+						},
+						{
+							"field": "nik",
+							"title": "NIK",
+							"width": "150px",
+							"template": "<span class='style-center'>#: nik #</span>"
+						},
+						{
+							"field": "nokartupeserta",
+							"title": "No Kartu Peserta",
+							"width": "150px",
+							"template": "<span class='style-center'>#: nokartupeserta #</span>"
+						},
+						{
+							"field": "kelompok",
+							"title": "Kelompok",
+							"width": "100px",
+							"template": "<span class='style-center'>#: kelompok #</span>"
+						},
+						{
+							"field": "",
+							"title": "Log Antrol",
+							"width":"100px",
+							"template": "<span style='color:black;font-size:1.2em;cursor: pointer;' class='fa fa-file-text-o style-center' ng-click='ShowCatatan(\"#= noregistrasi #\")'></span>",
+						},
+					]
+			};
 
 			$scope.syncData = function () {
 				if ($scope.dataDaftarPasien._data.length == 0) return
@@ -1155,6 +1286,121 @@ define(['initialize'], function (initialize) {
 					$scope.tombolSimpanVis = true;
 				})
 			}
+
+			$scope.liatJadwalHfis = function() {
+				if(!$scope.dataPasienSelected2) {
+					toastr.error("Harap pilih data terlebih dahulu !", "Info")
+					return
+				}
+
+				var poli = $scope.dataPasienSelected2.noruangan == "HDL" ? "INT" : $scope.dataPasienSelected2.noruangan
+
+				var json = {
+					url: `jadwaldokter/kodepoli/${poli}/tanggal/${moment($scope.dataPasienSelected2.tanggal).format("YYYY-MM-DD")}`,
+					method: "GET",
+					jenis: "antrean",
+					data: null,
+				};
+
+				$scope.isRouteLoading = true;
+				medifirstService.postNonMessage('bridging/bpjs/tools', json).then(function (x0) {
+					$scope.isRouteLoading = false;
+					let result = []
+					if (x0.data.metaData.code == 200) {
+						for (let i = 0; i < x0.data.response.length; i++) {
+							const element = x0.data.response[i];
+							element.no = i + 1
+							result.push(element)
+						}
+					} else {
+						toastr.error(x0.data.metaData.message,"Info")
+					}
+
+					$scope.dataJadwalHfis = new kendo.data.DataSource({
+						data: result,
+						pageSize: 10,
+						total: result.length,
+						serverPaging: false,
+						schema: {
+							model: {
+								fields: {
+								}
+							}
+						}
+					});
+					$scope.modalJadwalHfis.open().center();
+				});
+			}
+
+			$scope.columnJadwalHfis = {
+				selectable: 'row',
+				pageable: true,
+				columns:
+					[
+						{
+							"field": "no",
+							"title": "No",
+							"width": "50px",
+							"template": "<span class='style-center'>#: no #</span>"
+						},
+						{
+							"field": "kodedokter",
+							"title": "Kode Dokter",
+							"width": "100px",
+							"template": "<span class='style-center'>#: kodedokter #</span>"
+						},
+						{
+							"field": "namadokter",
+							"title": "Dokter",
+							"width": "150px",
+							"template": "<span class='style-center'>#: namadokter #</span>"
+						},
+						{
+							"field": "kodepoli",
+							"title": "Kode Poli",
+							"width": "100px",
+							"template": "<span class='style-center'>#: kodepoli #</span>"
+						},
+						{
+							"field": "namapoli",
+							"title": "Nama Poli",
+							"width": "150px",
+							"template": "<span class='style-center'>#: namapoli #</span>"
+						},
+						{
+							"field": "kodesubspesialis",
+							"title": "Kode SubSpesialis",
+							"width": "100px",
+							"template": "<span class='style-center'>#: kodesubspesialis #</span>"
+						},
+						{
+							"field": "namasubspesialis",
+							"title": "Nama SubSpesialis",
+							"width": "150px",
+							"template": "<span class='style-center'>#: namasubspesialis #</span>"
+						},
+						{
+							"field": "namahari",
+							"title": "Hari",
+							"width": "100px",
+							"template": "<span class='style-center'>#: namahari #</span>"
+						},
+						{
+							"field": "jadwal",
+							"title": "Jam",
+							"width": "100px",
+							"template": "<span class='style-center'>#: jadwal #</span>"
+						},
+						{
+							"field": "kapasitaspasien",
+							"title": "Kapasitas",
+							"width": "100px",
+							"template": "<span class='style-center'>#: kapasitaspasien #</span>"
+						},
+						
+						
+					]
+			};
 
 			// END ################
 		}
