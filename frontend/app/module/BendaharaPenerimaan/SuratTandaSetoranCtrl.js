@@ -164,7 +164,7 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
 					for (var i = 0; i < $scope.selectedData2.length; i++) {
 						tol += parseFloat($scope.selectedData2[i].totalpenerimaan);
 					}
-                    console.log($scope.selectedData2);
+                    // console.log($scope.selectedData2);
                     $scope.item.totalSetor = tol;
 				} else{
                     $scope.item.totalSetor = tol;
@@ -534,8 +534,8 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
                             $cell["borderBottom"] = { color: "#000000", size: 1 };
                             $cell["borderLeft"] = { color: "#000000", size: 1 };
                         }
-                        console.log(e.workbook.sheets[0].rows.length);
-                        console.log(e.workbook.sheets[0].rows[i].cells.length);
+                        // console.log(e.workbook.sheets[0].rows.length);
+                        // console.log(e.workbook.sheets[0].rows[i].cells.length);
                     }
 
                     
@@ -764,6 +764,233 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
             $scope.cetakpdfV2 = function(){
                 // console.log($scope.selectedData2)
                 window.open(baseTransaksi + "report/cetak-stsv2?nosts="+$scope.selectedData2[0].nosts, '_blank');
+            }
+
+            $scope.popupSimpan = function(){
+                
+                // validasi
+                if($scope.selectedData2.length < 1){
+                    toastr.error('Pilih Data Dulu')
+                    return
+                }
+
+                if($scope.selectedData2[0].nosts !== null){
+                    toastr.error('Data sudah di STS')
+                    return
+                }
+
+                $scope.isRouteLoading = true;
+
+                $scope.detailSTSV2 = []
+                $scope.listRekeningSTS = []
+
+                medifirstService.get('bendaharapenerimaan/get-konfirmasi-rekening-sts' 
+                    + '?noclosing=' + $scope.selectedData2[0].nopenerimaan)
+                    .then(function(response) {
+                        $scope.isRouteLoading = false;
+
+                        $scope.listRekeningSTS = response.data.rekening
+
+                        response.data.data.map(item => $scope.detailSTSV2.push(item))
+
+                        $scope.totaldibayar = 0;
+
+                        response.data.data.map(item => $scope.totaldibayar += parseFloat(item.totaldibayarclosing))
+
+
+                        // jika ada dua rekening berbeda maka akan menyimpan dua sts
+                        $scope.dataSTS = []
+                        
+                        $scope.listRekeningSTS.map((rek) => {
+                            
+                            let totalSetoran = 0;
+                            let uraianSTS = '';
+                            let detailSTS = []
+
+                            $scope.detailSTSV2.map((detail) => {
+                                if(rek.id == detail.idlevel6){
+                                    totalSetoran += parseFloat(detail.totaldibayarclosing)
+                                    detailSTS.push(detail)
+                                }
+
+                                if(detail.namapasien !== null){
+                                    uraianSTS = 'TF an ' + detail.namapasien
+                                }
+
+                                if(detail.namapasien == null){
+                                    uraianSTS = 'Penerimaan Tanggal ' + moment(new Date).format('DD-MM-YYYY')
+                                }
+                            })
+
+                            let obj = {
+                                tanggalSTS: moment($scope.item.tanggalSTS).format('YYYY-MM-DD HH:mm:ss'),
+                                uraian: uraianSTS,
+                                totalSetoran: totalSetoran,
+                                // idrekening: rek.id,
+                                // rekening: rek.koderekening + ' - ' + rek.namarekening,
+                                rekening: rek, 
+                                detailSTS: detailSTS
+                            }
+
+                            $scope.dataSTS.push(obj)
+                        })
+
+                        $scope.popupSimpanSTS.center().open()
+                    })
+            }
+
+            // batal popup
+            $scope.batalSTS = function(){
+
+                $scope.listRekeningSTS = []
+                $scope.detailSTSV2 = []
+                $scope.dataSTS = []
+
+                $scope.popupSimpanSTS.close()
+            }
+
+            $scope.formatRupiah = function (value, currency) {
+                return currency + " " + parseFloat(value).toFixed(2).replace(/(\d)(?=(\d{3})+\.)/g, "$1,");
+            }
+
+
+            $scope.simpanV2 = function() {
+
+                let valid = false;
+
+                // validasi
+                $scope.dataSTS.map((item) => {
+                    
+                    if(item.rekening == null){
+                        toastr.error('Pilih Rekening Dulu')
+                        valid = false
+                        return
+                    }else if(item.uraian == null || item.uraian == ''){
+                        toastr.error('Masukkan uraian dulu')
+                        valid = false
+                        return
+                    }else if(item.totalSetoran == null){
+                        toastr.error('Masukkan total setoran dulu')
+                        valid = false
+                        return
+                    }else{
+                        valid = true
+                    }
+
+                })
+
+                if(valid == true){
+                    // data yang dikirim
+                    $scope.dataSTS.map((item) => {
+                        item.terbilang = terbilang(item.totalSetoran)
+                        item.scfk = $scope.selectedData2[0].scfk
+                        item.sckfk =  $scope.selectedData2[0].sckfk
+
+                        return item
+                    })
+                    
+                    // console.log($scope.dataSTS)
+
+                    let objSimpanSTSV2 = {
+                        sts: $scope.dataSTS
+                    }
+                    
+                    $scope.isRouteLoading = true;
+                    var cektunai = 789;
+                    var cektransfer = 456;
+                    var ceksudahsts = 1213;
+                    for (let i = 0; i < $scope.selectedData2.length; i++) {
+                        if($scope.selectedData2[i].carabayar == 'TUNAI'){
+                            cektunai = 111;
+                        }
+                        if($scope.selectedData2[i].carabayar == 'TRANSFER BANK'){
+                            cektransfer = 123;
+                        }
+                        if($scope.selectedData2[i].nosts != null){
+                            ceksudahsts = 1214;
+                        }
+                    }
+
+                    if(cektunai == 111 && cektransfer == 123){
+                        toastr.error('Cara Bayar Transfer dan Tunai Tercampur');
+                        return
+                    }
+                    else if(ceksudahsts == 1214) {
+                        toastr.error('Data sudah ada yang di STS');
+                        return
+                    }                
+                    else{
+                        medifirstService.post('bendaharapenerimaan/simpan-stsv2', objSimpanSTSV2).then(function (dat) {
+                            $scope.isRouteLoading = false;
+
+                            // refresh
+                            init();
+                            $scope.selectedData2 = []
+                            $scope.popupSimpanSTS.close()
+                                                           
+                        });
+                    }
+                }
+
+            }
+
+            function terbilang(nilai) {
+                // deklarasi variabel nilai sebagai angka matemarika
+                // Objek Math bertujuan agar kita bisa melakukan tugas matemarika dengan javascript
+                nilai = Math.floor(Math.abs(nilai));
+                
+                // deklarasi nama angka dalam bahasa indonesia
+                var huruf = [
+                  '',
+                  'satu',
+                  'dua',
+                  'tiga',
+                  'empat',
+                  'lima',
+                  'enam',
+                  'tujuh',
+                  'delapan',
+                  'sembilan',
+                  'sepuluh',
+                  'sebelas',
+                ];
+                
+                // menyimpan nilai default untuk pembagian
+                var bagi = 0;
+                // deklarasi variabel penyimpanan untuk menyimpan proses rumus terbilang
+                var penyimpanan = '';
+                
+                // rumus terbilang
+                if (nilai < 12) {
+                  penyimpanan = ' ' + huruf[nilai];
+                } else if (nilai < 20) {
+                  penyimpanan = terbilang(Math.floor(nilai - 10)) + ' selas';
+                } else if (nilai < 100) {
+                  bagi = Math.floor(nilai / 10);
+                  penyimpanan = terbilang(bagi) + ' puluh' + terbilang(nilai % 10);
+                } else if (nilai < 200) {
+                  penyimpanan = ' seratus' + terbilang(nilai - 100);
+                } else if (nilai < 1000) {
+                  bagi = Math.floor(nilai / 100);
+                  penyimpanan = terbilang(bagi) + ' ratus' + terbilang(nilai % 100);
+                } else if (nilai < 2000) {
+                  penyimpanan = ' seribu' + terbilang(nilai - 1000);
+                } else if (nilai < 1000000) {
+                  bagi = Math.floor(nilai / 1000);
+                  penyimpanan = terbilang(bagi) + ' ribu' + terbilang(nilai % 1000);
+                } else if (nilai < 1000000000) {
+                  bagi = Math.floor(nilai / 1000000);
+                  penyimpanan = terbilang(bagi) + ' juta' + terbilang(nilai % 1000000);
+                } else if (nilai < 1000000000000) {
+                  bagi = Math.floor(nilai / 1000000000);
+                  penyimpanan = terbilang(bagi) + ' miliar' + terbilang(nilai % 1000000000);
+                } else if (nilai < 1000000000000000) {
+                  bagi = Math.floor(nilai / 1000000000000);
+                  penyimpanan = terbilang(nilai / 1000000000000) + ' triliun' + terbilang(nilai % 1000000000000);
+                }
+               
+                // mengambalikan nilai yang ada dalam variabel penyimpanan
+                return penyimpanan;
             }
 
             //////////////////////////////////////////////////////////////          END             /////////////////////////////////////////////////////////////////////////////////////       
