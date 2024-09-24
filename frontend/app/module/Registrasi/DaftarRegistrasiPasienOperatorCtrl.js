@@ -313,9 +313,16 @@ define(['initialize', 'Configuration'], function (initialize, config) {
 				},
 				{
 					"field": "asalrujukan",
-					"title": "Asal Rujukan",
+					"title": "Jenis Rujukan",
 					"width": "80px",
 					"template": '# if( asalrujukan==null) {# - # } else {# #= asalrujukan # #} #'
+
+				},
+				{
+					"field": "nmprovider",
+					"title": "Asal Perujuk",
+					"width": "80px",
+					"template": '# if( nmprovider==null) {# - # } else {# #= nmprovider # #} #'
 
 				},
 				// {
