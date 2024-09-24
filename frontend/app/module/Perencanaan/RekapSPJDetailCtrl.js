@@ -668,6 +668,15 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
                 );
                 
             }
+            $scope.cetak = function(){
+                console.log($scope.dataSPJ)
+                medifirstService.get("sysadmin/general/get-terbilang/" + $scope.dataSPJ.nilaispj).then(
+                    function (dat) {
+                        window.open(baseTransaksi + "report/get-cetak-spj-detail?norec="+$scope.dataSPJ.norec+"&terbilang="+dat.data.terbilang, '_blank');
+                    }
+                );
+                
+            }
 
             $scope.SuratPengantarSPM2 = function(){
                 // console.log($scope.dataSPM)
@@ -5004,6 +5013,7 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
                         $(row.cells[13]).addClass("koneng");
                         $(row.cells[14]).addClass("koneng");
                     } else if (status == "Sudah Diverifikasi") {
+                        $(row.cells[0]).addClass("green");
                         $(row.cells[1]).addClass("green");
                         $(row.cells[2]).addClass("green");
                         $(row.cells[3]).addClass("green");
@@ -5022,110 +5032,70 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
 
                 }
             }
-            
             $scope.columnSPJ = {
                 dataBound: onDataBound,
                 toolbar: [
+                    "excel",
+                ],
+                excel: {
+                    fileName: "LaporanRekapDetailSPJ.xlsx",
+                    allPages: true,
+                },
+                excelExport: function (e) {
+                
+                    var sheet = e.workbook.sheets[0];
+                    sheet.frozenRows = 3;
+                    sheet.mergedCells = ["A1:J1", "A2:J2"];
+                    sheet.name = "SPJ";
+                
+                    var myHeaders = [{
+                        value: "LAPORAN REKAP DETAIL SPJ",
+                        fontSize: 20,
+                        textAlign: "center",
+                        background: "#ffffff",
+                    }];
+                    
+                    var selectedSubKegiatan = $scope.item.kegiatansubsubspj ? $scope.item.kegiatansubsubspj.keterangansubsubkegiatan || "" : "";
+                    var kodesubsubkegiatan = $scope.item.kegiatansubsubspj.kodesubsubkegiatan || "";
 
-                       "excel",
-                    
-                       ],
-                    
-                       excel: {
-                    
-                         fileName: "LaporanDetailSPJ.xlsx",
-                    
-                         allPages: true,
-                    
-                       },
-                    
-                       excelExport: function(e){
-                    
-                         var sheet = e.workbook.sheets[0];
-                    
-                         sheet.frozenRows = 2;
-                    
-                         sheet.mergedCells = ["A1:K1"];
-                    
-                         sheet.name = "SPJ";
-                    
-                      
-                    
-                         var myHeaders = [{
-                    
-                          value:"LAPORAN DETAIL SPJ",
-                    
-                          fontSize: 20,
-                    
-                          textAlign: "center",
-                    
-                          background:"#ffffff",
-                    
-                         // color:"#ffffff"
-                    
-                       }];
-                    
-                      
-                    
-                       sheet.rows.splice(0, 0, { cells: myHeaders, type: "header", height: 70});
-                    
-                      },
-                    
+                    function extractNamaKegiatan(kegiatan) {
+                        var parts = kegiatan.split('-');
+                        if (parts.length > 1) {
+                            var nama = parts.slice(-1).join(' ').trim();
+                            return nama ? nama : "Sub Kegiatan tidak tersedia";
+                        }
+                        return "Sub Kegiatan tidak tersedia";
+                    }
+                
+                    var namaKegiatan = extractNamaKegiatan(selectedSubKegiatan);
+                
+                    var subKegiatanValue = "Rekening: " + kodesubsubkegiatan + " | Sub Kegiatan: " + namaKegiatan;
+                
+                    var subKegiatanHeader = [{
+                        value: subKegiatanValue,
+                        fontSize: 16,
+                        textAlign: "center",
+                        background: "#ffffff",
+                    }];
+                
+                    sheet.rows.splice(0, 0, { cells: myHeaders, type: "header", height: 70 });
+                    sheet.rows.splice(1, 0, { cells: subKegiatanHeader, type: "header", height: 50 });
+                },                
+                   
                 selectable: 'row',
                 scrollable: true,
-
                 pageable: true,
-                // groupable: true,  
-                columns:[
-                    // {
-                    //     "command": [
-                    //             {
-                    //                 text: "Detail",
-                    //                 click: editDetailSPJ,
-                    //                 imageClass: "clinic fa"
-                    //             },
-                    //             {
-                    //                 text: "Cetak SPJ",
-                    //                 click: cetakSPJ,
-                    //                 imageClass: "clinic fa"
-                    //             },
-                    //             {
-                    //                 text: "Cetak SPJ dan Lampiran",
-                    //                 click: cetakSPJPlusLampiran,
-                    //                 imageClass: "clinic fa"
-                    //             },
-                                
-                    //         ],
-                    //             title: "",
-                    //             width: "230px",
-                    // },
-                    // {
-                    //     "command": [
-                    //           {
-                    //             text: "Verifikasi",
-                    //             click: verifSPJ,
-                    //             imageClass: "clinic fa",
-                    //           },
-                    //           {
-                    //             text: "Batal",
-                    //             click: batalVerifSPJ,
-                    //             imageClass: "clinic fa",
-                    //           },
-                    //       ],
-                    //          title: "",
-                    //          width: "100px",
-                    // },
+                columns: [
+                
                     {
                         "field": "tglrealisasi",
                         "title": "Tgl SPJ",
                         "width": "100px",
-                        // hidden: true
                     },
                     {
                         "field": "mataanggaran",
                         "title": "Kode Rekening",
                         "width": "200px",
-                        // hidden: true
                     },
                     {
                         "field": "kegiatan",
@@ -5137,14 +5107,11 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
                         "field": "norealisasi",
                         "title": "No SPJ",
                         "width": "100px",
-                        // hidden: true
                     },
-                    
                     {
                         "field": "asalproduk",
                         "title": "Sumber Dana",
                         "width": "100px",
-                        // hidden: true
                     },
                     {
                         "field": "deskripsi",
@@ -5156,57 +5123,52 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
                         "field": "totalbelanja",
                         "title": "Total Belanja",
                         "width": "130px",
-                        // hidden: true,
                     },
                     {
                         "field": "uraian",
                         "title": "Uraian",
                         "width": "200px",
-                        // hidden: true
                     },
                     {
                         "field": "pph",
                         "title": "PPh",
                         "width": "70px",
-                        // hidden: true
                     },
                     {
                         "field": "ppn",
                         "title": "PPN",
                         "width": "70px",
-                        // hidden: true
                     },
                     {
                         "field": "penerima",
                         "title": "Penerima",
                         "width": "200px",
-                        // hidden: true
                     },
                     {
                         "field": "pihakketiga",
                         "title": "Nama Pihak Ketiga",
                         "width": "150px",
-                        // hidden: true
                     },
+                    // {
+                    //     "field": "keterangan",
+                    //     "title": "Keterangan",
+                    //     "width": "200px",
+                    //     //hidden: true
+                    // },
                     {
-                        "field": "keterangan",
-                        "title": "Keterangan",
+                        "field": "status",
+                        "title": "Verifikasi",
                         "width": "200px",
-                        hidden: true
+                        //hidden: true
                     },
-                //     {
-                //         "command": [
-                //               {
-                //                  text: "Delete",
-                //                  click: deleteDetailSPJ,
-                //                  imageClass: "clinic fa"
-                //               },
-                //           ],
-                //              title: "",
-                //              width: "100px",
-                //     },
+                    // Tambahkan kolom baru di grid untuk "Sub Kegiatan"
+                    // {
+                    //     "field": "subKegiatan",
+                    //     "title": "Sub Kegiatan",
+                    //     "width": "150px",
+                    // }
                 ]
-            };
+            };            
 
             
             $scope.SimpanPopUpTambahMT = function(){
