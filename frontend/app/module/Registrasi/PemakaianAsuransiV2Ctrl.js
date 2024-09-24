@@ -1675,10 +1675,12 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
                                 }
 
                                 var polinya = poliTujuans == "HDL" ? "INT" : poliTujuans;
+                                var polisubnya = poliTujuans == "HDL" ? "INT" : poliTujuans;
                                 for (let i = 0; i < $scope.dataRefPoliJKN.length; i++) {
                                     const elpoli = $scope.dataRefPoliJKN[i];
                                     if(elpoli.kdsubspesialis == polinya) {
                                         polinya = elpoli.kdpoli
+                                        polisubnya = elpoli.kdsubspesialis
                                         break;
                                     }
                                 }
@@ -1734,7 +1736,7 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
                                         "nomorkartu": noKartu,
                                         "nik": $scope.model.noIdentitas,
                                         "nohp": $scope.model.noTelpons,
-                                        "kodepoli": poliTujuans,
+                                        "kodepoli": polisubnya,
                                         "namapoli": $scope.item.pasien.namaruangan,
                                         "pasienbaru": statuspasien,
                                         "norm": $scope.item.pasien.nocm,
