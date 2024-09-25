@@ -4983,14 +4983,121 @@ count(case when x.departemen = 'rahab_medik' then 1 end) AS rehab_medik
 
         return $res;
     }
-    public function getInfoKunjunganRawatJalanPerhari($tglAwal, $tglAkhir,$kdProfile){
+//     public function getInfoKunjunganRawatJalanPerhari($tglAwal, $tglAkhir,$kdProfile){
+//         $idProfile = (int) $kdProfile;
+//         $idDepRaJal = (int)$this->settingDataFixed('KdDepartemenRawatJalan', $idProfile);
+//         $tglAwal = $tglAwal .' 00:00' ;
+//         $tglAkhir = $tglAkhir.' 23:59' ;
+//         $data = DB::select(DB::raw("
+
+//                     select * from (SELECT
+//                     pd.noregistrasi,
+//                     ps.namapasien,
+//                     pd.statusenabled,
+//                     pd.nostruklastfk,
+//                     ru.namaruangan,
+//                     apd.tgldipanggilsuster,
+//                     apd.ispelayananpasien,
+//                     pd.objectruanganlastfk AS kdruangan,row_number() over (partition by pd.noregistrasi order by apd.tglmasuk desc) as rownum
+//                     FROM
+//                     pasiendaftar_t AS pd
+//                     INNER JOIN ruangan_m AS ru ON ru.id = pd.objectruanganlastfk
+//                     INNER JOIN pasien_m AS ps ON ps.id = pd.nocmfk
+//                     inner join antrianpasiendiperiksa_t as apd on apd.noregistrasifk = pd.norec and apd.objectruanganfk = pd.objectruanganlastfk
+//                     --LEFT JOIN batalregistrasi_t AS br ON br.pasiendaftarfk = pd.norec
+//                     WHERE pd.kdprofile = $idProfile and
+//                     pd.tglregistrasi BETWEEN '$tglAwal'
+//                     AND '$tglAkhir'
+//                     AND ru.objectdepartemenfk = $idDepRaJal
+//                     --and pd.objectruanganlastfk  = 795
+//                     ) as x where x.rownum=1
+//                     ORDER BY
+//                     x.noregistrasi"));
+
+//         $data10=[];
+//         $sudahPeriksa = 0;
+//         $belumPeriksa = 0;
+//         $batalRegis = 0;
+//         $totalAll = 0;
+//         if (count($data) > 0) {
+//             foreach ($data as $item) {
+//                 $sama = false;
+//                 $i = 0;
+//                 foreach ($data10 as $hideung) {
+//                     if ($item->kdruangan == $data10[$i]['kdruangan']) {
+//                         $sama = 1;
+//                         $jml = (float)$hideung['total'] + 1;
+//                         $data10[$i]['total'] = $jml;
+//                         if ($item->ispelayananpasien  ==true && $item->statusenabled == true) {
+//                             $data10[$i]['diperiksa'] = (float)$hideung['diperiksa'] + 1;
+
+//                         }
+//                         if ($item->ispelayananpasien !=true && $item->statusenabled == true) {
+// //                        if ($item->statusantrian == '0' && $item->norec_batal == null) {
+//                             $data10[$i]['belumperiksa'] = (float)$hideung['belumperiksa'] + 1;
+//                         }
+//                         if ($item->statusenabled == false) {
+//                             $data10[$i]['batalregistrasi'] = (float)$hideung['batalregistrasi'] + 1;
+//                         }
+//                         //                    $data10[$i]['totalAll'] = $data10[$i]['diperiksa'] + $data10[$i]['belumperiksa'] + $data10[$i]['batalregistrasi'];
+//                     }
+//                     $i = $i + 1;
+//                 }
+//                 if ($sama == false) {
+//                     if ($item->ispelayananpasien  ==true  && $item->statusenabled == true) {
+//                         $sudahPeriksa = 1;
+//                         $belumPeriksa = 0;
+//                         $batalRegis = 0;
+//                     }
+//                     if ($item->ispelayananpasien !=true  && $item->statusenabled == true) {
+//                         $sudahPeriksa = 0;
+//                         $belumPeriksa = 1;
+//                         $batalRegis = 0;
+//                     }
+//                     if ($item->statusenabled == false) {
+//                         $sudahPeriksa = 0;
+//                         $belumPeriksa = 0;
+//                         $batalRegis = 1;
+//                     }
+//                     $data10[] = array(
+//                         'kdruangan' => $item->kdruangan,
+//                         'namaruangan' => $item->namaruangan,
+//                         'total' => 1,
+//                         'diperiksa' => $sudahPeriksa,
+//                         'belumperiksa' => $belumPeriksa,
+//                         'batalregistrasi' => $batalRegis,
+// //                        'count' => $totalAll,
+//                     );
+//                 }
+//                 foreach ($data10 as $key => $row) {
+//                     $count[$key] = $row['total'];
+//                 }
+//                 array_multisort($count, SORT_DESC, $data10);
+//             }
+//         }else{
+//             $data10[] = array(
+//                 'kdruangan' => '-',
+//                 'namaruangan' => 'Tidak Ada Data',
+//                 'total' => 0,
+//                 'diperiksa' => 0,
+//                 'belumperiksa' => 0,
+//                 'batalregistrasi' => 0,
+//             );
+//         }
+//         // dd($data10);
+//         return $data10;
+//     }
+
+    public function getInfoKunjunganRawatJalanPerhari($tglAwal, $tglAkhir, $kdProfile) {
         $idProfile = (int) $kdProfile;
         $idDepRaJal = (int)$this->settingDataFixed('KdDepartemenRawatJalan', $idProfile);
-        $tglAwal = $tglAwal .' 00:00' ;
-        $tglAkhir = $tglAkhir.' 23:59' ;
-        $data = DB::select(DB::raw("
+        $tglAwal = $tglAwal . ' 00:00';
+        $tglAkhir = $tglAkhir . ' 23:59';
 
-                    select * from (SELECT
+        $data = DB::select(DB::raw("
+            SELECT *
+            FROM (
+                SELECT
                     pd.noregistrasi,
                     ps.namapasien,
                     pd.statusenabled,
@@ -4998,96 +5105,80 @@ count(case when x.departemen = 'rahab_medik' then 1 end) AS rehab_medik
                     ru.namaruangan,
                     apd.tgldipanggilsuster,
                     apd.ispelayananpasien,
-                    pd.objectruanganlastfk AS kdruangan,row_number() over (partition by pd.noregistrasi order by apd.tglmasuk desc) as rownum
-                    FROM
+                    pd.objectruanganlastfk AS kdruangan,
+                    ROW_NUMBER() OVER (PARTITION BY pd.noregistrasi ORDER BY apd.tglmasuk DESC) AS rownum
+                FROM
                     pasiendaftar_t AS pd
                     INNER JOIN ruangan_m AS ru ON ru.id = pd.objectruanganlastfk
                     INNER JOIN pasien_m AS ps ON ps.id = pd.nocmfk
-                    inner join antrianpasiendiperiksa_t as apd on apd.noregistrasifk = pd.norec and apd.objectruanganfk = pd.objectruanganlastfk
-                    --LEFT JOIN batalregistrasi_t AS br ON br.pasiendaftarfk = pd.norec
-                    WHERE pd.kdprofile = $idProfile and
-                    pd.tglregistrasi BETWEEN '$tglAwal'
-                    AND '$tglAkhir'
+                    INNER JOIN antrianpasiendiperiksa_t AS apd ON apd.noregistrasifk = pd.norec AND apd.objectruanganfk = pd.objectruanganlastfk
+                WHERE
+                    pd.kdprofile = $idProfile
+                    AND pd.tglregistrasi BETWEEN '$tglAwal' AND '$tglAkhir'
                     AND ru.objectdepartemenfk = $idDepRaJal
-                    --and pd.objectruanganlastfk  = 795
-                    ) as x where x.rownum=1
-                    ORDER BY
-                    x.noregistrasi"));
+                    AND pd.statusenabled = TRUE
+            ) AS x
+            WHERE x.rownum = 1
+            ORDER BY x.noregistrasi
+        "));
 
-        $data10=[];
-        $sudahPeriksa = 0;
-        $belumPeriksa = 0;
-        $batalRegis = 0;
-        $totalAll = 0;
+        $data10 = [];
+
         if (count($data) > 0) {
             foreach ($data as $item) {
-                $sama = false;
-                $i = 0;
-                foreach ($data10 as $hideung) {
-                    if ($item->kdruangan == $data10[$i]['kdruangan']) {
-                        $sama = 1;
-                        $jml = (float)$hideung['total'] + 1;
-                        $data10[$i]['total'] = $jml;
-                        if ($item->ispelayananpasien  ==true && $item->statusenabled == true) {
-                            $data10[$i]['diperiksa'] = (float)$hideung['diperiksa'] + 1;
+                $found = false;
+                foreach ($data10 as &$existing) {
+                    if ($item->kdruangan == $existing['kdruangan']) {
+                        $found = true;
+                        $existing['total']++;
+                        $existing['noregistrasi'][] = $item->noregistrasi; 
+                        $existing['namapasien'][] = $item->namapasien; 
 
+                        if ($item->ispelayananpasien && $item->statusenabled) {
+                            $existing['diperiksa']++;
+                        } elseif (!$item->ispelayananpasien && $item->statusenabled) {
+                            $existing['belumperiksa']++;
+                        } elseif (!$item->statusenabled) {
+                            $existing['batalregistrasi']++;
                         }
-                        if ($item->ispelayananpasien !=true && $item->statusenabled == true) {
-//                        if ($item->statusantrian == '0' && $item->norec_batal == null) {
-                            $data10[$i]['belumperiksa'] = (float)$hideung['belumperiksa'] + 1;
-                        }
-                        if ($item->statusenabled == false) {
-                            $data10[$i]['batalregistrasi'] = (float)$hideung['batalregistrasi'] + 1;
-                        }
-                        //                    $data10[$i]['totalAll'] = $data10[$i]['diperiksa'] + $data10[$i]['belumperiksa'] + $data10[$i]['batalregistrasi'];
                     }
-                    $i = $i + 1;
                 }
-                if ($sama == false) {
-                    if ($item->ispelayananpasien  ==true  && $item->statusenabled == true) {
-                        $sudahPeriksa = 1;
-                        $belumPeriksa = 0;
-                        $batalRegis = 0;
-                    }
-                    if ($item->ispelayananpasien !=true  && $item->statusenabled == true) {
-                        $sudahPeriksa = 0;
-                        $belumPeriksa = 1;
-                        $batalRegis = 0;
-                    }
-                    if ($item->statusenabled == false) {
-                        $sudahPeriksa = 0;
-                        $belumPeriksa = 0;
-                        $batalRegis = 1;
-                    }
-                    $data10[] = array(
+
+                if (!$found) {
+                    $data10[] = [
                         'kdruangan' => $item->kdruangan,
+                        'noregistrasi' => [$item->noregistrasi],
+                        'namapasien' => [$item->namapasien], // Inisialisasi array untuk nama pasien
                         'namaruangan' => $item->namaruangan,
                         'total' => 1,
-                        'diperiksa' => $sudahPeriksa,
-                        'belumperiksa' => $belumPeriksa,
-                        'batalregistrasi' => $batalRegis,
-//                        'count' => $totalAll,
-                    );
+                        'diperiksa' => $item->ispelayananpasien && $item->statusenabled ? 1 : 0,
+                        'belumperiksa' => !$item->ispelayananpasien && $item->statusenabled ? 1 : 0,
+                        'batalregistrasi' => !$item->statusenabled ? 1 : 0,
+                    ];
                 }
-                foreach ($data10 as $key => $row) {
-                    $count[$key] = $row['total'];
-                }
-                array_multisort($count, SORT_DESC, $data10);
             }
-        }else{
-            $data10[] = array(
+
+            foreach ($data10 as &$entry) {
+                $entry['noregistrasi'] = implode(', ', $entry['noregistrasi']);
+                $entry['namapasien'] = implode(', ', $entry['namapasien']); 
+            }
+
+        } else {
+            $data10[] = [
                 'kdruangan' => '-',
                 'namaruangan' => 'Tidak Ada Data',
                 'total' => 0,
                 'diperiksa' => 0,
                 'belumperiksa' => 0,
                 'batalregistrasi' => 0,
-            );
+                'noregistrasi' => 'N/A',
+                'namapasien' => 'N/A', 
+            ];
         }
-        // dd($data10);
+
         return $data10;
     }
-
+    
     public function getInfoPangkatGolongan($tglAwal, $tglAkhir,$kdProfile){
         $idProfile = (int) $kdProfile;
         $tglAwal = $tglAwal .' 00:00' ;

@@ -83,6 +83,10 @@
                 padding: 1px 1px;   /* Padding agar terlihat lebih rapi */
                 border-radius: 5px;  /* Bikin sudut membulat */
             }
+        .custom-modal-width {
+            max-width: 80%; /* Sesuaikan persentase lebar sesuai kebutuhan */
+        }
+
     </style>
 @endsection
 @section('content-body')
@@ -318,41 +322,48 @@
                             <div class="col-lg-6 col-md-12">
                                 <div class="card">
                                     <div class="panel panel-warning">
-                                        <div class="panel-heading  bg-warning">
+                                        <div class="panel-heading bg-warning">
                                             Informasi Kedatangan Pengunjung Pasien Rawat Jalan
                                         </div>
-                                        <div class="panel-body" style="height: 480px;overflow-x: auto;">
-                                            <div class="row" style="padding:10px;">
+                                        <div class="panel-body" style="height: 480px; overflow-x: auto;">
+                                            <div class="row" style="padding: 10px;">
                                                 <div class="col-md-12">
-                                                    <div class="table-responsive" >
-                                                <table class="table  table-striped table-sm table-styling" id="t_Kedatangan"
-                                                       style="width:100%">
-                                                    <thead>
-                                                    <tr class="table-inverse">
-                                                        <th>Poli </th>
-                                                        <th>Total </th>
-                                                        <th>Belum Diperiksa  </th>
-                                                        <th>Diperiksa</th>
-                                                        <th>Batal </th>
-                                                    </tr>
-                                                    </thead>
-                                                    <tbody>
-                                                    @forelse($res['info_kedatangan'] as $i => $d)
-                                                        <tr>
-                                                            <td>{{ $d['namaruangan'] }}</td>
-                                                            <td>{{ $d['total'] }}</td>
-                                                            <td>{{ $d['belumperiksa'] }}</td>
-                                                            <td>{{ $d['diperiksa'] }}</td>
-                                                            <td>{{ $d['batalregistrasi'] }}</td>
-                                                        </tr>
-                                                    @empty
-                                                        <tr>
-                                                            <td colspan="6" style="text-align: center">Data Tidak ada</td>
-                                                        </tr>
-                                                    @endforelse
-                                                    </tbody>
-                                                </table>
-                                            </div>
+                                                    <div class="table-responsive">
+                                                        <table class="table table-striped table-sm table-styling" id="t_Kedatangan" style="width: 100%">
+                                                            <thead>
+                                                                <tr class="table-inverse">
+                                                                    <th>Poli</th>
+                                                                    <th>Total</th>
+                                                                    <th>Belum Diperiksa</th>
+                                                                    <th>Diperiksa</th>
+                                                                    <th>Batal</th>
+                                                                </tr>
+                                                            </thead>
+                                                            <tbody>
+                                                                @forelse($res['info_kedatangan'] as $i => $d)
+                                                                    <tr>
+                                                                        <td>
+                                                                            <a href="#" class="room-name" 
+                                                                            data-noregistrasi="{{ $d['noregistrasi'] ?? 'N/A' }}" 
+                                                                            data-namapasien="{{ $d['namapasien'] ?? 'N/A' }}" 
+                                                                            data-namaruangan="{{ $d['namaruangan'] ?? 'N/A' }}" 
+                                                                            onclick="showInfo(this)">
+                                                                            {{ $d['namaruangan'] }}
+                                                                            </a>
+                                                                        </td>
+                                                                        <td>{{ $d['total'] }}</td>
+                                                                        <td>{{ $d['belumperiksa'] }}</td>
+                                                                        <td>{{ $d['diperiksa'] }}</td>
+                                                                        <td>{{ $d['batalregistrasi'] }}</td>
+                                                                    </tr>
+                                                                @empty
+                                                                    <tr>
+                                                                        <td colspan="5" style="text-align: center">Data Tidak ada</td>
+                                                                    </tr>
+                                                                @endforelse
+                                                            </tbody>
+                                                        </table>
+                                                    </div>
                                                 </div>
                                             </div>
                                         </div>
@@ -943,6 +954,40 @@
             </div>
         </div>
     </div>
+
+    <!-- Modal Structure -->
+    <div class="modal fade" id="infoModal" tabindex="-1" role="dialog" aria-labelledby="infoModalLabel" aria-hidden="true">
+        <div class="modal-dialog custom-modal-width" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="infoModalLabel">Informasi Pengunjung Pasien</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <table class="table table-bordered">
+                        <thead>
+                            <tr>
+                                <th>No</th>
+                                <th>No Registrasi</th>
+                                <th>Nama Pasien</th>
+                                <th>Ruangan</th>
+                            </tr>
+                        </thead>
+                        <tbody id="infoTableBody">
+                            <!-- Data akan dimasukkan di sini melalui JavaScript -->
+                        </tbody>
+                    </table>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Tutup</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
 @endsection
 
 @section('javascript')
@@ -3181,6 +3226,54 @@
                  window.location.reload();
            
         }, 60000);
+
+        function showInfo(element) {
+            // Ambil data dari atribut data-*
+            var regNumber = element.getAttribute('data-noregistrasi');
+            var patientName = element.getAttribute('data-namapasien');
+            var roomName = element.getAttribute('data-namaruangan');
+
+            // Parse data jika berbentuk array (misalnya terpisah dengan koma)
+            var regNumberArray = regNumber.split(', ');
+            var patientNameArray = patientName.split(', ');
+
+            // Dapatkan body tabel dari modal
+            var tableBody = document.getElementById('infoTableBody');
+
+            // Bersihkan isi tabel sebelumnya
+            tableBody.innerHTML = '';
+
+            // Loop untuk membuat baris berdasarkan array yang dikirim
+            regNumberArray.forEach(function(regNum, index) {
+                // Buat baris baru untuk informasi
+                var row = document.createElement('tr');
+
+                // Buat dan tambahkan sel untuk No, No Registrasi, Nama Pasien, Ruangan
+                var cellNo = document.createElement('td');
+                cellNo.innerText = (index + 1).toString(); // Nomor urut
+                row.appendChild(cellNo);
+
+                var cellRegNumber = document.createElement('td');
+                cellRegNumber.innerText = regNum;
+                row.appendChild(cellRegNumber);
+
+                var cellPatientName = document.createElement('td');
+                cellPatientName.innerText = patientNameArray[index] || ''; // Jika ada nama pasien
+                row.appendChild(cellPatientName);
+
+                var cellRoomName = document.createElement('td');
+                cellRoomName.innerText = roomName;
+                row.appendChild(cellRoomName);
+
+                // Tambahkan baris ke body tabel
+                tableBody.appendChild(row);
+            });
+
+            // Tampilkan modal
+            $('#infoModal').modal('show');
+        }
+
+
     </script>
 
 @endsection
