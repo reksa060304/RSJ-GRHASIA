@@ -73,6 +73,16 @@
             color: #fff;
             top: 5px;
           }
+          .total-pasien {
+                position: absolute;
+                bottom: 10px;   /* Jarak dari bawah */
+                right: 10px;    /* Jarak dari kanan */
+                font-size: 12px;  /* Ukuran font untuk teks total pasien */
+                background-color: rgba(128, 128, 128, 0.5);  /* Latar belakang semi-transparan */
+                color: white;   /* Warna teks putih */
+                padding: 1px 1px;   /* Padding agar terlihat lebih rapi */
+                border-radius: 5px;  /* Bikin sudut membulat */
+            }
     </style>
 @endsection
 @section('content-body')
@@ -382,7 +392,7 @@
                                 <div class="card">
                                     <div class="panel panel-default">
                                         <div class="panel-heading bg-default">
-                                           <span style="color:black"> Pemakaian Tempat Tidur Berdasarkan Usia</span>
+                                           <span style="color:black"> Pemakaian Tempat Tidur Berdasarkan Usia (Pasien Masih Dirawat)</span>
                                         </div>
                                         <div class="panel-body">
                                             <div class="row" style="padding: 10px">
@@ -396,6 +406,9 @@
                                                             <img src="{!! asset($d['img']) !!}" style="width: 60px">
                                                         </div>
                                                     </div>
+                                                </div>
+                                                <div class="total-pasien">
+                                                    Total Pasien Rawat Inap: {!! $d['totalpasien'] !!}
                                                 </div>
                                                  @endforeach
                                             </div>

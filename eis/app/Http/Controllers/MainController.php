@@ -4591,8 +4591,9 @@ AND sp.statusenabled <> false
                 ru.namaruangan,
                 jk.jeniskelamin,
                 ps.objectjeniskelaminfk,
-              date_part('year',age(ps.tgllahir))as umur,
-                date_part('day',now()-ps.tgllahir)as hari
+                date_part('year',age(ps.tgllahir))as umur,
+                date_part('day',now()-ps.tgllahir)as hari,
+                COUNT(pd.noregistrasi) OVER() AS totalpasien
             FROM
                 pasiendaftar_t AS pd
             LEFT JOIN pasien_m AS ps ON ps.id = pd.nocmfk
@@ -4630,6 +4631,7 @@ AND sp.statusenabled <> false
 
         foreach ($data as $item) {
             $jmlAll = $jmlAll + 1;
+            $totalPasien = $item->totalpasien;
             //DATA KEMENKES
             //1.Balita= 0 –5
             //2.Anak = 6 –11
@@ -4733,18 +4735,18 @@ AND sp.statusenabled <> false
         //7.Lansia Awal= 46 –55.
         //8.Lansia Akhir= 56 –65.
         //9.Manula= 65 –atas
-        $result [] = ['name' => 'Balita Perempuan','umur'=>'0 - 5 Tahun','jml' => $P_balita ,'img'=>'images/BayiPerempuan.png' ];
-        $result [] = ['name' => 'Balita Laki-laki','umur'=>'0 - 5 Tahun','jml' => $L_balita ,'img'=>'images/BayiLaki-Laki.png' ];
-        $result [] = ['name' => 'Anak Perempuan','umur'=>'6 - 11 Tahun','jml' => $P_anak ,'img'=>'images/AnakPerempuan.png' ];
-        $result [] = ['name' => 'Anak Laki-laki','umur'=>'6 - 11 Tahun','jml' => $L_anak ,'img'=>'images/AnakLaki-Laki.png' ];
-        $result [] = ['name' => 'Remaja Perempuan','umur'=>'12 - 25 Tahun','jml' => $P_remajaAwal + $P_remajaAkhir ,'img'=>'images/RemajaPerempuan.png' ];
-        $result [] = ['name' => 'Remaja Laki-laki','umur'=>'12 - 25 Tahun','jml' => $L_remajaAwal + $L_remajaAkhir ,'img'=>'images/RemajaLaki-Laki.png' ];
-        $result [] = ['name' => 'Dewasa Perempuan','umur'=>'26 - 45 Tahun','jml' => $P_dewasaAwal+ $P_dewasaAkhir  ,'img'=>'images/DewasaPerempuan.png' ];
-        $result [] = ['name' => 'Dewasa Laki-laki','umur'=>'26 - 45 Tahun','jml' => $L_dewasaAwal+ $L_dewasaAkhir  ,'img'=>'images/DewasaLaki-Laki.png' ];
-        $result [] = ['name' => 'Lansia Perempuan','umur'=>'46 - 65 Tahun','jml' => $P_lansiaAwal+ $P_lansiaakhir,'img'=>'images/Nenek2.png' ];
-        $result [] = ['name' => 'Lansia Laki-laki','umur'=>'46 - 65 Tahun','jml' =>  $L_lansiaAwal+ $L_lansiaakhir ,'img'=>'images/Kakek2.png' ];
-        $result [] = ['name' => 'Manula Perempuan','umur'=>'> 65 Tahun','jml' => $P_manula,'img'=>'images/Nenek.png' ];
-        $result [] = ['name' => 'Manula Laki-laki','umur'=>'> 65 Tahun','jml' => $L_manula ,'img'=>'images/Kakek.png' ];
+        $result [] = ['name' => 'Balita Perempuan','umur'=>'0 - 5 Tahun','jml' => $P_balita ,'img'=>'images/BayiPerempuan.png','totalpasien' => $totalPasien ];
+        $result [] = ['name' => 'Balita Laki-laki','umur'=>'0 - 5 Tahun','jml' => $L_balita ,'img'=>'images/BayiLaki-Laki.png','totalpasien' => $totalPasien ];
+        $result [] = ['name' => 'Anak Perempuan','umur'=>'6 - 11 Tahun','jml' => $P_anak ,'img'=>'images/AnakPerempuan.png','totalpasien' => $totalPasien ];
+        $result [] = ['name' => 'Anak Laki-laki','umur'=>'6 - 11 Tahun','jml' => $L_anak ,'img'=>'images/AnakLaki-Laki.png','totalpasien' => $totalPasien ];
+        $result [] = ['name' => 'Remaja Perempuan','umur'=>'12 - 25 Tahun','jml' => $P_remajaAwal + $P_remajaAkhir ,'img'=>'images/RemajaPerempuan.png','totalpasien' => $totalPasien ];
+        $result [] = ['name' => 'Remaja Laki-laki','umur'=>'12 - 25 Tahun','jml' => $L_remajaAwal + $L_remajaAkhir ,'img'=>'images/RemajaLaki-Laki.png','totalpasien' => $totalPasien ];
+        $result [] = ['name' => 'Dewasa Perempuan','umur'=>'26 - 45 Tahun','jml' => $P_dewasaAwal+ $P_dewasaAkhir  ,'img'=>'images/DewasaPerempuan.png','totalpasien' => $totalPasien ];
+        $result [] = ['name' => 'Dewasa Laki-laki','umur'=>'26 - 45 Tahun','jml' => $L_dewasaAwal+ $L_dewasaAkhir  ,'img'=>'images/DewasaLaki-Laki.png','totalpasien' => $totalPasien ];
+        $result [] = ['name' => 'Lansia Perempuan','umur'=>'46 - 65 Tahun','jml' => $P_lansiaAwal+ $P_lansiaakhir,'img'=>'images/Nenek2.png','totalpasien' => $totalPasien ];
+        $result [] = ['name' => 'Lansia Laki-laki','umur'=>'46 - 65 Tahun','jml' =>  $L_lansiaAwal+ $L_lansiaakhir ,'img'=>'images/Kakek2.png','totalpasien' => $totalPasien ];
+        $result [] = ['name' => 'Manula Perempuan','umur'=>'> 65 Tahun','jml' => $P_manula,'img'=>'images/Nenek.png','totalpasien' => $totalPasien ];
+        $result [] = ['name' => 'Manula Laki-laki','umur'=>'> 65 Tahun','jml' => $L_manula ,'img'=>'images/Kakek.png','totalpasien' => $totalPasien ];
 
 //        dd($result);
         return $result;
