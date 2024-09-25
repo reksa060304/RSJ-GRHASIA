@@ -754,9 +754,9 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
                                         medifirstService.post('registrasi/confirm-pasien-online', data).then(function (e) {
                                             // body...
                                         })
-                                        if (isMobileJKN == true) {
+                                        // if (isMobileJKN == true) {
                                             saveAntrolNonJKN($scope.Noregistrasi, $scope.resultAPD)
-                                        }
+                                        // }
                                     }else{
                                         // save Antrol
         
