@@ -3253,7 +3253,9 @@ $ruangdokter = \DB::table('ruangan_m as ru')
                 select * from (
                     select
                     ps.nocm as norm,
-                    case when pd.statusschedule <> '' and pd.statusschedule <> 'Kios-K' then pd.statusschedule else pd.noregistrasi end as noregistrasi,
+                    case when pd.statusschedule <> '' and pd.statusschedule <> 'Kios-K' and pd.objectkelompokpasienlastfk = 2
+                    then pd.statusschedule 
+                    else pd.noregistrasi end as noregistrasi,
                     mt.noregistrasifk,
                     pd.tglregistrasi,
                     ps.namapasien,
@@ -3738,7 +3740,7 @@ $ruangdokter = \DB::table('ruangan_m as ru')
             'rm.namaruangan',
             'pg.kddokterbpjs as kodedokter',
             'pg.namalengkap as namadokter',
-            DB::raw('CASE WHEN pd.statusschedule <> \'\' THEN pd.statusschedule ELSE pd.noregistrasi END as kodebooking'),
+            DB::raw('CASE WHEN pd.statusschedule <> \'\' and pd.statusschedule <> \'Kios-K\' and pd.objectkelompokpasienlastfk = 2 THEN pd.statusschedule ELSE pd.noregistrasi END as kodebooking'),
             DB::raw('CASE WHEN kp.id = 2 THEN \'JKN\' ELSE \'NON JKN\' END as kelompok')
         )
         ->join('pasien_m as ps', 'ps.id', '=', 'pd.nocmfk')
