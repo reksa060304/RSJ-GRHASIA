@@ -1701,9 +1701,22 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
                                                 "namadokter" : element.namadokter,
                                                 "kodedokter" : element.kodedokter,
                                                 "kapasitaspasien": element.kapasitaspasien,
+                                                "namaruangan" : element.namapoli,
+                                                "koderuangan" : element.kodesubspesialis,
                                             }
                                             break;
                                         }
+                                    }
+                                }
+
+                                if (!kodeDokterBPJS && resJadwalDokter.data.response.length > 0) {
+                                    kodeDokterBPJS = {
+                                        "jadwal" : resJadwalDokter.data.response[0].jadwal,
+                                        "namadokter" : resJadwalDokter.data.response[0].namadokter,
+                                        "kodedokter" : resJadwalDokter.data.response[0].kodedokter,
+                                        "kapasitaspasien": resJadwalDokter.data.response[0].kapasitaspasien,
+                                        "namaruangan" : resJadwalDokter.data.response[0].namapoli,
+                                        "koderuangan" : resJadwalDokter.data.response[0].kodesubspesialis
                                     }
                                 }
 
@@ -1736,8 +1749,10 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
                                         "nomorkartu": noKartu,
                                         "nik": $scope.model.noIdentitas,
                                         "nohp": $scope.model.noTelpons,
-                                        "kodepoli": polisubnya,
-                                        "namapoli": $scope.item.pasien.namaruangan,
+                                        // "kodepoli": polisubnya,
+                                        // "namapoli": $scope.item.pasien.namaruangan,
+                                        "kodepoli": kodeDokterBPJS ? kodeDokterBPJS.koderuangan : "",
+                                        "namapoli": kodeDokterBPJS ? kodeDokterBPJS.namaruangan : "",
                                         "pasienbaru": statuspasien,
                                         "norm": $scope.item.pasien.nocm,
                                         "tanggalperiksa": moment($scope.item.pasien.tglregistrasi).format('YYYY-MM-DD'),
