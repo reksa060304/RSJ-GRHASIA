@@ -3253,7 +3253,7 @@ $ruangdokter = \DB::table('ruangan_m as ru')
                 select * from (
                     select
                     ps.nocm as norm,
-                    case when pd.ismobilejkn = true then pd.statusschedule else pd.noregistrasi end as noregistrasi,
+                    case when pd.statusschedule <> '' and pd.statusschedule <> 'Kios-K' then pd.statusschedule else pd.noregistrasi end as noregistrasi,
                     mt.noregistrasifk,
                     pd.tglregistrasi,
                     ps.namapasien,
