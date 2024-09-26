@@ -2421,8 +2421,19 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
                                 "jadwal" : element.jadwal,
                                 "namadokter" : element.namadokter,
                                 "kodedokter" : element.kodedokter,
+                                "namaruangan" : element.namapoli,
+                                "koderuangan" : element.kodesubspesialis
                             }
                             break;
+                        }
+                    }
+                    if (kodeDokterBPJS == '' && z.data.response.length > 0) {
+                        kodeDokterBPJS = {
+                            "jadwal" : z.data.response[0].jadwal,
+                            "namadokter" : z.data.response[0].namadokter,
+                            "kodedokter" : z.data.response[0].kodedokter,
+                            "namaruangan" : z.data.response[0].namapoli,
+                            "koderuangan" : z.data.response[0].kodesubspesialis
                         }
                     }
                     let jenisKunjungan = 1
@@ -2441,8 +2452,10 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
                            "nomorkartu": "",
                            "nik": $scope.item.pasien.noidentitas ? $scope.item.pasien.noidentitas : "",
                            "nohp": $scope.item.pasien.notelepon ? $scope.item.pasien.notelepon.substring(0,12) : "000000000000",
-                           "kodepoli": $scope.item.ruangan.kodebpjs ? $scope.item.ruangan.kodebpjs : "",
-                           "namapoli": $scope.item.ruangan.namaruangan,
+                        //    "kodepoli": $scope.item.ruangan.kodebpjs ? $scope.item.ruangan.kodebpjs : "",
+                        //    "namapoli": $scope.item.ruangan.namaruangan,
+                           "kodepoli": kodeDokterBPJS != "" ? kodeDokterBPJS.koderuangan : "",
+                           "namapoli": kodeDokterBPJS != "" ? kodeDokterBPJS.namaruangan : "",
                            "pasienbaru": status,
                            "norm": $scope.item.pasien.nocm,
                            "tanggalperiksa": moment($scope.item.tglRegistrasi).format('YYYY-MM-DD'),
