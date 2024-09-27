@@ -21062,7 +21062,7 @@ public function suratBuktiPengembalian(Request $request)
             array(
                 'res' => $res,
                 'username'=> $username,
-                'tte' => (isset($request['isttd'])) ? 'true' : 'false'
+                'tte' => (isset($r['isttd']) && $r['isttd'] == true) ? 'true' : 'false'
             ));
         
         if(isset($r['isttd']) && $r['isttd'] == true){

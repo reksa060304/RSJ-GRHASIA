@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" ng-app="angularApp">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -20,12 +20,10 @@
 
     <style>
         /* Padding for the header on the first page */
-        @page :first {
-            margin: 10mm;
-        }
 
         /* Padding for the header on subsequent pages */
         @page {
+            size:A4;
             margin: 10mm;
         }
         .footer {
@@ -49,17 +47,26 @@
             right: 1%;
         }
 
-        #footer {
+        /* #footer {
         height: 30px;
         }
         #page {
         height: calc(100vh - 30px); //viewport height - footer height
+        } */
+        footer {
+            text-align: center;
+            position: absolute;
+            bottom: 0;
+            right: 5%;
         }
-        
+        footer {
+            position: fixed;
+            bottom: 0;
+        }
     </style>
 </head>
 <body>
-    <section id="page" style="font-family:Arial">
+    <section style="font-family:Arial">
         <table cellspacing="0" cellpadding="0" border="1" width="100%">
             <tr>
                 <td style="text-align: center" width="60%">
@@ -378,7 +385,7 @@
     </section>
 
     @if ($tte == 'true')
-        <div id="footer" class="footer3">
+        <div class="footer3">
             <table border="0">
                 <tr>
                     <td style="width: 15%; text-align:center;">
