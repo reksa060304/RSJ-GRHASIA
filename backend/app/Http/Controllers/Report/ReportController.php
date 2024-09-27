@@ -2450,6 +2450,7 @@ class ReportController extends ApiController{
         $data = DB::select(DB::raw("
         SELECT
             epd.emrdfk,
+            epd.emrfk,
             ep.noemr,
             ed.TYPE,
             pa.namapasien,
@@ -2540,6 +2541,7 @@ class ReportController extends ApiController{
             ->where('noregistrasi', trim($data[0]->noregistrasi))
             ->where('nocm', $data[0]->nocm)
             ->where('nomoremr', $data[0]->noemr)
+            ->where('emrfk', $data[0]->emrfk)
             ->where('status', true)
             ->get();
 
@@ -2588,6 +2590,7 @@ class ReportController extends ApiController{
         $data = DB::select(DB::raw("
         SELECT
             epd.emrdfk,
+            epd.emrfk,
             ep.noemr,
             ed.TYPE,
             pa.namapasien,
@@ -2673,6 +2676,22 @@ class ReportController extends ApiController{
             $peg = DB::table('pegawai_m')->where('id',$request['pegawaittd'])->first();
             
         }
+
+        // cari pdf yang sudah di ttd
+        $cekPdf = DB::table('emr_bsre_t')
+            ->where('statusenabled', true)
+            ->where('noregistrasi', trim($data[0]->noregistrasi))
+            ->where('nocm', $data[0]->nocm)
+            ->where('nomoremr', $data[0]->noemr)
+            ->where('status', true)
+            ->where('emrfk', $data[0]->emrfk)
+            ->get();
+
+        if(count($cekPdf) > 0){
+            $link = '/service/storage_path?path='.$cekPdf[0]->file.'&filename='.$cekPdf[0]->namafile.'&mimetype=application/pdf';
+            return redirect($link);
+        }
+
         // var_dump($data);
         $pdf = PDF::loadView(
             'report.EMR.suratketerangangawatdarurat-dom',
@@ -2714,6 +2733,7 @@ class ReportController extends ApiController{
         $data = DB::select(DB::raw("
         SELECT
             epd.emrdfk,
+            epd.emrfk,
             ep.noemr,
             ed.TYPE,
             pa.namapasien,
@@ -2799,6 +2819,22 @@ class ReportController extends ApiController{
             $peg = DB::table('pegawai_m')->where('id',$request['pegawaittd'])->first();
             
         }
+
+         // cari pdf yang sudah di ttd
+        $cekPdf = DB::table('emr_bsre_t')
+            ->where('statusenabled', true)
+            ->where('noregistrasi', trim($data[0]->noregistrasi))
+            ->where('nocm', $data[0]->nocm)
+            ->where('nomoremr', $data[0]->noemr)
+            ->where('status', true)
+            ->where('emrfk', $data[0]->emrfk)
+            ->get();
+
+        if(count($cekPdf) > 0){
+            $link = '/service/storage_path?path='.$cekPdf[0]->file.'&filename='.$cekPdf[0]->namafile.'&mimetype=application/pdf';
+            return redirect($link);
+        }
+
         // var_dump($data);
         $pdf = PDF::loadView(
             'report.EMR.suratketerangandirawatinap-dom',
@@ -16753,6 +16789,7 @@ from kegiatananggaran_m km
         $data = DB::select(DB::raw("
             SELECT
                 epd.emrdfk,
+                epd.emrfk,
                 ep.noemr,
                 ed.TYPE,
                 pa.namapasien,
@@ -16844,6 +16881,7 @@ from kegiatananggaran_m km
             ->where('nocm', $data[0]->nocm)
             ->where('nomoremr', $data[0]->noemr)
             ->where('status', true)
+            ->where('emrfk', $data[0]->emrfk)
             ->get();
 
         if(count($cekPdf) > 0){
@@ -16892,6 +16930,7 @@ from kegiatananggaran_m km
         $data = DB::select(DB::raw("
             SELECT
                 epd.emrdfk,
+                epd.emrfk,
                 ep.noemr,
                 ed.TYPE,
                 pa.namapasien,
@@ -16977,6 +17016,7 @@ from kegiatananggaran_m km
             ->where('noregistrasi', trim($data[0]->noregistrasi))
             ->where('nocm', $data[0]->nocm)
             ->where('nomoremr', $data[0]->noemr)
+            ->where('emrfk', $data[0]->emrfk)
             ->where('status', true)
             ->get();
 
@@ -19246,6 +19286,7 @@ public function suratBuktiPengembalian(Request $request)
         SELECT
             split_part(epd.value, '~', 2) as split,
             epd.emrdfk,
+            epd.emrfk,
             ep.noemr,
             ed.TYPE,
             pa.namapasien,
@@ -19335,6 +19376,7 @@ public function suratBuktiPengembalian(Request $request)
             ->where('noregistrasi', trim($data[0]->noregistrasi))
             ->where('nocm', $data[0]->nocm)
             ->where('nomoremr', $data[0]->noemr)
+            ->where('emrfk', $data[0]->emrfk)
             ->where('status', true)
             ->get();
         
@@ -23193,6 +23235,7 @@ public function suratBuktiPengembalian(Request $request)
         $data = DB::select(DB::raw("
             SELECT
                 epd.emrdfk,
+                epd.emrfk,
                 ep.noemr,
                 ed.TYPE,
                 pa.namapasien,
@@ -23282,6 +23325,7 @@ public function suratBuktiPengembalian(Request $request)
             ->where('nocm', $data[0]->nocm)
             ->where('nomoremr', $data[0]->noemr)
             ->where('status', true)
+            ->where('emrfk', $data[0]->emrfk)
             ->get();
 
         if(count($cekPdf) > 0){
@@ -23332,6 +23376,7 @@ public function suratBuktiPengembalian(Request $request)
         $data = DB::select(DB::raw("
             SELECT
                 epd.emrdfk,
+                epd.emrfk,
                 ep.noemr,
                 ed.TYPE,
                 pa.namapasien,
@@ -23423,6 +23468,7 @@ public function suratBuktiPengembalian(Request $request)
             ->where('nocm', $data[0]->nocm)
             ->where('nomoremr', $data[0]->noemr)
             ->where('status', true)
+            ->where('emrfk', $data[0]->emrfk)
             ->get();
 
         if(count($cekPdf) > 0){
