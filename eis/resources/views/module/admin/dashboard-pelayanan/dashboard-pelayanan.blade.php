@@ -155,7 +155,7 @@
                                                         <img class="icon-pasien" src="{!! asset($k->gambar) !!}">
 {{--                                                        <i class="ion ion-bag"></i>--}}
                                                     </div>
-                                                    <a  class="small-box-footer" onclick="klikDetails({!! $k->id !!},'{!! $k->namadepartemen !!}','pengunjung')">Detail <i class="fa fa-arrow-circle-right"></i></a>
+                                                    <a  class="small-box-footer" onclick="klikDetails('{!! $k->id !!}','{!! $k->namadepartemen !!}','pengunjung')">Detail <i class="fa fa-arrow-circle-right"></i></a>
                                                 </div>
                                             </div>
                                             @endforeach
@@ -192,7 +192,7 @@
                                                             <img class="icon-pasien" src="{!! asset($k['gambar']) !!}">
                                                             {{--                                                        <i class="ion ion-bag"></i>--}}
                                                         </div>
-                                                        <a  onclick="klikDetails({!! $k['id'] !!},'{!! $k['namadepartemen'] !!}','kunjungan')" class="small-box-footer">Detail <i class="fa fa-arrow-circle-right"></i></a>
+                                                        <a  onclick="klikDetails('{!! $k['id'] !!}','{!! $k['namadepartemen'] !!}','kunjungan')" class="small-box-footer">Detail <i class="fa fa-arrow-circle-right"></i></a>
                                                     </div>
                                                 </div>
                                             @endforeach
@@ -214,7 +214,7 @@
 
                                 </div>
                             </div>
-                            <div class="col-lg-12 col-xl-12">
+                            <div class="col-sm-12 col-lg-6 col-xl-6">
                                 <div class="card">
                                     <div class="panel panel-danger">
                                         <div class="panel-heading bg-danger">
@@ -222,6 +222,42 @@
                                         </div>
                                         <div class="panel-body">
                                             <div id="chartTrend"></div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                             <div class="col-sm-12 col-lg-6 col-xl-6">
+                                <div class="card">
+                                    <div class="panel panel-danger">
+                                        <div class="panel-heading bg-danger">
+                                            Trend Pengunjung Rawat Inap
+                                        </div>
+                                        <div class="panel-body">
+                                            <div id="chartTrendRanap"></div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                             <div class="col-sm-12 col-lg-6 col-xl-6">
+                                <div class="card">
+                                    <div class="panel panel-danger">
+                                        <div class="panel-heading bg-danger">
+                                            Trend Kunjungan Gawat Darurat
+                                        </div>
+                                        <div class="panel-body">
+                                            <div id="chartTrendIGD"></div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                             <div class="col-sm-12 col-lg-6 col-xl-6">
+                                <div class="card">
+                                    <div class="panel panel-danger">
+                                        <div class="panel-heading bg-danger">
+                                            Trend Kunjungan Penunjang
+                                        </div>
+                                        <div class="panel-body">
+                                            <div id="chartTrendPenunjang"></div>
                                         </div>
                                     </div>
                                 </div>
@@ -998,6 +1034,9 @@
         });
         var APP_URL = {!! json_encode(url('/')) !!}
         setChartTrend()
+        setChartTrendRI()
+        setChartTrendIGD()
+        setChartTrendPenunjang()
         setChartPenjadwalan()
         setChartPerjenis()
         setChartPerCaraDaftar()
@@ -1169,6 +1208,340 @@
             })
 
         }
+        function setChartTrendRI() {
+            let dataARR =  @json($res['trend_kunjunganRI']);
+            let ket = dataARR.awal.tanggal
+            let masuk = Highcharts.numberFormat(parseFloat(dataARR.awal.masuk), 0, ',', '.')
+            let keluar = Highcharts.numberFormat(parseFloat(dataARR.awal.keluar), 0, ',', '.')
+            let trendSemua = Highcharts.numberFormat(parseFloat(dataARR.awal.trend), 0, ',', '.')
+            let trend = dataARR.data
+            let data1 = []
+            let data2 = []
+            let data3 = []
+            let data4 = []
+            let categories = []
+            for (let i in trend) {
+                data1.push({
+                    y: parseFloat(trend[i].masuk),
+                    color: 'rgb(149, 206, 255)'
+                });
+            }
+
+            for (let i in trend) {
+                data2.push({
+                    y: parseFloat(trend[i].keluar),
+                    color: '#71db5f'
+                });
+            }
+
+            for (let i in trend) {
+                categories.push(trend[i].tanggal);
+            }
+            Highcharts.chart('chartTrendRanap', {
+                chart: {
+                    zoomType: 'x',
+                    spacingRight: 20
+                },
+                title: {
+                    text: ''
+                },
+
+                xAxis: {
+                    categories: categories,
+                    crosshair: true,
+                    title: {
+                        text: null
+                    }
+                },
+                yAxis: {
+                    title: {
+                        text: 'Jumlah Pasien'
+                    }
+                },
+                tooltip: {
+                    shared: true
+                },
+                legend: {
+                    enabled: true,
+                    borderRadius: 5,
+                    borderWidth: 1,
+                },
+                plotOptions: {
+                    area: {
+                        fillColor: {
+                            linearGradient: { x1: 0, y1: 0, x2: 0, y2: 1 },
+                            stops: [
+                                [0, Highcharts.getOptions().colors[0]],
+                                [1, Highcharts.Color(Highcharts.getOptions().colors[0])]
+                            ]
+                        },
+                        lineWidth: 1,
+                        marker: {
+                            enabled: true
+                        },
+                        shadow: false,
+                        states: {
+                            hover: {
+                                lineWidth: 1
+                            }
+                        },
+                        threshold: null
+                    },
+                    column: {
+                        cursor: 'pointer',
+                        dataLabels: {
+                            enabled: true,
+                            color: this.colors[1],
+
+                            formatter: function () {
+                                return Highcharts.numberFormat(this.y, 0, '.', ',');
+                            }
+                        },
+                        showInLegend: true
+                    },
+                },
+                credits: {
+                    text: ket + ' Masuk (' + masuk + ') ' +
+                        ', Keluar (' + keluar + ') ',
+                },
+
+                series: [
+                    {
+                        type: 'column',
+                        name: 'Pasien Masuk',
+                        color: 'rgb(149, 206, 255)', 
+                        data: data1,
+                    },
+                    {
+                        type: 'column',
+                        name: 'Pasien Keluar',
+                        color: '#71db5f', 
+                        data: data2,
+                    },
+                ]
+            })
+        }
+        function setChartTrendIGD() {
+            let dataARR =  @json($res['trend_kunjunganIGD']);
+            let trend = dataARR.data
+            let data1 = []
+            let data2 = []
+            let categories = []
+
+            for (let i in trend) {
+                data1.push({
+                    y: parseFloat(trend[i].total),
+                    color: 'rgb(149, 206, 255)'
+                });
+            }
+
+            for (let i in trend) {
+                data2.push({
+                    y: parseFloat(trend[i].mutasi),
+                    color: '#71db5f'
+                });
+            }
+
+            for (let i in trend) {
+                categories.push(trend[i].tanggal);
+            }
+
+            Highcharts.chart('chartTrendIGD', {
+                chart: {
+                    zoomType: 'x',
+                    spacingRight: 20
+                },
+                title: {
+                    text: ''
+                },
+
+                xAxis: {
+                    categories: categories,
+                    crosshair: true,
+                    title: {
+                        text: null
+                    }
+                },
+                yAxis: {
+                    title: {
+                        text: 'Jumlah Pasien'
+                    }
+                },
+                tooltip: {
+                    shared: true
+                },
+                legend: {
+                    enabled: true,
+                    borderRadius: 5,
+                    borderWidth: 1,
+                },
+                plotOptions: {
+                    area: {
+                        fillColor: {
+                            linearGradient: { x1: 0, y1: 0, x2: 0, y2: 1 },
+                            stops: [
+                                [0, Highcharts.getOptions().colors[0]],
+                                [1, Highcharts.Color(Highcharts.getOptions().colors[0])]
+                            ]
+                        },
+                        lineWidth: 1,
+                        marker: {
+                            enabled: true
+                        },
+                        shadow: false,
+                        states: {
+                            hover: {
+                                lineWidth: 1
+                            }
+                        },
+                        threshold: null
+                    },
+                    column: {
+                        cursor: 'pointer',
+                        dataLabels: {
+                            enabled: true,
+                            color: this.colors[1],
+
+                            formatter: function () {
+                                return Highcharts.numberFormat(this.y, 0, '.', ',');
+                            }
+                        },
+                        showInLegend: true
+                    },
+                },
+                series: [
+                    {
+                        type: 'column',
+                        name: 'Pasien Masuk',
+                        color: 'rgb(149, 206, 255)', 
+                        data: data1,
+                    },
+                    {
+                        type: 'column',
+                        name: 'Pasien Mutasi Ranap',
+                        color: '#71db5f', 
+                        data: data2,
+                    },
+                ]
+            })
+        }
+        function fillMissingDates (data, allDates) {
+            const filledData = [];
+            allDates.forEach(date => {
+                const existingEntry = data.find(entry => entry.x === date);
+                if (existingEntry) {
+                    filledData.push(existingEntry);
+                } else {
+                    filledData.push({ y: 0, x: date });
+                }
+            });
+            return filledData;
+        };
+        function setChartTrendPenunjang() {
+            let dataARR =  @json($res['trend_kunjunganPenunjang']);
+            let trend = dataARR.data
+            let series = []
+            let categories = []
+
+            for (let i in trend) {
+                if(!categories.includes(trend[i].tanggal))
+                    categories.push(trend[i].tanggal);
+            }
+            for (let i in trend) {
+                const existingCategory = series.find(x => x.name === trend[i].namaruangan);
+
+                if (existingCategory) {
+                    existingCategory.data.push({ y: trend[i].total, x: trend[i].tanggal });
+                }else {
+                    series.push({
+                        type: 'column',
+                        name: trend[i].namaruangan,
+                        data: [
+                            { y: trend[i].total, x: trend[i].tanggal }
+                        ]
+                    });
+                }
+            }
+
+            series.forEach(x => {
+                x.data = fillMissingDates(x.data, categories);
+                x.data.forEach(item => {
+                    delete item.x;
+                });
+            });
+
+            
+            console.log(categories);
+            console.log(series);
+
+            Highcharts.chart('chartTrendPenunjang', {
+                chart: {
+                    zoomType: 'x',
+                    spacingRight: 20
+                },
+                title: {
+                    text: ''
+                },
+
+                xAxis: {
+                    categories: categories,
+                    crosshair: true,
+                    title: {
+                        text: null
+                    }
+                },
+                yAxis: {
+                    title: {
+                        text: 'Jumlah Pasien'
+                    }
+                },
+                tooltip: {
+                    shared: true
+                },
+                legend: {
+                    enabled: true,
+                    borderRadius: 5,
+                    borderWidth: 1,
+                },
+                plotOptions: {
+                    area: {
+                        fillColor: {
+                            linearGradient: { x1: 0, y1: 0, x2: 0, y2: 1 },
+                            stops: [
+                                [0, Highcharts.getOptions().colors[0]],
+                                [1, Highcharts.Color(Highcharts.getOptions().colors[0])]
+                            ]
+                        },
+                        lineWidth: 1,
+                        marker: {
+                            enabled: true
+                        },
+                        shadow: false,
+                        states: {
+                            hover: {
+                                lineWidth: 1
+                            }
+                        },
+                        threshold: null
+                    },
+                    column: {
+                        cursor: 'pointer',
+                        dataLabels: {
+                            enabled: true,
+                            color: this.colors[1],
+
+                            formatter: function () {
+                                return Highcharts.numberFormat(this.y, 0, '.', ',');
+                            }
+                        },
+                        showInLegend: true
+                    },
+                },
+                series: series
+            })
+            
+        }
+
         function setChartPenjadwalan() {
             // chart jenis penjadwalan pie
 
@@ -3211,7 +3584,7 @@
             var tglakhir = $("#tglakhir").val();
             $.ajax({
                 type    : 'GET',
-                url     : APP_URL+'/get-detail-kunjungan-pasien',
+                url     : APP_URL+'/get-detail-kunjungan-pasien-2',
                 data    : {tglawal:tglawal,tglakhir:tglakhir,id:kode,jenis:jenis,title:title},
                 cache   : false,
                 success : function(respond){

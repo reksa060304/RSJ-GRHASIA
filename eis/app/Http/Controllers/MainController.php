@@ -703,6 +703,9 @@ class MainController extends ApiController
                     $res['pengunjung'] = $this->getPengunjung($tglawal,$tglakhir,$kdProfile);
                     $res['kunjungan'] = $this->getKunjungan($tglawal,$tglakhir,$kdProfile);
                     $res['trend_kunjungan'] = $this->getTrendKunjunganPasienRajal($tglawal,$tglakhir,$kdProfile);
+                    $res['trend_kunjunganRI'] = $this->getTrendKunjunganPasienRanap($tglawal,$tglakhir,$kdProfile);
+                    $res['trend_kunjunganIGD'] = $this->getTrendKunjunganPasienIgd($tglawal,$tglakhir,$kdProfile);
+                    $res['trend_kunjunganPenunjang'] = $this->getTrendKunjunganPasienPenunjang($tglawal,$tglakhir,$kdProfile);
                     $res['jenis_penjadwalan'] = $this->getPasienPerjenisPenjadwalan($tglawal,$tglakhir,$kdProfile);
                     $res['info_kedatangan'] = $this->getInfoKunjunganRawatJalanPerhari($tglawal,$tglakhir,$kdProfile);
 
@@ -2799,6 +2802,65 @@ AND sp.statusenabled <> false
          $title = DB::table('departemen_m')->where('id',$r['id'])->first()->namadepartemen;
          return view('module.shared.detail-kunjungan',compact('data','title','isfaramsi'));
 
+    }
+    public function  getDetailKun2(Request $r){
+        $idProfile = session("kdProfile");
+        $tglAwal = $r['tglawal'].' 00:00';
+        $tglAkhir =  $r['tglakhir'].' 23:59';
+        $idDepRanap = (int) $this->settingDataFixed('idDepRawatInap', $idProfile);
+        $idDepFarmasi = (int) $this->settingDataFixed('IdDepartemenInstalasiFarmasi',$idProfile);
+        $isfaramsi =false;
+        $arrayId = explode(",", $r['id']);
+        if($r['jenis'] == 'pengunjung'){
+            $data = DB::table('pasiendaftar_t as pd')
+            ->join('ruangan_m as ru','ru.id','=','pd.objectruanganlastfk')
+            ->join ('departemen_m as dp','dp.id','=','ru.objectdepartemenfk')
+            ->select(
+                DB::Raw('COUNT(*) as total')
+                ,'ru.namaruangan')
+            ->where('pd.kdprofile', $idProfile)
+            ->whereBetween('pd.tglregistrasi',[$tglAwal,$tglAkhir])
+            ->whereIn('ru.objectdepartemenfk', $arrayId)
+            ->where('pd.statusenabled', true)
+            ->groupBy('ru.namaruangan')
+            ->get();
+        } else {
+            if ($r['id'] == $idDepRanap) {
+                $data = DB::select(DB::raw("SELECT
+                    COUNT(*) as total,
+                    ru.namaruangan
+                    FROM
+                        pasiendaftar_t AS pd
+                    INNER JOIN ruangan_m AS ru ON ru.id = pd.objectruanganlastfk
+                    WHERE pd.kdprofile = $idProfile
+                    and ru.objectdepartemenfk = $idDepRanap
+                    and pd.statusenabled = true
+                    AND ((
+                        pd.tglregistrasi < '$tglAwal'
+                        AND pd.tglpulang >= '$tglAkhir')
+                    OR pd.tglpulang IS NULL
+                    )
+                    GROUP BY ru.namaruangan
+
+                "));
+            } else {
+                $data = DB::table('antrianpasiendiperiksa_t as apd')
+                ->join('pasiendaftar_t as pd','pd.norec','=','apd.noregistrasifk')
+                ->join('ruangan_m as ru','ru.id','=','apd.objectruanganfk')
+                ->join ('departemen_m as dp','dp.id','=','ru.objectdepartemenfk')
+                ->select(
+                    DB::Raw('COUNT(*) as total')
+                    ,'ru.namaruangan')
+                ->where('apd.kdprofile',$idProfile)
+                ->whereBetween('apd.tglregistrasi',[$tglAwal,$tglAkhir])
+                ->where('pd.statusenabled',true)
+                ->whereIn('ru.objectdepartemenfk',$arrayId)
+                ->groupBy('ru.namaruangan')
+                ->get();
+            }
+        }
+        $title = "Rekap pelayanan ruangan";
+        return view('module.shared.detail-kunjungan2',compact('data','title','isfaramsi'));
     }
     function getComboDiagnosaTop(){
         $data = DB::select(DB::raw("select kddiagnosa,namadiagnosa from pelayananmedis_t
@@ -5222,6 +5284,7 @@ count(case when x.departemen = 'rahab_medik' then 1 end) AS rehab_medik
         $tglAwal = $tglAwal .' 00:00' ;
         $tglAkhir = $tglAkhir.' 23:59' ;
         $dept = $this->settingDataFixed('kdDepartemenEIS',$kdProfile);
+        $deptpenunjang = $this->settingDataFixed('kdDepartemenPenunjangEIS',$kdProfile);
 
         $data = DB::select(DB::raw("SELECT dp.id ,dp.namadepartemen,count(pd.norec) as jumlah
                 FROM departemen_m dp
@@ -5231,7 +5294,7 @@ count(case when x.departemen = 'rahab_medik' then 1 end) AS rehab_medik
                 where tglregistrasi BETWEEN '$tglAwal' and '$tglAkhir' and pasiendaftar_t.statusenabled=true
                 and pasiendaftar_t.kdprofile=$kdProfile) pd ON (ru.id= pd.objectruanganlastfk)
                 WHERE dp.id in ($dept)
-                and ru.id <> 838
+                --and ru.id <> 838
                 and dp.kdprofile =$kdProfile
                 and dp.statusenabled =true
                 group by dp.namadepartemen,dp.id,dp.qdepartemen
@@ -5250,10 +5313,103 @@ count(case when x.departemen = 'rahab_medik' then 1 end) AS rehab_medik
                 group by dp.namadepartemen,dp.id,dp.qdepartemen
                 order by dp.qdepartemen asc
         "));
+        $data3 = DB::select(DB::raw("SELECT '". $deptpenunjang  ."' as id,	'Penunjang' as namadepartemen,count(pd.norec) as jumlah
+                FROM departemen_m dp
+                join ruangan_m as ru on ru.objectdepartemenfk=dp.id
+                LEFT JOIN (SELECT pasiendaftar_t.norec,pasiendaftar_t.objectruanganlastfk
+                FROM pasiendaftar_t
+                where tglregistrasi BETWEEN '$tglAwal' and '$tglAkhir' and pasiendaftar_t.statusenabled=true
+                and pasiendaftar_t.kdprofile=$kdProfile) pd ON (ru.id= pd.objectruanganlastfk)
+                WHERE dp.id in ($deptpenunjang)
+                and dp.kdprofile =$kdProfile
+                and dp.statusenabled =true
+        "));
 
-        return array_merge($data,$data2);
+        return array_merge($data,$data3);
     }
     public function getKunjungan($tglAwal,$tglAkhir,$kdProfile)
+    {
+        $tglAwal = $tglAwal .' 00:00' ;
+        $tglAkhir = $tglAkhir.' 23:59' ;
+        $idDepRanap = (int)$this->settingDataFixed('idDepRawatInap', $kdProfile);
+        $dept = "18,24";//$this->settingDataFixed('kdDepartemenRawatJalanFix', $kdProfile);
+        $deptPenunjang = $this->settingDataFixed('kdDepartemenPenunjangEIS', $kdProfile);
+        $data = DB::select(DB::raw("SELECT dp.id ,dp.namadepartemen, count(pd.norec)as jumlah,dp.qdepartemen
+            FROM departemen_m dp
+            join ruangan_m as ru on ru.objectdepartemenfk=dp.id
+            LEFT JOIN (SELECT antrianpasiendiperiksa_t.norec,antrianpasiendiperiksa_t.objectruanganfk, antrianpasiendiperiksa_t.noregistrasifk, pasiendaftar_t.norec as norec_pd FROM antrianpasiendiperiksa_t inner join pasiendaftar_t on pasiendaftar_t.norec= antrianpasiendiperiksa_t.noregistrasifk
+            where antrianpasiendiperiksa_t.tglregistrasi::date BETWEEN '$tglAwal' and '$tglAkhir'
+            and  antrianpasiendiperiksa_t.statusenabled=true
+            and antrianpasiendiperiksa_t.kdprofile=$kdProfile
+            and pasiendaftar_t.statusenabled=true and pasiendaftar_t.kdprofile=$kdProfile)
+            pd ON (ru.id= pd.objectruanganfk)
+            left join batalregistrasi_t br on pd.norec_pd = br.pasiendaftarfk
+            WHERE dp.id in ($dept)
+            and dp.statusenabled = true
+            and dp.kdprofile =$kdProfile
+            and br.pasiendaftarfk is null
+            GROUP BY
+            dp.id ,dp.namadepartemen,dp.qdepartemen
+            order by dp.qdepartemen asc
+        "));
+        $data2 = DB::select(DB::raw("SELECT '".$deptPenunjang."' as id ,'Penunjang' as namadepartemen, count(pd.norec)as jumlah,5 as qdepartemen
+            FROM departemen_m dp
+            join ruangan_m as ru on ru.objectdepartemenfk=dp.id
+            LEFT JOIN (SELECT antrianpasiendiperiksa_t.norec,antrianpasiendiperiksa_t.objectruanganfk, antrianpasiendiperiksa_t.noregistrasifk, pasiendaftar_t.norec as norec_pd FROM antrianpasiendiperiksa_t inner join pasiendaftar_t on pasiendaftar_t.norec= antrianpasiendiperiksa_t.noregistrasifk
+            where antrianpasiendiperiksa_t.tglregistrasi::date BETWEEN '$tglAwal' and '$tglAkhir'
+            and  antrianpasiendiperiksa_t.statusenabled=true
+            and antrianpasiendiperiksa_t.kdprofile=$kdProfile
+            and pasiendaftar_t.statusenabled=true and pasiendaftar_t.kdprofile=$kdProfile)
+            pd ON (ru.id= pd.objectruanganfk)
+            left join batalregistrasi_t br on pd.norec_pd = br.pasiendaftarfk
+            WHERE dp.id in ($deptPenunjang)
+            and dp.statusenabled = true
+            and dp.kdprofile =$kdProfile
+            and br.pasiendaftarfk is null
+        "));
+   $data = array_merge($data,$data2);
+        $dataRanap = DB::select(DB::raw("select count(x.noregistrasi) as jumlah
+            from ( select  pd.noregistrasi,pd.tglregistrasi
+            from pasiendaftar_t as pd
+            inner join ruangan_m as ru on ru.id = pd.objectruanganlastfk
+            where ru.objectdepartemenfk = $idDepRanap
+            and pd.statusenabled = true
+            and pd.kdprofile=$kdProfile
+            and ( (  pd.tglregistrasi < '$tglAwal'
+                AND pd.tglpulang >= '$tglAkhir'
+             ) or pd.tglpulang is null)
+
+         ) as x
+            "));
+        $masihDirawat = 0;
+        if (count($dataRanap) > 0) {
+            $masihDirawat = $dataRanap[0]->jumlah;
+        }
+        $data10 = [];
+        foreach ($data as $key => $value) {
+            $data10 [] = array('id' => $value->id,
+                'namadepartemen' => $value->namadepartemen,
+                'jumlah' => $value->jumlah,
+                'qdepartemen' => $value->qdepartemen);
+
+            # code...
+        }
+        $data10 [] = array(
+            'id' => 16,
+            'namadepartemen' => 'Instalasi Rawat Inap',
+            'jumlah' => $masihDirawat,
+            'qdepartemen' => 3
+        );
+        if (count($data10) > 0) {
+            foreach ($data10 as $key => $row) {
+                $count[$key] = $row['qdepartemen'];
+            }
+            array_multisort($count, SORT_ASC, $data10);
+        }
+
+        return $data10;
+    }
+    public function getKunjunganOld($tglAwal,$tglAkhir,$kdProfile)
     {
         $tglAwal = $tglAwal .' 00:00' ;
         $tglAkhir = $tglAkhir.' 23:59' ;
@@ -5481,6 +5637,223 @@ count(case when x.departemen = 'rahab_medik' then 1 end) AS rehab_medik
         }
         return $data10;
 
+    }
+    public function getTrendKunjunganPasienRanap($tglAwal,$tglAkhir,$kdProfile){
+        $awal = Carbon::now()->subWeek(2);
+        $first = $awal->format('d.M');
+        $deptInap = $this->settingDataFixed('kdDepartemenRanapFix', $kdProfile);
+        $tglAwal = $awal->format('Y-m-d 00:00');
+        $tglAkhir = Carbon::now()->format('Y-m-d 23:59');
+        $masuks = collect(DB::select("
+            SELECT
+            pd.noregistrasi,
+            pd.tglregistrasi,
+            pd.tglpulang
+            FROM pasiendaftar_t AS pd
+            JOIN ruangan_m AS ru ON ru. ID = pd.objectruanganlastfk
+            WHERE pd.kdprofile = $kdProfile
+            AND pd.statusenabled = TRUE
+            AND pd.tglregistrasi < '$tglAwal'
+            and ru.objectdepartemenfk in ($deptInap)"))->count();
+
+        $keluars = collect(DB::select("
+            SELECT
+            pd.noregistrasi,
+            pd.tglregistrasi,
+            pd.tglpulang
+            FROM pasiendaftar_t AS pd
+            JOIN ruangan_m AS ru ON ru. ID = pd.objectruanganlastfk
+            WHERE pd.kdprofile = $kdProfile
+            AND pd.statusenabled = TRUE
+            AND pd.tglpulang < '$tglAwal'
+            and ru.objectdepartemenfk in ($deptInap)"))->count();
+        $data = DB::select(DB::raw("
+            select * from (
+                SELECT pd.norec,pd.noregistrasi,  pd.statuscovidfk,  pd.tglregistrasi as tgl,
+                to_char ( pd.tglregistrasi,  'dd, Mon YYYY' ) AS tglregistrasi, to_char (pd.tglregistrasi, 'dd. Mon') AS tanggal, 'masuk' as keterangan
+                FROM pasiendaftar_t AS pd
+                join ruangan_m as ru on ru.id=pd.objectruanganlastfk
+                WHERE pd.kdprofile = $kdProfile and
+                pd.tglregistrasi BETWEEN  '$tglAwal' and '$tglAkhir'
+                and pd.statusenabled =true
+                and ru.objectdepartemenfk in ($deptInap)
+
+                UNION ALL
+
+                SELECT pd.norec,  pd.noregistrasi,   pd.statuscovidfk, pd.tglpulang as tgl,
+                to_char (pd.tglpulang, 'dd, Mon YYYY' ) AS tglregistrasi, to_char (pd.tglpulang, 'dd. Mon') AS tanggal,'keluar' as keterangan
+                FROM pasiendaftar_t AS pd
+                join ruangan_m as ru on ru.id=pd.objectruanganlastfk
+                WHERE pd.kdprofile = $kdProfile
+                and (pd.tglpulang is not null and pd.tglpulang BETWEEN  '$tglAwal' and '$tglAkhir')
+                and pd.statusenabled =true
+                and ru.objectdepartemenfk in ($deptInap)
+            ) as x
+            ORDER BY
+            x.tgl asc
+        "));
+
+
+        $data10 = [];
+        $masuk = 0;
+        $keluar = 0;
+        $dataAwal = [];
+        if (count($data) > 0) {
+            $data10[] = array(
+                'tglregistrasi' => '< ' . $first,
+                'tanggal' => '< ' . $first,
+                'totalterdaftar' => 1,
+                'masuk' => $masuks,
+                'keluar' => $keluars,
+                'trend' => $masuks - $keluars,
+            );
+            $dataAwal = array(
+                'tglregistrasi' => '< ' . $first,
+                'tanggal' => '< ' . $first,
+                'totalterdaftar' => 1,
+                'masuk' => $masuks,
+                'keluar' => $keluars,
+                'trend' => $masuks - $keluars,
+            );
+            foreach ($data as $item) {
+                $sama = false;
+                $i = 0;
+                foreach ($data10 as $hideung) {
+                    if ($item->tglregistrasi == $data10[$i]['tglregistrasi']) {
+                        $sama = 1;
+                        $jml = (float)$hideung['totalterdaftar'] + 1;
+                        $data10[$i]['totalterdaftar'] = $jml;
+                        if ($item->keterangan == 'masuk') {
+                            $data10[$i]['masuk'] = (float)$hideung['masuk'] + 1;
+                        }
+                        if ($item->keterangan == 'keluar') {
+                            $data10[$i]['keluar'] = (float)$hideung['keluar'] + 1;
+                        }
+                    }
+                    $i = $i + 1;
+                }
+                if ($sama == false) {
+                    if ($item->keterangan == 'masuk') {
+                        $masuk = 1;
+                        $keluar = 0;
+                    }
+                    if ($item->keterangan == 'keluar') {
+                        $masuk = 0;
+                        $keluar = 1;
+                    }
+                    $data10[] = array(
+                        'tglregistrasi' => $item->tglregistrasi,
+                        'tanggal' => $item->tanggal,
+                        'totalterdaftar' => 1,
+                        'masuk' => $masuk,
+                        'keluar' => $keluar,
+                        'trend' => 0,
+                    );
+                }
+            }
+            $tot = 0;
+            $to = 0;
+            $i = 0;
+            foreach ($data10 as $v) {
+                $v['all'] = (float) $v['masuk'] - (float) $v['keluar'];
+                $tot =   $v['all'] + $tot;
+                $v['trend'] = $tot;
+                $data10[$i]['trend'] = $tot;
+                $to = $to + $data10[$i]['totalterdaftar'];
+                $i++;
+            }
+            $data10 = array_splice($data10, 1, count($data10) - 1);
+        }
+        $res['awal'] = $dataAwal;
+        $res['data'] = $data10;
+
+        return $res;
+    }
+    public function getTrendKunjunganPasienIgd($tglAwal,$tglAkhir,$kdProfile) {
+        $awal = Carbon::now()->subWeek(2);
+        $first = $awal->format('d.M');
+        $deptIgd = $this->settingDataFixed('KdDepartemenInstalasiGawatDarurat', $kdProfile);
+        $tglAwal = $awal->format('Y-m-d 00:00');
+        $tglAkhir = Carbon::now()->format('Y-m-d 23:59');
+        $total = collect(DB::select("
+        SELECT count(pd.noregistrasi) as total
+        ,to_char (pd.tglregistrasi,  'dd, Mon YYYY' ) AS tglregistrasi
+        ,to_char (pd.tglregistrasi, 'dd. Mon') AS tanggal
+        FROM pasiendaftar_t as pd
+        JOIN antrianpasiendiperiksa_t as apd on apd.noregistrasifk = pd.norec
+        JOIN ruangan_m as rm on rm.id = apd.objectruanganfk
+        where pd.kdprofile = $kdProfile
+        and pd.statusenabled = true
+        and pd.tglregistrasi between '$tglAwal' and '$tglAkhir'
+        and rm.objectdepartemenfk in ($deptIgd)
+        group by 
+        to_char(pd.tglregistrasi, 'dd, Mon YYYY'),
+        to_char(pd.tglregistrasi, 'dd. Mon')
+        "));
+
+        $totalmutasiranap = collect(DB::select("
+        SELECT count(pd.noregistrasi) as total
+        ,to_char (pd.tglregistrasi,  'dd, Mon YYYY' ) AS tglregistrasi
+        ,to_char (pd.tglregistrasi, 'dd. Mon') AS tanggal
+        FROM pasiendaftar_t as pd
+        JOIN antrianpasiendiperiksa_t as apd on apd.noregistrasifk = pd.norec
+        JOIN ruangan_m as rm on rm.id = apd.objectruanganasalfk
+        where pd.kdprofile = $kdProfile
+        and pd.statusenabled = true
+        and pd.tglregistrasi between '$tglAwal' and '$tglAkhir'
+        and rm.objectdepartemenfk in ($deptIgd)
+        group by 
+        to_char(pd.tglregistrasi, 'dd, Mon YYYY'),
+        to_char(pd.tglregistrasi, 'dd. Mon')
+        "));
+
+        $data10 = [];
+        foreach($total as $item) {
+            $totalmutasi = 0;
+            foreach ($totalmutasiranap as $item2) {
+                if($item->tglregistrasi == $item2->tglregistrasi){
+                    $totalmutasi += $item2->total;
+                }
+            }
+
+            $data10[] = array(
+                'tglregistrasi' => $item->tglregistrasi,
+                'tanggal' => $item->tanggal,
+                'total' => $item->total,
+                'mutasi' => $totalmutasi,
+            );
+        }
+        $res['data'] = $data10;
+
+        return $res;
+    }
+    public function getTrendKunjunganPasienPenunjang($tglAwal,$tglAkhir,$kdProfile) {
+        $awal = Carbon::now()->subWeek(2);
+        $first = $awal->format('d.M');
+        $deptPenunjang = $this->settingDataFixed('kdDepartemenPenunjangEIS', $kdProfile);
+        $tglAwal = $awal->format('Y-m-d 00:00');
+        $tglAkhir = Carbon::now()->format('Y-m-d 23:59');
+        $total = collect(DB::select("
+        SELECT count(pd.noregistrasi) as total
+        ,to_char (pd.tglregistrasi,  'dd, Mon YYYY' ) AS tglregistrasi
+        ,to_char (pd.tglregistrasi, 'dd. Mon') AS tanggal
+        ,rm.namaruangan
+        FROM pasiendaftar_t as pd
+        JOIN antrianpasiendiperiksa_t as apd on apd.noregistrasifk = pd.norec
+        JOIN ruangan_m as rm on rm.id = apd.objectruanganfk
+        where pd.kdprofile = $kdProfile
+        and pd.statusenabled = true
+        and pd.tglregistrasi between '$tglAwal' and '$tglAkhir'
+        and rm.objectdepartemenfk in ($deptPenunjang)
+        group by 
+        rm.namaruangan,
+        to_char(pd.tglregistrasi, 'dd, Mon YYYY'),
+        to_char(pd.tglregistrasi, 'dd. Mon')
+        "));
+        
+        $res['data'] = $total;
+
+        return $res;
     }
     public  function getTotalKlaim($noregistrasi,$kdProfile)
     {
