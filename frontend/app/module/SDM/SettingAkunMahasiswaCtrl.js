@@ -790,7 +790,7 @@ define(['initialize', 'Configuration'], function (initialize, config) {
                 $scope.itembsre.institusipendidikan = dataItem.institusipendidikan;
                 if (dataItem.namauser == undefined) {
                     $scope.itembsre.namauser = dataItem.nim_user;
-                    $scope.itembsre.passcode = 'mhs30';
+                    $scope.itembsre.passcode = 'ermmhs17';
                 } else {
                     $scope.itembsre.namauser = dataItem.namauser;
                     $scope.itembsre.passcode = dataItem.passcode;
