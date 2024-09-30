@@ -1472,6 +1472,9 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
                                     case "7":
                                         jeniskunjungan = 3
                                         nomorreferensi = $scope.item.noRujukan == undefined ? "" : $scope.item.noRujukan
+                                        if($scope.item.noSurkon) { 
+                                            nomorreferensi = $scope.item.noSurkon
+                                        }
                                         break;
                                 }
     

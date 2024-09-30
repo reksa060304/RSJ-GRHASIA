@@ -1666,6 +1666,9 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
                                     case "7":
                                         jeniskunjungan = 3
                                         nomorreferensi = $scope.model.noRujukan === undefined ? "" : $scope.model.noRujukan
+                                        if($scope.model.skdp) {
+                                            nomorreferensi = $scope.model.skdp
+                                        }
                                         break;
                                 }
 
