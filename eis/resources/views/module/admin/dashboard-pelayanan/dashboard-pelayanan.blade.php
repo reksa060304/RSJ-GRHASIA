@@ -841,7 +841,7 @@
                                                 </div>
                                             </div>
                                         </div>
-                                        <div class="col-lg-6 col-md-12">
+                                        <!-- <div class="col-lg-6 col-md-12">
                                             <div class="card">
                                                 <div class="panel panel-purple">
                                                     <div class="panel-heading bg-info">
@@ -881,7 +881,7 @@
                                                                                 <td >{{ $d->dokter }}</td>
                                                                                 <td >{{ $d->jmlpasien }}</td>
                                                                                 <td >{{ $d->count }}</td>
-                                                                                <td >{{ $d->persen }}</td>
+                                                                                <td >{{ $d->persen }}%</td>
                                                                             </tr>
                                                                                
                                                                             </tr>
@@ -891,6 +891,55 @@
                                                                             </tr>
                                                                         @endforelse
             
+                                                                        </tbody>
+                                                                    </table>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div> -->
+                                        <div class="col-lg-6 col-md-12">
+                                            <div class="card">
+                                                <div class="panel panel-purple">
+                                                    <div class="panel-heading bg-info">
+                                                        <span style="float:left;">Persentase Elektronik Medical Record</span>
+                                                        <span style="float:right; font-size:12px;">Formula: (Jumlah EMR / Jumlah Pasien) x 100%</span>
+                                                        <div style="clear: both;"></div>
+                                                    </div>
+                                                    @php
+                                                        $sama = false;
+                                                        $resultSumDep = App\Http\Controllers\MainController::getEMRPersentase(request()->get("tglawal"), request()->get("tglakhir"));
+                                                    @endphp
+                                                    <div class="panel-body">
+                                                        <div class="row" style="padding:10px 20px;">
+                                                            <div class="col-md-12">
+                                                                <div class="table-responsive">
+                                                                    <table class="table table-striped table-sm table-styling" id="t_PersenEMR" style="width:100%">
+                                                                        <thead class="table-default">
+                                                                            <tr>
+                                                                                <th style="color:black;width: 10%">NO</th>
+                                                                                <th style="color:black">Nama</th>
+                                                                                <th style="color:black">Pasien</th>
+                                                                                <th style="color:black">EMR</th>
+                                                                                <th style="color:black">Persentase</th>
+                                                                            </tr>
+                                                                        </thead>
+                                                                        <tbody>
+                                                                            @forelse($resultSumDep as $i => $d)
+                                                                                <tr>
+                                                                                    <td>{{ $i +1 }}</td>
+                                                                                    <td>{{ $d->dokter }}</td>
+                                                                                    <td>{{ $d->jmlpasien }}</td>
+                                                                                    <td>{{ $d->count }}</td>
+                                                                                    <td>{{ $d->persen }}%</td>
+                                                                                </tr>
+                                                                            @empty
+                                                                                <tr>
+                                                                                    <td colspan="5" style="text-align: center">Data Tidak ada</td>
+                                                                                </tr>
+                                                                            @endforelse
                                                                         </tbody>
                                                                     </table>
                                                                 </div>

@@ -1614,67 +1614,143 @@ class MainController extends ApiController
 
 
     }
+    // public static function getEMRPersentase($dari, $sampai)
+    // {
+
+    //     $idProfile = (int)session("kdProfile");
+
+    //     $tglAwal = date($dari.' 00:00');
+    //     $tglAkhir = date($sampai.' 23:59');
+
+    //     $results = DB::select(DB::raw("
+    //     select namalengkap as dokter,count(noregistrasi),pegawaifk as iddokter from (
+    //         SELECT DISTINCT
+    //         emrd.pegawaifk,
+    //         pg.namalengkap, pd.noregistrasi, emrd.emrfk, emrd.emrpasienfk
+    //         FROM
+    //             emrpasien_t AS ep
+    //         inner join emrpasiend_t emrd on emrd.emrpasienfk = ep.noemr
+    //         inner join pasiendaftar_t pd on pd.noregistrasi = ep.noregistrasifk
+    //         inner join pegawai_m AS pg on pg.id = pd.objectpegawaifk  and emrd.pegawaifk = pg.id
+    //         WHERE
+    //         ep.statusenabled = 't'
+    //         AND pd.tglregistrasi BETWEEN '$tglAwal'  and '$tglAkhir' and pg.objectjenispegawaifk='1' and
+    //         ep.statusenabled = 't' and ep.kdprofile=$idProfile
+    //     ) as  d GROUP BY dokter,iddokter;
+
+
+    //     "));
+    //     $jmldata = DB::select(DB::raw("
+    //         SELECT
+    //             count(pd.noregistrasi) as jumlah,pg.id objectpegawaifk
+    //         FROM
+    //             pasiendaftar_t AS pd
+    //         inner join pegawai_m AS pg on pg.id = pd.objectpegawaifk
+    //         WHERE
+    //         pd.statusenabled = 't'
+    //         AND pd.tglregistrasi BETWEEN '$tglAwal'  and '$tglAkhir' and
+    //         pd.kdprofile=$idProfile
+    //         GROUP BY pg.id
+    //     "));
+    //     //dd($results);
+    //     if(count($results) > 0){
+    //         $i =0;
+    //         foreach ($results as $key => $row) {
+    //             $results[$i]->persen = 0;
+    //             $results[$i]->jmlpasien =0;
+    //             foreach($jmldata as $jml){
+    //                 if ($results[$i]->iddokter==$jml->objectpegawaifk  ){
+    //                     $results[$i]->persen = $results[$i]->count/$jml->jumlah*100;
+    //                     $results[$i]->jmlpasien =$jml->jumlah;
+    //                     // dd( $results[$i]->persen);
+    //                 }
+
+    //             }
+    //             $i++;
+
+    //             $count2[$key] = $row->count;
+    //         }
+    //         array_multisort($count2, SORT_DESC, $results);
+    //     } else{
+    //         $results = $results;
+    //     }
+
+    //     return $results;
+    // }
     public static function getEMRPersentase($dari, $sampai)
     {
-
         $idProfile = (int)session("kdProfile");
 
+        // Pastikan format tanggal sesuai
         $tglAwal = date($dari.' 00:00');
         $tglAkhir = date($sampai.' 23:59');
 
+        // Query untuk menghitung jumlah EMR unik per dokter
         $results = DB::select(DB::raw("
-        select namalengkap as dokter,count(noregistrasi),pegawaifk as iddokter from (
-            SELECT DISTINCT
-            emrd.pegawaifk,
-            pg.namalengkap, pd.noregistrasi, emrd.emrfk, emrd.emrpasienfk
-            FROM
-                emrpasien_t AS ep
-            inner join emrpasiend_t emrd on emrd.emrpasienfk = ep.noemr
-            inner join pasiendaftar_t pd on pd.noregistrasi = ep.noregistrasifk
-            inner join pegawai_m AS pg on pg.id = pd.objectpegawaifk  and emrd.pegawaifk = pg.id
-            WHERE
-            ep.statusenabled = 't'
-            AND pd.tglregistrasi BETWEEN '$tglAwal'  and '$tglAkhir' and pg.objectjenispegawaifk='1' and
-            ep.statusenabled = 't' and ep.kdprofile=$idProfile
-        ) as  d GROUP BY dokter,iddokter;
-
-
+            SELECT 
+                pg.namalengkap as dokter, 
+                COUNT(DISTINCT pd.noregistrasi) as count,  -- Menghitung EMR unik per pasien
+                pg.id as iddokter 
+            FROM emrpasien_t AS ep
+            INNER JOIN emrpasiend_t emrd ON emrd.emrpasienfk = ep.noemr
+            INNER JOIN pasiendaftar_t pd ON pd.noregistrasi = ep.noregistrasifk
+            INNER JOIN pegawai_m AS pg ON pg.id = pd.objectpegawaifk AND emrd.pegawaifk = pg.id
+            WHERE 
+                ep.statusenabled = 't'
+                AND pd.tglregistrasi BETWEEN '$tglAwal' AND '$tglAkhir'
+                AND pg.objectjenispegawaifk = '1'
+                AND ep.kdprofile = $idProfile
+            GROUP BY pg.namalengkap, pg.id;
         "));
+
+        // Query untuk menghitung jumlah pasien yang ditangani per dokter
         $jmldata = DB::select(DB::raw("
-            SELECT
-                count(pd.noregistrasi) as jumlah,pg.id objectpegawaifk
-            FROM
-                pasiendaftar_t AS pd
-            inner join pegawai_m AS pg on pg.id = pd.objectpegawaifk
-            WHERE
-            pd.statusenabled = 't'
-            AND pd.tglregistrasi BETWEEN '$tglAwal'  and '$tglAkhir' and
-            pd.kdprofile=$idProfile
-            GROUP BY pg.id
+            SELECT 
+                COUNT(pd.noregistrasi) as jumlah, 
+                pg.id as objectpegawaifk
+            FROM pasiendaftar_t AS pd
+            INNER JOIN pegawai_m AS pg ON pg.id = pd.objectpegawaifk
+            WHERE 
+                pd.statusenabled = 't'
+                AND pd.tglregistrasi BETWEEN '$tglAwal' AND '$tglAkhir'
+                AND pd.kdprofile = $idProfile
+            GROUP BY pg.id;
         "));
-        //dd($results);
-        if(count($results) > 0){
-            $i =0;
+
+        // Cek apakah data EMR ditemukan
+        if (count($results) > 0) {
+            $i = 0;
             foreach ($results as $key => $row) {
-                $results[$i]->persen = 0;
-                $results[$i]->jmlpasien =0;
-                foreach($jmldata as $jml){
-                    if ($results[$i]->iddokter==$jml->objectpegawaifk  ){
-                        $results[$i]->persen = $results[$i]->count/$jml->jumlah*100;
-                        $results[$i]->jmlpasien =$jml->jumlah;
-                        // dd( $results[$i]->persen);
+                $results[$i]->persen = 0;  // Inisialisasi persentase
+                $results[$i]->jmlpasien = 0;  // Inisialisasi jumlah pasien
+
+                // Loop untuk mencocokkan data jumlah pasien dari jmldata dengan dokter
+                foreach ($jmldata as $jml) {
+                    if ($results[$i]->iddokter == $jml->objectpegawaifk) {
+                        // Jika EMR lebih dari jumlah pasien, batasi persentasenya sampai 100%
+                        if ($results[$i]->count <= $jml->jumlah) {
+                            // $results[$i]->persen = ($results[$i]->count / $jml->jumlah) * 100;
+                            $results[$i]->persen = round(($results[$i]->count / $jml->jumlah) * 100, 2); //Dibulatkan
+                        } else {
+                            $results[$i]->persen = 100;  // Batasi persentase maksimal 100%
+                        }
+
+                        $results[$i]->jmlpasien = $jml->jumlah;  // Set jumlah pasien
                     }
-
                 }
-                $i++;
 
-                $count2[$key] = $row->count;
+                $i++;  // Increment index untuk dokter berikutnya
+                $count2[$key] = $row->count;  // Untuk sorting berdasarkan jumlah EMR
             }
+
+            // Sort data berdasarkan jumlah EMR (count) secara descending
             array_multisort($count2, SORT_DESC, $results);
-        } else{
-            $results = $results;
+        } else {
+            // Jika tidak ada hasil, kembalikan data kosong
+            $results = [];
         }
 
+        // Kembalikan hasil
         return $results;
     }
     public static function getABK($tglAwal,$tglAkhir,$kdProfile)
