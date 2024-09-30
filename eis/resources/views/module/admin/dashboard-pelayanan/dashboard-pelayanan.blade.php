@@ -2340,7 +2340,8 @@
                                 color: '#000000',
                                 connectorColor: '#000000',
                                 formatter: function () {
-                                    return this.percentage.toFixed(2) + ' %';
+                                    // return this.percentage.toFixed(2) + ' %';
+                                    return this.point.name + ': ' + this.percentage.toFixed(2) + ' % (' + Highcharts.numberFormat(this.y, 0, '.', ',') + ' Pasien)';
                                 }
                             },
                             showInLegend: true
