@@ -7576,13 +7576,15 @@ class LogistikController extends ApiController{
         $length = 1;
         try{
             if ($request['strukorder']['norecorder'] == '') {
-               $romawi = DB::select(DB::raw("SELECT to_char(date '".date('Y-m-d H:i:s')."', 'RM') as rm;"));
+                $romawi = DB::select(DB::raw("SELECT to_char(date 'now', 'RM') as rm;"));
                 $bulanIni = date('m');
+                $tahunIni = date('Y');
 
                 $spb = DB::table('seqnumberkeu_t')
                     ->where('seqname', 'spb')
                     ->where('kdprofile', 30)
                     ->where(DB::raw("date_part('month', tgljamseq::date)"), $bulanIni)
+                    ->where(DB::raw("date_part('year', tgljamseq::date)"), $tahunIni)
                     ->max(DB::raw("seqnumber::integer"));
 
                 if (!$spb) {
@@ -7593,18 +7595,17 @@ class LogistikController extends ApiController{
                     $SN = $prefix . str_pad((int)$subPrefix + 1, $length - $prefixLen, "0", STR_PAD_LEFT);
                 }
 
-                $spbnya = '020/' . $SN . '/' . $romawi[0]->rm . "/SPB/" . date("Y");
+                $spbnya = '020/' . $SN . '/' . $romawi[0]->rm . "/SPB/" . $tahunIni;
                 $spbnya = str_replace(' ', '', $spbnya);
 
-                DB::table('seqnumberkeu_t')->insert(
-                    [
-                        'kdprofile' => $idProfile,
-                        'seqnumber' => $SN,
-                        'tgljamseq' => date('Y-m-d H:i:s'),
-                        'seqname' => 'spb',
-                        'norec' => substr(\Webpatser\Uuid\Uuid::generate(), 0, 32),
-                    ]
-                );
+                DB::table('seqnumberkeu_t')->insert([
+                    'kdprofile' => $idProfile,
+                    'seqnumber' => $SN,
+                    'tgljamseq' => date('Y-m-d H:i:s'),
+                    'seqname' => 'spb',
+                    'norec' => substr(\Webpatser\Uuid\Uuid::generate(), 0, 32),
+                ]);
+
                 $noOrder = $spbnya;
                 $dataSO = new StrukOrder();
                 $dataSO->norec = $dataSO->generateNewId();
