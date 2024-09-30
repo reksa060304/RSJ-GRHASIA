@@ -3091,37 +3091,121 @@ AND sp.statusenabled <> false
         return $data;
     }
 
+    // public static function getKetersediaanTempatTidurPerkelas($tglAwal, $tglAkhir,$kdProfile){
+
+    //     $idProfile = (int) $kdProfile;
+
+    //     $data = DB::select(DB::raw("select sum(x.isi) as terpakai, sum(x.kosong) as kosong,x.namakelas,
+    //     sum(x.isi)+ sum(x.kosong) as jml from (
+    //         SELECT
+    //             kmr.id,
+    //             kmr.namakamar,
+    //             kl.id AS id_kelas,
+    //             kl.namakelas,
+    //             ru.id AS id_ruangan,
+    //             ru.namaruangan,
+    //             kmr.jumlakamarisi,
+    //             kmr.qtybed,
+    //             case when sb.id=1 then 1 else 0 end as isi,
+    //             case when sb.id=2 then 1 else 0 end as kosong
+    //         FROM
+    //             tempattidur_m AS tt
+    //         LEFT JOIN statusbed_m AS sb ON sb.id = tt.objectstatusbedfk
+    //         LEFT JOIN kamar_m AS kmr ON kmr.id = tt.objectkamarfk
+    //         LEFT JOIN ruangan_m AS ru ON ru.id = kmr.objectruanganfk
+    //         LEFT JOIN kelas_m AS kl ON kl.id = kmr.objectkelasfk
+    //         WHERE tt.kdprofile = $idProfile and
+    //             tt.statusenabled = true
+    //             and ru.statusenabled = true
+    //             and kmr.statusenabled=TRUE) as x GROUP BY x.namakelas
+    //         order by  x.namakelas
+
+    //         "));
+
+    //     return $data;
+    // }
+
     public static function getKetersediaanTempatTidurPerkelas($tglAwal, $tglAkhir,$kdProfile){
-
-        $idProfile = (int) $kdProfile;
-
-        $data = DB::select(DB::raw("select sum(x.isi) as terpakai, sum(x.kosong) as kosong,x.namakelas,
-        sum(x.isi)+ sum(x.kosong) as jml from (
-            SELECT
-                kmr.id,
-                kmr.namakamar,
-                kl.id AS id_kelas,
-                kl.namakelas,
-                ru.id AS id_ruangan,
-                ru.namaruangan,
-                kmr.jumlakamarisi,
-                kmr.qtybed,
-                case when sb.id=1 then 1 else 0 end as isi,
-                case when sb.id=2 then 1 else 0 end as kosong
-            FROM
-                tempattidur_m AS tt
-            LEFT JOIN statusbed_m AS sb ON sb.id = tt.objectstatusbedfk
-            LEFT JOIN kamar_m AS kmr ON kmr.id = tt.objectkamarfk
-            LEFT JOIN ruangan_m AS ru ON ru.id = kmr.objectruanganfk
-            LEFT JOIN kelas_m AS kl ON kl.id = kmr.objectkelasfk
-            WHERE tt.kdprofile = $idProfile and
-                tt.statusenabled = true
-                and ru.statusenabled = true
-                and kmr.statusenabled=TRUE) as x GROUP BY x.namakelas
-            order by  x.namakelas
-
+        $data = DB::select(DB::raw("
+                SELECT 
+                    q1.namakelas,
+                    q1.terpakai,
+                    q2.jml,
+                    (q2.jml - q1.terpakai) AS kosong
+                FROM (
+                    SELECT 
+                        x.namakelas,
+                        COUNT(x.namakelas) AS terpakai
+                    FROM (
+                        SELECT
+                            pd.tglregistrasi,
+                            P.nocm,
+                            pd.noregistrasi,
+                            ru.namaruangan,
+                            P.namapasien,
+                            kls.namakelas,
+                            tt.objectstatusbedfk
+                        FROM
+                            pasiendaftar_t AS pd
+                            INNER JOIN antrianpasiendiperiksa_t AS apd ON pd.norec = apd.noregistrasifk 
+                            AND apd.tglkeluar IS NULL
+                            INNER JOIN pasien_m AS P ON P.ID = pd.nocmfk
+                            INNER JOIN ruangan_m AS ru ON ru.ID = pd.objectruanganlastfk
+                            INNER JOIN kelas_m AS kls ON kls.ID = pd.objectkelasfk
+                            INNER JOIN jeniskelamin_m AS jk ON jk.ID = P.objectjeniskelaminfk
+                            LEFT JOIN pegawai_m AS pg ON pg.ID = pd.objectpegawaifk
+                            LEFT JOIN kelompokpasien_m AS kp ON kp.ID = pd.objectkelompokpasienlastfk
+                            LEFT JOIN departemen_m AS dept ON dept.ID = ru.objectdepartemenfk
+                            LEFT JOIN batalregistrasi_t AS br ON pd.norec = br.pasiendaftarfk
+                            LEFT JOIN kamar_m AS kmr ON kmr.ID = apd.objectkamarfk
+                            LEFT JOIN tempattidur_m AS tt ON tt.ID = apd.nobed
+                            LEFT JOIN alamat_m AS alm ON alm.nocmfk = P.ID 
+                        WHERE
+                            br.norec IS NULL 
+                            AND pd.tglpulang IS NULL 
+                            AND pd.kdprofile = 30 
+                            AND pd.statusenabled = TRUE
+                            AND kls.namakelas IS NOT NULL
+                    ) AS x
+                    GROUP BY x.namakelas
+                ) AS q1
+                INNER JOIN (
+                    SELECT 
+                        x.namakelas,
+                        SUM(x.isi) + SUM(x.kosong) AS jml
+                    FROM (
+                        SELECT
+                            kmr.ID,
+                            kmr.namakamar,
+                            kl.ID AS id_kelas,
+                            kl.namakelas,
+                            ru.ID AS id_ruangan,
+                            ru.namaruangan,
+                            kmr.jumlakamarisi,
+                            kmr.qtybed,
+                        CASE
+                            WHEN sb.ID = 1 THEN 1 ELSE 0 
+                        END AS isi,
+                        CASE
+                            WHEN sb.ID = 2 THEN 1 ELSE 0 
+                        END AS kosong
+                        FROM
+                            tempattidur_m AS tt
+                            LEFT JOIN statusbed_m AS sb ON sb.ID = tt.objectstatusbedfk
+                            LEFT JOIN kamar_m AS kmr ON kmr.ID = tt.objectkamarfk
+                            LEFT JOIN ruangan_m AS ru ON ru.ID = kmr.objectruanganfk
+                            LEFT JOIN kelas_m AS kl ON kl.ID = kmr.objectkelasfk 
+                        WHERE
+                            tt.kdprofile = 30 
+                            AND tt.statusenabled = TRUE 
+                            AND ru.statusenabled = TRUE 
+                            AND kmr.statusenabled = TRUE
+                            AND sb.statusenabled = TRUE
+                    ) AS x
+                    GROUP BY x.namakelas
+                ) AS q2 ON q1.namakelas = q2.namakelas
+                ORDER BY q1.namakelas;
             "));
-
         return $data;
     }
 

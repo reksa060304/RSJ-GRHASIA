@@ -648,6 +648,10 @@ class RawatInapController extends ApiController
         if(isset($filter['jmlRow']) && $filter['jmlRow'] != "" && $filter['jmlRow'] != "undefined") {
             $jmlRow = ' limit ' . $filter['jmlRow'];
         }
+        $klsId='';
+        if(isset($filter['klsId']) && $filter['klsId'] != "" && $filter['klsId'] != "undefined") {
+            $klsId = ' AND kls.id = ' . $filter['klsId'];
+        }
         $data=  DB::select(DB::raw("
         select  * from 
 			                (
@@ -690,7 +694,7 @@ class RawatInapController extends ApiController
 			left JOIN tempattidur_m as tt on tt.id =apd.nobed
 			left join alamat_m as alm on alm.nocmfk = p.id
 			where br.norec is null 
-			$noreg $norm $namaPasien $ruId
+			$noreg $norm $namaPasien $ruId $klsId
 			and pd.tglpulang is null
 			and pd.kdprofile = $idProfile	
 			and pd.statusenabled=true
@@ -739,12 +743,19 @@ class RawatInapController extends ApiController
             ->where('jd.statusenabled', true)
             ->orderBy('jd.jenisdiagnosa')
             ->get();
+        $dataKelas = \DB::table('kelas_m as kl')
+            ->select('kl.id', 'kl.namakelas')
+            ->where('kl.kdprofile', (int)$kdProfile)
+            ->where('kl.statusenabled', true)
+            ->orderBy('kl.namakelas')
+            ->get();
         $result = array(
             'ruanganRi' => $ruanganRi,
             'kelompokpasiensatu' => $dataKelompokTanpaUmum,
             'kddeptlayananranap' => $kdPelayananRanap,
             'kddeptlayananok' => $kdPelayananOk,
             'jenisdiagnosa' =>$jenisDiagnosa,
+            'dataKelas' => $dataKelas,
             'message' => 'as@epic',
         );
 

@@ -73,6 +73,7 @@ define(['initialize'], function (initialize) {
 					// $scope.listKelompokPasien = data.data.kelompokpasien;
 					var data = data.data
 					$scope.listRuangan = data.ruanganRi
+					$scope.listKelas = data.dataKelas
 					var datasu = data;
 					$scope.item.kdPelayananRanap = datasu.kddeptlayananranap.nilaifield;
 					$scope.item.kdPelayananOk = datasu.kddeptlayananok.nilaifield;
@@ -257,6 +258,11 @@ define(['initialize'], function (initialize) {
 				if ($scope.item.jmlRows != undefined) {
 					jmlRow = $scope.item.jmlRows
 				}
+
+				var kls = ""
+				if ($scope.item.kelas != undefined) {
+					var kls = "&klsId=" + $scope.item.kelas.id
+				}
 				var chacePeriode = {
 					0: tempRuanganArr,
 					1: jmlRow,
@@ -268,7 +274,7 @@ define(['initialize'], function (initialize) {
 				$scope.isRouteLoading = true;
 
 				medifirstService.get("rawatinap/get-daftar-pasien-masih-dirawat?"
-					+ nm + reg + rg + rm + "&jmlRow=" + jmlRow
+					+ nm + reg + rg + rm + "&jmlRow=" + jmlRow + kls
 					// + "&tglAwal="+ tglAwal +"&tglAkhir="+ tglAkhir
 
 				).then(function (data) {
