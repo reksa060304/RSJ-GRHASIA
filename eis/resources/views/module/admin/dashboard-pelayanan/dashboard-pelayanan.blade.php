@@ -271,7 +271,13 @@
                                         </div>
                                         <div class="panel-body">
                                             <div class="tab-content card-block">
-                                                <div class="tab-pane active" id="home1" role="tabpanel">
+                                                <div class="tab-pane active" id="all_caradaftar" role="tabpanel">
+                                                    <div id="chartCaraDaftar"></div>
+                                                </div>
+                                                <div class="tab-pane" id="all_grafik" role="tabpanel">
+                                                    <div id="chartCaraDaftarPie"></div>
+                                                </div>
+                                                <div class="tab-pane" id="home1" role="tabpanel">
                                                     <div id="chartJenisPenjadwalanPie"></div>
                                                 </div>
                                                 <div class="tab-pane" id="profile1" role="tabpanel">
@@ -281,6 +287,14 @@
                                             <ul class="nav nav-tabs tabs" role="tablist">
                                                 <li class="nav-item">
                                                     <a class="nav-link active" data-toggle="tab"
+                                                        href="#all_caradaftar" role="tab">Pie Chart</a>
+                                                </li>
+                                                <li class="nav-item">
+                                                    <a class="nav-link" data-toggle="tab" href="#all_grafik" role="tab">
+                                                        Grafik Chart</a>
+                                                </li>
+                                                <li class="nav-item">
+                                                    <a class="nav-link" data-toggle="tab"
                                                        href="#home1" role="tab">Donut Chart</a>
                                                 </li>
                                                 <li class="nav-item">
@@ -553,7 +567,7 @@
                                     </div>
                                 </div>
                             </div>
-                            <div class="col-lg-12 col-md-12">
+                            <!-- <div class="col-lg-12 col-md-12">
                                 <div class="card">
                                     <div class="panel panel-pink">
                                         <div class="panel-heading bg-c-pink">
@@ -610,8 +624,44 @@
                                         </div>
                                     </div>
                                 </div>
+                            </div> -->
+                            <div class="col-lg-6 col-md-12" >
+                                <div class="panel panel-pink">
+                                        <div class="panel-heading bg-c-pink">
+                                            <span style="color:white">Demografi Diagnosa</span>
+                                        </div>
+                                    <div class="row">
+                                        <div class="col-lg-6 col-md-12" >
+                                            <select id="comboDiagnosa" class="form-control cbo-custom" name="diagnosa">
+                                                <option value="">-- Filter Diagnosa --</option>
+                                                @php
+                                                    $res['toptendiag'] = App\Http\Controllers\MainController::getTopTenDiagnosa(request()->get("tglawal"),request()->get("tglakhir"),session('kdProfile'));
+                                                @endphp
+                                                @foreach($res['toptendiag'] as $k)
+                                                    <option {!! $res['toptendiag'][0]['kd'] == $k['kd'] ? 'selected' : '' !!}
+                                                            value='{{ $k['kd'] }}'> {{ $k['kddiagnosa'] }}</option>
+                                                @endforeach
+                                            </select>
+                                        </div>
+                                        <div class="col-lg-10 col-md-12" style="height: 400px ;">
+                                        <div id="world-map-markers" class="set-map"></div>
+                                    </div>
+                                    <div class="col-lg-2 col-md-12 custList" style="height: 400px !important; overflow: auto;">
+                                        <table id="tableDemog">
+                                            <thead>
+                                            <tr>
+                                                <th>
+                                                    Kecamatan
+                                                </th>
+                                            </tr>
+                                            </thead>
+                                            <tbody id="tBodyDemog">
+                                            </tbody>
+                                        </table>
+                                        </div>
+                                    </div>
+                                </div>
                             </div>
-
                             <div class="col-lg-6 col-md-12">
                                 <div class="card">
                                     <div class="panel panel-success">
@@ -627,7 +677,6 @@
                                     </div>
                                 </div>
                             </div>
-
                             <div class="col-lg-6 col-md-12">
                                 <div class="card">
                                     <div class="panel panel-warning">
@@ -691,7 +740,7 @@
                                 </div>
                             </div>
 
-                            <div class="col-lg-6 col-md-12" >
+                            <!-- <div class="col-lg-6 col-md-12" >
                                 <div class="panel-heading bg-c-pink">
                                     <span style="color:white">Demografi Asal Rujukan Pasien</span>
                                 </div>
@@ -709,8 +758,8 @@
                                     @endforeach
                                 </select>
                                 <div id="world-map-markers-rujukan" class="set-map"></div>
-                            </div>
-                            <div class="col-lg-6 col-md-12">
+                            </div> -->
+                            <!-- <div class="col-lg-6 col-md-12">
                                 <div class="card">
                                     <div class="panel panel-primary">
                                         <div class="panel-heading bg-primary">
@@ -724,7 +773,7 @@
                                         </div>
                                     </div>
                                 </div>
-                            </div>
+                            </div> -->
                             
                             <div class="col-lg-6 col-md-12">
                                             <div class="card">
@@ -949,7 +998,7 @@
                                                 </div>
                                             </div>
                                         </div>
-                                        <div class="col-lg-6 col-md-12">
+                                        <!-- <div class="col-lg-6 col-md-12">
                                             <div class="card">
                                                 <div class="panel panel-purple">
                                                     <div class="panel-heading bg-purple">
@@ -977,7 +1026,7 @@
                                                     </div>
                                                 </div>
                                             </div>
-                                        </div>
+                                        </div> -->
 
                             
                         <div class="modal fade" id="modalERESEP" tabindex="-1" role="dialog">
