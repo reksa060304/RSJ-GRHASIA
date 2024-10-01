@@ -418,6 +418,8 @@
         }
        
         function download() {
+            var file = document.getElementById("file").value
+            var namafile = document.getElementById("namafile").value
             window.open(APP_URL + "/service/storage_path?path=" + file + "&type=download" + "&filename=" + namafile +
                     "&mimetype=application/pdf");
             // let pass = prompt("Please enter password", "");
