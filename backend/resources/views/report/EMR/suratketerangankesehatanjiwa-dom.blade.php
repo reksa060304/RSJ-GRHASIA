@@ -186,9 +186,9 @@
             </tr>
         </table>
 
-        <table style="margin-top: 3em; width: 30%; margin-left:auto;">
+        <table style="margin-top: 3em; width: 40%; margin-left:auto;">
             <tr>
-                <td>Dokter yang memeriksa</td>
+                <td style="text-align: center;">Dokter yang memeriksa</td>
             </tr>
             @if ($tte == 'true')
                 <tr>
@@ -207,7 +207,19 @@
             </tr>
             @endif
             <tr>
-                <td>{{ $item[3003956] ? $item[3003956] : '' }}</td>
+                <td style="text-align: center;">{{ $item[3003956] ? $item[3003956] : '' }}</td>
+            </tr>
+            
+            {{-- jika ada nip tampilkan nip jika tidak tampilkan siip --}}
+            <tr>
+                <td style="text-align: center">
+                    NIP/SIP :  
+                    @if (isset($peg->nip))
+                        {{ $peg->nip }}
+                    @else
+                        {{ (isset($sip->nosip)) ? $sip->nosip : '' }}
+                    @endif
+                </td>
             </tr>
         </table>
 

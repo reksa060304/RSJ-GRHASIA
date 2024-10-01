@@ -250,6 +250,19 @@
                                     <br>{!! isset($item[190130809]) ? $item[190130809] : ''  !!}
                                 </td>
                             </tr>
+
+                            <tr>
+                                <td style="text-align: center"></td>
+                                <td style="text-align: center">&nbsp;</td>
+                                <td style="text-align: center">
+                                    NIP/SIP :  
+                                    @if (isset($peg->nip))
+                                        {{ $peg->nip }}
+                                    @else
+                                        {{ (isset($sip->nosip)) ? $sip->nosip : '' }}
+                                    @endif
+                                </td>
+                            </tr>
                         </table>
                     </td>
                 </tr>

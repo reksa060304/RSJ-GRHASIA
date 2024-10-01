@@ -117,15 +117,19 @@
 
                             </b>
                         </td>
-                        <td width="20%" >
-                            <div style="text-align: right">
-                                <table>
-                                    <tr>
-                                        <td style="width: 100px;font-size: 13px; font-weight: bold"> 
-                                            <br><br><br> <br><br><br></td>
-                                    </tr>
-                                </table>
-                            </div>
+                        <td width="20%">
+                            <p align="left" style=" padding-right: 40px">
+                                
+                                    <b>CM.RJP.01.003/20{{$item[190130812]}}</b>
+                                
+                            </p>
+                            <p><br></p>
+                            <p><br></p>
+                            <p align="left" style=" margin-bottom: 0; padding-right: 40px">
+                                <font style="font-size: 11pt; vertical-align: top;" color="#000000" face="Arial">
+                                    <b></b>
+                                </font>
+                            </p>
                         </td>
                     </tr>
                 </tbody>
@@ -245,6 +249,20 @@
                                 <td style="text-align: center" style="font-size: 13px">
                                     {{-- <br>{!! $res['d'][0]->namadokter == null ? ($peg!=null?$peg->namalengkap:'-'): $res['d'][0]->namadokter !!} --}}
                                     <br>{!! isset($item[190130819]) ? $item[190130819] : ''  !!}
+                                </td>
+                            </tr>
+
+                             {{-- jika ada nip tampilkan nip jika tidak tampilkan siip --}}
+                            <tr>
+                                <td style="text-align: center"></td>
+                                <td style="text-align: center">&nbsp;</td>
+                                <td style="text-align: center">
+                                    NIP/SIP :  
+                                    @if (isset($peg->nip))
+                                        {{ $peg->nip }}
+                                    @else
+                                        {{ (isset($sip->nosip)) ? $sip->nosip : '' }}
+                                    @endif
                                 </td>
                             </tr>
                         </table>

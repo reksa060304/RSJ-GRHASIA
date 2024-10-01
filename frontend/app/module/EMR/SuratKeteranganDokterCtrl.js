@@ -1025,6 +1025,7 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
                     '&emrfk=' + $scope.cc.emrfk +
                     '&kdprofile=' + local.id +
                     '&nama=' + nama +
+                    '&pegawaittd=' + $scope.item.obj[3003998].value +
                     // '&isttd=true' +
                     // '&pegawaittd=' + pegawai.value +
                     '&noregistrasi=' + $scope.cc.noregistrasi +

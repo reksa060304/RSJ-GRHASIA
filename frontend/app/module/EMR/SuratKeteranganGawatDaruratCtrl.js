@@ -296,7 +296,8 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
                         '&nama=' + nama +
                         '&namaemr=' + nomorEMR +
                         '&noregistrasi=' + $scope.cc.noregistrasi +
-                        '&norec_pd=' + $scope.cc.norec_pd, '_blank');
+                        '&norec_pd=' + $scope.cc.norec_pd +
+                        '&pegawaittd=' + $scope.item.obj[190130809].value, '_blank');
                         }
                     })
                  //SAMPAI SINI

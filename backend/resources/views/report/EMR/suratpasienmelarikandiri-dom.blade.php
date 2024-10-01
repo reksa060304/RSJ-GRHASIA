@@ -263,6 +263,18 @@
             <tr>
                 <td>{{ $item[3011315] ? $item[3011315] : null }}</td>
             </tr>
+
+            {{-- jika ada nip tampilkan nip jika tidak tampilkan siip --}}
+            <tr>
+                <td style="text-align: center">
+                    NIP/SIP :  
+                    @if (isset($peg->nip))
+                        {{ $peg->nip }}
+                    @else
+                        {{ (isset($sip->nosip)) ? $sip->nosip : '' }}
+                    @endif
+                </td>
+            </tr>
         </table>
 
     </section>

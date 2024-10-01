@@ -334,7 +334,7 @@ define(['initialize', 'Configuration'], function (initialize, config) {
                     }
                 }
                 $scope.listData4 = arrayAskep4
-                console.log($scope.listData4);
+                // console.log($scope.listData4);
 
                 var gejalaKosongKeun = []
                 for (let k = 0; k < arrayAskep5.length; k++) {
@@ -350,11 +350,11 @@ define(['initialize', 'Configuration'], function (initialize, config) {
                     }
                 }
                 $scope.listData5 = arrayAskep5
-                console.log($scope.listData5);
+                // console.log($scope.listData5);
             })
          
 
-            console.log($scope.dataTable)
+            // console.log($scope.dataTable)
             var chacePeriode = cacheHelper.get('cacheRekamMedis');
             if (chacePeriode != undefined) {
                 $scope.cc.nocm = chacePeriode[0]
@@ -520,7 +520,8 @@ define(['initialize', 'Configuration'], function (initialize, config) {
                     + $scope.cc.nocm + '&norec_apd='+  $scope.cc.norec +'&emr=' + norecEMR
                     + '&emrfk='+  $scope.cc.emrfk
                     + '&kdprofile='+local.id 
-                    + '&nama='+nama);
+                    + '&nama='+ nama
+                    + '&pegawaittd=' +  $scope.item.obj[30008032].value);
                    
             } 
 
@@ -552,7 +553,7 @@ define(['initialize', 'Configuration'], function (initialize, config) {
                         '&nocm=' + $scope.cc.nocm + '&norec_pd=' + $scope.cc.norec_pd
 
                 ).then(function (e) {
-                    console.log(e);
+                    // console.log(e);
                     if (e.data.status == 201) {
                         toastr.success(e.data.message)
                         $scope.winDialog.close()

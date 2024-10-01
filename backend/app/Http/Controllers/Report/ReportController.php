@@ -2529,11 +2529,27 @@ class ReportController extends ApiController{
                 }
         }
         $pageWidth = 950;
-        $peg = null;    
-        if(isset($request['isttd']) && $request['isttd'] == true){
-            $peg = DB::table('pegawai_m')->where('id',$request['pegawaittd'])->first();
+
+        $peg = DB::table('pegawai_m')
+            ->where('id',$request['pegawaittd'])
+            ->first();
+        
+        $dataSip = DB::table('masaberlakusipstr_t as mbs')
+                ->select('pg.id as idpegawai', 'pg.nama', 'mbs.nosip')
+                ->leftJoin('jenismasaberlakustrsip_m as jmb','jmb.id','=','mbs.jenismasaberlakufk')
+                ->leftJoin('pegawai_m as pg','pg.id','=', 'mbs.pegawaifk')
+                ->leftJoin('unitkerjapegawai_m as uk','uk.id','=','pg.objectunitkerjapegawaifk')
+                ->leftJoin('unitkerjapegawai_m as uk2','uk2.id','=','mbs.subunitkerjafk')
+                ->where('pg.statusenabled',true)
+                ->where('mbs.kdprofile', $kdProfile)
+                ->where('mbs.pegawaifk', $request['pegawaittd'])
+                ->orderBy('mbs.berakhirstr','desc')
+                ->first();
+
+        // if(isset($request['isttd']) && $request['isttd'] == true){
+        //     $peg = DB::table('pegawai_m')->where('id',$request['pegawaittd'])->first();
             
-        }
+        // }
 
         // cari pdf yang sudah di ttd
         $cekPdf = DB::table('emr_bsre_t')
@@ -2558,7 +2574,8 @@ class ReportController extends ApiController{
                 'data' => $data,
                 'item'=> $item,
                 'peg'=> $peg,
-                'tte' => (isset($request['isttd']) && $request['isttd'] == true) ? 'true' : 'false'
+                'tte' => (isset($request['isttd']) && $request['isttd'] == true) ? 'true' : 'false',
+                'sip' => $dataSip
             )
         );
         if(isset($request['isttd']) && $request['isttd'] == true){
@@ -2671,26 +2688,41 @@ class ReportController extends ApiController{
                 }
         }
         $pageWidth = 950;
-        $peg = null;    
-        if(isset($request['isttd']) && $request['isttd'] == true){
-            $peg = DB::table('pegawai_m')->where('id',$request['pegawaittd'])->first();
+
+        $peg = DB::table('pegawai_m')
+            ->where('id',$request['pegawaittd'])
+            ->first();
+        
+        $dataSip = DB::table('masaberlakusipstr_t as mbs')
+                ->select('pg.id as idpegawai', 'pg.nama', 'mbs.nosip')
+                ->leftJoin('jenismasaberlakustrsip_m as jmb','jmb.id','=','mbs.jenismasaberlakufk')
+                ->leftJoin('pegawai_m as pg','pg.id','=', 'mbs.pegawaifk')
+                ->leftJoin('unitkerjapegawai_m as uk','uk.id','=','pg.objectunitkerjapegawaifk')
+                ->leftJoin('unitkerjapegawai_m as uk2','uk2.id','=','mbs.subunitkerjafk')
+                ->where('pg.statusenabled',true)
+                ->where('mbs.kdprofile', $kdProfile)
+                ->where('mbs.pegawaifk', $request['pegawaittd'])
+                ->orderBy('mbs.berakhirstr','desc')
+                ->first();    
+        // if(isset($request['isttd']) && $request['isttd'] == true){
+        //     $peg = DB::table('pegawai_m')->where('id',$request['pegawaittd'])->first();
             
-        }
+        // }
 
         // cari pdf yang sudah di ttd
-        $cekPdf = DB::table('emr_bsre_t')
-            ->where('statusenabled', true)
-            ->where('noregistrasi', trim($data[0]->noregistrasi))
-            ->where('nocm', $data[0]->nocm)
-            ->where('nomoremr', $data[0]->noemr)
-            ->where('status', true)
-            ->where('emrfk', $data[0]->emrfk)
-            ->get();
+        // $cekPdf = DB::table('emr_bsre_t')
+        //     ->where('statusenabled', true)
+        //     ->where('noregistrasi', trim($data[0]->noregistrasi))
+        //     ->where('nocm', $data[0]->nocm)
+        //     ->where('nomoremr', $data[0]->noemr)
+        //     ->where('status', true)
+        //     ->where('emrfk', $data[0]->emrfk)
+        //     ->get();
 
-        if(count($cekPdf) > 0){
-            $link = '/service/storage_path?path='.$cekPdf[0]->file.'&filename='.$cekPdf[0]->namafile.'&mimetype=application/pdf';
-            return redirect($link);
-        }
+        // if(count($cekPdf) > 0){
+        //     $link = '/service/storage_path?path='.$cekPdf[0]->file.'&filename='.$cekPdf[0]->namafile.'&mimetype=application/pdf';
+        //     return redirect($link);
+        // }
 
         // var_dump($data);
         $pdf = PDF::loadView(
@@ -2701,7 +2733,8 @@ class ReportController extends ApiController{
                 'data' => $data,
                 'item'=> $item,
                 'peg'=> $peg,
-                'tte' => (isset($request['isttd']) && $request['isttd'] == true) ? 'true' : 'false'
+                'tte' => (isset($request['isttd']) && $request['isttd'] == true) ? 'true' : 'false',
+                'sip' => $dataSip
             )
         );
         if(isset($request['isttd']) && $request['isttd'] == true){
@@ -2722,7 +2755,7 @@ class ReportController extends ApiController{
         }
 
         return $pdf->stream();
-        return view('report.EMR.suratketerangangawatdarurat',compact('data','pageWidth'));
+        // return view('report.EMR.suratketerangangawatdarurat',compact('data','pageWidth'));
     }
 
     public function CetakSKDirawatInap(Request $request)
@@ -2814,26 +2847,45 @@ class ReportController extends ApiController{
                 }
         }
         $pageWidth = 950;
-        $peg = null;    
-        if(isset($request['isttd']) && $request['isttd'] == true){
-            $peg = DB::table('pegawai_m')->where('id',$request['pegawaittd'])->first();
+
+        $peg = DB::table('pegawai_m')
+            ->where('id',$request['pegawaittd'])
+            ->first();
+        
+        $dataSip = DB::table('masaberlakusipstr_t as mbs')
+                ->select('pg.id as idpegawai', 'pg.nama', 'mbs.nosip')
+                ->leftJoin('jenismasaberlakustrsip_m as jmb','jmb.id','=','mbs.jenismasaberlakufk')
+                ->leftJoin('pegawai_m as pg','pg.id','=', 'mbs.pegawaifk')
+                ->leftJoin('unitkerjapegawai_m as uk','uk.id','=','pg.objectunitkerjapegawaifk')
+                ->leftJoin('unitkerjapegawai_m as uk2','uk2.id','=','mbs.subunitkerjafk')
+                ->where('pg.statusenabled',true)
+                ->where('mbs.kdprofile', $kdProfile)
+                ->where('mbs.pegawaifk', $request['pegawaittd'])
+                ->orderBy('mbs.berakhirstr','desc')
+                ->first(); 
+
+        // if(isset($request['isttd']) && $request['isttd'] == true){
+        //     $peg = DB::table('pegawai_m')->where('id',$request['pegawaittd'])->first();
             
-        }
+        // }
 
          // cari pdf yang sudah di ttd
-        $cekPdf = DB::table('emr_bsre_t')
-            ->where('statusenabled', true)
-            ->where('noregistrasi', trim($data[0]->noregistrasi))
-            ->where('nocm', $data[0]->nocm)
-            ->where('nomoremr', $data[0]->noemr)
-            ->where('status', true)
-            ->where('emrfk', $data[0]->emrfk)
-            ->get();
+        // $cekPdf = DB::table('emr_bsre_t')
+        //     ->where('statusenabled', true)
+        //     ->where('noregistrasi', trim($data[0]->noregistrasi))
+        //     ->where('nocm', $data[0]->nocm)
+        //     ->where('nomoremr', $data[0]->noemr)
+        //     ->where('status', true)
+        //     ->where('emrfk', $data[0]->emrfk)
+        //     ->get();
 
-        if(count($cekPdf) > 0){
-            $link = '/service/storage_path?path='.$cekPdf[0]->file.'&filename='.$cekPdf[0]->namafile.'&mimetype=application/pdf';
-            return redirect($link);
-        }
+
+        // if(count($cekPdf) > 0){
+        //     $link = '/service/storage_path?path='.$cekPdf[0]->file.'&filename='.$cekPdf[0]->namafile.'&mimetype=application/pdf';
+        //     return redirect($link);
+        // }
+
+        // dd($item);
 
         // var_dump($data);
         $pdf = PDF::loadView(
@@ -2844,7 +2896,8 @@ class ReportController extends ApiController{
                 'data' => $data,
                 'item'=> $item,
                 'peg'=> $peg,
-                'tte' => (isset($request['isttd']) && $request['isttd'] == true) ? 'true' : 'false'
+                'tte' => (isset($request['isttd']) && $request['isttd'] == true) ? 'true' : 'false',
+                'sip' => $dataSip
             )
         );
         if(isset($request['isttd']) && $request['isttd'] == true){
@@ -2865,7 +2918,7 @@ class ReportController extends ApiController{
         }
 
          return $pdf->stream();
-         return view('report.EMR.suratketerangandirawatinap',compact('data','pageWidth'));
+        //  return view('report.EMR.suratketerangandirawatinap',compact('data','pageWidth'));
     }
 
     public function CetakLapOrderKirim(Request $request)
@@ -16865,14 +16918,30 @@ from kegiatananggaran_m km
             }
         }
 
-        // dd($item);
 
         $pageWidth = 950;
-        $peg = null;    
-        if(isset($request['isttd']) && $request['isttd'] == true){
-            $peg = DB::table('pegawai_m')->where('id',$request['pegawaittd'])->first();
+        // $peg = null;
+        
+        $peg = DB::table('pegawai_m')
+            ->where('id',$request['pegawaittd'])
+            ->first();
+        
+        $dataSip = DB::table('masaberlakusipstr_t as mbs')
+                ->select('pg.id as idpegawai', 'pg.nama', 'mbs.nosip')
+                ->leftJoin('jenismasaberlakustrsip_m as jmb','jmb.id','=','mbs.jenismasaberlakufk')
+                ->leftJoin('pegawai_m as pg','pg.id','=', 'mbs.pegawaifk')
+                ->leftJoin('unitkerjapegawai_m as uk','uk.id','=','pg.objectunitkerjapegawaifk')
+                ->leftJoin('unitkerjapegawai_m as uk2','uk2.id','=','mbs.subunitkerjafk')
+                ->where('pg.statusenabled',true)
+                ->where('mbs.kdprofile', $kdProfile)
+                ->where('mbs.pegawaifk', $request['pegawaittd'])
+                ->orderBy('mbs.berakhirstr','desc')
+                ->first();
+        
+        // if(isset($request['isttd']) && $request['isttd'] == true){
+        //     $peg = DB::table('pegawai_m')->where('id',$request['pegawaittd'])->first();
             
-        }
+        // }
         
         // cari pdf yang sudah di ttd
         $cekPdf = DB::table('emr_bsre_t')
@@ -16898,7 +16967,8 @@ from kegiatananggaran_m km
                 'profile' => $profile,
                 'item'=> $item,
                 'peg'=> $peg,
-                'tte' => (isset($request['isttd']) && $request['isttd'] == true) ? 'true' : 'false'
+                'tte' => (isset($request['isttd']) && $request['isttd'] == true) ? 'true' : 'false',
+                'sip' => $dataSip
             )
         );
         if(isset($request['isttd']) && $request['isttd'] == true){
@@ -17006,10 +17076,26 @@ from kegiatananggaran_m km
 
         $pageWidth = 950;
 
-        if(isset($request['isttd']) && $request['isttd'] == true){
-            $peg = DB::table('pegawai_m')->where('id',$request['pegawaittd'])->first();
+        $peg = DB::table('pegawai_m')
+            ->where('id',$request['pegawaittd'])
+            ->first();
+        
+        $dataSip = DB::table('masaberlakusipstr_t as mbs')
+                ->select('pg.id as idpegawai', 'pg.nama', 'mbs.nosip')
+                ->leftJoin('jenismasaberlakustrsip_m as jmb','jmb.id','=','mbs.jenismasaberlakufk')
+                ->leftJoin('pegawai_m as pg','pg.id','=', 'mbs.pegawaifk')
+                ->leftJoin('unitkerjapegawai_m as uk','uk.id','=','pg.objectunitkerjapegawaifk')
+                ->leftJoin('unitkerjapegawai_m as uk2','uk2.id','=','mbs.subunitkerjafk')
+                ->where('pg.statusenabled',true)
+                ->where('mbs.kdprofile', $kdProfile)
+                ->where('mbs.pegawaifk', $request['pegawaittd'])
+                ->orderBy('mbs.berakhirstr','desc')
+                ->first();
+
+        // if(isset($request['isttd']) && $request['isttd'] == true){
+        //     $peg = DB::table('pegawai_m')->where('id',$request['pegawaittd'])->first();
             
-        }
+        // }
 
         $cekPdf = DB::table('emr_bsre_t')
             ->where('statusenabled', true)
@@ -17032,7 +17118,9 @@ from kegiatananggaran_m km
                 'data' => $data,
                 'profile' => $profile,
                 'item' => $item,
-                'tte' => (isset($request['isttd']) && $request['isttd'] == true) ? 'true' : 'false'
+                'tte' => (isset($request['isttd']) && $request['isttd'] == true) ? 'true' : 'false',
+                'peg' => $peg,
+                'sip' => $dataSip,
             )
         );
 
@@ -19364,11 +19452,26 @@ public function suratBuktiPengembalian(Request $request)
             }
         }
         $pageWidth = 950;
-        $peg = null;    
-        if(isset($request['isttd']) && $request['isttd'] == true){
-            $peg = DB::table('pegawai_m')->where('id',$request['pegawaittd'])->first();
+
+        $peg = DB::table('pegawai_m')
+            ->where('id',$request['pegawaittd'])
+            ->first();
+        
+        $dataSip = DB::table('masaberlakusipstr_t as mbs')
+                ->select('pg.id as idpegawai', 'pg.nama', 'mbs.nosip')
+                ->leftJoin('jenismasaberlakustrsip_m as jmb','jmb.id','=','mbs.jenismasaberlakufk')
+                ->leftJoin('pegawai_m as pg','pg.id','=', 'mbs.pegawaifk')
+                ->leftJoin('unitkerjapegawai_m as uk','uk.id','=','pg.objectunitkerjapegawaifk')
+                ->leftJoin('unitkerjapegawai_m as uk2','uk2.id','=','mbs.subunitkerjafk')
+                ->where('pg.statusenabled',true)
+                ->where('mbs.kdprofile', $kdProfile)
+                ->where('mbs.pegawaifk', $request['pegawaittd'])
+                ->orderBy('mbs.berakhirstr','desc')
+                ->first();
+        // if(isset($request['isttd']) && $request['isttd'] == true){
+        //     $peg = DB::table('pegawai_m')->where('id',$request['pegawaittd'])->first();
             
-        }
+        // }
 
         // cari pdf yang sudah di ttd
         $cekPdf = DB::table('emr_bsre_t')
@@ -19394,7 +19497,8 @@ public function suratBuktiPengembalian(Request $request)
                 'data' => $data,
                 'item'=> $item,
                 'peg'=> $peg,
-                'tte' => (isset($request['isttd']) && $request['isttd'] == true) ? 'true' : 'false'
+                'tte' => (isset($request['isttd']) && $request['isttd'] == true) ? 'true' : 'false',
+                'sip' => $dataSip
             )
         );
 
@@ -21011,6 +21115,7 @@ public function suratBuktiPengembalian(Request $request)
                     $no++;
                 }
             }
+
             $result= array(
                 'norec' => $item->norec,
                 'kelompokpasien' => $item->kelompokpasien,
@@ -21084,6 +21189,23 @@ public function suratBuktiPengembalian(Request $request)
         $res['terapi'][] = array('tera' => 'asas');
         $res['d'] =$result;
         
+        $peg = DB::table('pegawai_m')
+            ->where('id',$r['pegawaittd'])
+            ->first();
+        
+        $dataSip = DB::table('masaberlakusipstr_t as mbs')
+                ->select('pg.id as idpegawai', 'pg.nama', 'mbs.nosip')
+                ->leftJoin('jenismasaberlakustrsip_m as jmb','jmb.id','=','mbs.jenismasaberlakufk')
+                ->leftJoin('pegawai_m as pg','pg.id','=', 'mbs.pegawaifk')
+                ->leftJoin('unitkerjapegawai_m as uk','uk.id','=','pg.objectunitkerjapegawaifk')
+                ->leftJoin('unitkerjapegawai_m as uk2','uk2.id','=','mbs.subunitkerjafk')
+                ->where('pg.statusenabled',true)
+                ->where('mbs.kdprofile', $r['kdprofile'])
+                ->where('mbs.pegawaifk', $r['pegawaittd'])
+                ->orderBy('mbs.berakhirstr','desc')
+                ->first();
+
+
         // cari pdf yang sudah di tte
         $cekPdf = DB::table('emr_bsre_t')
             ->where('statusenabled', true)
@@ -21104,7 +21226,9 @@ public function suratBuktiPengembalian(Request $request)
             array(
                 'res' => $res,
                 'username'=> $username,
-                'tte' => (isset($r['isttd']) && $r['isttd'] == true) ? 'true' : 'false'
+                'tte' => (isset($r['isttd']) && $r['isttd'] == true) ? 'true' : 'false',
+                'peg' => $peg,
+                'sip' => $dataSip
             ));
         
         if(isset($r['isttd']) && $r['isttd'] == true){
@@ -23312,12 +23436,27 @@ public function suratBuktiPengembalian(Request $request)
         // dd($item);
 
         $pageWidth = 950;
-        $peg = null;  
 
-        if(isset($request['isttd']) && $request['isttd'] == true){
-            $peg = DB::table('pegawai_m')->where('id',$request['pegawaittd'])->first();
+        $peg = DB::table('pegawai_m')
+            ->where('id',$request['pegawaittd'])
+            ->first();
+        
+        $dataSip = DB::table('masaberlakusipstr_t as mbs')
+                ->select('pg.id as idpegawai', 'pg.nama', 'mbs.nosip')
+                ->leftJoin('jenismasaberlakustrsip_m as jmb','jmb.id','=','mbs.jenismasaberlakufk')
+                ->leftJoin('pegawai_m as pg','pg.id','=', 'mbs.pegawaifk')
+                ->leftJoin('unitkerjapegawai_m as uk','uk.id','=','pg.objectunitkerjapegawaifk')
+                ->leftJoin('unitkerjapegawai_m as uk2','uk2.id','=','mbs.subunitkerjafk')
+                ->where('pg.statusenabled',true)
+                ->where('mbs.kdprofile', $kdProfile)
+                ->where('mbs.pegawaifk', $request['pegawaittd'])
+                ->orderBy('mbs.berakhirstr','desc')
+                ->first();  
+
+        // if(isset($request['isttd']) && $request['isttd'] == true){
+        //     $peg = DB::table('pegawai_m')->where('id',$request['pegawaittd'])->first();
             
-        }
+        // }
 
         $cekPdf = DB::table('emr_bsre_t')
             ->where('statusenabled', true)
@@ -23342,7 +23481,8 @@ public function suratBuktiPengembalian(Request $request)
                 'item'=> $item,
                 'peg'=> $peg,
                 'profile' => $profile,
-                'tte' => (isset($request['isttd']) && $request['isttd'] == true) ? 'true' : 'false'
+                'tte' => (isset($request['isttd']) && $request['isttd'] == true) ? 'true' : 'false',
+                'sip' => $dataSip
             )
         );
         if(isset($request['isttd']) && $request['isttd'] == true){
@@ -23363,7 +23503,7 @@ public function suratBuktiPengembalian(Request $request)
         }
 
         return $pdf->stream();
-        return view('report.EMR.suratpasienmelarikandiri',compact('data','pageWidth', 'profile', 'item'));
+        // return view('report.EMR.suratpasienmelarikandiri',compact('data','pageWidth', 'profile', 'item'));
     }
 
 
@@ -23454,11 +23594,26 @@ public function suratBuktiPengembalian(Request $request)
 
         
         $pageWidth = 950;
-        $peg = null;    
-        if(isset($request['isttd']) && $request['isttd'] == true){
-            $peg = DB::table('pegawai_m')->where('id',$request['pegawaittd'])->first();
+        $peg = DB::table('pegawai_m')
+            ->where('id',$request['pegawaittd'])
+            ->first();
+        
+        $dataSip = DB::table('masaberlakusipstr_t as mbs')
+                ->select('pg.id as idpegawai', 'pg.nama', 'mbs.nosip')
+                ->leftJoin('jenismasaberlakustrsip_m as jmb','jmb.id','=','mbs.jenismasaberlakufk')
+                ->leftJoin('pegawai_m as pg','pg.id','=', 'mbs.pegawaifk')
+                ->leftJoin('unitkerjapegawai_m as uk','uk.id','=','pg.objectunitkerjapegawaifk')
+                ->leftJoin('unitkerjapegawai_m as uk2','uk2.id','=','mbs.subunitkerjafk')
+                ->where('pg.statusenabled',true)
+                ->where('mbs.kdprofile', $kdProfile)
+                ->where('mbs.pegawaifk', $request['pegawaittd'])
+                ->orderBy('mbs.berakhirstr','desc')
+                ->first();
+
+        // if(isset($request['isttd']) && $request['isttd'] == true){
+        //     $peg = DB::table('pegawai_m')->where('id',$request['pegawaittd'])->first();
             
-        }
+        // }
         
 
         // cari pdf yang sudah di ttd
@@ -23485,7 +23640,8 @@ public function suratBuktiPengembalian(Request $request)
                 'profile' => $profile,
                 'item'=> $item,
                 'peg'=> $peg,
-                'tte' => (isset($request['isttd']) && $request['isttd'] == true) ? 'true' : 'false'
+                'tte' => (isset($request['isttd']) && $request['isttd'] == true) ? 'true' : 'false',
+                'sip' => $dataSip
             )
         );
 

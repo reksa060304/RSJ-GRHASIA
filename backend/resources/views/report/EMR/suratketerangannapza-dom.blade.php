@@ -233,7 +233,7 @@
             @if ($tte == 'true')
                 <tr>
                     <td style="padding: 0em 2em;">
-                        <p style="text-align: center; color:grey;font-family: 'Times New Roman', Times, serif;font-size: 16px;">
+                        <p style="text-align: center; color:grey;font-size: 16px;">
                             Ditandatangani Secara 
                             <br>Elektronik
                         </p>
@@ -242,7 +242,7 @@
             @else
                 <tr>
                     <td style="padding: 4em 0em;">
-                        <p style="text-align: center; color:grey;font-family: 'Times New Roman', Times, serif;font-size: 16px;">
+                        <p style="text-align: center; color:grey;font-size: 16px;">
                             
                         </p>
                     </td>
@@ -255,6 +255,18 @@
                 @endphp
                 <td>
                     <p>{{ end($split) }}</p>
+                </td>
+            </tr>
+
+            {{-- NIP/SIP --}}
+            <tr>
+                <td>
+                    NIP/SIP : 
+                    @if (isset($peg->nip))
+                        {{ $peg->nip }}
+                    @else
+                        {{ (isset($sip->nosip)) ? $sip->nosip : '' }}
+                    @endif
                 </td>
             </tr>
         </table>

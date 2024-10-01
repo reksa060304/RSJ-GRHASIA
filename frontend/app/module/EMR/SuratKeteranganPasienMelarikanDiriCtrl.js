@@ -997,7 +997,8 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
                     + '&kdprofile=' + local.id 
                     + '&nama=' + nama
                     + '&noregistrasi=' + $scope.cc.noregistrasi 
-                    + '&norec_pd=' + $scope.cc.norec_pd, '_blank');
+                    + '&norec_pd=' + $scope.cc.norec_pd
+                    + '&pegawaittd=' + $scope.item.obj[3011315].value, '_blank');
             }
 
             $scope.ttdElek = function () {

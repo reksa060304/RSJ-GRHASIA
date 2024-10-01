@@ -258,18 +258,14 @@
                 <table>
                     <tbody>
                         <tr>
-                            <td width="33%" style="text-align: center"> </td>
-                            <td width="33%"></td>
-                            <td width="33%">
+                            <td style="text-align: center;">
                                 <b>Dokter yang memeriksa</b>
                             </td>
                         </tr>
                         @if ($tte == 'true')
                             <tr>
-                                <td></td>
-                                <td></td>
                                 <td>
-                                    <p style="text-align: center; color:grey;font-family: 'Times New Roman', Times, serif;font-size: 16px;">
+                                    <p style="text-align: center; color:grey;">
                                         Ditandatangani Secara 
                                         <br>Elektronik
                                     </p>
@@ -277,22 +273,29 @@
                             </tr>
                         @else
                             <tr>
-                                <td></td>
-                                <td></td>
                                 <td style="padding: 2em 0;">
                                     
                                 </td>
                             </tr>
                         @endif
                         <tr>
-                            <td style="text-align: center"></td>
-                            <td style="text-align: center">&nbsp;</td>
                             <td style="text-align: center">
                                 {{-- <br>{!! $res['d'][0]->namadokter == null ? ($peg!=null?$peg->namalengkap:'-'): $res['d'][0]->namadokter !!} --}}
                                 <br>{!! $item[3003998] !!}
                             </td>
                         </tr>
-                      
+
+                        {{-- jika ada nip tampilkan nip jika tidak tampilkan siip --}}
+                        <tr>
+                            <td style="text-align: center">
+                                NIP/SIP :  
+                                @if (isset($peg->nip))
+                                    {{ $peg->nip }}
+                                @else
+                                    {{ (isset($sip->nosip)) ? $sip->nosip : '' }}
+                                @endif
+                            </td>
+                        </tr>
                     </tbody>
                 </table>
             </div>

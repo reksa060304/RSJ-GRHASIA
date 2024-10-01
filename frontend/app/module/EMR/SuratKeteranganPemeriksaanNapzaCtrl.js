@@ -1001,7 +1001,8 @@ define(['initialize','Configuration'], function (initialize, configuration) {
                     + '&norec_apd=' + $scope.cc.norec
                     + '&emr=' + norecEMR 
                     + '&emrfk=' + $scope.cc.emrfk 
-                    + '&kdprofile=' + local.id, '_blank');
+                    + '&kdprofile=' + local.id
+                    + '&pegawaittd=' + $scope.item.obj[3003976].value, '_blank');
             }
 
             $scope.ttdElek = function () {

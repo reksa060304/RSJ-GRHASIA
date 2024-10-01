@@ -719,6 +719,7 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
                     + '&emr=' + norecEMR
                     + '&emrfk=' + $scope.cc.emrfk
                     + '&kdprofile=' + local.id
+                    + '&pegawaittd=' + $scope.item.obj[1901301450].value
                 )
 
                 // window.open(configuration.baseApiBackend 

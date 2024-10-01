@@ -561,7 +561,7 @@ define(['initialize', 'Configuration'], function (initialize, config) {
                     }
 
                 }
-                console.log(arrracik);
+                // console.log(arrracik);
                 var aha = ''
                 aha = nonracika != '' ? 'Non Racikan:\n' + nonracika.slice(1, nonracika.length) : ''
                 var aja = ''
@@ -1088,7 +1088,8 @@ define(['initialize', 'Configuration'], function (initialize, config) {
                 window.open(config.baseApiBackend + "report/cetak-resume-medis-v3" 
                     + "?norec=" + $scope.modelGrid.norec 
                     + "&kdprofile=" + local.id 
-                    + "&nama=" + nama);
+                    + "&nama=" + nama
+                    + "&pegawaittd=" + $scope.modelGrid.pegawaifk);
             }
             $scope.ttdElek = function () {
                 if ($scope.modelGrid == undefined) {

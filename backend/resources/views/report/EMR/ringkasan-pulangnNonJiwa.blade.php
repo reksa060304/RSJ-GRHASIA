@@ -865,6 +865,21 @@
                     </font>
                 </td>
             </tr> 
+
+            {{-- jika ada nip tampilkan nip jika tidak tampilkan siip --}}
+            <tr>
+                <td></td>
+                <td></td>
+                <td style="font-size: 9px; font-weight: 400; text-align: center">
+                    NIP/SIP :  
+                    @if (isset($peg->nip))
+                        {{ $peg->nip }}
+                    @else
+                        {{ (isset($sip->nosip)) ? $sip->nosip : '' }}
+                    @endif
+                </td>
+            </tr>
+            
         </table>
     </section>
     

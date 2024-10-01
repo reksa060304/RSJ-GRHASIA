@@ -210,7 +210,7 @@
             @if ($tte == 'true')
                 <tr>
                     <td style="padding: 0 2em;">
-                        <p style="text-align: center; color:grey;font-family: 'Times New Roman', Times, serif;font-size: 16px;">
+                        <p style="text-align: center; color:grey;font-size: 16px;">
                             Ditandatangani Secara<br>Elektronik
                         </p>
                     </td>
@@ -222,6 +222,18 @@
             @endif
             <tr>
                 <td align="center">{{ isset($item[3003976]) ? $item[3003976] : '' }}</td>
+            </tr>
+            
+            {{-- NIP/SIP --}}
+            <tr>
+                <td style="text-align: center;">
+                    NIP/SIP : 
+                    @if (isset($peg->nip))
+                        {{ $peg->nip }}
+                    @else
+                        {{ (isset($sip->nosip)) ? $sip->nosip : '' }}
+                    @endif
+                </td>
             </tr>
         </table>
     </section>
