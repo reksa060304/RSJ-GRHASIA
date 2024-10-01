@@ -712,6 +712,7 @@ class MainController extends ApiController
                     $res['kunjungan_perjenispasien'] = $this->getKunjunganRSPerJenisPasien($tglawal,$tglakhir,$kdProfile);
                     $res['jumlahpasien_percaradaftar'] = $this->getJumlahPasienPerCaraDaftar($tglawal,$tglakhir,$kdProfile);
                     $res['tt_usia'] = $this->getTempatTidurTerpakai($tglawal,$tglakhir,$kdProfile);
+                    $res['sebaran_diagnosa'] = $this->getSebaranDiagnosa($tglawal,$tglakhir,$kdProfile);
 
 
                     $i=0;
@@ -6587,5 +6588,47 @@ count(case when x.departemen = 'rahab_medik' then 1 end) AS rehab_medik
         return view('module.shared.detail-layanan',compact('data'));
 
 
+    }
+
+    public function getSebaranDiagnosa($tglAwal, $tglAkhir,$kdProfile){
+        $idProfile = (int) $kdProfile;
+        $tglAwal = $tglAwal .' 00:00' ;
+        $tglAkhir = $tglAkhir.' 23:59' ;
+        $sebaranDiagnosa = DB::select("
+        SELECT * FROM (
+            SELECT COUNT(x.namakotakabupaten) AS jumlah, x.kddiagnosa, x.namadiagnosa, x.namakotakabupaten
+            FROM (
+                SELECT dm.kddiagnosa, dm.namadiagnosa, ps.namapasien, kot.namakotakabupaten
+                FROM diagnosapasien_t AS dp
+                INNER JOIN detaildiagnosapasien_t AS ddp ON ddp.objectdiagnosapasienfk = dp.norec
+                INNER JOIN diagnosa_m AS dm ON ddp.objectdiagnosafk = dm.ID
+                LEFT JOIN antrianpasiendiperiksa_t AS app ON dp.noregistrasifk = app.norec
+                INNER JOIN pasiendaftar_t AS pd ON pd.norec = app.noregistrasifk
+                INNER JOIN pasien_m AS ps ON ps.ID = pd.nocmfk
+                LEFT JOIN alamat_m AS alm ON alm.nocmfk = ps.ID
+                LEFT JOIN kecamatan_m AS kec ON kec.ID = alm.objectkecamatanfk
+                LEFT JOIN kotakabupaten_m AS kot ON kot.ID = alm.objectkotakabupatenfk
+                WHERE pd.kdprofile = :kdProfile
+                AND pd.statusenabled = TRUE
+                AND kot.namakotakabupaten IS NOT NULL AND dm.namadiagnosa != '-'
+                AND dp.tglpendaftaran BETWEEN :tglAwal AND :tglAkhir
+            ) AS x
+            GROUP BY x.namakotakabupaten, x.namadiagnosa, x.kddiagnosa
+        ) AS z
+        ORDER BY z.jumlah DESC
+    ", ['tglAwal' => $tglAwal, 'tglAkhir' => $tglAkhir, 'kdProfile' => $kdProfile]);
+
+        // Process and format the result as needed
+        $dataAll = [];
+        foreach ($sebaranDiagnosa as $row) {
+            $dataAll[] = [
+                'namakotakabubaten' => $row->namakotakabupaten,
+                'jumlah' => $row->jumlah,
+                'namadiagnosa' => $row->namadiagnosa
+            ];
+        }
+        return [
+            'dataAll' => $dataAll
+        ];
     }
 }

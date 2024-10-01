@@ -625,58 +625,80 @@
                                     </div>
                                 </div>
                             </div> -->
-                            <div class="col-lg-6 col-md-12" >
-                                <div class="panel panel-pink">
-                                        <div class="panel-heading bg-c-pink">
-                                            <span style="color:white">Demografi Diagnosa</span>
+                            <div class="col-lg-6 col-md-12">
+                                <div class="card">
+                                    <div class="panel panel-info">
+                                        <div class="panel-heading bg-info">
+                                            Sebaran Diagnosa Per Wilayah
                                         </div>
-                                    <div class="row">
-                                        <div class="col-lg-6 col-md-12" >
-                                            <select id="comboDiagnosa" class="form-control cbo-custom" name="diagnosa">
-                                                <option value="">-- Filter Diagnosa --</option>
-                                                @php
-                                                    $res['toptendiag'] = App\Http\Controllers\MainController::getTopTenDiagnosa(request()->get("tglawal"),request()->get("tglakhir"),session('kdProfile'));
-                                                @endphp
-                                                @foreach($res['toptendiag'] as $k)
-                                                    <option {!! $res['toptendiag'][0]['kd'] == $k['kd'] ? 'selected' : '' !!}
-                                                            value='{{ $k['kd'] }}'> {{ $k['kddiagnosa'] }}</option>
-                                                @endforeach
-                                            </select>
-                                        </div>
-                                        <div class="col-lg-10 col-md-12" style="height: 400px ;">
-                                        <div id="world-map-markers" class="set-map"></div>
-                                    </div>
-                                    <div class="col-lg-2 col-md-12 custList" style="height: 400px !important; overflow: auto;">
-                                        <table id="tableDemog">
-                                            <thead>
-                                            <tr>
-                                                <th>
-                                                    Kecamatan
-                                                </th>
-                                            </tr>
-                                            </thead>
-                                            <tbody id="tBodyDemog">
-                                            </tbody>
-                                        </table>
+                                        <div class="panel-body">
+                                            <div class="tab-content card-block">
+                                                <div class="tab-pane active" id="all_jenis" role="tabpanel">
+                                                    <div id="chartSebaranDiagnosa"></div>
+                                                </div>
+                                            </div>
                                         </div>
                                     </div>
                                 </div>
                             </div>
                             <div class="col-lg-6 col-md-12">
                                 <div class="card">
-                                    <div class="panel panel-success">
-                                        <div class="panel-heading bg-success">
-                                            10 Besar Diagnosa
+                                    <div class="panel panel-purple">
+                                        <div class="panel-heading bg-purple">
+                                            E-Resep Dokter
                                         </div>
-                                        <div class="panel-body">
-                                            @php
-                                                $res['toptendiag'] = App\Http\Controllers\MainController::getTopTenDiagnosa(request()->get("tglawal"),request()->get("tglakhir"),session('kdProfile'));
-                                            @endphp
-                                            <div id="chart10Diagnosa"></div>
+                                        @php
+
+                                            $sama = false;
+                                        
+                                            $resultSumDep =   App\Http\Controllers\MainController::getOrderResep(request()->get("tglawal"),request()->get("tglakhir"));
+                                
+                                            
+                                        @endphp
+                                        <div class="panel-body" >
+                                            <div class="row" style="padding:10px 20px;">
+                                                <div class="col-md-12">
+                                                    <div class="table-responsive" >
+                                                        <table class="table  table-striped table-sm table-styling" id="t_E-RESEP"
+                                                            style="width:100%">
+                                                            <thead class="table-default">
+                                                            <tr>
+                                                                <th style="color:black;width: 10%">NO </th>
+                                                                <th style="color:black">DOKTER </th>
+                                                                <th style="color:black">JUMLAH RESEP </th>
+                                                                <th style="color:black;width: 10%"># </th>
+                                                            </tr>
+                                                            </thead>
+                                                            <tbody>
+
+                                                            @forelse($resultSumDep as $i => $d)
+
+                                                                <tr>
+                                                                    <td >{{ $i +1 }}</td>
+                                                                    <td >{{ $d->dokter }}</td>
+                                                                    <td >{{ $d->count }}</td>
+                                                                    <td ><a href='#'   class="btn btn-danger btn-outline-danger btn-mini click-eresep"
+                                                                        data-doktere="{{ $d->iddokter }}"
+                                                                        nama-doktere="{{ $d->dokter }}" >
+                                                                    <i class='icofont icofont-search'></i></a>
+                                                                </td>
+                                                                </tr>
+                                                            @empty
+                                                                <tr>
+                                                                    <td colspan="4" style="text-align: center">Data Tidak ada</td>
+                                                                </tr>
+                                                            @endforelse
+
+                                                            </tbody>
+                                                        </table>
+                                                    </div>
+                                                </div>
+                                            </div>
                                         </div>
                                     </div>
                                 </div>
                             </div>
+                           
                             <div class="col-lg-6 col-md-12">
                                 <div class="card">
                                     <div class="panel panel-warning">
@@ -740,6 +762,22 @@
                                 </div>
                             </div>
 
+                            <div class="col-lg-6 col-md-12">
+                                <div class="card">
+                                    <div class="panel panel-success">
+                                        <div class="panel-heading bg-success">
+                                            10 Besar Diagnosa
+                                        </div>
+                                        <div class="panel-body">
+                                            @php
+                                                $res['toptendiag'] = App\Http\Controllers\MainController::getTopTenDiagnosa(request()->get("tglawal"),request()->get("tglakhir"),session('kdProfile'));
+                                            @endphp
+                                            <div id="chart10Diagnosa"></div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
                             <!-- <div class="col-lg-6 col-md-12" >
                                 <div class="panel-heading bg-c-pink">
                                     <span style="color:white">Demografi Asal Rujukan Pasien</span>
@@ -775,63 +813,7 @@
                                 </div>
                             </div> -->
                             
-                            <div class="col-lg-6 col-md-12">
-                                            <div class="card">
-                                                <div class="panel panel-purple">
-                                                    <div class="panel-heading bg-purple">
-                                                        E-Resep Dokter
-                                                    </div>
-                                                    @php
-            
-                                                        $sama = false;
-                                                 
-                                                        $resultSumDep =   App\Http\Controllers\MainController::getOrderResep(request()->get("tglawal"),request()->get("tglakhir"));
-                                            
-                                                     
-                                                    @endphp
-                                                    <div class="panel-body" >
-                                                        <div class="row" style="padding:10px 20px;">
-                                                            <div class="col-md-12">
-                                                                <div class="table-responsive" >
-                                                                    <table class="table  table-striped table-sm table-styling" id="t_E-RESEP"
-                                                                        style="width:100%">
-                                                                        <thead class="table-default">
-                                                                        <tr>
-                                                                            <th style="color:black;width: 10%">NO </th>
-                                                                            <th style="color:black">DOKTER </th>
-                                                                            <th style="color:black">JUMLAH RESEP </th>
-                                                                            <th style="color:black;width: 10%"># </th>
-                                                                        </tr>
-                                                                        </thead>
-                                                                        <tbody>
-            
-                                                                        @forelse($resultSumDep as $i => $d)
-            
-                                                                            <tr>
-                                                                                <td >{{ $i +1 }}</td>
-                                                                                <td >{{ $d->dokter }}</td>
-                                                                                <td >{{ $d->count }}</td>
-                                                                                <td ><a href='#'   class="btn btn-danger btn-outline-danger btn-mini click-eresep"
-                                                                                    data-doktere="{{ $d->iddokter }}"
-                                                                                    nama-doktere="{{ $d->dokter }}" >
-                                                                                <i class='icofont icofont-search'></i></a>
-                                                                            </td>
-                                                                            </tr>
-                                                                        @empty
-                                                                            <tr>
-                                                                                <td colspan="4" style="text-align: center">Data Tidak ada</td>
-                                                                            </tr>
-                                                                        @endforelse
-            
-                                                                        </tbody>
-                                                                    </table>
-                                                                </div>
-                                                            </div>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </div>
+                                       
                                         <div class="col-lg-6 col-md-12">
                                             <div class="card">
                                                 <div class="panel panel-purple">
@@ -1137,6 +1119,7 @@
         setChartTrendPenunjang()
         setChartPenjadwalan()
         setChartPerjenis()
+        setChartSebaranDiagnosa()
         setChartPerCaraDaftar()
         setChartJenisPel()
         setChartPerujuk()
@@ -3743,6 +3726,71 @@
 
             // Tampilkan modal
             $('#infoModal').modal('show');
+        }
+
+        function setChartSebaranDiagnosa() {
+            this.datachartSebaranDiagnosa = @json($res['sebaran_diagnosa']);
+            let dataz = [];
+            let slice = true;
+            let jmlPasien = 0;
+
+            // Menggunakan this.datachartSebaranDiagnosa, bukan data
+            this.datachartSebaranDiagnosa.dataAll.forEach(function (item) {
+                // Gabungkan namakotakabubaten dengan namadiagnosa
+                let label = item.namakotakabubaten + ' - ' + item.namadiagnosa;
+
+                dataz.push({
+                    name: label, // Menggunakan label yang sudah digabung
+                    y: parseFloat(item.jumlah),
+                    sliced: slice,
+                    selected: slice
+                });
+                slice = false;
+                jmlPasien += parseFloat(item.jumlah);
+            });
+
+            Highcharts.chart('chartSebaranDiagnosa', {
+                chart: {
+                    plotBackgroundColor: null,
+                    plotBorderWidth: null,
+                    plotShadow: false,
+                    width: 560,  // Atur lebar chart
+                    height: 720,  // Atur tinggi chart
+                    type: 'pie'
+                },
+                title: {
+                    text: ''
+                },
+                plotOptions: {
+                    pie: {
+                        allowPointSelect: true,
+                        cursor: 'pointer',
+                        dataLabels: {
+                            enabled: true,
+                            color: '#000000',
+                            connectorColor: '#000000',
+                            formatter: function () {
+                                // Tampilkan name yang sudah gabungan dan jumlah pasien
+                                return this.point.name + ': ' + this.percentage.toFixed(2) + ' % (' + this.y + ' pasien)';
+                            }
+                        },
+                        showInLegend: true
+                    }
+                },
+                credits: {
+                    text: 'Total Pasien ' + jmlPasien
+                },
+                legend: {
+                    enabled: true,
+                    borderRadius: 5,
+                    borderWidth: 1
+                },
+                series: [{
+                    type: 'pie',
+                    name: 'Persentase Sebaran Diagnosa',
+                    data: dataz
+                }]
+            });
         }
 
 
