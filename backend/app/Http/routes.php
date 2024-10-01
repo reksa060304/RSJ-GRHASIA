@@ -3640,7 +3640,7 @@ Route::group(['middleware' => 'cors', 'prefix' => 'service'], function () {
     {
         $pathFILE = storage_path($request['path']);
 
-        if (!Storage::exists($pathFILE)) {
+        if (!File::exists($pathFILE)) {
           echo 'Data tidak ada ';
           die;
         }
