@@ -272,7 +272,7 @@
                                             <button type="button" class="btn btn-outline-info btn-block"
                                                 id="btnMasuk" onclick="download()">
                                                 <i data-feather="file-text" class="mr-25"></i>
-                                                <span class="align-middle">Donwload Dokumen</span>
+                                                <span class="align-middle">Download Dokumen</span>
                                             </button>
                                         </div>
                                     </div>

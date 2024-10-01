@@ -1918,6 +1918,7 @@ Route::group(['middleware' => 'cors', 'prefix' => 'service'], function () {
             Route::get('anggaran/get-keterangan-belanja', 'Anggaran_2024\AnggaranController@getTotalAnggaran');
             Route::post('anggaran/save-keterangan-belanja','Anggaran_2024\AnggaranController@saveKeteranganBelanja');
             Route::get('anggaran/get-total-anggaran-rcn', 'Anggaran_2024\AnggaranController@getTotalAnggaranRcn');
+            Route::get('anggaran/get-total-mataanggaran-transaksi', 'Anggaran_2024\AnggaranController@getTotalMataAnggaranByTransaksi');
             // End Anggaran 2024
 
 
@@ -3639,10 +3640,10 @@ Route::group(['middleware' => 'cors', 'prefix' => 'service'], function () {
     {
         $pathFILE = storage_path($request['path']);
 
-        if (!File::exists($pathFILE)) {
-          echo 'Data tidak ada ';
-          die;
-        }
+        // if (!Storage::exists($pathFILE)) {
+        //   echo 'Data tidak ada ';
+        //   die;
+        // }
         if(isset($request['type']) && $request['type'] == 'download'){
           $type = isset($request['mimetype']) ? $request['mimetype'] : File::mimeType($pathFILE);
           $headers = array( 'Content-Type: '. $type,   );
