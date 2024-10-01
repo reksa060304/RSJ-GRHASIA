@@ -102,7 +102,7 @@ define(['initialize'], function (initialize) {
                             }
                         }
                     });
-                    var chacePeriode = '' + "~" + '' + "~" + $scope.itema.ruangan.id + "~" + $scope.itema.ruangan.namaruangan;
+                    var chacePeriode = '' + "~" + '' + "~" + $scope.item.ruangan.id + "~" + $scope.item.ruangan.namaruangan;
                     cacheHelper.set('DaftarAntrianDokterRanapCtrl', chacePeriode);
                 });
             }
@@ -204,6 +204,11 @@ define(['initialize'], function (initialize) {
                         "field":"namadokter",
                         "title":"Dokter",
                         "width":"100px"     
+                    },
+                    {
+                        "field": "listdpjp",
+                        "title": "Pemindahan DPJP",
+                        "width": "100px"
                     },  
                     {
                         "field": "jeniskelamin",

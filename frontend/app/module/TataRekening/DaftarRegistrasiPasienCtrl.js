@@ -152,6 +152,11 @@ define(['initialize'], function (initialize) {
 						"width": "150px",
 						"template": '# if( namadokter==null) {# - # } else {# #= namadokter # #} #'
 					},
+                    {
+						"field": "listdpjp",
+						"title": "Pemindahan DPJP",
+						"width": "150px",
+					},
 					{
 						"field": "kelompokpasien",
 						"title": "Kelompok Pasien",

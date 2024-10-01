@@ -2815,6 +2815,36 @@ class TagihanController  extends ApiController
 
         $data = $data->get();
 
+
+        // apakah registrasi punya form dpjp
+        $idEMRDPJP = 3001060;
+        foreach($data as $row){
+
+            $formDPJP = DB::select(DB::raw("
+                SELECT
+                    ep.noregistrasifk,
+                    (array_agg((split_part(epd.value, '~', 2)) ORDER BY epd.emrdfk DESC))[1] AS formdpjp
+                FROM emrpasien_t ep 
+                JOIN emrpasiend_t epd ON epd.emrpasienfk = ep.noemr AND epd.statusenabled = TRUE AND epd.kdprofile = 30
+                JOIN emrd_t ed ON ed.id = epd.emrdfk AND ed.statusenabled = TRUE AND ed.kdprofile = 30
+                WHERE 
+                    ep.statusenabled = TRUE
+                    AND ep.kdprofile = 30
+                    AND epd.emrfk = ".$idEMRDPJP."
+                    AND ep.noregistrasifk ILIKE '%".$row->noregistrasi."%'
+                    AND ed.caption ILIKE '%nama%'
+                GROUP BY
+                    ep.noregistrasifk
+            "));
+
+            if(count($formDPJP) > 0){
+                $row->listdpjp = $formDPJP[0]->formdpjp;
+            }else{
+                $row->listdpjp = '';
+            }
+
+        }
+
         return $this->respond($data);
     }
     public function getAPD(Request $request)
