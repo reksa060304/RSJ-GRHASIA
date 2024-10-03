@@ -24,7 +24,7 @@
         /* Padding for the header on subsequent pages */
         @page {
             size:A4;
-            margin: 10mm;
+            margin: 15mm;
         }
         .footer {
             text-align: center;
@@ -62,6 +62,9 @@
         footer {
             position: fixed;
             bottom: 0;
+        }
+        #keterangan{
+            page-break-before: always;
         }
     </style>
 </head>
@@ -332,69 +335,65 @@
                     kepentingan pengobatan, serta TIDAK DAPAT digunakan untuk kepentingan lainnya.</td>
             </tr>
         </table>
-   
 
-        <div style="margin-top: 3cm;">
-            <table width="100%">
-                <tbody>
-                    <tr>
-                        <td width="33%" style="text-align: center"></td>
-                        <td width="33%"></td>
-                        <td width="33%">
-                            <b>Yogyakarta, {{date('d-m-Y')}}</b>
-                        </td>
-                    </tr>
-                    <tr>
-                        <td width="33%" style="text-align: center"><b>Pasien / Wali Pasien
-                        </b> </td>
-                        <td width="33%"></td>
-                        <td width="33%">
-                            <b>Dokter Penanggung Jawab Pasien</b>
-                        </td>
-                    </tr>
-                    @if ($tte == 'true')
-                        <tr>
-                            <td></td>
-                            <td></td>
-                            <td height="40px"> 
-                                <p style="text-align: center; color:grey;font-family: 'Times New Roman', Times, serif;font-size: 16px;">
-                                    Ditandatangani Secara 
-                                    <br>Elektronik
-                                </p>
-                            </td>
-                        </tr>
+        <table id="keterangan" width="100%">
+            
+            <tr>
+                <td width="33%" style="text-align: center"></td>
+                <td width="33%"></td>
+                <td width="33%">
+                    <b>Yogyakarta, {{date('d-m-Y')}}</b>
+                </td>
+            </tr>
+            <tr>
+                <td width="33%" style="text-align: center"><b>Pasien / Wali Pasien
+                </b> </td>
+                <td width="33%"></td>
+                <td width="33%">
+                    <b>Dokter Penanggung Jawab Pasien</b>
+                </td>
+            </tr>
+            @if ($tte == 'true')
+                <tr>
+                    <td></td>
+                    <td></td>
+                    <td height="40px"> 
+                        <p style="text-align: center; color:grey;font-family: 'Times New Roman', Times, serif;font-size: 16px;">
+                            Ditandatangani Secara 
+                            <br>Elektronik
+                        </p>
+                    </td>
+                </tr>
+            @else
+                <tr>
+                    <td height="70px"></td>
+                    <td></td>
+                    <td height="70px"></td>
+                </tr>
+            @endif
+            <tr>
+                <td style="text-align: center"> {!!$res['d']['pasien']!!}</td>
+                <td style="text-align: center">&nbsp;</td>
+                <td style="text-align: center">
+                    {{-- <br>{!! $res['d'][0]->namadokter == null ? ($peg!=null?$peg->namalengkap:'-'): $res['d'][0]->namadokter !!} --}}
+                    {!! $res['d']['namadokter'] !!}
+                </td>
+            </tr>
+            
+            {{-- jika ada nip tampilkan nip jika tidak tampilkan siip --}}
+            <tr>
+                <td></td>
+                <td></td>
+                <td style="text-align: center">
+                    NIP/SIP :  
+                    @if (isset($peg->nip))
+                        {{ $peg->nip }}
                     @else
-                        <tr>
-                            <td height="70px"></td>
-                            <td></td>
-                            <td height="70px"></td>
-                        </tr>
+                        {{ (isset($sip->nosip)) ? $sip->nosip : '' }}
                     @endif
-                    <tr>
-                        <td style="text-align: center"> {!!$res['d']['pasien']!!}</td>
-                        <td style="text-align: center">&nbsp;</td>
-                        <td style="text-align: center">
-                            {{-- <br>{!! $res['d'][0]->namadokter == null ? ($peg!=null?$peg->namalengkap:'-'): $res['d'][0]->namadokter !!} --}}
-                            {!! $res['d']['namadokter'] !!}
-                        </td>
-                    </tr>
-                    
-                    {{-- jika ada nip tampilkan nip jika tidak tampilkan siip --}}
-                    <tr>
-                        <td></td>
-                        <td></td>
-                        <td style="text-align: center">
-                            NIP/SIP :  
-                            @if (isset($peg->nip))
-                                {{ $peg->nip }}
-                            @else
-                                {{ (isset($sip->nosip)) ? $sip->nosip : '' }}
-                            @endif
-                        </td>
-                    </tr>
-                </tbody>
-            </table>
-        </div>
+                </td>
+            </tr>
+        </table>
     </section>
 
     @if ($tte == 'true')

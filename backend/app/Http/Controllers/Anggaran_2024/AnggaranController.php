@@ -407,23 +407,23 @@ class AnggaranController extends ApiController {
 
         $kegiatan = DB::select(DB::raw("
             SELECT
-                ka4.kode as kode_urusan,
-                ka4.keterangan as ket_urusan,
-                ka3.kode as kode_program,
-                ka3.keterangan as ket_program,
+                ka0.kode as kode_urusan,
+                ka0.keterangan as ket_urusan,
+                ka1.kode as kode_program,
+                ka1.keterangan as ket_program,
                 ka2.kode as kode_kegiatan,
                 ka2.keterangan as ket_kegiatan,
-                ka1.kode kode_subkegiatan,
-                ka1.keterangan as ket_subkegiatan,
+                ka3.kode kode_subkegiatan,
+                ka3.keterangan as ket_subkegiatan,
                 ka.kode as kode_subsubkegiatan,
                 ka.keterangan as ket_subsubkegiatan	
             FROM
                 transaksianggaran2024_t ta
                 INNER JOIN kegiatananggaran2024_m ka ON ka.ID = ta.objectkegiatanfk
-                INNER JOIN kegiatananggaran2024_m ka1 ON ka.kode ILIKE ka1.kode || '%' 	AND ka1.div = 3
-                INNER JOIN kegiatananggaran2024_m ka2 ON ka1.kode ILIKE ka2.kode || '%'	AND ka2.div = 2
-                INNER JOIN kegiatananggaran2024_m ka3 ON ka2.kode ILIKE ka3.kode || '%'	AND ka3.div = 1
-                INNER JOIN kegiatananggaran2024_m ka4 ON ka3.kode ILIKE ka4.kode || '%'	AND ka4.div = 0 
+                LEFT JOIN kegiatananggaran2024_m ka3 ON ka3.id = ka.headfk
+                LEFT JOIN kegiatananggaran2024_m ka2 ON ka2.id = ka3.headfk 
+                LEFT JOIN kegiatananggaran2024_m ka1 on ka1.id = ka2.headfk
+                LEFT JOIN kegiatananggaran2024_m ka0 ON ka0.id = ka1.headfk
             WHERE
                 ta.kdprofile = $idProfile
                 and ta.statusenabled = true
@@ -673,5 +673,104 @@ class AnggaranController extends ApiController {
         );
 
         return $this->respond($result);
+    }
+
+
+    public function getTotalMataAnggaranByTransaksi(Request $request)
+    {
+
+        $kdProfile = $this->getDataKdProfile($request);
+        $idProfile = (int) $kdProfile;
+
+        $data = [];
+
+        if($request['cek'] == 'true'){
+
+            $mataAnggaran = DB::select(DB::raw("
+                SELECT
+                    ma.id as idmataanggaran,
+                    ma.kodemataanggaran,
+                    ma.namamataanggaran,
+                    ma.kodemataanggaran || ' - ' || ma.namamataanggaran AS text,
+                    SUM(kb.subtotal) AS total
+                FROM keteranganbelanja2024_t kb
+                JOIN transaksianggaran2024_t tra ON tra.norec = kb.objecttransaksifk AND tra.statusenabled = TRUE AND tra.kdprofile = ".$idProfile."
+                JOIN mataanggaran2024_m ma ON ma.id = kb.objectmataanggaranfk AND ma.statusenabled = TRUE AND ma.kdprofile = ".$idProfile."
+                JOIN kegiatananggaran2024_m ka ON ka.id = kb.objectkegiatanfk AND ka.statusenabled = TRUE AND ka.kdprofile = ".$idProfile."
+                JOIN asalproduk_m ap ON ap.id = kb.objectasalprodukfk AND ap.statusenabled = TRUE AND ap.kdprofile = ".$idProfile."
+                JOIN tahapanggaran_m ta ON ta.id = kb.objecttahapfk AND ta.statusenabled = TRUE AND ta.kdprofile = ".$idProfile."
+                WHERE
+                    kb.statusenabled = TRUE
+                    AND kb.kdprofile = 30
+                    AND kb.objecttransaksifk = '".$request['norec_transakianggaran']."'
+                GROUP BY
+                    ma.id,
+                    ma.namamataanggaran,
+                    ma.kodemataanggaran
+            "));
+
+            $data = $mataAnggaran;
+
+        }else{
+
+            $mataAnggaran = DB::select(DB::raw("
+                SELECT
+                    ma.id as idmataanggaran,
+                    ma.kodemataanggaran,
+                    ma.namamataanggaran,
+                    ma.kodemataanggaran || ' - ' || ma.namamataanggaran AS text
+                FROM mataanggaran2024_m AS ma
+                WHERE
+                    ma.statusenabled = TRUE
+                    AND ma.kdprofile = ".$idProfile."
+                    AND ma.div = 4
+            "));
+
+
+            $keteranganBelanja = DB::select(DB::raw("
+                SELECT
+                    ma.id as idmataanggaran,
+                    ma.kodemataanggaran,
+                    ma.namamataanggaran,
+                    ma.kodemataanggaran || ' - ' || ma.namamataanggaran AS text,
+                    SUM(kb.subtotal) AS totalanggaran
+                FROM keteranganbelanja2024_t kb
+                JOIN transaksianggaran2024_t tra ON tra.norec = kb.objecttransaksifk AND tra.statusenabled = TRUE AND tra.kdprofile = ".$idProfile."
+                JOIN mataanggaran2024_m ma ON ma.id = kb.objectmataanggaranfk AND ma.statusenabled = TRUE AND ma.kdprofile = ".$idProfile."
+                JOIN kegiatananggaran2024_m ka ON ka.id = kb.objectkegiatanfk AND ka.statusenabled = TRUE AND ka.kdprofile = ".$idProfile."
+                JOIN asalproduk_m ap ON ap.id = kb.objectasalprodukfk AND ap.statusenabled = TRUE AND ap.kdprofile = ".$idProfile."
+                JOIN tahapanggaran_m ta ON ta.id = kb.objecttahapfk AND ta.statusenabled = TRUE AND ta.kdprofile = ".$idProfile."
+                WHERE
+                    kb.statusenabled = TRUE
+                    AND kb.kdprofile = 30
+                    AND kb.objecttransaksifk = '".$request['norec_transakianggaran']."'
+                GROUP BY
+                    ma.id,
+                    ma.namamataanggaran,
+                    ma.kodemataanggaran
+            "));
+
+            foreach($mataAnggaran AS $ma){
+                
+                $ma->total = 0;
+
+                foreach($keteranganBelanja AS $kb){
+
+                    if($kb->idmataanggaran == $ma->idmataanggaran){
+                        $ma->total += (int)$kb->totalanggaran;
+                    }
+
+                }
+
+            }
+
+            $data = $mataAnggaran;
+
+        }
+
+        return $this->respond([
+            'mataanggaran' => $data
+        ]);
+
     }
 }

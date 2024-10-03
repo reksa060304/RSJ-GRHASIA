@@ -934,14 +934,19 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
 
                 
             }
+
+
+            $scope.norecTransaksi = null;
             function editKegiatanT(e) {
                 e.preventDefault();
                 var dataItem = this.dataItem($(e.currentTarget).closest("tr"));
+
+                $scope.norecTransaksi = dataItem.norec
                 // medifirstService.get("reservasionline/get-daftar-slotting?id=1").then(function (e) {
 
 				// })
                 
-                console.log(dataItem)
+                // console.log(dataItem)
                 // $scope.popupSubSubKegiatan.center().open();  
                 
                 // $scope.norecrcntotalanggaran = dataItem.norec 
@@ -995,10 +1000,10 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
                 let c1 = kodeArr2[3]  + '.' + kodeArr2[4]
                 let d1 = kodeArr2[5]  
 
-                console.log(a1)
-                console.log(b1)
-                console.log(c1)
-                console.log(d1)
+                // console.log(a1)
+                // console.log(b1)
+                // console.log(c1)
+                // console.log(d1)
                 if(dataItem.div == 0){
                     $scope.item.urusandiv = {div: dataItem.namakelompok, id: dataItem.div}
                     $scope.popupUrusan.center().open()
@@ -2940,18 +2945,28 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
             $scope.$watch('item.isCekAdaAnggaranSaja', function (newValue, oldValue) {
                 if (newValue != oldValue) {
 
-                            var idpegawai = ''
-                            $scope.pegawaiLogin = medifirstService.getPegawaiLogin();
-                            idpegawai = $scope.pegawaiLogin.id
+                    var idpegawai = ''
+                    $scope.pegawaiLogin = medifirstService.getPegawaiLogin();
+                    idpegawai = $scope.pegawaiLogin.id
+                    
+                    medifirstService.get("anggaran/get-total-mataanggaran-transaksi" 
+                        + "?norec_transakianggaran=" + $scope.norecTransaksi
+                        + "&cek=" + $scope.item.isCekAdaAnggaranSaja)
+                        .then(function(response) {
                             
-                            
-                            medifirstService.get("perencanaan/get-total-mata-anggaran?tahun="+moment($scope.item.thnAnggaran).format('YYYY')+"&tahap="+$scope.item.tahapdetail.id+"&idpegawai="+idpegawai+"&cek=" + $scope.item.isCekAdaAnggaranSaja+"&noreckegiatan=" + $scope.idkegiatananggaran).then(function (e) {
-                                DataTotalMataAnggaran = e.data.data
-                                $scope.listAsalProduk = e.data.asalproduk
-                                $scope.dataSourceDetailMT = new kendo.data.DataSource({
-                                    data: DataTotalMataAnggaran
-                                });
+
+                            $scope.dataSourceDetailMT = new kendo.data.DataSource({
+                                data: response.data.mataanggaran
                             });
+                        })
+
+                    // medifirstService.get("perencanaan/get-total-mata-anggaran?tahun="+moment($scope.item.thnAnggaran).format('YYYY')+"&tahap="+$scope.item.tahapdetail.id+"&idpegawai="+idpegawai+"&cek=" + $scope.item.isCekAdaAnggaranSaja+"&noreckegiatan=" + $scope.idkegiatananggaran).then(function (e) {
+                    //     DataTotalMataAnggaran = e.data.data
+                    //     $scope.listAsalProduk = e.data.asalproduk
+                    //     $scope.dataSourceDetailMT = new kendo.data.DataSource({
+                    //         data: DataTotalMataAnggaran
+                    //     });
+                    // });
                 }
             });
 
@@ -3656,82 +3671,82 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
                         if ($scope.item.combosubsubkegiatan != undefined) {
                             subsubkegiatan = '&subsubkegiatan=' + $scope.item.combosubsubkegiatan.kode
                         }
-                        medifirstService.get("perencanaan/get-total-mata-anggaran?tahun=" + moment($scope.item.tahunkas).format('YYYY') + "&tahap=" + $scope.item.searchtahap.id + "&idpegawai=" + idpegawai + subkegiatan + subsubkegiatan).then(function (e) {
-                            DataTotalMataAnggaran = e.data.data
-                            $scope.listAsalProduk = e.data.asalproduk
-                            $scope.dataSourceDetailMT = new kendo.data.DataSource({
-                                data: DataTotalMataAnggaran
-                            });
-                            DataTabKeteranganBelanja = []; //e.data.keteranganbelanja
-                            // let DataInsertAlokasi = [];
-                            let dataAlokasi = e.data.alokasi;
-                            for (let index = 0; index < e.data.keteranganbelanja.length; index++) {
-                                let element = e.data.keteranganbelanja[index];
-                                for (let aa = 0; aa < dataAlokasi.length; aa++) {
-                                    let alokasielement = dataAlokasi[aa];
-                                    for (let bb = 0; bb < alokasielement.length; bb++) {
-                                        let elementbb = alokasielement[bb];
-                                        if (elementbb.kodemataanggaran == element.kodemataanggaran) {
-                                            if (elementbb.bulanint == 1) {
-                                                elementbb.jan = elementbb.nilai
-                                            }
-                                            if (elementbb.bulanint == 2) {
-                                                elementbb.feb = elementbb.nilai
-                                            }
-                                            if (elementbb.bulanint == 3) {
-                                                elementbb.mar = elementbb.nilai
-                                            }
-                                            if (elementbb.bulanint == 4) {
-                                                elementbb.apr = elementbb.nilai
-                                            }
-                                            if (elementbb.bulanint == 5) {
-                                                elementbb.mei = elementbb.nilai
-                                            }
-                                            if (elementbb.bulanint == 6) {
-                                                elementbb.jun = elementbb.nilai
-                                            }
-                                            if (elementbb.bulanint == 7) {
-                                                elementbb.jul = elementbb.nilai
-                                            }
-                                            if (elementbb.bulanint == 8) {
-                                                elementbb.agt = elementbb.nilai
-                                            }
-                                            if (elementbb.bulanint == 9) {
-                                                elementbb.sep = elementbb.nilai
-                                            }
-                                            if (elementbb.bulanint == 10) {
-                                                elementbb.okt = elementbb.nilai
-                                            }
-                                            if (elementbb.bulanint == 11) {
-                                                elementbb.nov = elementbb.nilai
-                                            }
-                                            if (elementbb.bulanint == 12) {
-                                                elementbb.des = elementbb.nilai
-                                            }
+                        // medifirstService.get("perencanaan/get-total-mata-anggaran?tahun=" + moment($scope.item.tahunkas).format('YYYY') + "&tahap=" + $scope.item.searchtahap.id + "&idpegawai=" + idpegawai + subkegiatan + subsubkegiatan).then(function (e) {
+                        //     DataTotalMataAnggaran = e.data.data
+                        //     $scope.listAsalProduk = e.data.asalproduk
+                        //     $scope.dataSourceDetailMT = new kendo.data.DataSource({
+                        //         data: DataTotalMataAnggaran
+                        //     });
+                        //     DataTabKeteranganBelanja = []; //e.data.keteranganbelanja
+                        //     // let DataInsertAlokasi = [];
+                        //     let dataAlokasi = e.data.alokasi;
+                        //     for (let index = 0; index < e.data.keteranganbelanja.length; index++) {
+                        //         let element = e.data.keteranganbelanja[index];
+                        //         for (let aa = 0; aa < dataAlokasi.length; aa++) {
+                        //             let alokasielement = dataAlokasi[aa];
+                        //             for (let bb = 0; bb < alokasielement.length; bb++) {
+                        //                 let elementbb = alokasielement[bb];
+                        //                 if (elementbb.kodemataanggaran == element.kodemataanggaran) {
+                        //                     if (elementbb.bulanint == 1) {
+                        //                         elementbb.jan = elementbb.nilai
+                        //                     }
+                        //                     if (elementbb.bulanint == 2) {
+                        //                         elementbb.feb = elementbb.nilai
+                        //                     }
+                        //                     if (elementbb.bulanint == 3) {
+                        //                         elementbb.mar = elementbb.nilai
+                        //                     }
+                        //                     if (elementbb.bulanint == 4) {
+                        //                         elementbb.apr = elementbb.nilai
+                        //                     }
+                        //                     if (elementbb.bulanint == 5) {
+                        //                         elementbb.mei = elementbb.nilai
+                        //                     }
+                        //                     if (elementbb.bulanint == 6) {
+                        //                         elementbb.jun = elementbb.nilai
+                        //                     }
+                        //                     if (elementbb.bulanint == 7) {
+                        //                         elementbb.jul = elementbb.nilai
+                        //                     }
+                        //                     if (elementbb.bulanint == 8) {
+                        //                         elementbb.agt = elementbb.nilai
+                        //                     }
+                        //                     if (elementbb.bulanint == 9) {
+                        //                         elementbb.sep = elementbb.nilai
+                        //                     }
+                        //                     if (elementbb.bulanint == 10) {
+                        //                         elementbb.okt = elementbb.nilai
+                        //                     }
+                        //                     if (elementbb.bulanint == 11) {
+                        //                         elementbb.nov = elementbb.nilai
+                        //                     }
+                        //                     if (elementbb.bulanint == 12) {
+                        //                         elementbb.des = elementbb.nilai
+                        //                     }
 
-                                            elementbb.subtotal = element.subtotal
-                                        }
-                                        DataTabKeteranganBelanja.push(elementbb)
-                                    }
+                        //                     elementbb.subtotal = element.subtotal
+                        //                 }
+                        //                 DataTabKeteranganBelanja.push(elementbb)
+                        //             }
 
-                                }
-                                // DataInsertAlokasi.push(element)
+                        //         }
+                        //         // DataInsertAlokasi.push(element)
 
-                            }
-                            // DataTabKeteranganBelanja = DataInsertAlokasi
-                            // $scope.item.dataKeteranganBelanja = DataInsertAlokasi
-                            $scope.dataSourceKeteranganBelanja = new kendo.data.DataSource({
-                                data: e.data.alokasimataanggaran,
-                                group: $scope.groupmataanggaran,
-                            });
-                            console.log($scope.dataSourceKeteranganBelanja);
-                            $scope.dataSearchSourceKeteranganBelanja = $scope.dataSourceKeteranganBelanja
+                        //     }
+                        //     // DataTabKeteranganBelanja = DataInsertAlokasi
+                        //     // $scope.item.dataKeteranganBelanja = DataInsertAlokasi
+                        //     $scope.dataSourceKeteranganBelanja = new kendo.data.DataSource({
+                        //         data: e.data.alokasimataanggaran,
+                        //         group: $scope.groupmataanggaran,
+                        //     });
+                        //     console.log($scope.dataSourceKeteranganBelanja);
+                        //     $scope.dataSearchSourceKeteranganBelanja = $scope.dataSourceKeteranganBelanja
 
-                            $scope.dataSourceDetailKeteranganBelanja = new kendo.data.DataSource({
-                                data: e.data.detailalokasimataanggaran,
-                            });
+                        //     $scope.dataSourceDetailKeteranganBelanja = new kendo.data.DataSource({
+                        //         data: e.data.detailalokasimataanggaran,
+                        //     });
 
-                        })
+                        // })
                     })
                     
                 // $scope.popupDokter.center().open();
@@ -3778,85 +3793,85 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
                             $scope.semuaanggaran = true
                         }
 
-                        medifirstService.get("perencanaan/get-total-mata-anggaran?tahun=" + moment($scope.item.thnAnggaran).format('YYYY') + "&tahap=" + $scope.item.tahapdetail.id + "&idpegawai=" + idpegawai + "&cek=" + $scope.item.isCekAdaAnggaranSaja + "&noreckegiatan=" + $scope.idkegiatananggaran).then(function (e) {
-                            DataTotalMataAnggaran = e.data.data
-                            $scope.listAsalProduk = e.data.asalproduk
-                            $scope.dataSourceDetailMT = new kendo.data.DataSource({
-                                data: DataTotalMataAnggaran
-                            });
-                            DataTabKeteranganBelanja = []; //e.data.keteranganbelanja
-                            // let DataInsertAlokasi = [];
-                            console.log(e.data.keteranganbelanja)
-                            let dataAlokasi = e.data.alokasi;
-                            for (let index = 0; index < e.data.keteranganbelanja.length; index++) {
-                                let element = e.data.keteranganbelanja[index];
-                                for (let aa = 0; aa < dataAlokasi.length; aa++) {
-                                    let alokasielement = dataAlokasi[aa];
-                                    for (let bb = 0; bb < alokasielement.length; bb++) {
-                                        let elementbb = alokasielement[bb];
-                                        if (elementbb.kodemataanggaran == element.kodemataanggaran) {
-                                            if (elementbb.bulanint == 1) {
-                                                elementbb.jan = elementbb.nilai
-                                            }
-                                            if (elementbb.bulanint == 2) {
-                                                elementbb.feb = elementbb.nilai
-                                            }
-                                            if (elementbb.bulanint == 3) {
-                                                elementbb.mar = elementbb.nilai
-                                            }
-                                            if (elementbb.bulanint == 4) {
-                                                elementbb.apr = elementbb.nilai
-                                            }
-                                            if (elementbb.bulanint == 5) {
-                                                elementbb.mei = elementbb.nilai
-                                            }
-                                            if (elementbb.bulanint == 6) {
-                                                elementbb.jun = elementbb.nilai
-                                            }
-                                            if (elementbb.bulanint == 7) {
-                                                elementbb.jul = elementbb.nilai
-                                            }
-                                            if (elementbb.bulanint == 8) {
-                                                elementbb.agt = elementbb.nilai
-                                            }
-                                            if (elementbb.bulanint == 9) {
-                                                elementbb.sep = elementbb.nilai
-                                            }
-                                            if (elementbb.bulanint == 10) {
-                                                elementbb.okt = elementbb.nilai
-                                            }
-                                            if (elementbb.bulanint == 11) {
-                                                elementbb.nov = elementbb.nilai
-                                            }
-                                            if (elementbb.bulanint == 12) {
-                                                elementbb.des = elementbb.nilai
-                                            }
+                        // medifirstService.get("perencanaan/get-total-mata-anggaran?tahun=" + moment($scope.item.thnAnggaran).format('YYYY') + "&tahap=" + $scope.item.tahapdetail.id + "&idpegawai=" + idpegawai + "&cek=" + $scope.item.isCekAdaAnggaranSaja + "&noreckegiatan=" + $scope.idkegiatananggaran).then(function (e) {
+                        //     DataTotalMataAnggaran = e.data.data
+                        //     $scope.listAsalProduk = e.data.asalproduk
+                        //     $scope.dataSourceDetailMT = new kendo.data.DataSource({
+                        //         data: DataTotalMataAnggaran
+                        //     });
+                        //     DataTabKeteranganBelanja = []; //e.data.keteranganbelanja
+                        //     // let DataInsertAlokasi = [];
+                        //     console.log(e.data.keteranganbelanja)
+                        //     let dataAlokasi = e.data.alokasi;
+                        //     for (let index = 0; index < e.data.keteranganbelanja.length; index++) {
+                        //         let element = e.data.keteranganbelanja[index];
+                        //         for (let aa = 0; aa < dataAlokasi.length; aa++) {
+                        //             let alokasielement = dataAlokasi[aa];
+                        //             for (let bb = 0; bb < alokasielement.length; bb++) {
+                        //                 let elementbb = alokasielement[bb];
+                        //                 if (elementbb.kodemataanggaran == element.kodemataanggaran) {
+                        //                     if (elementbb.bulanint == 1) {
+                        //                         elementbb.jan = elementbb.nilai
+                        //                     }
+                        //                     if (elementbb.bulanint == 2) {
+                        //                         elementbb.feb = elementbb.nilai
+                        //                     }
+                        //                     if (elementbb.bulanint == 3) {
+                        //                         elementbb.mar = elementbb.nilai
+                        //                     }
+                        //                     if (elementbb.bulanint == 4) {
+                        //                         elementbb.apr = elementbb.nilai
+                        //                     }
+                        //                     if (elementbb.bulanint == 5) {
+                        //                         elementbb.mei = elementbb.nilai
+                        //                     }
+                        //                     if (elementbb.bulanint == 6) {
+                        //                         elementbb.jun = elementbb.nilai
+                        //                     }
+                        //                     if (elementbb.bulanint == 7) {
+                        //                         elementbb.jul = elementbb.nilai
+                        //                     }
+                        //                     if (elementbb.bulanint == 8) {
+                        //                         elementbb.agt = elementbb.nilai
+                        //                     }
+                        //                     if (elementbb.bulanint == 9) {
+                        //                         elementbb.sep = elementbb.nilai
+                        //                     }
+                        //                     if (elementbb.bulanint == 10) {
+                        //                         elementbb.okt = elementbb.nilai
+                        //                     }
+                        //                     if (elementbb.bulanint == 11) {
+                        //                         elementbb.nov = elementbb.nilai
+                        //                     }
+                        //                     if (elementbb.bulanint == 12) {
+                        //                         elementbb.des = elementbb.nilai
+                        //                     }
 
-                                            elementbb.subtotal = element.subtotal
-                                        }
-                                        DataTabKeteranganBelanja.push(elementbb)
-                                    }
+                        //                     elementbb.subtotal = element.subtotal
+                        //                 }
+                        //                 DataTabKeteranganBelanja.push(elementbb)
+                        //             }
 
-                                }
-                                // DataInsertAlokasi.push(element)
+                        //         }
+                        //         // DataInsertAlokasi.push(element)
 
-                            }
-                            // DataTabKeteranganBelanja = DataInsertAlokasi
-                            // $scope.item.dataKeteranganBelanja = DataInsertAlokasi
-                            $scope.dataSourceKeteranganBelanja = new kendo.data.DataSource({
-                                data: e.data.alokasimataanggaran,
-                                group: $scope.groupmataanggaran,
+                        //     }
+                        //     // DataTabKeteranganBelanja = DataInsertAlokasi
+                        //     // $scope.item.dataKeteranganBelanja = DataInsertAlokasi
+                        //     $scope.dataSourceKeteranganBelanja = new kendo.data.DataSource({
+                        //         data: e.data.alokasimataanggaran,
+                        //         group: $scope.groupmataanggaran,
 
-                            });
+                        //     });
 
 
-                            $scope.dataSearchSourceKeteranganBelanja = $scope.dataSourceKeteranganBelanja
+                        //     $scope.dataSearchSourceKeteranganBelanja = $scope.dataSourceKeteranganBelanja
 
-                            $scope.dataSourceDetailKeteranganBelanja = new kendo.data.DataSource({
-                                data: e.data.detailalokasimataanggaran,
-                            });
+                        //     $scope.dataSourceDetailKeteranganBelanja = new kendo.data.DataSource({
+                        //         data: e.data.detailalokasimataanggaran,
+                        //     });
 
-                        })
+                        // })
                     })
                     
             }
@@ -5674,14 +5689,14 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
                     $scope.pegawaiLogin = medifirstService.getPegawaiLogin();
                     idpegawai = $scope.pegawaiLogin.id
 
-                    console.log($scope.item.isCekAdaAnggaranSaja)
-                    medifirstService.get("perencanaan/get-total-mata-anggaran?tahun=" + moment($scope.item.thnAnggaran).format('YYYY') + "&tahap=" + $scope.item.tahapdetail.id + "&idpegawai=" + idpegawai + "&cek=" + $scope.item.isCekAdaAnggaranSaja + "&noreckegiatan=" + $scope.idkegiatananggaran).then(function (e) {
-                        DataTotalMataAnggaran = e.data.data
-                        $scope.listAsalProduk = e.data.asalproduk
-                        $scope.dataSourceDetailMT = new kendo.data.DataSource({
-                            data: DataTotalMataAnggaran
-                        });
-                    });
+                    // console.log($scope.item.isCekAdaAnggaranSaja)
+                    // medifirstService.get("perencanaan/get-total-mata-anggaran?tahun=" + moment($scope.item.thnAnggaran).format('YYYY') + "&tahap=" + $scope.item.tahapdetail.id + "&idpegawai=" + idpegawai + "&cek=" + $scope.item.isCekAdaAnggaranSaja + "&noreckegiatan=" + $scope.idkegiatananggaran).then(function (e) {
+                    //     DataTotalMataAnggaran = e.data.data
+                    //     $scope.listAsalProduk = e.data.asalproduk
+                    //     $scope.dataSourceDetailMT = new kendo.data.DataSource({
+                    //         data: DataTotalMataAnggaran
+                    //     });
+                    // });
 
                 })
             }
@@ -6277,9 +6292,9 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
                     let myRega1 = new RegExp(a1 + ".*")
                     let myRegb1 = new RegExp(a1 + '.' + b1 + ".*")
                     let myRegc1 = new RegExp(a1 + '.' + b1 + '.' + c1 + ".*")
-                    console.log(myRega1)
-                    console.log(myRegb1)
-                    console.log(myRegc1)
+                    // console.log(myRega1)
+                    // console.log(myRegb1)
+                    // console.log(myRegc1)
                     let d1 = dataMataAnggaranSelected.kodemataanggaran
                     $scope.rcn.totallv1 = 0
                     $scope.rcn.totallv2 = 0
@@ -6333,17 +6348,20 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
                     }
 
                     let TotalAnggaran = 0;
-                    medifirstService.get("anggaran/get-keterangan-belanja?norec=" + $scope.item.norec+"&idmataanggaran="+$scope.rcn.idmataanggaran).then(function (e) {
-                        DataKeteranganBelanja = e.data.data
-                        $scope.dataSourceRincianAnggaran = new kendo.data.DataSource({
-                            data: DataKeteranganBelanja
-                        });
-                        for (let index = 0; index < DataKeteranganBelanja.length; index++) {
-                            let element = DataKeteranganBelanja[index];
-                            DataKeteranganBelanja[index].statCheckbox2 = false
-                            TotalAnggaran = TotalAnggaran + parseFloat(element.subtotal)
-                        }
-                        TotalAnggaran = parseFloat(TotalAnggaran)
+                    medifirstService.get("anggaran/get-keterangan-belanja" 
+                        + "?norec=" + $scope.item.norec 
+                        + "&idmataanggaran=" + dataMataAnggaranSelected.idmataanggaran)
+                        .then(function (e) {
+                            DataKeteranganBelanja = e.data.data
+                            $scope.dataSourceRincianAnggaran = new kendo.data.DataSource({
+                                data: DataKeteranganBelanja
+                            });
+                            for (let index = 0; index < DataKeteranganBelanja.length; index++) {
+                                let element = DataKeteranganBelanja[index];
+                                DataKeteranganBelanja[index].statCheckbox2 = false
+                                TotalAnggaran = TotalAnggaran + parseFloat(element.subtotal)
+                            }
+                            TotalAnggaran = parseFloat(TotalAnggaran)
                         // $scope.rcn.paguAnggaran = formatRupiah(0, "Rp. ")
                         // $scope.rcn.totalAnggaran = formatRupiah(TotalAnggaran, "Rp. ")
                         //$scope.rcn.sisaAnggaran = formatRupiah(TotalAnggaran - 0, "Rp. ")
@@ -8539,6 +8557,17 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
                         $scope.item.targetKinerjaMasukan = formatRupiah(total, "Rp. ")
                         
                     })
+
+
+                    medifirstService.get("anggaran/get-total-mataanggaran-transaksi" 
+                        + "?norec_transakianggaran=" + $scope.norecTransaksi)
+                        .then(function(response) {
+                            
+
+                            $scope.dataSourceDetailMT = new kendo.data.DataSource({
+                                data: response.data.mataanggaran
+                            });
+                        })
                 // }
                 
                 $scope.popupRincianAnggaran.center().open()
