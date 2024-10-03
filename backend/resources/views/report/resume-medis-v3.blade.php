@@ -126,7 +126,7 @@
             </tr>
             <tr>
                 <th colspan="2">
-                    RINGKASAN PULANG JIWA
+                    RINGKASAN PULANG
                 </th>
             </tr>
             <tr>
