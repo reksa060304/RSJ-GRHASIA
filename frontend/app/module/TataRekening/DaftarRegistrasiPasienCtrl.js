@@ -146,15 +146,15 @@ define(['initialize'], function (initialize) {
 						"width": "150px",
 						"template": "<span class='style-left'>#: namaruangan #</span>"
 					},
-					{
-						"field": "namadokter",
-						"title": "Nama Dokter",
-						"width": "150px",
-						"template": '# if( namadokter==null) {# - # } else {# #= namadokter # #} #'
-					},
+					// {
+					// 	"field": "namadokter",
+					// 	"title": "Nama Dokter",
+					// 	"width": "150px",
+					// 	"template": '# if( namadokter==null) {# - # } else {# #= namadokter # #} #'
+					// },
                     {
 						"field": "listdpjp",
-						"title": "Pemindahan DPJP",
+						"title": "Nama Dokter",
 						"width": "150px",
 					},
 					{

@@ -285,7 +285,7 @@ class RawatInapController extends ApiController
             if(count($formDPJP) > 0){
                 $row->listdpjp = $formDPJP[0]->formdpjp;
             }else{
-                $row->listdpjp = '';
+                $row->listdpjp = $row->namadokter;
             }
 
         }

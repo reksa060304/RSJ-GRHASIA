@@ -200,14 +200,14 @@ define(['initialize'], function (initialize) {
                         "title": "Umur",
                         "width": "80px"
                     },
-                    {
-                        "field":"namadokter",
-                        "title":"Dokter",
-                        "width":"100px"     
-                    },
+                    // {
+                    //     "field":"namadokter",
+                    //     "title":"Dokter",
+                    //     "width":"100px"     
+                    // },
                     {
                         "field": "listdpjp",
-                        "title": "Pemindahan DPJP",
+                        "title": "Dokter",
                         "width": "100px"
                     },  
                     {
