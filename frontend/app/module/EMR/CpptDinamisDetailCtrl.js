@@ -676,13 +676,13 @@ define(['initialize', 'Configuration'], function (initialize, config) {
                     //     namaEMR : $scope.cc.emrfk,
                     //     nomorEMR : e.data.data.noemr 
                     // });
-                    if(kelompokUser == 'dokter') {
+                    // if(kelompokUser == 'dokter') {
                         let params = $scope.cc.noregistrasi
                         if ($scope.cc.noreservasi != undefined && $scope.cc.noreservasi != '' && $scope.cc.noreservasi != 'Kios-K') {
                             params = $scope.cc.noreservasi
                         }
                         saveAntrol(5, params, $scope.cc.norec_pd)
-                    }
+                    // }
                     medifirstService.postLogging('EMR', 'norec emrpasien_t', e.data.data.norec,
                         'CPPT Rawat Jalan' + ' dengan No EMR - ' + e.data.data.noemr + ' pada No Registrasi '
                         + $scope.cc.noregistrasi).then(function (res) {
