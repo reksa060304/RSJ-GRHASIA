@@ -165,10 +165,10 @@
                         <td colspan="2" style="text-align:center; padding-left: 50px; padding-bottom: 80px; padding-top: 5px; width: 100px;">
                             <font style="font-size: 12pt" color="#000000"></font>
                         </td>
-                        <td style="text-align:center; padding-left: 50px; padding-bottom: 80px; padding-top: 5px; width: 100px;">
+                        {{-- <td style="text-align:center; padding-left: 50px; padding-bottom: 80px; padding-top: 5px; width: 100px;">
                             <font style="font-size: 12pt" color="#000000"></font>
-                        </td>
-                        <td colspan="2" style="padding: 10px; padding-bottom: 80px; padding-top: 5px; width: 100px;" align="center">
+                        </td> --}}
+                        <td colspan="3" style="padding: 10px; padding-bottom: 80px; padding-top: 5px; width: 100px;" align="center">
                             <font style="font-size: 12pt" color="#000000">Pejabat Pelaksana<br>Teknis Kegiatan (PPTK)</font>
                         </td>
                     </tr>
@@ -176,10 +176,10 @@
                         <td colspan="2" style="text-align:center; padding-left: 50px; padding-bottom: 5px; padding-top: 5px; width: 120px;">
                             <font style="font-size: 12pt" color="#000000"></font>
                         </td>
-                        <td style="text-align:center; padding-left: 50px; padding-bottom: 5px; padding-top: 5px; width: 80px;">
+                        {{-- <td style="text-align:center; padding-left: 50px; padding-bottom: 5px; padding-top: 5px; width: 80px;">
                             <font style="font-size: 12pt" color="#000000"></font>
-                        </td>
-                        <td colspan="2" style="padding: 10px; padding-bottom: 5px; padding-top: 5px; width: 100px;" align="center">
+                        </td> --}}
+                        <td colspan="3" style="padding: 10px; padding-bottom: 5px; padding-top: 5px; width: 100px;" align="center">
                             <font style="font-size: 12pt" color="#000000"><u>{{ $kegiatan[0]->namalengkap}}</u><br>NIP. {{ $kegiatan[0]->nippns}}</font>
                         </td>
                     </tr>
