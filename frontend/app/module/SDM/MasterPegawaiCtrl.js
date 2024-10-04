@@ -3282,7 +3282,8 @@ $scope.formatRupiah = function (value, currency) {
 					"itemGajiBerkala.bulanmasakerjagolongan|ng-model|Bulan Gaji Berkala",
 					"itemGajiBerkala.noskcetak|ng-model|No SK Lama",
 					"itemGajiBerkala.jenissk|ng-model|Jenis SK",
-					// "itemGajiBerkala.masakerjagolongan|ng-model|Masa Kerja Golongan",
+					"itemGajiBerkala.masakerjagolongan|ng-model|Masa Kerja Golongan",
+					"itemGajiBerkala.suratkeputusanBaru|ng-model|Surat Keputusan",
 					// "itemPandG.jabatanTtd|k-ng-model|Penandatangan Jabatan",
 				];
 
@@ -3316,7 +3317,8 @@ $scope.formatRupiah = function (value, currency) {
 								data.jenisskco = $scope.gajilamanya
 								data.masakerjagolongan = $scope.itemGajiBerkala.tahunmasakerjagolongan + " tahun " + $scope.itemGajiBerkala.bulanmasakerjagolongan + " bulan"
 								data.tgltmtcetak = moment($scope.itemGajiBerkala.tanggaltmtcetak).format('YYYY-MM-DD HH:mm')
-								data.tglskbaru= moment($scope.itemGajiBerkala.tanggalskbaru).format('YYYY-MM-DD HH:mm')
+								data.tglskbaru = moment($scope.itemGajiBerkala.tanggalskbaru).format('YYYY-MM-DD HH:mm')
+								data.suratkeputusan = $scope.itemGajiBerkala.suratkeputusanBaru
 								dataRiwayatGajiBerkala[i] = data;
 
 								$scope.gridRiwayatGajiBerkala = new kendo.data.DataSource({
@@ -4527,7 +4529,8 @@ $scope.formatRupiah = function (value, currency) {
 						$scope.item.MasaKerja = masaKerja.year + ' th, ' + masaKerja.month + ' bln, ' + masaKerja.day + ' hr'
 					}
                 }
-            });
+			});
+			
 			$scope.getDataGolongan = function () {
 				var nominal = 0;
 				var pindah = 0;
@@ -4578,9 +4581,40 @@ $scope.formatRupiah = function (value, currency) {
 				// medifirstService.get('nominal/get-nominal?golongan=' + $scope.itemGajiBerkala.golongan.id + '&mkg=' + mkgnya + '&pegawai='+ $scope.item.idPegawai).then(function (data) {
 				// 	$scope.itemGajiBerkala.gajiakhir = data.data.gajigolongan[0].gajipokok
 				// 	$scope.itemGajiBerkala.gajiawal = data.data.gajiawal[0].nominal
-				// })
+				// })
 				
 			}
+
+			$scope.getDataGolonganKGB = function () {
+				var nominal = 0;
+				var golongan = "";
+			
+				
+				if ($scope.itemGajiBerkala.masakerjagolongan == undefined) {
+					toastr.error('Masukkan Masa Kerja Golongan Terlebih Dahulu!');
+					return;
+				}
+			
+				
+				var masaKerja = $scope.itemGajiBerkala.masakerjagolongan.split(' ');
+				var tahun = parseInt(masaKerja[0]);
+				var bulan = parseInt(masaKerja[2]);
+			
+				
+				if ($scope.itemGajiBerkala.suratkeputusanBaru == undefined) {
+					toastr.error('Pilih Surat Keputusan Terlebih Dahulu!');
+					return;
+				}
+			
+				
+				medifirstService.get('nominal/get-nominal?golongan=' + $scope.itemGajiBerkala.golongan.id + '&mkg=' + tahun + '&pegawai=' + $scope.item.idPegawai + '&sk=' + $scope.itemGajiBerkala.suratkeputusanBaru.id).then(function (data) {
+					$scope.itemGajiBerkala.tahunmasakerjagolongan = tahun;
+					$scope.itemGajiBerkala.bulanmasakerjagolongan = bulan;
+					$scope.itemGajiBerkala.masakerjagolongan = $scope.itemGajiBerkala.tahunmasakerjagolongan + " tahun " + $scope.itemGajiBerkala.bulanmasakerjagolongan + " bulan ";
+					$scope.itemGajiBerkala.gajiakhir = data.data.gajigolongan[0].gajipokok;
+				});
+			}
+
 			function cetakGajiBerkala(e){
 				
 				e.preventDefault();
@@ -5162,27 +5196,52 @@ $scope.formatRupiah = function (value, currency) {
 			$scope.$watch('gajilamanya', function (newValue, oldValue) {
 				if (newValue != oldValue) {
 					$scope.itemGajiBerkala = {}
-					if($scope.gajilamanya == undefined){
-						return
+					if ($scope.gajilamanya == undefined) {
+						return;
 					}
 					medifirstService.get('sdm/get-gaji-pokok-lama?gaji=' + $scope.gajilamanya + '&idpegawai=' + $scope.item.idPegawai).then(function (data) {
 						var datas = data.data.data[0]
 						// $scope.itemGajiBerkala.jenissk = $scope.gajilamanya
 						if ($scope.gajilamanya == 'KP') {
-							$scope.itemGajiBerkala.gajiawal = datas.nominal
-							$scope.itemGajiBerkala.tanggalsk = new Date(moment(datas.tglsk).format('YYYY-MM-DD'))
-							$scope.itemGajiBerkala.noskcetak = datas.nosk
-							$scope.itemGajiBerkala.tanggaltmtcetak = new Date(moment(datas.tgltmt).format('YYYY-MM-DD'))
+							$scope.itemGajiBerkala.gajiawal = datas.nominal;
+							$scope.itemGajiBerkala.tanggalsk = new Date(moment(datas.tglsk).format('YYYY-MM-DD'));
+							$scope.itemGajiBerkala.noskcetak = datas.nosk;
+							$scope.itemGajiBerkala.tanggaltmtcetak = new Date(moment(datas.tgltmt).format('YYYY-MM-DD'));
 						} else {
-							$scope.itemGajiBerkala.gajiawal = datas.gajiakhir
-							$scope.itemGajiBerkala.tanggalsk = new Date(moment(datas.tglskbaru).format('YYYY-MM-DD'))
-							$scope.itemGajiBerkala.noskcetak = datas.nosk
-							$scope.itemGajiBerkala.tanggaltmtcetak = new Date(moment(datas.tgltmt).format('YYYY-MM-DD'))
+							$scope.itemGajiBerkala.gajiawal = datas.gajiakhir;
+							$scope.itemGajiBerkala.tanggalsk = new Date(moment(datas.tglskbaru).format('YYYY-MM-DD'));
+							$scope.itemGajiBerkala.noskcetak = datas.nosk;
+							$scope.itemGajiBerkala.tanggaltmtcetak = new Date(moment(datas.tgltmt).format('YYYY-MM-DD'));
+							$scope.itemGajiBerkala.masakerjagolongan = datas.masakerjagolongan;
+							$scope.itemGajiBerkala.masakerjagolonganlama = datas.masakerjagolongan;
+						}
+			
+						
+						if ($scope.itemGajiBerkala.tanggaltmtcetak) {
+							var tmtBaru = new Date($scope.itemGajiBerkala.tanggaltmtcetak);
+							tmtBaru.setFullYear(tmtBaru.getFullYear() + 2);
+							$scope.itemGajiBerkala.tanggaltmt = tmtBaru;
 						}
 
-					})
+						if ($scope.itemGajiBerkala.masakerjagolongan) {
+							var masaKerja = $scope.itemGajiBerkala.masakerjagolongan.split(" ");
+							var tahun = parseInt(masaKerja[0]); 
+							var bulan = parseInt(masaKerja[2]) || 0;  
+						
+							if (!isNaN(tahun)) {
+								tahun += 2;
+
+								if (bulan >= 12) {
+									tahun += Math.floor(bulan / 12); 
+									bulan = bulan % 12; 
+								}
+								$scope.itemGajiBerkala.masakerjagolongan = tahun + " tahun " + bulan + " bulan";
+							}
+						}
+					});
 				}
-			})
+			});
+			
 			$scope.$watch('tunjangan', function (newValue, oldValue) {
 				var tunjangan = 0
 				if($scope.datakeluarga == 'isanak'){

@@ -1822,7 +1822,7 @@
 								<div class="panel-body">
 									<div class="grid_12">
 										<div class="grid_4">
-											<md-radio-group ng-model="gajilamanya" >
+											<md-radio-group ng-model="gajilamanya">
 												<md-radio-button value="KP" class="md-primary">Pangkat Golongan
 												</md-radio-button>
 												<md-radio-button value="KGB" class="md-primary">Gaji Berkala
@@ -1837,6 +1837,23 @@
 												<input c-text-box type="input" filter="'varchar'" class="k-textbox"
 													ng-model="itemGajiBerkala.gajiawal" />
 											</div>
+										</div>
+										<div class="grid_4">
+											<div class="grid_12">
+												<label c-label>Masa Kerja Golongan</label>
+											</div>
+											<div class="grid_12">
+												<input c-text-box type="input" filter="'varchar'" class="k-textbox"
+													ng-model="itemGajiBerkala.masakerjagolonganlama"  disabled/>
+											</div>
+											<!-- <div class="grid_6">
+												<input c-text-box type="text" filter="'varchar'" class="k-textbox"
+													ng-model="itemGajiBerkala.tahunmasakerjagolongan" placeholder="tahun" />
+											</div>
+											<div class="grid_6">
+												<input c-text-box type="text" filter="'varchar'" class="k-textbox"
+													ng-model="itemGajiBerkala.bulanmasakerjagolongan" placeholder="bulan" />
+											</div> -->
 										</div>
 										<!-- <div class="grid_4">
 											<div class="grid_12">
@@ -1873,7 +1890,7 @@
 										</div>
 										<div class="grid_4">
 											<div class="grid_12">
-												<label c-label>No SK(Lama)</label>
+												<label c-label>No Surat Keputusan(Lama)</label>
 											</div>
 											<div class="grid_12">
 												<input c-text-box type="input" filter="'varchar'" class="k-textbox"
@@ -1896,7 +1913,7 @@
 												<div class="grid_12">
 													<input style="width: 100%;" kendo-combo-box k-ng-model="itemGajiBerkala.suratkeputusanBaru"
 														k-data-text-field="'nosk2'" k-data-value-field="'id'" k-auto-bind="true"
-														k-data-source="ListSuratKeputusan" k-on-change="getDataGolongan()" />
+														k-data-source="ListSuratKeputusan" k-on-change="getDataGolonganKGB()" />
 													
 												</div>
 											</div>
@@ -1904,7 +1921,7 @@
 										<div class="grid_12">
 											<div class="grid_4">
 												<div class="grid_12">
-													<label c-label>No SK</label>
+													<label c-label>No Surat Keputusan</label>
 												</div>
 												<div class="grid_12">
 													<input c-text-box type="input" filter="'varchar'" class="k-textbox"
@@ -1918,7 +1935,7 @@
 												<div class="grid_12">
 													<input style="width: 100%;" kendo-combo-box k-ng-model="itemGajiBerkala.golongan"
 														k-data-text-field="'golongan'" k-data-value-field="'id'" k-auto-bind="true"
-														k-data-source="ListGolonganGajiBerkala" />
+														k-data-source="ListGolonganGajiBerkala" k-on-change="getDataGolonganKGB()" />
 													<!-- k-on-change="getDataGolongan()" -->
 												</div>
 											</div>
@@ -1929,7 +1946,7 @@
 												<div class="clear"></div>
 												<div class="grid_12">
 													<input style="width: 100%" kendo-date-picker k-ng-model="itemGajiBerkala.tanggalskbaru"
-														placeholer="dd-MM-yyyy" k-format="'dd-MM-yyyy'" parsedate="dd-MM-yyyy"/>
+														placeholer="dd-MM-yyyy" k-format="'dd-MM-yyyy'" parsedate="dd-MM-yyyy" k-on-change="getDataGolonganKGB()"/>
 												</div>
 											</div>
 											
@@ -1944,7 +1961,7 @@
 												<div class="clear"></div>
 												<div class="grid_12">
 													<input style="width: 100%" kendo-date-picker k-ng-model="itemGajiBerkala.tanggaltmt"
-														placeholer="dd-MM-yyyy" k-format="'dd-MM-yyyy'" parsedate="dd-MM-yyyy" k-on-change="getDataGolongan()" />
+														placeholer="dd-MM-yyyy" k-format="'dd-MM-yyyy'" parsedate="dd-MM-yyyy" k-on-change="getDataGolonganKGB()" />
 												</div>
 											</div>
 											<div class="grid_4">
@@ -1953,16 +1970,16 @@
 												</div>
 												<div class="grid_12">
 													<input c-text-box type="input" filter="'varchar'" class="k-textbox"
-														ng-model="itemGajiBerkala.masakerjagolongan" ng-hide="true" />
+														ng-model="itemGajiBerkala.masakerjagolongan" k-on-change="getDataGolonganKGB()"/>
 												</div>
-												<div class="grid_6">
+												<!-- <div class="grid_6">
 													<input c-text-box type="text" filter="'varchar'" class="k-textbox"
 														ng-model="itemGajiBerkala.tahunmasakerjagolongan" placeholder="tahun" />
 												</div>
 												<div class="grid_6">
 													<input c-text-box type="text" filter="'varchar'" class="k-textbox"
 														ng-model="itemGajiBerkala.bulanmasakerjagolongan" placeholder="bulan" />
-												</div>
+												</div> -->
 											</div>
 											<div class="grid_4">
 												<div class="grid_12">
