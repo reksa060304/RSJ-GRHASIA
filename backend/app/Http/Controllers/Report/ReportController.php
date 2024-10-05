@@ -18329,15 +18329,17 @@ public function suratBuktiPengembalian(Request $request)
         $profile = DB::select("select*from profile_m where kdprofile = $kdProfile and statusenabled = true");
         if (isset($request['rgb'])) {
             $data = \DB::select(DB::raw("
-            SELECT rgb.jenisskco, rgb.jenissk, rgb.nosk, pg.namalengkap, pg.nippns, gol.namaexternal || ' / ' || gol.reportdisplay as panggol,gol.reportdisplay as golongan, 'Rumah Sakit Jiwa Grhasia Dinkes DIY' as instansi, rgb.gajiawal, rgb.noskcetak as sklama, rgb.tglsk as tglsklama, rgb.tgltmtcetak as tmtlama, rgb.gajiakhir, rgb.masakerjagolongan, rgb.tgltmt as tmtbaru FROM riwayatgajiberkala_t rgb 
+            SELECT rgb.jenisskco, rgb.jenissk, rgb.nosk, pg.namalengkap, pg.nippns, gol.namaexternal || ' / ' || gol.reportdisplay as panggol,gol.reportdisplay as golongan, 'Rumah Sakit Jiwa Grhasia Dinkes DIY' as instansi, rgb.gajiawal, rgb.noskcetak as sklama, rgb.tglsk as tglsklama, rgb.tgltmtcetak as tmtlama, rgb.gajiakhir, rgb.masakerjagolongan, rgb.tgltmt as tmtbaru, rgb.objectsuratkeputusanfk AS suratkeputusanfk, skp.namask FROM riwayatgajiberkala_t rgb 
             inner join pegawai_m pg on pg.id= rgb.objectpegawaifk
+            JOIN suratkeputusan_m skp ON skp.id = rgb.objectsuratkeputusanfk
             inner join sdm_golongan_m gol  on gol.id = rgb.objectgolonganfk
             where rgb.norec ilike '$request[norec]'
             "));
         }else{
             $data = \DB::select(DB::raw("
-            SELECT rgb.jenisskco, rgb.jenissk, rgb.nosk, pg.namalengkap, pg.nippns, gol.namaexternal || ' / ' || gol.reportdisplay as panggol,gol.reportdisplay as golongan, 'Rumah Sakit Jiwa Grhasia Dinkes DIY' as instansi, rgb.gajiawal, rgb.noskcetak as sklama, rgb.tglsk as tglsklama, rgb.tgltmtcetak as tmtlama, rgb.gajiakhir, rgb.masakerjagolongan, rgb.tgltmt as tmtbaru FROM riwayatgajiberkala_t rgb 
+            SELECT rgb.jenisskco, rgb.jenissk, rgb.nosk, pg.namalengkap, pg.nippns, gol.namaexternal || ' / ' || gol.reportdisplay as panggol,gol.reportdisplay as golongan, 'Rumah Sakit Jiwa Grhasia Dinkes DIY' as instansi, rgb.gajiawal, rgb.noskcetak as sklama, rgb.tglsk as tglsklama, rgb.tgltmtcetak as tmtlama, rgb.gajiakhir, rgb.masakerjagolongan, rgb.tgltmt as tmtbaru, rgb.objectsuratkeputusanfk AS suratkeputusanfk, skp.namask FROM riwayatgajiberkala_t rgb 
             inner join pegawai_m pg on pg.id= rgb.objectpegawaifk
+            JOIN suratkeputusan_m skp ON skp.id = rgb.objectsuratkeputusanfk
             inner join sdm_golongan_m gol  on gol.id = rgb.objectgolonganfk
             where rgb.norec ilike '$request[id_pegawai]'"));
         }
