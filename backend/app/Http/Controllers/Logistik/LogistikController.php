@@ -10083,7 +10083,8 @@ class LogistikController extends ApiController{
                 'ss.id as ssid','ss.satuanstandar','ra.qtyprodukaset','spd.norec as norecspd','ap.asalproduk','ra.noregisteraset_int',
                 'ra.masaberlakusertifikat','ra.sisaumur','ra.noseri','ra.tahunperolehan','ra.objectmerkprodukfk as merkid','mp.merkproduk',
                 'ra.tahunperolehan','tp.typeproduk','ra.nilaisisa','ra.luasbangunan','ra.luaslantai','md1.nama as tingkat','md2.nama as kondisibanguanan','md3.nama as kondisibarang','md4.nama as beton'
-                ,'ra.tingkatfk','ra.kondisbanguanfk','ra.kondisibarangfk','ra.betonfk','ra.luastanah','ra.koderegisterrs', 'ra.kdjenissertifikat', 'ra.objectbahanprodukfk')
+                ,'ra.tingkatfk','ra.kondisbanguanfk','ra.kondisibarangfk','ra.betonfk','ra.luastanah','ra.koderegisterrs', 'ra.kdjenissertifikat', 'ra.objectbahanprodukfk',
+                'ra.nopolisi', 'ra.norangka', 'ra.nomesin', 'ra.nobpkb')
             ->where('ra.kdprofile',$idProfile);
 
         if (isset($request['norecAsset']) && $request['norecAsset'] != "" && $request['norecAsset'] != "undefined") {
@@ -10474,7 +10475,7 @@ class LogistikController extends ApiController{
             ->leftJOIN('ruanganasset_m as ru','ru.id','=','ra.objectruanganfk')
             ->leftJOIN('ruanganasset_m as ru1','ru1.id','=','ra.objectruanganposisicurrentfk')
             ->leftJOIN('rekanan_m as rek','rek.id','=','ra.objectsupplier')
-            ->limit('100')
+            // ->limit('100')
             ->select('ra.norec','ra.koderegisterrs as noregisteraset','ra.objectprodukfk as kdproduk','pr.namaproduk','jp.jenisproduk',
                      'ru.id as ruanganasalfk','ru.namaruangan as namaruanganasal','ru1.id as ruangancurrenfk','ru1.namaruangan as ruangancurrent',
                      'ra.tglregisteraset','ra.tglstrukterima','ra.qtyprodukaset','ra.hargaperolehan','ra.tglregisteraset','ra.tglstrukterima',

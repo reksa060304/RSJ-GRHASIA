@@ -78,7 +78,7 @@ define(['initialize'], function (initialize) {
 					$scope.isRouteLoading = false;
 					var dataComboMaster = result[0].data;
 					var dataComboAlamat = result[1].data;
-					$scope.ListRuanganAsal = dataComboMaster.ruanganall;
+					$scope.ListRuanganAsal = dataComboMaster.ruanganall;    
 					$scope.ListRuangan = dataComboMaster.ruanganall;
 					$scope.ListJenisProduk = dataComboMaster.jenisproduk;
 					$scope.ListDetailJenis = dataComboMaster.detailjenisproduk;
@@ -284,12 +284,12 @@ define(['initialize'], function (initialize) {
 							// * END SATUAN
 
 							// * KENDARAAN
-							// $scope.item.NoMesin="";
-							// $scope.item.NoBPKB="";
+							$scope.item.NoMesin= (datas.nomesin) ? datas.nomesin : '';
+							$scope.item.NoBPKB= (datas.nobpkb) ? datas.nobpkb : '';
 							// $scope.item.NoModel="";
-							// $scope.item.NoRangka="";
+							$scope.item.NoRangka= (datas.norangka) ? datas.norangka : '';
 							// $scope.item.NoSeri="";
-							// $scope.item.NoPolisi="";
+							$scope.item.NoPolisi= (datas.nopolisi) ? datas.nopolisi : '';
 							// $scope.item.BPKBPegawai="";
 							// * END KENDARAAN
 
