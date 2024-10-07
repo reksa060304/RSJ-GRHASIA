@@ -314,8 +314,12 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
                         $scope.item.obj[3003996]= datas[0].nadi
                         $scope.item.obj[3015534]= datas[0].suhu
                         $scope.item.obj[3015533]= datas[0].pernapasan
-                        $scope.item.obj[3003995]= datas[0].bb
-                        $scope.item.obj[3003993]= datas[0].tb
+                        if(datas[0].bb !== null){
+                            $scope.item.obj[3003995]= datas[0].bb
+                        }
+                        if(datas[0].tb !== null){
+                            $scope.item.obj[3003993]= datas[0].tb
+                        }
                         $scope.item.obj[901308931]= datas[0].imt
 
 
