@@ -6657,7 +6657,7 @@ order by  split_part(kode, '.', 1)asc, split_part(kode, '.', 2)asc,  split_part(
         and subkeg.statusenabled = true
         and subsubkeg.kdprofile = 30
         and subsubkeg.statusenabled = true
-        and NOT EXISTS ( SELECT * FROM spjtopanjar_t stp WHERE stp.objectpanjarfk = pj.norec AND stp.statusenabled = TRUE and stp.kdprofile = ".$idProfile." )
+        --and NOT EXISTS ( SELECT * FROM spjtopanjar_t stp WHERE stp.objectpanjarfk = pj.norec AND stp.statusenabled = TRUE and stp.kdprofile = ".$idProfile." )
         --and ma.kodemataanggaran = '$kode'--munculkan semunya 23-042024
         ORDER BY cast(split_part(nopanjar, '/', 1)  as integer) desc
         ")
@@ -8856,7 +8856,7 @@ order by  split_part(kode, '.', 1)asc, split_part(kode, '.', 2)asc,  split_part(
             }
 
             if($request['norecpanjar'] != null){
-                if($jumlahall > 0){
+                if($jumlahall >= 0){
                     for($i = 0; $i < count($request['norecpanjar']); $i++){
 
                         $npanjar = $request['norecpanjar'][$i]['norecpanjar'];
