@@ -257,88 +257,88 @@ define(['initialize'], function (initialize) {
                         // color:"#ffffff"
                     }];
 
-                    var header = {
-                        "type": "header",
-                        "cells": [
-                            {
-                                "background": "#7a7a7a",
-                                "color": "#fff",
-                                "value": "No",
-                                "colSpan": 1
-                            },
-                            {
-                                "background": "#7a7a7a",
-                                "color": "#fff",
-                                "value": "Tgl Registrasi",
-                                "colSpan": 1
-                            },
-                            {
-                                "background": "#7a7a7a",
-                                "color": "#fff",
-                                "value": "Kode Booking",
-                                "colSpan": 1
-                            },
-                            {
-                                "background": "#7a7a7a",
-                                "color": "#fff",
-                                "value": "No RM",
-                                "colSpan": 1
-                            },
-                            {
-                                "background": "#7a7a7a",
-                                "color": "#fff",
-                                "value": "Nama Pasien",
-                                "colSpan": 1
-                            },
-                            {
-                                "background": "#7a7a7a",
-                                "color": "#fff",
-                                "value": "Nama Ruangan",
-                                "colSpan": 1
-                            },
-                            {
-                                "background": "#7a7a7a",
-                                "color": "#fff",
-                                "value": "Nomor Referensi",
-                                "colSpan": 1
-                            },
-                            {
-                                "background": "#7a7a7a",
-                                "color": "#fff",
-                                "value": "Response",
-                                "colSpan": 1
-                            }
-                        ],
-                        "index": 1
-                    }
+                    // var header = {
+                    //     "type": "header",
+                    //     "cells": [
+                    //         {
+                    //             "background": "#7a7a7a",
+                    //             "color": "#fff",
+                    //             "value": "No",
+                    //             "colSpan": 1
+                    //         },
+                    //         {
+                    //             "background": "#7a7a7a",
+                    //             "color": "#fff",
+                    //             "value": "Tgl Registrasi",
+                    //             "colSpan": 1
+                    //         },
+                    //         {
+                    //             "background": "#7a7a7a",
+                    //             "color": "#fff",
+                    //             "value": "Kode Booking",
+                    //             "colSpan": 1
+                    //         },
+                    //         {
+                    //             "background": "#7a7a7a",
+                    //             "color": "#fff",
+                    //             "value": "No RM",
+                    //             "colSpan": 1
+                    //         },
+                    //         {
+                    //             "background": "#7a7a7a",
+                    //             "color": "#fff",
+                    //             "value": "Nama Pasien",
+                    //             "colSpan": 1
+                    //         },
+                    //         {
+                    //             "background": "#7a7a7a",
+                    //             "color": "#fff",
+                    //             "value": "Nama Ruangan",
+                    //             "colSpan": 1
+                    //         },
+                    //         {
+                    //             "background": "#7a7a7a",
+                    //             "color": "#fff",
+                    //             "value": "Nomor Referensi",
+                    //             "colSpan": 1
+                    //         },
+                    //         {
+                    //             "background": "#7a7a7a",
+                    //             "color": "#fff",
+                    //             "value": "Response",
+                    //             "colSpan": 1
+                    //         }
+                    //     ],
+                    //     "index": 1
+                    // }
 
-                    var grid = e.sender;
-                    var sheet = e.workbook.sheets[0];
-                    // Ambil semua data dari grid, termasuk yang tersembunyi
-                    var data = grid.dataSource._data;
-                    console.log(data);
-                    console.log(sheet);
-                    // Tambahkan data ke sheet secara manual
-                    var rows = [];
-                    rows.push(header)
-                    for (var i = 0; i < data.length; i++) {
-                        var item = data[i];
-                        rows.push({
-                            cells: [
-                                { value: item.no },
-                                { value: item.tglregistrasi },
-                                { value: item.noregistrasi },
-                                { value: item.norm },
-                                { value: item.namapasien },
-                                { value: item.namaruangan },
-                                { value: item.noreferensi }, // Menyertakan kolom tersembunyi
-                                { value: item.response }, // Menyertakan kolom tersembunyi
-                            ]
-                        });
-                    }
+                    // var grid = e.sender;
+                    // var sheet = e.workbook.sheets[0];
+                    // // Ambil semua data dari grid, termasuk yang tersembunyi
+                    // var data = grid.dataSource._data;
+                    // console.log(data);
+                    // console.log(sheet);
+                    // // Tambahkan data ke sheet secara manual
+                    // var rows = [];
+                    // rows.push(header)
+                    // for (var i = 0; i < data.length; i++) {
+                    //     var item = data[i];
+                    //     rows.push({
+                    //         cells: [
+                    //             { value: item.no },
+                    //             { value: item.tglregistrasi },
+                    //             { value: item.noregistrasi },
+                    //             { value: item.norm },
+                    //             { value: item.namapasien },
+                    //             { value: item.taksid_1 },
+                    //             { value: item.noreferensi }, // Menyertakan kolom tersembunyi
+                    //             { value: item.response }, // Menyertakan kolom tersembunyi
+                    //         ]
+                    //     });
+                    // }
 
-                    // Set data pada sheet
-                    sheet.rows = rows;
+                    // // Set data pada sheet
+                    // sheet.rows = rows;
 
                     sheet.rows.splice(0, 0, {
                         cells: myHeaders,
@@ -530,7 +530,6 @@ define(['initialize'], function (initialize) {
                         "template": "<span class='style-center'>#: noreferensi #</span>"
                     },
                     {
-                        "hidden": true,
                         "field": "response",
                         "title": "Response",
                         "width": "100px",
