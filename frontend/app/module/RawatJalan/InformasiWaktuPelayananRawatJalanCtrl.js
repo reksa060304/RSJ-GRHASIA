@@ -246,7 +246,7 @@ define(['initialize'], function (initialize) {
                 excelExport: function (e) {
                     var sheet = e.workbook.sheets[0];
                     sheet.frozenRows = 2;
-                    sheet.mergedCells = ["A1:H1"];
+                    sheet.mergedCells = ["A1:U1"];
                     sheet.name = "Orders";
 
                     var myHeaders = [{
