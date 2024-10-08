@@ -276,7 +276,9 @@ define(['initialize', 'Configuration'], function (initialize, config) {
                 resizable:true,
                 columns: [
                     { field: "nippns", title: "NIP", width: "10%" },
+                    { field: "noidentitas", title: "NIK", width: "10%" },
                     { field: "namalengkap", title: "Nama Lengkap", width: "25%" },
+                    { field: "jeniskelamin", title: "Jenis Kelamin", width: "10%" },
                     { field: "golongan", title: "Pangkat Golongan", width: "10%" },
                     { field: "agama", title: "Agama", width: "10%" },
                     { field: "jbfungsional", title: "Jabatan", width: "25%" },
@@ -290,7 +292,10 @@ define(['initialize', 'Configuration'], function (initialize, config) {
                     // { field: "namakategorypegawai", title: "Status Pegawai", width: "10%" },
                     { field: "tglmasuk", title: "Tanggal Masuk", width: "10%", 
                     template: "<span class='style-left'>{{formatTanggal('#: tglmasuk #')}}</span>" },
-                    { field: "nosipstr", title: "No SIP/ STR", width: "10%" },
+                    { field: "nostr", title: "No STR", width: "15%" },
+                    { field: "berakhirsip", title: "Tanggal Berakhir", width: "15%" },
+                    { field: "nosip", title: "No SIP", width: "15%" },    
+                    { field: "berakhirstr", title: "Tanggal Berakhir", width: "15%" },
                     { field: "id", title: "ID Pegawai", width: "10%" },
                     { field: "responsebsre", title: "Response Register", width: "10%" },
                     {

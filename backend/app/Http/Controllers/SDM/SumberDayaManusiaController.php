@@ -341,6 +341,7 @@ class SumberDayaManusiaController extends ApiController {
     public function getDaftarPegawai (Request $request) {
         $kdProfile = (int) $this->getDataKdProfile($request);
         $data = \DB::table('pegawai_m as pg')
+            ->leftJoin('masaberlakusipstr_t AS mbs', 'mbs.pegawaifk', '=', 'pg.id')
             ->leftJoin('agama_m as ag','ag.id','=','pg.objectagamafk')
             ->leftJoin('detailkategorypegawai_m as dkp','dkp.id','=','pg.objectdetailkategorypegawaifk ')
             ->leftJoin('golongandarah_m as gd','gd.id','=', 'pg.objectgolongandarahfk')
@@ -364,7 +365,8 @@ class SumberDayaManusiaController extends ApiController {
             ->select(\DB::raw("jb.objectjenisjabatanfk, jj.jenisjabatan,pg.*,ag.agama,dkp.detailkategorypegawai,gd.golongandarah,jb.namajabatan as jbfungsional,
 			                        jb1.namajabatan as jbstruktural,gp.golonganpegawai,uk.name as unitkerja,sp.statuspegawai,
 			                        kj.namakelompokjabatan,spp.statusperkawinan,ese.eselon,kp.kategorypegawai as namakategorypegawai,pend.pendidikan,jk.jeniskelamin,
-			                        gol.namaexternal||', '||gol.name as golongan,nkj.detailkelompokjabatan,nkj.grade,ks.kelompokshiftkerja,kdd.name as kedudukan,jp.jenispegawai"))
+			                        gol.namaexternal||', '||gol.name as golongan,nkj.detailkelompokjabatan,nkj.grade,ks.kelompokshiftkerja,kdd.name as kedudukan,jp.jenispegawai,
+                                    mbs.berakhirsip AS berakhirsip, mbs.berakhirstr AS berakhirstr"))
             ->where('pg.kdprofile', $kdProfile)
             ->where('pg.namalengkap', '<>','-')
             ->where('pg.namalengkap', '<>','Programmer Administrator')
