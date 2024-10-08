@@ -16,6 +16,8 @@ define(['initialize'], function (initialize) {
             $scope.totalQuality = 0
             $scope.totalRata = 0
             $scope.totalBelum = 0
+            var data2 = [];
+            $scope.tombolSimpanVis = true;
             loadCombo()
             loadData()
 
@@ -80,6 +82,23 @@ define(['initialize'], function (initialize) {
                     for (let i = 0; i < data.data.length; i++) {
                         data.data[i].no = i + 1;
                         const element = data.data[i]
+
+                        // modif noref, response
+                        if(element.noreferensi){
+                            const jsonString = `{${element.noreferensi}}`;
+                            // Mengurai string JSON menjadi objek
+                            const jsonObject = JSON.parse(jsonString);
+                            // Mengambil nilai dari key 'nomorreferensi'
+                            element.noreferensi = jsonObject.nomorreferensi;
+                        }
+                        if(element.response){
+                            const jsonString = `{${element.response}}`;
+                            // Mengurai string JSON menjadi objek
+                            const jsonObject = JSON.parse(jsonString);
+                            // Mengambil nilai dari key 'nomorreferensi'
+                            element.response = jsonObject.message;
+                        }
+
                         element.jumlahdetik = 0
                         if(element.status_1 == true || element.status_3 == true){
                             $scope.totalAntrean = $scope.totalAntrean + 1
@@ -158,7 +177,7 @@ define(['initialize'], function (initialize) {
                     // 	$scope.totalRata = rata1_/totalLengkap
                     // 	$scope.totalRata = secondsToHms($scope.totalRata); 
                     // // }
-                
+                    data2 = data.data;
                     $scope.dataDaftarPasien = new kendo.data.DataSource({
                         data: data.data,
                         pageSize: 15,
@@ -227,7 +246,7 @@ define(['initialize'], function (initialize) {
                 excelExport: function (e) {
                     var sheet = e.workbook.sheets[0];
                     sheet.frozenRows = 2;
-                    sheet.mergedCells = ["A1:T1"];
+                    sheet.mergedCells = ["A1:H1"];
                     sheet.name = "Orders";
 
                     var myHeaders = [{
@@ -237,6 +256,89 @@ define(['initialize'], function (initialize) {
                         background: "#ffffff",
                         // color:"#ffffff"
                     }];
+
+                    var header = {
+                        "type": "header",
+                        "cells": [
+                            {
+                                "background": "#7a7a7a",
+                                "color": "#fff",
+                                "value": "No",
+                                "colSpan": 1
+                            },
+                            {
+                                "background": "#7a7a7a",
+                                "color": "#fff",
+                                "value": "Tgl Registrasi",
+                                "colSpan": 1
+                            },
+                            {
+                                "background": "#7a7a7a",
+                                "color": "#fff",
+                                "value": "Kode Booking",
+                                "colSpan": 1
+                            },
+                            {
+                                "background": "#7a7a7a",
+                                "color": "#fff",
+                                "value": "No RM",
+                                "colSpan": 1
+                            },
+                            {
+                                "background": "#7a7a7a",
+                                "color": "#fff",
+                                "value": "Nama Pasien",
+                                "colSpan": 1
+                            },
+                            {
+                                "background": "#7a7a7a",
+                                "color": "#fff",
+                                "value": "Nama Ruangan",
+                                "colSpan": 1
+                            },
+                            {
+                                "background": "#7a7a7a",
+                                "color": "#fff",
+                                "value": "Nomor Referensi",
+                                "colSpan": 1
+                            },
+                            {
+                                "background": "#7a7a7a",
+                                "color": "#fff",
+                                "value": "Response",
+                                "colSpan": 1
+                            }
+                        ],
+                        "index": 1
+                    }
+
+                    var grid = e.sender;
+                    var sheet = e.workbook.sheets[0];
+                    // Ambil semua data dari grid, termasuk yang tersembunyi
+                    var data = grid.dataSource._data;
+                    console.log(data);
+                    console.log(sheet);
+                    // Tambahkan data ke sheet secara manual
+                    var rows = [];
+                    rows.push(header)
+                    for (var i = 0; i < data.length; i++) {
+                        var item = data[i];
+                        rows.push({
+                            cells: [
+                                { value: item.no },
+                                { value: item.tglregistrasi },
+                                { value: item.noregistrasi },
+                                { value: item.norm },
+                                { value: item.namapasien },
+                                { value: item.namaruangan },
+                                { value: item.noreferensi }, // Menyertakan kolom tersembunyi
+                                { value: item.response }, // Menyertakan kolom tersembunyi
+                            ]
+                        });
+                    }
+
+                    // Set data pada sheet
+                    sheet.rows = rows;
 
                     sheet.rows.splice(0, 0, {
                         cells: myHeaders,
@@ -421,6 +523,20 @@ define(['initialize'], function (initialize) {
                         ]
                     },
                     {
+                        "hidden": true,
+                        "field": "noreferensi",
+                        "title": "Nomor Referensi",
+                        "width": "100px",
+                        "template": "<span class='style-center'>#: noreferensi #</span>"
+                    },
+                    {
+                        "hidden": true,
+                        "field": "response",
+                        "title": "Response",
+                        "width": "100px",
+                        "template": "<span class='style-center'>#: response #</span>"
+                    },
+                    {
                         "field": "",
                         "title": "Log Antrol",
                         "width": "100px",
@@ -463,93 +579,107 @@ define(['initialize'], function (initialize) {
                 $scope.isRouteLoading = true
                 for (let x = 0; x < dataSource.length; x++) {
                     const element = dataSource[x];
-                    await repeatSendTaskId(element.noregistrasifk, 7)
+                    await repeatSendTaskId(element.noregistrasifk, 7, element.tglregistrasi)
                 }
                 $scope.isRouteLoading = false
             }
-            async function repeatSendTaskId(norec_pd, taskid) {
+            async function repeatSendTaskId(norec_pd, taskid, tglregistrasi) {
                 await medifirstService.get('registrasi/get-data-antrean?norec_pd=' + norec_pd).then(async function (e) {
-                    // VALIDASI BARU
-                    e.data.nohp = e.data.nohp.substring(0,12)
-                    let ASALRUJUKAN = 1
-                    let jenisKunjungan = 1 // {1 (Rujukan FKTP), 2 (Rujukan Internal), 3 (Kontrol), 4 (Rujukan Antar RS)}
-                    if(e.data.jenispasien == 'JKN'){
-                        var jsonRujukan = {
-                            "url": `Rujukan/Peserta/${e.data.nomorkartu}`,
-                            "method": "GET",
-                            "data": null
-                        }
-                        let resRujukan = await medifirstService.postNonMessage('bridging/bpjs/tools', jsonRujukan)
-                        if(resRujukan.data.metaData.code == 200){
-                            ASALRUJUKAN = 1
-                            e.data.nomorreferensi = resRujukan.data.response.rujukan.noKunjungan
-                        }else{
-                            var jsonRujukan = {
-                                "url": `Rujukan/RS/Peserta/${e.data.nomorkartu}`,
-                                "method": "GET",
-                                "data": null
-                            }
-                            let resRujukan = await medifirstService.postNonMessage('bridging/bpjs/tools', jsonRujukan)
-                            if(resRujukan.data.metaData.code == 200){
-                                ASALRUJUKAN = 2
-                                e.data.nomorreferensi = resRujukan.data.response.rujukan.noKunjungan
-                            }
-                        }
-                    }
-                    //cek jml sep rujukan
-
-                    var jsonJML = {
-                        "url":`Rujukan/JumlahSEP/${ASALRUJUKAN}/${e.data.nomorreferensi}`,
+					var jsoncekAntrian = {
+                        "url":`antrean/pendaftaran/kodebooking/${e.data.kodebooking}`,
                         "method": "GET",
+                        "jenis": "antrean",
                         "data": null
                     }
-                    let resJML = await medifirstService.postNonMessage('bridging/bpjs/tools', jsonJML)
-                    if(resJML.data.metaData.code == 200){
-                        if(resJML.data.response.jumlahSEP > 0){
-                        var jsonSURKON = {
-                            "url": `RencanaKontrol/ListRencanaKontrol/Bulan/${moment(new Date()).format("MM")}/Tahun/${new Date().getFullYear()}/Nokartu/${e.data.nomorkartu}/filter/2`,
-                            "method": "GET",
-                            "data": null
-                        }
-                        let resSURKON = await medifirstService.postNonMessage('bridging/bpjs/tools', jsonSURKON)
-                        if(resSURKON.data.metaData.code == 200){
-                            e.data.nomorreferensi = resSURKON.data.response.list[0].noSuratKontrol
-                            jenisKunjungan = 3
-                            if(resSURKON.data.response.list[0].terbitSEP =='Sudah'){
-                                let NGASAL =  resSURKON.data.response.list[0].noSuratKontrol.replace('K','Z')
-                                e.data.nomorreferensi = NGASAL
-                            }
-                        }else{
-                            jenisKunjungan = 2
-                            // e.data.nomorreferensi = e.data.kodebooking // pake no internal aja
-                        }
-                        }
-                    }
-                    e.data.jeniskunjungan = jenisKunjungan
-                    var data = {
-                        "url": "antrean/add",
-                        "jenis": "antrean",
-                        "method": "POST",
-                        "data": e.data
-                    }
-                    medifirstService.postNonMessage('bridging/bpjs/tools', data).then(function (x) {
-                        // simpan log
-                        if (x.data.metaData.code != 208) {
-                            medifirstService.postLogging('Antrol Task ID', 'norec Pasien Daftar',
-                                e.data.kodebooking, 'Tambah Antrean Kode ' + e.data.kodebooking + ' | ' +
-                                JSON.stringify(data) + ' | ' + JSON.stringify(x.data))
-                        }
-                        // mengabil data catatan task id dari 1 - 4
-                        medifirstService.get('rawatjalan/get-monitoring-taskid?taskid=' + taskid + '&norec_pd=' + norec_pd).then(function (res) {
-                            if (res.data.length == (taskid - 1)) {
-                                updateWaktuId(res, e.data.kodebooking, norec_pd)
-                            } else if (res.data.length == 7) {
-                                updateWaktuId(res, e.data.kodebooking, norec_pd)
-                            } else {
-                                checkTaksId(e.data.kodebooking, norec_pd,e.data.estimasidilayani)
-                            }
-                        })
-                    })
+					const rescekantrian = await medifirstService.postNonMessage('bridging/bpjs/tools', jsoncekAntrian)
+					if(rescekantrian.data.metaData.code == 200){
+						// mengabil data catatan task id dari 1 - 4
+						medifirstService.get('rawatjalan/get-monitoring-taskid?taskid=' + taskid + '&norec_pd=' + norec_pd).then(function (res) {
+							updateWaktuIdNew(res, e.data.kodebooking, norec_pd, tglregistrasi)
+						})
+					} else {
+						// VALIDASI BARU
+						e.data.nohp = e.data.nohp.substring(0,12)
+						let ASALRUJUKAN = 1
+						let jenisKunjungan = 1 // {1 (Rujukan FKTP), 2 (Rujukan Internal), 3 (Kontrol), 4 (Rujukan Antar RS)}
+						if(e.data.jenispasien == 'JKN'){
+							var jsonRujukan = {
+								"url": `Rujukan/Peserta/${e.data.nomorkartu}`,
+								"method": "GET",
+								"data": null
+							}
+							let resRujukan = await medifirstService.postNonMessage('bridging/bpjs/tools', jsonRujukan)
+							if(resRujukan.data.metaData.code == 200){
+								ASALRUJUKAN = 1
+								e.data.nomorreferensi = resRujukan.data.response.rujukan.noKunjungan
+							}else{
+								var jsonRujukan = {
+									"url": `Rujukan/RS/Peserta/${e.data.nomorkartu}`,
+									"method": "GET",
+									"data": null
+								}
+								let resRujukan = await medifirstService.postNonMessage('bridging/bpjs/tools', jsonRujukan)
+								if(resRujukan.data.metaData.code == 200){
+									ASALRUJUKAN = 2
+									e.data.nomorreferensi = resRujukan.data.response.rujukan.noKunjungan
+								}
+							}
+						}
+						//cek jml sep rujukan
+
+						var jsonJML = {
+							"url":`Rujukan/JumlahSEP/${ASALRUJUKAN}/${e.data.nomorreferensi}`,
+							"method": "GET",
+							"data": null
+						}
+						let resJML = await medifirstService.postNonMessage('bridging/bpjs/tools', jsonJML)
+						if(resJML.data.metaData.code == 200){
+						if(resJML.data.response.jumlahSEP > 0){
+							var jsonSURKON = {
+								"url": `RencanaKontrol/ListRencanaKontrol/Bulan/${moment(new Date()).format("MM")}/Tahun/${new Date().getFullYear()}/Nokartu/${e.data.nomorkartu}/filter/2`,
+								"method": "GET",
+								"data": null
+							}
+							let resSURKON = await medifirstService.postNonMessage('bridging/bpjs/tools', jsonSURKON)
+							if(resSURKON.data.metaData.code == 200){
+								e.data.nomorreferensi = resSURKON.data.response.list[0].noSuratKontrol
+								jenisKunjungan = 3
+								if(resSURKON.data.response.list[0].terbitSEP =='Sudah'){
+									let NGASAL =  resSURKON.data.response.list[0].noSuratKontrol.replace('K','Z')
+									e.data.nomorreferensi = NGASAL
+								}
+							}else{
+								jenisKunjungan = 2
+								// e.data.nomorreferensi = e.data.kodebooking // pake no internal aja
+							}
+						}
+						}
+						e.data.jeniskunjungan = jenisKunjungan
+						var data = {
+							"url": "antrean/add",
+							"jenis": "antrean",
+							"method": "POST",
+							"data": e.data
+						}
+						medifirstService.postNonMessage('bridging/bpjs/tools', data).then(function (x) {
+							// simpan log
+							if(x.data.metaData.code != 208) {
+								medifirstService.postLogging('Antrol Task ID', 'norec Pasien Daftar',
+								e.data.kodebooking, 'Tambah Antrean Kode ' + e.data.kodebooking +' | '+
+								JSON.stringify(data) + ' | '+ JSON.stringify(x.data))
+							}
+							// mengabil data catatan task id dari 1 - 4
+							medifirstService.get('rawatjalan/get-monitoring-taskid?taskid=' + taskid + '&norec_pd=' + norec_pd).then(function (res) {
+								if(res.data.length == (taskid - 1 )){
+									updateWaktuId(res, e.data.kodebooking, norec_pd)
+								}else if(res.data.length == 7){
+									updateWaktuId(res, e.data.kodebooking, norec_pd)
+								}else{
+									checkTaksId(e.data.kodebooking,norec_pd,e.data.estimasidilayani)
+								}
+							})
+						})
+					}
                 })
             }
             async function updateWaktuId(res, kodebooking, norec_pd) {
@@ -594,6 +724,39 @@ define(['initialize'], function (initialize) {
                 }
             }
 
+            async function updateWaktuIdNew(res, kodebooking, norec_pd) {
+				for (let h = 1; h < res.data.length; h++) {
+					const element = res.data[h];
+					// if (parseInt(element.waktu) <= parseInt(res.data[h - 1].waktu)) {
+						let randomMinutes = getRandomMinutes();
+						element.waktu = parseInt(res.data[h - 1].waktu) + randomMinutes * 60000
+					// }
+				}
+				for (let i = 0; i < res.data.length; i++) {
+                    const element = res.data[i];
+					var data = {
+						"url": "antrean/updatewaktu",
+						"jenis": "antrean",
+						"method": "POST",
+						"data":
+						{
+							"kodebooking": kodebooking,
+							"taskid": element.taskid,
+							"waktu": element.waktu
+						}
+					}
+					await medifirstService.postNonMessage('bridging/bpjs/tools', data).then(async function (e) {
+						if(e.data.metaData.code == 200) {
+							await saveMonitoringTaksId(kodebooking,norec_pd,  element.taskid, element.waktu, true);
+						}
+					})
+				}
+			}
+    
+            function getRandomMinutes() {
+                return Math.floor(Math.random() * 10) + 1; // Menghasilkan angka acak antara 1 dan 10
+            }
+
             async function saveMonitoringTaksId(kodebooking, noregistrasifk, taskid, waktu, statuskirim) {
                 if (statuskirim == true) {
                     // 071e25a
@@ -634,67 +797,67 @@ define(['initialize'], function (initialize) {
                     await loadData()
                 })
             }
-            const random = (min, max) => Math.floor(Math.random() * (max - min)) + min;
-            async function checkTaksId(param,norec_pd,tgl) {
-                var taksId = [
-                    { Id: 1, waktu: random(7500000, 9300000) }, // 1 ke 2 range waktu 60 - 90 menit 
-                    { Id: 2, waktu: random(3600000, 3900000) }, // 2 ke 3 range waktu 5 - 10 menit 
-                    { Id: 3, waktu: random(3000000, 3300000) }, // 3 ke 4 range waktu 15 - 20 menit 
+			const random = (min, max) => Math.floor(Math.random() * (max - min)) + min;
+			async function checkTaksId(param,norec_pd,tgl) {
+				var taksId = [
+					{ Id: 1, waktu: random(0, 0) }, // 
+                    { Id: 2, waktu: random(300000, 500000) }, // 
+                    { Id: 3, waktu: random(600000, 900000) },  // 5 ke 6 range waktu 10 - 15 menit
                     { Id: 4, waktu: random(1320000, 2100000) }, // 4 ke 5 range waktu 7 - 20 menit
-                    { Id: 5, waktu: random(600000, 900000) },  // 5 ke 6 range waktu 10 - 15 menit
-                    { Id: 6, waktu: random(300000, 500000) }, // 
-                    { Id: 7, waktu: random(0, 0) }, // 
+                    { Id: 5, waktu: random(3000000, 3300000) }, // 3 ke 4 range waktu 15 - 20 menit 
+                    { Id: 6, waktu: random(3600000, 3900000) }, // 2 ke 3 range waktu 5 - 10 menit 
+                    { Id: 7, waktu: random(7500000, 9300000) }, // 1 ke 2 range waktu 60 - 90 menit 
                 ]
                 for (let i = 0; i < taksId.length; i++) {
                     var element = taksId[i]
-                    var waktuS = tgl - element.waktu // new Date(tgl).getTime() - element.waktu
-                    if (param.length < 10) {
-                        if (element.Id >= 3) {
-                            var json = {
-                                "url": "antrean/updatewaktu",
-                                "jenis": "antrean",
-                                "method": "POST",
-                                "data": {
-                                    "kodebooking": param,
-                                    "taskid": element.Id,
-                                    "waktu": waktuS
-                                }
-                            }
-
-                            await medifirstService.postNonMessage('bridging/bpjs/tools', json).then(async function (e) {
-                                if (e.data.metaData.code == 200) {
-                                    await saveMonitoringTaksId(param, norec_pd, element.Id, waktuS, true)
-                                }
-                                if (e.data.metaData.code == 208) {
-                                    if (e.data.metaData.message == "TaskId=" + element.Id + " sudah ada") {
-                                        await saveMonitoringTaksId(param, norec_pd, element.Id, waktuS, true)
-                                    }
-                                }
-                            })
-                        }
-                    } else {
-                        var json = {
-                            "url": "antrean/updatewaktu",
-                            "jenis": "antrean",
-                            "method": "POST",
-                            "data": {
-                                "kodebooking": param,
-                                "taskid": element.Id,
-                                "waktu": waktuS
-                            }
-                        }
-
-                        await medifirstService.postNonMessage('bridging/bpjs/tools', json).then(async function (e) {
-                            if (e.data.metaData.code == 200) {
-                                await saveMonitoringTaksId(param, norec_pd, element.Id, waktuS, true)
-                            }
-                            if (e.data.metaData.code == 208) {
-                                if (e.data.metaData.message == "TaskId=" + element.Id + " sudah ada") {
-                                    await saveMonitoringTaksId(param, norec_pd, element.Id, waktuS, true)
-                                }
-                            }
-                        })
-                    }
+					var waktuS = tgl + element.waktu // new Date(tgl).getTime() - element.waktu
+					if(param.length <10){
+						if( element.Id >=3){
+							var json = {
+								"url": "antrean/updatewaktu",
+								"jenis": "antrean",
+								"method": "POST",
+								"data": {
+								"kodebooking": param,
+								"taskid": element.Id,
+								"waktu":waktuS
+								}
+							}
+						
+							await medifirstService.postNonMessage('bridging/bpjs/tools', json).then(async function (e) {
+								if(e.data.metaData.code == 200) {
+								await saveMonitoringTaksId(param,norec_pd, element.Id, waktuS, true)
+								}
+								if(e.data.metaData.code == 208) {
+									if(e.data.metaData.message == "TaskId="+element.Id+" sudah ada") {
+										await saveMonitoringTaksId(param,norec_pd, element.Id, waktuS, true)
+									}
+								}
+							})
+						}
+					}else{
+						var json = {
+							"url": "antrean/updatewaktu",
+							"jenis": "antrean",
+							"method": "POST",
+							"data": {
+							"kodebooking": param,
+							"taskid": element.Id,
+							"waktu":waktuS
+							}
+						}
+					
+						await medifirstService.postNonMessage('bridging/bpjs/tools', json).then(async function (e) {
+							if(e.data.metaData.code == 200) {
+							await saveMonitoringTaksId(param,norec_pd, element.Id, waktuS, true)
+							}
+							if(e.data.metaData.code == 208) {
+								if(e.data.metaData.message == "TaskId="+element.Id+" sudah ada") {
+									await saveMonitoringTaksId(param,norec_pd, element.Id, waktuS, true)
+								}
+							}
+						})
+					}
                 }
             }
             $scope.validasiData = function () {

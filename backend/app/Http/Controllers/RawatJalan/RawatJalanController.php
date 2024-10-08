@@ -3221,7 +3221,7 @@ $ruangdokter = \DB::table('ruangan_m as ru')
 
         return $data;
     }
-    public function getInformasiMonitoringTaksId(Request $request)
+    public function getInformasiMonitoringTaksIdOld(Request $request)
     {
         $kdProfile = $this->getDataKdProfile($request);
         $tglawal = $request['tglAwal'];
@@ -3312,6 +3312,361 @@ $ruangdokter = \DB::table('ruangan_m as ru')
         }
 
         return $this->respond($data);
+    }
+    public function getInformasiMonitoringTaksId(Request $request){
+        $kdProfile = $this->getDataKdProfile($request);
+        $tglawal = $request['tglAwal'];
+        $tglakhir = $request['tglAkhir'];
+
+        $nocm = "";
+        if(isset($request['norm']) && $request['norm'] != '' && $request['norm'] != null) {
+            $nocm = " and ps.nocm = '". $request['norm'] ."'";
+        }
+        $nama = "";
+        if(isset($request['nama']) && $request['nama'] != '' && $request['nama'] != null) {
+            $nama = " and ps.namapasien ilike '%". $request['nama'] ."%'";
+        }
+        $ruangId = "";
+        if(isset($request['ruangId']) && $request['ruangId'] != '' && $request['ruangId'] != null) {
+            $ruangId = " and rm.id = '". $request['ruangId'] ."'";
+        }
+        $kdBooking = "";
+        if(isset($request['kdBooking']) && $request['kdBooking'] != '' && $request['kdBooking'] != null) {
+            $kdBooking = " and sx.noregistrasi = '". $request['kdBooking'] ."'";
+        }
+        $kelId = "";
+        if (isset($request['kelId']) && $request['kelId'] != '' && $request['kelId'] != null) {
+            $kelId = " and kp.id = '" . $request['kelId'] . "'";
+        }
+
+        $data = DB::select("
+                select tx.*
+                ,substring(lg.keterangan FROM '\"nomorreferensi\":[^,]*') as noreferensi
+                ,substring(lg.keterangan FROM '\"message\":[^}]*') as response
+                from (
+                    select sx.*
+                    from (
+                        select
+                        ps.nocm as norm,
+                        case when pd.ismobilejkn = true then pd.statusschedule else pd.noregistrasi end as noregistrasi,
+                        mt.noregistrasifk,
+                        pd.tglregistrasi,
+                        ps.namapasien,
+                        rm.namaruangan,
+                        mt.taskid,
+                        mt.waktu,
+                        mt.statuskirim,
+                        row_number() over(PARTITION BY mt.noregistrasifk,mt.taskid ORDER BY taskid) as nomor
+                        from monitoringtaskid_t mt
+                        inner join pasiendaftar_t pd on pd.norec = mt.noregistrasifk
+                        inner join ruangan_m rm on rm.id = pd.objectruanganlastfk
+                        inner join pasien_m ps on ps.id = pd.nocmfk
+                        left join kelompokpasien_m kp on kp.id = pd.objectkelompokpasienlastfk
+                        where pd.statusenabled = true
+                        and rm.objectdepartemenfk = 18
+                        and pd.tglregistrasi between '$tglawal' and '$tglakhir'
+                        $nocm
+                        $nama
+                        $ruangId
+                    
+                    ) sx
+                    where sx.nomor = 1
+                    $kdBooking
+                ) tx
+                left join logginguser_t lg on lg.noreff = tx.noregistrasi
+                where SUBSTRING ( lg.keterangan FROM '\"message\":[^}]*' ) != '\"message\":\"Ok.\"'
+                ORDER BY tx.noregistrasi DESC
+        ");
+
+        $dataok = collect(DB::select("
+                select tx.*
+                ,substring(lg.keterangan FROM '\"nomorreferensi\":[^,]*') as noreferensi
+                ,substring(lg.keterangan FROM '\"message\":[^}]*') as response
+                from (
+                    select sx.*
+                    from (
+                        select
+                        ps.nocm as norm,
+                        case when pd.ismobilejkn = true then pd.statusschedule else pd.noregistrasi end as noregistrasi,
+                        mt.noregistrasifk,
+                        pd.tglregistrasi,
+                        ps.namapasien,
+                        rm.namaruangan,
+                        mt.taskid,
+                        mt.waktu,
+                        mt.statuskirim,
+                        row_number() over(PARTITION BY mt.noregistrasifk,mt.taskid ORDER BY taskid) as nomor
+                        from monitoringtaskid_t mt
+                        inner join pasiendaftar_t pd on pd.norec = mt.noregistrasifk
+                        inner join ruangan_m rm on rm.id = pd.objectruanganlastfk
+                        inner join pasien_m ps on ps.id = pd.nocmfk
+                        left join kelompokpasien_m kp on kp.id = pd.objectkelompokpasienlastfk
+                        where pd.statusenabled = true
+                        and rm.objectdepartemenfk = 18
+                        and pd.tglregistrasi between '$tglawal' and '$tglakhir'
+                        $nocm
+                        $nama
+                        $ruangId
+                    
+                    ) sx
+                    where sx.nomor = 1
+                    $kdBooking
+                ) tx
+                left join logginguser_t lg on lg.noreff = tx.noregistrasi
+                where SUBSTRING ( lg.keterangan FROM '\"message\":[^}]*' ) = '\"message\":\"Ok.\"'
+                ORDER BY tx.noregistrasi DESC
+        "));
+        // return $data;
+        $status_1 = false;    
+        $taksid_1 = null;   
+        $status_2 = false;    
+        $taksid_2 = null;   
+        $status_3 = false;    
+        $taksid_3 = null;   
+        $status_4 = false;    
+        $taksid_4 = null;   
+        $status_5 = false;    
+        $taksid_5 = null;   
+        $status_6 = false;    
+        $taksid_6 = null;   
+        $status_7 = false;    
+        $taksid_7 = null;
+
+        $noregisok = [];
+        foreach($dataok as $item){
+            if(!in_array($item->noregistrasi, $noregisok)){
+                array_push($noregisok, $item->noregistrasi);
+            }
+        }
+
+        // Filter array1 untuk menghapus elemen yang ada di noregistrasiArray2
+        $result = array_filter($data, function($item) use ($noregisok) {
+            return !in_array($item->noregistrasi, $noregisok);
+        });
+        $result = array_values($result);
+
+        $dataGROUP= [];
+        foreach ($result as $item) {
+            $sama = false;
+            $i = 0;
+            foreach ($dataGROUP as $item2) {
+                if ($item->noregistrasi == $dataGROUP[$i]['noregistrasi'] ) {
+                    $sama = true;
+                    if ($item->taskid == 1) {
+                        $dataGROUP[$i]['status_1'] = $item->statuskirim;
+                        $dataGROUP[$i]['taksid_1'] = $item->waktu;
+                    }
+                    if ($item->taskid == 2) {
+                        $dataGROUP[$i]['status_2'] = $item->statuskirim;
+                        $dataGROUP[$i]['taksid_2'] = $item->waktu;
+                    }
+                    if ($item->taskid == 3) {
+                        $dataGROUP[$i]['status_3'] = $item->statuskirim;
+                        $dataGROUP[$i]['taksid_3'] = $item->waktu;
+                    }
+                    if ($item->taskid == 4) {
+                        $dataGROUP[$i]['status_4'] = $item->statuskirim;
+                        $dataGROUP[$i]['taksid_4'] = $item->waktu;
+                    }
+                    if ($item->taskid == 5) {
+                        $dataGROUP[$i]['status_5'] = $item->statuskirim;
+                        $dataGROUP[$i]['taksid_5'] = $item->waktu;
+                    }
+                    if ($item->taskid == 6) {
+                        $dataGROUP[$i]['status_6'] = $item->statuskirim;
+                        $dataGROUP[$i]['taksid_6'] = $item->waktu;
+                    }
+                    if ($item->taskid == 7) {
+                        $dataGROUP[$i]['status_7'] = $item->statuskirim;
+                        $dataGROUP[$i]['taksid_7'] = $item->waktu;
+                    }
+                }
+                $i = $i + 1;
+            }
+            if ($sama == false) {
+                if ($item->taskid == 1) {
+                    $status_1 = $item->statuskirim;
+                    $taksid_1 = $item->waktu;
+                }
+                if ($item->taskid == 2) {
+                    $status_2 = $item->statuskirim;
+                    $taksid_2 = $item->waktu;
+                }
+                if ($item->taskid == 3) {
+                    $status_3 = $item->statuskirim;
+                    $taksid_3 = $item->waktu;
+                }
+                if ($item->taskid == 4) {
+                    $status_4 = $item->statuskirim;
+                    $taksid_4 = $item->waktu;
+                }
+                if ($item->taskid == 5) {
+                    $status_5 = $item->statuskirim;
+                    $taksid_5 = $item->waktu;
+                }
+                if ($item->taskid == 6) {
+                    $status_6 = $item->statuskirim;
+                    $taksid_6 = $item->waktu;
+                }
+                if ($item->taskid == 7) {
+                    $status_7 = $item->statuskirim;
+                    $taksid_7 = $item->waktu;
+                }
+                $dataGROUP[] = array(
+
+                    'norm' => $item->norm,
+                    'noregistrasi' => $item->noregistrasi,
+                    'tglregistrasi' => $item->tglregistrasi,
+                    'namapasien' =>  $item->namapasien,
+                    'namaruangan' => $item->namaruangan,
+                    'noregistrasifk' => $item->noregistrasifk,
+                    'status_1' => $status_1,
+                    'status_2' => $status_2,
+                    'status_3' => $status_3,
+                    'status_4' => $status_4,
+                    'status_5' => $status_5,
+                    'status_6' => $status_6,
+                    'status_7' => $status_7,
+                    'taksid_1' => $taksid_1,
+                    'taksid_2' => $taksid_2,
+                    'taksid_3' => $taksid_3,
+                    'taksid_4' => $taksid_4,
+                    'taksid_5' => $taksid_5,
+                    'taksid_6' => $taksid_6,
+                    'taksid_7' => $taksid_7,
+                    // 'log' => $item->log,
+                    'noreferensi' => $item->noreferensi,
+                    'response' => $item->response,
+                );
+            }
+        }
+
+        foreach ($dataok as $item) {
+            $sama = false;
+            $i = 0;
+            foreach ($dataGROUP as $item2) {
+                if ($item->noregistrasi == $dataGROUP[$i]['noregistrasi'] ) {
+                    $sama = true;
+                    if ($item->taskid == 1) {
+                        $dataGROUP[$i]['status_1'] = $item->statuskirim;
+                        $dataGROUP[$i]['taksid_1'] = $item->waktu;
+                    }
+                    if ($item->taskid == 2) {
+                        $dataGROUP[$i]['status_2'] = $item->statuskirim;
+                        $dataGROUP[$i]['taksid_2'] = $item->waktu;
+                    }
+                    if ($item->taskid == 3) {
+                        $dataGROUP[$i]['status_3'] = $item->statuskirim;
+                        $dataGROUP[$i]['taksid_3'] = $item->waktu;
+                    }
+                    if ($item->taskid == 4) {
+                        $dataGROUP[$i]['status_4'] = $item->statuskirim;
+                        $dataGROUP[$i]['taksid_4'] = $item->waktu;
+                    }
+                    if ($item->taskid == 5) {
+                        $dataGROUP[$i]['status_5'] = $item->statuskirim;
+                        $dataGROUP[$i]['taksid_5'] = $item->waktu;
+                    }
+                    if ($item->taskid == 6) {
+                        $dataGROUP[$i]['status_6'] = $item->statuskirim;
+                        $dataGROUP[$i]['taksid_6'] = $item->waktu;
+                    }
+                    if ($item->taskid == 7) {
+                        $dataGROUP[$i]['status_7'] = $item->statuskirim;
+                        $dataGROUP[$i]['taksid_7'] = $item->waktu;
+                    }
+                }
+                $i = $i + 1;
+            }
+            if ($sama == false) {
+                if ($item->taskid == 1) {
+                    $status_1 = $item->statuskirim;
+                    $taksid_1 = $item->waktu;
+                }
+                if ($item->taskid == 2) {
+                    $status_2 = $item->statuskirim;
+                    $taksid_2 = $item->waktu;
+                }
+                if ($item->taskid == 3) {
+                    $status_3 = $item->statuskirim;
+                    $taksid_3 = $item->waktu;
+                }
+                if ($item->taskid == 4) {
+                    $status_4 = $item->statuskirim;
+                    $taksid_4 = $item->waktu;
+                }
+                if ($item->taskid == 5) {
+                    $status_5 = $item->statuskirim;
+                    $taksid_5 = $item->waktu;
+                }
+                if ($item->taskid == 6) {
+                    $status_6 = $item->statuskirim;
+                    $taksid_6 = $item->waktu;
+                }
+                if ($item->taskid == 7) {
+                    $status_7 = $item->statuskirim;
+                    $taksid_7 = $item->waktu;
+                }
+                $dataGROUP[] = array(
+
+                    'norm' => $item->norm,
+                    'noregistrasi' => $item->noregistrasi,
+                    'tglregistrasi' => $item->tglregistrasi,
+                    'namapasien' =>  $item->namapasien,
+                    'namaruangan' => $item->namaruangan,
+                    'noregistrasifk' => $item->noregistrasifk,
+                    'status_1' => $status_1,
+                    'status_2' => $status_2,
+                    'status_3' => $status_3,
+                    'status_4' => $status_4,
+                    'status_5' => $status_5,
+                    'status_6' => $status_6,
+                    'status_7' => $status_7,
+                    'taksid_1' => $taksid_1,
+                    'taksid_2' => $taksid_2,
+                    'taksid_3' => $taksid_3,
+                    'taksid_4' => $taksid_4,
+                    'taksid_5' => $taksid_5,
+                    'taksid_6' => $taksid_6,
+                    'taksid_7' => $taksid_7,
+                    // 'log' => $item->log,
+                    'noreferensi' => $item->noreferensi,
+                    'response' => $item->response,
+                );
+            }
+        }
+
+        $dataGROUP = json_decode(json_encode($dataGROUP));
+        foreach($dataGROUP as $item) {
+            $message = '';
+            // if($item->log!=null){
+            //     $log = explode("|",$item->log);
+
+            //     $logmes = '';
+            //     if(count($log) > 0){
+            //         foreach($log as $l => $vv){
+            //             $logs =json_decode($vv);
+            //             if(isset($logs->metaData) && isset($logs->metaData->message)){
+            //                  $message = $message .','. $logs->metaData->message;
+            //             }   
+            //         }
+            //     }
+            // }
+
+            // $item->log =  substr($message, 1, strlen($message)-1);
+            // if( $item->log == false){
+            //     $item->log = '';
+            // }
+            $item->taksid_1 = $item->taksid_1 == null ? "-" : date('Y-m-d H:i', $item->taksid_1 / 1000);
+            $item->taksid_2 = $item->taksid_2 == null ? "-" : date('Y-m-d H:i', $item->taksid_2 / 1000);
+            $item->taksid_3 = $item->taksid_3 == null ? "-" : date('Y-m-d H:i', $item->taksid_3 / 1000);
+            $item->taksid_4 = $item->taksid_4 == null ? "-" : date('Y-m-d H:i', $item->taksid_4 / 1000);
+            $item->taksid_5 = $item->taksid_5 == null ? "-" : date('Y-m-d H:i', $item->taksid_5 / 1000);
+            $item->taksid_6 = $item->taksid_6 == null ? "-" : date('Y-m-d H:i', $item->taksid_6 / 1000);
+            $item->taksid_7 = $item->taksid_7 == null ? "-" : date('Y-m-d H:i', $item->taksid_7 / 1000);
+        }
+
+        return $this->respond($dataGROUP);
     }
     public function LaporanPermintaanMakanGizi(Request $request)
     {

@@ -14224,7 +14224,8 @@ GROUP BY y.KET
         $norec_pd = $request['norec_pd'];
 
         $data = collect(DB::select("
-            select case when pd.ismobilejkn = true then pd.statusschedule else pd.noregistrasi end as kodebooking
+            select 
+            case when pd.statusschedule <> '' and pd.statusschedule <> 'Kios-K' and pd.objectkelompokpasienlastfk = 2 THEN pd.statusschedule ELSE pd.noregistrasi END as kodebooking
             ,case when pd.objectkelompokpasienlastfk = 2 then 'JKN' else 'NON JKN' end as jenispasien
             ,case when pd.objectkelompokpasienlastfk = 2 then ps.nobpjs else '' end as nomorkartu
             ,ps.noidentitas as nik
