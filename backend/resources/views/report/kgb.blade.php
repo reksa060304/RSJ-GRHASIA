@@ -93,21 +93,18 @@
 
 <body class="A4" style="font-family:Arial;height: auto">
     <section class="sheet padding-15mm" style="font-family:Arial">
-
-        <table cellspacing="0" cellpadding="0" border="0" width="100%">
+    <table cellspacing="0" cellpadding="0" border="0" width="100%">
             <tbody>
                 <tr>
                     <td width="10%" style="padding: 5px">
                         <img src="data:image/jpeg;base64,{{$profile[0]->logopemerintahan}}" alt=""
-                            style="width: 95px; margin-bottom:35px">
-
+                            style="width: 95px; margin-bottom:15px">
                     </td>
                     <td style="text-align: center; font-family: Arial">
-
                         <span style="font-size: 12pt">{{strtoupper($profile[0]->baris1)}}</span><br>
                         <span style="font-size: 16pt;">{{strtoupper($profile[0]->baris2)}}</span><br>
                         <span style="font-size: 14pt;">{{strtoupper($profile[0]->namalengkap)}}</span><br>
-                        <img src="data:image/jpeg;base64,{{$profile[0]->gambarlogo}}" alt="" style="width: 230px;"><br>
+                        <img src="data:image/jpeg;base64,{{$profile[0]->gambarlogo}}" alt="" style="width: 200px;"><br>
                         <span color="#000000" style="font-size: 10pt">
                             Jalan Kaliurang Km 17 Yogyakarta
                             Telepon {{$profile[0]->fixedphone}}
@@ -119,14 +116,10 @@
                             Kode Pos {{$profile[0]->kodepos}}
                         </span>
                     </td>
-
-
-                </tr>
-                <tr>
-
-                </tr>
+                </tr>               
             </tbody>
         </table>
+
 
         <hr style="border:1px solid #000;margin-bottom:0px">
         <hr style="border:0.5px solid #000;margin-top:2px">
@@ -141,16 +134,16 @@
 
             </tr>
             <tr>
-                <td style="padding-left: 50%; padding-top: 25px; font-family: Arial; font-size: 11pt">
+                <td style="padding-left: 50%; padding-top: 20px; font-family: Arial; font-size: 11pt">
                     K e p a d a : <br>
                     Yth. Kepala Badan Pengelola Keuangan dan Aset <br>
-                    c.q. Kepala Bidang Pengelolaan Kas Daerah DIY <br><br>
-                    di -
-                    <p style="padding-left: 5%">Yogyakarta <br></p>
+                    c.q. Kepala Bidang Pengelolaan Kas Daerah DIY <br>
+                    di - <br>
+                    Yogyakarta <br>
                 </td>
             </tr>
             <tr>
-                <td height="60" style="padding-left: 5%;font-family: Arial; font-size: 11pt">
+                <td height="50" style="padding-left: 5%;font-family: Arial; font-size: 11pt">
                     Dengan ini diberitahukan bahwa berhubung telah dipenuhi masa kerja dan syarat-syarat lainnya maka kepada:
                 </td>
             </tr>
@@ -207,21 +200,21 @@
                         </tr>
                         <tr>
                             <td style="font-size: 11pt"></td>
-                            <td style="font-size: 11pt">Nomor</td>
+                            <td style="font-size: 11pt; padding-left: 20px;" >Nomor</td>
                             <td style="font-size: 11pt">:</td>
                             <td style="font-size: 11pt"> {{$data[0]->sklama }}</td>
                         </tr>
                         <tr>
                             <td style="font-size: 11pt"></td>
-                            <td style="font-size: 11pt">Tanggal</td>
+                            <td style="font-size: 11pt; padding-left: 20px;">Tanggal</td>
                             <td style="font-size: 11pt"> : </td>
                             <td style="font-size: 11pt"> {{$data[0]->tglsklama }}</td>
                         </tr>
                         <tr>
                             <td style="font-size: 11pt"></td>
-                            <td style="font-size: 11pt">Terhitung Mulai Tanggal</td>
+                            <td style="font-size: 11pt; padding-left: 20px;">Terhitung Mulai Tanggal</td>
                             <td style="font-size: 11pt"> : </td>
-                            <td style="font-size: 11pt"> {{$data[0]->tmtlama }}</td>
+                            <td style="font-size: 11pt"> {{$data[0]->tmtlama }} </td>
                         </tr>
                         <tr>
                             <td style="font-size: 11pt" colspan="4" height="30" style="padding-left: 6%">Diberikan Kenaikan Gaji Berkala sehingga memperoleh :</td>
@@ -257,8 +250,8 @@
         </td>
         </tr>
         <tr>
-            <td height="70" style="padding-left: 5%;font-size: 11pt" colspan="4">
-                Diharap agar sesuai dengan Peraturan Pemerintah : {{$data[0]->namask}}. Pegawai tersebut
+            <td height="50" style="padding-left: 5%;font-size: 11pt" colspan="4">
+                Diharap agar sesuai dengan Peraturan Pemerintah {{$data[0]->namask}}. Pegawai tersebut
                 dapat dibayarkan penghasilannya berdasarkan gaji pokok yang baru.
             </td>
         </tr>
