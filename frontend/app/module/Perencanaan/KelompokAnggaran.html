@@ -2393,11 +2393,22 @@
 						ng-disabled="tambahpanjarspj" />
 				</div>
 			</div>
+            <div class="grid_12">
+				<div class="grid_3" style="text-align: left;margin-top: 15px;">
+					Sumber Dana
+				</div>
+				<div class="grid_6" >
+					<input kendo-combo-box k-ng-model="item.asalprodukpanjar"
+						k-data-text-field="'asalproduk'" k-data-value-field="'id'"
+						k-filter="'contains'" k-auto-bind="false" k-data-source="listAsalProdukPanjarSPJ"
+						ng-disabled="tambahpanjarspj" />
+				</div>
+			</div>
 			<div class="grid_12">
-				<div class="grid_3" style="text-align: left;">
+				<div class="grid_3" style="text-align: left;margin-top: 15px;">
 					Tanggal Panjar
 				</div>
-				<div class="grid_6" style="margin-top: -10px;">
+				<div class="grid_6">
 					<input style="width: 100%" k-ng-model="item.tglPanjar" kendo-datepicker 
                      placeholer="yyyy-MM-dd" k-format="'yyyy-MM-dd'"/>
 				</div>

@@ -1040,14 +1040,14 @@ class PerencanaanController extends ApiController {
         select  ntpn, idbill, ppn, pph2,ntpnpph2,idbillpph2,jenispajak2,idpajak2, ntpnpph, idbillpph, pph, jenispajak, idpajak, namamataanggaran, objectbkufk,idmataanggaran, kodemataanggaran, idsubkegiatan, subkegiatan, idsubsubkegiatan, subsubkegiatan,
         norec, nopanjar, uraian, tglpanjar, jumlah, jenispanjar, norealisasi, coalesce(jumlahspj, 0) jumlahspj, sumberpanjar,
         coalesce(sum(jumlahpengembalian), 0) jumlahpengembalian, coalesce(jumlahspj, 0) + coalesce(sum(jumlahpengembalian), 0) totalpemakaian,
-        coalesce(jumlah, 0) - (coalesce(jumlahspj, 0) + coalesce(sum(jumlahpengembalian), 0)) selisih
+        coalesce(jumlah, 0) - (coalesce(jumlahspj, 0) + coalesce(sum(jumlahpengembalian), 0)) selisih, idasalproduk, asalproduk
         from(
                 select pj.ntpn, pj.idbill, pj.ppn, pj.pph2, pj.ntpnpph2, pj.idbillpph2, jp2.jenispajak as jenispajak2, pj.objectjenispphfk2 as idpajak2, pj.ntpnpph, pj.idbillpph, jp.jenispajak, pj.objectjenispphfk as idpajak, ma.namamataanggaran, ma.id idmataanggaran, ma.kodemataanggaran, subkeg.id idsubkegiatan, 
                 subkeg.keterangan subkegiatan, subsubkeg.id idsubsubkegiatan, subsubkeg.keterangan subsubkegiatan, 
                 pj.norec, pj.nopanjar, pj.uraian, pj.tglpanjar, pj.jumlah, pj.jenispanjar, pj.pph,
                 string_agg(DISTINCT sr.norealisasi, ',') norealisasi,
                 sum(stp.jumlahspj) as jumlahspj, pj.sumberpanjar, pj.objectbkufk,
-                pp.jumlahpengembalian, pp.norec norecpengembalian
+                pp.jumlahpengembalian, pp.norec norecpengembalian, ap.id as idasalproduk, ap.asalproduk
                 from panjar_t pj
                 inner join mataanggaran_m ma on ma.id = pj.objectmataanggaranfk
                 inner join kegiatananggaran_m subkeg on subkeg.id = pj.objectsubkegiatanfk
@@ -1063,17 +1063,18 @@ class PerencanaanController extends ApiController {
                 left join pengembalianpanjar_t pp on pp.objectpanjarfk = pj.norec
                 and pp.kdprofile = 30
                 and pp.statusenabled = true
+                left join asalproduk_m ap ON ap.id = pj.objectasalprodukfk and ap.statusenabled = true and ap.kdprofile = $idProfile
                 where pj.kdprofile = 30
                 $thnpanjar
                 $tglpanjardate
                 and pj.statusenabled = true
                 group by pj.ntpn, pj.idbill, pj.ppn, pj.pph2, pj.ntpnpph2, pj.idbillpph2, jp2.jenispajak, pj.objectjenispphfk2, pj.ntpnpph,pj.idbillpph, pj.pph, jp.jenispajak, pj.objectjenispphfk,ma.namamataanggaran, ma.id, ma.kodemataanggaran, subkeg.id, subkeg.keterangan, 
                 subsubkeg.id, subsubkeg.keterangan, pj.norec, pj.nopanjar, pj.uraian, pj.tglpanjar, 
-                pj.jumlah, pj.jenispanjar, pj.sumberpanjar, pp.jumlahpengembalian, pp.norec,pj.objectbkufk
+                pj.jumlah, pj.jenispanjar, pj.sumberpanjar, pp.jumlahpengembalian, pp.norec,pj.objectbkufk, ap.id, ap.asalproduk
                 order by pj.nopanjar
         ) as x 
         group by ntpn, idbill, ppn, pph2,ntpnpph2,idbillpph2,jenispajak2,idpajak2,  ntpnpph, idbillpph, pph, jenispajak, idpajak, namamataanggaran, objectbkufk, idmataanggaran, kodemataanggaran, idsubkegiatan, subkegiatan, idsubsubkegiatan, subsubkegiatan,
-        norec, nopanjar, uraian, tglpanjar, jumlah, jenispanjar, norealisasi, jumlahspj, sumberpanjar
+        norec, nopanjar, uraian, tglpanjar, jumlah, jenispanjar, norealisasi, jumlahspj, sumberpanjar, idasalproduk, asalproduk
         order by nopanjar asc;
         "));
         // dd( $panjar);
@@ -8754,7 +8755,7 @@ order by  split_part(kode, '.', 1)asc, split_part(kode, '.', 2)asc,  split_part(
 
 
         $result = array(
-            'data' => $data,
+            'data' => $spj,
             'message' => '@epic',
         );
 
@@ -9226,6 +9227,7 @@ order by  split_part(kode, '.', 1)asc, split_part(kode, '.', 2)asc,  split_part(
                 $MA->ntpnpph2 = $request['ntpnpph2'];
                 $MA->objectjenispphfk2 = $request['objectjenispphfk2'];
                 $MA->pph2 = $request['pph2'];
+                $MA->objectasalprodukfk = $request['asalproduk'];
                 $MA->save();
 
            $transStatus = 'true';
