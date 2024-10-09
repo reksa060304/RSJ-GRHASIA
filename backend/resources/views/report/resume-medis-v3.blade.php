@@ -287,9 +287,9 @@
                     <br>
                     a. Minum obat sesuai aturan
                     <br>
-                    b. Kontrol klinik {!! $res['d']['kontrolklinik'] !!} di RS Jiwa Grhasia / {!! $res['d']['rumahsakittujuan'] !!} tanggal {{ date('d-M-Y', strtotime($res['d']['tglkontrolpoli'])) }}
+                    b. Kontrol klinik @if(isset($res['d']['kontrolklinik'])) {!! $res['d']['kontrolklinik'] !!} @endif di RS Jiwa Grhasia / {!! $res['d']['rumahsakittujuan'] !!} tanggal @if(isset($res['d']['tglkontrolpoli'])) {{ date('d-m-Y', strtotime($res['d']['tglkontrolpoli'])) }} @endif
                     <br>
-                    c. Edukasi perawatan lanjut : {{ $res['d']['instruksianjuran'] }}
+                    c. Edukasi perawatan lanjut : @if(isset($res['d']['instruksianjuran'])) {{ $res['d']['instruksianjuran'] }} @endif
                     <br>
                     d. {{ $res['d']['kondisiwaktukeluar'] }}
                     <br>
