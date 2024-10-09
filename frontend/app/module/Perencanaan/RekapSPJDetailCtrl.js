@@ -3830,9 +3830,9 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
                     sub = $scope.item.kegiatansubsubspj.id
                 }
 
-                var asal = ''
+                var asalproduk = ''
                 if ($scope.item.asalproduk != undefined) { 
-                    asal = $scope.item.asalproduk.id
+                    asalproduk = $scope.item.asalproduk.id
                 }
                 
                 medifirstService.get("perencanaan/get-spj?tglAwal=" + tglawal
@@ -3840,7 +3840,7 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
                     + "&idpegawai=" + $scope.idpegawailogin
                     + "&status=" + stat
                     + "&subkegiatan=" + sub
-                    + "&asal=" + asal
+                    + "&asalproduk=" + asalproduk
                 ).then(function (e) {
                     DataSPJ = e.data.data
                     DataDetailSPJALL = e.data.detail
