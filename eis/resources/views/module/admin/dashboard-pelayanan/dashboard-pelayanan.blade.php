@@ -94,6 +94,60 @@
     <div class="page-wrapper pad" style="margin-top:20px">
         <div class="page-body">
             <div class="card">
+                <div class="card-block tab-icon">
+                    <div class="row">
+                        <div class="col-sm-12 col-lg-6 col-xl-6">
+                            <div class="card">
+                                <div class="panel panel-danger">
+                                    <div class="panel-heading bg-danger">
+                                        Trend Pengunjung Rawat Jalan
+                                    </div>
+                                    <div class="panel-body">
+                                        <div id="chartTrend"></div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                            <div class="col-sm-12 col-lg-6 col-xl-6">
+                            <div class="card">
+                                <div class="panel panel-danger">
+                                    <div class="panel-heading bg-danger">
+                                        Trend Pengunjung Rawat Inap
+                                    </div>
+                                    <div class="panel-body">
+                                        <div id="chartTrendRanap"></div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                            <div class="col-sm-12 col-lg-6 col-xl-6">
+                            <div class="card">
+                                <div class="panel panel-danger">
+                                    <div class="panel-heading bg-danger">
+                                        Trend Kunjungan Gawat Darurat
+                                    </div>
+                                    <div class="panel-body">
+                                        <div id="chartTrendIGD"></div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                            <div class="col-sm-12 col-lg-6 col-xl-6">
+                            <div class="card">
+                                <div class="panel panel-danger">
+                                    <div class="panel-heading bg-danger">
+                                        Trend Kunjungan Penunjang
+                                    </div>
+                                    <div class="panel-body">
+                                        <div id="chartTrendPenunjang"></div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="card">
                 <div class="card-header">
                     <h5>Executive Information System</h5>
                 </div>
@@ -214,50 +268,32 @@
 
                                 </div>
                             </div>
-                            <div class="col-sm-12 col-lg-6 col-xl-6">
+                             <div class="col-lg-6 col-md-12">
                                 <div class="card">
-                                    <div class="panel panel-danger">
-                                        <div class="panel-heading bg-danger">
-                                            Trend Pengunjung Rawat Jalan
+                                    <div class="panel panel-primary">
+                                        <div class="panel-heading bg-primary">
+                                            Sebaran Pasien Rawat Inap
                                         </div>
                                         <div class="panel-body">
-                                            <div id="chartTrend"></div>
+                                            @php
+                                                $res['ranap'] = App\Http\Controllers\MainController::getKunjunganRuanganRawatInap(request()->get("tglawal"),request()->get("tglakhir"),session('kdProfile'));
+                                            @endphp
+                                            <div id="chartKunjunganRanap"></div>
                                         </div>
                                     </div>
                                 </div>
                             </div>
-                             <div class="col-sm-12 col-lg-6 col-xl-6">
+                            <div class="col-lg-6 col-md-12">
                                 <div class="card">
-                                    <div class="panel panel-danger">
-                                        <div class="panel-heading bg-danger">
-                                            Trend Pengunjung Rawat Inap
+                                    <div class="panel panel-primary">
+                                        <div class="panel-heading bg-primary">
+                                            Pengunjung Pasien Rawat Jalan
                                         </div>
                                         <div class="panel-body">
-                                            <div id="chartTrendRanap"></div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                             <div class="col-sm-12 col-lg-6 col-xl-6">
-                                <div class="card">
-                                    <div class="panel panel-danger">
-                                        <div class="panel-heading bg-danger">
-                                            Trend Kunjungan Gawat Darurat
-                                        </div>
-                                        <div class="panel-body">
-                                            <div id="chartTrendIGD"></div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                             <div class="col-sm-12 col-lg-6 col-xl-6">
-                                <div class="card">
-                                    <div class="panel panel-danger">
-                                        <div class="panel-heading bg-danger">
-                                            Trend Kunjungan Penunjang
-                                        </div>
-                                        <div class="panel-body">
-                                            <div id="chartTrendPenunjang"></div>
+                                            @php
+                                                $res['rajal'] = App\Http\Controllers\MainController::getKunjunganRuanganRawatJalan(request()->get("tglawal"),request()->get("tglakhir"),session('kdProfile'));
+                                            @endphp
+                                            <div id="chartKunjunganRajal"></div>
                                         </div>
                                     </div>
                                 </div>
@@ -449,6 +485,83 @@
                                     </div>
                                 </div>
                             </div>
+                            <div class="col-lg-6 col-md-12">
+                                <div class="card">
+                                    <div class="panel panel-warning">
+                                        <div class="panel-heading  bg-c-kuning">
+                                            Ketersediaan Tempat Tidur Per Kelas
+                                        </div>
+                                        @php
+                                            $res['tt'] = App\Http\Controllers\MainController::getKetersediaanTempatTidurPerkelas(request()->get("tglawal"),request()->get("tglakhir"),session('kdProfile'));
+                                        @endphp
+                                        <div class="panel-body" >
+                                            <div class="row" style="padding:10px;">
+                                                <div class="col-md-12">
+                                                    <div class="table-responsive" >
+                                                        <table class="table  table-striped table-sm table-styling"
+                                                               style="width:100%">
+                                                            <thead>
+                                                            <tr class="table-inverse">
+                                                                <th>Kelas </th>
+                                                                <th>Jumlah </th>
+                                                                <th>Terpakai   </th>
+                                                                <th>Kosong</th>
+                                                            </tr>
+                                                            </thead>
+                                                            <tbody>
+                                                            @php
+                                                             $jml = 0;
+                                                             $ksng = 0;
+                                                             $pakai = 0;
+                                                            @endphp
+                                                            @forelse($res['tt'] as $i => $d)
+                                                                @php
+                                                                    $jml = (float)$d->jml +$jml;
+                                                                    $ksng = (float)$d->kosong +$ksng;
+                                                                    $pakai = (float)$d->terpakai +$pakai;
+                                                                @endphp
+                                                                <tr>
+                                                                    <td >{{ $d->namakelas }}</td>
+                                                                    <td  style="text-align: center">{{ $d->jml }}</td>
+                                                                    <td  style="text-align: center">{{ $d->terpakai }}</td>
+                                                                    <td  style="text-align: center">{{ $d->kosong }}</td>
+                                                                </tr>
+                                                            @empty
+                                                                <tr>
+                                                                    <td colspan="4" style="text-align: center">Data Tidak ada</td>
+                                                                </tr>
+                                                            @endforelse
+                                                            <tr style="background:rgba(0,0,0,.3);">
+                                                                <td>JUMLAH</td>
+                                                                <td style="text-align: center">{{$jml}}</td>
+                                                                <td style="text-align: center">{{$pakai}}</td>
+                                                                <td style="text-align: center">{{$ksng}}</td>
+                                                            </tr>
+                                                            </tbody>
+                                                        </table>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="col-lg-6 col-md-12">
+                                <div class="card">
+                                    <div class="panel panel-success">
+                                        <div class="panel-heading bg-success">
+                                            10 Besar Diagnosa
+                                        </div>
+                                        <div class="panel-body">
+                                            @php
+                                                $res['toptendiag'] = App\Http\Controllers\MainController::getTopTenDiagnosa(request()->get("tglawal"),request()->get("tglakhir"),session('kdProfile'));
+                                            @endphp
+                                            <div id="chart10Diagnosa"></div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
                             <div class="col-lg-12 col-md-12">
                                 <div class="card">
                                     <div class="panel panel-default">
@@ -511,7 +624,7 @@
                                 <div class="card">
                                     <div class="panel panel-info">
                                         <div class="panel-heading bg-info">
-                                            Asal Perujuk Pasien Instalasi Gawat Darurat
+                                            Asal Perujuk Kunjungan Pasien Instalasi Gawat Darurat
                                         </div>
                                         <div class="panel-body">
                                             @php
@@ -533,36 +646,6 @@
                                                 $res['jenis_pel'] = App\Http\Controllers\MainController::getKunjunganPerJenisPelayanan(request()->get("tglawal"),request()->get("tglakhir"),session('kdProfile'));
                                             @endphp
                                             <div id="chartJenisPelayanan"></div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="col-lg-6 col-md-12">
-                                <div class="card">
-                                    <div class="panel panel-primary">
-                                        <div class="panel-heading bg-primary">
-                                            Sebaran Pasien Rawat Inap
-                                        </div>
-                                        <div class="panel-body">
-                                            @php
-                                                $res['ranap'] = App\Http\Controllers\MainController::getKunjunganRuanganRawatInap(request()->get("tglawal"),request()->get("tglakhir"),session('kdProfile'));
-                                            @endphp
-                                            <div id="chartKunjunganRanap"></div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="col-lg-6 col-md-12">
-                                <div class="card">
-                                    <div class="panel panel-primary">
-                                        <div class="panel-heading bg-primary">
-                                            Pengunjung Pasien Rawat Jalan
-                                        </div>
-                                        <div class="panel-body">
-                                            @php
-                                                $res['rajal'] = App\Http\Controllers\MainController::getKunjunganRuanganRawatJalan(request()->get("tglawal"),request()->get("tglakhir"),session('kdProfile'));
-                                            @endphp
-                                            <div id="chartKunjunganRajal"></div>
                                         </div>
                                     </div>
                                 </div>
@@ -694,85 +777,6 @@
                                                     </div>
                                                 </div>
                                             </div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                           
-                            <div class="col-lg-6 col-md-12">
-                                <div class="card">
-                                    <div class="panel panel-warning">
-                                        <div class="panel-heading  bg-c-kuning">
-                                            Ketersediaan Tempat Tidur Per Kelas
-                                        </div>
-                                        @php
-                                            $res['tt'] = App\Http\Controllers\MainController::getKetersediaanTempatTidurPerkelas(request()->get("tglawal"),request()->get("tglakhir"),session('kdProfile'));
-                                        @endphp
-                                        <div class="panel-body" >
-                                            <div class="row" style="padding:10px;">
-                                                <div class="col-md-12">
-                                                    <div class="table-responsive" >
-                                                        <table class="table  table-striped table-sm table-styling"
-                                                               style="width:100%">
-{{--                                                            id="t_Bed"--}}
-                                                            <thead>
-                                                            <tr class="table-inverse">
-                                                                <th>Kelas </th>
-                                                                <th>Jumlah </th>
-                                                                <th>Terpakai   </th>
-                                                                <th>Kosong</th>
-                                                            </tr>
-                                                            </thead>
-                                                            <tbody>
-                                                            @php
-                                                             $jml = 0;
-                                                             $ksng = 0;
-                                                             $pakai = 0;
-                                                            @endphp
-                                                            @forelse($res['tt'] as $i => $d)
-                                                                @php
-                                                                    $jml = (float)$d->jml +$jml;
-                                                                    $ksng = (float)$d->kosong +$ksng;
-                                                                    $pakai = (float)$d->terpakai +$pakai;
-                                                                @endphp
-                                                                <tr>
-                                                                    <td >{{ $d->namakelas }}</td>
-                                                                    <td  style="text-align: center">{{ $d->jml }}</td>
-                                                                    <td  style="text-align: center">{{ $d->terpakai }}</td>
-                                                                    <td  style="text-align: center">{{ $d->kosong }}</td>
-                                                                </tr>
-                                                            @empty
-                                                                <tr>
-                                                                    <td colspan="4" style="text-align: center">Data Tidak ada</td>
-                                                                </tr>
-                                                            @endforelse
-                                                            <tr style="background:rgba(0,0,0,.3);">
-                                                                <td>JUMLAH</td>
-                                                                <td style="text-align: center">{{$jml}}</td>
-                                                                <td style="text-align: center">{{$pakai}}</td>
-                                                                <td style="text-align: center">{{$ksng}}</td>
-                                                            </tr>
-                                                            </tbody>
-                                                        </table>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-
-                            <div class="col-lg-6 col-md-12">
-                                <div class="card">
-                                    <div class="panel panel-success">
-                                        <div class="panel-heading bg-success">
-                                            10 Besar Diagnosa
-                                        </div>
-                                        <div class="panel-body">
-                                            @php
-                                                $res['toptendiag'] = App\Http\Controllers\MainController::getTopTenDiagnosa(request()->get("tglawal"),request()->get("tglakhir"),session('kdProfile'));
-                                            @endphp
-                                            <div id="chart10Diagnosa"></div>
                                         </div>
                                     </div>
                                 </div>

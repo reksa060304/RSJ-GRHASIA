@@ -4341,20 +4341,35 @@ AND sp.statusenabled <> false
         $bulan = Carbon::now()->format('F');
         $idDepRanap = (int) static::settingDataFixed2('idDepRawatInap', $idProfile);
 
-        $data = DB::select(DB::raw("
-        select namaruangan, sum(jumlah) as jumlah
-        from (
-            select count(pd.noregistrasi) as jumlah, ru.namaruangan
-            FROM pasiendaftar_t as pd
-            inner join antrianpasiendiperiksa_t apd on pd.norec=apd.noregistrasifk
-            INNER JOIN ruangan_m as ru on ru.id = apd.objectruanganfk
-            where pd.kdprofile = $idProfile
+        $data = DB::select(DB::raw("select count(x.noregistrasi) as jumlah, x.namaruangan
+            from ( select  pd.noregistrasi,pd.tglregistrasi,ru.namaruangan
+            from pasiendaftar_t as pd
+            inner join ruangan_m as ru on ru.id = pd.objectruanganlastfk
+            where ru.objectdepartemenfk = $idDepRanap
             and pd.statusenabled = true
-            and ru.objectdepartemenfk = 16
-            and apd.tglmasuk::date between '$tglAwal' and '$tglAkhir'
-            group by ru.namaruangan
-        )
-        as x group by namaruangan"));
+            and pd.kdprofile=$kdProfile
+            and ( (  pd.tglregistrasi < '$tglAwal'
+                AND pd.tglpulang >= '$tglAkhir'
+             ) or pd.tglpulang is null)
+
+            ) as x
+            GROUP BY x.namaruangan
+        "));
+
+        // $data = DB::select(DB::raw("
+        // select namaruangan, sum(jumlah) as jumlah
+        // from (
+        //     select count(pd.noregistrasi) as jumlah, ru.namaruangan
+        //     FROM pasiendaftar_t as pd
+        //     inner join antrianpasiendiperiksa_t apd on pd.norec=apd.noregistrasifk
+        //     INNER JOIN ruangan_m as ru on ru.id = apd.objectruanganfk
+        //     where pd.kdprofile = $idProfile
+        //     and pd.statusenabled = true
+        //     and ru.objectdepartemenfk = 16
+        //     and apd.tglmasuk between '$tglAwal' and '$tglAkhir'
+        //     group by ru.namaruangan
+        // )
+        // as x group by namaruangan"));
 
         // $data = DB::select(DB::raw("
         // SELECT ru.namaruangan,count(pd.noregistrasi) as jumlah
@@ -4735,7 +4750,8 @@ AND sp.statusenabled <> false
 		from pasiendaftar_t pd
         inner join antrianpasiendiperiksa_t apd on pd.norec=apd.noregistrasifk
         inner join asalrujukan_m aj on aj.id = apd.objectasalrujukanfk
-        inner join ruangan_m ru on ru.id = pd.objectruanganasalfk
+        --inner join ruangan_m ru on ru.id = pd.objectruanganasalfk
+        inner join ruangan_m ru on ru.id = apd.objectruanganfk
         where apd.tglmasuk between '$tglAwal' and '$tglAkhir'
         and pd.statusenabled = true and pd.kdprofile = $idProfile
         and ru.objectdepartemenfk = 24
