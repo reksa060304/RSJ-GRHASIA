@@ -97,6 +97,202 @@ define(['initialize'], function (initialize) {
 					}
 				});
 
+				var data = {
+					"url": "antrean/pendaftaran/tanggal/" + tanggal,
+					"method": "GET",
+					"data": null,
+					"jenis": "antrean"
+				}
+				await medifirstService.postNonMessage('bridging/bpjs/tools', data).then(function (x) {
+					if (x.data.metaData.code == 200) {
+
+						// console.log(x.data.response)
+						var res = [];
+
+						res = x.data.response;
+
+						var dtapop = [];
+						var no = 1;
+
+						res.forEach(elm => {
+							var jeniskunjungan = "";
+							switch (elm.jeniskunjungan) {
+								case 1:
+									jeniskunjungan = "Rujukan"
+									break;
+								case 2:
+									jeniskunjungan = "Rujukan Internal"
+									break;
+								case 3:
+									jeniskunjungan = "Kontrol"
+									break;
+								case 4:
+									jeniskunjungan = "Rujukan Antar RS"
+									break;
+								default:
+									break;
+							}
+
+							// let dtregfilter = dtreg.filter(function (flt) {
+							// 	return flt.noregistrasi == kodebooking;
+							// })
+
+							if (elm.status != 'Batal') {
+
+								if (elm.ispeserta == true) {
+									$scope.jmlAntreanJKN += 1;
+								} else {
+									$scope.jmlAntreanNonJKN += 1;
+								}
+								
+								if(elm.ispeserta == true &&
+									elm.sumberdata == 'Mobile JKN'
+								) {
+									$scope.jmlAntreanByMJKN += 1;
+								}
+
+								if(elm.ispeserta == true &&
+									elm.sumberdata == 'Bridging Antrean'
+								) {
+									$scope.jmlAntreanBySumber += 1;
+								}
+
+								if (elm.ispeserta == true &&
+									elm.status == "Selesai dilayani" &&
+									elm.sumberdata == "Bridging Antrean"
+								) {
+									$scope.totalLengkapByBridging += 1;
+								}
+
+								if (elm.ispeserta == true &&
+									elm.status == "Selesai dilayani" &&
+									elm.sumberdata == "Mobile JKN"
+								) {
+									$scope.totalLengkapByMJKN += 1;
+								}
+
+								dtapop.push({
+									"no": no++,
+									"tanggal": elm.tanggal,
+									"kodebooking": elm.kodebooking,
+									"jeniskunjungan": jeniskunjungan,
+									"kodepoli": elm.kodepoli,
+									"kodedokter": elm.kodedokter,
+									"noreferensi": elm.nomorreferensi == "" ? "-" : elm.nomorreferensi,
+									"norm": elm.norekammedis,
+									"nik": elm.nik,
+									"nokartupeserta": elm.nokapst,
+									"sumberdata": elm.sumberdata,
+									"kelompok": elm.ispeserta == true ? "JKN" : "NON JKN",
+									"status": elm.status,
+								})
+
+							}
+
+						});
+
+						$scope.capaianAntrol = Math.round((($scope.totalLengkapByBridging + $scope.totalLengkapByMJKN) / $scope.totalSepTerbitByBridging) * 100)
+						$scope.capaianMJKN = Math.round(($scope.totalLengkapByMJKN / $scope.totalSepTerbitByBridging) * 100)
+
+						$scope.dataDaftarPasien = new kendo.data.DataSource({
+							data: dtapop,
+							pageSize: 10,
+							total: dtapop.length,
+							serverPaging: false,
+							schema: {
+								model: {
+									fields: {
+									}
+								}
+							}
+						});
+
+
+						var dtamon = [
+							{
+								'jmlantreanjkn': $scope.jmlAntreanJKN,
+								'jmlantreannonjkn': $scope.jmlAntreanNonJKN,
+								'jmlantreanbysumberbridging': $scope.jmlAntreanBySumber,
+								'jmlantreanbysumbermjkn': $scope.jmlAntreanByMJKN,
+								'totalsepterbit': $scope.totalSepTerbitByBridging,
+								'jmlantreanlengkapbybridging': $scope.totalLengkapByBridging,
+								'jmlantreanlengkapbymjkn': $scope.totalLengkapByMJKN,
+								'capaianantrol': $scope.capaianAntrol,
+								'capaianmjkn': $scope.capaianMJKN
+							}
+						];
+						$scope.dataMonitoring = new kendo.data.DataSource({
+							data: dtamon,
+							pageSize: 10,
+							total: dtamon.length,
+							serverPaging: false,
+							schema: {
+								model: {
+									fields: {
+									}
+								}
+							}
+						});
+					}
+					$scope.isRouteLoading = false;
+				})
+
+
+
+			}
+
+			async function loadDataOld() {
+				$scope.isRouteLoading = true;
+				var tanggal = moment($scope.item.tanggal).format("YYYY-MM-DD");
+
+				var kdBooking = ""
+				if ($scope.item.kdBooking != undefined) {
+					var kdBooking = "&kdBooking=" + $scope.item.kdBooking
+				}
+
+				var kelompok = ""
+				if ($scope.item.kelompokpasien != undefined) {
+					kelompok = "&kelId=" + $scope.item.kelompokpasien.id
+				}
+
+
+				$scope.totalLengkapByBridging = 0;
+				$scope.totalLengkapByMJKN = 0;
+				$scope.totalSepTerbitByBridging = 0;
+				$scope.totalSepTerbitByMJKN = 0;
+				$scope.capaianAntrol = 0;
+				$scope.capaianMJKN = 0;
+				$scope.totalJkn = 0;
+				$scope.jmlAntreanJKN = 0;
+				$scope.jmlAntreanNonJKN = 0;
+				$scope.jmlAntreanBySumber = 0;
+				$scope.jmlAntreanByMJKN = 0;
+				$scope.jmlAntreanJKN = 0;
+				$scope.dataDaftarPasien = null;
+				$scope.dataMonitoring = null;
+
+
+
+
+				var dt_sep = {
+					url: "Monitoring/Kunjungan/Tanggal/" + tanggal + "/JnsPelayanan/2",
+					method: "GET",
+					data: null,
+				};
+
+				await medifirstService.postNonMessage('bridging/bpjs/tools', dt_sep).then(function (x0) {
+					if (x0.data.metaData.code == 200) {
+						var res0 = [];
+						res0 = x0.data.response.sep;
+						res0.forEach(elm0 => {
+							if (elm0.poli != 'IGD') {
+								$scope.totalSepTerbitByBridging += 1;
+							}
+
+						})
+					}
+				});
+
 
 
 				var dtreg = [];
@@ -464,12 +660,12 @@ define(['initialize'], function (initialize) {
 							"width": "100px",
 							"template": "<span class='style-center'>#: norm #</span>"
 						},
-						{
-							"field": "namapasien",
-							"title": "Nama Pasien",
-							"width": "150px",
-							"template": "<span class='style-center'>#: namapasien #</span>"
-						},
+						// {
+						// 	"field": "namapasien",
+						// 	"title": "Nama Pasien",
+						// 	"width": "150px",
+						// 	"template": "<span class='style-center'>#: namapasien #</span>"
+						// },
 						{
 							"field": "nik",
 							"title": "NIK",
@@ -524,13 +720,13 @@ define(['initialize'], function (initialize) {
 						},
 						{
 							"field": "jmlantreanbysumberbridging",
-							"title": "JML Antrean By Sumber (Bridging)",
+							"title": "JML Antrean JKN By Sumber (Bridging)",
 							"width": "150px",
 							"template": "<span class='style-center-font-20'>#: jmlantreanbysumberbridging #</span>"
 						},
 						{
 							"field": "jmlantreanbysumbermjkn",
-							"title": "JML Antrean By Sumber (MJKN)",
+							"title": "JML Antrean JKN By Sumber (MJKN)",
 							"width": "150px",
 							"template": "<span class='style-center-font-20'>#: jmlantreanbysumbermjkn #</span>"
 						},
@@ -542,13 +738,13 @@ define(['initialize'], function (initialize) {
 						},
 						{
 							"field": "jmlantreanlengkapbybridging",
-							"title": "JML Antrean Lengkap By Sumber (Bridging)",
+							"title": "JML Antrean JKN Lengkap By Sumber (Bridging)",
 							"width": "150px",
 							"template": "<span class='style-center-font-20'>#: jmlantreanlengkapbybridging #</span>"
 						},
 						{
 							"field": "jmlantreanlengkapbymjkn",
-							"title": "JML Antrean Lengkap By Sumber (MJKN)",
+							"title": "JML Antrean JKN Lengkap By Sumber (MJKN)",
 							"width": "150px",
 							"template": "<span class='style-center-font-20'>#: jmlantreanlengkapbymjkn #</span>"
 						},
