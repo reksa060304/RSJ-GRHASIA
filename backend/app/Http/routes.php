@@ -869,6 +869,7 @@ Route::group(['middleware' => 'cors', 'prefix' => 'service'], function () {
           Route::get('emr/get-perjanjian','EMR\EMRController@getPasienPerjanjian');
           Route::post('emr/post-cppt/{method}','EMR\EMRController@postCPPT');
           Route::get('emr/get-cppt','EMR\EMRController@getCPPT');
+          Route::post('emr/post-riwayatalergi-v2', 'EMR\EMRController@saveAlergiV2');
 
           Route::get('emr/get-data-riwayat-pengkajiankeperawatan','EMR\EMRController@getDataPasienPengkajianKeperawatan');
           Route::get('emr/daftar-riwayat-registrasi', 'EMR\EMRController@getDaftarRiwayatRegistrasi');
@@ -886,6 +887,7 @@ Route::group(['middleware' => 'cors', 'prefix' => 'service'], function () {
           Route::post('emr/delete-diagnosa-pasien', 'EMR\EMRController@deleteDiagnosaPasien');
           Route::post('emr/save-diagnosa-keperawatan','EMR\EMRController@saveDiagnosaKeperawatan');
           Route::post('emr/hapus-diagnosa-keperawatan','EMR\EMRController@hapusDiagnosaKeperawatan');
+          Route::get('emr/get-kategori-alergi', 'EMR\EMRController@getKategoriAlergi');
 
           Route::get('emr/get-combo-resep-emr', 'EMR\EMRController@getDataComboResepEMR');
           Route::get('emr/get-daftar-detail-order', 'EMR\EMRController@getDaftarDetailOrder');

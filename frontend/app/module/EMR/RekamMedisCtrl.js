@@ -6,14 +6,14 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
             $scope.item = {};
             $scope.header = {};
             var usrDokter = medifirstService.getPegawaiLogin().jenisPegawai.id;
-            $scope.checkNoregis =true;
+            $scope.checkNoregis = true;
             // $scope.checkNoregis = (usrDokter == 1) ? false : true;
             var usia = ''
             var departemen = ''
             $scope.isLoadingNav = false
             $scope.scrollmarker = false
 
-            if(medifirstService.getKelompokUser() == 'mahasiswadiklat'){
+            if (medifirstService.getKelompokUser() == 'mahasiswadiklat') {
                 $scope.textUser = medifirstService.getUserLogin().kdUser
                 $scope.textNamaLengkap = medifirstService.getPegawaiLogin().namaLengkap
                 $scope.scrollmarker = true
@@ -22,10 +22,10 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
             $scope.getRekamMedisCheck = function (checkNoregis) {
                 $rootScope.getRekamMedisCheck(checkNoregis);
             }
-                $scope.rekammedis = true
+            $scope.rekammedis = true
             if (medifirstService.getKelompokUser() == 'operator') {
                 $scope.rekammedis = false
-            }else{
+            } else {
                 $scope.rekammedis = true
 
             }
@@ -64,8 +64,8 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
                 localStorage.setItem('departemenPengkajian', departemen);
                 $scope.hideShowForm(setUsiaPengkajian, departemen)
                 setCache()
-           
-           
+
+
             })
             function setCache() {
                 cacheHelper.set('CacheInputDiagnosaDokter', undefined);
@@ -116,6 +116,7 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
                     37: $scope.header.pendidikan,
                     38: $scope.header.agama,
                     39: $scope.header.nohp,
+                    40: $scope.header.ketalergi,
                 }
                 cacheHelper.set('CacheInputDiagnosaDokter', arrStr);
                 cacheHelper.set('InputResepApotikOrderRevCtrl', arrStr);
@@ -136,15 +137,15 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
             function loadTreeView() {
                 var mapemr = "&departemen=" + $scope.header.objectdepartemenfk
                 // if($scope.header.objectdepartemenfk == 18 && $scope.header.objectdepartemenfk == 16)
-                    mapemr += "&ruangan=" + $scope.header.objectruanganfk
+                mapemr += "&ruangan=" + $scope.header.objectruanganfk
                 $scope.isLoadingNav = true
                 $scope.treeSourceMenu = [];
                 $scope.dataMenu = []
                 var mahasiswadiklat = ''
-                if(medifirstService.getKelompokUser() == 'mahasiswadiklat'){
+                if (medifirstService.getKelompokUser() == 'mahasiswadiklat') {
                     mahasiswadiklat = '&mahasiswadiklat=true'
                 }
-                medifirstService.get("emr/get-menu-rekam-medis-dynamic?namaemr=navigasi" + mapemr+mahasiswadiklat).then(function (e) {
+                medifirstService.get("emr/get-menu-rekam-medis-dynamic?namaemr=navigasi" + mapemr + mahasiswadiklat).then(function (e) {
                     $scope.isLoadingNav = false
                     // if(medifirstService.getKelompokUser() == 'mahasiswadiklat'){
                     //     e.data.data = [
@@ -222,10 +223,14 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
                     }
                     // var treeview = $("#treeview").data("kendoTreeView");
                     // .expandPath([2, 5])
-                    $scope.showNavigasiTree =true   
+                    $scope.showNavigasiTree = true
 
                 }, function (error) {
                     $scope.isLoadingNav = false
+                })
+
+                medifirstService.get("emr/get-kategori-alergi").then(function (dat) {
+                    $scope.listKategoriAlergi = dat.data.kategorialergi
                 })
 
             }
@@ -318,7 +323,7 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
                 cacheHelper.set('cacheRekamMedis', arrStr);
                 cacheHelper.set('InputFormulirPendelegasianObatCtrl', arrStr);
                 cacheHelper.set('OrderElektromedikCtrl', arrStr);
-                
+
                 $state.go(state, $state.params);
                 // console.log($scope.currentState);
 
@@ -344,12 +349,12 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
                 if (departemen == 16 || departemen == 35) { $scope.isRawatInap = true }
 
             }
-            $scope.searchnoreg = function(){
+            $scope.searchnoreg = function () {
                 // if ($scope.dataPasienSelected == undefined) {
                 //     window.messageContainer.error("Pilih Dahulu Pasien!")
                 //     return
                 // }
-                medifirstService.get('registrasi/get-pd?noregistrasi=' + $scope.header.noregistrasi).then(function(e){
+                medifirstService.get('registrasi/get-pd?noregistrasi=' + $scope.header.noregistrasi).then(function (e) {
                     medifirstService.get("registrasi/daftar-registrasi/get-apd?noregistrasi=" +
                         $scope.header.noregistrasi +
                         "&objectruanganlastfk=" + e.data.objectruanganlastfk
@@ -398,7 +403,7 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
                         })
                     })
                 })
-                
+
             }
 
             $scope.iCare = function () {
@@ -419,9 +424,9 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
                 medifirstService.postNonMessage("bridging/bpjs/tools", json).then(function (e) {
                     $scope.isRouteLoading = false;
                     if (e.data.metaData.code === "200") {
-                            $scope.dataSep = e.data.response;
-                            $scope.item.dpjpSurkon = $scope.dataSep.dpjp.nmDPJP;
-                            $scope.item.kodedpjpSurkon = $scope.dataSep.dpjp.kdDPJP;
+                        $scope.dataSep = e.data.response;
+                        $scope.item.dpjpSurkon = $scope.dataSep.dpjp.nmDPJP;
+                        $scope.item.kodedpjpSurkon = $scope.dataSep.dpjp.kdDPJP;
                     } else {
                         window.messageContainer.error("Sep tidak ditemukan !");
                         return
@@ -432,26 +437,46 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
                         "url": "api/rs/validate",
                         "method": "POST",
                         "jenis": "i-care",
-                        "data":  {
-                                "param": $scope.header.nobpjs,
-                                "kodedokter": dpjpLayan ? parseInt(dpjpLayan) :null
+                        "data": {
+                            "param": $scope.header.nobpjs,
+                            "kodedokter": dpjpLayan ? parseInt(dpjpLayan) : null
                         }
                     }
                     medifirstService.postNonMessage("bridging/bpjs/tools", Send).then(function (e) {
                         if (e.data.metaData.code == "200") {
-                                window.open(e.data.response.url, "_blank")
-                        }  else {
-                                window.messageContainer.error(e.data.metaData.message);
+                            window.open(e.data.response.url, "_blank")
+                        } else {
+                            window.messageContainer.error(e.data.metaData.message);
                         }
                     })
                 })
-        }
+            }
             // window.addEventListener("scroll", function() {
             //     var scrollMarker = document.querySelector(".scroll-marker");
             //     var scrollTop = window.scrollY;
             //     scrollMarker.style.top = scrollTop + "px";
             // });
 
+            $scope.alergi = function () {
+                $scope.item.alergi = $scope.header.ketalergi
+                $scope.popUpAlergi.open().center()
+            }
+
+            $scope.simpanAlergi = function () {
+                var objSave = {
+                    norec_pd: $scope.header.norec_pd,
+                    keterangan: $scope.item.alergi,
+                    objectalergifk: $scope.item.kategoriAlergi.id
+                }
+                medifirstService.post('emr/post-riwayatalergi-v2', objSave).then(function (e) {
+                    $scope.header.ketalergi = e.data.data.ketalergi
+                    $scope.popUpAlergi.close();
+                });
+            }
+
+            $scope.tutupAlergi = function () {
+                $scope.popUpAlergi.close();
+            }
         }
     ]);
 });

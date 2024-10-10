@@ -843,7 +843,7 @@ class IHSController extends ApiController
                                 array(
                                     0 =>
                                     array(
-                                           'system' => 'http://terminology.hl7.org/CodeSystem/participant-type',
+                                        'system' => 'http://terminology.hl7.org/CodeSystem/participant-type',
                                         // 'code' => 'ATND',
                                         // 'display' => 'attender',
                                         'code' => 'translator',
@@ -4416,7 +4416,7 @@ class IHSController extends ApiController
         }
         return response()->json($response);
         $kdProfile = $this->kdProfile();
-      
+
         $q = collect(DB::select("
                 SELECT
                 st.noorder,
@@ -4456,7 +4456,7 @@ class IHSController extends ApiController
             st.kdprofile = $kdProfile
             and  hh.ono = '$request[noorder]'
                     "));
-    
+
         try {
 
             if (count($q) == 0) {
@@ -4940,11 +4940,11 @@ class IHSController extends ApiController
         return response()->json($response);
     }
 
-    public function ServiceRequestFollowUpPlan(Request $request, $lokal = null) 
+    public function ServiceRequestFollowUpPlan(Request $request, $lokal = null)
     {
         // try {
-            $kdProfile = $this->kdProfile;
-            $q = collect(DB::select("
+        $kdProfile = $this->kdProfile;
+        $q = collect(DB::select("
                 SELECT
                     pp.norec,
                     pp.ihs_id as ihs_srfup,
@@ -4971,7 +4971,7 @@ class IHSController extends ApiController
             "));
 
 
-            $dg = DB::select(DB::raw("
+        $dg = DB::select(DB::raw("
                 SELECT
                     dg.kddiagnosa,
                     dg.namadiagnosa
@@ -4984,146 +4984,146 @@ class IHSController extends ApiController
                 AND pp.norec = '$request[norec_pp]'
             "));
 
-            $arrDg = [];
-            if (!empty($dg)) {
-                foreach ($dg as $item) {
-                    $arrDg[] = array(
-                        'system' => 'http://hl7.org/fhir/sid/icd-10',
-                        'code' => $item->kddiagnosa,
-                        'display' => $item->namadiagnosa
-                    );
-                }
-            } else {
+        $arrDg = [];
+        if (!empty($dg)) {
+            foreach ($dg as $item) {
                 $arrDg[] = array(
                     'system' => 'http://hl7.org/fhir/sid/icd-10',
-                    'code' => '',
-                    'display' => ''
+                    'code' => $item->kddiagnosa,
+                    'display' => $item->namadiagnosa
                 );
             }
+        } else {
+            $arrDg[] = array(
+                'system' => 'http://hl7.org/fhir/sid/icd-10',
+                'code' => '',
+                'display' => ''
+            );
+        }
 
-            if (count($q) == 0) {
-                $response = array(
-                    "issue" =>  'ServiceRequestFollowUpPlan doesnt exist',
-                    "resourceType" => "OperationOutcome"
-                );
-                if ($lokal == true) {
-                    return $response;
-                }
-                return response()->json($response);
+        if (count($q) == 0) {
+            $response = array(
+                "issue" =>  'ServiceRequestFollowUpPlan doesnt exist',
+                "resourceType" => "OperationOutcome"
+            );
+            if ($lokal == true) {
+                return $response;
             }
-            $profile = Profile::where('id', $kdProfile)->first();
-            foreach ($q as $key => $item) {
-                $data = array(
-                    'resourceType' => 'ServiceRequest',
-                    'id' => $item->ihs_srfup,
-                    'identifier' => array(
-                        0 => array(
-                            'system' => 'http://sys-ids.kemkes.go.id/servicerequest/' . $profile->ihs_id,
-                            'value' => $item->noperjanjian
-                        )
-                    ),
-                    'status' => 'active',
-                    'intent' => 'original-order',
-                    'priority' => 'routine',
-                    'category' => array(
-                        0 => array(
-                            'coding' => array(
-                                0 => array(
-                                    'system' => 'http://snomed.info/sct',
-                                    'code' => '3457005',
-                                    'display' => 'Patient referral'
-                                )
-                            )
-                        )
-                    ),
-                    'code' => array(
+            return response()->json($response);
+        }
+        $profile = Profile::where('id', $kdProfile)->first();
+        foreach ($q as $key => $item) {
+            $data = array(
+                'resourceType' => 'ServiceRequest',
+                'id' => $item->ihs_srfup,
+                'identifier' => array(
+                    0 => array(
+                        'system' => 'http://sys-ids.kemkes.go.id/servicerequest/' . $profile->ihs_id,
+                        'value' => $item->noperjanjian
+                    )
+                ),
+                'status' => 'active',
+                'intent' => 'original-order',
+                'priority' => 'routine',
+                'category' => array(
+                    0 => array(
                         'coding' => array(
                             0 => array(
                                 'system' => 'http://snomed.info/sct',
-                                'code' => '185389009',
-                                'display' => 'Follow-up visit'
+                                'code' => '3457005',
+                                'display' => 'Patient referral'
                             )
-                        ),
-                        'text' => $item->indikasikembali
+                        )
+                    )
+                ),
+                'code' => array(
+                    'coding' => array(
+                        0 => array(
+                            'system' => 'http://snomed.info/sct',
+                            'code' => '185389009',
+                            'display' => 'Follow-up visit'
+                        )
                     ),
-                    'subject' => array(
-                        'reference' => 'Patient/' . $item->ihs_pasien_id
-                    ),
-                    'encounter' => array(
-                        'reference' => 'Encounter/' . $item->ihs_encounter,
-                        'display' => 'Kunjungan pada ' . $item->tglregistrasi
-                    ),
-                    'occurrenceDateTime' => date('Y-m-d\TH:i:sP', strtotime($item->tglperjanjian)),
-                    'authoredOn' => date('Y-m-d\TH:i:sP'),
-                    'requester' => array(
+                    'text' => $item->indikasikembali
+                ),
+                'subject' => array(
+                    'reference' => 'Patient/' . $item->ihs_pasien_id
+                ),
+                'encounter' => array(
+                    'reference' => 'Encounter/' . $item->ihs_encounter,
+                    'display' => 'Kunjungan pada ' . $item->tglregistrasi
+                ),
+                'occurrenceDateTime' => date('Y-m-d\TH:i:sP', strtotime($item->tglperjanjian)),
+                'authoredOn' => date('Y-m-d\TH:i:sP'),
+                'requester' => array(
+                    'reference' => 'Practitioner/' . $item->ihs_practioner_id,
+                    'display' => $item->ihs_practioner_name
+                ),
+                'performer' => array(
+                    0 => array(
                         'reference' => 'Practitioner/' . $item->ihs_practioner_id,
                         'display' => $item->ihs_practioner_name
-                    ),
-                    'performer' => array(
-                        0 => array(
-                            'reference' => 'Practitioner/' . $item->ihs_practioner_id,
-                            'display' => $item->ihs_practioner_name
-                        )
-                    ),
-                    'reasonCode' => array(
-                        0 => array(
-                            'coding' => $arrDg,
-                            'text' => 'Kontrol rutin bulanan'
-                        )
-                    ),
-                    'locationReference' => array(
-                        0 => array(
-                            'reference' => 'Location/' . $item->ihs_location_id,
-                            'display' => $item->ihs_location_name
-                        )
-                    ),
-                    'patientInstruction' => $item->keterangan
-                );
+                    )
+                ),
+                'reasonCode' => array(
+                    0 => array(
+                        'coding' => $arrDg,
+                        'text' => 'Kontrol rutin bulanan'
+                    )
+                ),
+                'locationReference' => array(
+                    0 => array(
+                        'reference' => 'Location/' . $item->ihs_location_id,
+                        'display' => $item->ihs_location_name
+                    )
+                ),
+                'patientInstruction' => $item->keterangan
+            );
 
-                if ($item->ihs_srfup == null) {
-                    unset($data['id']);
-                }
-
-                $objetoRequest = new \Illuminate\Http\Request();
-                $objetoRequest['url'] = $data['resourceType'];
-                $objetoRequest['method'] = $item->ihs_srfup == null ? 'POST' : 'PUT';
-                $objetoRequest['data'] = $data;
-
-                $response =  $this->ihsTools($objetoRequest, true);
-
-                $noterror = true;
-                if ($response->resourceType == 'OperationOutcome') {
-                    $noterror = false;
-                }
-
-                if ($item->ihs_srfup == null) {
-                    $mod = new IHS_Transaction();
-                    $mod->norec = $mod->generateNewId();
-                    $mod->statusenabled = $noterror;
-                    $mod->kdprofile = $this->kdProfile;
-                } else {
-                    $mod = IHS_Transaction::where('id', $item->ihs_srfup)->first();
-                }
-                if (empty($mod)) {
-                    $mod = new IHS_Transaction();
-                    $mod->norec = $mod->generateNewId();
-                    $mod->statusenabled = $noterror;
-                    $mod->kdprofile = $this->kdProfile;
-                }
-                $mod->resourcetype = $data['resourceType'];
-                $mod->url =  $this->endPoint() . $data['resourceType'];
-                $mod->method = $item->ihs_srfup == null ? 'POST' : 'PUT';
-                $mod->id = isset($response->id) ? $response->id : null;
-                $mod->body = json_encode($data);
-                $mod->response = json_encode($response);
-                $mod->date = date('Y-m-d H:i:s');
-                $mod->save();
-                if (isset($response->id)) {
-                    PasienPerjanjian::where('norec', $item->norec)->update([
-                        'ihs_id' => $response->id,
-                    ]);
-                }
+            if ($item->ihs_srfup == null) {
+                unset($data['id']);
             }
+
+            $objetoRequest = new \Illuminate\Http\Request();
+            $objetoRequest['url'] = $data['resourceType'];
+            $objetoRequest['method'] = $item->ihs_srfup == null ? 'POST' : 'PUT';
+            $objetoRequest['data'] = $data;
+
+            $response =  $this->ihsTools($objetoRequest, true);
+
+            $noterror = true;
+            if ($response->resourceType == 'OperationOutcome') {
+                $noterror = false;
+            }
+
+            if ($item->ihs_srfup == null) {
+                $mod = new IHS_Transaction();
+                $mod->norec = $mod->generateNewId();
+                $mod->statusenabled = $noterror;
+                $mod->kdprofile = $this->kdProfile;
+            } else {
+                $mod = IHS_Transaction::where('id', $item->ihs_srfup)->first();
+            }
+            if (empty($mod)) {
+                $mod = new IHS_Transaction();
+                $mod->norec = $mod->generateNewId();
+                $mod->statusenabled = $noterror;
+                $mod->kdprofile = $this->kdProfile;
+            }
+            $mod->resourcetype = $data['resourceType'];
+            $mod->url =  $this->endPoint() . $data['resourceType'];
+            $mod->method = $item->ihs_srfup == null ? 'POST' : 'PUT';
+            $mod->id = isset($response->id) ? $response->id : null;
+            $mod->body = json_encode($data);
+            $mod->response = json_encode($response);
+            $mod->date = date('Y-m-d H:i:s');
+            $mod->save();
+            if (isset($response->id)) {
+                PasienPerjanjian::where('norec', $item->norec)->update([
+                    'ihs_id' => $response->id,
+                ]);
+            }
+        }
         // } catch (Exception $e) {
         //     $response = array(
         //         "issue" => $e->getMessage() . ' ' . $e->getLine(),
@@ -5255,13 +5255,189 @@ class IHSController extends ApiController
                     ]);
                 }
             }
-        } catch(Exception $e) {
+        } catch (Exception $e) {
             $response = array(
                 "issue" => $e->getMessage() . ' ' . $e->getLine(),
                 "resourceType" => "OperationOutcome"
             );
         }
 
+        if ($lokal == true) {
+            return $response;
+        }
+        return response()->json($response);
+    }
+
+    public function AllergyIntolerance(Request $request,  $lokal = null)
+    {
+
+        $kdProfile = $this->kdProfile;
+
+        try {
+            $q =  collect(DB::select("
+            SELECT
+                ps.namapasien AS given,
+                ps.ketalergi,
+                pd.norec,
+                ps.ihs_number AS ihs_pasien,
+                pd.ihs_id AS ihs_encounter,
+                pd.tglregistrasi AS tglinput,
+                pg.ihs_id AS ihs_practitioner,
+                ag.kodeexternal,
+                ag.reportdisplay as namaalergi,
+                ag.kodesnomed
+            FROM
+                pasiendaftar_t AS pd
+	            LEFT JOIN pasien_m AS ps ON pd.nocmfk = ps.ID 
+                LEFT JOIN pegawai_m AS pg ON pg.id = pd.objectpegawaifk
+                LEFT JOIN alergi_m AS ag ON ag.id = ps.objectalergifk
+            WHERE
+                pd.kdprofile = $kdProfile 
+                AND pd.statusenabled = true
+                AND pd.noregistrasi = '$request[noregistrasi]'
+          
+          "));
+
+            if (count($q) == 0) {
+                $response = array(
+                    "issue" =>   'AllergyIntolerance doesnt exist',
+                    "resourceType" => "OperationOutcome"
+                );
+                if ($lokal == true) {
+                    return $response;
+                }
+                return response()->json($response);
+            }
+            $profile = Profile::where('id', $kdProfile)->first();
+            $displayFlag = '';
+            $arr_result_ob = [];
+
+            foreach ($q as $k =>  $item) {
+                $tglemr =  strtotime(date($item->tglinput));
+                $tglemr =  substr(date("Y-m-d\TH:i:s", $tglemr), 0, 23) . date('P', $tglemr);
+                //   $idAL = $this->generateCodeBySeqTable(new PapAlergi, 'alergi_satusehat', 10, date('Ym'), $kdProfile);
+                $data =  array(
+                    'id' => $item->ihs_encounter,
+                    'resourceType' => 'AllergyIntolerance',
+                    'identifier' =>
+                    array(
+                        0 =>
+                        array(
+                            'system' => 'http://sys-ids.kemkes.go.id/allergy/' . $profile->ihs_id,
+                            'use' => 'official',
+                            'value' => $item->norec,
+                        ),
+                    ),
+                    'clinicalStatus' =>
+                    array(
+                        'coding' =>
+                        array(
+                            0 =>
+                            array(
+                                'system' => 'http://terminology.hl7.org/CodeSystem/allergyintolerance-clinical',
+                                'code' => 'active',
+                                'display' => 'Active',
+                            ),
+                        ),
+                    ),
+                    'verificationStatus' =>
+                    array(
+                        'coding' =>
+                        array(
+                            0 =>
+                            array(
+                                'system' => 'http://terminology.hl7.org/CodeSystem/allergyintolerance-verification',
+                                'code' => "confirmed",
+                                'display' => 'Confirmed',
+                            ),
+                        ),
+                    ),
+                    'category' =>
+                    array(
+                        0 =>  $item->kodeexternal,
+                    ),
+                    'code' =>
+                    array(
+                        'coding' =>
+                        array(
+                            0 =>
+                            array(
+                                'system' => 'http://snomed.info/sct',
+                                'code' => $item->kodesnomed,
+                                'display' =>  $item->namaalergi,
+                            ),
+                        ),
+                        'text' => $item->ketalergi,
+                    ),
+                    'patient' =>
+                    array(
+                        'reference' => 'Patient/' . $item->ihs_pasien,
+                        'display' => $item->given,
+                    ),
+                    'encounter' =>
+                    array(
+                        'reference' => 'Encounter/' . $item->ihs_encounter,
+                        'display' => 'Kunjungan ' . $item->given . ' di hari ' . $this->hari_ini($item->tglinput) . ', ' . $this->getDateIndo($item->tglinput),
+
+                    ),
+                    'recordedDate' => $tglemr, //'2022-06-14T15:37:31+07:00',
+                    'recorder' =>
+                    array(
+                        'reference' => 'Practitioner/' . '10012452058',
+                    ),
+                );
+                // if ($item->ihs_idforput == null) {
+                unset($data['id']);
+                // }
+                $objetoRequest = new \Illuminate\Http\Request();
+                $objetoRequest['url'] = $data['resourceType'];
+                // $objetoRequest['method'] = $item->ihs_idforput == null ? 'POST' : 'PUT';
+                $objetoRequest['method'] = 'POST';
+
+                $objetoRequest['data'] = $data;
+
+                $response =  $this->ihsTools($objetoRequest, true);
+
+                $noterror = true;
+                if ($response->resourceType == 'OperationOutcome') {
+                    $noterror = false;
+                }
+
+                if ($item->ihs_encounter == null) {
+                    $mod = new IHS_Transaction();
+                    $mod->norec = $mod->generateNewId();
+                    $mod->statusenabled = $noterror;
+                    $mod->kdprofile = $this->kdProfile;
+                } else {
+                    $mod = IHS_Transaction::where('id', $item->ihs_encounter)->first();
+                }
+                if (empty($mod)) {
+                    $mod = new IHS_Transaction();
+                    $mod->norec = $mod->generateNewId();
+                    $mod->statusenabled = $noterror;
+                    $mod->kdprofile = $this->kdProfile;
+                }
+                $mod->resourcetype = $data['resourceType'];
+                $mod->url =  $this->endPoint() . $data['resourceType'];
+                $mod->method = 'POST';
+                $mod->id = isset($response->id) ? $response->id : null;
+                $mod->body = json_encode($data);
+                $mod->response = json_encode($response);
+                $mod->date = date('Y-m-d H:i:s');
+                $mod->save();
+                if (isset($response->id)) {
+                    DB::table('papalergi_t')->where('norec', $item->norec)->update([
+                        'ihs_id' => $response->id,
+
+                    ]);
+                }
+            }
+        } catch (\Exception $e) {
+            $response = array(
+                "issue" => $e->getMessage() . ' ' . $e->getLine(),
+                "resourceType" => "OperationOutcome"
+            );
+        }
         if ($lokal == true) {
             return $response;
         }

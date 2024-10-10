@@ -1,99 +1,96 @@
 <style>
-    
-.scroll-marker {
-    position: fixed;
-    top: 0;
-    right: 0;
-    background-color: #333;
-    color: #fff;
-    padding: 10px;
-    z-index:999;
-    font-size: 14pt;
-    font-family: Arial;
-}
-
+    .scroll-marker {
+        position: fixed;
+        top: 0;
+        right: 0;
+        background-color: #333;
+        color: #fff;
+        padding: 10px;
+        z-index: 999;
+        font-size: 14pt;
+        font-family: Arial;
+    }
 </style>
 <div class="grid_12">
     <div class="grid_12">
         <c-panel item="item" header="'Rekam Medis'" disabled>
             <div class=' grid_12 panel panel-default'>
                 <div class='panel-body animated'>
-                    <div class='grid_12'>
-                       
-                        <div class="grid_12 animated fadeIn" ng-show="header.noregistrasi!==undefined">
-                            <div class="grid_1" style="margin-top: 15px;">
-                                <fieldset class="effect-shadow" style="border-radius: 10px;">
-                                    <div ng-click="showPopUp()">
-                                        <img style="object-fit: cover;
+                    <div class="grid_10 animated fadeIn" ng-show="header.noregistrasi!==undefined">
+                        <div class="grid_1" style="margin-top: 15px;">
+                            <fieldset class="effect-shadow" style="border-radius: 10px;">
+                                <div ng-click="showPopUp()">
+                                    <img style="object-fit: cover;
                                             object-position: center;
                                             height: 100px;
                                             display: block;
                                                     max-width: 100%;
                                             width: 120px;" src="{{header.image}}" alt="Photo" title="">
-                                    </div>
-                                </fieldset>
-                            </div>
-                            <div class="grid_11">
-                             <div class="grid_12">
-                             <div class="grid_2">
-                                <div class="grid_12">
-                                    <input type="checkbox" class="k-checkbox" ng-model="checkNoregis" id="Generate"
-                                        ng-click="getRekamMedisCheck(checkNoregis)"  >
-                                    <!-- <input type="checkbox" class="k-checkbox" id="Generate" ng-model="checkNoregis"
-                                        ng-click="getRekamMedisCheck()" > -->
-                                    <label class="k-checkbox-label" for="Generate"><b> &nbsp; No Registrasi</b></label>
-
                                 </div>
-
-                                <div class="grid_12">
-                                    <input c-text-box type="input" filter="" class="k-textbox"
-                                        ng-model="header.noregistrasi" ng-disabled="rekammedis" ng-keyup="$event.keyCode
-                                        == 13 ? searchnoreg() : null"/>
-                                </div>
-
-                            </div>
-                            <div class="grid_2">
-                                <div class="grid_12">
-                                    <label c-label item="item">Tgl Registrasi</label>
-                                </div>
-
-                                <div class="grid_12">
-                                    <input c-text-box type="input" filter="" class="k-textbox"
-                                        ng-model="header.tglregistrasi" ng-disabled="true" />
-                                </div>
-                            </div>
-                            <div class="grid_2">
-                                <div class="grid_12">
-                                    <label c-label item="item">No Rekam Medis</label>
-                                </div>
-
-                                <div class="grid_12">
-                                    <input c-text-box type="input" filter="" class="k-textbox" ng-model="header.nocm"
-                                        ng-disabled="true" />
-                                </div>
-                            </div>
-
-                            <div class="grid_3">
-                                <div class="grid_12">
-                                    <label c-label item="item">Nama Pasien</label>
-                                </div>
-
-                                <div class="grid_12">
-                                    <input c-text-box type="input" filter="" class="k-textbox"
-                                        ng-model="header.namapasien" ng-disabled="true" />
-                                </div>
-                            </div>
-                            <div class="grid_3">
-                                <div class="grid_12">
-                                    <label c-label item="item" c-label-text="Umur"></label>
-                                </div>
-
-                                <div class="grid_12">
-                                    <input c-text-box type="input" filter="" class="k-textbox" ng-model="header.umur"
-                                        ng-disabled="true" />
-                                </div>
-                            </div>
+                            </fieldset>
                         </div>
+                        <div class="grid_11">
+                            <div class="grid_12">
+                                <div class="grid_2">
+                                    <div class="grid_12">
+                                        <input type="checkbox" class="k-checkbox" ng-model="checkNoregis" id="Generate"
+                                            ng-click="getRekamMedisCheck(checkNoregis)">
+                                        <!-- <input type="checkbox" class="k-checkbox" id="Generate" ng-model="checkNoregis"
+                                        ng-click="getRekamMedisCheck()" > -->
+                                        <label class="k-checkbox-label" for="Generate"><b> &nbsp; No
+                                                Registrasi</b></label>
+
+                                    </div>
+
+                                    <div class="grid_12">
+                                        <input c-text-box type="input" filter="" class="k-textbox"
+                                            ng-model="header.noregistrasi" ng-disabled="rekammedis" ng-keyup="$event.keyCode
+                                        == 13 ? searchnoreg() : null" />
+                                    </div>
+
+                                </div>
+                                <div class="grid_2">
+                                    <div class="grid_12">
+                                        <label c-label item="item">Tgl Registrasi</label>
+                                    </div>
+
+                                    <div class="grid_12">
+                                        <input c-text-box type="input" filter="" class="k-textbox"
+                                            ng-model="header.tglregistrasi" ng-disabled="true" />
+                                    </div>
+                                </div>
+                                <div class="grid_2">
+                                    <div class="grid_12">
+                                        <label c-label item="item">No Rekam Medis</label>
+                                    </div>
+
+                                    <div class="grid_12">
+                                        <input c-text-box type="input" filter="" class="k-textbox"
+                                            ng-model="header.nocm" ng-disabled="true" />
+                                    </div>
+                                </div>
+
+                                <div class="grid_3">
+                                    <div class="grid_12">
+                                        <label c-label item="item">Nama Pasien</label>
+                                    </div>
+
+                                    <div class="grid_12">
+                                        <input c-text-box type="input" filter="" class="k-textbox"
+                                            ng-model="header.namapasien" ng-disabled="true" />
+                                    </div>
+                                </div>
+                                <div class="grid_3">
+                                    <div class="grid_12">
+                                        <label c-label item="item" c-label-text="Umur"></label>
+                                    </div>
+
+                                    <div class="grid_12">
+                                        <input c-text-box type="input" filter="" class="k-textbox"
+                                            ng-model="header.umur" ng-disabled="true" />
+                                    </div>
+                                </div>
+                            </div>
                             <div class="grid_2">
                                 <div class="grid_12">
                                     <label c-label item="item">Jenis Kelamin</label>
@@ -160,16 +157,16 @@
                                 </div>
 
                                 <div class="grid_12">
-                                    <input c-text-box type="input" filter="" class="k-textbox"
-                                        ng-model="header.nohp" ng-disabled="true" />
+                                    <input c-text-box type="input" filter="" class="k-textbox" ng-model="header.nohp"
+                                        ng-disabled="true" />
                                 </div>
                             </div>
 
                             <div class="grid_2" style="padding-top: 19px;">
                                 <button class="btnTemplate1" ng-click="iCare()" style="margin-top: 7px;">
-                                 <i class="fa fa-heartbeat"></i> &nbsp; I-Care</button>
+                                    <i class="fa fa-heartbeat"></i> &nbsp; I-Care</button>
                             </div>
-                            
+
                             <!-- <div class="grid_2">
                                 <div class="grid_12">
                                     <label c-label item="item">Golongan Darah</label>
@@ -204,9 +201,28 @@
                         </div>
 
                     </div>
-
+                    <div class='grid_2'>
+                        <fieldset style="min-height:50px !important" align="center">
+                            <legend>
+                                <h2>Data Alergi</h2>
+                            </legend>
+                            <div class="grid_12">
+                                <div class="grid_12">
+                                    <label c-label item="item">Keterangan Alergi</label>
+                                </div>
+                                <div class="grid_12">
+                                    <textarea class="k-textbox" style="height: 73px; width: 100%; resize: none;"
+                                        ng-model="header.ketalergi" disabled></textarea>
+                                </div>
+                            </div>
+                            <div class="grid_12" style="display: flex; justify-content: center;">
+                                <div class="grid_6">
+                                    <button class="btnTemplate1" ng-click="alergi()">Alergi</button>
+                                </div>
+                            </div>
+                        </fieldset>
+                    </div>
                 </div>
-            </div>
         </c-panel>
     </div>
     <div ng-show="scrollmarker" class="scroll-marker">{{textUser}} <br> {{textNamaLengkap}}</div>
@@ -240,7 +256,7 @@
         </div>
 
         <div class="grid_10" ng-show="showNavigasiTree">
-            <div ui-view ></div>
+            <div ui-view></div>
         </div>
     </div>
     <!-- <div ng-show="isShowNavEMR">
@@ -273,6 +289,30 @@
         </div>
     </div> -->
     <!-- </md-content> -->
+
+</div>
+<div kendo-window="popUpAlergi" k-title="'Alergi Pasien'" style="width: 500px;" k-visible="false"
+    k-on-open="win2visible = true" k-on-close="win2visible = false">
+    <div class="grid_12" style="margin-bottom: 10px;">
+        <div class="grid_12">Kategori Alergi</div>
+        <div class="div_12">
+            <input ng-disabled="isDisable" style="width: 100%;" kendo-combo-box k-ng-model="item.kategoriAlergi"
+                k-data-text-field="'namaalergi'" k-filter="'contains'" k-data-value-field="'id'" k-auto-bind="false"
+                k-data-source="listKategoriAlergi" />
+        </div>
+    </div>
+    <div class="grid_12">
+        <div class="grid_12">Keterangan Alergi</div>
+        <div class="grid_12">
+            <textarea class="k-textbox" style="height: 100px;" ng-model="item.alergi"></textarea>
+        </div>
+    </div>
+    <div class="dialog_buttons pull-right" style="margin-top:5%; text-align: left;">
+        <input type="button" class="confirm_no k-button" value="Tutup" style="width: 70px" ng-click="tutupAlergi()" />
+        &nbsp;
+        <input type="button" class="confirm_yes k-button" value="Simpan" style="width: 70px"
+            ng-click="simpanAlergi()" />
+    </div>
 </div>
 <style>
     .k-treeview .k-in {
@@ -351,20 +391,23 @@
         background-color: #41abf2;
         font-size: 18px;
     }
+
     textarea[type="input"]:disabled {
         background: #dddddd;
     }
-    .k-checkbox:checked + .k-checkbox-label:before {
-    /* background-color: #fff; */
-    border-color: #3dcdbf;
-    color: white;
-    background-color: #3dcdbf;
-}
-md-content {
-    display: block;
-    position: relative;
-    overflow: auto;
-    -webkit-overflow-scrolling: touch;
-    background-color: white;
-}
+
+    .k-checkbox:checked+.k-checkbox-label:before {
+        /* background-color: #fff; */
+        border-color: #3dcdbf;
+        color: white;
+        background-color: #3dcdbf;
+    }
+
+    md-content {
+        display: block;
+        position: relative;
+        overflow: auto;
+        -webkit-overflow-scrolling: touch;
+        background-color: white;
+    }
 </style>
