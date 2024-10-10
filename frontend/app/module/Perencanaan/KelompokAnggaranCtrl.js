@@ -6618,6 +6618,7 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
                     , true).then(function (dat) {
                         $scope.isRouteLoading = false;
                         var datas = dat.data.data
+                        dataPanjarSPJ = datas
                         //console.log(datas)
                         for(var i = 0; i < dat.data.data.length; i++){
                             dat.data.data[i].no = i+1
@@ -7321,6 +7322,11 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
                     toastr.error("Pilih rekening dulu")
                     return
                 }
+
+                if($scope.item.sumberDanaSPJ == null){
+                    toastr.error('Pilih sumber dana dulu')
+                    return
+                }
                 
                 if(!$scope.item.sumberDanaSPJ.id){
                     toastr.error("Pilih sumber dana dulu")
@@ -7732,7 +7738,7 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
                     toastr.error('Sudah dibuat BKU tidak bisa diverifikasi')
                     return
                 }
-                console.log(dataItem)
+                // console.log(dataItem)
                 $scope.item.pph = dataItem.pph
                 $scope.item.ppn = dataItem.ppn
                 $scope.item.jumlahdibayarSPJ = dataItem.totalbelanja
