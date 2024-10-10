@@ -5749,7 +5749,7 @@ count(case when x.departemen = 'rahab_medik' then 1 end) AS rehab_medik
                 AND ru.objectdepartemenfk = $idDepRaJal
                 ) as x where x.rownum=1
                 ORDER BY
-                x.tglregistrasi
+                x.tgl ASC
         "));
         $data10=[];
         $sudahPeriksa = 0;
@@ -5956,6 +5956,7 @@ count(case when x.departemen = 'rahab_medik' then 1 end) AS rehab_medik
         SELECT count(pd.noregistrasi) as total
         ,to_char (pd.tglregistrasi,  'dd, Mon YYYY' ) AS tglregistrasi
         ,to_char (pd.tglregistrasi, 'dd. Mon') AS tanggal
+        ,pd.tglregistrasi::date as tlg
         FROM pasiendaftar_t as pd
         JOIN antrianpasiendiperiksa_t as apd on apd.noregistrasifk = pd.norec
         JOIN ruangan_m as rm on rm.id = apd.objectruanganfk
@@ -5965,13 +5966,16 @@ count(case when x.departemen = 'rahab_medik' then 1 end) AS rehab_medik
         and rm.objectdepartemenfk in ($deptIgd)
         group by 
         to_char(pd.tglregistrasi, 'dd, Mon YYYY'),
-        to_char(pd.tglregistrasi, 'dd. Mon')
+        to_char(pd.tglregistrasi, 'dd. Mon'),
+        pd.tglregistrasi::date
+        order by pd.tglregistrasi::date asc
         "));
 
         $totalmutasiranap = collect(DB::select("
         SELECT count(pd.noregistrasi) as total
         ,to_char (pd.tglregistrasi,  'dd, Mon YYYY' ) AS tglregistrasi
         ,to_char (pd.tglregistrasi, 'dd. Mon') AS tanggal
+        ,pd.tglregistrasi::date as tlg
         FROM pasiendaftar_t as pd
         JOIN antrianpasiendiperiksa_t as apd on apd.noregistrasifk = pd.norec
         JOIN ruangan_m as rm on rm.id = apd.objectruanganasalfk
@@ -5981,7 +5985,9 @@ count(case when x.departemen = 'rahab_medik' then 1 end) AS rehab_medik
         and rm.objectdepartemenfk in ($deptIgd)
         group by 
         to_char(pd.tglregistrasi, 'dd, Mon YYYY'),
-        to_char(pd.tglregistrasi, 'dd. Mon')
+        to_char(pd.tglregistrasi, 'dd. Mon'),
+        pd.tglregistrasi::date
+        order by pd.tglregistrasi::date asc
         "));
 
         $data10 = [];
@@ -6015,6 +6021,7 @@ count(case when x.departemen = 'rahab_medik' then 1 end) AS rehab_medik
         ,to_char (pd.tglregistrasi,  'dd, Mon YYYY' ) AS tglregistrasi
         ,to_char (pd.tglregistrasi, 'dd. Mon') AS tanggal
         ,rm.namaruangan
+        ,pd.tglregistrasi::date as tlg
         FROM pasiendaftar_t as pd
         JOIN antrianpasiendiperiksa_t as apd on apd.noregistrasifk = pd.norec
         JOIN ruangan_m as rm on rm.id = apd.objectruanganfk
@@ -6025,7 +6032,9 @@ count(case when x.departemen = 'rahab_medik' then 1 end) AS rehab_medik
         group by 
         rm.namaruangan,
         to_char(pd.tglregistrasi, 'dd, Mon YYYY'),
-        to_char(pd.tglregistrasi, 'dd. Mon')
+        to_char(pd.tglregistrasi, 'dd. Mon'),
+        pd.tglregistrasi::date
+        order by pd.tglregistrasi::date asc
         "));
         
         $res['data'] = $total;
