@@ -1241,6 +1241,9 @@ class EMRController  extends ApiController
                 $RekamMedis->tglinput = date('Y-m-d H:i:s');
                 $RekamMedis->objectruanganfk = $request['objectruanganfk'];
                 $RekamMedis->noperjanjian = $noJanji;
+                $RekamMedis->noregistrasifk = $request['norec_pd'];
+                $RekamMedis->diagnosa = $request['diagnosa'];
+                $RekamMedis->indikasikembali = $request['indikasi'];
                 $RekamMedis->save();
                 $norec = $RekamMedis->norec;
 
@@ -1281,10 +1284,18 @@ class EMRController  extends ApiController
         if ($transStatus == 'true') {
             $transMessage = "Sukses";
             DB::commit();
+            if ($method == 'save') {
+                $objetoRequest = new \Illuminate\Http\Request();
+                $objetoRequest ['norec_pp']= $norec;
+                $ihs = app('App\Http\Controllers\Bridging\IHSController')->ServiceRequestFollowUpPlan($objetoRequest,true);
+                $ihs2 = app('App\Http\Controllers\Bridging\IHSController')->CarePlan($objetoRequest,true);
+            }
             $result = array(
                 'status' => 201,
                 'norec' => $norec,
                 'message' => $transMessage,
+                'ServiceRequestFollowUpPlan' => isset($ihs) ? $ihs : [],
+                'CarePlan' => isset($ihs2) ? $ihs2 : [],
                 'as' => 'Inhuman',
             );
         } else {
@@ -1306,8 +1317,7 @@ class EMRController  extends ApiController
             ->select('rm.norec', 'rm.objectdokterfk', 'pg.namalengkap', 'rm.jumlahkujungan', 'rm.keterangan',
                 'rm.objectpasienfk', 'rm.tglinput', 'rm.tglperjanjian', 'rm.noperjanjian', 'rm.objectruanganfk', 'ru.namaruangan',
 //                'pd.noregistrasi','pd.tglregistrasi',
-                'ps.nocm',
-                'ps.namapasien')
+                'ps.nocm','ps.namapasien','rm.diagnosa','rm.indikasikembali')
             ->leftJoin('pasien_m as ps', 'rm.objectpasienfk', '=', 'ps.id')
 //            ->leftJoin('pasiendaftar_t as pd','pd.nocmfk','=','ps.id')
             ->leftJoin('pegawai_m as pg', 'pg.id', '=', 'rm.objectdokterfk')
@@ -4617,7 +4627,7 @@ class EMRController  extends ApiController
                      CASE WHEN rn.rencana is null then '-'
                      ELSE rn.rencana end as rencana,
                      pp.tglperjanjian,pg.namalengkap as namadokter,
-                     ru1.namaruangan as ruangankontrol,pp.keterangan,
+                     ru1.namaruangan as ruangankontrol,pp.keterangan,pp.diagnosa,pp.indikasikembali,
                      CASE WHEN cp.s is not NULL then cp.s else '-' end as s,
                      CASE WHEN cp.o is not NULL then cp.o else '-' end as o,
                      CASE WHEN cp.a is not NULL then cp.a else '-' end as a,

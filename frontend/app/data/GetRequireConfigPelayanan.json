@@ -3744,6 +3744,10 @@
         {
             "nameDep": "PemakaianAsuransiV3Ctrl",
             "urlDep": "module/Registrasi/PemakaianAsuransiV3Ctrl"
+        },
+        {
+            "nameDep": "PerjanjianKontrolKembaliCtrl",
+            "urlDep": "module/EMR/PerjanjianKontrolKembaliCtrl"
         }
     ]
 }

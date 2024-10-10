@@ -1,0 +1,232 @@
+<style>
+    .style-center {
+        display: inline-block;
+        text-align: center;
+        width: 100%;
+    }
+  
+    .style-right {
+        display: inline-block;
+        text-align: right;
+        width: 100%;
+    }
+  
+    .style-left {
+        display: inline-block;
+        text-align: left;
+        width: 100%;
+    }
+  
+  
+  
+    .k-panelbar .k-tabstrip>.k-content,
+    .k-tabstrip>.k-content {
+        display: table-row !important;
+    }
+  
+    .k-tabstrip>.k-content {
+        display: table-row !important;
+    }
+  
+    .custom-button {
+        margin: 0 0 10px;
+        background: none;
+        color: black;
+        border-radius: 0.8em;
+        border: 1px solid;
+        background-color: white;
+    }
+  
+    .k-edit,
+    .k-i-download {
+        background-position: -313px -221px;
+    }
+  
+    a.k-button.k-button-icontext {
+        min-width: 84px;
+        background-color: #e0360b;
+        border: none;
+        margin: .1em;
+    }
+  
+    k-button.k-button-icontext.k-grid-Cetak {
+        min-width: 84px;
+        background-color: #e0360b;
+        border: none;
+        margin: .1em;
+    }
+  
+    .duplicateDate {
+        background-color: red;
+        border: 2px solid red !important;
+    }
+  
+    .k-window-content .k-content {
+        overflow: none
+    }
+  
+    legend {
+        cursor: pointer;
+        padding: 10px;
+    }
+  
+    .effect-shadow {
+        -webkit-box-shadow: 2px 2px 5px #b6b6b6;
+        -moz-box-shadow: 2px 2px 5px #b6b6b6;
+        box-shadow: 2px 2px 5px #b6b6b6;
+    }
+  
+    hr {
+        border: 1px solid black;
+        margin-top: 0px;
+        margin-bottom: 0px;
+        display: inline-block;
+        width: 100%;
+    }
+  
+    h1 {
+        color: black;
+        display: block;
+        font-size: 14px;
+        margin-block-start: 0px;
+        margin-block-end: 0;
+        margin-inline-start: 0px;
+        margin-inline-end: 0px;
+        font-weight: bold;
+    }
+  
+    h2 {
+        color: black;
+        display: block;
+        font-size: 14px;
+        margin-block-start: 0px;
+        margin-block-end: 0;
+        margin-inline-start: 0px;
+        margin-inline-end: 0px;
+        font-weight: bold;
+    }
+  </style>
+  
+  <div>
+    <div class="grid_12">
+      <div class="panel panel-default">
+        <iframe id='printf' ng-src='{{iframedata}}' width="1" height="1"></iframe>
+        <div class="panel-heading" style="font-size: 18px;"><span c-translate>Pasien Perjanjian</span>
+          <span class="icon fa fa-chevron-circle-down" ng-show="!isShowPerjanjian" style="right:10px" ng-click="showPerjanjian()"></span>
+          <span class="icon fa fa-chevron-circle-up" ng-show="isShowPerjanjian" style="right:10px" ng-click="showPerjanjian()"></span>
+        </div>
+  
+        <div class="panel-body" ng-show="isShowPerjanjian">
+          <md-content class="md-padding" ng-show="!isRiwayatPerjanjian">
+            <div class="grid_4">
+              <!-- Tanggal Keluar -->
+              <label c-label item="item" c-label-text="tanggalPerjanjian"></label>
+            </div>
+            <div class="grid_8">
+              <input style="width: 100%" kendo-date-time-picker k-min="now"
+                  k-ng-model="perjanjian.tglPerjanjian" placeholer="Hari-Bln-Thn"
+                  k-format="'dd-MM-yyyy HH:mm'" k-on-change="pilihTanggal(perjanjian.tglPerjanjian)" />
+            </div>
+  
+  
+            <div class="grid_4">
+              <label c-label item="item" c-label-text="poliklinik"></label>
+            </div>
+            <div class="grid_8">
+              <input ng-disabled="isDisable" style="width: 100%;" kendo-combo-box
+                  k-ng-model="perjanjian.ruangan" k-data-text-field="'namaruangan'" k-filter="'contains'"
+                  k-data-value-field="'id'" k-auto-bind="false" k-data-source="listRuangan"
+                  k-on-change="getPegawai(item.ruangan)" />
+            </div>
+  
+            <div class="grid_4">
+              <label c-label item="item" c-label-text="dokter"></label>
+            </div>
+            <div class="grid_8">
+              <input ng-disabled="isDisable" style="width: 100%;" kendo-combo-box
+                  k-ng-model="perjanjian.dokter" k-data-text-field="'namalengkap'" k-filter="'contains'"
+                  k-data-value-field="'value'" k-auto-bind="false" k-data-source="listDokter" />
+            </div>
+            <div class="grid_4" ng-show="perjanjian.ruangan.id===20">
+              <label c-label item="item" c-label-text="jumlahKunjungan"></label>
+            </div>
+            <div class="grid_8" ng-show="perjanjian.ruangan.id===20">
+              <div class="grid_12">
+                <input ng-disabled="isDisable" c-text-box type="input" filter="'numeric'"
+                    class="k-textbox" ng-model="perjanjian.jumlahKunjungan" />
+              </div>
+  
+              <div class="grid_8" ng-show="limit!==0&&isRehabMedik===true">
+                <input ng-disabled="isDisable" c-text-box ng-disabled="'true'" type="input"
+                    filter="'numeric'" class="k-textbox" ng-model="perjanjian.informasi" />
+              </div>
+            </div>
+            <div class="grid_4">
+              <label c-label item="item" c-label-text="Diagnosa"></label>
+            </div>
+            <div class="grid_8">
+              <textarea ng-disabled="isDisable" ng-model="perjanjian.diagnosa"
+                  style="width: 99%; height: 80px;"></textarea>
+            </div>
+            <div class="grid_4">
+              <label c-label item="item" c-label-text="indikasiKembaliKeRs"></label>
+            </div>
+            <div class="grid_8">
+              <textarea ng-disabled="isDisable" ng-model="perjanjian.indikasikembalikers"
+                  style="width: 99%; height: 80px;"></textarea>
+            </div>
+            <div class="grid_4">
+              <label c-label item="item" c-label-text="keteranganLainnya"></label>
+            </div>
+            <div class="grid_8">
+              <textarea ng-disabled="isDisable" ng-model="perjanjian.keteranganLainnya"
+                  style="width: 99%; height: 80px;"></textarea>
+            </div>
+            <div class="grid_12" style="padding-top:10px">
+              <div class="grid_6"></div>
+              <div class="grid_6">
+                <!-- <div class="grid_3"> -->
+                    <!-- <button class="c-button" ng-click="riwayatEdukasi(true)">
+                    <span style="font-size:10!important">Riwayat</span>
+                </button> -->
+                <!-- </div> -->
+                <div class="grid_2">
+                  <button class="c-button success" ng-click="tambahPerjanjian()">
+                    <span style="font-size:10!important">Tambah</span>
+                  </button>
+                </div>
+                <div class="grid_2">
+                  <button class="c-button cancel" ng-click="hapusPerjanjian()">
+                    <span style="font-size:10!important">Hapus</span>
+                  </button>
+                </div>
+                <div class="grid_2">
+                  <button class="c-button" ng-click="batal()">
+                    <span style="font-size:10!important">Batal</span>
+                  </button>
+                </div>
+                <div class="grid_3">
+                  <button class="c-button" ng-click="cetak()">
+                    <span style="font-size:10!important">Cetak</span>
+                  </button>
+                </div>
+                <div class="grid_3">
+                  <button class="c-button" ng-click="showPopRencana()">
+                    <span style="font-size:10!important">Cetak SKDP</span>
+                  </button>
+                </div>
+              </div>
+            </div>
+            <div class="grid_12" style="margin-bottom:15px">
+              <div kendo-grid k-data-source="sourcePerjanjian" k-ng-model="dataPerjanjian" ng-click="klikPerjanjian(dataPerjanjian)" k-selectable="'row'" options="gridPerjanjian">
+              </div>
+            </div>
+            </div>
+          </md-content>
+        </div>
+      </div>
+      <div class="grid_12" style="margin-top:60px">
+        <div ng-include='"../app/template/Shared/TemplateLoading"'></div>
+      </div>
+    </div>
+  </div>

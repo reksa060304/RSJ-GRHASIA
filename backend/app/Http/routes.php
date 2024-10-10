@@ -661,6 +661,7 @@ Route::group(['middleware' => 'cors', 'prefix' => 'service'], function () {
         Route::post('bridging/ihs/DiagnosticReportBridging', 'Bridging\IHSController@DiagnosticReportBridging');
         // Route::post('bridging/ihs/{resource}', 'Bridging\IHSController@ResourceType');
         Route::post('bridging/ihs/Encounter-tes', 'Bridging\IHSController@Encountertes');
+        Route::post('bridging/ihs/ServiceRequestFollowUpPlan', 'Bridging\IHSController@ServiceRequestFollowUpPlan');
         Route::get('bridging/ihs/get-list', 'Bridging\IHSController@getList');
         Route::get('sysadmin/master/get-data-produkapotik', 'SysAdmin\Master\MasterController@getListProdukApotik');
         Route::get('sysadmin/master/get-data-combo-master-rev', 'SysAdmin\Master\MasterController@getDataComboMasterRev');
@@ -749,7 +750,7 @@ Route::group(['middleware' => 'cors', 'prefix' => 'service'], function () {
           Route::get('emr/get-edukasi', 'EMR\EMRController@getEdukasi');
           Route::post('emr/post-rencana/{method}', 'EMR\EMRController@postRencana');
           Route::get('emr/get-rencana', 'EMR\EMRController@getRencana');
-          Route::post('emr/post-perjanjian/{method}', 'EMR\EMRController@postPerjanjianPasien');
+          // Route::post('emr/post-perjanjian/{method}', 'EMR\EMRController@postPerjanjianPasien');
           Route::get('emr/get-perjanjian', 'EMR\EMRController@getPasienPerjanjian');
           Route::post('emr/post-cppt/{method}', 'EMR\EMRController@postCPPT');
           Route::get('emr/get-cppt', 'EMR\EMRController@getCPPT');

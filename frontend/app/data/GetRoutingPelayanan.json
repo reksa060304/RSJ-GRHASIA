@@ -20722,6 +20722,29 @@
         "define": "MedifirstService"
       }
     ]
+  },
+  {
+    "name": "RekamMedis.PerjanjianKontrolKembali",
+    "url": "/PerjanjianKontrolKembali",
+    "templateurl": "module/EMR/PerjanjianKontrolKembali.html",
+    "controller": "PerjanjianKontrolKembaliCtrl",
+    "deps": [
+      {
+        "module": "Services",
+        "define": "Service"
+      },
+      {
+        "module": "LoginServices",
+        "define": "LoginService"
+      },
+      {
+        "module": "MedifirstService",
+        "define": "MedifirstService"
+      },
+      {
+        "define": "RekamMedisCtrl"
+      }
+    ]
   }
 ]
 
