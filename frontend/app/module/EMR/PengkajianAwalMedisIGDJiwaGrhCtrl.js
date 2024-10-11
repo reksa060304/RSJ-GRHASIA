@@ -2781,17 +2781,17 @@ define(['initialize','Configuration'], function (initialize, configuration) {
                         if ($scope.CABAKNEW == true) {
                             arrSave2.push({
                                 norec: element.norec != null ? element.norec : "",
-                                tgljampemberi: element.tgljampemberi != undefined ? element.tgljampemberi : null,
+                                tgljampemberi: element.tgljampemberi != undefined ? moment(element.tgljampemberi).format('YYYY-MM-DD HH:mm') : null,
                                 namaterangpemberi: element.namaterangpemberi != undefined ? element.namaterangpemberi.value + "~" + element.namaterangpemberi.text : null,
-                                tgljampenerima: element.tgljampenerima != undefined ? element.tgljampenerima : null,
+                                tgljampenerima: element.tgljampenerima != undefined ? moment(element.tgljampenerima).format('YYYY-MM-DD HH:mm') : null,
                                 namaterangpenerima: element.namaterangpenerima != undefined ? element.namaterangpenerima.value + "~" + element.namaterangpenerima.text : null,
                             })
                         }else{
                             arrSave2.push({
                                 norec: element.norec != null ? element.norec : "",
-                                tgljampemberi: element.tgljampemberi != undefined ? element.tgljampemberi : null,
+                                tgljampemberi: element.tgljampemberi != undefined ? moment(element.tgljampemberi).format('YYYY-MM-DD HH:mm') : null,
                                 namaterangpemberi: element.namaterangpemberi != undefined ? element.namaterangpemberi.value + "~" + element.namaterangpemberi.text : null,
-                                tgljampenerima: element.tgljampenerima != undefined ? element.tgljampenerima : null,
+                                tgljampenerima: element.tgljampenerima != undefined ? moment(element.tgljampenerima).format('YYYY-MM-DD HH:mm') : null,
                                 namaterangpenerima: element.namaterangpenerima != undefined ? element.namaterangpenerima.value + "~" + element.namaterangpenerima.text : null,
                             })
                         }
@@ -2848,8 +2848,8 @@ define(['initialize','Configuration'], function (initialize, configuration) {
 
                                                 arr.push({
                                                     norec: element.norec,
-                                                    tgljampenerima: element.tgljampenerima != null ? new Date(element.tgljampenerima) : null,
-                                                    tgljampemberi: element.tgljampemberi != null ? new Date(element.tgljampemberi) : null,
+                                                    tgljampenerima: element.tgljampenerima != null ? moment(element.tgljampenerima).format('YYYY-MM-DD HH:mm') : null,
+                                                    tgljampemberi: element.tgljampemberi != null ? moment(element.tgljampemberi).format('YYYY-MM-DD HH:mm') : null,
                                                     namaterangpemberi: element.namaterangpemberi != null ? {
                                                         value: namaterangpemberi[0],
                                                         text: namaterangpemberi[1],
