@@ -23,6 +23,7 @@ use App\Web\Token;
 use App\Master\Pasien;
 use App\Master\Produk;
 use App\Master\Ruangan;
+use App\Transaksi\AntrianApotik;
 use App\Transaksi\DetailDiagnosaPasien;
 use App\Transaksi\DetailDiagnosaTindakanPasien;
 use App\Transaksi\DiagnosaTindakanPasien;
@@ -5438,6 +5439,291 @@ class IHSController extends ApiController
                 "resourceType" => "OperationOutcome"
             );
         }
+        if ($lokal == true) {
+            return $response;
+        }
+        return response()->json($response);
+    }
+
+    public function QuestionnaireResponse(Request $request, $lokal = null)
+    {
+        try {
+            $kdProfile = $this->kdProfile;
+            $q = collect(DB::select("
+                SELECT
+                    aa.*,
+                    pd.ihs_id AS ihs_encounter,
+                    ps.ihs_number AS ihs_pasien_id,
+                    ps.namapasien AS ihs_pasien_name,
+                    pg.ihs_id AS ihs_practioner_id,
+                    pg.namalengkap AS ihs_practioner_name
+                FROM antrianapotik_t AS aa
+                INNER JOIN pasiendaftar_t AS pd ON pd.norec = aa.noregistrasifk
+                INNER JOIN pasien_m AS ps ON ps.id = pd.nocmfk
+                INNER JOIN pegawai_m AS pg ON pg.id = pd.objectpegawaifk
+                WHERE aa.kdprofile = $kdProfile
+                AND aa.noregistrasifk = '$request[noregistrasifk]'
+            "));
+
+            if (count($q) == 0) {
+                $response = array(
+                    "issue" =>  'QuestionnaireResponse doesnt exist',
+                    "resourceType" => "OperationOutcome"
+                );
+                if ($lokal == true) {
+                    return $response;
+                }
+                return response()->json($response);
+            }
+            $profile = Profile::where('id', $kdProfile)->first();
+
+            foreach ($q as $key => $item) {
+                $data = array(
+                    'resourceType' => 'QuestionnaireResponse',
+                    'id' => $item->ihs_id,
+                    'questionnaire' => 'https://fhir.kemkes.go.id/Questionnaire/Q0007',
+                    'status' => 'completed',
+                    'subject' => array(
+                        'reference' => 'Patient/' . $item->ihs_pasien_id,
+                        'display' => $item->ihs_pasien_name
+                    ),
+                    'encounter' => array(
+                        'reference' => 'Encounter/' . $item->ihs_encounter
+                    ),
+                    'authored' => date('Y-m-d\TH:i:sP', strtotime($item->tglresep)),
+                    'author' => array(
+                        'reference' => 'Practitioner/' . $item->ihs_practioner_id,
+                        'display' => $item->ihs_practioner_name
+                    ),
+                    'source' => array(
+                        'reference' => 'Patient/' . $item->ihs_pasien_id
+                    ),
+                    'item' => array(
+                        0 => array(
+                            'linkId' => '1',
+                            'text' => 'Persyaratan Administrasi',
+                            'item' => array(
+                                0 => array(
+                                    'linkId' => '1.1',
+                                    'text' => 'Apakah nama, umur, jenis kelamin, berat badan dan tinggi badan pasien sudah sesuai?',
+                                    'answer' => array(
+                                        0 => array(
+                                            'valueCoding' => array(
+                                                'system' => 'http://terminology.kemkes.go.id/CodeSystem/clinical-term',
+                                                'code' => 'OV000052',
+                                                'display' => $item->persyaratanadministrasi1
+                                            )
+                                        )
+                                    )
+                                ),
+                                1 => array(
+                                    'linkId' => '1.2',
+                                    'text' => 'Apakah nama, nomor ijin, alamat dan paraf dokter sudah sesuai?',
+                                    'answer' => array(
+                                        0 => array(
+                                            'valueCoding' => array(
+                                                'system' => 'http://terminology.kemkes.go.id/CodeSystem/clinical-term',
+                                                'code' => 'OV000052',
+                                                'display' => $item->persyaratanadministrasi2
+                                            )
+                                        )
+                                    )
+                                ),
+                                2 => array(
+                                    'linkId' => '1.3',
+                                    'text' => 'Apakah tanggal resep sudah sesuai?',
+                                    'answer' => array(
+                                        0 => array(
+                                            'valueCoding' => array(
+                                                'system' => 'http://terminology.kemkes.go.id/CodeSystem/clinical-term',
+                                                'code' => 'OV000052',
+                                                'display' => $item->persyaratanadministrasi3
+                                            )
+                                        )
+                                    )
+                                ),
+                                3 => array(
+                                    'linkId' => '1.4',
+                                    'text' => 'Apakah ruangan/unit asal resep sudah sesuai?',
+                                    'answer' => array(
+                                        0 => array(
+                                            'valueCoding' => array(
+                                                'system' => 'http://terminology.kemkes.go.id/CodeSystem/clinical-term',
+                                                'code' => 'OV000052',
+                                                'display' => $item->persyaratanadministrasi4
+                                            )
+                                        )
+                                    )
+                                ),
+                                4 => array(
+                                    'linkId' => '2',
+                                    'text' => 'Persyaratan Farmasetik',
+                                    'item' => array(
+                                        0 => array(
+                                            'linkId' => '2.1',
+                                            'text' => 'Apakah nama obat, bentuk dan kekuatan sediaan sudah sesuai?',
+                                            'answer' => array(
+                                                0 => array(
+                                                    'valueCoding' => array(
+                                                        'system' => 'http://terminology.kemkes.go.id/CodeSystem/clinical-term',
+                                                        'code' => 'OV000052',
+                                                        'display' => $item->persyaratanfarmasetik1
+                                                    )
+                                                )
+                                            )
+                                        ),
+                                        1 => array(
+                                            'linkId' => '2.2',
+                                            'text' => 'Apakah dosis dan jumlah obat sudah sesuai?',
+                                            'answer' => array(
+                                                0 => array(
+                                                    'valueCoding' => array(
+                                                        'system' => 'http://terminology.kemkes.go.id/CodeSystem/clinical-term',
+                                                        'code' => 'OV000052',
+                                                        'display' => $item->persyaratanfarmasetik2
+                                                    )
+                                                )
+                                            )
+                                        ),
+                                        2 => array(
+                                            'linkId' => '2.3',
+                                            'text' => 'Apakah stabilitas obat sudah sesuai?',
+                                            'answer' => array(
+                                                0 => array(
+                                                    'valueCoding' => array(
+                                                        'system' => 'http://terminology.kemkes.go.id/CodeSystem/clinical-term',
+                                                        'code' => 'OV000052',
+                                                        'display' => $item->persyaratanfarmasetik3
+                                                    )
+                                                )
+                                            )
+                                        ),
+                                        3 => array(
+                                            'linkId' => '2.4',
+                                            'text' => 'Apakah aturan dan cara penggunaan obat sudah sesuai?',
+                                            'answer' => array(
+                                                0 => array(
+                                                    'valueCoding' => array(
+                                                        'system' => 'http://terminology.kemkes.go.id/CodeSystem/clinical-term',
+                                                        'code' => 'OV000052',
+                                                        'display' => $item->persyaratanfarmasetik4
+                                                    )
+                                                )
+                                            )
+                                        ),
+                                    )
+                                ),
+                                5 => array(
+                                    'linkId' => '3',
+                                    'text' => 'Persyaratan Klinis',
+                                    'item' => array(
+                                        0 => array(
+                                            'linkId' => '3.1',
+                                            'text' => 'Apakah ketepatan indikasi, dosis, dan waktu penggunaan obat sudah sesuai?',
+                                            'answer' => array(
+                                                0 => array(
+                                                    'valueCoding' => array(
+                                                        'system' => 'http://terminology.kemkes.go.id/CodeSystem/clinical-term',
+                                                        'code' => 'OV000052',
+                                                        'display' => $item->persyaratanklinis1
+                                                    )
+                                                )
+                                            )
+                                        ),
+                                        1 => array(
+                                            'linkId' => '3.2',
+                                            'text' => 'Apakah ketepatan indikasi, dosis, dan waktu penggunaan obat sudah sesuai?',
+                                            'answer' => array(
+                                                0 => array(
+                                                    'valueBoolean' => $item->persyaratanklinis2 == 'Sesuai' ? true : false
+                                                )
+                                            )
+                                        ),
+                                        2 => array(
+                                            'linkId' => '3.3',
+                                            'text' => 'Apakah terdapat alergi dan reaksi obat yang tidak dikehendaki (ROTD)?',
+                                            'answer' => array(
+                                                0 => array(
+                                                    'valueBoolean' => $item->persyaratanklinis3 == 'Sesuai' ? true : false
+                                                )
+                                            )
+                                        ),
+                                        3 => array(
+                                            'linkId' => '3.4',
+                                            'text' => 'Apakah terdapat kontraindikasi pengobatan?',
+                                            'answer' => array(
+                                                0 => array(
+                                                    'valueBoolean' => $item->persyaratanklinis3 == 'Sesuai' ? true : false
+                                                )
+                                            )
+                                        ),
+                                        4 => array(
+                                            'linkId' => '3.5',
+                                            'text' => 'Apakah terdapat dampak interaksi obat?',
+                                            'answer' => array(
+                                                0 => array(
+                                                    'valueBoolean' => $item->persyaratanklinis3 == 'Sesuai' ? true : false
+                                                )
+                                            )
+                                        ),
+                                    )
+                                )
+                            )
+                        )
+                    )
+                );
+                
+                if ($item->ihs_id == null) {
+                    unset($data['id']);
+                }
+
+                $objetoRequest = new \Illuminate\Http\Request();
+                $objetoRequest['url'] = $data['resourceType'];
+                $objetoRequest['method'] = $item->ihs_id == null ? 'POST' : 'PUT';
+                $objetoRequest['data'] = $data;
+
+                $response =  $this->ihsTools($objetoRequest, true);
+
+                $noterror = true;
+                if ($response->resourceType == 'OperationOutcome') {
+                    $noterror = false;
+                }
+
+                if ($item->ihs_id == null) {
+                    $mod = new IHS_Transaction();
+                    $mod->norec = $mod->generateNewId();
+                    $mod->statusenabled = $noterror;
+                    $mod->kdprofile = $this->kdProfile;
+                } else {
+                    $mod = IHS_Transaction::where('id', $item->ihs_id)->first();
+                }
+                if (empty($mod)) {
+                    $mod = new IHS_Transaction();
+                    $mod->norec = $mod->generateNewId();
+                    $mod->statusenabled = $noterror;
+                    $mod->kdprofile = $this->kdProfile;
+                }
+                $mod->resourcetype = $data['resourceType'];
+                $mod->url =  $this->endPoint() . $data['resourceType'];
+                $mod->method = $item->ihs_id == null ? 'POST' : 'PUT';
+                $mod->id = isset($response->id) ? $response->id : null;
+                $mod->body = json_encode($data);
+                $mod->response = json_encode($response);
+                $mod->date = date('Y-m-d H:i:s');
+                $mod->save();
+                if (isset($response->id)) {
+                    AntrianApotik::where('norec', $item->norec)->update([
+                        'ihs_id' => $response->id,
+                    ]);
+                }
+            }
+        } catch (Exception $e) {
+            $response = array(
+                "issue" => $e->getMessage() . ' ' . $e->getLine(),
+                "resourceType" => "OperationOutcome"
+            );
+        }
+
         if ($lokal == true) {
             return $response;
         }

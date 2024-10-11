@@ -10,31 +10,31 @@ define(['initialize', 'Configuration'], function (initialize, config) {
                 $scope.noPesanan = $state.params.noOrder
             }
             $scope.listwaktuPakai = [
-                {id:1,waktupakai: 'Pagi'},
-                {id:2,waktupakai: 'Siang'},
-                {id:3,waktupakai: 'Sore'},
-                {id:4,waktupakai: 'Malam'}
+                { id: 1, waktupakai: 'Pagi' },
+                { id: 2, waktupakai: 'Siang' },
+                { id: 3, waktupakai: 'Sore' },
+                { id: 4, waktupakai: 'Malam' }
             ]
-                $scope.selectedData2 = [];
-                $scope.selectedData3 = [];
-                $scope.cetak = []
-                $scope.rmcetak = []
-                $scope.startPrint = []
-                $scope.fieldset = []
-                $scope.resep = []
-                $scope.norm = []
-                $scope.checkpagi = []
-                $scope.checksiang = []
-                $scope.checkmalam = []
-                $scope.cetakpagi = []
-                $scope.cetaksiang = []
-                $scope.cetakmalam = []
-                $scope.WaktuPakaiMalam = []
-                $scope.WaktuPakaiPagi = []
-                $scope.WaktuPakaiSiang = [] 
-                $scope.startPrintPagi = []
-                $scope.startPrintSiang = []
-                $scope.startPrintMalam = []
+            $scope.selectedData2 = [];
+            $scope.selectedData3 = [];
+            $scope.cetak = []
+            $scope.rmcetak = []
+            $scope.startPrint = []
+            $scope.fieldset = []
+            $scope.resep = []
+            $scope.norm = []
+            $scope.checkpagi = []
+            $scope.checksiang = []
+            $scope.checkmalam = []
+            $scope.cetakpagi = []
+            $scope.cetaksiang = []
+            $scope.cetakmalam = []
+            $scope.WaktuPakaiMalam = []
+            $scope.WaktuPakaiPagi = []
+            $scope.WaktuPakaiSiang = []
+            $scope.startPrintPagi = []
+            $scope.startPrintSiang = []
+            $scope.startPrintMalam = []
             FormLoad();
             // $scope.item.namaPasien = "";
             // $scope.item.ruangan = "";
@@ -50,7 +50,7 @@ define(['initialize', 'Configuration'], function (initialize, config) {
                     $scope.listRuanganDepo = e.data.ruanganfarmasi
                 })
             }
-              var onDataBound = function (e) {
+            var onDataBound = function (e) {
                 var kendoGrid = $("#kGrid").data("kendoGrid"); // get the grid widget
                 var rows = e.sender.element.find("tbody tr"); // get all rows
                 // iterate over the rows and if the undelying dataitem's Status field is PPT add class to the cell
@@ -59,29 +59,29 @@ define(['initialize', 'Configuration'], function (initialize, config) {
                     var isambilobat = kendoGrid.dataItem(row).isambilobat;
                     if (isambilobat != null && isambilobat == '✔') {
                         $(row.cells[2]).addClass("green");
-                         $(row.cells[16]).addClass("green");
-                    }else{
+                        $(row.cells[16]).addClass("green");
+                    } else {
                         // $(row.cells[1]).addClass("red");
                     }
                     var cito = kendoGrid.dataItem(row).cito;
                     if (cito != null && cito == '✔') {
-                         $(row.cells[16]).addClass("red");
-                    }else{
+                        $(row.cells[16]).addClass("red");
+                    } else {
                         // $(row.cells[1]).addClass("red");
                     }
                     var statusorder = kendoGrid.dataItem(row).statusorder;
                     if (statusorder != null && statusorder == 'Menunggu') {
-                         $(row.cells[11]).addClass("koneng");
-                    }else if (statusorder != null && statusorder == 'Verifikasi') {
+                        $(row.cells[11]).addClass("koneng");
+                    } else if (statusorder != null && statusorder == 'Verifikasi') {
                         $(row.cells[11]).addClass("green");
-                   }else{
+                    } else {
                         // $(row.cells[1]).addClass("red");
                     }
                     var iskurir = kendoGrid.dataItem(row).iskurir;
                     if (iskurir != null && iskurir == '✔') {
                         $(row.cells[2]).addClass("koneng");
-                         $(row.cells[17]).addClass("koneng");
-                    }else{
+                        $(row.cells[17]).addClass("koneng");
+                    } else {
                         // $(row.cells[1]).addClass("red");
                     }
                     var cekreseppulang = kendoGrid.dataItem(row).cekreseppulang;
@@ -91,10 +91,10 @@ define(['initialize', 'Configuration'], function (initialize, config) {
                     } else {
                         // $(row.cells[1]).addClass("red");
                     }
-                    
+
                 }
             }
-             $scope.arrColumnGridResepElektronik = {
+            $scope.arrColumnGridResepElektronik = {
                 dataBound: onDataBound,
                 toolbar: ["excel"],
                 excel: {
@@ -114,146 +114,146 @@ define(['initialize', 'Configuration'], function (initialize, config) {
                 sortable: true,
                 scrollable: true,
                 pageable: true,
-                groupable: true,  
+                groupable: true,
                 columns: [
-                {
-                    "template": "<input type='checkbox' class='checkbox' ng-click='onClick($event)' />",
-                    "width": 40
-                },
-                {
-                    "field": "noantri",
-                    "title": "No Antri",
-                    "width": "40px",
-                },
-                {
-                    "field": "noorder",
-                    "title": "No Pesanan",
-                    "width": "60px",
+                    {
+                        "template": "<input type='checkbox' class='checkbox' ng-click='onClick($event)' />",
+                        "width": 40
+                    },
+                    {
+                        "field": "noantri",
+                        "title": "No Antri",
+                        "width": "40px",
+                    },
+                    {
+                        "field": "noorder",
+                        "title": "No Pesanan",
+                        "width": "60px",
 
 
-                }, {
-                    "field": "nocm",
-                    "title": "No Rekam Medis",
-                    "width": "60px",
+                    }, {
+                        "field": "nocm",
+                        "title": "No Rekam Medis",
+                        "width": "60px",
 
 
-                }, {
-                    "field": "namapasien",
-                    "title": "Nama Pasien",
-                    "width": "100px",
+                    }, {
+                        "field": "namapasien",
+                        "title": "Nama Pasien",
+                        "width": "100px",
 
-                }, {
-                    "field": "jeniskelamin",
-                    "title": "Jenis Kelamin",
-                    "width": "60px",
+                    }, {
+                        "field": "jeniskelamin",
+                        "title": "Jenis Kelamin",
+                        "width": "60px",
 
-                }, {
-                    "field": "namaruanganrawat",
-                    "title": "Ruang Rawat",
-                    "width": "100px",
+                    }, {
+                        "field": "namaruanganrawat",
+                        "title": "Ruang Rawat",
+                        "width": "100px",
 
-                }, {
-                    template: "#= new moment(new Date(tglorder)).format('DD-MM-YYYY HH:mm:ss') #",
-                    "field": "strukOrder.tglOrder",
-                    "title": "Tanggal/Jam Masuk",
-                    "width": "100px",
+                    }, {
+                        template: "#= new moment(new Date(tglorder)).format('DD-MM-YYYY HH:mm:ss') #",
+                        "field": "strukOrder.tglOrder",
+                        "title": "Tanggal/Jam Masuk",
+                        "width": "100px",
 
-                }, {
-                    "field": "namalengkap",
-                    "title": "Dokter",
-                    "width": "100px",
+                    }, {
+                        "field": "namalengkap",
+                        "title": "Dokter",
+                        "width": "100px",
 
-                }, {
-                    "field": "kelompokpasien",
-                    "title": "Tipe Pasien",
-                    "width": "60px",
+                    }, {
+                        "field": "kelompokpasien",
+                        "title": "Tipe Pasien",
+                        "width": "60px",
 
-                }, {
-                    hidden: true,
-                    "field": "namaruangan",
-                    "width": "70px",
-                    "title": "Depo",
-                    aggregates: ["count"],
-                    groupHeaderTemplate: "Ruangan #= value # "
+                    }, {
+                        hidden: true,
+                        "field": "namaruangan",
+                        "width": "70px",
+                        "title": "Depo",
+                        aggregates: ["count"],
+                        groupHeaderTemplate: "Ruangan #= value # "
 
-                }, {
-                    "field": "statusorder",
-                    "title": "Status",
-                    "width": "60px",
+                    }, {
+                        "field": "statusorder",
+                        "title": "Status",
+                        "width": "60px",
 
-                }, {
-                    "field": "namapengambilorder",
-                    "title": "Pengambil Obat",
-                    "width": "80px",
+                    }, {
+                        "field": "namapengambilorder",
+                        "title": "Pengambil Obat",
+                        "width": "80px",
 
-                },
-                {
-                    "field": "noruangan",
-                    "title": "No Ruang",
-                    "width": "80px",
+                    },
+                    {
+                        "field": "noruangan",
+                        "title": "No Ruang",
+                        "width": "80px",
 
-                },
-                {
-                    "field": "cekreseppulang",
-                    "title": "Resep Pulang",
-                    "width": "80px",
+                    },
+                    {
+                        "field": "cekreseppulang",
+                        "title": "Resep Pulang",
+                        "width": "80px",
 
-                },
-                {
-                    "field": "cito",
-                    "title": "Cito",
-                    "width": "80px",
-                },
-                {
-                    "field": "isbayar",
-                    "title": "Sudah dibayar",
-                    "width": "80px",
+                    },
+                    {
+                        "field": "cito",
+                        "title": "Cito",
+                        "width": "80px",
+                    },
+                    {
+                        "field": "isbayar",
+                        "title": "Sudah dibayar",
+                        "width": "80px",
 
-                },
-                {
-                    "field": "isambilobat",
-                    "title": "Resep Di Ambil Di RS",
-                    "width": "80px",
+                    },
+                    {
+                        "field": "isambilobat",
+                        "title": "Resep Di Ambil Di RS",
+                        "width": "80px",
 
-                },
-                {
-                    "field": "iskurir",
-                    "title": "Resep Diantar Kurir",
-                    "width": "80px",
+                    },
+                    {
+                        "field": "iskurir",
+                        "title": "Resep Diantar Kurir",
+                        "width": "80px",
 
-                },
-                {
-                    "field": "statusgrab",
-                    "title": "Order Grab",
-                    "width": "80px",
+                    },
+                    {
+                        "field": "statusgrab",
+                        "title": "Order Grab",
+                        "width": "80px",
 
-                },
-                {
-                    "command": [
-                        {
-                            text: "Selesai",
-                            click: updateDone2,
-                            imageClass: ""
-                        },
+                    },
+                    {
+                        "command": [
+                            {
+                                text: "Selesai",
+                                click: updateDone2,
+                                imageClass: ""
+                            },
                         ],
-                    title: "#",
-                    width: "80px",
-                },
-                
-                {
-                    hidden: true,
-                    "field": "jenis",
-                    "width": "70px",
-                    "title": "Jenis",
-                    aggregates: ["count"],
-                    groupHeaderTemplate: " #= value # "
+                        title: "#",
+                        width: "80px",
+                    },
 
-                },]
+                    {
+                        hidden: true,
+                        "field": "jenis",
+                        "width": "70px",
+                        "title": "Jenis",
+                        aggregates: ["count"],
+                        groupHeaderTemplate: " #= value # "
+
+                    },]
             };
 
             LoadCache();
             function LoadCache() {
-                
+
                 var chacePeriode = cacheHelper.get('ResepElektronikCtrl');
                 if (chacePeriode != undefined) {
                     //var arrPeriode = chacePeriode.split(':');
@@ -269,9 +269,9 @@ define(['initialize', 'Configuration'], function (initialize, config) {
                         $scope.checkPasienRanap = chacePeriode[6]
                     if (chacePeriode[7] != null)
                         $scope.checkPasienRajal = chacePeriode[7]
-                        
-                        // if (chacePeriode[4] != null)
-                        //     $scope.noPesanan = chacePeriode[4]
+
+                    // if (chacePeriode[4] != null)
+                    //     $scope.noPesanan = chacePeriode[4]
 
 
                 }
@@ -372,7 +372,7 @@ define(['initialize', 'Configuration'], function (initialize, config) {
                 // },
                 autoBind: false,
 
-            };            
+            };
             $scope.refresh = function () {
                 $scope.isRouteLoading = true
                 // debugger;
@@ -444,7 +444,7 @@ define(['initialize', 'Configuration'], function (initialize, config) {
                         e.data[i].umur = umur.year + ' thn ' + umur.month + ' bln ' + umur.day + ' hari'
                         //itungUsia(dat.data[i].tgllahir)
 
-                        
+
                         if (e.data[i].noorder == e.data[i].noresep) {
                             if (e.data[i].statusorder == 'Menunggu')
                                 e.data[i].statusorder = 'Verifikasi'
@@ -454,30 +454,30 @@ define(['initialize', 'Configuration'], function (initialize, config) {
                         } else {
                             e.data[i].cekreseppulang = '-'
                         }
-                        
+
                         if (e.data[i].isambilobat == true) {
-                            e.data[i].isambilobat = "✔"                            
-                        }else{
+                            e.data[i].isambilobat = "✔"
+                        } else {
                             e.data[i].isambilobat = "✘"
-                        }   
+                        }
                         if (e.data[i].cito == true) {
-                            e.data[i].cito = "✔"                            
-                        }else{
+                            e.data[i].cito = "✔"
+                        } else {
                             e.data[i].cito = "✘"
-                        }                        
+                        }
                         if (e.data[i].isordergrab == true) {
-                            e.data[i].statusgrab = "Sudah Order"                            
-                        }else{
+                            e.data[i].statusgrab = "Sudah Order"
+                        } else {
                             e.data[i].statusgrab = "-"
                         }
                         if (e.data[i].iskurir == true) {
-                            e.data[i].iskurir = "✔"                            
-                        }else{
+                            e.data[i].iskurir = "✔"
+                        } else {
                             e.data[i].iskurir = "✘"
                         }
                         if (e.data[i].isbayar == true) {
-                            e.data[i].isbayar = "Lunas"                            
-                        }else{
+                            e.data[i].isbayar = "Lunas"
+                        } else {
                             e.data[i].isbayar = "Belum dibayar"
                         }
 
@@ -510,7 +510,7 @@ define(['initialize', 'Configuration'], function (initialize, config) {
                         group: $scope.group
                     });
 
-                
+
                 });
                 var chacePeriode = {
                     0: tglAwal,
@@ -519,8 +519,8 @@ define(['initialize', 'Configuration'], function (initialize, config) {
                     3: $scope.namaPasien != undefined ? $scope.namaPasien : null,
                     4: null,
                     5: $scope.departemen != undefined ? $scope.departemen : null,
-                    6: $scope.checkPasienRanap !=undefined ? $scope.checkPasienRanap : null,
-                    7: $scope.checkPasienRajal !=undefined ? $scope.checkPasienRajal : null
+                    6: $scope.checkPasienRanap != undefined ? $scope.checkPasienRanap : null,
+                    7: $scope.checkPasienRajal != undefined ? $scope.checkPasienRajal : null
                 }
                 cacheHelper.set('ResepElektronikCtrl', chacePeriode);
             };
@@ -616,150 +616,150 @@ define(['initialize', 'Configuration'], function (initialize, config) {
             }
 
             $scope.updateProduksi = function () {
-                        if ($scope.item.statusorder != 'Menunggu') {
-                            //managePasien.updateStatusOrder($scope.item.strukOrder.noOrder, 1).then(function(e) {
-                            //
-                            //managePasien.updateStatusOrder($scope.item.noorder, 1).then(function(e) {
-                            var strukresep = ""
-                            if ($scope.item.noorder == $scope.item.noresep) { //resep yang input langsung tanpa order
-                                strukresep = true
-                            }
-        
-                            var objSave = {
-                                noorder: $scope.item.noorder,
-                                statusorder: 1,
-                                tglambil: null,
-                                namapengambil: null,
-                                tglselesai: null,
-                                namaselesai: null,
-                                strukresep: strukresep
-                            }
-                            medifirstService.post('farmasi/save-status-resepelektonik', objSave).then(function (e) {
-                                let params = $scope.item.noregistrasi
-                                if ($scope.item.noreservasi != undefined && $scope.item.noreservasi != '' && $scope.item.noreservasi != 'Kios-K') {
-                                    params = $scope.item.noreservasi
-                                }
-                                saveAntrol(params, 6, $scope.item.norec) //waktu layan faarmasi
-                                medifirstService.postLogging('Rubah Status Produksi Order Resep Elektronik', 'No Order Struk Order',
-                                    $scope.item.noorder, 'Rubah Status Produksi Order Resep Elektronik No Order: ' + $scope.item.noorder + '/ Noregistrasi : ' + $scope.item.noregistrasi).then(function (res) {
-                                        $scope.refresh();
-                                    })
-                                    
-                            });
-                        } else {
-                            toastr.error("Status Data Belum Diverifikasi !!")
-                            return;
+                if ($scope.item.statusorder != 'Menunggu') {
+                    //managePasien.updateStatusOrder($scope.item.strukOrder.noOrder, 1).then(function(e) {
+                    //
+                    //managePasien.updateStatusOrder($scope.item.noorder, 1).then(function(e) {
+                    var strukresep = ""
+                    if ($scope.item.noorder == $scope.item.noresep) { //resep yang input langsung tanpa order
+                        strukresep = true
+                    }
+
+                    var objSave = {
+                        noorder: $scope.item.noorder,
+                        statusorder: 1,
+                        tglambil: null,
+                        namapengambil: null,
+                        tglselesai: null,
+                        namaselesai: null,
+                        strukresep: strukresep
+                    }
+                    medifirstService.post('farmasi/save-status-resepelektonik', objSave).then(function (e) {
+                        let params = $scope.item.noregistrasi
+                        if ($scope.item.noreservasi != undefined && $scope.item.noreservasi != '' && $scope.item.noreservasi != 'Kios-K') {
+                            params = $scope.item.noreservasi
                         }
+                        saveAntrol(params, 6, $scope.item.norec) //waktu layan faarmasi
+                        medifirstService.postLogging('Rubah Status Produksi Order Resep Elektronik', 'No Order Struk Order',
+                            $scope.item.noorder, 'Rubah Status Produksi Order Resep Elektronik No Order: ' + $scope.item.noorder + '/ Noregistrasi : ' + $scope.item.noregistrasi).then(function (res) {
+                                $scope.refresh();
+                            })
+
+                    });
+                } else {
+                    toastr.error("Status Data Belum Diverifikasi !!")
+                    return;
+                }
                 //if ($scope.item.statusorder == 'Verifikasi') {
-                
+
             }
 
             $scope.updatePackaging = function () {
-                        if ($scope.item.statusorder != 'Menunggu') {
-                            //managePasien.updateStatusOrder($scope.item.strukOrder.noOrder, 2).then(function(e) {
-                            // managePasien.updateStatusOrder($scope.item.noorder, 2).then(function(e) {
-                            //     $scope.refresh();
-                            // });;
-                            var strukresep = ""
-                            if ($scope.item.noorder == $scope.item.noresep) { //resep yang input langsung tanpa order
-                                strukresep = true
-                            }
-        
-                            var objSave =
-                            {
-                                noorder: $scope.item.noorder,
-                                statusorder: 2,
-                                tglambil: null,
-                                namapengambil: null,
-                                tglselesai: null,
-                                namaselesai: null,
-                                strukresep: strukresep
-                            }
-                            medifirstService.post('farmasi/save-status-resepelektonik', objSave).then(function (e) {
-                                medifirstService.postLogging('Rubah Status Packaging Order Resep Elektronik', 'No Order Struk Order',
-                                    $scope.item.noorder, 'Rubah Status Packaging Order Resep Elektronik No Order: ' + $scope.item.noorder + '/ Noregistrasi : ' + $scope.item.noregistrasi).then(function (res) {
-                                        $scope.refresh();
-                                    })
-                            });
-                        } else {
-                            if ($scope.item.statusorder == 'Menunggu') {
-                                toastr.error("Status Data Belum Diverifikasi !!")
-                                return;
-                            } else {
-                                toastr.error("Status Data Belum Produksi !!")
-                                return;
-                            }
-                        }
+                if ($scope.item.statusorder != 'Menunggu') {
+                    //managePasien.updateStatusOrder($scope.item.strukOrder.noOrder, 2).then(function(e) {
+                    // managePasien.updateStatusOrder($scope.item.noorder, 2).then(function(e) {
+                    //     $scope.refresh();
+                    // });;
+                    var strukresep = ""
+                    if ($scope.item.noorder == $scope.item.noresep) { //resep yang input langsung tanpa order
+                        strukresep = true
+                    }
+
+                    var objSave =
+                    {
+                        noorder: $scope.item.noorder,
+                        statusorder: 2,
+                        tglambil: null,
+                        namapengambil: null,
+                        tglselesai: null,
+                        namaselesai: null,
+                        strukresep: strukresep
+                    }
+                    medifirstService.post('farmasi/save-status-resepelektonik', objSave).then(function (e) {
+                        medifirstService.postLogging('Rubah Status Packaging Order Resep Elektronik', 'No Order Struk Order',
+                            $scope.item.noorder, 'Rubah Status Packaging Order Resep Elektronik No Order: ' + $scope.item.noorder + '/ Noregistrasi : ' + $scope.item.noregistrasi).then(function (res) {
+                                $scope.refresh();
+                            })
+                    });
+                } else {
+                    if ($scope.item.statusorder == 'Menunggu') {
+                        toastr.error("Status Data Belum Diverifikasi !!")
+                        return;
+                    } else {
+                        toastr.error("Status Data Belum Produksi !!")
+                        return;
+                    }
+                }
                 //if ($scope.item.statusorder == 'Verifikasi' || $scope.item.statusorder == 'Produksi') {
-                
+
             }
             $scope.updateDone = function () {
-                        if ($scope.item.statusorder != 'Menunggu') {
-                            //managePasien.updateStatusOrder($scope.item.strukOrder.noOrder, 3).then(function(e) {
-                            // managePasien.updateStatusOrder($scope.item.noorder, 3).then(function(e) {
-                            //     $scope.refresh();
-                            // });;
-                            var strukresep = ""
-                            if ($scope.item.noorder == $scope.item.noresep) { //resep yang input langsung tanpa order
-                                strukresep = true
-                            }
-                            var objSave =
-                            {
-                                noorder: $scope.item.noorder,
-                                statusorder: 3,
-                                tglambil: null,
-                                namapengambil: null,
-                                tglselesai: null,
-                                namaselesai: 'selesai',
-                                strukresep: strukresep
-                            }
-                            medifirstService.post('farmasi/save-status-resepelektonik', objSave).then(function (e) {
-                                var userLogin = medifirstService.getPegawaiLogin();
-                                var Norec = $scope.item.noresep;
-                                var Noreg = $scope.item.noregistrasi;
-                                //grhasia ga perlu cetak ketika tekan selesai
-                                // if ($scope.item.statusorder == 'Verifikasi' || $scope.item.statusorder == 'Packaging' || $scope.item.statusorder == 'Selesai') {
-                                //     var stt = 'false'
-                                //     if (confirm('View Antrian Farmasi? ')) {
-                                //         // Save it!
-                                //         stt = 'true';
-                                //     } else {
-                                //         // Do nothing!
-                                //         stt = 'false'
-                                //     }
-                                //     var client = new HttpClient();
-                                //     client.get('http://127.0.0.1:1237/printvb/farmasi?cetak-buktiantrianfarmasi=' + Norec + '&noregistrasi=' + Noreg + '&view=' + stt, function (response) {
-                                //         // aadc=response;
-                                //     });
-                                // }
-        
-        
-                                medifirstService.postLogging('Rubah Status Selasai Order Resep Elektronik', 'No Order Struk Order',
-                                    $scope.item.noorder, 'Rubah Status Selasai Order Resep Elektronik No Order: ' + $scope.item.noorder + '/ Noregistrasi : ' + $scope.item.noregistrasi).then(function (res) {
-                                        $scope.refresh();
-                                    })
-                            });
-                            let params = $scope.item.noregistrasi
-                            if ($scope.item.noreservasi != undefined && $scope.item.noreservasi != '' && $scope.item.noreservasi != 'Kios-K') {
-                                params = $scope.item.noreservasi
-                            }
-                            saveAntrol(params, 7, $scope.item.norec)
-                            
-                        } else {
-                            if ($scope.item.statusorder == 'Menunggu') {
-                                toastr.error("Status Data Belum Diverifikasi !!")
-                                return;
-                            } else {
-                                toastr.error("Status Data Belum Packaging !!")
-                                return;
-                            }
-                        }
+                if ($scope.item.statusorder != 'Menunggu') {
+                    //managePasien.updateStatusOrder($scope.item.strukOrder.noOrder, 3).then(function(e) {
+                    // managePasien.updateStatusOrder($scope.item.noorder, 3).then(function(e) {
+                    //     $scope.refresh();
+                    // });;
+                    var strukresep = ""
+                    if ($scope.item.noorder == $scope.item.noresep) { //resep yang input langsung tanpa order
+                        strukresep = true
+                    }
+                    var objSave =
+                    {
+                        noorder: $scope.item.noorder,
+                        statusorder: 3,
+                        tglambil: null,
+                        namapengambil: null,
+                        tglselesai: null,
+                        namaselesai: 'selesai',
+                        strukresep: strukresep
+                    }
+                    medifirstService.post('farmasi/save-status-resepelektonik', objSave).then(function (e) {
+                        var userLogin = medifirstService.getPegawaiLogin();
+                        var Norec = $scope.item.noresep;
+                        var Noreg = $scope.item.noregistrasi;
+                        //grhasia ga perlu cetak ketika tekan selesai
+                        // if ($scope.item.statusorder == 'Verifikasi' || $scope.item.statusorder == 'Packaging' || $scope.item.statusorder == 'Selesai') {
+                        //     var stt = 'false'
+                        //     if (confirm('View Antrian Farmasi? ')) {
+                        //         // Save it!
+                        //         stt = 'true';
+                        //     } else {
+                        //         // Do nothing!
+                        //         stt = 'false'
+                        //     }
+                        //     var client = new HttpClient();
+                        //     client.get('http://127.0.0.1:1237/printvb/farmasi?cetak-buktiantrianfarmasi=' + Norec + '&noregistrasi=' + Noreg + '&view=' + stt, function (response) {
+                        //         // aadc=response;
+                        //     });
+                        // }
+
+
+                        medifirstService.postLogging('Rubah Status Selasai Order Resep Elektronik', 'No Order Struk Order',
+                            $scope.item.noorder, 'Rubah Status Selasai Order Resep Elektronik No Order: ' + $scope.item.noorder + '/ Noregistrasi : ' + $scope.item.noregistrasi).then(function (res) {
+                                $scope.refresh();
+                            })
+                    });
+                    let params = $scope.item.noregistrasi
+                    if ($scope.item.noreservasi != undefined && $scope.item.noreservasi != '' && $scope.item.noreservasi != 'Kios-K') {
+                        params = $scope.item.noreservasi
+                    }
+                    saveAntrol(params, 7, $scope.item.norec)
+
+                } else {
+                    if ($scope.item.statusorder == 'Menunggu') {
+                        toastr.error("Status Data Belum Diverifikasi !!")
+                        return;
+                    } else {
+                        toastr.error("Status Data Belum Packaging !!")
+                        return;
+                    }
+                }
                 //if ($scope.item.statusorder == 'Verifikasi' || $scope.item.statusorder == 'Packaging') {
-                
+
             }
-            function updateDone2 (e) {
-				e.preventDefault();
-				var dataItem = this.dataItem($(e.currentTarget).closest("tr"));
+            function updateDone2(e) {
+                e.preventDefault();
+                var dataItem = this.dataItem($(e.currentTarget).closest("tr"));
                 if (dataItem.statusorder != 'Menunggu') {
                     var strukresep = ""
                     if (dataItem.noorder == dataItem.noresep) { //resep yang input langsung tanpa order
@@ -862,7 +862,7 @@ define(['initialize', 'Configuration'], function (initialize, config) {
                                     dokter: array[i].dokter,
                                     cekreseppulang: array[i].cekreseppulang,
                                     details: dataDetail0,
-                                   // keterangan:  array[i].keteranganpakai,
+                                    // keterangan:  array[i].keteranganpakai,
                                 }
                                 group.push(result)
                             }
@@ -891,24 +891,24 @@ define(['initialize', 'Configuration'], function (initialize, config) {
                     if (result.length == 0) {
                         $scope.selectedData2.push(dataItem);
                     } else {
-                        for (var i = 0; i < $scope.selectedData2.length; i++){
-                            
+                        for (var i = 0; i < $scope.selectedData2.length; i++) {
+
                             if ($scope.selectedData2[i].noresep === dataItem.noresep) {
                                 $scope.selectedData2.splice(i, 1);
                                 break;
                             }
-                            
+
                         }
                         $scope.selectedData2.push(dataItem);
                     }
                     row.addClass("k-state-selected");
                 } else {
-                    for (var i = 0; i < $scope.selectedData2.length; i++){
+                    for (var i = 0; i < $scope.selectedData2.length; i++) {
                         if ($scope.selectedData2[i].noresep === dataItem.noresep) {
                             $scope.selectedData2.splice(i, 1);
                             break;
                         }
-                        
+
                     }
                     row.removeClass("k-state-selected");
                 }
@@ -922,7 +922,7 @@ define(['initialize', 'Configuration'], function (initialize, config) {
                 return {
                     dataSource: new kendo.data.DataSource({
                         data: dataItem.details,
-                        sort:[{ field: "rke", dir: "asc" }],
+                        sort: [{ field: "rke", dir: "asc" }],
 
                     }),
                     resizable: true,
@@ -1019,56 +1019,56 @@ define(['initialize', 'Configuration'], function (initialize, config) {
             ];
 
             $scope.verifikasi = function () {
-                        // debugger;
-                        if ($scope.item.statusorder == 'Menunggu') {
-                            var notf = {
-                                data : $scope.item.noorder
-                            }
-                            medifirstService.postNonMessage('farmasi/disable-notif', notf).then(function(){
+                // debugger;
+                if ($scope.item.statusorder == 'Menunggu') {
+                    var notf = {
+                        data: $scope.item.noorder
+                    }
+                    medifirstService.postNonMessage('farmasi/disable-notif', notf).then(function () {
 
-                            })
-                            medifirstService.get("farmasi/get-penjagaan-verif-eresep?noorder=" + $scope.item.noorder ).then(function (e) {
-                    
+                    })
+                    medifirstService.get("farmasi/get-penjagaan-verif-eresep?noorder=" + $scope.item.noorder).then(function (e) {
 
-                                if(e.data.detail[0].tglresep == null){
-                                    var cek = 123;
-                                } else{
-                                    var cek = 234;
-                                }
-            
-                                console.log(cek);
-            
-                                if(cek == 234){
-                                    messageContainer.error("Data yang sudah diverif tidak bisa diverif ulang");
-                                } else if (cek == 123){
-                                    var arrStr = {
-                                        0: $scope.item.nocm,
-                                        1: $scope.item.namapasien,
-                                        2: $scope.item.jeniskelamin,
-                                        3: $scope.item.noregistrasi,
-                                        4: $scope.item.umur,
-                                        5: $scope.item.klid,
-                                        6: $scope.item.namakelas,
-                                        7: $scope.item.tglregistrasi,
-                                        8: $scope.item.norec_apd,
-                                        9: $scope.item.noorder,
-                                        10: $scope.item.jenisPenjamin,
-                                        11: $scope.item.kelompokPasien,
-                                        12: $scope.item.beratBadan,
-                                        13: $scope.item.AlergiYa,
-                                        14: '',
-                                        17: $scope.item.cito,
-                                    }
-                                    cacheHelper.set('InputResepApotikCtrl', arrStr);
-                                    $state.go('InputResepApotik')
-                                }
-                            });
+
+                        if (e.data.detail[0].tglresep == null) {
+                            var cek = 123;
                         } else {
-                            alert('Sudah di verifikasi!!')
+                            var cek = 234;
                         }
-                
+
+                        console.log(cek);
+
+                        if (cek == 234) {
+                            messageContainer.error("Data yang sudah diverif tidak bisa diverif ulang");
+                        } else if (cek == 123) {
+                            var arrStr = {
+                                0: $scope.item.nocm,
+                                1: $scope.item.namapasien,
+                                2: $scope.item.jeniskelamin,
+                                3: $scope.item.noregistrasi,
+                                4: $scope.item.umur,
+                                5: $scope.item.klid,
+                                6: $scope.item.namakelas,
+                                7: $scope.item.tglregistrasi,
+                                8: $scope.item.norec_apd,
+                                9: $scope.item.noorder,
+                                10: $scope.item.jenisPenjamin,
+                                11: $scope.item.kelompokPasien,
+                                12: $scope.item.beratBadan,
+                                13: $scope.item.AlergiYa,
+                                14: '',
+                                17: $scope.item.cito,
+                            }
+                            cacheHelper.set('InputResepApotikCtrl', arrStr);
+                            $state.go('InputResepApotik')
+                        }
+                    });
+                } else {
+                    alert('Sudah di verifikasi!!')
+                }
+
             }
-            $scope.preview = function (){
+            $scope.preview = function () {
                 console.log($scope.item)
                 if ($scope.item == undefined) {
                     toastr.error('Pilih data dulu')
@@ -1081,60 +1081,73 @@ define(['initialize', 'Configuration'], function (initialize, config) {
                 });
             }
             $scope.ambilObat = function () {
-                        if ($scope.item.statusorder == 'Selesai') {
-                            // noresep
-                            $scope.item.tglambil = new Date()
-                            $scope.item.namapengambil = $scope.item.namapasien 
-                            $scope.alamatlengkap = $scope.item.alamatlengkap
-                            var client = new HttpClient();
-                            client.get('http://127.0.0.1:2905/printvb/Pendaftaran?displaykeun=1&noantri=' + $scope.item.noantri + '&namapasien=' + $scope.item.nocm + ', ' + $scope.item.namapasien + '&view=true', function (response) {
-                                // do something with response
-                            });
-                            // if ( $scope.item.statusorder == 'Selesai') {
-                            let params = $scope.item.noregistrasi
-                            if ($scope.item.noreservasi != undefined && $scope.item.noreservasi != '' && $scope.item.noreservasi != 'Kios-K') {
-                                params = $scope.item.noreservasi
-                            }
-                            saveAntrol(params, 7, $scope.item.norec) //waktu penyerahan obat faarmasi
-                            $scope.popup.center().open();
-                            //$state.go('ResepElektronikAmbilObat', { noOrder: $scope.item.strukOrder.noOrder, noAntrianPasien: $scope.item.strukOrder.noRegistrasi.noRec });
-                            // $state.go('ResepElektronikAmbilObat', { noOrder: $scope.item.noorder, noAntrianPasien: $scope.item.norec_apd });
-                            // } else {
-                            // alert('Status harus Selesai!!')
-                            // }
-                        } else {
-                            toastr.error("Status Data Harus Selesai !!")
-                            return;
-                        }
-                
+                if ($scope.item.statusorder == 'Selesai') {
+                    // noresep
+                    $scope.item.tglambil = new Date()
+                    $scope.item.namapengambil = $scope.item.namapasien
+                    $scope.alamatlengkap = $scope.item.alamatlengkap
+                    var client = new HttpClient();
+                    client.get('http://127.0.0.1:2905/printvb/Pendaftaran?displaykeun=1&noantri=' + $scope.item.noantri + '&namapasien=' + $scope.item.nocm + ', ' + $scope.item.namapasien + '&view=true', function (response) {
+                        // do something with response
+                    });
+                    // if ( $scope.item.statusorder == 'Selesai') {
+                    let params = $scope.item.noregistrasi
+                    if ($scope.item.noreservasi != undefined && $scope.item.noreservasi != '' && $scope.item.noreservasi != 'Kios-K') {
+                        params = $scope.item.noreservasi
+                    }
+                    saveAntrol(params, 7, $scope.item.norec) //waktu penyerahan obat faarmasi
+                    $scope.item.persyaratanAdministrasi1 = 'Belum Sesuai'
+                    $scope.item.persyaratanAdministrasi2 = 'Belum Sesuai'
+                    $scope.item.persyaratanAdministrasi3 = 'Belum Sesuai'
+                    $scope.item.persyaratanAdministrasi4 = 'Belum Sesuai'
+                    $scope.item.persyaratanFarmasetik1 = 'Belum Sesuai'
+                    $scope.item.persyaratanFarmasetik2 = 'Belum Sesuai'
+                    $scope.item.persyaratanFarmasetik3 = 'Belum Sesuai'
+                    $scope.item.persyaratanFarmasetik4 = 'Belum Sesuai'
+                    $scope.item.persyaratanKlinis1 = 'Belum Sesuai'
+                    $scope.item.persyaratanKlinis2 = 'Belum Sesuai'
+                    $scope.item.persyaratanKlinis3 = 'Belum Sesuai'
+                    $scope.item.persyaratanKlinis4 = 'Belum Sesuai'
+                    $scope.item.persyaratanKlinis5 = 'Belum Sesuai'
+                    $scope.popup.center().open();
+                    //$state.go('ResepElektronikAmbilObat', { noOrder: $scope.item.strukOrder.noOrder, noAntrianPasien: $scope.item.strukOrder.noRegistrasi.noRec });
+                    // $state.go('ResepElektronikAmbilObat', { noOrder: $scope.item.noorder, noAntrianPasien: $scope.item.norec_apd });
+                    // } else {
+                    // alert('Status harus Selesai!!')
+                    // }
+                } else {
+                    toastr.error("Status Data Harus Selesai !!")
+                    return;
+                }
+
 
             }
 
             $scope.saveambilobat = function () {
-                        var nm = ''
-                        if ($scope.item.namapengambil != undefined) {
-                            nm = $scope.item.namapengambil
-                        }
-                        var strukresep = ""
-                        if ($scope.item.noorder == $scope.item.noresep) { //resep yang input langsung tanpa order
-                            strukresep = true
-                        }
-                        var objSave =
-                        {
-                            noorder: $scope.item.noorder,
-                            statusorder: 4,
-                            tglambil: moment($scope.item.tglambil).format('YYYY-MM-DD HH:mm'),
-                            namapengambil: nm,
-                            strukresep: strukresep
-                        }
-                                medifirstService.post('farmasi/save-status-resepelektonik', objSave).then(function (e) {
-                                    medifirstService.postLogging('Rubah Status Sudah Di Ambil Order Resep Elektronik', 'No Order Struk Order',
-                                        $scope.item.noorder, 'Rubah Status Sudah Di Ambil Order Resep Elektronik No Order: ' + $scope.item.noorder + '/ Noregistrasi : ' + $scope.item.noregistrasi).then(function (res) {
-                                            $scope.refresh();
-                                            $scope.popup.close()
-                                        })
-                                });
-                
+                var nm = ''
+                if ($scope.item.namapengambil != undefined) {
+                    nm = $scope.item.namapengambil
+                }
+                var strukresep = ""
+                if ($scope.item.noorder == $scope.item.noresep) { //resep yang input langsung tanpa order
+                    strukresep = true
+                }
+                var objSave =
+                {
+                    noorder: $scope.item.noorder,
+                    statusorder: 4,
+                    tglambil: moment($scope.item.tglambil).format('YYYY-MM-DD HH:mm'),
+                    namapengambil: nm,
+                    strukresep: strukresep
+                }
+                medifirstService.post('farmasi/save-status-resepelektonik', objSave).then(function (e) {
+                    medifirstService.postLogging('Rubah Status Sudah Di Ambil Order Resep Elektronik', 'No Order Struk Order',
+                        $scope.item.noorder, 'Rubah Status Sudah Di Ambil Order Resep Elektronik No Order: ' + $scope.item.noorder + '/ Noregistrasi : ' + $scope.item.noregistrasi).then(function (res) {
+                            $scope.refresh();
+                            $scope.popup.close()
+                        })
+                });
+
             }
 
 
@@ -1544,7 +1557,7 @@ define(['initialize', 'Configuration'], function (initialize, config) {
                 grid.refresh();
 
             }
-			var isCheckAll = false
+            var isCheckAll = false
             $scope.selectRow = function (e) {
                 var element = $(e.currentTarget);
                 var checked = element.is(':checked'),
@@ -1580,7 +1593,7 @@ define(['initialize', 'Configuration'], function (initialize, config) {
                         }
                     row.removeClass("k-state-selected");
                 }
-                    console.log($scope.selectedData3);
+                console.log($scope.selectedData3);
             }
             $scope.columnGridVerif = [
                 {
@@ -1680,12 +1693,12 @@ define(['initialize', 'Configuration'], function (initialize, config) {
                 }
             }
 
-            $scope.cetakResepDokter = function(){
-                
-                if ($scope.item.noorder == null){
+            $scope.cetakResepDokter = function () {
+
+                if ($scope.item.noorder == null) {
                     toastr.error("PILIH NO ORDER !!")
                     return;
-                }else{
+                } else {
                     var stt = 1
                     if (confirm('Cetak Resep Dengan Qty Setengahnya ? ')) {
                         // Save it!
@@ -1694,20 +1707,20 @@ define(['initialize', 'Configuration'], function (initialize, config) {
                         // Do nothing!
                         stt = 1
                     }
-                    window.open(config.baseApiBackend + "report/cetak-resep-dokter?noorder=" + $scope.item.noorder + "&norec=" + $scope.item.norecresep 
-                    + "&nocm=" + $scope.item.nocm + '&kodeprofile=' + profile + '&qtybagi=' + stt);
+                    window.open(config.baseApiBackend + "report/cetak-resep-dokter?noorder=" + $scope.item.noorder + "&norec=" + $scope.item.norecresep
+                        + "&nocm=" + $scope.item.nocm + '&kodeprofile=' + profile + '&qtybagi=' + stt);
                     // // window.open(config.baseApiBackend + "report/cetak-hasil-lab-histopatologi?norec=" + $scope.dataSelected.norec_pp + '&kdprofile=' + profile
                     //     + '&user=' + user + '&jenis=his', '_blank');
                 }
             }
-            $scope.cetakResepDokterRev = function(){
+            $scope.cetakResepDokterRev = function () {
                 if ($scope.item.statusorder != 'Menunggu') {
                     var local = JSON.parse(localStorage.getItem('profile'));
                     var profile = local.id;
-                    if ($scope.item.noorder == null){
+                    if ($scope.item.noorder == null) {
                         toastr.error("PILIH NO ORDER !!")
                         return;
-                    }else{
+                    } else {
                         $scope.popUpResepDokter.center().open()
                     }
                 } else {
@@ -1715,31 +1728,31 @@ define(['initialize', 'Configuration'], function (initialize, config) {
                     return;
                 }
             }
-            $scope.CETAKRESEPDOKTERREV = function(data){
+            $scope.CETAKRESEPDOKTERREV = function (data) {
                 var local = JSON.parse(localStorage.getItem('profile'));
                 var profile = local.id;
                 var stt = 1
                 var cetakkin = data
                 console.log(data);
-                if(data == undefined){
-                        toastr.error("Pilih yang ingin dicetak !!")
+                if (data == undefined) {
+                    toastr.error("Pilih yang ingin dicetak !!")
                     return
                 }
                 window.open(config.baseApiBackend + "report/cetak-resep-dokter-rev?noorder=" + $scope.item.noorder + "&norec=" + $scope.item.norecresep +
-                    "&nocm=" + $scope.item.nocm + '&kodeprofile=' + profile + '&qtybagi=' + stt + '&cetakkin='+cetakkin);
+                    "&nocm=" + $scope.item.nocm + '&kodeprofile=' + profile + '&qtybagi=' + stt + '&cetakkin=' + cetakkin);
                 // // window.open(config.baseApiBackend + "report/cetak-hasil-lab-histopatologi?norec=" + $scope.dataSelected.norec_pp + '&kdprofile=' + profile
                 //     + '&user=' + user + '&jenis=his', '_blank');
                 $scope.popUpResepDokter.close()
             }
             $scope.grab = {
-                lokasiPengirim :  medifirstService.getProfile().alamatlengkap,
-                lokasiPengirimLat :  medifirstService.getProfile().lat,
-                lokasiPengirimLng :  medifirstService.getProfile().lng,
-                recipient : {},
-                sender:{}
+                lokasiPengirim: medifirstService.getProfile().alamatlengkap,
+                lokasiPengirimLat: medifirstService.getProfile().lat,
+                lokasiPengirimLng: medifirstService.getProfile().lng,
+                recipient: {},
+                sender: {}
             }
 
-            $scope.orderGrab = function(){
+            $scope.orderGrab = function () {
                 if ($scope.item.statusorder != 'Selesai') {
                     toastr.error("Status Data Harus Selesai !!")
                     return;
@@ -1748,26 +1761,26 @@ define(['initialize', 'Configuration'], function (initialize, config) {
                     toastr.error("Sudah Di Order !!")
                     return;
                 }
-                
+
                 $scope.grab.sender.firstName = medifirstService.getPegawaiLogin().namaLengkap
                 $scope.grab.sender.companyName = medifirstService.getProfile().namalengkap
                 $scope.grab.recipient.firstName = $scope.item.namapasien
                 $scope.grab.recipient.phone = $scope.item.nohp
                 $scope.grab.recipient.address = $scope.item.alamatlengkap
-                
+
                 $scope.popupGrab.center().open()
                 setMap()
 
             }
-            function setMap(){
-               const myLatLng = { lat: parseFloat($scope.grab.lokasiPengirimLat), lng: parseFloat($scope.grab.lokasiPengirimLng) };
-               let map = new google.maps.Map(document.getElementById("map"), {
+            function setMap() {
+                const myLatLng = { lat: parseFloat($scope.grab.lokasiPengirimLat), lng: parseFloat($scope.grab.lokasiPengirimLng) };
+                let map = new google.maps.Map(document.getElementById("map"), {
                     center: myLatLng,
                     zoom: 15,
                     mapTypeId: "roadmap",
                     mapTypeControl: false,
                 });
-                   
+
             }
 
             function toggleBounce() {
@@ -1778,53 +1791,53 @@ define(['initialize', 'Configuration'], function (initialize, config) {
                 }
             }
 
-            function initMap(map_lat,map_lng) {
-                  
-                   let myLatlng = { lat: parseFloat(map_lat) , lng: parseFloat(map_lng) };
-                   let map = new google.maps.Map(document.getElementById("map"), {
-                        center: myLatlng,
-                        zoom: 15,
-                        mapTypeId: "roadmap",
-                        mapTypeControl: false,
-                    });
+            function initMap(map_lat, map_lng) {
 
-                     var marker = new google.maps.Marker({
-                        map,
-                        draggable: true,
-                        animation: google.maps.Animation.DROP,
-                        position: myLatlng,
-                        title: 'Penerima Berada Disini',
-                    });
-                    marker.addListener("click", toggleBounce);
+                let myLatlng = { lat: parseFloat(map_lat), lng: parseFloat(map_lng) };
+                let map = new google.maps.Map(document.getElementById("map"), {
+                    center: myLatlng,
+                    zoom: 15,
+                    mapTypeId: "roadmap",
+                    mapTypeControl: false,
+                });
+
+                var marker = new google.maps.Marker({
+                    map,
+                    draggable: true,
+                    animation: google.maps.Animation.DROP,
+                    position: myLatlng,
+                    title: 'Penerima Berada Disini',
+                });
+                marker.addListener("click", toggleBounce);
             }
 
-            $scope.showPop =  function () {
-                cacheHelper.set('norec_resep_qwertyuio',undefined);
-                if($scope.item== undefined){
-                   toastr.error('Pilih data dulu')
-                   return
-               }
-               console.log($scope.item)
+            $scope.showPop = function () {
+                cacheHelper.set('norec_resep_qwertyuio', undefined);
+                if ($scope.item == undefined) {
+                    toastr.error('Pilih data dulu')
+                    return
+                }
+                console.log($scope.item)
 
-               medifirstService.get("sysadmin/general/get-status-close/" + $scope.item.noregistrasi, false).then(function (rese) {
-                   if (rese.data.status == true) {
-                       toastr.error('Pemeriksaan sudah ditutup tanggal ' + moment(new Date(rese.data.tglclosing)).format('DD-MMM-YYYY HH:mm'), 'Peringatan!')
-                       $scope.isSelesaiPeriksa = true
-                       return
-                   } else {
-                       $scope.listRuanganApd = []
+                medifirstService.get("sysadmin/general/get-status-close/" + $scope.item.noregistrasi, false).then(function (rese) {
+                    if (rese.data.status == true) {
+                        toastr.error('Pemeriksaan sudah ditutup tanggal ' + moment(new Date(rese.data.tglclosing)).format('DD-MMM-YYYY HH:mm'), 'Peringatan!')
+                        $scope.isSelesaiPeriksa = true
+                        return
+                    } else {
+                        $scope.listRuanganApd = []
 
-                       $scope.listRuanganApd = JSON.parse(localStorage.getItem('mapLoginUserToRuangan'))
-                       $scope.item.ruanganAntrian = $scope.listRuanganApd[0]
-                       $scope.popupAntrians.center().open()
+                        $scope.listRuanganApd = JSON.parse(localStorage.getItem('mapLoginUserToRuangan'))
+                        $scope.item.ruanganAntrian = $scope.listRuanganApd[0]
+                        $scope.popupAntrians.center().open()
 
-                   }
-               })
+                    }
+                })
             }
 
 
             $scope.inputTindakan = function () {
-                if($scope.item.ruanganAntrian == undefined)return
+                if ($scope.item.ruanganAntrian == undefined) return
                 medifirstService.get("radiologi/get-apd?noregistrasi="
                     + $scope.item.noregistrasi
                 ).then(function (data) {
@@ -1850,13 +1863,13 @@ define(['initialize', 'Configuration'], function (initialize, config) {
             }
 
             $scope.showTindakan = function (norec_apd) {
-                cacheHelper.set('norec_resep_qwertyuio',$scope.item.norecresep);
+                cacheHelper.set('norec_resep_qwertyuio', $scope.item.norecresep);
                 $state.go('InputTindakan', {
                     norecPD: $scope.item.norec_pd,
                     norecAPD: norec_apd,
 
                 });
-               
+
             }
 
             $scope.saveAPD = function (argument) {
@@ -1868,12 +1881,12 @@ define(['initialize', 'Configuration'], function (initialize, config) {
                     "objectruangantujuanfk": $scope.item.ruanganAntrian.id,
                     "objectruanganasalfk": $scope.item.ruid,
                     "objectkelasfk": $scope.item.klid,
-                    "tglregistrasidate":moment($scope.item.tglregistrasi).format('YYYY-MM-DD')
+                    "tglregistrasidate": moment($scope.item.tglregistrasi).format('YYYY-MM-DD')
                 }
                 medifirstService.post('radiologi/save-apd', dataKonsul).then(function (e) {
                     $scope.tombolSimpanVis = false;
                     var norec_apd = e.data.data.norec
-                   
+
                     $scope.showTindakan(norec_apd)
 
                 }, function (error) {
@@ -1881,146 +1894,146 @@ define(['initialize', 'Configuration'], function (initialize, config) {
                 })
             }
 
-            $scope.lanjutOrderGrab = function(){
-                if($scope.grab.sender.firstName == undefined || $scope.grab.sender.firstName == null || $scope.grab.sender.firstName == '-'){
-                   toastr.error('Nama Pengirim tidak boleh Kosong')
-                   return
+            $scope.lanjutOrderGrab = function () {
+                if ($scope.grab.sender.firstName == undefined || $scope.grab.sender.firstName == null || $scope.grab.sender.firstName == '-') {
+                    toastr.error('Nama Pengirim tidak boleh Kosong')
+                    return
                 }
-                if($scope.grab.recipient.address == undefined || $scope.grab.recipient.address == null){
-                   toastr.error('Mohon isi alamat lengkap untuk tujuan pengiriman')
-                   return
+                if ($scope.grab.recipient.address == undefined || $scope.grab.recipient.address == null) {
+                    toastr.error('Mohon isi alamat lengkap untuk tujuan pengiriman')
+                    return
                 }
-                if($scope.grab.recipient.phone == undefined || $scope.grab.recipient.phone == null){
-                   toastr.error('No HP Penerima harus di isi')
-                   return
+                if ($scope.grab.recipient.phone == undefined || $scope.grab.recipient.phone == null) {
+                    toastr.error('No HP Penerima harus di isi')
+                    return
                 }
-                if($scope.grab.sender.phone == undefined || $scope.grab.sender.phone == null){
-                   toastr.error('No HP Pengirim harus di isi')
-                   return
+                if ($scope.grab.sender.phone == undefined || $scope.grab.sender.phone == null) {
+                    toastr.error('No HP Pengirim harus di isi')
+                    return
                 }
-                if($scope.grab.sender.email == undefined || $scope.grab.sender.email == null){
-                   toastr.error('Email Pengirim harus di isi')
-                   return
+                if ($scope.grab.sender.email == undefined || $scope.grab.sender.email == null) {
+                    toastr.error('Email Pengirim harus di isi')
+                    return
                 }
-                if($scope.grab.recipient.email == undefined || $scope.grab.recipient.email == null){
-                   toastr.error('Email Penerima harus di isi')
-                   return
+                if ($scope.grab.recipient.email == undefined || $scope.grab.recipient.email == null) {
+                    toastr.error('Email Penerima harus di isi')
+                    return
                 }
 
                 var client = new HttpClient();
                 $scope.isShowOrder = true
-                client.get('https://maps.googleapis.com/maps/api/geocode/json?address=' + $scope.grab.recipient.address 
-                        + '&key=AIzaSyDYhPXYjgCmT7ZO8jZigFm8iPXY_e16C8M', function (response) {
-                   var res = JSON.parse(response)
-                   if(res.results.length == 0){
-                      toastr.error('Mohon isi alamat dengan lengkap ','Koordinat lokasi tidak ditemukan')
-                      return
-                   }else{
-                        toastr.info('Lat : '  +  res.results[0].geometry.location.lat + ', Lng : '+ res.results[0].geometry.location.lng,'Koordinat ditemukan')
-                   }
-                   
-                   $scope.grab.tujuanLat = res.results[0].geometry.location.lat;
-                   $scope.grab.tujuanLong =  res.results[0].geometry.location.lng;
-                   initMap( $scope.grab.tujuanLat ,$scope.grab.tujuanLong )
+                client.get('https://maps.googleapis.com/maps/api/geocode/json?address=' + $scope.grab.recipient.address
+                    + '&key=AIzaSyDYhPXYjgCmT7ZO8jZigFm8iPXY_e16C8M', function (response) {
+                        var res = JSON.parse(response)
+                        if (res.results.length == 0) {
+                            toastr.error('Mohon isi alamat dengan lengkap ', 'Koordinat lokasi tidak ditemukan')
+                            return
+                        } else {
+                            toastr.info('Lat : ' + res.results[0].geometry.location.lat + ', Lng : ' + res.results[0].geometry.location.lng, 'Koordinat ditemukan')
+                        }
 
-                   medifirstService.get("farmasi/get_detail-resep?norecResep=" + $scope.item.norecresep, true).then(function (zz) {
-                        let packageDetail = []
-                        let totalOrder = 0
-                        for (var i = 0; i < zz.data.pelayananPasien.length; i++) {
-                            const element = zz.data.pelayananPasien[i]
-                            totalOrder = totalOrder + parseFloat(element.total)
-                            packageDetail.push({
-                                "name": element.namaproduk,
-                                "description": 'Aturan Pakai :' + element.aturanpakai,
-                                "quantity": element.jumlah,
-                                "price": parseFloat(element.hargasatuan),
-                                "dimensions": {
-                                    "height": 0,
-                                    "width": 0,
-                                    "depth": 0,
-                                    "weight": 0
-                                }
-                            })
-                        }
-                      
-                       let json = {
-                            "req": {
-                                "merchantOrderID": $scope.item.noorder,
-                                "serviceType": "INSTANT",
-                                "paymentMethod": "CASHLESS",
-                                "packages": packageDetail,
-                                "origin": {
-                                    "address": $scope.grab.lokasiPengirim,
-                                    "coordinates": {
-                                        "latitude": parseFloat($scope.grab.lokasiPengirimLat),
-                                        "longitude": parseFloat($scope.grab.lokasiPengirimLng)
+                        $scope.grab.tujuanLat = res.results[0].geometry.location.lat;
+                        $scope.grab.tujuanLong = res.results[0].geometry.location.lng;
+                        initMap($scope.grab.tujuanLat, $scope.grab.tujuanLong)
+
+                        medifirstService.get("farmasi/get_detail-resep?norecResep=" + $scope.item.norecresep, true).then(function (zz) {
+                            let packageDetail = []
+                            let totalOrder = 0
+                            for (var i = 0; i < zz.data.pelayananPasien.length; i++) {
+                                const element = zz.data.pelayananPasien[i]
+                                totalOrder = totalOrder + parseFloat(element.total)
+                                packageDetail.push({
+                                    "name": element.namaproduk,
+                                    "description": 'Aturan Pakai :' + element.aturanpakai,
+                                    "quantity": element.jumlah,
+                                    "price": parseFloat(element.hargasatuan),
+                                    "dimensions": {
+                                        "height": 0,
+                                        "width": 0,
+                                        "depth": 0,
+                                        "weight": 0
                                     }
-                                },
-                                "destination": {
-                                    "address":$scope.grab.recipient.address,
-                                    "coordinates": {
-                                        "latitude": parseFloat($scope.grab.tujuanLat) ,
-                                        "longitude": parseFloat($scope.grab.tujuanLong )
-                                    }
-                                },
-                                "recipient": {
-                                    "firstName": $scope.grab.recipient.firstName,
-                                    "lastName": "",
-                                    "email": $scope.grab.recipient.email != undefined ? $scope.grab.recipient.email :"",
-                                    "phone": $scope.grab.recipient.phone != undefined ? $scope.grab.recipient.phone :"",
-                                    "smsEnabled": true
-                                },
-                                "sender": {
-                                    "firstName": $scope.grab.sender.firstName ,
-                                    "companyName":  $scope.grab.sender.companyName ,
-                                    "email": $scope.grab.sender.email != undefined ? $scope.grab.sender.email :"",
-                                    "phone": $scope.grab.sender.phone != undefined ? $scope.grab.sender.phone :"",
-                                    "smsEnabled": true
-                                },
-                                "orderId": parseFloat($scope.item.noorder),
-                                "totalOrder": totalOrder
+                                })
                             }
-                        }
-                        medifirstService.postApi('api/grab/delivery',json).then(function (e) {
-                           if(e.data.deliveryID != undefined){
-                               toastr.success('Sukses Order, status : '+e.data.status,'No Kirim : '+e.data.deliveryID) 
-                               updateStatusGrab(e.data)
-                              
-                           }else if(e.data.message!=undefined){
-                               toastr.error(e.data.message,'Error') 
-                           }else{
-                               toastr.error(e.data.arg,'Error') 
-                           }
-                          
-                           $scope.isShowOrder = false
-                        },function(error){
-                            toastr.error('Terjadi Kesalahan ','Info')
-                            $scope.isShowOrder = false
+
+                            let json = {
+                                "req": {
+                                    "merchantOrderID": $scope.item.noorder,
+                                    "serviceType": "INSTANT",
+                                    "paymentMethod": "CASHLESS",
+                                    "packages": packageDetail,
+                                    "origin": {
+                                        "address": $scope.grab.lokasiPengirim,
+                                        "coordinates": {
+                                            "latitude": parseFloat($scope.grab.lokasiPengirimLat),
+                                            "longitude": parseFloat($scope.grab.lokasiPengirimLng)
+                                        }
+                                    },
+                                    "destination": {
+                                        "address": $scope.grab.recipient.address,
+                                        "coordinates": {
+                                            "latitude": parseFloat($scope.grab.tujuanLat),
+                                            "longitude": parseFloat($scope.grab.tujuanLong)
+                                        }
+                                    },
+                                    "recipient": {
+                                        "firstName": $scope.grab.recipient.firstName,
+                                        "lastName": "",
+                                        "email": $scope.grab.recipient.email != undefined ? $scope.grab.recipient.email : "",
+                                        "phone": $scope.grab.recipient.phone != undefined ? $scope.grab.recipient.phone : "",
+                                        "smsEnabled": true
+                                    },
+                                    "sender": {
+                                        "firstName": $scope.grab.sender.firstName,
+                                        "companyName": $scope.grab.sender.companyName,
+                                        "email": $scope.grab.sender.email != undefined ? $scope.grab.sender.email : "",
+                                        "phone": $scope.grab.sender.phone != undefined ? $scope.grab.sender.phone : "",
+                                        "smsEnabled": true
+                                    },
+                                    "orderId": parseFloat($scope.item.noorder),
+                                    "totalOrder": totalOrder
+                                }
+                            }
+                            medifirstService.postApi('api/grab/delivery', json).then(function (e) {
+                                if (e.data.deliveryID != undefined) {
+                                    toastr.success('Sukses Order, status : ' + e.data.status, 'No Kirim : ' + e.data.deliveryID)
+                                    updateStatusGrab(e.data)
+
+                                } else if (e.data.message != undefined) {
+                                    toastr.error(e.data.message, 'Error')
+                                } else {
+                                    toastr.error(e.data.arg, 'Error')
+                                }
+
+                                $scope.isShowOrder = false
+                            }, function (error) {
+                                toastr.error('Terjadi Kesalahan ', 'Info')
+                                $scope.isShowOrder = false
+                            })
                         })
-                    })
-                });
-// 
+                    });
+                // 
             }
-            function updateStatusGrab(response){
+            function updateStatusGrab(response) {
                 let json = {
-                    'isordergrab' : true,
-                    'statusordergrab' : response.status,
-                    'norec_order' : $scope.item.norec_order,
-                    'nokirimgrab' : response.deliveryID
+                    'isordergrab': true,
+                    'statusordergrab': response.status,
+                    'norec_order': $scope.item.norec_order,
+                    'nokirimgrab': response.deliveryID
                 }
-                medifirstService.post('farmasi/update-status-grabexpress',json).then(function(e){
+                medifirstService.post('farmasi/update-status-grabexpress', json).then(function (e) {
                     $scope.cancelOrder()
                     $scope.refresh()
 
                 })
             }
-            $scope.cancelOrder = function(){
+            $scope.cancelOrder = function () {
                 $scope.grab = {
-                    lokasiPengirim :  medifirstService.getProfile().alamatlengkap,
-                    lokasiPengirimLat :  medifirstService.getProfile().lat,
-                    lokasiPengirimLng :  medifirstService.getProfile().lng,
-                    recipient : {},
-                    sender:{}
+                    lokasiPengirim: medifirstService.getProfile().alamatlengkap,
+                    lokasiPengirimLat: medifirstService.getProfile().lat,
+                    lokasiPengirimLng: medifirstService.getProfile().lng,
+                    recipient: {},
+                    sender: {}
                 }
                 $scope.popupGrab.close()
             }
@@ -2052,7 +2065,7 @@ define(['initialize', 'Configuration'], function (initialize, config) {
                     "waktu": waktu,
                     "statuskirim": statuskirim
                 }
-                medifirstService.postNonMessage('rawatjalan/save-monitoring-taskid', json).then(function (e) {})
+                medifirstService.postNonMessage('rawatjalan/save-monitoring-taskid', json).then(function (e) { })
             }
 
             function repeatSendTaskId(norec_pd, taskid) {
@@ -2097,36 +2110,36 @@ define(['initialize', 'Configuration'], function (initialize, config) {
                     })
                 }
             }
-            
-            
+
+
             $scope.waktucetak = function () {
-                
+
                 for (let i = 0; i < $scope.selectedData2.length; i++) {
-                    if($scope.checkpagi[i]== true){
-                    $scope.cetakpagi[i] = true
-                    $scope.WaktuPakaiPagi[i] = {id:1,waktupakai: 'Pagi'}
+                    if ($scope.checkpagi[i] == true) {
+                        $scope.cetakpagi[i] = true
+                        $scope.WaktuPakaiPagi[i] = { id: 1, waktupakai: 'Pagi' }
                     } else if ($scope.checkpagi[i] == false) {
                         $scope.cetakpagi[i] = false
                         $scope.WaktuPakaiPagi[i] = undefined
                     }
                     if ($scope.checksiang[i] == true) {
                         $scope.cetaksiang[i] = true
-                        $scope.WaktuPakaiSiang[i] = {id:2,waktupakai: 'Siang'}
+                        $scope.WaktuPakaiSiang[i] = { id: 2, waktupakai: 'Siang' }
                     } else if ($scope.checksiang[i] == false) {
                         $scope.cetaksiang[i] = false
                         $scope.WaktuPakaiSiang[i] = undefined
                     }
                     if ($scope.checkmalam[i] == true) {
                         $scope.cetakmalam[i] = true
-                        $scope.WaktuPakaiMalam[i] = {id:4,waktupakai: 'Malam'}
+                        $scope.WaktuPakaiMalam[i] = { id: 4, waktupakai: 'Malam' }
                     } else if ($scope.checkmalam[i] == false) {
                         $scope.cetakmalam[i] = false
                         $scope.WaktuPakaiMalam[i] = undefined
                     }
                 }
-                
+
             }
-            $scope.cetakUDD = function(){
+            $scope.cetakUDD = function () {
                 // if ($scope.item.noorder == undefined){
                 //     toastr.error("Pilih Data !!")
                 //     return;
@@ -2140,7 +2153,7 @@ define(['initialize', 'Configuration'], function (initialize, config) {
                 // $scope.WaktuPakaiMalam = {id:4,waktupakai: 'Malam'}
                 // $scope.normcetak = $scope.item.nocm
                 // $scope.resepcetak = $scope.item.noresep
-                    // $scope.popUpDetailUDD.center().open()
+                // $scope.popUpDetailUDD.center().open()
 
                 console.log($scope.selectedData2);
                 for (let i = 0; i < $scope.selectedData2.length; i++) {
@@ -2152,7 +2165,7 @@ define(['initialize', 'Configuration'], function (initialize, config) {
                         $scope.norm[0] = $scope.selectedData2[0].nocm
                         $scope.resep[0] = $scope.selectedData2[0].noresep
                         $scope.fieldset[0] = true
-                    } else if ($scope.selectedData2[0] == undefined){
+                    } else if ($scope.selectedData2[0] == undefined) {
                         $scope.norm[0] = undefined
                         $scope.resep[0] = undefined
                         $scope.fieldset[0] = false
@@ -2175,26 +2188,26 @@ define(['initialize', 'Configuration'], function (initialize, config) {
                         $scope.resep[2] = undefined
                         $scope.fieldset[2] = false
                     }
-                    
-                    
+
+
                 }
 
-                if ($scope.selectedData2.length > 0 && $scope.selectedData2.length < 4){
+                if ($scope.selectedData2.length > 0 && $scope.selectedData2.length < 4) {
                     $scope.popUpDetailUDD.center().open()
-                }else{
+                } else {
                     toastr.error("Checklist maksimal 3")
                     return;
                 }
             }
-            
+
             $scope.cancelCetakUDDnya = function () {
                 // $scope.selectedData2 = []
                 $scope.popUpDetailUDD.close()
             }
-            $scope.CetakUDDnya = function(){
+            $scope.CetakUDDnya = function () {
                 var local = JSON.parse(localStorage.getItem('profile'));
                 var profile = local.id;
-                var noreseparr = [], nocmarr = [], norec_apdarr = [], tglpagiarr = [], tglsiangarr = [], tglmalamarr = [],waktupagiarr = [],
+                var noreseparr = [], nocmarr = [], norec_apdarr = [], tglpagiarr = [], tglsiangarr = [], tglmalamarr = [], waktupagiarr = [],
                     waktusiangarr = [],
                     waktumalamarr = []
                 var tglpagi = '',
@@ -2203,12 +2216,12 @@ define(['initialize', 'Configuration'], function (initialize, config) {
                     waktupagi = '',
                     waktusiang = '',
                     waktumalam = ''
-                    var datas = []
-                    var data = {}
-                    var pasien1 = ''
-                    var pasien2 = ''
-                    var pasien3 = ''
-                    var cetaknyaatuh=''
+                var datas = []
+                var data = {}
+                var pasien1 = ''
+                var pasien2 = ''
+                var pasien3 = ''
+                var cetaknyaatuh = ''
                 for (let i = 0; i < $scope.selectedData2.length; i++) {
                     noreseparr[i] = $scope.selectedData2[i].noresep
                     nocmarr[i] = $scope.selectedData2[i].nocm
@@ -2222,7 +2235,7 @@ define(['initialize', 'Configuration'], function (initialize, config) {
                     if ($scope.startPrintMalam[i] != undefined) {
                         tglmalamarr[i] = moment($scope.startPrintMalam[i]).format('YYYY-MM-DD')
                     }
-                    if($scope.WaktuPakaiPagi[i] != undefined){
+                    if ($scope.WaktuPakaiPagi[i] != undefined) {
                         waktupagiarr[i] = $scope.WaktuPakaiPagi[i].id
                     }
                     if ($scope.WaktuPakaiSiang[i] != undefined) {
@@ -2241,7 +2254,7 @@ define(['initialize', 'Configuration'], function (initialize, config) {
                         if ($scope.checksiang[0] == true) {
                             pasien1 = norec_apdarr[0] + ',' + nocmarr[0] + ',' + noreseparr[0] + ',' + waktusiangarr[0] + ',' + tglsiangarr[0]
                         }
-                        cetaknyaatuh = "pasien1="+pasien1
+                        cetaknyaatuh = "pasien1=" + pasien1
                     }
                     if ($scope.selectedData2.length == 2) {
                         if ($scope.checkmalam[0] == true) {
@@ -2262,7 +2275,7 @@ define(['initialize', 'Configuration'], function (initialize, config) {
                         if ($scope.checksiang[1] == true) {
                             pasien2 = norec_apdarr[1] + ',' + nocmarr[1] + ',' + noreseparr[1] + ',' + waktusiangarr[1] + ',' + tglsiangarr[1]
                         }
-                        cetaknyaatuh = "pasien1=" + pasien1+"&pasien2="+pasien2
+                        cetaknyaatuh = "pasien1=" + pasien1 + "&pasien2=" + pasien2
 
                     }
                     if ($scope.selectedData2.length == 3) {
@@ -2299,11 +2312,11 @@ define(['initialize', 'Configuration'], function (initialize, config) {
 
                     }
                 }
-                
+
                 var noresep = noreseparr.join()
                 var nocm = nocmarr.join()
                 var norec_apd = norec_apdarr.join()
-                if (waktumalamarr.join() != ''){
+                if (waktumalamarr.join() != '') {
                     waktumalam = "&waktumalam=" + waktumalamarr.join()
                 }
                 if (waktupagiarr.join() != '') {
@@ -2321,15 +2334,15 @@ define(['initialize', 'Configuration'], function (initialize, config) {
                 if (tglmalamarr.join() != '') {
                     tglmalam = "&tglmalam=" + tglmalamarr.join()
                 }
-                
+
                 console.log(pasien1, pasien2, pasien3);
                 window.open(config.baseApiBackend + "report/cetak-udd?" + cetaknyaatuh + '&kodeprofile=' + profile);
                 return
                 window.open(config.baseApiBackend + "report/cetak-udd?noorder=" + noresep + "&norec_apd=" + norec_apd
-                +"&nocm=" + nocm + '&kodeprofile=' +profile+ tglmalam+tglpagi+tglsiang+ waktumalam+waktupagi+waktusiang);
+                    + "&nocm=" + nocm + '&kodeprofile=' + profile + tglmalam + tglpagi + tglsiang + waktumalam + waktupagi + waktusiang);
             }
             $scope.cetakTilik = function () {
-                 console.log($scope.selectedData2);
+                console.log($scope.selectedData2);
                 for (let i = 0; i < $scope.selectedData2.length; i++) {
                     if ($scope.selectedData2[i].statusorder == 'Menunggu') {
                         toastr.error("Status Data Belum Diverifikasi !!")
@@ -2351,7 +2364,7 @@ define(['initialize', 'Configuration'], function (initialize, config) {
             }
 
             $scope.cancelCetakTiliknya = function () {
-                for (let i = 0; i < $scope.selectedData2.length; i++) {}
+                for (let i = 0; i < $scope.selectedData2.length; i++) { }
                 $scope.popUpDetailTilik.close()
             }
             $scope.CetakTiliknya = function () {
@@ -2422,22 +2435,22 @@ define(['initialize', 'Configuration'], function (initialize, config) {
                 window.open(config.baseApiBackend + "report/cetak-tilik?noorder=" + noresep + "&norec_apd=" + norec_apd +
                     "&nocm=" + nocm + '&kodeprofile=' + profile + tglmalam + tglpagi + tglsiang + waktumalam + waktupagi + waktusiang);
             }
-            $scope.copyResep = function(){
+            $scope.copyResep = function () {
                 console.log($scope.item);
                 if (Object.keys($scope.item).length == 0) {
                     toastr.error('Pilih data Pasien!')
                     return
                 }
                 window.open("/app/#/CopyResepCtrl/" + $scope.item.norec_order)
-                
+
             }
-            $scope.tombolotomatis = function(){
+            $scope.tombolotomatis = function () {
                 var data = {}
-                medifirstService.post('updatebro', data).then(function(data){
+                medifirstService.post('updatebro', data).then(function (data) {
                     console.log(data)
                 })
             }
-            $scope.daftarobatpulang = function(){
+            $scope.daftarobatpulang = function () {
                 if ($scope.item == undefined) {
                     toastr.error('Pilih data dulu!')
                     return
@@ -2452,7 +2465,7 @@ define(['initialize', 'Configuration'], function (initialize, config) {
                 // }
                 $scope.detailVerif()
                 $scope.popUpDetailVerif.center().open()
-                
+
 
             }
 
@@ -2497,10 +2510,10 @@ define(['initialize', 'Configuration'], function (initialize, config) {
                     a = a + b
                 }
                 $scope.produkfkkkk = a.slice(1, a.length)
-                window.open(config.baseApiBackend + "report/cetak-obat-pulang?norec_order="+$scope.item.norec_order + "&kdprofile=30" + "&produkfk="+ $scope.produkfkkkk + "&pegawai="+medifirstService.getPegawaiLogin().id, '_BLANK')
+                window.open(config.baseApiBackend + "report/cetak-obat-pulang?norec_order=" + $scope.item.norec_order + "&kdprofile=30" + "&produkfk=" + $scope.produkfkkkk + "&pegawai=" + medifirstService.getPegawaiLogin().id, '_BLANK')
 
             }
         }
-        
+
     ]);
 });

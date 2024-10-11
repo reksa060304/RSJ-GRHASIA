@@ -395,6 +395,320 @@
     <div kendo-window="popup" k-title="'Penyerahan Obat'" k-visible="false" k-width="550">
         <div class="panel panel-default container_12">
             <div class="grid_12">
+                <div class="grid_12">
+                    <div class="grid_6">
+                        <label c-label>Rincian</label>
+                    </div>
+                    <div class="grid_6">
+                        <label c-label></label>
+                    </div>
+                </div>
+                <div class="grid_12">
+                    <div class="grid_7">
+                        <label c-label>1. Persyaratan Administrasi</label>
+                    </div>
+                    <div class="grid_5"></div>
+                </div>
+                <div class="grid_12">
+                    <div class="grid_1" style="text-align: right;"><label c-label>1.1.</label> </div>
+                    <div class="grid_7">
+                        <label c-label>Apakah nama, umur, jenis kelamin, berat badan dan tinggi badan pasien sudah sesuai?</label>
+                    </div>
+                    <div class="grid_4">
+                        <div class="grid_6">
+                            <md-radio-group ng-model="item.persyaratanAdministrasi1">
+                                <md-radio-button value="Sesuai" class="md-primary">
+                                    Sesuai
+                                </md-radio-button>
+                            </md-radio-group>
+                        </div>
+                        <div class="grid_6">
+                            <md-radio-group ng-model="item.persyaratanAdministrasi1">
+                                <md-radio-button value="Belum Sesuai" class="md-primary">
+                                    Belum Sesuai
+                                </md-radio-button>
+                            </md-radio-group>
+                        </div>
+                    </div>
+                </div>
+                <div class="grid_12">
+                    <div class="grid_1" style="text-align: right;"><label c-label>1.2.</label> </div>
+                    <div class="grid_7">
+                        <label c-label>Apakah nama, nomor ijin, alamat dan paraf dokter sudah sesuai?</label>
+                    </div>
+                    <div class="grid_4">
+                        <div class="grid_6">
+                            <md-radio-group ng-model="item.persyaratanAdministrasi2">
+                                <md-radio-button value="Sesuai" class="md-primary">
+                                    Sesuai
+                                </md-radio-button>
+                            </md-radio-group>
+                        </div>
+                        <div class="grid_6">
+                            <md-radio-group ng-model="item.persyaratanAdministrasi2">
+                                <md-radio-button value="Belum Sesuai" class="md-primary">
+                                    Belum Sesuai
+                                </md-radio-button>
+                            </md-radio-group>
+                        </div>
+                    </div>
+                </div>
+                <div class="grid_12">
+                    <div class="grid_1" style="text-align: right;"><label c-label>1.3.</label> </div>
+                    <div class="grid_7">
+                        <label c-label>Apakah tanggal resep sudah sesuai?</label>
+                    </div>
+                    <div class="grid_4">
+                        <div class="grid_6">
+                            <md-radio-group ng-model="item.persyaratanAdministrasi3">
+                                <md-radio-button value="Sesuai" class="md-primary">
+                                    Sesuai
+                                </md-radio-button>
+                            </md-radio-group>
+                        </div>
+                        <div class="grid_6">
+                            <md-radio-group ng-model="item.persyaratanAdministrasi3">
+                                <md-radio-button value="Belum Sesuai" class="md-primary">
+                                    Belum Sesuai
+                                </md-radio-button>
+                            </md-radio-group>
+                        </div>
+                    </div>
+                </div>
+                <div class="grid_12">
+                    <div class="grid_1" style="text-align: right;"><label c-label>1.4.</label> </div>
+                    <div class="grid_7">
+                        <label c-label>Apakah ruangan/unit asal resep sudah sesuai?</label>
+                    </div>
+                    <div class="grid_4">
+                        <div class="grid_6">
+                            <md-radio-group ng-model="item.persyaratanAdministrasi4">
+                                <md-radio-button value="Sesuai" class="md-primary">
+                                    Sesuai
+                                </md-radio-button>
+                            </md-radio-group>
+                        </div>
+                        <div class="grid_6">
+                            <md-radio-group ng-model="item.persyaratanAdministrasi4">
+                                <md-radio-button value="Belum Sesuai" class="md-primary">
+                                    Belum Sesuai
+                                </md-radio-button>
+                            </md-radio-group>
+                        </div>
+                    </div>
+                </div>
+                <div class="grid_12">
+                    <div class="grid_7">
+                        <label c-label>2. Persyaratan Farmasetik</label>
+                    </div>
+                    <div class="grid_5"></div>
+                </div>
+                <div class="grid_12">
+                    <div class="grid_1" style="text-align: right;"><label c-label>2.1.</label> </div>
+                    <div class="grid_7">
+                        <label c-label>Apakah nama obat, bentuk dan kekuatan sediaan sudah sesuai?</label>
+                    </div>
+                    <div class="grid_4">
+                        <div class="grid_6">
+                            <md-radio-group ng-model="item.persyaratanFarmasetik1">
+                                <md-radio-button value="Sesuai" class="md-primary">
+                                    Sesuai
+                                </md-radio-button>
+                            </md-radio-group>
+                        </div>
+                        <div class="grid_6">
+                            <md-radio-group ng-model="item.persyaratanFarmasetik1">
+                                <md-radio-button value="Belum Sesuai" class="md-primary">
+                                    Belum Sesuai
+                                </md-radio-button>
+                            </md-radio-group>
+                        </div>
+                    </div>
+                </div>
+                <div class="grid_12">
+                    <div class="grid_1" style="text-align: right;"><label c-label>2.2.</label> </div>
+                    <div class="grid_7">
+                        <label c-label>Apakah dosis dan jumlah obat sudah sesuai?</label>
+                    </div>
+                    <div class="grid_4">
+                        <div class="grid_6">
+                            <md-radio-group ng-model="item.persyaratanFarmasetik2">
+                                <md-radio-button value="Sesuai" class="md-primary">
+                                    Sesuai
+                                </md-radio-button>
+                            </md-radio-group>
+                        </div>
+                        <div class="grid_6">
+                            <md-radio-group ng-model="item.persyaratanFarmasetik2">
+                                <md-radio-button value="Belum Sesuai" class="md-primary">
+                                    Belum Sesuai
+                                </md-radio-button>
+                            </md-radio-group>
+                        </div>
+                    </div>
+                </div>
+                <div class="grid_12">
+                    <div class="grid_1" style="text-align: right;"><label c-label>2.3.</label> </div>
+                    <div class="grid_7">
+                        <label c-label>Apakah stabilitas obat sudah sesuai?</label>
+                    </div>
+                    <div class="grid_4">
+                        <div class="grid_6">
+                            <md-radio-group ng-model="item.persyaratanFarmasetik3">
+                                <md-radio-button value="Sesuai" class="md-primary">
+                                    Sesuai
+                                </md-radio-button>
+                            </md-radio-group>
+                        </div>
+                        <div class="grid_6">
+                            <md-radio-group ng-model="item.persyaratanFarmasetik3">
+                                <md-radio-button value="Belum Sesuai" class="md-primary">
+                                    Belum Sesuai
+                                </md-radio-button>
+                            </md-radio-group>
+                        </div>
+                    </div>
+                </div>
+                <div class="grid_12">
+                    <div class="grid_1" style="text-align: right;"><label c-label>2.4.</label> </div>
+                    <div class="grid_7">
+                        <label c-label>Apakah aturan dan cara penggunaan obat sudah sesuai?</label>
+                    </div>
+                    <div class="grid_4">
+                        <div class="grid_6">
+                            <md-radio-group ng-model="item.persyaratanFarmasetik4">
+                                <md-radio-button value="Sesuai" class="md-primary">
+                                    Sesuai
+                                </md-radio-button>
+                            </md-radio-group>
+                        </div>
+                        <div class="grid_6">
+                            <md-radio-group ng-model="item.persyaratanFarmasetik4">
+                                <md-radio-button value="Belum Sesuai" class="md-primary">
+                                    Belum Sesuai
+                                </md-radio-button>
+                            </md-radio-group>
+                        </div>
+                    </div>
+                </div>
+                <div class="grid_12">
+                    <div class="grid_7">
+                        <label c-label>3. Persyaratan Klinis</label>
+                    </div>
+                    <div class="grid_5"></div>
+                </div>
+                <div class="grid_12">
+                    <div class="grid_1" style="text-align: right;"><label c-label>3.1.</label> </div>
+                    <div class="grid_7">
+                        <label c-label>Apakah ketepatan indikasi, dosis, dan waktu penggunaan obat sudah sesuai?</label>
+                    </div>
+                    <div class="grid_4">
+                        <div class="grid_6">
+                            <md-radio-group ng-model="item.persyaratanKlinis1">
+                                <md-radio-button value="Sesuai" class="md-primary">
+                                    Sesuai
+                                </md-radio-button>
+                            </md-radio-group>
+                        </div>
+                        <div class="grid_6">
+                            <md-radio-group ng-model="item.persyaratanKlinis1">
+                                <md-radio-button value="Belum Sesuai" class="md-primary">
+                                    Belum Sesuai
+                                </md-radio-button>
+                            </md-radio-group>
+                        </div>
+                    </div>
+                </div>
+                <div class="grid_12">
+                    <div class="grid_1" style="text-align: right;"><label c-label>3.2.</label> </div>
+                    <div class="grid_7">
+                        <label c-label>Apakah terdapat duplikasi pengobatan?</label>
+                    </div>
+                    <div class="grid_4">
+                        <div class="grid_6">
+                            <md-radio-group ng-model="item.persyaratanKlinis2">
+                                <md-radio-button value="Sesuai" class="md-primary">
+                                    Sesuai
+                                </md-radio-button>
+                            </md-radio-group>
+                        </div>
+                        <div class="grid_6">
+                            <md-radio-group ng-model="item.persyaratanKlinis2">
+                                <md-radio-button value="Belum Sesuai" class="md-primary">
+                                    Belum Sesuai
+                                </md-radio-button>
+                            </md-radio-group>
+                        </div>
+                    </div>
+                </div>
+                <div class="grid_12">
+                    <div class="grid_1" style="text-align: right;"><label c-label>3.3.</label> </div>
+                    <div class="grid_7">
+                        <label c-label>Apakah terdapat alergi dan reaksi obat yang tidak dikehendaki (ROTD)?</label>
+                    </div>
+                    <div class="grid_4">
+                        <div class="grid_6">
+                            <md-radio-group ng-model="item.persyaratanKlinis3">
+                                <md-radio-button value="Sesuai" class="md-primary">
+                                    Sesuai
+                                </md-radio-button>
+                            </md-radio-group>
+                        </div>
+                        <div class="grid_6">
+                            <md-radio-group ng-model="item.persyaratanKlinis3">
+                                <md-radio-button value="Belum Sesuai" class="md-primary">
+                                    Belum Sesuai
+                                </md-radio-button>
+                            </md-radio-group>
+                        </div>
+                    </div>
+                </div>
+                <div class="grid_12">
+                    <div class="grid_1" style="text-align: right;"><label c-label>3.4.</label> </div>
+                    <div class="grid_7">
+                        <label c-label>Apakah terdapat kontraindikasi pengobatan?</label>
+                    </div>
+                    <div class="grid_4">
+                        <div class="grid_6">
+                            <md-radio-group ng-model="item.persyaratanKlinis4">
+                                <md-radio-button value="Sesuai" class="md-primary">
+                                    Sesuai
+                                </md-radio-button>
+                            </md-radio-group>
+                        </div>
+                        <div class="grid_6">
+                            <md-radio-group ng-model="item.persyaratanKlinis4">
+                                <md-radio-button value="Belum Sesuai" class="md-primary">
+                                    Belum Sesuai
+                                </md-radio-button>
+                            </md-radio-group>
+                        </div>
+                    </div>
+                </div>
+                <div class="grid_12">
+                    <div class="grid_1" style="text-align: right;"><label c-label>3.5.</label> </div>
+                    <div class="grid_7">
+                        <label c-label>Apakah terdapat dampak interaksi obat?</label>
+                    </div>
+                    <div class="grid_4">
+                        <div class="grid_6">
+                            <md-radio-group ng-model="item.persyaratanKlinis5">
+                                <md-radio-button value="Sesuai" class="md-primary">
+                                    Sesuai
+                                </md-radio-button>
+                            </md-radio-group>
+                        </div>
+                        <div class="grid_6">
+                            <md-radio-group ng-model="item.persyaratanKlinis5">
+                                <md-radio-button value="Belum Sesuai" class="md-primary">
+                                    Belum Sesuai
+                                </md-radio-button>
+                            </md-radio-group>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="grid_12">
                 <div class="grid_6">
                     <div class="grid_12">
                         <label c-label item="item">Tgl Ambil</label>
