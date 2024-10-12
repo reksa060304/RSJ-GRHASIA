@@ -1096,19 +1096,19 @@ define(['initialize', 'Configuration'], function (initialize, config) {
                         params = $scope.item.noreservasi
                     }
                     saveAntrol(params, 7, $scope.item.norec) //waktu penyerahan obat faarmasi
-                    $scope.item.persyaratanAdministrasi1 = 'Belum Sesuai'
-                    $scope.item.persyaratanAdministrasi2 = 'Belum Sesuai'
-                    $scope.item.persyaratanAdministrasi3 = 'Belum Sesuai'
-                    $scope.item.persyaratanAdministrasi4 = 'Belum Sesuai'
-                    $scope.item.persyaratanFarmasetik1 = 'Belum Sesuai'
-                    $scope.item.persyaratanFarmasetik2 = 'Belum Sesuai'
-                    $scope.item.persyaratanFarmasetik3 = 'Belum Sesuai'
-                    $scope.item.persyaratanFarmasetik4 = 'Belum Sesuai'
-                    $scope.item.persyaratanKlinis1 = 'Belum Sesuai'
-                    $scope.item.persyaratanKlinis2 = 'Belum Sesuai'
-                    $scope.item.persyaratanKlinis3 = 'Belum Sesuai'
-                    $scope.item.persyaratanKlinis4 = 'Belum Sesuai'
-                    $scope.item.persyaratanKlinis5 = 'Belum Sesuai'
+                    // $scope.item.persyaratanAdministrasi1 = 'Belum Sesuai'
+                    // $scope.item.persyaratanAdministrasi2 = 'Belum Sesuai'
+                    // $scope.item.persyaratanAdministrasi3 = 'Belum Sesuai'
+                    // $scope.item.persyaratanAdministrasi4 = 'Belum Sesuai'
+                    // $scope.item.persyaratanFarmasetik1 = 'Belum Sesuai'
+                    // $scope.item.persyaratanFarmasetik2 = 'Belum Sesuai'
+                    // $scope.item.persyaratanFarmasetik3 = 'Belum Sesuai'
+                    // $scope.item.persyaratanFarmasetik4 = 'Belum Sesuai'
+                    // $scope.item.persyaratanKlinis1 = 'Belum Sesuai'
+                    // $scope.item.persyaratanKlinis2 = 'Belum Sesuai'
+                    // $scope.item.persyaratanKlinis3 = 'Belum Sesuai'
+                    // $scope.item.persyaratanKlinis4 = 'Belum Sesuai'
+                    // $scope.item.persyaratanKlinis5 = 'Belum Sesuai'
                     $scope.popup.center().open();
                     //$state.go('ResepElektronikAmbilObat', { noOrder: $scope.item.strukOrder.noOrder, noAntrianPasien: $scope.item.strukOrder.noRegistrasi.noRec });
                     // $state.go('ResepElektronikAmbilObat', { noOrder: $scope.item.noorder, noAntrianPasien: $scope.item.norec_apd });
