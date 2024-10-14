@@ -7619,24 +7619,24 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
                     //console.log($scope.item.panjar)
 				})
 
-                // if($scope.item.radioPencairan == 2){
-                //     dispanjar = false
-                // }
+                if($scope.item.radioPencairan == 2){
+                    dispanjar = false
+                }
                 
-                // if(dataItem.tglverif != null && $scope.idpegawailogin != ''){
-                //     $scope.dispptkspj = true
-                //     var kenGrid = $("#kGridDetail").data("kendoGrid");
-                //     kenGrid.hideColumn(0);
-                // } else{
-                //     $scope.dispptkspj = false
-                //     var kenGrid = $("#kGridDetail").data("kendoGrid");
-                //     kenGrid.showColumn(0);
-                // }
+                if(dataItem.tglverif != null && $scope.idpegawailogin != ''){
+                    $scope.dispptkspj = true
+                    var kenGrid = $("#kGridDetail").data("kendoGrid");
+                    kenGrid.hideColumn(0);
+                } else{
+                    $scope.dispptkspj = false
+                    var kenGrid = $("#kGridDetail").data("kendoGrid");
+                    kenGrid.showColumn(0);
+                }
 
-                // let kegiatanArr = dataItem.kegiatan.split("~");
-                // let mataAnggaranArr = dataItem.mataanggaran.split("~");
-                // let kodeArr =kegiatanArr[0].split(" ");
-                // $scope.norecverif = dataItem.norec
+                let kegiatanArr = dataItem.kegiatan.split("~");
+                let mataAnggaranArr = dataItem.mataanggaran.split("~");
+                let kodeArr =kegiatanArr[0].split(" ");
+                $scope.norecverif = dataItem.norec
 
                 // $scope.listSubKegiatanSPJ = [];
                 // ListSubKegiatan = [];
