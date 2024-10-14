@@ -1942,6 +1942,10 @@ define(['initialize','Configuration'], function (initialize, configuration) {
                         if (dataLoad[i].type == "textbox6") {
                             $scope.item.obj[dataLoad[i].emrdfk] = dataLoad[i].value
                         }
+                        // untuk inputan textbox rawat inap ke ruangan ....
+                        if (dataLoad[i].type == "textbox12") {
+                            $scope.item.obj[dataLoad[i].emrdfk] = dataLoad[i].value
+                        }
                         if (dataLoad[i].type == "checkbox") {
                             chekedd = false
                             if (dataLoad[i].value == '1') {
