@@ -3,7 +3,7 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
     var baseTransaksi = configuration.baseApiBackend;
 
     initialize.controller('SipStrExpiredCtrl', ['$scope', 'DateHelper', '$timeout', 'MedifirstService',
-        function ($scope, dateHelper, $timeout, medifirstService) {
+        function ($scope, dateHelper, $timeout, medifirstService) {            
             $scope.item = {};
             $scope.itemSip = {};
             $scope.itemStr = {};
@@ -125,13 +125,13 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
                         var diffDays = monthDiff(
                             dateNow,
                             dateEx, // November 4th, 2008
-                              // March 12th, 2010
+                            // March 12th, 2010
                         );
                         if (diffDays <= 3) {
                             $(row.cells[3]).addClass("red");
                         }
                         else if (diffDays <= 6) {
-                            toastr.warning("SIP dan STR " + kendoGrid.dataItem(row).namapegawai + " akan berakhir dalam "+diffDays+" bulan");
+                            toastr.warning("SIP dan STR " + kendoGrid.dataItem(row).namapegawai + " akan berakhir dalam " + diffDays + " bulan");
                             $(row.cells[3]).addClass("koneng");
                         }
                         console.log(diffDays);
@@ -139,13 +139,13 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
                     if (berakhirstr != null) {
                         var dateExx = new Date(berakhirstr);
                         var diffDayss = monthDiff(
-                           // November 4th, 2008
+                            // November 4th, 2008
                             dateNow,  // March 12th, 2010,
                             dateExx
                         );
                         if (diffDayss <= 3) {
                             $(row.cells[6]).addClass("red");
-                        }else if (diffDays <= 6) {
+                        } else if (diffDays <= 6) {
                             $(row.cells[6]).addClass("koneng");
                         }
                     }
@@ -208,6 +208,7 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
                 //     }
                 // },
                 columns: [
+                    { field: "norec", title: "norec", "width": 180, hidden: true, },
                     { field: "nipPns", title: "NIP", "width": 180 },
                     { field: "namapegawai", title: "Nama", "width": 280 },
                     // { field: "unitkerja", title: "Unit Kerja" ,"width": 280 },
@@ -219,20 +220,27 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
                     { field: "berakhirstr", title: " Berakhir", template: "<span class='style-left'>{{formatTanggal('#: berakhirstr #')}}</span>", width: 150 },
                     { field: "namafilestr", title: "File STR", "width": 330 },
                     {
-                        "command": [{
-                            text: "Download",
-                            click: downloadSipStr,
-                            imageClass: "k-icon k-i-pencil"
-                        }
-                            , {
-                            text: "Hapus",
-                            click: HapusSip,
-                            imageClass: "k-icon k-delete"
-                        }
+                        "command": [
+                            {
+                                text: "Edit",
+                                click: editSipStr,
+                                imageClass: "k-icon k-i-pencil"
+                            },
+                            {
+                                text: "Download",
+                                click: downloadSipStr,
+                                imageClass: "k-icon k-font-icon"
+                            },
+                            {
+                                text: "Hapus",
+                                click: HapusSip,
+                                imageClass: "k-icon k-delete"
+                            }
                         ],
                         title: "",
-                        width: 280,
-                    },
+                        width: 280
+                    }
+                    
                     // { field: "tglberakhir", title: "Tanggal Berakhir"  
                     //  , aggregates: ["count"]
                     //  , groupHeaderTemplate: "Tanggal Berakhir SIP [#= kendo.toString(value) #] (Total: #= count#)" }
@@ -543,8 +551,8 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
 
 
 
-            $scope.createSip = function () {
-                $scope.popUpSip.center().open();
+            $scope.createSip = function () {                
+                $scope.popUpSip.center().open();                
                 var actions = $scope.popUpSip.options.actions;
                 actions.splice(actions.indexOf("Close"), 1);
                 $scope.popUpSip.setOptions({ actions: actions });
@@ -844,6 +852,34 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
                 })
             }
 
+            function editSipStr(e) {
+        
+                e.preventDefault();             
+                var dataItem = this.dataItem($(e.currentTarget).closest("tr"));
+                if (!dataItem) {
+                    alert("Data Belum Dipilih!");
+                    return;
+                } 
+            
+                $scope.itemSip = {
+                    norec: dataItem.norec,
+                    namaPeg: { id: dataItem.pegawaifk, namalengkap: dataItem.namapegawai }, 
+                    nomor: dataItem.nosip,
+                    terbit: moment(dataItem.terbitsip).format('YYYY-MM-DD HH:mm'),
+                    berakhir: moment(dataItem.berakhirsip).format('YYYY-MM-DD HH:mm'),
+                    filesip: dataItem.namafilesip
+                };
+
+                $scope.itemStr = {
+                    nomor: dataItem.nostr,
+                    terbit: moment(dataItem.terbitstr).format('YYYY-MM-DD HH:mm'),
+                    berakhir: moment(dataItem.berakhirstr).format('YYYY-MM-DD HH:mm'),
+                    filestr: dataItem.namafilestr
+                };
+                
+                $scope.popUpSip.center().open();
+                 console.log("nama nya:", dataItem.namapegawai);
+            }   
         }
     ]);
 });
