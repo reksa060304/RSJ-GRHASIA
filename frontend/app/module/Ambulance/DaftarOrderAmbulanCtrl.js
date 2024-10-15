@@ -455,6 +455,15 @@ define(['initialize'], function (initialize) {
                 loadDiagnosa($scope.dataSelected.noregistrasi)
                 $scope.popUpVerif.center().open();
                 loadDataVerif();
+
+                $scope.pelaksanaAmbulan2 = false;
+                $scope.pelaksanaAmbulan3 = false;
+				$scope.show = true;
+				$scope.show2 = false;
+                $scope.item.jenisPelaksana2 = "";
+				$scope.selectedPegawai2 = [];
+                $scope.item.jenisPelaksana3 = "";
+				$scope.selectedPegawai3 = [];
             }
 
             function loadDiagnosa(noreg) {
@@ -479,7 +488,7 @@ define(['initialize'], function (initialize) {
             }
             function loadDataVerif() {
                 medifirstService.get("ambulance/get-order-pelayanan-ambulan?norec_so=" + $scope.dataSelected.norec_so
-                    + "&objectkelasfk=" + $scope.dataSelected.objectkelasfk, true).then(function (dat) {
+                    + "&objectkelasfk=" + $scope.dataSelected.objectkelasfk + '&objectpenjaminfk=' + $scope.dataSelected.objectrekananfk, true).then(function (dat) {
                         var dataSource = dat.data.data;
                         for (var i = 0; i < dataSource.length; i++) {
                             dataSource[i].statCheckbox = false;
@@ -835,9 +844,10 @@ define(['initialize'], function (initialize) {
 
 			$scope.show = true;
 			$scope.tambah2 = function () {
-				$scope.showJenisPelaksana2 = true;
+				$scope.pelaksanaAmbulan3 = true;
 				$scope.show = false;
-				$scope.show2 = true;
+				$scope.show2 = false;
+				$scope.show3 = true;
 			};
 			$scope.hapusPelaksanaAmbulan2 = function () {
 				$scope.show = true;
@@ -845,6 +855,15 @@ define(['initialize'], function (initialize) {
 				$scope.pelaksanaAmbulan2 = false;
 				$scope.item.jenisPelaksana2 = "";
 				$scope.selectedPegawai2 = [];
+			};
+
+			$scope.hapusPelaksanaAmbulan3 = function () {
+				$scope.show = false;
+				$scope.show2 = true;
+				$scope.pelaksanaAmbulan2 = true;
+				$scope.pelaksanaAmbulan3 = false;
+				$scope.item.jenisPelaksana3 = "";
+				$scope.selectedPegawai3 = [];
 			};
 
 			$scope.isInArray = function (value, array) {
@@ -868,6 +887,17 @@ define(['initialize'], function (initialize) {
 				var id = $scope.item.jenisPelaksana2.id;
 				var model = 'dataSource2';
 				var listArray = 'selectedPegawai2';
+				var isInList = $scope.isInArray(id, $scope.listIdPetugas);
+				if (isInList) {
+					getGenericPegawai(model, listArray);
+				} else {
+					getPegawaiById(id, model, listArray);
+				}
+			};
+			$scope.init3 = function () {
+				var id = $scope.item.jenisPelaksana3.id;
+				var model = 'dataSource3';
+				var listArray = 'selectedPegawai3';
 				var isInList = $scope.isInArray(id, $scope.listIdPetugas);
 				if (isInList) {
 					getGenericPegawai(model, listArray);

@@ -13,6 +13,12 @@ define(['initialize'], function (initialize) {
 			$scope.checkQtyOrg = '';
 			$scope.checkQtyOrg = true
 			$scope.QtyOrang = true;
+			$scope.noPolAmbulan = true;
+			$scope.hargabahanbakar = true;
+			$scope.listJenisPelaksana = [];
+			$scope.show = true;
+			$scope.pelaksanaAmbulan1 = true;
+			$scope.pelaksanaAmbulan2 = false;
 			var data2 = [];
 			var dataProduk = [];
 			var norec = '';
@@ -37,6 +43,15 @@ define(['initialize'], function (initialize) {
 					$scope.listKelompokTransaksi = data.data.kelnon;
 					$scope.KelompokUserDiklit = data.data.diklit;
 					LoadCache();
+				})
+
+				medifirstService.get("tatarekening/tindakan/get-combo")
+				.then(function (da) {
+					$scope.listJenisPelaksana = da.data.jenispelaksana;
+					if($scope.item.iddpjp != undefined) {
+            $scope.item.jenisPelaksana = { id: 4, jenispetugaspe: 'Dokter Pemeriksa' };
+            $scope.init2();
+          }
 				})
 			}
 
@@ -437,6 +452,83 @@ define(['initialize'], function (initialize) {
 			$scope.batal = function () {
 				ClearIsian();
 			}
+
+			$scope.kelompokTransaksiSelected = function(kelTransaksi) {
+				if (kelTransaksi.id == 9 || kelTransaksi == 'PELAYANAN AMBULAN') {
+					$scope.noPolAmbulan = false;
+					$scope.hargabahanbakar = false;
+					$scope.pelaksanaAmbulan1 = false;
+				} else {
+					$scope.noPolAmbulan = true;
+					$scope.hargabahanbakar = true;
+					$scope.pelaksanaAmbulan1 = true;
+					$scope.item.noPolAmbulan = undefined;
+				}
+			}
+
+			$scope.selectOptions = {
+				placeholder: "Pilih Pegawai...",
+				dataTextField: "namaLengkap",
+				dataValueField: "id",
+				filter: "contains"
+			};
+
+			$scope.tambah1 = function () {
+				$scope.pelaksanaAmbulan2 = true;
+				$scope.show = false;
+				$scope.show2 = true;
+			};
+
+			$scope.show = true;
+			$scope.tambah2 = function () {
+				$scope.pelaksanaAmbulan3 = true;
+				$scope.show = false;
+				$scope.show2 = false;
+				$scope.show3 = true;
+			};
+			$scope.hapusPelaksanaAmbulan2 = function () {
+				$scope.show = true;
+				$scope.show2 = false;
+				$scope.pelaksanaAmbulan2 = false;
+				$scope.item.jenisPelaksana2 = "";
+				$scope.selectedPegawai2 = [];
+			};
+			$scope.hapusPelaksanaAmbulan3 = function () {
+				$scope.show = false;
+				$scope.show2 = true;
+				$scope.pelaksanaAmbulan3 = false;
+				$scope.item.jenisPelaksana3 = "";
+				$scope.selectedPegawai3 = [];
+			};
+
+			$scope.isInArray = function (value, array) {
+				return array.indexOf(value) > -1;
+			}
+			
+			$scope.listIdPetugas = [13827, 176873]
+			$scope.init1 = function () {
+				var id = $scope.item.jenisPelaksana.id;
+				var model = 'dataSource';
+				var listArray = 'selectedPegawai';
+				var isInList = $scope.isInArray(id, $scope.listIdPetugas);
+				if (isInList) {
+					getGenericPegawai(model, listArray);
+				} else {
+					getPegawaiById(id, model, listArray);
+				}
+			};
+			$scope.selectedPegawai = [];
+			$scope.init2 = function () {
+				var id = $scope.item.jenisPelaksana2.id;
+				var model = 'dataSource2';
+				var listArray = 'selectedPegawai2';
+				var isInList = $scope.isInArray(id, $scope.listIdPetugas);
+				if (isInList) {
+					getGenericPegawai(model, listArray);
+				} else {
+					getPegawaiById(id, model, listArray);
+				}
+			};
 
 		// BATAS //
 		}

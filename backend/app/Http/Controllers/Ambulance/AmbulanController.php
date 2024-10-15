@@ -193,7 +193,7 @@ class AmbulanController extends ApiController{
             ->leftJoin('pelayananpasien_t as pp', 'pp.strukorderfk', '=', 'so.norec')
             ->leftJoin('jenispelayanan_m as jp', 'jp.kodeinternal', '=', 'pd.jenispelayanan')
             ->select('so.norec as norec_so', 'pd.norec as norec_pd', 'so.noorder', 'pd.noregistrasi', 'pd.tglregistrasi', 'pd.tglpulang', 'ps.nocm', 'ps.namapasien',
-                'klm.jeniskelamin', 'ps.tgllahir',
+                'klm.jeniskelamin', 'ps.tgllahir','pd.objectrekananfk',
                 'kps.kelompokpasien', 'dp.namadepartemen', 'pd.objectkelasfk', 'kls.namakelas', 'so.objectruangantujuanfk',
                 'so.objectruanganfk', 'pd.objectkelompokpasienlastfk', 'ru.objectdepartemenfk', 'ru2.objectdepartemenfk as iddeptujuan',
                 'so.objectpegawaiorderfk', 'pg.namalengkap as pegawaiorder','so.tglorder','pd.jenispelayanan as idjenisPelayanan','jp.jenispelayanan',
@@ -594,10 +594,12 @@ class AmbulanController extends ApiController{
 
     public function getOrderPelayananAmbulan(Request $request) {
         $idkelas = $request['objectkelasfk'];
+        $idPenjamin = $request['objectpenjaminfk'];
         $norec_so = $request['norec_so'];
         $kdProfile = $this->getDataKdProfile($request);
         $idProfile = (int) $kdProfile;
-        $dataOrderPelayanan = DB::select(DB::raw("select DISTINCT op.norec as norec_op,pr.id as prid,pr.namaproduk,
+        if (isset($request['objectpenjaminfk']) && $request['objectpenjaminfk'] != 'null') {
+            $dataOrderPelayanan = DB::select(DB::raw("select DISTINCT op.norec as norec_op,pr.id as prid,pr.namaproduk,
                 op.tglpelayanan,op.qtyproduk ,ru.namaruangan as ruangantujuan,ru.objectdepartemenfk,op.strukorderfk,so.objectruangantujuanfk,
                 hnp.hargasatuan ,kls.namakelas,dpm.namadepartemen,
                 pps.norec as norec_pp
@@ -605,7 +607,8 @@ class AmbulanController extends ApiController{
                 left join strukorder_t as so on so.norec=op.strukorderfk
                 INNER JOIN produk_m as pr on pr.id=op.objectprodukfk
                 left JOIN harganettoprodukbykelas_m as hnp on pr.id=hnp.objectprodukfk
-                        and '$idkelas' =hnp.objectkelasfk                
+                    and '$idkelas' = hnp.objectkelasfk
+                    and '$idPenjamin' = hnp.objectpenjaminfk
                 left join kelas_m as kls on kls.id = '$idkelas'                
                 left join ruangan_m as ru on ru.id =so.objectruangantujuanfk
                 left join departemen_m as dpm on dpm.id=ru.objectdepartemenfk
@@ -619,6 +622,55 @@ class AmbulanController extends ApiController{
                 'objectkelasfk' =>$idkelas ,
             )
         );
+        } else {
+            $dataOrderPelayanan = DB::select(DB::raw("select DISTINCT op.norec as norec_op,pr.id as prid,pr.namaproduk,
+                op.tglpelayanan,op.qtyproduk ,ru.namaruangan as ruangantujuan,ru.objectdepartemenfk,op.strukorderfk,so.objectruangantujuanfk,
+                hnp.hargasatuan ,kls.namakelas,dpm.namadepartemen,
+                pps.norec as norec_pp
+                from orderpelayanan_t op
+                left join strukorder_t as so on so.norec=op.strukorderfk
+                INNER JOIN produk_m as pr on pr.id=op.objectprodukfk
+                left JOIN harganettoprodukbykelas_m as hnp on pr.id=hnp.objectprodukfk
+                    and '$idkelas' = hnp.objectkelasfk
+                    and hnp.objectpenjaminfk is null
+                left join kelas_m as kls on kls.id = '$idkelas'                
+                left join ruangan_m as ru on ru.id =so.objectruangantujuanfk
+                left join departemen_m as dpm on dpm.id=ru.objectdepartemenfk
+                left JOIN pelayananpasien_t as pps on pps.strukorderfk=so.norec
+                      and op.objectprodukfk =pps.produkfk
+                where op.kdprofile = $idProfile and op.strukorderfk=:norec_so
+                and kls.id=:objectkelasfk
+                ORDER by op.tglpelayanan"),
+            array(
+                'norec_so' => $norec_so,
+                'objectkelasfk' =>$idkelas ,
+            )
+        );
+        }
+
+        // $dataOrderPelayanan = DB::select(DB::raw("select DISTINCT op.norec as norec_op,pr.id as prid,pr.namaproduk,
+        //         op.tglpelayanan,op.qtyproduk ,ru.namaruangan as ruangantujuan,ru.objectdepartemenfk,op.strukorderfk,so.objectruangantujuanfk,
+        //         hnp.hargasatuan ,kls.namakelas,dpm.namadepartemen,
+        //         pps.norec as norec_pp
+        //         from orderpelayanan_t op
+        //         left join strukorder_t as so on so.norec=op.strukorderfk
+        //         INNER JOIN produk_m as pr on pr.id=op.objectprodukfk
+        //         left JOIN harganettoprodukbykelas_m as hnp on pr.id=hnp.objectprodukfk
+        //             and '$idkelas' = hnp.objectkelasfk
+        //             and '$idPenjamin' = hnp.objectpenjaminfk
+        //         left join kelas_m as kls on kls.id = '$idkelas'                
+        //         left join ruangan_m as ru on ru.id =so.objectruangantujuanfk
+        //         left join departemen_m as dpm on dpm.id=ru.objectdepartemenfk
+        //         left JOIN pelayananpasien_t as pps on pps.strukorderfk=so.norec
+        //               and op.objectprodukfk =pps.produkfk
+        //         where op.kdprofile = $idProfile and op.strukorderfk=:norec_so
+        //         and kls.id=:objectkelasfk
+        //         ORDER by op.tglpelayanan"),
+        //     array(
+        //         'norec_so' => $norec_so,
+        //         'objectkelasfk' =>$idkelas ,
+        //     )
+        // );
 
         $result=[];
         foreach ($dataOrderPelayanan as $item){
