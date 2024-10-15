@@ -10529,4 +10529,157 @@ order by  split_part(kode, '.', 1)asc, split_part(kode, '.', 2)asc,  split_part(
 
         return $this->setStatusCode($result['status'])->respond($result, $result['message']);
     }
+
+
+    public function getRekapSPJDetail(Request $request)
+    {  
+        $kdProfile = $this->getDataKdProfile($request);
+        $idProfile = (int) $kdProfile;
+
+        $tglAwal = $request['tglAwal'];
+        $tglAkhir = $request['tglAkhir'];
+
+
+        $setting = \DB::table('settinganggaran_t as st')
+            ->join('pegawai_m as pg','pg.id','=','st.objectkepalabludfk')
+            ->join('tahapanggaran_m as ta','ta.id','=','st.objecttahapaktivfk')
+            ->select('st.*','pg.namalengkap', 'ta.tahap', 'ta.id as idtahap', 'pg.id as idpegawai')
+            ->where('st.kdprofile', $idProfile)
+            ->where('st.statusenabled', true)
+            ->orderBy('st.tahunanggaran')
+            ->first();
+
+        $sub = '';
+        if(isset($request['subkegiatan']) && $request['subkegiatan'] != "undefined" && $request['subkegiatan'] != ''){
+            // cari subsubkegiatan dari semua tahap
+            $subsub = DB::select(DB::raw("
+                SELECT
+                    ka.*
+                FROM kegiatananggaran_m ka
+                WHERE
+                    ka.statusenabled = true
+                    AND ka.kdprofile = ".$idProfile."
+                    AND ka.id = ".$request['subkegiatan']."
+            "));
+
+            if(count($subsub) > 0){
+                $sub = "and ka.kode = '".$subsub[0]->kode."' and ka.tahun = '".$setting->tahunanggaran."'";
+            }
+        
+        }
+
+        $status = '';
+        if(isset($request['status']) && $request['status'] != "undefined" && $request['status'] != '' && $request['status'] == 0){
+            $status = "";
+        } else if(isset($request['status']) && $request['status'] != "undefined" && $request['status'] != '' && $request['status'] == 1){
+            $status = "and (sr.status is null or sr.status = 'Belum Diverifikasi')";
+        } else if(isset($request['status']) && $request['status'] != "undefined" && $request['status'] != '' && $request['status'] == 2){
+            $status = "and sr.status = 'Revisi'";
+        } else if(isset($request['status']) && $request['status'] != "undefined" && $request['status'] != '' && $request['status'] == 3){
+            $status = "and sr.status = 'Sudah Diverifikasi'";
+        }
+
+        $asal = '';
+        if(isset($request['asalproduk']) && $request['asalproduk'] != "undefined" && $request['asalproduk'] != ''){
+            $asal = "and sr.objectasalprodukfk = ".$request['asalproduk'];
+        }
+
+        $mataanggaran = '';
+        if(isset($request['mataanggaran']) && $request['mataanggaran'] != "undefined" && $request['mataanggaran'] != ''){
+            $mataanggaran = "and sr.objectmataanggaranfk = ".$request['mataanggaran'];
+        }
+
+        $cari = "";
+        if(isset($request['cari']) && $request['cari'] != "undefined" && $request['cari'] != ''){
+            $cari = "and( 
+                rd.uraian ILIKE '%".$request['cari']."%' OR
+                CAST(sr.totalbelanja as VARCHAR) ILIKE '%".$request['cari']."%' OR
+                rkn.namarekanan ILIKE '%".$request['cari']."%'
+            )";
+        }
+
+        $data = DB::select(DB::raw("
+        select string_agg(DISTINCT rd.uraian, ',') uraian, sr.*, cbs.carabayar, sr.tglverif, sr.keterangan, sr.jumlahdibayarverif, ka.tahun,--sr.norealisasi,sr.deskripsi,sr.totalbelanja,
+                pg1.namalengkap as bendahara, pg2.namalengkap as penerima, rkn.namarekanan as pihakketiga,
+                ka.kode || '~' || ka.keterangan as kegiatan, ma.kodemataanggaran || '~' || ma.namamataanggaran as mataanggaran,
+                dp0.kode kodesubkegiatan, dp0.keterangan keterangansubkegiatan, ma.kodemataanggaran, ma.namamataanggaran, dp0.id idsubkegiatan, ka.keterangan subsubkegiatan, ka.id idsubsubkegiatan,
+                ap.id idasalproduk, ap.asalproduk, sr.objectbkufk
+                from strukrealisasi_t sr
+                inner join realisasidetail_t rd on rd.strukrealisasifk = sr.norec
+                left join asalproduk_m ap on ap.id = sr.objectasalprodukfk
+                left JOIN kegiatananggaran_m ka on ka.id=sr.objectkegiatanfk and ka.kdprofile = 30 and ka.statusenabled=true
+                left join kegiatananggaran_m as dp0 on ka.kode ilike dp0.kode || '%' and dp0.div = 3 and dp0.kdprofile = 30 and dp0.statusenabled=true
+                left JOIN rekanan_m rkn on rkn.id=sr.rekananfk
+                left JOIN pegawai_m as pg1 on pg1.id=sr.bendaharafk
+                left JOIN pegawai_m as pg2 on pg2.id=sr.penerimafk
+                left join carabayarspj_m cbs on cbs.id = sr.objectcarabayarfk
+                left JOIN mataanggaran_m ma on ma.id=sr.objectmataanggaranfk
+                where sr.tglrealisasi between '$tglAwal' and '$tglAkhir'
+                and sr.statusenabled = true
+                and rd.statusenabled = true
+                and rd.kdprofile = 30
+                $sub
+                $status
+                $asal
+                $mataanggaran
+                $cari
+				group by dp0.kode, dp0.keterangan, sr.norec, cbs.carabayar, sr.tglverif, sr.keterangan, sr.jumlahdibayarverif, sr.kdprofile, sr.statusenabled, sr.tglrealisasi, sr.norealisasi, sr.status, sr.totalbelanja, sr.objectcarabayarfk, sr.rekananfk, sr.deskripsi, sr.objectkegiatanfk, sr.objectmataanggaranfk, sr.bendaharafk, sr.penerimafk, sr.pph, sr.ppn, pg1.namalengkap, pg2.namalengkap, rkn.namarekanan ,
+                ka.kode || '~' || ka.keterangan, ma.kodemataanggaran || '~' || ma.namamataanggaran, ka.tahun, ma.kodemataanggaran, ma.namamataanggaran, dp0.id, ka.keterangan, ka.id, ap.id, ap.asalproduk, sr.objectbkufk
+                order by sr.norealisasi desc
+            ")
+        );
+
+        $dataDetail = DB::select(DB::raw("
+                    select rd.*,ka.keteranganbelanja,0 as nourut
+                    from strukrealisasi_t sr
+                inner join realisasidetail_t rd on rd.strukrealisasifk = sr.norec
+                    INNER JOIN keteranganbelanja_t ka on ka.norec=rd.keteranganbelanjafk
+                    where  rd.statusenabled = true
+                    and rd.kdprofile = 30
+                    and ka.statusenabled = true
+                    and ka.kdprofile = 30
+                    and sr.tglrealisasi between  '$tglAwal' and '$tglAkhir'
+                ")
+            );
+
+        $dataDetail1=[];
+        foreach($data as $item){
+            // $strukrealisasifk= ;
+            $dataDetail1 =[];
+            foreach($dataDetail as $detail){
+                if($item->norec == $detail->strukrealisasifk){
+                    $dataDetail1[]=array(
+                        'norec'=> $detail->norec,
+                        'kdprofile'	=> $detail->kdprofile,
+                        'statusenabled'	=> $detail->statusenabled,
+                        'strukrealisasifk'	=> $detail->strukrealisasifk,
+                        'uraian'	=> $detail->uraian,
+                        'jml'	=> $detail->jml,
+                        'satuan'	=> $detail->satuan,
+                        'harga'	=> $detail->harga,
+                        'subtotal'	=> $detail->subtotal,
+                        'keteranganbelanjafk'	=> $detail->keteranganbelanjafk,
+                        'keteranganbelanja'	=> $detail->keteranganbelanja,
+                        'nourut'	=> $detail->nourut
+                    );
+                    // break;
+                }
+                
+            }
+
+            $result[] = array(
+                'strukrealisasifk' => $item->norec,
+                'data' => $dataDetail1,
+            );
+        };
+
+
+        $result = array(
+            'data' => $data,
+            'detail' => $result,
+            'message' => '@epic',
+        );
+
+        return $this->respond($result);
+    }
 }

@@ -155,14 +155,14 @@
             <td colspan="2" style="padding: 3px; width: 50px;" align="center"></td>
             <td style="padding: 3px;" align="center">Reny Astuti, SE</td>
             <td colspan="2" style="padding: 3px; width: 50px;" align="center"></td>
-            <td style="padding: 3px;" align="center">Suri Herlina Pratiwi, S.KM, M.PH</td>
+            <td style="padding: 3px;" align="center">Tutik Herawati</td>
         </tr>
         <tr style="padding: 3px;">
             <td style="padding: 3px; padding-left: 20px;" align="center">NIP. 19680714 200012 1 002</td>
             <td colspan="2" style="padding: 3px; width: 50px;" align="center"></td>
-            <td style="padding: 3px;" align="center">NIP. 19700404 199303 2005</td>
+            <td style="padding: 3px;" align="center">NIP. 19700404 199303 2 005</td>
             <td colspan="2" style="padding: 3px; width: 50px;" align="center"></td>
-            <td style="padding: 3px;" align="center">NIP. 19860422 201101 2 013</td>
+            <td style="padding: 3px;" align="center">NIP. 19700514 199403 2 005</td>
         </tr>
         </tbody>
     </table>

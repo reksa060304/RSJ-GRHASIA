@@ -59,6 +59,7 @@ Route::group(['middleware' => 'cors', 'prefix' => 'service'], function () {
 		Route::get('report/cetak-rba-detail-sebelum-sesudah-rev', 'Report\ReportController@cetakRBADetailRev');
 		Route::get('perencanaan/get-transfer-target', 'Perencanaan\PerencanaanController@getTransferTarget');
 		Route::post('perencanaan/simpan-transfer-target', 'Perencanaan\PerencanaanController@simpanTransferTarget');
+        Route::get('perencanaan/get-rekap-spj-detail', 'Perencanaan\PerencanaanController@getRekapSPJDetail');
 
         // Start Verif HAIS Route-------------------------------------------------------------------------------------------
         Route::get('verif-hais/get-bundlehais', 'EMR\BundleHaisController@getBundleHais');

@@ -118,18 +118,18 @@
 </style>
 <c-panel item="item" header="'REKAP SPJ DETAIL'">
     <div class="grid_12" style="margin-top: 2em;">
-        <div class="grid_2">
+        <div class="grid_1">
             <label c-label item="item" c-label-text="Tanggal awal"></label>
             <input style="width: 100%" k-ng-model="item.tglawal" kendo-datepicker placeholer="yyyy-mm-dd"
                 k-format="'yyyy-MM-dd'" />
         </div>
 
-        <div class="grid_2">
+        <div class="grid_1">
             <label c-label item="item" c-label-text="Tanggal Akhir"></label>
             <input style="width: 100%" k-ng-model="item.tglakhir" kendo-datepicker placeholer="yyyy-mm-dd"
                 k-format="'yyyy-MM-dd'" />
         </div>
-        <div class="grid_2">
+        <div class="grid_1">
             <label c-label item="item" c-label-text="Status SPJ" real></label>
             <input style="width: 100%;" kendo-combo-box k-ng-model="item.statusspj" k-data-text-field="'status'"
                 k-data-value-field="'id'" k-filter="'contains'" k-auto-bind="false" k-data-source="listStatusSPJ" />
@@ -140,11 +140,21 @@
                 k-data-text-field="'keterangansubsubkegiatan'" k-data-value-field="'id'" k-filter="'contains'"
                 k-auto-bind="false" k-data-source="listSubSubKegiatanspj" />
         </div>
-        <div class="grid_2">
+        <div class="grid_1">
             <label c-label item="item" c-label-text="Asal Produk" real></label>
             <input style="width: 100%;" kendo-combo-box k-ng-model="item.asalproduk"
                 k-data-text-field="'asalproduk'" k-data-value-field="'id'" k-filter="'contains'"
                 k-auto-bind="false" k-data-source="listAsalProduk" />
+        </div>
+        <div class="grid_2">
+            <label c-label item="item" c-label-text="Rekening" real></label>
+            <input style="width: 100%;" kendo-combo-box k-ng-model="item.mataanggaran"
+                k-data-text-field="'text'" k-data-value-field="'id'" k-filter="'contains'"
+                k-auto-bind="false" k-data-source="listMataAnggaran" />
+        </div>
+        <div class="grid_2">
+            <label c-label item="item" c-label-text="Cari" real></label>
+            <input style="width: 100%;" c-text-box type="text" class="k-textbox" ng-model="item.carispj" />
         </div>
         <div class="grid_1" style="margin-top: 12px;">
             <button class="btnTemplate1" ng-click="CariSPJ()">Cari</button>
