@@ -82,7 +82,7 @@ class IHSController extends ApiController
         }
 
         $curl = curl_init();
-        // dd($headers);
+        // dd($dataJsonSend);
         if ($dataJsonSend == null || $dataJsonSend == '') {
             curl_setopt_array($curl, array(
                 CURLOPT_URL => $url,
@@ -1258,7 +1258,7 @@ class IHSController extends ApiController
     public function Medication(Request $request, $lokal = null)
     {
         try {
-            $kdProfile = $this->kdProfile();
+            $kdProfile = $this->kdProfile;
             $data =  collect(DB::select(" 
                 SELECT
                 kd.*
@@ -1364,7 +1364,7 @@ class IHSController extends ApiController
                 'status' => 'active',
                 'manufacturer' =>
                 array(
-                    'reference' => 'Organization/900001' //.$q->ihs_profile, //PT KIMIA FARMA, Tbk
+                    'reference' => 'Organization/'.$q->ihs_profile, //PT KIMIA FARMA, Tbk
                 ),
                 'form' =>
                 array(
@@ -1372,7 +1372,7 @@ class IHSController extends ApiController
                     array(
                         0 =>
                         array(
-                            'system' => 'https://terminology.kemkes.go.id/CodeSystem/medication-form',
+                            'system' => 'http://terminology.kemkes.go.id/CodeSystem/medication-form',
                             'code' => $q->ihs_sediaan,
                             'display' => $q->ihs_sediaan_display,
                         ),
@@ -1392,7 +1392,7 @@ class IHSController extends ApiController
                             array(
                                 0 =>
                                 array(
-                                    'system' => 'https://terminology.kemkes.go.id/CodeSystem/medication-type',
+                                    'system' => 'http://terminology.kemkes.go.id/CodeSystem/medication-type',
                                     'code' => 'NC',
                                     'display' => 'Non-compound',
                                 ),
@@ -1411,11 +1411,32 @@ class IHSController extends ApiController
             if ($q->ihs_id == null) {
                 unset($data['id']);
             }
+            // dd($data);
 
+            
+            $method =   $q->ihs_id == null ? 'POST' : 'PUT';
             $objetoRequest = new \Illuminate\Http\Request();
-            $objetoRequest['url'] = $data['resourceType'];
-            $objetoRequest['method'] = $q->ihs_id == null ? 'POST' : 'PUT';
+            $objetoRequest['url'] = $q->ihs_id == null ? $data['resourceType'] : $data['resourceType'] . '/' . $q->ihs_id;
+            $objetoRequest['method'] = $method;
             $objetoRequest['data'] = $data;
+
+            $response =  $this->ihsTools($objetoRequest, true);
+
+            $noterror = true;
+            if (isset($response->resourceType ) && $response->resourceType == 'OperationOutcome') {
+                $noterror = false;
+                if(isset($response->issue) && isset($response->issue[0]->code)  && $response->issue[0]->code == 'not-found'){
+                    $objetoRequest = new \Illuminate\Http\Request();
+                    $objetoRequest['url'] =  $data['resourceType'] ;
+                    $objetoRequest['method'] = $method;
+                    $objetoRequest['data'] = $data;
+                    $response =  $this->ihsTools($objetoRequest, true);
+                    $noterror = true;
+                    if ($response->resourceType == 'OperationOutcome') {
+                        $noterror = false;
+                    }
+                }
+            }
 
             $response =  $this->ihsTools($objetoRequest, true);
 
@@ -1428,9 +1449,15 @@ class IHSController extends ApiController
                 $mod = new IHS_Transaction();
                 $mod->norec = $mod->generateNewId();
                 $mod->statusenabled = $noterror;
-                $mod->kdprofile = $this->kdProfile();
+                $mod->kdprofile = $this->kdProfile;
             } else {
                 $mod = IHS_Transaction::where('id', $q->ihs_id)->first();
+                if (empty($mod)) {
+                    $mod = new IHS_Transaction();
+                    $mod->norec = $mod->generateNewId();
+                    $mod->statusenabled = $noterror;
+                    $mod->kdprofile = $this->kdProfile;
+                }
             }
             $mod->resourcetype = $data['resourceType'];
             $mod->url =  $this->endPoint() . $data['resourceType'];
@@ -1456,10 +1483,11 @@ class IHSController extends ApiController
         }
         return response()->json($response);
     }
+    // tanda1
     public function MedicationRequest(Request $request, $lokal = null)
     {
         try {
-            $kdProfile = $this->kdProfile();
+            $kdProfile = $this->kdProfile;
             $q  =  collect(DB::select(" 
                 SELECT so.noorder,op.rke, jk.jeniskemasan, pr.namaproduk, ss.satuanstandar
                 ,op.aturanpakai, op.jumlah, op.hargasatuan,op.keteranganpakai as keterangan,
@@ -1532,17 +1560,17 @@ class IHSController extends ApiController
                 ->get();
             $profile = Profile::where('statusenabled', true)->first();
             foreach ($q as $k =>  $item) {
-                if ($item->ihs_medication == null) {
-                    $objetoRequest = new \Illuminate\Http\Request();
-                    $objetoRequest['id'] = $item->idproduk;
-                    $ihs = app('App\Http\Controllers\Bridging\IHSController')->Medication($objetoRequest, true);
-                    if ($ihs->resourceType != 'OperationOutcome') {
-                        Produk::where('id', $item->idproduk)->update([
-                            'ihs_id' => $ihs->id
-                        ]);
-                        $item->ihs_medication = $ihs->id;
-                    }
-                }
+                // if ($item->ihs_medication == null) {
+                //     $objetoRequest = new \Illuminate\Http\Request();
+                //     $objetoRequest['id'] = $item->idproduk;
+                //     $ihs = app('App\Http\Controllers\Bridging\IHSController')->Medication($objetoRequest, true);
+                //     if ($ihs->resourceType != 'OperationOutcome') {
+                //         Produk::where('id', $item->idproduk)->update([
+                //             'ihs_id' => $ihs->id
+                //         ]);
+                //         $item->ihs_medication = $ihs->id;
+                //     }
+                // }
                 $DoseQtyunitUnit = $item->satuanstandar;
                 $DoseQtyunitCode = $item->satuanstandar;
                 foreach ($ingredientsS as $ing) {
@@ -1623,7 +1651,7 @@ class IHSController extends ApiController
                     array(
                         'reference' => 'Encounter/' . $item->ihs_encounter,
                     ),
-                    'authoredOn' => date('Y-m-d', strtotime($item->tglorder)),
+                    'authoredOn' => date('Y-m-d\TH:i:sP', strtotime($item->tglorder)),
                     'requester' =>
                     array(
                         'reference' => 'Practitioner/' . $item->ihs_practitioner,
@@ -1760,6 +1788,11 @@ class IHSController extends ApiController
                         //     'system' => 'http://unitsofmeasure.org',
                         //     'code' => 'd',
                         // ),
+                        
+                        'performer' =>
+                        array(
+                            "reference" => "Organization/" . $profile->ihs_id
+                        ),
                     ),
                 );
 
@@ -1785,7 +1818,7 @@ class IHSController extends ApiController
                     $mod = new IHS_Transaction();
                     $mod->norec = $mod->generateNewId();
                     $mod->statusenabled = $noterror;
-                    $mod->kdprofile = $this->kdProfile();
+                    $mod->kdprofile = $this->kdProfile;
                 } else {
                     $mod = IHS_Transaction::where('id', $item->ihs_medication_request)->first();
                 }
@@ -1793,7 +1826,7 @@ class IHSController extends ApiController
                     $mod = new IHS_Transaction();
                     $mod->norec = $mod->generateNewId();
                     $mod->statusenabled = $noterror;
-                    $mod->kdprofile = $this->kdProfile();
+                    $mod->kdprofile = $this->kdProfile;
                 }
                 $mod->resourcetype = $data['resourceType'];
                 $mod->url =  $this->endPoint() . $data['resourceType'];
@@ -1824,7 +1857,7 @@ class IHSController extends ApiController
     public function MedicationDispense(Request $request, $lokal = null)
     {
         try {
-            $kdProfile = $this->kdProfile();
+            $kdProfile = $this->kdProfile;
             $q  =  collect(DB::select(" 
 
                  SELECT
@@ -2115,7 +2148,7 @@ class IHSController extends ApiController
                     $mod = new IHS_Transaction();
                     $mod->norec = $mod->generateNewId();
                     $mod->statusenabled = $noterror;
-                    $mod->kdprofile = $this->kdProfile();
+                    $mod->kdprofile = $this->kdProfile;
                 } else {
                     $mod = IHS_Transaction::where('id', $item->ihs_medicationdispense)->first();
                 }
@@ -2123,7 +2156,7 @@ class IHSController extends ApiController
                     $mod = new IHS_Transaction();
                     $mod->norec = $mod->generateNewId();
                     $mod->statusenabled = $noterror;
-                    $mod->kdprofile = $this->kdProfile();
+                    $mod->kdprofile = $this->kdProfile;
                 }
                 $mod->resourcetype = $data['resourceType'];
                 $mod->url =  $this->endPoint() . $data['resourceType'];
@@ -2154,7 +2187,7 @@ class IHSController extends ApiController
     public function MedicationDispenseObatBebas(Request $request, $lokal = null)
     {
         try {
-            $kdProfile = $this->kdProfile();
+            $kdProfile = $this->kdProfile;
             $q  =  collect(DB::select(" 
 
             SELECT
@@ -2554,7 +2587,7 @@ class IHSController extends ApiController
                 $mod = new IHS_Transaction();
                 $mod->norec = $mod->generateNewId();
                 $mod->statusenabled = $noterror;
-                $mod->kdprofile = $this->kdProfile();
+                $mod->kdprofile = $this->kdProfile;
             } else {
                 $mod = IHS_Transaction::where('id', $q[0]->ihs_bundle)->first();
             }
@@ -2562,7 +2595,7 @@ class IHSController extends ApiController
                 $mod = new IHS_Transaction();
                 $mod->norec = $mod->generateNewId();
                 $mod->statusenabled = $noterror;
-                $mod->kdprofile = $this->kdProfile();
+                $mod->kdprofile = $this->kdProfile;
             }
             $mod->resourcetype = $data['resourceType'];
             $mod->url =  $this->endPoint() . $data['resourceType'];
@@ -3642,10 +3675,11 @@ class IHSController extends ApiController
     {
         return  date('H:i', strtotime(date($date)));
     }
+
     public function Specimen(Request $request, $lokal = null)
     {
         try {
-            $kdProfile = $this->kdProfile();
+            $kdProfile = $this->kdProfile;
             $q = collect(DB::select("
                 SELECT
                 so.noorder
@@ -3657,7 +3691,7 @@ class IHSController extends ApiController
                 ,ps.ihs_number as ihs_pasien
                 ,ps.namapasien
                 ,pd.ihs_id as ihs_encounter
-                ,case when pg.ihs_id  is not null then pg.ihs_id  else pg2.ihs_id end as ihs_practitioner
+                ,pg.ihs_id as ihs_practitioner
                 ,pg.namalengkap as dokterorder
                 ,ru.namaruangan
                 ,ru.ihs_id as ihs_ruangan
@@ -3736,7 +3770,7 @@ class IHSController extends ApiController
                             array(
                                 0 =>
                                 array(
-                                    'system' => 'https://snomed.info/sct',
+                                    'system' => 'http://snomed.info/sct',
                                     // "code" => "82078001",
                                     // "display" => "Collection of blood specimen for laboratory"
                                     'code' => '281325009',
@@ -3787,7 +3821,7 @@ class IHSController extends ApiController
                     $mod = new IHS_Transaction();
                     $mod->norec = $mod->generateNewId();
                     $mod->statusenabled = $noterror;
-                    $mod->kdprofile = $this->kdProfile();
+                    $mod->kdprofile = $this->kdProfile;
                 } else {
                     $mod = IHS_Transaction::where('id', $item->ihs_idforput)->first();
                 }
@@ -3795,7 +3829,7 @@ class IHSController extends ApiController
                     $mod = new IHS_Transaction();
                     $mod->norec = $mod->generateNewId();
                     $mod->statusenabled = $noterror;
-                    $mod->kdprofile = $this->kdProfile();
+                    $mod->kdprofile = $this->kdProfile;
                 }
                 $mod->resourcetype = $data['resourceType'];
                 $mod->url =  $this->endPoint() . $data['resourceType'];
