@@ -5480,9 +5480,11 @@ class ReportController extends ApiController{
 
         $asalproduk_kb = "";
         $asalproduk_sr = "";
+        $asalproduk_pj = "";
         if (isset($request['asalproduk']) && $request['tahun'] != "" && $request['asalproduk'] != "undefined") {
             $asalproduk_kb = "and kb.objectasalprodukfk = ".$request['asalproduk'];
             $asalproduk_sr = "and sr.objectasalprodukfk = ".$request['asalproduk'];
+            $asalproduk_pj = "and P.objectasalprodukfk = ".$request['asalproduk'];
         }
 
 
@@ -5496,22 +5498,21 @@ class ReportController extends ApiController{
                     x.kodemataanggaran,
                     x.namamataanggaran,
                     SUM ( jumlahanggaran ) AS jumlahanggaran,
-                    SUM ( panjar ) AS jumlahpanjar,
+                    SUM ( panjar ) - SUM(panjarspj) AS jumlahpanjar,
                     SUM ( spj ) AS jumlahspj ,
-                    SUM ( panjar ) + SUM ( spj )  as subtotal,
-                    SUM ( jumlahanggaran )- (SUM ( panjar ) + SUM ( spj )) as sisaanggaran
+                    SUM ( panjar ) - SUM(panjarspj) + SUM ( spj )  as subtotal,
+                    SUM ( jumlahanggaran ) - ((SUM (panjar) - SUM(panjarspj)) + SUM ( spj )) as sisaanggaran
                 FROM
                     (
                     SELECT
-                        ka.ID AS idKeg,
                         ma.ID AS idAng,
                         ka.kode,
-                        ka.keterangan,
                         ma.kodemataanggaran,
                         ma.namamataanggaran,
                         COALESCE ( SUM ( kb.subtotal ), 0 ) AS jumlahanggaran,
                         0 AS panjar,
-                        0 AS spj 
+                        0 AS spj,
+                        0 AS panjarspj 
                     FROM
                         keteranganbelanja_t kb
                         LEFT JOIN kegiatananggaran_m ka ON ka.ID = kb.objectkegiatanfk
@@ -5527,27 +5528,25 @@ class ReportController extends ApiController{
                         AND ma.kdprofile = 30
                         $asalproduk_kb 
                     GROUP BY
-                        ka.ID,
                         ma.ID,
                         ka.kode,
-                        ka.keterangan,
                         ma.kodemataanggaran,
                         ma.namamataanggaran 
                     
                     UNION
                     
                     SELECT
-                        ka.ID AS idKeg,
                         ma.ID AS idAng,
                         ka.kode,
-                        ka.keterangan,
                         ma.kodemataanggaran,
                         ma.namamataanggaran,
                         0 AS jumlahanggaran,
                         0 AS panjar,
-                        COALESCE ( SUM ( sr.totalbelanja ), 0 ) AS spj 
+                        COALESCE ( SUM ( sr.totalbelanja ), 0 ) AS spj,
+                        0 AS panjarspj 
                     FROM
                         strukrealisasi_t sr
+                        JOIN realisasidetail_t rd ON rd.strukrealisasifk = sr.norec AND rd.statusenabled = TRUE
                         LEFT JOIN kegiatananggaran_m ka ON ka.ID = sr.objectkegiatanfk
                         LEFT JOIN mataanggaran_m ma ON ma.ID = sr.objectmataanggaranfk 
                     WHERE
@@ -5570,25 +5569,22 @@ class ReportController extends ApiController{
                         AND ma.kdprofile = 30 
                         $asalproduk_sr
                     GROUP BY
-                        ka.ID,
                         ma.ID,
                         ka.kode,
-                        ka.keterangan,
                         ma.kodemataanggaran,
                         ma.namamataanggaran 
                         
                     UNION
 
                     SELECT
-                        ka.ID AS idKeg,
                         ma.ID AS idAng,
                         ka.kode,
-                        ka.keterangan,
                         ma.kodemataanggaran,
                         ma.namamataanggaran,
                         0 AS jumlahanggaran,
-                        COALESCE ( SUM ( P.jumlah ), 0 ) - COALESCE ( SUM ( pp.jumlahpengembalian ), 0 ) - COALESCE ( SUM ( sp.jumlahspj ), 0 ) AS panjar,
-                        0 AS spj 
+                        COALESCE ( SUM ( P.jumlah ), 0 ) - COALESCE ( SUM ( pp.jumlahpengembalian ), 0 ) AS panjar,
+                        0 AS spj,
+                        0 AS panjarspj 
                     FROM
                         panjar_t
                         P LEFT JOIN kegiatananggaran_m ka ON ka.ID = P.objectsubsubkegiatanfk
@@ -5596,9 +5592,6 @@ class ReportController extends ApiController{
                         LEFT JOIN pengembalianpanjar_t pp ON pp.objectpanjarfk = P.norec 
                         AND pp.statusenabled = TRUE 
                         AND pp.kdprofile = 30
-                        LEFT JOIN spjtopanjar_t sp ON sp.objectpanjarfk = P.norec 
-                        AND sp.statusenabled = TRUE 
-                        AND sp.kdprofile = 30 
                     WHERE
                         P.objectsubsubkegiatanfk IN (
                         SELECT ID 
@@ -5617,18 +5610,60 @@ class ReportController extends ApiController{
                         AND ka.kdprofile = 30 
                         AND ma.statusenabled = TRUE 
                         AND ma.kdprofile = 30 
+                        $asalproduk_pj
                     GROUP BY
-                        ka.ID,
                         ma.ID,
                         ka.kode,
-                        ka.keterangan,
+                        ma.kodemataanggaran,
+                        ma.namamataanggaran
+                        
+                    UNION
+
+                    SELECT
+                        ma.ID AS idAng,
+                        ka.kode,
+                        ma.kodemataanggaran,
+                        ma.namamataanggaran,
+                        0 AS jumlahanggaran,
+                        0 AS panjar, 
+                        0 AS spj,
+                        COALESCE ( SUM ( sp.jumlahspj ), 0 ) AS panjarspj
+                    FROM
+                        panjar_t
+                        P LEFT JOIN kegiatananggaran_m ka ON ka.ID = P.objectsubsubkegiatanfk
+                        LEFT JOIN mataanggaran_m ma ON ma.ID = P.objectmataanggaranfk
+                        LEFT JOIN pengembalianpanjar_t pp ON pp.objectpanjarfk = P.norec  AND pp.statusenabled = TRUE AND pp.kdprofile = 30
+                        LEFT JOIN spjtopanjar_t sp ON sp.objectpanjarfk = P.norec AND sp.statusenabled = TRUE AND sp.kdprofile = 30 
+                    WHERE
+                        P.objectsubsubkegiatanfk IN (
+                        SELECT ID 
+                        FROM
+                            kegiatananggaran_m 
+                        WHERE
+                            kode = ( SELECT kode FROM kegiatananggaran_m WHERE ID = $subsubk AND statusenabled = TRUE AND kdprofile = 30 LIMIT 1 ) 
+                            AND tahun = '$tahun'
+                            AND statusenabled = TRUE 
+                            AND kdprofile = 30 
+                        ) 
+                        AND ka.tahun = '$tahun'
+                        AND P.statusenabled = TRUE 
+                        AND P.kdprofile = 30 
+                        AND ka.statusenabled = TRUE 
+                        AND ka.kdprofile = 30 
+                        AND ma.statusenabled = TRUE 
+                        AND ma.kdprofile = 30 
+                        $asalproduk_pj
+                    GROUP BY
+                        ma.ID,
+                        ka.kode,
                         ma.kodemataanggaran,
                         ma.namamataanggaran 
+
                     ) AS x 
                 GROUP BY
                     kodemataanggaran,
                     namamataanggaran
-                    order by subkodepertama asc, subkodekedua asc, subkodeketiga asc, subkodekeempat asc, subkodekelima asc 
+                order by subkodepertama asc, subkodekedua asc, subkodeketiga asc, subkodekeempat asc, subkodekelima asc 
 
              "));
 
@@ -24479,6 +24514,11 @@ public function suratBuktiPengembalian(Request $request)
         if (isset($request['asalproduk']) && $request['asalproduk'] != "" && $request['asalproduk'] != "undefined") {
             $asalproduk_kb = 'and kb.objectasalprodukfk = '.$request['asalproduk'];
             $asalproduk_sr = 'and sr.objectasalprodukfk = '.$request['asalproduk'];
+            if($request['asalproduk'] == 18 || $request['asalproduk'] == 4){
+                $asalProduk = [18,4];
+            }else {
+                $asalProduk = [2,15,21];
+            }
 
         }
 
@@ -24506,23 +24546,25 @@ public function suratBuktiPengembalian(Request $request)
                 ma1.kodemataanggaran AS kode_mataanggaran1,
                 MIN(ma1.namamataanggaran) AS nama_mataanggaran1,
                 SUM(CAST(kb.subtotal AS DECIMAL)) AS total_anggaran
-            FROM keteranganbelanja2024_t kb
-            JOIN kegiatananggaran2024_m ka ON ka.id = kb.objectkegiatanfk AND ka.statusenabled = TRUE AND ka.kdprofile = 30
-            LEFT JOIN kegiatananggaran2024_m ka3 ON ka3.id = ka.headfk
-            LEFT JOIN kegiatananggaran2024_m ka2 ON ka2.id = ka3.headfk 
-            LEFT JOIN kegiatananggaran2024_m ka1 on ka1.id = ka2.headfk
+            FROM keteranganbelanja_t kb
+            JOIN kegiatananggaran_m kalama ON kalama.id = kb.objectkegiatanfk AND kalama.statusenabled = TRUE AND kalama.kdprofile = 30 AND kalama.tahun = '".$settingRBA->tahunanggaran."'
+            JOIN kegiatananggaran2024_m ka ON ka.kode = kalama.kode AND ka.statusenabled = TRUE AND ka.kdprofile = 30
+            JOIN kegiatananggaran2024_m ka3 ON ka3.id = ka.headfk
+            JOIN kegiatananggaran2024_m ka2 ON ka2.id = ka3.headfk 
+            JOIN kegiatananggaran2024_m ka1 on ka1.id = ka2.headfk
             JOIN mataanggaran2024_m ma ON ma.id = kb.objectmataanggaranfk AND ma.statusenabled = TRUE AND ma.kdprofile = 30
-            LEFT JOIN mataanggaran2024_m ma3 ON ma3.id = ma.headfk
-            LEFT JOIN mataanggaran2024_m ma2 ON ma2.id = ma3.headfk
-            LEFT JOIN mataanggaran2024_m ma1 ON ma1.id = ma2.headfk 
-            LEFT JOIN mataanggaranpermen_m mp ON mp.id = ma.mataanggaranpermenfk
-            LEFT JOIN asalproduk_m ap ON ap.id = kb.objectasalprodukfk AND ap.statusenabled = TRUE AND ap.kdprofile = 30
+            JOIN mataanggaran2024_m ma3 ON ma3.id = ma.headfk
+            JOIN mataanggaran2024_m ma2 ON ma2.id = ma3.headfk
+            JOIN mataanggaran2024_m ma1 ON ma1.id = ma2.headfk 
+            JOIN mataanggaranpermen_m mp ON mp.id = ma.mataanggaranpermenfk
+            JOIN asalproduk_m ap ON ap.id = kb.objectasalprodukfk AND ap.statusenabled = TRUE AND ap.kdprofile = 30
             JOIN tahapanggaran_m ta ON ta.id = kb.objecttahapfk AND ta.statusenabled = TRUE AND ta.kdprofile = 30
             WHERE 
                 kb.statusenabled = TRUE 
                 AND kb.kdprofile = 30
-                AND kb.objecttahapfk = 3
-                $asalproduk_kb
+                AND kb.objecttahapfk = ".$settingRBA->objecttahapaktivfk."
+                -- AND kb.objectasalprodukfk IN (".implode(',', $asalProduk).")
+                ".$asalproduk_kb."
             GROUP BY
                 ka.kode,
                 ka3.kode,
@@ -24535,12 +24577,12 @@ public function suratBuktiPengembalian(Request $request)
                 mp.id,
                 mp.mataanggaranpermen
             ORDER BY
-                SPLIT_PART(ka.kode, '.', 2),
-                SPLIT_PART(ka.kode, '.', 3),
-                SPLIT_PART(ka.kode, '.', 4),
-                SPLIT_PART(ka.kode, '.', 5),
-                SPLIT_PART(ka.kode, '.', 6),
-                SPLIT_PART(ka.kode, '.', 7),
+                CAST(SPLIT_PART(ka.kode, '.', 2) AS INTEGER) ASC,
+                CAST(SPLIT_PART(ka.kode, '.', 3) AS INTEGER) ASC,
+                CAST(SPLIT_PART(ka.kode, '.', 4) AS INTEGER) ASC,
+                CAST(SPLIT_PART(ka.kode, '.', 5) AS INTEGER) ASC,
+                CAST(SPLIT_PART(ka.kode, '.', 6) AS INTEGER) ASC,
+                CAST(SPLIT_PART(ka.kode, '.', 7) AS INTEGER) ASC,
                 SPLIT_PART(ma.kodemataanggaran, '.', 1),
                 SPLIT_PART(ma.kodemataanggaran, '.', 2),
                 SPLIT_PART(ma.kodemataanggaran, '.', 3),
@@ -24570,26 +24612,29 @@ public function suratBuktiPengembalian(Request $request)
                 MIN(ma1.namamataanggaran) AS nama_mataanggaran1,
                 SUM(case when extract(year from bku.tglbku) = extract(year from timestamp '".$request['tglbku']."')
                     and bku.tglbku <= DATE_TRUNC('MONTH', timestamp '".$request['tglbku']."')
-                then sr.totalbelanja else 0 end) as total_belanja_bulan_lalu,
+                then rd.subtotal else 0 end) as total_belanja_bulan_lalu,
                 SUM(case when extract(year from bku.tglbku) = extract(year from timestamp '".$request['tglbku']."')
                     and extract(month from bku.tglbku) = extract(month from timestamp '".$request['tglbku']."')
-                then sr.totalbelanja else 0 end) as total_belanja_bulan_ini,
-                SUM(sr.totalbelanja) as total_belanja
-            FROM strukrealisasi2024_t sr
-            JOIN kegiatananggaran2024_m ka ON ka.id = sr.objectkegiatanfk AND ka.statusenabled = TRUE AND ka.kdprofile = 30
-            LEFT JOIN kegiatananggaran2024_m ka3 ON ka3.id = ka.headfk
-            LEFT JOIN kegiatananggaran2024_m ka2 ON ka2.id = ka3.headfk 
-            LEFT JOIN kegiatananggaran2024_m ka1 on ka1.id = ka2.headfk
+                then rd.subtotal else 0 end) as total_belanja_bulan_ini,
+                SUM(rd.subtotal) as total_belanja
+            FROM strukrealisasi_t sr
+            JOIN realisasidetail_t rd ON rd.strukrealisasifk = sr.norec AND rd.statusenabled = TRUE    
+            JOIN kegiatananggaran_m kalama ON kalama.id = sr.objectkegiatanfk AND kalama.statusenabled = TRUE AND kalama.kdprofile = 30 AND kalama.tahun = '".$settingRBA->tahunanggaran."'
+            JOIN kegiatananggaran2024_m ka ON ka.kode = kalama.kode AND ka.statusenabled = TRUE AND ka.kdprofile = 30
+            JOIN kegiatananggaran2024_m ka3 ON ka3.id = ka.headfk
+            JOIN kegiatananggaran2024_m ka2 ON ka2.id = ka3.headfk 
+            JOIN kegiatananggaran2024_m ka1 on ka1.id = ka2.headfk
             JOIN mataanggaran2024_m ma ON ma.id = sr.objectmataanggaranfk
-            LEFT JOIN mataanggaran2024_m ma3 ON ma3.id = ma.headfk
-            LEFT JOIN mataanggaran2024_m ma2 ON ma2.id = ma3.headfk
-            LEFT JOIN mataanggaran2024_m ma1 ON ma1.id = ma2.headfk 
+            JOIN mataanggaran2024_m ma3 ON ma3.id = ma.headfk
+            JOIN mataanggaran2024_m ma2 ON ma2.id = ma3.headfk
+            JOIN mataanggaran2024_m ma1 ON ma1.id = ma2.headfk 
             JOIN asalproduk_m ap ON ap.id = sr.objectasalprodukfk
             JOIN bukukasumum_t bku ON bku.norec = sr.objectbkufk AND bku.statusenabled = TRUE AND bku.kdprofile = 30
             WHERE 
                 sr.statusenabled = TRUE
                 AND sr.kdprofile = 30
-                $asalproduk_sr
+                -- AND sr.objectasalprodukfk IN (".implode(',', $asalProduk).")
+                ".$asalproduk_sr."
             GROUP BY
                 ka.kode,
                 ka3.kode,
@@ -24600,15 +24645,15 @@ public function suratBuktiPengembalian(Request $request)
                 ma2.kodemataanggaran,
                 ma1.kodemataanggaran
             ORDER BY
-                SPLIT_PART(ka.kode, '.', 2),
-                SPLIT_PART(ka.kode, '.', 3),
-                SPLIT_PART(ka.kode, '.', 4),
-                SPLIT_PART(ka.kode, '.', 5),
-                SPLIT_PART(ka.kode, '.', 6),
-                SPLIT_PART(ka.kode, '.', 7),
-                SPLIT_PART(ma.kodemataanggaran, '.', 1),
-                SPLIT_PART(ma.kodemataanggaran, '.', 2),
-                SPLIT_PART(ma.kodemataanggaran, '.', 3),
+                CAST(SPLIT_PART(ka.kode, '.', 2) AS INTEGER) ASC,
+                CAST(SPLIT_PART(ka.kode, '.', 3) AS INTEGER) ASC,
+                CAST(SPLIT_PART(ka.kode, '.', 4) AS INTEGER) ASC,
+                CAST(SPLIT_PART(ka.kode, '.', 5) AS INTEGER) ASC,
+                CAST(SPLIT_PART(ka.kode, '.', 6) AS INTEGER) ASC,
+                CAST(SPLIT_PART(ka.kode, '.', 7) AS INTEGER) ASC,
+                SPLIT_PART(ma.kodemataanggaran, '.', 1) ASC,
+                SPLIT_PART(ma.kodemataanggaran, '.', 2) ASC,
+                SPLIT_PART(ma.kodemataanggaran, '.', 3) ASC,
                 case 
                     when SPLIT_PART(ma.kodemataanggaran, '.', 5) = '' THEN cast(SPLIT_PART(ma.kodemataanggaran, '.', 4) as INTEGER)
                     else cast(SPLIT_PART(ma.kodemataanggaran, '.', 5) as INTEGER)

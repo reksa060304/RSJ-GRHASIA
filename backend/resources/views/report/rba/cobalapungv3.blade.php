@@ -135,11 +135,11 @@
                     <tr>
                         <td style="width: 8%;">{{ $item->kode_kegiatan1 }}</td>
                         <td>{{ $item->keterangan_kegiatan1 }}</td>
-                        <td style="background-color: #40A578; text-align: right;">Rp. {{ number_format($anggaranKegiatan1,2,',','.') }}</td>
-                        <td style="text-align: right;">Rp. {{ number_format($belanjaKegiatan1BulanLalu,2,',','.') }}</td>
-                        <td style="text-align: right;">Rp. {{ number_format($belanjaKegiatan1BulanIni,2,',','.') }}</td>
-                        <td style="text-align: right;">Rp. {{ number_format((int)$belanjaKegiatan1BulanLalu + (int)$belanjaKegiatan1BulanIni,2,',','.') }}</td>
-                        <td style="text-align: right;">Rp. {{ number_format(($anggaranKegiatan1 - ((int)$belanjaKegiatan1BulanLalu + (int)$belanjaKegiatan1BulanIni)),2,',','.') }}</td>
+                        <td style="background-color: #40A578; text-align: right;">Rp. {{ number_format($anggaranKegiatan1,2,'.',',') }}</td>
+                        <td style="text-align: right;">Rp. {{ number_format($belanjaKegiatan1BulanLalu,2,'.',',') }}</td>
+                        <td style="text-align: right;">Rp. {{ number_format($belanjaKegiatan1BulanIni,2,'.',',') }}</td>
+                        <td style="text-align: right;">Rp. {{ number_format((int)$belanjaKegiatan1BulanLalu + (int)$belanjaKegiatan1BulanIni,2,'.',',') }}</td>
+                        <td style="text-align: right;">Rp. {{ number_format(($anggaranKegiatan1 - ((int)$belanjaKegiatan1BulanLalu + (int)$belanjaKegiatan1BulanIni)),2,'.',',') }}</td>
                     </tr>
                 @endif
                 
@@ -169,11 +169,11 @@
                     <tr>
                         <td style="width: 8%;">{{ $item->kode_kegiatan2 }}</td>
                         <td>{{ $item->keterangan_kegiatan2 }}</td>
-                        <td style="text-align: right;">Rp. {{ number_format($anggaranKegiatan2,2,',','.') }}</td>
-                        <td style="text-align: right;">Rp. {{ number_format($belanjaKegiatan2BulanLalu,2,',','.') }}</td>
-                        <td style="text-align: right;">Rp. {{ number_format($belanjaKegiatan2BulanIni,2,',','.') }}</td>
-                        <td style="text-align: right;">Rp. {{ number_format((int)$belanjaKegiatan2BulanLalu + (int)$belanjaKegiatan2BulanIni,2,',','.') }}</td>
-                        <td style="text-align: right;">Rp. {{ number_format(($anggaranKegiatan2 - ((int)$belanjaKegiatan2BulanLalu + (int)$belanjaKegiatan2BulanIni)),2,',','.') }}</td>
+                        <td style="text-align: right;">Rp. {{ number_format($anggaranKegiatan2,2,'.',',') }}</td>
+                        <td style="text-align: right;">Rp. {{ number_format($belanjaKegiatan2BulanLalu,2,'.',',') }}</td>
+                        <td style="text-align: right;">Rp. {{ number_format($belanjaKegiatan2BulanIni,2,'.',',') }}</td>
+                        <td style="text-align: right;">Rp. {{ number_format((int)$belanjaKegiatan2BulanLalu + (int)$belanjaKegiatan2BulanIni,2,'.',',') }}</td>
+                        <td style="text-align: right;">Rp. {{ number_format(($anggaranKegiatan2 - ((int)$belanjaKegiatan2BulanLalu + (int)$belanjaKegiatan2BulanIni)),2,'.',',') }}</td>
                     </tr>
                 @endif
                 
@@ -202,11 +202,11 @@
                     <tr>
                         <td style="width: 8%;">{{ $item->kode_kegiatan3 }}</td>
                         <td>{{ $item->keterangan_kegiatan3 }}</td>
-                        <td style="text-align: right;">Rp. {{ number_format($anggaranKegiatan3,2,',','.') }}</td>
-                        <td style="text-align: right;">Rp. {{ number_format($belanjaKegiatan3BulanLalu,2,',','.') }}</td>
-                        <td style="text-align: right;">Rp. {{ number_format($belanjaKegiatan3BulanIni,2,',','.') }}</td>
-                        <td style="text-align: right;">Rp. {{ number_format((int)$belanjaKegiatan3BulanLalu + (int)$belanjaKegiatan3BulanIni,2,',','.') }}</td>
-                        <td style="text-align: right;">Rp. {{ number_format(($anggaranKegiatan3 - ((int)$belanjaKegiatan3BulanLalu + (int)$belanjaKegiatan3BulanIni)),2,',','.') }}</td>
+                        <td style="text-align: right;">Rp. {{ number_format($anggaranKegiatan3,2,'.',',') }}</td>
+                        <td style="text-align: right;">Rp. {{ number_format($belanjaKegiatan3BulanLalu,2,'.',',') }}</td>
+                        <td style="text-align: right;">Rp. {{ number_format($belanjaKegiatan3BulanIni,2,'.',',') }}</td>
+                        <td style="text-align: right;">Rp. {{ number_format((int)$belanjaKegiatan3BulanLalu + (int)$belanjaKegiatan3BulanIni,2,'.',',') }}</td>
+                        <td style="text-align: right;">Rp. {{ number_format(($anggaranKegiatan3 - ((int)$belanjaKegiatan3BulanLalu + (int)$belanjaKegiatan3BulanIni)),2,'.',',') }}</td>
                     </tr>
                 @endif
                 
@@ -237,11 +237,11 @@
                     <tr style="font-weight: bold;">
                         <td style="width: 8%;">{{ $item->kode_kegiatan }}</td>
                         <td>{{ $item->keterangan_kegiatan }}</td>
-                        <td style="background-color: #9DDE8B; text-align: right;">Rp. {{ number_format($anggaranKegiatan4,2,',','.') }}</td>
-                        <td style="text-align: right;">Rp. {{ number_format($belanjaKegiatanBulanLalu,2,',','.') }}</td>
-                        <td style="text-align: right;">Rp. {{ number_format($belanjaKegiatanBulanIni,2,',','.') }}</td>
-                        <td style="text-align: right;">Rp. {{ number_format((int)$belanjaKegiatanBulanLalu + (int)$belanjaKegiatanBulanIni,2,',','.') }}</td>
-                        <td style="text-align: right;">Rp. {{ number_format(($anggaranKegiatan4 - ((int)$belanjaKegiatanBulanLalu + (int)$belanjaKegiatanBulanIni)),2,',','.') }}</td>
+                        <td style="background-color: #9DDE8B; text-align: right;">Rp. {{ number_format($anggaranKegiatan4,2,'.',',') }}</td>
+                        <td style="text-align: right;">Rp. {{ number_format($belanjaKegiatanBulanLalu,2,'.',',') }}</td>
+                        <td style="text-align: right;">Rp. {{ number_format($belanjaKegiatanBulanIni,2,'.',',') }}</td>
+                        <td style="text-align: right;">Rp. {{ number_format((int)$belanjaKegiatanBulanLalu + (int)$belanjaKegiatanBulanIni,2,'.',',') }}</td>
+                        <td style="text-align: right;">Rp. {{ number_format(($anggaranKegiatan4 - ((int)$belanjaKegiatanBulanLalu + (int)$belanjaKegiatanBulanIni)),2,'.',',') }}</td>
                     </tr>
 
                 @endif
@@ -297,11 +297,11 @@
                                             <p style="width: 85%">{{ $ma->nama_mataanggaran1 }}</p>
                                         </div>
                                     </td>
-                                    <td style="text-align: right;">Rp. {{ number_format($totalRekening1,2,',','.') }}</td>
-                                    <td style="text-align: right;">Rp. {{ number_format($totalBelanjaBulanLalu1,2,',','.') }}</td>
-                                    <td style="text-align: right;">Rp. {{ number_format($totalBelanjaBulanIni1,2,',','.') }}</td>
-                                    <td style="text-align: right;">Rp. {{ number_format($totalBelanja1,2,',','.') }}</td>
-                                    <td style="text-align: right;">Rp. {{ number_format(((int)$totalRekening1 - (int)$totalBelanja1),2,',','.') }}</td>
+                                    <td style="text-align: right;">Rp. {{ number_format($totalRekening1,2,'.',',') }}</td>
+                                    <td style="text-align: right;">Rp. {{ number_format($totalBelanjaBulanLalu1,2,'.',',') }}</td>
+                                    <td style="text-align: right;">Rp. {{ number_format($totalBelanjaBulanIni1,2,'.',',') }}</td>
+                                    <td style="text-align: right;">Rp. {{ number_format($totalBelanja1,2,'.',',') }}</td>
+                                    <td style="text-align: right;">Rp. {{ number_format(((int)$totalRekening1 - (int)$totalBelanja1),2,'.',',') }}</td>
                                 </tr>
                                 
                                 @php
@@ -350,11 +350,11 @@
                                             <p style="width: 85%">{{ $ma->nama_mataanggaran2 }}</p>
                                         </div>
                                     </td>
-                                    <td style="text-align: right;">Rp. {{ number_format($totalRekening2,2,',','.') }}</td>
-                                    <td style="text-align: right;">Rp. {{ number_format($totalBelanjaBulanLalu2,2,',','.') }}</td>
-                                    <td style="text-align: right;">Rp. {{ number_format($totalBelanjaBulanIni2,2,',','.') }}</td>
-                                    <td style="text-align: right;">Rp. {{ number_format($totalBelanja2,2,',','.') }}</td>
-                                    <td style="text-align: right;">Rp. {{ number_format(((int)$totalRekening2 - (int)$totalBelanja2),2,',','.') }}</td>
+                                    <td style="text-align: right;">Rp. {{ number_format($totalRekening2,2,'.',',') }}</td>
+                                    <td style="text-align: right;">Rp. {{ number_format($totalBelanjaBulanLalu2,2,'.',',') }}</td>
+                                    <td style="text-align: right;">Rp. {{ number_format($totalBelanjaBulanIni2,2,'.',',') }}</td>
+                                    <td style="text-align: right;">Rp. {{ number_format($totalBelanja2,2,'.',',') }}</td>
+                                    <td style="text-align: right;">Rp. {{ number_format(((int)$totalRekening2 - (int)$totalBelanja2),2,'.',',') }}</td>
                                 </tr>
                                 
                                 @php
@@ -403,11 +403,11 @@
                                             <p style="width: 85%">{{ $ma->nama_mataanggaran3 }}</p>
                                         </div>
                                     </td>
-                                    <td style="text-align: right;">Rp. {{ number_format($totalRekening3,2,',','.') }}</td>
-                                    <td style="text-align: right;">Rp. {{ number_format($totalBelanjaBulanLalu3,2,',','.') }}</td>
-                                    <td style="text-align: right;">Rp. {{ number_format($totalBelanjaBulanIni3,2,',','.') }}</td>
-                                    <td style="text-align: right;">Rp. {{ number_format($totalBelanja3,2,',','.') }}</td>
-                                    <td style="text-align: right;">Rp. {{ number_format(((int)$totalRekening3 - (int)$totalBelanja3),2,',','.') }}</td>
+                                    <td style="text-align: right;">Rp. {{ number_format($totalRekening3,2,'.',',') }}</td>
+                                    <td style="text-align: right;">Rp. {{ number_format($totalBelanjaBulanLalu3,2,'.',',') }}</td>
+                                    <td style="text-align: right;">Rp. {{ number_format($totalBelanjaBulanIni3,2,'.',',') }}</td>
+                                    <td style="text-align: right;">Rp. {{ number_format($totalBelanja3,2,'.',',') }}</td>
+                                    <td style="text-align: right;">Rp. {{ number_format(((int)$totalRekening3 - (int)$totalBelanja3),2,'.',',') }}</td>
                                 </tr>
                                 
                                 @php
@@ -447,11 +447,11 @@
                                         <p style="width: 85%">{{ $ma->nama_mataanggaran }}</p>
                                     </div>
                                 </td>
-                                <td style="background-color: #E6FF94; text-align: right;">Rp. {{ number_format($ma->total_anggaran,2,',','.') }}</td>
-                                <td style="text-align: right;">Rp. {{ number_format($totalBulanLalu,2,',','.') }}</td>
-                                <td style="text-align: right;">Rp. {{ number_format($totalBulanIni,2,',','.') }}</td>
-                                <td style="text-align: right;">Rp. {{ number_format($totalBelanja,2,',','.') }}</td>
-                                <td style="text-align: right;">Rp. {{ number_format(((int)$ma->total_anggaran - (int)$totalBelanja),2,',','.') }}</td>
+                                <td style="background-color: #E6FF94; text-align: right;">Rp. {{ number_format($ma->total_anggaran,2,'.',',') }}</td>
+                                <td style="text-align: right;">Rp. {{ number_format($totalBulanLalu,2,'.',',') }}</td>
+                                <td style="text-align: right;">Rp. {{ number_format($totalBulanIni,2,'.',',') }}</td>
+                                <td style="text-align: right;">Rp. {{ number_format($totalBelanja,2,'.',',') }}</td>
+                                <td style="text-align: right;">Rp. {{ number_format(((int)$ma->total_anggaran - (int)$totalBelanja),2,'.',',') }}</td>
                             </tr>
                         @endif
                     @endforeach
@@ -460,6 +460,5 @@
             @endforeach
         </tbody>
     </table>
-
 </body>
 </html>
