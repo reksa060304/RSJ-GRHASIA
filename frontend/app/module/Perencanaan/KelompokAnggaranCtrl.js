@@ -7038,10 +7038,19 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
                     }
                 }
 
-                medifirstService.get("perencanaan/get-data-combo-item-rincian?kegiatan="+$scope.item.subSubKegiatanSPJ.id+"&mataanggaran="+$scope.item.mataAnggaranSPJ.kodemataanggaran).then(function (e) {
-                    $scope.listItemRincian = e.data.data
-                    // $scope.item.sisaanggaran = 
-                    //console.log($scope.listItemRincian)
+                // menampilkan rincian belanja berdasarkan kegiatan,mataanggaran,dan sumberdana
+                let asalprodukrincianbelanja = ''
+                if($scope.item.sumberDanaSPJ !== undefined && $scope.item.sumberDanaSPJ !== null){
+                    asalprodukrincianbelanja = '&asalproduk=' + $scope.item.sumberDanaSPJ.id
+                }
+                medifirstService.get("perencanaan/get-data-combo-item-rincian" 
+                    + "?kegiatan="+$scope.item.subSubKegiatanSPJ.id
+                    + "&mataanggaran="+$scope.item.mataAnggaranSPJ.kodemataanggaran
+                    + asalprodukrincianbelanja)
+                    .then(function (e) {
+                        $scope.listItemRincian = e.data.data
+                        // $scope.item.sisaanggaran = 
+                        //console.log($scope.listItemRincian)
                 })
                 $scope.popupTambahDetailSPJ.center().open()
             }
@@ -7160,7 +7169,7 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
 
 				})
 
-                console.log(dataItem)
+                // console.log(dataItem)
                 
                 if( $scope.item.mataAnggaranSPJ ==  undefined){
                     return
@@ -7175,15 +7184,35 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
                 $scope.subtotalbelanjasebelum = dataItem.subtotal
                 
                 // DataKeteranganBelanja
-                let itemRincianList = [];
-                for (let index = 0; index < DataTabKeteranganBelanja.length; index++) {
-                    const element = DataTabKeteranganBelanja[index];
-                    if (element.kodemataanggaran == $scope.item.mataAnggaranSPJ.kodemataanggaran){
-                        itemRincianList.push(element)
-                    }
+                // let itemRincianList = [];
+                // for (let index = 0; index < DataTabKeteranganBelanja.length; index++) {
+                //     const element = DataTabKeteranganBelanja[index];
+                //     if (element.kodemataanggaran == $scope.item.mataAnggaranSPJ.kodemataanggaran){
+                //         itemRincianList.push(element)
+                //     }
+                // }
+                // $scope.listItemRincian = itemRincianList
+                let asalprodukrincianbelanja = ''
+                if($scope.item.sumberDanaSPJ !== undefined && $scope.item.sumberDanaSPJ !== null){
+                    asalprodukrincianbelanja = '&asalproduk=' + $scope.item.sumberDanaSPJ.id
                 }
-                $scope.listItemRincian = itemRincianList
-                $scope.item.itemRincian = {keteranganbelanjafk:dataItem.keteranganbelanjafk,keteranganbelanja:dataItem.keteranganbelanja}
+                medifirstService.get("perencanaan/get-data-combo-item-rincian" 
+                    + "?kegiatan="+$scope.item.subSubKegiatanSPJ.id
+                    + "&mataanggaran="+$scope.item.mataAnggaranSPJ.kodemataanggaran
+                    + asalprodukrincianbelanja)
+                    .then(function (e) {
+                        $scope.listItemRincian = e.data.data
+                        // $scope.item.sisaanggaran = 
+                        //console.log($scope.listItemRincian)
+                        $scope.listItemRincian.map(function(item){
+                            if(item.norec == dataItem.keteranganbelanjafk){
+                                $scope.item.itemRincian = item
+                            }
+                        })
+                })
+
+
+                // $scope.item.itemRincian = {keteranganbelanjafk:dataItem.keteranganbelanjafk,keteranganbelanja:dataItem.keteranganbelanja}
                 $scope.popupTambahDetailSPJ.center().open()
             }
             function deleteDetailRincianBelanjaSPJ(e) {
