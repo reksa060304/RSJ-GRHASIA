@@ -318,16 +318,16 @@
         $(this).animate({ scrollTop: 0 }, 15000);
     });
     }
-    scrollTopBottom()
+    //scrollTopBottom()
     
 
-    setInterval(function(){
-        scrollTopBottom()
+    //setInterval(function(){
+        //scrollTopBottom()
        
-    }, 30000);
-      setTimeout(function(){
-             window.location.reload();
+    //}, 30000);
+      //setTimeout(function(){
+        //     window.location.reload();
        
-    }, 120000);
+    //}, 120000);
 </script>
 @endsection
