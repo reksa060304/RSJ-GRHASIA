@@ -1193,7 +1193,14 @@ class PerencanaanController extends ApiController {
         $idkegiatan = $request['kegiatan'];
         $ma = DB::select(DB::raw("select id from mataanggaran_m where kodemataanggaran = '$kode' and statusenabled = true and kdprofile = 30"));
         $idma = $ma[0]->id;
-        $data = DB::select(DB::raw("select * from keteranganbelanja_t where objectkegiatanfk = $idkegiatan and objectmataanggaranfk = $idma and statusenabled = true and kdprofile = 30"));
+
+        // penambahan asalproduk
+        $idap = '';
+        if(isset($request['asalproduk']) && $request['asalproduk'] !== '' && $request['asalproduk'] !== 'undefined'){
+            $idap = "and objectasalprodukfk = ".$request['asalproduk'];
+        }
+
+        $data = DB::select(DB::raw("select * from keteranganbelanja_t where objectkegiatanfk = $idkegiatan and objectmataanggaranfk = $idma $idap and statusenabled = true and kdprofile = 30"));
 
         $result = array(
             'data' => $data,
