@@ -89,9 +89,17 @@
                 <div class="card-block tab-icon">
                     <form action="{!! route("show_page", ["role" => session('role'), "pages" => $r->pages ]) !!}" method="get">
                         <div class="row">
-                            <div class="col-lg-7">
+                            <div class="col-lg-5">
                             </div>
-                            <div class="col-lg-2" style="margin-top: 5px"></div>
+                            <div class="col-lg-4" style="margin-top: 5px">
+                            <select class="js-example-basic-single" name="tahap" id="tahap">
+                                @forelse($tahap as $item)
+                                <option value="{{$item->id}}" {{ $r->tahap == $item->id ? "selected" : ""}}>{{$item->tahap}}</option>
+                                @empty
+                                <option value=""></option>
+                                @endforelse
+                            </select>
+                            </div>
                             <div class="col-lg-2" style="margin-top: 5px">
                                 <div class="input-group" >
                                     <span class="input-group-addon" id="basic-addon1"><i class="ti-calendar"></i></span>
@@ -113,7 +121,7 @@
                                         </div>
                                         <div class="panel-body">
                                             @php
-                                                $klaim = App\Http\Controllers\MainController::getDataDeviasi(request()->get("tahun"));
+                                                $klaim = App\Http\Controllers\MainController::getDataDeviasi(request()->get("tahun"), request()->get("tahap"));
                                             @endphp
                                             <div class="row" style="padding:10px;">
                                                 <div class="col-md-12">
@@ -121,7 +129,7 @@
                                                         <table class="table table-striped"
                                                                style="width:100%">
                                                             <thead>
-                                                            <tr>
+                                                            {{-- <tr>
                                                                 <th style="text-align: center;color:#000000;white-space: pre-wrap;">Tahap Anggaran</th>
                                                                 <th style="text-align: center;color:#000000;white-space: pre-wrap;">Kode Kegiatan</th>
                                                                 <th style="text-align: center;color:#000000;white-space: pre-wrap">Sub Sub Kegiatan</th>
@@ -129,18 +137,36 @@
                                                                 <th style="text-align: center;color:#000000;white-space: pre-wrap">Jumlah Anggaran</th>
                                                                 <th style="text-align: center;color:#000000;white-space: pre-wrap">Jumlah Realisasi</th>
                                                                 <th style="text-align: center;color:#000000;white-space: pre-wrap">Jumlah Deviasi</th>
+                                                            </tr> --}}
+                                                            <tr>
+                                                                <th style="text-align: center;color:#000000;white-space: pre-wrap;">Kode</th>
+                                                                <th style="text-align: center;color:#000000;white-space: pre-wrap;">Keterangan</th>
+                                                                <th style="text-align: center;color:#000000;white-space: pre-wrap">PPTK</th>
+                                                                <th style="text-align: center;color:#000000;white-space: pre-wrap">Tahap Anggaran</th>
+                                                                <th style="text-align: center;color:#000000;white-space: pre-wrap">Tahun Anggaran</th>
+                                                                <th style="text-align: center;color:#000000;white-space: pre-wrap">Target Kinerja</th>
+                                                                <th style="text-align: center;color:#000000;white-space: pre-wrap">div</th>
                                                             </tr>
                                                             </thead>
                                                             <tbody>
+                                                            {{-- <tr >
+                                                                <td style="color:#000000;text-align: right;white-space: pre-wrap">{{ $items->tahap }}</td>
+                                                                <td style="color:#000000;text-align: left;white-space: pre-wrap">{{ $items->kodeanggaran }}</td>
+                                                                <td style="color:#000000;text-align: left;white-space: pre-wrap">{{ $items->keterangan }}</td>
+                                                                <td style="color:#000000;text-align: right;white-space: pre-wrap">{{ $items->tahun }}</td>
+                                                                <td style="color:#000000;text-align: right;white-space: pre-wrap">{{ number_format($items->subtotal,2,',','.') }}</td>
+                                                                <td style="color:#000000;text-align: right;white-space: pre-wrap">{{ number_format($items->jumlahrealisasi,2,',','.') }}</td>
+                                                                <td style="color:#000000;text-align: right;white-space: pre-wrap">{{ number_format($items->deviasi,2,',','.') }}</td>
+                                                            </tr> --}}
                                                             @foreach($klaim as $items)
                                                                 <tr >
-                                                                    <td style="color:#000000;text-align: right;white-space: pre-wrap">{{ $items->tahap }}</td>
-                                                                    <td style="color:#000000;text-align: left;white-space: pre-wrap">{{ $items->kodeanggaran }}</td>
+                                                                    <td style="color:#000000;text-align: left;white-space: pre-wrap">{{ $items->kode }}</td>
                                                                     <td style="color:#000000;text-align: left;white-space: pre-wrap">{{ $items->keterangan }}</td>
-                                                                    <td style="color:#000000;text-align: right;white-space: pre-wrap">{{ $items->tahun }}</td>
-                                                                    <td style="color:#000000;text-align: right;white-space: pre-wrap">{{ number_format($items->subtotal,2,',','.') }}</td>
-                                                                    <td style="color:#000000;text-align: right;white-space: pre-wrap">{{ number_format($items->jumlahrealisasi,2,',','.') }}</td>
-                                                                    <td style="color:#000000;text-align: right;white-space: pre-wrap">{{ number_format($items->deviasi,2,',','.') }}</td>
+                                                                    <td style="color:#000000;text-align: left;white-space: pre-wrap">{{ $items->namalengkap }}</td>
+                                                                    <td style="color:#000000;text-align: left;white-space: pre-wrap">{{ $items->tahap }}</td>
+                                                                    <td style="color:#000000;text-align: center;white-space: pre-wrap">{{ $items->tahun }}</td>
+                                                                    <td style="color:#000000;text-align: right;white-space: pre-wrap">{{ number_format($items->targetmasuk,2,',','.') }}</td>
+                                                                    <td style="color:#000000;text-align: left;white-space: pre-wrap">{{ $items->namakelompok }}</td>
                                                                 </tr>
                                                             @endforeach
                                                             </tbody>

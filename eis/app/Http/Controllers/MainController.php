@@ -782,18 +782,39 @@ class MainController extends ApiController
 
                 case 'dashboard-anggaran':
 
+                    $tahap = DB::table('tahapanggaran_m')
+                    ->where('statusenabled',true)
+                    ->where('kdprofile', $kdProfile)
+                    ->get();
+
+                    $setting = DB::table('settinganggaran_t')
+                    ->where('statusenabled',true)
+                    ->where('kdprofile', $kdProfile)
+                    ->first();
+
                     $tahun = date('Y');
 
                     if (!isset($r->tahun) ){
                         return redirect()->route("show_page",
                             ["role" => session("role"),
                                 "pages" => $r->pages,
-                                "tahun" =>  $tahun]);
+                                "tahun" =>  $tahun,
+                                "tahap" =>  $setting->objecttahapaktivfk
+                            ]);
                     } else {
                         $tahun = $r->tahun;
                     }
+
+                    if (!isset($r->tahap) ){
+                        return redirect()->route("show_page",
+                            ["role" => session("role"),
+                                "pages" => $r->pages,
+                                "tahun" =>  $tahun,
+                                "tahap" =>  $setting->objecttahapaktivfk
+                            ]);
+                    }
 //                    dd($res);
-                    array_push($compact,'r');
+                    array_push($compact,'r', 'tahap', 'setting');
                     break;
 
                 case 'dashboard-persediaan':
@@ -929,118 +950,209 @@ class MainController extends ApiController
                     }
                     $kdProfile = session("kdProfile");
 
-                    $data = collect(DB::select("
-                          SELECT
-                            x.namaruangan,
-                            SUM (x.isi) AS isi,
-                            SUM (x.kosong) AS kosong,
-                        count(x.tt_id) as total
-                        FROM
-                            (
-                                SELECT
-                                    CAST (tt.nomorbed AS INT) AS nomor,
-                                    tt. ID AS tt_id,
-                                    tt.nomorbed AS namabed,
-                                    kmr. ID AS kmr_id,
-                                    kmr.namakamar,
-                                    ru. ID AS id_ruangan,
-                                    ru.namaruangan,
-                                    kls.namakelas,
-                                    sb.statusbed,
-                                    CASE 	WHEN sb. ID = 1 THEN	1	ELSE 0 END AS isi,
-                                CASE WHEN sb. ID = 2 THEN	1	ELSE 0	END AS kosong
-                            FROM
-                                tempattidur_m AS tt
-                            INNER JOIN statusbed_m AS sb ON sb. ID = tt.objectstatusbedfk
-                            INNER JOIN kamar_m AS kmr ON kmr. ID = tt.objectkamarfk
-                            INNER JOIN kelas_m AS kls ON kls. ID = kmr.objectkelasfk
-                            INNER JOIN ruangan_m AS ru ON ru. ID = kmr.objectruanganfk
-                            WHERE
-                                tt.kdprofile = $kdProfile
-                            AND tt.statusenabled = TRUE
-                            AND kmr.statusenabled = TRUE
-                            ) AS x
-                        GROUP BY
-                            x.namaruangan
+                    // $data = collect(DB::select("
+                    //       SELECT
+                    //         x.namaruangan,
+                    //         SUM (x.isi) AS isi,
+                    //         SUM (x.kosong) AS kosong,
+                    //     count(x.tt_id) as total
+                    //     FROM
+                    //         (
+                    //             SELECT
+                    //                 CAST (tt.nomorbed AS INT) AS nomor,
+                    //                 tt. ID AS tt_id,
+                    //                 tt.nomorbed AS namabed,
+                    //                 kmr. ID AS kmr_id,
+                    //                 kmr.namakamar,
+                    //                 ru. ID AS id_ruangan,
+                    //                 ru.namaruangan,
+                    //                 kls.namakelas,
+                    //                 sb.statusbed,
+                    //                 CASE 	WHEN sb. ID = 1 THEN	1	ELSE 0 END AS isi,
+                    //             CASE WHEN sb. ID = 2 THEN	1	ELSE 0	END AS kosong
+                    //         FROM
+                    //             tempattidur_m AS tt
+                    //         INNER JOIN statusbed_m AS sb ON sb. ID = tt.objectstatusbedfk
+                    //         INNER JOIN kamar_m AS kmr ON kmr. ID = tt.objectkamarfk
+                    //         INNER JOIN kelas_m AS kls ON kls. ID = kmr.objectkelasfk
+                    //         INNER JOIN ruangan_m AS ru ON ru. ID = kmr.objectruanganfk
+                    //         WHERE
+                    //             tt.kdprofile = $kdProfile
+                    //         AND tt.statusenabled = TRUE
+                    //         AND kmr.statusenabled = TRUE
+                    //         ) AS x
+                    //     GROUP BY
+                    //         x.namaruangan
 
-                        "));
+                    //     "));
+                    $data = collect(DB::select(DB::raw("
+                        SELECT 
+                            q2.id_ruangan as idruangan,
+                            q2.namaruangan,
+                            COALESCE(q1.isi,0) as isi,
+                            q2.total,
+                            (q2.total -  COALESCE(q1.isi,0)) AS kosong
+                        FROM (
+                            SELECT 
+                                x.namaruangan,
+                                COUNT(x.namaruangan) AS isi
+                            FROM (
+                                SELECT DISTINCT
+                                    pd.tglregistrasi,
+                                    P.nocm,
+                                    pd.noregistrasi,
+                                    ru.namaruangan,
+                                    P.namapasien,
+                                    kls.namakelas,
+                                    tt.objectstatusbedfk
+                                FROM
+                                    pasiendaftar_t AS pd
+                                    INNER JOIN antrianpasiendiperiksa_t AS apd ON pd.norec = apd.noregistrasifk 
+                                    AND apd.tglkeluar IS NULL
+                                    INNER JOIN pasien_m AS P ON P.ID = pd.nocmfk
+                                    INNER JOIN ruangan_m AS ru ON ru.ID = pd.objectruanganlastfk
+                                    INNER JOIN kelas_m AS kls ON kls.ID = pd.objectkelasfk
+                                    INNER JOIN jeniskelamin_m AS jk ON jk.ID = P.objectjeniskelaminfk
+                                    LEFT JOIN pegawai_m AS pg ON pg.ID = pd.objectpegawaifk
+                                    LEFT JOIN kelompokpasien_m AS kp ON kp.ID = pd.objectkelompokpasienlastfk
+                                    LEFT JOIN departemen_m AS dept ON dept.ID = ru.objectdepartemenfk
+                                    LEFT JOIN batalregistrasi_t AS br ON pd.norec = br.pasiendaftarfk
+                                    LEFT JOIN kamar_m AS kmr ON kmr.ID = apd.objectkamarfk
+                                    LEFT JOIN tempattidur_m AS tt ON tt.ID = apd.nobed
+                                    LEFT JOIN alamat_m AS alm ON alm.nocmfk = P.ID 
+                                WHERE
+                                    br.norec IS NULL 
+                                    AND pd.tglpulang IS NULL 
+                                    AND pd.kdprofile = 30 
+                                    AND pd.statusenabled = TRUE
+                                    AND kls.namakelas IS NOT NULL
+                            ) AS x
+                            GROUP BY x.namaruangan
+                        ) AS q1
+                        RIGHT JOIN (
+                            SELECT 
+                                x.id_ruangan,
+                                x.namaruangan,
+                                SUM(x.isi) + SUM(x.kosong) AS total
+                            FROM (
+                                SELECT
+                                    kmr.ID,
+                                    kmr.namakamar,
+                                    kl.ID AS id_kelas,
+                                    kl.namakelas,
+                                    ru.ID AS id_ruangan,
+                                    ru.namaruangan,
+                                    kmr.jumlakamarisi,
+                                    kmr.qtybed,
+                                CASE
+                                    WHEN sb.ID = 1 THEN 1 ELSE 0 
+                                END AS isi,
+                                CASE
+                                    WHEN sb.ID = 2 THEN 1 ELSE 0 
+                                END AS kosong
+                                FROM
+                                    tempattidur_m AS tt
+                                    LEFT JOIN statusbed_m AS sb ON sb.ID = tt.objectstatusbedfk
+                                    LEFT JOIN kamar_m AS kmr ON kmr.ID = tt.objectkamarfk
+                                    LEFT JOIN ruangan_m AS ru ON ru.ID = kmr.objectruanganfk
+                                    LEFT JOIN kelas_m AS kl ON kl.ID = kmr.objectkelasfk 
+                                WHERE
+                                    tt.kdprofile = 30 
+                                    AND tt.statusenabled = TRUE 
+                                    AND ru.statusenabled = TRUE 
+                                    AND kmr.statusenabled = TRUE
+                                    AND sb.statusenabled = TRUE
+                            ) AS x
+                            GROUP BY x.namaruangan, x.id_ruangan
+                        ) AS q2 ON q1.namaruangan = q2.namaruangan
+                        ORDER BY q1.namaruangan;
+                    ")));
                     $totalKamar = $data->count();
                     $totalBed = 0;
                     $totalIsi = 0;
                     $totalKosong = 0;
+                    $data10 =[];
                     foreach ($data as $item){
                         $totalBed =    $totalBed + (float) $item->total;
                         $totalIsi =    $totalIsi + (float) $item->isi;
                         $totalKosong =    $totalKosong + (float) $item->kosong;
+
+                        $data10[] =array(
+                            'idruangan' => $item->idruangan,
+                            'namaruangan' => $item->namaruangan,
+                            // 'idstatusbed' => $item->idstatusbed,
+                            'bed' => $item->total,
+                            'kosong' => $item->kosong,
+                            'isi' => $item->isi,
+                        );
                     }
 
-                  $tt = collect(DB::select("SELECT
-                        ru.id AS idruangan,
-                        ru.namaruangan,
-                        km.id AS idkamar,
-                        km.namakamar,
-                        tt.id AS idtempattidur,
-                        tt.reportdisplay,
-                        tt.nomorbed,
-                        sb.id AS idstatusbed,
-                        sb.statusbed,
-                        kl.id AS idkelas,
-                        kl.namakelas
-                    FROM
-                        tempattidur_m AS tt
-                    LEFT JOIN kamar_m AS km ON km.id = tt.objectkamarfk
-                    LEFT JOIN ruangan_m AS ru ON ru.id = km.objectruanganfk
-                    LEFT JOIN statusbed_m AS sb ON sb.id = tt.objectstatusbedfk
-                    LEFT JOIN kelas_m AS kl ON kl.id = km.objectkelasfk
-                    WHERE
-                        ru.objectdepartemenfk IN (16, 35)
-                    AND ru.statusenabled = true
-                    AND km.statusenabled = true
-                    AND tt.statusenabled = true
-                    AND tt.kdprofile = $kdProfile"));
+                //   $tt = collect(DB::select("SELECT
+                //         ru.id AS idruangan,
+                //         ru.namaruangan,
+                //         km.id AS idkamar,
+                //         km.namakamar,
+                //         tt.id AS idtempattidur,
+                //         tt.reportdisplay,
+                //         tt.nomorbed,
+                //         sb.id AS idstatusbed,
+                //         sb.statusbed,
+                //         kl.id AS idkelas,
+                //         kl.namakelas
+                //     FROM
+                //         tempattidur_m AS tt
+                //     LEFT JOIN kamar_m AS km ON km.id = tt.objectkamarfk
+                //     LEFT JOIN ruangan_m AS ru ON ru.id = km.objectruanganfk
+                //     LEFT JOIN statusbed_m AS sb ON sb.id = tt.objectstatusbedfk
+                //     LEFT JOIN kelas_m AS kl ON kl.id = km.objectkelasfk
+                //     WHERE
+                //         ru.objectdepartemenfk IN (16, 35)
+                //     AND ru.statusenabled = true
+                //     AND km.statusenabled = true
+                //     AND tt.statusenabled = true
+                //     AND tt.kdprofile = $kdProfile"));
 
-                    $data10 =[];
                     $sama =false;
                     $bed = 0 ;
                     $isi = 0;
                     $kosong = 0;
-                    foreach ($tt as $item) {
-                        $sama = false;
-                        $i = 0;
-                        foreach ($data10 as $hideung) {
-                            if ($item->namaruangan == $data10[$i]['namaruangan']) {
-                                $sama = 1;
-                                $jml = (float)$hideung['bed'] + 1;
-                                $data10[$i]['bed'] = $jml;
-                                if ($item->idstatusbed == 1) {
-                                    $data10[$i]['isi'] = (float)$hideung['isi'] + 1;
-                                }
-                                if ($item->idstatusbed == 2) {
-                                    $data10[$i]['kosong'] = (float)$hideung['kosong'] + 1;
-                                }
-                            }
-                            $i = $i + 1;
-                        }
-                        if ($sama == false) {
-                            if ($item->idstatusbed ==1 ) {
-                                $isi = 1;
-                                $kosong = 0;
-                            }
-                            if ($item->idstatusbed ==2 ) {
-                                $isi = 0;
-                                $kosong = 1;
-                            }
+                    // foreach ($tt as $item) {
+                    //     $sama = false;
+                    //     $i = 0;
+                    //     foreach ($data10 as $hideung) {
+                    //         if ($item->namaruangan == $data10[$i]['namaruangan']) {
+                    //             $sama = 1;
+                    //             $jml = (float)$hideung['bed'] + 1;
+                    //             $data10[$i]['bed'] = $jml;
+                    //             if ($item->idstatusbed == 1) {
+                    //                 $data10[$i]['isi'] = (float)$hideung['isi'] + 1;
+                    //             }
+                    //             if ($item->idstatusbed == 2) {
+                    //                 $data10[$i]['kosong'] = (float)$hideung['kosong'] + 1;
+                    //             }
+                    //         }
+                    //         $i = $i + 1;
+                    //     }
+                    //     if ($sama == false) {
+                    //         if ($item->idstatusbed ==1 ) {
+                    //             $isi = 1;
+                    //             $kosong = 0;
+                    //         }
+                    //         if ($item->idstatusbed ==2 ) {
+                    //             $isi = 0;
+                    //             $kosong = 1;
+                    //         }
 
-                            $data10[] =array(
-                                'idruangan' => $item->idruangan,
-                                'namaruangan' => $item->namaruangan,
-                                'idstatusbed' => $item->idstatusbed,
-                                'bed' => 1,
-                                'kosong' => $kosong,
-                                'isi' => $isi,
-                            );
-                        }
-                     }
+                    //         $data10[] =array(
+                    //             'idruangan' => $item->idruangan,
+                    //             'namaruangan' => $item->namaruangan,
+                    //             'idstatusbed' => $item->idstatusbed,
+                    //             'bed' => 1,
+                    //             'kosong' => $kosong,
+                    //             'isi' => $isi,
+                    //         );
+                    //     }
+                    //  }
 
                     $res['totalKamar'] =$totalKamar;
                     $res['totalBed'] =$totalBed;
@@ -3047,7 +3159,7 @@ AND sp.statusenabled <> false
         return $arrM;
     }
 
-    public static function getDataDeviasi($tahun)
+    public static function getDataDeviasi($tahun, $tahap)
     {
         $kdProfile = session("kdProfile");
         $y =date('Y');
@@ -3055,33 +3167,153 @@ AND sp.statusenabled <> false
             $y=$tahun;
         }
         // return $arrM ;
-        $data =  DB::select(DB::raw("select tahun, tahap, id, kodeanggaran, keterangan,
-        sum(coalesce(subtotal,0)) subtotal, sum(coalesce(jumlahrealisasi,0)) jumlahrealisasi,
-        sum(coalesce(subtotal,0)) - sum(coalesce(jumlahrealisasi,0)) deviasi
-        from(
-                select tahun, tahap, id, kodeanggaran, keterangan, keteranganbelanja,
-                keteranganbelanja, subtotal, sum(coalesce(totalbelanja,0)) jumlahrealisasi
-                from(
-                        select km.tahun, ta.tahap, km.id, km.kode as kodeanggaran, km.keterangan,
-                        kb.keteranganbelanja, kb.subtotal, sr.totalbelanja, sr.norealisasi
-                                from kegiatananggaran_m km
-                        inner join keteranganbelanja_t kb on kb.objectkegiatanfk = km.id
-                        inner join tahapanggaran_m ta on ta.id = kb.objecttahapfk and kb.objectkegiatanfk = km.id
-                        left join strukrealisasi_t sr on sr.objectkegiatanfk = km.id
-                        and sr.kdprofile = 30 and sr.statusenabled = true
-                        where km.kdprofile = 30 and km.statusenabled = true
-                        and kb.kdprofile = 30 and kb.statusenabled = true
-                        and ta.kdprofile = 30 and ta.statusenabled = true
-                        and km.tahun = '$y'
-                        group by km.tahun, ta.tahap, km.id, km.kode, km.keterangan,
-                        kb.keteranganbelanja, kb.subtotal, sr.totalbelanja, sr.norealisasi
-                        order by km.keterangan asc
-                ) as x
-                group by tahun, tahap, id, kodeanggaran, keterangan, keteranganbelanja, subtotal
-                order by keterangan asc
-        ) as y
-        group by tahun, tahap, id, kodeanggaran, keterangan
-        order by tahap, keterangan"));
+        // $data =  DB::select(DB::raw("select tahun, tahap, id, kodeanggaran, keterangan,
+        // sum(coalesce(subtotal,0)) subtotal, sum(coalesce(jumlahrealisasi,0)) jumlahrealisasi,
+        // sum(coalesce(subtotal,0)) - sum(coalesce(jumlahrealisasi,0)) deviasi
+        // from(
+        //         select tahun, tahap, id, kodeanggaran, keterangan, keteranganbelanja,
+        //         keteranganbelanja, subtotal, sum(coalesce(totalbelanja,0)) jumlahrealisasi
+        //         from(
+        //                 select km.tahun, ta.tahap, km.id, km.kode as kodeanggaran, km.keterangan,
+        //                 kb.keteranganbelanja, kb.subtotal, sr.totalbelanja, sr.norealisasi
+        //                         from kegiatananggaran_m km
+        //                 inner join keteranganbelanja_t kb on kb.objectkegiatanfk = km.id
+        //                 inner join tahapanggaran_m ta on ta.id = kb.objecttahapfk and kb.objectkegiatanfk = km.id
+        //                 left join strukrealisasi_t sr on sr.objectkegiatanfk = km.id
+        //                 and sr.kdprofile = 30 and sr.statusenabled = true
+        //                 where km.kdprofile = 30 and km.statusenabled = true
+        //                 and kb.kdprofile = 30 and kb.statusenabled = true
+        //                 and ta.kdprofile = 30 and ta.statusenabled = true
+        //                 and km.tahun = '$y'
+        //                 group by km.tahun, ta.tahap, km.id, km.kode, km.keterangan,
+        //                 kb.keteranganbelanja, kb.subtotal, sr.totalbelanja, sr.norealisasi
+        //                 order by km.keterangan asc
+        //         ) as x
+        //         group by tahun, tahap, id, kodeanggaran, keterangan, keteranganbelanja, subtotal
+        //         order by keterangan asc
+        // ) as y
+        // group by tahun, tahap, id, kodeanggaran, keterangan
+        // order by tahap, keterangan"));
+
+
+        if (isset($tahap) && $tahap != "" && $tahap != "undefined" && $tahap != 100) {
+            $thp = 'and kb.objecttahapfk = '.$tahap;
+            $data = DB::select(DB::raw("select dp.objectjenisbelanjafk, jb.jenisbelanja, dp.objectpptkfk, dp.islockrba, ta.tahap, kb.objecttahapfk, dp.norec, dp0.kode kodesubkegiatan, dp0.keterangan keterangansubkegiatan,
+                dp3.kode kodekegiatan, dp3.keterangan keterangankegiatan,
+                dp2.kode kodeprogram, dp2.keterangan keteranganprogram,
+                dp1.kode kodeurusan, dp1.keterangan keteranganurusan, 
+                dp.indikatormasuk, dp.indikatorkeluaran, dp.indikatorhasil, dp.targetmasuk, dp.targetkeluaran, dp.targethasil, 
+                            coalesce(sum(kb.subtotal),0) as targetmasuk,dp.id, dp.tahun, dp.kode, dp.keterangan, dp.div, kp.namakelompok, pg.namalengkap, cast(split_part(dp.kode, '.', 1) as int4) as subkodeawal
+                            , cast(split_part(dp.kode, '.', 2) as int4) as subkodekedua
+                            , case when split_part(dp.kode, '.', 3) = '' then '0' else split_part(dp.kode, '.', 3)::int4 end as subkodeketiga
+                            , case when split_part(dp.kode, '.', 4) = '' then '0' else split_part(dp.kode, '.', 4)::int4 end as subkodekeempat
+                            , case when split_part(dp.kode, '.', 5) = '' then '0' else split_part(dp.kode, '.', 5)::int4 end as subkodekelima
+                            , case when split_part(dp.kode, '.', 6) = '' then '0' else split_part(dp.kode, '.', 6)::int4 end as subkodekeenam
+                            , case when split_part(dp.kode, '.', 7) = '' then '0' else split_part(dp.kode, '.', 7)::int4 end as subkodeakhir 
+                            from kegiatananggaran_m as dp 
+                            left join keteranganbelanja_t as kb on kb.objectkegiatanfk = dp.id
+                            and kb.kdprofile = 30 and kb.statusenabled = true 
+                            left join kegiatananggaran_m as dp3 on dp.kode ilike dp3.kode || '%' and dp3.div = 2
+                            and dp3.kdprofile = 30 and dp3.statusenabled = true 
+                            left join kegiatananggaran_m as dp2 on dp3.kode ilike dp2.kode || '%' and dp2.div = 1
+                            and dp2.kdprofile = 30 and dp2.statusenabled = true 
+                            left join kegiatananggaran_m as dp1 on dp2.kode ilike dp1.kode || '%' and dp1.div = 0
+                            and dp1.kdprofile = 30 and dp1.statusenabled = true 
+                            left join kegiatananggaran_m as dp0 on dp.kode ilike dp0.kode || '%' and dp0.div = 3
+                            and dp0.kdprofile = 30 and dp0.statusenabled = true 
+                            left join kelompokanggaran_m as kp on kp.id = dp.div 
+                            left join pegawai_m as pg on pg.id = dp.objectpptkfk 
+                            left join tahapanggaran_m ta on ta.id = kb.objecttahapfk
+                            left join jenisbelanja_m jb on jb.id = dp.objectjenisbelanjafk
+                            where dp.kdprofile = 30 and dp.statusenabled = true 
+                            and kb.kdprofile = 30 and kb.statusenabled = true
+                            and dp.tahun = '$y'
+                            $thp
+                            group by dp.objectjenisbelanjafk, jb.jenisbelanja, dp.objectpptkfk, ta.tahap, kb.objecttahapfk, dp.norec, dp0.kode, dp0.keterangan, dp3.kode, dp3.keterangan, dp2.kode, dp2.keterangan, dp1.kode, dp1.keterangan, 
+                            dp.indikatormasuk, dp.indikatorkeluaran, dp.indikatorhasil, dp.targetmasuk, dp.targetkeluaran, dp.targethasil, dp.id, dp.kode, dp.div, dp.tahun, dp.keterangan, kp.namakelompok, pg.namalengkap, cast(split_part(dp.kode, '.', 1) as int4)
+                            , cast(split_part(dp.kode, '.', 2) as int4)
+                            , case when split_part(dp.kode, '.', 3) = '' then '0' else split_part(dp.kode, '.', 3)::int4 end
+                            , case when split_part(dp.kode, '.', 4) = '' then '0' else split_part(dp.kode, '.', 4)::int4 end
+                            , case when split_part(dp.kode, '.', 5) = '' then '0' else split_part(dp.kode, '.', 5)::int4 end
+                            , case when split_part(dp.kode, '.', 6) = '' then '0' else split_part(dp.kode, '.', 6)::int4 end
+                            , case when split_part(dp.kode, '.', 7) = '' then '0' else split_part(dp.kode, '.', 7)::int4 end order by subkodeawal asc, subkodekedua asc, subkodeketiga asc, subkodekeempat asc, subkodekelima asc, subkodekeenam asc, subkodeakhir asc"));
+        } else if (isset($tahap) && $tahap != "" && $tahap != "undefined" && $tahap == 100) {
+            $data = DB::select(DB::raw("select dp.objectjenisbelanjafk, jb.jenisbelanja, dp.objectpptkfk, dp.islockrba, ta.tahap, kb.objecttahapfk, dp.norec, dp0.kode kodesubkegiatan, dp0.keterangan keterangansubkegiatan,
+                dp3.kode kodekegiatan, dp3.keterangan keterangankegiatan,
+                dp2.kode kodeprogram, dp2.keterangan keteranganprogram,
+                dp1.kode kodeurusan, dp1.keterangan keteranganurusan, 
+                dp.indikatormasuk, dp.indikatorkeluaran, dp.indikatorhasil, dp.targetmasuk, dp.targetkeluaran, dp.targethasil, 
+                coalesce(sum(kb.subtotal),0) as targetmasuk,dp.id, dp.tahun, dp.kode, dp.keterangan, dp.div, kp.namakelompok, pg.namalengkap, cast(split_part(dp.kode, '.', 1) as int4) as subkodeawal
+                            , cast(split_part(dp.kode, '.', 2) as int4) as subkodekedua
+                            , case when split_part(dp.kode, '.', 3) = '' then '0' else split_part(dp.kode, '.', 3)::int4 end as subkodeketiga
+                            , case when split_part(dp.kode, '.', 4) = '' then '0' else split_part(dp.kode, '.', 4)::int4 end as subkodekeempat
+                            , case when split_part(dp.kode, '.', 5) = '' then '0' else split_part(dp.kode, '.', 5)::int4 end as subkodekelima
+                            , case when split_part(dp.kode, '.', 6) = '' then '0' else split_part(dp.kode, '.', 6)::int4 end as subkodekeenam
+                            , case when split_part(dp.kode, '.', 7) = '' then '0' else split_part(dp.kode, '.', 7)::int4 end as subkodeakhir 
+                            from kegiatananggaran_m as dp 
+                            left join keteranganbelanja_t as kb on kb.objectkegiatanfk = dp.id
+                            and kb.kdprofile = 30 and kb.statusenabled = true 
+                            left join kegiatananggaran_m as dp3 on dp.kode ilike dp3.kode || '%' and dp3.div = 2
+                            and dp3.kdprofile = 30 and dp3.statusenabled = true 
+                            left join kegiatananggaran_m as dp2 on dp3.kode ilike dp2.kode || '%' and dp2.div = 1
+                            and dp2.kdprofile = 30 and dp2.statusenabled = true 
+                            left join kegiatananggaran_m as dp1 on dp2.kode ilike dp1.kode || '%' and dp1.div = 0
+                            and dp1.kdprofile = 30 and dp1.statusenabled = true 
+                            left join kegiatananggaran_m as dp0 on dp.kode ilike dp0.kode || '%' and dp0.div = 3
+                            and dp0.kdprofile = 30 and dp0.statusenabled = true 
+                            left join kelompokanggaran_m as kp on kp.id = dp.div 
+                            left join pegawai_m as pg on pg.id = dp.objectpptkfk 
+                            left join tahapanggaran_m ta on ta.id = kb.objecttahapfk
+                            left join jenisbelanja_m jb on jb.id = dp.objectjenisbelanjafk
+                            where dp.kdprofile = 30 and dp.statusenabled = true 
+                            and dp.tahun = '$y'
+                            group by dp.objectjenisbelanjafk, jb.jenisbelanja, dp.objectpptkfk, ta.tahap, kb.objecttahapfk, dp.norec, dp0.kode, dp0.keterangan, dp3.kode, dp3.keterangan, dp2.kode, dp2.keterangan, dp1.kode, dp1.keterangan, 
+                            dp.indikatormasuk, dp.indikatorkeluaran, dp.indikatorhasil, dp.targetmasuk, dp.targetkeluaran, dp.targethasil, dp.id, dp.kode, dp.div, dp.tahun, dp.keterangan, kp.namakelompok, pg.namalengkap, cast(split_part(dp.kode, '.', 1) as int4)
+                            , cast(split_part(dp.kode, '.', 2) as int4)
+                            , case when split_part(dp.kode, '.', 3) = '' then '0' else split_part(dp.kode, '.', 3)::int4 end
+                            , case when split_part(dp.kode, '.', 4) = '' then '0' else split_part(dp.kode, '.', 4)::int4 end
+                            , case when split_part(dp.kode, '.', 5) = '' then '0' else split_part(dp.kode, '.', 5)::int4 end
+                            , case when split_part(dp.kode, '.', 6) = '' then '0' else split_part(dp.kode, '.', 6)::int4 end
+                            , case when split_part(dp.kode, '.', 7) = '' then '0' else split_part(dp.kode, '.', 7)::int4 end order by subkodeawal asc, subkodekedua asc, subkodeketiga asc, subkodekeempat asc, subkodekelima asc, subkodekeenam asc, subkodeakhir asc"));
+        } else{
+            $data = DB::select(DB::raw("select dp.objectjenisbelanjafk, jb.jenisbelanja, dp.objectpptkfk, dp.islockrba, ta.tahap, kb.objecttahapfk, dp.norec, dp0.kode kodesubkegiatan, dp0.keterangan keterangansubkegiatan,
+                dp3.kode kodekegiatan, dp3.keterangan keterangankegiatan,
+                dp2.kode kodeprogram, dp2.keterangan keteranganprogram,
+                dp1.kode kodeurusan, dp1.keterangan keteranganurusan, 
+                dp.indikatormasuk, dp.indikatorkeluaran, dp.indikatorhasil, dp.targetmasuk, dp.targetkeluaran, dp.targethasil, 
+                            coalesce(sum(kb.subtotal),0) as targetmasuk,dp.id, dp.tahun, dp.kode, dp.keterangan, dp.div, kp.namakelompok, pg.namalengkap, cast(split_part(dp.kode, '.', 1) as int4) as subkodeawal
+                            , cast(split_part(dp.kode, '.', 2) as int4) as subkodekedua
+                            , case when split_part(dp.kode, '.', 3) = '' then '0' else split_part(dp.kode, '.', 3)::int4 end as subkodeketiga
+                            , case when split_part(dp.kode, '.', 4) = '' then '0' else split_part(dp.kode, '.', 4)::int4 end as subkodekeempat
+                            , case when split_part(dp.kode, '.', 5) = '' then '0' else split_part(dp.kode, '.', 5)::int4 end as subkodekelima
+                            , case when split_part(dp.kode, '.', 6) = '' then '0' else split_part(dp.kode, '.', 6)::int4 end as subkodekeenam
+                            , case when split_part(dp.kode, '.', 7) = '' then '0' else split_part(dp.kode, '.', 7)::int4 end as subkodeakhir 
+                            from kegiatananggaran_m as dp 
+                            left join keteranganbelanja_t as kb on kb.objectkegiatanfk = dp.id 
+                            and kb.kdprofile = 30 and kb.statusenabled = true 
+                            left join kegiatananggaran_m as dp3 on dp.kode ilike dp3.kode || '%' and dp3.div = 2
+                            and dp3.kdprofile = 30 and dp3.statusenabled = true 
+                            left join kegiatananggaran_m as dp2 on dp3.kode ilike dp2.kode || '%' and dp2.div = 1
+                            and dp2.kdprofile = 30 and dp2.statusenabled = true 
+                            left join kegiatananggaran_m as dp1 on dp2.kode ilike dp1.kode || '%' and dp1.div = 0
+                            and dp1.kdprofile = 30 and dp1.statusenabled = true 
+                            left join kegiatananggaran_m as dp0 on dp.kode ilike dp0.kode || '%' and dp0.div = 3
+                            and dp0.kdprofile = 30 and dp0.statusenabled = true 
+                            left join kelompokanggaran_m as kp on kp.id = dp.div 
+                            left join pegawai_m as pg on pg.id = dp.objectpptkfk 
+                            left join tahapanggaran_m ta on ta.id = kb.objecttahapfk
+                            left join jenisbelanja_m jb on jb.id = dp.objectjenisbelanjafk
+                            where dp.kdprofile = 30 and dp.statusenabled = true 
+                            and dp.tahun = '$y'
+                            group by dp.objectjenisbelanjafk, jb.jenisbelanja, dp.objectpptkfk, ta.tahap, kb.objecttahapfk, dp.norec, dp0.kode, dp0.keterangan, dp3.kode, dp3.keterangan, dp2.kode, dp2.keterangan, dp1.kode, dp1.keterangan, 
+                            dp.indikatormasuk, dp.indikatorkeluaran, dp.indikatorhasil, dp.targetmasuk, dp.targetkeluaran, dp.targethasil, dp.id, dp.kode, dp.div, dp.tahun, dp.keterangan, kp.namakelompok, pg.namalengkap, cast(split_part(dp.kode, '.', 1) as int4)
+                            , cast(split_part(dp.kode, '.', 2) as int4)
+                            , case when split_part(dp.kode, '.', 3) = '' then '0' else split_part(dp.kode, '.', 3)::int4 end
+                            , case when split_part(dp.kode, '.', 4) = '' then '0' else split_part(dp.kode, '.', 4)::int4 end
+                            , case when split_part(dp.kode, '.', 5) = '' then '0' else split_part(dp.kode, '.', 5)::int4 end
+                            , case when split_part(dp.kode, '.', 6) = '' then '0' else split_part(dp.kode, '.', 6)::int4 end
+                            , case when split_part(dp.kode, '.', 7) = '' then '0' else split_part(dp.kode, '.', 7)::int4 end order by subkodeawal asc, subkodekedua asc, subkodeketiga asc, subkodekeempat asc, subkodekelima asc, subkodekeenam asc, subkodeakhir asc"));
+        }
 
 
         $result = array(
@@ -3129,16 +3361,16 @@ AND sp.statusenabled <> false
     public static function getKetersediaanTempatTidurPerkelas($tglAwal, $tglAkhir,$kdProfile){
         $data = DB::select(DB::raw("
                 SELECT 
-                    q1.namakelas,
-                    q1.terpakai,
+                    q2.namakelas,
+                    COALESCE(q1.terpakai,0) as terpakai,
                     q2.jml,
-                    (q2.jml - q1.terpakai) AS kosong
+                    (q2.jml -  COALESCE(q1.terpakai,0)) AS kosong
                 FROM (
                     SELECT 
                         x.namakelas,
                         COUNT(x.namakelas) AS terpakai
                     FROM (
-                        SELECT
+                        SELECT DISTINCT
                             pd.tglregistrasi,
                             P.nocm,
                             pd.noregistrasi,
@@ -3170,7 +3402,7 @@ AND sp.statusenabled <> false
                     ) AS x
                     GROUP BY x.namakelas
                 ) AS q1
-                INNER JOIN (
+                RIGHT JOIN (
                     SELECT 
                         x.namakelas,
                         SUM(x.isi) + SUM(x.kosong) AS jml
