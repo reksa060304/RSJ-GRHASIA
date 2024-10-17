@@ -5542,7 +5542,7 @@ class ReportController extends ApiController{
                         ma.namamataanggaran,
                         0 AS jumlahanggaran,
                         0 AS panjar,
-                        COALESCE ( SUM ( sr.totalbelanja ), 0 ) AS spj,
+                        COALESCE ( SUM ( rd.subtotal ), 0 ) AS spj,
                         0 AS panjarspj 
                     FROM
                         strukrealisasi_t sr
