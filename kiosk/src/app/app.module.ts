@@ -91,7 +91,8 @@ const appRoutes: Routes = [
   { path: 'touchscreen/self-regis/verif-pasien/poli', loadChildren: () => import('./main/module/pilih-poli/pilih-poli.module').then(m => m.PilihPoliModule),canActivate: [RedirectGuard] },
   { path: 'touchscreen/checkin', loadChildren: () => import('./main/module/checkin/checkin.module').then(m => m.CheckinModule),canActivate: [RedirectGuard] },
   { path: 'touchscreen/self-regis/verif-pasien-bpjs-old', loadChildren: () => import('./main/module/verif-pasien-bpjs/verif-pasien-bpjs.module').then(m => m.VerifPasienBpjsModule),canActivate: [RedirectGuard] },
-  { path: 'touchscreen/self-regis/verif-pasien-bpjs', loadChildren: () => import('./main/module/verif-pasien-bpjs-old/verif-pasien-bpjs-old.module').then(m => m.VerifPasienBpjsOldModule),canActivate: [RedirectGuard] },
+  { path: 'touchscreen/self-regis/verif-pasien-bpjs-old-2', loadChildren: () => import('./main/module/verif-pasien-bpjs-old/verif-pasien-bpjs-old.module').then(m => m.VerifPasienBpjsOldModule),canActivate: [RedirectGuard] },
+  { path: 'touchscreen/self-regis/verif-pasien-bpjs', loadChildren: () => import('./main/module/verif-pasien-bpjs-new/verif-pasien-bpjs-new.module').then(m => m.VerifPasienBpjsNewModule),canActivate: [RedirectGuard] },
   
   { path: 'informasi-profil', loadChildren: () => import('./main/module/informasi-profil/informasi-profil.module').then(m => m.InformasiProfilModule),canActivate: [RedirectGuard] },
   { path: 'gallery', loadChildren: () => import('./main/module/gallery/gallery.module').then(m => m.GalleryModule),canActivate: [RedirectGuard] },

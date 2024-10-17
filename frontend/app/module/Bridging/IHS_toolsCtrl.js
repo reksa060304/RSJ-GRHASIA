@@ -2521,7 +2521,7 @@ define(['initialize'], function (initialize) {
                         "width": "100px"
                     },
                     {
-                        "field": "conclusionCode[0].coding[0].display",
+                        "field": "conclusion",
                         "title": "Conclusion ",
                         "width": "150px"
                     },

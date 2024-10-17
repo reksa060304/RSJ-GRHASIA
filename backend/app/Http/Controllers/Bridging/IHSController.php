@@ -1018,7 +1018,6 @@ class IHSController extends ApiController
             $q =  collect(DB::select(" 
         SELECT 
         ps.ihs_number
-        ,ps.noidentitas
         ,ps.namapasien
         ,pd.noregistrasi
         ,pd.ihs_id as ihs_encounter
@@ -1031,7 +1030,7 @@ class IHSController extends ApiController
          FROM pasiendaftar_t as pd
         join pasien_m as ps on ps.id=pd.nocmfk
         join antrianpasiendiperiksa_t as apd on apd.noregistrasifk=pd.norec
-        JOIN diagnosapasienlaporan_t as ddp on ddp.norec_apd=apd.norec
+        JOIN detaildiagnosapasien_t as ddp on ddp.noregistrasifk=apd.norec
         join diagnosa_m as dg on dg.id=ddp.objectdiagnosafk 
         where pd.noregistrasi='$request[noregistrasi]'
         "));
@@ -1168,7 +1167,7 @@ class IHSController extends ApiController
                     PasienDaftar::where('noregistrasi', $item->noregistrasi)->update([
                         'ihs_condition' => $response->id
                     ]);
-                    DiagnosaLaporan10::where('norec', $item->norec)->update([
+                    DetailDiagnosaPasien::where('norec', $item->norec)->update([
                         'ihs_id' => $response->id
                     ]);
 
@@ -3660,7 +3659,7 @@ class IHSController extends ApiController
                 INNER JOIN pasiendaftar_t AS pd ON so.noregistrasifk = pd.norec 
                 INNER JOIN produk_m AS pr ON pr.ID = op.objectprodukfk
                 INNER JOIN pasien_m AS ps ON ps.ID = pd.nocmfk
-                INNER JOIN pegawai_m AS pg ON pg.ID = so.objectpegawaiorderfk
+                INNER JOIN pegawai_m AS pg ON pg.ID = pd.objectpegawaifk
                 INNER JOIN ruangan_m AS ru ON ru.ID = so.objectruanganfk
                 LEFT JOIN pegawai_m AS pg2 ON pg2.ID = pd.objectpegawaifk
                 LEFT JOIN ris_order as ro ON  ro.order_no = so.noorder and ro.order_code = cast( op.objectprodukfk as text)
@@ -3870,7 +3869,7 @@ class IHSController extends ApiController
                 INNER JOIN pasiendaftar_t AS pd ON so.noregistrasifk = pd.norec 
                 INNER JOIN produk_m AS pr ON pr.ID = op.objectprodukfk
                 INNER JOIN pasien_m AS ps ON ps.ID = pd.nocmfk
-                INNER JOIN pegawai_m AS pg ON pg.ID = so.objectpegawaiorderfk
+                INNER JOIN pegawai_m AS pg ON pg.ID = pd.objectpegawaifk
                 INNER JOIN ruangan_m AS ru ON ru.ID = so.objectruanganfk
                 LEFT JOIN pegawai_m AS pg2 ON pg2.ID = pd.objectpegawaifk
             WHERE
@@ -4369,7 +4368,7 @@ class IHSController extends ApiController
                     $displayFlag = 'Abnormal';
                 }
                 $satuan = 'mg/dL';
-                if ($item->satuan != '' && $item->satuan != null) {
+                if ($item->satuan != '' && $item->satuan != null && $item->satuan != '-') {
                     $satuan = $item->satuan;
                 }
                 $nilaiNormal = '70 - 150';

@@ -660,6 +660,9 @@ Route::group(['middleware' => 'cors', 'prefix' => 'service'], function () {
         Route::post('bridging/ihs/DiagnosticReport', 'Bridging\IHSController@DiagnosticReport');
         Route::post('bridging/ihs/ObservationLabBridging', 'Bridging\IHSController@ObservationLabBridging');
         Route::post('bridging/ihs/DiagnosticReportBridging', 'Bridging\IHSController@DiagnosticReportBridging');
+        Route::post('bridging/ihs/ClinicalImpression', 'Bridging\IHSController@ClinicalImpression');
+        Route::post('bridging/ihs/MedicationStatement', 'Bridging\IHSController@MedicationStatement');
+        Route::post('bridging/ihs/QuestionnaireResponse', 'Bridging\IHSController@QuestionnaireResponse');
         // Route::post('bridging/ihs/{resource}', 'Bridging\IHSController@ResourceType');
         Route::post('bridging/ihs/Encounter-tes', 'Bridging\IHSController@Encountertes');
         Route::post('bridging/ihs/ServiceRequestFollowUpPlan', 'Bridging\IHSController@ServiceRequestFollowUpPlan');

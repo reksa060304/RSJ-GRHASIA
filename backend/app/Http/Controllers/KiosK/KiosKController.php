@@ -116,7 +116,7 @@ class KiosKController extends ApiController
         $data = \DB::table('diagnosa_m')
             ->where('statusenabled',true)
             ->where('kddiagnosa', '=',$kode)
-             ->where('kdprofile', '=',$kdProfile)
+            //  ->where('kdprofile', '=',$kdProfile)
             ->first();
 
         $result = array(

@@ -2671,6 +2671,7 @@ class PelayananResepController extends ApiController
             $objetoRequest = new \Illuminate\Http\Request();
             $objetoRequest ['noresep']= $newSR->noresep;
             $ihs = app('App\Http\Controllers\Bridging\IHSController')->MedicationDispense($objetoRequest,true);
+            $ihs2 = app('App\Http\Controllers\Bridging\IHSController')->MedicationStatement($objetoRequest,true);
 
             $result = array(
                 "status" => 201,
@@ -2680,6 +2681,7 @@ class PelayananResepController extends ApiController
                 "dataKS" => $dataKS,
                 "R_PPL" => $r_PPL,
                 "MedicationDispense"=>  isset($ihs) ? $ihs : null,
+                "MedicationStatement"=>  isset($ihs2) ? $ihs2 : null,
         //                "double" => count($cekSR),
                 "as" => 'as@epic',
             );
