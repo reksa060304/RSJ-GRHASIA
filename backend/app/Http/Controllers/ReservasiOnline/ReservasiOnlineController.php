@@ -194,6 +194,7 @@ class ReservasiOnlineController extends ApiController
 
 	public function saveReservasi(Request $request){
         $kdProfile = $this->getDataKdProfile($request);
+        $userData = $request->all();
         DB::beginTransaction();
         try {
             $tgl = $request['tglReservasiFix'];
@@ -283,7 +284,8 @@ class ReservasiOnlineController extends ApiController
             }
             
             // dd($cek);
-          
+            
+            $ruang = Ruangan::where('id', $request['poliKlinik']['id'])->first();
 
             $dataReservasi = \DB::table('antrianpasienregistrasi_t as apr')
                 ->select('apr.norec','apr.tanggalreservasi','tanggal','jamreservasi')
@@ -413,6 +415,50 @@ class ReservasiOnlineController extends ApiController
                 ->first();
                 $newptp->dokter =!empty($cek)?$cek->namalengkap:'-';
             }
+
+            $statusDaftarLangsung = $this->settingDataFixed('isDaftarLangsungReservasi', $kdProfile);
+            if (!empty($statusDaftarLangsung) && $statusDaftarLangsung == 'true') {
+                $pasiendaftar = array(
+                    'tglregistrasi' => $tglDoang .' '.$antrian['jamkosong'],
+                    'tglregistrasidate' => date('Y-m-d',strtotime($tglDoang)),
+                    'nocmfk' =>  $pasien->id,
+                    'objectruanganfk' =>  $ruang->id,
+                    'objectdepartemenfk' =>  $ruang->objectdepartemenfk,
+                    'objectkelasfk' =>  6,//nonkelas
+                    'objectkelompokpasienlastfk' => $request['tipePembayaran']['id'],//bpjs
+                    'objectrekananfk' =>  $request['tipePembayaran']['id'] == 2 ? 2552 : null,
+                    'tipelayanan' => 1,//reguler
+                    'objectpegawaifk' => isset($request['dokter']['id']) ? $request['dokter']['id'] : null,
+                    'noregistrasi' =>  '',
+                    'norec_pd' =>  '',
+                    'israwatinap' =>  'false',
+                    'statusschedule' => $newptp->noreservasi,
+                    'objectrekananfk' => $request['tipePembayaran']['id'] == 2 ? 2552 : null,
+                    'isjkn' => false
+                );
+                $antrianpasiendiperiksa = array(
+                    'norec_apd' => '',
+                    'tglregistrasi' => $newptp->tanggalreservasi,
+                    'objectruanganfk' =>  $ruang->id,
+                    'objectkelasfk' => 6,
+                    'objectpegawaifk' => isset($request['dokter']['id']) ? $request['dokter']['id'] : null,
+                    'objectkamarfk' =>null,
+                    'nobed' =>null,
+                    'objectdepartemenfk' => $ruang->objectdepartemenfk,
+                    'objectasalrujukanfk' => $request['jeniskunjungan'] == 1? 1:2,
+                    'israwatgabung' => 0,
+                    'objectkamarfk' => null,
+                    'noantrian' => $antrian['antrian'],
+                    'nojkn' =>  null,//$newptp->jenis . '-' . $nomorAntrian,
+                );
+
+                $objetoRequest = new \Illuminate\Http\Request();
+                $objetoRequest ['pasiendaftar'] = $pasiendaftar;
+                $objetoRequest ['antrianpasiendiperiksa'] = $antrianpasiendiperiksa;
+                $objetoRequest ['userData'] = $userData['userData'];
+                $regis = app('App\Http\Controllers\Registrasi\RegistrasiController')->saveRegistrasiPasien($objetoRequest);
+                $regis = json_decode($regis->content(), true);
+            }
             
             $transStatus = true;
          } catch (\Exception $e) {
@@ -427,6 +473,7 @@ class ReservasiOnlineController extends ApiController
                 "message" => $transMessage,
                 "data"=>$newptp,
                 "antrol" => $this->saveAntrolV2($newptp),
+                'pasiendaftar' => $regis,
                 "as" => 'ramdan@epic',
             );
         } else {
