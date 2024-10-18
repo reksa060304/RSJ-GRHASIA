@@ -458,6 +458,9 @@ class RegistrasiController extends ApiController
                 if (isset($r_NewPD['statusschedule'])) {
                     $dataPD->statusschedule = $r_NewPD['statusschedule'];
                 }
+                if (isset($r_NewPD['ischeckin'])) {
+                    $dataPD->ischeckin = true;
+                }
                 if (isset($r_NewPD['isjknloket'])) {
                     $dataPD->ismobilejkn = $r_NewPD['isjknloket'];
                     $dataPD->ischeckin = true;

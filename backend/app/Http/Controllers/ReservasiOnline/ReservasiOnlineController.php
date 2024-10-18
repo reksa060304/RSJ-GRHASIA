@@ -371,7 +371,7 @@ class ReservasiOnlineController extends ApiController
 //            $newptp->objectasalrujukanfk = 0;
 //            $newptp->objectstrukreturfk= 0;
 //            $newptp->objecttitlefk= 0;
-//            $newptp->isconfirm= 0;
+            $newptp->isconfirm = true;
 //            $newptp->jenis = $request['datas']['norecpap'];
 //            $newptp->statuspanggil = 0;
             if(isset($pasien) && !empty($pasien)){
@@ -473,7 +473,7 @@ class ReservasiOnlineController extends ApiController
                 "message" => $transMessage,
                 "data"=>$newptp,
                 "antrol" => $this->saveAntrolV2($newptp),
-                'pasiendaftar' => $regis,
+                'pasiendaftar' => isset($regis) ? $regis : null,
                 "as" => 'ramdan@epic',
             );
         } else {
@@ -4298,6 +4298,8 @@ class ReservasiOnlineController extends ApiController
             ->leftJoin('ruangan_m as ru','ru.id','=','apr.objectruanganfk')
             ->leftJoin('pegawai_m as pg','pg.id','=','apr.objectpegawaifk')
             ->leftJoin('kelompokpasien_m as kps','kps.id','=','apr.objectkelompokpasienfk')
+            ->leftJoin('pasiendaftar_t as pd', 'pd.statusschedule', '=', 'apr.noreservasi')
+            ->leftJoin('antrianpasiendiperiksa_t as apd', 'apd.noregistrasifk', '=', 'pd.norec')
             ->select('apr.norec','pm.nocm','apr.noreservasi','apr.tanggalreservasi','apr.objectruanganfk',
                 'apr.objectpegawaifk','ru.namaruangan','apr.isconfirm','pg.namalengkap as dokter','pm.id as nocmfk',
                'pm.namapasien','apr.namapasien','alm.alamatlengkap','pk.pekerjaan','pm.noasuransilain','pm.noidentitas',
@@ -4307,14 +4309,15 @@ class ReservasiOnlineController extends ApiController
                 (case when apr.isconfirm=true then \'Confirm\' else \'Reservasi\' end) as status,case when pm.tempatlahir is null then apr.tempatlahir else pm.tempatlahir end as tempatlahir,
                 case when jk.jeniskelamin is null then jks.jeniskelamin else jk.jeniskelamin end as jeniskelamin,
                 case when apr.tgllahir is null then pm.tgllahir else apr.tgllahir end as tgllahir,
-                apr.tanggal,apr.jamreservasi,
+                apr.tanggal,apr.jamreservasi,pd.norec as norec_pd,apd.norec as norec_apd,
                 case when apr.tipepasien = \'LAMA\' then pm.nohp else  apr.notelepon end as notelepon' )
             )
             // ->whereNull('apr.isconfirm')
             ->where('apr.noreservasi','!=','-')
             ->whereNotNull('apr.noreservasi')
             ->where('apr.kdprofile',  $kdProfile )
-            ->whereRaw("(apr.isconfirm = false or apr.isconfirm is null) " )
+            // ->whereRaw("(apr.isconfirm = false or apr.isconfirm is null) " )
+            ->whereRaw("(pd.ischeckin = false or pd.ischeckin is null) " )
             ->where('apr.statusenabled',true);
 
 

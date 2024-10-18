@@ -201,13 +201,14 @@ export class CheckinComponent implements OnInit {
       'tipelayanan': 1,//reguler
       'objectpegawaifk': this.item.objectpegawaifk,
       'noregistrasi': '',
-      'norec_pd': '',
+      'norec_pd': this.item.norec_pd != null ? this.item.norec_pd : '',
       'israwatinap': 'false',
+      'ischeckin': 'true',
       'statusschedule': this.item.noreservasi// this.formGroup.get('noReservasi').value != '' ? this.formGroup.get('noReservasi').value : '',
 
     }
     var antrianpasiendiperiksa = {
-      'norec_apd': '',
+      'norec_apd': this.item.norec_apd != null ? this.item.norec_apd : '',
       'tglregistrasi': moment(new Date()).format('YYYY-MM-DD HH:mm:ss'),
       'objectruanganfk': this.item.objectruanganfk,
       'objectkelasfk': 6,//nonkelas
