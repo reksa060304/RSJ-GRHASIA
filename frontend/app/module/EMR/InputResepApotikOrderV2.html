@@ -350,8 +350,7 @@
                             <label c-label item="item" c-label-text="Dosis"></label>
                         </div>
                         <div class="grid_12">
-                            <input c-text-box type="input" filter="" class="k-textbox" ng-model="item.dosis" />
-
+                            <input c-text-box type="input" ng-disabled="item.jenisKemasan.id == 2 ? true : false" filter="" class="k-textbox" ng-model="item.dosis" />
                         </div>
                     </div>
                     <div class="grid_1">
