@@ -186,31 +186,30 @@ class IHSController extends ApiController
     function getHeader()
     {
         try {
-            $date_now =session('satusehat_date');
+            $date_now = session('satusehat_date');
             $seconds = session("satusehat_exp");
             $date = date("Y-m-d H:i:s", (strtotime(date($date_now)) + $seconds));
-        
-            if (!empty(session("satusehat_token")) && $date > date('Y-m-d H:i:s')  ) {
+
+            if (!empty(session("satusehat_token")) && $date > date('Y-m-d H:i:s')) {
 
                 $token = session("satusehat_token");
-            }else{
+            } else {
                 $datas = $this->generateToken(true);
                 // if($datas->resourceType == 'OperationOutcome'){
-                
+
                 // }
-       
+
                 $token = $datas->access_token;
                 $expires_in = $datas->expires_in;
-             
+
                 session(["satusehat_token" => $token]);
                 session(["satusehat_date" => date('Y-m-d H:i:s')]);
                 session(["satusehat_exp" => $expires_in]);
             }
-    
-        }catch(Exception $e){
-          
+        } catch (Exception $e) {
+
             $token2 = $this->generateToken(true);
-            \Log::info("TOKEN SATUSEHAT: ".json_encode($token2));
+            \Log::info("TOKEN SATUSEHAT: " . json_encode($token2));
             $token = '';
         }
 
@@ -218,7 +217,7 @@ class IHSController extends ApiController
             'Content-Type: application/json',
             'Authorization: Bearer ' . $token,
         );
-      
+
         return $header;
     }
     public function ihsTools(Request $request, $lokal = null)
@@ -235,7 +234,6 @@ class IHSController extends ApiController
             //     $url = $this->endPoint() . $request['url'].'/'.$request['data']['id'];
             // }
             $response = $this->curlAPI($headers, $dataJsonSend, $url, $methods);
-           
         } catch (Exception $e) {
             $response = array(
                 "issue" => $e->getMessage() . ' ' . $e->getLine(),
@@ -243,11 +241,11 @@ class IHSController extends ApiController
             );
             $response = json_decode(json_encode($response)); //Turn it into an object
         }
-      
+
         if ($lokal) {
             return $response;
         }
-       
+
         return response()->json($response);
     }
     public function Organization(Request $request)
@@ -377,7 +375,7 @@ class IHSController extends ApiController
 
         $objetoRequest = new \Illuminate\Http\Request();
         $objetoRequest['url'] = $q->ihs_id == null ? $data['resourceType'] : $data['resourceType'] . '/' . $q->ihs_id;
-        $objetoRequest['method'] = $q->ihs_id == null ?'POST':'PUT';
+        $objetoRequest['method'] = $q->ihs_id == null ? 'POST' : 'PUT';
         $objetoRequest['data'] = $data;
 
         $response =  $this->ihsTools($objetoRequest, true);
@@ -500,14 +498,14 @@ class IHSController extends ApiController
                 'reference' => 'Organization/' . $q->ihs_dep,
             ),
         );
-        if($q->ihs_id == null){
+        if ($q->ihs_id == null) {
             unset($data['id']);
         }
-  
+
 
         $objetoRequest = new \Illuminate\Http\Request();
         $objetoRequest['url'] = $q->ihs_id == null ? $data['resourceType'] : $data['resourceType'] . '/' . $q->ihs_id;
-        $objetoRequest['method'] = $q->ihs_id == null ? 'POST': 'PUT';
+        $objetoRequest['method'] = $q->ihs_id == null ? 'POST' : 'PUT';
         $objetoRequest['data'] = $data;
 
         $response =  $this->ihsTools($objetoRequest, true);
@@ -523,7 +521,7 @@ class IHSController extends ApiController
             $mod->kdprofile = $this->kdProfile;
         } else {
             $mod = IHS_Transaction::where('id', $q->ihs_id)->first();
-            if(empty($mod)){
+            if (empty($mod)) {
                 $mod = new IHS_Transaction();
                 $mod->norec = $mod->generateNewId();
                 $mod->statusenabled = $noterror;
@@ -583,20 +581,20 @@ class IHSController extends ApiController
             $diagnosis = [];
             if ($q->ihs_condition != null && $request['diagnosis']) {
 
-               $use = 
-                array(
-                    'coding' => [
+                $use =
+                    array(
+                        'coding' => [
                             array(
-                                "system"=> "http://terminology.hl7.org/CodeSystem/diagnosis-role",
-                                "code"=> "DD",
-                                "display"=> "Discharge diagnosis"
+                                "system" => "http://terminology.hl7.org/CodeSystem/diagnosis-role",
+                                "code" => "DD",
+                                "display" => "Discharge diagnosis"
                             )
-                    ] )
-               ;
+                        ]
+                    );
 
                 $diagnosis = $request['diagnosis'];
                 unset($diagnosis['use']);
-             
+
                 // $diagnosis[0]['use']=  $use;
                 // dd($diagnosis);
             }
@@ -779,11 +777,11 @@ class IHSController extends ApiController
                         );
                     }
                 } else {
-                    $statusPulang = $q->statuspulang ;
-                    if($q->statuspulang  == null){
+                    $statusPulang = $q->statuspulang;
+                    if ($q->statuspulang  == null) {
                         $statusPulang = 'Diketahui / diizinkan oleh dokter ';
                     }
-                  
+
                     $status =   'finished';
                     $tglpulang =    strtotime(date($q->tglpulang));
                     $tglpulang =  substr(date("Y-m-d\TH:i:s", $tglpulang), 0, 23) . date('P', $tglpulang);
@@ -918,20 +916,20 @@ class IHSController extends ApiController
                 ),
                 'statusHistory' =>
                 $statusHis,
-                
+
                 "hospitalization" => array(
-                     "dischargeDisposition"=>  array(
-                         "coding"=> [
+                    "dischargeDisposition" =>  array(
+                        "coding" => [
                             array(
-                                 "system"=> "http://terminology.hl7.org/CodeSystem/discharge-disposition",
-                                 "code"=> "home",
-                                 "display"=> "Home"
+                                "system" => "http://terminology.hl7.org/CodeSystem/discharge-disposition",
+                                "code" => "home",
+                                "display" => "Home"
                             )
-                         ],
-                         "text"=> $statusPulang
+                        ],
+                        "text" => $statusPulang
+                    )
                 )
-                )
-             
+
             );
 
             if ($IHS_NUMBER_DOKTER == null) {
@@ -947,7 +945,7 @@ class IHSController extends ApiController
                 unset($data['period']['end']);
                 unset($data['hospitalization']);
             }
-           
+
 
             $method =  $q->ihs_encounter == null ? 'POST' : 'PUT';
             $objetoRequest = new \Illuminate\Http\Request();
@@ -958,11 +956,11 @@ class IHSController extends ApiController
             $response =  $this->ihsTools($objetoRequest, true);
 
             $noterror = true;
-            if (isset($response->resourceType ) && $response->resourceType == 'OperationOutcome') {
+            if (isset($response->resourceType) && $response->resourceType == 'OperationOutcome') {
                 $noterror = false;
-                if(isset($response->issue) && isset($response->issue[0]->code)  && $response->issue[0]->code == 'not-found'){
+                if (isset($response->issue) && isset($response->issue[0]->code)  && $response->issue[0]->code == 'not-found') {
                     $objetoRequest = new \Illuminate\Http\Request();
-                    $objetoRequest['url'] =  $data['resourceType'] ;
+                    $objetoRequest['url'] =  $data['resourceType'];
                     $objetoRequest['method'] = $method;
                     $objetoRequest['data'] = $data;
                     $response =  $this->ihsTools($objetoRequest, true);
@@ -980,7 +978,7 @@ class IHSController extends ApiController
                 $mod->kdprofile = $this->kdProfile;
             } else {
                 $mod = IHS_Transaction::where('id', $q->ihs_encounter)->first();
-                if(empty($mod)){
+                if (empty($mod)) {
                     $mod = new IHS_Transaction();
                     $mod->norec = $mod->generateNewId();
                     $mod->statusenabled = $noterror;
@@ -1432,7 +1430,7 @@ class IHSController extends ApiController
                 'status' => 'active',
                 'manufacturer' =>
                 array(
-                    'reference' => 'Organization/'.$q->ihs_profile, //PT KIMIA FARMA, Tbk
+                    'reference' => 'Organization/' . $q->ihs_profile, //PT KIMIA FARMA, Tbk
                 ),
                 'form' =>
                 array(
@@ -1481,7 +1479,7 @@ class IHSController extends ApiController
             }
             // dd($data);
 
-            
+
             $method =   $q->ihs_id == null ? 'POST' : 'PUT';
             $objetoRequest = new \Illuminate\Http\Request();
             $objetoRequest['url'] = $q->ihs_id == null ? $data['resourceType'] : $data['resourceType'] . '/' . $q->ihs_id;
@@ -1491,11 +1489,11 @@ class IHSController extends ApiController
             $response =  $this->ihsTools($objetoRequest, true);
 
             $noterror = true;
-            if (isset($response->resourceType ) && $response->resourceType == 'OperationOutcome') {
+            if (isset($response->resourceType) && $response->resourceType == 'OperationOutcome') {
                 $noterror = false;
-                if(isset($response->issue) && isset($response->issue[0]->code)  && $response->issue[0]->code == 'not-found'){
+                if (isset($response->issue) && isset($response->issue[0]->code)  && $response->issue[0]->code == 'not-found') {
                     $objetoRequest = new \Illuminate\Http\Request();
-                    $objetoRequest['url'] =  $data['resourceType'] ;
+                    $objetoRequest['url'] =  $data['resourceType'];
                     $objetoRequest['method'] = $method;
                     $objetoRequest['data'] = $data;
                     $response =  $this->ihsTools($objetoRequest, true);
@@ -1855,7 +1853,7 @@ class IHSController extends ApiController
                         //     'system' => 'http://unitsofmeasure.org',
                         //     'code' => 'd',
                         // ),
-                        
+
                         'performer' =>
                         array(
                             "reference" => "Organization/" . $profile->ihs_id
@@ -3053,14 +3051,16 @@ class IHSController extends ApiController
                     apd.objectruanganfk,
                     ru.namaruangan,
                     apd.norec AS norec_apd,
-                    dtp.objectdiagnosatindakanfk,
+                    ddt.objectdiagnosatindakanfk,
                     dt.kddiagnosatindakan,
                     dt.namadiagnosatindakan,
-                    dtp.norec AS norec_detaildpasien,
-                    dtp.keterangan as keterangantindakan,
+                    dtp.norec AS norec_diagnosapasien,
+                    ddt.norec AS norec_detaildpasien,
+                    dt.*,
+                    ddt.keterangantindakan,
                     pg.namalengkap,
-                    dtp.tglinput as tglinputdiagnosa,
-                    dtp.ihs_id as ihs_diagnosa,
+                    ddt.tglinputdiagnosa,
+                    ddt.ihs_id as ihs_diagnosa,
                     ps.ihs_number,
                     ps.namapasien,
                     pd.ihs_id as ihs_encounter,
@@ -3070,9 +3070,10 @@ class IHSController extends ApiController
                     INNER JOIN pasien_m AS ps ON ps.id = pd.nocmfk
                     INNER JOIN antrianpasiendiperiksa_t AS apd ON apd.noregistrasifk = pd.norec
                     INNER JOIN ruangan_m AS ru ON ru.id = apd.objectruanganfk
-                    INNER JOIN diagnosapasientindakanlaporan_t AS dtp ON dtp.norec_apd = apd.norec
-                    INNER JOIN diagnosatindakan_m AS dt ON dt.id = dtp.objectdiagnosatindakanfk
-                    LEFT JOIN pegawai_m AS pg ON pg.id = dtp.id
+                    INNER JOIN diagnosatindakanpasien_t AS dtp ON dtp.objectpasienfk = apd.norec
+                    INNER JOIN detaildiagnosatindakanpasien_t AS ddt ON ddt.objectdiagnosatindakanpasienfk = dtp.norec
+                    INNER JOIN diagnosatindakan_m AS dt ON dt.id = ddt.objectdiagnosatindakanfk
+                    LEFT JOIN pegawai_m AS pg ON pg.id = ddt.objectpegawaifk 
                 WHERE
                     pd.kdprofile = $kdProfile
                     and pd.noregistrasi ='$request[noregistrasi]'    
@@ -3229,7 +3230,7 @@ class IHSController extends ApiController
                 $mod->date = date('Y-m-d H:i:s');
                 $mod->save();
                 if (isset($response->id)) {
-                    DiagnosaLaporan9::where('norec', $item->norec_detaildpasien)->update([
+                    DetailDiagnosaTindakanPasien::where('norec', $item->norec_detaildpasien)->update([
                         'ihs_id' => $response->id,
                     ]);
                 }
@@ -3282,7 +3283,7 @@ class IHSController extends ApiController
                     so.noorder ASC
                 
                 "));
-            
+
 
             if (count($q) == 0) {
                 $response = array(
@@ -3297,16 +3298,16 @@ class IHSController extends ApiController
             $profile = Profile::where('statusenabled', true)->first();
             $array = [];
             foreach ($q as $k =>  $item) {
-                $jenis =  explode(',',$item->arrjenisdiet);
+                $jenis =  explode(',', $item->arrjenisdiet);
                 $jenisdiet = '';
-                foreach($jenis as $dd){
-                    $datasss= DB::table('jenisdiet_m')->where('id',$dd)->first();
-                    if(!empty($datasss)){
-                        $jenisdiet = $jenisdiet.', '. $datasss->jenisdiet;
+                foreach ($jenis as $dd) {
+                    $datasss = DB::table('jenisdiet_m')->where('id', $dd)->first();
+                    if (!empty($datasss)) {
+                        $jenisdiet = $jenisdiet . ', ' . $datasss->jenisdiet;
                     }
                 }
-                $jenisdiet = substr($jenisdiet, 2, strlen($jenisdiet)-1);
-               
+                $jenisdiet = substr($jenisdiet, 2, strlen($jenisdiet) - 1);
+
                 $data = array(
                     'id' => $item->ihs_composition,
                     'resourceType' => 'Composition',
@@ -3386,8 +3387,8 @@ class IHSController extends ApiController
                             'text' =>
                             array(
                                 'status' => 'additional',
-                                'div' => 'Kategori Diet : '. $item->kategorydiet . ' '.
-                                'Jenis Diet : '. $jenisdiet,
+                                'div' => 'Kategori Diet : ' . $item->kategorydiet . ' ' .
+                                    'Jenis Diet : ' . $jenisdiet,
                             ),
                         ),
                     ),
@@ -3406,7 +3407,7 @@ class IHSController extends ApiController
                 $response =  $this->ihsTools($objetoRequest, true);
 
                 $noterror = true;
-                if (isset($response->resourceType ) && $response->resourceType == 'OperationOutcome') {
+                if (isset($response->resourceType) && $response->resourceType == 'OperationOutcome') {
                     $noterror = false;
                 }
 
@@ -3685,24 +3686,24 @@ class IHSController extends ApiController
 
             foreach ($q as $k =>  $item) {
                 $assen = [];
-              
+
                 if (!empty($item->accession_num)) {
                     $assen = array(
-                                "use" => "usual",
-                                "type" => array(
-                                    "coding" =>    
-                                      array(
-                                        0 => array(
-                                        "system" => "http://terminology.hl7.org/CodeSystem/v2-0203",
-                                        "code" => "ACSN"
-                                    )
-                                    )
-                                ),
-                                "system" => "http://sys-ids.kemkes.go.id/acsn/" . $profile->ihs_id,
-                                "value" => $item->accession_num
-                            );
+                        "use" => "usual",
+                        "type" => array(
+                            "coding" =>
+                            array(
+                                0 => array(
+                                    "system" => "http://terminology.hl7.org/CodeSystem/v2-0203",
+                                    "code" => "ACSN"
+                                )
+                            )
+                        ),
+                        "system" => "http://sys-ids.kemkes.go.id/acsn/" . $profile->ihs_id,
+                        "value" => $item->accession_num
+                    );
                 }
-                
+
                 // dd($assen);
                 $data  = array(
                     'resourceType' => 'ServiceRequest',
@@ -3725,9 +3726,9 @@ class IHSController extends ApiController
                         array(
                             0 =>
                             array(
-                                'system' => stripos( $item->ihs_loinc_id , '-') !== FALSE ? 'http://loinc.org' : "http://snomed.info/sct",
-                                'code' =>  $item->ihs_loinc_id ? $item->ihs_loinc_id: '',
-                                'display' => $item->ihs_loinc_common_name ? $item->ihs_loinc_common_name: '',
+                                'system' => stripos($item->ihs_loinc_id, '-') !== FALSE ? 'http://loinc.org' : "http://snomed.info/sct",
+                                'code' =>  $item->ihs_loinc_id ? $item->ihs_loinc_id : '',
+                                'display' => $item->ihs_loinc_common_name ? $item->ihs_loinc_common_name : '',
                             ),
                         ),
                         'text' => $item->namaproduk
@@ -4057,7 +4058,7 @@ class IHSController extends ApiController
             and so.statusenabled=true 
             and  so.noorder = '$request[noorder]'
             "));
-        
+
         try {
 
             if (count($q) == 0) {
@@ -4105,9 +4106,9 @@ class IHSController extends ApiController
                         array(
                             0 =>
                             array(
-                                'system' => stripos( $item->ihs_loinc_id , '-') !== FALSE ? 'http://loinc.org' : "http://snomed.info/sct",
-                                'code' =>$item->ihs_loinc_id,
-                                'display' =>$item->ihs_loinc_common_name,
+                                'system' => stripos($item->ihs_loinc_id, '-') !== FALSE ? 'http://loinc.org' : "http://snomed.info/sct",
+                                'code' => $item->ihs_loinc_id,
+                                'display' => $item->ihs_loinc_common_name,
                             ),
                         ),
                     ),
@@ -4122,8 +4123,8 @@ class IHSController extends ApiController
                         'display' => 'Observasi hasil' . $item->ihs_loinc_common_name . ' ' . $item->namapasien . ' di hari ' . $this->hari_ini($item->tanggal) . ', ' . $this->getDateIndo($item->tanggal),
 
                     ),
-                    'effectiveDateTime' => date('Y-m-d', ($item->tanggal ?strtotime($item->tanggal):date('Y-m-d') )),
-                    'issued' => $this->dateISO( ($item->tanggal ?strtotime($item->tanggal):date('Y-m-d') )),
+                    'effectiveDateTime' => date('Y-m-d', ($item->tanggal ? strtotime($item->tanggal) : date('Y-m-d'))),
+                    'issued' => $this->dateISO(($item->tanggal ? strtotime($item->tanggal) : date('Y-m-d'))),
                     'performer' =>
                     array(
                         0 =>
@@ -4142,7 +4143,7 @@ class IHSController extends ApiController
                             'reference' => 'ServiceRequest/' . $item->ihs_service_request,
                         ),
                     ),
-					'bodySite' =>
+                    'bodySite' =>
                     array(
                         'coding' =>
                         array(
@@ -4154,7 +4155,7 @@ class IHSController extends ApiController
                             ),
                         ),
                     ),
-					'derivedFrom' =>
+                    'derivedFrom' =>
                     array(
                         'reference' => 'ImagingStudy/' . $item->ihs_imaging_id,
                     ),
@@ -4217,7 +4218,7 @@ class IHSController extends ApiController
             return $response;
         }
         return response()->json($response);
-    }    
+    }
 
     public function ObservationLab(Request $request,  $lokal = null)
     {
@@ -4370,6 +4371,9 @@ class IHSController extends ApiController
                 $satuan = 'mg/dL';
                 if ($item->satuan != '' && $item->satuan != null && $item->satuan != '-') {
                     $satuan = $item->satuan;
+                }
+                if ($item->satuan === '1') {
+                    $satuan = 'mg/dL';
                 }
                 $nilaiNormal = '70 - 150';
                 if ($item->nilainormal != '' && $item->nilainormal != null) {
@@ -4647,10 +4651,10 @@ class IHSController extends ApiController
                         'reference' => 'Observation/' . $item->ihs_observation,
                     );
             }
-            foreach($arr_result_ob as $ddd){
+            foreach ($arr_result_ob as $ddd) {
                 // $ddd['id'] =(string) $ddd['id'] ;
             }
-            
+
             $data = array(
                 'resourceType' => 'DiagnosticReport',
                 'id' => $item->ihs_idforput,
@@ -4814,8 +4818,8 @@ class IHSController extends ApiController
     {
 
         $kdProfile = $this->kdProfile;
-     
-        $q= collect(DB::select("select 
+
+        $q = collect(DB::select("select 
             res.his_reg_no AS visit_trans_id,  res.lis_test_id AS tarif_id,
             res.test_name AS examination_name, res.result AS result_value,  res.test_units_name AS unit,
             res.reference_value AS normal_value,  res.result_comment AS metode,   res.test_group AS treatment_name,
@@ -4843,7 +4847,7 @@ class IHSController extends ApiController
             LEFT JOIN produk_m AS pr ON pr.ID = res.his_test_id
             LEFT JOIN pegawai_m AS pg ON cast(pg.ID  as text)= orz.doctor_id 
             where res.his_reg_no= '$request[noorder]'"))->toArray();
-         
+
         // $q = collect(DB::select("
         //         SELECT
         //         st.noorder,
@@ -4883,7 +4887,7 @@ class IHSController extends ApiController
         //     hh.kdprofile = $kdProfile
         //     and  hh.norec = '$request[norec_hasil]'
         //             "));
-      
+
         try {
 
             if (count($q) == 0) {
@@ -5183,28 +5187,28 @@ class IHSController extends ApiController
                     //     ),
                     // ),
                     'conclusion' => $displayFlag
-    
+
                 );
                 // dd($data);
-    
-    
+
+
                 // if ($item->ihs_idforput == null) {
                 unset($data['id']);
                 // }
-    
+
                 $objetoRequest = new \Illuminate\Http\Request();
                 $objetoRequest['url'] = $data['resourceType'];
                 // $objetoRequest['method'] = $item->ihs_idforput == null ? 'POST' : 'PUT';
                 $objetoRequest['method'] = 'POST';
                 $objetoRequest['data'] = $data;
-    
+
                 $response =  $this->ihsTools($objetoRequest, true);
-    
+
                 $noterror = true;
                 if ($response->resourceType == 'OperationOutcome') {
                     $noterror = false;
                 }
-    
+
                 if ($item->ihs_idforput == null) {
                     $mod = new IHS_Transaction();
                     $mod->norec = $mod->generateNewId();
@@ -5230,7 +5234,7 @@ class IHSController extends ApiController
                 if (isset($response->id)) {
                     DB::table('result_bridge')->where('lis_reg_no', $item->lis_reg_no)->update([
                         'ihs_diagnosticreport' => $response->id,
-    
+
                     ]);
                 }
             }
@@ -5249,35 +5253,32 @@ class IHSController extends ApiController
     {
 
         $kdProfile = $this->kdProfile;
-       
+
         try {
             $q =  collect(DB::select("
-
             SELECT
-                pap.*,
-                al.namaalergi,
-                pg.namalengkap ,
-                ps.namapasien as given,
-                pap.ihs_id  as ihs_idforput,
-                ps.ihs_number AS ihs_pasien
-                ,pd.ihs_id as ihs_encounter
-                ,pd.tglregistrasi 
-                , pg.ihs_id  as ihs_practitioner
-                ,al.kodesnomed
-                ,pap.kategori
+                ps.namapasien AS given,
+                ps.ketalergi,
+                pd.norec,
+                ps.ihs_number AS ihs_pasien,
+                pd.ihs_id AS ihs_encounter,
+                pd.tglregistrasi AS tglinput,
+                pg.ihs_id AS ihs_practitioner,
+                ag.kodeexternal,
+                ag.reportdisplay as namaalergi,
+                ag.kodesnomed
             FROM
-                papalergi_t AS pap
-                INNER JOIN pasiendaftar_t AS pd ON pd.norec = pap.objectpasienfk
-                INNER JOIN pasien_m AS ps ON pd.nocmfk = ps.id
-                INNER JOIN alergi_m AS al ON al.id = pap.objectalergifk
-                INNER JOIN pegawai_m AS pg ON pap.pegawaifk = pg.id 
+                pasiendaftar_t AS pd
+	            LEFT JOIN pasien_m AS ps ON pd.nocmfk = ps.ID 
+                LEFT JOIN pegawai_m AS pg ON pg.id = pd.objectpegawaifk
+                LEFT JOIN alergi_m AS ag ON ag.id = ps.objectalergifk
             WHERE
-                pap.kdprofile = $kdProfile 
-                AND pap.statusenabled = true
+                pd.kdprofile = $kdProfile 
+                AND pd.statusenabled = true
                 AND pd.noregistrasi = '$request[noregistrasi]'
           
           "));
-           
+
             if (count($q) == 0) {
                 $response = array(
                     "issue" =>   'AllergyIntolerance doesnt exist',
@@ -5291,88 +5292,84 @@ class IHSController extends ApiController
             $profile = Profile::where('id', $kdProfile)->first();
             $displayFlag = '';
             $arr_result_ob = [];
-           
+
             foreach ($q as $k =>  $item) {
-              $tglemr =  strtotime(date($item->tglinput));
-              $tglemr =  substr(date("Y-m-d\TH:i:s", $tglemr), 0, 23) . date('P', $tglemr);
-            //   $idAL = $this->generateCodeBySeqTable(new PapAlergi, 'alergi_satusehat', 10, date('Ym'), $kdProfile);
-              $data =  array (
-                   'id' => $item->ihs_idforput,
+                $tglemr =  strtotime(date($item->tglinput));
+                $tglemr =  substr(date("Y-m-d\TH:i:s", $tglemr), 0, 23) . date('P', $tglemr);
+                //   $idAL = $this->generateCodeBySeqTable(new PapAlergi, 'alergi_satusehat', 10, date('Ym'), $kdProfile);
+                $data =  array(
+                    'id' => $item->ihs_encounter,
                     'resourceType' => 'AllergyIntolerance',
-                    'identifier' => 
-                    array (
-                      0 => 
-                      array (
-                        'system' => 'http://sys-ids.kemkes.go.id/allergy/'. $profile->ihs_id,
-                        'use' => 'official',
-                        'value' => $item->norec,
-                      ),
-                    ),
-                    'clinicalStatus' => 
-                    array (
-                      'coding' => 
-                      array (
-                        0 => 
-                        array (
-                          'system' => 'http://terminology.hl7.org/CodeSystem/allergyintolerance-clinical',
-                          'code' => 'active',
-                          'display' => 'Active',
+                    'identifier' =>
+                    array(
+                        0 =>
+                        array(
+                            'system' => 'http://sys-ids.kemkes.go.id/allergy/' . $profile->ihs_id,
+                            'use' => 'official',
+                            'value' => $item->norec,
                         ),
-                      ),
                     ),
-                    'verificationStatus' => 
-                    array (
-                      'coding' => 
-                      array (
-                        0 => 
-                        array (
-                          'system' => 'http://terminology.hl7.org/CodeSystem/allergyintolerance-verification',
-                          'code' => 'confirmed',
-                          'display' => 'Confirmed',
+                    'clinicalStatus' =>
+                    array(
+                        'coding' =>
+                        array(
+                            0 =>
+                            array(
+                                'system' => 'http://terminology.hl7.org/CodeSystem/allergyintolerance-clinical',
+                                'code' => 'active',
+                                'display' => 'Active',
+                            ),
                         ),
-                      ),
                     ),
-                    'category' => 
-                    array (
-                      0 =>  $item->kategori != null ? $item->kategori:$item->namaalergi,
-                    ),
-                    'code' => 
-                    array (
-                      'coding' => 
-                      array (
-                        0 => 
-                        array (
-                          'system' => 'http://snomed.info/sct',
-                          'code' => (string)$item->kodesnomed,
-                          'display' =>  $item->namaalergi,
+                    'verificationStatus' =>
+                    array(
+                        'coding' =>
+                        array(
+                            0 =>
+                            array(
+                                'system' => 'http://terminology.hl7.org/CodeSystem/allergyintolerance-verification',
+                                'code' => "confirmed",
+                                'display' => 'Confirmed',
+                            ),
                         ),
-                      ),
-                      'text' => $item->keterangandata,
                     ),
-                    'patient' => 
-                    array (
-                      'reference' => 'Patient/'.$item->ihs_pasien,
-                      'display' => $item->given,
+                    'category' =>
+                    array(
+                        0 =>  $item->kodeexternal,
                     ),
-                    'encounter' => 
-                    array (
+                    'code' =>
+                    array(
+                        'coding' =>
+                        array(
+                            0 =>
+                            array(
+                                'system' => 'http://snomed.info/sct',
+                                'code' => $item->kodesnomed,
+                                'display' =>  $item->namaalergi,
+                            ),
+                        ),
+                        'text' => $item->ketalergi,
+                    ),
+                    'patient' =>
+                    array(
+                        'reference' => 'Patient/' . $item->ihs_pasien,
+                        'display' => $item->given,
+                    ),
+                    'encounter' =>
+                    array(
                         'reference' => 'Encounter/' . $item->ihs_encounter,
-                        'display' => 'Kunjungan ' . $item->given . ' di hari ' . $this->hari_ini($item->tglregistrasi) . ', ' . $this->getDateIndo($item->tglregistrasi),
-               
+                        'display' => 'Kunjungan ' . $item->given . ' di hari ' . $this->hari_ini($item->tglinput) . ', ' . $this->getDateIndo($item->tglinput),
+
                     ),
-                    'recordedDate' => $tglemr ,//'2022-06-14T15:37:31+07:00',
-                    'recorder' => 
-                    array (
-                      'reference' => 'Practitioner/'.$item->ihs_practitioner,
+                    'recordedDate' => $tglemr, //'2022-06-14T15:37:31+07:00',
+                    'recorder' =>
+                    array(
+                        'reference' => 'Practitioner/' . '10012452058',
                     ),
                 );
-         
-
                 // if ($item->ihs_idforput == null) {
                 unset($data['id']);
                 // }
-
-          
                 $objetoRequest = new \Illuminate\Http\Request();
                 $objetoRequest['url'] = $data['resourceType'];
                 // $objetoRequest['method'] = $item->ihs_idforput == null ? 'POST' : 'PUT';
@@ -5387,13 +5384,13 @@ class IHSController extends ApiController
                     $noterror = false;
                 }
 
-                if ($item->ihs_idforput == null) {
+                if ($item->ihs_encounter == null) {
                     $mod = new IHS_Transaction();
                     $mod->norec = $mod->generateNewId();
                     $mod->statusenabled = $noterror;
                     $mod->kdprofile = $this->kdProfile;
                 } else {
-                    $mod = IHS_Transaction::where('id', $item->ihs_idforput)->first();
+                    $mod = IHS_Transaction::where('id', $item->ihs_encounter)->first();
                 }
                 if (empty($mod)) {
                     $mod = new IHS_Transaction();
@@ -5412,11 +5409,9 @@ class IHSController extends ApiController
                 if (isset($response->id)) {
                     DB::table('papalergi_t')->where('norec', $item->norec)->update([
                         'ihs_id' => $response->id,
-                        
+
                     ]);
                 }
-
-              
             }
         } catch (\Exception $e) {
             $response = array(
@@ -5429,6 +5424,8 @@ class IHSController extends ApiController
         }
         return response()->json($response);
     }
+
+    // tanda1
     public function ClinicalImpression(Request $request,  $lokal = null)
     {
 
@@ -5516,6 +5513,7 @@ class IHSController extends ApiController
 
             $tgl =  strtotime(date($item->tglpulang));
             $tgl =  substr(date("Y-m-d\TH:i:s", $tgl), 0, 23) . date('P', $tgl);
+
             $data = array (
                 'resourceType' => 'ClinicalImpression',
                 'identifier' => 
@@ -5661,98 +5659,99 @@ class IHSController extends ApiController
         }
         return response()->json($response);
     }
+
     public function ObservationKesadaran(Request $request,  $lokal = null)
     {
 
         //prognosis
 
         $kdProfile = $this->kdProfile;
-       
+
         // try {
-           
-            // $q =[];
-            // if (count($q) == 0) {
-            //     $response = array(
-            //         "issue" =>   'ClinicalImpression doesnt exist',
-            //         "resourceType" => "OperationOutcome"
-            //     );
-            //     if ($lokal == true) {
-            //         return $response;
-            //     }
-            //     return response()->json($response);
-            // }
-            $profile = Profile::where('id', $kdProfile)->first();
-            // $displayFlag = '';
-            // $arr_result_ob = [];
-           
-            // foreach ($q as $k =>  $item) {
-                $response = array (
-                    'resourceType' => 'Observation',
-                    'status' => 'final',
-                    'category' => 
-                    array (
-                      0 => 
-                      array (
-                        'coding' => 
-                        array (
-                          0 => 
-                          array (
+
+        // $q =[];
+        // if (count($q) == 0) {
+        //     $response = array(
+        //         "issue" =>   'ClinicalImpression doesnt exist',
+        //         "resourceType" => "OperationOutcome"
+        //     );
+        //     if ($lokal == true) {
+        //         return $response;
+        //     }
+        //     return response()->json($response);
+        // }
+        $profile = Profile::where('id', $kdProfile)->first();
+        // $displayFlag = '';
+        // $arr_result_ob = [];
+
+        // foreach ($q as $k =>  $item) {
+        $response = array(
+            'resourceType' => 'Observation',
+            'status' => 'final',
+            'category' =>
+            array(
+                0 =>
+                array(
+                    'coding' =>
+                    array(
+                        0 =>
+                        array(
                             'system' => 'http://terminology.hl7.org/CodeSystem/observation-category',
                             'code' => 'exam',
                             'display' => 'Exam',
-                          ),
                         ),
-                      ),
                     ),
-                    'code' => 
-                    array (
-                      'coding' => 
-                      array (
-                        0 => 
-                        array (
-                          'system' => 'http://loinc.org',
-                          'code' => '67775-7',
-                          'display' => 'Level of responsiveness',
-                        ),
-                      ),
+                ),
+            ),
+            'code' =>
+            array(
+                'coding' =>
+                array(
+                    0 =>
+                    array(
+                        'system' => 'http://loinc.org',
+                        'code' => '67775-7',
+                        'display' => 'Level of responsiveness',
                     ),
-                    'subject' => 
-                    array (
-                      'reference' => 'Patient/100000030009',
+                ),
+            ),
+            'subject' =>
+            array(
+                'reference' => 'Patient/100000030009',
+            ),
+            'performer' =>
+            array(
+                0 =>
+                array(
+                    'reference' => 'Practitioner/N10000001',
+                ),
+            ),
+            'encounter' =>
+            array(
+                'reference' => 'Encounter/2823ed1d-3e3e-434e-9a5b-9c579d192787',
+                'display' => 'Pemeriksaan Kesadaran Budi Santoso di hari Selasa, 14 Juni 2022',
+            ),
+            'effectiveDateTime' => '2022-07-14',
+            'valueCodeableConcept' =>
+            array(
+                'coding' =>
+                array(
+                    0 =>
+                    array(
+                        'system' => 'http://terminology.kemkes.go.id/CodeSystem/clinical-term',
+                        'code' => 'TK000001',
+                        'display' => 'Alert',
                     ),
-                    'performer' => 
-                    array (
-                      0 => 
-                      array (
-                        'reference' => 'Practitioner/N10000001',
-                      ),
-                    ),
-                    'encounter' => 
-                    array (
-                      'reference' => 'Encounter/2823ed1d-3e3e-434e-9a5b-9c579d192787',
-                      'display' => 'Pemeriksaan Kesadaran Budi Santoso di hari Selasa, 14 Juni 2022',
-                    ),
-                    'effectiveDateTime' => '2022-07-14',
-                    'valueCodeableConcept' => 
-                    array (
-                      'coding' => 
-                      array (
-                        0 => 
-                        array (
-                          'system' => 'http://terminology.kemkes.go.id/CodeSystem/clinical-term',
-                          'code' => 'TK000001',
-                          'display' => 'Alert',
-                        ),
-                      ),
-                    ),
-                  );
-         
+                ),
+            ),
+        );
+
 
         //         // if ($item->ihs_idforput == null) {
         //         unset($data['id']);
         //         // }
 
-          
+
         //         $objetoRequest = new \Illuminate\Http\Request();
         //         $objetoRequest['url'] = $data['resourceType'];
         //         // $objetoRequest['method'] = $item->ihs_idforput == null ? 'POST' : 'PUT';
@@ -5792,11 +5791,11 @@ class IHSController extends ApiController
         //         if (isset($response->id)) {
         //             DB::table('papalergi_t')->where('norec', $item->norec)->update([
         //                 'ihs_id' => $response->id,
-                        
+
         //             ]);
         //         }
 
-              
+
         //     }
         // } catch (\Exception $e) {
         //     $response = array(
@@ -5812,112 +5811,112 @@ class IHSController extends ApiController
     public function ProcedureEdukasi(Request $request,  $lokal = null)
     {
 
-      
+
 
         $kdProfile = $this->kdProfile;
-       
+
         // try {
-           
-            // $q =[];
-            // if (count($q) == 0) {
-            //     $response = array(
-            //         "issue" =>   'ClinicalImpression doesnt exist',
-            //         "resourceType" => "OperationOutcome"
-            //     );
-            //     if ($lokal == true) {
-            //         return $response;
-            //     }
-            //     return response()->json($response);
-            // }
-            $profile = Profile::where('id', $kdProfile)->first();
-            // $displayFlag = '';
-            // $arr_result_ob = [];
-           
-            // foreach ($q as $k =>  $item) {
-                $response = array (
-                    'resourceType' => 'Procedure',
-                    'status' => 'completed',
-                    'category' => 
-                    array (
-                      'coding' => 
-                      array (
-                        0 => 
-                        array (
-                          'system' => 'http://snomed.info/sct',
-                          'code' => '409073007',
-                          'display' => 'Education',
-                        ),
-                      ),
-                      'text' => 'Education',
+
+        // $q =[];
+        // if (count($q) == 0) {
+        //     $response = array(
+        //         "issue" =>   'ClinicalImpression doesnt exist',
+        //         "resourceType" => "OperationOutcome"
+        //     );
+        //     if ($lokal == true) {
+        //         return $response;
+        //     }
+        //     return response()->json($response);
+        // }
+        $profile = Profile::where('id', $kdProfile)->first();
+        // $displayFlag = '';
+        // $arr_result_ob = [];
+
+        // foreach ($q as $k =>  $item) {
+        $response = array(
+            'resourceType' => 'Procedure',
+            'status' => 'completed',
+            'category' =>
+            array(
+                'coding' =>
+                array(
+                    0 =>
+                    array(
+                        'system' => 'http://snomed.info/sct',
+                        'code' => '409073007',
+                        'display' => 'Education',
                     ),
-                    'code' => 
-                    array (
-                      'coding' => 
-                      array (
-                        0 => 
-                        array (
-                          'system' => 'http://terminology.kemkes.go.id/CodeSystem/clinical-term',
-                          'code' => 'ED000002',
-                          'display' => 'Edukasi obat-obatan',
-                        ),
-                      ),
+                ),
+                'text' => 'Education',
+            ),
+            'code' =>
+            array(
+                'coding' =>
+                array(
+                    0 =>
+                    array(
+                        'system' => 'http://terminology.kemkes.go.id/CodeSystem/clinical-term',
+                        'code' => 'ED000002',
+                        'display' => 'Edukasi obat-obatan',
                     ),
-                    'subject' => 
-                    array (
-                      'reference' => 'Patient/100000030009',
-                      'display' => 'Budi Santoso',
+                ),
+            ),
+            'subject' =>
+            array(
+                'reference' => 'Patient/100000030009',
+                'display' => 'Budi Santoso',
+            ),
+            'encounter' =>
+            array(
+                'reference' => 'Encounter/2823ed1d-3e3e-434e-9a5b-9c579d192787',
+                'display' => 'Edukasi minum obat OAT rutin kepada Budi Santoso di hari Selasa, 14 Juni 2022',
+            ),
+            'performedPeriod' =>
+            array(
+                'start' => '2022-06-14T13:31:00+01:00',
+                'end' => '2022-06-14T14:27:00+01:00',
+            ),
+            'performer' =>
+            array(
+                0 =>
+                array(
+                    'actor' =>
+                    array(
+                        'reference' => 'Practitioner/N10000001',
+                        'display' => 'Dokter Bronsig',
                     ),
-                    'encounter' => 
-                    array (
-                      'reference' => 'Encounter/2823ed1d-3e3e-434e-9a5b-9c579d192787',
-                      'display' => 'Edukasi minum obat OAT rutin kepada Budi Santoso di hari Selasa, 14 Juni 2022',
-                    ),
-                    'performedPeriod' => 
-                    array (
-                      'start' => '2022-06-14T13:31:00+01:00',
-                      'end' => '2022-06-14T14:27:00+01:00',
-                    ),
-                    'performer' => 
-                    array (
-                      0 => 
-                      array (
-                        'actor' => 
-                        array (
-                          'reference' => 'Practitioner/N10000001',
-                          'display' => 'Dokter Bronsig',
-                        ),
-                      ),
-                    ),
-                    'reasonCode' => 
-                    array (
-                      0 => 
-                      array (
-                        'coding' => 
-                        array (
-                          0 => 
-                          array (
+                ),
+            ),
+            'reasonCode' =>
+            array(
+                0 =>
+                array(
+                    'coding' =>
+                    array(
+                        0 =>
+                        array(
                             'system' => 'http://hl7.org/fhir/sid/icd-10',
                             'code' => 'A15.0',
                             'display' => 'Tuberculosis of lung, confirmed by sputum microscopy with or without culture',
-                          ),
                         ),
-                      ),
                     ),
-                    'note' => 
-                    array (
-                      0 => 
-                      array (
-                        'text' => 'Edukasi minum OAT teratur.',
-                      ),
-                    ),
-                  );
-         
+                ),
+            ),
+            'note' =>
+            array(
+                0 =>
+                array(
+                    'text' => 'Edukasi minum OAT teratur.',
+                ),
+            ),
+        );
+
 
         //         // if ($item->ihs_idforput == null) {
         //         unset($data['id']);
         //         // }
 
-          
+
         //         $objetoRequest = new \Illuminate\Http\Request();
         //         $objetoRequest['url'] = $data['resourceType'];
         //         // $objetoRequest['method'] = $item->ihs_idforput == null ? 'POST' : 'PUT';
@@ -5957,11 +5956,11 @@ class IHSController extends ApiController
         //         if (isset($response->id)) {
         //             DB::table('papalergi_t')->where('norec', $item->norec)->update([
         //                 'ihs_id' => $response->id,
-                        
+
         //             ]);
         //         }
 
-              
+
         //     }
         // } catch (\Exception $e) {
         //     $response = array(
@@ -5977,87 +5976,87 @@ class IHSController extends ApiController
     public function ConditionSaatMeninggalkanRS(Request $request,  $lokal = null)
     {
 
-      
+
 
         $kdProfile = $this->kdProfile;
-       
+
         // try {
-           
-            // $q =[];
-            // if (count($q) == 0) {
-            //     $response = array(
-            //         "issue" =>   'ClinicalImpression doesnt exist',
-            //         "resourceType" => "OperationOutcome"
-            //     );
-            //     if ($lokal == true) {
-            //         return $response;
-            //     }
-            //     return response()->json($response);
-            // }
-            $profile = Profile::where('id', $kdProfile)->first();
-            // $displayFlag = '';
-            // $arr_result_ob = [];
-           
-            // foreach ($q as $k =>  $item) {
-                $response = array (
-                    'resourceType' => 'Condition',
-                    'clinicalStatus' => 
-                    array (
-                      'coding' => 
-                      array (
-                        0 => 
-                        array (
-                          'system' => 'http://terminology.hl7.org/CodeSystem/condition-clinical',
-                          'code' => 'active',
-                          'display' => 'Active',
-                        ),
-                      ),
+
+        // $q =[];
+        // if (count($q) == 0) {
+        //     $response = array(
+        //         "issue" =>   'ClinicalImpression doesnt exist',
+        //         "resourceType" => "OperationOutcome"
+        //     );
+        //     if ($lokal == true) {
+        //         return $response;
+        //     }
+        //     return response()->json($response);
+        // }
+        $profile = Profile::where('id', $kdProfile)->first();
+        // $displayFlag = '';
+        // $arr_result_ob = [];
+
+        // foreach ($q as $k =>  $item) {
+        $response = array(
+            'resourceType' => 'Condition',
+            'clinicalStatus' =>
+            array(
+                'coding' =>
+                array(
+                    0 =>
+                    array(
+                        'system' => 'http://terminology.hl7.org/CodeSystem/condition-clinical',
+                        'code' => 'active',
+                        'display' => 'Active',
                     ),
-                    'category' => 
-                    array (
-                      0 => 
-                      array (
-                        'coding' => 
-                        array (
-                          0 => 
-                          array (
+                ),
+            ),
+            'category' =>
+            array(
+                0 =>
+                array(
+                    'coding' =>
+                    array(
+                        0 =>
+                        array(
                             'system' => 'http://terminology.hl7.org/CodeSystem/condition-category',
                             'code' => 'problem-list-item',
                             'display' => 'Problem List Item',
-                          ),
                         ),
-                      ),
                     ),
-                    'code' => 
-                    array (
-                      'coding' => 
-                      array (
-                        0 => 
-                        array (
-                          'system' => 'http://terminology.kemkes.go.id/CodeSystem/clinical-term',
-                          'code' => 'MN000001',
-                          'display' => 'Stabil',
-                        ),
-                      ),
+                ),
+            ),
+            'code' =>
+            array(
+                'coding' =>
+                array(
+                    0 =>
+                    array(
+                        'system' => 'http://terminology.kemkes.go.id/CodeSystem/clinical-term',
+                        'code' => 'MN000001',
+                        'display' => 'Stabil',
                     ),
-                    'subject' => 
-                    array (
-                      'reference' => 'Patient/100000030009',
-                      'display' => 'Budi Santoso',
-                    ),
-                    'encounter' => 
-                    array (
-                      'reference' => 'Encounter/2823ed1d-3e3e-434e-9a5b-9c579d192787',
-                      'display' => 'Kunjungan Budi Santoso di hari Selasa, 14 Juni 2022',
-                    ),
-                  );
-         
+                ),
+            ),
+            'subject' =>
+            array(
+                'reference' => 'Patient/100000030009',
+                'display' => 'Budi Santoso',
+            ),
+            'encounter' =>
+            array(
+                'reference' => 'Encounter/2823ed1d-3e3e-434e-9a5b-9c579d192787',
+                'display' => 'Kunjungan Budi Santoso di hari Selasa, 14 Juni 2022',
+            ),
+        );
+
 
         //         // if ($item->ihs_idforput == null) {
         //         unset($data['id']);
         //         // }
 
-          
+
         //         $objetoRequest = new \Illuminate\Http\Request();
         //         $objetoRequest['url'] = $data['resourceType'];
         //         // $objetoRequest['method'] = $item->ihs_idforput == null ? 'POST' : 'PUT';
@@ -6097,11 +6096,11 @@ class IHSController extends ApiController
         //         if (isset($response->id)) {
         //             DB::table('papalergi_t')->where('norec', $item->norec)->update([
         //                 'ihs_id' => $response->id,
-                        
+
         //             ]);
         //         }
 
-              
+
         //     }
         // } catch (\Exception $e) {
         //     $response = array(
@@ -6114,19 +6113,20 @@ class IHSController extends ApiController
         }
         return response()->json($response);
     }
-    public function EncounterList (Request $r){
-        
+    public function EncounterList(Request $r)
+    {
+
         $data =  DB::table('pasiendaftar_t')
-        ->where('kdprofile', $this->kdProfile)
-        ->where('statusenabled',true)
-        ->select('noregistrasi','tglregistrasi')
-        ->whereRaw("to_char(tglregistrasi,'yyyy-MM-dd') <='$r[dari]'")
-        ->whereRaw("to_char(tglregistrasi,'yyyy-MM-dd') >='$r[sampai]'")
-        ->get();
+            ->where('kdprofile', $this->kdProfile)
+            ->where('statusenabled', true)
+            ->select('noregistrasi', 'tglregistrasi')
+            ->whereRaw("to_char(tglregistrasi,'yyyy-MM-dd') <='$r[dari]'")
+            ->whereRaw("to_char(tglregistrasi,'yyyy-MM-dd') >='$r[sampai]'")
+            ->get();
         return $data;
     }
 
-    public function ServiceRequestFollowUpPlan(Request $request, $lokal = null) 
+    public function ServiceRequestFollowUpPlan(Request $request, $lokal = null)
     {
         try {
             $kdProfile = $this->kdProfile;
@@ -6478,9 +6478,9 @@ class IHSController extends ApiController
                     pg.ihs_id AS ihs_practioner_id,
                     pg.namalengkap AS ihs_practioner_name
                 FROM antrianapotik_t AS aa
-                INNER JOIN pasiendaftar_t AS pd ON pd.norec = aa.noregistrasifk
-                INNER JOIN pasien_m AS ps ON ps.id = pd.nocmfk
-                INNER JOIN pegawai_m AS pg ON pg.id = pd.objectpegawaifk
+                LEFT JOIN pasiendaftar_t AS pd ON pd.norec = aa.noregistrasifk
+                LEFT JOIN pasien_m AS ps ON ps.id = pd.nocmfk
+                LEFT JOIN pegawai_m AS pg ON pg.id = pd.objectpegawaifk
                 WHERE aa.kdprofile = $kdProfile
                 AND aa.noregistrasifk = '$request[noregistrasifk]'
             "));
@@ -6868,7 +6868,7 @@ class IHSController extends ApiController
                     ]);
                 }
             }
-        } catch(Exception $e) {
+        } catch (Exception $e) {
             $response = array(
                 "issue" => $e->getMessage() . ' ' . $e->getLine(),
                 "resourceType" => "OperationOutcome"

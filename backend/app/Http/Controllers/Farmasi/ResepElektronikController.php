@@ -601,20 +601,20 @@ class ResepElektronikController extends ApiController
                     ->where('kdprofile',$idProfile)
                     ->update([
                             'status' => $request['statusorder'],
-                            // 'noregistrasifk' => $request['norec_pd'],
-                            // 'persyaratanadministrasi1' => $request['persyaratanAdministrasi1'],
-                            // 'persyaratanadministrasi2' => $request['persyaratanAdministrasi2'],
-                            // 'persyaratanadministrasi3' => $request['persyaratanAdministrasi3'],
-                            // 'persyaratanadministrasi4' => $request['persyaratanAdministrasi4'],
-                            // 'persyaratanfarmasetik1' => $request['persyaratanFarmasetik1'],
-                            // 'persyaratanfarmasetik2' => $request['persyaratanFarmasetik2'],
-                            // 'persyaratanfarmasetik3' => $request['persyaratanFarmasetik3'],
-                            // 'persyaratanfarmasetik4' => $request['persyaratanFarmasetik4'],
-                            // 'persyaratanklinis1' => $request['persyaratanKlinis1'],
-                            // 'persyaratanklinis2' => $request['persyaratanKlinis2'],
-                            // 'persyaratanklinis3' => $request['persyaratanKlinis3'],
-                            // 'persyaratanklinis4' => $request['persyaratanKlinis4'],
-                            // 'persyaratanklinis5' => $request['persyaratanKlinis5'],
+                            'noregistrasifk' => $request['norec_pd'],
+                            'persyaratanadministrasi1' => $request['persyaratanAdministrasi1'],
+                            'persyaratanadministrasi2' => $request['persyaratanAdministrasi2'],
+                            'persyaratanadministrasi3' => $request['persyaratanAdministrasi3'],
+                            'persyaratanadministrasi4' => $request['persyaratanAdministrasi4'],
+                            'persyaratanfarmasetik1' => $request['persyaratanFarmasetik1'],
+                            'persyaratanfarmasetik2' => $request['persyaratanFarmasetik2'],
+                            'persyaratanfarmasetik3' => $request['persyaratanFarmasetik3'],
+                            'persyaratanfarmasetik4' => $request['persyaratanFarmasetik4'],
+                            'persyaratanklinis1' => $request['persyaratanKlinis1'],
+                            'persyaratanklinis2' => $request['persyaratanKlinis2'],
+                            'persyaratanklinis3' => $request['persyaratanKlinis3'],
+                            'persyaratanklinis4' => $request['persyaratanKlinis4'],
+                            'persyaratanklinis5' => $request['persyaratanKlinis5'],
                         ]
                     );
 
@@ -691,20 +691,20 @@ class ResepElektronikController extends ApiController
                     ->where('kdprofile',$idProfile)
                     ->update([
                             'status' => $request['statusorder'],
-                            // 'noregistrasifk' => $request['norec_pd'],
-                            // 'persyaratanadministrasi1' => $request['persyaratanAdministrasi1'],
-                            // 'persyaratanadministrasi2' => $request['persyaratanAdministrasi2'],
-                            // 'persyaratanadministrasi3' => $request['persyaratanAdministrasi3'],
-                            // 'persyaratanadministrasi4' => $request['persyaratanAdministrasi4'],
-                            // 'persyaratanfarmasetik1' => $request['persyaratanFarmasetik1'],
-                            // 'persyaratanfarmasetik2' => $request['persyaratanFarmasetik2'],
-                            // 'persyaratanfarmasetik3' => $request['persyaratanFarmasetik3'],
-                            // 'persyaratanfarmasetik4' => $request['persyaratanFarmasetik4'],
-                            // 'persyaratanklinis1' => $request['persyaratanKlinis1'],
-                            // 'persyaratanklinis2' => $request['persyaratanKlinis2'],
-                            // 'persyaratanklinis3' => $request['persyaratanKlinis3'],
-                            // 'persyaratanklinis4' => $request['persyaratanKlinis4'],
-                            // 'persyaratanklinis5' => $request['persyaratanKlinis5'],
+                            'noregistrasifk' => $request['norec_pd'],
+                            'persyaratanadministrasi1' => $request['persyaratanAdministrasi1'],
+                            'persyaratanadministrasi2' => $request['persyaratanAdministrasi2'],
+                            'persyaratanadministrasi3' => $request['persyaratanAdministrasi3'],
+                            'persyaratanadministrasi4' => $request['persyaratanAdministrasi4'],
+                            'persyaratanfarmasetik1' => $request['persyaratanFarmasetik1'],
+                            'persyaratanfarmasetik2' => $request['persyaratanFarmasetik2'],
+                            'persyaratanfarmasetik3' => $request['persyaratanFarmasetik3'],
+                            'persyaratanfarmasetik4' => $request['persyaratanFarmasetik4'],
+                            'persyaratanklinis1' => $request['persyaratanKlinis1'],
+                            'persyaratanklinis2' => $request['persyaratanKlinis2'],
+                            'persyaratanklinis3' => $request['persyaratanKlinis3'],
+                            'persyaratanklinis4' => $request['persyaratanKlinis4'],
+                            'persyaratanklinis5' => $request['persyaratanKlinis5'],
                         ]
                     );
                 /*
@@ -801,6 +801,7 @@ class ResepElektronikController extends ApiController
             $ihs = app('App\Http\Controllers\Bridging\IHSController')->QuestionnaireResponse($objetoRequest,true);
             $result = array(
                 "status" => 201,
+                'QuestionnaireResponse' => isset($ihs) ? $ihs : null,
                 "by" => 'as@epic',
             );
         } else {
@@ -808,7 +809,6 @@ class ResepElektronikController extends ApiController
             DB::rollBack();
             $result = array(
                 "status" => 400,
-                'QuestionnaireResponse' => isset($ihs) ? $ihs : null,
                 "by" => 'as@epic',
                 "e" => $e->getLine() . "// " .$e->getMessage(),
                 "errObj" => $errObj,
