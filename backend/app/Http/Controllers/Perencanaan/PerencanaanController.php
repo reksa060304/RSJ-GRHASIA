@@ -5499,6 +5499,11 @@ class PerencanaanController extends ApiController {
                     'statusenabled'=> false
                 ]);
 
+                // disable sambungan spjtopanjar
+                DB::table('spjtopanjar_t')->where('objectspjfk', $request['norec'])->update([
+                    'statusenabled' => false
+                ]);
+
                 $transStatus = 'true';
             } else{
                 $transStatus = 'false';
@@ -9809,6 +9814,12 @@ order by  split_part(kode, '.', 1)asc, split_part(kode, '.', 2)asc,  split_part(
             $MA = Panjar::where('norec', '=', $request['data'])->first();
             $MA->statusenabled = false;
             $MA->save();
+
+            // disabled spjtopanjar
+            DB::table('spjtopanjar_t')->where('objectpanjarfk', '=',$request['data'])->update([
+                'statusenabled' => false
+            ]);
+
 
            $transStatus = 'true';
        } catch (\Exception $e) {
