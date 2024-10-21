@@ -125,14 +125,14 @@
         <hr style="border:0.5px solid #000;margin-top:2px">
         <table id="dt" cellspacing="0" cellpadding="0" border="0" width="100%">
             <tr>
-                <td style="text-align: center; font-family: Arial; font-size: 12pt">
-                    <b><u>SURAT PEMBERITAHUAN KENAIKAN GAJI BERKALA</u></b>
-                    <br>
-                    NOMOR : {{$data[0]->nosk}}
-
-                </td>
-
+            <td style="text-align: center; font-family: Arial; font-size: 12pt">
+                <b><u>SURAT PEMBERITAHUAN KENAIKAN GAJI BERKALA</u></b>
+                <div style="margin-top: 10px;">
+                    NOMOR : {{ $data[0]->nosk }}
+                </div>
+            </td>
             </tr>
+
             <tr>
                 <td style="padding-left: 50%; padding-top: 20px; font-family: Arial; font-size: 11pt">
                     K e p a d a : <br>
