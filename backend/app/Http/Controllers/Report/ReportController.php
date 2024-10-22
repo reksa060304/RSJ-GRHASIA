@@ -22749,7 +22749,7 @@ public function suratBuktiPengembalian(Request $request)
         
         $idSebelum = DB::select(DB::raw("
             SELECT
-                CAST(SPLIT_PART(ka.keterangan, '-', 1) AS INTEGER) AS id_kegiatan
+                CAST(SPLIT_PART(ka.keterangan, '-', 1) AS INTEGER) AS id_kegiatan, ka.kode
             FROM 
                 keteranganbelanja_t AS kb 
             LEFT JOIN kegiatananggaran_m AS ka ON ka.id = kb.objectkegiatanfk AND ka.statusenabled = TRUE AND ka.kdprofile = 30
@@ -22836,7 +22836,7 @@ public function suratBuktiPengembalian(Request $request)
                     AND kb2.statusenabled = TRUE    
                     AND kb2.objecttahapfk = ".$request['terhadap']."
                     AND kb2.keteranganbelanja = kb.keteranganbelanja
-                    AND kb2.objectkegiatanfk = ".$idSebelum[0]->id_kegiatan."
+                    -- AND kb2.objectkegiatanfk = ".$idSebelum[0]->id_kegiatan."
                 LEFT JOIN kegiatananggaran_m AS ka2 ON ka2.id = kb2.objectkegiatanfk
                     AND ka2.statusenabled = TRUE
                     AND ka2.kdprofile = 30
@@ -22846,6 +22846,7 @@ public function suratBuktiPengembalian(Request $request)
                 AND kb.kdprofile = 30 
                 AND kb.objecttahapfk = ".$request['tahap']." 
                 AND kb.objectkegiatanfk = ".$request['subsubkegiatan']."
+                AND ka2.kode = '".$idSebelum[0]->kode."'
             ORDER BY
                 SPLIT_PART( ma4.kodemataanggaran, '.', 1 ),
                 SPLIT_PART( ma4.kodemataanggaran, '.', 2 ),
