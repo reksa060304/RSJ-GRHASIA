@@ -283,7 +283,6 @@ class TindakanController extends ApiController
             
             $PelPasien->save();
             $PPnorec = $PelPasien->norec;
-
             $new_PPP=$item['pelayananpetugas'];
             foreach ($new_PPP as $itemPPP) {
                 $detailItemPPP=$itemPPP['listpegawai'];
