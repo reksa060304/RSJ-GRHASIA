@@ -316,8 +316,7 @@
                                                                     <td class="tg-9wq8">Sopir Ambulans</td>
                                                                     <td class="tg-9wq8">Yang Menerima</td>
                                                                 </tr>
-                                                                <tr class="tr-z"
-                                                                    style="background-color: antiquewhite;">
+                                                                <tr>
                                                                     <td class="tg-c3ow">
                                                                         @foreach ($data as $item)
                                                                             @if ($item->id === 1)

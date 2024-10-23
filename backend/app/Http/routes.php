@@ -188,6 +188,7 @@ Route::group(['middleware' => 'cors', 'prefix' => 'service'], function () {
           Route::post('ambulance/save-input-non-layanan', 'Ambulance\AmbulanController@SaveInputTagihan');
           Route::get('ambulance/daftar-tagihan-non-layanan', 'Ambulance\AmbulanController@daftarTagihanNonLayanan');
           Route::get('ambulance/detail-tagihan-non-layanan', 'Ambulance\AmbulanController@detailTagihanNonLayanan');
+          Route::get('ambulance/laporan-kegiatan-ambulan','Ambulance\AmbulanController@lapKegiatanAmbulan');
         // });
         Route::group(['prefix' => 'askep'], function () {
 

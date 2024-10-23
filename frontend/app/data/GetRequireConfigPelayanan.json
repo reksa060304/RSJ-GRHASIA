@@ -3748,6 +3748,10 @@
         {
             "nameDep": "PerjanjianKontrolKembaliCtrl",
             "urlDep": "module/EMR/PerjanjianKontrolKembaliCtrl"
+        },
+        {
+            "nameDep": "LapKegiatanAmbulanCtrl",
+            "urlDep": "module/Ambulance/LapKegiatanAmbulanCtrl"
         }
     ]
 }
