@@ -127,6 +127,11 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
 				// $scope.itemKeluarga.tglLahir=moment($scope.now).format("DD-MM-YYYY");			
 			};
 
+			function ClearDataRiwayatGajiBerkalaPangkat() {
+				$scope.itemGajiBerkalaPangkat = {};
+				// $scope.itemKeluarga.tglLahir=moment($scope.now).format("DD-MM-YYYY");			
+			};
+
 			function ClearDataKomponenAdd() {
 				$scope.itemKomponenAdd = {};
 				// $scope.itemKeluarga.tglLahir=moment($scope.now).format("DD-MM-YYYY");			
@@ -760,7 +765,7 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
 						// } 
 						// else{
 							$scope.ListTunjangan = dat.data.tunjanganbaru;
-							$scope.itemJabatan.nominaltunjangan = 185000
+							//$scope.itemJabatan.nominaltunjangan = 185000
 						// }
 					})
 				}
@@ -1140,7 +1145,13 @@ $scope.formatRupiah = function (value, currency) {
 					name: "create",
 					text: "Buat Riwayat Gaji Berkala",
 					template: '<button ng-click="createGajiBerkala()" class="k-button k-button-icontext k-grid-upload" href="\\#"><span class="k-icon k-i-plus"></span>Buat Riwayat Gaji Berkala</button>'
-				}],
+				},
+				{
+					name: "create",
+					text: "Buat Riwayat Kenaikan Pangkat",
+					template: '<button ng-click="createGajiBerkalaPangkat()" class="k-button k-button-icontext k-grid-upload" href="\\#"><span class="k-icon k-i-plus"></span>Buat Riwayat Gaji Pangkat</button>'
+				},
+				],
 				sortable: false,
 				reorderable: true,
 				filterable: false,
@@ -1626,7 +1637,7 @@ $scope.formatRupiah = function (value, currency) {
 					},
 					{
 						"command": [
-							// { text: "Edit", click: EditStr, imageClass: "k-icon k-i-pencil" },
+							{ text: "Edit", click: EditStr, imageClass: "k-icon k-i-pencil" },
 							{ text: "Hapus", click: HapusStrNew, imageClass: "k-icon k-i-delete" },
 							{ text: "Download", click: downloadSipStr, imageClass: "k-icon k-delete" }
 						],
@@ -2501,6 +2512,15 @@ $scope.formatRupiah = function (value, currency) {
 				$scope.popUpRiwayatGajiBerkala.setOptions({ actions: actions });
 			}
 
+			$scope.createGajiBerkalaPangkat = function () {
+				$scope.item.norecGajiBerkala = "";
+				$scope.item.IdGajiBerkala = undefined;
+				$scope.popUpRiwayatGajiBerkalaPangkat.center().open();
+				var actions = $scope.popUpRiwayatGajiBerkalaPangkat.options.actions;
+				actions.splice(actions.indexOf("Close"), 1);
+				$scope.popUpRiwayatGajiBerkalaPangkat.setOptions({ actions: actions });
+			}
+
 			$scope.createHukumanDisiplin = function () {
 				$scope.item.norechudis = "";
 				$scope.item.nomorIdh = undefined;
@@ -2591,6 +2611,11 @@ $scope.formatRupiah = function (value, currency) {
 			$scope.batalRiwayatGajiBerkala = function () {
 				ClearDataRiwayatGajiBerkala();
 				$scope.popUpRiwayatGajiBerkala.close();
+			}
+
+			$scope.batalRiwayatGajiBerkalaPangkat = function () {
+				ClearDataRiwayatGajiBerkalaPangkat();
+				$scope.popUpRiwayatGajiBerkalaPangkat.close();
 			}
 
 			$scope.batalRiwayatPelatihan = function () {
@@ -3050,7 +3075,7 @@ $scope.formatRupiah = function (value, currency) {
 								data.ttdsk = $scope.itemJabatan.ttdSK
 								data.ttdjabatansk = $scope.itemJabatan.jabatanTtd
 								data.objectpegawaifk = $scope.item.idPegawai
-								data.eselon = $scope.itemJabatan.eselon != undefined ? $scope.itemJabatan.eselon.id : null,
+								data.eselon = $scope.itemJabatan.tunjangan.id
 								dataRiwayatJabatan[i] = data;
 								$scope.gridRiwayatJabatan = new kendo.data.DataSource({
 									data: dataRiwayatJabatan
@@ -3082,7 +3107,7 @@ $scope.formatRupiah = function (value, currency) {
 							tunjangan: $scope.itemJabatan.nominaltunjangan,
 							ttdjabatansk: $scope.itemJabatan.jabatanTtd,
 							objectpegawaifk: $scope.item.idPegawai,
-							eselon: $scope.itemJabatan.eselon != undefined ? $scope.itemJabatan.eselon.id : null,
+							eselon: $scope.itemJabatan.tunjangan.id,
 							tmtjabatan: moment($scope.itemJabatan.tmtjabatan).format('YYYY-MM-DD'),
 							instansi: $scope.itemJabatan.instansi
 						}
@@ -5217,11 +5242,11 @@ $scope.formatRupiah = function (value, currency) {
 						}
 			
 						
-						if ($scope.itemGajiBerkala.tanggaltmtcetak) {
+						if ($scope.itemGajiBerkala.tanggaltmtcetak  !== 'KP') {
 							var tmtBaru = new Date($scope.itemGajiBerkala.tanggaltmtcetak);
 							tmtBaru.setFullYear(tmtBaru.getFullYear() + 2);
 							$scope.itemGajiBerkala.tanggaltmt = tmtBaru;
-						}
+						} 			
 
 						if ($scope.itemGajiBerkala.masakerjagolongan) {
 							var masaKerja = $scope.itemGajiBerkala.masakerjagolongan.split(" ");

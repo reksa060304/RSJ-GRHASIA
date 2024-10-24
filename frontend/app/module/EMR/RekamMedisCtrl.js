@@ -458,7 +458,7 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
             // });
 
             $scope.alergi = function () {
-                $scope.item.alergi = $scope.header.ketalergi
+                // $scope.item.alergi = $scope.header.ketalergi
                 $scope.popUpAlergi.open().center()
             }
 

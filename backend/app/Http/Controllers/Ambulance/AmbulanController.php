@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Created by PhpStorm.
  * PiutangController
@@ -6,7 +7,9 @@
  * Date: 22/10/2019
  * Time: 14:25 PM
  */
+
 namespace App\Http\Controllers\Ambulance;
+
 use App\Http\Controllers\ApiController;
 use App\Traits\Valet;
 use App\Transaksi\AntrianPasienDiperiksa;
@@ -20,28 +23,42 @@ use App\Transaksi\StrukPelayanan;
 use App\Transaksi\StrukPelayananDetail;
 use DB;
 use Illuminate\Http\Request;
-class AmbulanController extends ApiController{
+
+class AmbulanController extends ApiController
+{
     use Valet;
-    public function __construct(){
-        parent::__construct($skip_authentication=false);
+    public function __construct()
+    {
+        parent::__construct($skip_authentication = false);
     }
 
-    public function getDataApdAmbulance(Request $request){
+    public function getDataApdAmbulance(Request $request)
+    {
         $kdProfile = $this->getDataKdProfile($request);
         $idProfile = (int) $kdProfile;
-        $Ruangan = explode (',',$this->settingDataFixed('KdRuanganAmbulance',$idProfile));
+        $Ruangan = explode(',', $this->settingDataFixed('KdRuanganAmbulance', $idProfile));
         $listRuangan = [];
-        foreach ($Ruangan as $itemRuangan){
-            $listRuangan [] = (int) $itemRuangan;
+        foreach ($Ruangan as $itemRuangan) {
+            $listRuangan[] = (int) $itemRuangan;
         }
         $data = \DB::table('antrianpasiendiperiksa_t as apd')
             ->join('pasiendaftar_t as pd', 'pd.norec', '=', 'apd.noregistrasifk')
             ->join('ruangan_m as ru', 'ru.id', '=', 'apd.objectruanganfk')
             ->join('pasien_m as ps', 'ps.id', '=', 'pd.nocmfk')
             ->join('kelas_m as kls', 'kls.id', '=', 'apd.objectkelasfk')
-            ->select('apd.norec as norec_apd', 'ps.nocm', 'ps.id as nocmfk', 'ps.namapasien', 'pd.noregistrasi',
-                'apd.objectruanganfk as id','ru.objectdepartemenfk',
-                'ru.namaruangan', 'apd.tglregistrasi', 'kls.namakelas', 'apd.objectruanganasalfk')
+            ->select(
+                'apd.norec as norec_apd',
+                'ps.nocm',
+                'ps.id as nocmfk',
+                'ps.namapasien',
+                'pd.noregistrasi',
+                'apd.objectruanganfk as id',
+                'ru.objectdepartemenfk',
+                'ru.namaruangan',
+                'apd.tglregistrasi',
+                'kls.namakelas',
+                'apd.objectruanganasalfk'
+            )
             ->whereIn('apd.objectruanganfk', $listRuangan)
             ->where('pd.noregistrasi', $request['noregistrasi'])
             ->where('apd.kdprofile', $idProfile)
@@ -55,15 +72,16 @@ class AmbulanController extends ApiController{
         return $this->respond($result);
     }
 
-    public function getKelompokUser(Request $request){
+    public function getKelompokUser(Request $request)
+    {
         $kdProfile = $this->getDataKdProfile($request);
         $idProfile = (int) $kdProfile;
         $detailLogin = $request->all();
         $data = \DB::table('kelompokuser_s as ku')
-            ->join('loginuser_s as lu','lu.objectkelompokuserfk','=','ku.id')
-            ->select('ku.id','ku.kelompokuser','lu.namauser')
+            ->join('loginuser_s as lu', 'lu.objectkelompokuserfk', '=', 'ku.id')
+            ->select('ku.id', 'ku.kelompokuser', 'lu.namauser')
             ->where('ku.kdprofile', $idProfile)
-            ->where('lu.id',$request['luId'])
+            ->where('lu.id', $request['luId'])
             ->first();
         $result = array(
             "data" => $data,
@@ -72,99 +90,100 @@ class AmbulanController extends ApiController{
         return $this->respond($result);
     }
 
-    public function GetDataForComboAmbulan(Request $request) {
+    public function GetDataForComboAmbulan(Request $request)
+    {
         $kdProfile = $this->getDataKdProfile($request);
         $idProfile = (int) $kdProfile;
-        $deptPelayanan = explode (',',$this->settingDataFixed('kdDepartemenPelayanan',$idProfile));
-        $deptRanapGawat = explode(',',$this->settingDataFixed('KdRanapIgd',$idProfile));
+        $deptPelayanan = explode(',', $this->settingDataFixed('kdDepartemenPelayanan', $idProfile));
+        $deptRanapGawat = explode(',', $this->settingDataFixed('KdRanapIgd', $idProfile));
         $deptAmbulan = (int) $this->settingDataFixed('KdInstalasiAmbulan', $idProfile);
         $KelUserKasir = $this->settingDataFixed('KdKelompokUser', $idProfile);
         // return $deptAmbulan;
         $deptZenajah = (int) $this->settingDataFixed('KdInstalasiJenazah', $idProfile);
-        $kdJeniPegawaiDokter = (int) $this->settingDataFixed('KdJenisPegawaiDokter',$idProfile);
+        $kdJeniPegawaiDokter = (int) $this->settingDataFixed('KdJenisPegawaiDokter', $idProfile);
         $kdDepartemenRawatPelayanan = [];
         $kdDeptRanapGawat = [];
         $kdPelayananAmbulan = (int) $this->settingDataFixed('KdKelompokTransaksiAmbulance', $idProfile);
-        foreach ($deptPelayanan as $itemPelayanan){
-            $kdDepartemenRawatPelayanan []=  (int)$itemPelayanan;
+        foreach ($deptPelayanan as $itemPelayanan) {
+            $kdDepartemenRawatPelayanan[] =  (int)$itemPelayanan;
         }
-        foreach ($deptRanapGawat as $items){
-            $kdDeptRanapGawat [] = (int)$items;
+        foreach ($deptRanapGawat as $items) {
+            $kdDeptRanapGawat[] = (int)$items;
         }
         $ruangan = \DB::table('ruangan_m as r')
-            ->select('r.id','r.namaruangan','r.objectdepartemenfk')
-            ->where('statusenabled','true')
+            ->select('r.id', 'r.namaruangan', 'r.objectdepartemenfk')
+            ->where('statusenabled', 'true')
             ->where('r.kdprofile', $idProfile)
-            ->wherein('r.objectdepartemenfk',$kdDeptRanapGawat)
+            ->wherein('r.objectdepartemenfk', $kdDeptRanapGawat)
             ->get();
 
         $RuanganAmbulan = \DB::table('ruangan_m as r')
-            ->select('r.id','r.namaruangan','r.objectdepartemenfk')
-            ->where('statusenabled','true')
+            ->select('r.id', 'r.namaruangan', 'r.objectdepartemenfk')
+            ->where('statusenabled', 'true')
             ->where('r.kdprofile', $idProfile)
-            ->where('r.objectdepartemenfk',$deptAmbulan)
+            ->where('r.objectdepartemenfk', $deptAmbulan)
             ->get();
 
         $dataAmbulan = \DB::table('departemen_m as dp')
-            ->select('dp.id','dp.namadepartemen as departemen')
+            ->select('dp.id', 'dp.namadepartemen as departemen')
             ->where('dp.kdprofile', $idProfile)
-            ->where('dp.id',$deptAmbulan)
-            ->where('dp.statusenabled',true)
+            ->where('dp.id', $deptAmbulan)
+            ->where('dp.statusenabled', true)
             ->get();
 
         $dataInstalasi = \DB::table('departemen_m as dp')
-            ->select('dp.id','dp.namadepartemen as departemen')
+            ->select('dp.id', 'dp.namadepartemen as departemen')
             ->where('dp.kdprofile', $idProfile)
-            ->where('dp.statusenabled',true)
+            ->where('dp.statusenabled', true)
             ->get();
 
         $dokter = \DB::table('pegawai_m as p')
-            ->select('p.id','p.namalengkap as namadokter')
+            ->select('p.id', 'p.namalengkap as namadokter')
             ->where('p.kdprofile', $idProfile)
-            ->where('p.objectjenispegawaifk',$kdJeniPegawaiDokter)
-            ->where('statusenabled','true')
+            ->where('p.objectjenispegawaifk', $kdJeniPegawaiDokter)
+            ->where('statusenabled', 'true')
             ->get();
 
         $hubunganKeluarga = \DB::table('hubungankeluarga_m as h')
-            ->select('h.id','h.hubungankeluarga')
+            ->select('h.id', 'h.hubungankeluarga')
             ->where('h.kdprofile', $idProfile)
-            ->where('h.statusenabled','true')
+            ->where('h.statusenabled', 'true')
             ->get();
 
         $dataKelompok = \DB::table('kelompokpasien_m as kp')
-            ->select('kp.id','kp.kelompokpasien')
+            ->select('kp.id', 'kp.kelompokpasien')
             ->where('kp.kdprofile', $idProfile)
-            ->where('kp.statusenabled',true)
+            ->where('kp.statusenabled', true)
             ->get();
 
         $dataJenisPetugas = \DB::table('jenispetugaspelaksana_m as kp')
-            ->select('kp.id','kp.jenispetugaspe')
+            ->select('kp.id', 'kp.jenispetugaspe')
             ->where('kp.kdprofile', $idProfile)
-            ->where('kp.statusenabled',true)
+            ->where('kp.statusenabled', true)
             ->get();
 
         $dataRuanganPelayanan = \DB::table('ruangan_m as r')
-            ->select('r.id','r.namaruangan')
+            ->select('r.id', 'r.namaruangan')
             ->where('r.kdprofile', $idProfile)
-            ->where('statusenabled','true')
-            ->whereIn('objectdepartemenfk',$kdDepartemenRawatPelayanan)
+            ->where('statusenabled', 'true')
+            ->whereIn('objectdepartemenfk', $kdDepartemenRawatPelayanan)
             ->get();
 
         $dataKelompokTransaksiAmbulan = \DB::table('kelompoktransaksi_m as r')
-            ->select('r.id','r.kelompoktransaksi')
+            ->select('r.id', 'r.kelompoktransaksi')
             ->where('r.kdprofile', $idProfile)
-            ->where('statusenabled','true')
-            ->where('r.id',$kdPelayananAmbulan)
+            ->where('statusenabled', 'true')
+            ->where('r.id', $kdPelayananAmbulan)
             ->get();
 
         $result = array(
-            'ruangan'=>$ruangan,
-            'ruanganambulan'=>$RuanganAmbulan,
-            'dokter'=>$dokter,
-            'hubunganKeluarga'=>$hubunganKeluarga,
-            'departemen'=>$dataAmbulan,
-            'kelompokpasien'=>$dataKelompok,
-            'jenispetugaspe'=>$dataJenisPetugas,
+            'ruangan' => $ruangan,
+            'ruanganambulan' => $RuanganAmbulan,
+            'dokter' => $dokter,
+            'hubunganKeluarga' => $hubunganKeluarga,
+            'departemen' => $dataAmbulan,
+            'kelompokpasien' => $dataKelompok,
+            'jenispetugaspe' => $dataJenisPetugas,
             'ruanganpelayanan' => $dataRuanganPelayanan,
             'kelompoktransaksi' => $dataKelompokTransaksiAmbulan,
             'keluserkasir' => $KelUserKasir
@@ -173,7 +192,8 @@ class AmbulanController extends ApiController{
         return $this->respond($result);
     }
 
-    public function getDaftarOrderAmbulan (Request $request) {
+    public function getDaftarOrderAmbulan(Request $request)
+    {
         $kdProfile = $this->getDataKdProfile($request);
         $idProfile = (int) $kdProfile;
         $dataLogin = $request->all();
@@ -192,82 +212,108 @@ class AmbulanController extends ApiController{
             ->leftJoin('pegawai_m as pg2', 'pg2.id', '=', 'pd.objectpegawaifk')
             ->leftJoin('pelayananpasien_t as pp', 'pp.strukorderfk', '=', 'so.norec')
             ->leftJoin('jenispelayanan_m as jp', 'jp.kodeinternal', '=', 'pd.jenispelayanan')
-            ->select('so.norec as norec_so', 'pd.norec as norec_pd', 'so.noorder', 'pd.noregistrasi', 'pd.tglregistrasi', 'pd.tglpulang', 'ps.nocm', 'ps.namapasien',
-                'klm.jeniskelamin', 'ps.tgllahir','pd.objectrekananfk',
-                'kps.kelompokpasien', 'dp.namadepartemen', 'pd.objectkelasfk', 'kls.namakelas', 'so.objectruangantujuanfk',
-                'so.objectruanganfk', 'pd.objectkelompokpasienlastfk', 'ru.objectdepartemenfk', 'ru2.objectdepartemenfk as iddeptujuan',
-                'so.objectpegawaiorderfk', 'pg.namalengkap as pegawaiorder','so.tglorder','pd.jenispelayanan as idjenisPelayanan','jp.jenispelayanan',
-                'ru.namaruangan', 'ru2.namaruangan as ruangantujuan','so.tglpelayananakhir','pg2.namalengkap as dpjp','so.tglrencana',
+            ->select(
+                'so.norec as norec_so',
+                'pd.norec as norec_pd',
+                'so.noorder',
+                'pd.noregistrasi',
+                'pd.tglregistrasi',
+                'pd.tglpulang',
+                'ps.nocm',
+                'ps.namapasien',
+                'klm.jeniskelamin',
+                'ps.tgllahir',
+                'pd.objectrekananfk',
+                'kps.kelompokpasien',
+                'dp.namadepartemen',
+                'pd.objectkelasfk',
+                'kls.namakelas',
+                'so.objectruangantujuanfk',
+                'so.objectruanganfk',
+                'pd.objectkelompokpasienlastfk',
+                'ru.objectdepartemenfk',
+                'ru2.objectdepartemenfk as iddeptujuan',
+                'so.objectpegawaiorderfk',
+                'pg.namalengkap as pegawaiorder',
+                'so.tglorder',
+                'pd.jenispelayanan as idjenisPelayanan',
+                'jp.jenispelayanan',
+                'ru.namaruangan',
+                'ru2.namaruangan as ruangantujuan',
+                'so.tglpelayananakhir',
+                'pg2.namalengkap as dpjp',
+                'so.tglrencana',
                 (DB::raw("case when pp.strukorderfk is null then 'MASUK' else
-                                    'Sudah Verifikasi' end as status")))
+                                    'Sudah Verifikasi' end as status"))
+            )
             ->where('so.kdprofile', $idProfile)
-            ->where('ru2.objectdepartemenfk', $this->settingDataFixed('KdInstalasiAmbulan',$idProfile))            ->where('so.statusenabled',true);
+            ->where('ru2.objectdepartemenfk', $this->settingDataFixed('KdInstalasiAmbulan', $idProfile))->where('so.statusenabled', true);
 
         if (isset($request['isNotVerif']) && $request['isNotVerif'] != "" && $request['isNotVerif'] != "undefined") {
             if ($request['isNotVerif'] == true) {
                 $data = $data->whereNull('pp.strukorderfk');
             }
         }
-//        if($dataruangan[0]->objectdepartemenfk != 27 && $dataruangan[0]->objectdepartemenfk != 3 && $dataruangan[0]->objectdepartemenfk != 25){
-//            $tgltgltgl= date('Y-m-d H:i:s');
-//            $data = $data->where('so.tglpelayananakhir','>=', $tgltgltgl);
-//        }
+        //        if($dataruangan[0]->objectdepartemenfk != 27 && $dataruangan[0]->objectdepartemenfk != 3 && $dataruangan[0]->objectdepartemenfk != 25){
+        //            $tgltgltgl= date('Y-m-d H:i:s');
+        //            $data = $data->where('so.tglpelayananakhir','>=', $tgltgltgl);
+        //        }
 
-        if(isset($request['tglAwal']) && $request['tglAwal']!="" && $request['tglAwal']!="undefined"){
-            $data = $data->where('so.tglorder','>=', $request['tglAwal']);
+        if (isset($request['tglAwal']) && $request['tglAwal'] != "" && $request['tglAwal'] != "undefined") {
+            $data = $data->where('so.tglorder', '>=', $request['tglAwal']);
         }
-        if(isset($request['tglAkhir']) && $request['tglAkhir']!="" && $request['tglAkhir']!="undefined"){
-            $tgl= $request['tglAkhir'];
-            $data = $data->where('so.tglorder','<=', $tgl);
+        if (isset($request['tglAkhir']) && $request['tglAkhir'] != "" && $request['tglAkhir'] != "undefined") {
+            $tgl = $request['tglAkhir'];
+            $data = $data->where('so.tglorder', '<=', $tgl);
         }
-        if(isset($request['tglAwalOperasi']) && $request['tglAwalOperasi']!="" && $request['tglAwalOperasi']!="undefined"){
-            $data = $data->where('so.tglpelayananakhir','>=', $request['tglAwalOperasi']);
+        if (isset($request['tglAwalOperasi']) && $request['tglAwalOperasi'] != "" && $request['tglAwalOperasi'] != "undefined") {
+            $data = $data->where('so.tglpelayananakhir', '>=', $request['tglAwalOperasi']);
         }
-        if(isset($request['tglAkhirOperasi']) && $request['tglAkhirOperasi']!="" && $request['tglAkhirOperasi']!="undefined"){
-            $tgl= $request['tglAkhirOperasi'];
-            $data = $data->where('so.tglpelayananakhir','<=', $tgl);
+        if (isset($request['tglAkhirOperasi']) && $request['tglAkhirOperasi'] != "" && $request['tglAkhirOperasi'] != "undefined") {
+            $tgl = $request['tglAkhirOperasi'];
+            $data = $data->where('so.tglpelayananakhir', '<=', $tgl);
         }
-        if(isset($request['tglAwalRen']) && $request['tglAwalRen']!="" && $request['tglAwalRen']!="undefined"){
-            $data = $data->where('so.tglrencana','>=', $request['tglAwalRen']);
+        if (isset($request['tglAwalRen']) && $request['tglAwalRen'] != "" && $request['tglAwalRen'] != "undefined") {
+            $data = $data->where('so.tglrencana', '>=', $request['tglAwalRen']);
         }
-        if(isset($request['tglAkhirRen']) && $request['tglAkhirRen']!="" && $request['tglAkhirRen']!="undefined"){
-            $tgl= $request['tglAkhirRen'];
-            $data = $data->where('so.tglrencana','<=', $tgl);
+        if (isset($request['tglAkhirRen']) && $request['tglAkhirRen'] != "" && $request['tglAkhirRen'] != "undefined") {
+            $tgl = $request['tglAkhirRen'];
+            $data = $data->where('so.tglrencana', '<=', $tgl);
         }
-        if(isset($request['idRuanganOrder']) && $request['idRuanganOrder']!="" && $request['idRuanganOrder']!="undefined"){
-            $data = $data->where('so.objectruanganfk','=', $request['idRuanganOrder']);
+        if (isset($request['idRuanganOrder']) && $request['idRuanganOrder'] != "" && $request['idRuanganOrder'] != "undefined") {
+            $data = $data->where('so.objectruanganfk', '=', $request['idRuanganOrder']);
         }
 
-        if(isset($request['pegId']) && $request['pegId']!="" && $request['pegId']!="undefined"){
-            $data = $data->where('so.objectpegawaiorderfk','=', $request['pegId']);
+        if (isset($request['pegId']) && $request['pegId'] != "" && $request['pegId'] != "undefined") {
+            $data = $data->where('so.objectpegawaiorderfk', '=', $request['pegId']);
         }
-        if(isset($request['idRuanganTujuan']) && $request['idRuanganTujuan']!="" && $request['idRuanganTujuan']!="undefined"){
-            $data = $data->where('so.objectruangantujuanfk','=', $request['idRuanganTujuan']);
+        if (isset($request['idRuanganTujuan']) && $request['idRuanganTujuan'] != "" && $request['idRuanganTujuan'] != "undefined") {
+            $data = $data->where('so.objectruangantujuanfk', '=', $request['idRuanganTujuan']);
         }
-        if(isset($request['kelId']) && $request['kelId']!="" && $request['kelId']!="undefined"){
-            $data = $data->where('pd.objectkelompokpasienlastfk','=', $request['kelId']);
+        if (isset($request['kelId']) && $request['kelId'] != "" && $request['kelId'] != "undefined") {
+            $data = $data->where('pd.objectkelompokpasienlastfk', '=', $request['kelId']);
         }
-        if(isset($request['noregistrasi']) && $request['noregistrasi']!="" && $request['noregistrasi']!="undefined"){
-            $data = $data->where('pd.noregistrasi','ilike','%'. $request['noregistrasi'].'%');
+        if (isset($request['noregistrasi']) && $request['noregistrasi'] != "" && $request['noregistrasi'] != "undefined") {
+            $data = $data->where('pd.noregistrasi', 'ilike', '%' . $request['noregistrasi'] . '%');
         }
-        if(isset($request['nocm']) && $request['nocm']!="" && $request['nocm']!="undefined"){
-            $data = $data->where('ps.nocm','ilike','%'. $request['nocm'].'%');
+        if (isset($request['nocm']) && $request['nocm'] != "" && $request['nocm'] != "undefined") {
+            $data = $data->where('ps.nocm', 'ilike', '%' . $request['nocm'] . '%');
         }
-        if(isset($request['namapasien']) && $request['namapasien']!="" && $request['namapasien']!="undefined"){
-            $data = $data->where('ps.namapasien','ilike','%'. $request['namapasien'].'%');
+        if (isset($request['namapasien']) && $request['namapasien'] != "" && $request['namapasien'] != "undefined") {
+            $data = $data->where('ps.namapasien', 'ilike', '%' . $request['namapasien'] . '%');
         }
-        if(isset($request['noOrders']) && $request['noOrders']!="" && $request['noOrders']!="undefined"){
-            $data = $data->where('so.noorder','ilike','%'. $request['noOrders'].'%');
+        if (isset($request['noOrders']) && $request['noOrders'] != "" && $request['noOrders'] != "undefined") {
+            $data = $data->where('so.noorder', 'ilike', '%' . $request['noOrders'] . '%');
         }
-        if(isset($request['jmlRow']) && $request['jmlRow']!="" && $request['jmlRow']!="undefined"){
+        if (isset($request['jmlRow']) && $request['jmlRow'] != "" && $request['jmlRow'] != "undefined") {
             $data = $data->take($request['jmlRow']);
         }
-        $data = $data->orderBy('so.noorder','desc');
-//        $data = $data->take(100);
+        $data = $data->orderBy('so.noorder', 'desc');
+        //        $data = $data->take(100);
         $data = $data->distinct();
         $data = $data->get();
 
-        $dataResult=array(
+        $dataResult = array(
             'message' =>  'inhuman',
             'data' =>  $data,
         );
@@ -275,7 +321,8 @@ class AmbulanController extends ApiController{
     }
 
 
-    public function saveOrderAmbulan(Request $request){
+    public function saveOrderAmbulan(Request $request)
+    {
         $kdProfile = $this->getDataKdProfile($request);
         $idProfile = (int) $kdProfile;
         $detLogin = $request->all();
@@ -308,14 +355,14 @@ class AmbulanController extends ApiController{
                 $dataSO->norec = $dataSO->generateNewId();
                 $dataSO->kdprofile = $idProfile;
                 $dataSO->statusenabled = true;
-                $dataSO->nocmfk = $dataPD->nocmfk;//$dataPD;
-//            $dataSO->cito = '0';
-//            $dataSO->objectdiagnosafk = true;
+                $dataSO->nocmfk = $dataPD->nocmfk; //$dataPD;
+                //            $dataSO->cito = '0';
+                //            $dataSO->objectdiagnosafk = true;
                 $dataSO->isdelivered = 1;
                 $dataSO->noorder = $noOrder;
                 $dataSO->noorderintern = $noOrder;
-                $dataSO->noregistrasifk = $dataPD->norec;//$dataAPD['noregistrasifk'];
-                $dataSO->objectpegawaiorderfk = $dokter2;//$request['pegawaiorderfk'];
+                $dataSO->noregistrasifk = $dataPD->norec; //$dataAPD['noregistrasifk'];
+                $dataSO->objectpegawaiorderfk = $dokter2; //$request['pegawaiorderfk'];
                 $dataSO->qtyjenisproduk = 1;
                 $dataSO->qtyproduk = $request['qtyproduk'];
                 $dataSO->objectruanganfk = $request['objectruanganfk'];
@@ -343,7 +390,7 @@ class AmbulanController extends ApiController{
                     $dataSO->objectkelompoktransaksifk = 9;
                     $dataSO->tglrencana = $request['tglrencana'];
                 }
-                if(isset( $request['keterangan'])){
+                if (isset($request['keterangan'])) {
                     $dataSO->keteranganlainnya = $request['keterangan'];
                 }
                 $dataSO->tglorder = date('Y-m-d H:i:s');
@@ -363,8 +410,9 @@ class AmbulanController extends ApiController{
                 foreach ($request['details'] as $item) {
                     if ($request['status'] == 'bridinglangsung') {
                         $updatePP = PelayananPasien::where('norec', $item['norec_pp'])
-                            ->where('kdprofile',$idProfile)
-                            ->update([
+                            ->where('kdprofile', $idProfile)
+                            ->update(
+                                [
                                     'strukorderfk' => $dataSOnorec
                                 ]
                             );
@@ -406,7 +454,6 @@ class AmbulanController extends ApiController{
                     }
                     $dataOP->save();
                 }
-
             } else {
 
                 foreach ($request['details'] as $item) {
@@ -478,13 +525,13 @@ class AmbulanController extends ApiController{
         return $this->setStatusCode($result['status'])->respond($result, $transMessage);
     }
 
-    public function hapusOrderPelayananAmbulan(Request $request){
+    public function hapusOrderPelayananAmbulan(Request $request)
+    {
         $kdProfile = $this->getDataKdProfile($request);
         $idProfile = (int) $kdProfile;
         DB::beginTransaction();
         try {
-            StrukOrder::where('norec', $request['norec_order'])->where('kdprofile', $idProfile)->update
-            (['statusenabled' => false]);
+            StrukOrder::where('norec', $request['norec_order'])->where('kdprofile', $idProfile)->update(['statusenabled' => false]);
 
             $transStatus = 'true';
         } catch (\Exception $e) {
@@ -497,10 +544,9 @@ class AmbulanController extends ApiController{
             $result = array(
                 "status" => 201,
                 "message" => $transMessage,
-//                    "strukorder" => $dataSO,
+                //                    "strukorder" => $dataSO,
                 "as" => 'inhuman',
             );
-
         } else {
             $transMessage = "Hapus Gagal";
             DB::rollBack();
@@ -513,14 +559,15 @@ class AmbulanController extends ApiController{
         return $this->setStatusCode($result['status'])->respond($result, $transMessage);
     }
 
-    public function getRiwayatOrderPelayananAmbulan(Request $request){
+    public function getRiwayatOrderPelayananAmbulan(Request $request)
+    {
         $kdProfile = $this->getDataKdProfile($request);
         $idProfile = (int) $kdProfile;
         $results = [];
         $ruanganLab = explode(',', $this->settingDataFixed('KdRuanganAmbulance', $idProfile));
         $kdRuangLab = [];
         foreach ($ruanganLab as $item) {
-            $kdRuangLab [] = (int)$item;
+            $kdRuangLab[] = (int)$item;
         }
         $data = \DB::table('strukorder_t as so')
             ->LEFTJOIN('pasiendaftar_t as pd', 'pd.norec', '=', 'so.noregistrasifk')
@@ -528,9 +575,18 @@ class AmbulanController extends ApiController{
             ->LEFTJOIN('ruangan_m as ru', 'ru.id', '=', 'so.objectruanganfk')
             ->LEFTJOIN('ruangan_m as ru2', 'ru2.id', '=', 'so.objectruangantujuanfk')
             ->LEFTJOIN('pegawai_m as p', 'p.id', '=', 'so.objectpegawaiorderfk')
-            ->select('so.norec', 'pd.norec as norecpd', 'pd.noregistrasi', 'so.tglorder', 'so.noorder',
-                'ru.namaruangan as ruanganasal', 'ru2.namaruangan as ruangantujuan', 'p.namalengkap',
-                'so.noorder','pd.noregistrasi','so.keteranganlainnya'
+            ->select(
+                'so.norec',
+                'pd.norec as norecpd',
+                'pd.noregistrasi',
+                'so.tglorder',
+                'so.noorder',
+                'ru.namaruangan as ruanganasal',
+                'ru2.namaruangan as ruangantujuan',
+                'p.namalengkap',
+                'so.noorder',
+                'pd.noregistrasi',
+                'so.keteranganlainnya'
             )
             ->where('pd.kdprofile', $idProfile);
         if (isset($request['noregistrasi']) && $request['noregistrasi'] != "" && $request['noregistrasi'] != "undefined") {
@@ -553,7 +609,8 @@ class AmbulanController extends ApiController{
             } else {
                 $item->statusorder = 'PENDING';
             }
-            $details = DB::select(DB::raw("
+            $details = DB::select(
+                DB::raw("
                             select so.tglorder,so.noorder,
                             pr.id,pr.namaproduk,op.qtyproduk
                             from strukorder_t as so
@@ -574,7 +631,7 @@ class AmbulanController extends ApiController{
                 'noorder' => $item->noorder,
                 'norec' => $item->norec,
                 'norecpd' => $item->norecpd,
-//                'norecapd' => $item->norecapd,
+                //                'norecapd' => $item->norecapd,
                 'namaruanganasal' => $item->ruanganasal,
                 'namaruangantujuan' => $item->ruangantujuan,
                 'dokter' => $item->namalengkap,
@@ -592,14 +649,16 @@ class AmbulanController extends ApiController{
         return $this->respond($result);
     }
 
-    public function getOrderPelayananAmbulan(Request $request) {
+    public function getOrderPelayananAmbulan(Request $request)
+    {
         $idkelas = $request['objectkelasfk'];
         $idPenjamin = $request['objectpenjaminfk'];
         $norec_so = $request['norec_so'];
         $kdProfile = $this->getDataKdProfile($request);
         $idProfile = (int) $kdProfile;
         if (isset($request['objectpenjaminfk']) && $request['objectpenjaminfk'] != 'null') {
-            $dataOrderPelayanan = DB::select(DB::raw("select DISTINCT op.norec as norec_op,pr.id as prid,pr.namaproduk,
+            $dataOrderPelayanan = DB::select(
+                DB::raw("select DISTINCT op.norec as norec_op,pr.id as prid,pr.namaproduk,
                 op.tglpelayanan,op.qtyproduk ,ru.namaruangan as ruangantujuan,ru.objectdepartemenfk,op.strukorderfk,so.objectruangantujuanfk,
                 hnp.hargasatuan ,kls.namakelas,dpm.namadepartemen,
                 pps.norec as norec_pp
@@ -617,13 +676,14 @@ class AmbulanController extends ApiController{
                 where op.kdprofile = $idProfile and op.strukorderfk=:norec_so
                 and kls.id=:objectkelasfk
                 ORDER by op.tglpelayanan"),
-            array(
-                'norec_so' => $norec_so,
-                'objectkelasfk' =>$idkelas ,
-            )
-        );
+                array(
+                    'norec_so' => $norec_so,
+                    'objectkelasfk' => $idkelas,
+                )
+            );
         } else {
-            $dataOrderPelayanan = DB::select(DB::raw("select DISTINCT op.norec as norec_op,pr.id as prid,pr.namaproduk,
+            $dataOrderPelayanan = DB::select(
+                DB::raw("select DISTINCT op.norec as norec_op,pr.id as prid,pr.namaproduk,
                 op.tglpelayanan,op.qtyproduk ,ru.namaruangan as ruangantujuan,ru.objectdepartemenfk,op.strukorderfk,so.objectruangantujuanfk,
                 hnp.hargasatuan ,kls.namakelas,dpm.namadepartemen,
                 pps.norec as norec_pp
@@ -641,11 +701,11 @@ class AmbulanController extends ApiController{
                 where op.kdprofile = $idProfile and op.strukorderfk=:norec_so
                 and kls.id=:objectkelasfk
                 ORDER by op.tglpelayanan"),
-            array(
-                'norec_so' => $norec_so,
-                'objectkelasfk' =>$idkelas ,
-            )
-        );
+                array(
+                    'norec_so' => $norec_so,
+                    'objectkelasfk' => $idkelas,
+                )
+            );
         }
 
         // $dataOrderPelayanan = DB::select(DB::raw("select DISTINCT op.norec as norec_op,pr.id as prid,pr.namaproduk,
@@ -672,8 +732,8 @@ class AmbulanController extends ApiController{
         //     )
         // );
 
-        $result=[];
-        foreach ($dataOrderPelayanan as $item){
+        $result = [];
+        foreach ($dataOrderPelayanan as $item) {
             $dataz =  DB::select(DB::raw("select DISTINCT hnp.objectkomponenhargafk,kh.komponenharga,hnp.hargasatuan,
                 hnp.objectprodukfk
                 from harganettoprodukbykelasd_m as hnp   
@@ -700,7 +760,7 @@ class AmbulanController extends ApiController{
             );
         }
 
-        $result=array(
+        $result = array(
             'message' =>  'inhuman',
             'data' =>  $result,
 
@@ -708,23 +768,29 @@ class AmbulanController extends ApiController{
         return $this->respond($result);
     }
 
-    public function savePelayananPasienAmbulan(Request $request) {
+    public function savePelayananPasienAmbulan(Request $request)
+    {
         $kdProfile = (int) $this->getDataKdProfile($request);
         DB::beginTransaction();
-        try{
+        try {
             $jenisPetugasPe = \DB::table('mapjenispetugasptojenispegawai_m as mpp')
-                ->join ('jenispegawai_m as jp','jp.id','=','mpp.objectjenispegawaifk')
-                ->join ('pegawai_m as pg','pg.objectjenispegawaifk','=','jp.id')
-                ->join ('jenispetugaspelaksana_m as jpp','jpp.id','=','mpp.objectjenispetugaspefk')
-                ->select( 'mpp.objectjenispegawaifk','jp.jenispegawai','mpp.objectjenispetugaspefk' ,'jpp.jenispetugaspe',
-                    'pg.namalengkap','pg.id'
+                ->join('jenispegawai_m as jp', 'jp.id', '=', 'mpp.objectjenispegawaifk')
+                ->join('pegawai_m as pg', 'pg.objectjenispegawaifk', '=', 'jp.id')
+                ->join('jenispetugaspelaksana_m as jpp', 'jpp.id', '=', 'mpp.objectjenispetugaspefk')
+                ->select(
+                    'mpp.objectjenispegawaifk',
+                    'jp.jenispegawai',
+                    'mpp.objectjenispetugaspefk',
+                    'jpp.jenispetugaspe',
+                    'pg.namalengkap',
+                    'pg.id'
                 )
                 ->where('mpp.kdprofile', $kdProfile)
                 ->where('pg.id', $request['objectpegawaiorderfk'])
                 ->first();
 
-            if($request['norec_pp']=='') {
-                $pd = PasienDaftar::where('norec',$request['norec_pd'])->first();
+            if ($request['norec_pp'] == '') {
+                $pd = PasienDaftar::where('norec', $request['norec_pd'])->first();
                 $dataAPD = new AntrianPasienDiperiksa();
                 $dataAPD->norec = $dataAPD->generateNewId();
                 $dataAPD->kdprofile = $kdProfile;
@@ -738,20 +804,20 @@ class AmbulanController extends ApiController{
                 $dataAPD->statusantrian = 0;
                 $dataAPD->statuspasien = 1;
                 $dataAPD->objectstrukorderfk = $request['norec_so'];
-                $dataAPD->tglregistrasi =$pd->tglregistrasi;// date('Y-m-d H:i:s');
+                $dataAPD->tglregistrasi = $pd->tglregistrasi; // date('Y-m-d H:i:s');
                 $dataAPD->tglmasuk = date('Y-m-d H:i:s');
                 $dataAPD->tglkeluar = date('Y-m-d H:i:s');
                 $dataAPD->save();
 
                 $dataAPDnorec = $dataAPD->norec;
                 $dataAPDtglPel = $dataAPD->tglregistrasi;
-            }else{
-                $dataAPD =  PelayananPasien::where('norec',$request['norec_pp'])->where('kdprofile', $kdProfile)->first();
+            } else {
+                $dataAPD =  PelayananPasien::where('norec', $request['norec_pp'])->where('kdprofile', $kdProfile)->first();
                 $dataAPDnorec = $dataAPD->noregistrasifk;
                 $dataAPDtglPel = $dataAPD->tglregistrasi;
 
                 $HapusPP = PelayananPasien::where('strukorderfk', $request['norec_so'])->where('kdprofile', $kdProfile)->get();
-                foreach ($HapusPP as $pp){
+                foreach ($HapusPP as $pp) {
                     $HapusPPD = PelayananPasienDetail::where('pelayananpasien', $pp['norec'])->where('kdprofile', $kdProfile)->delete();
                     $HapusPPP = PelayananPasienPetugas::where('pelayananpasien', $pp['norec'])->where('kdprofile', $kdProfile)->delete();
                 }
@@ -759,7 +825,7 @@ class AmbulanController extends ApiController{
             }
 
 
-            foreach ($request['bridging'] as $item){
+            foreach ($request['bridging'] as $item) {
                 $PelPasien = new PelayananPasien();
                 $PelPasien->norec = $PelPasien->generateNewId();
                 $PelPasien->kdprofile = $kdProfile;
@@ -778,9 +844,9 @@ class AmbulanController extends ApiController{
                 $PelPasien->stock =  1;
                 $PelPasien->strukorderfk =  $request['norec_so'];
 
-                if (isset($item['tglpelayanan'])){
+                if (isset($item['tglpelayanan'])) {
                     $PelPasien->tglpelayanan = $item['tglpelayanan'];
-                }else{
+                } else {
                     $PelPasien->tglpelayanan = date('Y-m-d H:i:s');
                 }
 
@@ -795,8 +861,8 @@ class AmbulanController extends ApiController{
                 $PelPasienPetugas->kdprofile = $kdProfile;
                 $PelPasienPetugas->statusenabled = true;
                 $PelPasienPetugas->nomasukfk = $dataAPDnorec;
-                $PelPasienPetugas->objectpegawaifk = $request['iddokterverif'];//$request['objectpegawaiorderfk'],
-                $PelPasienPetugas->objectjenispetugaspefk = $request['idpetugaspe'];//4;//$jenisPetugasPe->idpetugaspe;
+                $PelPasienPetugas->objectpegawaifk = $request['iddokterverif']; //$request['objectpegawaiorderfk'],
+                $PelPasienPetugas->objectjenispetugaspefk = $request['idpetugaspe']; //4;//$jenisPetugasPe->idpetugaspe;
                 $PelPasienPetugas->pelayananpasien = $PPnorec;
                 $PelPasienPetugas->save();
                 $PPPnorec = $PelPasienPetugas->norec;
@@ -823,7 +889,7 @@ class AmbulanController extends ApiController{
                     $PelPasienDetail->produkfk =  $item['produkid'];
                     $PelPasienDetail->stock = 1;
                     $PelPasienDetail->strukorderfk =  $request['norec_so'];
-                    $PelPasienDetail->tglpelayanan =$dataAPDtglPel;
+                    $PelPasienDetail->tglpelayanan = $dataAPDtglPel;
                     $PelPasienDetail->harganetto = $itemKomponen['hargasatuan'];
                     $PelPasienDetail->save();
                     $PPDnorec = $PelPasienDetail->norec;
@@ -833,7 +899,8 @@ class AmbulanController extends ApiController{
 
             $dataPD = PasienDaftar::where('norec', $request['norec_pd'])
                 ->where('kdprofile', $kdProfile)
-                ->update(['objectruanganlastfk' => $request['objectruangantujuanfk']]
+                ->update(
+                    ['objectruanganlastfk' => $request['objectruangantujuanfk']]
                 );
 
             $transStatus = 'true';
@@ -849,7 +916,7 @@ class AmbulanController extends ApiController{
                 'status' => 201,
                 'message' => $transMessage,
                 'dataPP' => $PelPasien,
-//                'dataPPP' => $PelPasienPetugas,
+                //                'dataPPP' => $PelPasienPetugas,
                 'dataPPD' => $PelPasienDetail,
                 'as' => 'ramdanegie',
             );
@@ -860,25 +927,26 @@ class AmbulanController extends ApiController{
                 'status' => 400,
                 'message'  => $transMessage,
                 'dataPP' => $PelPasien,
-//                'dataPPP' => $PelPasienPetugas,
-//                'dataPPD' => $PelPasienDetail,
+                //                'dataPPP' => $PelPasienPetugas,
+                //                'dataPPD' => $PelPasienDetail,
                 'as' => 'ramdanegie',
             );
         }
         return $this->setStatusCode($result['status'])->respond($result, $transMessage);
-//        return $this->respond();
+        //        return $this->respond();
     }
 
-    public function getRincianPelayananAmbulan(Request $request) {
+    public function getRincianPelayananAmbulan(Request $request)
+    {
         $kdProfile = (int) $this->getDataKdProfile($request);
-        $dataLogin=$request->all();
-        $result=[];
+        $dataLogin = $request->all();
+        $result = [];
         $dataruangan = \DB::table('maploginusertoruangan_s as mlu')
-            ->leftjoin('ruangan_m as ru','ru.id','=','mlu.objectruanganfk')
-            ->leftjoin('departemen_m as dp','dp.id','=','ru.objectdepartemenfk')
-            ->select('ru.id','ru.namaruangan','ru.objectdepartemenfk')
+            ->leftjoin('ruangan_m as ru', 'ru.id', '=', 'mlu.objectruanganfk')
+            ->leftjoin('departemen_m as dp', 'dp.id', '=', 'ru.objectdepartemenfk')
+            ->select('ru.id', 'ru.namaruangan', 'ru.objectdepartemenfk')
             ->where('mlu.kdprofile', $kdProfile)
-            ->where('objectloginuserfk',$dataLogin['userData']['id'])
+            ->where('objectloginuserfk', $dataLogin['userData']['id'])
             ->get();
 
         $pelayanan = \DB::table('pelayananpasien_t as pp')
@@ -891,13 +959,33 @@ class AmbulanController extends ApiController{
             ->JOIN('departemen_m as dp', 'dp.id', '=', 'ru.objectdepartemenfk')
             ->leftJOIN('strukpelayanan_t as sp', 'sp.norec', '=', 'pp.strukfk')
             ->leftJOIN('strukorder_t as so', 'so.norec', '=', 'pp.strukorderfk')
-//                ->leftJOIN('ris_order as ris', 'ris.order_no', '=',
-//                    DB::raw('so.noorder AND ris.order_code=pp.produkfk'))
-            ->select('ps.nocm', 'ps.namapasien', 'jk.jeniskelamin', 'pp.tglpelayanan', 'pp.produkfk', 'pr.namaproduk',
-                'pp.jumlah', 'pp.hargasatuan', 'pp.hargadiscount', 'sp.nostruk', 'pd.noregistrasi', 'ru.namaruangan',
-                'dp.namadepartemen', 'ps.id as psid', 'apd.norec as norec_apd', 'sp.norec as norec_sp', 'pp.norec as norec_pp',
-                'ru.objectdepartemenfk', 'so.noorder','apd.objectruanganfk','pp.iscito','pp.jasa')
-//                    DB::raw('case when ris.order_key is not null then \'Sudah Dikirim\' else \'-\'end as statusbridging'))
+            //                ->leftJOIN('ris_order as ris', 'ris.order_no', '=',
+            //                    DB::raw('so.noorder AND ris.order_code=pp.produkfk'))
+            ->select(
+                'ps.nocm',
+                'ps.namapasien',
+                'jk.jeniskelamin',
+                'pp.tglpelayanan',
+                'pp.produkfk',
+                'pr.namaproduk',
+                'pp.jumlah',
+                'pp.hargasatuan',
+                'pp.hargadiscount',
+                'sp.nostruk',
+                'pd.noregistrasi',
+                'ru.namaruangan',
+                'dp.namadepartemen',
+                'ps.id as psid',
+                'apd.norec as norec_apd',
+                'sp.norec as norec_sp',
+                'pp.norec as norec_pp',
+                'ru.objectdepartemenfk',
+                'so.noorder',
+                'apd.objectruanganfk',
+                'pp.iscito',
+                'pp.jasa'
+            )
+            //                    DB::raw('case when ris.order_key is not null then \'Sudah Dikirim\' else \'-\'end as statusbridging'))
             ->where('pp.kdprofile', $kdProfile)
             ->where('ru.objectdepartemenfk', $this->settingDataFixed('KdInstalasiAmbulan', $kdProfile))
             ->orderBy('pp.tglpelayanan');
@@ -921,7 +1009,7 @@ class AmbulanController extends ApiController{
                 ->join('pelayananpasienpetugas_t as ptu', 'ptu.nomasukfk', '=', 'apd.norec')
                 ->leftjoin('pegawai_m as pg', 'pg.id', '=', 'ptu.objectpegawaifk')
                 ->select('ptu.pelayananpasien', 'pg.namalengkap', 'pg.id')
-//                    ->where('ptu.objectjenispetugaspefk', 4)
+                //                    ->where('ptu.objectjenispetugaspefk', 4)
                 ->where('pd.kdprofile', $kdProfile)
                 ->where('pd.noregistrasi', $pelayanan[0]->noregistrasi)
                 ->get();
@@ -941,7 +1029,7 @@ class AmbulanController extends ApiController{
                         $DokterId = $hahaha->id;
                     }
                 }
-                $total = (((float)$item->hargasatuan - (float)$diskon) * (float)$item->jumlah ) + (float)$item->jasa ;
+                $total = (((float)$item->hargasatuan - (float)$diskon) * (float)$item->jumlah) + (float)$item->jasa;
 
                 $result[] = array(
                     'nocm' => $item->nocm,
@@ -971,7 +1059,7 @@ class AmbulanController extends ApiController{
                 );
             }
         }
-        $dataTea =array(
+        $dataTea = array(
             'data' => $result,
             'detaillogin' => $dataLogin,
             'message' => 'Inhuman'
@@ -979,7 +1067,8 @@ class AmbulanController extends ApiController{
         return $this->respond($dataTea);
     }
 
-    public function getPelayananAmbulan(Request $request){
+    public function getPelayananAmbulan(Request $request)
+    {
         $kdProfile = (int) $this->getDataKdProfile($request);
         $data = \DB::table('pasiendaftar_t as pd')
             ->join('antrianpasiendiperiksa_t as apd', 'pd.norec', '=', 'apd.noregistrasifk')
@@ -990,56 +1079,92 @@ class AmbulanController extends ApiController{
             ->join('kelas_m as kls', 'kls.id', '=', 'pd.objectkelasfk')
             ->join('jeniskelamin_m as jk', 'jk.id', '=', 'p.objectjeniskelaminfk')
             ->leftjoin('pegawai_m as pg', 'pg.id', '=', 'apd.objectpegawaifk')
-//            ->leftJoin('pegawai_m as pg','pg.id','=','pd.objectpegawaifk')
+            //            ->leftJoin('pegawai_m as pg','pg.id','=','pd.objectpegawaifk')
             ->leftJoin('kelompokpasien_m as kp', 'kp.id', '=', 'pd.objectkelompokpasienlastfk')
             ->leftJoin('departemen_m as dept', 'dept.id', '=', 'ru.objectdepartemenfk')
             ->leftJoin('batalregistrasi_t as br', 'pd.norec', '=', 'br.pasiendaftarfk')
-            ->select('pd.norec as norec_pd','apd.norec as norec_apd','pd.tglregistrasi', 'p.nocm', 'pd.noregistrasi', 'ru.namaruangan', 'p.namapasien', 'kp.kelompokpasien',
-                'kls.namakelas','jk.jeniskelamin','pg.namalengkap as namapelaksana','pd.norec as norec_pd',
-                'pd.tglpulang', 'pd.statuspasien','p.tgllahir','pd.objectruanganlastfk','apd.tglmasuk','pr.id as prid', 'pr.namaproduk')
+            ->select(
+                'pd.norec as norec_pd',
+                'apd.norec as norec_apd',
+                'pd.tglregistrasi',
+                'p.nocm',
+                'pd.noregistrasi',
+                'ru.namaruangan',
+                'p.namapasien',
+                'kp.kelompokpasien',
+                'kls.namakelas',
+                'jk.jeniskelamin',
+                'pg.namalengkap as namapelaksana',
+                'pd.norec as norec_pd',
+                'pd.tglpulang',
+                'pd.statuspasien',
+                'p.tgllahir',
+                'pd.objectruanganlastfk',
+                'apd.tglmasuk',
+                'pr.id as prid',
+                'pr.namaproduk'
+            )
             ->where('pd.kdprofile', $kdProfile)
             ->whereNull('p.tglmeninggal')
             ->whereNull('br.norec');
 
         $filter = $request->all();
-        if(isset($filter['tglAwal']) && $filter['tglAwal'] != "" && $filter['tglAwal'] != "undefined") {
-//            $data = $data->where('pd.tglregistrasi', '>=', $filter['tglAwal']);
-//            $data = $data->where('so.tglorder', '>=', $filter['tglAwal']);
+        if (isset($filter['tglAwal']) && $filter['tglAwal'] != "" && $filter['tglAwal'] != "undefined") {
+            //            $data = $data->where('pd.tglregistrasi', '>=', $filter['tglAwal']);
+            //            $data = $data->where('so.tglorder', '>=', $filter['tglAwal']);
             $data = $data->where('apd.tglmasuk', '>=', $filter['tglAwal']);
         }
 
-        if(isset($filter['tglAkhir']) && $filter['tglAkhir'] != "" && $filter['tglAkhir'] != "undefined") {
-            $tgl = $filter['tglAkhir'] ;//. " 23:59:59";
-//            $data = $data->where('pd.tglregistrasi', '<=', $tgl);
-//            $data = $data->where('so.tglorder', '<=', $tgl);
+        if (isset($filter['tglAkhir']) && $filter['tglAkhir'] != "" && $filter['tglAkhir'] != "undefined") {
+            $tgl = $filter['tglAkhir']; //. " 23:59:59";
+            //            $data = $data->where('pd.tglregistrasi', '<=', $tgl);
+            //            $data = $data->where('so.tglorder', '<=', $tgl);
             $data = $data->where('apd.tglmasuk', '<=', $tgl);
         }
 
-        if(isset($filter['instalasiId']) && $filter['instalasiId'] != "" && $filter['instalasiId'] != "undefined") {
+        if (isset($filter['instalasiId']) && $filter['instalasiId'] != "" && $filter['instalasiId'] != "undefined") {
             $data = $data->where('dept.id', '=', $filter['instalasiId']);
         }
 
-        if(isset($filter['idRuangan']) && $filter['idRuangan'] != "" && $filter['idRuangan'] != "undefined") {
+        if (isset($filter['idRuangan']) && $filter['idRuangan'] != "" && $filter['idRuangan'] != "undefined") {
             $data = $data->where('apd.objectruanganfk', '=', $filter['idRuangan']);
         }
 
-        if(isset($filter['namaPasien']) && $filter['namaPasien'] != "" && $filter['namaPasien'] != "undefined") {
+        if (isset($filter['namaPasien']) && $filter['namaPasien'] != "" && $filter['namaPasien'] != "undefined") {
             $data = $data->where('p.namapasien', 'ilike', '%' . $filter['namaPasien'] . '%');
         }
 
-        if(isset($filter['noRegis']) && $filter['noRegis'] != "" && $filter['noRegis'] != "undefined") {
+        if (isset($filter['noRegis']) && $filter['noRegis'] != "" && $filter['noRegis'] != "undefined") {
             $data = $data->where('pd.noregistrasi', 'ilike', '%' . $filter['noRegis'] . '%');
         }
-        if(isset($filter['noCm']) && $filter['noCm'] != "" && $filter['noCm'] != "undefined") {
+        if (isset($filter['noCm']) && $filter['noCm'] != "" && $filter['noCm'] != "undefined") {
             $data = $data->where('p.nocm', 'ilike', '%' . $filter['noCm'] . '%');
         }
-        if(isset($filter['jmlRow']) && $filter['jmlRow'] != "" && $filter['jmlRow'] != "undefined") {
+        if (isset($filter['jmlRow']) && $filter['jmlRow'] != "" && $filter['jmlRow'] != "undefined") {
             $data = $data->take($filter['jmlRow']);
         }
 
-        $data = $data->groupBy('pd.norec','apd.norec','pd.tglregistrasi', 'p.nocm', 'pd.noregistrasi', 'ru.namaruangan', 'p.namapasien', 'kp.kelompokpasien',
-            'kls.namakelas','jk.jeniskelamin','pg.namalengkap','pd.norec',
-            'pd.tglpulang', 'pd.statuspasien','p.tgllahir','pd.objectruanganlastfk','apd.tglmasuk','pr.id', 'pr.namaproduk');
+        $data = $data->groupBy(
+            'pd.norec',
+            'apd.norec',
+            'pd.tglregistrasi',
+            'p.nocm',
+            'pd.noregistrasi',
+            'ru.namaruangan',
+            'p.namapasien',
+            'kp.kelompokpasien',
+            'kls.namakelas',
+            'jk.jeniskelamin',
+            'pg.namalengkap',
+            'pd.norec',
+            'pd.tglpulang',
+            'pd.statuspasien',
+            'p.tgllahir',
+            'pd.objectruanganlastfk',
+            'apd.tglmasuk',
+            'pr.id',
+            'pr.namaproduk'
+        );
 
         // $data = $data->orderBy('pd.tglregistrasi','desc');
         // $data = $data->take(50);
@@ -1052,7 +1177,8 @@ class AmbulanController extends ApiController{
         return $this->respond($result);
     }
 
-    public function getJadwalAmbulan(Request $request){
+    public function getJadwalAmbulan(Request $request)
+    {
         $kdProfile = (int) $this->getDataKdProfile($request);
         $data = \DB::table('pasiendaftar_t as pd')
             ->leftjoin('strukorder_t as so', 'so.noregistrasifk', '=', 'pd.norec')
@@ -1060,56 +1186,90 @@ class AmbulanController extends ApiController{
             ->join('ruangan_m as ru', 'ru.id', '=', 'pd.objectruanganlastfk')
             ->join('kelas_m as kls', 'kls.id', '=', 'pd.objectkelasfk')
             ->join('jeniskelamin_m as jk', 'jk.id', '=', 'p.objectjeniskelaminfk')
-            ->leftJoin('pegawai_m as pg','pg.id','=','pd.objectpegawaifk')
+            ->leftJoin('pegawai_m as pg', 'pg.id', '=', 'pd.objectpegawaifk')
             ->leftJoin('kelompokpasien_m as kp', 'kp.id', '=', 'pd.objectkelompokpasienlastfk')
             ->leftJoin('departemen_m as dept', 'dept.id', '=', 'ru.objectdepartemenfk')
             ->leftJoin('batalregistrasi_t as br', 'pd.norec', '=', 'br.pasiendaftarfk')
             ->join('antrianpasiendiperiksa_t as apd', 'pd.norec', '=', 'apd.noregistrasifk')
             ->leftjoin('pelayananpasien_t as pp', 'pp.noregistrasifk', '=', 'apd.norec')
-            ->select('pd.norec as norec_pd','apd.norec as norec_apd','pd.tglregistrasi', 'p.nocm', 'pd.noregistrasi', 'ru.namaruangan', 'p.namapasien', 'kp.kelompokpasien',
-                'kls.namakelas','jk.jeniskelamin','pg.namalengkap as namadokter','pd.norec as norec_pd',
-                'pd.tglpulang', 'pd.statuspasien','p.tgllahir','pd.objectruanganlastfk','apd.tglmasuk','pp.tglpelayanan')
+            ->select(
+                'pd.norec as norec_pd',
+                'apd.norec as norec_apd',
+                'pd.tglregistrasi',
+                'p.nocm',
+                'pd.noregistrasi',
+                'ru.namaruangan',
+                'p.namapasien',
+                'kp.kelompokpasien',
+                'kls.namakelas',
+                'jk.jeniskelamin',
+                'pg.namalengkap as namadokter',
+                'pd.norec as norec_pd',
+                'pd.tglpulang',
+                'pd.statuspasien',
+                'p.tgllahir',
+                'pd.objectruanganlastfk',
+                'apd.tglmasuk',
+                'pp.tglpelayanan'
+            )
             ->where('pd.kdprofile', $kdProfile)
             ->whereNull('p.tglmeninggal')
             ->whereNull('br.norec')
-            ->where('apd.objectruanganfk',72);
+            ->where('apd.objectruanganfk', 72);
 
         $filter = $request->all();
 
-        if(isset($filter['tglAwalRen']) && $filter['tglAwalRen'] != "" && $filter['tglAwalRen'] != "undefined") {
+        if (isset($filter['tglAwalRen']) && $filter['tglAwalRen'] != "" && $filter['tglAwalRen'] != "undefined") {
             $data = $data->where('pp.tglpelayanan', '>=', $filter['tglAwalRen']);
         }
 
-        if(isset($filter['tglAkhirRen']) && $filter['tglAkhirRen'] != "" && $filter['tglAkhirRen'] != "undefined") {
-            $tgl = $filter['tglAkhirRen'] ;//. " 23:59:59";
+        if (isset($filter['tglAkhirRen']) && $filter['tglAkhirRen'] != "" && $filter['tglAkhirRen'] != "undefined") {
+            $tgl = $filter['tglAkhirRen']; //. " 23:59:59";
             $data = $data->where('pp.tglpelayanan', '<=', $tgl);
         }
 
-        if(isset($filter['instalasiId']) && $filter['instalasiId'] != "" && $filter['instalasiId'] != "undefined") {
+        if (isset($filter['instalasiId']) && $filter['instalasiId'] != "" && $filter['instalasiId'] != "undefined") {
             $data = $data->where('dept.id', '=', $filter['instalasiId']);
         }
 
-        if(isset($filter['idRuangan']) && $filter['idRuangan'] != "" && $filter['idRuangan'] != "undefined") {
+        if (isset($filter['idRuangan']) && $filter['idRuangan'] != "" && $filter['idRuangan'] != "undefined") {
             $data = $data->where('apd.objectruanganfk', '=', $filter['idRuangan']);
         }
 
-        if(isset($filter['namaPasien']) && $filter['namaPasien'] != "" && $filter['namaPasien'] != "undefined") {
+        if (isset($filter['namaPasien']) && $filter['namaPasien'] != "" && $filter['namaPasien'] != "undefined") {
             $data = $data->where('p.namapasien', 'ilike', '%' . $filter['namaPasien'] . '%');
         }
 
-        if(isset($filter['noRegis']) && $filter['noRegis'] != "" && $filter['noRegis'] != "undefined") {
+        if (isset($filter['noRegis']) && $filter['noRegis'] != "" && $filter['noRegis'] != "undefined") {
             $data = $data->where('pd.noregistrasi', 'ilike', '%' . $filter['noRegis'] . '%');
         }
-        if(isset($filter['noCm']) && $filter['noCm'] != "" && $filter['noCm'] != "undefined") {
+        if (isset($filter['noCm']) && $filter['noCm'] != "" && $filter['noCm'] != "undefined") {
             $data = $data->where('p.nocm', 'ilike', '%' . $filter['noCm'] . '%');
         }
-        if(isset($filter['jmlRow']) && $filter['jmlRow'] != "" && $filter['jmlRow'] != "undefined") {
+        if (isset($filter['jmlRow']) && $filter['jmlRow'] != "" && $filter['jmlRow'] != "undefined") {
             $data = $data->take($filter['jmlRow']);
         }
 
-        $data = $data->groupBy('pd.norec','apd.norec','pd.tglregistrasi', 'p.nocm', 'pd.noregistrasi', 'ru.namaruangan', 'p.namapasien', 'kp.kelompokpasien',
-            'kls.namakelas','jk.jeniskelamin','pg.namalengkap','pd.norec',
-            'pd.tglpulang', 'pd.statuspasien','p.tgllahir','pd.objectruanganlastfk','apd.tglmasuk','pp.tglpelayanan');
+        $data = $data->groupBy(
+            'pd.norec',
+            'apd.norec',
+            'pd.tglregistrasi',
+            'p.nocm',
+            'pd.noregistrasi',
+            'ru.namaruangan',
+            'p.namapasien',
+            'kp.kelompokpasien',
+            'kls.namakelas',
+            'jk.jeniskelamin',
+            'pg.namalengkap',
+            'pd.norec',
+            'pd.tglpulang',
+            'pd.statuspasien',
+            'p.tgllahir',
+            'pd.objectruanganlastfk',
+            'apd.tglmasuk',
+            'pp.tglpelayanan'
+        );
 
         // $data = $data->orderBy('pd.tglregistrasi','desc');
         // $data = $data->take(50);
@@ -1122,12 +1282,13 @@ class AmbulanController extends ApiController{
         return $this->respond($result);
     }
 
-    public function getPasienAmbulan(Request $request){
+    public function getPasienAmbulan(Request $request)
+    {
         $kdProfile = (int) $this->getDataKdProfile($request);
         $ruanganLab = explode(',', $this->settingDataFixed('KdRuanganAmbulance', $kdProfile));
         $kdRuangLab = [];
         foreach ($ruanganLab as $item) {
-            $kdRuangLab [] = (int)$item;
+            $kdRuangLab[] = (int)$item;
         }
         $data = \DB::table('pasiendaftar_t as pd')
             ->leftjoin('strukorder_t as so', 'so.noregistrasifk', '=', 'pd.norec')
@@ -1135,66 +1296,104 @@ class AmbulanController extends ApiController{
             ->join('ruangan_m as ru', 'ru.id', '=', 'pd.objectruanganlastfk')
             ->join('kelas_m as kls', 'kls.id', '=', 'pd.objectkelasfk')
             ->join('jeniskelamin_m as jk', 'jk.id', '=', 'p.objectjeniskelaminfk')
-            ->leftJoin('pegawai_m as pg','pg.id','=','pd.objectpegawaifk')
+            ->leftJoin('pegawai_m as pg', 'pg.id', '=', 'pd.objectpegawaifk')
             ->leftJoin('kelompokpasien_m as kp', 'kp.id', '=', 'pd.objectkelompokpasienlastfk')
             ->leftJoin('departemen_m as dept', 'dept.id', '=', 'ru.objectdepartemenfk')
             ->leftJoin('batalregistrasi_t as br', 'pd.norec', '=', 'br.pasiendaftarfk')
-            ->join ('antrianpasiendiperiksa_t as apd',function($join) use ($kdRuangLab) {
-                $join->on('apd.noregistrasifk','=','pd.norec')
+            ->join('antrianpasiendiperiksa_t as apd', function ($join) use ($kdRuangLab) {
+                $join->on('apd.noregistrasifk', '=', 'pd.norec')
                     ->whereIn('apd.objectruanganfk', $kdRuangLab);
             })
-//            ->join('antrianpasiendiperiksa_t as apd', 'pd.norec', '=', 'apd.noregistrasifk')
+            //            ->join('antrianpasiendiperiksa_t as apd', 'pd.norec', '=', 'apd.noregistrasifk')
             ->leftjoin('pelayananpasien_t as pp', 'pp.noregistrasifk', '=', 'apd.norec')
             ->leftjoin('rekanan_m as rek', 'rek.id', '=', 'pd.objectrekananfk')
             ->leftJoin('alamat_m as alm', 'alm.nocmfk', '=', 'p.id')
-            ->select('pd.norec as norec_pd','apd.norec as norec_apd','pd.tglregistrasi', 'p.nocm', 'pd.noregistrasi', 'ru.namaruangan', 'p.namapasien', 'kp.kelompokpasien',
-                'kls.namakelas','jk.jeniskelamin','pg.namalengkap as namadokter','pd.norec as norec_pd',
-                'pd.tglpulang', 'pd.statuspasien','p.tgllahir','pd.objectruanganlastfk','apd.tglmasuk','pp.tglpelayanan','rek.namarekanan','alm.alamatlengkap')
+            ->select(
+                'pd.norec as norec_pd',
+                'apd.norec as norec_apd',
+                'pd.tglregistrasi',
+                'p.nocm',
+                'pd.noregistrasi',
+                'ru.namaruangan',
+                'p.namapasien',
+                'kp.kelompokpasien',
+                'kls.namakelas',
+                'jk.jeniskelamin',
+                'pg.namalengkap as namadokter',
+                'pd.norec as norec_pd',
+                'pd.tglpulang',
+                'pd.statuspasien',
+                'p.tgllahir',
+                'pd.objectruanganlastfk',
+                'apd.tglmasuk',
+                'pp.tglpelayanan',
+                'rek.namarekanan',
+                'alm.alamatlengkap'
+            )
             ->where('pd.kdprofile', $kdProfile)
-//            ->whereNull('p.tglmeninggal')
+            //            ->whereNull('p.tglmeninggal')
             ->whereNull('br.norec');
 
         $filter = $request->all();
-        if(isset($filter['tglAwal']) && $filter['tglAwal'] != "" && $filter['tglAwal'] != "undefined") {
-//            $data = $data->where('pd.tglregistrasi', '>=', $filter['tglAwal']);
-//            $data = $data->where('so.tglorder', '>=', $filter['tglAwal']);
-//            $data = $data->where('apd.tglmasuk', '>=', $filter['tglAwal']);
+        if (isset($filter['tglAwal']) && $filter['tglAwal'] != "" && $filter['tglAwal'] != "undefined") {
+            //            $data = $data->where('pd.tglregistrasi', '>=', $filter['tglAwal']);
+            //            $data = $data->where('so.tglorder', '>=', $filter['tglAwal']);
+            //            $data = $data->where('apd.tglmasuk', '>=', $filter['tglAwal']);
             $data = $data->where('pp.tglpelayanan', '>=', $filter['tglAwal']);
         }
 
-        if(isset($filter['tglAkhir']) && $filter['tglAkhir'] != "" && $filter['tglAkhir'] != "undefined") {
-            $tgl = $filter['tglAkhir'] ;//. " 23:59:59";
-//            $data = $data->where('pd.tglregistrasi', '<=', $tgl);
-//            $data = $data->where('so.tglorder', '<=', $tgl);
-//            $data = $data->where('apd.tglmasuk', '<=', $tgl);
+        if (isset($filter['tglAkhir']) && $filter['tglAkhir'] != "" && $filter['tglAkhir'] != "undefined") {
+            $tgl = $filter['tglAkhir']; //. " 23:59:59";
+            //            $data = $data->where('pd.tglregistrasi', '<=', $tgl);
+            //            $data = $data->where('so.tglorder', '<=', $tgl);
+            //            $data = $data->where('apd.tglmasuk', '<=', $tgl);
             $data = $data->where('pp.tglpelayanan', '<=', $tgl);
         }
 
-        if(isset($filter['instalasiId']) && $filter['instalasiId'] != "" && $filter['instalasiId'] != "undefined") {
+        if (isset($filter['instalasiId']) && $filter['instalasiId'] != "" && $filter['instalasiId'] != "undefined") {
             $data = $data->where('dept.id', '=', $filter['instalasiId']);
         }
 
-        if(isset($filter['idRuangan']) && $filter['idRuangan'] != "" && $filter['idRuangan'] != "undefined") {
+        if (isset($filter['idRuangan']) && $filter['idRuangan'] != "" && $filter['idRuangan'] != "undefined") {
             $data = $data->where('apd.objectruanganfk', '=', $filter['idRuangan']);
         }
 
-        if(isset($filter['namaPasien']) && $filter['namaPasien'] != "" && $filter['namaPasien'] != "undefined") {
+        if (isset($filter['namaPasien']) && $filter['namaPasien'] != "" && $filter['namaPasien'] != "undefined") {
             $data = $data->where('p.namapasien', 'ilike', '%' . $filter['namaPasien'] . '%');
         }
 
-        if(isset($filter['noRegis']) && $filter['noRegis'] != "" && $filter['noRegis'] != "undefined") {
+        if (isset($filter['noRegis']) && $filter['noRegis'] != "" && $filter['noRegis'] != "undefined") {
             $data = $data->where('pd.noregistrasi', 'ilike', '%' . $filter['noRegis'] . '%');
         }
-        if(isset($filter['noCm']) && $filter['noCm'] != "" && $filter['noCm'] != "undefined") {
+        if (isset($filter['noCm']) && $filter['noCm'] != "" && $filter['noCm'] != "undefined") {
             $data = $data->where('p.nocm', 'ilike', '%' . $filter['noCm'] . '%');
         }
-        if(isset($filter['jmlRow']) && $filter['jmlRow'] != "" && $filter['jmlRow'] != "undefined") {
+        if (isset($filter['jmlRow']) && $filter['jmlRow'] != "" && $filter['jmlRow'] != "undefined") {
             $data = $data->take($filter['jmlRow']);
         }
 
-        $data = $data->groupBy('pd.norec','apd.norec','pd.tglregistrasi', 'p.nocm', 'pd.noregistrasi', 'ru.namaruangan', 'p.namapasien', 'kp.kelompokpasien',
-            'kls.namakelas','jk.jeniskelamin','pg.namalengkap','pd.norec',
-            'pd.tglpulang', 'pd.statuspasien','p.tgllahir','pd.objectruanganlastfk','apd.tglmasuk','pp.tglpelayanan','rek.namarekanan','alm.alamatlengkap');
+        $data = $data->groupBy(
+            'pd.norec',
+            'apd.norec',
+            'pd.tglregistrasi',
+            'p.nocm',
+            'pd.noregistrasi',
+            'ru.namaruangan',
+            'p.namapasien',
+            'kp.kelompokpasien',
+            'kls.namakelas',
+            'jk.jeniskelamin',
+            'pg.namalengkap',
+            'pd.norec',
+            'pd.tglpulang',
+            'pd.statuspasien',
+            'p.tgllahir',
+            'pd.objectruanganlastfk',
+            'apd.tglmasuk',
+            'pp.tglpelayanan',
+            'rek.namarekanan',
+            'alm.alamatlengkap'
+        );
 
         // $data = $data->orderBy('pd.tglregistrasi','desc');
         // $data = $data->take(50);
@@ -1207,53 +1406,54 @@ class AmbulanController extends ApiController{
         return $this->respond($result);
     }
 
-    public function getDataComboOperator(Request $request){
+    public function getDataComboOperator(Request $request)
+    {
         $kdProfile = $this->getDataKdProfile($request);
         $idProfile = (int) $kdProfile;
         $dataLogin = $request->all();
         $dataPegawai = \DB::table('loginuser_s as lu')
-            ->join('pegawai_m as pg','pg.id','=','lu.objectpegawaifk')
-            ->select('lu.objectpegawaifk','pg.namalengkap')
-            ->where('pg.kdprofile',$idProfile)
-            ->where('lu.id',$dataLogin['userData']['id'])
+            ->join('pegawai_m as pg', 'pg.id', '=', 'lu.objectpegawaifk')
+            ->select('lu.objectpegawaifk', 'pg.namalengkap')
+            ->where('pg.kdprofile', $idProfile)
+            ->where('lu.id', $dataLogin['userData']['id'])
             ->first();
 
         $dataInstalasi = \DB::table('departemen_m as dp')
-//            ->whereIn('dp.id', array(3, 14, 16, 17, 18, 19, 24, 25, 26, 27, 28, 35))
-            ->where('dp.kdprofile',$idProfile)
+            //            ->whereIn('dp.id', array(3, 14, 16, 17, 18, 19, 24, 25, 26, 27, 28, 35))
+            ->where('dp.kdprofile', $idProfile)
             ->where('dp.statusenabled', true)
             ->orderBy('dp.namadepartemen')
             ->get();
 
         $dataRuangan = \DB::table('ruangan_m as ru')
-            ->where('ru.kdprofile',$idProfile)
+            ->where('ru.kdprofile', $idProfile)
             ->where('ru.statusenabled', true)
             ->orderBy('ru.namaruangan')
             ->get();
 
         $dept = \DB::table('departemen_m as dept')
-            ->where('dept.kdprofile',$idProfile)
+            ->where('dept.kdprofile', $idProfile)
             ->where('dept.id', '18')
             ->where('dept.statusenabled', true)
             ->orderBy('dept.namadepartemen')
             ->get();
 
         $deptRajalInap = \DB::table('departemen_m as dept')
-            ->where('dept.kdprofile',$idProfile)
+            ->where('dept.kdprofile', $idProfile)
             ->whereIn('dept.id', [18, 16])
             ->where('dept.statusenabled', true)
             ->orderBy('dept.namadepartemen')
             ->get();
 
         $ruanganRi = \DB::table('ruangan_m as ru')
-            ->where('ru.kdprofile',$idProfile)
+            ->where('ru.kdprofile', $idProfile)
             ->wherein('ru.objectdepartemenfk', ['18', '28'])
             ->where('ru.statusenabled', true)
             ->orderBy('ru.namaruangan')
             ->get();
 
         $dataDokter = \DB::table('pegawai_m as ru')
-            ->where('ru.kdprofile',$idProfile)
+            ->where('ru.kdprofile', $idProfile)
             ->where('ru.statusenabled', true)
             ->where('ru.objectjenispegawaifk', 1)
             ->orderBy('ru.namalengkap')
@@ -1295,22 +1495,22 @@ class AmbulanController extends ApiController{
 
         $jenisDiagnosa = \DB::table('jenisdiagnosa_m as jd')
             ->select('jd.id', 'jd.jenisdiagnosa')
-//            ->where('jd.id',5)
+            //            ->where('jd.id',5)
             ->where('jd.statusenabled', true)
             ->orderBy('jd.jenisdiagnosa')
             ->get();
 
-//        $kdeDiagnosa = \DB::table('diagnosa_m as dm')
-//            ->select('dm.id', 'dm.kddiagnosa')
-//            ->where('dm.statusenabled', true)
-//            ->orderBy('dm.id')
-//            ->get();
-//
-//        $Diagnosa = \DB::table('diagnosa_m as dm')
-//            ->select('dm.id', 'dm.namadiagnosa')
-//            ->where('dm.statusenabled', true)
-//            ->orderBy('dm.id')
-//            ->get();
+        //        $kdeDiagnosa = \DB::table('diagnosa_m as dm')
+        //            ->select('dm.id', 'dm.kddiagnosa')
+        //            ->where('dm.statusenabled', true)
+        //            ->orderBy('dm.id')
+        //            ->get();
+        //
+        //        $Diagnosa = \DB::table('diagnosa_m as dm')
+        //            ->select('dm.id', 'dm.namadiagnosa')
+        //            ->where('dm.statusenabled', true)
+        //            ->orderBy('dm.id')
+        //            ->get();
 
         $KelompokKerjaHead = \DB::table('kelompokkerjahead_m as dm')
             ->select('dm.id', 'dm.kelompokkerjahead')
@@ -1341,8 +1541,8 @@ class AmbulanController extends ApiController{
             'ruanganall' => $dataRuangan,
             'pembatalan' => $pembatalan,
             'jenisdiagnosa' => $jenisDiagnosa,
-//            'diagnosa' => $Diagnosa,
-//            'kddiagnosa' => $kdeDiagnosa,
+            //            'diagnosa' => $Diagnosa,
+            //            'kddiagnosa' => $kdeDiagnosa,
             'kelompokkerjahead' => $KelompokKerjaHead,
             'kelompokkerja' => $KelompokKerja,
             'pegawaiLogin' => $dataPegawai->namalengkap,
@@ -1353,14 +1553,16 @@ class AmbulanController extends ApiController{
         return $this->respond($result);
     }
 
-    public function getDataDiagnosa(Request $request){
+    public function getDataDiagnosa(Request $request)
+    {
         $req = $request->all();
         $icdIX = \DB::table('diagnosa_m as dg')
-            ->select('dg.id', 'dg.kddiagnosa', 'dg.namadiagnosa','dg.kddiagnosa as kdDiagnosa','dg.namadiagnosa as namaDiagnosa')
+            ->select('dg.id', 'dg.kddiagnosa', 'dg.namadiagnosa', 'dg.kddiagnosa as kdDiagnosa', 'dg.namadiagnosa as namaDiagnosa')
             ->where('dg.statusenabled', true)
             ->orderBy('dg.kddiagnosa');
 
-        if (isset($req['filter']['filters'][0]['value']) &&
+        if (
+            isset($req['filter']['filters'][0]['value']) &&
             $req['filter']['filters'][0]['value'] != "" &&
             $req['filter']['filters'][0]['value'] != "undefined"
         ) {
@@ -1375,19 +1577,20 @@ class AmbulanController extends ApiController{
         return $this->respond($icdIX);
     }
 
-    public function saveAntrianPasien(Request $request){
+    public function saveAntrianPasien(Request $request)
+    {
         $kdProfile = $this->getDataKdProfile($request);
         $idProfile = (int) $kdProfile;
         DB::beginTransaction();
         $transStatus = 'true';
         try {
-            $countNoAntrian = AntrianPasienDiperiksa::where('objectruanganfk',$request['objectruanganasalfk'])
+            $countNoAntrian = AntrianPasienDiperiksa::where('objectruanganfk', $request['objectruanganasalfk'])
                 ->where('kdprofile', $idProfile)
-                ->where('tglregistrasi', '>=', $request['tglregistrasidate'].' 00:00')
-                ->where('tglregistrasi', '<=', $request['tglregistrasidate'].' 23:59')
+                ->where('tglregistrasi', '>=', $request['tglregistrasidate'] . ' 00:00')
+                ->where('tglregistrasi', '<=', $request['tglregistrasidate'] . ' 23:59')
                 ->count('norec');
-//            return $this->respond($countNoAntrian);
-            $pd = PasienDaftar::where('norec',$request['norec_pd'])->first();
+            //            return $this->respond($countNoAntrian);
+            $pd = PasienDaftar::where('norec', $request['norec_pd'])->first();
             $noAntrian = $countNoAntrian + 1;
             $dataAPD = new AntrianPasienDiperiksa;
             $dataAPD->norec = $dataAPD->generateNewId();
@@ -1404,7 +1607,7 @@ class AmbulanController extends ApiController{
             $dataAPD->statuskunjungan = 'LAMA';
             $dataAPD->statuspenyakit = 'BARU';
             $dataAPD->objectruanganasalfk = $request['objectruanganasalfk'];;
-            $dataAPD->tglregistrasi = $pd->tglregistrasi;//date('Y-m-d H:i:s');
+            $dataAPD->tglregistrasi = $pd->tglregistrasi; //date('Y-m-d H:i:s');
             $dataAPD->tglkeluar = date('Y-m-d H:i:s');
             $dataAPD->tglmasuk = date('Y-m-d H:i:s');
             $dataAPD->save();
@@ -1436,21 +1639,22 @@ class AmbulanController extends ApiController{
         return $this->setStatusCode($result['status'])->respond($result, $transMessage);
     }
 
-    public function getDataComboLabRab(Request $request) {
+    public function getDataComboLabRab(Request $request)
+    {
         $kdProfile = $this->getDataKdProfile($request);
         $idProfile = (int) $kdProfile;
         $dataDokter = \DB::table('pegawai_m as dp')
-            ->select('dp.id','dp.namalengkap')
-            ->whereIn('dp.objectjenispegawaifk',array(1))
-            ->where('dp.statusenabled',true)
-            ->where('dp.kdprofile',$idProfile)
+            ->select('dp.id', 'dp.namalengkap')
+            ->whereIn('dp.objectjenispegawaifk', array(1))
+            ->where('dp.statusenabled', true)
+            ->where('dp.kdprofile', $idProfile)
             ->orderBy('dp.namalengkap')
             ->get();
 
         $golonganDarah = \DB::table('golongandarah_m')
-            ->select('id','golongandarah')
-            ->where('statusenabled',true)
-            ->where('kdprofile',$idProfile)
+            ->select('id', 'golongandarah')
+            ->where('statusenabled', true)
+            ->where('kdprofile', $idProfile)
             ->orderBy('golongandarah')
             ->get();
 
@@ -1462,11 +1666,12 @@ class AmbulanController extends ApiController{
         return $this->respond($result);
     }
 
-    public function deletePelayananPasien(Request $request) {
+    public function deletePelayananPasien(Request $request)
+    {
         $kdProfile = $this->getDataKdProfile($request);
         $idProfile = (int) $kdProfile;
         DB::beginTransaction();
-        try{
+        try {
             foreach ($request['dataDel'] as $item) {
                 $HapusPP = PelayananPasien::where('norec', $item['norec_pp'])->get();
                 foreach ($HapusPP as $pp) {
@@ -1486,7 +1691,7 @@ class AmbulanController extends ApiController{
             $result = array(
                 "status" => 201,
                 "message" => $transMessage,
-//                "nokirim" => $dataSO,//$noResep,,//$noResep,
+                //                "nokirim" => $dataSO,//$noResep,,//$noResep,
                 "as" => 'inhuman',
             );
         } else {
@@ -1495,19 +1700,20 @@ class AmbulanController extends ApiController{
             $result = array(
                 "status" => 400,
                 "message"  => $transMessage,
-//                "nokirim" => $dataSO,//$noResep,
+                //                "nokirim" => $dataSO,//$noResep,
                 "as" => 'inhuman',
             );
         }
         return $this->setStatusCode($result['status'])->respond($result, $transMessage);
     }
 
-    public function getDaftarRegistrasiPasienAmbulan(Request $request){
+    public function getDaftarRegistrasiPasienAmbulan(Request $request)
+    {
         $kdProfile = (int) $this->getDataKdProfile($request);
         $ruanganLab = explode(',', $this->settingDataFixed('KdRuanganAmbulance', $kdProfile));
         $kdRuangLab = [];
         foreach ($ruanganLab as $item) {
-            $kdRuangLab [] = (int)$item;
+            $kdRuangLab[] = (int)$item;
         }
         $filter = $request->all();
         $data = \DB::table('pasiendaftar_t as pd')
@@ -1522,17 +1728,42 @@ class AmbulanController extends ApiController{
             ->leftjoin('rekanan_m as rek', 'rek.id', '=', 'pd.objectrekananfk')
             ->leftjoin('kelas_m as kls', 'kls.id', '=', 'pd.objectkelasfk')
             ->leftjoin('jeniskelamin_m as jk', 'jk.id', '=', 'ps.objectjeniskelaminfk')
-            ->leftJoin('jenispelayanan_m as jp','jp.kodeinternal','=','pd.jenispelayanan')
-            ->select('pd.norec as norec_pd', 'pd.statusenabled', 'pd.tglregistrasi', 'ps.nocm', 'pd.nocmfk', 'pd.noregistrasi', 'ru.namaruangan', 'ps.namapasien',
-                'kp.kelompokpasien', 'rek.namarekanan', 'pg.namalengkap as namadokter', 'pd.tglpulang', 'pd.statuspasien',
-                'pa.norec as norec_pa', 'pa.objectasuransipasienfk', 'pd.objectpegawaifk as pgid', 'pd.objectruanganlastfk',
-                'pa.nosep as nosep', 'br.norec as norec_br', 'pd.nostruklastfk','pd.objectkelasfk','kls.namakelas',
-                'ps.tgllahir','ps.objectjeniskelaminfk','jk.jeniskelamin','alm.alamatlengkap',
-                'pd.jenispelayanan as idjenispelayanan','jp.jenispelayanan','ps.tglmeninggal')
+            ->leftJoin('jenispelayanan_m as jp', 'jp.kodeinternal', '=', 'pd.jenispelayanan')
+            ->select(
+                'pd.norec as norec_pd',
+                'pd.statusenabled',
+                'pd.tglregistrasi',
+                'ps.nocm',
+                'pd.nocmfk',
+                'pd.noregistrasi',
+                'ru.namaruangan',
+                'ps.namapasien',
+                'kp.kelompokpasien',
+                'rek.namarekanan',
+                'pg.namalengkap as namadokter',
+                'pd.tglpulang',
+                'pd.statuspasien',
+                'pa.norec as norec_pa',
+                'pa.objectasuransipasienfk',
+                'pd.objectpegawaifk as pgid',
+                'pd.objectruanganlastfk',
+                'pa.nosep as nosep',
+                'br.norec as norec_br',
+                'pd.nostruklastfk',
+                'pd.objectkelasfk',
+                'kls.namakelas',
+                'ps.tgllahir',
+                'ps.objectjeniskelaminfk',
+                'jk.jeniskelamin',
+                'alm.alamatlengkap',
+                'pd.jenispelayanan as idjenispelayanan',
+                'jp.jenispelayanan',
+                'ps.tglmeninggal'
+            )
             ->where('pd.kdprofile', $kdProfile)
             ->where('pd.statusenabled', true)
             ->whereNull('br.norec');
-//            ->whereIn('ru.id', $kdRuangLab);
+        //            ->whereIn('ru.id', $kdRuangLab);
         if (isset($filter['tglAwal']) && $filter['tglAwal'] != "" && $filter['tglAwal'] != "undefined") {
             $data = $data->where('pd.tglregistrasi', '>=', $filter['tglAwal']);
         }
@@ -1567,38 +1798,64 @@ class AmbulanController extends ApiController{
             $data = $data->take($filter['jmlRows']);
         }
         $data = $data->orderBy('pd.noregistrasi');
-        $data = $data->groupBy('pd.norec', 'pd.statusenabled', 'pd.tglregistrasi', 'ps.nocm', 'pd.nocmfk', 'pd.noregistrasi',
-            'ru.namaruangan', 'ps.namapasien',
-            'kp.kelompokpasien', 'rek.namarekanan', 'pg.namalengkap', 'pd.tglpulang', 'pd.statuspasien',
-            'pa.nosep', 'br.norec', 'pa.norec', 'pa.objectasuransipasienfk', 'pd.objectpegawaifk', 'pd.objectruanganlastfk',
-            'pd.nostruklastfk', 'ps.tgllahir','pd.objectkelasfk','kls.namakelas','ps.objectjeniskelaminfk','jk.jeniskelamin',
-            'alm.alamatlengkap','pd.jenispelayanan','jp.jenispelayanan','ps.tglmeninggal');
-//        $data = $data->take($filter['jmlRows']);
+        $data = $data->groupBy(
+            'pd.norec',
+            'pd.statusenabled',
+            'pd.tglregistrasi',
+            'ps.nocm',
+            'pd.nocmfk',
+            'pd.noregistrasi',
+            'ru.namaruangan',
+            'ps.namapasien',
+            'kp.kelompokpasien',
+            'rek.namarekanan',
+            'pg.namalengkap',
+            'pd.tglpulang',
+            'pd.statuspasien',
+            'pa.nosep',
+            'br.norec',
+            'pa.norec',
+            'pa.objectasuransipasienfk',
+            'pd.objectpegawaifk',
+            'pd.objectruanganlastfk',
+            'pd.nostruklastfk',
+            'ps.tgllahir',
+            'pd.objectkelasfk',
+            'kls.namakelas',
+            'ps.objectjeniskelaminfk',
+            'jk.jeniskelamin',
+            'alm.alamatlengkap',
+            'pd.jenispelayanan',
+            'jp.jenispelayanan',
+            'ps.tglmeninggal'
+        );
+        //        $data = $data->take($filter['jmlRows']);
         $data = $data->get();
         return $this->respond($data);
     }
 
-    public function getDataProduk(Request $request) {
+    public function getDataProduk(Request $request)
+    {
         $kdProfile = (int) $this->getDataKdProfile($request);
         $kdDetailJenisProduk = (int) $this->settingDataFixed('KdDetailJenisProdukAmbulance', $kdProfile);
         $dataLogin = $request->all();
         $data = \DB::table('produk_m as pr')
-            ->JOIN('harganettoprodukbykelas_m as het','het.objectprodukfk','=','pr.id')
-            ->select('pr.id','pr.namaproduk','het.harganetto1 as harga')
+            ->JOIN('harganettoprodukbykelas_m as het', 'het.objectprodukfk', '=', 'pr.id')
+            ->select('pr.id', 'pr.namaproduk', 'het.harganetto1 as harga')
             ->where('pr.kdprofile', $kdProfile)
             ->where('het.kdprofile', $kdProfile)
-            ->where('pr.statusenabled',true)
+            ->where('pr.statusenabled', true)
             ->where('pr.objectdetailjenisprodukfk', $kdDetailJenisProduk)
-            ->where('het.objectkelasfk',6)
-            ->where('het.objectjenispelayananfk',1)
-            ->where('het.statusenabled',true);
-//            ->take($request['take']);
+            ->where('het.objectkelasfk', 6)
+            ->where('het.objectjenispelayananfk', 1)
+            ->where('het.statusenabled', true);
+        //            ->take($request['take']);
 
-        if(isset($request['prid']) && $request['prid']!="" && $request['prid']!="undefined"){
+        if (isset($request['prid']) && $request['prid'] != "" && $request['prid'] != "undefined") {
             $data = $data->where('ru.id', $request['prid']);
         }
-        if(isset($request['namaproduk']) && $request['namaproduk']!="" && $request['namaproduk']!="undefined"){
-            $data = $data->where('pr.namaproduk','ilike','%'. $request['namaproduk'].'%');
+        if (isset($request['namaproduk']) && $request['namaproduk'] != "" && $request['namaproduk'] != "undefined") {
+            $data = $data->where('pr.namaproduk', 'ilike', '%' . $request['namaproduk'] . '%');
         }
         $data = $data->get();
 
@@ -1613,23 +1870,24 @@ class AmbulanController extends ApiController{
         return $this->respond($result);
     }
 
-    public function SaveInputTagihan(Request $request) {
+    public function SaveInputTagihan(Request $request)
+    {
         $kdProfile = (int) $this->getDataKdProfile($request);
         \DB::beginTransaction();
-        $transMessage='';
+        $transMessage = '';
         $req = $request->all();
-//        return $this->respond($req);
+        //        return $this->respond($req);
         try {
 
-            if($req['norec'] == ''){
+            if ($req['norec'] == '') {
                 $SP = new StrukPelayanan();
                 $norecSP = $SP->generateNewId();
-                $noStruk = $this->generateCode(new StrukPelayanan, 'nostruk', 10, 'NLA'.$this->getDateTime()->format('ym'), $kdProfile);
+                $noStruk = $this->generateCode(new StrukPelayanan, 'nostruk', 10, 'NLA' . $this->getDateTime()->format('ym'), $kdProfile);
                 $SP->norec = $norecSP;
                 $SP->kdprofile = $kdProfile;
                 $SP->statusenabled = true;
                 $SP->nostruk = $noStruk;
-            }else{
+            } else {
                 $SP = StrukPelayanan::where('norec', $req['norec'])->where('kprofile', $kdProfile)->first();
                 $DelSPD = StrukPelayananDetail::where('nostrukfk', $req['norec'])->where('kdprofile', $kdProfile)->delete();
             }
@@ -1637,14 +1895,14 @@ class AmbulanController extends ApiController{
             $SP->keteranganlainnya = $req['keteranganlainnya'];
             $SP->namapasien_klien = $req['namaPasien_klien'];
             $SP->nostruk_intern = $req['nocm'];
-            if (isset($req['notelp_klien'])){
+            if (isset($req['notelp_klien'])) {
                 $SP->noteleponfaks = $req['notelp_klien'];
             }
-            if (isset($req['alamat'])){
-                $SP->namatempattujuan =  $req['alamat'];//alamat
+            if (isset($req['alamat'])) {
+                $SP->namatempattujuan =  $req['alamat']; //alamat
             }
-            if (isset($req['tglLahir'])){
-                $SP->tglfaktur =  $req['tglLahir'];//tgllahir
+            if (isset($req['tglLahir'])) {
+                $SP->tglfaktur =  $req['tglLahir']; //tgllahir
             }
             $SP->tglstruk = $req['tglstruk'];
             $SP->totalharusdibayar = $req['totalharusdibayar'];
@@ -1654,11 +1912,11 @@ class AmbulanController extends ApiController{
             $hargaTambahanD = 0;
 
             foreach ($req['details'] as $item) {
-                if ($req['perawat'] == true || $req['perawat'] == 'true'){
-                    $hargaTambahanP = (float) $item['harga'] * 25/100;
+                if ($req['perawat'] == true || $req['perawat'] == 'true') {
+                    $hargaTambahanP = (float) $item['harga'] * 25 / 100;
                 }
-                if ($req['dokter'] == true || $req['dokter'] == 'true'){
-                    $hargaTambahanD = (float) $item['harga'] * 25/100;
+                if ($req['dokter'] == true || $req['dokter'] == 'true') {
+                    $hargaTambahanD = (float) $item['harga'] * 25 / 100;
                 }
                 $SPD = new StrukPelayananDetail();
                 $norecKS = $SPD->generateNewId();
@@ -1723,58 +1981,69 @@ class AmbulanController extends ApiController{
         return $this->setStatusCode($result['status'])->respond($result, $transMessage);
     }
 
-    public function daftarTagihanNonLayanan(Request $request){
+    public function daftarTagihanNonLayanan(Request $request)
+    {
         $kdProfile = (int) $this->getDataKdProfile($request);
         $kdPelayananAmbulan = (int) $this->settingDataFixed('KdKelompokTransaksiAmbulance', $kdProfile);
-        $filter=$request->all();
+        $filter = $request->all();
         $datakelompokuser = \DB::table('loginuser_s as lu')
             ->select('lu.objectkelompokuserfk')
             ->where('lu.kdprofile', $kdProfile)
-            ->where('lu.id','=',$filter['userData']['id'])
+            ->where('lu.id', '=', $filter['userData']['id'])
             ->get();
 
         $dataNonLayanan = \DB::table('strukpelayanan_t as sp')
             ->join('kelompoktransaksi_m as kt', 'sp.objectkelompoktransaksifk', '=', 'kt.id')
-            ->select('sp.norec', 'sp.tglstruk', 'sp.namapasien_klien', 'kt.reportdisplay as jenistagihan',
-                     'sp.totalharusdibayar', 'keteranganlainnya', 'sp.nosbklastfk', 'sp.nosbmlastfk', 'kt.id as jenisTagihanId',
-                DB::raw("CASE WHEN sp.nosbmlastfk IS NOT NULL OR sp.nosbklastfk IS NOT NULL THEN 'Lunas' ELSE 'Belum Bayar' END AS statusbayar"))
+            ->select(
+                'sp.norec',
+                'sp.tglstruk',
+                'sp.namapasien_klien',
+                'kt.reportdisplay as jenistagihan',
+                'sp.totalharusdibayar',
+                'keteranganlainnya',
+                'sp.nosbklastfk',
+                'sp.nosbmlastfk',
+                'kt.id as jenisTagihanId',
+                DB::raw("CASE WHEN sp.nosbmlastfk IS NOT NULL OR sp.nosbklastfk IS NOT NULL THEN 'Lunas' ELSE 'Belum Bayar' END AS statusbayar")
+            )
             ->where('sp.kdprofile', $kdProfile)
             ->whereNotNull('sp.totalharusdibayar')
             ->where('sp.objectkelompoktransaksifk', $kdPelayananAmbulan);
 
-        if(isset($filter['tglAwal']) && $filter['tglAwal']!=""){
-            $dataNonLayanan = $dataNonLayanan->where('sp.tglstruk','>=', $filter['tglAwal']);
+        if (isset($filter['tglAwal']) && $filter['tglAwal'] != "") {
+            $dataNonLayanan = $dataNonLayanan->where('sp.tglstruk', '>=', $filter['tglAwal']);
         }
 
-        if(isset($filter['tglAkhir']) && $filter['tglAkhir']!=""){
-            $tgl= $filter['tglAkhir'];//." 23:59:59";
-            $dataNonLayanan = $dataNonLayanan->where('sp.tglstruk','<=', $tgl);
+        if (isset($filter['tglAkhir']) && $filter['tglAkhir'] != "") {
+            $tgl = $filter['tglAkhir']; //." 23:59:59";
+            $dataNonLayanan = $dataNonLayanan->where('sp.tglstruk', '<=', $tgl);
         }
 
-        if(isset($filter['namaPelanggan']) && $filter['namaPelanggan']!=""){
-            $dataNonLayanan = $dataNonLayanan->where('sp.namapasien_klien','ilike','%'. $filter['namaPelanggan'] . '%');
+        if (isset($filter['namaPelanggan']) && $filter['namaPelanggan'] != "") {
+            $dataNonLayanan = $dataNonLayanan->where('sp.namapasien_klien', 'ilike', '%' . $filter['namaPelanggan'] . '%');
         }
 
-        if(isset($filter['status']) && $filter['status']!=""){
-            if($filter['status']=='Lunas'){
+        if (isset($filter['status']) && $filter['status'] != "") {
+            if ($filter['status'] == 'Lunas') {
                 $dataNonLayanan = $dataNonLayanan->whereNotNull('sp.nosbmlastfk');
-            }else{
+            } else {
                 $dataNonLayanan = $dataNonLayanan->whereNull('sp.nosbmlastfk');
             }
         }
-        if(isset($filter['statusK']) && $filter['statusK']!=""){
-            if($filter['statusK']=='Lunas'){
+        if (isset($filter['statusK']) && $filter['statusK'] != "") {
+            if ($filter['statusK'] == 'Lunas') {
                 $dataNonLayanan = $dataNonLayanan->whereNotNull('sp.nosbklastfk');
-            }else{
+            } else {
                 $dataNonLayanan = $dataNonLayanan->whereNull('sp.nosbklastfk');
             }
         }
 
-        $dataNonLayanan = $dataNonLayanan->where('sp.statusenabled','=',true);
+        $dataNonLayanan = $dataNonLayanan->where('sp.statusenabled', '=', true);
         $dataNonLayanan = $dataNonLayanan->get();
-        $result=[];
-        foreach ($dataNonLayanan as $item){
-            $details = DB::select(DB::raw("select pr.id,pr.namaproduk,spd.keteranganlainnya,spd.qtyproduk,spd.hargasatuan,
+        $result = [];
+        foreach ($dataNonLayanan as $item) {
+            $details = DB::select(
+                DB::raw("select pr.id,pr.namaproduk,spd.keteranganlainnya,spd.qtyproduk,spd.hargasatuan,
                      CASE WHEN isjasaperawat = true THEN spd.hargasatuan * 25/100 ELSE 0 END AS jasaperawat,
                      CASE WHEN isjasadokter = true THEN spd.hargasatuan * 25/100 ELSE 0 END AS jasadokter,
                      (spd.qtyproduk * spd.hargasatuan) + CASE WHEN isjasaperawat = true THEN spd.hargasatuan * 25/100 ELSE 0 END 
@@ -1807,23 +2076,37 @@ class AmbulanController extends ApiController{
         return $this->respond($result);
     }
 
-    public function detailTagihanNonLayanan(Request $request){
+    public function detailTagihanNonLayanan(Request $request)
+    {
         $kdProfile = (int)$this->getDataKdProfile($request);
         $kdPelayananAmbulan = (int)$this->settingDataFixed('KdKelompokTransaksiAmbulance', $kdProfile);
         $noRec = $request['noRec'];
         $data = \DB::table('strukpelayanan_t as sp')
             ->join('kelompoktransaksi_m as kt', 'sp.objectkelompoktransaksifk', '=', 'kt.id')
-            ->select('sp.norec', 'sp.tglstruk', 'sp.namapasien_klien', 'kt.reportdisplay as jenistagihan',
-                     'sp.totalharusdibayar', 'keteranganlainnya', 'sp.nosbklastfk', 'sp.nosbmlastfk', 'kt.id as jenisTagihanId',
-                     'sp.noteleponfaks as notelepon','sp.namatempattujuan as alamatlengkap','sp.tglfaktur as tgllahir','sp.keteranganlainnya',
-                DB::raw("CASE WHEN sp.nosbmlastfk IS NOT NULL OR sp.nosbklastfk IS NOT NULL THEN 'Lunas' ELSE 'Belum Bayar' END AS statusbayar"))
+            ->select(
+                'sp.norec',
+                'sp.tglstruk',
+                'sp.namapasien_klien',
+                'kt.reportdisplay as jenistagihan',
+                'sp.totalharusdibayar',
+                'keteranganlainnya',
+                'sp.nosbklastfk',
+                'sp.nosbmlastfk',
+                'kt.id as jenisTagihanId',
+                'sp.noteleponfaks as notelepon',
+                'sp.namatempattujuan as alamatlengkap',
+                'sp.tglfaktur as tgllahir',
+                'sp.keteranganlainnya',
+                DB::raw("CASE WHEN sp.nosbmlastfk IS NOT NULL OR sp.nosbklastfk IS NOT NULL THEN 'Lunas' ELSE 'Belum Bayar' END AS statusbayar")
+            )
             ->where('sp.kdprofile', $kdProfile)
             ->whereNotNull('sp.totalharusdibayar')
             ->where('sp.objectkelompoktransaksifk', $kdPelayananAmbulan)
             ->where('sp.norec', $noRec)
             ->first();
 
-        $details = DB::select(DB::raw("select pr.namaproduk,spd.keteranganlainnya,spd.qtyproduk as jumlah,spd.hargasatuan as harga,
+        $details = DB::select(
+            DB::raw("select pr.namaproduk,spd.keteranganlainnya,spd.qtyproduk as jumlah,spd.hargasatuan as harga,
                      CASE WHEN isjasaperawat = true THEN spd.hargasatuan * 25/100 ELSE 0 END AS jasaperawat,
                      CASE WHEN isjasadokter = true THEN spd.hargasatuan * 25/100 ELSE 0 END AS jasadokter,
                      (spd.qtyproduk * spd.hargasatuan) + CASE WHEN isjasaperawat = true THEN spd.hargasatuan * 25/100 ELSE 0 END 
@@ -1845,23 +2128,24 @@ class AmbulanController extends ApiController{
         return $this->respond($result);
     }
 
-    public function SaveInputTagihanVerif(Request $request) {
+    public function SaveInputTagihanVerif(Request $request)
+    {
         $kdProfile = (int) $this->getDataKdProfile($request);
         \DB::beginTransaction();
-        $transMessage='';
+        $transMessage = '';
         $req = $request->all();
-//        return $this->respond($req);
+        //        return $this->respond($req);
         try {
 
-            if($req['norec'] == ''){
+            if ($req['norec'] == '') {
                 $SP = new StrukPelayanan();
                 $norecSP = $SP->generateNewId();
-                $noStruk = $this->generateCode(new StrukPelayanan, 'nostruk', 10, 'NLA'.$this->getDateTime()->format('ym'), $kdProfile);
+                $noStruk = $this->generateCode(new StrukPelayanan, 'nostruk', 10, 'NLA' . $this->getDateTime()->format('ym'), $kdProfile);
                 $SP->norec = $norecSP;
                 $SP->kdprofile = $kdProfile;
                 $SP->statusenabled = true;
                 $SP->nostruk = $noStruk;
-            }else{
+            } else {
                 $SP = StrukPelayanan::where('norec', $req['norec'])->where('kprofile', $kdProfile)->first();
                 $DelSPD = StrukPelayananDetail::where('nostrukfk', $req['norec'])->where('kdprofile', $kdProfile)->delete();
             }
@@ -1869,14 +2153,14 @@ class AmbulanController extends ApiController{
             $SP->keteranganlainnya = $req['keteranganlainnya'];
             $SP->namapasien_klien = $req['namaPasien_klien'];
             $SP->nostruk_intern = $req['nocm'];
-            if (isset($req['notelp_klien'])){
+            if (isset($req['notelp_klien'])) {
                 $SP->noteleponfaks = $req['notelp_klien'];
             }
-            if (isset($req['alamat'])){
-                $SP->namatempattujuan =  $req['alamat'];//alamat
+            if (isset($req['alamat'])) {
+                $SP->namatempattujuan =  $req['alamat']; //alamat
             }
-            if (isset($req['tglLahir'])){
-                $SP->tglfaktur =  $req['tglLahir'];//tgllahir
+            if (isset($req['tglLahir'])) {
+                $SP->tglfaktur =  $req['tglLahir']; //tgllahir
             }
             $SP->tglstruk = $req['tglstruk'];
             $SP->totalharusdibayar = $req['totalharusdibayar'];
@@ -1886,11 +2170,11 @@ class AmbulanController extends ApiController{
             $hargaTambahanD = 0;
 
             foreach ($req['details'] as $item) {
-                if ($req['perawat'] == true || $req['perawat'] == 'true'){
-                    $hargaTambahanP = (float) $item['harga'] * 25/100;
+                if ($req['perawat'] == true || $req['perawat'] == 'true') {
+                    $hargaTambahanP = (float) $item['harga'] * 25 / 100;
                 }
-                if ($req['dokter'] == true || $req['dokter'] == 'true'){
-                    $hargaTambahanD = (float) $item['harga'] * 25/100;
+                if ($req['dokter'] == true || $req['dokter'] == 'true') {
+                    $hargaTambahanD = (float) $item['harga'] * 25 / 100;
                 }
                 $SPD = new StrukPelayananDetail();
                 $norecKS = $SPD->generateNewId();
@@ -1969,4 +2253,52 @@ class AmbulanController extends ApiController{
         }
         return $this->setStatusCode($result['status'])->respond($result, $transMessage);
     }
+
+    public function lapKegiatanAmbulan(Request $request)
+    {
+        $kdProfile = $this->getDataKdProfile($request);
+        $filter = $request->all();
+
+        // Query untuk mendapatkan data
+        $data = \DB::table('strukpelayanan_t as sp')
+            ->leftJoin('strukbuktipenerimaan_t as sbm', 'sbm.norec', '=', 'sp.nosbmlastfk')
+            ->leftJoin('strukpelayanandetail_t as spd', 'spd.nostrukfk', '=', 'sp.norec')
+            ->leftJoin('petugaspelayananambulan_t as ppa', 'ppa.nostrukdetailfk', '=', 'spd.norec')
+            ->leftJoin('pegawai_m as pg', 'pg.id', '=', 'ppa.objectpegawaifk')
+            ->leftJoin('jenispegawai_m as jp', 'jp.id', '=', 'pg.objectjenispegawaifk')
+            ->distinct()
+            ->select(
+                'sp.nostruk',
+                'sp.tglstruk',
+                'pg.namalengkap AS namapersonel',
+                'spd.hargasatuan',
+                'sp.namapasien_klien'
+            )
+            ->where('sp.statusenabled', true)
+            ->where('sp.kdprofile', (int)$kdProfile)
+            ->where('jp.id', 48)
+            ->whereNotNull('sp.nosbmlastfk'); // Perbaikan pengecekan null
+
+        // Filter berdasarkan tanggal awal
+        if (!empty($filter['tglAwal'])) {
+            $data = $data->where('sp.tglstruk', '>=', $filter['tglAwal']);
+        }
+
+        // Filter berdasarkan tanggal akhir
+        if (!empty($filter['tglAkhir'])) {
+            $data = $data->where('sp.tglstruk', '<=', $filter['tglAkhir']);
+        }
+
+        // Filter berdasarkan nama pasien/klien
+        if (!empty($filter['nama'])) {
+            $data = $data->where('sp.namapasien_klien', 'ilike', '%' . $filter['nama'] . '%');
+        }
+
+        // Urutkan berdasarkan tanggal struk
+        $data = $data->orderBy('sp.tglstruk')->get();
+
+        // Mengembalikan response
+        return $this->respond($data);
+    }
+
 }

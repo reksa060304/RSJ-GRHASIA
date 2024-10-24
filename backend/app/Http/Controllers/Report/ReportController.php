@@ -22749,7 +22749,7 @@ public function suratBuktiPengembalian(Request $request)
         
         $idSebelum = DB::select(DB::raw("
             SELECT
-                CAST(SPLIT_PART(ka.keterangan, '-', 1) AS INTEGER) AS id_kegiatan
+                CAST(SPLIT_PART(ka.keterangan, '-', 1) AS INTEGER) AS id_kegiatan, ka.kode
             FROM 
                 keteranganbelanja_t AS kb 
             LEFT JOIN kegiatananggaran_m AS ka ON ka.id = kb.objectkegiatanfk AND ka.statusenabled = TRUE AND ka.kdprofile = 30
@@ -22836,7 +22836,7 @@ public function suratBuktiPengembalian(Request $request)
                     AND kb2.statusenabled = TRUE    
                     AND kb2.objecttahapfk = ".$request['terhadap']."
                     AND kb2.keteranganbelanja = kb.keteranganbelanja
-                    AND kb2.objectkegiatanfk = ".$idSebelum[0]->id_kegiatan."
+                    -- AND kb2.objectkegiatanfk = ".$idSebelum[0]->id_kegiatan."
                 LEFT JOIN kegiatananggaran_m AS ka2 ON ka2.id = kb2.objectkegiatanfk
                     AND ka2.statusenabled = TRUE
                     AND ka2.kdprofile = 30
@@ -22846,6 +22846,7 @@ public function suratBuktiPengembalian(Request $request)
                 AND kb.kdprofile = 30 
                 AND kb.objecttahapfk = ".$request['tahap']." 
                 AND kb.objectkegiatanfk = ".$request['subsubkegiatan']."
+                AND ka2.kode = '".$idSebelum[0]->kode."'
             ORDER BY
                 SPLIT_PART( ma4.kodemataanggaran, '.', 1 ),
                 SPLIT_PART( ma4.kodemataanggaran, '.', 2 ),
@@ -24667,4 +24668,43 @@ public function suratBuktiPengembalian(Request $request)
         ]);
     } 
 
+    public function suratTugasAmbulan(Request $request)
+    {
+        $profile = (int)$request['kdprofile'];
+        $nostrukfk = $request['norec'];
+
+        // Menggunakan parameter binding untuk keamanan
+        $data = collect(DB::select(
+            "SELECT
+                spd.norec,
+                pg.namalengkap,
+                pg.nip,
+                jp.id,
+                jp.jenispegawai AS jabatan,
+                spd.tglpelayanan
+            FROM
+                strukpelayanandetail_t AS spd
+                LEFT JOIN petugaspelayananambulan_t AS ppa ON ppa.nostrukdetailfk = spd.norec
+                LEFT JOIN pegawai_m AS pg ON pg.id = ppa.objectpegawaifk
+                LEFT JOIN jenispegawai_m AS jp ON jp.id = pg.objectjenispegawaifk
+            WHERE
+                spd.kdprofile = :profile
+                AND spd.statusenabled = TRUE
+                AND spd.nostrukfk = :nostrukfk",
+            ['profile' => $profile, 'nostrukfk' => $nostrukfk]
+        ));
+
+        // dd($data);
+
+        // Pastikan data ditemukan
+        if ($data->isEmpty()) {
+            return response()->json(['message' => 'Data tidak ditemukan'], 404);
+        }
+
+        $height = 600;
+        $pageWidth = 950;
+
+        // Mengembalikan view dengan data yang ditemukan
+        return view('report.kasir.surat-tugas-ambulan', compact('data', 'request', 'pageWidth'));
+    }
 }

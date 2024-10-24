@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Created by PhpStorm.
  * User: Efan Andrian(ea@epic)
@@ -7,6 +8,7 @@
  */
 
 namespace App\Http\Controllers\Kasir;
+
 use App\Http\Controllers\ApiController;
 use App\Master\JadwalPraktekBulanan;
 use App\Master\Pasien;
@@ -37,11 +39,13 @@ use PDF;
 use App\Traits\BniTrait;
 use App\Transaksi\BNITransaction;
 use App\Transaksi\BniEnc;
+use App\Transaksi\PetugasPelayananAmbulan;
 use App\Transaksi\VirtualAccount;
 use Webpatser\Uuid\Uuid;
 
-class KasirController extends ApiController{
-    use Valet, InternalList, PelayananPasienTrait, SettingDataFixedTrait,BniTrait;
+class KasirController extends ApiController
+{
+    use Valet, InternalList, PelayananPasienTrait, SettingDataFixedTrait, BniTrait;
     // protected $request;
     protected $client_id = '13513';
     protected $secret_key = 'fda741b2e353fce9856fb0a4674095b1';
@@ -50,31 +54,32 @@ class KasirController extends ApiController{
 
     public function __construct()
     {
-        parent::__construct($skip_authentication=false);
-
+        parent::__construct($skip_authentication = false);
     }
 
-    protected function  getKdTransaksiNonLayanan(){
+    protected function  getKdTransaksiNonLayanan()
+    {
         $set = SettingDataFixed::where('namafield', 'kdTransaksiNonLayanan')->first();
-        if($set){
+        if ($set) {
             return $set->nilaifield;
-        }else{
+        } else {
             return null;
         }
     }
 
-    public function getDataComboKasir(Request $request) {
+    public function getDataComboKasir(Request $request)
+    {
         $kdProfile = (int) $this->getDataKdProfile($request);
-        $dataLogin=$request->all();
+        $dataLogin = $request->all();
         $dataPegawai = \DB::table('loginuser_s as lu')
-            ->join('pegawai_m as pg','pg.id','=','lu.objectpegawaifk')
-            ->select('pg.namalengkap','lu.objectpegawaifk','lu.objectkelompokuserfk')
+            ->join('pegawai_m as pg', 'pg.id', '=', 'lu.objectpegawaifk')
+            ->select('pg.namalengkap', 'lu.objectpegawaifk', 'lu.objectkelompokuserfk')
             ->where('lu.kdprofile', $kdProfile)
-            ->where('lu.id',$dataLogin['userData']['id'])
+            ->where('lu.id', $dataLogin['userData']['id'])
             ->first();
         $dataInstalasi = \DB::table('departemen_m as dp')
             ->where('dp.kdprofile', $kdProfile)
-            ->whereIn('dp.id',[3, 14, 16, 17, 18, 19, 24, 25, 26, 27, 28, 35])
+            ->whereIn('dp.id', [3, 14, 16, 17, 18, 19, 24, 25, 26, 27, 28, 35])
             ->where('dp.statusenabled', true)
             ->orderBy('dp.namadepartemen')
             ->get();
@@ -85,18 +90,18 @@ class KasirController extends ApiController{
             ->get();
         $kelTrans = \DB::table('kelompoktransaksi_m')
             ->where('kdprofile', $kdProfile)
-            ->select('id','kelompoktransaksi')
-            ->where('statusenabled',true)
+            ->select('id', 'kelompoktransaksi')
+            ->where('statusenabled', true)
             ->get();
         $caraBayar = \DB::table('carabayar_m')
             ->where('kdprofile', $kdProfile)
-            ->select('id','carabayar as caraBayar','carabayar as namaExternal')
-            ->where('statusenabled',true)
+            ->select('id', 'carabayar as caraBayar', 'carabayar as namaExternal')
+            ->where('statusenabled', true)
             ->get();
         $jenisKartu = \DB::table('jeniskartu_m')
-            ->select('id','jeniskartu as jenisKartu','jeniskartu as namaExternal')
+            ->select('id', 'jeniskartu as jenisKartu', 'jeniskartu as namaExternal')
             ->where('kdprofile', $kdProfile)
-            ->where('statusenabled',true)
+            ->where('statusenabled', true)
             ->get();
         $dataKelompok = \DB::table('kelompokpasien_m as kp')
             ->select('kp.id', 'kp.kelompokpasien')
@@ -105,26 +110,29 @@ class KasirController extends ApiController{
             ->orderBy('kp.kelompokpasien')
             ->get();
         $dataRuanganRi = \DB::table('ruangan_m as ru')
-            ->select('ru.id','ru.namaruangan','ru.objectdepartemenfk','ru.kdinternal')
+            ->select('ru.id', 'ru.namaruangan', 'ru.objectdepartemenfk', 'ru.kdinternal')
             ->where('ru.kdprofile', $kdProfile)
             ->where('ru.statusenabled', true)
             ->where('ru.objectdepartemenfk', 16)
             ->orderBy('ru.namaruangan')
             ->get();
-        $dataKasir= \DB::select(DB::raw("select pg.id,pg.namalengkap from loginuser_s lu
+        $dataKasir = \DB::select(
+            DB::raw("select pg.id,pg.namalengkap from loginuser_s lu
                 INNER JOIN pegawai_m pg on lu.objectpegawaifk=pg.id
                 where lu.kdprofile = $kdProfile and objectkelompokuserfk=:id and pg.statusenabled=true"),
             array(
                 'id' => 20,
             )
         );
-        $dataCB= DB::select(DB::raw("select id,carabayar from carabayar_m
+        $dataCB = DB::select(
+            DB::raw("select id,carabayar from carabayar_m
                 where kdprofile = $kdProfile and statusenabled=:tt;"),
             array(
                 'tt' => 1,
             )
         );
-        $dataKP= DB::select(DB::raw("select id,kelompoktransaksi from kelompoktransaksi_m
+        $dataKP = DB::select(
+            DB::raw("select id,kelompoktransaksi from kelompoktransaksi_m
                 where kdprofile = $kdProfile and statusenabled=:tt and id in (2,3,4,5,6,10,13,16,34,8,9,20,21,23,24,26,62,70,71);"),
             array(
                 'tt' => 1,
@@ -137,22 +145,22 @@ class KasirController extends ApiController{
             ->orderBy('ru.namalengkap')
             ->get();
 
-            $pegawai = \DB::table('pegawai_m as ru')
+        $pegawai = \DB::table('pegawai_m as ru')
             ->where('ru.kdprofile', $kdProfile)
             ->where('ru.statusenabled', true)
             ->whereNull('ru.usereksternal')
-            ->where('ru.namalengkap', '<>','-')
+            ->where('ru.namalengkap', '<>', '-')
             // ->where('ru.objectjenispegawaifk', 1)
             ->orderBy('ru.namalengkap')
             ->get();
-            $jenisperan = \DB::table('jenisperan_m')
+        $jenisperan = \DB::table('jenisperan_m')
             ->where('objectdetailjenisprodukfk', $request['detailjenisprodukfk'])
             ->orderBy('id', 'asc')
             ->get();
-            $detailkegiatandiklat = \DB::table('detailkegiatandiklat_t as dkd')
-            ->select('pg.namalengkap','jp.jenisperan', 'dkd.*')
-            ->leftjoin('pegawai_m as pg', 'pg.id','=','dkd.objectpegawaifk')
-            ->leftjoin('jenisperan_m as jp', 'jp.id','=','dkd.objectjenisperanfk')
+        $detailkegiatandiklat = \DB::table('detailkegiatandiklat_t as dkd')
+            ->select('pg.namalengkap', 'jp.jenisperan', 'dkd.*')
+            ->leftjoin('pegawai_m as pg', 'pg.id', '=', 'dkd.objectpegawaifk')
+            ->leftjoin('jenisperan_m as jp', 'jp.id', '=', 'dkd.objectjenisperanfk')
             ->where('dkd.norec_pp', $request['norec_pp'])
             ->where('dkd.kdprofile', $kdProfile)
             ->where('dkd.statusenabled', true)
@@ -175,16 +183,16 @@ class KasirController extends ApiController{
             );
         }
 
-        $diklit= $this->settingDataFixed('KdKelompokUserDiklat',$kdProfile);
-        $list = explode(',',$this->settingDataFixed('kdTransaksiNonLayanan', $kdProfile));
-        $arry=[];
-        foreach ($list as $item){
-            $arry [] = (int)$item;
+        $diklit = $this->settingDataFixed('KdKelompokUserDiklat', $kdProfile);
+        $list = explode(',', $this->settingDataFixed('kdTransaksiNonLayanan', $kdProfile));
+        $arry = [];
+        foreach ($list as $item) {
+            $arry[] = (int)$item;
         }
         $kelTransNon = \DB::table('kelompoktransaksi_m')
-            ->select('id','kelompoktransaksi')
-            ->where('statusenabled',1)
-            ->whereIn('id',$arry)
+            ->select('id', 'kelompoktransaksi')
+            ->where('statusenabled', 1)
+            ->whereIn('id', $arry)
             ->get();
 
         $result = array(
@@ -192,27 +200,28 @@ class KasirController extends ApiController{
             'kelompoktransaksi' => $kelTrans,
             'carabayar' => $caraBayar,
             'jeniskartu' => $jenisKartu,
-            'datapegawai'=>$dataPegawai,
-            'kelompokpasien'=>$dataKelompok,
-            'ruanganri'=>$dataRuanganRi,
-            'datakasir'=>$dataKasir,
-            'dataInstalasi' =>$dataInstalasi,
-            'dataCB' =>$dataCB,
-            'dataKP' =>$dataKP,
-            'datalogin'=>$dataLogin,
+            'datapegawai' => $dataPegawai,
+            'kelompokpasien' => $dataKelompok,
+            'ruanganri' => $dataRuanganRi,
+            'datakasir' => $dataKasir,
+            'dataInstalasi' => $dataInstalasi,
+            'dataCB' => $dataCB,
+            'dataKP' => $dataKP,
+            'datalogin' => $dataLogin,
             'dokter' => $dataDokter,
             'departemen' => $dataDepartemen,
             'diklit' => $diklit,
             'kelnon' => $kelTransNon,
             'pegawai' => $pegawai,
-            'jenisperan'=>$jenisperan,
-            'detailkegiatandiklat'=> $detailkegiatandiklat,
+            'jenisperan' => $jenisperan,
+            'detailkegiatandiklat' => $detailkegiatandiklat,
             'message' => 'ihuman@epic'
         );
         return $this->respond($result);
     }
 
-    public function getComboRuanganRanapRajal(Request $request) {
+    public function getComboRuanganRanapRajal(Request $request)
+    {
         $kdProfile = (int) $this->getDataKdProfile($request);
         $dataRuanganRanap = \DB::table('ruangan_m as ru')
             ->where('ru.kdprofile', $kdProfile)
@@ -234,84 +243,102 @@ class KasirController extends ApiController{
         return $this->respond($result);
     }
 
-    public function daftarTagihanNonLayanan(Request $request){
+    public function daftarTagihanNonLayanan(Request $request)
+    {
         $kdProfile = (int) $this->getDataKdProfile($request);
-        $filter=$request->all();
-        $list = explode (',',$this->settingDataFixed('kdTransaksiNonLayanan', $kdProfile));
+        $filter = $request->all();
+        $list = explode(',', $this->settingDataFixed('kdTransaksiNonLayanan', $kdProfile));
         $KdList = [];
-        foreach ($list as $item){
-            $KdList []=  (int)$item;
+        foreach ($list as $item) {
+            $KdList[] =  (int)$item;
         }
-        $datakelompokuser= \DB::table('loginuser_s as lu')
+        $datakelompokuser = \DB::table('loginuser_s as lu')
             ->select('lu.objectkelompokuserfk')
             ->where('lu.kdprofile', $kdProfile)
-            ->where('lu.id','=',$filter['userData']['id'])
+            ->where('lu.id', '=', $filter['userData']['id'])
             ->get();
 
-        if ($datakelompokuser[0]->objectkelompokuserfk == 58){
+        if ($datakelompokuser[0]->objectkelompokuserfk == 58) {
             $dataNonLayanan = \DB::table('strukpelayanan_t as sp')
                 ->join('kelompoktransaksi_m as kt', 'sp.objectkelompoktransaksifk', '=', 'kt.id')
-                ->select('sp.norec', 'sp.tglstruk', 'sp.namapasien_klien', 'kt.reportdisplay as jenistagihan','sp.isverifikasi',
-                     'keteranganlainnya', 'sp.nosbklastfk', 'sp.nosbmlastfk', 'kt.id as jenisTagihanId',
-                    \DB::raw("CAST(sp.totalharusdibayar AS FLOAT) AS totalharusdibayar "))
+                ->select(
+                    'sp.norec',
+                    'sp.tglstruk',
+                    'sp.namapasien_klien',
+                    'kt.reportdisplay as jenistagihan',
+                    'sp.isverifikasi',
+                    'keteranganlainnya',
+                    'sp.nosbklastfk',
+                    'sp.nosbmlastfk',
+                    'kt.id as jenisTagihanId',
+                    \DB::raw("CAST(sp.totalharusdibayar AS FLOAT) AS totalharusdibayar ")
+                )
                 ->where('sp.kdprofile', $kdProfile)
                 ->whereNotNull('sp.totalharusdibayar')
                 ->whereIn('sp.objectkelompoktransaksifk', $KdList)
-                ->where('kt.id','=',13);
-        }else {
+                ->where('kt.id', '=', 13);
+        } else {
             $dataNonLayanan = \DB::table('strukpelayanan_t as sp')
                 ->join('kelompoktransaksi_m as kt', 'sp.objectkelompoktransaksifk', '=', 'kt.id')
-                ->select('sp.norec', 'sp.tglstruk', 'sp.namapasien_klien', 'kt.reportdisplay as jenistagihan',
-                    'keteranganlainnya', 'sp.nosbklastfk', 'sp.nosbmlastfk', 'kt.id as jenisTagihanId',
-                    \DB::raw("CAST(sp.totalharusdibayar AS FLOAT) AS totalharusdibayar"))
-//            ->whereNull('sp.noregistrasifk')
+                ->select(
+                    'sp.norec',
+                    'sp.tglstruk',
+                    'sp.namapasien_klien',
+                    'kt.reportdisplay as jenistagihan',
+                    'keteranganlainnya',
+                    'sp.nosbklastfk',
+                    'sp.nosbmlastfk',
+                    'kt.id as jenisTagihanId',
+                    \DB::raw("CAST(sp.totalharusdibayar AS FLOAT) AS totalharusdibayar")
+                )
+                //            ->whereNull('sp.noregistrasifk')
                 ->where('sp.kdprofile', $kdProfile)
                 ->whereNotNull('sp.totalharusdibayar')
-                ->whereIn('sp.objectkelompoktransaksifk',$KdList);
-//            ->where('spp.kdrekananpenjamin', 0);->whereIn('id', [1, 2, 3])
+                ->whereIn('sp.objectkelompoktransaksifk', $KdList);
+            //            ->where('spp.kdrekananpenjamin', 0);->whereIn('id', [1, 2, 3])
         }
 
-        if(isset($filter['tglAwal']) && $filter['tglAwal']!=""){
-            $dataNonLayanan = $dataNonLayanan->where('sp.tglstruk','>=', $filter['tglAwal']);
+        if (isset($filter['tglAwal']) && $filter['tglAwal'] != "") {
+            $dataNonLayanan = $dataNonLayanan->where('sp.tglstruk', '>=', $filter['tglAwal']);
         }
 
-        if(isset($filter['tglAkhir']) && $filter['tglAkhir']!=""){
-            $tgl= $filter['tglAkhir'];//." 23:59:59";
-            $dataNonLayanan = $dataNonLayanan->where('sp.tglstruk','<=', $tgl);
+        if (isset($filter['tglAkhir']) && $filter['tglAkhir'] != "") {
+            $tgl = $filter['tglAkhir']; //." 23:59:59";
+            $dataNonLayanan = $dataNonLayanan->where('sp.tglstruk', '<=', $tgl);
         }
-//
-        if(isset($filter['jenisTagihanId']) && $filter['jenisTagihanId']!=""){
-            $dataNonLayanan = $dataNonLayanan->where('kt.id','=', $filter['jenisTagihanId']);
+        //
+        if (isset($filter['jenisTagihanId']) && $filter['jenisTagihanId'] != "") {
+            $dataNonLayanan = $dataNonLayanan->where('kt.id', '=', $filter['jenisTagihanId']);
         }
 
-        if(isset($filter['namaPelanggan']) && $filter['namaPelanggan']!=""){
-            $dataNonLayanan = $dataNonLayanan->where('sp.namapasien_klien','ilike','%'. $filter['namaPelanggan'] . '%');
+        if (isset($filter['namaPelanggan']) && $filter['namaPelanggan'] != "") {
+            $dataNonLayanan = $dataNonLayanan->where('sp.namapasien_klien', 'ilike', '%' . $filter['namaPelanggan'] . '%');
         }
-//
-        if(isset($filter['status']) && $filter['status']!=""){
-            if($filter['status']=='Lunas'){
+        //
+        if (isset($filter['status']) && $filter['status'] != "") {
+            if ($filter['status'] == 'Lunas') {
                 $dataNonLayanan = $dataNonLayanan->whereNotNull('sp.nosbmlastfk');
-            }else{
+            } else {
                 $dataNonLayanan = $dataNonLayanan->whereNull('sp.nosbmlastfk');
             }
         }
-        if(isset($filter['statusK']) && $filter['statusK']!=""){
-            if($filter['statusK']=='Lunas'){
+        if (isset($filter['statusK']) && $filter['statusK'] != "") {
+            if ($filter['statusK'] == 'Lunas') {
                 $dataNonLayanan = $dataNonLayanan->whereNotNull('sp.nosbklastfk');
-            }else{
+            } else {
                 $dataNonLayanan = $dataNonLayanan->whereNull('sp.nosbklastfk');
             }
         }
 
-//        $dataPiutang=$dataPiutang->groupBy('kp.kelompokpasien', 'spp.norec','sp.tglstruk', 'pd.noregistrasi', 'pd.tglregistrasi','p.nocm','p.namapasien','spp.totalppenjamin','spp.totalharusdibayar',
-//            'spp.totalsudahdibayar', 'r.namarekanan', 'spp.totalbiaya', 'spp.noverifikasi');
-        $dataNonLayanan =$dataNonLayanan->where('sp.statusenabled','=',true);
-        $dataNonLayanan =$dataNonLayanan->whereNull('sp.isverifikasi');
-        $dataNonLayanan =$dataNonLayanan->get();
+        //        $dataPiutang=$dataPiutang->groupBy('kp.kelompokpasien', 'spp.norec','sp.tglstruk', 'pd.noregistrasi', 'pd.tglregistrasi','p.nocm','p.namapasien','spp.totalppenjamin','spp.totalharusdibayar',
+        //            'spp.totalsudahdibayar', 'r.namarekanan', 'spp.totalbiaya', 'spp.noverifikasi');
+        $dataNonLayanan = $dataNonLayanan->where('sp.statusenabled', '=', true);
+        $dataNonLayanan = $dataNonLayanan->whereNull('sp.isverifikasi');
+        $dataNonLayanan = $dataNonLayanan->get();
         $result = array();
         foreach ($dataNonLayanan as $item) {
             $statusBayar = "Belum Bayar";
-            if($item->nosbmlastfk!=null ||$item->nosbklastfk!=null){
+            if ($item->nosbmlastfk != null || $item->nosbklastfk != null) {
                 $statusBayar = "Lunas";
             }
             $result[] = array(
@@ -322,51 +349,52 @@ class KasirController extends ApiController{
                 'totalDibayar' => $item->totalharusdibayar,
                 'keterangan' => $item->keteranganlainnya,
                 'jenisTagihanId' => $item->jenisTagihanId,
-                'statusBayar' =>$statusBayar
+                'statusBayar' => $statusBayar
 
             );
         }
 
         return $this->respond($result, 'Data Tagihan Penunjang');
 
-//        $strukOrder = StrukOrder::has('order_pelayanan')->where('noregistrasifk', null)->get();
-//        $result = array();
-//        foreach ($strukOrder as $item) {
-//            $orderPelayanan = $item->order_pelayanan;
-//            $totalTagihan = ($item->totalhargasatuan*$item->qtyproduk);
-//            if($totalTagihan>0){
-//                $result[] = array(
-//                    'noRec' => $item->norec,
-//                    'tglTransaksi' => $item->tglorder,
-//                    'namaPelanggan' => $item->namapenyewa,
-//                    'jenisTagihan' => 'x', //dari mana kelompokTransaksi
-//                    'total' => $totalTagihan,
-//                    'keterangan' => $item->keteranganorder,
-//                    'statusBayar' =>"-", //belum bayar / lunas
-//                );
-//            }
-//        }
-//        return $this->respond($result, 'Data tagihan non layanan');
+        //        $strukOrder = StrukOrder::has('order_pelayanan')->where('noregistrasifk', null)->get();
+        //        $result = array();
+        //        foreach ($strukOrder as $item) {
+        //            $orderPelayanan = $item->order_pelayanan;
+        //            $totalTagihan = ($item->totalhargasatuan*$item->qtyproduk);
+        //            if($totalTagihan>0){
+        //                $result[] = array(
+        //                    'noRec' => $item->norec,
+        //                    'tglTransaksi' => $item->tglorder,
+        //                    'namaPelanggan' => $item->namapenyewa,
+        //                    'jenisTagihan' => 'x', //dari mana kelompokTransaksi
+        //                    'total' => $totalTagihan,
+        //                    'keterangan' => $item->keteranganorder,
+        //                    'statusBayar' =>"-", //belum bayar / lunas
+        //                );
+        //            }
+        //        }
+        //        return $this->respond($result, 'Data tagihan non layanan');
     }
 
-    public function getDataProduk(Request $request) {
+    public function getDataProduk(Request $request)
+    {
         $kdProfile = (int) $this->getDataKdProfile($request);
         $dataLogin = $request->all();
         $data = \DB::table('produk_m as pr')
-            ->JOIN('harganettoprodukbykelas_m as het','het.objectprodukfk','=','pr.id')
-            ->select('pr.id','pr.namaproduk','het.harganetto1 as harga')
+            ->JOIN('harganettoprodukbykelas_m as het', 'het.objectprodukfk', '=', 'pr.id')
+            ->select('pr.id', 'pr.namaproduk', 'het.harganetto1 as harga')
             ->where('pr.kdprofile', $kdProfile)
-            ->where('pr.statusenabled',true)
-            ->where('het.objectkelasfk',6)
-            ->where('het.objectjenispelayananfk',1)
-            ->where('het.statusenabled',true);
-//            ->take($request['take']);
+            ->where('pr.statusenabled', true)
+            ->where('het.objectkelasfk', 6)
+            ->where('het.objectjenispelayananfk', 1)
+            ->where('het.statusenabled', true);
+        //            ->take($request['take']);
 
-        if(isset($request['prid']) && $request['prid']!="" && $request['prid']!="undefined"){
+        if (isset($request['prid']) && $request['prid'] != "" && $request['prid'] != "undefined") {
             $data = $data->where('ru.id', $request['prid']);
         }
-        if(isset($request['namaproduk']) && $request['namaproduk']!="" && $request['namaproduk']!="undefined"){
-            $data = $data->where('pr.namaproduk','ilike','%'. $request['namaproduk'].'%');
+        if (isset($request['namaproduk']) && $request['namaproduk'] != "" && $request['namaproduk'] != "undefined") {
+            $data = $data->where('pr.namaproduk', 'ilike', '%' . $request['namaproduk'] . '%');
         }
         $data = $data->get();
 
@@ -381,37 +409,39 @@ class KasirController extends ApiController{
         return $this->respond($result);
     }
 
-    public function SaveInputTagihan(Request $request) {
+    public function SaveInputTagihan(Request $request)
+    {
         $kdProfile = (int) $this->getDataKdProfile($request);
         \DB::beginTransaction();
-        $transMessage='';
+        $idProfile = (int) $kdProfile;
+        $transMessage = '';
         $req = $request->all();
-//        return $this->respond($req);
+        //        return $this->respond($req);
         try {
-        if($req['norec'] == ''){
+        if ($req['norec'] == '') {
             $SP = new StrukPelayanan();
             $norecSP = $SP->generateNewId();
-            $noStruk = $this->generateCode(new StrukPelayanan, 'nostruk', 10, 'NL'.$this->getDateTime()->format('ym'), $kdProfile);
+            $noStruk = $this->generateCode(new StrukPelayanan, 'nostruk', 10, 'NL' . $this->getDateTime()->format('ym'), $kdProfile);
             $SP->norec = $norecSP;
             $SP->kdprofile = $kdProfile;
             $SP->statusenabled = true;
             $SP->nostruk = $noStruk;
-        }else{
+        } else {
             $SP = StrukPelayanan::where('norec', $req['norec'])->where('kprofile', $kdProfile)->first();
             $DelSPD = StrukPelayananDetail::where('nostrukfk', $req['norec'])->where('kdprofile', $kdProfile)->delete();
         }
-            $SP->objectkelompoktransaksifk = $req['kelompoktransaksifk'];
-            $SP->keteranganlainnya = $req['keteranganlainnya'];
-            $SP->namapasien_klien = $req['namapasien_klien'];
-            if (isset($req['notelp_klien'])){
-                $SP->noteleponfaks = $req['notelp_klien'];
-            }
-            if (isset($req['isverifikasi'])){
-                $SP->isverifikasi = $req['isverifikasi'];
-            }
-            $SP->tglstruk = $req['tglstruk'];
-            $SP->totalharusdibayar = $req['totalharusdibayar'];
-            $SP->save();
+        $SP->objectkelompoktransaksifk = $req['kelompoktransaksifk'];
+        $SP->keteranganlainnya = $req['keteranganlainnya'];
+        $SP->namapasien_klien = $req['namapasien_klien'];
+        if (isset($req['notelp_klien'])) {
+            $SP->noteleponfaks = $req['notelp_klien'];
+        }
+        if (isset($req['isverifikasi'])) {
+            $SP->isverifikasi = $req['isverifikasi'];
+        }
+        $SP->tglstruk = $req['tglstruk'];
+        $SP->totalharusdibayar = $req['totalharusdibayar'];
+        $SP->save();
 
         foreach ($req['details'] as $item) {
             $SPD = new StrukPelayananDetail();
@@ -447,7 +477,29 @@ class KasirController extends ApiController{
             $SPD->keteranganlainnya = $item['keterangan'];
             $SPD->save();
         }
-            $transStatus = 'true';
+
+        $PPnorec = $SPD->norec;
+        $PPtglpelayanan = $SPD->tglpelayanan;
+
+        if (isset($req['petugaspelayananambulan']) && count($req['petugaspelayananambulan']) > 0) {
+            foreach ($req['petugaspelayananambulan'] as $itemPPA) {
+                if (isset($itemPPA['listpegawai']) && count($itemPPA['listpegawai']) > 0) {
+                    foreach ($itemPPA['listpegawai'] as $detailItemPPAz) {
+                        $PetugasPelAmbulan = new PetugasPelayananAmbulan();
+                        $PetugasPelAmbulan->norec = $PetugasPelAmbulan->generateNewId();
+                        $PetugasPelAmbulan->kdprofile = $idProfile;
+                        $PetugasPelAmbulan->statusenabled = true;
+                        $PetugasPelAmbulan->objectpegawaifk = $detailItemPPAz['id'] ?? null;
+                        $PetugasPelAmbulan->nostrukdetailfk = $PPnorec;
+                        $PetugasPelAmbulan->tglpelayanan = $PPtglpelayanan;
+                        $PetugasPelAmbulan->save();
+                    }
+                }
+            }
+        }
+
+
+        $transStatus = 'true';
         } catch (\Exception $e) {
             $transStatus = 'false';
         }
@@ -468,28 +520,29 @@ class KasirController extends ApiController{
                 "status" => 400,
                 "message"  => $transMessage,
                 "data" => $SP,
-                'e'=> $e->getLine(),
-                'messafe'=>$e->getMessage(),
+                'e' => $e->getLine(),
+                'messafe' => $e->getMessage(),
                 "as" => 'as@epic',
             );
         }
         return $this->setStatusCode($result['status'])->respond($result, $transMessage);
     }
 
-    public function detailTagihanNonLayanan(Request $request){
+    public function detailTagihanNonLayanan(Request $request)
+    {
         $kdProfile = (int) $this->getDataKdProfile($request);
         $noRec = $request['noRec'];
         $strukPelayanan = StrukPelayanan::where('norec', $noRec)->where('kdprofile', $kdProfile)->first();
-//        if($strukPelayanan){
-//            //return notfound
-//        }
+        //        if($strukPelayanan){
+        //            //return notfound
+        //        }
         $strukPelayananDetail = $strukPelayanan->struk_pelayanan_detail;
-        $totalBilling= 0;
-        $totalKlaim= 0;
+        $totalBilling = 0;
+        $totalKlaim = 0;
         $detailTagihan = array();
-        foreach ($strukPelayananDetail as $value){
-            $totalBilling = $totalBilling + ($value->harganetto*$value->qtyproduk);
-            $totalKlaim = $totalKlaim + ($value->hargasatuanppenjamin*$value->qtyproduk);
+        foreach ($strukPelayananDetail as $value) {
+            $totalBilling = $totalBilling + ($value->harganetto * $value->qtyproduk);
+            $totalKlaim = $totalKlaim + ($value->hargasatuanppenjamin * $value->qtyproduk);
             $detailTagihan[] = array(
                 'namaLayanan'  => @$value->produk->namaproduk,
                 'namaproduk' => @$value->produk->namaproduk,
@@ -503,8 +556,8 @@ class KasirController extends ApiController{
                 'keterangan' => $value->keteranganlainnya,
             );
         }
-        $totalBayar = $totalBilling -$totalKlaim;
-        $result =array(
+        $totalBayar = $totalBilling - $totalKlaim;
+        $result = array(
             "tglTransaksi" => $strukPelayanan->tglstruk,
             "namaPasien_klien"  => $strukPelayanan->namapasien_klien,
             "jumlahBayar" => 0,
@@ -521,94 +574,109 @@ class KasirController extends ApiController{
         return $this->respond($result, "Detail Tagihan Pasien");
     }
 
-    public function daftarTagihanPasien(Request $request){
+    public function daftarTagihanPasien(Request $request)
+    {
         $result = array();
         $filter = $request->all();
         $kdProfile = (int) $this->getDataKdProfile($request);
-        $dataStrukPelayanan= \DB::table('strukpelayanan_t as sp')
+        $dataStrukPelayanan = \DB::table('strukpelayanan_t as sp')
             ->join('pasiendaftar_t as pd', 'pd.norec', '=', 'sp.noregistrasifk')
             ->join('pasien_m as p', 'p.id', '=', 'pd.nocmfk')
             ->leftJoin('ruangan_m as r', 'r.id', '=', 'pd.objectruanganlastfk')
             ->leftJoin('departemen_m as dept', 'dept.id', '=', 'r.objectdepartemenfk')
             ->leftJoin('kelompokpasien_m as kp', 'kp.id', '=', 'pd.objectkelompokpasienlastfk')
             ->leftJoin('kelas_m as k', 'k.id', '=', 'pd.objectkelasfk')
-            ->select('pd.noregistrasi', 'p.nocm','p.namapasien','pd.tglregistrasi','pd.tglpulang','r.namaruangan',
-                'kp.kelompokpasien','sp.totalharusdibayar','sp.norec', 'sp.nostruk', 'k.namakelas', 'sp.tglstruk',
-                'sp.totalprekanan', 'r.id as ruanganId', 'dept.id as departmentId')
+            ->select(
+                'pd.noregistrasi',
+                'p.nocm',
+                'p.namapasien',
+                'pd.tglregistrasi',
+                'pd.tglpulang',
+                'r.namaruangan',
+                'kp.kelompokpasien',
+                'sp.totalharusdibayar',
+                'sp.norec',
+                'sp.nostruk',
+                'k.namakelas',
+                'sp.tglstruk',
+                'sp.totalprekanan',
+                'r.id as ruanganId',
+                'dept.id as departmentId'
+            )
             ->where('sp.kdprofile', $kdProfile);
 
-        if(isset($filter['noReg']) && $filter['noReg']!="" && $filter['noReg']!="undefined"){
+        if (isset($filter['noReg']) && $filter['noReg'] != "" && $filter['noReg'] != "undefined") {
             $dataStrukPelayanan  = $dataStrukPelayanan->where('pd.noregistrasi', $filter['noReg']);
         }
 
-        if(isset($filter['noRm']) && $filter['noRm']!="" && $filter['noRm']!="undefined"){
-            $dataStrukPelayanan  = $dataStrukPelayanan->where('p.nocm','ilike','%'. $filter['noRm'].'%');
+        if (isset($filter['noRm']) && $filter['noRm'] != "" && $filter['noRm'] != "undefined") {
+            $dataStrukPelayanan  = $dataStrukPelayanan->where('p.nocm', 'ilike', '%' . $filter['noRm'] . '%');
         }
-//
-//        if(isset($filter['tglAwal']) && $filter['tglAwal']!="" && $filter['tglAwal']!="undefined"){
-//            $dataStrukPelayanan = $dataStrukPelayanan->where('pd.tglregistrasi','>=', $filter['tglAwal']);
-//        }
-        if(isset($filter['tglAwal']) && $filter['tglAwal']!="" && $filter['tglAwal']!="undefined"){
-            $dataStrukPelayanan = $dataStrukPelayanan->where('sp.tglstruk','>=', $filter['tglAwal']);
-        }
-
-//        if(isset($filter['tglAkhir']) && $filter['tglAkhir']!="" && $filter['tglAkhir']!="undefined"){
-//            $tgl= $filter['tglAkhir']." 23:59:59";
-//            $dataStrukPelayanan = $dataStrukPelayanan->where('pd.tglregistrasi','<=', $tgl);
-//        }
-        if(isset($filter['tglAkhir']) && $filter['tglAkhir']!="" && $filter['tglAkhir']!="undefined"){
-            $tgl= $filter['tglAkhir'];//." 23:59:59";
-            $dataStrukPelayanan = $dataStrukPelayanan->where('sp.tglstruk','<=', $tgl);
+        //
+        //        if(isset($filter['tglAwal']) && $filter['tglAwal']!="" && $filter['tglAwal']!="undefined"){
+        //            $dataStrukPelayanan = $dataStrukPelayanan->where('pd.tglregistrasi','>=', $filter['tglAwal']);
+        //        }
+        if (isset($filter['tglAwal']) && $filter['tglAwal'] != "" && $filter['tglAwal'] != "undefined") {
+            $dataStrukPelayanan = $dataStrukPelayanan->where('sp.tglstruk', '>=', $filter['tglAwal']);
         }
 
-        if(isset($filter['instalasiId']) && $filter['instalasiId']!="" && $filter['instalasiId']!="undefined"){
-            $dataStrukPelayanan = $dataStrukPelayanan->where('dept.id','=', $filter['instalasiId']);
+        //        if(isset($filter['tglAkhir']) && $filter['tglAkhir']!="" && $filter['tglAkhir']!="undefined"){
+        //            $tgl= $filter['tglAkhir']." 23:59:59";
+        //            $dataStrukPelayanan = $dataStrukPelayanan->where('pd.tglregistrasi','<=', $tgl);
+        //        }
+        if (isset($filter['tglAkhir']) && $filter['tglAkhir'] != "" && $filter['tglAkhir'] != "undefined") {
+            $tgl = $filter['tglAkhir']; //." 23:59:59";
+            $dataStrukPelayanan = $dataStrukPelayanan->where('sp.tglstruk', '<=', $tgl);
         }
 
-        if(isset($filter['ruanganId']) && $filter['ruanganId']!="" && $filter['ruanganId']!="undefined"){
-            $dataStrukPelayanan = $dataStrukPelayanan->where('r.id','=', $filter['ruanganId']);
+        if (isset($filter['instalasiId']) && $filter['instalasiId'] != "" && $filter['instalasiId'] != "undefined") {
+            $dataStrukPelayanan = $dataStrukPelayanan->where('dept.id', '=', $filter['instalasiId']);
         }
 
-        if(isset($filter['namaPasien']) && $filter['namaPasien']!="" && $filter['namaPasien']!="undefined"){
-            $dataStrukPelayanan = $dataStrukPelayanan->where('p.namapasien','ilike', '%'.$filter['namaPasien'].'%');
+        if (isset($filter['ruanganId']) && $filter['ruanganId'] != "" && $filter['ruanganId'] != "undefined") {
+            $dataStrukPelayanan = $dataStrukPelayanan->where('r.id', '=', $filter['ruanganId']);
         }
 
-        if(isset($filter['kelompokPasienId']) && $filter['kelompokPasienId']!="" && $filter['kelompokPasienId']!="undefined"){
-            $dataStrukPelayanan = $dataStrukPelayanan->where('pd.objectkelompokpasienlastfk','=', $filter['kelompokPasienId']);
+        if (isset($filter['namaPasien']) && $filter['namaPasien'] != "" && $filter['namaPasien'] != "undefined") {
+            $dataStrukPelayanan = $dataStrukPelayanan->where('p.namapasien', 'ilike', '%' . $filter['namaPasien'] . '%');
         }
 
-//        if($filter['tglAwal']!=""){
-//            $dataStrukPelayanan = $dataStrukPelayanan->where('tglregistrasi','>=', $filter['tglAwal']);
-//        }
-//
-//        if($filter['tglAkhir']!=""){
-//            $tgl= $filter['tglAkhir']." 23:59:59";
-//            $dataStrukPelayanan = $dataStrukPelayanan->where('tglregistrasi','<=', $tgl);
-//        }
-        if(isset($filter['status']) && $filter['status']!=""){
-            if($filter['status']=='Lunas'){
+        if (isset($filter['kelompokPasienId']) && $filter['kelompokPasienId'] != "" && $filter['kelompokPasienId'] != "undefined") {
+            $dataStrukPelayanan = $dataStrukPelayanan->where('pd.objectkelompokpasienlastfk', '=', $filter['kelompokPasienId']);
+        }
+
+        //        if($filter['tglAwal']!=""){
+        //            $dataStrukPelayanan = $dataStrukPelayanan->where('tglregistrasi','>=', $filter['tglAwal']);
+        //        }
+        //
+        //        if($filter['tglAkhir']!=""){
+        //            $tgl= $filter['tglAkhir']." 23:59:59";
+        //            $dataStrukPelayanan = $dataStrukPelayanan->where('tglregistrasi','<=', $tgl);
+        //        }
+        if (isset($filter['status']) && $filter['status'] != "") {
+            if ($filter['status'] == 'Lunas') {
                 $dataStrukPelayanan  = $dataStrukPelayanan->whereNotNull('sp.nosbmlastfk');
-            }else{
+            } else {
                 $dataStrukPelayanan  = $dataStrukPelayanan->whereNull('sp.nosbmlastfk');
             }
         }
         $dataStrukPelayanan = $dataStrukPelayanan->take(50);
         $dataStrukPelayanan = $dataStrukPelayanan->whereRaw('(sp.statusenabled is null or sp.statusenabled =true)');
         $dataStrukPelayanan  = $dataStrukPelayanan->whereNotNull('sp.totalharusdibayar');
-        $dataStrukPelayanan  = $dataStrukPelayanan->where('sp.totalharusdibayar','<>',0);
+        $dataStrukPelayanan  = $dataStrukPelayanan->where('sp.totalharusdibayar', '<>', 0);
         $dataStrukPelayanan  = $dataStrukPelayanan->whereNotNull('sp.noregistrasifk');
-        if(!empty($filter['tglAwal']) && !empty($filter['tglAkhir']) && empty($filter['noReg']) && empty($filter['noRm']) && empty($filter['status']) && empty($filter['ruanganId']) && empty($filter['namaPasien']) && empty($filter['instalasiId'])){
+        if (!empty($filter['tglAwal']) && !empty($filter['tglAkhir']) && empty($filter['noReg']) && empty($filter['noRm']) && empty($filter['status']) && empty($filter['ruanganId']) && empty($filter['namaPasien']) && empty($filter['instalasiId'])) {
             $dataStrukPelayanan = $dataStrukPelayanan->get();
-        }else if (empty($filter['tglAwal']) && empty($filter['tglAkhir']) && empty($filter['noReg']) && empty($filter['noRm']) && empty($filter['status']) && empty($filter['ruanganId']) && empty($filter['namaPasien']) && empty($filter['instalasiId'])) {
+        } else if (empty($filter['tglAwal']) && empty($filter['tglAkhir']) && empty($filter['noReg']) && empty($filter['noRm']) && empty($filter['status']) && empty($filter['ruanganId']) && empty($filter['namaPasien']) && empty($filter['instalasiId'])) {
             $dataStrukPelayanan = $dataStrukPelayanan->limit(10)->get();
-        }else if(!empty($filter['tglAwal']) && !empty($filter['tglAkhir']) && empty($filter['noReg']) && empty($filter['noRm']) && empty($filter['status'])&& empty( $filter['ruanganId']) && empty($filter['namaPasien']) && $filter['instalasiId'] == "undefined"){
+        } else if (!empty($filter['tglAwal']) && !empty($filter['tglAkhir']) && empty($filter['noReg']) && empty($filter['noRm']) && empty($filter['status']) && empty($filter['ruanganId']) && empty($filter['namaPasien']) && $filter['instalasiId'] == "undefined") {
             $dataStrukPelayanan = $dataStrukPelayanan->limit(10)->get();
-        } else{
+        } else {
             $dataStrukPelayanan    = $dataStrukPelayanan->get();
         }
 
-        foreach ($dataStrukPelayanan as $key => $item){
-            $sp=StrukPelayanan::find($item->norec);
+        foreach ($dataStrukPelayanan as $key => $item) {
+            $sp = StrukPelayanan::find($item->norec);
             $result[] = array(
                 'noRec' => $item->norec,
                 'tglStruk' => $item->tglstruk,
@@ -622,7 +690,7 @@ class KasirController extends ApiController{
                 'jenisPasien' => $item->kelompokpasien,
                 'kelasPenjamin' => "-", //ambilnya dari mana ?
                 'totalBilling' => $item->totalharusdibayar,
-                'totalKlaim' => $item->totalprekanan ,
+                'totalKlaim' => $item->totalprekanan,
                 'totalBayar' => $item->totalharusdibayar,
                 'statusBayar' => $sp->statusBayar,
                 'ruanganId' => $item->ruanganId,
@@ -632,110 +700,127 @@ class KasirController extends ApiController{
         return $this->respond($result, 'Data Daftar Pasien');
     }
 
-    public function detailTagihanPasien(Request $request){
+    public function detailTagihanPasien(Request $request)
+    {
         $kdProfile = (int)$this->getDataKdProfile($request);
         $noRecStrukPelayanan = $request['noRecStrukPelayanan'];
         $strukPelayanan = StrukPelayanan::where('norec', $noRecStrukPelayanan)->where('kdprofile', $kdProfile)->first();
-        if($strukPelayanan){
+        if ($strukPelayanan) {
             //return notfound
         }
         $pelayanan_pasien = $strukPelayanan->pelayanan_pasien;
-        $deposit= 0;
+        $deposit = 0;
         $detailTagihan = array();
 
-        foreach ($pelayanan_pasien as $value){
-            $harga = ($value->hargajual==null) ? 0 : $value->hargajual;
-            $diskon = ($value->hargadiscount==null) ? 0 : $value->hargadiscount;
-            if($value->nilainormal== -1){
+        foreach ($pelayanan_pasien as $value) {
+            $harga = ($value->hargajual == null) ? 0 : $value->hargajual;
+            $diskon = ($value->hargadiscount == null) ? 0 : $value->hargadiscount;
+            if ($value->nilainormal == -1) {
                 $deposit += $harga;
-            }else{
+            } else {
                 $detailTagihan[] = array(
                     'namaLayanan'  => $value->produk->namaproduk,
                     "ruangan" => @$value->antrian_pasien_diperiksa->ruangan->reportdisplay,
                     'jumlah'  => $value->jumlah,
                     'harga'  => $harga,
                     'diskon'  => $diskon,
-                    'total'  => ($harga-$diskon) * $value->jumlah,
+                    'total'  => ($harga - $diskon) * $value->jumlah,
                 );
             }
-
         }
 
-        $noregistasi =$strukPelayanan->pasien_daftar->noregistrasi;
+        $noregistasi = $strukPelayanan->pasien_daftar->noregistrasi;
         // dd($strukPelayanan->pasien_daftar->pasien->jenis_kelamin);
-        $result =array(
+        $result = array(
             "noRegistrasi"  => $strukPelayanan->pasien_daftar->noregistrasi,
             "noCm"  => $strukPelayanan->pasien_daftar->pasien->nocm,
             "namaPasien"  => $strukPelayanan->pasien_daftar->pasien->namapasien,
             "jenisPenjamin"  => $strukPelayanan->pasien_daftar->kelompok_pasien->kelompokpasien,
             "jenisKelamin"  => $strukPelayanan->pasien_daftar->pasien->jenis_kelamin->jeniskelamin,
             "umur"  => $strukPelayanan->pasien_daftar->pasien->Umur,
-            "totalDeposit"  => $this->getDepositPasien($noregistasi),// $deposit,
-            "jumlahBayar"  => $strukPelayanan->totalharusdibayar,//+ $this->getDepositPasien($noregistasi),
-            "totalPenjamin" => ($strukPelayanan->totalprekanan==null) ? 0 : $strukPelayanan->totalprekanan,
+            "totalDeposit"  => $this->getDepositPasien($noregistasi), // $deposit,
+            "jumlahBayar"  => $strukPelayanan->totalharusdibayar, //+ $this->getDepositPasien($noregistasi),
+            "totalPenjamin" => ($strukPelayanan->totalprekanan == null) ? 0 : $strukPelayanan->totalprekanan,
             "detailTagihan"  => $detailTagihan,
 
         );
         return $this->respond($result, "Detail Tagihan Pasien");
     }
 
-    public function daftarPiutang(Request $request){
+    public function daftarPiutang(Request $request)
+    {
         $kdProfile = (int)$this->getDataKdProfile($request);
         $filter = $request->all();
-        $dataPiutang= \DB::table('strukpelayananpenjamin_t as spp')
+        $dataPiutang = \DB::table('strukpelayananpenjamin_t as spp')
             ->join('strukpelayanan_t as sp', 'sp.norec', '=', 'spp.nostrukfk')
             ->join('pasien_m as p', 'p.id', '=', 'sp.nocmfk')
             ->join('pasiendaftar_t as pd', 'sp.noregistrasifk', '=', 'pd.norec')
-            ->join('ruangan_m as ru','ru.id','=','pd.objectruanganlastfk')
+            ->join('ruangan_m as ru', 'ru.id', '=', 'pd.objectruanganlastfk')
             ->leftjoin('rekanan_m as rkn', 'rkn.id', '=', 'pd.objectrekananfk')
             ->join('kelompokpasien_m as kp', 'kp.id', '=', 'pd.objectkelompokpasienlastfk')
             ->leftjoin('postinghutangpiutang_t as php', 'php.nostrukfk', '=', 'spp.norec')
             ->leftjoin('strukposting_t as spt', 'spt.noposting', '=', 'php.noposting')
-            ->select('kp.kelompokpasien', 'spp.norec','pd.tglpulang as tglstruk', 'pd.noregistrasi', 'pd.tglregistrasi','p.nocm',
-                'p.namapasien','ru.namaruangan','spp.totalppenjamin','spp.totalharusdibayar',
-                'spp.totalsudahdibayar',  'spp.totalbiaya', 'spp.noverifikasi','rkn.namarekanan','php.noposting','spt.statusenabled',
-                'pd.norec as norec_pd','php.statusenabled as sttts')
+            ->select(
+                'kp.kelompokpasien',
+                'spp.norec',
+                'pd.tglpulang as tglstruk',
+                'pd.noregistrasi',
+                'pd.tglregistrasi',
+                'p.nocm',
+                'p.namapasien',
+                'ru.namaruangan',
+                'spp.totalppenjamin',
+                'spp.totalharusdibayar',
+                'spp.totalsudahdibayar',
+                'spp.totalbiaya',
+                'spp.noverifikasi',
+                'rkn.namarekanan',
+                'php.noposting',
+                'spt.statusenabled',
+                'pd.norec as norec_pd',
+                'php.statusenabled as sttts'
+            )
             ->where('spp.kdprofile', $kdProfile)
             ->whereNotNull('spp.noverifikasi')
             ->where('sp.statusenabled', true);
 
-        if(isset($filter['tglAwal']) && $filter['tglAwal']!=""){
-            $dataPiutang = $dataPiutang->where('pd.tglpulang','>=', $filter['tglAwal']);
+        if (isset($filter['tglAwal']) && $filter['tglAwal'] != "") {
+            $dataPiutang = $dataPiutang->where('pd.tglpulang', '>=', $filter['tglAwal']);
         }
 
-        if(isset($filter['tglAkhir']) && $filter['tglAkhir']!=""){
-            $tgl= $filter['tglAkhir']." 23:59:59";
-            $dataPiutang = $dataPiutang->where('pd.tglpulang','<=', $tgl);
+        if (isset($filter['tglAkhir']) && $filter['tglAkhir'] != "") {
+            $tgl = $filter['tglAkhir'] . " 23:59:59";
+            $dataPiutang = $dataPiutang->where('pd.tglpulang', '<=', $tgl);
         }
 
-        if(isset($filter['kelompokpasienfk']) && $filter['kelompokpasienfk']!=""){
-            $dataPiutang = $dataPiutang->where('pd.objectkelompokpasienlastfk','=', $filter['kelompokpasienfk']);
+        if (isset($filter['kelompokpasienfk']) && $filter['kelompokpasienfk'] != "") {
+            $dataPiutang = $dataPiutang->where('pd.objectkelompokpasienlastfk', '=', $filter['kelompokpasienfk']);
         }
 
-        if(isset($filter['penjaminID']) && $filter['penjaminID']!=""){
-            $dataPiutang = $dataPiutang->where('pd.objectkelompokpasienlastfk','=', $filter['penjaminID']);
+        if (isset($filter['penjaminID']) && $filter['penjaminID'] != "") {
+            $dataPiutang = $dataPiutang->where('pd.objectkelompokpasienlastfk', '=', $filter['penjaminID']);
         }
-        if(isset($filter['rekananfk']) && $filter['rekananfk']!=""){
-            $dataPiutang = $dataPiutang->where('pd.objectrekananfk','=', $filter['rekananfk']);
+        if (isset($filter['rekananfk']) && $filter['rekananfk'] != "") {
+            $dataPiutang = $dataPiutang->where('pd.objectrekananfk', '=', $filter['rekananfk']);
         }
 
-        if(isset($filter['ruanganId']) && $filter['ruanganId']!=""){
-            $dataPiutang = $dataPiutang->where('ru.id','=', $filter['ruanganId']);
+        if (isset($filter['ruanganId']) && $filter['ruanganId'] != "") {
+            $dataPiutang = $dataPiutang->where('ru.id', '=', $filter['ruanganId']);
         }
-        if(isset($filter['namaPasien']) && $filter['namaPasien']!=""){
-            $dataPiutang = $dataPiutang->where('p.namapasien','ilike', '%'.$filter['namaPasien'].'%');
+        if (isset($filter['namaPasien']) && $filter['namaPasien'] != "") {
+            $dataPiutang = $dataPiutang->where('p.namapasien', 'ilike', '%' . $filter['namaPasien'] . '%');
         }
-        if(isset($filter['noregistrasi']) && $filter['noregistrasi']!=""){
-            $dataPiutang = $dataPiutang->where('pd.noregistrasi','ilike', '%'.$filter['noregistrasi'].'');
+        if (isset($filter['noregistrasi']) && $filter['noregistrasi'] != "") {
+            $dataPiutang = $dataPiutang->where('pd.noregistrasi', 'ilike', '%' . $filter['noregistrasi'] . '');
         }
-        if(isset($filter['nocm']) && $filter['nocm']!=""){
-            $dataPiutang = $dataPiutang->where('p.nocm','=', $filter['nocm']);
+        if (isset($filter['nocm']) && $filter['nocm'] != "") {
+            $dataPiutang = $dataPiutang->where('p.nocm', '=', $filter['nocm']);
         }
         if (isset($filter['jmlRows']) && $filter['jmlRows'] != "" && $filter['jmlRows'] != "undefined") {
             $dataPiutang = $dataPiutang->take($filter['jmlRows']);
         }
-        $dataPiutang =$dataPiutang->orderBy('pd.tglpulang');
-        $dataPiutang =$dataPiutang->get();
+        $dataPiutang = $dataPiutang->orderBy('pd.tglpulang');
+        $dataPiutang = $dataPiutang->get();
         $result = array();
         $no = 1;
         foreach ($dataPiutang as $item) {
@@ -757,7 +842,7 @@ class KasirController extends ApiController{
                         'tglTransaksi' => $item->tglstruk,
                         'noRegistrasi' => $item->noregistrasi,
                         'namaPasien' => $item->namapasien,
-                        'ruangan'=>$item->namaruangan,
+                        'ruangan' => $item->namaruangan,
                         'kelasRawat' => $item->kelompokpasien,
                         'jenisPasien' => $item->kelompokpasien,
                         'umur' => $this->hitungUmur($item->tglstruk),
@@ -777,7 +862,8 @@ class KasirController extends ApiController{
         return $this->respond($result, 'Data Piutang Layanan');
     }
 
-    public function daftarPasienAktif(Request $request){
+    public function daftarPasienAktif(Request $request)
+    {
         $kdProfile = (int)$this->getDataKdProfile($request);
         $data = \DB::table('pasiendaftar_t as pd')
             ->join('pasien_m as p', 'p.id', '=', 'pd.nocmfk')
@@ -785,46 +871,64 @@ class KasirController extends ApiController{
             ->leftJoin('kelompokpasien_m as kp', 'kp.id', '=', 'pd.objectkelompokpasienlastfk')
             ->leftJoin('departemen_m as dept', 'dept.id', '=', 'ru.objectdepartemenfk')
             ->join('antrianpasiendiperiksa_t as apd', 'pd.norec', '=', 'apd.noregistrasifk')
-            ->select('pd.tglregistrasi', 'p.nocm', 'pd.noregistrasi', 'ru.namaruangan', 'p.namapasien', 'kp.kelompokpasien',
-                     'pd.tglpulang', 'pd.statuspasien',
+            ->select(
+                'pd.tglregistrasi',
+                'p.nocm',
+                'pd.noregistrasi',
+                'ru.namaruangan',
+                'p.namapasien',
+                'kp.kelompokpasien',
+                'pd.tglpulang',
+                'pd.statuspasien',
                 DB::raw("
                     CASE WHEN pd.nostruklastfk IS NOT NULL AND pd.nosbmlastfk IS NOT NULL THEN '-'
                     WHEN pd.nostruklastfk IS NOT NULL AND pd.nosbmlastfk IS NULL THEN 'Verifikasi'
                     ELSE 'Belum Verifikasi' END AS statusverif
-                "))
+                ")
+            )
             ->where('pd.statusenabled', true)
             ->where('pd.kdprofile', $kdProfile)
             ->whereNull('pd.tglpulang');
 
         $filter = $request->all();
-//        if(isset($filter['tglAwal']) && $filter['tglAwal'] != "" && $filter['tglAwal'] != "undefined") {
-//            $tgl0 = $filter['tglAwal'] . " 00:00:00";
-//            $data = $data->where('pd.tglregistrasi', '>=', $tgl0);
-//        }
-//
-//        if(isset($filter['tglAkhir']) && $filter['tglAkhir'] != "" && $filter['tglAkhir'] != "undefined") {
-//            $tgl = $filter['tglAkhir'] . " 23:59:59";
-//            $data = $data->where('pd.tglregistrasi', '<=', $tgl);
-//        }
+        //        if(isset($filter['tglAwal']) && $filter['tglAwal'] != "" && $filter['tglAwal'] != "undefined") {
+        //            $tgl0 = $filter['tglAwal'] . " 00:00:00";
+        //            $data = $data->where('pd.tglregistrasi', '>=', $tgl0);
+        //        }
+        //
+        //        if(isset($filter['tglAkhir']) && $filter['tglAkhir'] != "" && $filter['tglAkhir'] != "undefined") {
+        //            $tgl = $filter['tglAkhir'] . " 23:59:59";
+        //            $data = $data->where('pd.tglregistrasi', '<=', $tgl);
+        //        }
 
-        if(isset($filter['instalasiId']) && $filter['instalasiId'] != "" && $filter['instalasiId'] != "undefined") {
+        if (isset($filter['instalasiId']) && $filter['instalasiId'] != "" && $filter['instalasiId'] != "undefined") {
             $data = $data->where('dept.id', '=', $filter['instalasiId']);
         }
 
-        if(isset($filter['ruanganId']) && $filter['ruanganId'] != "" && $filter['ruanganId'] != "undefined") {
+        if (isset($filter['ruanganId']) && $filter['ruanganId'] != "" && $filter['ruanganId'] != "undefined") {
             $data = $data->where('ru.id', '=', $filter['ruanganId']);
         }
 
-        if(isset($filter['namaPasien']) && $filter['namaPasien'] != "" && $filter['namaPasien'] != "undefined") {
+        if (isset($filter['namaPasien']) && $filter['namaPasien'] != "" && $filter['namaPasien'] != "undefined") {
             $data = $data->where('p.namapasien', 'ilike', '%' . $filter['namaPasien'] . '%');
         }
 
-        if(isset($filter['noReg']) && $filter['noReg'] != "" && $filter['noReg'] != "undefined") {
+        if (isset($filter['noReg']) && $filter['noReg'] != "" && $filter['noReg'] != "undefined") {
             $data = $data->where('pd.noregistrasi', 'ilike', '%' . $filter['noReg'] . '%');
         }
 
-        $data = $data->groupBy('pd.tglregistrasi', 'p.nocm', 'pd.noregistrasi', 'ru.namaruangan', 'p.namapasien', 'kp.kelompokpasien',
-            'pd.tglpulang', 'pd.statuspasien','pd.nostruklastfk','pd.nosbmlastfk');
+        $data = $data->groupBy(
+            'pd.tglregistrasi',
+            'p.nocm',
+            'pd.noregistrasi',
+            'ru.namaruangan',
+            'p.namapasien',
+            'kp.kelompokpasien',
+            'pd.tglpulang',
+            'pd.statuspasien',
+            'pd.nostruklastfk',
+            'pd.nosbmlastfk'
+        );
 
         $data = $data->get();
 
@@ -845,9 +949,10 @@ class KasirController extends ApiController{
         return $this->respond($result);
     }
 
-    public function daftarSBM(Request $request){
+    public function daftarSBM(Request $request)
+    {
         $kdProfile = (int)$this->getDataKdProfile($request);
-        $dataLogin=$request->all();
+        $dataLogin = $request->all();
         $data = \DB::table('strukbuktipenerimaan_t as sbm')
             ->join('strukpelayanan_t as sp', 'sbm.nostrukfk', '=', 'sp.norec')
             ->leftjoin('pasiendaftar_t as pd', 'sp.noregistrasifk', '=', 'pd.norec')
@@ -861,97 +966,117 @@ class KasirController extends ApiController{
             ->leftjoin('kelompokpasien_m as kp', 'kp.id', '=', 'pd.objectkelompokpasienlastfk')
             ->leftjoin('strukclosing_t as sc', 'sc.norec', '=', 'sbm.noclosingfk')
             ->leftjoin('strukverifikasi_t as sv', 'sv.norec', '=', 'sbm.noverifikasifk')
-            ->select('sbm.norec as noRec','cb.carabayar as caraBayar','sbmcr.objectcarabayarfk as idCaraBayar','sbm.objectkelompoktransaksifk as idKelTransaksi',
-                              'kt.kelompoktransaksi as kelTransaksi','sbm.keteranganlainnya as keterangan','p.id as idPegawai','p.namalengkap as namaPenerima',
-                              'sc.noclosing as noClosing','sbm.nosbm as noSbm','sv.noverifikasi as noVerifikasi','sc.tglclosing as tglClosing',
-                              'sbm.tglsbm as tglSbm','sv.tglverifikasi as tglVerif','pd.noregistrasi','ps.namapasien',
-                              'sp.norec as norec_sp','ru.id as ruid','ru.namaruangan','sp.namapasien_klien','ps.nocm','kp.kelompokpasien','sbm.totaldibayar AS totalPenerimaan'
-//                    ,\DB::raw("")
+            ->select(
+                'sbm.norec as noRec',
+                'cb.carabayar as caraBayar',
+                'sbmcr.objectcarabayarfk as idCaraBayar',
+                'sbm.objectkelompoktransaksifk as idKelTransaksi',
+                'kt.kelompoktransaksi as kelTransaksi',
+                'sbm.keteranganlainnya as keterangan',
+                'p.id as idPegawai',
+                'p.namalengkap as namaPenerima',
+                'sc.noclosing as noClosing',
+                'sbm.nosbm as noSbm',
+                'sv.noverifikasi as noVerifikasi',
+                'sc.tglclosing as tglClosing',
+                'sbm.tglsbm as tglSbm',
+                'sv.tglverifikasi as tglVerif',
+                'pd.noregistrasi',
+                'ps.namapasien',
+                'sp.norec as norec_sp',
+                'ru.id as ruid',
+                'ru.namaruangan',
+                'sp.namapasien_klien',
+                'ps.nocm',
+                'kp.kelompokpasien',
+                'sbm.totaldibayar AS totalPenerimaan'
+                //                    ,\DB::raw("")
             )
-            ->where('sbm.statusenabled',true)
+            ->where('sbm.statusenabled', true)
             ->where('sbm.kdprofile', $kdProfile);
 
         $filter = $request->all();
-        if(isset($filter['dateStartTglSbm']) && $filter['dateStartTglSbm'] != "" && $filter['dateStartTglSbm'] != "undefined") {
-            $tgl2 = $filter['dateStartTglSbm'] ;//. " 00:00:00";
+        if (isset($filter['dateStartTglSbm']) && $filter['dateStartTglSbm'] != "" && $filter['dateStartTglSbm'] != "undefined") {
+            $tgl2 = $filter['dateStartTglSbm']; //. " 00:00:00";
             $data = $data->where('sbm.tglsbm', '>=', $tgl2);
         }
-        if(isset($filter['dateEndTglSbm']) && $filter['dateEndTglSbm'] != "" && $filter['dateEndTglSbm'] != "undefined") {
-            $tgl = $filter['dateEndTglSbm'] ;//. " 23:59:59";
+        if (isset($filter['dateEndTglSbm']) && $filter['dateEndTglSbm'] != "" && $filter['dateEndTglSbm'] != "undefined") {
+            $tgl = $filter['dateEndTglSbm']; //. " 23:59:59";
             $data = $data->where('sbm.tglsbm', '<=', $tgl);
         }
-        if(isset($filter['idPegawai']) && $filter['idPegawai'] != "" && $filter['idPegawai'] != "undefined") {
+        if (isset($filter['idPegawai']) && $filter['idPegawai'] != "" && $filter['idPegawai'] != "undefined") {
             $data = $data->where('p.id', '=', $filter['idPegawai']);
         }
-        if(isset($filter['idCaraBayar']) && $filter['idCaraBayar'] != "" && $filter['idCaraBayar'] != "undefined") {
+        if (isset($filter['idCaraBayar']) && $filter['idCaraBayar'] != "" && $filter['idCaraBayar'] != "undefined") {
             $data = $data->where('cb.id', '=', $filter['idCaraBayar']);
         }
-        if(isset($filter['idKelTransaksi']) && $filter['idKelTransaksi'] != "" && $filter['idKelTransaksi'] != "undefined") {
+        if (isset($filter['idKelTransaksi']) && $filter['idKelTransaksi'] != "" && $filter['idKelTransaksi'] != "undefined") {
             $data = $data->where('kt.id', $filter['idKelTransaksi']);
         }
-        if(isset($filter['ins']) && $filter['ins'] != "" && $filter['ins'] != "undefined") {
+        if (isset($filter['ins']) && $filter['ins'] != "" && $filter['ins'] != "undefined") {
             $data = $data->where('ru.objectdepartemenfk', $filter['ins']);
         }
-        if(isset($filter['nosbm']) && $filter['nosbm'] != "" && $filter['nosbm'] != "undefined") {
-            $data = $data->where('sbm.nosbm','ilike','%'.$filter['nosbm'].'%');
+        if (isset($filter['nosbm']) && $filter['nosbm'] != "" && $filter['nosbm'] != "undefined") {
+            $data = $data->where('sbm.nosbm', 'ilike', '%' . $filter['nosbm'] . '%');
         }
-        if(isset($filter['nocm']) && $filter['nocm'] != "" && $filter['nocm'] != "undefined") {
-            $data = $data->where('ps.nocm','ilike','%'.$filter['nocm'].'%');
+        if (isset($filter['nocm']) && $filter['nocm'] != "" && $filter['nocm'] != "undefined") {
+            $data = $data->where('ps.nocm', 'ilike', '%' . $filter['nocm'] . '%');
         }
-        if(isset($filter['nama']) && $filter['nama'] != "" && $filter['nama'] != "undefined") {
-            $data = $data->where('ps.namapasien','ilike','%'.$filter['nama'].'%');
+        if (isset($filter['nama']) && $filter['nama'] != "" && $filter['nama'] != "undefined") {
+            $data = $data->where('ps.namapasien', 'ilike', '%' . $filter['nama'] . '%');
         }
-        if(isset($filter['desk']) && $filter['desk'] != "" && $filter['desk'] != "undefined") {
-            $data = $data->where('sp.namapasien_klien','ilike','%'.$filter['desk'].'%');
+        if (isset($filter['desk']) && $filter['desk'] != "" && $filter['desk'] != "undefined") {
+            $data = $data->where('sp.namapasien_klien', 'ilike', '%' . $filter['desk'] . '%');
         }
-        if(isset($filter['JenisPelayanan']) && $filter['JenisPelayanan'] != "" && $filter['JenisPelayanan'] != "undefined") {
-            $data = $data->where('pd.jenispelayanan','=',$filter['JenisPelayanan']);
-            if($filter['JenisPelayanan'] == 1){
-                $data = $data->where('ru.id','=',663);
+        if (isset($filter['JenisPelayanan']) && $filter['JenisPelayanan'] != "" && $filter['JenisPelayanan'] != "undefined") {
+            $data = $data->where('pd.jenispelayanan', '=', $filter['JenisPelayanan']);
+            if ($filter['JenisPelayanan'] == 1) {
+                $data = $data->where('ru.id', '=', 663);
             }
         }
 
-        if(isset($request['KasirArr']) && $request['KasirArr']!="" && $request['KasirArr']!="undefined"){
-            $arrRuang = explode(',',$request['KasirArr']) ;
+        if (isset($request['KasirArr']) && $request['KasirArr'] != "" && $request['KasirArr'] != "undefined") {
+            $arrRuang = explode(',', $request['KasirArr']);
             $kodeRuang = [];
-            foreach ( $arrRuang as $item){
+            foreach ($arrRuang as $item) {
                 $kodeRuang[] = (int) $item;
             }
-            $data = $data->whereIn('p.id',$kodeRuang);
+            $data = $data->whereIn('p.id', $kodeRuang);
         }
-        if(isset($request['diklat']) && $request['diklat']== true){
+        if (isset($request['diklat']) && $request['diklat'] == true) {
             $data = $data->where('sp.objectkelompoktransaksifk', 13);
         }
-        if(isset($request['cost']) && $request['cost']== true){
+        if (isset($request['cost']) && $request['cost'] == true) {
             $data = $data->whereNotIn('pd.objectkelompokpasienlastfk', [1, 12]);
         }
 
-//        $data = $data->take($request['jmlRows']);
+        //        $data = $data->take($request['jmlRows']);
         $data = $data->get();
         return $this->respond($data);
     }
 
-    public function saveLogBatalBayar(Request $request){
+    public function saveLogBatalBayar(Request $request)
+    {
         $kdProfile = (int)$this->getDataKdProfile($request);
         \DB::beginTransaction();
         $transStatus = true;
         $dataLogin = $request->all();
 
         $pasienDaftar = PasienDaftar::where('noregistrasi', $request['noregistrasi'])->first();
-        $pasien = Pasien::where('id',$pasienDaftar->nocmfk)->first();
+        $pasien = Pasien::where('id', $pasienDaftar->nocmfk)->first();
         $newId = LoggingUser::max('id');
-        $newId = $newId +1;
+        $newId = $newId + 1;
         $logUser = new LoggingUser();
         $logUser->id = $newId;
         $logUser->norec = $logUser->generateNewId();
-        $logUser->kdprofile= $kdProfile;
-        $logUser->statusenabled=true;
+        $logUser->kdprofile = $kdProfile;
+        $logUser->statusenabled = true;
         $logUser->jenislog = 'Batal Bayar';
         $logUser->noreff = $pasienDaftar->norec;
-        $logUser->referensi='norec Pasien Daftar';
+        $logUser->referensi = 'norec Pasien Daftar';
         $logUser->objectloginuserfk =  $dataLogin['userData']['id'];
         $logUser->tanggal = $this->getDateTime()->format('Y-m-d H:i:s');
-        $logUser->keterangan ='No SBM - '.$request['nosbm'].' atas nama '.$pasien->namapasien .' ( '.$pasien->nocm.' ) No Registrasi '.$pasienDaftar->noregistrasi;
+        $logUser->keterangan = 'No SBM - ' . $request['nosbm'] . ' atas nama ' . $pasien->namapasien . ' ( ' . $pasien->nocm . ' ) No Registrasi ' . $pasienDaftar->noregistrasi;
         $logUser->save();
 
 
@@ -971,39 +1096,37 @@ class KasirController extends ApiController{
         return $this->respond($result);
     }
 
-    protected function UbahCaraBayar(Request $request){
+    protected function UbahCaraBayar(Request $request)
+    {
         $kdProfile = (int)$this->getDataKdProfile($request);
         \DB::beginTransaction();
         $transStatus = 'true';
-        try{
+        try {
             $data = StrukBuktiPenerimaanCaraBayar::where('nosbmfk', $request['norec_sbm'])
                 ->where('kdprofile', $kdProfile)
-                ->update([
+                ->update(
+                    [
                         'objectcarabayarfk' => $request['idCaraBayar']
                     ]
                 );
-        }
-        catch(\Exception $e){
+        } catch (\Exception $e) {
             $transStatus = 'false';
             $transMsg =   "Batal Pembayaran Gagal {SP}";
-
         }
 
         //JURNAL
         //jurnal verif sP
-        $logAcc =new  LogAcc;
+        $logAcc = new  LogAcc;
         $logAcc->norec = $logAcc->generateNewId();
         $logAcc->jenistransaksi = 'Ubah Pembayaran Tagihan';
         $logAcc->noreff = $request['norec_sbm'];
         $logAcc->status = 0;
         $logAcc->tanggal = $this->getDateTime()->format('Y-m-d H:i:s');
-        try{
+        try {
             $logAcc->save();
-        }
-        catch(\Exception $e){
+        } catch (\Exception $e) {
             $transStatus = 'false';
             $transMsg =   "Simpan logAcc Gagal {SP}";
-
         }
         //END jurnal verif sP
 
@@ -1027,14 +1150,15 @@ class KasirController extends ApiController{
         return $this->setStatusCode($result['status'])->respond($result, $transMsg);
     }
 
-    protected function deletePembayaranTagihan(Request $request){
+    protected function deletePembayaranTagihan(Request $request)
+    {
         $kdProfile = (int)$this->getDataKdProfile($request);
         \DB::beginTransaction();
         $transStatus = 'true';
-        try{
-            $produkDeposit =$this->getProdukIdDeposit();
+        try {
+            $produkDeposit = $this->getProdukIdDeposit();
             $noreg = $request['noregistrasi'];
-//          $sbm = StrukBuktiPenerimaan::where('nostrukfk', $request['norec_sbm'])->first();
+            //          $sbm = StrukBuktiPenerimaan::where('nostrukfk', $request['norec_sbm'])->first();
             $sbm = StrukBuktiPenerimaan::where('norec', $request['norec_sbm'])->first();
             if ($request['isdeposit'] == true) {
                 $getPP = DB::select(DB::raw("select pp.norec ,pp.produkfk,prd.namaproduk,pp.hargasatuan 
@@ -1042,7 +1166,7 @@ class KasirController extends ApiController{
                             inner join antrianpasiendiperiksa_t as apd on pd.norec=apd.noregistrasifk
                             inner join pelayananpasien_t as pp on pp.noregistrasifk=apd.norec
                             inner join produk_m as prd on prd.id=pp.produkfk
-                            where pd.kdprofile = $kdProfile and pd.noregistrasi ='$noreg' and pp.produkfk='$produkDeposit'" ));
+                            where pd.kdprofile = $kdProfile and pd.noregistrasi ='$noreg' and pp.produkfk='$produkDeposit'"));
                 if (count($getPP) > 0) {
                     foreach ($getPP as $item) {
                         if ($item->hargasatuan == $sbm['totaldibayar']) {
@@ -1056,56 +1180,56 @@ class KasirController extends ApiController{
 
             $strukPelayanan = StrukPelayanan::where('norec', $request['norec_sp'])
                 ->where('kdprofile', $kdProfile)
-                ->update([
+                ->update(
+                    [
                         'nosbmlastfk'    => null,
                     ]
                 );
-//            $strukBuktiPenerimanan = StrukBuktiPenerimaan::where('nostrukfk', $request['norec_sp'])
-//                ->where('kdprofile', $kdProfile)
-//                ->update([
-//                        'statusenabled' => false,
-//                        'nostrukfk'    => null,
-//                    ]
-//                );
+            //            $strukBuktiPenerimanan = StrukBuktiPenerimaan::where('nostrukfk', $request['norec_sp'])
+            //                ->where('kdprofile', $kdProfile)
+            //                ->update([
+            //                        'statusenabled' => false,
+            //                        'nostrukfk'    => null,
+            //                    ]
+            //                );
             $strukBuktiPenerimanan = StrukBuktiPenerimaan::where('norec', $request['norec_sbm'])
                 ->where('kdprofile', $kdProfile)
-                ->update([
+                ->update(
+                    [
                         'statusenabled' => false,
                         'nostrukfk'    => null,
                     ]
                 );
             $pasienDaftar = PasienDaftar::where('nostruklastfk', $request['norec_sp'])
                 ->where('kdprofile', $kdProfile)
-                ->update([
+                ->update(
+                    [
                         'nosbmlastfk'    => null,
                     ]
                 );
 
-            if ($sbm['ispiutang'] == true || $sbm['ispiutang']  == "true"){
+            if ($sbm['ispiutang'] == true || $sbm['ispiutang']  == "true") {
                 $upSPP = \DB::table('strukpelayananpenjamin_t')
                     ->where('kdprofile', $kdProfile)
-                    ->where('nostrukfk',$request['norec_sp'])
-                    ->decrement('totalsudahdibayar',  (float)$sbm['totaldibayar'] );
+                    ->where('nostrukfk', $request['norec_sp'])
+                    ->decrement('totalsudahdibayar',  (float)$sbm['totaldibayar']);
             }
-
-        }
-        catch(\Exception $e){
+        } catch (\Exception $e) {
             $transStatus = 'false';
             $transMsg =   "Batal Pembayaran Gagal {SP}";
         }
 
         //JURNAL
         //jurnal verif sP
-        $logAcc =new  LogAcc;
+        $logAcc = new  LogAcc;
         $logAcc->norec = $logAcc->generateNewId();
         $logAcc->jenistransaksi = 'Batal Pembayaran Tagihan';
         $logAcc->noreff = $request['norec_sp'];
         $logAcc->status = 0;
         $logAcc->tanggal = $this->getDateTime()->format('Y-m-d H:i:s');
-        try{
+        try {
             $logAcc->save();
-        }
-        catch(\Exception $e){
+        } catch (\Exception $e) {
             $transStatus = 'false';
             $transMsg =   "Simpan logAcc Gagal {SP}";
         }
@@ -1131,7 +1255,8 @@ class KasirController extends ApiController{
         return $this->setStatusCode($result['status'])->respond($result, $transMsg);
     }
 
-    public function getDataLaporanPenerimaanKasirHarian(Request $request){
+    public function getDataLaporanPenerimaanKasirHarian(Request $request)
+    {
         $kdProfile = (int)$this->getDataKdProfile($request);
         $dataLogin = $request->all();
         $data = \DB::table('strukbuktipenerimaan_t as sbm')
@@ -1147,8 +1272,14 @@ class KasirController extends ApiController{
             ->leftJOIN('ruangan_m as ru', 'ru.id', '=', 'pd.objectruanganlastfk')
             ->leftJoin('departemen_m as dp', 'dp.id', '=', 'ru.objectdepartemenfk')
             ->leftJOIN('kelompokpasien_m as kp', 'kp.id', '=', 'pd.objectkelompokpasienlastfk')
-            ->select('sbm.tglsbm', 'ps.nocm', 'ru.namaruangan', 'pg.namalengkap', 'pg2.namalengkap as kasir',
-                'sp.totalharusdibayar', 'sbm.totaldibayar',
+            ->select(
+                'sbm.tglsbm',
+                'ps.nocm',
+                'ru.namaruangan',
+                'pg.namalengkap',
+                'pg2.namalengkap as kasir',
+                'sp.totalharusdibayar',
+                'sbm.totaldibayar',
                 \DB::raw('( case when pd.noregistrasi is null then sp.nostruk else pd.noregistrasi end) as noregistrasi, 
                 (case when ps.namapasien is null then sp.namapasien_klien else ps.namapasien end) as namapasien,
                 (case when kp.kelompokpasien is null then null else kp.kelompokpasien end) as kelompokpasien,
@@ -1162,7 +1293,7 @@ class KasirController extends ApiController{
             $data = $data->where('sbm.tglsbm', '>=', $request['tglAwal']);
         }
         if (isset($request['tglAkhir']) && $request['tglAkhir'] != "" && $request['tglAkhir'] != "undefined") {
-            $tgl = $request['tglAkhir'];//." 23:59:59";
+            $tgl = $request['tglAkhir']; //." 23:59:59";
             $data = $data->where('sbm.tglsbm', '<=', $tgl);
         }
         if (isset($request['idKasir']) && $request['idKasir'] != "" && $request['idKasir'] != "undefined") {
@@ -1192,7 +1323,8 @@ class KasirController extends ApiController{
         return $this->respond($result);
     }
 
-    public function getDataLaporanPenerimaanKasirPerusahaan(Request $request){
+    public function getDataLaporanPenerimaanKasirPerusahaan(Request $request)
+    {
         $kdProfile = (int)$this->getDataKdProfile($request);
         $dataLogin = $request->all();
         $data = \DB::table('strukpelayananpenjamin_t as spp')
@@ -1206,11 +1338,23 @@ class KasirController extends ApiController{
             ->leftJoin('departemen_m as dp', 'dp.id', '=', 'ru.objectdepartemenfk')
             ->leftJOIN('rekanan_m as r', 'r.id', '=', 'spp.kdrekananpenjamin')
             ->leftJOIN('kelompokpasien_m as kp', 'kp.id', '=', 'pd.objectkelompokpasienlastfk')
-            ->select('kp.kelompokpasien', 'spp.norec', 'sp.tglstruk', 'pd.noregistrasi', 'pd.tglregistrasi',
-                'p.nocm', 'p.namapasien', 'ru.namaruangan', 'pg.namalengkap', 'spp.totalppenjamin', 'spp.totalharusdibayar',
+            ->select(
+                'kp.kelompokpasien',
+                'spp.norec',
+                'sp.tglstruk',
+                'pd.noregistrasi',
+                'pd.tglregistrasi',
+                'p.nocm',
+                'p.namapasien',
+                'ru.namaruangan',
+                'pg.namalengkap',
+                'spp.totalppenjamin',
+                'spp.totalharusdibayar',
                 'spp.totalsudahdibayar',
-                'spp.totalbiaya', 'spp.noverifikasi',
-                \DB::raw('(spp.totalharusdibayar - spp.totalppenjamin) as sisaBayar'))
+                'spp.totalbiaya',
+                'spp.noverifikasi',
+                \DB::raw('(spp.totalharusdibayar - spp.totalppenjamin) as sisaBayar')
+            )
             ->where('spp.kdprofile', $kdProfile)
             ->where('kp.id', '=', 5);
 
@@ -1218,7 +1362,7 @@ class KasirController extends ApiController{
             $data = $data->where('sp.tglstruk', '>=', $request['tglAwal']);
         }
         if (isset($request['tglAkhir']) && $request['tglAkhir'] != "" && $request['tglAkhir'] != "undefined") {
-            $tgl = $request['tglAkhir'];//." 23:59:59";
+            $tgl = $request['tglAkhir']; //." 23:59:59";
             $data = $data->where('sp.tglstruk', '<=', $tgl);
         }
         if (isset($request['idDokter']) && $request['idDokter'] != "" && $request['idDokter'] != "undefined") {
@@ -1230,10 +1374,22 @@ class KasirController extends ApiController{
         if (isset($request['idRuangan']) && $request['idRuangan'] != "" && $request['idRuangan'] != "undefined") {
             $data = $data->where('ru.id', '=', $request['idRuangan']);
         }
-        $data = $data->groupBy('kp.kelompokpasien', 'spp.norec', 'sp.tglstruk', 'pd.noregistrasi', 'pd.tglregistrasi',
-            'p.nocm', 'p.namapasien', 'ru.namaruangan', 'pg.namalengkap', 'spp.totalppenjamin', 'spp.totalharusdibayar',
+        $data = $data->groupBy(
+            'kp.kelompokpasien',
+            'spp.norec',
+            'sp.tglstruk',
+            'pd.noregistrasi',
+            'pd.tglregistrasi',
+            'p.nocm',
+            'p.namapasien',
+            'ru.namaruangan',
+            'pg.namalengkap',
+            'spp.totalppenjamin',
+            'spp.totalharusdibayar',
             'spp.totalsudahdibayar',
-            'spp.totalbiaya','spp.noverifikasi');
+            'spp.totalbiaya',
+            'spp.noverifikasi'
+        );
         $data = $data->orderBy('pd.noregistrasi', 'ASC');
         $data = $data->get();
         $result = array(
@@ -1243,7 +1399,8 @@ class KasirController extends ApiController{
         return $this->respond($result);
     }
 
-    public function getDataLapPendapatan(Request $request){
+    public function getDataLapPendapatan(Request $request)
+    {
         $dataLogin = $request->all();
         $kdProfile = (int)$this->getDataKdProfile($request);
         $data = \DB::table('pasiendaftar_t as pd')
@@ -1259,8 +1416,15 @@ class KasirController extends ApiController{
             ->join('pasien_m as ps', 'ps.id', '=', 'pd.nocmfk')
             ->join('kelompokpasien_m as kps', 'kps.id', '=', 'pd.objectkelompokpasienlastfk')
             ->join('strukpelayanan_t as sp', 'sp.noregistrasifk', '=', 'pd.norec')
-            ->select('apd.objectruanganfk', 'ru.namaruangan', 'apd.objectpegawaifk', 'pg.namalengkap', 'ps.nocm',
-                'ps.namapasien', 'pd.noregistrasi', 'kps.kelompokpasien',
+            ->select(
+                'apd.objectruanganfk',
+                'ru.namaruangan',
+                'apd.objectpegawaifk',
+                'pg.namalengkap',
+                'ps.nocm',
+                'ps.namapasien',
+                'pd.noregistrasi',
+                'kps.kelompokpasien',
                 \DB::raw('sum(case when pr.id =395 then pp.hargajual* pp.jumlah else 0 end) as karcis,
                          sum(CASE WHEN kp.id = 26 THEN pp.hargajual* pp.jumlah ELSE 0 END) as konsul,
                          sum(case when pr.id =10013116  then pp.hargajual* pp.jumlah else 0 end) as embos,
@@ -1276,14 +1440,14 @@ class KasirController extends ApiController{
             ->where('pd.kdprofile', $kdProfile)
             ->where('djp.objectjenisprodukfk', '<>', 97)
             ->whereNull('sp.statusenabled');
-//            ->where('ru.objectdepartemenfk', 18);
+        //            ->where('ru.objectdepartemenfk', 18);
 
         $kelompokpasiens = array('1', '3', '5');
         if (isset($request['tglAwal']) && $request['tglAwal'] != "" && $request['tglAwal'] != "undefined") {
             $data = $data->where('pd.tglregistrasi', '>=', $request['tglAwal']);
         }
         if (isset($request['tglAkhir']) && $request['tglAkhir'] != "" && $request['tglAkhir'] != "undefined") {
-            $tgl = $request['tglAkhir'];//." 23:59:59";
+            $tgl = $request['tglAkhir']; //." 23:59:59";
             $data = $data->where('pd.tglregistrasi', '<=', $tgl);
         }
         if (isset($request['idDokter']) && $request['idDokter'] != "" && $request['idDokter'] != "undefined") {
@@ -1291,7 +1455,7 @@ class KasirController extends ApiController{
         }
         if (isset($request['idDept']) && $request['idDept'] != "" && $request['idDept'] != "undefined") {
             if ($request['idDept'] == '12345') {
-                $data = $data->wherein('ru.objectdepartemenfk', [3,14,16,17,18,19,24,25,26,27,28,35]);
+                $data = $data->wherein('ru.objectdepartemenfk', [3, 14, 16, 17, 18, 19, 24, 25, 26, 27, 28, 35]);
             } else {
                 $data = $data->where('ru.objectdepartemenfk', '=', $request['idDept']);
             }
@@ -1307,9 +1471,18 @@ class KasirController extends ApiController{
             }
         }
 
-        $data = $data->groupBy('apd.objectruanganfk', 'ru.namaruangan', 'apd.objectpegawaifk', 'pg.namalengkap',
-            'ps.nocm', 'ps.namapasien', 'pd.noregistrasi', 'kps.kelompokpasien', 'pd.objectkelompokpasienlastfk',
-            'sp.norec');
+        $data = $data->groupBy(
+            'apd.objectruanganfk',
+            'ru.namaruangan',
+            'apd.objectpegawaifk',
+            'pg.namalengkap',
+            'ps.nocm',
+            'ps.namapasien',
+            'pd.noregistrasi',
+            'kps.kelompokpasien',
+            'pd.objectkelompokpasienlastfk',
+            'sp.norec'
+        );
         $data = $data->orderBy('pd.noregistrasi', 'ASC');
         $data = $data->distinct();
         $data = $data->get();
@@ -1320,7 +1493,8 @@ class KasirController extends ApiController{
         return $this->respond($result);
     }
 
-    public function getDataLaporanPendapatanRuangan(Request $request){
+    public function getDataLaporanPendapatanRuangan(Request $request)
+    {
         $kdProfile = (int)$this->getDataKdProfile($request);
         $dataLogin = $request->all();
         $tglAwal = $request['tglAwal'];
@@ -1329,17 +1503,17 @@ class KasirController extends ApiController{
         if (isset($request['idDept']) && $request['idDept'] != "" && $request['idDept'] != "undefined") {
             $idDept = ' and x.objectdepartemenfk =  ' . $request['idDept'];
         }
-        $idRuangan='';
+        $idRuangan = '';
         if (isset($request['idRuangan']) && $request['idRuangan'] != "" && $request['idRuangan'] != "undefined") {
             $idRuangan = ' and x.objectruanganfk = ' . $request['idRuangan'];
         }
-        $idKelompok='';
+        $idKelompok = '';
         if (isset($request['kelompokPasien']) && $request['kelompokPasien'] != "" && $request['kelompokPasien'] != "undefined") {
-            $idKelompok = 'and x.objectkelompokpasienlastfk = '. $request['kelompokPasien'];
+            $idKelompok = 'and x.objectkelompokpasienlastfk = ' . $request['kelompokPasien'];
         }
         $idDokter = ' ';
         if (isset($request['idDokter']) && $request['idDokter'] != "" && $request['idDokter'] != "undefined") {
-            $idDokter = 'and x.pegawaifk  = '. $request['idDokter'];
+            $idDokter = 'and x.pegawaifk  = ' . $request['idDokter'];
         }
 
 
@@ -1606,7 +1780,7 @@ case when pjd.hargasatuand = 0 then pjd.hargasatuank else pjd.hargasatuand end
 
         $strLast = $strstr . "  " .
             " union all " .
-//                    $strstr . " where pj.deskripsiproduktransaksi ='diskon' and pjd.hargasatuand >0 "  . ' union all ' .
+            //                    $strstr . " where pj.deskripsiproduktransaksi ='diskon' and pjd.hargasatuand >0 "  . ' union all ' .
             $strstr2;
 
         $data = \DB::select(DB::raw("select p.nocm,p.noregistrasi,p.namapasien,p.objectruanganfk,p.namaruangan,p.namalengkap,
@@ -1638,29 +1812,29 @@ case when pjd.hargasatuand = 0 then pjd.hargasatuank else pjd.hargasatuand end
         $dataBEda = [];
         $sama = false;
         $dataGroupNoJurnal = [];
-        foreach ($data as $itm){
-            if ((float)$itm->administrasi != (float)$itm->administrasij){
-                $dataBEda[] =$itm;
+        foreach ($data as $itm) {
+            if ((float)$itm->administrasi != (float)$itm->administrasij) {
+                $dataBEda[] = $itm;
             }
-            if ((float)$itm->visite != (float)$itm->visitej){
-                $dataBEda[] =$itm;
+            if ((float)$itm->visite != (float)$itm->visitej) {
+                $dataBEda[] = $itm;
             }
-            if ((float)$itm->konsultasi != (float)$itm->konsultasij){
-                $dataBEda[] =$itm;
+            if ((float)$itm->konsultasi != (float)$itm->konsultasij) {
+                $dataBEda[] = $itm;
             }
-            if ((float)$itm->akomodasi != (float)$itm->akomodasij){
-                $dataBEda[] =$itm;
+            if ((float)$itm->akomodasi != (float)$itm->akomodasij) {
+                $dataBEda[] = $itm;
             }
-            if ((float)$itm->alatcanggih != (float)$itm->alatcanggihj){
-                $dataBEda[] =$itm;
+            if ((float)$itm->alatcanggih != (float)$itm->alatcanggihj) {
+                $dataBEda[] = $itm;
             }
-            if ((float)$itm->obatalkes != (float)$itm->obatalkesj){
-                $dataBEda[] =$itm;
+            if ((float)$itm->obatalkes != (float)$itm->obatalkesj) {
+                $dataBEda[] = $itm;
             }
-            if ((float)$itm->tindakan != (float)$itm->tindakanj){
-                $dataBEda[] =$itm;
+            if ((float)$itm->tindakan != (float)$itm->tindakanj) {
+                $dataBEda[] = $itm;
             }
-            $sama=false;
+            $sama = false;
             foreach ($dataGroupNoJurnal as $items) {
                 if ($items['nojurnal_intern'] == $itm->nojurnal_intern) {
                     $sama = true;
@@ -1673,7 +1847,6 @@ case when pjd.hargasatuand = 0 then pjd.hargasatuank else pjd.hargasatuand end
                     'keteranganlainnya' => $itm->keteranganlainnya,
                 );
             }
-
         }
 
         $result = array(
@@ -1687,7 +1860,8 @@ case when pjd.hargasatuand = 0 then pjd.hargasatuank else pjd.hargasatuand end
         return $this->respond($result);
     }
 
-    public function getDataLaporanPiutangPenjamin(Request $request){
+    public function getDataLaporanPiutangPenjamin(Request $request)
+    {
         $kdProfile = (int)$this->getDataKdProfile($request);
         $dataLogin = $request->all();
         $data = \DB::table('strukpelayananpenjamin_t as spp')
@@ -1707,8 +1881,14 @@ case when pjd.hargasatuand = 0 then pjd.hargasatuank else pjd.hargasatuand end
             ->LEFTJOIN('detailjenisproduk_m as djp', 'djp.id', '=', 'pr.objectdetailjenisprodukfk')
             ->LEFTJOIN('jenisproduk_m as jp', 'jp.id', '=', 'djp.objectjenisprodukfk')
             ->LEFTJOIN('kelompokproduk_m as kpr', 'kpr.id', '=', 'jp.objectkelompokprodukfk')
-            ->select('kp.kelompokpasien', 'spp.norec', 'stp.tglposting', 'pd.noregistrasi', 'pd.tglregistrasi',
-                'p.nocm', 'p.namapasien',
+            ->select(
+                'kp.kelompokpasien',
+                'spp.norec',
+                'stp.tglposting',
+                'pd.noregistrasi',
+                'pd.tglregistrasi',
+                'p.nocm',
+                'p.namapasien',
                 'ru.namaruangan',
                 \DB::raw('case when pr.id =395 then pp.hargajual* pp.jumlah else 0 end as karcis,
                         case when pr.id =10013116  then pp.hargajual* pp.jumlah else 0 end as embos,
@@ -1725,7 +1905,7 @@ case when pjd.hargasatuand = 0 then pjd.hargasatuank else pjd.hargasatuand end
             $data = $data->where('pd.tglpulang', '>=', $request['tglAwal']);
         }
         if (isset($request['tglAkhir']) && $request['tglAkhir'] != "" && $request['tglAkhir'] != "undefined") {
-            $tgl = $request['tglAkhir'];//." 23:59:59";
+            $tgl = $request['tglAkhir']; //." 23:59:59";
             $data = $data->where('pd.tglpulang', '<=', $tgl);
         }
         if (isset($request['idDept']) && $request['idDept'] != "" && $request['idDept'] != "undefined") {
@@ -1737,12 +1917,32 @@ case when pjd.hargasatuand = 0 then pjd.hargasatuank else pjd.hargasatuand end
         if (isset($request['kelompokPasien']) && $request['kelompokPasien'] != "" && $request['kelompokPasien'] != "undefined") {
             $data = $data->where('pd.objectkelompokpasienlastfk', '=', $request['kelompokPasien']);
         }
-        $data = $data->groupby('sp.totalharusdibayar', 'sp.totalprekanan', 'kp.kelompokpasien', 'spp.norec',
-            'stp.tglposting', 'pd.noregistrasi', 'pd.tglregistrasi', 'p.nocm', 'p.namapasien',
-            'ru.namaruangan', 'pr.id', 'pp.hargajual', 'pp.jumlah', 'pp.hargadiscount', 'kpr.id',
-            'pr.objectdetailjenisprodukfk', 'spp.totalppenjamin', 'spp.totalharusdibayar',
-            'spp.totalsudahdibayar', 'r.namarekanan', 'spp.totalbiaya', 'spp.noverifikasi',
-            'php.noposting', 'stp.kdhistorylogins');
+        $data = $data->groupby(
+            'sp.totalharusdibayar',
+            'sp.totalprekanan',
+            'kp.kelompokpasien',
+            'spp.norec',
+            'stp.tglposting',
+            'pd.noregistrasi',
+            'pd.tglregistrasi',
+            'p.nocm',
+            'p.namapasien',
+            'ru.namaruangan',
+            'pr.id',
+            'pp.hargajual',
+            'pp.jumlah',
+            'pp.hargadiscount',
+            'kpr.id',
+            'pr.objectdetailjenisprodukfk',
+            'spp.totalppenjamin',
+            'spp.totalharusdibayar',
+            'spp.totalsudahdibayar',
+            'r.namarekanan',
+            'spp.totalbiaya',
+            'spp.noverifikasi',
+            'php.noposting',
+            'stp.kdhistorylogins'
+        );
         $data = $data->distinct();
         $data = $data->orderBy('pd.tglregistrasi');
 
@@ -1754,15 +1954,16 @@ case when pjd.hargasatuand = 0 then pjd.hargasatuank else pjd.hargasatuand end
         return $this->respond($result);
     }
 
-    protected function getDepositPasien($noregistrasi){
-//        $kdProfile = (int)$this->getDataKdProfile($request);
+    protected function getDepositPasien($noregistrasi)
+    {
+        //        $kdProfile = (int)$this->getDataKdProfile($request);
         $produkIdDeposit = $this->getProdukIdDeposit();
         $deposit = 0;
         $pasienDaftar  = PasienDaftar::has('pelayanan_pasien')->where('noregistrasi', $noregistrasi)->first();
-        if($pasienDaftar){
-            $depositList =$pasienDaftar->pelayanan_pasien()->where('nilainormal', '-1')->whereNull('strukfk')->get();
-            foreach ($depositList as $item){
-                if($item->produkfk==$produkIdDeposit){
+        if ($pasienDaftar) {
+            $depositList = $pasienDaftar->pelayanan_pasien()->where('nilainormal', '-1')->whereNull('strukfk')->get();
+            foreach ($depositList as $item) {
+                if ($item->produkfk == $produkIdDeposit) {
                     $deposit = $deposit + $item->hargasatuan;
                 }
             }
@@ -1770,11 +1971,13 @@ case when pjd.hargasatuand = 0 then pjd.hargasatuank else pjd.hargasatuand end
         return $deposit;
     }
 
-    protected function simpanPembayaranDeposit(Request $request){
+    protected function simpanPembayaranDeposit(Request $request)
+    {
         $kdProfile = (int)$this->getDataKdProfile($request);
         $pasienDaftar = PasienDaftar::where('noregistrasi', $request['parameterTambahan']['noRegistrasi'])->where('kdprofile', $kdProfile)->first();
         $dataLogin = $request->all();
-        $dataPegawaiUser = \DB::select(DB::raw("select pg.id,pg.namalengkap from loginuser_s as lu
+        $dataPegawaiUser = \DB::select(
+            DB::raw("select pg.id,pg.namalengkap from loginuser_s as lu
                 INNER JOIN pegawai_m as pg on lu.objectpegawaifk=pg.id
                 where lu.id=:idLoginUser"),
             array(
@@ -1790,23 +1993,22 @@ case when pjd.hargasatuand = 0 then pjd.hargasatuank else pjd.hargasatuand end
         $PP = new PelayananPasien();
         $PP->norec  = $PP->generateNewId();
         $PP->kdprofile = $kdProfile;
-//        $PP->kdprofile = $this->getKdProfile();
+        //        $PP->kdprofile = $this->getKdProfile();
         $PP->noregistrasifk = $AntrianPasienDiperiksa->norec; //salah
         $PP->aturanpakai = "-";
-        $PP->hargasatuan= (float)$request['jumlahBayar'];
-        $PP->hargajual= (float)$request['jumlahBayar'];
-        $PP->jumlah= 1;
-        $PP->nilainormal= -1;
+        $PP->hargasatuan = (float)$request['jumlahBayar'];
+        $PP->hargajual = (float)$request['jumlahBayar'];
+        $PP->jumlah = 1;
+        $PP->nilainormal = -1;
         $PP->keteranganlain = "-";
         $PP->keteranganpakai2 = "-";
-        $PP->produkfk= $this->getProdukIdDeposit();
-        $PP->stock= 1;
-        $PP->tglpelayanan= $request['tglsbm'];//$this->getDateTime();
+        $PP->produkfk = $this->getProdukIdDeposit();
+        $PP->stock = 1;
+        $PP->tglpelayanan = $request['tglsbm']; //$this->getDateTime();
 
-        try{
+        try {
             $PP->save();
-        }
-        catch(\Exception $e){
+        } catch (\Exception $e) {
             $this->transStatus = false;
             $this->transMessage = "Simpan deposit Gagal {PP}";
         }
@@ -1817,15 +2019,14 @@ case when pjd.hargasatuand = 0 then pjd.hargasatuank else pjd.hargasatuand end
         $SP->noregistrasifk =  $pasienDaftar->norec;
         $SP->objectkelaslastfk =  $pasienDaftar->objectkelasfk;
         $SP->objectkelompoktransaksifk =  1;
-        $SP->objectpegawaipenerimafk =  $dataPegawaiUser[0]->id;//$this->getCurrentLoginID();
-        $SP->nostruk =  $this->generateCode(new StrukPelayanan, 'nostruk', 10, 'S',$kdProfile);
-        $SP->tglstruk =  $request['tglsbm'];//$this->getDateTime();
-        $SP->objectruanganfk=  $pasienDaftar->objectruanganlastfk;
-        try{
+        $SP->objectpegawaipenerimafk =  $dataPegawaiUser[0]->id; //$this->getCurrentLoginID();
+        $SP->nostruk =  $this->generateCode(new StrukPelayanan, 'nostruk', 10, 'S', $kdProfile);
+        $SP->tglstruk =  $request['tglsbm']; //$this->getDateTime();
+        $SP->objectruanganfk =  $pasienDaftar->objectruanganlastfk;
+        try {
             $SP->save();
-        }
-        catch(\Exception $e){
-            $this->transStatus= false;
+        } catch (\Exception $e) {
+            $this->transStatus = false;
             $this->transMessage = "Simpan deposit Gagal {SP}";
         }
 
@@ -1857,102 +2058,98 @@ case when pjd.hargasatuand = 0 then pjd.hargasatuank else pjd.hargasatuand end
         $strukPelayananDetail->objectprodukfk = $PP->produkfk;
         $strukPelayananDetail->objectkelasfk = $PP->kelasfk;
 
-        try{
+        try {
             $strukPelayananDetail->save();
-        }
-        catch(\Exception $e){
-            $this->transStatus= false;
+        } catch (\Exception $e) {
+            $this->transStatus = false;
             $this->transMessage = "Simpan deposit Gagal {SPD}";
         }
-//        if($this->transStatus){
-        foreach($request['pembayaran'] as $pembayaran){
+        //        if($this->transStatus){
+        foreach ($request['pembayaran'] as $pembayaran) {
             $strukBuktiPenerimanan = new StrukBuktiPenerimaan();
             //$SBM123213 = $strukBuktiPenerimanan->generateNewId();
             $strukBuktiPenerimanan->norec = $strukBuktiPenerimanan->generateNewId();
-            $strukBuktiPenerimanan->kdprofile= $kdProfile;
+            $strukBuktiPenerimanan->kdprofile = $kdProfile;
             $strukBuktiPenerimanan->statusenabled = 1;
             $strukBuktiPenerimanan->keteranganlainnya = "Pembayaran Deposit Pasien";
             $strukBuktiPenerimanan->nostrukfk = $SP->norec;
             $strukBuktiPenerimanan->objectkelompokpasienfk = $SP->pasien_daftar->pasien->objectkelompokpasienfk;
             $strukBuktiPenerimanan->objectkelompoktransaksifk = 1;
-            $strukBuktiPenerimanan->objectpegawaipenerimafk  =$this->getCurrentLoginID();
+            $strukBuktiPenerimanan->objectpegawaipenerimafk  = $this->getCurrentLoginID();
             $strukBuktiPenerimanan->tglsbm  = $SP->tglstruk;
             $strukBuktiPenerimanan->totaldibayar  = $pembayaran['nominal'];
-            $sbmKode = $this->generateCode(new StrukBuktiPenerimaan, 'nosbm', 14, 'RV-'.$this->getDateTime()->format('ym'), $kdProfile);
-            $strukBuktiPenerimanan->nosbm = $sbmKode;//$this->generateCode(new StrukBuktiPenerimaan, 'nosbm', 14, 'RV-'.$this->getDateTime()->format('ym'));
+            $sbmKode = $this->generateCode(new StrukBuktiPenerimaan, 'nosbm', 14, 'RV-' . $this->getDateTime()->format('ym'), $kdProfile);
+            $strukBuktiPenerimanan->nosbm = $sbmKode; //$this->generateCode(new StrukBuktiPenerimaan, 'nosbm', 14, 'RV-'.$this->getDateTime()->format('ym'));
             $NOSBM[] = $strukBuktiPenerimanan->nosbm;
 
             //$nostrukfkSTR = $strukBuktiPenerimanan->norec ;
-            try{
+            try {
                 $strukBuktiPenerimanan->save();
-            }
-            catch(\Exception $e){
+            } catch (\Exception $e) {
                 $this->transStatus = false;
                 throw new \Exception($e->getMessage());
                 $this->transMessage = "Simpan deposit Gagal {SBP}";
             }
 
 
-            if($this->transStatus){
+            if ($this->transStatus) {
                 $SBPCB = new StrukBuktiPenerimaanCaraBayar();
                 $SBPCB->norec = $SBPCB->generateNewId();
-                $SBPCB->kdprofile= $kdProfile;
+                $SBPCB->kdprofile = $kdProfile;
                 $SBPCB->statusenabled = 1;
                 $SBPCB->nosbmfk = $strukBuktiPenerimanan->norec;
                 $SBPCB->objectcarabayarfk = $pembayaran['caraBayar']['id'];
                 $SBPCB->totaldibayar = $pembayaran['nominal'];
-                if(isset($pembayaran['detailBank'])){
+                if (isset($pembayaran['detailBank'])) {
                     $SBPCB->objectjeniskartufk = $pembayaran['detailBank']['jenisKartu']['id'];
                     $SBPCB->nokartuaccount = $pembayaran['detailBank']['noKartu'];
                     $SBPCB->namabankprovider = $pembayaran['detailBank']['namaKartu'];
                     $SBPCB->namapemilik = $pembayaran['detailBank']['namaKartu'];
                 }
-                try{
+                try {
                     $SBPCB->save();
-                }
-                catch(\Exception $e){
+                } catch (\Exception $e) {
                     $this->transStatus = false;
-//                        throw new \Exception($e);
+                    //                        throw new \Exception($e);
                     $this->transMessage = "Simpan deposit Gagal {SBPCB}";
                 }
                 //jurnal verif sP
-                $logAcc =new  LogAcc;
+                $logAcc = new  LogAcc;
                 $logAcc->norec = $logAcc->generateNewId();
                 $logAcc->jenistransaksi = 'Penerimaan Deposit';
                 $logAcc->noreff = $SBPCB->norec;
                 $logAcc->status = 0;
                 $logAcc->tanggal = $this->getDateTime()->format('Y-m-d H:i:s');
-                if($this->transStatus){
-                    try{
+                if ($this->transStatus) {
+                    try {
                         $logAcc->save();
-                    }
-                    catch(\Exception $e){
-                        $transStatus= false;
+                    } catch (\Exception $e) {
+                        $transStatus = false;
                         $transMsg =   "Simpan logAcc Gagal {SP}";
-
                     }
                 }
             }
         }
 
-        if($this->transStatus){
+        if ($this->transStatus) {
             $this->transMessage = "Simpan deposit Berhasil";
             $this->statusCode = 201;
             DB::commit();
-        }else{
+        } else {
             $this->statusCode = 400;
             DB::rollBack();
         }
-        return $this->respond(array('noSBM'=> $NOSBM), $this->transMessage);
+        return $this->respond(array('noSBM' => $NOSBM), $this->transMessage);
     }
 
-    protected function simpanPembayaranTagihanPasien(Request $request){
+    protected function simpanPembayaranTagihanPasien(Request $request)
+    {
         $kdProfile = (int)$this->getDataKdProfile($request);
         $noRegistrasi = '';
         \DB::beginTransaction();
         $strukPelayanan = StrukPelayanan::where('norec', $request['parameterTambahan']['noRecStrukPelayanan'])->first();
-        $sisa =0;
-        if($strukPelayanan->nosbmlastfk==null || $strukPelayanan->nosbmlastfk==''){
+        $sisa = 0;
+        if ($strukPelayanan->nosbmlastfk == null || $strukPelayanan->nosbmlastfk == '') {
             $sisa = $sisa + $this->getDepositPasien($strukPelayanan->pasien_daftar->noregistrasi);
         }
 
@@ -1962,202 +2159,198 @@ case when pjd.hargasatuand = 0 then pjd.hargasatuank else pjd.hargasatuand end
 
 
         $NOSBM = array();
-        foreach($request['pembayaran'] as $pembayaran){
+        foreach ($request['pembayaran'] as $pembayaran) {
             $strukBuktiPenerimanan = new StrukBuktiPenerimaan();
             $strukBuktiPenerimanan->norec = $strukBuktiPenerimanan->generateNewId();
-            $strukBuktiPenerimanan->kdprofile= $kdProfile;
+            $strukBuktiPenerimanan->kdprofile = $kdProfile;
             $strukBuktiPenerimanan->keteranganlainnya = "Pembayaran Tagihan Pasien";
-            $strukBuktiPenerimanan->statusenabled= 1;
+            $strukBuktiPenerimanan->statusenabled = 1;
             $strukBuktiPenerimanan->nostrukfk = $strukPelayanan->norec;
             $strukBuktiPenerimanan->objectkelompokpasienfk = $strukPelayanan->pasien_daftar->pasien->objectkelompokpasienfk;
             $strukBuktiPenerimanan->objectkelompoktransaksifk = 1;
             $strukBuktiPenerimanan->objectpegawaipenerimafk  = $this->getCurrentLoginID();
-            $strukBuktiPenerimanan->tglsbm  =  $request['tglsbm'];//$this->getDateTime();
+            $strukBuktiPenerimanan->tglsbm  =  $request['tglsbm']; //$this->getDateTime();
             $strukBuktiPenerimanan->totaldibayar  = $pembayaran['nominal'];
-            $strukBuktiPenerimanan->nosbm = $this->generateCode(new StrukBuktiPenerimaan, 'nosbm', 14, 'RV-'.$this->getDateTime()->format('ym'), $kdProfile);
+            $strukBuktiPenerimanan->nosbm = $this->generateCode(new StrukBuktiPenerimaan, 'nosbm', 14, 'RV-' . $this->getDateTime()->format('ym'), $kdProfile);
             $NOSBM[] = $strukBuktiPenerimanan->nosbm;
-            $nostrukfkSTR = $strukPelayanan->norec ;
-//            try{
+            $nostrukfkSTR = $strukPelayanan->norec;
+            //            try{
             $strukBuktiPenerimanan->save();
-//            }
-//            catch(\Exception $e){
-//                throw new \Exception($e->getMessage());
+            //            }
+            //            catch(\Exception $e){
+            //                throw new \Exception($e->getMessage());
             $this->transMessage = "Simpan Pembayaran Gagal {SBP}";
-//            }
+            //            }
 
-            if($this->transStatus){
+            if ($this->transStatus) {
                 $SBPCB = new StrukBuktiPenerimaanCaraBayar();
                 $SBPCB->norec = $SBPCB->generateNewId();
-                $SBPCB->kdprofile= $kdProfile;
+                $SBPCB->kdprofile = $kdProfile;
                 $SBPCB->statusenabled = 1;
                 $SBPCB->nosbmfk = $strukBuktiPenerimanan->norec;
                 $SBPCB->objectcarabayarfk = $pembayaran['caraBayar']['id'];
                 $SBPCB->totaldibayar = $pembayaran['nominal'];
 
-//                if(isset($pembayaran['detailBank'])){
-//                    $SBPCB->objectjeniskartufk = $pembayaran['detailBank']['jenisKartu']['id'];
-//                    $SBPCB->nokartuaccount = $pembayaran['detailBank']['noKartu'];
-//                    $SBPCB->namabankprovider = $pembayaran['detailBank']['namaKartu'];
-//                    $SBPCB->namapemilik = $pembayaran['detailBank']['namaKartu'];
-//                }
-                try{
+                //                if(isset($pembayaran['detailBank'])){
+                //                    $SBPCB->objectjeniskartufk = $pembayaran['detailBank']['jenisKartu']['id'];
+                //                    $SBPCB->nokartuaccount = $pembayaran['detailBank']['noKartu'];
+                //                    $SBPCB->namabankprovider = $pembayaran['detailBank']['namaKartu'];
+                //                    $SBPCB->namapemilik = $pembayaran['detailBank']['namaKartu'];
+                //                }
+                try {
                     $SBPCB->save();
-                }
-                catch(\Exception $e){
+                } catch (\Exception $e) {
                     $this->transStatus = false;
-//                    throw new \Exception($e->getMessage());
+                    //                    throw new \Exception($e->getMessage());
                     $this->transMessage = "Simpan Pembayaran Gagal {SBPCB}";
                 }
-
             }
 
             //JURNAL
             //jurnal verif sP
-            $logAcc =new  LogAcc;
+            $logAcc = new  LogAcc;
             $logAcc->norec = $logAcc->generateNewId();
             $logAcc->jenistransaksi = 'Pembayaran Tagihan';
             $logAcc->noreff = $nostrukfkSTR;
             $logAcc->status = 0;
             $logAcc->tanggal = $this->getDateTime()->format('Y-m-d H:i:s');
-            if($this->transStatus){
-                try{
+            if ($this->transStatus) {
+                try {
                     $logAcc->save();
-                }
-                catch(\Exception $e){
-                    $transStatus= false;
+                } catch (\Exception $e) {
+                    $transStatus = false;
                     $transMsg =   "Simpan logAcc Gagal {SP}";
-
                 }
             }
             //END jurnal verif sP
-//            $detailJurnal = array();
-//            $saldo = (float)$pembayaran['nominal'];
-//            $idbendahara = ((int)$pembayaran['caraBayar']['id']==1) ? 1318 : 1333; //Kas Bendahara Penerimaan : Bank In Transit
-//            if($this->transStatus){
-//                $saldoJurnal = array();
-//                $saldoJurnal[] = array(
-//                    'account_id' => $idbendahara,
-//                    'balance'    => 'D',
-//                    'saldo'      => $saldo
-//                );
-//                if($deposit>0){
-//                    $saldoJurnal[] = array(
-//                        'account_id' =>   1475, //Uang Muka PAsien
-//                        'balance'    =>  'D',
-//                        'saldo'      => $deposit
-//                    );
-//                }
-//
-//                $saldoJurnal[] = array(
-//                    'account_id' =>   1348, //Piutang Perorangan
-//                    'balance'    =>  'K',
-//                    'saldo'      => $saldo + $deposit
-//                );
-//
-//                $detailJurnal[] = array(
-//                    "tgltransaksi" => $this->getDateTime(),
-//                    "notransaksi" =>  $strukBuktiPenerimanan->nosbm,
-//                    "saldoJurnal" => $saldoJurnal,
-//                    "ruanganid" => $strukPelayanan->objectruanganfk,
-//                    "kelompoktransaksiid" => 1,
-//                    "nobuktitransaksi" => $strukBuktiPenerimanan->nosbm,
-//                    "tglbuktitransaksi" => $this->getDateTime(),
-//                    "keteranganlainnya" => "Pembayaran Tagihan Pasien",
-//                );
-//
-//                $jurnal = array(
-//                    "noposting" => $noPosting = $this->generateCode(new PostingJurnalTransaksi, 'noposting', 14, 'BT-'.$this->getDateTime()->format('ym')),
-//                    "detailJurnal" =>$detailJurnal
-//                );
-//                $this->postingJournal($jurnal);
-//            }
+            //            $detailJurnal = array();
+            //            $saldo = (float)$pembayaran['nominal'];
+            //            $idbendahara = ((int)$pembayaran['caraBayar']['id']==1) ? 1318 : 1333; //Kas Bendahara Penerimaan : Bank In Transit
+            //            if($this->transStatus){
+            //                $saldoJurnal = array();
+            //                $saldoJurnal[] = array(
+            //                    'account_id' => $idbendahara,
+            //                    'balance'    => 'D',
+            //                    'saldo'      => $saldo
+            //                );
+            //                if($deposit>0){
+            //                    $saldoJurnal[] = array(
+            //                        'account_id' =>   1475, //Uang Muka PAsien
+            //                        'balance'    =>  'D',
+            //                        'saldo'      => $deposit
+            //                    );
+            //                }
+            //
+            //                $saldoJurnal[] = array(
+            //                    'account_id' =>   1348, //Piutang Perorangan
+            //                    'balance'    =>  'K',
+            //                    'saldo'      => $saldo + $deposit
+            //                );
+            //
+            //                $detailJurnal[] = array(
+            //                    "tgltransaksi" => $this->getDateTime(),
+            //                    "notransaksi" =>  $strukBuktiPenerimanan->nosbm,
+            //                    "saldoJurnal" => $saldoJurnal,
+            //                    "ruanganid" => $strukPelayanan->objectruanganfk,
+            //                    "kelompoktransaksiid" => 1,
+            //                    "nobuktitransaksi" => $strukBuktiPenerimanan->nosbm,
+            //                    "tglbuktitransaksi" => $this->getDateTime(),
+            //                    "keteranganlainnya" => "Pembayaran Tagihan Pasien",
+            //                );
+            //
+            //                $jurnal = array(
+            //                    "noposting" => $noPosting = $this->generateCode(new PostingJurnalTransaksi, 'noposting', 14, 'BT-'.$this->getDateTime()->format('ym')),
+            //                    "detailJurnal" =>$detailJurnal
+            //                );
+            //                $this->postingJournal($jurnal);
+            //            }
         }
 
-        if($this->transStatus){
-//            $strukPelayananDetail = $strukPelayanan->struk_pelayanan_detail;
-//            foreach ($strukPelayananDetail as $item){
-//                $total = ($item->harganetto-$item->hargasatuandijamin)*$item->qtyproduk;
-//                if(($total<=$sisa || $total<=($sisa+ 0.0001)) && $item->is_terbayar==0){
-//                    $item->is_terbayar=1;
-//                    $sisa = $sisa - $total;
-//                    try{
-//                        $item->save();
-//                    }
-//                    catch(\Exception $e){
-//                        $this->transStatus = false;
-//                        $this->transMessage = "Simpan Pembayaran Gagal {SPD}";
-//                        break;
-//                    }
-//                }
-//            }
+        if ($this->transStatus) {
+            //            $strukPelayananDetail = $strukPelayanan->struk_pelayanan_detail;
+            //            foreach ($strukPelayananDetail as $item){
+            //                $total = ($item->harganetto-$item->hargasatuandijamin)*$item->qtyproduk;
+            //                if(($total<=$sisa || $total<=($sisa+ 0.0001)) && $item->is_terbayar==0){
+            //                    $item->is_terbayar=1;
+            //                    $sisa = $sisa - $total;
+            //                    try{
+            //                        $item->save();
+            //                    }
+            //                    catch(\Exception $e){
+            //                        $this->transStatus = false;
+            //                        $this->transMessage = "Simpan Pembayaran Gagal {SPD}";
+            //                        break;
+            //                    }
+            //                }
+            //            }
 
             //INSERT DARI PELAYANANPASIEN KE STUKPELAYANANPASIENBAYAR
             //INSERT DARI PELAYAANPASIENDETIAL KE STRUKPEKAYANANPASIENKBAYAR
         }
 
-        if($this->transStatus){
-            $strukPelayanan->nosbmlastfk =$strukBuktiPenerimanan->norec;
-//            $strukPelayanan->sisa = $sisa;
-            try{
+        if ($this->transStatus) {
+            $strukPelayanan->nosbmlastfk = $strukBuktiPenerimanan->norec;
+            //            $strukPelayanan->sisa = $sisa;
+            try {
                 $strukPelayanan->save();
-            }
-            catch(\Exception $e){
+            } catch (\Exception $e) {
                 throw new \Exception($e->getMessage());
                 $this->transStatus = false;
                 $this->transMessage = "Simpan Pembayaran Gagal {SPD}";
             }
         }
 
-        if($this->transStatus){
+        if ($this->transStatus) {
             $pd = $strukPelayanan->pasien_daftar;
-            $pd->nosbmlastfk =$strukBuktiPenerimanan->norec;
+            $pd->nosbmlastfk = $strukBuktiPenerimanan->norec;
             $noRegistrasi = $pd['noregistrasi'];
-//            $strukPelayanan->sisa = $sisa;
-            try{
+            //            $strukPelayanan->sisa = $sisa;
+            try {
                 $pd->save();
-            }
-            catch(\Exception $e){
+            } catch (\Exception $e) {
                 throw new \Exception($e->getMessage());
                 $this->transStatus = false;
                 $this->transMessage = "Simpan Pembayaran Gagal {pasienDaftar}";
             }
         }
 
-        if(isset($request['isVA']) && $request['isVA'] == true){
-            $va =  VirtualAccount::where('kdprofile',$kdProfile)
-                    ->where('norec_sp',$request['parameterTambahan']['noRecStrukPelayanan'])
-                    ->first();
+        if (isset($request['isVA']) && $request['isVA'] == true) {
+            $va =  VirtualAccount::where('kdprofile', $kdProfile)
+                ->where('norec_sp', $request['parameterTambahan']['noRecStrukPelayanan'])
+                ->first();
 
-            if(!empty($va)){
+            if (!empty($va)) {
                 $va->datetime_payment =  $request['tglsbm'];
                 $va->norec_sbm =  $strukBuktiPenerimanan->norec;
                 $va->va_status =  "Y";
                 $va->payment_amount =  $pembayaran['nominal'];
-                $va->status ='callback';
+                $va->status = 'callback';
                 $va->save();
-            }        
+            }
         }
-        if($this->transStatus){
+        if ($this->transStatus) {
             $this->transMessage = "Simpan Pembayaran Berhasil";
             $this->statusCode = 201;
             DB::commit();
-        }else{
+        } else {
             $this->statusCode = 400;
             DB::rollBack();
         }
-        return $this->respond(array('noSBM'=> $NOSBM,'noReg'=> $noRegistrasi), $this->transMessage);
+        return $this->respond(array('noSBM' => $NOSBM, 'noReg' => $noRegistrasi), $this->transMessage);
     }
 
-    protected function simpanPengembalianDeposit(Request $request){
+    protected function simpanPengembalianDeposit(Request $request)
+    {
         $kdProfile = (int)$this->getDataKdProfile($request);
         \DB::beginTransaction();
         $pasienDaftar = PasienDaftar::where('noregistrasi', $request['parameterTambahan']['noRegistrasi'])->where('kdprofile', $kdProfile)->first();
-        $dataSP = StrukPelayanan::where('noregistrasifk',$pasienDaftar->norec)
+        $dataSP = StrukPelayanan::where('noregistrasifk', $pasienDaftar->norec)
             ->wherenull('statusenabled')
             ->first();
         $norec_sp = $dataSP['norec'];
         $dataLogin = $request->all();
-        $dataPegawaiUser = DB::select(DB::raw("select pg.id,pg.namalengkap from loginuser_s as lu
+        $dataPegawaiUser = DB::select(
+            DB::raw("select pg.id,pg.namalengkap from loginuser_s as lu
                 INNER JOIN pegawai_m as pg on lu.objectpegawaifk=pg.id
                 where lu.kdprofile = $kdProfile and lu.id=:idLoginUser"),
             array(
@@ -2167,43 +2360,42 @@ case when pjd.hargasatuand = 0 then pjd.hargasatuank else pjd.hargasatuand end
 
         $NOSBM = array();
 
-        foreach($request['pembayaran'] as $pembayaran){
-            try{
+        foreach ($request['pembayaran'] as $pembayaran) {
+            try {
                 $strukBuktiPenerimanan = new StrukBuktiPenerimaan();
                 //$SBM123213 = $strukBuktiPenerimanan->generateNewId();
                 $strukBuktiPenerimanan->norec = $strukBuktiPenerimanan->generateNewId();
-                $strukBuktiPenerimanan->kdprofile= $kdProfile;
+                $strukBuktiPenerimanan->kdprofile = $kdProfile;
                 $strukBuktiPenerimanan->statusenabled = 1;
                 $strukBuktiPenerimanan->keteranganlainnya = "Pengembalian Deposit Pasien";
                 $strukBuktiPenerimanan->nostrukfk = $norec_sp;
                 $strukBuktiPenerimanan->objectkelompokpasienfk = $pasienDaftar->objectkelompokpasienlastfk;
                 $strukBuktiPenerimanan->objectkelompoktransaksifk = 1;
-                $strukBuktiPenerimanan->objectpegawaipenerimafk  =$this->getCurrentLoginID();
+                $strukBuktiPenerimanan->objectpegawaipenerimafk  = $this->getCurrentLoginID();
                 $strukBuktiPenerimanan->tglsbm  = $dataSP['tglstruk'];
                 $strukBuktiPenerimanan->totaldibayar  = $pembayaran['nominal'];
-                $sbmKode = $this->generateCode(new StrukBuktiPenerimaan, 'nosbm', 14, 'RV-'.$this->getDateTime()->format('ym'), $kdProfile);
-                $strukBuktiPenerimanan->nosbm = $sbmKode;//$this->generateCode(new StrukBuktiPenerimaan, 'nosbm', 14, 'RV-'.$this->getDateTime()->format('ym'));
+                $sbmKode = $this->generateCode(new StrukBuktiPenerimaan, 'nosbm', 14, 'RV-' . $this->getDateTime()->format('ym'), $kdProfile);
+                $strukBuktiPenerimanan->nosbm = $sbmKode; //$this->generateCode(new StrukBuktiPenerimaan, 'nosbm', 14, 'RV-'.$this->getDateTime()->format('ym'));
                 $NOSBM[] = $strukBuktiPenerimanan->nosbm;
                 $NOSBM2 = $strukBuktiPenerimanan->nosbm;
 
                 $strukBuktiPenerimanan->save();
                 $transStatus = 'true';
-            }
-            catch(\Exception $e){
+            } catch (\Exception $e) {
                 $transStatus = 'false';
                 $this->transMessage = "Simpan deposit Gagal {SBP}";
             }
-            $norec_sbm=$strukBuktiPenerimanan->norec;
+            $norec_sbm = $strukBuktiPenerimanan->norec;
 
-            try{
+            try {
                 $SBPCB = new StrukBuktiPenerimaanCaraBayar();
                 $SBPCB->norec = $SBPCB->generateNewId();
-                $SBPCB->kdprofile= $kdProfile;
+                $SBPCB->kdprofile = $kdProfile;
                 $SBPCB->statusenabled = 1;
                 $SBPCB->nosbmfk = $strukBuktiPenerimanan->norec;
                 $SBPCB->objectcarabayarfk = $pembayaran['caraBayar']['id'];
                 $SBPCB->totaldibayar = $pembayaran['nominal'];
-                if(isset($pembayaran['detailBank'])){
+                if (isset($pembayaran['detailBank'])) {
                     $SBPCB->objectjeniskartufk = $pembayaran['detailBank']['jenisKartu']['id'];
                     $SBPCB->nokartuaccount = $pembayaran['detailBank']['noKartu'];
                     $SBPCB->namabankprovider = $pembayaran['detailBank']['namaKartu'];
@@ -2211,14 +2403,13 @@ case when pjd.hargasatuand = 0 then pjd.hargasatuank else pjd.hargasatuand end
                 }
                 $SBPCB->save();
                 $transStatus = 'true';
-            }
-            catch(\Exception $e){
+            } catch (\Exception $e) {
                 $transStatus = 'false';
                 $this->transMessage = "Simpan deposit Gagal {SBPCB}";
             }
             //jurnal
-            try{
-                $logAcc =new  LogAcc;
+            try {
+                $logAcc = new  LogAcc;
                 $logAcc->norec = $logAcc->generateNewId();
                 $logAcc->jenistransaksi = 'Penerimaan Deposit';
                 $logAcc->noreff = $SBPCB->norec;
@@ -2226,50 +2417,50 @@ case when pjd.hargasatuand = 0 then pjd.hargasatuank else pjd.hargasatuand end
                 $logAcc->tanggal = $this->getDateTime()->format('Y-m-d H:i:s');
                 $logAcc->save();
                 $transStatus = 'true';
-            }
-            catch(\Exception $e){
+            } catch (\Exception $e) {
                 $transStatus = 'false';
                 $transMsg =   "Simpan logAcc Gagal {SP}";
             }
             //END jurnal
-            try{
-                $dt=StrukPelayanan::where('noregistrasifk', $pasienDaftar->norec)
+            try {
+                $dt = StrukPelayanan::where('noregistrasifk', $pasienDaftar->norec)
                     ->wherenull('statusenabled')
-                    ->update([
-                            'nosbmlastfk' => $norec_sbm]
+                    ->update(
+                        [
+                            'nosbmlastfk' => $norec_sbm
+                        ]
                     );
                 $transStatus = 'true';
-            }
-            catch(\Exception $e){
+            } catch (\Exception $e) {
                 $transStatus = 'false';
                 $this->transMessage = "Simpan Pembayaran Gagal {SPD}";
             }
 
-            try{
-                $pasienDaftar->nosbmlastfk =$norec_sbm;
+            try {
+                $pasienDaftar->nosbmlastfk = $norec_sbm;
                 $noRegistrasi = $pasienDaftar['noregistrasi'];
                 $pasienDaftar->save();
                 $transStatus = 'true';
-            }
-            catch(\Exception $e){
+            } catch (\Exception $e) {
                 $transStatus = 'false';
                 $this->transMessage = "Simpan Pembayaran Gagal {pasienDaftar}";
             }
         }
 
-        if($transStatus == 'true'){
+        if ($transStatus == 'true') {
             $this->transMessage = "Simpan deposit Berhasil";
             $this->statusCode = 201;
             DB::commit();
-        }else{
+        } else {
             $this->transMessage = "Simpan deposit gagal";
             $this->statusCode = 400;
             DB::rollBack();
         }
-        return $this->respond(array('noSBM'=> $NOSBM2,'noReg'=>$request['parameterTambahan']['noRegistrasi'],), $this->transMessage);
+        return $this->respond(array('noSBM' => $NOSBM2, 'noReg' => $request['parameterTambahan']['noRegistrasi'],), $this->transMessage);
     }
 
-    protected function simpanCicilanPasien($request){
+    protected function simpanCicilanPasien($request)
+    {
         $kdProfile = (int)$this->getDataKdProfile($request);
         \DB::beginTransaction();
         $strukPelayananPenjamin = StrukPelayananPenjamin::where('norec', $request['parameterTambahan']['noRecStrukPelayanan'])
@@ -2278,154 +2469,150 @@ case when pjd.hargasatuand = 0 then pjd.hargasatuank else pjd.hargasatuand end
         $strukPelayanan = StrukPelayanan::where('norec', $strukPelayananPenjamin->nostrukfk)
             ->where('kdprofile', $kdProfile)
             ->first();
-//        $sisa =0;
-//        if($strukPelayanan->nosbmlastfk==null || $strukPelayanan->nosbmlastfk==''){
-//            $sisa = $sisa + $this->getDepositPasien($strukPelayanan->pasien_daftar->noregistrasi);
-//        }
-//
-//        $deposit = $sisa;
-//
-//        $sisa = $sisa + $request['jumlahBayar'];
+        //        $sisa =0;
+        //        if($strukPelayanan->nosbmlastfk==null || $strukPelayanan->nosbmlastfk==''){
+        //            $sisa = $sisa + $this->getDepositPasien($strukPelayanan->pasien_daftar->noregistrasi);
+        //        }
+        //
+        //        $deposit = $sisa;
+        //
+        //        $sisa = $sisa + $request['jumlahBayar'];
 
 
         $NOSBM = array();
-        foreach($request['pembayaran'] as $pembayaran){
+        foreach ($request['pembayaran'] as $pembayaran) {
             $strukBuktiPenerimanan = new StrukBuktiPenerimaan();
             $strukBuktiPenerimanan->norec = $strukBuktiPenerimanan->generateNewId();
-            $strukBuktiPenerimanan->kdprofile= $kdProfile;
+            $strukBuktiPenerimanan->kdprofile = $kdProfile;
             $strukBuktiPenerimanan->keteranganlainnya = "Pembayaran Cicilan Tagihan Pasien";
-            $strukBuktiPenerimanan->statusenabled= 1;
+            $strukBuktiPenerimanan->statusenabled = 1;
             $strukBuktiPenerimanan->nostrukfk = $strukPelayanan->norec;
             $strukBuktiPenerimanan->objectkelompokpasienfk = $strukPelayanan->pasien_daftar->pasien->objectkelompokpasienfk;
             $strukBuktiPenerimanan->objectkelompoktransaksifk = 1;
             $strukBuktiPenerimanan->objectpegawaipenerimafk  = $this->getCurrentLoginID();
             $strukBuktiPenerimanan->tglsbm  = $this->getDateTime();
             $strukBuktiPenerimanan->totaldibayar  = $pembayaran['nominal'];
-            $strukBuktiPenerimanan->nosbm = $this->generateCode(new StrukBuktiPenerimaan, 'nosbm', 14, 'RV-'.$this->getDateTime()->format('ym'), $kdProfile);
+            $strukBuktiPenerimanan->nosbm = $this->generateCode(new StrukBuktiPenerimaan, 'nosbm', 14, 'RV-' . $this->getDateTime()->format('ym'), $kdProfile);
             $strukBuktiPenerimanan->ispiutang = true;
             $NOSBM[] = $strukBuktiPenerimanan->nosbm;
-            $nostrukfkSTR = $strukPelayanan->norec ;
-            try{
+            $nostrukfkSTR = $strukPelayanan->norec;
+            try {
                 $strukBuktiPenerimanan->save();
-                $strukPelayananPenjamin->totalsudahdibayar =$strukPelayananPenjamin->totalsudahdibayar+$pembayaran['nominal'];
-            }
-            catch(\Exception $e){
+                $strukPelayananPenjamin->totalsudahdibayar = $strukPelayananPenjamin->totalsudahdibayar + $pembayaran['nominal'];
+            } catch (\Exception $e) {
                 throw new \Exception($e->getMessage());
                 $this->transMessage = "Simpan Pembayaran Gagal {SBP}";
             }
 
-            if($this->transStatus){
+            if ($this->transStatus) {
                 $SBPCB = new StrukBuktiPenerimaanCaraBayar();
                 $SBPCB->norec = $SBPCB->generateNewId();
-                $SBPCB->kdprofile=$kdProfile;
+                $SBPCB->kdprofile = $kdProfile;
                 $SBPCB->statusenabled = 1;
                 $SBPCB->nosbmfk = $strukBuktiPenerimanan->norec;
                 $SBPCB->objectcarabayarfk = $pembayaran['caraBayar']['id'];
 
-                if(isset($pembayaran['detailBank'])){
+                if (isset($pembayaran['detailBank'])) {
                     $SBPCB->objectjeniskartufk = $pembayaran['detailBank']['jenisKartu']['id'];
                     $SBPCB->nokartuaccount = $pembayaran['detailBank']['noKartu'];
                     $SBPCB->namabankprovider = $pembayaran['detailBank']['namaKartu'];
                     $SBPCB->namapemilik = $pembayaran['detailBank']['namaKartu'];
                 }
-                try{
+                try {
                     $SBPCB->save();
-                }
-                catch(\Exception $e){
+                } catch (\Exception $e) {
                     $this->transStatus = false;
-//                    throw new \Exception($e->getMessage());
+                    //                    throw new \Exception($e->getMessage());
                     $this->transMessage = "Simpan Pembayaran Gagal {SBPCB}";
                 }
-
             }
 
             //JURNAL
             //jurnal verif sP
-//            $logAcc =new  LogAcc;
-//            $logAcc->norec = $logAcc->generateNewId();
-//            $logAcc->jenistransaksi = 'Pembayaran Cicilan Piutang';
-//            $logAcc->noreff = $nostrukfkSTR;
-//            $logAcc->status = 0;
-//            $logAcc->tanggal = $this->getDateTime()->format('Y-m-d H:i:s');
-//            if($this->transStatus){
-//                try{
-//                    $logAcc->save();
-//                }
-//                catch(\Exception $e){
-//                    $transStatus= false;
-//                    $transMsg =   "Simpan logAcc Gagal {SP}";
-//
-//                }
-//            }
+            //            $logAcc =new  LogAcc;
+            //            $logAcc->norec = $logAcc->generateNewId();
+            //            $logAcc->jenistransaksi = 'Pembayaran Cicilan Piutang';
+            //            $logAcc->noreff = $nostrukfkSTR;
+            //            $logAcc->status = 0;
+            //            $logAcc->tanggal = $this->getDateTime()->format('Y-m-d H:i:s');
+            //            if($this->transStatus){
+            //                try{
+            //                    $logAcc->save();
+            //                }
+            //                catch(\Exception $e){
+            //                    $transStatus= false;
+            //                    $transMsg =   "Simpan logAcc Gagal {SP}";
+            //
+            //                }
+            //            }
             //END jurnal verif sP
-//            $detailJurnal = array();
-//            $saldo = (float)$pembayaran['nominal'];
-//            $idbendahara = ((int)$pembayaran['caraBayar']['id']==1) ? 1318 : 1333; //Kas Bendahara Penerimaan : Bank In Transit
-//            if($this->transStatus){
-//                $saldoJurnal = array();
-//                $saldoJurnal[] = array(
-//                    'account_id' => $idbendahara,
-//                    'balance'    => 'D',
-//                    'saldo'      => $saldo
-//                );
-//                if($deposit>0){
-//                    $saldoJurnal[] = array(
-//                        'account_id' =>   1475, //Uang Muka PAsien
-//                        'balance'    =>  'D',
-//                        'saldo'      => $deposit
-//                    );
-//                }
-//
-//                $saldoJurnal[] = array(
-//                    'account_id' =>   1348, //Piutang Perorangan
-//                    'balance'    =>  'K',
-//                    'saldo'      => $saldo + $deposit
-//                );
-//
-//                $detailJurnal[] = array(
-//                    "tgltransaksi" => $this->getDateTime(),
-//                    "notransaksi" =>  $strukBuktiPenerimanan->nosbm,
-//                    "saldoJurnal" => $saldoJurnal,
-//                    "ruanganid" => $strukPelayanan->objectruanganfk,
-//                    "kelompoktransaksiid" => 1,
-//                    "nobuktitransaksi" => $strukBuktiPenerimanan->nosbm,
-//                    "tglbuktitransaksi" => $this->getDateTime(),
-//                    "keteranganlainnya" => "Pembayaran Tagihan Pasien",
-//                );
-//
-//                $jurnal = array(
-//                    "noposting" => $noPosting = $this->generateCode(new PostingJurnalTransaksi, 'noposting', 14, 'BT-'.$this->getDateTime()->format('ym')),
-//                    "detailJurnal" =>$detailJurnal
-//                );
-//                $this->postingJournal($jurnal);
-//            }
+            //            $detailJurnal = array();
+            //            $saldo = (float)$pembayaran['nominal'];
+            //            $idbendahara = ((int)$pembayaran['caraBayar']['id']==1) ? 1318 : 1333; //Kas Bendahara Penerimaan : Bank In Transit
+            //            if($this->transStatus){
+            //                $saldoJurnal = array();
+            //                $saldoJurnal[] = array(
+            //                    'account_id' => $idbendahara,
+            //                    'balance'    => 'D',
+            //                    'saldo'      => $saldo
+            //                );
+            //                if($deposit>0){
+            //                    $saldoJurnal[] = array(
+            //                        'account_id' =>   1475, //Uang Muka PAsien
+            //                        'balance'    =>  'D',
+            //                        'saldo'      => $deposit
+            //                    );
+            //                }
+            //
+            //                $saldoJurnal[] = array(
+            //                    'account_id' =>   1348, //Piutang Perorangan
+            //                    'balance'    =>  'K',
+            //                    'saldo'      => $saldo + $deposit
+            //                );
+            //
+            //                $detailJurnal[] = array(
+            //                    "tgltransaksi" => $this->getDateTime(),
+            //                    "notransaksi" =>  $strukBuktiPenerimanan->nosbm,
+            //                    "saldoJurnal" => $saldoJurnal,
+            //                    "ruanganid" => $strukPelayanan->objectruanganfk,
+            //                    "kelompoktransaksiid" => 1,
+            //                    "nobuktitransaksi" => $strukBuktiPenerimanan->nosbm,
+            //                    "tglbuktitransaksi" => $this->getDateTime(),
+            //                    "keteranganlainnya" => "Pembayaran Tagihan Pasien",
+            //                );
+            //
+            //                $jurnal = array(
+            //                    "noposting" => $noPosting = $this->generateCode(new PostingJurnalTransaksi, 'noposting', 14, 'BT-'.$this->getDateTime()->format('ym')),
+            //                    "detailJurnal" =>$detailJurnal
+            //                );
+            //                $this->postingJournal($jurnal);
+            //            }
         }
 
-        if($this->transStatus){
-//            $strukPelayananDetail = $strukPelayanan->struk_pelayanan_detail;
-//            foreach ($strukPelayananDetail as $item){
-//                $total = ($item->harganetto-$item->hargasatuandijamin)*$item->qtyproduk;
-//                if(($total<=$sisa || $total<=($sisa+ 0.0001)) && $item->is_terbayar==0){
-//                    $item->is_terbayar=1;
-//                    $sisa = $sisa - $total;
-//                    try{
-//                        $item->save();
-//                    }
-//                    catch(\Exception $e){
-//                        $this->transStatus = false;
-//                        $this->transMessage = "Simpan Pembayaran Gagal {SPD}";
-//                        break;
-//                    }
-//                }
-//            }
+        if ($this->transStatus) {
+            //            $strukPelayananDetail = $strukPelayanan->struk_pelayanan_detail;
+            //            foreach ($strukPelayananDetail as $item){
+            //                $total = ($item->harganetto-$item->hargasatuandijamin)*$item->qtyproduk;
+            //                if(($total<=$sisa || $total<=($sisa+ 0.0001)) && $item->is_terbayar==0){
+            //                    $item->is_terbayar=1;
+            //                    $sisa = $sisa - $total;
+            //                    try{
+            //                        $item->save();
+            //                    }
+            //                    catch(\Exception $e){
+            //                        $this->transStatus = false;
+            //                        $this->transMessage = "Simpan Pembayaran Gagal {SPD}";
+            //                        break;
+            //                    }
+            //                }
+            //            }
 
         }
 
-        if($this->transStatus){
-            try{
+        if ($this->transStatus) {
+            try {
                 $strukPelayananPenjamin->save();
-            }
-            catch(\Exception $e){
+            } catch (\Exception $e) {
                 throw new \Exception($e->getMessage());
                 $this->transStatus = false;
                 $this->transMessage = "Simpan Pembayaran Gagal {SPP}";
@@ -2433,31 +2620,32 @@ case when pjd.hargasatuand = 0 then pjd.hargasatuank else pjd.hargasatuand end
         }
 
 
-        if($this->transStatus){
+        if ($this->transStatus) {
             $this->transMessage = "Simpan Pembayaran Berhasil";
             $this->statusCode = 201;
-//            DB::rollBack();
+            //            DB::rollBack();
 
             DB::commit();
-        }else{
+        } else {
             $this->statusCode = 400;
             DB::rollBack();
         }
-        return $this->respond(array('noSBM'=> $NOSBM), $this->transMessage);
-//        disini ngikutin pembayaran laginya..
-//        return $this->respond([], "Simpan Pembayaran Berhasil");
+        return $this->respond(array('noSBM' => $NOSBM), $this->transMessage);
+        //        disini ngikutin pembayaran laginya..
+        //        return $this->respond([], "Simpan Pembayaran Berhasil");
     }
 
-    protected function simpanPembayaranTagihanNonLayanan($request){
+    protected function simpanPembayaranTagihanNonLayanan($request)
+    {
         $kdProfile = (int)  $kdProfile = $this->getDataKdProfile($request);
         \DB::beginTransaction();
         $strukPelayanan = StrukPelayanan::where('norec', $request['parameterTambahan']['noRecStrukPelayanan'])
             ->where('kdprofile', $kdProfile)
             ->first();
-        $sisa =0;
-//        if($strukPelayanan->nosbmlastfk==null || $strukPelayanan->nosbmlastfk==''){
-//            $sisa = $sisa + $this->getDepositPasien($strukPelayanan->pasien_daftar->noregistrasi);
-//        }
+        $sisa = 0;
+        //        if($strukPelayanan->nosbmlastfk==null || $strukPelayanan->nosbmlastfk==''){
+        //            $sisa = $sisa + $this->getDepositPasien($strukPelayanan->pasien_daftar->noregistrasi);
+        //        }
 
         $deposit = $sisa;
 
@@ -2465,146 +2653,140 @@ case when pjd.hargasatuand = 0 then pjd.hargasatuank else pjd.hargasatuand end
 
 
         $NOSBM = array();
-        foreach($request['pembayaran'] as $pembayaran){
+        foreach ($request['pembayaran'] as $pembayaran) {
             $strukBuktiPenerimanan = new StrukBuktiPenerimaan();
             $strukBuktiPenerimanan->norec = $strukBuktiPenerimanan->generateNewId();
-            $strukBuktiPenerimanan->kdprofile= $kdProfile;
+            $strukBuktiPenerimanan->kdprofile = $kdProfile;
             $strukBuktiPenerimanan->keteranganlainnya = "Pembayaran Tagihan Non Layanan";
-            $strukBuktiPenerimanan->statusenabled= 1;
+            $strukBuktiPenerimanan->statusenabled = 1;
             $strukBuktiPenerimanan->nostrukfk = $strukPelayanan->norec;
-//            $strukBuktiPenerimanan->objectkelompokpasienfk = $strukPelayanan->pasien_daftar->pasien->objectkelompokpasienfk;
+            //            $strukBuktiPenerimanan->objectkelompokpasienfk = $strukPelayanan->pasien_daftar->pasien->objectkelompokpasienfk;
             $strukBuktiPenerimanan->objectkelompoktransaksifk = $this->getGlobalSettingDataFixed('kdTransaksiTagihanNonLayanan', $kdProfile); //dibikin lagi lagi untuk nonlayanan
             $strukBuktiPenerimanan->objectpegawaipenerimafk  = $this->getCurrentLoginID();
-            $strukBuktiPenerimanan->tglsbm  = $request['tglsbm'];//$this->getDateTime();
+            $strukBuktiPenerimanan->tglsbm  = $request['tglsbm']; //$this->getDateTime();
             $strukBuktiPenerimanan->totaldibayar  = $pembayaran['nominal'];
-            $strukBuktiPenerimanan->nosbm = $this->generateCode(new StrukBuktiPenerimaan, 'nosbm', 14, 'RV-'.$this->getDateTime()->format('ym'), $kdProfile);
+            $strukBuktiPenerimanan->nosbm = $this->generateCode(new StrukBuktiPenerimaan, 'nosbm', 14, 'RV-' . $this->getDateTime()->format('ym'), $kdProfile);
             $NOSBM[] = $strukBuktiPenerimanan->nosbm;
-            $nostrukfkSTR = $strukPelayanan->norec ;
-            try{
+            $nostrukfkSTR = $strukPelayanan->norec;
+            try {
                 $strukBuktiPenerimanan->save();
-            }
-            catch(\Exception $e){
+            } catch (\Exception $e) {
                 throw new \Exception($e->getMessage());
                 $this->transMessage = "Simpan Pembayaran Gagal {SBP}";
             }
 
-            if($this->transStatus){
+            if ($this->transStatus) {
                 $SBPCB = new StrukBuktiPenerimaanCaraBayar();
                 $SBPCB->norec = $SBPCB->generateNewId();
-                $SBPCB->kdprofile= $kdProfile;
+                $SBPCB->kdprofile = $kdProfile;
                 $SBPCB->statusenabled = 1;
                 $SBPCB->nosbmfk = $strukBuktiPenerimanan->norec;
                 $SBPCB->objectcarabayarfk = $pembayaran['caraBayar']['id'];
 
-                if(isset($pembayaran['detailBank'])){
+                if (isset($pembayaran['detailBank'])) {
                     $SBPCB->objectjeniskartufk = $pembayaran['detailBank']['jenisKartu']['id'];
                     $SBPCB->nokartuaccount = $pembayaran['detailBank']['noKartu'];
                     $SBPCB->namabankprovider = $pembayaran['detailBank']['namaKartu'];
                     $SBPCB->namapemilik = $pembayaran['detailBank']['namaKartu'];
                 }
-                try{
+                try {
                     $SBPCB->save();
-                }
-                catch(\Exception $e){
+                } catch (\Exception $e) {
                     $this->transStatus = false;
-//                    throw new \Exception($e->getMessage());
+                    //                    throw new \Exception($e->getMessage());
                     $this->transMessage = "Simpan Pembayaran Gagal {SBPCB}";
                 }
-
             }
 
             //JURNAL
 
             //jurnal verif sP
-            $logAcc =new  LogAcc;
+            $logAcc = new  LogAcc;
             $logAcc->norec = $logAcc->generateNewId();
             $logAcc->jenistransaksi = 'Pembayaran Tagihan Non Layanan';
             $logAcc->noreff = $nostrukfkSTR;
             $logAcc->status = 0;
             $logAcc->tanggal = $this->getDateTime()->format('Y-m-d H:i:s');
-            if($this->transStatus){
-                try{
+            if ($this->transStatus) {
+                try {
                     $logAcc->save();
-                }
-                catch(\Exception $e){
-                    $transStatus= false;
+                } catch (\Exception $e) {
+                    $transStatus = false;
                     $transMsg =   "Simpan logAcc Gagal {SP}";
-
                 }
             }
             //END jurnal verif sP
-//            $detailJurnal = array();
-//            $saldo = (float)$pembayaran['nominal'];
-//            $idbendahara = ((int)$pembayaran['caraBayar']['id']==1) ? 1318 : 1333; //Kas Bendahara Penerimaan : Bank In Transit
-//            if($this->transStatus && 1==2){  //nanti aja yaa bosss..
-//                $saldoJurnal = array();
-//                $saldoJurnal[] = array(
-//                    'account_id' => $idbendahara,
-//                    'balance'    => 'D',
-//                    'saldo'      => $saldo
-//                );
-//                if($deposit>0){
-//                    $saldoJurnal[] = array(
-//                        'account_id' =>   1475, //Uang Muka PAsien
-//                        'balance'    =>  'D',
-//                        'saldo'      => $deposit
-//                    );
-//                }
-//
-//                $saldoJurnal[] = array(
-//                    'account_id' =>   1348, //Piutang Perorangan
-//                    'balance'    =>  'K',
-//                    'saldo'      => $saldo + $deposit
-//                );
-//
-//                $detailJurnal[] = array(
-//                    "tgltransaksi" => $this->getDateTime(),
-//                    "notransaksi" =>  $strukBuktiPenerimanan->nosbm,
-//                    "saldoJurnal" => $saldoJurnal,
-//                    "ruanganid" => $strukPelayanan->objectruanganfk,
-//                    "kelompoktransaksiid" => 1,
-//                    "nobuktitransaksi" => $strukBuktiPenerimanan->nosbm,
-//                    "tglbuktitransaksi" => $this->getDateTime(),
-//                    "keteranganlainnya" => "Pembayaran Tagihan Pasien",
-//                );
-//
-//                $jurnal = array(
-//                    "noposting" => $noPosting = $this->generateCode(new PostingJurnalTransaksi, 'noposting', 14, 'BT-'.$this->getDateTime()->format('ym')),
-//                    "detailJurnal" =>$detailJurnal
-//                );
-//                $this->postingJournal($jurnal);
-//            }
+            //            $detailJurnal = array();
+            //            $saldo = (float)$pembayaran['nominal'];
+            //            $idbendahara = ((int)$pembayaran['caraBayar']['id']==1) ? 1318 : 1333; //Kas Bendahara Penerimaan : Bank In Transit
+            //            if($this->transStatus && 1==2){  //nanti aja yaa bosss..
+            //                $saldoJurnal = array();
+            //                $saldoJurnal[] = array(
+            //                    'account_id' => $idbendahara,
+            //                    'balance'    => 'D',
+            //                    'saldo'      => $saldo
+            //                );
+            //                if($deposit>0){
+            //                    $saldoJurnal[] = array(
+            //                        'account_id' =>   1475, //Uang Muka PAsien
+            //                        'balance'    =>  'D',
+            //                        'saldo'      => $deposit
+            //                    );
+            //                }
+            //
+            //                $saldoJurnal[] = array(
+            //                    'account_id' =>   1348, //Piutang Perorangan
+            //                    'balance'    =>  'K',
+            //                    'saldo'      => $saldo + $deposit
+            //                );
+            //
+            //                $detailJurnal[] = array(
+            //                    "tgltransaksi" => $this->getDateTime(),
+            //                    "notransaksi" =>  $strukBuktiPenerimanan->nosbm,
+            //                    "saldoJurnal" => $saldoJurnal,
+            //                    "ruanganid" => $strukPelayanan->objectruanganfk,
+            //                    "kelompoktransaksiid" => 1,
+            //                    "nobuktitransaksi" => $strukBuktiPenerimanan->nosbm,
+            //                    "tglbuktitransaksi" => $this->getDateTime(),
+            //                    "keteranganlainnya" => "Pembayaran Tagihan Pasien",
+            //                );
+            //
+            //                $jurnal = array(
+            //                    "noposting" => $noPosting = $this->generateCode(new PostingJurnalTransaksi, 'noposting', 14, 'BT-'.$this->getDateTime()->format('ym')),
+            //                    "detailJurnal" =>$detailJurnal
+            //                );
+            //                $this->postingJournal($jurnal);
+            //            }
         }
 
-        if($this->transStatus){
-//            $strukPelayananDetail = $strukPelayanan->struk_pelayanan_detail;
-//            foreach ($strukPelayananDetail as $item){
-//                $total = ($item->harganetto-$item->hargasatuandijamin)*$item->qtyproduk;
-//                if(($total<=$sisa || $total<=($sisa+ 0.0001)) && $item->is_terbayar==0){
-//                    $item->is_terbayar=1;
-//                    $sisa = $sisa - $total;
-//                    try{
-//                        $item->save();
-//                    }
-//                    catch(\Exception $e){
-//                        $this->transStatus = false;
-//                        $this->transMessage = "Simpan Pembayaran Gagal {SPD}";
-//                        break;
-//                    }
-//                }
-//            }
+        if ($this->transStatus) {
+            //            $strukPelayananDetail = $strukPelayanan->struk_pelayanan_detail;
+            //            foreach ($strukPelayananDetail as $item){
+            //                $total = ($item->harganetto-$item->hargasatuandijamin)*$item->qtyproduk;
+            //                if(($total<=$sisa || $total<=($sisa+ 0.0001)) && $item->is_terbayar==0){
+            //                    $item->is_terbayar=1;
+            //                    $sisa = $sisa - $total;
+            //                    try{
+            //                        $item->save();
+            //                    }
+            //                    catch(\Exception $e){
+            //                        $this->transStatus = false;
+            //                        $this->transMessage = "Simpan Pembayaran Gagal {SPD}";
+            //                        break;
+            //                    }
+            //                }
+            //            }
 
             //INSERT DARI PELAYANANPASIEN KE STUKPELAYANANPASIENBAYAR
             //INSERT DARI PELAYAANPASIENDETIAL KE STRUKPEKAYANANPASIENKBAYAR
         }
 
-        if($this->transStatus){
-            $strukPelayanan->nosbmlastfk =$strukBuktiPenerimanan->norec;
-//            $strukPelayanan->sisa = $sisa;
-            try{
+        if ($this->transStatus) {
+            $strukPelayanan->nosbmlastfk = $strukBuktiPenerimanan->norec;
+            //            $strukPelayanan->sisa = $sisa;
+            try {
                 $strukPelayanan->save();
-            }
-            catch(\Exception $e){
+            } catch (\Exception $e) {
                 throw new \Exception($e->getMessage());
                 $this->transStatus = false;
                 $this->transMessage = "Simpan Pembayaran Gagal {SPD}";
@@ -2612,20 +2794,21 @@ case when pjd.hargasatuand = 0 then pjd.hargasatuank else pjd.hargasatuand end
         }
 
 
-        if($this->transStatus){
+        if ($this->transStatus) {
             $this->transMessage = "Simpan Pembayaran Berhasil";
             $this->statusCode = 201;
-//            DB::rollBack();
+            //            DB::rollBack();
 
             DB::commit();
-        }else{
+        } else {
             $this->statusCode = 400;
             DB::rollBack();
         }
-        return $this->respond(array('noSBM'=> $NOSBM), $this->transMessage);
+        return $this->respond(array('noSBM' => $NOSBM), $this->transMessage);
     }
 
-    protected function simpanCicilanPasienCollect($request){
+    protected function simpanCicilanPasienCollect($request)
+    {
         $kdProfile = (int)$this->getDataKdProfile($request);
         \DB::beginTransaction();
         $strukPelayananPenjamin = StrukPelayananPenjamin::where('norec', $request['parameterTambahan']['noRecStrukPelayanan'])
@@ -2638,53 +2821,52 @@ case when pjd.hargasatuand = 0 then pjd.hargasatuank else pjd.hargasatuand end
             ->where('kdprofile', $kdProfile)
             ->first();
         $noSBM = '';
-        try{
-        $NOSBM = array();
-        foreach($request['pembayaran'] as $pembayaran){
-            $strukBuktiPenerimanan = new StrukBuktiPenerimaan();
-            $strukBuktiPenerimanan->norec = $strukBuktiPenerimanan->generateNewId();
-            $strukBuktiPenerimanan->kdprofile= $kdProfile;
-            $strukBuktiPenerimanan->keteranganlainnya = "Pembayaran Cicilan Tagihan Pasien Collecting";
-            $strukBuktiPenerimanan->statusenabled= 1;
-            $strukBuktiPenerimanan->nostrukfk = $strukPelayanan->norec;
-            $strukBuktiPenerimanan->objectkelompokpasienfk = $strukPelayanan->pasien_daftar->pasien->objectkelompokpasienfk;
-            $strukBuktiPenerimanan->objectkelompoktransaksifk = 76;
-            $strukBuktiPenerimanan->objectpegawaipenerimafk  = $this->getCurrentLoginID();
-            $strukBuktiPenerimanan->tglsbm  = $this->getDateTime();
-            $strukBuktiPenerimanan->totaldibayar  = $pembayaran['nominal'];
-            $strukBuktiPenerimanan->nosbm = $this->generateCode(new StrukBuktiPenerimaan, 'nosbm', 14, 'RV-'.$this->getDateTime()->format('ym'), $kdProfile);
-            $NOSBM[] = $strukBuktiPenerimanan->nosbm;
-            $nostrukfkSTR = $strukPelayanan->norec ;
-            $noSBM = $strukBuktiPenerimanan->nosbm;
-            $strukBuktiPenerimanan->save();
-            $strukPelayananPenjamin->totalsudahdibayar =$strukPelayananPenjamin->totalsudahdibayar+$pembayaran['nominal'];
+        try {
+            $NOSBM = array();
+            foreach ($request['pembayaran'] as $pembayaran) {
+                $strukBuktiPenerimanan = new StrukBuktiPenerimaan();
+                $strukBuktiPenerimanan->norec = $strukBuktiPenerimanan->generateNewId();
+                $strukBuktiPenerimanan->kdprofile = $kdProfile;
+                $strukBuktiPenerimanan->keteranganlainnya = "Pembayaran Cicilan Tagihan Pasien Collecting";
+                $strukBuktiPenerimanan->statusenabled = 1;
+                $strukBuktiPenerimanan->nostrukfk = $strukPelayanan->norec;
+                $strukBuktiPenerimanan->objectkelompokpasienfk = $strukPelayanan->pasien_daftar->pasien->objectkelompokpasienfk;
+                $strukBuktiPenerimanan->objectkelompoktransaksifk = 76;
+                $strukBuktiPenerimanan->objectpegawaipenerimafk  = $this->getCurrentLoginID();
+                $strukBuktiPenerimanan->tglsbm  = $this->getDateTime();
+                $strukBuktiPenerimanan->totaldibayar  = $pembayaran['nominal'];
+                $strukBuktiPenerimanan->nosbm = $this->generateCode(new StrukBuktiPenerimaan, 'nosbm', 14, 'RV-' . $this->getDateTime()->format('ym'), $kdProfile);
+                $NOSBM[] = $strukBuktiPenerimanan->nosbm;
+                $nostrukfkSTR = $strukPelayanan->norec;
+                $noSBM = $strukBuktiPenerimanan->nosbm;
+                $strukBuktiPenerimanan->save();
+                $strukPelayananPenjamin->totalsudahdibayar = $strukPelayananPenjamin->totalsudahdibayar + $pembayaran['nominal'];
 
-            if($this->transStatus){
-                $SBPCB = new StrukBuktiPenerimaanCaraBayar();
-                $SBPCB->norec = $SBPCB->generateNewId();
-                $SBPCB->kdprofile= $kdProfile;
-                $SBPCB->statusenabled = 1;
-                $SBPCB->nosbmfk = $strukBuktiPenerimanan->norec;
-                $SBPCB->objectcarabayarfk = $pembayaran['caraBayar']['id'];
+                if ($this->transStatus) {
+                    $SBPCB = new StrukBuktiPenerimaanCaraBayar();
+                    $SBPCB->norec = $SBPCB->generateNewId();
+                    $SBPCB->kdprofile = $kdProfile;
+                    $SBPCB->statusenabled = 1;
+                    $SBPCB->nosbmfk = $strukBuktiPenerimanan->norec;
+                    $SBPCB->objectcarabayarfk = $pembayaran['caraBayar']['id'];
 
-                if(isset($pembayaran['detailBank'])){
-                    $SBPCB->objectjeniskartufk = $pembayaran['detailBank']['jenisKartu']['id'];
-                    $SBPCB->nokartuaccount = $pembayaran['detailBank']['noKartu'];
-                    $SBPCB->namabankprovider = $pembayaran['detailBank']['namaKartu'];
-                    $SBPCB->namapemilik = $pembayaran['detailBank']['namaKartu'];
+                    if (isset($pembayaran['detailBank'])) {
+                        $SBPCB->objectjeniskartufk = $pembayaran['detailBank']['jenisKartu']['id'];
+                        $SBPCB->nokartuaccount = $pembayaran['detailBank']['noKartu'];
+                        $SBPCB->namabankprovider = $pembayaran['detailBank']['namaKartu'];
+                        $SBPCB->namapemilik = $pembayaran['detailBank']['namaKartu'];
+                    }
+                    $SBPCB->save();
                 }
-                $SBPCB->save();
             }
 
-        }
-
-//            $pd = $strukPelayanan->pasien_daftar;
-//            $pd->nosbmlastfk =$strukBuktiPenerimanan->norec;
-//            $pd->save();
+            //            $pd = $strukPelayanan->pasien_daftar;
+            //            $pd->nosbmlastfk =$strukBuktiPenerimanan->norec;
+            //            $pd->save();
 
             //JURNAL
             //jurnal verif sP
-            $logAcc =new  LogAcc;
+            $logAcc = new  LogAcc;
             $logAcc->norec = $logAcc->generateNewId();
             $logAcc->jenistransaksi = 'Pembayaran Cicilan Piutang';
             $logAcc->noreff = $nostrukfkSTR;
@@ -2692,17 +2874,17 @@ case when pjd.hargasatuand = 0 then pjd.hargasatuank else pjd.hargasatuand end
             $logAcc->tanggal = $this->getDateTime()->format('Y-m-d H:i:s');
             $logAcc->save();
 
-        foreach($request['detailSPP'] as $DetailSPP) {
-            $SPP = StrukPelayananPenjamin::where('norec', $DetailSPP['noRecSPP'])->where('kdprofile', $kdProfile)->first();
-            $SP = StrukPelayanan::where('norec', $SPP->nostrukfk)->where('kdprofile', $kdProfile)->first();
-            $PD = PasienDaftar::where('norec', $SP->noregistrasifk)->where('kdprofile', $kdProfile)->first();
-            $SPP->totalsudahdibayar = $SPP->totalsudahdibayar + $DetailSPP['bayarKlaim'];
-            $SPP->save();
-            $pd = $SP->pasien_daftar;
-            $pd->nosbmlastfk = $strukBuktiPenerimanan->norec;
-            $noRegistrasi = $pd['noregistrasi'];
-            $pd->save();
-        }
+            foreach ($request['detailSPP'] as $DetailSPP) {
+                $SPP = StrukPelayananPenjamin::where('norec', $DetailSPP['noRecSPP'])->where('kdprofile', $kdProfile)->first();
+                $SP = StrukPelayanan::where('norec', $SPP->nostrukfk)->where('kdprofile', $kdProfile)->first();
+                $PD = PasienDaftar::where('norec', $SP->noregistrasifk)->where('kdprofile', $kdProfile)->first();
+                $SPP->totalsudahdibayar = $SPP->totalsudahdibayar + $DetailSPP['bayarKlaim'];
+                $SPP->save();
+                $pd = $SP->pasien_daftar;
+                $pd->nosbmlastfk = $strukBuktiPenerimanan->norec;
+                $noRegistrasi = $pd['noregistrasi'];
+                $pd->save();
+            }
             $transStatus = 'true';
         } catch (\Exception $e) {
             $transStatus = 'false';
@@ -2714,36 +2896,37 @@ case when pjd.hargasatuand = 0 then pjd.hargasatuank else pjd.hargasatuand end
             \DB::commit();
             $result = array(
                 "status" => 201,
-//                "message" => $transMessage,
-//                "data" => $aingMacan,
+                //                "message" => $transMessage,
+                //                "data" => $aingMacan,
                 "as" => 'ea@epic',
             );
         } else {
-            $transMessage = $transMessage ." Gagal!!";
+            $transMessage = $transMessage . " Gagal!!";
             DB::rollBack();
             $result = array(
                 "status" => 400,
-//                "message"  => $transMessage,
+                //                "message"  => $transMessage,
                 "as" => 'ea@epic',
             );
         }
         return $this->setStatusCode($result['status'])->respond($result, $transMessage);
-//            if($this->transStatus){
-//                $this->transMessage = "Simpan Pembayaran Berhasil";
-//                $this->statusCode = 201;
-////            DB::rollBack();
-//
-//                DB::commit();
-//            }else{
-//                $this->statusCode = 400;
-//                DB::rollBack();
-//            }
-//
-//        }
-//        return $this->respond(array('noSBM'=> $NOSBM), $this->transMessage);
+        //            if($this->transStatus){
+        //                $this->transMessage = "Simpan Pembayaran Berhasil";
+        //                $this->statusCode = 201;
+        ////            DB::rollBack();
+        //
+        //                DB::commit();
+        //            }else{
+        //                $this->statusCode = 400;
+        //                DB::rollBack();
+        //            }
+        //
+        //        }
+        //        return $this->respond(array('noSBM'=> $NOSBM), $this->transMessage);
     }
 
-    public function simpanPembayaran(Request $request){
+    public function simpanPembayaran(Request $request)
+    {
         switch ($request['parameterTambahan']['tipePembayaran']) {
             case 'depositPasien':
                 return $this->simpanPembayaranDeposit($request);
@@ -2762,14 +2945,15 @@ case when pjd.hargasatuand = 0 then pjd.hargasatuank else pjd.hargasatuand end
                 break;
             case 'cicilanPasienCollect':
                 return $this->simpanCicilanPasienCollect($request);
-//                return $this->simpanCicilanPiutang($request);
+                //                return $this->simpanCicilanPiutang($request);
                 break;
             default:
                 return 0;
         }
     }
 
-    protected function getDetailPembayaranDeposit(Request $request){
+    protected function getDetailPembayaranDeposit(Request $request)
+    {
         $result = array(
             'jumlahBayar' => $request['jumlahBayar'],
             'tipePembayaran' => $request['tipePembayaran'],
@@ -2778,31 +2962,35 @@ case when pjd.hargasatuand = 0 then pjd.hargasatuank else pjd.hargasatuand end
         return $this->respond($result, "Data Pembayaran");
     }
 
-    protected function getDetailTagihanPasien(Request $request){
+    protected function getDetailTagihanPasien(Request $request)
+    {
         $kdProfile = (int)$this->getDataKdProfile($request);
         $strukPelayanan = StrukPelayanan::where('norec', $request['noRecStrukPelayanan'])->where('kdprofile', $kdProfile)->first();
-        $totalBilling= $strukPelayanan->totalharusdibayar;
+        $totalBilling = $strukPelayanan->totalharusdibayar;
         $totalBayar = $totalBilling;
-        $result =array(
+        $result = array(
             "noRecStrukPelayanan"  => $strukPelayanan->norec,
             "jumlahBayar"  => $totalBayar,
         );
         return $this->respond($result, "Data Pembayaran");
     }
 
-    protected  function getDetailCicilanPasien(Request $request){
-        $result =array(
+    protected  function getDetailCicilanPasien(Request $request)
+    {
+        $result = array(
             "noRecStrukPelayanan"  => $request['noRecStrukPelayanan'],
             "jumlahBayar"  => $request['jumlahBayar'],
         );
         return $this->respond($result, "Data Pembayaran");
     }
 
-    protected  function getDetailPembayaranNonLayanan(Request $request){
+    protected  function getDetailPembayaranNonLayanan(Request $request)
+    {
         return $this->respond("Data Pembayaran");
     }
 
-    public function pembayaran(Request $request){
+    public function pembayaran(Request $request)
+    {
         switch ($request['tipePembayaran']) {
             case 'depositPasien':
                 return $this->getDetailPembayaranDeposit($request);
@@ -2819,10 +3007,11 @@ case when pjd.hargasatuand = 0 then pjd.hargasatuank else pjd.hargasatuand end
                 return 0;
         }
     }
-    public function detailPasienDeposit($noRegister, Request $request){
+    public function detailPasienDeposit($noRegister, Request $request)
+    {
         $kdProfile = (int)$this->getDataKdProfile($request);
         $pasienDaftar = PasienDaftar::where('noregistrasi', $noRegister)->where('kdprofile', $kdProfile)->first();
-        if(!$pasienDaftar){
+        if (!$pasienDaftar) {
             //kalau tidak ditemukan
             return false;
         }
@@ -2830,10 +3019,10 @@ case when pjd.hargasatuand = 0 then pjd.hargasatuank else pjd.hargasatuand end
         $listDeposit = array();
         $pasienDaftar->DepositId = $this->getProdukIdDeposit();
         $deposit = $pasienDaftar->list_deposit;
-        foreach ($deposit as $item){
+        foreach ($deposit as $item) {
             $listDeposit[] = array(
                 "tglTransaksi" => $item->tglpelayanan,
-                "jumlahDeposit" => $item->hargasatuan*$item->jumlah
+                "jumlahDeposit" => $item->hargasatuan * $item->jumlah
             );
         }
 
@@ -2850,7 +3039,8 @@ case when pjd.hargasatuand = 0 then pjd.hargasatuank else pjd.hargasatuand end
 
         return $this->respond($result, "Detail Deposit Pasien");
     }
-    public function HapusTglPulang(Request $request){
+    public function HapusTglPulang(Request $request)
+    {
         $kdProfile = (int)$this->getDataKdProfile($request);
         DB::beginTransaction();
         $tglAyeuna = date('Y-m-d H:i:s');
@@ -2858,89 +3048,92 @@ case when pjd.hargasatuand = 0 then pjd.hargasatuank else pjd.hargasatuand end
         $dataPegawai = \DB::table('loginuser_s as lu')
             ->select('lu.objectpegawaifk')
             ->where('lu.kdprofile', $kdProfile)
-            ->where('lu.id',$dataLogin['userData']['id'])
+            ->where('lu.id', $dataLogin['userData']['id'])
             ->first();
-        $pasienDaftar = PasienDaftar::where('noregistrasi',$request['noregistrasi'])->where('kdprofile', $kdProfile)->first();
+        $pasienDaftar = PasienDaftar::where('noregistrasi', $request['noregistrasi'])->where('kdprofile', $kdProfile)->first();
         try {
-            $data=$dataAsalRujukan = \DB::table('pasiendaftar_t as pd')
+            $data = $dataAsalRujukan = \DB::table('pasiendaftar_t as pd')
                 ->leftjoin('antrianpasiendiperiksa_t as apd', 'apd.noregistrasifk', '=', 'pd.norec')
                 ->leftjoin('pelayananpasien_t as pp', 'pp.noregistrasifk', '=', 'apd.norec')
                 ->leftjoin('strukpelayanan_t as sp', 'sp.norec', '=', 'pp.strukfk')
-                ->join('ruangan_m as ru','ru.id','=','pd.objectruanganlastfk')
+                ->join('ruangan_m as ru', 'ru.id', '=', 'pd.objectruanganlastfk')
                 ->select('ru.objectdepartemenfk')
                 ->where('pd.kdprofile', $kdProfile)
-                ->where('pd.noregistrasi',$request['noregistrasi'])
-//                ->whereIn('ru.objectdepartemenfk',array(16,17,35))
+                ->where('pd.noregistrasi', $request['noregistrasi'])
+                //                ->whereIn('ru.objectdepartemenfk',array(16,17,35))
                 ->first();
 
-            $stt=false;
-            if ($data->objectdepartemenfk==16){
-                $stt=true;
+            $stt = false;
+            if ($data->objectdepartemenfk == 16) {
+                $stt = true;
             }
-            if ($data->objectdepartemenfk==17){
-                $stt=true;
+            if ($data->objectdepartemenfk == 17) {
+                $stt = true;
             }
-            if ($data->objectdepartemenfk==35){
-                $stt=true;
+            if ($data->objectdepartemenfk == 35) {
+                $stt = true;
             }
-            if ($data->objectdepartemenfk==26){
-                $stt=true;
+            if ($data->objectdepartemenfk == 26) {
+                $stt = true;
             }
 
 
-            if ($stt==false){
-                $ddddd=[];
+            if ($stt == false) {
+                $ddddd = [];
                 $transMessage = "Hanya Pasien Rawat Inap yang Bisa Batal Pulang!";
-            }else{
-                $antrian = AntrianPasienDiperiksa::where('noregistrasifk',$pasienDaftar->norec )
+            } else {
+                $antrian = AntrianPasienDiperiksa::where('noregistrasifk', $pasienDaftar->norec)
                     ->where('kdprofile', $kdProfile)
-                    ->where('objectruanganfk',$pasienDaftar->objectruanganlastfk)
-                    ->orderBy('tglmasuk','desc')
+                    ->where('objectruanganfk', $pasienDaftar->objectruanganlastfk)
+                    ->orderBy('tglmasuk', 'desc')
                     ->first();
-                $registrasiPelPas = RegistrasiPelayananPasien::where('noregistrasifk',$pasienDaftar->norec )
-                    ->where('objectruanganfk',$pasienDaftar->objectruanganlastfk)
+                $registrasiPelPas = RegistrasiPelayananPasien::where('noregistrasifk', $pasienDaftar->norec)
+                    ->where('objectruanganfk', $pasienDaftar->objectruanganlastfk)
                     ->where('kdprofile', $kdProfile)
-                    ->orderBy('tglmasuk','desc')
+                    ->orderBy('tglmasuk', 'desc')
                     ->first();
 
-                if ($request['tglpulang']== 'null'){
-                    $ddddd=PasienDaftar::where('noregistrasi', $request['noregistrasi'])
+                if ($request['tglpulang'] == 'null') {
+                    $ddddd = PasienDaftar::where('noregistrasi', $request['noregistrasi'])
                         ->where('kdprofile', $kdProfile)
-                        ->update([
-                                'tglpulang' => null]
-//                        'tglpulang' => $request['tglpulang']]
+                        ->update(
+                            [
+                                'tglpulang' => null
+                            ]
+                            //                        'tglpulang' => $request['tglpulang']]
                         );
-                    $apd = AntrianPasienDiperiksa::where('norec',$antrian->norec)
+                    $apd = AntrianPasienDiperiksa::where('norec', $antrian->norec)
                         ->where('kdprofile', $kdProfile)
-                        ->update([ 'tglkeluar' => null ] );
-                    $rpp = RegistrasiPelayananPasien::where('norec',$registrasiPelPas->norec)
+                        ->update(['tglkeluar' => null]);
+                    $rpp = RegistrasiPelayananPasien::where('norec', $registrasiPelPas->norec)
                         ->where('kdprofile', $kdProfile)
-                        ->update([ 'tglkeluar' => null ] );
-
-                }else{
-                    $ddddd=PasienDaftar::where('noregistrasi', $request['noregistrasi'])
+                        ->update(['tglkeluar' => null]);
+                } else {
+                    $ddddd = PasienDaftar::where('noregistrasi', $request['noregistrasi'])
                         ->where('kdprofile', $kdProfile)
-                        ->update([
-                                'tglpulang' => $request['tglpulang']]
+                        ->update(
+                            [
+                                'tglpulang' => $request['tglpulang']
+                            ]
                         );
 
-                    $apd = AntrianPasienDiperiksa::where('norec',$antrian->norec)
+                    $apd = AntrianPasienDiperiksa::where('norec', $antrian->norec)
                         ->where('kdprofile', $kdProfile)
-                        ->update([ 'tglkeluar' => null ] );
-                    $rpp = RegistrasiPelayananPasien::where('norec',$registrasiPelPas->norec)
+                        ->update(['tglkeluar' => null]);
+                    $rpp = RegistrasiPelayananPasien::where('norec', $registrasiPelPas->norec)
                         ->where('kdprofile', $kdProfile)
-                        ->update([ 'tglkeluar' => null ] );
+                        ->update(['tglkeluar' => null]);
                     //## Logging User
                     $newId = LoggingUser::max('id');
-                    $newId = $newId +1;
+                    $newId = $newId + 1;
                     $logUser = new LoggingUser();
                     $logUser->id = $newId;
                     $logUser->norec = $logUser->generateNewId();
-                    $logUser->kdprofile= $kdProfile;
-                    $logUser->statusenabled=true;
+                    $logUser->kdprofile = $kdProfile;
+                    $logUser->statusenabled = true;
                     $logUser->jenislog = 'Batal Pulang Pasien';
-                    $logUser->noreff =$request['noregistrasi'];
-                    $logUser->referensi='noregistrasi Pasien';
+                    $logUser->noreff = $request['noregistrasi'];
+                    $logUser->referensi = 'noregistrasi Pasien';
                     $logUser->objectloginuserfk =  $dataLogin['userData']['id'];
                     $logUser->tanggal = $tglAyeuna;
                     $logUser->save();
@@ -2961,9 +3154,9 @@ case when pjd.hargasatuand = 0 then pjd.hargasatuank else pjd.hargasatuand end
             DB::commit();
             $result = array(
                 "status" => 201,
-//                "message" =>   $transMessae,
+                //                "message" =>   $transMessae,
                 "message" => $transMessage,
-                "struk" => $ddddd,//$noResep,,//$noResep,
+                "struk" => $ddddd, //$noResep,,//$noResep,
                 "as" => 'as@epic',
             );
         } else {
@@ -2979,7 +3172,8 @@ case when pjd.hargasatuand = 0 then pjd.hargasatuank else pjd.hargasatuand end
         return $this->setStatusCode($result['status'])->respond($result, $transMessage);
     }
 
-    public function BatalInputTagihanNonLayanan(Request $request) {
+    public function BatalInputTagihanNonLayanan(Request $request)
+    {
         $kdProfile = (int)$this->getDataKdProfile($request);
         \DB::beginTransaction();
         $tglAyeuna = date('Y-m-d H:i:s');
@@ -2987,9 +3181,9 @@ case when pjd.hargasatuand = 0 then pjd.hargasatuank else pjd.hargasatuand end
         $dataPegawai = \DB::table('loginuser_s as lu')
             ->select('lu.objectpegawaifk')
             ->where('lu.kdprofile', $kdProfile)
-            ->where('lu.id',$dataLogin['userData']['id'])
+            ->where('lu.id', $dataLogin['userData']['id'])
             ->first();
-        try{
+        try {
 
             $Kel = StrukPelayanan::where('norec', $request['norec'])
                 ->where('kdprofile', $kdProfile)
@@ -2999,15 +3193,15 @@ case when pjd.hargasatuand = 0 then pjd.hargasatuank else pjd.hargasatuand end
 
             //## Logging User
             $newId = LoggingUser::max('id');
-            $newId = $newId +1;
+            $newId = $newId + 1;
             $logUser = new LoggingUser();
             $logUser->id = $newId;
             $logUser->norec = $logUser->generateNewId();
-            $logUser->kdprofile= $kdProfile;
-            $logUser->statusenabled=true;
+            $logUser->kdprofile = $kdProfile;
+            $logUser->statusenabled = true;
             $logUser->jenislog = 'Batal Transaksi Non Layanan Dengan Nostruk : ' . $request['nostruk'];
-            $logUser->noreff =$request['norec'];
-            $logUser->referensi='norec strukpelayanan_t';
+            $logUser->noreff = $request['norec'];
+            $logUser->referensi = 'norec strukpelayanan_t';
             $logUser->objectloginuserfk =  $dataLogin['userData']['id'];
             $logUser->tanggal = $tglAyeuna;
             $logUser->save();
@@ -3037,7 +3231,8 @@ case when pjd.hargasatuand = 0 then pjd.hargasatuank else pjd.hargasatuand end
         return $this->setStatusCode($result['status'])->respond($result, $transMessage);
     }
 
-    public function getDataLaporanPenerimaan(Request $request){
+    public function getDataLaporanPenerimaan(Request $request)
+    {
         //todo : laporan penerimaan
         $tglAwal = $request['tglAwal'];
         $tglAkhir = $request['tglAkhir'];
@@ -3158,7 +3353,8 @@ case when pjd.hargasatuand = 0 then pjd.hargasatuank else pjd.hargasatuand end
         return $this->respond($data);
     }
 
-    public function getDataLaporanRekapPendapatanHarian(Request $request){
+    public function getDataLaporanRekapPendapatanHarian(Request $request)
+    {
         //todo : laporan penerimaan
         $tglAwal = $request['tglAwal'];
         $tglAkhir = $request['tglAkhir'];
@@ -3564,60 +3760,61 @@ case when pjd.hargasatuand = 0 then pjd.hargasatuank else pjd.hargasatuand end
                             and x.subheader is not null
                             GROUP BY x.subheader,x.penerimaankasir,x.kelompokpenerimaan_produk,x.penerimaan_produk,x.nopenerimaan
                             ORDER BY x.nopenerimaan ASC"));
-       return $this->respond($data);
+        return $this->respond($data);
     }
 
-    public function getDataLaporanPendapatanRuanganNew(Request $request) {
-//        $data = \DB::table('pasiendaftar_t as pd')
-//            ->JOIN ('antrianpasiendiperiksa_t as apd','apd.noregistrasifk','=','pd.norec')
-//            ->JOIN ('pasien_m as ps','ps.id','=','pd.nocmfk')
-//            ->leftjoin ('pegawai_m as pgw','pgw.id','=','pd.objectdokterpemeriksafk')
-//            ->join ('ruangan_m as rg','rg.id','=','apd.objectruanganfk')
-//            ->leftJoin('kelompokpasien_m as klp','klp.id','=','pd.objectkelompokpasienlastfk')
-//            ->leftJoin('pelayananpasien_t as ply', 'ply.noregistrasifk','=','apd.norec')
-//            ->leftJoin('produk_m as prd','prd.id','=','ply.produkfk')
-//
-//            ->select('pd.norec','pd.noregistrasi','ps.namapasien','pgw.namalengkap as namadokter','pd.statuspasien','rg.namaruangan','ply.hargajual','ply.jumlah','prd.namaproduk','klp.kelompokpasien',
-//                DB::raw('(ply.hargajual*ply.jumlah) as   total'))
-//            ->where('pd.statusenabled', true);
-//        if (isset($request['tglAwal']) && $request['tglAwal'] != "" && $request['tglAwal'] != "undefined") {
-//            $data = $data->where('ply.tglpelayanan', '>=', $request['tglAwal']);
-//        }
-//        if (isset($request['tglAkhir']) && $request['tglAkhir'] != "" && $request['tglAkhir'] != "undefined") {
-//            $data = $data->where('ply.tglpelayanan', '<=', $request['tglAkhir']);
-//        }
-//        if (isset($request['ruanganId']) && $request['ruanganId'] != "" && $request['ruanganId'] != "undefined") {
-//            $data = $data->where('rg.id', '=', $request['ruanganId']);
-//        }
-//        if (isset($request['dokter']) && $request['dokter'] != "" && $request['dokter'] != "undefined") {
-//            $data = $data->Where('pgw.id', '=', $request['dokter'])	;
-//        }
-//        if (isset($request['kelompokPasien']) && $request['kelompokPasien'] != "" && $request['kelompokPasien'] != "undefined") {
-//            $data = $data->Where('klp.id', '=', $request['kelompokPasien'])	;
-//        }
-//        if (isset($request['idDept']) && $request['idDept'] != "" && $request['idDept'] != "undefined") {
-//            $data = $data->where('rg.objectdepartemenfk', '=', $request['idDept']);
-//        }
-//
-//        $data =  $data ->get();
+    public function getDataLaporanPendapatanRuanganNew(Request $request)
+    {
+        //        $data = \DB::table('pasiendaftar_t as pd')
+        //            ->JOIN ('antrianpasiendiperiksa_t as apd','apd.noregistrasifk','=','pd.norec')
+        //            ->JOIN ('pasien_m as ps','ps.id','=','pd.nocmfk')
+        //            ->leftjoin ('pegawai_m as pgw','pgw.id','=','pd.objectdokterpemeriksafk')
+        //            ->join ('ruangan_m as rg','rg.id','=','apd.objectruanganfk')
+        //            ->leftJoin('kelompokpasien_m as klp','klp.id','=','pd.objectkelompokpasienlastfk')
+        //            ->leftJoin('pelayananpasien_t as ply', 'ply.noregistrasifk','=','apd.norec')
+        //            ->leftJoin('produk_m as prd','prd.id','=','ply.produkfk')
+        //
+        //            ->select('pd.norec','pd.noregistrasi','ps.namapasien','pgw.namalengkap as namadokter','pd.statuspasien','rg.namaruangan','ply.hargajual','ply.jumlah','prd.namaproduk','klp.kelompokpasien',
+        //                DB::raw('(ply.hargajual*ply.jumlah) as   total'))
+        //            ->where('pd.statusenabled', true);
+        //        if (isset($request['tglAwal']) && $request['tglAwal'] != "" && $request['tglAwal'] != "undefined") {
+        //            $data = $data->where('ply.tglpelayanan', '>=', $request['tglAwal']);
+        //        }
+        //        if (isset($request['tglAkhir']) && $request['tglAkhir'] != "" && $request['tglAkhir'] != "undefined") {
+        //            $data = $data->where('ply.tglpelayanan', '<=', $request['tglAkhir']);
+        //        }
+        //        if (isset($request['ruanganId']) && $request['ruanganId'] != "" && $request['ruanganId'] != "undefined") {
+        //            $data = $data->where('rg.id', '=', $request['ruanganId']);
+        //        }
+        //        if (isset($request['dokter']) && $request['dokter'] != "" && $request['dokter'] != "undefined") {
+        //            $data = $data->Where('pgw.id', '=', $request['dokter'])	;
+        //        }
+        //        if (isset($request['kelompokPasien']) && $request['kelompokPasien'] != "" && $request['kelompokPasien'] != "undefined") {
+        //            $data = $data->Where('klp.id', '=', $request['kelompokPasien'])	;
+        //        }
+        //        if (isset($request['idDept']) && $request['idDept'] != "" && $request['idDept'] != "undefined") {
+        //            $data = $data->where('rg.objectdepartemenfk', '=', $request['idDept']);
+        //        }
+        //
+        //        $data =  $data ->get();
         $kdProfile = (int) $this->getDataKdProfile($request);
         $tglAwal = $request['tglAwal'];
         $tglAkhir = $request['tglAkhir'];
         $ruanganId = '';
         $dokter = '';
-        $idDept ='';
-        $kelompokPasien= '';
+        $idDept = '';
+        $kelompokPasien = '';
         if (isset($request['ruanganId']) && $request['ruanganId'] != "" && $request['ruanganId'] != "undefined") {
-            $ruanganId = ' and ru.id='.$request['ruanganId'];
+            $ruanganId = ' and ru.id=' . $request['ruanganId'];
         }
         if (isset($request['dokter']) && $request['dokter'] != "" && $request['dokter'] != "undefined") {
-            $dokter = '  and pg.id='. $request['dokter']	;
+            $dokter = '  and pg.id=' . $request['dokter'];
         }
         if (isset($request['kelompokPasien']) && $request['kelompokPasien'] != "" && $request['kelompokPasien'] != "undefined") {
-            $kelompokPasien = ' and kps.id='. $request['kelompokPasien'];
+            $kelompokPasien = ' and kps.id=' . $request['kelompokPasien'];
         }
         if (isset($request['idDept']) && $request['idDept'] != "" && $request['idDept'] != "undefined") {
-            $idDept =' and ru.objectdepartemenfk='.$request['idDept'];
+            $idDept = ' and ru.objectdepartemenfk=' . $request['idDept'];
         }
         $data = DB::select(DB::raw("
             SELECT
@@ -3698,13 +3895,14 @@ case when pjd.hargasatuand = 0 then pjd.hargasatuank else pjd.hargasatuand end
            "));
 
         $result = array(
-            'data'=> $data,
+            'data' => $data,
             'message' => 'ramdanegie',
         );
         return $this->respond($result);
     }
 
-    public function getDataLaporanOPDAdministrasi(Request $request){
+    public function getDataLaporanOPDAdministrasi(Request $request)
+    {
         //todo : laporan penerimaan
         $tglAwal = $request['tglAwal'];
         $tglAkhir = $request['tglAkhir'];
@@ -3819,7 +4017,8 @@ case when pjd.hargasatuand = 0 then pjd.hargasatuank else pjd.hargasatuand end
         return $this->respond($data);
     }
 
-    public function getDataLaporanPerRekening(Request $request){
+    public function getDataLaporanPerRekening(Request $request)
+    {
         //todo : laporan penerimaan
         $tglAwal = $request['tglAwal'];
         $tglAkhir = $request['tglAkhir'];
@@ -3934,7 +4133,8 @@ case when pjd.hargasatuand = 0 then pjd.hargasatuank else pjd.hargasatuand end
         return $this->respond($data);
     }
 
-    public function getDataLaporanOPDFungsional(Request $request){
+    public function getDataLaporanOPDFungsional(Request $request)
+    {
         //todo : laporan penerimaan
         $tglAwal = $request['tglAwal'];
         $tglAkhir = $request['tglAkhir'];
@@ -4048,7 +4248,8 @@ case when pjd.hargasatuand = 0 then pjd.hargasatuank else pjd.hargasatuand end
 
         return $this->respond($data);
     }
-    public function getDataLaporanPenerimaanMingguan(Request $request){
+    public function getDataLaporanPenerimaanMingguan(Request $request)
+    {
         //todo : laporan penerimaan
         $tglAwal = $request['tglAwal'];
         $tglAkhir = $request['tglAkhir'];
@@ -4174,7 +4375,8 @@ case when pjd.hargasatuand = 0 then pjd.hargasatuank else pjd.hargasatuand end
 
         return $this->respond($data);
     }
-    public function getDataLaporanRekapHasilRetribusiDaerah(Request $request){
+    public function getDataLaporanRekapHasilRetribusiDaerah(Request $request)
+    {
         //todo : laporan penerimaan
         $tglAwal = $request['tglAwal'];
         $tglAkhir = $request['tglAkhir'];
@@ -4527,7 +4729,8 @@ case when pjd.hargasatuand = 0 then pjd.hargasatuank else pjd.hargasatuand end
         return $this->respond($data);
     }
 
-    public function getDataLaporanTargetRealisasiPendapatan(Request $request){
+    public function getDataLaporanTargetRealisasiPendapatan(Request $request)
+    {
         //todo : laporan penerimaan
         $tglAwal = $request['tglAwal'];
         $tglAkhir = $request['tglAkhir'];
@@ -4589,10 +4792,11 @@ case when pjd.hargasatuand = 0 then pjd.hargasatuank else pjd.hargasatuand end
         return $this->respond($data);
     }
 
-    public function getDataLaporanPendapatanDiklat(Request $request){
+    public function getDataLaporanPendapatanDiklat(Request $request)
+    {
         $tglAwal = $request['tglAwal'];
         $tglAkhir = $request['tglAkhir'];
-   $kdProfile = (int) $this->getDataKdProfile($request);
+        $kdProfile = (int) $this->getDataKdProfile($request);
 
         $data = \DB::select(DB::raw("
             SELECT sbm.tglsbm, sbm.nosbm, sbm.totaldibayar, pe.institusipendidikan, cb.carabayar, pe.jumlahpeserta, pe.tanggalmulai, pe.tanggalselesai, pr.namaproduk FROM strukbuktipenerimaan_t sbm 
@@ -4607,12 +4811,12 @@ case when pjd.hargasatuand = 0 then pjd.hargasatuank else pjd.hargasatuand end
          "));
 
         return $this->respond($data);
-
     }
 
-    public function getDataRekapDiklat(Request $request){
+    public function getDataRekapDiklat(Request $request)
+    {
         $tahun = $request['tahun'];
-  $kdProfile = (int) $this->getDataKdProfile($request);
+        $kdProfile = (int) $this->getDataKdProfile($request);
 
         $data = \DB::select(DB::raw("
                 SELECT x.jenistagihan,x.bulanku,SUM(x.totalharusdibayar) as total FROM (select sp.norec,sp.tglstruk, sp.namapasien_klien,kt.reportdisplay as jenistagihan,
@@ -4649,21 +4853,23 @@ case when pjd.hargasatuand = 0 then pjd.hargasatuank else pjd.hargasatuand end
         return $this->respond($data);
     }
 
-    function getDataLaporanPenerimaanSemuaKasir(Request $request) {
+    function getDataLaporanPenerimaanSemuaKasir(Request $request)
+    {
         $kdProfile = (int) $this->getDataKdProfile($request);
         $tglAwal = $request['tglAwal'];
         $tglAkhir = $request['tglAkhir'];
-        
+
         $idKasir = '';
         $idRuangan = '';
         if (isset($request['idKasir']) && $request['idKasir'] != "" && $request['idKasir'] != "undefined") {
-            $idKasir = 'AND p.id ='.$request['idKasir'];
+            $idKasir = 'AND p.id =' . $request['idKasir'];
         }
         if (isset($request['idRuangan']) && $request['idRuangan'] != "" && $request['idRuangan'] != "undefined") {
-            $idRuangan = 'AND p.id ='.$request['idRuangan'];
+            $idRuangan = 'AND p.id =' . $request['idRuangan'];
         }
 
-        $data = \DB::select(DB::raw("
+        $data = \DB::select(DB::raw(
+            "
                     SELECT
                         p.namalengkap AS namapenerima,
                         sum(cast(sbm.totaldibayar AS float)) AS totalpenerimaan,
@@ -4681,118 +4887,119 @@ case when pjd.hargasatuand = 0 then pjd.hargasatuank else pjd.hargasatuand end
                         $idKasir
                         $idRuangan
                     GROUP BY p.namalengkap"
-                ));
-        
+        ));
+
         return $this->respond($data);
     }
 
-    public function getLapJaspelRajalRanap(Request $request){
+    public function getLapJaspelRajalRanap(Request $request)
+    {
         $kdProfile = (int) $this->getDataKdProfile($request);
         $dep = [];
 
-//         $data = DB::table('spasiendaftar_t AS pd')
-//             ->join('pasien_m AS ps','ps.id','=','pd.nocmfk')
-//             ->join('antrianpasiendiperiksa_t as apd','apd.noregistrasifk','=','pd.norec')
-//             ->LEFTJOIN ('pelayananpasien_t AS pp','pp.noregistrasifk','=','apd.norec')
-//             ->LEFTJOIN ('pelayananpasienpetugas_t AS ppp','ppp.pelayananpasien','=','pp.norec')
-//             ->LEFTJOIN ('kelompokpasien_m AS kp','kp.id','=','pd.objectkelompokpasienlastfk')
-//             ->LEFTJOIN ('produk_m as prd','prd.id','=','pp.produkfk')
-//             ->LEFTJOIN ('ruangan_m as ru','ru.id','=','pd.objectruanganlastfk')
-//             ->LEFTJOIN ('pegawai_m AS pg','pg.id','=','apd.objectpegawaifk')
-//             ->LEFTJOIN ('pegawai_m AS pg2','pg2.id','=','pd.objectpegawaifk')
-//             ->LEFTJOIN ('strukresep_t AS sr','sr.norec','=','pp.strukresepfk')
-//             ->LEFTJOIN ('pegawai_m AS pg3','pg3.id','=','sr.penulisresepfk')
-//             ->LEFTJOIN ('pegawai_m AS pg4','pg4.id','=','ppp.objectpegawaifk')
-//             ->select(DB::raw("pd.noregistrasi,pd.tglregistrasi,ps.nocm,ps.namapasien,ru.namaruangan, pg4.namalengkap as dokter_rad,
-//                 case when pp.strukresepfk is not null then pg3.namalengkap else pg.namalengkap end as dokter,
-//                 pg2.namalengkap as dpjputama,kp.kelompokpasien as tipe,
-//                 case when pp.strukresepfk is not  null then prd.namaproduk end as obat,
-//                 case when pp.strukresepfk is not null then ((pp.hargasatuan - (COALESCE(pp.hargadiscount, 0))) * pp.jumlah) + COALESCE(pp.jasa, 0) else 0 end as totalobat,
-//                 case when pp.strukresepfk is null and apd.objectruanganfk not in(575,39,576,44) 
-//                 and pp.produkfk not in (403531,28434,28435,29539,29909,33652,33651,33634,33633,33632,33636,33637,33653,33654,33655,33649,33650,33631) then prd.namaproduk end as tindakan,
-//                 case when pp.strukresepfk is null and apd.objectruanganfk not in(575,39,576,44) 
-//                 and pp.produkfk not in (403531,28434,28435,29539,29909,33652,33651,33634,33633,33632,33636,33637,33653,33654,33655,33649,33650,33631) then pp.jumlah else 0 end as qtytindakan,
-//                 case when pp.strukresepfk is null and apd.objectruanganfk not in(575,39,576,44) 
-//                 and pp.produkfk not in (403531,28434,28435,29539,29909,33652,33651,33634,33633,33632,33636,33637,33653,33654,33655,33649,33650,33631) then pp.hargasatuan  else 0 end as totaltindakan,
-//                 case when pp.strukresepfk is null and apd.objectruanganfk not in(575,39,576,44) 
-//                 and pp.produkfk not in (403531,28434,28435,29539,29909,33652,33651,33634,33633,33632,33636,33637,33653,33654,33655,33649,33650,33631)then pp.norec end as norec_tindakan,
-//                 case when apd.objectruanganfk in (575,39) then prd.namaproduk end as lab,
-//                 case when apd.objectruanganfk in (575,39) then pp.jumlah end as qtylab,
-//                 case when apd.objectruanganfk in (575,39) then pp.hargasatuan end as totallab,
-//                 case when apd.objectruanganfk in (575,39) then pp.norec end as norec_lab,
-//                 case when apd.objectruanganfk in (576) then prd.namaproduk end as radiologi,
-//                 case when apd.objectruanganfk in (576) then pp.jumlah end as qtyradiologi,
-//                 case when apd.objectruanganfk in (576) then pp.hargasatuan end as totalradiologi,
-//                 case when apd.objectruanganfk in (576) then pp.norec end as norec_rad,
-//                 case when pp.produkfk in ( 403531 ) then prd.namaproduk end as askep,
-//                 case when pp.produkfk in ( 403531 ) then pp.jumlah end as qtyaskep,
-//                 case when pp.produkfk in ( 403531 ) then pp.hargasatuan end as totalaskep,
-//                 case when pp.produkfk in ( 403531 ) then pp.norec end as norec_askep,
-//                 case when pp.produkfk in ( 0 ) then prd.namaproduk end as dokterumum,
-//                 case when pp.produkfk in ( 0 ) then pp.jumlah end as qtydokterumum,
-//                 case when pp.produkfk in ( 0 ) then pp.hargasatuan end as totaldokterumum,
-//                 case when pp.produkfk in ( 0 ) then pp.norec end as norec_dokterumum,
-//                 case when pp.produkfk in ( 0 ) then prd.namaproduk end as dokterspe,
-//                 case when pp.produkfk in ( 0 ) then pp.jumlah end as qtydokterspe,
-//                 case when pp.produkfk in ( 0 ) then pp.hargasatuan end as totaldokterspe,
-//                 case when pp.produkfk in ( 0 ) then pp.norec end as norec_dokterspe,
-//                 case when apd.objectruanganfk in (44) then prd.namaproduk end as operasi,
-//                 case when apd.objectruanganfk in (44) then pp.jumlah end as qtyoperasi,
-//                 case when apd.objectruanganfk in (44) then pp.hargasatuan end as totaloperasi,
-//                 case when apd.objectruanganfk in (44) then pp.norec end as norec_operasi,
-//                 case when pp.produkfk in ( 28434,28435,29539,29909 ) then prd.namaproduk end as oxygen,
-//                 case when pp.produkfk in ( 28434,28435,29539,29909 ) then pp.jumlah end as qtyoxygen,
-//                 case when pp.produkfk in ( 28434,28435,29539,29909 ) then pp.hargasatuan end as totaloxygen,
-//                 case when pp.produkfk in ( 28434,28435,29539,29909 ) then pp.norec end as norec_oxygen,
-//                 case when pp.produkfk in ( 33652,33651,33634,33633,33632,33636,33637,33653,33654,33655,33649,33650,33631 ) then prd.namaproduk end as ruang,
-//                 case when pp.produkfk in ( 33652,33651,33634,33633,33632,33636,33637,33653,33654,33655,33649,33650,33631 ) then pp.jumlah end as qtyruang,
-//                 case when pp.produkfk in ( 33652,33651,33634,33633,33632,33636,33637,33653,33654,33655,33649,33650,33631 ) then pp.hargasatuan end as totalruang,
-//                 case when pp.produkfk in ( 33652,33651,33634,33633,33632,33636,33637,33653,33654,33655,33649,33650,33631 ) then pp.norec end as norec_ruang,
-//                 case when pp.produkfk in ( 0 ) then prd.namaproduk end as adm,
-//                 case when pp.produkfk in ( 0 ) then pp.jumlah end as qtyadm,
-//                 case when pp.produkfk in ( 0 ) then pp.hargasatuan end as totaladm,
-//                 case when pp.produkfk in ( 0 ) then pp.norec end as norec_adm,
-//                  null as jp_tindakan, null as js_tindakan, 
-//                  null as jp_rad, null as js_rad,
-//                  null as jp_lab, null as js_lab,
-//                  null as jp_askep, null as js_askep,
-//                  null as jp_dokterumum, null as js_dokterumum,
-//                  null as jp_dokterspe, null as js_dokterspe,
-//                  null as jp_operasi, null as js_operasi,
-//                  null as jp_oxygen, null as js_oxygen,
-//                  null as jp_ruang, null as js_ruang,
-//                  null as jp_adm, null as js_adm,
-//                  ((pp.hargasatuan - (COALESCE (pp.hargadiscount, 0))) * pp.jumlah)
-//                  + COALESCE (pp.jasa, 0) AS total_all
-             
-//                 "))
-// //            ->whereNotNull('pp.strukresepfk')
-//             ->where('pd.kdprofile',$kdProfile);
+        //         $data = DB::table('spasiendaftar_t AS pd')
+        //             ->join('pasien_m AS ps','ps.id','=','pd.nocmfk')
+        //             ->join('antrianpasiendiperiksa_t as apd','apd.noregistrasifk','=','pd.norec')
+        //             ->LEFTJOIN ('pelayananpasien_t AS pp','pp.noregistrasifk','=','apd.norec')
+        //             ->LEFTJOIN ('pelayananpasienpetugas_t AS ppp','ppp.pelayananpasien','=','pp.norec')
+        //             ->LEFTJOIN ('kelompokpasien_m AS kp','kp.id','=','pd.objectkelompokpasienlastfk')
+        //             ->LEFTJOIN ('produk_m as prd','prd.id','=','pp.produkfk')
+        //             ->LEFTJOIN ('ruangan_m as ru','ru.id','=','pd.objectruanganlastfk')
+        //             ->LEFTJOIN ('pegawai_m AS pg','pg.id','=','apd.objectpegawaifk')
+        //             ->LEFTJOIN ('pegawai_m AS pg2','pg2.id','=','pd.objectpegawaifk')
+        //             ->LEFTJOIN ('strukresep_t AS sr','sr.norec','=','pp.strukresepfk')
+        //             ->LEFTJOIN ('pegawai_m AS pg3','pg3.id','=','sr.penulisresepfk')
+        //             ->LEFTJOIN ('pegawai_m AS pg4','pg4.id','=','ppp.objectpegawaifk')
+        //             ->select(DB::raw("pd.noregistrasi,pd.tglregistrasi,ps.nocm,ps.namapasien,ru.namaruangan, pg4.namalengkap as dokter_rad,
+        //                 case when pp.strukresepfk is not null then pg3.namalengkap else pg.namalengkap end as dokter,
+        //                 pg2.namalengkap as dpjputama,kp.kelompokpasien as tipe,
+        //                 case when pp.strukresepfk is not  null then prd.namaproduk end as obat,
+        //                 case when pp.strukresepfk is not null then ((pp.hargasatuan - (COALESCE(pp.hargadiscount, 0))) * pp.jumlah) + COALESCE(pp.jasa, 0) else 0 end as totalobat,
+        //                 case when pp.strukresepfk is null and apd.objectruanganfk not in(575,39,576,44) 
+        //                 and pp.produkfk not in (403531,28434,28435,29539,29909,33652,33651,33634,33633,33632,33636,33637,33653,33654,33655,33649,33650,33631) then prd.namaproduk end as tindakan,
+        //                 case when pp.strukresepfk is null and apd.objectruanganfk not in(575,39,576,44) 
+        //                 and pp.produkfk not in (403531,28434,28435,29539,29909,33652,33651,33634,33633,33632,33636,33637,33653,33654,33655,33649,33650,33631) then pp.jumlah else 0 end as qtytindakan,
+        //                 case when pp.strukresepfk is null and apd.objectruanganfk not in(575,39,576,44) 
+        //                 and pp.produkfk not in (403531,28434,28435,29539,29909,33652,33651,33634,33633,33632,33636,33637,33653,33654,33655,33649,33650,33631) then pp.hargasatuan  else 0 end as totaltindakan,
+        //                 case when pp.strukresepfk is null and apd.objectruanganfk not in(575,39,576,44) 
+        //                 and pp.produkfk not in (403531,28434,28435,29539,29909,33652,33651,33634,33633,33632,33636,33637,33653,33654,33655,33649,33650,33631)then pp.norec end as norec_tindakan,
+        //                 case when apd.objectruanganfk in (575,39) then prd.namaproduk end as lab,
+        //                 case when apd.objectruanganfk in (575,39) then pp.jumlah end as qtylab,
+        //                 case when apd.objectruanganfk in (575,39) then pp.hargasatuan end as totallab,
+        //                 case when apd.objectruanganfk in (575,39) then pp.norec end as norec_lab,
+        //                 case when apd.objectruanganfk in (576) then prd.namaproduk end as radiologi,
+        //                 case when apd.objectruanganfk in (576) then pp.jumlah end as qtyradiologi,
+        //                 case when apd.objectruanganfk in (576) then pp.hargasatuan end as totalradiologi,
+        //                 case when apd.objectruanganfk in (576) then pp.norec end as norec_rad,
+        //                 case when pp.produkfk in ( 403531 ) then prd.namaproduk end as askep,
+        //                 case when pp.produkfk in ( 403531 ) then pp.jumlah end as qtyaskep,
+        //                 case when pp.produkfk in ( 403531 ) then pp.hargasatuan end as totalaskep,
+        //                 case when pp.produkfk in ( 403531 ) then pp.norec end as norec_askep,
+        //                 case when pp.produkfk in ( 0 ) then prd.namaproduk end as dokterumum,
+        //                 case when pp.produkfk in ( 0 ) then pp.jumlah end as qtydokterumum,
+        //                 case when pp.produkfk in ( 0 ) then pp.hargasatuan end as totaldokterumum,
+        //                 case when pp.produkfk in ( 0 ) then pp.norec end as norec_dokterumum,
+        //                 case when pp.produkfk in ( 0 ) then prd.namaproduk end as dokterspe,
+        //                 case when pp.produkfk in ( 0 ) then pp.jumlah end as qtydokterspe,
+        //                 case when pp.produkfk in ( 0 ) then pp.hargasatuan end as totaldokterspe,
+        //                 case when pp.produkfk in ( 0 ) then pp.norec end as norec_dokterspe,
+        //                 case when apd.objectruanganfk in (44) then prd.namaproduk end as operasi,
+        //                 case when apd.objectruanganfk in (44) then pp.jumlah end as qtyoperasi,
+        //                 case when apd.objectruanganfk in (44) then pp.hargasatuan end as totaloperasi,
+        //                 case when apd.objectruanganfk in (44) then pp.norec end as norec_operasi,
+        //                 case when pp.produkfk in ( 28434,28435,29539,29909 ) then prd.namaproduk end as oxygen,
+        //                 case when pp.produkfk in ( 28434,28435,29539,29909 ) then pp.jumlah end as qtyoxygen,
+        //                 case when pp.produkfk in ( 28434,28435,29539,29909 ) then pp.hargasatuan end as totaloxygen,
+        //                 case when pp.produkfk in ( 28434,28435,29539,29909 ) then pp.norec end as norec_oxygen,
+        //                 case when pp.produkfk in ( 33652,33651,33634,33633,33632,33636,33637,33653,33654,33655,33649,33650,33631 ) then prd.namaproduk end as ruang,
+        //                 case when pp.produkfk in ( 33652,33651,33634,33633,33632,33636,33637,33653,33654,33655,33649,33650,33631 ) then pp.jumlah end as qtyruang,
+        //                 case when pp.produkfk in ( 33652,33651,33634,33633,33632,33636,33637,33653,33654,33655,33649,33650,33631 ) then pp.hargasatuan end as totalruang,
+        //                 case when pp.produkfk in ( 33652,33651,33634,33633,33632,33636,33637,33653,33654,33655,33649,33650,33631 ) then pp.norec end as norec_ruang,
+        //                 case when pp.produkfk in ( 0 ) then prd.namaproduk end as adm,
+        //                 case when pp.produkfk in ( 0 ) then pp.jumlah end as qtyadm,
+        //                 case when pp.produkfk in ( 0 ) then pp.hargasatuan end as totaladm,
+        //                 case when pp.produkfk in ( 0 ) then pp.norec end as norec_adm,
+        //                  null as jp_tindakan, null as js_tindakan, 
+        //                  null as jp_rad, null as js_rad,
+        //                  null as jp_lab, null as js_lab,
+        //                  null as jp_askep, null as js_askep,
+        //                  null as jp_dokterumum, null as js_dokterumum,
+        //                  null as jp_dokterspe, null as js_dokterspe,
+        //                  null as jp_operasi, null as js_operasi,
+        //                  null as jp_oxygen, null as js_oxygen,
+        //                  null as jp_ruang, null as js_ruang,
+        //                  null as jp_adm, null as js_adm,
+        //                  ((pp.hargasatuan - (COALESCE (pp.hargadiscount, 0))) * pp.jumlah)
+        //                  + COALESCE (pp.jasa, 0) AS total_all
+
+        //                 "))
+        // //            ->whereNotNull('pp.strukresepfk')
+        //             ->where('pd.kdprofile',$kdProfile);
 
         $tglAwal = '';
         $tglAkhir = '';
         $idDept = '';
         $idRuangan = '';
-        $idKelPasien='';
-        if(isset($request['tglAwal']) && $request['tglAwal']!="" && $request['tglAwal']!="undefined"){
-            $tglAwal = " and pd.tglregistrasi >='".$request['tglAwal']."'";
+        $idKelPasien = '';
+        if (isset($request['tglAwal']) && $request['tglAwal'] != "" && $request['tglAwal'] != "undefined") {
+            $tglAwal = " and pd.tglregistrasi >='" . $request['tglAwal'] . "'";
         };
-        if(isset($request['tglAkhir']) && $request['tglAkhir']!="" && $request['tglAkhir']!="undefined"){
-            $tglAkhir = " and pd.tglregistrasi <='".$request['tglAkhir']."'";
+        if (isset($request['tglAkhir']) && $request['tglAkhir'] != "" && $request['tglAkhir'] != "undefined") {
+            $tglAkhir = " and pd.tglregistrasi <='" . $request['tglAkhir'] . "'";
         };
-        if(isset($request['idDept']) && $request['idDept']!="" && $request['idDept']!="undefined"){
-            $idDept = ' and ru.objectdepartemenfk = '.$request['idDept'];
+        if (isset($request['idDept']) && $request['idDept'] != "" && $request['idDept'] != "undefined") {
+            $idDept = ' and ru.objectdepartemenfk = ' . $request['idDept'];
         }
-        if(isset($request['idRuangan']) && $request['idRuangan']!="" && $request['idRuangan']!="undefined"){
-            $idRuangan = ' and ru.id = '.$request['idRuangan'];
+        if (isset($request['idRuangan']) && $request['idRuangan'] != "" && $request['idRuangan'] != "undefined") {
+            $idRuangan = ' and ru.id = ' . $request['idRuangan'];
         }
-        if(isset($request['kelPasien']) && $request['kelPasien'] != "" && $request['kelPasien'] != "undefined") {
+        if (isset($request['kelPasien']) && $request['kelPasien'] != "" && $request['kelPasien'] != "undefined") {
             $idKelPasien = ' and pd.objectkelompokpasienlastfk = ' . $request['kelPasien'];
         }
-//        $data = $data->where('pd.noregistrasi','2010005564');
+        //        $data = $data->where('pd.noregistrasi','2010005564');
         // $data = $data->orderby('pd.noregistrasi');
         // $data = $data->get();
-//        return $this->respond($data);
+        //        return $this->respond($data);
         $data = DB::select(DB::raw("select pd.noregistrasi,pd.tglregistrasi,ps.nocm,ps.namapasien,ru.namaruangan, pg4.namalengkap as dokter_pemeriksa, pa.nosep,
         case when pp.strukresepfk is not null then pg3.namalengkap else pg.namalengkap end as dokter,pp.tglpelayanan,ru2.namaruangan as ruanganasal,
         pg2.namalengkap as dpjputama,kp.kelompokpasien as tipe,
@@ -4900,7 +5107,7 @@ case when pjd.hargasatuand = 0 then pjd.hargasatuank else pjd.hargasatuand end
 
         $norecPP = '';
         $no = 1;
-        foreach ($data as $ob){
+        foreach ($data as $ob) {
             $ob->no = $no++;
             $ob->noregistrasi = (float) $ob->noregistrasi;
             $ob->nocm = (float) $ob->nocm;
@@ -4937,19 +5144,19 @@ case when pjd.hargasatuand = 0 then pjd.hargasatuank else pjd.hargasatuand end
                 if (empty($ob->dokter_pemeriksa)) {
                     $ob->dokter_pemeriksa = ' - ';
                 }
-                $ob->radiologi .= ' ( '.$ob->dokter_pemeriksa.' )';
+                $ob->radiologi .= ' ( ' . $ob->dokter_pemeriksa . ' )';
             }
             if (!empty($ob->tindakan)) {
                 if (empty($ob->dokter_pemeriksa)) {
                     $ob->dokter_pemeriksa = ' - ';
                 }
-                $ob->tindakan .= ' ( '.$ob->dokter_pemeriksa.' )';
+                $ob->tindakan .= ' ( ' . $ob->dokter_pemeriksa . ' )';
             }
             if (!empty($ob->dokterspe)) {
                 if (empty($ob->dokter_pemeriksa)) {
                     $ob->dokter_pemeriksa = ' - ';
                 }
-                $ob->dokterspe =$ob->dokter_pemeriksa;
+                $ob->dokterspe = $ob->dokter_pemeriksa;
             }
             // if (!empty($ob->operasi)) {
             //     if (empty($ob->dokter_pemeriksa)) {
@@ -4957,45 +5164,45 @@ case when pjd.hargasatuand = 0 then pjd.hargasatuank else pjd.hargasatuand end
             //     }
             //     $ob->operasi .= ' ( '.$ob->dokter_pemeriksa.' )';
             // }
-            if($ob->norec_tindakan != null){
-                $norecPP = $norecPP.",'".$ob->norec_tindakan . "'";
+            if ($ob->norec_tindakan != null) {
+                $norecPP = $norecPP . ",'" . $ob->norec_tindakan . "'";
             }
-            if($ob->norec_lab != null){
-                $norecPP = $norecPP.",'".$ob->norec_lab . "'";
+            if ($ob->norec_lab != null) {
+                $norecPP = $norecPP . ",'" . $ob->norec_lab . "'";
             }
-            if($ob->norec_rad != null){
-                $norecPP = $norecPP.",'".$ob->norec_rad . "'";
+            if ($ob->norec_rad != null) {
+                $norecPP = $norecPP . ",'" . $ob->norec_rad . "'";
             }
-            if($ob->norec_askep != null){
-                $norecPP = $norecPP.",'".$ob->norec_askep . "'";
+            if ($ob->norec_askep != null) {
+                $norecPP = $norecPP . ",'" . $ob->norec_askep . "'";
             }
-            if($ob->norec_dokterumum != null){
-                $norecPP = $norecPP.",'".$ob->norec_dokterumum . "'";
+            if ($ob->norec_dokterumum != null) {
+                $norecPP = $norecPP . ",'" . $ob->norec_dokterumum . "'";
             }
-            if($ob->norec_dokterspe != null){
-                $norecPP = $norecPP.",'".$ob->norec_dokterspe . "'";
+            if ($ob->norec_dokterspe != null) {
+                $norecPP = $norecPP . ",'" . $ob->norec_dokterspe . "'";
             }
-            if($ob->norec_operasi != null){
-                $norecPP = $norecPP.",'".$ob->norec_operasi . "'";
+            if ($ob->norec_operasi != null) {
+                $norecPP = $norecPP . ",'" . $ob->norec_operasi . "'";
             }
-            if($ob->norec_oxygen != null){
-                $norecPP = $norecPP.",'".$ob->norec_oxygen . "'";
+            if ($ob->norec_oxygen != null) {
+                $norecPP = $norecPP . ",'" . $ob->norec_oxygen . "'";
             }
-            if($ob->norec_ruang != null){
-                $norecPP = $norecPP.",'".$ob->norec_ruang . "'";
+            if ($ob->norec_ruang != null) {
+                $norecPP = $norecPP . ",'" . $ob->norec_ruang . "'";
             }
-            if($ob->norec_adm != null){
-                $norecPP = $norecPP.",'".$ob->norec_adm . "'";
+            if ($ob->norec_adm != null) {
+                $norecPP = $norecPP . ",'" . $ob->norec_adm . "'";
             }
-            if($ob->norec_pendaftaran != null){
-                $norecPP = $norecPP.",'".$ob->norec_pendaftaran . "'";
+            if ($ob->norec_pendaftaran != null) {
+                $norecPP = $norecPP . ",'" . $ob->norec_pendaftaran . "'";
             }
         }
-        $norecPP = substr($norecPP, 1, strlen($norecPP)-1);
-//        return $this->respond($norecPd);
-//        return $norecPd;
-        $detail=[];
-        if($norecPP !=''){
+        $norecPP = substr($norecPP, 1, strlen($norecPP) - 1);
+        //        return $this->respond($norecPd);
+        //        return $norecPd;
+        $detail = [];
+        if ($norecPP != '') {
             $detail = DB::select(DB::raw("select ppd.hargasatuan,kom.komponenharga,
                 ppd.pelayananpasien as norec_pp,ppd.komponenhargafk
                 from pelayananpasiendetail_t as ppd
@@ -5005,62 +5212,106 @@ case when pjd.hargasatuand = 0 then pjd.hargasatuank else pjd.hargasatuand end
         }
 
         $i = 0;
-        foreach ($data  as $h){
-            foreach ($detail as $d){
+        foreach ($data  as $h) {
+            foreach ($detail as $d) {
                 //tindakan
-                if($h->norec_tindakan != null && $h->norec_tindakan == $d->norec_pp ){
-                    if($d->komponenhargafk == 93){ $data[$i]->js_tindakan = (float) $d->hargasatuan * $h->qtytindakan; }
-                    if($d->komponenhargafk == 94){ $data[$i]->jp_tindakan = (float) $d->hargasatuan * $h->qtytindakan; }
+                if ($h->norec_tindakan != null && $h->norec_tindakan == $d->norec_pp) {
+                    if ($d->komponenhargafk == 93) {
+                        $data[$i]->js_tindakan = (float) $d->hargasatuan * $h->qtytindakan;
+                    }
+                    if ($d->komponenhargafk == 94) {
+                        $data[$i]->jp_tindakan = (float) $d->hargasatuan * $h->qtytindakan;
+                    }
                 }
                 //lab
-                if($h->norec_lab != null && $h->norec_lab == $d->norec_pp ){
-                    if($d->komponenhargafk == 93){ $data[$i]->js_lab = (float) $d->hargasatuan * $h->qtylab; }
-                    if($d->komponenhargafk == 94){ $data[$i]->jp_lab = (float) $d->hargasatuan * $h->qtylab; }
+                if ($h->norec_lab != null && $h->norec_lab == $d->norec_pp) {
+                    if ($d->komponenhargafk == 93) {
+                        $data[$i]->js_lab = (float) $d->hargasatuan * $h->qtylab;
+                    }
+                    if ($d->komponenhargafk == 94) {
+                        $data[$i]->jp_lab = (float) $d->hargasatuan * $h->qtylab;
+                    }
                 }
                 //rad
-                if($h->norec_rad != null && $h->norec_rad == $d->norec_pp ){
-                    if($d->komponenhargafk == 93){ $data[$i]->js_rad = (float) $d->hargasatuan * $h->qtyradiologi; }
-                    if($d->komponenhargafk == 94){ $data[$i]->jp_rad = (float) $d->hargasatuan * $h->qtyradiologi; }
+                if ($h->norec_rad != null && $h->norec_rad == $d->norec_pp) {
+                    if ($d->komponenhargafk == 93) {
+                        $data[$i]->js_rad = (float) $d->hargasatuan * $h->qtyradiologi;
+                    }
+                    if ($d->komponenhargafk == 94) {
+                        $data[$i]->jp_rad = (float) $d->hargasatuan * $h->qtyradiologi;
+                    }
                 }
                 //askep
-                if($h->norec_askep != null && $h->norec_askep == $d->norec_pp ){
-                    if($d->komponenhargafk == 93){ $data[$i]->js_askep = (float) $d->hargasatuan * $h->qtyaskep; }
-                    if($d->komponenhargafk == 94){ $data[$i]->jp_askep = (float) $d->hargasatuan * $h->qtyaskep; }
+                if ($h->norec_askep != null && $h->norec_askep == $d->norec_pp) {
+                    if ($d->komponenhargafk == 93) {
+                        $data[$i]->js_askep = (float) $d->hargasatuan * $h->qtyaskep;
+                    }
+                    if ($d->komponenhargafk == 94) {
+                        $data[$i]->jp_askep = (float) $d->hargasatuan * $h->qtyaskep;
+                    }
                 }
                 //dokterumum
-                if($h->norec_dokterumum != null && $h->norec_dokterumum == $d->norec_pp ){
-                    if($d->komponenhargafk == 93){ $data[$i]->js_dokterumum = (float) $d->hargasatuan * $h->qtydokterumum; }
-                    if($d->komponenhargafk == 94){ $data[$i]->jp_dokterumum = (float) $d->hargasatuan * $h->qtydokterumum; }
+                if ($h->norec_dokterumum != null && $h->norec_dokterumum == $d->norec_pp) {
+                    if ($d->komponenhargafk == 93) {
+                        $data[$i]->js_dokterumum = (float) $d->hargasatuan * $h->qtydokterumum;
+                    }
+                    if ($d->komponenhargafk == 94) {
+                        $data[$i]->jp_dokterumum = (float) $d->hargasatuan * $h->qtydokterumum;
+                    }
                 }
                 //norec_dokterspe
-                if($h->norec_dokterspe != null && $h->norec_dokterspe == $d->norec_pp ){
-                    if($d->komponenhargafk == 93){ $data[$i]->js_dokterspe = (float) $d->hargasatuan * $h->qtydokterspe; }
-                    if($d->komponenhargafk == 94){ $data[$i]->jp_dokterspe = (float) $d->hargasatuan * $h->qtydokterspe; }
+                if ($h->norec_dokterspe != null && $h->norec_dokterspe == $d->norec_pp) {
+                    if ($d->komponenhargafk == 93) {
+                        $data[$i]->js_dokterspe = (float) $d->hargasatuan * $h->qtydokterspe;
+                    }
+                    if ($d->komponenhargafk == 94) {
+                        $data[$i]->jp_dokterspe = (float) $d->hargasatuan * $h->qtydokterspe;
+                    }
                 }
                 //norec_operasi
-                if($h->norec_operasi != null && $h->norec_operasi == $d->norec_pp ){
-                    if($d->komponenhargafk == 93){ $data[$i]->js_operasi = (float) $d->hargasatuan * $h->qtyoperasi; }
-                    if($d->komponenhargafk == 94){ $data[$i]->jp_operasi = (float) $d->hargasatuan * $h->qtyoperasi; }
+                if ($h->norec_operasi != null && $h->norec_operasi == $d->norec_pp) {
+                    if ($d->komponenhargafk == 93) {
+                        $data[$i]->js_operasi = (float) $d->hargasatuan * $h->qtyoperasi;
+                    }
+                    if ($d->komponenhargafk == 94) {
+                        $data[$i]->jp_operasi = (float) $d->hargasatuan * $h->qtyoperasi;
+                    }
                 }
                 //norec_oxygen
-                if($h->norec_oxygen != null && $h->norec_oxygen == $d->norec_pp ){
-                    if($d->komponenhargafk == 93){ $data[$i]->js_oxygen = (float) $d->hargasatuan * $h->qtyoxygen; }
-                    if($d->komponenhargafk == 94){ $data[$i]->jp_oxygen = (float) $d->hargasatuan * $h->qtyoxygen; }
+                if ($h->norec_oxygen != null && $h->norec_oxygen == $d->norec_pp) {
+                    if ($d->komponenhargafk == 93) {
+                        $data[$i]->js_oxygen = (float) $d->hargasatuan * $h->qtyoxygen;
+                    }
+                    if ($d->komponenhargafk == 94) {
+                        $data[$i]->jp_oxygen = (float) $d->hargasatuan * $h->qtyoxygen;
+                    }
                 }
                 //norec_ruang
-                if($h->norec_ruang != null && $h->norec_ruang == $d->norec_pp ){
-                    if($d->komponenhargafk == 93){ $data[$i]->js_ruang = (float) $d->hargasatuan * $h->qtyruang; }
-                    if($d->komponenhargafk == 94){ $data[$i]->jp_ruang = (float) $d->hargasatuan * $h->qtyruang; }
+                if ($h->norec_ruang != null && $h->norec_ruang == $d->norec_pp) {
+                    if ($d->komponenhargafk == 93) {
+                        $data[$i]->js_ruang = (float) $d->hargasatuan * $h->qtyruang;
+                    }
+                    if ($d->komponenhargafk == 94) {
+                        $data[$i]->jp_ruang = (float) $d->hargasatuan * $h->qtyruang;
+                    }
                 }
                 //admin
-                if($h->norec_adm != null && $h->norec_adm == $d->norec_pp ){
-                    if($d->komponenhargafk == 93){ $data[$i]->js_adm = (float) $d->hargasatuan * $h->qtyadm; }
-                    if($d->komponenhargafk == 94){ $data[$i]->jp_adm = (float) $d->hargasatuan * $h->qtyadm; }
+                if ($h->norec_adm != null && $h->norec_adm == $d->norec_pp) {
+                    if ($d->komponenhargafk == 93) {
+                        $data[$i]->js_adm = (float) $d->hargasatuan * $h->qtyadm;
+                    }
+                    if ($d->komponenhargafk == 94) {
+                        $data[$i]->jp_adm = (float) $d->hargasatuan * $h->qtyadm;
+                    }
                 }
                 //pendaftaran
-                if($h->norec_pendaftaran != null && $h->norec_pendaftaran == $d->norec_pp ){
-                    if($d->komponenhargafk == 93){ $data[$i]->js_pendaftaran = (float) $d->hargasatuan * $h->qty_pendaftaran; }
-                    if($d->komponenhargafk == 94){ $data[$i]->jp_pendaftaran = (float) $d->hargasatuan * $h->qty_pendaftaran; }
+                if ($h->norec_pendaftaran != null && $h->norec_pendaftaran == $d->norec_pp) {
+                    if ($d->komponenhargafk == 93) {
+                        $data[$i]->js_pendaftaran = (float) $d->hargasatuan * $h->qty_pendaftaran;
+                    }
+                    if ($d->komponenhargafk == 94) {
+                        $data[$i]->jp_pendaftaran = (float) $d->hargasatuan * $h->qty_pendaftaran;
+                    }
                 }
             }
             $i++;
@@ -5071,107 +5322,107 @@ case when pjd.hargasatuand = 0 then pjd.hargasatuank else pjd.hargasatuand end
         return $this->respond($res);
     }
 
-    public function getLaporanDetailPenerimaanKasir(Request $request){
+    public function getLaporanDetailPenerimaanKasir(Request $request)
+    {
         $kdProfile = (int) $this->getDataKdProfile($request);
         $tglAwal = $request['tglAwal'];
         $tglAkhir = $request['tglAkhir'];
         $Kronis = "";
         $noreg = '';
         if (isset($request['noReg']) && $request['noReg'] != "" && $request['noReg'] != "undefined") {
-            $noreg = " AND pd.noregistrasi ILIKE '%" .  $request['noReg']."%'";
+            $noreg = " AND pd.noregistrasi ILIKE '%" .  $request['noReg'] . "%'";
         }
         $norm = '';
         if (isset($request['noRm']) && $request['noRm'] != "" && $request['noRm'] != "undefined") {
-            $norm = " AND pm.nocm ILIKE '%" .  $request['noRm']."%'";
+            $norm = " AND pm.nocm ILIKE '%" .  $request['noRm'] . "%'";
         }
         $nosbm = '';
         if (isset($request['nosbm']) && $request['nosbm'] != "" && $request['nosbm'] != "undefined") {
-            $nosbm = " AND sbm.nosbm ILIKE '%" .  $request['nosbm']."%'";
+            $nosbm = " AND sbm.nosbm ILIKE '%" .  $request['nosbm'] . "%'";
         }
         $namaPasien = '';
         if (isset($request['namaPasien']) && $request['namaPasien'] != "" && $request['namaPasien'] != "undefined") {
             $request['namaPasien'] =  str_replace("'", "",   $request['namaPasien']);
-            $namaPasien = "  AND replace(pm.namapasien,'''','') ILIKE '%".$request['namaPasien']."%'";
+            $namaPasien = "  AND replace(pm.namapasien,'''','') ILIKE '%" . $request['namaPasien'] . "%'";
         }
-        $ruId='';
-        if(isset($request['ruanganId']) && $request['ruanganId'] != "" && $request['ruanganId'] != "undefined") {
+        $ruId = '';
+        if (isset($request['ruanganId']) && $request['ruanganId'] != "" && $request['ruanganId'] != "undefined") {
             $ruId = ' AND ru.id = ' . $request['ruanganId'];
         }
-        $deptId='';
-        if(isset($request['idDept']) && $request['idDept'] != "" && $request['idDept'] != "undefined") {
+        $deptId = '';
+        if (isset($request['idDept']) && $request['idDept'] != "" && $request['idDept'] != "undefined") {
             $deptId = ' AND ru.objectdepartemenfk = ' . $request['idDept'];
         }
-        $idKelPasien='';
-        if(isset($request['kelompokPasien']) && $request['kelompokPasien'] != "" && $request['kelompokPasien'] != "undefined") {
+        $idKelPasien = '';
+        if (isset($request['kelompokPasien']) && $request['kelompokPasien'] != "" && $request['kelompokPasien'] != "undefined") {
             $idKelPasien = ' AND pd.objectkelompokpasienlastfk = ' . $request['kelompokPasien'];
         }
         $namaproduk = '';
         if (isset($request['namaproduk']) && $request['namaproduk'] != "" && $request['namaproduk'] != "undefined") {
-            $nosbm = " AND pr.namaproduk ILIKE '%" .  $request['namaproduk']."%'";
+            $nosbm = " AND pr.namaproduk ILIKE '%" .  $request['namaproduk'] . "%'";
         }
         $paramKasir = '';
-        if(isset($request['KasirArr']) && $request['KasirArr']!="" && $request['KasirArr']!="undefined"){
-            $arrRuang = explode(',',$request['KasirArr']) ;
+        if (isset($request['KasirArr']) && $request['KasirArr'] != "" && $request['KasirArr'] != "undefined") {
+            $arrRuang = explode(',', $request['KasirArr']);
             $kodeRuang = [];
             $str = '';
-            $d=0;
-            foreach ( $arrRuang as $item){
-                if ($str == ''){
+            $d = 0;
+            foreach ($arrRuang as $item) {
+                if ($str == '') {
                     $str = $item;
-                }else{
+                } else {
                     $str = $str . ',' . $item;
                 }
                 $d = $d + 1;
             }
             $paramKasir = " AND pg.id IN ($str)";
-//            return $this->respond($paramKasir);
+            //            return $this->respond($paramKasir);
         }
-        
-        $tempKelDokter= '';
+
+        $tempKelDokter = '';
         if (isset($request['dokter']) && $request['dokter'] != "" && $request['dokter'] != "undefined") {
             $tempKelDokter = ' AND pgdpjp.id = ' .  $request['dokter'];
         }
 
-        $tempCarabayar= '';
+        $tempCarabayar = '';
         if (isset($request['carabayar']) && $request['carabayar'] != "" && $request['carabayar'] != "undefined") {
             $tempCarabayar = ' AND cb.id = ' .  $request['carabayar'];
         }
 
-        $paramKelLayanan='';
-        if(isset($request['KelLayanan']) && $request['KelLayanan'] != "" && $request['KelLayanan'] != "undefined") {
-            if ($request['KelLayanan'] == 1){
+        $paramKelLayanan = '';
+        if (isset($request['KelLayanan']) && $request['KelLayanan'] != "" && $request['KelLayanan'] != "undefined") {
+            if ($request['KelLayanan'] == 1) {
                 $paramKelLayanan = ' AND pp.produkfk IN (33625,28343,30111,30110,30168,30650,31206,31207,32361,32362,33630,30151,5001885) AND pp.strukresepfk IS NULL ';
-//                $Kronis = " Limit 0";
-            }elseif ($request['KelLayanan'] == 2){
+                //                $Kronis = " Limit 0";
+            } elseif ($request['KelLayanan'] == 2) {
                 $paramKelLayanan = ' AND pp.produkfk NOT IN (33625,28343,30111,30110,30168,30650,31206,31207,32361,32362,33630,30151,5001885) AND pp.strukresepfk IS NULL ';
-//                $Kronis = " Limit 0";
-            }elseif ($request['KelLayanan'] == 3){
+                //                $Kronis = " Limit 0";
+            } elseif ($request['KelLayanan'] == 3) {
                 $paramKelLayanan = ' AND pp.strukresepfk IS NOT NULL ';
             }
-
         }
 
         $periode = '';
-        if(isset($request['isTglSBM']) && $request['isTglSBM'] != "" && $request['isTglSBM'] != "undefined") {
-            if ($request['isTglSBM'] == "true"){
+        if (isset($request['isTglSBM']) && $request['isTglSBM'] != "" && $request['isTglSBM'] != "undefined") {
+            if ($request['isTglSBM'] == "true") {
                 $periode = "AND sbm.tglsbm BETWEEN '$tglAwal' and '$tglAkhir'";
-            }else{
+            } else {
                 $periode = "AND sp.tglstruk  BETWEEN '$tglAwal' and '$tglAkhir'";
             }
         }
 
-        if(isset($request['periodeBerdasarkan']) && $request['periodeBerdasarkan'] != "" && $request['periodeBerdasarkan'] != "undefined") {
-            if ($request['periodeBerdasarkan'] == "tglsbm"){
+        if (isset($request['periodeBerdasarkan']) && $request['periodeBerdasarkan'] != "" && $request['periodeBerdasarkan'] != "undefined") {
+            if ($request['periodeBerdasarkan'] == "tglsbm") {
                 $periode = "AND sbm.tglsbm BETWEEN '$tglAwal' and '$tglAkhir'";
-            }elseif ($request['periodeBerdasarkan'] == "tglverifikasi"){
+            } elseif ($request['periodeBerdasarkan'] == "tglverifikasi") {
                 $periode = "AND sp.tglstruk  BETWEEN '$tglAwal' and '$tglAkhir'";
-            }else{
+            } else {
                 $periode = "AND pd.tglpulang  BETWEEN '$tglAwal' and '$tglAkhir'";
             }
         }
 
-        
-        
+
+
 
 
 
@@ -5217,41 +5468,42 @@ case when pjd.hargasatuand = 0 then pjd.hargasatuank else pjd.hargasatuand end
                 $namaproduk    
                 $tempCarabayar                                                        
         "));
-//        UNION ALL
-//        SELECT pd.tglregistrasi,pm.nocm,pd.noregistrasi,pm.namapasien,ru.namaruangan,kp.kelompokpasien,
-//                pp.tglpelayanan,pp.produkfk,pr.namaproduk,
-//                CASE WHEN pp.hargajual IS NULL THEN 0 ELSE pp.hargajual END AS harga,
-//                CASE WHEN pp.hargadiscount IS NULL THEN 0 ELSE pp.hargadiscount END AS diskon,
-//                CASE WHEN pp.jasa IS NULL THEN 0 ELSE pp.jasa END AS jasa,(pp.jumlah*7)/30 AS jumlah,
-//                (((CASE WHEN pp.hargajual IS NULL THEN 0 ELSE pp.hargajual END - CASE WHEN pp.hargadiscount IS NULL THEN
-//                0 ELSE pp.hargadiscount END) * ((pp.jumlah*7)/30)) + CASE WHEN pp.jasa IS NULL THEN 0 ELSE pp.jasa END ) AS total,
-//                pd.tglpulang,sp.nostruk as nomorverif,sbm.nosbm,pg.namalengkap as kasir
-//                FROM pelayananpasien_t AS pp
-//                INNER JOIN antrianpasiendiperiksa_t AS apd ON apd.norec = pp.noregistrasifk
-//                INNER JOIN pasiendaftar_t AS pd ON pd.norec = apd.noregistrasifk
-//                INNER JOIN pasien_m AS pm ON pm.id = pd.nocmfk
-//                LEFT JOIN ruangan_m AS ru ON ru.id = apd.objectruanganfk
-//                INNER JOIN strukpelayanan_t AS sp ON sp.norec = pp.strukfk
-//                LEFT JOIN strukbuktipenerimaan_t AS sbm ON sbm.nostrukfk = sp.norec AND sbm.statusenabled = true
-//                LEFT JOIN loginuser_s AS lu ON lu.id = sbm.objectpegawaipenerimafk
-//                LEFT JOIN pegawai_m AS pg ON pg.id = lu.objectpegawaifk
-//                LEFT JOIN produk_m AS pr ON pr.id = pp.produkfk
-//                LEFT JOIN kelompokpasien_m AS kp ON kp.id = pd.objectkelompokpasienlastfk
-//                WHERE pp.kdprofile = $kdProfile AND sbm.tglsbm BETWEEN '$tglAwal' AND '$tglAkhir'
-//        AND pd.objectkelompokpasienlastfk = 2 AND pp.iskronis = true
-//                $noreg
-//                $norm
-//                $namaPasien
-//                $ruId
-//                $deptId
-//                $paramKasir
-//                $idKelPasien
-//                $Kronis
+        //        UNION ALL
+        //        SELECT pd.tglregistrasi,pm.nocm,pd.noregistrasi,pm.namapasien,ru.namaruangan,kp.kelompokpasien,
+        //                pp.tglpelayanan,pp.produkfk,pr.namaproduk,
+        //                CASE WHEN pp.hargajual IS NULL THEN 0 ELSE pp.hargajual END AS harga,
+        //                CASE WHEN pp.hargadiscount IS NULL THEN 0 ELSE pp.hargadiscount END AS diskon,
+        //                CASE WHEN pp.jasa IS NULL THEN 0 ELSE pp.jasa END AS jasa,(pp.jumlah*7)/30 AS jumlah,
+        //                (((CASE WHEN pp.hargajual IS NULL THEN 0 ELSE pp.hargajual END - CASE WHEN pp.hargadiscount IS NULL THEN
+        //                0 ELSE pp.hargadiscount END) * ((pp.jumlah*7)/30)) + CASE WHEN pp.jasa IS NULL THEN 0 ELSE pp.jasa END ) AS total,
+        //                pd.tglpulang,sp.nostruk as nomorverif,sbm.nosbm,pg.namalengkap as kasir
+        //                FROM pelayananpasien_t AS pp
+        //                INNER JOIN antrianpasiendiperiksa_t AS apd ON apd.norec = pp.noregistrasifk
+        //                INNER JOIN pasiendaftar_t AS pd ON pd.norec = apd.noregistrasifk
+        //                INNER JOIN pasien_m AS pm ON pm.id = pd.nocmfk
+        //                LEFT JOIN ruangan_m AS ru ON ru.id = apd.objectruanganfk
+        //                INNER JOIN strukpelayanan_t AS sp ON sp.norec = pp.strukfk
+        //                LEFT JOIN strukbuktipenerimaan_t AS sbm ON sbm.nostrukfk = sp.norec AND sbm.statusenabled = true
+        //                LEFT JOIN loginuser_s AS lu ON lu.id = sbm.objectpegawaipenerimafk
+        //                LEFT JOIN pegawai_m AS pg ON pg.id = lu.objectpegawaifk
+        //                LEFT JOIN produk_m AS pr ON pr.id = pp.produkfk
+        //                LEFT JOIN kelompokpasien_m AS kp ON kp.id = pd.objectkelompokpasienlastfk
+        //                WHERE pp.kdprofile = $kdProfile AND sbm.tglsbm BETWEEN '$tglAwal' AND '$tglAkhir'
+        //        AND pd.objectkelompokpasienlastfk = 2 AND pp.iskronis = true
+        //                $noreg
+        //                $norm
+        //                $namaPasien
+        //                $ruId
+        //                $deptId
+        //                $paramKasir
+        //                $idKelPasien
+        //                $Kronis
 
         return $this->respond($data);
     }
 
-    public function getLaporanDetailPenerimaanKasirNonLayanan(Request $request){
+    public function getLaporanDetailPenerimaanKasirNonLayanan(Request $request)
+    {
         $kdProfile = (int)$this->getDataKdProfile($request);
         $tglAwal = $request['tglAwal'];
         $tglAkhir = $request['tglAkhir'];
@@ -5266,18 +5518,18 @@ case when pjd.hargasatuand = 0 then pjd.hargasatuank else pjd.hargasatuand end
         }
         $nosbm = '';
         if (isset($request['nosbm']) && $request['nosbm'] != "" && $request['nosbm'] != "undefined") {
-            $nosbm = " AND sbm.nosbm ILIKE '%" .  $request['nosbm']."%'";
+            $nosbm = " AND sbm.nosbm ILIKE '%" .  $request['nosbm'] . "%'";
         }
         $paramKasir = '';
-        if(isset($request['KasirArr']) && $request['KasirArr']!="" && $request['KasirArr']!="undefined"){
-            $arrRuang = explode(',',$request['KasirArr']) ;
+        if (isset($request['KasirArr']) && $request['KasirArr'] != "" && $request['KasirArr'] != "undefined") {
+            $arrRuang = explode(',', $request['KasirArr']);
             $kodeRuang = [];
             $str = '';
-            $d=0;
-            foreach ( $arrRuang as $item){
-                if ($str == ''){
+            $d = 0;
+            foreach ($arrRuang as $item) {
+                if ($str == '') {
                     $str = $item;
-                }else{
+                } else {
                     $str = $str . ',' . $item;
                 }
                 $d = $d + 1;
@@ -5319,9 +5571,10 @@ case when pjd.hargasatuand = 0 then pjd.hargasatuank else pjd.hargasatuand end
         return $this->respond($data);
     }
 
-    public function getDataLaporanPenerimaanAzaleaMCU(Request $request) {
+    public function getDataLaporanPenerimaanAzaleaMCU(Request $request)
+    {
         $kdProfile = (int)$this->getDataKdProfile($request);
-        $dataLogin=$request->all();
+        $dataLogin = $request->all();
 
         // $data = \DB::table('sstrukbuktipenerimaan_t as sbm')
         //     ->join('strukpelayanan_t as sp', 'sbm.nostrukfk', '=', 'sp.norec')
@@ -5344,48 +5597,47 @@ case when pjd.hargasatuand = 0 then pjd.hargasatuank else pjd.hargasatuand end
 
         $filter = $request->all();
         $tglAwal = '';
-        if(isset($filter['dateStartTglSbm']) && $filter['dateStartTglSbm'] != "" && $filter['dateStartTglSbm'] != "undefined") {
-            $tgl2 = $filter['dateStartTglSbm'] ;//. " 00:00:00";
-            $tglAwal = " and sbm.tglsbm >= '".$tgl2."'";
+        if (isset($filter['dateStartTglSbm']) && $filter['dateStartTglSbm'] != "" && $filter['dateStartTglSbm'] != "undefined") {
+            $tgl2 = $filter['dateStartTglSbm']; //. " 00:00:00";
+            $tglAwal = " and sbm.tglsbm >= '" . $tgl2 . "'";
         }
         $tglAkhir = '';
-        if(isset($filter['dateEndTglSbm']) && $filter['dateEndTglSbm'] != "" && $filter['dateEndTglSbm'] != "undefined") {
-            $tgl = $filter['dateEndTglSbm'] ;//. " 23:59:59";
-            $tglAkhir = " and sbm.tglsbm <= '".$tgl."'";
+        if (isset($filter['dateEndTglSbm']) && $filter['dateEndTglSbm'] != "" && $filter['dateEndTglSbm'] != "undefined") {
+            $tgl = $filter['dateEndTglSbm']; //. " 23:59:59";
+            $tglAkhir = " and sbm.tglsbm <= '" . $tgl . "'";
         }
         $idPegawai = '';
-        if(isset($filter['idPegawai']) && $filter['idPegawai'] != "" && $filter['idPegawai'] != "undefined") {
-            $idPegawai = " and p.id = ".$filter['idPegawai'];
+        if (isset($filter['idPegawai']) && $filter['idPegawai'] != "" && $filter['idPegawai'] != "undefined") {
+            $idPegawai = " and p.id = " . $filter['idPegawai'];
         }
         $jenisPelayanan = '';
         $ruid1 = 'and ru.id = 663';
         $ruid2 = '';
-        if(isset($filter['jenisPelayanan']) && $filter['jenisPelayanan'] != "" && $filter['jenisPelayanan'] != "undefined") {
-            $jenisPelayanan = " and pd.jenispelayanan = '".$filter['jenisPelayanan']."'";
+        if (isset($filter['jenisPelayanan']) && $filter['jenisPelayanan'] != "" && $filter['jenisPelayanan'] != "undefined") {
+            $jenisPelayanan = " and pd.jenispelayanan = '" . $filter['jenisPelayanan'] . "'";
             if ($filter['jenisPelayanan'] == 1) {
                 $ruid1 = '';
                 $ruid2 = " and ru.id = 663";
-            }
-            else {
+            } else {
                 $ruid1 = '';
                 $ruid2 = '';
             }
         }
         $nosbm = '';
-        if(isset($filter['nosbm']) && $filter['nosbm'] != "" && $filter['nosbm'] != "undefined") {
-            $nosbm = " and sbm.nosbm ilike '%".$filter['nosbm']."%'";
+        if (isset($filter['nosbm']) && $filter['nosbm'] != "" && $filter['nosbm'] != "undefined") {
+            $nosbm = " and sbm.nosbm ilike '%" . $filter['nosbm'] . "%'";
         }
         $nocm = '';
-        if(isset($filter['nocm']) && $filter['nocm'] != "" && $filter['nocm'] != "undefined") {
-            $nocm = " and ps.nocm ilike '%".$filter['nocm']."%'";
+        if (isset($filter['nocm']) && $filter['nocm'] != "" && $filter['nocm'] != "undefined") {
+            $nocm = " and ps.nocm ilike '%" . $filter['nocm'] . "%'";
         }
         $nama = '';
-        if(isset($filter['nama']) && $filter['nama'] != "" && $filter['nama'] != "undefined") {
-            $nama = " and ps.namapasien ilike '%".$filter['nama']."%'";
+        if (isset($filter['nama']) && $filter['nama'] != "" && $filter['nama'] != "undefined") {
+            $nama = " and ps.namapasien ilike '%" . $filter['nama'] . "%'";
         }
         $kasir = '';
-        if(isset($filter['kasir']) && $filter['kasir'] != "" && $filter['kasir'] != "undefined") {
-            $kasir = " and p.id = ".$filter['kasir'];
+        if (isset($filter['kasir']) && $filter['kasir'] != "" && $filter['kasir'] != "undefined") {
+            $kasir = " and p.id = " . $filter['kasir'];
         }
 
         // if(isset($filter['desk']) && $filter['desk'] != "" && $filter['desk'] != "undefined") {
@@ -5402,7 +5654,7 @@ case when pjd.hargasatuand = 0 then pjd.hargasatuank else pjd.hargasatuand end
         //     $kasirArr = ' and p.id in '.$kodeRuang;
         // }
         // $data = $data->get();
-        
+
         $data = \DB::select(DB::raw("
                 select cb.carabayar as caraBayar, 
                     sbmcr.objectcarabayarfk as idCaraBayar, 
@@ -5448,7 +5700,8 @@ case when pjd.hargasatuand = 0 then pjd.hargasatuank else pjd.hargasatuand end
         return $this->respond($data);
     }
 
-    public function getLaporanDetailPenerimaanKasirObatKronis(Request $request){
+    public function getLaporanDetailPenerimaanKasirObatKronis(Request $request)
+    {
         $kdProfile = (int)$this->getDataKdProfile($request);
         $tglAwal = $request['tglAwal'];
         $tglAkhir = $request['tglAkhir'];
@@ -5462,15 +5715,15 @@ case when pjd.hargasatuand = 0 then pjd.hargasatuank else pjd.hargasatuand end
             $namaPasien = "  AND replace(ps.namapasien,'''','') ILIKE '%" . $request['namaPasien'] . "%'";
         }
         $paramKasir = '';
-        if(isset($request['KasirArr']) && $request['KasirArr']!="" && $request['KasirArr']!="undefined"){
-            $arrRuang = explode(',',$request['KasirArr']) ;
+        if (isset($request['KasirArr']) && $request['KasirArr'] != "" && $request['KasirArr'] != "undefined") {
+            $arrRuang = explode(',', $request['KasirArr']);
             $kodeRuang = [];
             $str = '';
-            $d=0;
-            foreach ( $arrRuang as $item){
-                if ($str == ''){
+            $d = 0;
+            foreach ($arrRuang as $item) {
+                if ($str == '') {
                     $str = $item;
-                }else{
+                } else {
                     $str = $str . ',' . $item;
                 }
                 $d = $d + 1;
@@ -5506,9 +5759,10 @@ case when pjd.hargasatuand = 0 then pjd.hargasatuank else pjd.hargasatuand end
 
         return $this->respond($data);
     }
-    public function daftarVirtualAccount(Request $request){
+    public function daftarVirtualAccount(Request $request)
+    {
         $kdProfile = (int)$this->getDataKdProfile($request);
-        $dataLogin=$request->all();
+        $dataLogin = $request->all();
         $data = \DB::table('virtualaccount_t as vr')
             ->leftjoin('strukbuktipenerimaan_t as sbm', 'sbm.norec', '=', 'vr.norec_sbm')
             ->leftjoin('strukpelayanan_t as sp', 'vr.norec_sp', '=', 'sp.norec')
@@ -5518,41 +5772,41 @@ case when pjd.hargasatuand = 0 then pjd.hargasatuank else pjd.hargasatuand end
             ->leftjoin('pegawai_m as p', 'p.id', '=', 'vr.objectpegawaifk')
             ->leftjoin('pasien_m as ps', 'ps.id', '=', 'pd.nocmfk')
             ->select(
-                   \DB::raw("vr.*,pd.noregistrasi,pd.tglregistrasi,ps.nocm,ps.namapasien,p.namalengkap as kasir,ru.namaruangan,sbm.nosbm")
+                \DB::raw("vr.*,pd.noregistrasi,pd.tglregistrasi,ps.nocm,ps.namapasien,p.namalengkap as kasir,ru.namaruangan,sbm.nosbm")
             )
-            ->where('vr.statusenabled',true)
+            ->where('vr.statusenabled', true)
             ->where('vr.kdprofile', $kdProfile)
             ->whereNotnull('vr.norec_pd');
 
         $filter = $request->all();
-        if(isset($filter['dateStartTglSbm']) && $filter['dateStartTglSbm'] != "" && $filter['dateStartTglSbm'] != "undefined") {
-            $tgl2 = $filter['dateStartTglSbm'] ;//. " 00:00:00";
+        if (isset($filter['dateStartTglSbm']) && $filter['dateStartTglSbm'] != "" && $filter['dateStartTglSbm'] != "undefined") {
+            $tgl2 = $filter['dateStartTglSbm']; //. " 00:00:00";
             $data = $data->where('vr.datetime_created', '>=', $tgl2);
         }
-        if(isset($filter['dateEndTglSbm']) && $filter['dateEndTglSbm'] != "" && $filter['dateEndTglSbm'] != "undefined") {
-            $tgl = $filter['dateEndTglSbm'] ;//. " 23:59:59";
+        if (isset($filter['dateEndTglSbm']) && $filter['dateEndTglSbm'] != "" && $filter['dateEndTglSbm'] != "undefined") {
+            $tgl = $filter['dateEndTglSbm']; //. " 23:59:59";
             $data = $data->where('vr.datetime_created', '<=', $tgl);
         }
-        if(isset($filter['idPegawai']) && $filter['idPegawai'] != "" && $filter['idPegawai'] != "undefined") {
+        if (isset($filter['idPegawai']) && $filter['idPegawai'] != "" && $filter['idPegawai'] != "undefined") {
             $data = $data->where('p.id', '=', $filter['idPegawai']);
         }
-        if(isset($filter['idCaraBayar']) && $filter['idCaraBayar'] != "" && $filter['idCaraBayar'] != "undefined") {
+        if (isset($filter['idCaraBayar']) && $filter['idCaraBayar'] != "" && $filter['idCaraBayar'] != "undefined") {
             $data = $data->where('cb.id', '=', $filter['idCaraBayar']);
         }
-        if(isset($filter['idKelTransaksi']) && $filter['idKelTransaksi'] != "" && $filter['idKelTransaksi'] != "undefined") {
+        if (isset($filter['idKelTransaksi']) && $filter['idKelTransaksi'] != "" && $filter['idKelTransaksi'] != "undefined") {
             $data = $data->where('kt.id', $filter['idKelTransaksi']);
         }
-        if(isset($filter['ins']) && $filter['ins'] != "" && $filter['ins'] != "undefined") {
+        if (isset($filter['ins']) && $filter['ins'] != "" && $filter['ins'] != "undefined") {
             $data = $data->where('ru.objectdepartemenfk', $filter['ins']);
         }
-        if(isset($filter['nosbm']) && $filter['nosbm'] != "" && $filter['nosbm'] != "undefined") {
-            $data = $data->where('sbm.nosbm','ilike','%'.$filter['nosbm'].'%');
+        if (isset($filter['nosbm']) && $filter['nosbm'] != "" && $filter['nosbm'] != "undefined") {
+            $data = $data->where('sbm.nosbm', 'ilike', '%' . $filter['nosbm'] . '%');
         }
-        if(isset($filter['nocm']) && $filter['nocm'] != "" && $filter['nocm'] != "undefined") {
-            $data = $data->where('ps.nocm','ilike','%'.$filter['nocm'].'%');
+        if (isset($filter['nocm']) && $filter['nocm'] != "" && $filter['nocm'] != "undefined") {
+            $data = $data->where('ps.nocm', 'ilike', '%' . $filter['nocm'] . '%');
         }
-        if(isset($filter['nama']) && $filter['nama'] != "" && $filter['nama'] != "undefined") {
-            $data = $data->where('ps.namapasien','ilike','%'.$filter['nama'].'%');
+        if (isset($filter['nama']) && $filter['nama'] != "" && $filter['nama'] != "undefined") {
+            $data = $data->where('ps.namapasien', 'ilike', '%' . $filter['nama'] . '%');
         }
         // if(isset($filter['desk']) && $filter['desk'] != "" && $filter['desk'] != "undefined") {
         //     $data = $data->where('sp.namapasien_klien','ilike','%'.$filter['desk'].'%');
@@ -5564,59 +5818,59 @@ case when pjd.hargasatuand = 0 then pjd.hargasatuank else pjd.hargasatuand end
         //     }
         // }
 
-        if(isset($request['KasirArr']) && $request['KasirArr']!="" && $request['KasirArr']!="undefined"){
-            $arrRuang = explode(',',$request['KasirArr']) ;
+        if (isset($request['KasirArr']) && $request['KasirArr'] != "" && $request['KasirArr'] != "undefined") {
+            $arrRuang = explode(',', $request['KasirArr']);
             $kodeRuang = [];
-            foreach ( $arrRuang as $item){
+            foreach ($arrRuang as $item) {
                 $kodeRuang[] = (int) $item;
             }
-            $data = $data->whereIn('p.id',$kodeRuang);
+            $data = $data->whereIn('p.id', $kodeRuang);
         }
 
-//        $data = $data->take($request['jmlRows']);
+        //        $data = $data->take($request['jmlRows']);
         $data = $data->get();
         return $this->respond($data);
     }
-     public function createBillingSIMRS(Request $request)
+    public function createBillingSIMRS(Request $request)
     {
-         $kdProfile = (int)$this->getDataKdProfile($request);
-   
-       // return $this->sendSMS('082211333013',$kontenSMS);
+        $kdProfile = (int)$this->getDataKdProfile($request);
+
+        // return $this->sendSMS('082211333013',$kontenSMS);
         DB::beginTransaction();
-        try{
+        try {
             // $r = $request->input();
             $vir['trx_id'] =  $this->generateCodeBySeqTable(new VirtualAccount(), 'trx_id', 10, date('ymd'), $this->kdProfile);
             // return $vir['trx_id'];
             $strukPelayanan = StrukPelayanan::where('norec', $request['parameterTambahan']['noRecStrukPelayanan'])->first();
-            $norecPD =$strukPelayanan->pasien_daftar;
-            $nocmfk =$strukPelayanan->pasien_daftar->nocmfk;
-            $pref = substr($norecPD->noregistrasi, 6,4);
+            $norecPD = $strukPelayanan->pasien_daftar;
+            $nocmfk = $strukPelayanan->pasien_daftar->nocmfk;
+            $pref = substr($norecPD->noregistrasi, 6, 4);
             $expired = date("Y-m-d H:i:s", strtotime('+3 hours', strtotime(date('Y-m-d H:i:s'))));
-            $pasien= DB::table('pasien_m')->where('id',$nocmfk)->first();
-            
-            $vir['type'] = 'createbilling';
-            $vir['virtual_account'] =$this->getPrefix().date('ym').$pref;
-            $vir['client_id'] =$this->getClientId();
-            $vir['trx_amount'] =$request['jumlahBayar'];
-            $vir['billing_type'] ='c';
-            $vir['customer_name'] =$pasien->namapasien;
-            $vir['customer_email'] ='';
-            $vir['customer_phone'] =$request['nohp'];
-            $vir['datetime_expired'] =$expired;
-            $vir['description'] ='Trx Virtual '. $vir['trx_id'];
-             // return  $vir;
-            $kontenSMS = '';
-            $response = $this->encryptBNI($vir) ;
-           
-            if($response['status'] =='105'){
-                $vir['trx_id']=  $this->generateCodeBySeqTable(new VirtualAccount(), 'trx_id', 10, date('ymd'), $this->kdProfile);
+            $pasien = DB::table('pasien_m')->where('id', $nocmfk)->first();
 
-                $response = $this->encryptBNI($vir) ;
+            $vir['type'] = 'createbilling';
+            $vir['virtual_account'] = $this->getPrefix() . date('ym') . $pref;
+            $vir['client_id'] = $this->getClientId();
+            $vir['trx_amount'] = $request['jumlahBayar'];
+            $vir['billing_type'] = 'c';
+            $vir['customer_name'] = $pasien->namapasien;
+            $vir['customer_email'] = '';
+            $vir['customer_phone'] = $request['nohp'];
+            $vir['datetime_expired'] = $expired;
+            $vir['description'] = 'Trx Virtual ' . $vir['trx_id'];
+            // return  $vir;
+            $kontenSMS = '';
+            $response = $this->encryptBNI($vir);
+
+            if ($response['status'] == '105') {
+                $vir['trx_id'] =  $this->generateCodeBySeqTable(new VirtualAccount(), 'trx_id', 10, date('ymd'), $this->kdProfile);
+
+                $response = $this->encryptBNI($vir);
             }
-            if($response['status'] == '000'){
-               $kontenSMS=   "Hai ".$vir['customer_name'].", Harap melakukan pembayaran dengan No Virtual Account BNI ".$response['data']['virtual_account']." !. Batas waktu pembayaran ".$vir['datetime_expired'].".No Transaksi kamu ".$response['data']['trx_id'].".";
-               $kontenSMS=  str_replace(' ', '%20', $kontenSMS);
-                $newVA = New VirtualAccount();
+            if ($response['status'] == '000') {
+                $kontenSMS =   "Hai " . $vir['customer_name'] . ", Harap melakukan pembayaran dengan No Virtual Account BNI " . $response['data']['virtual_account'] . " !. Batas waktu pembayaran " . $vir['datetime_expired'] . ".No Transaksi kamu " . $response['data']['trx_id'] . ".";
+                $kontenSMS =  str_replace(' ', '%20', $kontenSMS);
+                $newVA = new VirtualAccount();
                 $newVA->trx_id =  $response['data']['trx_id'];
                 $newVA->type =  $vir['type'];
                 $newVA->client_id =  $vir['client_id'];
@@ -5627,7 +5881,7 @@ case when pjd.hargasatuand = 0 then pjd.hargasatuank else pjd.hargasatuand end
                 $newVA->customer_phone =  $vir['customer_phone'];
                 $newVA->datetime_created =  date('Y-m-d H:i:s');
                 $newVA->datetime_expired =  $vir['datetime_expired'];
-                $newVA->description = $vir['description'] ;
+                $newVA->description = $vir['description'];
                 $newVA->virtual_account =  $response['data']['virtual_account'];
                 $newVA->bank =  'BNI';
                 $newVA->norec_pd =  $norecPD->norec;
@@ -5636,75 +5890,75 @@ case when pjd.hargasatuand = 0 then pjd.hargasatuank else pjd.hargasatuand end
                 $newVA->kdprofile =  $kdProfile;
                 $newVA->statusenabled =  true;
                 $newVA->save();
-            }else{
-                  DB::rollBack();
-                  $transMessage = $response['message'];
-                  $result = array(
-                     'status' => 400,
-                     'message' =>  $response['message'] ,
-                 );
-                 return $this->setStatusCode($result['status'])->respond($result, $transMessage);
-            }
-
-
-               $transStatus = 'true';
-            } catch (\Exception $e) {
-                $transStatus = 'false';
-            }
-
-
-            if ($transStatus == 'true') {
-                $transMessage = "Sukses";
-                DB::commit();
-                $this->sendSMS($vir['customer_phone'],$kontenSMS);
-                $result = array(
-                    'status' => 201,
-                    'message' => $transMessage,
-                    'data' => $response,
-                    'as' => 'er@epic',
-                );
             } else {
-                $transMessage = " Simpan Gagal";
                 DB::rollBack();
+                $transMessage = $response['message'];
                 $result = array(
                     'status' => 400,
-                    'message'  => $transMessage,
-
-                    'as' => 'er@epic',
+                    'message' =>  $response['message'],
                 );
+                return $this->setStatusCode($result['status'])->respond($result, $transMessage);
             }
+
+
+            $transStatus = 'true';
+        } catch (\Exception $e) {
+            $transStatus = 'false';
+        }
+
+
+        if ($transStatus == 'true') {
+            $transMessage = "Sukses";
+            DB::commit();
+            $this->sendSMS($vir['customer_phone'], $kontenSMS);
+            $result = array(
+                'status' => 201,
+                'message' => $transMessage,
+                'data' => $response,
+                'as' => 'er@epic',
+            );
+        } else {
+            $transMessage = " Simpan Gagal";
+            DB::rollBack();
+            $result = array(
+                'status' => 400,
+                'message'  => $transMessage,
+
+                'as' => 'er@epic',
+            );
+        }
         return $this->setStatusCode($result['status'])->respond($result, $transMessage);
-
     }
-    function sendSMS($nomor,$contena) {
-            $auth = md5('ECGGENGGAM'.'EC3G348'.$nomor);
-            // $mobile = '082211333013';
-            $username = 'ECGGENGGAM';
-         
-            $url ="http://send.smsmasking.co.id:8080/web2sms/api/sendSMS.aspx?username=".$username."&mobile=".$nomor."&message=".$contena."&auth=".$auth;
+    function sendSMS($nomor, $contena)
+    {
+        $auth = md5('ECGGENGGAM' . 'EC3G348' . $nomor);
+        // $mobile = '082211333013';
+        $username = 'ECGGENGGAM';
 
-           $curl = curl_init();
+        $url = "http://send.smsmasking.co.id:8080/web2sms/api/sendSMS.aspx?username=" . $username . "&mobile=" . $nomor . "&message=" . $contena . "&auth=" . $auth;
 
-           curl_setopt_array($curl, array(
-              CURLOPT_URL => $url,
-              CURLOPT_RETURNTRANSFER => true,
-              CURLOPT_ENCODING => "",
-              CURLOPT_MAXREDIRS => 10,
-              CURLOPT_TIMEOUT => 0,
-              // CURLOPT_SSL_VERIFYHOST => 0,
-              // CURLOPT_SSL_VERIFYPEER => 0,
-              CURLOPT_FOLLOWLOCATION => true,
-              CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
-              CURLOPT_CUSTOMREQUEST => "GET",
-            ));
+        $curl = curl_init();
 
-            $response = curl_exec($curl);
-            $err = curl_error($curl);
-            curl_close($curl);
-            return $response;
+        curl_setopt_array($curl, array(
+            CURLOPT_URL => $url,
+            CURLOPT_RETURNTRANSFER => true,
+            CURLOPT_ENCODING => "",
+            CURLOPT_MAXREDIRS => 10,
+            CURLOPT_TIMEOUT => 0,
+            // CURLOPT_SSL_VERIFYHOST => 0,
+            // CURLOPT_SSL_VERIFYPEER => 0,
+            CURLOPT_FOLLOWLOCATION => true,
+            CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
+            CURLOPT_CUSTOMREQUEST => "GET",
+        ));
 
+        $response = curl_exec($curl);
+        $err = curl_error($curl);
+        curl_close($curl);
+        return $response;
     }
-      public function encryptBNI($data_asli){
+    public function encryptBNI($data_asli)
+    {
         $hashed_string = BniEnc::encrypt(
             $data_asli,
             $this->client_id,
@@ -5714,34 +5968,37 @@ case when pjd.hargasatuand = 0 then pjd.hargasatuank else pjd.hargasatuand end
             'client_id' => $this->client_id,
             'data' => $hashed_string,
         );
-//        dd($data_asli);
+        //        dd($data_asli);
         $response = $this->get_content($this->url, json_encode($data));
         $response_json = json_decode($response, true);
         if ($response_json['status'] !== '000') {
             // handling jika gagal
             return $response_json;
-        }else {
+        } else {
             $data_response = BniEnc::decrypt($response_json['data'], $this->client_id, $this->secret_key);
             $respond = array(
                 'status' => $response_json['status'],
-                'data' =>  $data_response ,
+                'data' =>  $data_response,
             );
 
             return $respond;
-
         }
     }
-    function getClientId (){
+    function getClientId()
+    {
         return '13513';
     }
-    function getSecretKey (){
-        return 'fda741b2e353fce9856fb0a4674095b1';//'ea0c88921fb033387e66ef7d1e82ab83';
+    function getSecretKey()
+    {
+        return 'fda741b2e353fce9856fb0a4674095b1'; //'ea0c88921fb033387e66ef7d1e82ab83';
     }
-    function getPrefix(){
+    function getPrefix()
+    {
         return '98813513';
     }
-     function get_content($url, $post = '') {
-//        $usecookie = __DIR__ . "/cookie.txt";
+    function get_content($url, $post = '')
+    {
+        //        $usecookie = __DIR__ . "/cookie.txt";
         $header[] = 'Content-Type: application/json';
         $header[] = "Accept-Encoding: gzip, deflate";
         $header[] = "Cache-Control: max-age=0";
@@ -5764,8 +6021,7 @@ case when pjd.hargasatuand = 0 then pjd.hargasatuank else pjd.hargasatuand end
 
         curl_setopt($ch, CURLOPT_USERAGENT, "Mozilla/5.0 (Windows NT 6.1) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/37.0.2062.120 Safari/537.36");
 
-        if ($post)
-        {
+        if ($post) {
             curl_setopt($ch, CURLOPT_POST, true);
             curl_setopt($ch, CURLOPT_POSTFIELDS, $post);
         }
@@ -5774,7 +6030,7 @@ case when pjd.hargasatuand = 0 then pjd.hargasatuank else pjd.hargasatuand end
 
         $rs = curl_exec($ch);
 
-        if(empty($rs)){
+        if (empty($rs)) {
             var_dump($rs, curl_error($ch));
             curl_close($ch);
             return false;
@@ -5783,13 +6039,14 @@ case when pjd.hargasatuand = 0 then pjd.hargasatuank else pjd.hargasatuand end
         return $rs;
     }
 
-    public function detailPiutangPasien($norec){
+    public function detailPiutangPasien($norec)
+    {
         $spp = StrukPelayananPenjamin::where('norec', $norec)->first();
-//        $sp = StrukPelayanan::where('norec', $spp->nostrukfk)->first();
+        //        $sp = StrukPelayanan::where('norec', $spp->nostrukfk)->first();
         $sbp = StrukBuktiPenerimaan::where('nostrukfk', $spp->nostrukfk)->orderBy('nosbm')->get();
 
         $detailPembayaran = array();
-        foreach ($sbp as $item){
+        foreach ($sbp as $item) {
             $detailPembayaran[] = array(
                 'noSbm' => $item->nosbm,
                 'tglPembayaran' => $item->tglsbm,
@@ -5805,35 +6062,36 @@ case when pjd.hargasatuand = 0 then pjd.hargasatuank else pjd.hargasatuand end
             "umurPiutang" => $spp->struk_pelayanan->UmurPiutang,
             "noCM" => $spp->struk_pelayanan->pasien_daftar->pasien->nocm,
             "totalTagihan" => $spp->totalbiaya,
-            "sudahDibayar" => $spp->totalsudahdibayar+$dibayarAwal,
-            "sisaPiutang" => $spp->totalbiaya - $dibayarAwal-$spp->totalsudahdibayar,
+            "sudahDibayar" => $spp->totalsudahdibayar + $dibayarAwal,
+            "sisaPiutang" => $spp->totalbiaya - $dibayarAwal - $spp->totalsudahdibayar,
             "detailPembayaran" => $detailPembayaran
         );
 
         return $this->respond($data);
     }
 
-    public function getDataLaporanRekapPendapatanRuangan(Request $request) {
+    public function getDataLaporanRekapPendapatanRuangan(Request $request)
+    {
         $kdProfile = (int) $this->getDataKdProfile($request);
         $tglAwal = $request['tglAwal'];
         $tglAkhir = $request['tglAkhir'];
-        $listIdKelPasienNonUmum = $this->settingDataFixed('settingLaporanPendapatanNonUmum',$kdProfile);
-        $listIdKelPasienUmum = $this->settingDataFixed('settingLaporanPendapatanUmum',$kdProfile);
-        $ruanganId = '';       
-        $idDept ='';
+        $listIdKelPasienNonUmum = $this->settingDataFixed('settingLaporanPendapatanNonUmum', $kdProfile);
+        $listIdKelPasienUmum = $this->settingDataFixed('settingLaporanPendapatanUmum', $kdProfile);
+        $ruanganId = '';
+        $idDept = '';
         $kelompokPasien = '';
         if (isset($request['idDept']) && $request['idDept'] != "" && $request['idDept'] != "undefined") {
-            $idDept =' and ru.objectdepartemenfk = '. $request['idDept'];
+            $idDept = ' and ru.objectdepartemenfk = ' . $request['idDept'];
         }
         if (isset($request['ruanganId']) && $request['ruanganId'] != "" && $request['ruanganId'] != "undefined") {
-            $ruanganId = ' and pd.objectruanganlastfk = '. $request['ruanganId'];
-        }        
+            $ruanganId = ' and pd.objectruanganlastfk = ' . $request['ruanganId'];
+        }
         if (isset($request['kelompokPasien']) && $request['kelompokPasien'] != "" && $request['kelompokPasien'] != "undefined") {
             if ($request['kelompokPasien'] == "Non Tunai") {
-                $kelompokPasien = " AND pd.objectkelompokpasienlastfk IN (" . $listIdKelPasienNonUmum .") AND sbm.nostrukfk IS NULL ";
+                $kelompokPasien = " AND pd.objectkelompokpasienlastfk IN (" . $listIdKelPasienNonUmum . ") AND sbm.nostrukfk IS NULL ";
             } else if ($request['kelompokPasien'] == "Tunai") {
-                $kelompokPasien = " AND pd.objectkelompokpasienlastfk IN (" . $listIdKelPasienUmum .") AND sbm.nostrukfk IS NOT NULL ";
-            }         
+                $kelompokPasien = " AND pd.objectkelompokpasienlastfk IN (" . $listIdKelPasienUmum . ") AND sbm.nostrukfk IS NOT NULL ";
+            }
         }
         $data = DB::select(DB::raw("
                 WITH x AS (
@@ -5872,16 +6130,16 @@ case when pjd.hargasatuand = 0 then pjd.hargasatuank else pjd.hargasatuand end
         "));
 
         $result = array(
-            'laporan' => $data,         
+            'laporan' => $data,
             'message' => 'ea@epic',
         );
 
-        return $this->respond($result);   
+        return $this->respond($result);
     }
     public function detailTagihanDiklat(Request $request)
     {
-       $kdProfile = (int) $this->getDataKdProfile($request);
-        $filter=$request->all();
+        $kdProfile = (int) $this->getDataKdProfile($request);
+        $filter = $request->all();
         // $list = explode (',',$this->settingDataFixed('kdTransaksiNonLayanan', $kdProfile));
         // $KdList = [];
         // foreach ($list as $item){
@@ -5893,49 +6151,61 @@ case when pjd.hargasatuand = 0 then pjd.hargasatuank else pjd.hargasatuand end
         //     ->where('lu.id','=',$filter['userData']['id'])
         //     ->get();
 
-            $dataNonLayanan = \DB::table('strukpelayanan_t as sp')
-                ->leftjoin('strukpelayanandetail_t as spd', 'spd.nostrukfk', '=', 'sp.norec')
-                ->join('produk_m as pr', 'pr.id', '=', 'spd.objectprodukfk')
-                ->join('detailjenisproduk_m as djp', 'djp.id', '=', 'pr.objectdetailjenisprodukfk')
-                ->join('kelompoktransaksi_m as kt', 'sp.objectkelompoktransaksifk', '=', 'kt.id')
-                ->select('sp.norec', 'sp.tglstruk', 'sp.namapasien_klien', 'kt.reportdisplay as jenistagihan','sp.isverifikasi',
-                        'sp.keteranganlainnya', 'sp.nosbklastfk', 'sp.nosbmlastfk', 'kt.id as jenisTagihanId','djp.detailjenisproduk', 'djp.id as iddjp','spd.norec as norec_spd',
-                    \DB::raw("CAST(sp.totalharusdibayar AS FLOAT) AS totalharusdibayar "))
-                ->where('sp.kdprofile', $kdProfile)
-                // ->whereNotNull('sp.totalharusdibayar')
-                // ->whereIn('sp.objectkelompoktransaksifk', $KdList)
-                // ->whereNotNull('sp.nosbmlastfk')
-                // ->whereNotNull('sp.nosbklastfk')
-                ->where('kt.id','=',13);
-        
+        $dataNonLayanan = \DB::table('strukpelayanan_t as sp')
+            ->leftjoin('strukpelayanandetail_t as spd', 'spd.nostrukfk', '=', 'sp.norec')
+            ->join('produk_m as pr', 'pr.id', '=', 'spd.objectprodukfk')
+            ->join('detailjenisproduk_m as djp', 'djp.id', '=', 'pr.objectdetailjenisprodukfk')
+            ->join('kelompoktransaksi_m as kt', 'sp.objectkelompoktransaksifk', '=', 'kt.id')
+            ->select(
+                'sp.norec',
+                'sp.tglstruk',
+                'sp.namapasien_klien',
+                'kt.reportdisplay as jenistagihan',
+                'sp.isverifikasi',
+                'sp.keteranganlainnya',
+                'sp.nosbklastfk',
+                'sp.nosbmlastfk',
+                'kt.id as jenisTagihanId',
+                'djp.detailjenisproduk',
+                'djp.id as iddjp',
+                'spd.norec as norec_spd',
+                \DB::raw("CAST(sp.totalharusdibayar AS FLOAT) AS totalharusdibayar ")
+            )
+            ->where('sp.kdprofile', $kdProfile)
+            // ->whereNotNull('sp.totalharusdibayar')
+            // ->whereIn('sp.objectkelompoktransaksifk', $KdList)
+            // ->whereNotNull('sp.nosbmlastfk')
+            // ->whereNotNull('sp.nosbklastfk')
+            ->where('kt.id', '=', 13);
 
-        if(isset($filter['tglAwal']) && $filter['tglAwal']!=""){
-            $dataNonLayanan = $dataNonLayanan->where('sp.tglstruk','>=', $filter['tglAwal']);
+
+        if (isset($filter['tglAwal']) && $filter['tglAwal'] != "") {
+            $dataNonLayanan = $dataNonLayanan->where('sp.tglstruk', '>=', $filter['tglAwal']);
         }
 
-        if(isset($filter['tglAkhir']) && $filter['tglAkhir']!=""){
-            $tgl= $filter['tglAkhir'];//." 23:59:59";
-            $dataNonLayanan = $dataNonLayanan->where('sp.tglstruk','<=', $tgl);
+        if (isset($filter['tglAkhir']) && $filter['tglAkhir'] != "") {
+            $tgl = $filter['tglAkhir']; //." 23:59:59";
+            $dataNonLayanan = $dataNonLayanan->where('sp.tglstruk', '<=', $tgl);
         }
-//
-        if(isset($filter['jenisTagihanId']) && $filter['jenisTagihanId']!=""){
-            $dataNonLayanan = $dataNonLayanan->where('kt.id','=', $filter['jenisTagihanId']);
-        }
-
-        if(isset($filter['namaPelanggan']) && $filter['namaPelanggan']!=""){
-            $dataNonLayanan = $dataNonLayanan->where('sp.namapasien_klien','ilike','%'. $filter['namaPelanggan'] . '%');
+        //
+        if (isset($filter['jenisTagihanId']) && $filter['jenisTagihanId'] != "") {
+            $dataNonLayanan = $dataNonLayanan->where('kt.id', '=', $filter['jenisTagihanId']);
         }
 
+        if (isset($filter['namaPelanggan']) && $filter['namaPelanggan'] != "") {
+            $dataNonLayanan = $dataNonLayanan->where('sp.namapasien_klien', 'ilike', '%' . $filter['namaPelanggan'] . '%');
+        }
 
-//        $dataPiutang=$dataPiutang->groupBy('kp.kelompokpasien', 'spp.norec','sp.tglstruk', 'pd.noregistrasi', 'pd.tglregistrasi','p.nocm','p.namapasien','spp.totalppenjamin','spp.totalharusdibayar',
-//            'spp.totalsudahdibayar', 'r.namarekanan', 'spp.totalbiaya', 'spp.noverifikasi');
-        $dataNonLayanan =$dataNonLayanan->where('sp.statusenabled','=',true);
-        $dataNonLayanan =$dataNonLayanan->whereNull('sp.isverifikasi');
-        $dataNonLayanan =$dataNonLayanan->get();
+
+        //        $dataPiutang=$dataPiutang->groupBy('kp.kelompokpasien', 'spp.norec','sp.tglstruk', 'pd.noregistrasi', 'pd.tglregistrasi','p.nocm','p.namapasien','spp.totalppenjamin','spp.totalharusdibayar',
+        //            'spp.totalsudahdibayar', 'r.namarekanan', 'spp.totalbiaya', 'spp.noverifikasi');
+        $dataNonLayanan = $dataNonLayanan->where('sp.statusenabled', '=', true);
+        $dataNonLayanan = $dataNonLayanan->whereNull('sp.isverifikasi');
+        $dataNonLayanan = $dataNonLayanan->get();
         $result = array();
         foreach ($dataNonLayanan as $item) {
             $statusBayar = "Belum Bayar";
-            if($item->nosbmlastfk!=null ||$item->nosbklastfk!=null){
+            if ($item->nosbmlastfk != null || $item->nosbklastfk != null) {
                 $statusBayar = "Lunas";
             }
             $result[] = array(
@@ -5946,489 +6216,486 @@ case when pjd.hargasatuand = 0 then pjd.hargasatuank else pjd.hargasatuand end
                 'totalDibayar' => $item->totalharusdibayar,
                 'keterangan' => $item->keteranganlainnya,
                 'jenisTagihanId' => $item->jenisTagihanId,
-                'statusBayar' =>$statusBayar,
+                'statusBayar' => $statusBayar,
                 'detailjenisproduk' => $item->detailjenisproduk,
                 'detailjenisprodukId' => $item->iddjp,
                 'norec_spd' => $item->norec_spd,
 
             );
         }
-         return $this->respond($result, 'Data Tagihan Penunjang');
+        return $this->respond($result, 'Data Tagihan Penunjang');
     }
     public function SaveTagihanDiklat(Request $request)
     {
         $kdProfile = (int) $this->getDataKdProfile($request);
         \DB::beginTransaction();
-        $transMessage='';
+        $transMessage = '';
         $req = $request->all();
         try {
-            if($req['norec'] == ''){
+            if ($req['norec'] == '') {
                 $ceknorec = \DB::table('detailkegiatandiklat_t')->select('norec_pp')->where('norec_pp', $req['norec_pp'])->get();
                 //orientasi
-                if(count($ceknorec) == 0 && $req['objectdetailjenisproduk'] == 1951){
+                if (count($ceknorec) == 0 && $req['objectdetailjenisproduk'] == 1951) {
                     $TagihanDiklat1 = \DB::table('detailkegiatandiklat_t')->insert([
-                        'norec'=> substr(Uuid::generate(), 0, 32),
-                        'kdprofile'=> $kdProfile,
-                        'statusenabled'=>true,
-                        'kodeexternal'=>$req['kodeexternal'],
-                        'namaexternal'=> $req['namaexternal'],
-                        'reportdisplay'=>$req['kodeexternal'],
-                        'objectpegawaifk'=> $req['objectpegawaifk'],
-                        'objectjenisperanfk'=> $req['objectjenisperanfk'],
-                        'norec_pp'=> $req['norec_pp'],
+                        'norec' => substr(Uuid::generate(), 0, 32),
+                        'kdprofile' => $kdProfile,
+                        'statusenabled' => true,
+                        'kodeexternal' => $req['kodeexternal'],
+                        'namaexternal' => $req['namaexternal'],
+                        'reportdisplay' => $req['kodeexternal'],
+                        'objectpegawaifk' => $req['objectpegawaifk'],
+                        'objectjenisperanfk' => $req['objectjenisperanfk'],
+                        'norec_pp' => $req['norec_pp'],
                     ]);
 
-                        //mapping otomatis
-                        //2912 id bu ami
-                        //100270 id mas toni
-                        // 320261180 diklat
-                        // 320261181 timkordik
-                        // 320261182 kepk
-                        //2665 dr. arum
-                        //2914 dr. naila
+                    //mapping otomatis
+                    //2912 id bu ami
+                    //100270 id mas toni
+                    // 320261180 diklat
+                    // 320261181 timkordik
+                    // 320261182 kepk
+                    //2665 dr. arum
+                    //2914 dr. naila
                     $TagihanDiklat2 = \DB::table('detailkegiatandiklat_t')->insert([
-                        'norec'=> substr(Uuid::generate(), 0, 32),
-                        'kdprofile'=> $kdProfile,
-                        'statusenabled'=>true,
-                        'kodeexternal'=>$req['kodeexternal'],
-                        'namaexternal'=> $req['namaexternal'],
-                        'reportdisplay'=>$req['kodeexternal'],
-                        'objectpegawaifk'=> 320261180,
-                        'objectjenisperanfk'=> 20,
-                        'norec_pp'=> $req['norec_pp'],
+                        'norec' => substr(Uuid::generate(), 0, 32),
+                        'kdprofile' => $kdProfile,
+                        'statusenabled' => true,
+                        'kodeexternal' => $req['kodeexternal'],
+                        'namaexternal' => $req['namaexternal'],
+                        'reportdisplay' => $req['kodeexternal'],
+                        'objectpegawaifk' => 320261180,
+                        'objectjenisperanfk' => 20,
+                        'norec_pp' => $req['norec_pp'],
                     ]);
-                    $transMessage='Simpan Berhasil plus diklat';
+                    $transMessage = 'Simpan Berhasil plus diklat';
                 }
 
                 //pkk
-                else if(count($ceknorec) == 0 && $req['objectdetailjenisproduk'] == 1947){
+                else if (count($ceknorec) == 0 && $req['objectdetailjenisproduk'] == 1947) {
                     \DB::table('detailkegiatandiklat_t')->insert([
-                        'norec'=> substr(Uuid::generate(), 0, 32),
-                        'kdprofile'=> $kdProfile,
-                        'statusenabled'=>true,
-                        'kodeexternal'=>$req['kodeexternal'],
-                        'namaexternal'=> $req['namaexternal'],
-                        'reportdisplay'=>$req['kodeexternal'],
-                        'objectpegawaifk'=> $req['objectpegawaifk'],
-                        'objectjenisperanfk'=> $req['objectjenisperanfk'],
-                        'norec_pp'=> $req['norec_pp'],
+                        'norec' => substr(Uuid::generate(), 0, 32),
+                        'kdprofile' => $kdProfile,
+                        'statusenabled' => true,
+                        'kodeexternal' => $req['kodeexternal'],
+                        'namaexternal' => $req['namaexternal'],
+                        'reportdisplay' => $req['kodeexternal'],
+                        'objectpegawaifk' => $req['objectpegawaifk'],
+                        'objectjenisperanfk' => $req['objectjenisperanfk'],
+                        'norec_pp' => $req['norec_pp'],
                     ]);
 
-                        //mapping otomatis
+                    //mapping otomatis
                     \DB::table('detailkegiatandiklat_t')->insert([
-                        'norec'=> substr(Uuid::generate(), 0, 32),
-                        'kdprofile'=> $kdProfile,
-                        'statusenabled'=>true,
-                        'kodeexternal'=>$req['kodeexternal'],
-                        'namaexternal'=> $req['namaexternal'],
-                        'reportdisplay'=>$req['kodeexternal'],
-                        'objectpegawaifk'=> 320261180,
-                        'objectjenisperanfk'=> 22,
-                        'norec_pp'=> $req['norec_pp'],
+                        'norec' => substr(Uuid::generate(), 0, 32),
+                        'kdprofile' => $kdProfile,
+                        'statusenabled' => true,
+                        'kodeexternal' => $req['kodeexternal'],
+                        'namaexternal' => $req['namaexternal'],
+                        'reportdisplay' => $req['kodeexternal'],
+                        'objectpegawaifk' => 320261180,
+                        'objectjenisperanfk' => 22,
+                        'norec_pp' => $req['norec_pp'],
                     ]);
 
                     \DB::table('detailkegiatandiklat_t')->insert([
-                        'norec'=> substr(Uuid::generate(), 0, 32),
-                        'kdprofile'=> $kdProfile,
-                        'statusenabled'=>true,
-                        'kodeexternal'=>$req['kodeexternal'],
-                        'namaexternal'=> $req['namaexternal'],
-                        'reportdisplay'=>$req['kodeexternal'],
-                        'objectpegawaifk'=> 2914,
-                        'objectjenisperanfk'=> 23,
-                        'norec_pp'=> $req['norec_pp'],
+                        'norec' => substr(Uuid::generate(), 0, 32),
+                        'kdprofile' => $kdProfile,
+                        'statusenabled' => true,
+                        'kodeexternal' => $req['kodeexternal'],
+                        'namaexternal' => $req['namaexternal'],
+                        'reportdisplay' => $req['kodeexternal'],
+                        'objectpegawaifk' => 2914,
+                        'objectjenisperanfk' => 23,
+                        'norec_pp' => $req['norec_pp'],
                     ]);
-                    $transMessage='Simpan Berhasil plus diklat';
+                    $transMessage = 'Simpan Berhasil plus diklat';
                 }
                 //ppk
-                else if(count($ceknorec) == 0 && $req['objectdetailjenisproduk'] == 1960){
+                else if (count($ceknorec) == 0 && $req['objectdetailjenisproduk'] == 1960) {
                     \DB::table('detailkegiatandiklat_t')->insert([
-                        'norec'=> substr(Uuid::generate(), 0, 32),
-                        'kdprofile'=> $kdProfile,
-                        'statusenabled'=>true,
-                        'kodeexternal'=>$req['kodeexternal'],
-                        'namaexternal'=> $req['namaexternal'],
-                        'reportdisplay'=>$req['kodeexternal'],
-                        'objectpegawaifk'=> $req['objectpegawaifk'],
-                        'objectjenisperanfk'=> $req['objectjenisperanfk'],
-                        'norec_pp'=> $req['norec_pp'],
+                        'norec' => substr(Uuid::generate(), 0, 32),
+                        'kdprofile' => $kdProfile,
+                        'statusenabled' => true,
+                        'kodeexternal' => $req['kodeexternal'],
+                        'namaexternal' => $req['namaexternal'],
+                        'reportdisplay' => $req['kodeexternal'],
+                        'objectpegawaifk' => $req['objectpegawaifk'],
+                        'objectjenisperanfk' => $req['objectjenisperanfk'],
+                        'norec_pp' => $req['norec_pp'],
                     ]);
 
-                        //mapping otomatis
+                    //mapping otomatis
                     \DB::table('detailkegiatandiklat_t')->insert([
-                        'norec'=> substr(Uuid::generate(), 0, 32),
-                        'kdprofile'=> $kdProfile,
-                        'statusenabled'=>true,
-                        'kodeexternal'=>$req['kodeexternal'],
-                        'namaexternal'=> $req['namaexternal'],
-                        'reportdisplay'=>$req['kodeexternal'],
-                        'objectpegawaifk'=> 320261180,
-                        'objectjenisperanfk'=> 9,
-                        'norec_pp'=> $req['norec_pp'],
+                        'norec' => substr(Uuid::generate(), 0, 32),
+                        'kdprofile' => $kdProfile,
+                        'statusenabled' => true,
+                        'kodeexternal' => $req['kodeexternal'],
+                        'namaexternal' => $req['namaexternal'],
+                        'reportdisplay' => $req['kodeexternal'],
+                        'objectpegawaifk' => 320261180,
+                        'objectjenisperanfk' => 9,
+                        'norec_pp' => $req['norec_pp'],
                     ]);
 
-              
-                    $transMessage='Simpan Berhasil plus diklat';
+
+                    $transMessage = 'Simpan Berhasil plus diklat';
                 }
 
                 //kunjungan sehari
-                else if(count($ceknorec) == 0 && $req['objectdetailjenisproduk'] == 1950){
+                else if (count($ceknorec) == 0 && $req['objectdetailjenisproduk'] == 1950) {
                     \DB::table('detailkegiatandiklat_t')->insert([
-                        'norec'=> substr(Uuid::generate(), 0, 32),
-                        'kdprofile'=> $kdProfile,
-                        'statusenabled'=>true,
-                        'kodeexternal'=>$req['kodeexternal'],
-                        'namaexternal'=> $req['namaexternal'],
-                        'reportdisplay'=>$req['kodeexternal'],
-                        'objectpegawaifk'=> $req['objectpegawaifk'],
-                        'objectjenisperanfk'=> $req['objectjenisperanfk'],
-                        'norec_pp'=> $req['norec_pp'],
+                        'norec' => substr(Uuid::generate(), 0, 32),
+                        'kdprofile' => $kdProfile,
+                        'statusenabled' => true,
+                        'kodeexternal' => $req['kodeexternal'],
+                        'namaexternal' => $req['namaexternal'],
+                        'reportdisplay' => $req['kodeexternal'],
+                        'objectpegawaifk' => $req['objectpegawaifk'],
+                        'objectjenisperanfk' => $req['objectjenisperanfk'],
+                        'norec_pp' => $req['norec_pp'],
                     ]);
 
-                        //mapping otomatis
+                    //mapping otomatis
                     \DB::table('detailkegiatandiklat_t')->insert([
-                        'norec'=> substr(Uuid::generate(), 0, 32),
-                        'kdprofile'=> $kdProfile,
-                        'statusenabled'=>true,
-                        'kodeexternal'=>$req['kodeexternal'],
-                        'namaexternal'=> $req['namaexternal'],
-                        'reportdisplay'=>$req['kodeexternal'],
-                        'objectpegawaifk'=> 320261180,
-                        'objectjenisperanfk'=> 31,
-                        'norec_pp'=> $req['norec_pp'],
+                        'norec' => substr(Uuid::generate(), 0, 32),
+                        'kdprofile' => $kdProfile,
+                        'statusenabled' => true,
+                        'kodeexternal' => $req['kodeexternal'],
+                        'namaexternal' => $req['namaexternal'],
+                        'reportdisplay' => $req['kodeexternal'],
+                        'objectpegawaifk' => 320261180,
+                        'objectjenisperanfk' => 31,
+                        'norec_pp' => $req['norec_pp'],
                     ]);
 
-              
-                    $transMessage='Simpan Berhasil plus diklat';
+
+                    $transMessage = 'Simpan Berhasil plus diklat';
                 }
                 //penelitian
-                else if(count($ceknorec) == 0 && $req['objectdetailjenisproduk'] == 1948){
+                else if (count($ceknorec) == 0 && $req['objectdetailjenisproduk'] == 1948) {
                     \DB::table('detailkegiatandiklat_t')->insert([
-                        'norec'=> substr(Uuid::generate(), 0, 32),
-                        'kdprofile'=> $kdProfile,
-                        'statusenabled'=>true,
-                        'kodeexternal'=>$req['kodeexternal'],
-                        'namaexternal'=> $req['namaexternal'],
-                        'reportdisplay'=>$req['kodeexternal'],
-                        'objectpegawaifk'=> $req['objectpegawaifk'],
-                        'objectjenisperanfk'=> $req['objectjenisperanfk'],
-                        'norec_pp'=> $req['norec_pp'],
+                        'norec' => substr(Uuid::generate(), 0, 32),
+                        'kdprofile' => $kdProfile,
+                        'statusenabled' => true,
+                        'kodeexternal' => $req['kodeexternal'],
+                        'namaexternal' => $req['namaexternal'],
+                        'reportdisplay' => $req['kodeexternal'],
+                        'objectpegawaifk' => $req['objectpegawaifk'],
+                        'objectjenisperanfk' => $req['objectjenisperanfk'],
+                        'norec_pp' => $req['norec_pp'],
                     ]);
 
-                        //mapping otomatis
+                    //mapping otomatis
                     \DB::table('detailkegiatandiklat_t')->insert([
-                        'norec'=> substr(Uuid::generate(), 0, 32),
-                        'kdprofile'=> $kdProfile,
-                        'statusenabled'=>true,
-                        'kodeexternal'=>$req['kodeexternal'],
-                        'namaexternal'=> $req['namaexternal'],
-                        'reportdisplay'=>$req['kodeexternal'],
-                        'objectpegawaifk'=> 320261180,
-                        'objectjenisperanfk'=> 33,
-                        'norec_pp'=> $req['norec_pp'],
+                        'norec' => substr(Uuid::generate(), 0, 32),
+                        'kdprofile' => $kdProfile,
+                        'statusenabled' => true,
+                        'kodeexternal' => $req['kodeexternal'],
+                        'namaexternal' => $req['namaexternal'],
+                        'reportdisplay' => $req['kodeexternal'],
+                        'objectpegawaifk' => 320261180,
+                        'objectjenisperanfk' => 33,
+                        'norec_pp' => $req['norec_pp'],
                     ]);
 
-              
-                    $transMessage='Simpan Berhasil plus diklat';
+
+                    $transMessage = 'Simpan Berhasil plus diklat';
                 }
                 //wawancara
-                else if(count($ceknorec) == 0 && $req['objectdetailjenisproduk'] == 1949){
+                else if (count($ceknorec) == 0 && $req['objectdetailjenisproduk'] == 1949) {
                     \DB::table('detailkegiatandiklat_t')->insert([
-                        'norec'=> substr(Uuid::generate(), 0, 32),
-                        'kdprofile'=> $kdProfile,
-                        'statusenabled'=>true,
-                        'kodeexternal'=>$req['kodeexternal'],
-                        'namaexternal'=> $req['namaexternal'],
-                        'reportdisplay'=>$req['kodeexternal'],
-                        'objectpegawaifk'=> $req['objectpegawaifk'],
-                        'objectjenisperanfk'=> $req['objectjenisperanfk'],
-                        'norec_pp'=> $req['norec_pp'],
+                        'norec' => substr(Uuid::generate(), 0, 32),
+                        'kdprofile' => $kdProfile,
+                        'statusenabled' => true,
+                        'kodeexternal' => $req['kodeexternal'],
+                        'namaexternal' => $req['namaexternal'],
+                        'reportdisplay' => $req['kodeexternal'],
+                        'objectpegawaifk' => $req['objectpegawaifk'],
+                        'objectjenisperanfk' => $req['objectjenisperanfk'],
+                        'norec_pp' => $req['norec_pp'],
                     ]);
 
-                        //mapping otomatis
+                    //mapping otomatis
                     \DB::table('detailkegiatandiklat_t')->insert([
-                        'norec'=> substr(Uuid::generate(), 0, 32),
-                        'kdprofile'=> $kdProfile,
-                        'statusenabled'=>true,
-                        'kodeexternal'=>$req['kodeexternal'],
-                        'namaexternal'=> $req['namaexternal'],
-                        'reportdisplay'=>$req['kodeexternal'],
-                        'objectpegawaifk'=> 320261180,
-                        'objectjenisperanfk'=> 35,
-                        'norec_pp'=> $req['norec_pp'],
+                        'norec' => substr(Uuid::generate(), 0, 32),
+                        'kdprofile' => $kdProfile,
+                        'statusenabled' => true,
+                        'kodeexternal' => $req['kodeexternal'],
+                        'namaexternal' => $req['namaexternal'],
+                        'reportdisplay' => $req['kodeexternal'],
+                        'objectpegawaifk' => 320261180,
+                        'objectjenisperanfk' => 35,
+                        'norec_pp' => $req['norec_pp'],
                     ]);
 
-              
-                    $transMessage='Simpan Berhasil plus diklat';
+
+                    $transMessage = 'Simpan Berhasil plus diklat';
                 }
 
                 //uap
-                else if(count($ceknorec) == 0 && $req['objectdetailjenisproduk'] == 1958){
+                else if (count($ceknorec) == 0 && $req['objectdetailjenisproduk'] == 1958) {
                     \DB::table('detailkegiatandiklat_t')->insert([
-                        'norec'=> substr(Uuid::generate(), 0, 32),
-                        'kdprofile'=> $kdProfile,
-                        'statusenabled'=>true,
-                        'kodeexternal'=>$req['kodeexternal'],
-                        'namaexternal'=> $req['namaexternal'],
-                        'reportdisplay'=>$req['kodeexternal'],
-                        'objectpegawaifk'=> $req['objectpegawaifk'],
-                        'objectjenisperanfk'=> $req['objectjenisperanfk'],
-                        'norec_pp'=> $req['norec_pp'],
+                        'norec' => substr(Uuid::generate(), 0, 32),
+                        'kdprofile' => $kdProfile,
+                        'statusenabled' => true,
+                        'kodeexternal' => $req['kodeexternal'],
+                        'namaexternal' => $req['namaexternal'],
+                        'reportdisplay' => $req['kodeexternal'],
+                        'objectpegawaifk' => $req['objectpegawaifk'],
+                        'objectjenisperanfk' => $req['objectjenisperanfk'],
+                        'norec_pp' => $req['norec_pp'],
                     ]);
 
-                        //mapping otomatis
+                    //mapping otomatis
                     \DB::table('detailkegiatandiklat_t')->insert([
-                        'norec'=> substr(Uuid::generate(), 0, 32),
-                        'kdprofile'=> $kdProfile,
-                        'statusenabled'=>true,
-                        'kodeexternal'=>$req['kodeexternal'],
-                        'namaexternal'=> $req['namaexternal'],
-                        'reportdisplay'=>$req['kodeexternal'],
-                        'objectpegawaifk'=> 320261180,
-                        'objectjenisperanfk'=> 37,
-                        'norec_pp'=> $req['norec_pp'],
+                        'norec' => substr(Uuid::generate(), 0, 32),
+                        'kdprofile' => $kdProfile,
+                        'statusenabled' => true,
+                        'kodeexternal' => $req['kodeexternal'],
+                        'namaexternal' => $req['namaexternal'],
+                        'reportdisplay' => $req['kodeexternal'],
+                        'objectpegawaifk' => 320261180,
+                        'objectjenisperanfk' => 37,
+                        'norec_pp' => $req['norec_pp'],
                     ]);
 
-              
-                    $transMessage='Simpan Berhasil plus diklat';
+
+                    $transMessage = 'Simpan Berhasil plus diklat';
                 }
                 //pra penelitian
-                else if(count($ceknorec) == 0 && $req['objectdetailjenisproduk'] == 1957){
+                else if (count($ceknorec) == 0 && $req['objectdetailjenisproduk'] == 1957) {
                     \DB::table('detailkegiatandiklat_t')->insert([
-                        'norec'=> substr(Uuid::generate(), 0, 32),
-                        'kdprofile'=> $kdProfile,
-                        'statusenabled'=>true,
-                        'kodeexternal'=>$req['kodeexternal'],
-                        'namaexternal'=> $req['namaexternal'],
-                        'reportdisplay'=>$req['kodeexternal'],
-                        'objectpegawaifk'=> $req['objectpegawaifk'],
-                        'objectjenisperanfk'=> $req['objectjenisperanfk'],
-                        'norec_pp'=> $req['norec_pp'],
+                        'norec' => substr(Uuid::generate(), 0, 32),
+                        'kdprofile' => $kdProfile,
+                        'statusenabled' => true,
+                        'kodeexternal' => $req['kodeexternal'],
+                        'namaexternal' => $req['namaexternal'],
+                        'reportdisplay' => $req['kodeexternal'],
+                        'objectpegawaifk' => $req['objectpegawaifk'],
+                        'objectjenisperanfk' => $req['objectjenisperanfk'],
+                        'norec_pp' => $req['norec_pp'],
                     ]);
 
-                        //mapping otomatis
+                    //mapping otomatis
                     \DB::table('detailkegiatandiklat_t')->insert([
-                        'norec'=> substr(Uuid::generate(), 0, 32),
-                        'kdprofile'=> $kdProfile,
-                        'statusenabled'=>true,
-                        'kodeexternal'=>$req['kodeexternal'],
-                        'namaexternal'=> $req['namaexternal'],
-                        'reportdisplay'=>$req['kodeexternal'],
-                        'objectpegawaifk'=> 320261180,
-                        'objectjenisperanfk'=> 39,
-                        'norec_pp'=> $req['norec_pp'],
+                        'norec' => substr(Uuid::generate(), 0, 32),
+                        'kdprofile' => $kdProfile,
+                        'statusenabled' => true,
+                        'kodeexternal' => $req['kodeexternal'],
+                        'namaexternal' => $req['namaexternal'],
+                        'reportdisplay' => $req['kodeexternal'],
+                        'objectpegawaifk' => 320261180,
+                        'objectjenisperanfk' => 39,
+                        'norec_pp' => $req['norec_pp'],
                     ]);
 
-              
-                    $transMessage='Simpan Berhasil plus diklat';
+
+                    $transMessage = 'Simpan Berhasil plus diklat';
                 }
                 //studi banding
-                else if(count($ceknorec) == 0 && $req['objectdetailjenisproduk'] == 1952){
+                else if (count($ceknorec) == 0 && $req['objectdetailjenisproduk'] == 1952) {
                     \DB::table('detailkegiatandiklat_t')->insert([
-                        'norec'=> substr(Uuid::generate(), 0, 32),
-                        'kdprofile'=> $kdProfile,
-                        'statusenabled'=>true,
-                        'kodeexternal'=>$req['kodeexternal'],
-                        'namaexternal'=> $req['namaexternal'],
-                        'reportdisplay'=>$req['kodeexternal'],
-                        'objectpegawaifk'=> $req['objectpegawaifk'],
-                        'objectjenisperanfk'=> $req['objectjenisperanfk'],
-                        'norec_pp'=> $req['norec_pp'],
+                        'norec' => substr(Uuid::generate(), 0, 32),
+                        'kdprofile' => $kdProfile,
+                        'statusenabled' => true,
+                        'kodeexternal' => $req['kodeexternal'],
+                        'namaexternal' => $req['namaexternal'],
+                        'reportdisplay' => $req['kodeexternal'],
+                        'objectpegawaifk' => $req['objectpegawaifk'],
+                        'objectjenisperanfk' => $req['objectjenisperanfk'],
+                        'norec_pp' => $req['norec_pp'],
                     ]);
 
-                        //mapping otomatis
+                    //mapping otomatis
                     \DB::table('detailkegiatandiklat_t')->insert([
-                        'norec'=> substr(Uuid::generate(), 0, 32),
-                        'kdprofile'=> $kdProfile,
-                        'statusenabled'=>true,
-                        'kodeexternal'=>$req['kodeexternal'],
-                        'namaexternal'=> $req['namaexternal'],
-                        'reportdisplay'=>$req['kodeexternal'],
-                        'objectpegawaifk'=> 320261180,
-                        'objectjenisperanfk'=> 47,
-                        'norec_pp'=> $req['norec_pp'],
+                        'norec' => substr(Uuid::generate(), 0, 32),
+                        'kdprofile' => $kdProfile,
+                        'statusenabled' => true,
+                        'kodeexternal' => $req['kodeexternal'],
+                        'namaexternal' => $req['namaexternal'],
+                        'reportdisplay' => $req['kodeexternal'],
+                        'objectpegawaifk' => 320261180,
+                        'objectjenisperanfk' => 47,
+                        'norec_pp' => $req['norec_pp'],
                     ]);
 
-              
-                    $transMessage='Simpan Berhasil plus diklat';
+
+                    $transMessage = 'Simpan Berhasil plus diklat';
                 }
                 //mou
-                else if(count($ceknorec) == 0 && $req['objectdetailjenisproduk'] == 1959){
+                else if (count($ceknorec) == 0 && $req['objectdetailjenisproduk'] == 1959) {
                     \DB::table('detailkegiatandiklat_t')->insert([
-                        'norec'=> substr(Uuid::generate(), 0, 32),
-                        'kdprofile'=> $kdProfile,
-                        'statusenabled'=>true,
-                        'kodeexternal'=>$req['kodeexternal'],
-                        'namaexternal'=> $req['namaexternal'],
-                        'reportdisplay'=>$req['kodeexternal'],
-                        'objectpegawaifk'=> $req['objectpegawaifk'],
-                        'objectjenisperanfk'=> $req['objectjenisperanfk'],
-                        'norec_pp'=> $req['norec_pp'],
+                        'norec' => substr(Uuid::generate(), 0, 32),
+                        'kdprofile' => $kdProfile,
+                        'statusenabled' => true,
+                        'kodeexternal' => $req['kodeexternal'],
+                        'namaexternal' => $req['namaexternal'],
+                        'reportdisplay' => $req['kodeexternal'],
+                        'objectpegawaifk' => $req['objectpegawaifk'],
+                        'objectjenisperanfk' => $req['objectjenisperanfk'],
+                        'norec_pp' => $req['norec_pp'],
                     ]);
 
-                        //mapping otomatis
+                    //mapping otomatis
                     \DB::table('detailkegiatandiklat_t')->insert([
-                        'norec'=> substr(Uuid::generate(), 0, 32),
-                        'kdprofile'=> $kdProfile,
-                        'statusenabled'=>true,
-                        'kodeexternal'=>$req['kodeexternal'],
-                        'namaexternal'=> $req['namaexternal'],
-                        'reportdisplay'=>$req['kodeexternal'],
-                        'objectpegawaifk'=> 320261180,
-                        'objectjenisperanfk'=> 53,
-                        'norec_pp'=> $req['norec_pp'],
+                        'norec' => substr(Uuid::generate(), 0, 32),
+                        'kdprofile' => $kdProfile,
+                        'statusenabled' => true,
+                        'kodeexternal' => $req['kodeexternal'],
+                        'namaexternal' => $req['namaexternal'],
+                        'reportdisplay' => $req['kodeexternal'],
+                        'objectpegawaifk' => 320261180,
+                        'objectjenisperanfk' => 53,
+                        'norec_pp' => $req['norec_pp'],
                     ]);
 
-                    
-                    $transMessage='Simpan Berhasil plus diklat';
+
+                    $transMessage = 'Simpan Berhasil plus diklat';
                 }
-                 //seminar
-                else if(count($ceknorec) == 0 && $req['objectdetailjenisproduk'] == 1961){
+                //seminar
+                else if (count($ceknorec) == 0 && $req['objectdetailjenisproduk'] == 1961) {
                     \DB::table('detailkegiatandiklat_t')->insert([
-                        'norec'=> substr(Uuid::generate(), 0, 32),
-                        'kdprofile'=> $kdProfile,
-                        'statusenabled'=>true,
-                        'kodeexternal'=>$req['kodeexternal'],
-                        'namaexternal'=> $req['namaexternal'],
-                        'reportdisplay'=>$req['kodeexternal'],
-                        'objectpegawaifk'=> $req['objectpegawaifk'],
-                        'objectjenisperanfk'=> $req['objectjenisperanfk'],
-                        'norec_pp'=> $req['norec_pp'],
+                        'norec' => substr(Uuid::generate(), 0, 32),
+                        'kdprofile' => $kdProfile,
+                        'statusenabled' => true,
+                        'kodeexternal' => $req['kodeexternal'],
+                        'namaexternal' => $req['namaexternal'],
+                        'reportdisplay' => $req['kodeexternal'],
+                        'objectpegawaifk' => $req['objectpegawaifk'],
+                        'objectjenisperanfk' => $req['objectjenisperanfk'],
+                        'norec_pp' => $req['norec_pp'],
                     ]);
 
-                        //mapping otomatis
+                    //mapping otomatis
                     \DB::table('detailkegiatandiklat_t')->insert([
-                        'norec'=> substr(Uuid::generate(), 0, 32),
-                        'kdprofile'=> $kdProfile,
-                        'statusenabled'=>true,
-                        'kodeexternal'=>$req['kodeexternal'],
-                        'namaexternal'=> $req['namaexternal'],
-                        'reportdisplay'=>$req['kodeexternal'],
-                        'objectpegawaifk'=> 320261180,
-                        'objectjenisperanfk'=> 55,
-                        'norec_pp'=> $req['norec_pp'],
+                        'norec' => substr(Uuid::generate(), 0, 32),
+                        'kdprofile' => $kdProfile,
+                        'statusenabled' => true,
+                        'kodeexternal' => $req['kodeexternal'],
+                        'namaexternal' => $req['namaexternal'],
+                        'reportdisplay' => $req['kodeexternal'],
+                        'objectpegawaifk' => 320261180,
+                        'objectjenisperanfk' => 55,
+                        'norec_pp' => $req['norec_pp'],
                     ]);
 
-                    
-                    $transMessage='Simpan Berhasil plus diklat';
+
+                    $transMessage = 'Simpan Berhasil plus diklat';
                 }
 
-                 //RM
-                else if(count($ceknorec) == 0 && $req['objectdetailjenisproduk'] == 2036){
+                //RM
+                else if (count($ceknorec) == 0 && $req['objectdetailjenisproduk'] == 2036) {
                     \DB::table('detailkegiatandiklat_t')->insert([
-                        'norec'=> substr(Uuid::generate(), 0, 32),
-                        'kdprofile'=> $kdProfile,
-                        'statusenabled'=>true,
-                        'kodeexternal'=>$req['kodeexternal'],
-                        'namaexternal'=> $req['namaexternal'],
-                        'reportdisplay'=>$req['kodeexternal'],
-                        'objectpegawaifk'=> $req['objectpegawaifk'],
-                        'objectjenisperanfk'=> $req['objectjenisperanfk'],
-                        'norec_pp'=> $req['norec_pp'],
+                        'norec' => substr(Uuid::generate(), 0, 32),
+                        'kdprofile' => $kdProfile,
+                        'statusenabled' => true,
+                        'kodeexternal' => $req['kodeexternal'],
+                        'namaexternal' => $req['namaexternal'],
+                        'reportdisplay' => $req['kodeexternal'],
+                        'objectpegawaifk' => $req['objectpegawaifk'],
+                        'objectjenisperanfk' => $req['objectjenisperanfk'],
+                        'norec_pp' => $req['norec_pp'],
                     ]);
 
-                        //mapping otomatis
+                    //mapping otomatis
                     \DB::table('detailkegiatandiklat_t')->insert([
-                        'norec'=> substr(Uuid::generate(), 0, 32),
-                        'kdprofile'=> $kdProfile,
-                        'statusenabled'=>true,
-                        'kodeexternal'=>$req['kodeexternal'],
-                        'namaexternal'=> $req['namaexternal'],
-                        'reportdisplay'=>$req['kodeexternal'],
-                        'objectpegawaifk'=> 320261180,
-                        'objectjenisperanfk'=> 57,
-                        'norec_pp'=> $req['norec_pp'],
+                        'norec' => substr(Uuid::generate(), 0, 32),
+                        'kdprofile' => $kdProfile,
+                        'statusenabled' => true,
+                        'kodeexternal' => $req['kodeexternal'],
+                        'namaexternal' => $req['namaexternal'],
+                        'reportdisplay' => $req['kodeexternal'],
+                        'objectpegawaifk' => 320261180,
+                        'objectjenisperanfk' => 57,
+                        'norec_pp' => $req['norec_pp'],
                     ]);
 
-                    
-                    $transMessage='Simpan Berhasil plus diklat';
+
+                    $transMessage = 'Simpan Berhasil plus diklat';
                 }
                 //observasi akreditasi
-                else if(count($ceknorec) == 0 && $req['objectdetailjenisproduk'] == 1953){
+                else if (count($ceknorec) == 0 && $req['objectdetailjenisproduk'] == 1953) {
                     \DB::table('detailkegiatandiklat_t')->insert([
-                        'norec'=> substr(Uuid::generate(), 0, 32),
-                        'kdprofile'=> $kdProfile,
-                        'statusenabled'=>true,
-                        'kodeexternal'=>$req['kodeexternal'],
-                        'namaexternal'=> $req['namaexternal'],
-                        'reportdisplay'=>$req['kodeexternal'],
-                        'objectpegawaifk'=> $req['objectpegawaifk'],
-                        'objectjenisperanfk'=> $req['objectjenisperanfk'],
-                        'norec_pp'=> $req['norec_pp'],
+                        'norec' => substr(Uuid::generate(), 0, 32),
+                        'kdprofile' => $kdProfile,
+                        'statusenabled' => true,
+                        'kodeexternal' => $req['kodeexternal'],
+                        'namaexternal' => $req['namaexternal'],
+                        'reportdisplay' => $req['kodeexternal'],
+                        'objectpegawaifk' => $req['objectpegawaifk'],
+                        'objectjenisperanfk' => $req['objectjenisperanfk'],
+                        'norec_pp' => $req['norec_pp'],
                     ]);
 
-                        //mapping otomatis
+                    //mapping otomatis
                     \DB::table('detailkegiatandiklat_t')->insert([
-                        'norec'=> substr(Uuid::generate(), 0, 32),
-                        'kdprofile'=> $kdProfile,
-                        'statusenabled'=>true,
-                        'kodeexternal'=>$req['kodeexternal'],
-                        'namaexternal'=> $req['namaexternal'],
-                        'reportdisplay'=>$req['kodeexternal'],
-                        'objectpegawaifk'=> 320261180,
-                        'objectjenisperanfk'=> 59,
-                        'norec_pp'=> $req['norec_pp'],
+                        'norec' => substr(Uuid::generate(), 0, 32),
+                        'kdprofile' => $kdProfile,
+                        'statusenabled' => true,
+                        'kodeexternal' => $req['kodeexternal'],
+                        'namaexternal' => $req['namaexternal'],
+                        'reportdisplay' => $req['kodeexternal'],
+                        'objectpegawaifk' => 320261180,
+                        'objectjenisperanfk' => 59,
+                        'norec_pp' => $req['norec_pp'],
                     ]);
 
-                    
-                    $transMessage='Simpan Berhasil plus diklat';
+
+                    $transMessage = 'Simpan Berhasil plus diklat';
                 }
-                 //kepek
-                else if(count($ceknorec) == 0 && $req['objectdetailjenisproduk'] == 1956){
+                //kepek
+                else if (count($ceknorec) == 0 && $req['objectdetailjenisproduk'] == 1956) {
                     \DB::table('detailkegiatandiklat_t')->insert([
-                        'norec'=> substr(Uuid::generate(), 0, 32),
-                        'kdprofile'=> $kdProfile,
-                        'statusenabled'=>true,
-                        'kodeexternal'=>$req['kodeexternal'],
-                        'namaexternal'=> $req['namaexternal'],
-                        'reportdisplay'=>$req['kodeexternal'],
-                        'objectpegawaifk'=> 2665,
-                        'objectjenisperanfk'=> 60,
-                        'norec_pp'=> $req['norec_pp'],
+                        'norec' => substr(Uuid::generate(), 0, 32),
+                        'kdprofile' => $kdProfile,
+                        'statusenabled' => true,
+                        'kodeexternal' => $req['kodeexternal'],
+                        'namaexternal' => $req['namaexternal'],
+                        'reportdisplay' => $req['kodeexternal'],
+                        'objectpegawaifk' => 2665,
+                        'objectjenisperanfk' => 60,
+                        'norec_pp' => $req['norec_pp'],
                     ]);
 
-                        //mapping otomatis
+                    //mapping otomatis
                     \DB::table('detailkegiatandiklat_t')->insert([
-                        'norec'=> substr(Uuid::generate(), 0, 32),
-                        'kdprofile'=> $kdProfile,
-                        'statusenabled'=>true,
-                        'kodeexternal'=>$req['kodeexternal'],
-                        'namaexternal'=> $req['namaexternal'],
-                        'reportdisplay'=>$req['kodeexternal'],
-                        'objectpegawaifk'=> 320261180,
-                        'objectjenisperanfk'=> 61,
-                        'norec_pp'=> $req['norec_pp'],
+                        'norec' => substr(Uuid::generate(), 0, 32),
+                        'kdprofile' => $kdProfile,
+                        'statusenabled' => true,
+                        'kodeexternal' => $req['kodeexternal'],
+                        'namaexternal' => $req['namaexternal'],
+                        'reportdisplay' => $req['kodeexternal'],
+                        'objectpegawaifk' => 320261180,
+                        'objectjenisperanfk' => 61,
+                        'norec_pp' => $req['norec_pp'],
                     ]);
 
-                    
-                    $transMessage='Simpan Berhasil plus diklat';
-                }
 
-                else{
+                    $transMessage = 'Simpan Berhasil plus diklat';
+                } else {
                     \DB::table('detailkegiatandiklat_t')->insert([
-                        'norec'=> substr(Uuid::generate(), 0, 32),
-                        'kdprofile'=> $kdProfile,
-                        'statusenabled'=>true,
-                        'kodeexternal'=>$req['kodeexternal'],
-                        'namaexternal'=> $req['namaexternal'],
-                        'reportdisplay'=>$req['kodeexternal'],
-                        'objectpegawaifk'=> $req['objectpegawaifk'],
-                        'objectjenisperanfk'=> $req['objectjenisperanfk'],
-                        'norec_pp'=> $req['norec_pp'],
+                        'norec' => substr(Uuid::generate(), 0, 32),
+                        'kdprofile' => $kdProfile,
+                        'statusenabled' => true,
+                        'kodeexternal' => $req['kodeexternal'],
+                        'namaexternal' => $req['namaexternal'],
+                        'reportdisplay' => $req['kodeexternal'],
+                        'objectpegawaifk' => $req['objectpegawaifk'],
+                        'objectjenisperanfk' => $req['objectjenisperanfk'],
+                        'norec_pp' => $req['norec_pp'],
                     ]);
                 }
-        }
-        else{
-            $transMessage = "Simpan Berhasil";
-            $TagihanDiklat = \DB::table('detailkegiatandiklat_t')->where('norec', $req['norec'])->update([
-                'kodeexternal'=>$req['kodeexternal'],
-                'reportdisplay'=>$req['kodeexternal'],
-                'namaexternal'=> $req['namaexternal'],
-                'objectpegawaifk'=> $req['objectpegawaifk'],
-                'objectjenisperanfk'=> $req['objectjenisperanfk'],
-                'norec_pp'=> $req['norec_pp'],
-            ]);
-        }
+            } else {
+                $transMessage = "Simpan Berhasil";
+                $TagihanDiklat = \DB::table('detailkegiatandiklat_t')->where('norec', $req['norec'])->update([
+                    'kodeexternal' => $req['kodeexternal'],
+                    'reportdisplay' => $req['kodeexternal'],
+                    'namaexternal' => $req['namaexternal'],
+                    'objectpegawaifk' => $req['objectpegawaifk'],
+                    'objectjenisperanfk' => $req['objectjenisperanfk'],
+                    'norec_pp' => $req['norec_pp'],
+                ]);
+            }
             $transStatus = 'true';
         } catch (\Exception $e) {
             $transStatus = 'false';
@@ -6449,8 +6716,8 @@ case when pjd.hargasatuand = 0 then pjd.hargasatuank else pjd.hargasatuand end
             $result = array(
                 "status" => 400,
                 "message"  => $transMessage,
-                'e'=> $e->getLine(),
-                'messafe'=>$e->getMessage(),
+                'e' => $e->getLine(),
+                'messafe' => $e->getMessage(),
                 // "data" => $SP,
                 "as" => 'as@epic',
             );
@@ -6461,7 +6728,7 @@ case when pjd.hargasatuand = 0 then pjd.hargasatuank else pjd.hargasatuand end
     {
         $kdProfile = (int) $this->getDataKdProfile($request);
         \DB::beginTransaction();
-        $transMessage='';
+        $transMessage = '';
         $req = $request->all();
         try {
             $TagihanDiklat = \DB::table('detailkegiatandiklat_t')->where('norec', $req['norec'])->delete();
@@ -6485,8 +6752,8 @@ case when pjd.hargasatuand = 0 then pjd.hargasatuank else pjd.hargasatuand end
             $result = array(
                 "status" => 400,
                 "message"  => $transMessage,
-                'e'=> $e->getLine(),
-                'messafe'=>$e->getMessage(),
+                'e' => $e->getLine(),
+                'messafe' => $e->getMessage(),
                 // "data" => $SP,
                 "as" => 'as@epic',
             );
@@ -6537,7 +6804,7 @@ case when pjd.hargasatuand = 0 then pjd.hargasatuank else pjd.hargasatuand end
         ORDER BY dkd.norec, jp.id asc
         "));
 
-         $datasum =\DB::select(DB::raw("
+        $datasum = \DB::select(DB::raw("
             SELECT x.namapegawai, sum(x.pembilang)as penerimaan, round(sum(x.pembilang)*0.3*0.75)as equ from (SELECT 
                     pg.id as namapegawai, 
             CASE 
@@ -6563,11 +6830,11 @@ case when pjd.hargasatuand = 0 then pjd.hargasatuank else pjd.hargasatuand end
 
             GROUP BY x.namapegawai
             "));
-    $result = array(
-        'data'=> $data,
-        'datasum'=> $datasum,
-        'as'=> 'fizi'
-    );
+        $result = array(
+            'data' => $data,
+            'datasum' => $datasum,
+            'as' => 'fizi'
+        );
         return $this->respond($result);
     }
 }
