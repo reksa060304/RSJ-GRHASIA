@@ -792,7 +792,7 @@ class MainController extends ApiController
                     ->where('kdprofile', $kdProfile)
                     ->first();
 
-                    $tahun = date('Y');
+                    $tahun = date('Y-m-d');
 
                     if (!isset($r->tahun) ){
                         return redirect()->route("show_page",
@@ -3162,10 +3162,9 @@ AND sp.statusenabled <> false
     public static function getDataDeviasi($tahun, $tahap)
     {
         $kdProfile = session("kdProfile");
-        $y =date('Y');
-        if(isset($tahun)){
-            $y=$tahun;
-        }
+        $parts = explode('-', $tahun);
+        $y = $parts[0]; // Mengambil tahun (2024)
+        $m = $parts[1]; // Mengambil bulan (04)
         // return $arrM ;
         // $data =  DB::select(DB::raw("select tahun, tahap, id, kodeanggaran, keterangan,
         // sum(coalesce(subtotal,0)) subtotal, sum(coalesce(jumlahrealisasi,0)) jumlahrealisasi,
@@ -3315,6 +3314,78 @@ AND sp.statusenabled <> false
                             , case when split_part(dp.kode, '.', 7) = '' then '0' else split_part(dp.kode, '.', 7)::int4 end order by subkodeawal asc, subkodekedua asc, subkodeketiga asc, subkodekeempat asc, subkodekelima asc, subkodekeenam asc, subkodeakhir asc"));
         }
 
+        $data2 = DB::select(DB::raw("
+            SELECT
+                ka.kode, 
+                ka.keterangan,
+                SUM(CAST(ap.nilai AS NUMERIC)) AS total_alokasi,
+                COUNT(DISTINCT ap.bulanint) AS jumlah_bulan 
+            FROM
+                keteranganbelanja_t AS kb
+                JOIN kegiatananggaran_m ka ON ka.ID = kb.objectkegiatanfk
+                LEFT JOIN (
+                    SELECT
+                        ap.keteranganbelanjafk,
+                        ap.nilai,
+                        ap.bulanint 
+                    FROM
+                        alokasiketeranganbelanja_t AS ap
+                    WHERE
+                        ap.statusenabled = TRUE 
+                        AND ap.kdprofile = 30 
+                        AND ap.bulanint <= '$m'
+                ) AS ap ON ap.keteranganbelanjafk = kb.norec
+            WHERE
+                kb.objecttahapfk = $tahap 
+                AND kb.statusenabled = TRUE 
+                AND kb.kdprofile = 30 
+                AND ka.tahun = '$y'
+            GROUP BY
+                ka.kode, 
+                ka.keterangan
+            ORDER BY
+                ka.kode;
+        "));
+
+        $data3 = DB::select(DB::raw("
+            SELECT
+                ka.kode,
+                SUM(st.jumlahdibayarverif) AS total_spj 
+            FROM
+                strukrealisasi_t AS st
+                JOIN kegiatananggaran_m AS ka ON ka.ID = st.objectkegiatanfk 
+                JOIN keteranganbelanja_t AS kb ON st.objectkegiatanfk = kb.objectkegiatanfk
+            WHERE
+                st.statusenabled = TRUE 
+                AND st.objectbkufk IS NOT NULL
+                AND ka.statusenabled = TRUE
+                AND kb.objecttahapfk = $tahap
+                AND kb.statusenabled = TRUE 
+                AND kb.kdprofile = 30 
+                AND ka.tahun = '$y'
+                AND st.tglrealisasi <= '$tahun'
+            GROUP BY
+                ka.kode
+            ORDER BY
+                ka.kode;
+        "));
+
+        $i = 0;
+        foreach ($data as $h) {
+            $data[$i]->total_anggaran = 0;
+            $data[$i]->total_realisasi = 0;
+            foreach ($data2 as $d) {
+                if ($data[$i]->kode == $d->kode) {
+                    $data[$i]->total_anggaran = (float)$d->total_alokasi;
+                }
+            }
+            foreach ($data3 as $d) {
+                if ($data[$i]->kode == $d->kode) {
+                    $data[$i]->total_realisasi = (float)$d->total_spj;
+                }
+            }
+            $i++;
+        }
 
         $result = array(
             'data' => $data,

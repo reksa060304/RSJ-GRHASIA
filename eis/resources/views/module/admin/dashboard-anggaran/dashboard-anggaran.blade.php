@@ -103,7 +103,7 @@
                             <div class="col-lg-2" style="margin-top: 5px">
                                 <div class="input-group" >
                                     <span class="input-group-addon" id="basic-addon1"><i class="ti-calendar"></i></span>
-                                    <input type="text" id="tahun" name="tahun" class="form-control" value="{{request()->get("tahun")}}" >
+                                    <input type="text" id="tahun" name="tahun" class="date-custom form-control" value="{{request()->get("tahun")}}" >
                                 </div>
 
                             </div>
@@ -138,14 +138,31 @@
                                                                 <th style="text-align: center;color:#000000;white-space: pre-wrap">Jumlah Realisasi</th>
                                                                 <th style="text-align: center;color:#000000;white-space: pre-wrap">Jumlah Deviasi</th>
                                                             </tr> --}}
-                                                            <tr>
+                                                            {{-- <tr>
                                                                 <th style="text-align: center;color:#000000;white-space: pre-wrap;">Kode</th>
                                                                 <th style="text-align: center;color:#000000;white-space: pre-wrap;">Keterangan</th>
                                                                 <th style="text-align: center;color:#000000;white-space: pre-wrap">PPTK</th>
                                                                 <th style="text-align: center;color:#000000;white-space: pre-wrap">Tahap Anggaran</th>
                                                                 <th style="text-align: center;color:#000000;white-space: pre-wrap">Tahun Anggaran</th>
-                                                                <th style="text-align: center;color:#000000;white-space: pre-wrap">Target Kinerja</th>
+                                                                <th style="text-align: center;color:#000000;white-space: pre-wrap">Jumlah Anggaran Total</th>
                                                                 <th style="text-align: center;color:#000000;white-space: pre-wrap">div</th>
+                                                            </tr> --}}
+                                                            <tr>
+                                                                <th rowspan="2" style="text-align: center; width: 5%;">Kode</th>
+                                                                <th rowspan="2" style="text-align: center; width: 30%;">Nama Sub Sub Kegiatan</th>
+                                                                <th rowspan="2" style="text-align: center; width: 10%;">PPTK</th>
+                                                                <th rowspan="2" style="text-align: center; width: 10%;">Tahap Anggaran</th>
+                                                                <th rowspan="2" style="text-align: center; width: 10%;">Tahun Anggaran</th>
+                                                                <th rowspan="2" style="text-align: center; width: 15%;">Jumlah Anggaran Total</th>
+                                                                <th colspan="2" style="text-align: center; width: 15%;">Jumlah Anggaran s/d Bulan Ini</th>
+                                                                <th colspan="2" style="text-align: center; width: 15%;">Jumlah Realisasi s/d Bulan Ini</th>
+                                                                <th rowspan="2" style="text-align: center; width: 10%;">Deviasi (%)</th>
+                                                            </tr>
+                                                            <tr>
+                                                                <th style="text-align: center;">Jumlah</th>
+                                                                <th style="text-align: center;">%</th>
+                                                                <th style="text-align: center;">Jumlah</th>
+                                                                <th style="text-align: center;">%</th>
                                                             </tr>
                                                             </thead>
                                                             <tbody>
@@ -165,8 +182,29 @@
                                                                     <td style="color:#000000;text-align: left;white-space: pre-wrap">{{ $items->namalengkap }}</td>
                                                                     <td style="color:#000000;text-align: left;white-space: pre-wrap">{{ $items->tahap }}</td>
                                                                     <td style="color:#000000;text-align: center;white-space: pre-wrap">{{ $items->tahun }}</td>
-                                                                    <td style="color:#000000;text-align: right;white-space: pre-wrap">{{ number_format($items->targetmasuk,2,',','.') }}</td>
-                                                                    <td style="color:#000000;text-align: left;white-space: pre-wrap">{{ $items->namakelompok }}</td>
+                                                                    <td style="color:#000000;text-align: right;white-space: pre-wrap">
+                                                                        {{ number_format($items->targetmasuk ?? 0, 2, ',', '.') }}
+                                                                    </td>
+                                                                    
+                                                                    <td style="color:#000000;text-align: right;white-space: pre-wrap">
+                                                                        {{ number_format($items->total_anggaran ?? 0, 2, ',', '.') }}
+                                                                    </td>
+                                                                    
+                                                                    <td style="color:#000000;text-align: left;white-space: pre-wrap">
+                                                                        {{ $items->targetmasuk > 0 ? number_format(($items->total_anggaran / $items->targetmasuk) * 100, 0, ',', '.') . ' %' : '0 %' }}
+                                                                    </td>
+                                                                    
+                                                                    <td style="color:#000000;text-align: right;white-space: pre-wrap">
+                                                                        {{ number_format($items->total_realisasi ?? 0, 2, ',', '.') }}
+                                                                    </td>
+                                                                    
+                                                                    <td style="color:#000000;text-align: left;white-space: pre-wrap">
+                                                                        {{ $items->targetmasuk > 0 ? number_format(($items->total_realisasi / $items->targetmasuk) * 100, 0, ',', '.') . ' %' : '0 %' }}
+                                                                    </td>
+                                                                    
+                                                                    <td style="color:#000000;text-align: left;white-space: pre-wrap">
+                                                                        {{ $items->targetmasuk > 0 ? number_format((($items->total_anggaran / $items->targetmasuk) * 100) - (($items->total_realisasi / $items->targetmasuk) * 100), 0, ',', '.') . ' %' : '0 %' }}
+                                                                    </td>
                                                                 </tr>
                                                             @endforeach
                                                             </tbody>
