@@ -787,6 +787,13 @@ class MainController extends ApiController
                     ->where('kdprofile', $kdProfile)
                     ->get();
 
+                    $dataAsalProduk = \DB::table('asalproduk_m as ap')
+                    ->select('ap.id','ap.asalproduk')
+                    ->where('ap.statusenabled',true)
+                    ->where('ap.isanggaran',true)
+                    ->orderBy('ap.asalproduk')
+                    ->get();
+
                     $setting = DB::table('settinganggaran_t')
                     ->where('statusenabled',true)
                     ->where('kdprofile', $kdProfile)
@@ -799,6 +806,7 @@ class MainController extends ApiController
                             ["role" => session("role"),
                                 "pages" => $r->pages,
                                 "tahun" =>  $tahun,
+                                "asalproduk" =>  $dataAsalProduk[0]->id,
                                 "tahap" =>  $setting->objecttahapaktivfk
                             ]);
                     } else {
@@ -810,11 +818,12 @@ class MainController extends ApiController
                             ["role" => session("role"),
                                 "pages" => $r->pages,
                                 "tahun" =>  $tahun,
+                                "asalproduk" =>  $dataAsalProduk[0]->id,
                                 "tahap" =>  $setting->objecttahapaktivfk
                             ]);
                     }
 //                    dd($res);
-                    array_push($compact,'r', 'tahap', 'setting');
+                    array_push($compact,'r', 'tahap','dataAsalProduk', 'setting');
                     break;
 
                 case 'dashboard-persediaan':
@@ -3159,7 +3168,7 @@ AND sp.statusenabled <> false
         return $arrM;
     }
 
-    public static function getDataDeviasi($tahun, $tahap)
+    public static function getDataDeviasi($tahun, $tahap, $asalproduk)
     {
         $kdProfile = session("kdProfile");
         $parts = explode('-', $tahun);
@@ -3364,6 +3373,7 @@ AND sp.statusenabled <> false
                 AND kb.kdprofile = 30 
                 AND ka.tahun = '$y'
                 AND st.tglrealisasi <= '$tahun'
+                AND st.objectasalprodukfk = '$asalproduk'
             GROUP BY
                 ka.kode
             ORDER BY

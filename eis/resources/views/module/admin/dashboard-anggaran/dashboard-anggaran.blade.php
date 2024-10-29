@@ -89,12 +89,21 @@
                 <div class="card-block tab-icon">
                     <form action="{!! route("show_page", ["role" => session('role'), "pages" => $r->pages ]) !!}" method="get">
                         <div class="row">
-                            <div class="col-lg-5">
+                            <div class="col-lg-3">
                             </div>
-                            <div class="col-lg-4" style="margin-top: 5px">
+                            <div class="col-lg-3" style="margin-top: 5px">
                             <select class="js-example-basic-single" name="tahap" id="tahap">
                                 @forelse($tahap as $item)
                                 <option value="{{$item->id}}" {{ $r->tahap == $item->id ? "selected" : ""}}>{{$item->tahap}}</option>
+                                @empty
+                                <option value=""></option>
+                                @endforelse
+                            </select>
+                            </div>
+                            <div class="col-lg-3" style="margin-top: 5px">
+                            <select class="js-example-basic-single" name="asalproduk" id="asalproduk">
+                                @forelse($dataAsalProduk as $item)
+                                <option value="{{$item->id}}" {{ $r->asalproduk == $item->id ? "selected" : ""}}>{{$item->asalproduk}}</option>
                                 @empty
                                 <option value=""></option>
                                 @endforelse
@@ -121,7 +130,7 @@
                                         </div>
                                         <div class="panel-body">
                                             @php
-                                                $klaim = App\Http\Controllers\MainController::getDataDeviasi(request()->get("tahun"), request()->get("tahap"));
+                                                $klaim = App\Http\Controllers\MainController::getDataDeviasi(request()->get("tahun"), request()->get("tahap"), request()->get("asalproduk"));
                                             @endphp
                                             <div class="row" style="padding:10px;">
                                                 <div class="col-md-12">
