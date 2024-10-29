@@ -18,6 +18,7 @@ use App\Transaksi\PasienDaftar;
 use App\Transaksi\PelayananPasien;
 use App\Transaksi\PelayananPasienDetail;
 use App\Transaksi\PelayananPasienPetugas;
+use App\Transaksi\PetugasPelayananAmbulan;
 use App\Transaksi\StrukOrder;
 use App\Transaksi\StrukPelayanan;
 use App\Transaksi\StrukPelayananDetail;
@@ -854,22 +855,39 @@ class AmbulanController extends ApiController
 
                 $PelPasien->save();
                 $PPnorec = $PelPasien->norec;
+                $PPtglpelayanan = $PelPasien->tglregistrasi;
 
 
-                $PelPasienPetugas = new PelayananPasienPetugas();
-                $PelPasienPetugas->norec = $PelPasienPetugas->generateNewId();
-                $PelPasienPetugas->kdprofile = $kdProfile;
-                $PelPasienPetugas->statusenabled = true;
-                $PelPasienPetugas->nomasukfk = $dataAPDnorec;
-                $PelPasienPetugas->objectpegawaifk = $request['iddokterverif']; //$request['objectpegawaiorderfk'],
-                $PelPasienPetugas->objectjenispetugaspefk = $request['idpetugaspe']; //4;//$jenisPetugasPe->idpetugaspe;
-                $PelPasienPetugas->pelayananpasien = $PPnorec;
-                $PelPasienPetugas->save();
-                $PPPnorec = $PelPasienPetugas->norec;
+                // $PelPasienPetugas = new PelayananPasienPetugas();
+                // $PelPasienPetugas->norec = $PelPasienPetugas->generateNewId();
+                // $PelPasienPetugas->kdprofile = $kdProfile;
+                // $PelPasienPetugas->statusenabled = true;
+                // $PelPasienPetugas->nomasukfk = $dataAPDnorec;
+                // $PelPasienPetugas->objectpegawaifk = $request['iddokterverif']; //$request['objectpegawaiorderfk'],
+                // $PelPasienPetugas->objectjenispetugaspefk = $request['idpetugaspe']; //4;//$jenisPetugasPe->idpetugaspe;
+                // $PelPasienPetugas->pelayananpasien = $PPnorec;
+                // $PelPasienPetugas->save();
+                // $PPPnorec = $PelPasienPetugas->norec;
+
+                if (isset($req['petugaspelayananambulan']) && count($req['petugaspelayananambulan']) > 0) {
+                    foreach ($req['petugaspelayananambulan'] as $itemPPA) {
+                        if (isset($itemPPA['listpegawai']) && count($itemPPA['listpegawai']) > 0) {
+                            foreach ($itemPPA['listpegawai'] as $detailItemPPAz) {
+                                $PetugasPelAmbulan = new PetugasPelayananAmbulan();
+                                $PetugasPelAmbulan->norec = $PetugasPelAmbulan->generateNewId();
+                                $PetugasPelAmbulan->kdprofile = $kdProfile;
+                                $PetugasPelAmbulan->statusenabled = true;
+                                $PetugasPelAmbulan->objectpegawaifk = $detailItemPPAz['id'] ?? null;
+                                $PetugasPelAmbulan->nostrukdetailfk = $PPnorec;
+                                $PetugasPelAmbulan->tglpelayanan = $PPtglpelayanan;
+                                $PetugasPelAmbulan->save();
+                            }
+                        }
+                    }
+                }
 
 
                 foreach ($item['komponenharga'] as $itemKomponen) {
-
                     $PelPasienDetail = new PelayananPasienDetail();
                     $PelPasienDetail->norec = $PelPasienDetail->generateNewId();
                     $PelPasienDetail->kdprofile = $kdProfile;

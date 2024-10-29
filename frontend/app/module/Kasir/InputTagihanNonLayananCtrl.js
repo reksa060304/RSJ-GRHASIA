@@ -306,7 +306,8 @@ define(['initialize'], function (initialize) {
 				} else {
 					console.log("Tidak ada data petugas layanan");
 				}
-				console.log(petugasLayanan); 
+				
+				// console.log(petugasLayanan); 
 				var objSave = {
 					norec: norec,
 					kelompoktransaksifk: $scope.item.kelompokTransaksi.id,
@@ -401,7 +402,6 @@ define(['initialize'], function (initialize) {
 				$scope.item.jumlah = $scope.dataSelected.jumlah;
 			}
 
-			// tanda1
 			$scope.tambah = function () {
 				if ($scope.item.namaprodukInput == undefined) {
 					alert("pilih produk terlebih dahulu !!")

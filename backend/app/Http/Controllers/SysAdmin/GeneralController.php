@@ -5948,4 +5948,184 @@ class GeneralController extends ApiController
         return $this->respond($data);
     }
 
+    public function getTindakanPartAmbulan(Request $request){
+        $kdProfile = (int) $this->getDataKdProfile($request);
+        //TODO : GET LIST TINDAKAN
+        $req = $request->all();
+        $ruangan = \DB::table('ruangan_m as ru')
+                    ->select('ru.id','ru.namaruangan','ru.objectdepartemenfk')
+                    ->where('ru.kdprofile', $kdProfile)
+                    ->where('ru.statusenabled', 1);
+        if (isset($req['idRuangan']) && $req['idRuangan'] != "" && $req['idRuangan'] != "undefined") {
+            $ruangan = $ruangan->where('ru.id', '=', $req['idRuangan']);
+        }
+        $ruangan = $ruangan->first();
+
+        $data = [];
+
+        if ($ruangan->objectdepartemenfk == "16"){
+           $data = \DB::table('mapruangantoproduk_m as mpr')
+            ->join ('produk_m as prd','prd.id','=','mpr.objectprodukfk')
+            ->select('mpr.objectprodukfk as id','prd.namaproduk',
+                'mpr.objectruanganfk',
+                'prd.namaproduk'
+            )
+            ->where('mpr.kdprofile', $kdProfile)
+            ->where('mpr.objectruanganfk',$request['idRuangan'])
+            ->where('mpr.statusenabled',true)
+            ->where('prd.statusenabled',true)
+            ->whereNotIn('prd.id', ['4041857','4041858','4041859','4041860','4041861','4041862','4041863','4041864']);
+
+            if(isset($req['filter']['filters'][0]['value']) &&
+                $req['filter']['filters'][0]['value']!="" &&
+                $req['filter']['filters'][0]['value']!="undefined"){
+                $data = $data
+                    ->where('prd.namaproduk','ilike','%'.$req['filter']['filters'][0]['value'].'%' );
+            }
+            if(isset($req['idProduk']) &&
+                $req['idProduk']!="" &&
+                $req['idProduk']!="undefined"){
+                $data = $data
+                    ->where('prd.id','=',$req['idProduk']);
+            }
+            $data = $data->orderBy('prd.namaproduk', 'ASC');
+            if(!isset($req['isLabRad'])  ){
+                   $data = $data->take(15);  
+            }
+            $data = $data->get();
+                 $result = array(
+                     'data' => $data,
+                     'message' => 'ramdanegie',
+                 );
+        } else if ($request['idRuangan'] == 576) {
+            $data = \DB::table('mapruangantoproduk_m as mpr')
+                ->join ('produk_m as prd','prd.id','=','mpr.objectprodukfk')
+                ->select('mpr.objectprodukfk as id','prd.namaexternal as namaproduk',
+                    'mpr.objectruanganfk',
+                    'prd.namaproduk as namalayanan'
+                )
+                ->where('mpr.kdprofile', $kdProfile)
+                ->where('mpr.objectruanganfk',$request['idRuangan'])
+                ->where('mpr.statusenabled',true)
+                ->where('prd.statusenabled',true);
+
+
+
+            if(isset($req['filter']['filters'][0]['value']) &&
+                $req['filter']['filters'][0]['value']!="" &&
+                $req['filter']['filters'][0]['value']!="undefined"){
+                $data = $data
+                    ->where('prd.namaexternal','ilike','%'.$req['filter']['filters'][0]['value'].'%' );
+            }
+            if(isset($req['idProduk']) &&
+                $req['idProduk']!="" &&
+                $req['idProduk']!="undefined"){
+                $data = $data
+                    ->where('prd.id','=',$req['idProduk']);
+            }
+            $data = $data->orderBy('prd.namaexternal', 'ASC');
+             if(!isset($req['isLabRad'])  ){
+                   $data = $data->take(15);  
+            }
+            $data = $data->get();
+            $result = array(
+                'data' => $data,
+                'message' => 'ramdanegie',
+            );
+        }else{
+            $data = \DB::table('mapruangantoproduk_m as mpr')
+                ->join ('produk_m as prd','prd.id','=','mpr.objectprodukfk')
+                ->select('mpr.objectprodukfk as id','prd.namaproduk',
+                    'mpr.objectruanganfk',
+                    'prd.namaproduk'
+                )
+                ->where('mpr.kdprofile', $kdProfile)
+                ->where('mpr.objectruanganfk',$request['idRuangan'])
+                ->where('mpr.statusenabled',true)
+                ->where('prd.statusenabled',true);
+
+
+
+            if(isset($req['filter']['filters'][0]['value']) &&
+                $req['filter']['filters'][0]['value']!="" &&
+                $req['filter']['filters'][0]['value']!="undefined"){
+                $data = $data
+                    ->where('prd.namaproduk','ilike','%'.$req['filter']['filters'][0]['value'].'%' );
+            }
+            if(isset($req['idProduk']) &&
+                $req['idProduk']!="" &&
+                $req['idProduk']!="undefined"){
+                $data = $data
+                    ->where('prd.id','=',$req['idProduk']);
+            }
+            $data = $data->orderBy('prd.namaproduk', 'ASC');
+             if(!isset($req['isLabRad'])  ){
+                   $data = $data->take(15);  
+            }
+            $data = $data->get();
+            $result = array(
+                'data' => $data,
+                'message' => 'ramdanegie',
+            );
+        }
+        return $this->respond($data);
+    }
+
+    public function getKomponenHargaAmbulan(Request $request){
+        $kdProfile = (int) $this->getDataKdProfile($request);
+        $data = \DB::table('harganettoprodukbykelasd_m as hnp')
+            ->join ('mapruangantoproduk_m as mpr ','mpr.objectprodukfk','=','hnp.objectprodukfk')
+            ->join ('produk_m as prd','prd.id','=','mpr.objectprodukfk')
+            ->join ('komponenharga_m as kh','kh.id','=','hnp.objectkomponenhargafk')
+            ->join ('kelas_m as kls','kls.id','=','hnp.objectkelasfk')
+            ->join ('ruangan_m as ru', 'ru.id','=','mpr.objectruanganfk')
+            ->select('hnp.objectkomponenhargafk','kh.komponenharga','hnp.hargasatuan','mpr.objectprodukfk','kh.iscito')
+            ->where('hnp.kdprofile', $kdProfile)
+            ->where('mpr.objectruanganfk',$request['idRuangan'])
+            ->where('hnp.objectkelasfk',$request['idKelas'])
+            ->where('mpr.objectprodukfk',$request['idProduk'])
+            ->where('hnp.objectjenispelayananfk',$request['idJenisPelayanan'])
+            ->where('mpr.statusenabled',true)
+            ->where('hnp.statusenabled',true)
+            ->where('prd.statusenabled',true);
+
+        $data = $data->distinct();
+        $data = $data->get();
+
+
+        $data2 = \DB::table('harganettoprodukbykelas_m as hnp')
+            ->join ('mapruangantoproduk_m as mpr ','mpr.objectprodukfk','=','hnp.objectprodukfk')
+            ->join ('produk_m as prd','prd.id','=','mpr.objectprodukfk')
+            ->join ('kelas_m as kls','kls.id','=','hnp.objectkelasfk')
+            ->join ('ruangan_m as ru', 'ru.id','=','mpr.objectruanganfk')
+            ->join ('suratkeputusan_m as sk', 'hnp.suratkeputusanfk','=','sk.id')
+            ->select('mpr.objectprodukfk','prd.id','prd.namaproduk','hnp.hargasatuan','hnp.objectkelasfk',
+                'kls.namakelas','mpr.objectruanganfk','ru.namaruangan',
+                'prd.namaproduk'
+            )
+
+
+            ->where('hnp.kdprofile', $kdProfile)
+            ->where('mpr.objectruanganfk',$request['idRuangan'])
+            ->where('hnp.objectkelasfk',$request['idKelas'])
+            ->where('mpr.objectprodukfk',$request['idProduk'])
+            ->where('hnp.objectjenispelayananfk',$request['idJenisPelayanan'])
+            ->where('hnp.statusenabled',true)
+            ->where('sk.statusenabled',true)
+            ->where('mpr.statusenabled',true)
+            ->where('prd.statusenabled',true);
+        $data2 = $data2->distinct();
+        $data2 = $data2->get();
+
+
+        $result = array(
+            'data' => $data,
+            'data2' => $data2,
+            'message' => 'ramdanegie',
+            'edited' => 'as@epic',
+        );
+
+        return $this->respond($result);
+    }
+
 }
