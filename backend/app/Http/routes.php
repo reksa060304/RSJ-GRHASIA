@@ -60,6 +60,11 @@ Route::group(['middleware' => 'cors', 'prefix' => 'service'], function () {
 		Route::get('perencanaan/get-transfer-target', 'Perencanaan\PerencanaanController@getTransferTarget');
 		Route::post('perencanaan/simpan-transfer-target', 'Perencanaan\PerencanaanController@simpanTransferTarget');
         Route::get('perencanaan/get-rekap-spj-detail', 'Perencanaan\PerencanaanController@getRekapSPJDetail');
+        Route::get('perencanaan/get-spj-bynorec', 'Perencanaan\PerencanaanController@getSPJByNorec');
+        Route::post('perencanaan/simpan-pengembalian', 'Perencanaan\PerencanaanController@simpanPengembalian');
+        Route::get('perencanaan/get-pengembalian-belanja', 'Perencanaan\PerencanaanController@getPengembalianBelanja');
+        Route::get('perencanaan/get-pengembalian-belanja-bynorec', 'Perencanaan\PerencanaanController@getPengembalianBelanjaByNorec');
+        Route::post('perencanaan/hapus-pengembalian-belanja', 'Perencanaan\PerencanaanController@hapusPengembalianBelanja');
 
         // Start Verif HAIS Route-------------------------------------------------------------------------------------------
         Route::get('verif-hais/get-bundlehais', 'EMR\BundleHaisController@getBundleHais');

@@ -1381,7 +1381,10 @@
         {
             "nameDep": "RekapSPJDetailCtrl",
             "urlDep": "module/Perencanaan/RekapSPJDetailCtrl"
+        },
+        {
+            "nameDep": "PengembalianBelanjaCtrl",
+            "urlDep": "module/Perencanaan/PengembalianBelanjaCtrl"
         }
-
     ]
 }

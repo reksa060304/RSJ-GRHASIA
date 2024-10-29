@@ -23,6 +23,7 @@ use App\Transaksi\PasienDaftar;
 use App\Transaksi\PelayananPasien;
 use App\Transaksi\PelayananPasienDetail;
 use App\Transaksi\PelayananPasienPetugas;
+use App\Transaksi\PengembalianBelanja;
 use App\Transaksi\RiwayatRealisasi;
 use App\Transaksi\StrukPelayananDetail;
 use App\Transaksi\StrukRealisasi;
@@ -10597,8 +10598,15 @@ order by  split_part(kode, '.', 1)asc, split_part(kode, '.', 2)asc,  split_part(
         $kdProfile = $this->getDataKdProfile($request);
         $idProfile = (int) $kdProfile;
 
-        $tglAwal = $request['tglAwal'];
-        $tglAkhir = $request['tglAkhir'];
+        $tglAwal = '';
+        if(isset($request['tglAwal']) && $request['tglAwal'] != "undefined" && $request['tglAwal'] != ''){
+            $tglAwal = "and sr.tglrealisasi >= '".$request['tglAwal']."'";
+        }
+
+        $tglAkhir = '';
+        if(isset($request['tglAkhir']) && $request['tglAkhir'] != "undefined" && $request['tglAkhir'] != ''){
+            $tglAkhir = "and sr.tglrealisasi <= '".$request['tglAkhir']."'";
+        }
 
 
         $setting = \DB::table('settinganggaran_t as st')
@@ -10675,8 +10683,11 @@ order by  split_part(kode, '.', 1)asc, split_part(kode, '.', 2)asc,  split_part(
                 left JOIN pegawai_m as pg2 on pg2.id=sr.penerimafk
                 left join carabayarspj_m cbs on cbs.id = sr.objectcarabayarfk
                 left JOIN mataanggaran_m ma on ma.id=sr.objectmataanggaranfk
-                where sr.tglrealisasi between '$tglAwal' and '$tglAkhir'
-                and sr.statusenabled = true
+                where 
+                sr.statusenabled = true
+                --and sr.tglrealisasi between '$tglAwal' and '$tglAkhir'
+                $tglAwal
+                $tglAkhir
                 and rd.statusenabled = true
                 and rd.kdprofile = 30
                 $sub
@@ -10693,13 +10704,15 @@ order by  split_part(kode, '.', 1)asc, split_part(kode, '.', 2)asc,  split_part(
         $dataDetail = DB::select(DB::raw("
                     select rd.*,ka.keteranganbelanja,0 as nourut
                     from strukrealisasi_t sr
-                inner join realisasidetail_t rd on rd.strukrealisasifk = sr.norec
+                    inner join realisasidetail_t rd on rd.strukrealisasifk = sr.norec
                     INNER JOIN keteranganbelanja_t ka on ka.norec=rd.keteranganbelanjafk
                     where  rd.statusenabled = true
                     and rd.kdprofile = 30
                     and ka.statusenabled = true
                     and ka.kdprofile = 30
-                    and sr.tglrealisasi between  '$tglAwal' and '$tglAkhir'
+                    --and sr.tglrealisasi between  '$tglAwal' and '$tglAkhir'
+                    $tglAwal
+                    $tglAkhir
                 ")
             );
 
@@ -10742,5 +10755,236 @@ order by  split_part(kode, '.', 1)asc, split_part(kode, '.', 2)asc,  split_part(
         );
 
         return $this->respond($result);
+    }
+
+    public function getSPJByNorec(Request $request)
+    {
+        $kdProfile = $this->getDataKdProfile($request);
+        $idProfile = (int) $kdProfile;
+
+        $data = DB::select(DB::raw("
+            select string_agg(DISTINCT rd.uraian, ',') uraian, sr.*, cbs.carabayar, sr.tglverif, sr.keterangan, sr.jumlahdibayarverif, ka.tahun,--sr.norealisasi,sr.deskripsi,sr.totalbelanja,
+                pg1.namalengkap as bendahara, pg2.namalengkap as penerima, rkn.namarekanan as pihakketiga,
+                ka.kode || '~' || ka.keterangan as kegiatan, ma.kodemataanggaran || '~' || ma.namamataanggaran as mataanggaran,
+                dp0.kode kodesubkegiatan, dp0.keterangan keterangansubkegiatan, ma.kodemataanggaran, ma.namamataanggaran, dp0.id idsubkegiatan, ka.keterangan subsubkegiatan, ka.id idsubsubkegiatan,
+                ap.id idasalproduk, ap.asalproduk, sr.objectbkufk
+            from strukrealisasi_t sr
+            inner join realisasidetail_t rd on rd.strukrealisasifk = sr.norec
+            left join asalproduk_m ap on ap.id = sr.objectasalprodukfk
+            left JOIN kegiatananggaran_m ka on ka.id=sr.objectkegiatanfk and ka.kdprofile = ".$idProfile." and ka.statusenabled=true
+            left join kegiatananggaran_m as dp0 on ka.kode ilike dp0.kode || '%' and dp0.div = 3 and dp0.kdprofile = ".$idProfile." and dp0.statusenabled=true
+            left JOIN rekanan_m rkn on rkn.id=sr.rekananfk
+            left JOIN pegawai_m as pg1 on pg1.id=sr.bendaharafk
+            left JOIN pegawai_m as pg2 on pg2.id=sr.penerimafk
+            left join carabayarspj_m cbs on cbs.id = sr.objectcarabayarfk
+            left JOIN mataanggaran_m ma on ma.id=sr.objectmataanggaranfk
+            where 
+                sr.statusenabled = true
+                and rd.statusenabled = true
+                and rd.kdprofile = ".$idProfile."
+                and sr.norec = '".$request['norec']."'
+			group by dp0.kode, dp0.keterangan, sr.norec, cbs.carabayar, sr.tglverif, sr.keterangan, sr.jumlahdibayarverif, sr.kdprofile, sr.statusenabled, sr.tglrealisasi, sr.norealisasi, sr.status, sr.totalbelanja, sr.objectcarabayarfk, sr.rekananfk, sr.deskripsi, sr.objectkegiatanfk, sr.objectmataanggaranfk, sr.bendaharafk, sr.penerimafk, sr.pph, sr.ppn, pg1.namalengkap, pg2.namalengkap, rkn.namarekanan ,
+                ka.kode || '~' || ka.keterangan, ma.kodemataanggaran || '~' || ma.namamataanggaran, ka.tahun, ma.kodemataanggaran, ma.namamataanggaran, dp0.id, ka.keterangan, ka.id, ap.id, ap.asalproduk, sr.objectbkufk
+                order by sr.norealisasi desc
+            ")
+        );
+
+        return $this->respond($data);
+
+    }
+
+    public function getPengembalianBelanja(Request $request)
+    {
+        $kdProfile = $this->getDataKdProfile($request);
+        $idProfile = (int) $kdProfile;
+        
+        $tglAwal = '';
+        if(isset($request['tglAwal']) && $request['tglAwal'] != "undefined" && $request['tglAwal'] != ''){
+            $tglAwal = "and pb.tglinput >= '".$request['tglAwal']."'";
+        }
+
+        $tglAkhir = '';
+        if(isset($request['tglAkhir']) && $request['tglAkhir'] != "undefined" && $request['tglAkhir'] != ''){
+            $tglAkhir = "and pb.tglinput <= '".$request['tglAkhir']."'";
+        }
+
+
+        $data = DB::select(DB::raw("
+            SELECT
+                pb.*, sr.norealisasi, 
+                ka.kode || '~' || ka.keterangan as kegiatan,
+                ma.kodemataanggaran || '~' || ma.namamataanggaran as mataanggaran,
+                ap.asalproduk,
+                sr.totalbelanja
+            FROM pengembalianbelanja_t pb
+            JOIN strukrealisasi_t sr ON sr.norec = pb.objectspjfk AND sr.statusenabled = true AND sr.kdprofile = ".$idProfile."
+            JOIN realisasidetail_t rd on rd.strukrealisasifk = sr.norec
+            JOIN kegiatananggaran_m ka ON ka.id = sr.objectkegiatanfk
+            JOIN mataanggaran_m ma ON ma.id = sr.objectmataanggaranfk
+            JOIN asalproduk_m ap ON ap.id = sr.objectasalprodukfk
+            WHERE
+                pb.statusenabled = true
+                AND pb.kdprofile = ".$idProfile."
+                $tglAwal
+                $tglAkhir
+            GROUP BY
+                pb.norec, 
+                sr.norealisasi, sr.totalbelanja, 
+                ka.kode, ka.keterangan, 
+                ma.kodemataanggaran, ma.namamataanggaran, 
+                ap.asalproduk
+            ORDER BY
+                pb.tglinput desc
+        "));
+
+        return $this->respond($data);
+
+    }
+
+    public function simpanPengembalian(Request $request)
+    {
+        $kdProfile = $this->getDataKdProfile($request);
+        $idProfile = (int) $kdProfile;
+        $transMessage = null;
+
+        try {
+
+            // jika tidak ada norec buat baru
+            if($request['norec_pengembalian'] == null){
+
+                // buat pengembalian baru
+                $pengembalian = new PengembalianBelanja();
+                $norec = $pengembalian->generateNewId();
+                $pengembalian->norec = $norec;
+                $pengembalian->statusenabled = true;
+                $pengembalian->kdprofile = $idProfile;
+                $pengembalian->objectspjfk = $request['norec_spj'];
+                $pengembalian->keterangan = $request['keteranganpengembalian'];
+                $pengembalian->totalpengembalian = $request['totalpengembalian'];
+                $pengembalian->tglinput = $request['tanggal'];
+                $pengembalian->tglupdate = $request['tanggal'];
+                $pengembalian->save();
+
+            }else{
+
+                // $pengembalian = new PengembalianBelanja();
+                $find = DB::table('pengembalianbelanja_t')->where('norec', $request['norec_pengembalian']);
+
+                // dd($find);
+
+                $find->update([
+                    'keterangan' => $request['keteranganpengembalian'],
+                    'totalpengembalian' => $request['totalpengembalian'],
+                    'tglupdate' => $request['tanggal'],
+                ]);
+
+            }
+
+            $transStatus = 'true';
+            $transMessage = "Simpan Berhasil";
+        } catch (\Exception $e) {
+            $transStatus = 'false';
+            $transMessage = "Simpan Gagal";
+        }
+
+        if ($transStatus == 'true') {
+            DB::commit();
+            $result = array(
+                'status' => 201,
+                'message' => $transMessage,
+                'as' => '@epic',
+            );
+        } else {
+            DB::rollBack();
+            $result = array(
+                'status' => 400,
+                'messages'=> $transMessage,
+                'errline'=> $e->getLine(),
+                'errmessage'=> $e->getMessage(),
+                'as' => '@epic',
+            );
+            
+        }
+
+        return $this->setStatusCode($result['status'])->respond($result, $transMessage);
+
+    }
+
+    public function getPengembalianBelanjaByNorec(Request $request)
+    {
+        $kdProfile = $this->getDataKdProfile($request);
+        $idProfile = (int) $kdProfile;
+
+        $data = DB::select(DB::raw("
+            SELECT
+                pb.*, sr.norealisasi,
+                ka.kode || '~' || ka.keterangan as kegiatan,
+                ma.kodemataanggaran || '~' || ma.namamataanggaran as mataanggaran,
+                ap.asalproduk,
+                sr.totalbelanja
+            FROM pengembalianbelanja_t pb
+            JOIN strukrealisasi_t sr ON sr.norec = pb.objectspjfk AND sr.statusenabled = true AND sr.kdprofile = ".$idProfile."
+            JOIN realisasidetail_t rd on rd.strukrealisasifk = sr.norec
+            JOIN kegiatananggaran_m ka ON ka.id = sr.objectkegiatanfk
+            JOIN mataanggaran_m ma ON ma.id = sr.objectmataanggaranfk
+            JOIN asalproduk_m ap ON ap.id = sr.objectasalprodukfk
+            WHERE
+                pb.statusenabled = true
+                AND pb.kdprofile = ".$idProfile."
+                AND pb.norec = '".$request['norec']."'
+            GROUP BY
+                pb.norec, 
+                sr.norealisasi, sr.totalbelanja, 
+                ka.kode, ka.keterangan, 
+                ma.kodemataanggaran, ma.namamataanggaran, 
+                ap.asalproduk
+            ORDER BY
+                pb.tglinput desc
+        "));
+
+        return $this->respond($data);
+    }
+
+    public function hapusPengembalianBelanja(Request $request)
+    {
+        $kdProfile = $this->getDataKdProfile($request);
+        $idProfile = (int) $kdProfile;
+        $transMessage = null;
+
+        try {
+            
+            $find = DB::table('pengembalianbelanja_t')->where('norec', $request['norec']);
+
+            $find->update([
+                'statusenabled' => false
+            ]);
+
+            $transStatus = 'true';
+            $transMessage = "Hapus Berhasil";
+        } catch (\Exception $e) {
+            $transStatus = 'false';
+            $transMessage = "Hapus Gagal";
+        }
+
+        if ($transStatus == 'true') {
+            DB::commit();
+            $result = array(
+                'status' => 201,
+                'message' => $transMessage,
+                'as' => '@epic',
+            );
+        } else {
+            DB::rollBack();
+            $result = array(
+                'status' => 400,
+                'messages'=> $transMessage,
+                'errline'=> $e->getLine(),
+                'errmessage'=> $e->getMessage(),
+                'as' => '@epic',
+            );
+            
+        }
+
+        return $this->setStatusCode($result['status'])->respond($result, $transMessage);
     }
 }

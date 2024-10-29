@@ -6834,5 +6834,25 @@
         "define": "MedifirstService"
       }
     ]
+  },
+  {
+    "name": "PengembalianBelanja",
+    "url": "/UGVuZ2VtYmFsaWFuQmVsYW5qYQ==",
+    "templateurl": "module/Perencanaan/PengembalianBelanja.html",
+    "controller": "PengembalianBelanjaCtrl",
+    "deps": [
+      {
+        "module": "Services",
+        "define": "Service"
+      },
+      {
+        "module": "LoginServices",
+        "define": "LoginService"
+      },
+      {
+        "module": "MedifirstService",
+        "define": "MedifirstService"
+      }
+    ]
   }
 ]
