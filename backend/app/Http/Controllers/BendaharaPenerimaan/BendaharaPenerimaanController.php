@@ -2572,7 +2572,7 @@ class BendaharaPenerimaanController extends ApiController {
             $ko = "and rkb.isobat = true";
         }
 
-        $detail = DB::select(DB::raw("select rkb.*, pd.noregistrasi, kp.kelompokpasien, kp.id idkelompokpasien, sts.nosts, sts.tglpenerimaan, coalesce(sts.totalsetoran,0) totalsetoran, ru.objectdepartemenfk
+        $detail = DB::select(DB::raw("select rkb.*, pd.noregistrasi, kp.kelompokpasien, kp.id idkelompokpasien, sts.nosts, sts.tglpenerimaan, sts.keterangan, coalesce(sts.totalsetoran,0) totalsetoran, ru.objectdepartemenfk
         from rekapklaimbpjs_t rkb
         left join pasiendaftar_t pd on pd.norec = rkb.norecpdfk
         left join kelompokpasien_m kp on kp.id = pd.objectkelompokpasienlastfk

@@ -169,6 +169,8 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
 				var grid = $("#grid").data("kendoGrid")
 				var dataItem = grid.dataItem(row);
 
+                $scope.item.uraian = dataItem.keterangan
+
 				if (checked) {
 					var result = $.grep($scope.selectedData2, function (e) {
 						return e.norec == dataItem.norec;
