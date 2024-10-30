@@ -22767,12 +22767,12 @@ public function suratBuktiPengembalian(Request $request)
                 kb.hargasatuan,
                 kb.subtotal,
                 kb.objectasalprodukfk,
-                kb2.norec AS norec_kb_sesudah,
-                kb2.keteranganbelanja AS keteranganbelanja_sesudah,
-                kb2.jml AS jml_sesudah,
-                kb2.satuan AS satuan_sesudah,
-                kb2.hargasatuan AS hargasatuan_sesudah,
-                kb2.objectasalprodukfk AS objectasalprodukfk_sesudah,
+                --kb2.norec AS norec_kb_sesudah,
+                --kb2.keteranganbelanja AS keteranganbelanja_sesudah,
+                --kb2.jml AS jml_sesudah,
+                --kb2.satuan AS satuan_sesudah,
+                --kb2.hargasatuan AS hargasatuan_sesudah,
+                --kb2.objectasalprodukfk AS objectasalprodukfk_sesudah,
                 ka.tahun,
                 ka.ID AS id_kegiatananggaran,
                 ka.kode AS kode_kegiatananggaran,
@@ -22783,12 +22783,12 @@ public function suratBuktiPengembalian(Request $request)
                 ka.targetmasuk,
                 ka.targetkeluaran,
                 ka.targethasil,
-                ka2.indikatormasuk AS indikatormasuk_sesudah,
-                ka2.indikatorkeluaran AS indikatorkeluaran_sesudah,
-                ka2.indikatorhasil AS indikatorhasil_sesudah,
-                ka2.targetmasuk AS targetmasuk_sesudah,
-                ka2.targetkeluaran AS targetkeluaran_sesudah,
-                ka2.targethasil AS targethasil_sesudah,
+                --ka2.indikatormasuk AS indikatormasuk_sesudah,
+                --ka2.indikatorkeluaran AS indikatorkeluaran_sesudah,
+                --ka2.indikatorhasil AS indikatorhasil_sesudah,
+                --ka2.targetmasuk AS targetmasuk_sesudah,
+                --ka2.targetkeluaran AS targetkeluaran_sesudah,
+                --ka2.targethasil AS targethasil_sesudah,
                 ma4.ID AS id_mataanggaran4,
                 ma3.ID AS id_mataanggaran3,
                 ma2.ID AS id_mataanggaran2,
@@ -22832,21 +22832,21 @@ public function suratBuktiPengembalian(Request $request)
                     AND ta.statusenabled = TRUE
                     AND ta.kdprofile = 30
                 -- sebelum
-                LEFT JOIN keteranganbelanja_t AS kb2 ON kb2.objectmataanggaranfk = kb.objectmataanggaranfk 
-                    AND kb2.statusenabled = TRUE    
-                    AND kb2.objecttahapfk = ".$request['terhadap']."
-                    AND kb2.keteranganbelanja = kb.keteranganbelanja
+                --LEFT JOIN keteranganbelanja_t AS kb2 ON kb2.objectmataanggaranfk = kb.objectmataanggaranfk 
+                    --AND kb2.statusenabled = TRUE    
+                    --AND kb2.objecttahapfk = ".$request['terhadap']."
+                    --AND kb2.keteranganbelanja = kb.keteranganbelanja
                     -- AND kb2.objectkegiatanfk = ".$idSebelum[0]->id_kegiatan."
-                LEFT JOIN kegiatananggaran_m AS ka2 ON ka2.id = kb2.objectkegiatanfk
-                    AND ka2.statusenabled = TRUE
-                    AND ka2.kdprofile = 30
-                    AND ka.tahun = '".$request['tahun']."'
+                --LEFT JOIN kegiatananggaran_m AS ka2 ON ka2.id = kb2.objectkegiatanfk
+                    --AND ka2.statusenabled = TRUE
+                    --AND ka2.kdprofile = 30
+                    --AND ka.tahun = '".$request['tahun']."'
             WHERE
                 kb.statusenabled = TRUE 
                 AND kb.kdprofile = 30 
                 AND kb.objecttahapfk = ".$request['tahap']." 
                 AND kb.objectkegiatanfk = ".$request['subsubkegiatan']."
-                AND ka2.kode = '".$idSebelum[0]->kode."'
+                --AND ka2.kode = '".$idSebelum[0]->kode."'
             ORDER BY
                 SPLIT_PART( ma4.kodemataanggaran, '.', 1 ),
                 SPLIT_PART( ma4.kodemataanggaran, '.', 2 ),
@@ -22857,6 +22857,118 @@ public function suratBuktiPengembalian(Request $request)
                 END,
                 kb.nourut
         "));
+
+        $sesudah = DB::select(DB::raw("
+            SELECT 
+                kb.norec AS norec_kb,
+                kb.keteranganbelanja,
+                kb.jml,
+                kb.satuan,
+                kb.hargasatuan,
+                kb.subtotal,
+                kb.objectasalprodukfk,
+                ka.tahun,
+                ka.ID AS id_kegiatananggaran,
+                ka.kode AS kode_kegiatananggaran,
+                ka.keterangan,
+                ka.indikatormasuk,
+                ka.indikatorkeluaran,
+                ka.indikatorhasil,
+                ka.targetmasuk,
+                ka.targetkeluaran,
+                ka.targethasil,
+                ma4.ID AS id_mataanggaran4,
+                ma3.ID AS id_mataanggaran3,
+                ma2.ID AS id_mataanggaran2,
+                ma1.ID AS id_mataanggaran1,
+                ma1.namamataanggaran AS nama_mataanggaran1,
+                ma2.namamataanggaran AS nama_mataanggaran2,
+                ma3.namamataanggaran AS nama_mataanggaran3,
+                ma4.namamataanggaran AS nama_mataanggaran4,
+                ma4.kodemataanggaran AS kode_mataanggaran4_gabung,
+                CASE WHEN SPLIT_PART( ma4.kodemataanggaran, '.', 5 ) = '' THEN
+                    SPLIT_PART( ma4.kodemataanggaran, '.', 4 ) ELSE 
+                    SPLIT_PART( ma4.kodemataanggaran, '.', 4 ) || '.' || SPLIT_PART( ma4.kodemataanggaran, '.', 5 ) 
+                END AS kode_mataanggaran4,
+                SPLIT_PART( ma4.kodemataanggaran, '.', 3 ) AS kode_mataanggaran3,
+                SPLIT_PART( ma4.kodemataanggaran, '.', 2 ) AS kode_mataanggaran2,
+                SPLIT_PART( ma4.kodemataanggaran, '.', 1 ) AS kode_mataanggaran1
+            FROM
+                keteranganbelanja_t AS kb
+                INNER JOIN kegiatananggaran_m AS ka ON ka.ID = kb.objectkegiatanfk AND ka.statusenabled = TRUE
+                    AND ka.kdprofile = 30
+                    AND ka.tahun = '".$request['tahun']."'
+                INNER JOIN mataanggaran_m AS ma4 ON ma4.ID = kb.objectmataanggaranfk
+                    AND ma4.statusenabled = TRUE
+                    AND ma4.kdprofile = 30
+                INNER JOIN mataanggaran_m AS ma3 ON ma3.kodemataanggaran ILIKE SPLIT_PART( ma4.kodemataanggaran, '.', 1 ) || '.' || SPLIT_PART( ma4.kodemataanggaran, '.', 2 ) || '.' || SPLIT_PART( ma4.kodemataanggaran, '.', 3 )
+                    AND ma3.statusenabled = TRUE
+                    AND ma3.kdprofile = 30
+                INNER JOIN mataanggaran_m AS ma2 ON ma2.kodemataanggaran ILIKE SPLIT_PART( ma3.kodemataanggaran, '.', 1 ) || '.' || SPLIT_PART( ma3.kodemataanggaran, '.', 2 )
+                    AND ma2.statusenabled = TRUE
+                    AND ma2.kdprofile = 30
+                INNER JOIN mataanggaran_m AS ma1 ON ma1.kodemataanggaran ILIKE SPLIT_PART( ma2.kodemataanggaran, '.', 1 )
+                    AND ma1.statusenabled = TRUE
+                    AND ma1.kdprofile = 30
+                INNER JOIN asalproduk_m AS ap ON ap.ID = kb.objectasalprodukfk
+                    AND ap.statusenabled = TRUE
+                    AND ap.kdprofile = 30
+                INNER JOIN tahapanggaran_m AS ta ON ta.ID = kb.objecttahapfk 
+                    AND ta.statusenabled = TRUE
+                    AND ta.kdprofile = 30
+            WHERE
+                kb.statusenabled = TRUE 
+                AND kb.kdprofile = 30 
+                AND kb.objecttahapfk = ".$request['terhadap']."
+                AND ka.kode = '".$idSebelum[0]->kode."'
+            ORDER BY
+                SPLIT_PART( ma4.kodemataanggaran, '.', 1 ),
+                SPLIT_PART( ma4.kodemataanggaran, '.', 2 ),
+                CAST ( SPLIT_PART( ma4.kodemataanggaran, '.', 3 ) AS INTEGER ),
+                CASE WHEN SPLIT_PART( ma4.kodemataanggaran, '.', 5 ) = '' THEN
+                    CAST ( SPLIT_PART( ma4.kodemataanggaran, '.', 4 ) AS INTEGER ) ELSE 
+                    CAST ( SPLIT_PART( ma4.kodemataanggaran, '.', 5 ) AS INTEGER ) 
+                END,
+                kb.nourut
+        
+        "));
+
+        foreach($data as $seb){
+            $seb->jml_sesudah = 0;
+            $seb->satuan_sesudah = null;
+            $seb->hargasatuan_sesudah = 0;
+            $seb->objectasalprodukfk_sesudah = null;
+            $seb->indikatormasuk_sesudah = null;
+            $seb->indikatorkeluaran_sesudah = null;
+            $seb->indikatorhasil_sesudah = null;
+            $seb->targetmasuk_sesudah = null;
+            $seb->targetkeluaran_sesudah = null;
+            $seb->targethasil_sesudah = null;
+            
+            foreach($sesudah as $ses){
+                if($seb->kode_kegiatananggaran == $ses->kode_kegiatananggaran){
+                    if($seb->kode_mataanggaran4 == $ses->kode_mataanggaran4){
+                        if($seb->keteranganbelanja == $ses->keteranganbelanja){
+                            $seb->jml_sesudah = $ses->jml;
+                            $seb->satuan_sesudah = $ses->satuan;
+                            $seb->hargasatuan_sesudah = $ses->hargasatuan;
+                            $seb->objectasalprodukfk_sesudah = $ses->objectasalprodukfk;
+                            
+                        }
+                    }
+
+                    $seb->indikatormasuk_sesudah = $ses->indikatormasuk;
+                    $seb->indikatorkeluaran_sesudah = $ses->indikatorkeluaran;
+                    $seb->indikatorhasil_sesudah = $ses->indikatorhasil;
+                    $seb->targetmasuk_sesudah = $ses->targetmasuk;
+                    $seb->targetkeluaran_sesudah = $ses->targetkeluaran;
+                    $seb->targethasil_sesudah = $ses->targethasil;
+                }
+            }
+        }
+
+        // dd($data);
+
 
         $program = DB::select(DB::raw("
             select dp.tahun, dp.kode kodesubsubkegiatan, dp.keterangan keterangansubsubkegiatan,

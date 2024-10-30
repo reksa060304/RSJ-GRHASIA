@@ -140,11 +140,11 @@
             {{-- <td style="padding: .2em .4em;">{{ $data[0]->indikatormasuk_sesudah }}</td> --}}
             <td style="padding: .2em .4em;">{{ $data[0]->indikatormasuk }}</td>
             {{-- <td style="padding: .2em .4em;">{{ $data[0]->targetmasuk }}</td> --}}
-            <td style="padding: .2em .4em;">{{ $data[0]->targetmasuk_sesudah }}</td>
+            <td style="padding: .2em .4em;">{{ $data[0]->targetmasuk }}</td>
             {{-- <td style="padding: .2em .4em;">{{ $data[0]->indikatormasuk_sesudah }}</td> --}}
             <td style="padding: .2em .4em;">{{ $data[0]->indikatormasuk }}</td>
             {{-- <td style="padding: .2em .4em;">{{ $data[0]->targetmasuk_sesudah }}</td> --}}
-            <td style="padding: .2em .4em;">{{ $data[0]->targetmasuk }}</td>
+            <td style="padding: .2em .4em;">{{ $data[0]->targetmasuk_sesudah }}</td>
         </tr>
         <tr>
             <td style="padding: .2em .4em;">Keluaran</td>
@@ -157,7 +157,7 @@
                     }
                 @endphp --}}
                 @php
-                    $indikatorkeluaranSesudah = explode(chr(10), $data[0]->indikatorkeluaran_sesudah);            
+                    $indikatorkeluaranSesudah = explode(chr(10), $data[0]->indikatorkeluaran);            
                     for ($i = 0; $i < count($indikatorkeluaranSesudah); $i++) {
                         echo "$indikatorkeluaranSesudah[$i]";
                         echo "<br>";
@@ -173,7 +173,7 @@
                     }
                 @endphp --}}
                 @php
-                    $targetkeluaranSesudah = explode(chr(10), $data[0]->targetkeluaran_sesudah);            
+                    $targetkeluaranSesudah = explode(chr(10), $data[0]->targetkeluaran);            
                     for ($i = 0; $i < count($targetkeluaranSesudah); $i++) {
                         echo "$targetkeluaranSesudah[$i]";
                         echo "<br>";
@@ -189,7 +189,7 @@
                     }
                 @endphp --}}
                 @php
-                    $indikatorkeluaran = explode(chr(10), $data[0]->indikatorkeluaran);            
+                    $indikatorkeluaran = explode(chr(10), $data[0]->indikatorkeluaran_sesudah);            
                     for ($i = 0; $i < count($indikatorkeluaran); $i++) {
                         echo "$indikatorkeluaran[$i]";
                         echo "<br>";
@@ -205,7 +205,7 @@
                     }
                 @endphp --}}
                 @php
-                    $targetkeluaran = explode(chr(10), $data[0]->targetkeluaran);            
+                    $targetkeluaran = explode(chr(10), $data[0]->targetkeluaran_sesudah);            
                     for ($i = 0; $i < count($targetkeluaran); $i++) {
                         echo "$targetkeluaran[$i]";
                         echo "<br>";
@@ -216,13 +216,13 @@
         <tr>
             <td style="padding: .2em .4em; border-bottom: 0;">Hasil</td>
             {{-- <td style="padding: .2em .4em; border-bottom: 0;">{{ $data[0]->indikatorhasil }}</td> --}}
-            <td style="padding: .2em .4em; border-bottom: 0;">{{ $data[0]->indikatorhasil_sesudah }}</td>
-            {{-- <td style="padding: .2em .4em; border-bottom: 0;">{{ $data[0]->targethasil }}</td> --}}
-            <td style="padding: .2em .4em; border-bottom: 0;">{{ $data[0]->targethasil_sesudah }}</td>
-            {{-- <td style="padding: .2em .4em; border-bottom: 0;">{{ $data[0]->indikatorhasil_sesudah }}</td> --}}
             <td style="padding: .2em .4em; border-bottom: 0;">{{ $data[0]->indikatorhasil }}</td>
-            {{-- <td style="padding: .2em .4em; border-bottom: 0;">{{ $data[0]->targethasil_sesudah }}</td> --}}
+            {{-- <td style="padding: .2em .4em; border-bottom: 0;">{{ $data[0]->targethasil }}</td> --}}
             <td style="padding: .2em .4em; border-bottom: 0;">{{ $data[0]->targethasil }}</td>
+            {{-- <td style="padding: .2em .4em; border-bottom: 0;">{{ $data[0]->indikatorhasil_sesudah }}</td> --}}
+            <td style="padding: .2em .4em; border-bottom: 0;">{{ $data[0]->indikatorhasil_sesudah }}</td>
+            {{-- <td style="padding: .2em .4em; border-bottom: 0;">{{ $data[0]->targethasil_sesudah }}</td> --}}
+            <td style="padding: .2em .4em; border-bottom: 0;">{{ $data[0]->targethasil_sesudah }}</td>
         </tr>
     </table>
 
@@ -316,7 +316,7 @@
                                 foreach ($data as $ma1) {
                                     if($ma1->id_mataanggaran1 === $item->id_mataanggaran1){
                                         if($ma1->objectasalprodukfk == $ap->id){
-                                            $ap->subtotal += ( (int)$ma1->jml_sesudah * (int)$ma1->hargasatuan_sesudah );
+                                            $ap->subtotal += ( (int)$ma1->jml * (int)$ma1->hargasatuan );
                                         }
                                     }
                                 }
@@ -345,7 +345,7 @@
                                 foreach ($data as $ma1) {
                                     if($ma1->id_mataanggaran1 === $item->id_mataanggaran1){
                                         if($ma1->objectasalprodukfk == $ap->id){
-                                            $ap->subtotal += ( (int)$ma1->jml * (int)$ma1->hargasatuan );
+                                            $ap->subtotal += ( (int)$ma1->jml_sesudah * (int)$ma1->hargasatuan_sesudah );
                                         }
                                     }
                                 }
@@ -401,7 +401,7 @@
                                 foreach ($data as $ma2) {
                                     if($ma2->id_mataanggaran2 === $item->id_mataanggaran2){
                                         if($ma2->objectasalprodukfk == $ap->id){
-                                            $ap->subtotal += ( (int)$ma2->jml_sesudah * (int)$ma2->hargasatuan_sesudah );
+                                            $ap->subtotal += ( (int)$ma2->jml * (int)$ma2->hargasatuan );
                                         }
                                     }
                                 }
@@ -429,7 +429,7 @@
                                 foreach ($data as $ma2) {
                                     if($ma2->id_mataanggaran2 === $item->id_mataanggaran2){
                                         if($ma2->objectasalprodukfk == $ap->id){
-                                            $ap->subtotal += ( (int)$ma2->jml * (int)$ma2->hargasatuan );
+                                            $ap->subtotal += ( (int)$ma2->jml_sesudah * (int)$ma2->hargasatuan_sesudah );
                                         }
                                     }
                                 }
@@ -459,7 +459,7 @@
                         foreach ($data as $kb) {
                             if($kb->id_mataanggaran3 === $item->id_mataanggaran3){
                                 $totalParent3 = $totalParent3 + ( (int)$kb->jml * (int)$kb->hargasatuan );
-                                $totalParent3Sesudah = $totalParent3Sesudah + ( (int)$kb->jml_sesudah * (int)$kb->hargasatuan_sesudah );
+                                $totalParent3Sesudah = $totalParent3Sesudah + ( (int)$kb->jml * (int)$kb->hargasatuan );
                             }
                         }
                         $selisihParent3 = (int)$totalParent3 - (int)$totalParent3Sesudah;
@@ -485,7 +485,7 @@
                                 foreach ($data as $ma3) {
                                     if($ma3->id_mataanggaran3 === $item->id_mataanggaran3){
                                         if($ma3->objectasalprodukfk == $ap->id){
-                                            $ap->subtotal += ( (int)$ma3->jml_sesudah * (int)$ma3->hargasatuan_sesudah );
+                                            $ap->subtotal += ( (int)$ma3->jml * (int)$ma3->hargasatuan );
                                         }
                                     }
                                 }
@@ -512,7 +512,7 @@
                                 foreach ($data as $ma3) {
                                     if($ma3->id_mataanggaran3 === $item->id_mataanggaran3){
                                         if($ma3->objectasalprodukfk == $ap->id){
-                                            $ap->subtotal += ( (int)$ma3->jml * (int)$ma3->hargasatuan );
+                                            $ap->subtotal += ( (int)$ma3->jml_sesudah * (int)$ma3->hargasatuan_sesudah );
                                         }
                                     }
                                 }
@@ -570,7 +570,7 @@
                                 foreach ($data as $ma4) {
                                     if($ma4->id_mataanggaran4 === $item->id_mataanggaran4){
                                         if($ma4->objectasalprodukfk == $ap->id){
-                                            $ap->subtotal += ( (int)$ma4->jml_sesudah * (int)$ma4->hargasatuan_sesudah );
+                                            $ap->subtotal += ( (int)$ma4->jml * (int)$ma4->hargasatuan );
                                         }
                                     }
                                 }
@@ -597,7 +597,7 @@
                                 foreach ($data as $ma4) {
                                     if($ma4->id_mataanggaran4 === $item->id_mataanggaran4){
                                         if($ma4->objectasalprodukfk == $ap->id){
-                                            $ap->subtotal += ( (int)$ma4->jml * (int)$ma4->hargasatuan );
+                                            $ap->subtotal += ( (int)$ma4->jml_sesudah * (int)$ma4->hargasatuan_sesudah );
                                         }
                                     }
                                 }
@@ -632,32 +632,32 @@
                     <td style="padding: .2em .4em;"></td>
                     <td style="padding: .2em .4em;">{{ $item->keteranganbelanja }}</td>
                     {{-- <td style="padding: .2em .4em;">{{ $item->jml }}</td> --}}
-                    <td style="padding: .2em .4em;">{{ $item->jml_sesudah }}</td>
+                    <td style="padding: .2em .4em;">{{ $item->jml }}</td>
                     {{-- <td style="padding: .2em .4em;">{{ $item->satuan }}</td> --}}
-                    <td style="padding: .2em .4em;">{{ $item->satuan_sesudah }}</td>
+                    <td style="padding: .2em .4em;">{{ $item->satuan }}</td>
                     {{-- <td style="text-align: right; padding: .2em .4em;">{{ number_format($item->hargasatuan,0,',','.') }}</td> --}}
-                    <td style="text-align: right; padding: .2em .4em;">{{ number_format($item->hargasatuan_sesudah,0,',','.') }}</td>
+                    <td style="text-align: right; padding: .2em .4em;">{{ number_format($item->hargasatuan,0,',','.') }}</td>
                     {{-- <td style="text-align: right; padding: .2em .4em;">{{ number_format( $totalKB,0,',','.' ) }}</td> --}}
                     
                     @foreach ($asalproduk as $ap)
                         @if ($ap->id == $item->objectasalprodukfk)
-                            <td style="text-align: right; padding: .2em .4em;">{{ number_format( $totalKBSesudah,0,',','.' ) }}</td>
+                            <td style="text-align: right; padding: .2em .4em;">{{ number_format( $totalKB,0,',','.' ) }}</td>
                         @else
                             <td style="text-align: right; padding: .2em .4em;">0</td>
                         @endif
                     @endforeach
                     
                     {{-- <td style="text-align: right; padding: .2em .4em;">{{ $item->jml_sesudah }}</td> --}}
-                    <td style="text-align: right; padding: .2em .4em;">{{ $item->jml }}</td>
+                    <td style="text-align: right; padding: .2em .4em;">{{ $item->jml_sesudah }}</td>
                     {{-- <td style="text-align: center; padding: .2em .4em;">{{ $item->satuan_sesudah }}</td> --}}
-                    <td style="text-align: center; padding: .2em .4em;">{{ $item->satuan }}</td>
+                    <td style="text-align: center; padding: .2em .4em;">{{ $item->satuan_sesudah }}</td>
                     {{-- <td style="text-align: right; padding: .2em .4em;">{{ number_format($item->hargasatuan_sesudah,0,',','.') }}</td> --}}
-                    <td style="text-align: right; padding: .2em .4em;">{{ number_format($item->hargasatuan,0,',','.') }}</td>
+                    <td style="text-align: right; padding: .2em .4em;">{{ number_format($item->hargasatuan_sesudah,0,',','.') }}</td>
                     {{-- <td style="text-align: right; padding: .2em .4em;">{{ number_format($totalKBSesudah,0,',','.') }}</td> --}}
                     
                     @foreach ($asalproduk as $ap)
                         @if ($ap->id == $item->objectasalprodukfk)
-                            <td style="text-align: right; padding: .2em .4em;">{{ number_format($totalKB,0,',','.') }}</td>
+                            <td style="text-align: right; padding: .2em .4em;">{{ number_format($totalKBSesudah,0,',','.') }}</td>
                         @else
                             <td style="text-align: right; padding: .2em .4em;">0</td>
                         @endif
@@ -692,7 +692,7 @@
 
                         foreach ($data as $dt) {
                             if($dt->objectasalprodukfk == $ap_sesudah->id){
-                                $ap_sesudah->subtotal += ( (int)$dt->jml_sesudah * (int)$dt->hargasatuan_sesudah );
+                                $ap_sesudah->subtotal += ( (int)$dt->jml * (int)$dt->hargasatuan );
                             }
                         }
                     @endphp
@@ -712,7 +712,7 @@
 
                         foreach ($data as $dt) {
                             if($dt->objectasalprodukfk == $ap->id){
-                                $ap->subtotal += ( (int)$dt->jml * (int)$dt->hargasatuan );
+                                $ap->subtotal += ( (int)$dt->jml_sesudah * (int)$dt->hargasatuan_sesudah );
                             }
                         }
                     @endphp
