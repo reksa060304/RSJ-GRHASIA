@@ -865,6 +865,7 @@ Route::group(['middleware' => 'cors', 'prefix' => 'service'], function () {
           //2019-12 penambahan arif akhir
           Route::get('report/get-cetak-pemeriksaanlab','Report\ReportController@pemeriksaanLab');
           Route::get('report/get-cetak-surat-tugas-ambulan','Report\ReportController@suratTugasAmbulan');
+          Route::get('report/get-cetak-biaya-ambulan','Report\ReportController@cetakBiayaAmbulan');
           Route::get('emr/get-antrian-pasien-norec/{norec}','EMR\EMRController@getAntrianPasienDiperiksa');
           Route::post('emr/post-anamnesis/{method}','EMR\EMRController@postAnamnesis');
           Route::get('emr/get-anamnesis','EMR\EMRController@getAnamnesis');
@@ -3097,6 +3098,9 @@ Route::group(['middleware' => 'cors', 'prefix' => 'service'], function () {
                 Route::get('sysadmin/general/get-tindakan-with-details','SysAdmin\GeneralController@getTindakanWithDetail');
                 Route::get('sysadmin/general/get-tindakan-with-details-luar','SysAdmin\GeneralController@getTindakanWithDetailLuar');
 
+                Route::get('sysadmin/general/get-tindakan-ambulan','SysAdmin\GeneralController@getTindakanPartAmbulan');
+                Route::get('sysadmin/general/get-komponenharga-ambulan','SysAdmin\GeneralController@getKomponenHargaAmbulan');
+                
                 Route::get('sysadmin/general/get-acc-number-radiologi', 'SysAdmin\GeneralController@getAccNumberRadiologi');
                 Route::get('sysadmin/general/get-produk', 'SysAdmin\GeneralController@getDataProduk');
                 Route::get('sysadmin/general/get-master-diagnosa-kep', 'SysAdmin\GeneralController@getDiagnosaKeperawatan');
