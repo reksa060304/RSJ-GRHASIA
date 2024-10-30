@@ -286,6 +286,27 @@ class AnggaranController extends ApiController {
                 COALESCE((string_to_array(kode, '.'))[8]::INT, 0)
         "));
 
+        // $kegiatan = DB::select(DB::raw("
+        //     SELECT
+        //         tag.norec,
+        //         ka.kode,
+        //         ka.keterangan,
+        //         peg.id as idpegawai,
+        //         peg.namalengkap,
+        //         ta.id as idtahap,
+        //         ta.tahap,
+        //         tag.tahun,
+        //         tag.targetmasuk as targetkinerja
+        //     FROM trnsaksianggaran2024_t tag
+        //     JOIN kegiatananggaran2024_m ka ON ka.id = tag.objectkegiatanfk AND ka.statusenabled = TRUE
+        //     JOIN tahapanggaran_m ta ON ta.id = tag.objecttahapfk AND ta.statusenabled = TRUE
+        //     LEFT JOIN pegawai_m peg ON peg.id = tag.objectpptkfk AND peg.statusenabled = TRUE 
+        //     WHERE
+        //         tag.statusenabled = TRUE
+        //         tag.kdprofile = 30
+
+        // "));
+
 
         $result = array(
             'kegiatan' => $kegiatan,
@@ -356,7 +377,19 @@ class AnggaranController extends ApiController {
 
         $div = '';
         if (isset($request['div']) && $request['div'] != "" && $request['div'] != "undefined") {
-            $div =  "and div = '".$request['div']."'";
+            $div =  "and ka.div = '".$request['div']."'";
+        }else{
+            $div = "and ka.div = 4";
+        }
+
+        $tahap = '';
+        if (isset($request['tahap']) && $request['tahap'] != "" && $request['tahap'] != "undefined") {
+            $tahap =  "and ta.objecttahapfk = ".$request['tahap'];
+        }
+        
+        $tahun = '';
+        if (isset($request['tahun']) && $request['tahun'] != "" && $request['tahun'] != "undefined") {
+            $tahun =  "and ta.tahun = '".$request['tahun']."'";
         }
 
         $kegiatan = DB::select(DB::raw("
@@ -365,7 +398,7 @@ class AnggaranController extends ApiController {
                 ta.indikatormasuk,ta.indikatorkeluaran,ta.indikatorhasil,ta.targetmasuk,ta.targetkeluaran,ta.targethasil
             FROM
                 kegiatananggaran2024_m AS ka
-                INNER JOIN transaksianggaran2024_t AS ta ON ta.objectkegiatanfk = ka.id
+                INNER JOIN transaksianggaran2024_t AS ta ON ta.objectkegiatanfk = ka.id AND ta.statusenabled = TRUE
                 LEFT JOIN pegawai_m as pg on pg.id = ta.objectpptkfk
                 LEFT JOIN jenisbelanja_m as jb on jb.id = ta.objectjenisbelanjafk
                 INNER JOIN tahapanggaran_m as tp on tp.id = ta.objecttahapfk
@@ -373,7 +406,10 @@ class AnggaranController extends ApiController {
             WHERE
                 ka.statusenabled = TRUE 
                 AND ka.kdprofile = $idProfile 
-                AND ka.div = 4 
+                -- AND ka.div = 4
+                $div
+                $tahap
+                $tahun
             ORDER BY
                 ( string_to_array( ka.kode, '.' ) ) [ 1 ]:: INT,
                 COALESCE ( ( string_to_array( ka.kode, '.' ) ) [ 2 ]:: INT, 0 ),
@@ -390,6 +426,8 @@ class AnggaranController extends ApiController {
             'kegiatan' => $kegiatan,
             'message' => 'epic',
         );
+
+        // dd($result);
 
         return $this->respond($result);
     }
@@ -416,7 +454,8 @@ class AnggaranController extends ApiController {
                 ka3.kode kode_subkegiatan,
                 ka3.keterangan as ket_subkegiatan,
                 ka.kode as kode_subsubkegiatan,
-                ka.keterangan as ket_subsubkegiatan	
+                ka.keterangan as ket_subsubkegiatan,
+                ta.objecttahapfk as idtahap
             FROM
                 transaksianggaran2024_t ta
                 INNER JOIN kegiatananggaran2024_m ka ON ka.ID = ta.objectkegiatanfk

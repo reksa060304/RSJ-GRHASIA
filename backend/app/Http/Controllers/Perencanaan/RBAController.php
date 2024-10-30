@@ -47,8 +47,8 @@ class RBAController extends ApiController
         $subSubKegiatan = DB::select(DB::raw("
             SELECT ka.id, ka.kode || ' - ' || ka.keterangan as keterangan
             FROM maploginusertosubsubkegiatan_s AS map
-            LEFT JOIN loginuser_s AS lu ON lu.id = map.objectloginuserfk
-            LEFT JOIN kegiatananggaran2024_m AS ka ON ka.id = map.objectsubsubkegiatanfk
+            JOIN loginuser_s AS lu ON lu.id = map.objectloginuserfk
+            JOIN kegiatananggaran2024_m AS ka ON ka.id = map.objectsubsubkegiatanfk
             WHERE map.kdprofile = ".$idProfile."
             AND map.statusenabled = TRUE
             AND lu.id = ".$request['idLogin']."
@@ -267,7 +267,7 @@ class RBAController extends ApiController
 
         $rencana = DB::table('strukperencanaan_t as sp')
             ->select(DB::raw("sp.tglverifikasi, sp.statusenabled, sp.objectsubkegiatanfk, sp.norec, sp.tgldokumen, sp.nostruk,  sp.keterangan As keteranganp, 
-                pg.namalengkap, 
+                sp.objectpegawaiveriffk, pg.namalengkap, 
                 ka.kode || ' - ' || ka.keterangan AS keterangan, 
                 ru.namaruangan"))
             ->leftJoin('pegawai_m as pg', 'pg.id', '=', 'sp.objectpegawaifk')
@@ -285,13 +285,15 @@ class RBAController extends ApiController
             $detail = DB::table('strukperencanaandetail_t as spd')
                 ->select(DB::raw("spd.qtyverifikasi, spd.namakegiatan, spd.hargasatuan, 
                     spd.statusverif, spd.norec, spd.nostrukfk, spd.objectprodukfk, 
-                    spd.qtyrencana, spd.qtystok, spd.keteranganlainnya, pr.namaproduk"))
+                    spd.qtyrencana, spd.qtystok, spd.keteranganlainnya, spd.istransfer, pr.namaproduk"))
                 ->leftJoin('produk_m as pr', 'pr.id', '=', 'spd.objectprodukfk')
                 ->where('spd.nostrukfk', $item->norec)
                 ->where('spd.statusenabled', true);
+
                 if(isset($request['statusverif']) && $request['statusverif'] !== '' && $request['tahap'] != "undefined"){
                     $detail = $detail->where('spd.statusverif', $request['statusverif']);
                 }
+
             $detail = $detail->where('spd.kdprofile', $idProfile)->get();
             
             if (count($detail) > 0) { 
@@ -316,7 +318,7 @@ class RBAController extends ApiController
 
         $rencana = DB::table('strukperencanaan_t as sp')
         ->select(DB::raw("sp.tglverifikasi, sp.statusenabled, sp.objectsubkegiatanfk, sp.norec, sp.tgldokumen, sp.nostruk, 
-            pg.namalengkap, 
+            sp.objectpegawaiveriffk, pg.namalengkap, 
             ka.id || '-' || ka.keterangan AS keterangan, 
             ru.namaruangan"))
         ->leftJoin('pegawai_m as pg', 'pg.id', '=', 'sp.objectpegawaifk')
@@ -431,7 +433,7 @@ class RBAController extends ApiController
         // Detail rencana 
         $detail = DB::table('strukperencanaandetail_t as spd')
             ->select(DB::raw("
-                spd.*, pr.namaproduk, ak.kodeakun as kdbmn"))
+                spd.*, pr.namaproduk, ak.kodeakun as kdbmn, sa.satuanstandar"))
             ->leftJoin('produk_m as pr', 'pr.id', '=', 'spd.objectprodukfk')
             ->leftJoin('charkodeakunasset_m as ak', 'ak.id', '=', 'pr.objectprodukassetfk')
             ->leftJoin('satuanstandar_m as sa', 'sa.id', '=', 'spd.objectsatuanfk')
@@ -600,7 +602,8 @@ class RBAController extends ApiController
                         'objectasalprodukfk' => $item['sumberdana']['id'],
                         'objectsatuanfk' => $item['satuan']['id'],
                         'objecttahapfk' => $request['idTahap'],
-                        'istransfer' => false
+                        'istransfer' => false,
+                        'keterangandetail' => $item['keterangandetail']
                     ]);
                 }
                 else{
@@ -624,7 +627,8 @@ class RBAController extends ApiController
                         'objectasalprodukfk' => $item['sumberdana']['id'],
                         'objectsatuanfk' => $item['satuan']['id'],
                         'objecttahapfk' => $request['idTahap'],
-                        'istransfer' => false
+                        'istransfer' => false,
+                        'keterangandetail' => $item['keterangandetail']
                     ]);
                 }
 
@@ -1002,44 +1006,56 @@ class RBAController extends ApiController
         $kdProfile = $this->getDataKdProfile($request);
         $idProfile = (int) $kdProfile;
 
+        $mataanggaran = '';
+        if(isset($request['mataanggaran']) && $request['mataanggaran'] !== '' && $request['mataanggaran'] !== 'undefined'){
+            $mataanggaran = 'and spd.objectmataanggaranfk = '.$request['mataanggaran'];
+        }
+
+        // ambil usulan yang sudah verifikasi dan belum di transfer
+        // status verif = 1
         $subSubKegiatan = DB::select(DB::raw("
         
-            SELECT  
+            SELECT
+                spd.norec as norec_detail,
+                spd.qtyrencana,
+                spd.qtyverifikasi,
+                spd.qtystok,  
+                spd.keteranganlainnya as referensi,
+                spd.totalharga,
+                spd.hargasatuan,
+                spd.tahunanggaran,
+                spd.namaproduk,
+                spd.namakegiatan,
                 ka.id AS idsubsubkegiatan,
                 ka.kode AS kodesubsubkegiatan,
                 ka.keterangan AS keterangansubsubkegiatan,
                 ma.id AS idmataanggaran,
                 ma.kodemataanggaran,
                 ma.namamataanggaran,
-                SUM(spd.totalharga) AS totalusulan,
+                ma.kodemataanggaran || ' - ' || ma.namamataanggaran as rekening,
                 ta.id AS idtahap,
                 ap.id AS idasalproduk,
+                ap.asalproduk,
                 sp.keterangan,
-                string_agg(spd.norec, ',') as norec_spd 
+                sp.nostruk,
+                sa.satuanstandar
             FROM strukperencanaandetail_t spd
             JOIN strukperencanaan_t sp ON sp.norec = spd.nostrukfk AND sp.statusenabled = TRUE AND sp.kdprofile = ".$idProfile."
             JOIN kegiatananggaran2024_m ka ON ka.id = spd.objectkegiatanfk AND ka.statusenabled = TRUE AND ka.kdprofile = ".$idProfile."
-            LEFT JOIN kegiatananggaran2024_m ka2 ON ka2.id = ka.headfk AND ka2.kdprofile = ".$idProfile."
             JOIN mataanggaran2024_m ma ON ma.id = spd.objectmataanggaranfk AND ma.statusenabled = TRUE AND ma.kdprofile = ".$idProfile."
             JOIN tahapanggaran_m ta ON ta.id = spd.objecttahapfk AND ta.statusenabled = TRUE AND ta.kdprofile = ".$idProfile."
             JOIN asalproduk_m ap ON ap.id = spd.objectasalprodukfk AND ap.statusenabled = TRUE AND ap.kdprofile = ".$idProfile."
+            --LEFT JOIN produk_m pr ON pr.id = spd.objectprodukfk AND pr.statusenabled = TRUE
+            LEFT JOIN satuanstandar_m sa ON sa.id = spd.objectsatuanfk 
             WHERE 
                 spd.statusenabled = TRUE 
                 AND spd.kdprofile = ".$idProfile."
                 AND spd.tahunanggaran = '".$request['tahunawal']."'
                 AND spd.objecttahapfk = ".$request['tahap']."
-                AND ka2.id = ".$request['subkegiatan']."
+                AND spd.objectkegiatanfk = ".$request['subsubkegiatan']."
+                $mataanggaran
                 AND spd.istransfer = false
-            GROUP BY 
-                ka.id,
-                ka.kode,
-                ka.keterangan,
-                ma.id,
-                ma.kodemataanggaran,
-                ma.namamataanggaran,
-                ta.id,
-                ap.id,
-                sp.keterangan
+                AND spd.statusverif = 1
 
         "));
 
@@ -1075,32 +1091,32 @@ class RBAController extends ApiController
     // Abaikan, dalam tahap pengembangan
     // Mengecek jumlah nilai alokasi sama gak dengan yng ditransfer
     // ubah nilai objectkegianfk dan tahap
-    public function coba()
-    {
-        $data = DB::select(DB::raw("
-            SELECT
-                kb.objectkegiatanfk, kb.objecttahapfk,
-                ak.nilai AS nilai_alokasi 
-            FROM
-                alokasiketeranganbelanja_t AS ak
-                LEFT JOIN keteranganbelanja_t AS kb ON kb.norec = ak.keteranganbelanjafk 
-            WHERE
-                kb.statusenabled = TRUE 
-                AND ak.statusenabled = TRUE
-                AND kb.objectkegiatanfk = 214
-                AND kb.objecttahapfk = 7
-            ORDER BY
-                nilai_alokasi DESC
-        "));
+    // public function coba()
+    // {
+    //     $data = DB::select(DB::raw("
+    //         SELECT
+    //             kb.objectkegiatanfk, kb.objecttahapfk,
+    //             ak.nilai AS nilai_alokasi 
+    //         FROM
+    //             alokasiketeranganbelanja_t AS ak
+    //             LEFT JOIN keteranganbelanja_t AS kb ON kb.norec = ak.keteranganbelanjafk 
+    //         WHERE
+    //             kb.statusenabled = TRUE 
+    //             AND ak.statusenabled = TRUE
+    //             AND kb.objectkegiatanfk = 214
+    //             AND kb.objecttahapfk = 7
+    //         ORDER BY
+    //             nilai_alokasi DESC
+    //     "));
 
-        $totalNilaiAlokasi = 0;
+    //     $totalNilaiAlokasi = 0;
 
-        foreach($data as $d){
-            $totalNilaiAlokasi = $totalNilaiAlokasi + (int)$d->nilai_alokasi;
-        }
+    //     foreach($data as $d){
+    //         $totalNilaiAlokasi = $totalNilaiAlokasi + (int)$d->nilai_alokasi;
+    //     }
 
-        return $this->respond($totalNilaiAlokasi);
-    }
+    //     return $this->respond($totalNilaiAlokasi);
+    // }
 
     public function cobaCetak()
     {
@@ -1142,5 +1158,375 @@ class RBAController extends ApiController
         return view('report.cobacetak', [
             'data' => $data
         ]);
+    }
+
+    public function getDetailRencanaByNorec(Request $request)
+    {
+
+        $kdProfile = $this->getDataKdProfile($request);
+        $idProfile = (int) $kdProfile;
+
+        $data = DB::select(DB::raw("
+            SELECT
+                spd.norec as norec_detail,
+                spd.qtyrencana,
+                spd.qtyverifikasi,
+                spd.qtystok,  
+                spd.keteranganlainnya as referensi,
+                spd.totalharga,
+                spd.hargasatuan,
+                spd.tahunanggaran,
+                ka.id AS idsubsubkegiatan,
+                ka.kode AS kodesubsubkegiatan,
+                ka.keterangan AS keterangansubsubkegiatan,
+                ma.id AS idmataanggaran,
+                ma.kodemataanggaran,
+                ma.namamataanggaran,
+                ma.kodemataanggaran || ' - ' || ma.namamataanggaran as rekening,
+                ta.id AS idtahap,
+                ap.id AS idasalproduk,
+                ap.asalproduk,
+                sp.keterangan,
+                sp.nostruk,
+                pr.namaproduk
+            FROM strukperencanaandetail_t spd
+            JOIN strukperencanaan_t sp ON sp.norec = spd.nostrukfk AND sp.statusenabled = TRUE AND sp.kdprofile = ".$idProfile."
+            JOIN kegiatananggaran2024_m ka ON ka.id = spd.objectkegiatanfk AND ka.statusenabled = TRUE AND ka.kdprofile = ".$idProfile."
+            JOIN mataanggaran2024_m ma ON ma.id = spd.objectmataanggaranfk AND ma.statusenabled = TRUE AND ma.kdprofile = ".$idProfile."
+            JOIN tahapanggaran_m ta ON ta.id = spd.objecttahapfk AND ta.statusenabled = TRUE AND ta.kdprofile = ".$idProfile."
+            JOIN asalproduk_m ap ON ap.id = spd.objectasalprodukfk AND ap.statusenabled = TRUE AND ap.kdprofile = ".$idProfile."
+            LEFT JOIN produk_m pr ON pr.id = spd.objectprodukfk AND pr.statusenabled = TRUE
+            WHERE
+                spd.statusenabled = TRUE
+                AND spd.kdprofile = ".$idProfile."
+                AND spd.istransfer <> TRUE
+                AND spd.norec = '".$request['norec']."'
+        "));
+
+        return $this->respond($data);
+
+    }
+
+    public function simpanTransfer(Request $request)
+    {
+        $kdProfile = $this->getDataKdProfile($request);
+        $idProfile = (int) $kdProfile;
+        $details = $request['details'];
+        $tahapawal = $request['tahapawal'];
+        $tahapakhir = $request['tahapakhir'];
+
+        $errMsg = null;
+
+        DB::beginTransaction();
+        try{
+            
+            // cek jika kegiatan anggaran sudah ada berdasarkan tahun
+            $cek = DB::table('transaksianggaran2024_t')
+                ->where('objectkegiatanfk', $request['objectkegiatanfk'])
+                ->where('objecttahapfk', $tahapakhir)
+                ->where('tahun', $request['tahuntransfer'])
+                ->first();
+            
+            // jika ada transaksi buat keterangan belanja berdasarkan transaksi
+            // jika tidak ada buat transaksi baru dan keteranganbelanja baru
+            if($cek){
+
+                // update target masuk
+                $tambah = (int)$cek->targetmasuk + (int)$request['subtotal'];
+                DB::table('transaksianggaran2024_t')
+                    ->where('norec', $cek->norec)
+                    ->update([
+                        'targetmasuk' => $tambah
+                    ]);
+                
+
+                $kb = new KeteranganBelanja2024();
+                $kb->norec = $kb->generateNewId();
+                $kb->statusenabled = true;
+                $kb->kdprofile = $idProfile;
+                $kb->objectkegiatanfk = $request['objectkegiatanfk'];
+                $kb->objectmataanggaranfk = $request['objectmataanggaranfk'];
+                $kb->objectasalprodukfk = $request['objectasalprodukfk'];
+                $kb->objecttahapfk = $request['tahapakhir'];
+                $kb->keteranganbelanja = $request['keteranganbelanja'];
+                $kb->jml = $request['juml'];
+                $kb->hargasatuan = $request['hargasatuan'];
+                $kb->subtotal = $request['subtotal'];
+                $kb->satuan = $request['satuan'];
+                $kb->objecttransaksifk = $cek->norec;
+                $kb->save();
+
+                // update strukperencanaan detail is transfer = true
+                foreach($details as $dt){
+                    $norec = $dt['norec_detail'];
+                    DB::table('strukperencanaandetail_t')
+                        ->where('norec', $norec)
+                        ->update([
+                            'istransfer' => true
+                        ]);
+
+                }
+
+            }else{
+
+                $ta = new TransaksiAnggaran2024();
+                $ta->norec = $ta->generateNewId();
+                $ta->statusenabled = true;
+                $ta->kdprofile = $idProfile;
+                $ta->objectkegiatanfk = $request['objectkegiatanfk'];
+                $ta->objecttahapfk = $tahapakhir;
+                $ta->tahun = $request['tahuntransfer'];
+                $ta->targetmasuk = (string)$request['subtotal'];
+                $ta->save();
+
+                $kb = new KeteranganBelanja2024();
+                $kb->norec = $kb->generateNewId();
+                $kb->statusenabled = true;
+                $kb->kdprofile = $idProfile;
+                $kb->objectkegiatanfk = $request['objectkegiatanfk'];
+                $kb->objectmataanggaranfk = $request['objectmataanggaranfk'];
+                $kb->objectasalprodukfk = $request['objectasalprodukfk'];
+                $kb->objecttahapfk = $request['tahapakhir'];
+                $kb->keteranganbelanja = $request['keteranganbelanja'];
+                $kb->jml = $request['juml'];
+                $kb->hargasatuan = $request['hargasatuan'];
+                $kb->subtotal = $request['subtotal'];
+                $kb->satuan = $request['satuan'];
+                $kb->objecttransaksifk = $ta->norec;
+                $kb->save();
+
+                // update strukperencanaan detail is transfer = true
+                foreach($details as $dt){
+                    $norec = $dt['norec_detail'];
+                    DB::table('strukperencanaandetail_t')
+                        ->where('norec', $norec)
+                        ->update([
+                            'istransfer' => true
+                        ]);
+
+                }
+            }
+
+            $transStatus = true;
+            $transMessage = 'Save Transfer Usulan Ke RBA ';
+        } catch (Exception $e) {
+            $transStatus = false;
+            $errMsg = $e->getMessage();
+        }
+        
+        $transMessage = 'Save Transfer Usulan Ke RBA ';
+
+        if ($transStatus == true) {
+            $transMessage = $transMessage . 'Suksess';
+            DB::commit();
+            $result = array(
+                'status' => 201,
+                'message' => $transMessage,
+                'as' => '@epic',
+            );
+        } else {
+            $transMessage = "Simpan Gagal";
+            DB::rollBack();
+            $result = array(
+                'status' => 400,
+                'line'=> $e->getLine(),
+                'message'=> $errMsg,
+                'as' => '@epic',
+            );
+        }
+        return $this->setStatusCode($result['status'])->respond($result, $transMessage);
+    }
+
+    public function simpanTransferSatuan(Request $request)
+    {
+        $kdProfile = $this->getDataKdProfile($request);
+        $idProfile = (int) $kdProfile;
+        $details = $request['details'];
+        $tahapawal = $request['tahapawal'];
+        $tahapakhir = $request['tahapakhir'];
+
+        $errMsg = null;
+
+        DB::beginTransaction();
+        try{
+            
+            // cek jika kegiatan anggaran sudah ada berdasarkan tahun
+            $cek = DB::table('transaksianggaran2024_t')
+                ->where('objectkegiatanfk', $request['objectkegiatanfk'])
+                ->where('objecttahapfk', $tahapakhir)
+                ->where('tahun', $request['tahuntransfer'])
+                ->first();
+            
+            // jika ada transaksi buat keterangan belanja berdasarkan transaksi
+            // jika tidak ada buat transaksi baru dan keteranganbelanja baru
+            if($cek){
+
+                // loop data untuk menjumlah totalharga setiap usulan
+                $total = 0;
+                foreach($request['details'] as $dt){
+                    $total += (float)$dt['totalharga'];
+                }
+
+                // update target masuk
+                DB::table('transaksianggaran2024_t')
+                    ->where('norec', $cek->norec)
+                    ->update([
+                        'targetmasuk' => $total
+                    ]);
+                
+                // loop detail membuat keteranganbelanja baru
+                foreach($details as $dt){
+                    $kb = new KeteranganBelanja2024();
+                    $kb->norec = $kb->generateNewId();
+                    $kb->statusenabled = true;
+                    $kb->kdprofile = $idProfile;
+                    $kb->objectkegiatanfk = $dt['idsubsubkegiatan'];
+                    $kb->objectmataanggaranfk = $dt['idmataanggaran'];
+                    $kb->objectasalprodukfk = $dt['idasalproduk'];
+                    $kb->objecttahapfk = $dt['idtahap'];
+                    // keteranganbelanja ambil dari namaproduk / kegiatan
+                    $kb->keteranganbelanja = isset($dt['namaproduk']) ? $dt['namaproduk'] : $dt['namakegiatan'];
+                    $kb->jml = $dt['qtyverifikasi'];
+                    $kb->hargasatuan = $dt['hargasatuan'];
+                    $kb->subtotal = $dt['totalharga'];
+                    $kb->satuan = $dt['satuanstandar'];
+                    $kb->objecttransaksifk = $cek->norec;
+                    $kb->save();
+
+                }
+
+                // update strukperencanaan detail is transfer = true
+                foreach($details as $dt){
+                    $norec = $dt['norec_detail'];
+                    DB::table('strukperencanaandetail_t')
+                        ->where('norec', $norec)
+                        ->update([
+                            'istransfer' => true
+                        ]);
+
+                }
+
+            }else{
+
+                // loop data untuk menjumlah totalharga setiap usulan
+                $total = 0;
+                foreach($request['details'] as $dt){
+                    $total += (float)$dt['totalharga'];
+                }
+
+                $ta = new TransaksiAnggaran2024();
+                $ta->norec = $ta->generateNewId();
+                $ta->statusenabled = true;
+                $ta->kdprofile = $idProfile;
+                $ta->objectkegiatanfk = $request['objectkegiatanfk'];
+                $ta->objecttahapfk = $tahapakhir;
+                $ta->indikatormasuk = 'Dana';
+                $ta->tahun = $request['tahuntransfer'];
+                $ta->targetmasuk = (string)$total;
+                $ta->save();
+                
+                // loop data untuk buat keterangan belanja
+                foreach($details as $dt){
+                    $kb = new KeteranganBelanja2024();
+                    $kb->norec = $kb->generateNewId();
+                    $kb->statusenabled = true;
+                    $kb->kdprofile = $idProfile;
+                    $kb->objectkegiatanfk = $dt['idsubsubkegiatan'];
+                    $kb->objectmataanggaranfk = $dt['idmataanggaran'];
+                    $kb->objectasalprodukfk = $dt['idasalproduk'];
+                    $kb->objecttahapfk = $dt['idtahap'];
+                    // keteranganbelanja ambil dari namaproduk / kegiatan
+                    $kb->keteranganbelanja = isset($dt['namaproduk']) ? $dt['namaproduk'] : $dt['namakegiatan'];
+                    $kb->jml = $dt['qtyverifikasi'];
+                    $kb->hargasatuan = $dt['hargasatuan'];
+                    $kb->subtotal = $dt['totalharga'];
+                    $kb->satuan = $dt['satuanstandar'];
+                    $kb->objecttransaksifk = $ta->norec;
+                    $kb->save();
+                }
+
+                // update strukperencanaan detail is transfer = true
+                foreach($details as $dt){
+                    $norec = $dt['norec_detail'];
+                    DB::table('strukperencanaandetail_t')
+                        ->where('norec', $norec)
+                        ->update([
+                            'istransfer' => true
+                        ]);
+
+                }
+            }
+
+            $transStatus = true;
+            $transMessage = 'Save Transfer Usulan Ke RBA ';
+        } catch (Exception $e) {
+            $transStatus = false;
+            $errMsg = $e->getMessage();
+        }
+        
+        $transMessage = 'Save Transfer Usulan Ke RBA ';
+
+        if ($transStatus == true) {
+            $transMessage = $transMessage . 'Suksess';
+            DB::commit();
+            $result = array(
+                'status' => 201,
+                'message' => $transMessage,
+                'as' => '@epic',
+            );
+        } else {
+            $transMessage = "Simpan Gagal";
+            DB::rollBack();
+            $result = array(
+                'status' => 400,
+                'line'=> $e->getLine(),
+                'message'=> $errMsg,
+                'as' => '@epic',
+            );
+        }
+        return $this->setStatusCode($result['status'])->respond($result, $transMessage);
+    }
+
+    public function batalverifikasi(Request $request)
+    {
+        $kdProfile = $this->getDataKdProfile($request);
+        $idProfile = (int) $kdProfile;
+        
+        $transStatus = null;
+        $errMsg = null;
+        
+        DB::beginTransaction();
+        try {
+            
+            $data = StrukPerencanaan::where('norec', $request['norec'])->update([
+                'objectpegawaiveriffk' => null,
+                'tglverifikasi' => null
+            ]);
+
+            $transStatus = true;
+        } catch (\Exception $e) {
+            $transStatus = false;
+            $errMsg = $e->getMessage();
+        }
+
+        if ($transStatus == true) {
+            $transMessage = "Batal verifikasi berhasil";
+            DB::commit();
+            $result = array(
+                'status' => 201,
+                'message' => $transMessage,
+                'as' => '@epic',
+            );
+        } else {
+            $transMessage = "Batal verifikasi gagal";
+            DB::rollBack();
+            $result = array(
+                'status' => 400,
+                'line'=> $e->getLine(),
+                'message'=> $errMsg,
+                'as' => '@epic',
+            );
+        }
+        return $this->setStatusCode($result['status'])->respond($result, $transMessage);
     }
 }

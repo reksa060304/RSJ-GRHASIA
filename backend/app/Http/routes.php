@@ -95,6 +95,10 @@ Route::group(['middleware' => 'cors', 'prefix' => 'service'], function () {
         Route::get('anggaran/load-combo-master-pendapatan','Perencanaan\PerencanaanController@comboMasterPendapatan');
         Route::post('anggaran/save-master-pendapatan', 'Perencanaan\PerencanaanController@saveMasterPendapatan');
         Route::get('anggaran/get-master-pendapatan', 'Perencanaan\PerencanaanController@getComboPendapatan');
+        Route::get('perencanaan/get-detail-rencana-bynorec', 'Perencanaan\RBAController@getDetailRencanaByNorec');
+        Route::post('perencanaan/simpan-transfer', 'Perencanaan\RBAController@simpanTransfer');
+        Route::post('perencanaan/simpan-transfer-satuan', 'Perencanaan\RBAController@simpanTransferSatuan');
+        Route::post('perencanaan/batal-verifikasi-rencana', 'Perencanaan\RBAController@batalverifikasi');
         // End Rencana Belanja Route-------------------------------------------------------------------------------------------
 
 

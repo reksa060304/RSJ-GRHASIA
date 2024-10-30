@@ -542,22 +542,25 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
                     return
                 }
 
-                let sudahVerif = null
-                $scope.dataSelected.details.map(function(detail){
-
-                    let cari = $scope.listVerifikasi.find(item => item.name == detail.statusverif)
-
-                    if(cari){
-                        sudahVerif = cari
-                    }
-                })
-
-                console.log(sudahVerif)
-
-                if(sudahVerif){
-                    toastr.error('Data sudah ada yang diverif')
+                // validasi jika sudah diverifikasi
+                if($scope.dataSelected.rencana.tglverifikasi !== null || $scope.dataSelected.rencana.objectpegawaiveriffk !== null){
+                    toastr.error("Sudah ada data yang diverifikasi")
                     return
                 }
+
+                // let sudahVerif = null
+                // $scope.dataSelected.details.map(function(detail){
+
+                //     let cari = $scope.listVerifikasi.find(item => item.name == detail.statusverif)
+
+                //     if(cari){
+                //         sudahVerif = cari
+                //     }
+                // })
+                // if(sudahVerif){
+                //     toastr.error('Data sudah ada yang diverif')
+                //     return
+                // }
                 
 
                 $scope.dataPerencanaan = []

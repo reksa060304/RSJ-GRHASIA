@@ -118,13 +118,13 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
 
             var defaultspj = null
             
-            // $scope.listDiv = [
-            //     { id: 0, div: "Urusan Pemerintahan" },
-            //     { id: 1, div: "Program" },
-            //     { id: 2, div: "Kegiatan" },
-            //     { id: 3, div: "Sub Kegiatan" },
-            //     { id: 4, div: "Sub Sub Kegiatan" },
-            // ];
+            $scope.listDiv = [
+                { id: 0, div: "Urusan Pemerintahan" },
+                { id: 1, div: "Program" },
+                { id: 2, div: "Kegiatan" },
+                { id: 3, div: "Sub Kegiatan" },
+                { id: 4, div: "Sub Sub Kegiatan" },
+            ];
 
             $scope.listStatusSPJ = [
                 { id: 0, status: "Semua" },
@@ -140,15 +140,15 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
                 { id: 4, div: "Div: 4" },
             ];
 
-            $scope.listTahapKegiatan = [
-                { id: 100, tahap: "Semua Kegiatan" },
-                { id: 1, tahap: "Indikatif Murni" },
-                { id: 2, tahap: "Murni Definitif" },
-                { id: 4, tahap: "Pergeseran 1" },
-                { id: 3, tahap: "Pergeseran 2" },
-                { id: 5, tahap: "Pegeseran 3" },
-                { id: 6, tahap: "Perubahan" },
-            ];
+            // $scope.listTahapKegiatan = [
+            //     { id: 100, tahap: "Semua Kegiatan" },
+            //     { id: 1, tahap: "Indikatif Murni" },
+            //     { id: 2, tahap: "Murni Definitif" },
+            //     { id: 4, tahap: "Pergeseran 1" },
+            //     { id: 3, tahap: "Pergeseran 2" },
+            //     { id: 5, tahap: "Pegeseran 3" },
+            //     { id: 6, tahap: "Perubahan" },
+            // ];
             $scope.listPihakKetiga = []
             medifirstService.getPart('perencanaan/get-datacombo-part-rekanan', true, true, 20).then(function (data) {
                 $scope.listPihakKetiga = data
@@ -210,6 +210,7 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
                         $scope.listDataDiv4 = dataCombo.divsubsubsubkg;
                         $scope.listTahap = dataCombo.tahap;
                         $scope.listJenisBelanja = dataCombo.jenisbelanja;
+                        // $scope.listTahapKegiatan = dataCombo.tahap
                     });
                 })
                 
@@ -1069,7 +1070,12 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
                         $scope.item.pptktext = dataItem.namalengkap
                         $scope.item.jenisbelanja = {id:e.data.jenisbelanja[0].id, jenisbelanja:e.data.jenisbelanja[0].jenisbelanja}
                         // $scope.item.jenisbelanja = {id:e.data.jenisbelanja[0].id, jenisbelanja:e.data.jenisbelanja[0].jenisbelanja}
-                        $scope.item.tahapdetail = {id: e.data.tahap[0].id, tahap: e.data.tahap[0].tahap}
+                        // $scope.item.tahapdetail = {id: e.data.tahap[0].id, tahap: e.data.tahap[0].tahap}
+                        $scope.listTahap.map(function(item){
+                            if(item.id == e.data.kegiatan[0].idtahap){
+                                $scope.item.tahapdetail = item
+                            }
+                        })
 
                         $scope.rcn.judulKegiatan =  dataItem.keterangan
                         $scope.item.norec = dataItem.norec
@@ -6922,21 +6928,31 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
 
                 var thn = ''
                 if($scope.item.tahun != undefined){
-                    thn = moment($scope.item.tahun).format('YYYY')
+                    thn = '&tahun=' + moment($scope.item.tahun).format('YYYY')
                 }
 
                 var thp = ''
                 if($scope.item.searchtahapkeg != undefined){
-                    thp = $scope.item.searchtahapkeg.id
+                    thp = '&tahap=' + $scope.item.searchtahapkeg.id
                 }
 
-                medifirstService.get("perencanaan/get-data-combo?tahun="+thn+"&idpegawai=" + $scope.idpegawailogin + "&tahapaktif=" + thp + "&div=" + div).then(function (e) {
+                medifirstService.get("anggaran/get-daftar-master-kegiatanRBA" 
+                    + "?div=" + div 
+                    + thn + thp).then(function (e) {
                     DataKegiatan = e.data.kegiatan
                     for (let i = 0; i < DataKegiatan.length; i++) {
                         DataKegiatan[i].statCheckbox = false
                     }
                     $scope.dataSourceKegiatan = e.data.kegiatan
                 })
+
+                // medifirstService.get("perencanaan/get-data-combo?tahun="+thn+"&idpegawai=" + $scope.idpegawailogin + "&tahapaktif=" + thp + "&div=" + div).then(function (e) {
+                //     DataKegiatan = e.data.kegiatan
+                //     for (let i = 0; i < DataKegiatan.length; i++) {
+                //         DataKegiatan[i].statCheckbox = false
+                //     }
+                //     $scope.dataSourceKegiatan = e.data.kegiatan
+                // })
             }
             $scope.changeCboPilihSubSubKegiatanSPJ = function(){
                 if( $scope.item.subSubKegiatanSPJ == undefined){
