@@ -97,6 +97,7 @@ define(['initialize'], function (initialize) {
                 medifirstService.get("tatarekening/tindakan/get-combo")
                     .then(function (da) {
                         $scope.listJenisPelaksana = da.data.jenispelaksana;
+                        $scope.listAmbulan = da.data.nopol;
                         if ($scope.item.iddpjp != undefined) {
                             $scope.item.jenisPelaksana = { id: 4, jenispetugaspe: 'Dokter Pemeriksa' };
                             $scope.init2();
@@ -607,16 +608,16 @@ define(['initialize'], function (initialize) {
                     "title": "Qty Perorang/Perkilometer",
                     "width": "140px"
                 },
-                {
-                    "field": "hargabbm",
-                    "title": "Harga BBM",
-                    "width": "90px"
-                },
-                {
-                    "field": "totalhargabbm",
-                    "title": "Total Harga BBM",
-                    "width": "90px"
-                },
+                // {
+                //     "field": "hargabbm",
+                //     "title": "Harga BBM",
+                //     "width": "90px"
+                // },
+                // {
+                //     "field": "totalhargabbm",
+                //     "title": "Total Harga BBM",
+                //     "width": "90px"
+                // },
                 {
                     "field": "totalkeseluruhan",
                     "title": "Total Keseluruhan",
@@ -1774,7 +1775,7 @@ define(['initialize'], function (initialize) {
                         + "&idJenisPelayanan="
                         + idJenisPelayanan, true, 10, 10)
                         .then(function (x) {
-                            $scope.listLayanan = x;
+                            $scope.listLayanan = x;                           
                         })
                 })
             }

@@ -104,11 +104,20 @@ class TindakanController extends ApiController
             ->orderBy('rt.id')
             ->first();
 
+        $nopol = \DB::table('registrasiaset_t')
+        ->select('norec', 'nopolisi')
+        ->where('kdprofile', $kdProfile)
+        ->where('statusenabled', true)
+        ->whereNotNull('nopolisi')
+        ->where('keteranganlainnya', 'ilike', '%ambulan%')
+        ->get();
+
         $result = array(
             'detaillogin' =>$detailLog,
             'jenispelaksana' => $jenisPelaksana,
             'pegawai' => $pegawai,
             'tarifcito' => $dataTarifAdminCito,
+            'nopol' => $nopol,
             'message' => 'ramdanegie',
         );
 
