@@ -424,6 +424,18 @@ define(['initialize', 'Configuration'], function (initialize,config) {
                     window.open(config.baseApiBackend + "report/get-cetak-surat-tugas-ambulan?norec=" + $scope.dataPasienSelected.noRec + "&kdprofile=" + profile,'_blank');
                 }
             }
+
+            $scope.cetakBiayaAmbulan = function () {
+                var local = JSON.parse(localStorage.getItem('profile'));
+                var profile = local.id;
+                if ($scope.dataPasienSelected == null) {
+                    toastr.error("Pilih data yang ingin di cetak")
+                    return;
+                }
+                else {
+                    window.open(config.baseApiBackend + "report/get-cetak-biaya-ambulan?norec=" + $scope.dataPasienSelected.noRec + "&kdprofile=" + profile,'_blank');
+                }
+            }
             // BATAS //
         }
     ]);
