@@ -195,6 +195,14 @@ class KasirController extends ApiController
             ->whereIn('id', $arry)
             ->get();
 
+        $nopol = \DB::table('registrasiaset_t')
+        ->select('norec', 'nopolisi')
+        ->where('kdprofile', $kdProfile)
+        ->where('statusenabled', true)
+        ->whereNotNull('nopolisi')
+        ->where('keteranganlainnya', 'ilike', '%ambulan%')
+        ->get();
+
         $result = array(
             'ruangan' => $dataRuangan,
             'kelompoktransaksi' => $kelTrans,
@@ -215,6 +223,7 @@ class KasirController extends ApiController
             'pegawai' => $pegawai,
             'jenisperan' => $jenisperan,
             'detailkegiatandiklat' => $detailkegiatandiklat,
+            'nopol' => $nopol,
             'message' => 'ihuman@epic'
         );
         return $this->respond($result);

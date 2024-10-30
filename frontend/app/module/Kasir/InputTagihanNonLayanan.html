@@ -65,7 +65,7 @@
 
 			<div class="grid_12">
 				<input style="width: 100%;" kendo-combo-box k-ng-model="item.noPolAmbulan"
-					k-data-text-field="'nopolisi'" k-data-value-field="'id'" k-filter="'contains'" k-auto-bind="false"
+					k-data-text-field="'nopolisi'" k-data-value-field="'nopolisi'" k-filter="'contains'" k-auto-bind="false"
 					k-data-source="listAmbulan" k-on-change="noPolAmbulanSelected(item.noPolAmbulan)">
 			</div>
 		</div>
@@ -151,7 +151,7 @@
 						ng-model="item.QtyPerOrang" ng-disabled="QtyOrang" />
 				</div>
 			</div>
-			<div class="grid_2" ng-hide="hargabahanbakar">
+			<!-- <div class="grid_2" ng-hide="hargabahanbakar">
 				<div class="grid_12">
 					<label c-label item="item" c-label-text="Harga BBM"></label>
 				</div>
@@ -159,7 +159,7 @@
 					<input c-text-box type="input" style="text-align: right;" filter="" class="k-textbox"
 						ng-model="item.hargabahanbakar">
 				</div>
-			</div>
+			</div> -->
 			<div class="grid_2">
 				<div class="grid_12">
 					<label c-label item="item" c-label-text="Harga"></label>

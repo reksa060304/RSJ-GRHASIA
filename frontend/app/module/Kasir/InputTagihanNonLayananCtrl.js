@@ -43,6 +43,7 @@ define(['initialize'], function (initialize) {
 				medifirstService.get("kasir/get-data-combo-kasir").then(function (data) {
 					$scope.listKelompokTransaksi = data.data.kelnon;
 					$scope.KelompokUserDiklit = data.data.diklit;
+					$scope.listAmbulan = data.data.nopol;
 					LoadCache();
 				})
 			}
