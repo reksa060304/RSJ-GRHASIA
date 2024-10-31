@@ -42,6 +42,11 @@
         margin-bottom: 0px;
     }
 
+    .ttd {
+        font-size: 9.5px;
+        margin-bottom: 0px;
+    }
+
     @media print {
         @page {
             size: A4;
@@ -209,7 +214,7 @@
                     class="col border border-top-0 border-bottom-0 border-left-0 border-right-1 border-dark  d-flex align-items-end justify-content-center">
                     @foreach ($data as $item)
                         @if ($item->id === 1)
-                            <span>{{ $item->namalengkap }}</span>
+                            <span class="ttd">{{ $item->namalengkap }}</span>
                         @else
                             &nbsp;
                         @endif
@@ -219,7 +224,7 @@
                     class="col border border-top-0 border-bottom-0 border-left-0 border-right-1 border-dark  d-flex align-items-end justify-content-center">
                     @foreach ($data as $item)
                         @if ($item->id === 2)
-                            <span>{{ $item->namalengkap }}</span>
+                            <span class="ttd">{{ $item->namalengkap }}</span>
                         @else
                             &nbsp;
                         @endif
@@ -229,7 +234,7 @@
                     class="col border border-top-0 border-bottom-0 border-left-0 border-right-1 border-dark  d-flex align-items-end justify-content-center">
                     @foreach ($data as $item)
                         @if ($item->id === 48)
-                            <span>{{ $item->namalengkap }}</span>
+                            <span class="ttd">{{ $item->namalengkap }}</span>
                         @else
                             &nbsp;
                         @endif
