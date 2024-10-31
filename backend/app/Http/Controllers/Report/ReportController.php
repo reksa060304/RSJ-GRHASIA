@@ -24546,7 +24546,8 @@ public function suratBuktiPengembalian(Request $request)
                 MIN(ma2.namamataanggaran) AS nama_mataanggaran2,
                 ma1.kodemataanggaran AS kode_mataanggaran1,
                 MIN(ma1.namamataanggaran) AS nama_mataanggaran1,
-                SUM(CAST(kb.subtotal AS DECIMAL)) AS total_anggaran
+                SUM(CAST(kb.subtotal AS DECIMAL)) AS total_anggaran,
+                mp.id as idmataanggaranpermen
             FROM keteranganbelanja_t kb
             JOIN kegiatananggaran_m kalama ON kalama.id = kb.objectkegiatanfk AND kalama.statusenabled = TRUE AND kalama.kdprofile = 30 AND kalama.tahun = '".$settingRBA->tahunanggaran."'
             JOIN kegiatananggaran2024_m ka ON ka.kode = kalama.kode AND ka.statusenabled = TRUE AND ka.kdprofile = 30
@@ -24617,7 +24618,8 @@ public function suratBuktiPengembalian(Request $request)
                 SUM(case when extract(year from bku.tglbku) = extract(year from timestamp '".$request['tglbku']."')
                     and extract(month from bku.tglbku) = extract(month from timestamp '".$request['tglbku']."')
                 then rd.subtotal else 0 end) as total_belanja_bulan_ini,
-                SUM(rd.subtotal) as total_belanja
+                SUM(rd.subtotal) as total_belanja,
+                mp.id as idmataanggaranpermen
             FROM strukrealisasi_t sr
             JOIN realisasidetail_t rd ON rd.strukrealisasifk = sr.norec AND rd.statusenabled = TRUE    
             JOIN kegiatananggaran_m kalama ON kalama.id = sr.objectkegiatanfk AND kalama.statusenabled = TRUE AND kalama.kdprofile = 30 AND kalama.tahun = '".$settingRBA->tahunanggaran."'
@@ -24631,6 +24633,7 @@ public function suratBuktiPengembalian(Request $request)
             JOIN mataanggaran2024_m ma1 ON ma1.id = ma2.headfk 
             JOIN asalproduk_m ap ON ap.id = sr.objectasalprodukfk
             JOIN bukukasumum_t bku ON bku.norec = sr.objectbkufk AND bku.statusenabled = TRUE AND bku.kdprofile = 30
+            JOIN mataanggaranpermen_m mp ON mp.id = ma.mataanggaranpermenfk
             WHERE 
                 sr.statusenabled = TRUE
                 AND sr.kdprofile = 30
@@ -24644,7 +24647,9 @@ public function suratBuktiPengembalian(Request $request)
                 ma.kodemataanggaran,
                 ma3.kodemataanggaran,
                 ma2.kodemataanggaran,
-                ma1.kodemataanggaran
+                ma1.kodemataanggaran,
+                mp.id,
+                mp.mataanggaranpermen
             ORDER BY
                 CAST(SPLIT_PART(ka.kode, '.', 2) AS INTEGER) ASC,
                 CAST(SPLIT_PART(ka.kode, '.', 3) AS INTEGER) ASC,
@@ -24661,9 +24666,64 @@ public function suratBuktiPengembalian(Request $request)
                 END asc
         "));
 
+        $pajakpenerimaan = DB::select(DB::raw("
+            SELECT
+                jp.id,
+                jp.namaexternal,
+                SUM(case when extract(year from bku.tglbku) = extract(year from timestamp '".$request['tglbku']."')
+                    and bku.tglbku <= DATE_TRUNC('MONTH', timestamp '".$request['tglbku']."')
+                then bku.pengeluaran else 0 end) as total_belanja_bulan_lalu,
+                SUM(case when extract(year from bku.tglbku) = extract(year from timestamp '".$request['tglbku']."')
+                    and extract(month from bku.tglbku) = extract(month from timestamp '".$request['tglbku']."')
+                then bku.pengeluaran else 0 end) as total_belanja_bulan_ini
+            FROM pemungutanpajak_t pj
+            JOIN jenispajak_m jp ON jp.id = pj.objectjenispphfk AND jp.statusenabled = TRUE 
+            JOIN strukrealisasi_t sr ON sr.norec = pj.objectspjfk AND sr.statusenabled = TRUE 
+            JOIN kegiatananggaran_m ka ON ka.id = sr.objectkegiatanfk
+            JOIN mataanggaran_m ma ON ma.id = sr.objectmataanggaranfk
+            JOIN asalproduk_m ap ON ap.id = sr.objectasalprodukfk
+            JOIN bukukasumum_t bku ON bku.norec = pj.objectbkufk AND bku.statusenabled = TRUE 
+            WHERE 
+                pj.statusenabled = TRUE 
+                AND sr.objectasalprodukfk = ".$request['asalproduk']."
+            GROUP BY 
+                jp.id,
+                jp.namaexternal
+            ORDER BY
+                jp.id
+        "));
+
+
+        $pajakpengeluaran = DB::select(DB::raw("
+            SELECT
+                jp.id,
+                jp.namaexternal,
+                SUM(case when extract(year from bku.tglbku) = extract(year from timestamp '".$request['tglbku']."')
+                    and bku.tglbku <= DATE_TRUNC('MONTH', timestamp '".$request['tglbku']."')
+                then bku.pengeluaran else 0 end) as total_belanja_bulan_lalu,
+                SUM(case when extract(year from bku.tglbku) = extract(year from timestamp '".$request['tglbku']."')
+                    and extract(month from bku.tglbku) = extract(month from timestamp '".$request['tglbku']."')
+                then bku.pengeluaran else 0 end) as total_belanja_bulan_ini
+            FROM penyetoranpajak_t pj
+            JOIN jenispajak_m jp ON jp.id = pj.objectjenispphfk AND jp.statusenabled = TRUE 
+            JOIN strukrealisasi_t sr ON sr.norec = pj.objectspjfk AND sr.statusenabled = TRUE 
+            JOIN kegiatananggaran_m ka ON ka.id = sr.objectkegiatanfk
+            JOIN mataanggaran_m ma ON ma.id = sr.objectmataanggaranfk
+            JOIN asalproduk_m ap ON ap.id = sr.objectasalprodukfk
+            JOIN bukukasumum_t bku ON bku.norec = pj.objectbkufk AND bku.statusenabled = TRUE 
+            WHERE 
+                pj.statusenabled = TRUE 
+                AND sr.objectasalprodukfk = ".$request['asalproduk']."
+            GROUP BY 
+                jp.id,
+                jp.namaexternal
+        "));
+
         return view('report.rba.cobalapungv3', [
             'data' => $dataAnggaran,
             'spjbku' => $dataSPJ,
+            'pajakpenerimaan' => $pajakpenerimaan,
+            'pajakpengeluaran' => $pajakpengeluaran
             // 'jenisAnggaran' => $dataJenisAnggaran
         ]);
     } 
