@@ -426,7 +426,7 @@ class KasirController extends ApiController
         $transMessage = '';
         $req = $request->all();
         //        return $this->respond($req);
-        try {
+        // try {
         if ($req['norec'] == '') {
             $SP = new StrukPelayanan();
             $norecSP = $SP->generateNewId();
@@ -484,6 +484,7 @@ class KasirController extends ApiController
             $SPD->is_terbayar = 0;
             $SPD->linetotal = 0;
             $SPD->keteranganlainnya = $item['keterangan'];
+            $SPD->nopolisiaset = $req['nopolisiaset'];
             $SPD->save();
         }
 
@@ -509,9 +510,9 @@ class KasirController extends ApiController
 
 
         $transStatus = 'true';
-        } catch (\Exception $e) {
-            $transStatus = 'false';
-        }
+        // } catch (\Exception $e) {
+        //     $transStatus = 'false';
+        // }
 
         if ($transStatus == 'true') {
             $transMessage = "Simpan Berhasil";
@@ -530,7 +531,7 @@ class KasirController extends ApiController
                 "message"  => $transMessage,
                 "data" => $SP,
                 'e' => $e->getLine(),
-                'messafe' => $e->getMessage(),
+                'message' => $e->getMessage(),
                 "as" => 'as@epic',
             );
         }

@@ -318,6 +318,7 @@ define(['initialize'], function (initialize) {
 					tglstruk: moment($scope.item.tglStruk).format('YYYY-MM-DD hh:mm:ss'),
 					totalharusdibayar: parseFloat(subTotal),//parseFloat($scope.item.totalBilling),
 					details: dataProduk,
+					nopolisiaset: $scope.item.noPolAmbulan.nopolisi,
 					petugaspelayananambulan: petugasLayanan,
 
 				}

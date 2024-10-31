@@ -3104,7 +3104,7 @@ Route::group(['middleware' => 'cors', 'prefix' => 'service'], function () {
 
                 Route::get('sysadmin/general/get-tindakan-ambulan','SysAdmin\GeneralController@getTindakanPartAmbulan');
                 Route::get('sysadmin/general/get-komponenharga-ambulan','SysAdmin\GeneralController@getKomponenHargaAmbulan');
-                
+
                 Route::get('sysadmin/general/get-acc-number-radiologi', 'SysAdmin\GeneralController@getAccNumberRadiologi');
                 Route::get('sysadmin/general/get-produk', 'SysAdmin\GeneralController@getDataProduk');
                 Route::get('sysadmin/general/get-master-diagnosa-kep', 'SysAdmin\GeneralController@getDiagnosaKeperawatan');

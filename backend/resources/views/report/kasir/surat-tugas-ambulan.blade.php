@@ -6,389 +6,255 @@
     </title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet"
         integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
-    <link href="{{ asset('service/css/style.css') }}" rel="stylesheet">
 </head>
-<style type="text/css" media="print">
-    @page {
-        size: auto;
-        /* auto is the initial value */
-        margin: 0;
-        /* this affects the margin in the printer settings */
-    }
-</style>
+
 <style>
-    tr td {
-        padding: 2px 4px 2px 4px;
-    }
-
-    /* .borderss {
-        border-bottom: 1px solid black;
-    } */
-
     body {
-        font-family: Tahoma, Geneva, sans-serif;
+        margin: 0;
+        padding: 0;
+        background-color: #CCCCCC;
     }
 
-    /* tabel */
-    .tg {
-        border-collapse: collapse;
-        border-spacing: 0;
+    .print-container {
+        width: 100%;
+        max-width: 210mm;
+        background-color: #ffffff;
+        margin: 0 auto;
+        padding: 30px;
     }
 
-    .tg td {
-        border-color: black;
-        border-style: solid;
-        border-width: 1px;
-        font-family: Arial, sans-serif;
-        font-size: 14px;
-        overflow: hidden;
-        padding: 10px 5px;
-        word-break: normal;
+    .paragraph-header {
+        font-size: 9px;
+        margin-bottom: 0px;
     }
 
-    .tg th {
-        /* border-color: black;
-        border-style: solid;
-        border-width: 1px; */
-        font-family: Arial, sans-serif;
-        font-size: 14px;
-        overflow: hidden;
-        padding: 10px 5px;
-        word-break: normal;
+    .h5 {
+        margin-bottom: -2px;
     }
 
-    .tg .tg-lboi {
-        border-color: inherit;
-        text-align: left;
-        vertical-align: middle
+    .paragraph-body {
+        font-size: 12px;
+        margin-bottom: 0px;
     }
 
-    .tg .tg-9wq8 {
-        border-color: inherit;
-        text-align: center;
-        vertical-align: middle
+    .paragraph-footer {
+        font-size: 10px;
+        margin-bottom: 0px;
     }
 
-    .tg .tg-c3ow {
-        border-color: inherit;
-        text-align: center;
-        vertical-align: top
-    }
+    @media print {
+        @page {
+            size: A4;
+            margin: 0;
+        }
 
-    .tg .tg-0pky {
-        border-color: white;
-        text-align: left;
-        vertical-align: top
+        .container {
+            width: 97% !important;
+            max-width: 100% !important;
+            padding: 0 !important;
+            margin: 0 auto !important;
+        }
     }
 </style>
 
-<body style="background-color: #CCCCCC">
-    <div align="center">
-        <table class="bayangprint" cellspacing="0" cellpadding="0" bgcolor="#FFFFFF" border="0"
-            width="{{ $pageWidth }}">
-            <tbody>
-                <tr>
-                    <td style="padding: 30px">
-                        <div align="center">
-                            <p align="right">
-                            <table cellspacing="0" cellpadding="0" bgcolor="#FFFFFF" height="133" border="0"
-                                width="100%" style="text-align: center;">
-                                <tbody>
-                                    <tr>
-                                        <td style="text-align:left">
-                                            <div align="center">
-                                                <table cellspacing="0" cellpadding="0" height="74" border="0"
-                                                    width="850">
-                                                    <tbody>
-                                                        <tr>
-                                                            <td valign="top"></td>
-                                                        </tr>
-                                                        <tr>
-                                                            <td valign="top">
-                                                                <table cellspacing="0" cellpadding="0" border="0"
-                                                                    width="100%">
-                                                                    <tbody>
-                                                                        <tr>
-                                                                            <td width="105">
-                                                                                <p align="left">
-                                                                                    <img src="{{ asset('service/img/logo_grhasia.png') }}"
-                                                                                        style="width: 80px"
-                                                                                        border="0" />
-                                                                                </p>
-                                                                            </td>
-                                                                            <td align="center">
-                                                                                <div style="margin-left: -80px">
-                                                                                    <b>
-                                                                                        <font style="font-size: 14pt"
-                                                                                            color="#000000">PEMERINTAH
-                                                                                            DAERAH DAERAH ISTIMEWA
-                                                                                            YOGYAKARTA</font>
-                                                                                        <br>
-                                                                                    </b>
-                                                                                    <font style="font-size: 12pt"
-                                                                                        color="#000000">DINAS KESEHATAN
-                                                                                        RUMAH SAKIT JIWA GRHASIA
-                                                                                    </font>
-                                                                                    <br>
-                                                                                    <font size="3"
-                                                                                        color="#000000">
-                                                                                        Jalan Kaliurang Km 17 Sleman,
-                                                                                        Telepon: (0274) 895143, 895297,
-                                                                                        Faksimile: (0274) 895142</br>
-                                                                                        Laman: grhasia.jogjaprov.go.id,
-                                                                                        Surel:
-                                                                                        grhasiamentalhospital@jogjaprov.go.id
-                                                                                        </br>
-                                                                                        Kode Pos 55582
-                                                                                        <font>
-                                                                                </div>
-                                                                            </td>
-                                                                        </tr>
-                                                                        <tr>
-                                                                            <td width="105">&nbsp;</td>
-                                                                            <td>&nbsp;</td>
-                                                                        </tr>
-                                                                    </tbody>
-                                                                </table>
-                                                                <hr style="border: 1px solid black; width: 100%;">
-                                                            </td>
-                                                        </tr>
-                                                        {{-- ini --}}
-                                                        <tr>
-                                                            <table class="tg"
-                                                                style="table-layout: fixed; background-color: #FFFFFF; position: relative;">
-                                                                <colgroup>
-                                                                    <col style="width: 92.333333px; height: 20px;">
-                                                                    <col style="width: 222.333333px; height: 20px;">
-                                                                    <col style="width: 285.333333px; height: 20px;">
-                                                                    <col style="width: 399.333333px; height: 20px;">
-                                                                </colgroup>
-                                                                <thead>
-                                                                    <tr>
-                                                                        <th class="tg-0pky" colspan="4">
-                                                                            <div style="text-align: center">
-                                                                                <p
-                                                                                    style="margin-top: -11px;text-decoration: underline; font-weight: bold;">
-                                                                                    SURAT TUGAS AMBULANS
-                                                                                </p><br>
-                                                                                <p
-                                                                                    style="margin-top: -20px;font-weight: normal;">
-                                                                                    NOMOR : ................
-                                                                                </p>
-                                                                            </div>
-                                                                        </th>
-                                                                    </tr>
-                                                                    <tr>
-                                                                        <td class="tg-0pky" colspan="4">
-                                                                            <div style="text-align: center">
-                                                                                <p
-                                                                                    style="margin-top: 10px;margin-bottom: 10px;font-weight: bold;">
-                                                                                    MEMERINTAHKAN
-                                                                                </p>
-                                                                            </div>
-                                                                        </td>
-                                                                    </tr>
-                                                                </thead>
-                                                            </table>
-                                                        </tr>
-                                                        <tr>
-                                                            <table class="tg"
-                                                                style="table-layout: fixed; background-color: #FFFFFF; position: relative; border-collapse: collapse;">
-                                                                <colgroup>
-                                                                    <col style="width: 92.33px;">
-                                                                    <col style="width: 222.33px;">
-                                                                    <col style="width: 285.33px;">
-                                                                    <col style="width: 399.33px;">
-                                                                </colgroup>
-                                                                <thead>
-                                                                    <tr style="border: 1px solid black;">
-                                                                        <th class="tg-9wq8"
-                                                                            style="border: 1px solid black; padding: 8px;">
-                                                                            No</th>
-                                                                        <th class="tg-9wq8"
-                                                                            style="border: 1px solid black; padding: 8px;">
-                                                                            Nama</th>
-                                                                        <th class="tg-9wq8"
-                                                                            style="border: 1px solid black; padding: 8px;">
-                                                                            NIP</th>
-                                                                        <th class="tg-9wq8"
-                                                                            style="border: 1px solid black; padding: 8px;">
-                                                                            Jabatan</th>
-                                                                    </tr>
-                                                                </thead>
-                                                                <tbody>
-                                                                    @foreach ($data as $index => $item)
-                                                                        @if ($item->id === 48)
-                                                                            <tr>
-                                                                                <td class="tg-c3ow"
-                                                                                    style="border: 1px solid black; padding: 8px;">
-                                                                                    {{ $index + 1 }}</td>
-                                                                                <!-- Menampilkan nomor urut -->
-                                                                                <td class="tg-c3ow"
-                                                                                    style="border: 1px solid black; padding: 8px;">
-                                                                                    {{ $item->namalengkap }}</td>
-                                                                                <td class="tg-c3ow"
-                                                                                    style="border: 1px solid black; padding: 8px;">
-                                                                                    {{ $item->nip }}</td>
-                                                                                <td class="tg-c3ow"
-                                                                                    style="border: 1px solid black; padding: 8px;">
-                                                                                    {{ $item->jabatan }}</td>
-                                                                            </tr>
-                                                                        @endif
-                                                                    @endforeach
-                                                                    <tr>
-                                                                        <td class="tg-0pky" colspan="4">
-                                                                            <div class="container"
-                                                                                style="margin-top: 20px;">
-                                                                                <div class="row">
-                                                                                    <div class="col-4">
-                                                                                        <p>Untuk :</p>
-                                                                                    </div>
-                                                                                    <div class="col-8">
-                                                                                        <p>1. Menjemput pasien / Merujuk
-                                                                                            pasien / Memulangkan pasien
-                                                                                            /
-                                                                                            Mengantar jenazah</p>
-                                                                                        <p>2. Berangkat tanggal:
-                                                                                            {{ \Carbon\Carbon::parse($data[0]->tglpelayanan)->format('d-m-Y') }},
-                                                                                            jam:
-                                                                                            {{ \Carbon\Carbon::parse($data[0]->tglpelayanan)->format('H:i') }}
-                                                                                        </p>
-                                                                                        <p>3. Selesai melaksanakan tugas
-                                                                                            segera melaporkan ke Kepala
-                                                                                            Seksie / Subbagian terkait
-                                                                                            pelayanan ambulans</p>
-                                                                                    </div>
-                                                                                </div>
-                                                                            </div>
-                                                                        </td>
-                                                                    </tr>
-                                                                    <tr>
-                                                                        <td class="tg-0pky" colspan="4">
-                                                                            <div class="container"
-                                                                                style="margin-bottom: 20px;">
-                                                                                <div class="row">
-                                                                                    <div class="col">
-                                                                                        <p>Demikian surat tugas ini
-                                                                                            dibuat untuk dapat
-                                                                                            dilaksanakan
-                                                                                            dengan baik sesuai dengan
-                                                                                            peraturan dan ketentuan yang
-                                                                                            berlaku.</p>
-                                                                                    </div>
-                                                                                </div>
-                                                                            </div>
-                                                                            <div class="container">
-                                                                                <div class="row">
-                                                                                    <div class="col"></div>
-                                                                                    <div class="col"></div>
-                                                                                    <div class="col"
-                                                                                        style="text-align: center;">
-                                                                                        <p>Sleman, Oktober 2024</p>
-                                                                                        <p
-                                                                                            style="margin-top: -10px; margin-bottom: 50px;">
-                                                                                            DIREKTUR</p>
-                                                                                        <p
-                                                                                            style="text-decoration: underline;">
-                                                                                            dr. Akhmad Akhadi S, MPH
-                                                                                        </p>
-                                                                                        <p style="margin-top: -10px;">
-                                                                                            NIP. 19680714 200012 1 002
-                                                                                        </p>
-                                                                                    </div>
-                                                                                </div>
-                                                                            </div>
-                                                                        </td>
-                                                                    </tr>
-                                                                </tbody>
-                                                            </table>
-                                                            <table class="tg"
-                                                                style="table-layout: fixed; background-color: #FFFFFF; position: relative;">
-                                                                <colgroup>
-                                                                    <col style="width: 222px">
-                                                                    <col style="width: 222px">
-                                                                    <col style="width: 222px">
-                                                                    <col style="width: 222px">
-                                                                </colgroup>
-                                                                <tr>
-                                                                    <td class="tg-9wq8">Dokter</td>
-                                                                    <td class="tg-9wq8">Perawat</td>
-                                                                    <td class="tg-9wq8">Sopir Ambulans</td>
-                                                                    <td class="tg-9wq8">Yang Menerima</td>
-                                                                </tr>
-                                                                <tr>
-                                                                    <td class="tg-c3ow">
-                                                                        @foreach ($data as $item)
-                                                                            @if ($item->id === 1)
-                                                                                <p
-                                                                                    style="font-size: 12px; margin-top: 30px;margin-bottom: -20px">
-                                                                                    {{ $item->namalengkap }}</p>
-                                                                            @else
-                                                                                &nbsp;
-                                                                            @endif
-                                                                        @endforeach
-                                                                    </td>
-                                                                    <td class="tg-c3ow">
-                                                                        @foreach ($data as $item)
-                                                                            @if ($item->id === 2)
-                                                                                <p
-                                                                                    style="font-size: 12px;margin-top: 30px;margin-bottom: -20px">
-                                                                                    {{ $item->namalengkap }}</p>
-                                                                            @else
-                                                                                &nbsp;
-                                                                            @endif
-                                                                        @endforeach
-                                                                    </td>
-                                                                    <td class="tg-c3ow">
-                                                                        @foreach ($data as $item)
-                                                                            @if ($item->id === 48)
-                                                                                <p
-                                                                                    style="font-size: 12px;margin-top: 46px;margin-bottom: -20px">
-                                                                                    {{ $item->namalengkap }}</p>
-                                                                            @else
-                                                                                &nbsp;
-                                                                            @endif
-                                                                        @endforeach
-                                                                    </td>
-                                                                    <td class="tg-c3ow">
+@php
+    $tanggal = \Carbon\Carbon::now();
+    $bulan = [
+        'January' => 'Januari',
+        'February' => 'Februari',
+        'March' => 'Maret',
+        'April' => 'April',
+        'May' => 'Mei',
+        'June' => 'Juni',
+        'July' => 'Juli',
+        'August' => 'Agustus',
+        'September' => 'September',
+        'October' => 'Oktober',
+        'November' => 'November',
+        'December' => 'Desember',
+    ];
+@endphp
 
-                                                                    </td>
-                                                                </tr>
-                                                            </table>
-                                                            <div class="container"
-                                                                style="margin-top: 20px; font-size: 10px">
-                                                                <div class="row">
-                                                                    <div class="col" style="text-align: left">
-                                                                        <p>Catatan : SPT dibuat rangkap 2 (dua)
-                                                                            dan
-                                                                            wajib melampirkan </p>
-                                                                        <p style="margin-top: -10px">1. Nota
-                                                                            pembelian
-                                                                            BBM yang sah</p>
-                                                                        <p style="margin-top: -10px">2. FC
-                                                                            identitas
-                                                                            pasien (KTP/SIM/Kartu
-                                                                            BPJS/Lain-lain)</p>
-                                                                    </div>
-                                                                </div>
-                                                            </div>
-                                                        </tr>
-                                                    </tbody>
-                                                </table>
-                                            </div>
-                                        </td>
-                                    </tr>
-                                    <tr>
-                                        <td bordercolor="#808080" height="13"></td>
-                                    </tr>
-                                </tbody>
-                            </table>
-                            </p>
-                        </div>
-                    </td>
+<body>
+    <div class="print-container">
+        <div class="row" style="margin-bottom: 20px;">
+            <div class="col-12">
+                <div class="row">
+                    <div class="col-2 d-flex justify-content-center align-items-center">
+                        <img src="{{ asset('img/logo-diy.jpeg') }}" style="width: 100%;" border="0" />
+                    </div>
+                    <div class="col-8 d-flex flex-column justify-content-center align-items-center text-center">
+                        <p style="font-size: 15px; margin-bottom: 0;">PEMERINTAH DAERAH DAERAH ISTIMEWA YOGYAKARTA</p>
+                        <h5 class="h5">DINAS KESEHATAN</h5>
+                        <h5 class="h5">RUMAH SAKIT JIWA GRHASIA</h5>
+                        <img src="{{ asset('img/Aksara Jawa_surat.png') }}"
+                            style="width: 30%; margin-top: 2px; margin-bottom: 2px;" border="0" />
+                        <p class="paragraph-header">Jalan Kaliurang Km 17 Sleman, Telepon: (0274) 895143, 895297,
+                            Faksimile: (0274) 895142</p>
+                        <p class="paragraph-header">Laman: grhasia.jogjaprov.go.id, Surel:
+                            grhasiamentalhospital@jogjaprov.go.id</p>
+                        <p class="paragraph-header">Kode Pos 55582</p>
+                    </div>
+                    <div class="col-2"></div>
+                </div>
+            </div>
+        </div>
+
+        <div class="row" style="margin-bottom: 20px;">
+            <div class="col-12">
+                <div style="height: 2px; background-color: black; margin: 0;"></div>
+            </div>
+        </div>
+
+        <div class="row" style="margin-bottom: 20px;">
+            <div class="col-12 text-center">
+                <p class="paragraph-body" style="font-weight: bold; margin-bottom: -2px">SURAT TUGAS AMBULAN</p>
+                <p class="paragraph-body">Nomor : <input type="text" name="nomor_surat"
+                        style="border: none; outline: none; background: transparent; width: 110px; text-align: center;">
+                </p>
+            </div>
+        </div>
+        <div class="row" style="margin-bottom: 10px;">
+            <div class="col-12 text-center">
+                <p class="paragraph-body" style="font-weight: bold;">MEMERINTAHKAN :</p>
+            </div>
+        </div>
+
+        <table class="table table-bordered border-dark" style="font-size: 11px; margin-bottom: 20px;">
+            <thead>
+                <tr>
+                    <th scope="col">No</th>
+                    <th scope="col">Nama</th>
+                    <th scope="col">NIP/NIKRS</th>
+                    <th scope="col">Jabatan</th>
                 </tr>
+            </thead>
+            <tbody>
+                @foreach ($data as $index => $item)
+                    @if ($item->id === 48)
+                        <tr>
+                            <th scope="row">{{ $index + 1 }}</th>
+                            <td>{{ $item->namalengkap }}</td>
+                            <td>{{ $item->nip }}</td>
+                            <td>{{ $item->jabatan }}</td>
+                        </tr>
+                    @endif
+                @endforeach
             </tbody>
         </table>
+
+        <div class="row" style="margin-bottom: 20px; padding: 0px 20px">
+            <div class="col-2 text-end">
+                <p class="paragraph-body">Untuk : </p>
+            </div>
+            <div class="col-10">
+                <p class="paragraph-body">
+                    1. Menjemput pasien / Merujuk pasien / Memulangkan pasien / Mengantar jenazah
+                </p>
+                <p class="paragraph-body">
+                    2. Berangkat tanggal : {{ \Carbon\Carbon::parse($data[0]->tglpelayanan)->format('d-m-Y') }}, jam :
+                    {{ \Carbon\Carbon::parse($data[0]->tglpelayanan)->format('H:i') }}
+                </p>
+                <p class="paragraph-body">
+                    3. Selesai melaksanakan tugas segera melaporkan ke Kepala Seksie / Subbagian terkait pelayanan
+                    ambulans
+                </p>
+                <p class="paragraph-body" style="margin-top: 20px">
+                    Demikian surat tugas ini dibuat untuk dapat dilaksanakan dengan baik sesuai dengan peraturan dan
+                    ketentuan yang berlaku
+                </p>
+
+            </div>
+        </div>
+
+        <div class="row" style="margin-bottom: 20px">
+            <div class="row justify-content-end">
+                <div class="col-auto text-end" style="font-size: 11px;">
+                    <div class="text-center">
+                        <span>
+                            Sleman, {{ $tanggal->format('d') }} {{ $bulan[$tanggal->format('F')] }}
+                            {{ $tanggal->format('Y') }}
+                        </span>
+                    </div>
+                    <div class="mb-5 text-center">
+                        <span>DIREKTUR</span>
+                    </div>
+                    <div class="text-center">
+                        <span style="text-decoration: underline;">dr. Akhmad Akhadi S, MPH</span>
+                    </div>
+                    <div>
+                        <span>NIP. 19680714 200012 1 002</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="container text-center border border-0 border-dark" style="font-size: 11px; margin-bottom: 10px">
+            <div class="row row-cols-4 border border-1 border-dark">
+                <div class="col border border-top-0 border-bottom-0 border-left-0 border-right-1 border-dark">
+                    <span>Dokter</span>
+                </div>
+                <div class="col border border-top-0 border-bottom-0 border-left-0 border-right-1 border-dark">
+                    <span>Perawat</span>
+                </div>
+                <div class="col border border-top-0 border-bottom-0 border-left-0 border-right-1 border-dark">
+                    <span>Sopir Ambulan</span>
+                </div>
+                <div class="col border border-top-0 border-bottom-0 border-left-0 border-right-1 border-dark">
+                    <span>Yang Menerima</span>
+                </div>
+            </div>
+            <div class="row row-cols-4 border border-1 border-top-0 border-dark" style="height: 70px;">
+                <div
+                    class="col border border-top-0 border-bottom-0 border-left-0 border-right-1 border-dark  d-flex align-items-end justify-content-center">
+                    @foreach ($data as $item)
+                        @if ($item->id === 1)
+                            <span>{{ $item->namalengkap }}</span>
+                        @else
+                            &nbsp;
+                        @endif
+                    @endforeach
+                </div>
+                <div
+                    class="col border border-top-0 border-bottom-0 border-left-0 border-right-1 border-dark  d-flex align-items-end justify-content-center">
+                    @foreach ($data as $item)
+                        @if ($item->id === 2)
+                            <span>{{ $item->namalengkap }}</span>
+                        @else
+                            &nbsp;
+                        @endif
+                    @endforeach
+                </div>
+                <div
+                    class="col border border-top-0 border-bottom-0 border-left-0 border-right-1 border-dark  d-flex align-items-end justify-content-center">
+                    @foreach ($data as $item)
+                        @if ($item->id === 48)
+                            <span>{{ $item->namalengkap }}</span>
+                        @else
+                            &nbsp;
+                        @endif
+                    @endforeach
+                </div>
+                <div
+                    class="col border border-top-0 border-bottom-0 border-left-0 border-right-1 border-dark  d-flex align-items-end justify-content-center">
+                    <span></span>
+                </div>
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col">
+                <p class="paragraph-footer" style="font-style: italic;">
+                    Catatan : SPT dibuat rangkap 2 (dua) dan wajib melampirkan
+                </p>
+                <p class="paragraph-footer" style="font-style: italic;">
+                    1. Nota pembelian BBM yang sah
+                </p>
+                <p class="paragraph-footer" style="font-style: italic;">
+                    2. FC identitas pasien (KTP/SIM/Kartu BPJS/Lain-lain)
+                </p>
+            </div>
+        </div>
     </div>
 </body>
 
