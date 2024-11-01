@@ -483,8 +483,10 @@ class KasirController extends ApiController
             $SPD->tglpelayanan = $req['tglstruk'];
             $SPD->is_terbayar = 0;
             $SPD->linetotal = 0;
-            $SPD->keteranganlainnya = $item['keterangan'];
-            $SPD->nopolisiaset = $req['nopolisiaset'];
+            $SPD->keteranganlainnya = $item['keterangan'];         
+            if (isset($req['nopolisiaset'])) {
+                $SPD->nopolisiaset = $req['nopolisiaset'];
+            }
             $SPD->save();
         }
 
