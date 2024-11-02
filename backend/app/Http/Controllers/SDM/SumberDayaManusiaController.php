@@ -1515,6 +1515,7 @@ class SumberDayaManusiaController extends ApiController {
 
     public function getDataSip (Request $request) {
         $kdProfile = (int) $this->getDataKdProfile($request);
+        $tglSekarang = Carbon::now();
         $data = \DB::table('masaberlakusipstr_t as mbs')
             ->leftJoin('jenismasaberlakustrsip_m as jmb','jmb.id','=','mbs.jenismasaberlakufk')
             ->leftJoin('pegawai_m as pg','pg.id','=','mbs.pegawaifk')
@@ -1524,8 +1525,15 @@ class SumberDayaManusiaController extends ApiController {
 			                  uk2.name as subunit"))
             ->where('pg.statusenabled',true)
             ->where('mbs.kdprofile', $kdProfile)
-//            ->where('mbs.jenismasaberlakufk',1)
-            ->orderBy('mbs.berakhirstr','asc');
+            // ->where('mbs.jenismasaberlakufk',1)
+            // ->orderBy('mbs.berakhirstr','asc');
+            ->orderByRaw("
+            CASE 
+                WHEN mbs.berakhirstr <= ? THEN 0 
+                WHEN mbs.berakhirsip <= ? THEN 1 
+                ELSE 2 
+            END, 
+            mbs.berakhirstr ASC, mbs.berakhirsip ASC", [$tglSekarang, $tglSekarang]);           
 
 //        if (isset($request['tglAwal']) && $request['tglAwal'] != "" && $request['tglAwal'] != "undefined") {
 //            $data = $data->where('pjk.tgljadwal', '>=', $request['tglAwal']);
