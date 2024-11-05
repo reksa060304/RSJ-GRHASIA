@@ -307,6 +307,11 @@ define(['initialize'], function (initialize) {
 				} else {
 					console.log("Tidak ada data petugas layanan");
 				}
+
+                let nopolisiaset = ''
+                if($scope.item.noPolAmbulan !== undefined && $scope.item.noPolAmbulan !== null){
+                    nopolisiaset = $scope.item.noPolAmbulan.nopolisi
+                }
 				
 				// console.log(petugasLayanan); 
 				var objSave = {
@@ -318,7 +323,8 @@ define(['initialize'], function (initialize) {
 					tglstruk: moment($scope.item.tglStruk).format('YYYY-MM-DD hh:mm:ss'),
 					totalharusdibayar: parseFloat(subTotal),//parseFloat($scope.item.totalBilling),
 					details: dataProduk,
-					nopolisiaset: $scope.item.noPolAmbulan.nopolisi,
+					// nopolisiaset: $scope.item.noPolAmbulan.nopolisi,
+					nopolisiaset: nopolisiaset,
 					petugaspelayananambulan: petugasLayanan,
 
 				}
