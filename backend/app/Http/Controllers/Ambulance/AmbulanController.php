@@ -177,6 +177,12 @@ class AmbulanController extends ApiController
             ->where('r.id', $kdPelayananAmbulan)
             ->get();
 
+        $listJenisKegiatan = \DB::table('jeniskegiatanambulan_m as jka')
+            ->select('jka.namajeniskegiatan')
+            ->where('jka.kdprofile', $idProfile)
+            ->where('statusenabled', 'true')
+            ->get();
+
         $result = array(
             'ruangan' => $ruangan,
             'ruanganambulan' => $RuanganAmbulan,
@@ -187,6 +193,7 @@ class AmbulanController extends ApiController
             'jenispetugaspe' => $dataJenisPetugas,
             'ruanganpelayanan' => $dataRuanganPelayanan,
             'kelompoktransaksi' => $dataKelompokTransaksiAmbulan,
+            'jeniskegiatanambulan' => $listJenisKegiatan,
             'keluserkasir' => $KelUserKasir
         );
 
@@ -769,11 +776,12 @@ class AmbulanController extends ApiController
         return $this->respond($result);
     }
 
+    // tanda1
     public function savePelayananPasienAmbulan(Request $request)
     {
         $kdProfile = (int) $this->getDataKdProfile($request);
         DB::beginTransaction();
-        try {
+        // try {
             $jenisPetugasPe = \DB::table('mapjenispetugasptojenispegawai_m as mpp')
                 ->join('jenispegawai_m as jp', 'jp.id', '=', 'mpp.objectjenispegawaifk')
                 ->join('pegawai_m as pg', 'pg.objectjenispegawaifk', '=', 'jp.id')
@@ -905,10 +913,14 @@ class AmbulanController extends ApiController
                     $PelPasienDetail->piutangpenjamin = 0;
                     $PelPasienDetail->piutangrumahsakit = 0;
                     $PelPasienDetail->produkfk =  $item['produkid'];
+                    $PelPasienDetail->nopolisinorec =  $item['nopolisi'];
+                    $PelPasienDetail->jeniskegiatanambulanfk =  $item['jeniskegiatan'];
                     $PelPasienDetail->stock = 1;
                     $PelPasienDetail->strukorderfk =  $request['norec_so'];
                     $PelPasienDetail->tglpelayanan = $dataAPDtglPel;
                     $PelPasienDetail->harganetto = $itemKomponen['hargasatuan'];
+                    // $PelPasienDetail->nopolisiaset =  $request['nopolisiaset'];
+                    // $PelPasienDetail->jeniskegiatanambulan =  $request['jeniskegiatanambulan'];
                     $PelPasienDetail->save();
                     $PPDnorec = $PelPasienDetail->norec;
                     $transStatus = 'true';
@@ -922,10 +934,10 @@ class AmbulanController extends ApiController
                 );
 
             $transStatus = 'true';
-        } catch (\Exception $e) {
-            $transStatus = 'false';
-            $transMessage = "simpan PelPasien";
-        }
+        // } catch (\Exception $e) {
+        //     $transStatus = 'false';
+        //     $transMessage = "simpan PelPasien";
+        // }
 
         if ($transStatus == 'true') {
             $transMessage = "Simpan PelayananPasien Sukses";

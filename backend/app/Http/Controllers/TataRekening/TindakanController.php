@@ -112,12 +112,20 @@ class TindakanController extends ApiController
         ->where('keteranganlainnya', 'ilike', '%ambulan%')
         ->get();
 
+        $jenisKegiatan = \DB::table('jeniskegiatanambulan_m')
+        ->select('id', 'namajeniskegiatan')
+        ->where('kdprofile', $kdProfile)
+        ->where('statusenabled', true)
+        ->whereNotNull('namajeniskegiatan')
+        ->get();
+
         $result = array(
             'detaillogin' =>$detailLog,
             'jenispelaksana' => $jenisPelaksana,
             'pegawai' => $pegawai,
             'tarifcito' => $dataTarifAdminCito,
             'nopol' => $nopol,
+            'jeniskegiatan' => $jenisKegiatan,
             'message' => 'ramdanegie',
         );
 

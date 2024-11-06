@@ -98,6 +98,12 @@ define(['initialize'], function (initialize) {
                     .then(function (da) {
                         $scope.listJenisPelaksana = da.data.jenispelaksana;
                         $scope.listAmbulan = da.data.nopol;
+                        $scope.popUp.noPolisi = da.data.nopol;
+
+                        $scope.listJenisKegiatan = da.data.jeniskegiatan;
+                        $scope.popUp.jenisKegiatan = da.data.jeniskegiatan;
+                        console.log('jenis kegiatan',$scope.popUp.jenisKegiatan)
+                        
                         if ($scope.item.iddpjp != undefined) {
                             $scope.item.jenisPelaksana = { id: 4, jenispetugaspe: 'Dokter Pemeriksa' };
                             $scope.init2();
@@ -364,6 +370,16 @@ define(['initialize'], function (initialize) {
                             "template": "<span class='style-center'>{{formatTanggal('#: tglpelayanan #')}}</span>"
                         },
                         {
+                            "field": "nopolisi",
+                            "title": "No Polisi",
+                            "width": "150px",
+                        },
+                        {
+                            "field": "jeniskegiatan",
+                            "title": "Jenis Kegiatan",
+                            "width": "150px",
+                        },
+                        {
                             "field": "namaproduk",
                             "title": "Layanan",
                             "width": "150px",
@@ -486,6 +502,7 @@ define(['initialize'], function (initialize) {
                 $scope.headerVerif.diagnosa = $scope.dataSelected.namadiagnosa
 
                 $scope.item.dokterOrder = { id: $scope.dataSelected.objectpegawaiorderfk, namalengkap: $scope.dataSelected.pegawaiorder };
+
                 loadDiagnosa($scope.dataSelected.noregistrasi)
                 loadjenisPelayanan($scope.dataSelected.norec_pd, $scope.dataSelected.objectruangantujuanfk)
                 $scope.popUpVerif.center().open();
@@ -572,6 +589,8 @@ define(['initialize'], function (initialize) {
 
                     });
             }
+
+            // masukan data ke tabel verif
             $scope.columnVerif = [
                 {
                     "field": "no",
@@ -582,6 +601,16 @@ define(['initialize'], function (initialize) {
                     "field": "tglpelayanan",
                     "title": "Tgl Pelayanan",
                     "width": "90px",
+                },
+                {
+                    "field": "nopolisi",
+                    "title": "No Polisi",
+                    "width": "90px",
+                },
+                {
+                    "field": "jeniskegiatan",
+                    "title": "Jenis Kegiatan",
+                    "width": "150px",
                 },
                 {
                     "field": "namaproduk",
@@ -626,7 +655,7 @@ define(['initialize'], function (initialize) {
             ];
 
             $scope.selectRow = function (dataItem) {
-
+                // tanda1
                 var dataSelect = _.find($scope.sourceVerif._data, function (data) {
                     return data.prid == dataItem.prid;
                 });
@@ -641,6 +670,7 @@ define(['initialize'], function (initialize) {
                 $scope.tempCheckbox = dataSelect.statCheckbox;
 
                 reloadDataGrid($scope.sourceVerif._data);
+                dd('data apa', $scope.sourceVerif._data)
 
             }
             var isCheckAll = false
@@ -701,7 +731,9 @@ define(['initialize'], function (initialize) {
                         "hargasatuan": $scope.sourceVerif._data[i].hargasatuan,
                         "qtyproduk": $scope.sourceVerif._data[i].qtyproduk,
                         "komponenharga": $scope.sourceVerif._data[i].details,
-                        "tglpelayanan": $scope.sourceVerif._data[i].tglpelayanan
+                        "tglpelayanan": $scope.sourceVerif._data[i].tglpelayanan,
+                        "nopolisi": $scope.sourceVerif._data[i].nopolisinorec,
+                        "jeniskegiatan": $scope.sourceVerif._data[i].jeniskegiatanid, //tanda1
                     }
                     dataPost.push(datasys)
                     // }
@@ -1639,6 +1671,10 @@ define(['initialize'], function (initialize) {
                             data.hargabbm = parseFloat($scope.popUp.hargaBBM)
                             data.totalhargabbm = parseFloat($scope.popUp.totalHargaBBM)
                             data.totalkeseluruhan = parseFloat($scope.popUp.totalKeseluruhan)
+                            data.nopolisi = $scope.popUp.noPolisi.nopolisi
+                            data.nopolisinorec = $scope.popUp.noPolisi.norec
+                            data.jeniskegiatan = $scope.popUp.jenisKegiatan.namajeniskegiatan
+                            data.jeniskegiatanid = $scope.popUp.jenisKegiatan.id
                             data2[i] = data;
                             $scope.sourceVerif = new kendo.data.DataSource({
                                 data: data2,
@@ -1707,7 +1743,11 @@ define(['initialize'], function (initialize) {
                         qtyperkm : parseFloat($scope.popUp.qtyPerKM),
                         hargabbm : parseFloat($scope.popUp.hargaBBM),
                         totalhargabbm : parseFloat($scope.popUp.totalHargaBBM),
-                        totalkeseluruhan : parseFloat($scope.popUp.totalKeseluruhan)
+                        totalkeseluruhan : parseFloat($scope.popUp.totalKeseluruhan),
+                        nopolisi: $scope.popUp.noPolisi.nomorpolisi,
+                        nopolisinorec: $scope.popUp.noPolisi.norec,
+                        jeniskegiatan: $scope.popUp.jenisKegiatan.namajeniskegiatan,
+                        jeniskegiatanid: $scope.popUp.jenisKegiatan.id,
                     }
                     data2.push(data)
                     if ($scope.item.jenisPelaksana && $scope.selectedPegawai) {
@@ -1843,6 +1883,8 @@ define(['initialize'], function (initialize) {
                 $scope.popUp.hargaBBM = ''
                 $scope.popUp.totalHargaBBM = ''
                 $scope.popUp.totalKeseluruhan = ''
+                $scope.popUp.noPolisi = ''
+                $scope.popUp.jenisKegiatan = ''
             }
             //********************************  $scope.cekBelumVerifs=true;***
 
