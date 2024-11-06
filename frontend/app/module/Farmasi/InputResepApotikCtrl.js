@@ -1423,7 +1423,7 @@ Which will check for empty strings (""), null, undefined, false and the numbers 
 
                 jmlbulat = $scope.item.jumlahbulat;
                 jml = $scope.item.jumlah;
-                if ($scope.checkisKronis == true) {
+                if ($scope.checkisKronis == 'matiin kondisi ini/true') {
                     var datas = {};
                     $scope.showGridKronis = true
 
