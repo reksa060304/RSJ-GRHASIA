@@ -4764,8 +4764,13 @@ AND sp.statusenabled <> false
                         inner JOIN ruangan_m AS ru ON ru.id = apd.objectruanganfk
                         inner JOIN strukpelayanan_t AS sp ON sp.norec = pp.strukfk
                         inner JOIN strukbuktipenerimaan_t AS sbm ON sbm.nostrukfk = sp.norec
+                        JOIN strukclosing_t AS sc ON sc.norec = sbm.noclosingfk AND sc.statusenabled = TRUE AND sc.kdprofile = 30
+                        JOIN strukclosingkasir_t sck ON sck.noclosingfk = sc.norec
+                        JOIN ststosck_t as ssc on ssc.objectsckfk = sck.norec
+                        JOIN surattandasetoran_t as sts on sts.norec = ssc.objectstsfk AND sts.statusenabled = TRUE AND sts.kdprofile = 30
                         where sbm.tglsbm between '$tglAwal' and '$tglAkhir'
                         and pd.kdprofile = 30 and pd.statusenabled = true
+                        and sts.nosts is not null
                         group by ru.namaruangan, ru.id, ru.objectdepartemenfk
                     ) as x group by x.idruangan, x.departemen
                 ) as y
