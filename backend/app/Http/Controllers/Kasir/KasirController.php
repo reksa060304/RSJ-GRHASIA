@@ -203,6 +203,13 @@ class KasirController extends ApiController
         ->where('keteranganlainnya', 'ilike', '%ambulan%')
         ->get();
 
+        $jeniskegiatan = \DB::table('jeniskegiatanambulan_m')
+        ->select('id', 'namajeniskegiatan')
+        ->where('kdprofile', $kdProfile)
+        ->where('statusenabled', true)
+        ->whereNotNull('namajeniskegiatan')
+        ->get();
+
         $result = array(
             'ruangan' => $dataRuangan,
             'kelompoktransaksi' => $kelTrans,
@@ -224,6 +231,7 @@ class KasirController extends ApiController
             'jenisperan' => $jenisperan,
             'detailkegiatandiklat' => $detailkegiatandiklat,
             'nopol' => $nopol,
+            'jeniskegiatanambulan' => $jeniskegiatan,
             'message' => 'ihuman@epic'
         );
         return $this->respond($result);

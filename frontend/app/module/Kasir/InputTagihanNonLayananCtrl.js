@@ -25,6 +25,8 @@ define(['initialize'], function (initialize) {
 			var norec = '';
 			var NoStruk = '';
 			var Kegiatan = '';
+            $scope.pegawai = JSON.parse(window.localStorage.getItem('pegawai'));
+			console.log('pegawai',$scope.pegawai)
 
 			// var data = cacheHelper.get('InputTagihanNonLayananCtrl');
 			//          if (data !== undefined) {
@@ -39,11 +41,15 @@ define(['initialize'], function (initialize) {
 			loadCombo();
 
 			function loadCombo() {
+                var datauserlogin = JSON.parse(window.localStorage.getItem("datauserlogin"));
+				console.log(datauserlogin)
 				$scope.KelompokUser = medifirstService.getKelompokUser();
 				medifirstService.get("kasir/get-data-combo-kasir").then(function (data) {
 					$scope.listKelompokTransaksi = data.data.kelnon;
 					$scope.KelompokUserDiklit = data.data.diklit;
+					console.log('diklit',$scope.KelompokUserDiklit)
 					$scope.listAmbulan = data.data.nopol;
+					$scope.listJenisKegiatanAmbulan = data.data.jeniskegiatanambulan;
 					LoadCache();
 				})
 			}
@@ -238,6 +244,8 @@ define(['initialize'], function (initialize) {
 				columns: [
 					{ "field": "no", "title": "No", "width": "45px" },
 					{ "field": "namaproduk", "title": "Tagihan", "width": "300px" },
+					{ "field": "nopolisi", "title": "No Polisi", "width": "70px" },
+					{ "field": "jeniskegiatan", "title": "Jenis Kegiatan", "width": "200px" },
 					{ "field": "keterangan", "title": "Keterangan", "width": "200px" },
 					{ "field": "jumlah", "title": "Qty", "width": "90px" },
 					{ "field": "qtyoranglast", "title": "Qty Per Org/Per Km", "width": "155px" },
@@ -307,11 +315,6 @@ define(['initialize'], function (initialize) {
 				} else {
 					console.log("Tidak ada data petugas layanan");
 				}
-
-                let nopolisiaset = ''
-                if($scope.item.noPolAmbulan !== undefined && $scope.item.noPolAmbulan !== null){
-                    nopolisiaset = $scope.item.noPolAmbulan.nopolisi
-                }
 				
 				// console.log(petugasLayanan); 
 				var objSave = {
@@ -323,20 +326,19 @@ define(['initialize'], function (initialize) {
 					tglstruk: moment($scope.item.tglStruk).format('YYYY-MM-DD hh:mm:ss'),
 					totalharusdibayar: parseFloat(subTotal),//parseFloat($scope.item.totalBilling),
 					details: dataProduk,
-					// nopolisiaset: $scope.item.noPolAmbulan.nopolisi,
-					nopolisiaset: nopolisiaset,
+					nopolisi: $scope.item.noPolisi.norec,
+					jeniskegiatan: $scope.item.jenisKegiatan.id,
 					petugaspelayananambulan: petugasLayanan,
 
 				}
 				medifirstService.post('kasir/save-input-non-layanan', objSave).then(function (data) {
-					if ($scope.KelompokUser != $scope.KelompokUserDiklit) {
-						noRegistrasi2 = data.data.data.norec
+					if ($scope.KelompokUser !== $scope.KelompokUserDiklit) {
+						const noRegistrasi2 = data.data.data.norec;
 						$scope.changePage("PenerimaanPembayaranKasir");
 					} else {
 						window.history.back();
 					}
-
-				})
+				});			
 			}
 
 			$scope.$watch('item.jumlah', function (newValue, oldValue) {
@@ -449,6 +451,8 @@ define(['initialize'], function (initialize) {
 							data.harga = parseFloat($scope.item.Harga)
 							data.totalK = $scope.item.Total //parseFloat($scope.item.jumlah) * parseFloat($scope.item.Harga)
 							data.keterangan = $scope.item.KeteranganProduk
+							data.nopolisi = $scope.item.noPolisi.nopolisi
+							data.jeniskegiatan = $scope.item.jenisKegiatan.namajeniskegiatan
 							dataProduk[i] = data;
 							$scope.dataDaftarTagihan = new kendo.data.DataSource({
 								data: dataProduk
@@ -509,6 +513,8 @@ define(['initialize'], function (initialize) {
 						qtyoranglast: parseFloat($scope.item.QtyPerOrang),
 						harga: parseFloat($scope.item.Harga),
 						keterangan: $scope.item.KeteranganProduk,
+						nopolisi: $scope.item.noPolisi.nopolisi,
+						jeniskegiatan: $scope.item.jenisKegiatan.namajeniskegiatan,
 						totalK: $scope.item.Total //parseFloat($scope.item.jumlah) * parseFloat($scope.item.Harga)
 					}
 					dataProduk.push(data)
