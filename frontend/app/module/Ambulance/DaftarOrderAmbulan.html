@@ -377,7 +377,7 @@ k-on-close="win2visible = false">
                     k-data-source="listLayanan" k-on-change='getHargaTindakan()' />
             </div>
         </div>
-        <div class="grid_2">
+        <div class="grid_1">
             <div class="grid_12">
                 <label c-label item="item">Harga</label>
             </div>
@@ -386,7 +386,7 @@ k-on-close="win2visible = false">
                     disabled="true" />
             </div>
         </div>
-        <div class="grid_2">
+        <div class="grid_1">
             <div class="grid_12">
                 <label c-label item="item">Qty</label>
             </div>
@@ -394,16 +394,27 @@ k-on-close="win2visible = false">
                 <input c-text-box type="input" filter="" class="k-textbox" ng-model="popUp.qty" />
             </div>
         </div>
-        <div class="grid_2" ng-hide="noPolAmbulan">
+        <div class="grid_2">
             <div class="grid_12">
                 <label c-label item="item" c-label-text="NomorPolisi"></label>
             </div>
             <div class="clear"></div>
     
             <div class="grid_12">
-                <input style="width: 100%;" kendo-combo-box k-ng-model="item.noPolAmbulan"
-                    k-data-text-field="'nopolisi'" k-data-value-field="'nopolisi'" k-filter="'contains'" k-auto-bind="false"
-                    k-data-source="listAmbulan" k-on-change="noPolAmbulanSelected(item.noPolAmbulan)">
+                <input style="width: 100%;" kendo-combo-box k-ng-model="popUp.noPolisi"
+                k-data-text-field="'nopolisi'" k-data-value-field="'id'" k-filter="'contains'" k-auto-bind="false"
+                k-data-source="listAmbulan">
+            </div>
+        </div>
+        <div class="grid_2">
+            <div class="grid_12">
+                <label c-label item="item" c-label-text="Jenis Kegiatan"></label>
+            </div>
+            <div class="clear"></div>
+            <div class="grid_12">
+                <input style="width: 100%;" kendo-combo-box k-ng-model="popUp.jenisKegiatan"
+                k-data-text-field="'namajeniskegiatan'" k-data-value-field="'id'" k-filter="'contains'" k-auto-bind="false"
+                k-data-source="listJenisKegiatan">
             </div>
         </div>
     </div>

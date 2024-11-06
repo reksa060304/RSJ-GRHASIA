@@ -6033,6 +6033,7 @@ class GeneralController extends ApiController
                 'message' => 'ramdanegie',
             );
         }else{
+            // tanda1
             $data = \DB::table('mapruangantoproduk_m as mpr')
                 ->join ('produk_m as prd','prd.id','=','mpr.objectprodukfk')
                 ->select('mpr.objectprodukfk as id','prd.namaproduk',

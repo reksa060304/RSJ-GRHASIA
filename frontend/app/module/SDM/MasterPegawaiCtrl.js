@@ -4590,6 +4590,12 @@ $scope.formatRupiah = function (value, currency) {
 							$scope.itemGajiBerkala.gajiakhir = data.data.gajigolongan[0].gajipokok
 							// $scope.itemGajiBerkala.gajiawal = data.data.gajiawal[0].nominal
 							nominal = 0
+
+							// console.log("Golongan ID:", $scope.itemGajiBerkala.golongan.id);
+							// console.log("MKG (nominal):", nominal);
+							// console.log("Pegawai ID:", $scope.item.idPegawai);
+							// console.log("SK ID:", $scope.itemGajiBerkala.suratkeputusanBaru.id);
+
 						})
 					}
 				})
@@ -4639,6 +4645,54 @@ $scope.formatRupiah = function (value, currency) {
 					$scope.itemGajiBerkala.gajiakhir = data.data.gajigolongan[0].gajipokok;
 				});
 			}
+
+			let debounceTimeout;
+			$scope.$watch('itemGajiBerkala.masakerjagolongan', function (newVal, oldVal) {
+				if (newVal === oldVal) return;
+
+				clearTimeout(debounceTimeout);
+
+				debounceTimeout = setTimeout(() => {
+					console.log("Watching masakerjagolongan - New Value:", newVal, "Old Value:", oldVal);
+
+					if (!$scope.itemGajiBerkala.masakerjagolongan) {
+						toastr.error('Masukkan Masa Kerja Golongan Terlebih Dahulu!');
+						return;
+					}
+
+					if (!$scope.itemGajiBerkala.suratkeputusanBaru) {
+						toastr.error('Pilih Surat Keputusan Terlebih Dahulu!');
+						return;
+					}
+
+					const [tahun, , bulan] = $scope.itemGajiBerkala.masakerjagolongan.split(' ').map(Number);
+					if (isNaN(tahun) || isNaN(bulan)) {
+						toastr.error('Format Masa Kerja Golongan tidak valid!');
+						return;
+					}
+
+					const { golongan, suratkeputusanBaru } = $scope.itemGajiBerkala;
+					const { idPegawai } = $scope.item;
+
+					medifirstService.get(`nominal/get-nominal?golongan=${golongan.id}&mkg=${tahun}&pegawai=${idPegawai}&sk=${suratkeputusanBaru.id}`)
+						.then(function (response) {
+							const gajiData = response.data.gajigolongan[0];
+							if (!gajiData) {
+								toastr.error('Data gaji tidak ditemukan!');
+								return;
+							}
+
+							$scope.itemGajiBerkala.tahunmasakerjagolongan = tahun;
+							$scope.itemGajiBerkala.bulanmasakerjagolongan = bulan;
+							$scope.itemGajiBerkala.masakerjagolongan = `${tahun} tahun ${bulan} bulan`;
+							$scope.itemGajiBerkala.gajiakhir = gajiData.gajipokok;
+						})
+						.catch(function (error) {
+							toastr.error('Gagal mengambil data gaji.');
+							console.error(error);
+						});
+				}, 900); 
+			});
 
 			function cetakGajiBerkala(e){
 				
