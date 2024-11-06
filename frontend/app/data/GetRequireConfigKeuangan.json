@@ -25,10 +25,6 @@
             "urlDep": "module/Kasir/InputTagihanNonLayananCtrl"
         },
         {
-            "nameDep": "InputTagihanNonLayananCtrl",
-            "urlDep": "module/Kasir/InputTagihanNonLayananCtrl"
-        },
-        {
             "nameDep": "PembayaranTagihanNonLayananKasirCtrl",
             "urlDep": "module/Kasir/PembayaranTagihanNonLayananKasirCtrl"
         },

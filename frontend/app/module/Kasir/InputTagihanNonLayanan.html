@@ -42,7 +42,7 @@
 		</div>
 
 		<!-- Telepon -->
-		<div class="grid_3">
+		<div class="grid_2">
 			<div class="grid_12">
 				<label c-label item="item" c-label-text="Kelompok Transaksi"></label>
 			</div>
@@ -56,17 +56,28 @@
 			</div>
 		</div>
 
-		<!-- Nopol Ambulance -->
-		<div class="grid_2" ng-hide="noPolAmbulan">
+		<!-- tanda1 -->
+		<div class="grid_1" ng-hide="noPolAmbulan">
 			<div class="grid_12">
 				<label c-label item="item" c-label-text="NomorPolisi"></label>
 			</div>
 			<div class="clear"></div>
 
 			<div class="grid_12">
-				<input style="width: 100%;" kendo-combo-box k-ng-model="item.noPolAmbulan"
-					k-data-text-field="'nopolisi'" k-data-value-field="'nopolisi'" k-filter="'contains'" k-auto-bind="false"
-					k-data-source="listAmbulan" k-on-change="noPolAmbulanSelected(item.noPolAmbulan)">
+				<input style="width: 100%;" kendo-combo-box k-ng-model="item.noPolisi"
+					k-data-text-field="'nopolisi'" k-data-value-field="'id'" k-filter="'contains'" k-auto-bind="false"
+					k-data-source="listAmbulan">
+			</div>
+		</div>
+		<div class="grid_2" ng-hide="noPolAmbulan">
+			<div class="grid_12">
+				<label c-label item="item" c-label-text="JenisKegiatan"></label>
+			</div>
+			<div class="clear"></div>
+
+			<div class="grid_12">
+				<input style="width: 100%;" kendo-combo-box k-ng-model="item.jenisKegiatan"
+					k-data-text-field="'namajeniskegiatan'" k-data-value-field="'id'" k-filter="'contains'" k-auto-bind="false" k-data-source="listJenisKegiatanAmbulan">
 			</div>
 		</div>
 
