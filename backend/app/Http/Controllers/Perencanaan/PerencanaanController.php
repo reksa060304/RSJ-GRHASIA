@@ -9398,7 +9398,7 @@ order by  split_part(kode, '.', 1)asc, split_part(kode, '.', 2)asc,  split_part(
         $uraianpendapatanbaru = DB::table('char_akun_pendapatan_m')
             ->where('statusenabled', true)
             ->where('kdprofile', $idProfile)
-            ->where('level', 12)
+            ->where('level', 8)
             ->orderBy('nourut', 'asc')
             ->get();
 
