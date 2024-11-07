@@ -1772,7 +1772,7 @@ class GeneralController extends ApiController
         }
         $dataLogin = $request->all();
 //        ini_set('max_execution_time', 1000); //6 minutes
-        try {
+        // try {
             // TODO : Jurnal Pelayanan
 //            $dataCoa = DB::select(DB::raw("select ru.id as ruid, ru.namaruangan,coa.namaaccount,coa.kdaccount,coa.id as coaid
 //                    from chartofaccount_m as coa
@@ -2517,9 +2517,9 @@ class GeneralController extends ApiController
             //end Posting Obat Bebas
 
             $transStatus = 'true';
-        } catch (\Exception $e) {
-            $transStatus = 'false';
-        }
+        // } catch (\Exception $e) {
+        //     $transStatus = 'false';
+        // }
         $transMessage = 'Posting';
         $req = $request->all();
         if ($transStatus == 'true') {

@@ -37,6 +37,7 @@ use Illuminate\Support\Facades\DB;
 use Response;
 use PDF;
 use App\Traits\BniTrait;
+use App\Transaksi\AlamatNonLayanan;
 use App\Transaksi\BNITransaction;
 use App\Transaksi\BniEnc;
 use App\Transaksi\PetugasPelayananAmbulan;
@@ -492,9 +493,8 @@ class KasirController extends ApiController
             $SPD->is_terbayar = 0;
             $SPD->linetotal = 0;
             $SPD->keteranganlainnya = $item['keterangan'];         
-            if (isset($req['nopolisiaset'])) {
-                $SPD->nopolisiaset = $req['nopolisiaset'];
-            }
+            $SPD->nopolisifk = $req['nopolisi'];
+            $SPD->jeniskegiatanambulanfk = $req['jeniskegiatan'];
             $SPD->save();
         }
 
@@ -517,6 +517,20 @@ class KasirController extends ApiController
                 }
             }
         }
+
+        $alamatPemesan = new AlamatNonLayanan();
+        $alamatPemesan->norec = $alamatPemesan->generateNewId();
+        $alamatPemesan->kdprofile = $idProfile;
+        $alamatPemesan->statusenabled = true;
+        $alamatPemesan->strukpelayanandetail = $PPnorec;
+        $alamatPemesan->alamatlengkap = $req['alamatLengkap'];
+        $alamatPemesan->objectprovinsifk = $req['provinsi'];
+        $alamatPemesan->objectdesakelurahanfk = $req['desaKelurahan'];
+        $alamatPemesan->objectkecamatanfk = $req['kecamatan'];
+        $alamatPemesan->objectkotakabupatenfk = $req['kotaKabupaten'];
+        $alamatPemesan->rtrw = $req['rtRw'];
+        $alamatPemesan->save();
+                   
 
 
         $transStatus = 'true';
