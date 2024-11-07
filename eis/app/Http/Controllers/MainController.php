@@ -1383,45 +1383,23 @@ class MainController extends ApiController
         $tglAkhir =Carbon::now()->format('Y-m-d 23:59');
         $data = DB::select(DB::raw("
             select * from (
-                select x.namaproduk ,sum (x.jumlah) as jumlah ,sum(x.total ) as total from (
+                select x.namaruangan,x.namaproduk ,sum (x.jumlah) as jumlah ,sum(x.total ) as total from (
 
                 select
-                prd.namaproduk  , pp.jumlah , (
+                prd.namaproduk  , pp.jumlah , ru.namaruangan, (
                 ((  CASE WHEN   pp.hargasatuan IS NULL THEN 0 ELSE pp.hargasatuan END
                 - CASE WHEN pp.hargadiscount IS NULL THEN   0 ELSE pp.hargadiscount END     ) * pp.jumlah
                 ) + CASE    WHEN    pp.jasa IS NULL THEN 0  ELSE        pp.jasa END) AS total
                 from  strukresep_t as sr
                 join pelayananpasien_t  as pp  on pp.strukresepfk =sr.norec
+                join ruangan_m as ru on ru.id = sr.ruanganfk
                 join produk_m as prd on pp.produkfk= prd.id
                 where sr.kdprofile = $idProfile and pp.tglpelayanan BETWEEN  '$tglAwal' and '$tglAkhir'
                 and pp.strukresepfk is not null
 
-                Union all
-
-                SELECT pr.namaproduk,  (spd.qtyproduk) as jumlah,
-                  (((   CASE WHEN   spd.hargasatuan IS NULL THEN 0 ELSE spd.hargasatuan END
-                - CASE WHEN spd.hargadiscount IS NULL THEN  0 ELSE spd.hargadiscount END    ) * spd.qtyproduk
-                ) + CASE    WHEN    spd.hargatambahan IS NULL THEN 0    ELSE        spd.hargatambahan END) AS total
-                FROM strukpelayanan_t as sp
-                JOIN strukpelayanandetail_t as spd on spd.nostrukfk = sp.norec
-                join produk_m as pr  on pr.id =spd.objectprodukfk
-                WHERE sp.kdprofile = $idProfile and sp.tglstruk BETWEEN   '$tglAwal' and '$tglAkhir'
-                AND sp.nostruk_intern='-' AND substring(sp.nostruk,1,2)='OB'
-                and sp.statusenabled != false
-                Union ALL
-
-                SELECT pr.namaproduk, (spd.qtyproduk) as jumlah,
-                  (((   CASE WHEN   spd.hargasatuan IS NULL THEN 0 ELSE spd.hargasatuan END
-                - CASE WHEN spd.hargadiscount IS NULL THEN  0 ELSE spd.hargadiscount END    ) * spd.qtyproduk
-                ) + CASE    WHEN    spd.hargatambahan IS NULL THEN 0    ELSE        spd.hargatambahan END) AS total
-                FROM strukpelayanan_t as sp
-                JOIN strukpelayanandetail_t as spd on spd.nostrukfk = sp.norec
-                join produk_m as pr  on pr.id =spd.objectprodukfk
-                WHERE sp.kdprofile = $idProfile and sp.tglstruk BETWEEN   '$tglAwal' and '$tglAkhir'
-                AND sp.nostruk_intern not in ('-') AND substring(sp.nostruk,1,2)='OB'
-                and sp.statusenabled != false
+              
                 ) as x
-                group by x.namaproduk
+                group by x.namaproduk,x.namaruangan
             )  as z order by z.total desc")
         );
 
@@ -2071,9 +2049,9 @@ class MainController extends ApiController
         $tglAkhir =  $tglAkhir.' 23:59';
         $ratarata = 0;
 
-        $results = DB::select(DB::raw("select a.namaproduk, a.satuanstandar, a.saldoawal, b.saldomasuk, b.saldokeluar, c.saldoakhir from
+        $results = DB::select(DB::raw("select a.namaruangan, a.namaproduk, a.satuanstandar, a.saldoawal, b.saldomasuk, b.saldokeluar, c.saldoakhir from
         (
-        select ROW_NUMBER() OVER(order by pro.namaproduk) nourut, pro.namaproduk, ss.satuanstandar,
+        select ROW_NUMBER() OVER(order by pro.namaproduk) nourut, ru.namaruangan, pro.namaproduk, ss.satuanstandar,
         case when ks.status = true
         then ks.saldoawal - ks.jumlah else ks.saldoawal + ks.jumlah end as saldoawal
             from kartustok_t as ks
@@ -2097,9 +2075,9 @@ class MainController extends ApiController
             and ks.tglkejadian between '$tglAwal' and '$tglAkhir'
             and ru.id = 94
             and ks.saldoawal >= 0
-            group by pro.namaproduk,
+            group by pro.namaproduk,ru.namaruangan,
             ks.status,ks.saldoawal, ks.jumlah, ks.tglkejadian, ss.satuanstandar
-            order by pro.namaproduk, ks.tglkejadian
+            order by  pro.namaproduk, ks.tglkejadian
         ) as a
 
         inner join(
@@ -3364,6 +3342,7 @@ AND sp.statusenabled <> false
                 strukrealisasi_t AS st
                 JOIN kegiatananggaran_m AS ka ON ka.ID = st.objectkegiatanfk 
                 JOIN keteranganbelanja_t AS kb ON st.objectkegiatanfk = kb.objectkegiatanfk
+                JOIN bukukasumum_t as bku on bku.norec = st.objectbkufk
             WHERE
                 st.statusenabled = TRUE 
                 AND st.objectbkufk IS NOT NULL
@@ -3372,7 +3351,7 @@ AND sp.statusenabled <> false
                 AND kb.statusenabled = TRUE 
                 AND kb.kdprofile = 30 
                 AND ka.tahun = '$y'
-                AND st.tglrealisasi <= '$tahun'
+                AND bku.tglbku <= '$tahun'
                 AND st.objectasalprodukfk = '$asalproduk'
             GROUP BY
                 ka.kode

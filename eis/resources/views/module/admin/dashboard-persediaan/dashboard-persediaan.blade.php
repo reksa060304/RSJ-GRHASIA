@@ -102,6 +102,7 @@
                                                         <thead class="table-default">
                                                         <tr>
                                                             <th style="color:black;width: 10%">NO </th>
+                                                            <th style="color:black">NAMA RUANGAN </th>
                                                             <th style="color:black">NAMA PRODUK </th>
                                                             <th style="color:black">JUMLAH  </th>
                                                             <th style="color:black">TOTAL  </th>
@@ -117,6 +118,7 @@
                                                             @endphp
                                                             <tr>
                                                                 <td >{{ $i +1 }}</td>
+                                                                <td >{{ $d->namaruangan }}</td>
                                                                 <td >{{ $d->namaproduk }}</td>
                                                                 <td >{{ $d->jumlah}}</td>
                                                                 <td>{{App\Http\Controllers\MainController::formatRp($d->total)}}</td>
@@ -154,6 +156,7 @@
                                                         <thead class="table-default">
                                                         <tr>
                                                             <th style="color:black;width: 10%">NO</th>
+                                                            <th style="color:black">NAMA RUANGAN</th>
                                                             <th style="color:black">NAMA PRODUK</th>
                                                             <th style="color:black">SATUAN</th>
                                                             <th style="color:black">STOK AWAL</th>
@@ -167,6 +170,7 @@
 
                                                             <tr>
                                                                 <td >{{ $i +1 }}</td>
+                                                                <td >{{ $d->namaruangan }}</td>
                                                                 <td >{{ $d->namaproduk }}</td>
                                                                 <td >{{ $d->satuanstandar }}</td>
                                                                 <td >{{ $d->saldoawal }}</td>
