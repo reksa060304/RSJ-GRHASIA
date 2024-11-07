@@ -473,6 +473,61 @@
                                     </div>
                                 </div>
                             </div>
+                            <div class="col-lg-12 col-md-12">
+                                <div class="card">
+                                    <div class="panel panel-maroon">
+                                        <div class="panel-heading bg-c-maroon">
+                                            <span style="color:white"> Informasi  Target dan Realisasi</span>
+                                        </div>
+                                        <div class="panel-body">
+                                            @php
+                                                $klaim = App\Http\Controllers\MainController::loadDataRincian(request()->get("tglawal"),request()->get("tglakhir"),session('kdProfile'));
+                                            @endphp
+                                            <div class="row" style="padding:10px;">
+                                                <div class="col-md-12">
+                                                    <div class="table-responsive" >
+                                                        <table class="table table-striped"
+                                                               style="width:100%">
+                                                            <thead>
+                                                            <tr>
+                                                                <th colspan="5" style="text-align:center;color:#448cff;white-space: pre-wrap">Target</th>
+                                                                <th colspan="5" style="text-align:center;color:red;white-space: pre-wrap;">Realisasi</th>
+                                                            </tr>
+                                                            <tr>
+                                                                <th style="color:#448cff;white-space: pre-wrap;">Kode Rekening</th>
+                                                                <th style="color:#448cff;white-space: pre-wrap">Rekening</th>
+                                                                <th style="color:#448cff;white-space: pre-wrap">Keterangan</th>
+                                                                <th style="color:#448cff;white-space: pre-wrap">Target Pendapatan</th>
+                                                                <th style="color:#448cff;white-space: pre-wrap">Tahun</th>
+                                                                <th style="color:#448cff;white-space: pre-wrap">Tahap</th>
+                                                                <th style="color:red;white-space: pre-wrap"></th>
+                                                                <th style="color:red;white-space: pre-wrap"></th>
+                                                                <th style="color:red;white-space: pre-wrap"></th>
+                                                                <th style="color:red;white-space: pre-wrap"></th>
+                                                                <th style="color:red;white-space: pre-wrap"></th>
+                                                            </tr>
+                                                            </thead>
+                                                            <tbody>
+                                                            @foreach($klaim as $items)
+                                                                <tr >
+                                                                    <td style="color:#448cff;text-align: right;white-space: pre-wrap">{{ $items->koderekening }}</td>
+                                                                    <td style="color:#448cff;text-align: right;white-space: pre-wrap">{{ $items->namarekening }}</td>
+                                                                    <td style="color:#448cff;text-align: right;white-space: pre-wrap">{{ $items->keterangan }}</td>
+                                                                    <td style="color:#448cff;text-align: right;white-space: pre-wrap">{{ $items->jumlahpendapatan }}</td>
+                                                                    <td style="color:#448cff;text-align: right;white-space: pre-wrap">{{ $items->tahun }}</td>
+                                                                    <td style="color:#448cff;text-align: right;white-space: pre-wrap">{{ $items->tahap }}</td>
+                                                                    
+                                                                </tr>
+                                                            @endforeach
+                                                            </tbody>
+                                                        </table>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
                         </div >
                     </form>
                 </div>

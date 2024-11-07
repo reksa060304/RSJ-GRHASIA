@@ -6974,4 +6974,61 @@ count(case when x.departemen = 'rahab_medik' then 1 end) AS rehab_medik
             'dataAll' => $dataAll
         ];
     }
+
+    public static function loadDataRincian($tglAwal,$tglAkhir,$kdProfile)
+    {
+        // $kdProfile = $this->getDataKdProfile($request);
+        $kdProfile = 30;
+        $idProfile = (int) $kdProfile;
+
+        $sumberpendapatan = '';
+        if(isset($request['sumberpendapatan']) && $request['sumberpendapatan'] !== '' && $request['sumberpendapatan'] !== "undefined"){
+            $sumberpendapatan = "AND rp.objectasalprodukfk = ".$request['sumberpendapatan'];
+        }
+
+        $tahap = '';
+        if(isset($request['tahap']) && $request['tahap'] !== '' && $request['tahap'] !== "undefined"){
+            $tahap = "AND rp.objecttahapfk = ". $request['tahap'];
+        }
+
+        $tahun = '';
+        if(isset($request['tahun']) && $request['tahun'] !== '' && $request['tahun'] !== "undefined"){
+            $tahun = "AND rp.tahun = '". $request['tahun']."'";
+        }
+
+        $data = \DB::select(DB::raw("
+            SELECT
+                rp.norec,
+                rp.keterangan,
+                rp.uraianpendapatan,
+                rp.tahun,
+                rp.objectasalprodukfk,
+                rp.jumlahpendapatan,
+                rp.objecturaianpendapatanfk,
+                rp.objecttahapfk,
+                cap.koderekening,
+                cap.namarekening,
+                ta.tahap 
+            FROM rincianpendapatan_t rp
+            JOIN char_akun_pendapatan_m AS cap ON cap.id = rp.objecturaianpendapatanfk AND cap.statusenabled = TRUE AND cap.kdprofile = ".$idProfile."
+            JOIN tahapanggaran_m AS ta ON ta.id = rp.objecttahapfk AND ta.statusenabled = true AND ta.kdprofile = ".$idProfile."
+            JOIN asalproduk_m AS ap ON ap.id = rp.objectasalprodukfk AND ap.statusenabled = true AND ap.kdprofile = ".$idProfile."
+            WHERE 
+                rp.statusenabled = true 
+                AND rp.kdprofile = ".$idProfile."
+                ".$sumberpendapatan."
+                ".$tahap."
+                ".$tahun."
+            ORDER BY
+                cap.nourut,
+                CAST(rp.tahun AS INTEGER) asc
+        "));
+
+        $result = array(
+            'data' => $data,
+            'as' => 'as@vexana',
+        );
+
+        return $data;
+    }
 }
