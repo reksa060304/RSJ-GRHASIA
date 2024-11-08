@@ -2427,6 +2427,7 @@ class MainController extends ApiController
     x.tglpencarian,
     x.namaruangan,
     x.namadepartemen,
+    x.depId,
     x.kelompokpasien,
     SUM (x.total) AS total
 FROM
@@ -2438,6 +2439,7 @@ FROM
             ) AS tglpencarian,
             ru.namaruangan,
             dpm.namadepartemen,
+            dpm.id as depId,
             kps.kelompokpasien,
             --SUM
              (
@@ -2489,6 +2491,7 @@ FROM
                 ) AS tglpencarian,
                 ru.namaruangan,
                 dpm.namadepartemen,
+                dpm.id as depId,
                 'Umum/Pribadi' AS kelompokpasien,
                 -- SUM
                 (
@@ -2530,6 +2533,7 @@ FROM
                     ) AS tglpencarian,
                     ru.namaruangan,
                     dpm.namadepartemen,
+                    dpm.id as depId,
                     kps.kelompokpasien,
                     -- SUM
                     (
@@ -2579,6 +2583,7 @@ GROUP BY
     x.tglpencarian,
     x.kelompokpasien,
     x.namaruangan,
+    x.depId,
     x.namadepartemen
 
 
@@ -2693,7 +2698,7 @@ GROUP BY
         return $result;
     }
 
-    public function getDetailPendapatan(Request $r)
+    public function getDetailPendapatanOld(Request $r)
     {
 
     $data =DB::select(DB::raw("
@@ -2891,6 +2896,117 @@ AND sp.statusenabled <> false
 
 
     }
+
+    public function getDetailPendapatan(Request $r)
+    {
+        // Mengambil parameter dari request
+        $tglAwal = $r->query('tglawal') . ' 00:00'; // Menambahkan waktu 00:00 ke tglAwal
+        $tglAkhir = $r->query('tglakhir') . ' 23:59'; // Menambahkan waktu 23:59 ke tglAkhir
+        $idProfile = 30;
+        $jenis = $r->query('jenis');
+        $title = $r->query('title');
+    
+        // Query SQL yang telah disesuaikan
+        $data = DB::select(DB::raw("
+            SELECT
+                x.tglpencarian,
+                x.namaruangan,
+                x.namadepartemen,
+                x.depId,
+                x.kelompokpasien,
+                SUM(x.total) AS total
+            FROM (
+                -- Query pertama: pelayanan pasien
+                SELECT
+                    to_char(pp.tglpelayanan, 'yyyy-MM-dd HH:mm') AS tglpencarian,
+                    ru.namaruangan,
+                    dpm.namadepartemen,
+                    dpm.id AS depId,
+                    kps.kelompokpasien,
+                    (
+                        (
+                            CASE WHEN pp.hargajual IS NULL THEN 0 ELSE pp.hargajual END - 
+                            CASE WHEN pp.hargadiscount IS NULL THEN 0 ELSE pp.hargadiscount END
+                        ) * pp.jumlah
+                    ) + COALESCE(pp.jasa, 0) AS total
+                FROM
+                    pelayananpasien_t AS pp
+                JOIN antrianpasiendiperiksa_t AS apd ON apd.norec = pp.noregistrasifk
+                JOIN pasiendaftar_t AS pd ON pd.norec = apd.noregistrasifk
+                JOIN ruangan_m AS ru ON ru.id = apd.objectruanganfk
+                LEFT JOIN kelompokpasien_m AS kps ON kps.id = pd.objectkelompokpasienlastfk
+                LEFT JOIN departemen_m AS dpm ON dpm.id = ru.objectdepartemenfk
+                WHERE pp.kdprofile = {$idProfile}
+                  AND pp.tglpelayanan BETWEEN '{$tglAwal}' AND '{$tglAkhir}'
+                  AND pp.strukresepfk IS NULL
+                  AND pd.statusenabled = true
+                  AND dpm.id = {$r->query('id')}
+                UNION ALL
+    
+                -- Query kedua: struk pelayanan
+                SELECT
+                    to_char(sp.tglstruk, 'yyyy-MM-dd HH:mm') AS tglpencarian,
+                    ru.namaruangan,
+                    dpm.namadepartemen,
+                    dpm.id AS depId,
+                    'Umum/Pribadi' AS kelompokpasien,
+                    (
+                        spd.qtyproduk * (spd.hargasatuan - COALESCE(spd.hargadiscount, 0)) + 
+                        COALESCE(spd.hargatambahan, 0)
+                    ) AS total
+                FROM
+                    strukpelayanan_t AS sp
+                JOIN strukpelayanandetail_t AS spd ON spd.nostrukfk = sp.norec
+                LEFT JOIN ruangan_m AS ru ON ru.id = sp.objectruanganfk
+                LEFT JOIN departemen_m AS dpm ON dpm.id = ru.objectdepartemenfk
+                WHERE sp.kdprofile = {$idProfile}
+                  AND sp.tglstruk BETWEEN '{$tglAwal}' AND '{$tglAkhir}'
+                  AND sp.nostruk LIKE 'OB%'
+                  AND sp.statusenabled <> false
+                  AND dpm.id = {$r->query('id')}
+                UNION ALL
+    
+                -- Query ketiga: pelayanan resep
+                SELECT
+                    to_char(pp.tglpelayanan, 'yyyy-MM-dd HH:mm') AS tglpencarian,
+                    ru.namaruangan,
+                    dpm.namadepartemen,
+                    dpm.id AS depId,
+                    kps.kelompokpasien,
+                    (
+                        (
+                            CASE WHEN pp.hargajual IS NULL THEN 0 ELSE pp.hargajual END - 
+                            CASE WHEN pp.hargadiscount IS NULL THEN 0 ELSE pp.hargadiscount END
+                        ) * pp.jumlah
+                    ) + COALESCE(pp.jasa, 0) AS total
+                FROM
+                    pelayananpasien_t AS pp
+                JOIN antrianpasiendiperiksa_t AS apd ON apd.norec = pp.noregistrasifk
+                JOIN strukresep_t AS sr ON sr.norec = pp.strukresepfk
+                JOIN pasiendaftar_t AS pd ON pd.norec = apd.noregistrasifk
+                JOIN ruangan_m AS ru ON ru.id = sr.ruanganfk
+                LEFT JOIN kelompokpasien_m AS kps ON kps.id = pd.objectkelompokpasienlastfk
+                LEFT JOIN departemen_m AS dpm ON dpm.id = ru.objectdepartemenfk
+                WHERE pp.kdprofile = {$idProfile}
+                  AND pp.tglpelayanan BETWEEN '{$tglAwal}' AND '{$tglAkhir}'
+                  AND pp.strukresepfk IS NOT NULL
+                  AND pd.statusenabled = true
+                  AND dpm.id = {$r->query('id')}
+            ) AS x
+            GROUP BY
+                x.tglpencarian,
+                x.kelompokpasien,
+                x.namaruangan,
+                x.depId,
+                x.namadepartemen
+        "));
+    
+        // Mengembalikan data yang diperoleh ke view
+        return view('module.shared.detail-pendapatan-ruangan', compact('data'));
+    }
+    
+
+
     public function  getDetailKun(Request $r){
         $idProfile = session("kdProfile");
         $tglAwal = $r['tglawal'].' 00:00';

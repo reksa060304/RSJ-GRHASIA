@@ -299,6 +299,7 @@
                                                         if ($resultSumDep[$x]['namadepartemen'] == $array[$i]->namadepartemen) {
                                                             $sama = true;
                                                             $resultSumDep[$x]['total'] = (float) $resultSumDep[$x]['total']+  (float)$array[$i]->total;
+                                                            $resultSumDep[$x]['depid'] = (float)$array[$i]->depid;
                                                         }
                                                     }
                                                 }
@@ -306,6 +307,7 @@
                                                     $resultSumDep []= [
                                                         'namadepartemen' =>  $array[$i]->namadepartemen,
                                                         'total' =>  $array[$i]->total,
+                                                        'depid' =>  $array[$i]->depid,
                                                     ];
                                                 }
                                             }
@@ -320,6 +322,7 @@
                                                            <thead class="table-default">
                                                             <tr>
                                                                 <th style="color:black;width: 10%">NO </th>
+                                                                <th style="color:black;width: 10%">DETAIL </th>
                                                                 <th style="color:black">NAMA INSTALASI </th>
                                                                 <th style="text-align: right;color:black">JUMLAH </th>
                                                             </tr>
@@ -334,16 +337,21 @@
                                                                 @endphp
                                                                 <tr>
                                                                     <td >{{ $i +1 }}</td>
+                                                                    <td style="text-align: left;">
+                                                                        <a href="javascript:void(0);" onclick="klikDetails('{{ $d['depid'] }}', '{{ $d['namadepartemen'] }}', 'kunjungan')" class="small-box-footer">
+                                                                            Detail <i class="fa fa-arrow-circle-right"></i>
+                                                                        </a>
+                                                                    </td>
                                                                     <td >{{ $d['namadepartemen'] }}</td>
                                                                     <td  style="text-align: right"> {{ App\Http\Controllers\MainController::formatRp($d['total']) }}</td>
                                                                 </tr>
                                                             @empty
                                                                 <tr>
-                                                                    <td colspan="3" style="text-align: center">Data Tidak ada</td>
+                                                                    <td colspan="4" style="text-align: center">Data Tidak ada</td>
                                                                 </tr>
                                                             @endforelse
                                                             <tr style="background:rgba(0,0,0,.3);">
-                                                                <td colspan="2">TOTAL</td>
+                                                                <td colspan="3">TOTAL</td>
                                                                 <td style="text-align: right">{{App\Http\Controllers\MainController::formatRp($total)}}</td>
                                                             </tr>
                                                             </tbody>
@@ -1908,6 +1916,23 @@
                  window.location.reload();
            
         }, 60000);
+
+
+        function klikDetails(depid,title,jenis){
+            var tglawal = $("#tglawal").val();
+            var tglakhir = $("#tglakhir").val();
+            $.ajax({
+                type    : 'GET',
+                url     : APP_URL+'/get-detail-pendapatan',
+                data    : {tglawal:tglawal,tglakhir:tglakhir,id:depid,jenis:jenis,title:title},
+                cache   : false,
+                success : function(respond){
+                    document.getElementById("titleModalKun").innerHTML =   title
+                    $('#modalKunjungan').modal("show");
+                    $("#load_kunjungan").html(respond);
+                }
+            })
+        }
 
     </script>
 
