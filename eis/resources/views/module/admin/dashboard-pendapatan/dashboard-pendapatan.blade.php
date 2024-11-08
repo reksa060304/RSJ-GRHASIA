@@ -86,7 +86,7 @@
                 <div class="card-block tab-icon">
                     <form action="{!! route("show_page", ["role" => session('role'), "pages" => $r->pages ]) !!}" method="get">
                         <div class="row">
-                            <div class="col-lg-7">
+                            <div class="col-lg-1">
                             </div>
                             <div class="col-lg-2" style="margin-top: 5px">
                                 <div class="input-group" >
@@ -100,6 +100,30 @@
                                     <span class="input-group-addon" id="basic-addon1"><i class="ti-calendar"></i></span>
                                     <input type="text" id="tglakhir" name="tglakhir"  class="date-custom form-control" value="{{request()->get("tglakhir")}}" >
                                 </div>
+                            </div>
+                            <div class="col-lg-2" style="margin-top: 5px">
+                                <select class="js-example-basic-single form-control" name="departemen" id="departemen">
+                                    <option value="">All Departemen</option> <!-- Default option for All -->
+                                    @forelse($departemen as $item)
+                                        <option value="{{$item->id}}" {{ $r->departemen == $item->id ? "selected" : "" }}>
+                                            {{$item->namadepartemen}}
+                                        </option>
+                                    @empty
+                                        <option value="">No Data Available</option>
+                                    @endforelse
+                                </select>
+                            </div>
+                            <div class="col-lg-2" style="margin-top: 5px">
+                                <select class="js-example-basic-single form-control" name="ruangan" id="ruangan">
+                                    <option value="">All Ruangan</option> <!-- Default option for All -->
+                                    @forelse($ruangan as $item)
+                                        <option value="{{$item->id}}" {{ $r->ruangan == $item->id ? "selected" : "" }}>
+                                            {{$item->namaruangan}}
+                                        </option>
+                                    @empty
+                                        <option value="">No Data Available</option>
+                                    @endforelse
+                                </select>
                             </div>
                             <div class="col-lg-1" style="margin-top: 5px" >
                                 <button class="btn btn-success  btn-outline-success"  type="submit">
@@ -405,7 +429,7 @@
                                         </div>
                                         <div class="panel-body">
                                             @php
-                                                $res['pendapatan_mg'] = App\Http\Controllers\MainController::getPendapatanRumahSakit(request()->get("tglawal"),request()->get("tglakhir"),session('kdProfile'),'seminggu');
+                                                $res['pendapatan_mg'] = App\Http\Controllers\MainController::getPendapatanRumahSakit(request()->get("tglawal"),request()->get("tglakhir"),session('kdProfile'),'seminggu',request()->get("departemen"),request()->get("ruangan"));
                                             @endphp
                                             <div id="chartTrendPendapatan"></div>
                                         </div>
@@ -480,8 +504,11 @@
                                             <span style="color:white"> Informasi  Target dan Realisasi</span>
                                         </div>
                                         <div class="panel-body">
-                                            @php
+                                            {{-- @php
                                                 $klaim = App\Http\Controllers\MainController::loadDataRincian(request()->get("tglawal"),request()->get("tglakhir"),session('kdProfile'));
+                                            @endphp --}}
+                                            @php
+                                                $result = App\Http\Controllers\MainController::cetakSTSV2(request()->get("tglawal"),request()->get("tglakhir"),session('kdProfile'));
                                             @endphp
                                             <div class="row" style="padding:10px;">
                                                 <div class="col-md-12">
@@ -490,13 +517,16 @@
                                                                style="width:100%">
                                                             <thead>
                                                             <tr>
-                                                                <th colspan="5" style="text-align:center;color:#448cff;white-space: pre-wrap">Target</th>
-                                                                <th colspan="5" style="text-align:center;color:red;white-space: pre-wrap;">Realisasi</th>
+                                                                <th rowspan="2" style="color:#448cff;white-space: pre-wrap;">Kode Rekening</th>
+                                                                <th rowspan="2" style="color:#448cff;white-space: pre-wrap">Uraian</th>
+                                                                <th colspan="3" style="text-align:center;color:#448cff;white-space: pre-wrap">Target Pendapatan</th>
+                                                                {{-- <th colspan="5" style="text-align:center;color:red;white-space: pre-wrap;">Realisasi</th> --}}
                                                             </tr>
                                                             <tr>
-                                                                <th style="color:#448cff;white-space: pre-wrap;">Kode Rekening</th>
-                                                                <th style="color:#448cff;white-space: pre-wrap">Rekening</th>
-                                                                <th style="color:#448cff;white-space: pre-wrap">Keterangan</th>
+                                                                <th style="color:#448cff;white-space: pre-wrap;">s.d bulan lalu</th>
+                                                                <th style="color:#448cff;white-space: pre-wrap">bulan ini</th>
+                                                                <th style="color:#448cff;white-space: pre-wrap">sd.bulan ini</th>
+                                                                {{-- <th style="color:#448cff;white-space: pre-wrap">Keterangan</th>
                                                                 <th style="color:#448cff;white-space: pre-wrap">Target Pendapatan</th>
                                                                 <th style="color:#448cff;white-space: pre-wrap">Tahun</th>
                                                                 <th style="color:#448cff;white-space: pre-wrap">Tahap</th>
@@ -504,21 +534,193 @@
                                                                 <th style="color:red;white-space: pre-wrap"></th>
                                                                 <th style="color:red;white-space: pre-wrap"></th>
                                                                 <th style="color:red;white-space: pre-wrap"></th>
-                                                                <th style="color:red;white-space: pre-wrap"></th>
+                                                                <th style="color:red;white-space: pre-wrap"></th> --}}
                                                             </tr>
                                                             </thead>
+                                                            @php
+                                                            $idlevel1 = 0;
+                                                            $idlevel2 = 0;
+                                                            $idlevel3 = 0;
+                                                            $idlevel4 = 0;
+                                                            $idlevel5 = 0;
+                                                            $idlevel6 = 0;
+                                                            $idlevel7 = 0;
+                                                            @endphp
                                                             <tbody>
-                                                            @foreach($klaim as $items)
+                                                            {{-- @foreach($klaim as $items)
                                                                 <tr >
                                                                     <td style="color:#448cff;text-align: right;white-space: pre-wrap">{{ $items->koderekening }}</td>
-                                                                    <td style="color:#448cff;text-align: right;white-space: pre-wrap">{{ $items->namarekening }}</td>
+                                                                    <td style="color:#448cff;text-align: right;white-space: pre-wrap">{{ $items->uraian }}</td>
                                                                     <td style="color:#448cff;text-align: right;white-space: pre-wrap">{{ $items->keterangan }}</td>
                                                                     <td style="color:#448cff;text-align: right;white-space: pre-wrap">{{ $items->jumlahpendapatan }}</td>
                                                                     <td style="color:#448cff;text-align: right;white-space: pre-wrap">{{ $items->tahun }}</td>
                                                                     <td style="color:#448cff;text-align: right;white-space: pre-wrap">{{ $items->tahap }}</td>
                                                                     
                                                                 </tr>
-                                                            @endforeach
+                                                            @endforeach --}}
+                                                            @foreach ($result['rekening'] as $rek)
+            
+                                                            {{-- level-1 --}}
+                                                            @if ($rek->idlevel1 && ($rek->idlevel1 !== $idlevel1))
+                                                                <tr>
+                                                                    <td>{{ $rek->koderekeninglevel1 }}</td>
+                                                                    <td>{{ $rek->namarekeninglevel1 }}</td>
+                                                                    <td>
+                                                                        @php
+                                                                            $jmllevel1 = 0;
+                                                                            foreach ($result['data'] as $key => $row) {
+                                                                                if($rek->idlevel1 == $row->idlevel1){
+                                                                                    $jmllevel1 += $row->totaldibayarclosing;
+                                                                                }
+                                                                            }
+                                                                        @endphp
+                                                                        {{ number_format($jmllevel1, 2, '.', ',') }}
+                                                                    </td>
+                                                                </tr>
+                                                            @endif
+                                                
+                                                            {{-- level-2 --}}
+                                                            @if ($rek->idlevel2 && ($rek->idlevel2 !== $idlevel2))
+                                                                <tr>
+                                                                    <td>{{ $rek->koderekeninglevel2 }}</td>
+                                                                    <td>{{ $rek->namarekeninglevel2 }}</td>
+                                                                    <td>
+                                                                        @php
+                                                                            $jmllevel2 = 0;
+                                                                            foreach ($result['data'] as $key => $row) {
+                                                                                if($rek->idlevel2 == $row->idlevel2){
+                                                                                    $jmllevel2 += $row->totaldibayarclosing;
+                                                                                }
+                                                                            }
+                                                                        @endphp
+                                                                        {{ number_format($jmllevel2, 2, '.', ',') }}
+                                                                    </td>
+                                                                </tr>
+                                                            @endif
+                                                
+                                                            {{-- level-3 --}}
+                                                            @if ($rek->idlevel3 && ($rek->idlevel3 !== $idlevel3))
+                                                                <tr>
+                                                                    <td style="font-weight:bold;">{{ $rek->koderekeninglevel3 }}</td>
+                                                                    <td style="font-weight:bold;">{{ $rek->namarekeninglevel3 }}</td>
+                                                                    <td style="font-weight:bold;">
+                                                                        @php
+                                                                            $jmllevel3 = 0;
+                                                                            foreach ($result['data'] as $key => $row) {
+                                                                                if($rek->idlevel3 == $row->idlevel3){
+                                                                                    $jmllevel3 += $row->totaldibayarclosing;
+                                                                                }
+                                                                            }
+                                                                        @endphp
+                                                                        {{ number_format($jmllevel3, 2, '.', ',') }}
+                                                                    </td>
+                                                                </tr>
+                                                            @endif
+                                                
+                                                            {{-- level-4 --}}
+                                                            @if ($rek->idlevel4 && ($rek->idlevel4 !== $idlevel4))
+                                                                <tr>
+                                                                    <td>{{ $rek->koderekeninglevel4 }}</td>
+                                                                    <td>{{ $rek->namarekeninglevel4 }}</td>
+                                                                    <td>
+                                                                        @php
+                                                                            $jmllevel4 = 0;
+                                                                            foreach ($result['data'] as $key => $row) {
+                                                                                if($rek->idlevel4 == $row->idlevel4){
+                                                                                    $jmllevel4 += $row->totaldibayarclosing;
+                                                                                }
+                                                                            }
+                                                                        @endphp
+                                                                        {{ number_format($jmllevel4, 2, '.', ',') }}
+                                                                    </td>
+                                                                </tr>
+                                                            @endif
+                                                
+                                                            {{-- level-5 --}}
+                                                            @if ($rek->idlevel5 && ($rek->idlevel5 !== $idlevel5))
+                                                                <tr>
+                                                                    <td>{{ $rek->koderekeninglevel5 }}</td>
+                                                                    <td>{{ $rek->namarekeninglevel5 }}</td>
+                                                                    <td>
+                                                                        @php
+                                                                            $jmllevel5 = 0;
+                                                                            foreach ($result['data'] as $key => $row) {
+                                                                                if($rek->idlevel5 == $row->idlevel5){
+                                                                                    $jmllevel5 += $row->totaldibayarclosing;
+                                                                                }
+                                                                            }
+                                                                        @endphp
+                                                                        {{ number_format($jmllevel5, 2, '.', ',') }}
+                                                                    </td>
+                                                                </tr>
+                                                            @endif
+                                                
+                                                            {{-- level-6 --}}
+                                                            @if ($rek->idlevel6 && ($rek->idlevel6 !== $idlevel6))
+                                                                <tr>
+                                                                    <td>{{ $rek->koderekeninglevel6 }}</td>
+                                                                    <td>{{ $rek->namarekeninglevel6 }}</td>
+                                                                    <td>
+                                                                        @php
+                                                                            $jmllevel6 = 0;
+                                                                            foreach ($result['data'] as $key => $row) {
+                                                                                if($rek->idlevel6 == $row->idlevel6){
+                                                                                    $jmllevel6 += $row->totaldibayarclosing;
+                                                                                }
+                                                                            }
+                                                                        @endphp
+                                                                        {{ number_format($jmllevel6, 2, '.', ',') }}
+                                                                    </td>
+                                                                </tr>
+                                                            @endif
+                                                
+                                                            {{-- level-7 --}}
+                                                            @if ($rek->idlevel7 && ($rek->idlevel7 !== $idlevel7))
+                                                                <tr>
+                                                                    <td style="font-weight:bold;">{{ $rek->koderekeninglevel7 }}</td>
+                                                                    <td style="font-weight:bold;">{{ $rek->namarekeninglevel7 }}</td>
+                                                                    <td style="font-weight:bold;">
+                                                                        @php
+                                                                            $jmllevel7 = 0;
+                                                                            foreach ($result['data'] as $key => $row) {
+                                                                                if($rek->idlevel7 == $row->idlevel7){
+                                                                                    $jmllevel7 += $row->totaldibayarclosing;
+                                                                                }
+                                                                            }
+                                                                        @endphp
+                                                                        {{ number_format($jmllevel7, 2, '.', ',') }}
+                                                                    </td>
+                                                                </tr>
+                                                            @endif
+                                                
+                                                            <tr>
+                                                                <td>{{ $rek->koderekening }}</td>
+                                                                <td>{{ $rek->namarekening }}</td>
+                                                                <td>
+                                                                    @php
+                                                                        $jmllevel8 = 0;
+                                                                        foreach ($result['data'] as $key => $row) {
+                                                                            if($rek->idrekening == $row->idrekening){
+                                                                                $jmllevel8 += $row->totaldibayarclosing;
+                                                                            }
+                                                                        }
+                                                                    @endphp
+                                                                    {{ number_format($jmllevel8, 2, '.', ',') }}
+                                                                    
+                                                                </td>
+                                                            </tr>
+                                                            
+                                                
+                                                            @php
+                                                                $idlevel1 = $rek->idlevel1;
+                                                                $idlevel2 = $rek->idlevel2;
+                                                                $idlevel3 = $rek->idlevel3;
+                                                                $idlevel4 = $rek->idlevel4;
+                                                                $idlevel5 = $rek->idlevel5;
+                                                                $idlevel6 = $rek->idlevel6;
+                                                                $idlevel7 = $rek->idlevel7;
+                                                            @endphp
+                                                        @endforeach
                                                             </tbody>
                                                         </table>
                                                     </div>
