@@ -4638,6 +4638,36 @@ define(['initialize', 'Configuration'], function (initialize,configuration) {
 					// '&pegawaittd=' + pegawai.value +
 					'&noregistrasi=' + $scope.dataPasienSelected.noregistrasi, '_blank');
 			}
+
+			$scope.ringkasanRajalPerawat = function(){
+				if ($scope.dataPasienSelected == undefined) {
+					toastr.error('Pilih data dulu!')
+					return
+				}
+				if ($scope.dataPasienSelected.deptid == 16){
+					toastr.error('Pasien dari Ranap')
+					return
+				}
+				// if ($scope.item.obj[3003998] != undefined) {
+				//     $scope.listPegawai.add($scope.item.obj[3003998])
+				//     $scope.item.pegawai = $scope.item.obj[3003998]
+				// }
+				// if (pegawai == undefined) {
+				//     return
+				// }
+				var local = JSON.parse(localStorage.getItem('profile'))
+				var nama = medifirstService.getPegawaiLogin().namaLengkap
+
+				window.open(configuration.baseApiBackend + 'report/cetak-monitoringjamkes-perawat?nocm=' + $scope.dataPasienSelected.nocm +
+					'&norec_pd=' + $scope.dataPasienSelected.norec +
+					// '&emr=' + norecEMR +
+					// '&emrfk=' + $scope.cc.emrfk +
+					'&kdprofile=' + local.id +
+					'&nama=' + nama +
+					// '&isttd=true' +
+					// '&pegawaittd=' + pegawai.value +
+					'&noregistrasi=' + $scope.dataPasienSelected.noregistrasi, '_blank');
+			}
 			// END ################
 
 		}

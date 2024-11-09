@@ -21875,6 +21875,224 @@ public function suratBuktiPengembalian(Request $request)
                 'noregistrasi'=> $request['noregistrasi']
         ]);
     }
+
+    public function cetakmonitoringJamkesPerawat(Request $request)
+    {
+
+        $norec = $request['emr'];
+        $kdProfile = (int) $request['kdprofile'];
+        $pasien = collect(DB::select("
+            select pa.nosep,  pg.namalengkap, apd.statuskunjungan, kp.kelompokpasien, ps.nocm, ps.namapasien, to_char(ps.tgllahir,'dd-MM-yyyy') as tgllahir,
+			       CASE WHEN ps.objectjeniskelaminfk=1 then 'L' else 'P' END as jk,
+                   to_char(pd.tglregistrasi,'dd-MM-yyyy hh24:mi:ss') as tglregistrasi,rm.namaruangan,
+                   al.alamatlengkap,al.kecamatan,al.kotakabupaten
+            from antrianpasiendiperiksa_t apd
+            inner join pasiendaftar_t pd on pd.norec = apd.noregistrasifk
+            inner join pemakaianasuransi_t pa on pa.noregistrasifk = pd.norec
+            inner join pasien_m ps on ps.id = pd.nocmfk
+            inner join alamat_m as al on al.nocmfk=ps.id
+            inner join ruangan_m as rm on rm.id = apd.objectruanganfk and pd.objectruanganlastfk = apd.objectruanganfk
+            inner join kelompokpasien_m kp on kp.id = pd.objectkelompokpasienlastfk
+            inner join pegawai_m pg on pg.id = pd.objectpegawaifk
+            where pd.noregistrasi = '$request[noregistrasi]'
+            and ps.statusenabled = true limit 1
+        "))->first();
+        
+        $details = [];
+        $data = DB::select(DB::raw("
+            SELECT 
+                epd.emrdfk,
+                ep.noemr,
+                ed.TYPE,
+                epd.value
+            FROM
+                emrpasien_t AS ep
+                INNER JOIN emrpasiend_t AS epd ON ep.noemr = epd.emrpasienfk
+                INNER JOIN emrd_t AS ed ON epd.emrdfk = ed.ID
+                    INNER JOIN antrianpasiendiperiksa_t AS pd ON pd.norec = ep.norec_apd
+                left JOIN pegawai_m AS pg ON pg.id = pd.objectpegawaifk
+                left JOIN pasien_m as pa on ep.nocm =  pa.nocm
+                left JOIN alamat_m as al on pa.id = al.nocmfk
+            WHERE
+                ep.noregistrasifk = '$request[noregistrasi]'
+                    AND ep.kdprofile = '$kdProfile' 
+                AND epd.statusenabled = TRUE 
+                and epd.emrfk = 210222
+            ORDER BY
+            ed.nourut
+            "
+        ));
+        $maindata = DB::select(DB::raw("SELECT DISTINCT ep.noemr FROM emrpasien_t ep 
+        inner join emrpasiend_t epd on epd.emrpasienfk = ep.noemr
+        where ep.noregistrasifk = '$request[noregistrasi]' and epd.emrfk = 210222"));
+        foreach ($maindata as $m) {
+            $tgljam = "";
+            $jenisppa = "";
+            $soap = "";
+            $tenagamedis = "";
+            $instruksi = "";
+            $review = '';
+            $dpjp = '';
+            $tgldpjp = "";
+            $ttddpjp = "";
+
+            $tgljam2 = "";
+            $jenisppa2 = "";
+            $soap2 = "";
+            $tenagamedis2 = "";
+            $instruksi2 = "";
+            $review2 = '';
+            $dpjp2 = '';
+            $tgldpjp2 = "";
+            $ttddpjp2 = "";
+            foreach ($data as $d) {
+                if($d->noemr == $m->noemr){
+                    if($d->emrdfk == 22034961){
+                        $tgljam =  $this->tanggal_indonesia(date('Y-m-d',strtotime($d->value))) ." ". date('H:i',strtotime( $d->value)) ;
+                    }
+                    if($d->emrdfk == 22034962){
+                        $arr = explode('~',$d->value);
+                        $jenisppa = $arr[1];
+                    }
+                    if($d->emrdfk == 22034963){
+                        $soap = $d->value;
+                    }
+                    if($d->emrdfk == 22034964){
+                        $arr = explode('~',$d->value);
+                        $tenagamedis = $arr[1];
+                    }
+                    if($d->emrdfk == 22034965){
+                        $instruksi = $d->value;
+                    }
+                    if($d->emrdfk == 22034966){
+                        $review = $d->value;
+                    }
+                    if($d->emrdfk == 22034967){
+                        $tgldpjp =  $this->tanggal_indonesia(date('Y-m-d',strtotime($d->value))) ." ". date('H:i',strtotime( $d->value)) ;
+                    }
+                    if($d->emrdfk == 22034968){
+                        $arr = explode('~',$d->value);
+                        $ttddpjp = $arr[1];
+                    }
+
+                    if($d->emrdfk == 22034969){
+                        $tgljam2 =  $this->tanggal_indonesia(date('Y-m-d',strtotime($d->value))) ." ". date('H:i',strtotime( $d->value)) ;
+                    }
+                    if($d->emrdfk == 22034970){
+                        $arr = explode('~',$d->value);
+                        $jenisppa2 = $arr[1];
+                    }
+                    if($d->emrdfk == 22034971){
+                        $soap2 = $d->value;
+                    }
+                    if($d->emrdfk == 22034972){
+                        $arr = explode('~',$d->value);
+                        $tenagamedis2 = $arr[1];
+                    }
+                    if($d->emrdfk == 22034973){
+                        $instruksi2 = $d->value;
+                    }
+                    if($d->emrdfk == 22034974){
+                        $review2 = $d->value;
+                    }
+                    if($d->emrdfk == 22034975){
+                        $tgldpjp2 =  $this->tanggal_indonesia(date('Y-m-d',strtotime($d->value))) ." ". date('H:i',strtotime( $d->value)) ;
+                    }
+                    if($d->emrdfk == 22034976){
+                        $arr = explode('~',$d->value);
+                        $ttddpjp2 = $arr[1];
+                    }
+                }
+            }
+            $details[]= array(
+                'tgljam'=>$tgljam,
+                'jenisppa'=>$jenisppa,
+                'soap'=>$soap,
+                'tenagamedis'=>$tenagamedis,
+                'instruksi'=>$instruksi,
+                'review'=>$review,
+                'tgldpjp'=>$tgldpjp,
+                'ttddpjp'=>$ttddpjp,
+                
+                'tgljam2'=>$tgljam2,
+                'jenisppa2'=>$jenisppa2,
+                'soap2'=>$soap2,
+                'tenagamedis2'=>$tenagamedis2,
+                'instruksi2'=>$instruksi2,
+                'review2'=>$review2,
+                'tgldpjp2'=>$tgldpjp2,
+                'ttddpjp2'=>$ttddpjp2,
+            );
+        }
+        
+        // dd($details);
+
+        $diagnosa = DB::select(DB::raw("SELECT dg.namadiagnosa, dg.kddiagnosa, ddp.objectjenisdiagnosafk FROM detaildiagnosapasien_t ddp 
+        inner join diagnosapasien_t dp on dp.norec = ddp.objectdiagnosapasienfk
+        inner join diagnosa_m dg on dg.id = ddp.objectdiagnosafk
+        inner join antrianpasiendiperiksa_t apd on apd.norec = dp.noregistrasifk
+        inner join pasiendaftar_t pd on pd.norec = apd.noregistrasifk
+        where pd.noregistrasi = '$request[noregistrasi]'
+        and ddp.objectjenisdiagnosafk in (1,2)
+        ORDER BY ddp.objectdiagnosapasienfk asc"));
+        
+        $res['profile'] = Profile::where('id',$request['kdprofile'])->first();
+        $res['d'] = $details;
+        $detailsitem =[];   
+        $konsultasi = DB::select(DB::raw(" select
+        ru.namaruangan as ruanganasal, 
+        pg.namalengkap, rutuju.namaruangan as ruangantujuan, pet.namalengkap as pengonsul, 
+        so.keteranganorder, 
+        so.keteranganlainnya from strukorder_t as so 
+        inner join pasiendaftar_t as pd on pd.norec = so.noregistrasifk 
+        inner join pasien_m as ps on ps.id = pd.nocmfk 
+        left join ruangan_m as ru on ru.id = so.objectruanganfk 
+        left join ruangan_m as rutuju on rutuju.id = so.objectruangantujuanfk 
+        left join pegawai_m as pg on pg.id = so.objectpegawaiorderfk 
+        left join pegawai_m as pet on pet.id = so.objectpetugasfk 
+        left join antrianpasiendiperiksa_t as apd on apd.objectstrukorderfk = so.norec 
+        where so.kdprofile = 30 and so.statusenabled = true 
+        and so.objectkelompoktransaksifk = 108 and pd.noregistrasi = '$request[noregistrasi]' 
+        order by so.tglorder desc"));
+        // $pdf = PDF::loadView(
+        //     'report.EMR.ringkasanrajal',
+        //     array(
+        //         // 'res' => $res,
+        //         'diagnosa' => $diagnosa,
+        //         'konsultasi' => $konsultasi,
+        //         'dataReport' => $pasien,
+        //         'item'=> $details,
+        //         // 'peg'=> $peg
+        //     )
+        // );
+        // if(isset($request['isttd']) && $request['isttd'] == true){
+        //     $objetoRequest = new \Illuminate\Http\Request();
+        //     $objetoRequest ['emrfk'] = $request['emrfk'];
+        //     $objetoRequest ['norec_emr'] = $request['emr'];
+        //     $objetoRequest ['pegawaittd'] = $request['pegawaittd'];
+        //     $objetoRequest ['nocm'] = $request['nocm'];
+        //     $objetoRequest ['noregistrasi'] = $request['noregistrasi'];
+        //     $objetoRequest ['norec_pd'] = $request['norec_pd'];
+        //     $bsre = app('App\Http\Controllers\Bridging\BridgingBSREController')->pengajuanTTE($objetoRequest,true);
+        //     if($bsre['status'] == 201){
+        //         $content = $pdf->download()->getOriginalContent();
+        //         \Storage::disk('local')->put( 'TTD_BSRE/' . $bsre['dokumen']->id . '/file' . '.pdf' , $content);
+        //     }
+          
+        //     return $bsre;
+        // }
+
+        // return $pdf->stream();
+        return view('report.EMR.monitoringjamkesperawat',[
+            'res' => $res,
+                'diagnosa' => $diagnosa,
+                'konsultasi' => $konsultasi,
+                'dataReport' => $pasien,
+                'item'=> $details,
+                'noregistrasi'=> $request['noregistrasi']
+        ]);
+    }
+
     function cetakTriaseIGD(Request $request) {
         $norec = $request['emr'];
         $kdProfile = (int) $request['kdprofile'];
