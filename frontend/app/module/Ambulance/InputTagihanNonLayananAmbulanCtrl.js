@@ -41,16 +41,41 @@ define(['initialize'], function (initialize) {
 			loadCombo();
 
 			function loadCombo() {
-                var datauserlogin = JSON.parse(window.localStorage.getItem("datauserlogin"));
-				console.log(datauserlogin)
-				$scope.KelompokUser = medifirstService.getKelompokUser();
-				medifirstService.get("kasir/get-data-combo-kasir").then(function (data) {
-					$scope.listKelompokTransaksi = data.data.kelnon;
-					$scope.KelompokUserDiklit = data.data.diklit;
-					console.log('diklit',$scope.KelompokUserDiklit)
-					$scope.listAmbulan = data.data.nopol;
-					$scope.listJenisKegiatanAmbulan = data.data.jeniskegiatanambulan;
-					LoadCache();
+                // var datauserlogin = JSON.parse(window.localStorage.getItem("datauserlogin"));
+				// console.log(datauserlogin)
+				// $scope.KelompokUser = medifirstService.getKelompokUser();
+				// medifirstService.get("kasir/get-data-combo-kasir").then(function (data) {
+				// 	$scope.listKelompokTransaksi = data.data.kelnon;
+				// 	$scope.KelompokUserDiklit = data.data.diklit;
+				// 	console.log('diklit',$scope.KelompokUserDiklit)
+				// 	$scope.listAmbulan = data.data.nopol;
+				// 	$scope.listJenisKegiatanAmbulan = data.data.jeniskegiatanambulan;
+				// 	LoadCache();
+				// })
+
+				$q.all([
+                    medifirstService.get("kasir/get-data-combo-kasir"),
+                    medifirstService.get("registrasi/get-combo-address"),
+                ]).then(function (result) {
+					if (result[0].statResponse) {
+						$scope.KelompokUser = medifirstService.getKelompokUser();
+						$scope.listKelompokTransaksi = result[0].data.kelnon;
+						$scope.KelompokUserDiklit = result[0].data.diklit;
+						console.log('diklit',$scope.KelompokUserDiklit)
+						$scope.listAmbulan = result[0].data.nopol;
+						$scope.listJenisKegiatanAmbulan = result[0].data.jeniskegiatanambulan;
+						LoadCache();
+					}
+
+					if (result[1].statResponse) {
+						$scope.listDataKecamatan = result[1].data.kecamatan
+                        $scope.listDataKotaKabupaten = result[1].data.kotakabupaten
+                        $scope.listDataPropinsi = result[1].data.propinsi
+                        $scope.listKebangsaan = result[1].data.kebangsaan
+                        $scope.listNegara = result[1].data.negara
+                        $scope.item.kebangsaan = $scope.listKebangsaan[0]
+					}
+
 				})
 			}
 
@@ -280,21 +305,19 @@ define(['initialize'], function (initialize) {
 				})
 			}
 
-			$scope.bayar = function () {
+			$scope.bayar2 = function () {
 				if (dataProduk.length == 0) {
 					alert("Pilih produk terlebih dahulu !")
 					return;
 				}
 				if ($scope.item.kelompokTransaksi == undefined) {
 					alert("Pilih kelompok transaksi terlebih dahulu !")
+					return;
 				}
 				if ($scope.item.namaPasien_klien == undefined) {
 					alert("Isi Nama Pelanggan terlebih dahulu !")
+					return;
 				}
-				// if ($scope.item.totalBilling == undefined) {
-				// 	alert("Total tidak Boleh Kosong !")
-				// 	return;
-				// }
 				var subTotal = 0;
 				for (var i = dataProduk.length - 1; i >= 0; i--) {
 					subTotal = subTotal + parseFloat(dataProduk[i].totalK)
@@ -318,7 +341,76 @@ define(['initialize'], function (initialize) {
 				
 				// console.log(petugasLayanan); 
 				var objSave = {
-					norec: norec,
+					norec: norec || '',
+					kelompoktransaksifk: $scope.item.kelompokTransaksi.id,
+					keteranganlainnya: $scope.item.keterangan,
+					namapasien_klien: $scope.item.namaPasien_klien,
+					notelp_klien: $scope.item.noTelp_klien,
+					tglstruk: moment($scope.item.tglStruk).format('YYYY-MM-DD hh:mm:ss'),
+					totalharusdibayar: parseFloat(subTotal),//parseFloat($scope.item.totalBilling),
+					details: dataProduk,
+					nopolisi: $scope.item.noPolisi.norec,
+					jeniskegiatan: $scope.item.jenisKegiatan.id,
+					petugaspelayananambulan: petugasLayanan,
+				}
+				
+				const alamat = {
+					alamatLengkap: $scope.item.alamatLengkap,
+					desaKelurahan: $scope.item.desaKelurahan != undefined ? $scope.item.desaKelurahan.id : null,
+					kecamatan: $scope.item.kecamatan != undefined ? $scope.item.kecamatan.id : null,
+					kotaKabupaten: $scope.item.kotaKabupaten != undefined ? $scope.item.kotaKabupaten.id : null,
+					provinsi: $scope.item.propinsi != undefined ? $scope.item.propinsi.id : null,
+					rtRw: $scope.item.rtrw != undefined ? $scope.item.rtrw : null
+				}
+
+				const datas = {objSave,alamat}
+
+				console.log('data yg dikirim',datas)
+
+				medifirstService.post('kasir/save-input-non-layanan', datas).then(function (data) {
+					console.log("Data berhasil disimpan:", data);
+				}).catch(function (error) {
+					console.error("Terjadi kesalahan saat menyimpan data:", error);
+				});		
+			}
+
+			$scope.bayar = function () {
+				if (dataProduk.length == 0) {
+					alert("Pilih produk terlebih dahulu !")
+					return;
+				}
+				if ($scope.item.kelompokTransaksi == undefined) {
+					alert("Pilih kelompok transaksi terlebih dahulu !")
+					return;
+				}
+				if ($scope.item.namaPasien_klien == undefined) {
+					alert("Isi Nama Pelanggan terlebih dahulu !")
+					return;
+				}
+				var subTotal = 0;
+				for (var i = dataProduk.length - 1; i >= 0; i--) {
+					subTotal = subTotal + parseFloat(dataProduk[i].totalK)
+				}
+				if (subTotal == undefined || subTotal == 0) {
+					alert("Total tidak Boleh Kosong !")
+					return;
+				}
+
+				var petugasLayanan = [];
+				if ($scope.gridPetugasPelaksana && $scope.gridPetugasPelaksana._data.length > 0) {
+					$scope.gridPetugasPelaksana._data.forEach(function (a) {
+						petugasLayanan.push({
+							"objectjenispetugaspefk": a.jenisPetugas.id,
+							"listpegawai": a.listPetugas
+						});
+					});
+				} else {
+					console.log("Tidak ada data petugas layanan");
+				}
+				
+				// console.log(petugasLayanan); 
+				var objSave = {
+					norec: norec || '',
 					kelompoktransaksifk: $scope.item.kelompokTransaksi.id,
 					keteranganlainnya: $scope.item.keterangan,
 					namapasien_klien: $scope.item.namaPasien_klien,
@@ -330,15 +422,35 @@ define(['initialize'], function (initialize) {
 					jeniskegiatan: $scope.item.jenisKegiatan.id,
 					petugaspelayananambulan: petugasLayanan,
 
+					alamatLengkap: $scope.item.alamatLengkap,
+					desaKelurahan: $scope.item.desaKelurahan != undefined ? $scope.item.desaKelurahan.id : null,
+					kecamatan: $scope.item.kecamatan != undefined ? $scope.item.kecamatan.id : null,
+					kotaKabupaten: $scope.item.kotaKabupaten != undefined ? $scope.item.kotaKabupaten.id : null,
+					provinsi: $scope.item.propinsi != undefined ? $scope.item.propinsi.id : null,
+					rtRw: $scope.item.rtrw != undefined ? $scope.item.rtrw : null
 				}
+				
+				// const alamat = {
+				// 	alamatLengkap: $scope.item.alamatLengkap,
+				// 	desaKelurahan: $scope.item.desaKelurahan != undefined ? $scope.item.desaKelurahan.id : null,
+				// 	kecamatan: $scope.item.kecamatan != undefined ? $scope.item.kecamatan.id : null,
+				// 	kotaKabupaten: $scope.item.kotaKabupaten != undefined ? $scope.item.kotaKabupaten.id : null,
+				// 	provinsi: $scope.item.propinsi != undefined ? $scope.item.propinsi.id : null,
+				// 	rtRw: $scope.item.rtrw != undefined ? $scope.item.rtrw : null
+				// }
+
+				// const payload = {
+				// 	objSave: objSave,
+				// 	alamat: alamat
+				// };
+
+				// console.log('data yg dikirim',payload)
+
 				medifirstService.post('kasir/save-input-non-layanan', objSave).then(function (data) {
-					// if ($scope.KelompokUser !== $scope.KelompokUserDiklit) {
-					// 	const noRegistrasi2 = data.data.data.norec;
-					// 	$scope.changePage("PenerimaanPembayaranKasir");
-					// } else {
-					// 	window.history.back();
-					// }
-				});			
+					console.log("Data berhasil disimpan:", data);
+				}).catch(function (error) {
+					console.error("Terjadi kesalahan saat menyimpan data:", error);
+				});		
 			}
 
 			$scope.$watch('item.jumlah', function (newValue, oldValue) {
@@ -862,6 +974,96 @@ define(['initialize'], function (initialize) {
 			$scope.formatRupiah = function (value, currency) {
 				return currency + " " + parseFloat(value).toFixed(2).replace(/(\d)(?=(\d{3})+\.)/g, "$1,");
 			}
+
+			// alamat
+			medifirstService.getPart("registrasi/get-desa-kelurahan-paging", true, true, 10).then(function (e) {
+                $scope.listDataKelurahan = e;
+            });
+
+			$scope.findAddress = function (desa) {
+                if (desa.objectkecamatanfk)
+                    $scope.alamat.kecamatan = { id: desa.objectkecamatanfk, namakecamatan: desa.namakecamatan }
+                if (desa.objectkotakabupatenfk)
+                    $scope.alamat.kotaKabupaten = { id: desa.objectkotakabupatenfk, namakotakabupaten: desa.namakotakabupaten }
+                if (desa.objectpropinsifk)
+                    $scope.alamat.propinsi = { id: desa.objectpropinsifk, namapropinsi: desa.namapropinsi }
+                if (desa.kodepos)
+                    $scope.alamat.kodePos = desa.kodepos
+            }
+
+			$scope.$watch('item.desaKelurahan', function (newValue, oldValue) {
+                if (newValue == oldValue) return;
+                if (newValue.objectkecamatanfk)
+                    $scope.item.kecamatan = { id: newValue.objectkecamatanfk, namakecamatan: newValue.namakecamatan }
+                if (newValue.objectkotakabupatenfk)
+                    $scope.item.kotaKabupaten = { id: newValue.objectkotakabupatenfk, namakotakabupaten: newValue.namakotakabupaten }
+                if (newValue.objectpropinsifk)
+                    $scope.item.propinsi = { id: newValue.objectpropinsifk, namapropinsi: newValue.namapropinsi }
+                if (newValue.kodepos)
+                    $scope.item.kodePos = newValue.kodepos
+            });
+
+			$scope.$watch('item.alamatLengkap', function (newValue, oldValue) {
+                if (newValue != oldValue) {
+                    var nama = $scope.item.alamatLengkap.toUpperCase()
+                    $scope.item.alamatLengkap = nama;
+                }
+            });
+
+            $scope.$watch('item.alamatLengkap', function (newValue, oldValue) {
+                if (newValue != oldValue) {
+                    var nama = $scope.item.alamatLengkap.toUpperCase()
+                    $scope.item.alamatLengkap = nama;
+                }
+            });
+
+			// $scope.salinAlamat = function (data) {
+            //     if (data == true) {
+            //         if ($scope.item.alamatLengkap != undefined) {
+            //             $scope.item.alamatDomisili = $scope.item.alamatLengkap
+            //         } else {
+            //             toastr.info('Alamat lengkap belum diisi', 'Info')
+            //         }
+
+            //         if ($scope.item.rtrw != undefined) {
+            //             $scope.item.rtrwDomisili = $scope.item.rtrw
+            //         } else {
+            //             toastr.info('RT / RW belum diisi', 'Info')
+            //         }
+
+            //         if ($scope.item.desaKelurahan != undefined) {
+            //             $scope.item.desaKelurahanDomisili = $scope.item.desaKelurahan
+            //         } else {
+            //             toastr.info('Desa/Kelurahan belum diisi', 'Info')
+            //         }
+
+            //         if ($scope.item.kecamatan != undefined) {
+            //             $scope.item.kecamatanDomisili = $scope.item.kecamatan
+            //         } else {
+            //             toastr.info('Kecamatan belum diisi', 'Info')
+            //         }
+
+            //         if ($scope.item.kotaKabupaten != undefined) {
+            //             $scope.item.kotaKabupatenDomisili = $scope.item.kotaKabupaten
+            //         } else {
+            //             toastr.info('Kota/kabupaten belum diisi', 'info')
+            //         }
+
+            //         if ($scope.item.propinsi != undefined) {
+            //             $scope.item.propinsiDomisili = $scope.item.propinsi
+            //         } else {
+            //             toastr.info('Propinsi belum diisi', 'info')
+            //         }
+            //     } else {
+            //         $scope.item.alamatDomisili = undefined
+            //         $scope.item.rtrwDomisili = undefined
+            //         $scope.item.desaKelurahanDomisili = undefined
+            //         $scope.item.kecamatanDomisili = undefined
+            //         $scope.item.kotaKabupatenDomisili = undefined
+            //         $scope.item.propinsiDomisili = undefined
+            //         $scope.item.negaraDomisili = undefined
+            //     }
+            // }
 			// BATAS //
 		}
 	]);
