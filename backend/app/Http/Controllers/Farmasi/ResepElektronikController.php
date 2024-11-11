@@ -266,7 +266,7 @@ class ResepElektronikController extends ApiController
         $noorder = $request['noorder'];
 
         $data = DB::select(DB::raw("
-            SELECT statusorder from strukorder_t where noorder = '$noorder'
+            SELECT statusorder, petugasverif from strukorder_t where noorder = '$noorder'
         "));
 
         $result[] = array(
@@ -1030,5 +1030,43 @@ class ResepElektronikController extends ApiController
         }
         return $this->setStatusCode($result['status'])->respond($result, $transMessage);
     }
+
+    public function savePetugasVerif(Request $request) {
+        $kdProfile = $this->getDataKdProfile($request);
+        $idProfile = (int) $kdProfile;
+        DB::beginTransaction();
+        $dataReq = $request->all();
+        try {
+            StrukOrder::where('noorder', $request['noorder'])
+                ->where('kdprofile', $idProfile)
+                ->update([
+                    'petugasverif' => $request['petugasverif']
+                ]);
+            $transStatus = 'true';
+        } catch (\Exception $e) {
+            $transStatus = 'false';
+        }
+    
+        // Tambahkan nama petugas dalam notifikasi
+        $transMessage = "Save Status Pengerjaan Oleh " . $request['petugasverif'];
+    
+        if ($transStatus == 'true') {
+            $transMessage .= " Berhasil";
+            DB::commit();
+            $result = array(
+                "status" => 201,
+                "by" => 'as@epic',
+            );
+        } else {
+            $transMessage .= " Gagal!!";
+            DB::rollBack();
+            $result = array(
+                "status" => 400,
+                "by" => 'as@epic',
+            );
+        }
+        return $this->setStatusCode($result['status'])->respond($result, $transMessage);
+    }
+    
 
 }

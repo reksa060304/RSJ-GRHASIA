@@ -6562,7 +6562,7 @@ class PelayananResepController extends ApiController
         
         $noorder = $request['noorder'];
 
-        $dataz = DB::select(DB::raw("select sr.tglresep 
+        $dataz = DB::select(DB::raw("select sr.tglresep, so.petugasverif
         from strukorder_t as so 
         left join strukresep_t as sr on so.norec = sr.orderfk
         where so.noorder = '$noorder'"));
