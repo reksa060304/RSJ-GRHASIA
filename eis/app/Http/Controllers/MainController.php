@@ -1396,27 +1396,86 @@ class MainController extends ApiController
         $idProfile = (int) session("kdProfile");
         $tglAwal= Carbon::now()->format('Y-m-d 00:00');
         $tglAkhir =Carbon::now()->format('Y-m-d 23:59');
-        $data = DB::select(DB::raw("
-            select * from (
-                select x.namaruangan,x.namaproduk ,sum (x.jumlah) as jumlah ,sum(x.total ) as total from (
+        // $data = DB::select(DB::raw("
+        //     select * from (
+        //         select x.namaruangan,x.namaproduk ,sum (x.jumlah) as jumlah ,sum(x.total ) as total from (
 
-                select
-                prd.namaproduk  , pp.jumlah , ru.namaruangan, (
-                ((  CASE WHEN   pp.hargasatuan IS NULL THEN 0 ELSE pp.hargasatuan END
-                - CASE WHEN pp.hargadiscount IS NULL THEN   0 ELSE pp.hargadiscount END     ) * pp.jumlah
-                ) + CASE    WHEN    pp.jasa IS NULL THEN 0  ELSE        pp.jasa END) AS total
-                from  strukresep_t as sr
-                join pelayananpasien_t  as pp  on pp.strukresepfk =sr.norec
-                join ruangan_m as ru on ru.id = sr.ruanganfk
-                join produk_m as prd on pp.produkfk= prd.id
-                where sr.kdprofile = $idProfile and pp.tglpelayanan BETWEEN  '$tglAwal' and '$tglAkhir'
-                and pp.strukresepfk is not null
+        //         select
+        //         prd.namaproduk  , pp.jumlah , ru.namaruangan, (
+        //         ((  CASE WHEN   pp.hargasatuan IS NULL THEN 0 ELSE pp.hargasatuan END
+        //         - CASE WHEN pp.hargadiscount IS NULL THEN   0 ELSE pp.hargadiscount END     ) * pp.jumlah
+        //         ) + CASE    WHEN    pp.jasa IS NULL THEN 0  ELSE        pp.jasa END) AS total
+        //         from  strukresep_t as sr
+        //         join pelayananpasien_t  as pp  on pp.strukresepfk =sr.norec
+        //         join ruangan_m as ru on ru.id = sr.ruanganfk
+        //         join produk_m as prd on pp.produkfk= prd.id
+        //         where sr.kdprofile = $idProfile and pp.tglpelayanan BETWEEN  '$tglAwal' and '$tglAkhir'
+        //         and pp.strukresepfk is not null
 
               
-                ) as x
-                group by x.namaproduk,x.namaruangan
-            )  as z order by z.total desc")
-        );
+        //         ) as x
+        //         group by x.namaproduk,x.namaruangan
+        //     )  as z order by z.total desc")
+        // );
+
+        $data = DB::select(DB::raw("
+        SELECT
+            * 
+        FROM
+            (
+            SELECT
+                x.namaruangan,
+                x.namaproduk,
+                SUM ( x.jumlah ) AS jumlah,
+                SUM ( x.total ) AS total 
+            FROM
+                (
+                SELECT
+                    prd.namaproduk,
+                    pp.jumlah,
+                    ru.namaruangan,
+                    (
+                        (
+                            (
+                            CASE
+                                    
+                                    WHEN pp.hargasatuan IS NULL THEN
+                                    0 ELSE pp.hargasatuan 
+                                END -
+                            CASE
+                                    
+                                    WHEN pp.hargadiscount IS NULL THEN
+                                    0 ELSE pp.hargadiscount 
+                                END 
+                                    ) * pp.jumlah 
+                            ) +
+                        CASE
+                                
+                                WHEN pp.jasa IS NULL THEN
+                                0 ELSE pp.jasa 
+                            END 
+                            ) AS total 
+                        FROM
+                            strukresep_t AS sr
+                            JOIN pelayananpasien_t AS pp ON pp.strukresepfk = sr.norec
+                            JOIN ruangan_m AS ru ON ru.ID = sr.ruanganfk
+                            JOIN produk_m AS prd ON pp.produkfk = prd.ID 
+                            JOIN detailjenisproduk_m AS dj ON dj.id = prd.objectdetailjenisprodukfk 
+                        WHERE
+                            sr.kdprofile = $idProfile
+                            AND pp.tglpelayanan BETWEEN '$tglAwal' AND '$tglAkhir'
+                            AND pp.strukresepfk IS NOT NULL 
+                            AND dj.detailjenisproduk NOT ILIKE '%TENAGA AHLI%' 
+                            AND dj.detailjenisproduk NOT ILIKE '%ALKES%'
+                        ) AS x 
+                    GROUP BY
+                        x.namaproduk,
+                        x.namaruangan 
+                    ) AS z 
+            ORDER BY
+            z.total DESC
+        "));
+
 
         $result = array(
             'data' => $data,
@@ -2064,90 +2123,264 @@ class MainController extends ApiController
         $tglAkhir =  $tglAkhir.' 23:59';
         $ratarata = 0;
 
-        $results = DB::select(DB::raw("select a.namaruangan, a.namaproduk, a.satuanstandar, a.saldoawal, b.saldomasuk, b.saldokeluar, c.saldoakhir from
-        (
-        select ROW_NUMBER() OVER(order by pro.namaproduk) nourut, ru.namaruangan, pro.namaproduk, ss.satuanstandar,
-        case when ks.status = true
-        then ks.saldoawal - ks.jumlah else ks.saldoawal + ks.jumlah end as saldoawal
-            from kartustok_t as ks
-            inner join produk_m as pro on pro.id = ks.produkfk
-            inner join satuanstandar_m ss on ss.id = pro.objectsatuanstandarfk
-            inner join ruangan_m as ru on ru.id = ks.ruanganfk
-            inner join (
-                select pro.namaproduk, min(ks.tglkejadian) tglkejadian
-                from kartustok_t as ks
-                inner join produk_m as pro on pro.id = ks.produkfk
-                inner join ruangan_m as ru on ru.id = ks.ruanganfk
-                where ks.kdprofile = $idProfile
-                and ks.statusenabled = TRUE
-                and ks.tglkejadian between '$tglAwal' and '$tglAkhir'
-                and ru.id != 59
-                and ks.keterangan not like '%Ubah Resep%'
-                group by pro.namaproduk
-            ) as j on j.tglkejadian = ks.tglkejadian and j.namaproduk = pro.namaproduk
-            where ks.kdprofile = $idProfile
-            and ks.statusenabled = TRUE
-            and ks.tglkejadian between '$tglAwal' and '$tglAkhir'
-            and ru.id = 94
-            and ks.saldoawal >= 0
-            group by pro.namaproduk,ru.namaruangan,
-            ks.status,ks.saldoawal, ks.jumlah, ks.tglkejadian, ss.satuanstandar
-            order by  pro.namaproduk, ks.tglkejadian
-        ) as a
+        // $results = DB::select(DB::raw("select a.namaruangan, a.namaproduk, a.satuanstandar, a.saldoawal, b.saldomasuk, b.saldokeluar, c.saldoakhir from
+        // (
+        // select ROW_NUMBER() OVER(order by pro.namaproduk) nourut, ru.namaruangan, pro.namaproduk, ss.satuanstandar,
+        // case when ks.status = true
+        // then ks.saldoawal - ks.jumlah else ks.saldoawal + ks.jumlah end as saldoawal
+        //     from kartustok_t as ks
+        //     inner join produk_m as pro on pro.id = ks.produkfk
+        //     inner join satuanstandar_m ss on ss.id = pro.objectsatuanstandarfk
+        //     inner join ruangan_m as ru on ru.id = ks.ruanganfk
+        //     inner join (
+        //         select pro.namaproduk, min(ks.tglkejadian) tglkejadian
+        //         from kartustok_t as ks
+        //         inner join produk_m as pro on pro.id = ks.produkfk
+        //         inner join ruangan_m as ru on ru.id = ks.ruanganfk
+        //         where ks.kdprofile = $idProfile
+        //         and ks.statusenabled = TRUE
+        //         and ks.tglkejadian between '$tglAwal' and '$tglAkhir'
+        //         and ru.id != 59
+        //         and ks.keterangan not like '%Ubah Resep%'
+        //         group by pro.namaproduk
+        //     ) as j on j.tglkejadian = ks.tglkejadian and j.namaproduk = pro.namaproduk
+        //     where ks.kdprofile = $idProfile
+        //     and ks.statusenabled = TRUE
+        //     and ks.tglkejadian between '$tglAwal' and '$tglAkhir'
+        //     and ru.id = 94
+        //     and ks.saldoawal >= 0
+        //     group by pro.namaproduk,ru.namaruangan,
+        //     ks.status,ks.saldoawal, ks.jumlah, ks.tglkejadian, ss.satuanstandar
+        //     order by  pro.namaproduk, ks.tglkejadian
+        // ) as a
 
-        inner join(
-        select ROW_NUMBER() OVER(order by y.namaproduk) nourut, y.namaproduk, y.satuanstandar, sum(y.saldomasuk) as saldomasuk, sum(y.saldokeluar) as saldokeluar
-        from(
-            select x.namaproduk, x.satuanstandar,
-            case when x.status = TRUE
-            then x.jumlah else 0 end as saldomasuk,
-            case when x.status = true
-            then 0 else x.jumlah end as saldokeluar
-            from(
-                select ks.keterangan, ks.tglkejadian, pro.namaproduk, ss.satuanstandar, ks.jumlah, ks.status
-                    from kartustok_t as ks
-                    inner join produk_m as pro on pro.id = ks.produkfk
-                    inner join ruangan_m as ru on ru.id = ks.ruanganfk
-                    inner join satuanstandar_m ss on ss.id = pro.objectsatuanstandarfk
-                    where ks.kdprofile = $idProfile
-                    and ks.statusenabled = TRUE
-                    and ks.tglkejadian between '$tglAwal' and '$tglAkhir'
-                    and ru.id = 94
-                    and ks.saldoawal >= 0
-                    --group by ks.keterangan, pro.namaproduk, ks.jumlah, ks.status
-                    order by pro.namaproduk, ks.tglkejadian
-            ) as x
-        ) as y  group by y.namaproduk, y.satuanstandar
-        ) as b on a.nourut = b.nourut
+        // inner join(
+        // select ROW_NUMBER() OVER(order by y.namaproduk) nourut, y.namaproduk, y.satuanstandar, sum(y.saldomasuk) as saldomasuk, sum(y.saldokeluar) as saldokeluar
+        // from(
+        //     select x.namaproduk, x.satuanstandar,
+        //     case when x.status = TRUE
+        //     then x.jumlah else 0 end as saldomasuk,
+        //     case when x.status = true
+        //     then 0 else x.jumlah end as saldokeluar
+        //     from(
+        //         select ks.keterangan, ks.tglkejadian, pro.namaproduk, ss.satuanstandar, ks.jumlah, ks.status
+        //             from kartustok_t as ks
+        //             inner join produk_m as pro on pro.id = ks.produkfk
+        //             inner join ruangan_m as ru on ru.id = ks.ruanganfk
+        //             inner join satuanstandar_m ss on ss.id = pro.objectsatuanstandarfk
+        //             where ks.kdprofile = $idProfile
+        //             and ks.statusenabled = TRUE
+        //             and ks.tglkejadian between '$tglAwal' and '$tglAkhir'
+        //             and ru.id = 94
+        //             and ks.saldoawal >= 0
+        //             --group by ks.keterangan, pro.namaproduk, ks.jumlah, ks.status
+        //             order by pro.namaproduk, ks.tglkejadian
+        //     ) as x
+        // ) as y  group by y.namaproduk, y.satuanstandar
+        // ) as b on a.nourut = b.nourut
 
 
-        inner join(
-        select ROW_NUMBER() OVER(order by pro.namaproduk) nourut, pro.namaproduk, ss.satuanstandar,
-        ks.saldoawal as saldoakhir
-            from kartustok_t as ks
-            inner join produk_m as pro on pro.id = ks.produkfk
-            inner join satuanstandar_m ss on ss.id = pro.objectsatuanstandarfk
-            inner join ruangan_m as ru on ru.id = ks.ruanganfk
-            inner join (
-                select pro.namaproduk, max(ks.tglkejadian) tglkejadian
-                from kartustok_t as ks
-                inner join produk_m as pro on pro.id = ks.produkfk
-                inner join ruangan_m as ru on ru.id = ks.ruanganfk
-                where ks.kdprofile = $idProfile
-                and ks.statusenabled = TRUE
-                and ks.tglkejadian between '$tglAwal' and '$tglAkhir'
-                and ru.id != 59
-                and ks.keterangan not like '%Ubah Resep%'
-                group by pro.namaproduk
-            ) as j on j.tglkejadian = ks.tglkejadian and j.namaproduk = pro.namaproduk
-            where ks.kdprofile = $idProfile
-            and ks.statusenabled = TRUE
-            and ks.tglkejadian between '$tglAwal' and '$tglAkhir'
-            and ru.id = 94
-            and ks.saldoawal >= 0
-            group by pro.namaproduk,ks.saldoawal, ks.tglkejadian, ss.satuanstandar
-            order by pro.namaproduk, ks.tglkejadian
-        ) as c on b.nourut = c.nourut;
+        // inner join(
+        // select ROW_NUMBER() OVER(order by pro.namaproduk) nourut, pro.namaproduk, ss.satuanstandar,
+        // ks.saldoawal as saldoakhir
+        //     from kartustok_t as ks
+        //     inner join produk_m as pro on pro.id = ks.produkfk
+        //     inner join satuanstandar_m ss on ss.id = pro.objectsatuanstandarfk
+        //     inner join ruangan_m as ru on ru.id = ks.ruanganfk
+        //     inner join (
+        //         select pro.namaproduk, max(ks.tglkejadian) tglkejadian
+        //         from kartustok_t as ks
+        //         inner join produk_m as pro on pro.id = ks.produkfk
+        //         inner join ruangan_m as ru on ru.id = ks.ruanganfk
+        //         where ks.kdprofile = $idProfile
+        //         and ks.statusenabled = TRUE
+        //         and ks.tglkejadian between '$tglAwal' and '$tglAkhir'
+        //         and ru.id != 59
+        //         and ks.keterangan not like '%Ubah Resep%'
+        //         group by pro.namaproduk
+        //     ) as j on j.tglkejadian = ks.tglkejadian and j.namaproduk = pro.namaproduk
+        //     where ks.kdprofile = $idProfile
+        //     and ks.statusenabled = TRUE
+        //     and ks.tglkejadian between '$tglAwal' and '$tglAkhir'
+        //     and ru.id = 94
+        //     and ks.saldoawal >= 0
+        //     group by pro.namaproduk,ks.saldoawal, ks.tglkejadian, ss.satuanstandar
+        //     order by pro.namaproduk, ks.tglkejadian
+        // ) as c on b.nourut = c.nourut;
+        // "));
+
+        $results = DB::select(DB::raw("
+            SELECT 
+                A.namaruangan,
+                A.namaproduk,
+                A.satuanstandar,
+                A.saldoawal,
+                b.saldomasuk,
+                b.saldokeluar,
+                C.saldoakhir 
+            FROM
+                (
+                SELECT ROW_NUMBER
+                    ( ) OVER ( ORDER BY pro.namaproduk ) nourut,
+                    ru.namaruangan,
+                    pro.namaproduk,
+                    ss.satuanstandar,
+                CASE
+                        
+                        WHEN ks.status = TRUE THEN
+                        ks.saldoawal - ks.jumlah ELSE ks.saldoawal + ks.jumlah 
+                    END AS saldoawal 
+                FROM
+                    kartustok_t AS ks
+                    INNER JOIN produk_m AS pro ON pro.ID = ks.produkfk
+                    INNER JOIN detailjenisproduk_m AS dj ON dj.id = pro.objectdetailjenisprodukfk 
+                    INNER JOIN satuanstandar_m ss ON ss.ID = pro.objectsatuanstandarfk
+                    INNER JOIN ruangan_m AS ru ON ru.ID = ks.ruanganfk
+                    INNER JOIN (
+                    SELECT
+                        pro.namaproduk,
+                        MIN ( ks.tglkejadian ) tglkejadian 
+                    FROM
+                        kartustok_t AS ks
+                        INNER JOIN produk_m AS pro ON pro.ID = ks.produkfk
+                        INNER JOIN detailjenisproduk_m AS dj ON dj.id = pro.objectdetailjenisprodukfk 
+                        INNER JOIN ruangan_m AS ru ON ru.ID = ks.ruanganfk 
+                    WHERE
+                        ks.kdprofile = $idProfile
+                        AND ks.statusenabled = TRUE 
+                        AND ks.tglkejadian BETWEEN '$tglAwal' AND '$tglAkhir'
+                        AND ru.ID != 59 
+                        AND ks.keterangan NOT LIKE'%Ubah Resep%' 
+                        AND dj.detailjenisproduk NOT ILIKE '%TENAGA AHLI%' 
+                        AND dj.detailjenisproduk NOT ILIKE '%ALKES%'
+                    GROUP BY
+                        pro.namaproduk 
+                    ) AS j ON j.tglkejadian = ks.tglkejadian 
+                    AND j.namaproduk = pro.namaproduk 
+                WHERE
+                    ks.kdprofile =  $idProfile
+                    AND ks.statusenabled = TRUE 
+                    AND ks.tglkejadian BETWEEN '$tglAwal' AND '$tglAkhir'
+                    AND ru.ID = 94 
+                    AND ks.saldoawal >= 0 
+                    AND dj.detailjenisproduk NOT ILIKE '%TENAGA AHLI%' 
+                    AND dj.detailjenisproduk NOT ILIKE '%ALKES%'
+                GROUP BY
+                    pro.namaproduk,
+                    ru.namaruangan,
+                    ks.status,
+                    ks.saldoawal,
+                    ks.jumlah,
+                    ks.tglkejadian,
+                    ss.satuanstandar 
+                ORDER BY
+                    pro.namaproduk,
+                    ks.tglkejadian 
+                )
+                AS A INNER JOIN (
+                SELECT ROW_NUMBER
+                    ( ) OVER ( ORDER BY y.namaproduk ) nourut,
+                    y.namaproduk,
+                    y.satuanstandar,
+                    SUM ( y.saldomasuk ) AS saldomasuk,
+                    SUM ( y.saldokeluar ) AS saldokeluar 
+                FROM
+                    (
+                    SELECT
+                        x.namaproduk,
+                        x.satuanstandar,
+                    CASE
+                            
+                            WHEN x.status = TRUE THEN
+                            x.jumlah ELSE 0 
+                        END AS saldomasuk,
+                    CASE
+                            
+                            WHEN x.status = TRUE THEN
+                            0 ELSE x.jumlah 
+                        END AS saldokeluar 
+                    FROM
+                        (
+                        SELECT
+                            ks.keterangan,
+                            ks.tglkejadian,
+                            pro.namaproduk,
+                            ss.satuanstandar,
+                            ks.jumlah,
+                            ks.status 
+                        FROM
+                            kartustok_t AS ks
+                            INNER JOIN produk_m AS pro ON pro.ID = ks.produkfk
+                            INNER JOIN detailjenisproduk_m AS dj ON dj.id = pro.objectdetailjenisprodukfk 
+                            INNER JOIN ruangan_m AS ru ON ru.ID = ks.ruanganfk
+                            INNER JOIN satuanstandar_m ss ON ss.ID = pro.objectsatuanstandarfk 
+                        WHERE
+                            ks.kdprofile = $idProfile
+                            AND ks.statusenabled = TRUE 
+                            AND ks.tglkejadian BETWEEN '$tglAwal' AND '$tglAkhir'
+                            AND ru.ID = 94 
+                            AND ks.saldoawal >= 0 
+                            AND dj.detailjenisproduk NOT ILIKE '%TENAGA AHLI%' 
+                            AND dj.detailjenisproduk NOT ILIKE '%ALKES%'
+                        ORDER BY
+                            pro.namaproduk,
+                            ks.tglkejadian 
+                        ) AS x 
+                    ) AS y 
+                GROUP BY
+                    y.namaproduk,
+                    y.satuanstandar 
+                ) AS b ON A.nourut = b.nourut
+                INNER JOIN (
+                SELECT ROW_NUMBER
+                    ( ) OVER ( ORDER BY pro.namaproduk ) nourut,
+                    pro.namaproduk,
+                    ss.satuanstandar,
+                    ks.saldoawal AS saldoakhir 
+                FROM
+                    kartustok_t AS ks
+                    INNER JOIN produk_m AS pro ON pro.ID = ks.produkfk
+                    INNER JOIN detailjenisproduk_m AS dj ON dj.id = pro.objectdetailjenisprodukfk 
+                    INNER JOIN satuanstandar_m ss ON ss.ID = pro.objectsatuanstandarfk
+                    INNER JOIN ruangan_m AS ru ON ru.ID = ks.ruanganfk
+                    INNER JOIN (
+                    SELECT
+                        pro.namaproduk,
+                        MAX ( ks.tglkejadian ) tglkejadian 
+                    FROM
+                        kartustok_t AS ks
+                        INNER JOIN produk_m AS pro ON pro.ID = ks.produkfk
+                        INNER JOIN detailjenisproduk_m AS dj ON dj.id = pro.objectdetailjenisprodukfk 
+                        INNER JOIN ruangan_m AS ru ON ru.ID = ks.ruanganfk 
+                    WHERE
+                        ks.kdprofile = $idProfile
+                        AND ks.statusenabled = TRUE 
+                        AND ks.tglkejadian BETWEEN '$tglAwal' AND '$tglAkhir'
+                        AND ru.ID != 59 
+                        AND ks.keterangan NOT LIKE'%Ubah Resep%' 
+                        AND dj.detailjenisproduk NOT ILIKE '%TENAGA AHLI%' 
+                        AND dj.detailjenisproduk NOT ILIKE '%ALKES%'
+                    GROUP BY
+                        pro.namaproduk 
+                    ) AS j ON j.tglkejadian = ks.tglkejadian 
+                    AND j.namaproduk = pro.namaproduk 
+                WHERE
+                    ks.kdprofile = $idProfile
+                    AND ks.statusenabled = TRUE 
+                    AND ks.tglkejadian BETWEEN '$tglAwal' AND '$tglAkhir'
+                    AND ru.ID = 94 
+                    AND ks.saldoawal >= 0 
+                    AND dj.detailjenisproduk NOT ILIKE '%TENAGA AHLI%' 
+                    AND dj.detailjenisproduk NOT ILIKE '%ALKES%'
+                GROUP BY
+                    pro.namaproduk,
+                    ks.saldoawal,
+                    ks.tglkejadian,
+                    ss.satuanstandar 
+                ORDER BY
+                    pro.namaproduk,
+                ks.tglkejadian 
+                ) AS C ON b.nourut = C.nourut;
         "));
 
         return $results;
@@ -2361,36 +2594,97 @@ class MainController extends ApiController
         $idProfile = session("kdProfile");
         $tglAwal= Carbon::now()->format('Y-m-d 00:00');
         $tglAkhir =Carbon::now()->format('Y-m-d 23:59');
-        $data = DB::select(DB::raw("select * from
-                (
-                select sum(pp.jumlah) as jumlah,prd.namaproduk
-                from pelayananpasien_t  as pp
-                join produk_m as prd on pp.produkfk= prd.id
-                where pp.tglpelayanan BETWEEN '$tglAwal' and  '$tglAkhir'
-                and pp.strukresepfk is not null
-                GROUP BY prd.namaproduk
+        // $data = DB::select(DB::raw("select * from
+        //         (
+        //         select sum(pp.jumlah) as jumlah,prd.namaproduk
+        //         from pelayananpasien_t  as pp
+        //         join produk_m as prd on pp.produkfk= prd.id
+        //         where pp.tglpelayanan BETWEEN '$tglAwal' and  '$tglAkhir'
+        //         and pp.strukresepfk is not null
+        //         GROUP BY prd.namaproduk
 
-                UNION ALL
-                SELECT  sum(spd.qtyproduk) as jumlah,pr.namaproduk
-               FROM strukpelayanan_t as sp
-                JOIN strukpelayanandetail_t as spd on spd.nostrukfk = sp.norec
-                join produk_m as pr  on pr.id =spd.objectprodukfk
-                WHERE sp.kdprofile = $idProfile and sp.tglstruk BETWEEN '$tglAwal' and  '$tglAkhir'
-                AND sp.nostruk_intern='-' AND substring(sp.nostruk,1,2)='OB'
-                and sp.statusenabled != false
-                GROUP BY pr.namaproduk
-                UNION ALL
-                 SELECT sum  (spd.qtyproduk) as jumlah,pr.namaproduk
-               FROM strukpelayanan_t as sp
-                JOIN strukpelayanandetail_t as spd on spd.nostrukfk = sp.norec
-                join produk_m as pr  on pr.id =spd.objectprodukfk
-                WHERE sp.kdprofile = $idProfile and sp.tglstruk BETWEEN '$tglAwal' and  '$tglAkhir'
-              AND sp.nostruk_intern not in ('-') AND substring(sp.nostruk,1,2)='OB'
-                and sp.statusenabled != false
-                        GROUP BY pr.namaproduk
-                ) as x
-                order by x.jumlah desc")
-        );
+        //         UNION ALL
+        //         SELECT  sum(spd.qtyproduk) as jumlah,pr.namaproduk
+        //        FROM strukpelayanan_t as sp
+        //         JOIN strukpelayanandetail_t as spd on spd.nostrukfk = sp.norec
+        //         join produk_m as pr  on pr.id =spd.objectprodukfk
+        //         WHERE sp.kdprofile = $idProfile and sp.tglstruk BETWEEN '$tglAwal' and  '$tglAkhir'
+        //         AND sp.nostruk_intern='-' AND substring(sp.nostruk,1,2)='OB'
+        //         and sp.statusenabled != false
+        //         GROUP BY pr.namaproduk
+        //         UNION ALL
+        //          SELECT sum  (spd.qtyproduk) as jumlah,pr.namaproduk
+        //        FROM strukpelayanan_t as sp
+        //         JOIN strukpelayanandetail_t as spd on spd.nostrukfk = sp.norec
+        //         join produk_m as pr  on pr.id =spd.objectprodukfk
+        //         WHERE sp.kdprofile = $idProfile and sp.tglstruk BETWEEN '$tglAwal' and  '$tglAkhir'
+        //       AND sp.nostruk_intern not in ('-') AND substring(sp.nostruk,1,2)='OB'
+        //         and sp.statusenabled != false
+        //                 GROUP BY pr.namaproduk
+        //         ) as x
+        //         order by x.jumlah desc")
+        // );
+
+        $data = DB::select(DB::raw("
+                SELECT
+                    * 
+                FROM
+                    (
+                    SELECT SUM
+                        ( pp.jumlah ) AS jumlah,
+                        prd.namaproduk 
+                    FROM
+                        pelayananpasien_t AS pp
+                        JOIN produk_m AS prd ON pp.produkfk = prd.ID 
+                        JOIN detailjenisproduk_m AS dj ON dj.id = prd.objectdetailjenisprodukfk 
+                    WHERE
+                        pp.tglpelayanan BETWEEN '$tglAwal' AND  '$tglAkhir'
+                        AND pp.strukresepfk IS NOT NULL 
+                        AND dj.detailjenisproduk NOT ILIKE '%TENAGA AHLI%' 
+                        AND dj.detailjenisproduk NOT ILIKE '%ALKES%'
+                    GROUP BY
+                        prd.namaproduk UNION ALL
+                    SELECT SUM
+                        ( spd.qtyproduk ) AS jumlah,
+                        pr.namaproduk 
+                    FROM
+                        strukpelayanan_t AS sp
+                        JOIN strukpelayanandetail_t AS spd ON spd.nostrukfk = sp.norec
+                        JOIN produk_m AS pr ON pr.ID = spd.objectprodukfk 
+                        JOIN detailjenisproduk_m AS dj ON dj.id = pr.objectdetailjenisprodukfk 
+                    WHERE
+                        sp.kdprofile = $idProfile
+                        AND sp.tglstruk BETWEEN '$tglAwal' AND  '$tglAkhir'
+                        AND sp.nostruk_intern = '-' 
+                        AND SUBSTRING ( sp.nostruk, 1, 2 ) = 'OB' 
+                        AND sp.statusenabled != FALSE 
+                        AND dj.detailjenisproduk NOT ILIKE '%TENAGA AHLI%' 
+                        AND dj.detailjenisproduk NOT ILIKE '%ALKES%'
+                    GROUP BY
+                        pr.namaproduk UNION ALL
+                    SELECT SUM
+                        ( spd.qtyproduk ) AS jumlah,
+                        pr.namaproduk 
+                    FROM
+                        strukpelayanan_t AS sp
+                        JOIN strukpelayanandetail_t AS spd ON spd.nostrukfk = sp.norec
+                        JOIN produk_m AS pr ON pr.ID = spd.objectprodukfk 
+                        JOIN detailjenisproduk_m AS dj ON dj.id = pr.objectdetailjenisprodukfk 
+                    WHERE
+                        sp.kdprofile = $idProfile
+                        AND sp.tglstruk BETWEEN '$tglAwal' AND  '$tglAkhir'
+                        AND sp.nostruk_intern NOT IN ( '-' ) 
+                        AND SUBSTRING ( sp.nostruk, 1, 2 ) = 'OB' 
+                        AND sp.statusenabled != FALSE 
+                        AND dj.detailjenisproduk NOT ILIKE '%TENAGA AHLI%' 
+                        AND dj.detailjenisproduk NOT ILIKE '%ALKES%'
+                    GROUP BY
+                        pr.namaproduk 
+                    ) AS x 
+                ORDER BY
+                    x.jumlah DESC
+        
+        "));
 
         $result = array(
             'chart' => $data,
