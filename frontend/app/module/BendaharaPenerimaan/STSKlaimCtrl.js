@@ -127,7 +127,8 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
             }
 
             $scope.cetakpdf = function(){
-                console.log($scope.selectedData2)
+
+                // console.log($scope.selectedData2)
                 window.open(baseTransaksi + "report/get-cetak-sts-klaim-pdf?nosts="+$scope.selectedData2[0].nosts, '_blank');
             }
 
@@ -870,6 +871,16 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
             $scope.formatRupiah = function (value, currency) {
                 return currency + " " + value.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".");
             }
+
+            $scope.cetakpdfV2 = function(){
+                if($scope.selectedData2.length < 1){
+                    toastr.error("Pilih data terlebih dahulu")
+                    return
+                }
+
+                window.open(baseTransaksi + "report/cetak-stsklaimv2?nosts="+$scope.selectedData2[0].nosts, '_blank');
+            }
+
             //////////////////////////////////////////////////////////////          END             /////////////////////////////////////////////////////////////////////////////////////       
         }
     ]);
