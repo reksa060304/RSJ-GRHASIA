@@ -41,6 +41,10 @@ Route::group(['middleware' => 'cors', 'prefix' => 'service'], function () {
 		Route::post('perencanaan/save-lock-angkas', 'Perencanaan\PerencanaanController@saveLockAngkas');
 		Route::post('sysadmin/logging/save-log-lock-angkas', 'SysAdmin\LoggingController@saveLoggingLockAngkas');
         
+    //api service 
+    Route::get('api/get-jadwal-dokter', 'Bridging\NoAuthController@getJadwalDokter');
+    Route::get('api/get-ketersediaan-tempat-tidur', 'Bridging\NoAuthController@getKetersediaanTempatTidurPerkelas');
+    Route::get('api/get-tarif-layanan', 'Bridging\NoAuthController@getTarifLayanan');
         
 		// Cetakan
 		Route::get('report/cetak-label-pilihan', 'Report\ReportController@cetakLabelPilihan');
@@ -107,6 +111,8 @@ Route::group(['middleware' => 'cors', 'prefix' => 'service'], function () {
         Route::get('bendaharapenerimaan/get-konfirmasi-rekening-sts', 'BendaharaPenerimaan\BendaharaPenerimaanController@getKonfirmasiRekeningSTS');
         Route::post('bendaharapenerimaan/save-detail-stsv2', 'BendaharaPenerimaan\BendaharaPenerimaanController@saveDetailSTSV2');
         Route::post('bendaharapenerimaan/simpan-stsv2', 'BendaharaPenerimaan\BendaharaPenerimaanController@simpanSTSV2');
+        Route::get('report/cetak-stsklaimv2', 'Report\ReportController@cetakSTSKlaimV2');
+        // End bendahara penerimaan
 
 		Route::get('registrasi/laporan/get-rekap-kunjunganrs', 'Registrasi\LaporanRegistrasiController@getRekapKunjunganRS');
 
@@ -1065,7 +1071,8 @@ Route::group(['middleware' => 'cors', 'prefix' => 'service'], function () {
           Route::get('farmasi/get-detail-reg-farmasi', 'Farmasi\PelayananResepController@getDetailRegApotik');
           Route::get('farmasi/get-daftar-paket-obat-pasien', 'Farmasi\PelayananResepController@getDaftarPaketObatPasien');
           Route::post('farmasi/save-hapus-pelayananobat', 'Farmasi\PelayananResepController@DeletePelayananObat');
-        Route::post('farmasi/save-hapus-pelayananobat-kronis', 'Farmasi\PelayananResepController@DeletePelayananObatKronis');
+          Route::post('farmasi/save-hapus-pelayananobat-kronis', 'Farmasi\PelayananResepController@DeletePelayananObatKronis');
+          Route::post('farmasi/save-petugasverif', 'Farmasi\ResepElektronikController@savePetugasVerif');
 
           Route::get('farmasi/get-datacombo', 'Farmasi\PelayananResepController@getDataCombo');
           Route::get('farmasi/get_detail-resep', 'Farmasi\PelayananResepController@getDetailResep');

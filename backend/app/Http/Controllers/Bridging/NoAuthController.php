@@ -185,4 +185,162 @@ class NoAuthController extends ApiController
             }
         }
     }
+
+    public function getJadwalDokter (Request $request){
+        // $kdProfile = $this->getDataKdProfile($request);
+        // $idProfile = (int) $kdProfile;
+        $filter = $request->all();
+
+        $data = \DB::table('jadwaldokter_m as jd')
+            ->join('ruangan_m AS ru','ru.id','=','jd.objectruanganfk')
+            ->join('pegawai_m as pg','pg.id','=','jd.objectpegawaifk')
+            // ->leftJoin('hari_m AS hr','hr.id','=','jd.objecthariawal')
+            // ->leftJoin('hari_m AS hr1','hr1.id','=','jd.objecthariakhir')
+            ->select(DB::raw("jd.id as idjadwalpegawai,jd.objectruanganfk,ru.namaruangan,
+                              jd.objectpegawaifk,pg.namalengkap,pg.nosip,pg.nostr,pg.noidentitas as nik,
+                              jd.jammulai,jd.jamakhir,jd.keterangan, jd.hari"))
+            // ->where('jd.kdprofile', $idProfile)
+             ->where('ru.statusenabled',true)
+              ->where('pg.statusenabled', true)
+            ->where('jd.statusenabled', true);
+
+        if (isset($request['dokterId']) && $request['dokterId'] != "" && $request['dokterId'] != "undefined") {
+            $data = $data->where('pg.id', '=', $request['dokterId']);
+        }
+        if (isset($request['ruanganId']) && $request['ruanganId'] != "" && $request['ruanganId'] != "undefined") {
+            $data = $data->where('ru.id', '=', $request['ruanganId']);
+        }
+         if (isset($request['nik']) && $request['nik'] != "" && $request['nik'] != "undefined") {
+            $data = $data->where('pg.noidentitas', '=', $request['nik']);
+        }
+    if (isset($request['nostr']) && $request['nostr'] != "" && $request['nostr'] != "undefined") {
+            $data = $data->where('pg.nostr', '=', $request['nostr']);
+        }
+
+        $data = $data->orderBy('pg.namalengkap', 'asc');
+        $data = $data->get();
+        $result = array(
+            'data'=>$data,
+            'message' => 'ea@epic',
+        );
+        return $this->respond($result);
+    }
+
+    public static function getKetersediaanTempatTidurPerkelas(Request $request)
+    {
+        $data =  DB::select(DB::raw("
+                SELECT 
+                    q2.namakelas,
+                    COALESCE(q1.terpakai,0) as terpakai,
+                    q2.jml,
+                    (q2.jml -  COALESCE(q1.terpakai,0)) AS kosong
+                FROM (
+                    SELECT 
+                        x.namakelas,
+                        COUNT(x.namakelas) AS terpakai
+                    FROM (
+                        SELECT DISTINCT
+                            pd.tglregistrasi,
+                            P.nocm,
+                            pd.noregistrasi,
+                            ru.namaruangan,
+                            P.namapasien,
+                            kls.namakelas,
+                            tt.objectstatusbedfk
+                        FROM
+                            pasiendaftar_t AS pd
+                            INNER JOIN antrianpasiendiperiksa_t AS apd ON pd.norec = apd.noregistrasifk 
+                            AND apd.tglkeluar IS NULL
+                            INNER JOIN pasien_m AS P ON P.ID = pd.nocmfk
+                            INNER JOIN ruangan_m AS ru ON ru.ID = pd.objectruanganlastfk
+                            INNER JOIN kelas_m AS kls ON kls.ID = pd.objectkelasfk
+                            INNER JOIN jeniskelamin_m AS jk ON jk.ID = P.objectjeniskelaminfk
+                            LEFT JOIN pegawai_m AS pg ON pg.ID = pd.objectpegawaifk
+                            LEFT JOIN kelompokpasien_m AS kp ON kp.ID = pd.objectkelompokpasienlastfk
+                            LEFT JOIN departemen_m AS dept ON dept.ID = ru.objectdepartemenfk
+                            LEFT JOIN batalregistrasi_t AS br ON pd.norec = br.pasiendaftarfk
+                            LEFT JOIN kamar_m AS kmr ON kmr.ID = apd.objectkamarfk
+                            LEFT JOIN tempattidur_m AS tt ON tt.ID = apd.nobed
+                            LEFT JOIN alamat_m AS alm ON alm.nocmfk = P.ID 
+                        WHERE
+                            br.norec IS NULL 
+                            AND pd.tglpulang IS NULL 
+                            AND pd.kdprofile = 30 
+                            AND pd.statusenabled = TRUE
+                            AND kls.namakelas IS NOT NULL
+                    ) AS x
+                    GROUP BY x.namakelas
+                ) AS q1
+                RIGHT JOIN (
+                    SELECT 
+                        x.namakelas,
+                        SUM(x.isi) + SUM(x.kosong) AS jml
+                    FROM (
+                        SELECT
+                            kmr.ID,
+                            kmr.namakamar,
+                            kl.ID AS id_kelas,
+                            kl.namakelas,
+                            ru.ID AS id_ruangan,
+                            ru.namaruangan,
+                            kmr.jumlakamarisi,
+                            kmr.qtybed,
+                        CASE
+                            WHEN sb.ID = 1 THEN 1 ELSE 0 
+                        END AS isi,
+                        CASE
+                            WHEN sb.ID = 2 THEN 1 ELSE 0 
+                        END AS kosong
+                        FROM
+                            tempattidur_m AS tt
+                            LEFT JOIN statusbed_m AS sb ON sb.ID = tt.objectstatusbedfk
+                            LEFT JOIN kamar_m AS kmr ON kmr.ID = tt.objectkamarfk
+                            LEFT JOIN ruangan_m AS ru ON ru.ID = kmr.objectruanganfk
+                            LEFT JOIN kelas_m AS kl ON kl.ID = kmr.objectkelasfk 
+                        WHERE
+                            tt.kdprofile = 30 
+                            AND tt.statusenabled = TRUE 
+                            AND ru.statusenabled = TRUE 
+                            AND kmr.statusenabled = TRUE
+                            AND sb.statusenabled = TRUE
+                    ) AS x
+                    GROUP BY x.namakelas
+                ) AS q2 ON q1.namakelas = q2.namakelas
+                ORDER BY q1.namakelas;
+            "));
+
+        $result = array(
+            "data" => $data,
+            "message" => "ea@epic"
+        );
+        return $result;
+    }
+
+    public function getTarifLayanan(Request $request)
+    {
+        // $kdProfile = $this->getDataKdProfile($request);
+        // $idProfile = (int) $kdProfile;
+        $filter = $request->all();
+
+        $data = DB::table('harganettoprodukbykelas_m as ht')
+        ->join('produk_m as pr', 'pr.id', '=', 'ht.objectprodukfk')
+        ->join('kelas_m as kl', 'kl.id', '=', 'ht.objectkelasfk')
+        ->join('jenispelayanan_m as jp', 'jp.id', '=', 'ht.objectjenispelayananfk')
+        ->select('pr.namaproduk as tindakan', 'ht.hargasatuan as harga', 'kl.namakelas as kelas', 'jp.jenispelayanan')
+        ->where('ht.statusenabled',true)
+        // ->where('ht.kdprofile', $kdProfile)
+        ->where('ht.hargasatuan', '>', 0)
+        ->whereRaw("to_char(ht.tglberlakuawal, 'YYYY') >= '". $request['tahun'] ."'")
+        ->whereRaw("to_char(ht.tglberlakuakhir, 'YYYY') <= '". $request['tahun'] ."'");
+
+        if(isset($request['namatindakan']) && $request['namatindakan'] != "" && $request['namatindakan'] != null) {
+            $data = $data->where('pr.namaproduk', 'ilike', '%'. $request['namatindakan']  .'%');
+        }
+        $data = $data->get();
+        $result = array(
+            "data" => $data,
+            "message" => "ea@epic"
+        );
+        return $this->respond($result);
+    }
 }
