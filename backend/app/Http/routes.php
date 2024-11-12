@@ -41,6 +41,10 @@ Route::group(['middleware' => 'cors', 'prefix' => 'service'], function () {
 		Route::post('perencanaan/save-lock-angkas', 'Perencanaan\PerencanaanController@saveLockAngkas');
 		Route::post('sysadmin/logging/save-log-lock-angkas', 'SysAdmin\LoggingController@saveLoggingLockAngkas');
         
+    //api service 
+    Route::get('api/get-jadwal-dokter', 'Bridging\NoAuthController@getJadwalDokter');
+    Route::get('api/get-ketersediaan-tempat-tidur', 'Bridging\NoAuthController@getKetersediaanTempatTidurPerkelas');
+    Route::get('api/get-tarif-layanan', 'Bridging\NoAuthController@getTarifLayanan');
         
 		// Cetakan
 		Route::get('report/cetak-label-pilihan', 'Report\ReportController@cetakLabelPilihan');
