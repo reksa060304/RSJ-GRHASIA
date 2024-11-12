@@ -836,10 +836,15 @@ define(['initialize', 'Configuration'], function (initialize, config) {
             };
 
             $scope.Save = function (data) {
+                let tanggalmasuk = moment($scope.item.tglmasuk).format('YYYY-MM-DD HH:mm')
+                let tanggalpulang = moment($scope.item.tglpulang).format('YYYY-MM-DD HH:mm')
+
                 var item = {
                     "norec": $scope.item.norec != undefined ? $scope.item.norec : "",
-                    "tglmasuk":$scope.item.tglmasuk != undefined ? $scope.item.tglmasuk :"",
-                    "tglpulang":$scope.item.tglpulang != undefined ? $scope.item.tglpulang :"",
+                    // "tglmasuk": $scope.item.tglmasuk != undefined ? $scope.item.tglmasuk :"",
+                    "tglmasuk": tanggalmasuk,
+                    // "tglpulang":$scope.item.tglpulang != undefined ? $scope.item.tglpulang :"",
+                    "tglpulang": tanggalpulang,
                     "wisma":$scope.item.wisma != undefined ? $scope.item.wisma :"",
                     "kelas":$scope.item.kelas != undefined ? $scope.item.kelas :"",
                     "alasandirawat": $scope.item.alasanDirawat != undefined ? $scope.item.alasanDirawat : "",
@@ -883,7 +888,7 @@ define(['initialize', 'Configuration'], function (initialize, config) {
                     // delete $scope.item;
                     clear()
                     init();
-                    medifirstService.postLogging('Resume Medis', 'Norec resumemedis_t', e.data.resume.norec, 'Resume RI').then(function (res) {
+                    medifirstService.postLogging('Resume Medis', 'Norec resumemedis_t', e.data.resume.norec, 'Resume RI' + ' noregistrasi: ' + $scope.cc.noregistrasi).then(function (res) {
                     })
                 });
             };
