@@ -116,6 +116,26 @@
                                     </div>
                                 </div>
                             </div>
+                            <div class="col-md-12 col-lg-6">
+                                <div class="card bg-c-yellow order-card">
+                                    <div class="card-block">
+                                        <h6>TOTAL PEGAWAI LAKI LAKI</h6>
+                                        <h2>{{$res['pegawai']['lakilakiAktif']}}</h2>
+                                        <p class="m-b-0"> <i class="feather icon-arrow-up"></i></p>
+                                        <i class="card-icon feather icon-users"></i>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-12 col-lg-6">
+                                <div class="card bg-c-yellow order-card">
+                                    <div class="card-block">
+                                        <h6>TOTAL PEGAWAI PEREMPUAN</h6>
+                                        <h2>{{$res['pegawai']['perempuanAktif']}}</h2>
+                                        <p class="m-b-0"> <i class="feather icon-arrow-up"></i></p>
+                                        <i class="card-icon feather icon-users"></i>
+                                    </div>
+                                </div>
+                            </div>
                             <div class="col-md-12 col-lg-3"  style="cursor: pointer" onclick="detailPegawaiPNS('PNS')">
                                 <div class="card bg-c-blue order-card">
                                     <div class="card-block">
@@ -219,7 +239,7 @@
                                     </div>
                                 </div>
                             </div>
-                            <div class="col-lg-6 col-md-12">
+                            {{-- <div class="col-lg-6 col-md-12">
                                 <div class="card">
                                     <div class="panel panel-info">
                                         <div class="panel-heading bg-info">
@@ -230,7 +250,7 @@
                                         </div>
                                     </div>
                                 </div>
-                            </div>
+                            </div> --}}
                             <div class="col-lg-6 col-md-12">
                                 <div class="card">
                                     <div class="panel panel-primary">
@@ -243,7 +263,7 @@
                                     </div>
                                 </div>
                             </div>
-                            <div class="col-lg-6 col-md-12">
+                            {{-- <div class="col-lg-6 col-md-12">
                                 <div class="card">
                                     <div class="panel panel-danger">
                                         <div class="panel-heading bg-danger">
@@ -254,7 +274,7 @@
                                         </div>
                                     </div>
                                 </div>
-                            </div>
+                            </div> --}}
                             <div class="col-lg-12 col-md-12">
                                 <div class="card">
                                     <div class="panel panel-dark">
@@ -279,7 +299,7 @@
                                     </div>
                                 </div>
                             </div>
-                            <div class="col-lg-6 col-md-12">
+                            {{-- <div class="col-lg-6 col-md-12">
                                 <div class="card">
                                     <div class="panel panel-aqua">
                                         <div class="panel-heading bg-aqua">
@@ -287,6 +307,18 @@
                                         </div>
                                         <div class="panel-body">
                                             <div id="chartEse"></div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div> --}}
+                            <div class="col-lg-6 col-md-12">
+                                <div class="card">
+                                    <div class="panel panel-aqua">
+                                        <div class="panel-heading bg-aqua">
+                                            Pendidikan
+                                        </div>
+                                        <div class="panel-body">
+                                            <div id="chartPdd"></div>
                                         </div>
                                     </div>
                                 </div>
@@ -337,7 +369,53 @@
                                     </div>
                                 </div>
                             </div>
-                            <div class="col-lg-6 col-md-12">
+                            <div class="col-lg-12 col-md-12">
+                                <div class="card">
+                                    <div class="panel panel-warning">
+                                        <div class="panel-heading  bg-warning">
+                                            Data Penjagaan S I P / S T R
+                                        </div>
+                                        <div class="panel-body" style="height: 480px;overflow-x: auto;">
+                                            <div class="row" style="padding:10px;">
+                                                <div class="col-md-12">
+                                                    <div class="table-responsive" >
+                                                <table class="table  table-striped table-sm table-styling" id="t_Kedatangan"
+                                                       style="width:100%">
+                                                    <thead>
+                                                    <tr class="table-inverse">
+                                                        <th>NIP</th>
+                                                        <th>Nama</th>
+                                                        <th>Nomor SIP</th>
+                                                        <th>Berakhir</th>
+                                                        <th>Nomor STR</th>
+                                                        <th>Berakhir</th>
+                                                    </tr>
+                                                    </thead>
+                                                    <tbody>
+                                                    @forelse($res['sipstr'] as $i => $d)
+                                                        <tr>
+                                                            <td>{{ $d->nippns }}</td>
+                                                            <td>{{ $d->namapegawai }}</td>
+                                                            <td>{{ $d->nosip }}</td>
+                                                            <td>{{ $d->berakhirsip }}</td>
+                                                            <td>{{ $d->nostr }}</td>
+                                                            <td>{{ $d->berakhirstr }}</td>
+                                                        </tr>
+                                                    @empty
+                                                        <tr>
+                                                            <td colspan="6" style="text-align: center">Data Tidak ada</td>
+                                                        </tr>
+                                                    @endforelse
+                                                    </tbody>
+                                                </table>
+                                            </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            {{-- <div class="col-lg-6 col-md-12">
                                 <div class="card">
                                     <div class="panel panel-warning">
                                         <div class="panel-heading  bg-c-kuning">
@@ -348,7 +426,6 @@
                                             $sama = false;
                                             $resultSumDep = [];
                                             $array =   App\Http\Controllers\MainController::getLaporanLayanan();
-                                           // dd($array);
                                             for ($i = 0; $i < count($array); $i++) {
                                                 $sama = false;
                                                 if(count($resultSumDep) > 0){
@@ -411,20 +488,8 @@
                                         </div>
                                     </div>
                                 </div>
-                            </div>
-                            <div class="col-lg-6 col-md-12">
-                                <div class="card">
-                                    <div class="panel panel-aqua">
-                                        <div class="panel-heading bg-aqua">
-                                            Pendidikan
-                                        </div>
-                                        <div class="panel-body">
-                                            <div id="chartPdd"></div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="col-lg-12 col-md-12">
+                            </div> --}}
+                            {{-- <div class="col-lg-12 col-md-12">
                                 <div class="card">
                                     <div class="panel panel-warning">
                                         <div class="panel-heading bg-dark">
@@ -480,7 +545,7 @@
                                         </div>
                                     </div>
                                 </div>
-                            </div>
+                            </div> --}}
                         </div>
 
                 </div>
@@ -573,13 +638,13 @@
         })
         var APP_URL = {!! json_encode(url('/')) !!}
         setChartJenis()
-        setChartJK()
+        // setChartJK()
         setChartUnitKerja()
-        setChartKel()
+        // setChartKel()
         setChartUsia()
         setChartPdd()
         setChartGol()
-        setChartEse()
+        // setChartEse()
         function setChartJenis(){
             let jumlahKatPegawai = @json($res['pegawai']['jenispegawai']);
             let seriesKatPegawai = []
@@ -1223,22 +1288,22 @@
             })
         }
       
-        let datazz = @json($array);
-        $(".click-layanan").click(function(e) {
-            e.preventDefault();
-            var dokter = $(this).attr("data-dokter");
-            var nama = $(this).attr("nama-dokter");
+
+        // $(".click-layanan").click(function(e) {
+        //     e.preventDefault();
+        //     var dokter = $(this).attr("data-dokter");
+        //     var nama = $(this).attr("nama-dokter");
             
-            document.getElementById("titleModalLayanan").innerHTML =   nama
-            $.ajax({
-                type    : 'GET',
-                url     : APP_URL+'/get-detail-layanan',
-                data    : { dokter:dokter},
-                success : function(respond){
-                    $('#modalLayanan').modal("show");
-                    $("#load_layanan").html(respond);
-                }
-            })
+        //     document.getElementById("titleModalLayanan").innerHTML =   nama
+        //     $.ajax({
+        //         type    : 'GET',
+        //         url     : APP_URL+'/get-detail-layanan',
+        //         data    : { dokter:dokter},
+        //         success : function(respond){
+        //             $('#modalLayanan').modal("show");
+        //             $("#load_layanan").html(respond);
+        //         }
+        //     })
             // var datas =[];
             // // var total = 0
             // // for (let i in datazz) {
@@ -1267,7 +1332,7 @@
             // // });
             // // $('#tLayanan').append(trHTML);
             // $('#modalLayanan').modal("show");
-        })
+        // })
          setTimeout(function(){
              
                 //  window.location.reload();

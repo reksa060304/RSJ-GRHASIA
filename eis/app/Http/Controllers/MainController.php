@@ -878,6 +878,7 @@ class MainController extends ApiController
 
                     $res['pegawai']= $this->getCountPegawai($r);
                     $res['info_pangkatgolongan'] = $this->getInfoPangkatGolongan($tglawal,$tglakhir,$kdProfile);
+                    $res['sipstr']= $this->getDataSip($r);
                     $aktif = 0;
                     $nonaktif = 0;
                     $pns = 0;
@@ -889,11 +890,21 @@ class MainController extends ApiController
                     $jfp = 0;
                     $cpnsl = 0;
                     $cpnsp = 0;
+                    // penambahan eis pegawai
+                    $lakilakiAktif = 0;
+                    $perempuanAktif = 0;
                     foreach ($res['pegawai']['statuspegawai'] as $s){
                         if($s->statuspegawai == 'Aktif'){
                             $aktif =$aktif + (float)$s->total;
                         }else{
                             $nonaktif =$nonaktif + (float)$s->total;
+                        }
+                    }
+                    foreach ($res['pegawai']['jeniskelamin'] as $s){
+                        if($s->jeniskelamin == 'Laki-Laki'){
+                            $lakilakiAktif =$lakilakiAktif + (float)$s->total;
+                        }else if($s->jeniskelamin == 'Perempuan'){
+                            $perempuanAktif =$perempuanAktif + (float)$s->total;
                         }
                     }
                     foreach ($res['pegawai']['kategoripegawai'] as $s){
@@ -937,6 +948,8 @@ class MainController extends ApiController
                     $res['pegawai']['jfp'] = $jfp;
                     $res['pegawai']['cpnsl'] = $cpnsl;
                     $res['pegawai']['cpnsp'] = $cpnsp;
+                    $res['pegawai']['lakilakiAktif'] = $lakilakiAktif;
+                    $res['pegawai']['perempuanAktif'] = $perempuanAktif;
                     //dd($res['pegawai']);
                     array_push($compact,'res','r');
                     break;
@@ -7766,6 +7779,33 @@ count(case when x.departemen = 'rahab_medik' then 1 end) AS rehab_medik
 
         return $result;
 
+    }
+
+    public function getDataSip (Request $request) {
+        // $kdProfile = (int) $this->getDataKdProfile($request);
+        $tglSekarang = Carbon::now();
+        $data = \DB::table('masaberlakusipstr_t as mbs')
+            ->leftJoin('jenismasaberlakustrsip_m as jmb','jmb.id','=','mbs.jenismasaberlakufk')
+            ->leftJoin('pegawai_m as pg','pg.id','=','mbs.pegawaifk')
+            ->leftJoin('unitkerjapegawai_m as uk','uk.id','=','pg.objectunitkerjapegawaifk')
+            ->leftJoin('unitkerjapegawai_m as uk2','uk2.id','=','mbs.subunitkerjafk')
+            ->select(\DB::raw("mbs.*,jmb.jenismasaberlaku, pg.namalengkap as namapegawai,pg.nip_pns as nipPns, uk.name as unitkerja,
+			                  uk2.name as subunit"))
+            ->where('pg.statusenabled',true)
+            ->where('mbs.kdprofile', 30)
+            // ->where('mbs.jenismasaberlakufk',1)
+            // ->orderBy('mbs.berakhirstr','asc');
+            ->orderByRaw("
+            CASE 
+                WHEN mbs.berakhirstr <= ? THEN 0 
+                WHEN mbs.berakhirsip <= ? THEN 1 
+                ELSE 2 
+            END, 
+            mbs.berakhirstr ASC, mbs.berakhirsip ASC", [$tglSekarang, $tglSekarang]);           
+
+        $data = $data->get();
+        
+        return $data;
     }
 
 }
