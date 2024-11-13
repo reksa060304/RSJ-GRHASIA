@@ -244,8 +244,8 @@ define(['initialize'], function (initialize) {
 				columns: [
 					{ "field": "no", "title": "No", "width": "45px" },
 					{ "field": "namaproduk", "title": "Tagihan", "width": "300px" },
-					{ "field": "nopolisi", "title": "No Polisi", "width": "70px" },
-					{ "field": "jeniskegiatan", "title": "Jenis Kegiatan", "width": "200px" },
+					// { "field": "nopolisi", "title": "No Polisi", "width": "70px" },
+					// { "field": "jeniskegiatan", "title": "Jenis Kegiatan", "width": "200px" },
 					{ "field": "keterangan", "title": "Keterangan", "width": "200px" },
 					{ "field": "jumlah", "title": "Qty", "width": "90px" },
 					{ "field": "qtyoranglast", "title": "Qty Per Org/Per Km", "width": "155px" },
@@ -451,8 +451,8 @@ define(['initialize'], function (initialize) {
 							data.harga = parseFloat($scope.item.Harga)
 							data.totalK = $scope.item.Total //parseFloat($scope.item.jumlah) * parseFloat($scope.item.Harga)
 							data.keterangan = $scope.item.KeteranganProduk
-							data.nopolisi = $scope.item.noPolisi.nopolisi
-							data.jeniskegiatan = $scope.item.jenisKegiatan.namajeniskegiatan
+							data.nopolisi = $scope.item.noPolisi.nopolisi || ""
+							data.jeniskegiatan = $scope.item.jenisKegiatan.namajeniskegiatan || {}
 							dataProduk[i] = data;
 							$scope.dataDaftarTagihan = new kendo.data.DataSource({
 								data: dataProduk
@@ -513,8 +513,9 @@ define(['initialize'], function (initialize) {
 						qtyoranglast: parseFloat($scope.item.QtyPerOrang),
 						harga: parseFloat($scope.item.Harga),
 						keterangan: $scope.item.KeteranganProduk,
-						nopolisi: $scope.item.noPolisi.nopolisi,
-						jeniskegiatan: $scope.item.jenisKegiatan.namajeniskegiatan,
+						nopolisi: $scope.item.noPolisi?.nopolisi || "",
+						// jeniskegiatan: $scope.item.jenisKegiatan.namajeniskegiatan || {},
+						jeniskegiatan: $scope.item.jenisKegiatan && $scope.item.jenisKegiatan.namajeniskegiatan ? $scope.item.jenisKegiatan.namajeniskegiatan : "",
 						totalK: $scope.item.Total //parseFloat($scope.item.jumlah) * parseFloat($scope.item.Harga)
 					}
 					dataProduk.push(data)

@@ -780,6 +780,7 @@ class AmbulanController extends ApiController
     public function savePelayananPasienAmbulan(Request $request)
     {
         $kdProfile = (int) $this->getDataKdProfile($request);
+        $listPetugasPelAmbulan = [];
         DB::beginTransaction();
         // try {
             $jenisPetugasPe = \DB::table('mapjenispetugasptojenispegawai_m as mpp')
@@ -889,11 +890,12 @@ class AmbulanController extends ApiController
                                 $PetugasPelAmbulan->nostrukdetailfk = $PPnorec;
                                 $PetugasPelAmbulan->tglpelayanan = $PPtglpelayanan;
                                 $PetugasPelAmbulan->save();
+                                $listPetugasPelAmbulan[] = $PetugasPelAmbulan;
                             }
                         }
                     }
                 }
-
+                $result['dataPetugasPelayananAmbulan'] = $listPetugasPelAmbulan;
 
                 foreach ($item['komponenharga'] as $itemKomponen) {
                     $PelPasienDetail = new PelayananPasienDetail();
@@ -946,7 +948,7 @@ class AmbulanController extends ApiController
                 'status' => 201,
                 'message' => $transMessage,
                 'dataPP' => $PelPasien,
-                //                'dataPPP' => $PelPasienPetugas,
+                'dataPetugasPelayananAmbulan' => $listPetugasPelAmbulan,
                 'dataPPD' => $PelPasienDetail,
                 'as' => 'ramdanegie',
             );
@@ -957,6 +959,7 @@ class AmbulanController extends ApiController
                 'status' => 400,
                 'message'  => $transMessage,
                 'dataPP' => $PelPasien,
+                'dataPetugasPelayananAmbulan' => $listPetugasPelAmbulan,
                 //                'dataPPP' => $PelPasienPetugas,
                 //                'dataPPD' => $PelPasienDetail,
                 'as' => 'ramdanegie',
