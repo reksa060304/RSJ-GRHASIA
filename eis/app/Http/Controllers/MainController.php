@@ -879,6 +879,7 @@ class MainController extends ApiController
                     $res['pegawai']= $this->getCountPegawai($r);
                     $res['info_pangkatgolongan'] = $this->getInfoPangkatGolongan($tglawal,$tglakhir,$kdProfile);
                     $res['sipstr']= $this->getDataSip($r);
+                    $res['kalibrasi']= $this->getDaftarKalibrasi($r);
                     $aktif = 0;
                     $nonaktif = 0;
                     $pns = 0;
@@ -7805,6 +7806,31 @@ count(case when x.departemen = 'rahab_medik' then 1 end) AS rehab_medik
 
         $data = $data->get();
         
+        return $data;
+    }
+
+    public function getDaftarKalibrasi(Request $request){
+        $arrru = $request['arrru'];
+        // $kdProfile = $this->getDataKdProfile($request);
+        // $idProfile = (int) $kdProfile;
+        $data= \DB::table('strukplanning_t as spl')
+            ->leftjoin('pegawai_m as pg', 'pg.id', '=', 'spl.objectpegawaipjawabfk')
+            ->select('spl.tglplanning','spl.objectpegawaipjawabfk','spl.keteranganlainnya','spl.norec'
+                ,'pg.namalengkap','spl.startdate','spl.duedate'
+            )
+            ->where('spl.kdprofile', 30)
+            ->where('spl.objectkelompoktransaksifk',123);
+
+        if(isset($request['norecAsset']) && $request['norecAsset']!="" && $request['norecAsset']!="undefined"){
+            $data = $data->where('spl.noregisterassetfk','ilike','%'. $request['norecAsset'].'%' );
+        };
+        if (isset($request['tglAwal']) && $request['tglAwal'] != "" && $request['tglAwal'] != "undefined") {
+            $data = $data->whereBetween('spl.tglplanning', [ $request['tglAwal'],$request['tglAkhir'] ]);
+        }
+        $data = $data->get();
+        if (count($data)==0 ){
+            $data = [];
+        }
         return $data;
     }
 
