@@ -1757,10 +1757,11 @@ define(['initialize', 'Configuration'], function (initialize, config) {
                     if (dat.data[0].data[0].statusorder == 5) {
                         messageContainer.error('Tidak bisa di edit sudah di verifikasi');
                     }
-                    if (dat.data[0].data[0].petugasverif != null) {
-                        let petugasVerif = dat.data[0].data[0].petugasverif;
-                        toastr.warning("Sedang Dikerjakan Petugas: " + petugasVerif);
-                    } else if (dat.data[0].data[0].statusorder == 0 || dat.data[0].data[0].statusorder == null) {
+                    // if (dat.data[0].data[0].petugasverif != null) {
+                    //     let petugasVerif = dat.data[0].data[0].petugasverif;
+                    //     toastr.warning("Sedang Dikerjakan Petugas: " + petugasVerif);
+                    // } 
+                    else if (dat.data[0].data[0].statusorder == 0 || dat.data[0].data[0].statusorder == null) {
                         medifirstService.get("farmasi/get-detail-order?noorder=" + $scope.dataSelectedRiwayat.noorder, true).then(function (dat) {
                             $scope.isRouteLoading = false;
                             $scope.norecOrder = $scope.dataSelectedRiwayat.norec_order

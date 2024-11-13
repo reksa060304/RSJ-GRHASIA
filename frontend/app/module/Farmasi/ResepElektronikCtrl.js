@@ -1018,129 +1018,129 @@ define(['initialize', 'Configuration'], function (initialize, config) {
                 }
             ];
 
-            // $scope.verifikasi = function () {
-            //     // debugger;
-            //     if ($scope.item.statusorder == 'Menunggu') {
-            //         var notf = {
-            //             data: $scope.item.noorder
-            //         }
-            //         medifirstService.postNonMessage('farmasi/disable-notif', notf).then(function () {
-
-            //         })
-            //         medifirstService.get("farmasi/get-penjagaan-verif-eresep?noorder=" + $scope.item.noorder).then(function (e) {
-
-
-            //             if (e.data.detail[0].tglresep == null) {
-            //                 var cek = 123;
-            //             } else {
-            //                 var cek = 234;
-            //             }
-
-            //             console.log(cek);
-
-            //             if (cek == 234) {
-            //                 messageContainer.error("Data yang sudah diverif tidak bisa diverif ulang");
-            //             } else if (cek == 123) {
-            //                 var arrStr = {
-            //                     0: $scope.item.nocm,
-            //                     1: $scope.item.namapasien,
-            //                     2: $scope.item.jeniskelamin,
-            //                     3: $scope.item.noregistrasi,
-            //                     4: $scope.item.umur,
-            //                     5: $scope.item.klid,
-            //                     6: $scope.item.namakelas,
-            //                     7: $scope.item.tglregistrasi,
-            //                     8: $scope.item.norec_apd,
-            //                     9: $scope.item.noorder,
-            //                     10: $scope.item.jenisPenjamin,
-            //                     11: $scope.item.kelompokPasien,
-            //                     12: $scope.item.beratBadan,
-            //                     13: $scope.item.AlergiYa,
-            //                     14: '',
-            //                     17: $scope.item.cito,
-            //                 }
-            //                 cacheHelper.set('InputResepApotikCtrl', arrStr);
-            //                 $state.go('InputResepApotik')
-            //             }
-            //         });
-            //     } else {
-            //         alert('Sudah di verifikasi!!')
-            //     }
-
-            // }
-
             $scope.verifikasi = function () {
+                // debugger;
                 if ($scope.item.statusorder == 'Menunggu') {
                     var notf = {
                         data: $scope.item.noorder
-                    };
-                    medifirstService.postNonMessage('farmasi/disable-notif', notf).then(function () {});
-            
+                    }
+                    medifirstService.postNonMessage('farmasi/disable-notif', notf).then(function () {
+
+                    })
                     medifirstService.get("farmasi/get-penjagaan-verif-eresep?noorder=" + $scope.item.noorder).then(function (e) {
-                        var cek, cek2;
-                        
-                        // Cek status verifikasi resep
+
+
                         if (e.data.detail[0].tglresep == null) {
-                            cek = 123;
+                            var cek = 123;
                         } else {
-                            cek = 234;
+                            var cek = 234;
                         }
-            
+
                         console.log(cek);
-            
+
                         if (cek == 234) {
                             messageContainer.error("Data yang sudah diverif tidak bisa diverif ulang");
-                            return;
                         } else if (cek == 123) {
-                            // Jika belum diverifikasi, cek petugas verifikasi
-                            if (e.data.detail[0].petugasverif == null) {
-                                cek2 = 456;
-                            } else {
-                                cek2 = 789;
+                            var arrStr = {
+                                0: $scope.item.nocm,
+                                1: $scope.item.namapasien,
+                                2: $scope.item.jeniskelamin,
+                                3: $scope.item.noregistrasi,
+                                4: $scope.item.umur,
+                                5: $scope.item.klid,
+                                6: $scope.item.namakelas,
+                                7: $scope.item.tglregistrasi,
+                                8: $scope.item.norec_apd,
+                                9: $scope.item.noorder,
+                                10: $scope.item.jenisPenjamin,
+                                11: $scope.item.kelompokPasien,
+                                12: $scope.item.beratBadan,
+                                13: $scope.item.AlergiYa,
+                                14: '',
+                                17: $scope.item.cito,
                             }
-            
-                            if (cek2 == 789) {
-                                toastr.warning("Sedang Dikerjakan Petugas");
-                                return;
-                            } else if (cek2 == 456) {
-                                // Simpan data verifikasi jika belum dikerjakan
-                                var userLogin = medifirstService.getPegawaiLogin();
-                                var objSave = {
-                                    noorder: $scope.item.noorder,
-                                    petugasverif: userLogin.namaLengkap
-                                };
-                                
-                                medifirstService.post('farmasi/save-petugasverif', objSave).then(function () {});
-            
-                                // Siapkan data untuk halaman InputResepApotik
-                                var arrStr = {
-                                    0: $scope.item.nocm,
-                                    1: $scope.item.namapasien,
-                                    2: $scope.item.jeniskelamin,
-                                    3: $scope.item.noregistrasi,
-                                    4: $scope.item.umur,
-                                    5: $scope.item.klid,
-                                    6: $scope.item.namakelas,
-                                    7: $scope.item.tglregistrasi,
-                                    8: $scope.item.norec_apd,
-                                    9: $scope.item.noorder,
-                                    10: $scope.item.jenisPenjamin,
-                                    11: $scope.item.kelompokPasien,
-                                    12: $scope.item.beratBadan,
-                                    13: $scope.item.AlergiYa,
-                                    14: '',
-                                    17: $scope.item.cito,
-                                };
-                                
-                                cacheHelper.set('InputResepApotikCtrl', arrStr);
-                                $state.go('InputResepApotik');
-                            }
+                            cacheHelper.set('InputResepApotikCtrl', arrStr);
+                            $state.go('InputResepApotik')
                         }
                     });
                 } else {
-                    alert('Sudah di verifikasi!!');
+                    alert('Sudah di verifikasi!!')
                 }
-            };
+
+            }
+
+            // $scope.verifikasi = function () {
+            //     if ($scope.item.statusorder == 'Menunggu') {
+            //         var notf = {
+            //             data: $scope.item.noorder
+            //         };
+            //         medifirstService.postNonMessage('farmasi/disable-notif', notf).then(function () {});
+            
+            //         medifirstService.get("farmasi/get-penjagaan-verif-eresep?noorder=" + $scope.item.noorder).then(function (e) {
+            //             var cek, cek2;
+                        
+            //             // Cek status verifikasi resep
+            //             if (e.data.detail[0].tglresep == null) {
+            //                 cek = 123;
+            //             } else {
+            //                 cek = 234;
+            //             }
+            
+            //             console.log(cek);
+            
+            //             if (cek == 234) {
+            //                 messageContainer.error("Data yang sudah diverif tidak bisa diverif ulang");
+            //                 return;
+            //             } else if (cek == 123) {
+            //                 // Jika belum diverifikasi, cek petugas verifikasi
+            //                 if (e.data.detail[0].petugasverif == null) {
+            //                     cek2 = 456;
+            //                 } else {
+            //                     cek2 = 789;
+            //                 }
+            
+            //                 if (cek2 == 789) {
+            //                     toastr.warning("Sedang Dikerjakan Petugas");
+            //                     return;
+            //                 } else if (cek2 == 456) {
+            //                     // Simpan data verifikasi jika belum dikerjakan
+            //                     var userLogin = medifirstService.getPegawaiLogin();
+            //                     var objSave = {
+            //                         noorder: $scope.item.noorder,
+            //                         petugasverif: userLogin.namaLengkap
+            //                     };
+                                
+            //                     medifirstService.post('farmasi/save-petugasverif', objSave).then(function () {});
+            
+            //                     // Siapkan data untuk halaman InputResepApotik
+            //                     var arrStr = {
+            //                         0: $scope.item.nocm,
+            //                         1: $scope.item.namapasien,
+            //                         2: $scope.item.jeniskelamin,
+            //                         3: $scope.item.noregistrasi,
+            //                         4: $scope.item.umur,
+            //                         5: $scope.item.klid,
+            //                         6: $scope.item.namakelas,
+            //                         7: $scope.item.tglregistrasi,
+            //                         8: $scope.item.norec_apd,
+            //                         9: $scope.item.noorder,
+            //                         10: $scope.item.jenisPenjamin,
+            //                         11: $scope.item.kelompokPasien,
+            //                         12: $scope.item.beratBadan,
+            //                         13: $scope.item.AlergiYa,
+            //                         14: '',
+            //                         17: $scope.item.cito,
+            //                     };
+                                
+            //                     cacheHelper.set('InputResepApotikCtrl', arrStr);
+            //                     $state.go('InputResepApotik');
+            //                 }
+            //             }
+            //         });
+            //     } else {
+            //         alert('Sudah di verifikasi!!');
+            //     }
+            // };
             
             $scope.preview = function () {
                 console.log($scope.item)
