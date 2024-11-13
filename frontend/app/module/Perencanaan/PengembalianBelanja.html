@@ -143,13 +143,13 @@
             <div class="grid_3">
                 <label c-label item="item" c-label-text="Tanggal awal"></label>
                 <input style="width: 100%" k-ng-model="item.tglAwal" kendo-datepicker
-                    k-format="'yyyy-MM-dd HH:mm:ss'" />
+                    k-format="'yyyy-MM-dd HH:mm'" />
             </div>
 
             <div class="grid_3">
                 <label c-label item="item" c-label-text="Tanggal Akhir"></label>
                 <input style="width: 100%" k-ng-model="item.tglAkhir" kendo-datepicker
-                    k-format="'yyyy-MM-dd HH:mm:ss'" />
+                    k-format="'yyyy-MM-dd HH:mm'" />
             </div>
             <div class="grid_1" style="margin-top: 12px;">
                 <button class="btnTemplate1" ng-click="cari()">Cari</button>
@@ -322,6 +322,16 @@
                 </div>
                 <div class="grid_12">
                     <input c-text-box type="number" class="k-textbox" ng-model="item.totalpengembalian"  />
+                </div>
+            </div>
+
+            <div class="grid_3">
+                <div class="grid_12">
+                    Tanggal Pengembalian
+                </div>
+                <div class="grid_12">
+                    <input style="width: 100%" k-ng-model="item.tglpengembalian" kendo-datepicker
+                    k-format="'yyyy-MM-dd'" />
                 </div>
             </div>
 

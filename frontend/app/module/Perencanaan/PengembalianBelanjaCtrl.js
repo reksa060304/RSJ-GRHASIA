@@ -29,9 +29,12 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
             loadCombo()
 
             function loadData(){
+                let tglAwal = moment($scope.item.tglAwal).format('YYYY-MM-DD HH:mm')
+                let tglAkhir = moment($scope.item.tglAkhir).format('YYYY-MM-DD HH:mm')
+
                 medifirstService.get("perencanaan/get-pengembalian-belanja" 
-                    + "?tglAwal=" + $scope.item.tglAwal
-                    + "&tglAkhir=" + $scope.item.tglAkhir).then(function (e) {
+                    + "?tglAwal=" + tglAwal
+                    + "&tglAkhir=" + tglAkhir).then(function (e) {
                     // console.log(e.data)
 
                     let result = e.data.map((item, index) => ({...item, no: index + 1}))
@@ -133,12 +136,30 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
 
             $scope.simpanPengembalian = function(){
                 
+                // validasi
+                if($scope.item.keteranganpengembalian == undefined && $scope.item.keteranganpengembalian == null){
+                    toastr.error('Isi keterangan pengembalian dulu')
+                    return
+                }
+
+                if($scope.item.totalpengembalian == undefined && $scope.item.totalpengembalian == null){
+                    toastr.error('Isi total pengembalian dulu')
+                    return
+                }
+
+                if($scope.item.tglpengembalian == undefined && $scope.item.tglpengembalian == null){
+                    toastr.error('Isi tanggal pengembalian dulu')
+                    return
+                }
+
+
                 let objSave = {
                     norec_pengembalian: $scope.selectedPengembalian,
                     norec_spj: $scope.spjDipilih.norec,
                     keteranganpengembalian: $scope.item.keteranganpengembalian,
                     totalpengembalian: $scope.item.totalpengembalian,
                     tanggal: moment(new Date()).format('YYYY-MM-DD HH:mm'),
+                    tglpengembalian: moment($scope.item.tglpengembalian).format('YYYY-MM-DD')
                 }
                 // console.log(objSave)
 
@@ -179,6 +200,7 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
                         $scope.item.keteranganpengembalian = response.data[0].keterangan
                         $scope.item.totalpengembalian = parseFloat(response.data[0].totalpengembalian)
                         $scope.selectedPengembalian = response.data[0].norec
+                        $scope.item.tglpengembalian = response.data[0].tglpengembalian
 
                         $scope.popUpEntryPengembalian.center().open()
                     });

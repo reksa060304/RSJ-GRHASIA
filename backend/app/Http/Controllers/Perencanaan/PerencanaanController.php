@@ -10800,12 +10800,12 @@ order by  split_part(kode, '.', 1)asc, split_part(kode, '.', 2)asc,  split_part(
         
         $tglAwal = '';
         if(isset($request['tglAwal']) && $request['tglAwal'] != "undefined" && $request['tglAwal'] != ''){
-            $tglAwal = "and pb.tglinput >= '".$request['tglAwal']."'";
+            $tglAwal = "and pb.tglpengembalian >= '".$request['tglAwal']."'";
         }
 
         $tglAkhir = '';
         if(isset($request['tglAkhir']) && $request['tglAkhir'] != "undefined" && $request['tglAkhir'] != ''){
-            $tglAkhir = "and pb.tglinput <= '".$request['tglAkhir']."'";
+            $tglAkhir = "and pb.tglpengembalian <= '".$request['tglAkhir']."'";
         }
 
 
@@ -10834,7 +10834,7 @@ order by  split_part(kode, '.', 1)asc, split_part(kode, '.', 2)asc,  split_part(
                 ma.kodemataanggaran, ma.namamataanggaran, 
                 ap.asalproduk
             ORDER BY
-                pb.tglinput desc
+                pb.tglpengembalian desc
         "));
 
         return $this->respond($data);
@@ -10863,6 +10863,7 @@ order by  split_part(kode, '.', 1)asc, split_part(kode, '.', 2)asc,  split_part(
                 $pengembalian->totalpengembalian = $request['totalpengembalian'];
                 $pengembalian->tglinput = $request['tanggal'];
                 $pengembalian->tglupdate = $request['tanggal'];
+                $pengembalian->tglpengembalian = $request['tglpengembalian'];
                 $pengembalian->save();
 
             }else{
@@ -10876,6 +10877,7 @@ order by  split_part(kode, '.', 1)asc, split_part(kode, '.', 2)asc,  split_part(
                     'keterangan' => $request['keteranganpengembalian'],
                     'totalpengembalian' => $request['totalpengembalian'],
                     'tglupdate' => $request['tanggal'],
+                    'tglpengembalian' => $request['tglpengembalian']    
                 ]);
 
             }
@@ -10939,7 +10941,7 @@ order by  split_part(kode, '.', 1)asc, split_part(kode, '.', 2)asc,  split_part(
                 ma.kodemataanggaran, ma.namamataanggaran, 
                 ap.asalproduk
             ORDER BY
-                pb.tglinput desc
+                pb.tglpengembalian desc
         "));
 
         return $this->respond($data);
