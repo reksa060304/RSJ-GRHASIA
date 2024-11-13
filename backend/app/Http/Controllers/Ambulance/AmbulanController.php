@@ -2017,31 +2017,58 @@ class AmbulanController extends ApiController
     public function daftarTagihanNonLayanan(Request $request)
     {
         $kdProfile = (int) $this->getDataKdProfile($request);
-        $kdPelayananAmbulan = (int) $this->settingDataFixed('KdKelompokTransaksiAmbulance', $kdProfile);
         $filter = $request->all();
+        $list = explode(',', $this->settingDataFixed('kdTransaksiNonLayanan', $kdProfile));
+        $KdList = [];
+        foreach ($list as $item) {
+            $KdList[] =  (int)$item;
+        }
         $datakelompokuser = \DB::table('loginuser_s as lu')
             ->select('lu.objectkelompokuserfk')
             ->where('lu.kdprofile', $kdProfile)
             ->where('lu.id', '=', $filter['userData']['id'])
             ->get();
 
-        $dataNonLayanan = \DB::table('strukpelayanan_t as sp')
-            ->join('kelompoktransaksi_m as kt', 'sp.objectkelompoktransaksifk', '=', 'kt.id')
-            ->select(
-                'sp.norec',
-                'sp.tglstruk',
-                'sp.namapasien_klien',
-                'kt.reportdisplay as jenistagihan',
-                'sp.totalharusdibayar',
-                'keteranganlainnya',
-                'sp.nosbklastfk',
-                'sp.nosbmlastfk',
-                'kt.id as jenisTagihanId',
-                DB::raw("CASE WHEN sp.nosbmlastfk IS NOT NULL OR sp.nosbklastfk IS NOT NULL THEN 'Lunas' ELSE 'Belum Bayar' END AS statusbayar")
-            )
-            ->where('sp.kdprofile', $kdProfile)
-            ->whereNotNull('sp.totalharusdibayar')
-            ->where('sp.objectkelompoktransaksifk', $kdPelayananAmbulan);
+        if ($datakelompokuser[0]->objectkelompokuserfk == 58) {
+            $dataNonLayanan = \DB::table('strukpelayanan_t as sp')
+                ->join('kelompoktransaksi_m as kt', 'sp.objectkelompoktransaksifk', '=', 'kt.id')
+                ->select(
+                    'sp.norec',
+                    'sp.tglstruk',
+                    'sp.namapasien_klien',
+                    'kt.reportdisplay as jenistagihan',
+                    'sp.isverifikasi',
+                    'keteranganlainnya',
+                    'sp.nosbklastfk',
+                    'sp.nosbmlastfk',
+                    'kt.id as jenisTagihanId',
+                    \DB::raw("CAST(sp.totalharusdibayar AS FLOAT) AS totalharusdibayar ")
+                )
+                ->where('sp.kdprofile', $kdProfile)
+                ->whereNotNull('sp.totalharusdibayar')
+                ->whereIn('sp.objectkelompoktransaksifk', $KdList)
+                ->where('kt.id', '=', 13);
+        } else {
+            $dataNonLayanan = \DB::table('strukpelayanan_t as sp')
+                ->join('kelompoktransaksi_m as kt', 'sp.objectkelompoktransaksifk', '=', 'kt.id')
+                ->select(
+                    'sp.norec',
+                    'sp.tglstruk',
+                    'sp.namapasien_klien',
+                    'kt.reportdisplay as jenistagihan',
+                    'keteranganlainnya',
+                    'sp.nosbklastfk',
+                    'sp.nosbmlastfk',
+                    'kt.id as jenisTagihanId',
+                    \DB::raw("CAST(sp.totalharusdibayar AS FLOAT) AS totalharusdibayar")
+                )
+                //            ->whereNull('sp.noregistrasifk')
+                ->where('sp.kdprofile', $kdProfile)
+                ->whereNotNull('sp.totalharusdibayar')
+                ->where('sp.objectkelompoktransaksifk', '=', 9);
+                // ->whereIn('sp.objectkelompoktransaksifk', $KdList);
+            //            ->where('spp.kdrekananpenjamin', 0);->whereIn('id', [1, 2, 3])
+        }
 
         if (isset($filter['tglAwal']) && $filter['tglAwal'] != "") {
             $dataNonLayanan = $dataNonLayanan->where('sp.tglstruk', '>=', $filter['tglAwal']);
@@ -2051,11 +2078,15 @@ class AmbulanController extends ApiController
             $tgl = $filter['tglAkhir']; //." 23:59:59";
             $dataNonLayanan = $dataNonLayanan->where('sp.tglstruk', '<=', $tgl);
         }
+        //
+        if (isset($filter['jenisTagihanId']) && $filter['jenisTagihanId'] != "") {
+            $dataNonLayanan = $dataNonLayanan->where('kt.id', '=', $filter['jenisTagihanId']);
+        }
 
         if (isset($filter['namaPelanggan']) && $filter['namaPelanggan'] != "") {
             $dataNonLayanan = $dataNonLayanan->where('sp.namapasien_klien', 'ilike', '%' . $filter['namaPelanggan'] . '%');
         }
-
+        //
         if (isset($filter['status']) && $filter['status'] != "") {
             if ($filter['status'] == 'Lunas') {
                 $dataNonLayanan = $dataNonLayanan->whereNotNull('sp.nosbmlastfk');
@@ -2071,42 +2102,31 @@ class AmbulanController extends ApiController
             }
         }
 
+        //        $dataPiutang=$dataPiutang->groupBy('kp.kelompokpasien', 'spp.norec','sp.tglstruk', 'pd.noregistrasi', 'pd.tglregistrasi','p.nocm','p.namapasien','spp.totalppenjamin','spp.totalharusdibayar',
+        //            'spp.totalsudahdibayar', 'r.namarekanan', 'spp.totalbiaya', 'spp.noverifikasi');
         $dataNonLayanan = $dataNonLayanan->where('sp.statusenabled', '=', true);
+        $dataNonLayanan = $dataNonLayanan->whereNull('sp.isverifikasi');
         $dataNonLayanan = $dataNonLayanan->get();
-        $result = [];
+        $result = array();
         foreach ($dataNonLayanan as $item) {
-            $details = DB::select(
-                DB::raw("select pr.id,pr.namaproduk,spd.keteranganlainnya,spd.qtyproduk,spd.hargasatuan,
-                     CASE WHEN isjasaperawat = true THEN spd.hargasatuan * 25/100 ELSE 0 END AS jasaperawat,
-                     CASE WHEN isjasadokter = true THEN spd.hargasatuan * 25/100 ELSE 0 END AS jasadokter,
-                     (spd.qtyproduk * spd.hargasatuan) + CASE WHEN isjasaperawat = true THEN spd.hargasatuan * 25/100 ELSE 0 END 
-                     + CASE WHEN isjasadokter = true THEN spd.hargasatuan * 25/100 ELSE 0 END AS total
-                     from strukpelayanandetail_t as spd 
-                     left JOIN produk_m as pr on pr.id=spd.objectprodukfk
-                     where spd.kdprofile = $kdProfile and nostrukfk=:norec"),
-                array(
-                    'norec' => $item->norec,
-                )
-            );
+            $statusBayar = "Belum Bayar";
+            if ($item->nosbmlastfk != null || $item->nosbklastfk != null) {
+                $statusBayar = "Lunas";
+            }
             $result[] = array(
                 'noRec' => $item->norec,
                 'tglTransaksi' => $item->tglstruk,
                 'namaPelanggan' => $item->namapasien_klien,
                 'jenisTagihan' => $item->jenistagihan,
-                'total' => $item->totalharusdibayar,
+                'totalDibayar' => $item->totalharusdibayar,
                 'keterangan' => $item->keteranganlainnya,
                 'jenisTagihanId' => $item->jenisTagihanId,
-                'statusBayar' => $item->statusbayar,
-                'details' => $details,
+                'statusBayar' => $statusBayar
+
             );
         }
 
-        $result = array(
-            'daftar' => $result,
-            'datalogin' => $datakelompokuser,
-            'message' => 'as@epic',
-        );
-        return $this->respond($result);
+        return $this->respond($result, 'Data Tagihan Penunjang');
     }
 
     public function detailTagihanNonLayanan(Request $request)

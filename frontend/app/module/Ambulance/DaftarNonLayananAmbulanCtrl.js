@@ -1,4 +1,4 @@
-define(['initialize'], function (initialize) {
+define(['initialize', 'Configuration'], function (initialize, config) {
     'use strict';
     initialize.controller('DaftarNonLayananAmbulanCtrl', ['CacheHelper', '$timeout', '$state', '$q', '$scope', 'DateHelper', 'MedifirstService',
         function (cacheHelper, $timeout, $state, $q, $scope, dateHelper, medifirstService) {
@@ -7,193 +7,158 @@ define(['initialize'], function (initialize) {
             $scope.item = {};
             $scope.dataPasienSelected = {};
             $scope.showBayar = false;
-            $scope.KelUserLoginKasir = undefined;
             function showButton() {
                 // $scope.showBtnBayarTagihan = true;
                 // $scope.showBtnPerbaharui = true;
                 // $scope.showBtnDetail = true;
             }
-            ComboLoad();
             FormLoad();
 
-            function ComboLoad(){
-                medifirstService.get("ambulance/get-data-for-combo", true).then(function (data) {                    
-                    showButton();
-                    $scope.item.periodeAwal = new moment($scope.now).format('YYYY-MM-DD 00:00');
-                    $scope.item.periodeAkhir = new moment($scope.now).format('YYYY-MM-DD 23:59');
-                    var dataCombo = data.data;
-                    $scope.listKelompokTransaksi = dataCombo.kelompoktransaksi;
-                    $scope.item.kelompokTransaksi = dataCombo.kelompoktransaksi[0];          
-                    $scope.KelompokUser = medifirstService.getKelompokUser(); 
-                    $scope.KelUserLoginKasir = dataCombo.keluserkasir;
-                    $scope.listStatus = [
-                        { id: 1, namaExternal: "Lunas" },
-                        { id: 2, namaExternal: "Belum Bayar" }
-                    ]
-                                       
-                    // $timeout($scope.SearchData, 500);                        
-                    if ($scope.KelompokUser == $scope.KelUserLoginKasir) {
-                            $scope.showBayar = true
-                    }else{
-                        $scope.showBayar = false                       
-                    } 
-                });
-            }
-
             function FormLoad() {
-                $scope.isRouteLoading = true;
-                var ins = ""
-                if ($scope.item.instalasi != undefined) {
-                    var ins = "&dpid=" + $scope.item.instalasi.id
-                }
-                var rg = ""
-                if ($scope.item.ruangan != undefined) {
-                    var rg = "&ruid=" + $scope.item.ruangan.id
-                }
-                // var Jra =""
-                // if ($scope.item.jenisRacikan != undefined){
-                //     var Jra ="&jenisobatfk=" +$scope.item.jenisRacikan.id
-                // }
-                var tglAwal = moment($scope.item.tglAwal).format('YYYY-MM-DD HH:mm:ss');
-                var tglAkhir = moment($scope.item.tglAkhir).format('YYYY-MM-DD HH:mm:ss');
-                medifirstService.get("farmasi/get-daftar-jual-bebas?" +
-                    "tglAwal=" + tglAwal +
-                    "&tglAkhir=" + tglAkhir +
-                    "&nostruk=" + $scope.item.struk +
-                    "&nocm=" + $scope.item.noMr +
-                    "&namapasien=" + $scope.item.namaPasien
-                    , true).then(function (dat) {
-                        $scope.isRouteLoading = false;
-                        for (var i = 0; i < dat.data.daftar.length; i++) {
-                            dat.data.daftar[i].no = i + 1                        
-                        }
-                        var data2 = dat.data.daftar;
-                        $scope.dataGrid = new kendo.data.DataSource({
-                            data: data2,
-                            pageSize: 10,
-                            total: data2[0].length,
-                            serverPaging: false,
-                            schema: {
-                                model: {
-                                    fields: {
+                showButton();
+                $scope.item.periodeAwal = dateHelper.setJamAwal(new Date());
+                $scope.item.periodeAkhir = dateHelper.setJamAkhir(new Date());
+                $q.all([
+                    medifirstService.get("ambulance/daftar-tagihan-non-layanan?namaPelanggan=" + $scope.item.namaPelanggan + "&status=" + $scope.item.status + "&tglAwal=" + moment($scope.item.periodeAwal).format('YYYY-MM-DD') + "&tglAkhir=" + moment($scope.item.periodeAkhir).format('YYYY-MM-DD')),
+                    medifirstService.get("kasir/get-data-combo-kasir")]).then(function (data) {
+
+                        $scope.listKelompokTransaksi = data[1].data.kelompoktransaksi
+                        $scope.KelompokUserDiklit = data[1].data.diklit;
+                        $scope.KelompokUser = medifirstService.getKelompokUser();
+                        if (data[0].statResponse) {
+                            var dataFilter = []
+                            for (var i = 0; i < data[0].data.length; i++) {
+                                if (data[0][i].data.jenisTagihanId != 70) {
+                                    if (data[0][i].data.jenisTagihanId != 71) {
+                                        if (data[0][i].data.jenisTagihanId != 62) {
+                                            dataFilter.push(data[0].data[i])
+                                        }
                                     }
                                 }
                             }
-                        });
-                        pegawaiUser = dat.data.datalogin
+                            $scope.aggregate = [
+                                {
+                                    field: "totalDibayar",
+                                    aggregate: "sum"
+                                }
+                            ]
+                            $scope.dataDaftarNonLayanan = new kendo.data.DataSource({
+                                data: dataFilter,
+                                pageSize: 10,
+                                total: dataFilter.length,
+                                serverPaging: false,
+                                schema: {
+                                    model: {
+                                        fields: {
+                                            tglTransaksi: { type: "date" },
+
+                                        }
+                                    }
+                                },
+                                aggregate: [
+                                    { field: 'totalDibayar', aggregate: 'sum' },
+                                ]
+                            });
+                            // $scope.listKelompokTransaksi = data[1];
+                            // $scope.listKelompokTransaksi = data[1].kelompoktransaksi;
+                        }
+
+                        $scope.listStatus = [
+                            { id: 1, namaExternal: "Lunas" },
+                            { id: 2, namaExternal: "Belum Bayar" }
+                        ]
+                        var data = cacheHelper.get('DaftarNonLayananAmbulanCtrl');
+                        if (data !== undefined) {
+                            var splitResultData = data.split("#");
+                            $scope.item.periodeAwal = dateHelper.setJamAwal(new Date(splitResultData[0]));
+                            $scope.item.periodeAkhir = dateHelper.setJamAkhir(new Date(splitResultData[1]));
+                        }
+                        $timeout($scope.SearchData, 500);
+                        if ($scope.KelompokUser != $scope.KelompokUserDiklit) {
+                            $scope.showBayar = true
+                        } else {
+                            $scope.showBayar = false
+                        }
                     });
 
-                var chacePeriode = {
-                    0: tglAwal,
-                    1: tglAkhir,
-                    2: '',
-                    3: '',
-                    4: '',
-                    5: '',
-                    6: ''
-                }
-                cacheHelper.set('DaftarResepBebasCtrl', chacePeriode);
             }
 
-            
-
             $scope.formatTanggal = function (tanggal) {
-                return moment(tanggal).format('DD-MMM-YYYY');
+                return moment(tanggal).format('DD-MMM-YYYY HH:mm');
             }
 
             $scope.formatRupiah = function (value, currency) {
                 return currency + " " + parseFloat(value).toFixed(2).replace(/(\d)(?=(\d{3})+\.)/g, "$1,");
             }
 
-            $scope.columnDaftarNonLayanan = [
-                {
-                    "field": "tglTransaksi",
-                    "title": "Tanggal",
-                    "width": "150px",
-                    "template": "<span class='style-left'>{{formatTanggal('#: tglTransaksi #')}}</span>"
+            $scope.columnDaftarNonLayanan = {
+                toolbar: [
+                    "excel",
+                ],
+                excel: {
+                    fileName: "RekapDaftarTagihanNonLayan.xlsx",
+                    allPages: true,
                 },
-                {
-                    "field": "namaPelanggan",
-                    "title": "Nama Pelanggan",
-                    "width": "150px",
-                    "template": "<span class='style-left'>#: namaPelanggan #</span>"
+                excelExport: function (e) {
+                    var sheet = e.workbook.sheets[0];
+                    sheet.mergedCells = ["A1:F1"];
+                    sheet.frozenRows = 2;
+                    sheet.name = "Report";
+                    var myHeaders = [{
+                        value: "Laporan Tagihan Non Layanan",
+                        fontSize: 20,
+                        textAlign: "center",
+                        background: "#ffffff",
+                    }];
+                    sheet.rows.splice(0, 0, { cells: myHeaders, height: 70, fontSize: 20, textAlign: "center" });
                 },
-                {
-                    "field": "jenisTagihan",
-                    "title": "Jenis Tagihan",
-                    "width": "150px",
-                    "template": "<span class='style-center'>#: jenisTagihan #</span>"
-                },
-                {
-                    "field": "total",
-                    "title": "Jumlah",
-                    "width": "150px",
-                    "template": "<span class='style-right'>{{formatRupiah('#: total #', 'Rp.')}}</span>"
-                },
-                {
-                    "field": "keterangan",
-                    "title": "Keterangan",
-                    "width": "150px",
-                    "template": "<span class='style-left'>#: keterangan #</span>"
-                },
-                {
-                    "field": "statusBayar",
-                    "title": "Status",
-                    "width": "150px",
-                    "template": "<span class='style-center'>#: statusBayar #</span>"
-                }
-            ];
+                pageable: true,
+                columns: [
+                    {
+                        "field": "tglTransaksi",
+                        "title": "Tanggal",
+                        "width": "150px",
+                        "template": "<span class='style-left'>{{formatTanggal('#: tglTransaksi #')}}</span>"
+                    },
+                    {
+                        "field": "namaPelanggan",
+                        "title": "Nama Pelanggan",
+                        "width": "150px",
+                        "template": "<span class='style-left'>#: namaPelanggan #</span>"
+                    },
+                    {
+                        "field": "jenisTagihan",
+                        "title": "Jenis Tagihan",
+                        "width": "150px",
+                        "template": "<span class='style-center'>#: jenisTagihan #</span>"
+                    },
 
-            $scope.data2 = function (dataItem) {
-                return {
-                    dataSource: new kendo.data.DataSource({
-                        data: dataItem.details
-                    }),
-                    columns: [
-                        {
-                            "field": "namaproduk",
-                            "title": "Layanan",
-                            "width": "130px",
-                        },
-                        {
-                            "field": "keteranganlainnya",
-                            "title": "Keterangan",
-                            "width": "50px"
-                        },                        
-                        {
-                            "field": "qtyproduk",
-                            "title": "Qty",
-                            "width": "30px",
-                        },
-                        {
-                            "field": "hargasatuan",
-                            "title": "Harga",
-                            "width": "100px",
-                            "template": "<span class='style-right'>{{formatRupiah('#: hargasatuan #', 'Rp.')}}</span>"
-                        },
-                        {
-                            "field": "jasaperawat",
-                            "title": "Jasa Perawat",
-                            "width": "100px",
-                            "template": "<span class='style-right'>{{formatRupiah('#: jasaperawat #', 'Rp.')}}</span>"
-                        },
-                        {
-                            "field": "jasadokter",
-                            "title": "Jasa Dokter",
-                            "width": "100px",
-                            "template": "<span class='style-right'>{{formatRupiah('#: jasadokter #', 'Rp.')}}</span>"
-                        },                        
-                        {
-                            "field": "total",
-                            "title": "Total",
-                            "width": "100px",
-                            "template": "<span class='style-right'>{{formatRupiah('#: total #', 'Rp.')}}</span>"
-                        }
-                    ]
-                }
-            };
 
-            $scope.Bayar = function () {                
+                    {
+                        "field": "keterangan",
+                        "title": "Keterangan",
+                        "width": "150px",
+                        "template": "<span class='style-left'>#: keterangan #</span>"
+                    },
+                    {
+                        "field": "statusBayar",
+                        "title": "Status",
+                        "width": "150px",
+                        "template": "<span class='style-center'>#: statusBayar #</span>"
+                    },
+                    {
+                        "field": "totalDibayar",
+                        "title": "Jumlah",
+                        "width": "150px",
+                        template: "<span class='style-right'>{{formatRupiah('#: totalDibayar #', 'Rp.')}}</span>",
+                        aggregates: ["sum"],
+                        // footerTemplate: "#: data.totalDibayar.sum #",
+                        footerTemplate: "{{formatRupiah('#: data.totalDibayar.sum #', 'Rp.')}}",
+                    },
+                ]
+            }
+
+            $scope.Bayar = function () {
                 if ($scope.dataPasienSelected.statusBayar == "Lunas") {
                     toastr.error("Informasi, Tagihan Sudah Lunas !")
                     return;
@@ -204,12 +169,12 @@ define(['initialize'], function (initialize) {
 
                     // });
                 }
-                else {                    
+                else {
                     $scope.changePage2("PembayaranTagihanNonLayananKasir");
                 }
             }
 
-            $scope.changePage2 = function (stateName) {                
+            $scope.changePage2 = function (stateName) {
                 if ($scope.dataPasienSelected.noRec != undefined) {
                     var obj = {
                         noRegistrasi: $scope.dataPasienSelected.noRec
@@ -284,7 +249,7 @@ define(['initialize'], function (initialize) {
             }
 
             $scope.InputTagihan = function () {
-                $state.go('InputTagihanNonLayananAmbulan')
+                $state.go('InputTagihanNonLayanan')
             }
 
             //fungsi search data
@@ -349,9 +314,15 @@ define(['initialize'], function (initialize) {
 
             var init = function (a, b, c, d, e) {
                 $scope.isRouteLoading = true;
-                medifirstService.get("ambulance/daftar-tagihan-non-layanan?namaPelanggan=" + a + "&status=" + b + "&tglAwal=" + c + "&tglAkhir=" + d + "&jenisTagihanId=" + e).then(function (data) {                 
+                $scope.aggregate = [
+                    {
+                        field: "totalDibayar",
+                        aggregate: "sum"
+                    }
+                ]
+                medifirstService.get("ambulance/daftar-tagihan-non-layanan?namaPelanggan=" + a + "&status=" + b + "&tglAwal=" + c + "&tglAkhir=" + d + "&jenisTagihanId=" + e).then(function (data) {
                     var dataFilter = []
-                    var data = data.data.daftar;
+                    var data = data.data;
                     // for (var x=0;x < data.length;x++){
                     //      if (data[x].jenisTagihanId != 62){
                     //         dataFilter.push(data[x])
@@ -376,16 +347,18 @@ define(['initialize'], function (initialize) {
                         schema: {
                             model: {
                                 fields: {
-                                    tglTransaksi: { type: "date" }
+                                    tglTransaksi: { type: "date" },
+                                    totalDibayar: { type: "number" }
                                 }
                             }
-                        }
+                        },
+                        aggregate: $scope.aggregate
                     });
                 });
                 return $scope.dataDaftarNonLayanan;
             }
 
-            $scope.klikGrid = function(dataPasienSelected){
+            $scope.klikGrid = function (dataPasienSelected) {
                 if (dataPasienSelected == undefined) {
                     messageContainer.error("Data Belum Dipilih")
                     return
@@ -394,10 +367,10 @@ define(['initialize'], function (initialize) {
 
             }
 
-            $scope.Hapus = function(){
+            $scope.Hapus = function () {
                 if ($scope.dataPasienSelected.statusBayar == "Lunas") {
                     toastr.error("Informasi, Tagihan Sudah Lunas Tidak Bisa Dihapus !")
-                    return;                   
+                    return;
                 }
 
                 if ($scope.dataPasienSelected == undefined) {
@@ -410,16 +383,16 @@ define(['initialize'], function (initialize) {
                     nostruk: $scope.dataPasienSelected.nostruk,
                 }
 
-                medifirstService.post('kasir/hapus-transaksi-non-layanan',objSave).then(function (data) {
-					init();
-				})
+                medifirstService.post('kasir/hapus-transaksi-non-layanan', objSave).then(function (data) {
+                    init();
+                })
                 FormLoad();
             }
 
-            $scope.EditTagihan = function(){
+            $scope.EditTagihan = function () {
                 if ($scope.dataPasienSelected.statusBayar == "Lunas") {
                     toastr.error("Informasi, Tagihan Sudah Lunas Tidak Bisa Dirubah !")
-                    return;                   
+                    return;
                 }
 
                 if ($scope.dataPasienSelected == undefined) {
@@ -436,11 +409,34 @@ define(['initialize'], function (initialize) {
                     5: '',
                     6: ''
                 }
-                cacheHelper.set('InputTagihanNonLayananAmbulanCtrl', chacePeriode);
-                $state.go('InputTagihanNonLayananAmbulan')               
-            }            
+                cacheHelper.set('InputTagihanNonLayananCtrl', chacePeriode);
+                $state.go('InputTagihanNonLayanan')
+            }
 
-        // BATAS //
+            $scope.cetakSuratTugasAmbulan = function () {
+                var local = JSON.parse(localStorage.getItem('profile'));
+                var profile = local.id;
+                if ($scope.dataPasienSelected == null) {
+                    toastr.error("Pilih data yang ingin di cetak")
+                    return;
+                }
+                else {
+                    window.open(config.baseApiBackend + "report/get-cetak-surat-tugas-ambulan?norec=" + $scope.dataPasienSelected.noRec + "&kdprofile=" + profile, '_blank');
+                }
+            }
+
+            $scope.cetakBiayaAmbulan = function () {
+                var local = JSON.parse(localStorage.getItem('profile'));
+                var profile = local.id;
+                if ($scope.dataPasienSelected == null) {
+                    toastr.error("Pilih data yang ingin di cetak")
+                    return;
+                }
+                else {
+                    window.open(config.baseApiBackend + "report/get-cetak-biaya-ambulan?norec=" + $scope.dataPasienSelected.noRec + "&kdprofile=" + profile, '_blank');
+                }
+            }
+            // BATAS //
         }
     ]);
 });

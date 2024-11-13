@@ -154,7 +154,7 @@
             </div>
             <div class="col-10">
                 <p class="paragraph-body">
-                    1. Menjemput pasien / Merujuk pasien / Memulangkan pasien / Mengantar jenazah
+                    1. {{$data[0]->namajeniskegiatan}}
                 </p>
                 <p class="paragraph-body">
                     2. Berangkat tanggal : {{ \Carbon\Carbon::parse($data[0]->tglpelayanan)->format('d-m-Y') }}, jam :
