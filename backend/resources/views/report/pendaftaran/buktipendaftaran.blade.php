@@ -105,7 +105,7 @@
                     </tr>
                     <tr>
                         <td height="5" width="30%">
-                            <font style="font-size: 8pt;" color="#000000" face="Tahoma">Petugas</font>
+                            <font style="font-size: 8pt;" color="#000000" face="Tahoma">Dokter</font>
                         </td>
                         <td height="5" width="2%"><font size="1"  >:</font></td>
                         <td height="5" width="68%">
