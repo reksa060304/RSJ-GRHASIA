@@ -2319,13 +2319,19 @@ class AmbulanController extends ApiController
             ->leftJoin('petugaspelayananambulan_t as ppa', 'ppa.nostrukdetailfk', '=', 'spd.norec')
             ->leftJoin('pegawai_m as pg', 'pg.id', '=', 'ppa.objectpegawaifk')
             ->leftJoin('jenispegawai_m as jp', 'jp.id', '=', 'pg.objectjenispegawaifk')
+            ->leftJoin('jeniskegiatanambulan_m as jka', 'jka.id', '=', 'spd.jeniskegiatanambulanfk')
+            ->leftJoin('alamatnonlayanan_m as anl', 'anl.strukpelayanandetail', '=', 'spd.norec')
             ->distinct()
             ->select(
                 'sp.nostruk',
-                'sp.tglstruk',
+                \DB::raw('DATE(sp.tglstruk) as tglstruk'), // Hanya tanggal
+                'sp.tglstruk as tglstruk_full', // Menambahkan kolom untuk ORDER BY
                 'pg.namalengkap AS namapersonel',
                 'spd.hargasatuan',
-                'sp.namapasien_klien'
+                'sp.namapasien_klien',
+                'spd.nopolisifk',
+                'jka.namajeniskegiatan',
+                'anl.alamatlengkap as lokasitujuan '
             )
             ->where('sp.statusenabled', true)
             ->where('sp.kdprofile', (int)$kdProfile)
