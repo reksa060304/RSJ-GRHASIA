@@ -1073,6 +1073,7 @@ Route::group(['middleware' => 'cors', 'prefix' => 'service'], function () {
           Route::post('farmasi/save-hapus-pelayananobat', 'Farmasi\PelayananResepController@DeletePelayananObat');
           Route::post('farmasi/save-hapus-pelayananobat-kronis', 'Farmasi\PelayananResepController@DeletePelayananObatKronis');
           Route::post('farmasi/save-petugasverif', 'Farmasi\ResepElektronikController@savePetugasVerif');
+          Route::post('farmasi/unlock-petugasverif', 'Farmasi\ResepElektronikController@unlockPetugasVerif');
 
           Route::get('farmasi/get-datacombo', 'Farmasi\PelayananResepController@getDataCombo');
           Route::get('farmasi/get_detail-resep', 'Farmasi\PelayananResepController@getDetailResep');

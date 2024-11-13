@@ -1067,6 +1067,42 @@ class ResepElektronikController extends ApiController
         }
         return $this->setStatusCode($result['status'])->respond($result, $transMessage);
     }
+
+    public function unlockPetugasVerif(Request $request) {
+        $kdProfile = $this->getDataKdProfile($request);
+        $idProfile = (int) $kdProfile;
+        DB::beginTransaction();
+        $dataReq = $request->all();
+        try {
+            StrukOrder::where('noorder', $request['noorder'])
+                ->where('kdprofile', $idProfile)
+                ->update([
+                    'petugasverif' => null
+                ]);
+            $transStatus = 'true';
+        } catch (\Exception $e) {
+            $transStatus = 'false';
+        }
+    
+        // Menentukan pesan notifikasi berdasarkan hasil transaksi
+        if ($transStatus == 'true') {
+            $transMessage = "Berhasil Unlock Petugas, Dokter Dapat Mengedit Resep & Petugas Bisa Verif Ulang";
+            DB::commit();
+            $result = array(
+                "status" => 201,
+                "by" => 'as@epic',
+            );
+        } else {
+            $transMessage = "Gagal Unlock Petugas, Dokter Tidak Dapat Mengedit Resep & Petugas Tidak Bisa Verif Ulang";
+            DB::rollBack();
+            $result = array(
+                "status" => 400,
+                "by" => 'as@epic',
+            );
+        }
+        return $this->setStatusCode($result['status'])->respond($result, $transMessage);
+    }
+    
     
 
 }
