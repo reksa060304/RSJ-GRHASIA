@@ -523,12 +523,12 @@ class KasirController extends ApiController
         $alamatPemesan->kdprofile = $idProfile;
         $alamatPemesan->statusenabled = true;
         $alamatPemesan->strukpelayanandetail = $PPnorec;
-        $alamatPemesan->alamatlengkap = $req['alamatLengkap'];
-        $alamatPemesan->objectprovinsifk = $req['provinsi'];
-        $alamatPemesan->objectdesakelurahanfk = $req['desaKelurahan'];
-        $alamatPemesan->objectkecamatanfk = $req['kecamatan'];
-        $alamatPemesan->objectkotakabupatenfk = $req['kotaKabupaten'];
-        $alamatPemesan->rtrw = $req['rtRw'];
+        $alamatPemesan->alamatlengkap = $req['alamatLengkap']?? null;
+        $alamatPemesan->objectprovinsifk = $req['provinsi']?? null;
+        $alamatPemesan->objectdesakelurahanfk = $req['desaKelurahan']?? null;
+        $alamatPemesan->objectkecamatanfk = $req['kecamatan']?? null;
+        $alamatPemesan->objectkotakabupatenfk = $req['kotaKabupaten']?? null;
+        $alamatPemesan->rtrw = $req['rtRw'] ?? null;
         $alamatPemesan->save();
                    
 

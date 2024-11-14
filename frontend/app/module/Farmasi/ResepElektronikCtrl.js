@@ -1092,15 +1092,17 @@ define(['initialize', 'Configuration'], function (initialize, config) {
                             messageContainer.error("Data yang sudah diverif tidak bisa diverif ulang");
                             return;
                         } else if (cek == 123) {
+                            var userLogin = medifirstService.getPegawaiLogin();
                             // Jika belum diverifikasi, cek petugas verifikasi
-                            if (e.data.detail[0].petugasverif == null) {
+                            if (e.data.detail[0].petugasverif == null || e.data.detail[0].petugasverif == userLogin.namaLengkap) {
                                 cek2 = 456;
                             } else {
                                 cek2 = 789;
                             }
             
                             if (cek2 == 789) {
-                                toastr.warning("Sedang Dikerjakan Petugas");
+                                let petugasVerif = e.data.detail[0].petugasverif
+                                toastr.warning("Sedang Dikerjakan Petugas: " + petugasVerif);
                                 return;
                             } else if (cek2 == 456) {
                                 // Simpan data verifikasi jika belum dikerjakan
@@ -1141,6 +1143,34 @@ define(['initialize', 'Configuration'], function (initialize, config) {
                     alert('Sudah di verifikasi!!');
                 }
             };
+
+            $scope.unlock = function () {
+                if ($scope.item.statusorder == 'Menunggu') {
+                    var notf = {
+                        data: $scope.item.noorder
+                    }
+                    medifirstService.postNonMessage('farmasi/disable-notif', notf).then(function () {
+                    })
+                    medifirstService.get("farmasi/get-penjagaan-verif-eresep?noorder=" + $scope.item.noorder).then(function (e) {
+                        if (e.data.detail[0].tglresep == null) {
+                            var cek = 123;
+                        } else {
+                            var cek = 234;
+                        }
+                        console.log(cek);
+                        if (cek == 234) {
+                            messageContainer.error("Data yang sudah diverif tidak bisa diverif ulang");
+                        } else if (cek == 123) {
+                            var objSave = {
+                                noorder: $scope.item.noorder
+                            };
+                            medifirstService.post('farmasi/unlock-petugasverif', objSave).then(function () {});
+                        }
+                    });
+                } else {
+                    alert('Sudah di verifikasi!!')
+                }
+            }
             
             $scope.preview = function () {
                 console.log($scope.item)

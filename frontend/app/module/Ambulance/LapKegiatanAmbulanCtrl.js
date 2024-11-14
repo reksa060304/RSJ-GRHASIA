@@ -98,8 +98,8 @@ define(['initialize', 'Configuration'], function (initialize, config) {
                     var unitPpk = dataItem.get("ppkrujukan");
                     var unitSep = dataItem.get("nosep");
 
-                    var cellSEP = row.children().eq(13);
-                    cellSEP.addClass(getNotifSEP(unitBpjs, unitSep, unitDept, unitPpk));
+                    // var cellSEP = row.children().eq(13);
+                    // cellSEP.addClass(getNotifSEP(unitBpjs, unitSep, unitDept, unitPpk));
 
                     var isdiag = dataItem.get("isdiagnosis");
                     var cellDiag = row.children().eq(14);
@@ -144,20 +144,20 @@ define(['initialize', 'Configuration'], function (initialize, config) {
                     {
                         "field": "tglstruk",
                         "title": "Tgl Struk",
-                        "width": "120px",
+                        "width": "70px",
                     },
                     {
-                        "field": "",
+                        "field": "namajeniskegiatan",
                         "title": "Jenis Kegiatan",
-                        "width": "100px"
+                        "width": "130px"
                     },
+                    // {
+                    //     "field": "",
+                    //     "title": "Jenis Ambulan",
+                    //     "width": "100px",
+                    // },
                     {
-                        "field": "",
-                        "title": "Jenis Ambulan",
-                        "width": "100px",
-                    },
-                    {
-                        "field": "",
+                        "field": "nopolisifk",
                         "title": "No Plat",
                         "width": "100px",
                     },
@@ -167,28 +167,29 @@ define(['initialize', 'Configuration'], function (initialize, config) {
                         "width": "150px",
                     },
                     {
-                        "field": "",
+                        "field": "lokasitujuan",
                         "title": "Lokasi Tujuan",
-                        "width": "150px",
+                        "width": "200px",
                     },
-                    {
-                        "field": "",
-                        "title": "Jarak Tempuh",
-                        "width": "100px",
-                    },
+                    // {
+                    //     "field": "",
+                    //     "title": "Jarak Tempuh",
+                    //     "width": "100px",
+                    // },
                     {
                         "field": "hargasatuan",
                         "title": "Biaya",
-                        "width": "150px",
+                        "width": "50px",
                     },
                     {
                         "field": "namapasien_klien",
                         "title": "Nama Pasien",
-                        "width": "150px",
+                        "width": "120px",
                     },
                     {
                         "field": "",
                         "title": "Jenis Pasien",
+                        "template" : "Non Layanan",
                         "width": "100px",
                     }
                 ]

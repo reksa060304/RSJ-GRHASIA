@@ -16,14 +16,14 @@ export class RedirectGuard implements CanActivate {
   // canActivate
   canActivate(route: ActivatedRouteSnapshot, state: RouterStateSnapshot) {
     const currentUser = this._authenticationService.currentUserValue;
-    if(window.location.host.indexOf('103.131.104.56') > -1){
-        this._router.navigate(['/pages/miscellaneous/error']);
-        return false;
-    }
-    if(window.location.host.indexOf('simrs-grhasia.jogjaprov.go.id') > -1){
-      this._router.navigate(['/pages/miscellaneous/error']);
-      return false;
-    }
+    // if(window.location.host.indexOf('103.131.104.56') > -1){
+    //     this._router.navigate(['/pages/miscellaneous/error']);
+    //     return false;
+    // }
+    // if(window.location.host.indexOf('simrs-grhasia.jogjaprov.go.id') > -1){
+    //   this._router.navigate(['/pages/miscellaneous/error']);
+    //   return false;
+    // }
     return true;
 
     // not logged in so redirect to login page with the return url

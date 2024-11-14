@@ -876,6 +876,7 @@ Route::group(['middleware' => 'cors', 'prefix' => 'service'], function () {
           //2019-12 penambahan arif akhir
           Route::get('report/get-cetak-pemeriksaanlab','Report\ReportController@pemeriksaanLab');
           Route::get('report/get-cetak-surat-tugas-ambulan','Report\ReportController@suratTugasAmbulan');
+          Route::get('report/get-cetak-surat-tugas-ambulan-verifikasi','Report\ReportController@suratTugasAmbulanVerifikasi');
           Route::get('report/get-cetak-biaya-ambulan','Report\ReportController@cetakBiayaAmbulan');
           Route::get('emr/get-antrian-pasien-norec/{norec}','EMR\EMRController@getAntrianPasienDiperiksa');
           Route::post('emr/post-anamnesis/{method}','EMR\EMRController@postAnamnesis');
@@ -1073,6 +1074,7 @@ Route::group(['middleware' => 'cors', 'prefix' => 'service'], function () {
           Route::post('farmasi/save-hapus-pelayananobat', 'Farmasi\PelayananResepController@DeletePelayananObat');
           Route::post('farmasi/save-hapus-pelayananobat-kronis', 'Farmasi\PelayananResepController@DeletePelayananObatKronis');
           Route::post('farmasi/save-petugasverif', 'Farmasi\ResepElektronikController@savePetugasVerif');
+          Route::post('farmasi/unlock-petugasverif', 'Farmasi\ResepElektronikController@unlockPetugasVerif');
 
           Route::get('farmasi/get-datacombo', 'Farmasi\PelayananResepController@getDataCombo');
           Route::get('farmasi/get_detail-resep', 'Farmasi\PelayananResepController@getDetailResep');

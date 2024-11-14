@@ -52,17 +52,6 @@ define(['initialize'], function (initialize) {
                     })
             }
 
-            function ClearIsian() {
-                $scope.item.namaprodukInput = null
-                $scope.item.KeteranganProduk = null
-                $scope.item.jumlah = null
-                $scope.item.hargabahanbakar = null
-                $scope.item.Harga = null
-                $scope.item.Total = null
-                $scope.item.jenisPelaksana = null
-                $scope.selectedPegawai = []
-            }
-
             LoadCache();
             loadCombo();
             function LoadCache() {
@@ -710,8 +699,11 @@ define(['initialize'], function (initialize) {
 
             $scope.batalVerif = function () {
                 $scope.popUpVerif.close();
+                ClearIsian();
+                $scope.kosongkanDetailGrid();
             }
 
+            // tanda1
             $scope.simpanVerifikasi = function () {
                 // if ($scope.item.JenisPetugasPe == undefined) {
                 //     toastr.error('Jenis Petugas Pelaksana Harus Di isi')
@@ -754,7 +746,12 @@ define(['initialize'], function (initialize) {
                 } else {
                 	console.log("Tidak ada data petugas layanan");
                 }
-                console.log(petugasLayanan); 
+                console.log('petugas layanan',petugasLayanan); 
+                var idPetugasLayanan = petugasLayanan.map(function(petugas) {
+                    return petugas.listpegawai.map(function(pegawai) {
+                        return pegawai.id;
+                    });
+                }).flat();
 
                 var itemsave = {
                     "bridging": dataPost,
@@ -770,7 +767,8 @@ define(['initialize'], function (initialize) {
                     // "iddokterorder": $scope.item.dokterOrder.id,
                     // "namadokterorder": $scope.item.dokterOrder.namalengkap,
                     // "idpetugaspe": $scope.item.JenisPetugasPe.id
-                    petugaspelayananambulan: petugasLayanan,
+                    // petugaspelayananambulan: petugasLayanan,
+                    "petugaspelayananambulan": idPetugasLayanan
                 }
 
                 if (dataPost.length > 0) {
@@ -786,6 +784,8 @@ define(['initialize'], function (initialize) {
                     medifirstService.post('ambulance/simpan-data-pelayanan-ambulan', itemsave)
                         .then(function (e) {
                             init()
+                            kosongkan()
+                            kosongkanDetailGrid()
                         });
                 }
                 else {
@@ -1472,7 +1472,6 @@ define(['initialize'], function (initialize) {
                             }
                             $scope.item.totalBilling = parseFloat(subTotal).toFixed(2).replace(/(\d)(?=(\d{3})+\.)/g, "$1,")
                             ClearIsian();
-
                         }
                         // break;
                     }
@@ -1572,7 +1571,6 @@ define(['initialize'], function (initialize) {
                         $scope.showJenisPelaksana3 = false;
                         delete $scope.item.jenisPelaksana3;
                     }
-
                     ClearIsian();
                 }
             }
@@ -1600,6 +1598,30 @@ define(['initialize'], function (initialize) {
                             template: multiSelectArrayToString
                         }
                     ]
+                };
+            };
+            $scope.kosongkanDetailGrid = function () {
+                $scope.detailGridOptions = function (dataItem) {
+                    return {
+                        dataSource: {
+                            data: [],  // Kosongkan data
+                            filter: { field: "idParent", operator: "eq", value: dataItem.rowNumber }
+                        },
+                        columns: [
+                            {
+                                field: "jenisPetugas.jenisPelaksana",
+                                title: "Jenis Pelaksana",
+                                width: "100px",
+                                template: "#= jenisPetugas.jenisPelaksana #"
+                            },
+                            {
+                                field: "listPetugas[0].namalengkap",
+                                title: "Nama Pegawai",
+                                width: "200px",
+                                template: multiSelectArrayToString
+                            }
+                        ]
+                    };
                 };
             };
             function multiSelectArrayToString(item) {
@@ -1885,6 +1907,23 @@ define(['initialize'], function (initialize) {
                 $scope.popUp.totalKeseluruhan = ''
                 $scope.popUp.noPolisi = ''
                 $scope.popUp.jenisKegiatan = ''
+            }
+
+            // tanda1
+            function ClearIsian() {
+                $scope.item.namaprodukInput = null
+                $scope.item.KeteranganProduk = null
+                $scope.item.jumlah = null
+                $scope.item.hargabahanbakar = null
+                $scope.item.Harga = null
+                $scope.item.Total = null
+                $scope.item.jenisPelaksana = ""
+                $scope.item.jenisPelaksana = ""
+                $scope.item.jenisPelaksana2 = ""
+                $scope.item.jenisPelaksana3 = ""
+                $scope.selectedPegawai = ""
+                $scope.selectedPegawai2 = ""
+                $scope.selectedPegawai3 = ""
             }
             //********************************  $scope.cekBelumVerifs=true;***
 
