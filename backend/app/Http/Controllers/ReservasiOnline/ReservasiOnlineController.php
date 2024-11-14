@@ -4364,18 +4364,19 @@ class ReservasiOnlineController extends ApiController
      
         if(count($jam)> 0){
             
-            $jamAwal = $jam[0];
-            $jamAwal = date('H:i', strtotime('-'.$tambah.' minutes',strtotime($jamAwal)));
+            // $jamAwal = $jam[0];
+            // $jamAwal = date('H:i', strtotime('-'.$tambah.' minutes',strtotime($jamAwal)));
 
             $jamAkhir = $jam[1];
-            $dd['jamawal'] = $jamAwal;
+            // $dd['jamawal'] = $jamAwal;
             $dd['jamakhir'] = $jamAkhir;
             $dd['jamcheckin'] = $jamCheck;
             
-            if($jamCheck >= $jamAwal &&  $jamCheck <= $jamAkhir){ }else{
+            if( $jamCheck <= $jamAkhir){ 
+            } else {
                 $result = array(
                     'data' => null,
-                    'message' => 'Harap check-in dalam rentang jam reservasi, '.$data->jamreservasi,
+                    'message' => 'Harap check-in sebelum jam akhir pendaftaran pelayanan, '.$data->jamreservasi,
                     'dd'=> $dd,
                     'as' => 'er@epic',
                 );
