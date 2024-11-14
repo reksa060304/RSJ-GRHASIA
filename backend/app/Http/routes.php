@@ -876,6 +876,7 @@ Route::group(['middleware' => 'cors', 'prefix' => 'service'], function () {
           //2019-12 penambahan arif akhir
           Route::get('report/get-cetak-pemeriksaanlab','Report\ReportController@pemeriksaanLab');
           Route::get('report/get-cetak-surat-tugas-ambulan','Report\ReportController@suratTugasAmbulan');
+          Route::get('report/get-cetak-surat-tugas-ambulan-verifikasi','Report\ReportController@suratTugasAmbulanVerifikasi');
           Route::get('report/get-cetak-biaya-ambulan','Report\ReportController@cetakBiayaAmbulan');
           Route::get('emr/get-antrian-pasien-norec/{norec}','EMR\EMRController@getAntrianPasienDiperiksa');
           Route::post('emr/post-anamnesis/{method}','EMR\EMRController@postAnamnesis');

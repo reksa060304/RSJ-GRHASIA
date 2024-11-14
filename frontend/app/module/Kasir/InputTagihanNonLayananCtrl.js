@@ -316,9 +316,12 @@ define(['initialize'], function (initialize) {
 					console.log("Tidak ada data petugas layanan");
 				}
 				
+				var noPolisiNorec = $scope.item.noPolisi ? $scope.item.noPolisi.norec : "";
+				var jenisKegiatan = $scope.item.jenisKegiatan ? $scope.item.jenisKegiatan.id : "";
+
 				// console.log(petugasLayanan); 
 				var objSave = {
-					norec: norec,
+					norec: norec || '',
 					kelompoktransaksifk: $scope.item.kelompokTransaksi.id,
 					keteranganlainnya: $scope.item.keterangan,
 					namapasien_klien: $scope.item.namaPasien_klien,
@@ -326,9 +329,9 @@ define(['initialize'], function (initialize) {
 					tglstruk: moment($scope.item.tglStruk).format('YYYY-MM-DD hh:mm:ss'),
 					totalharusdibayar: parseFloat(subTotal),//parseFloat($scope.item.totalBilling),
 					details: dataProduk,
-					nopolisi: $scope.item.noPolisi.norec,
-					jeniskegiatan: $scope.item.jenisKegiatan.id,
-					petugaspelayananambulan: petugasLayanan,
+					nopolisi: noPolisiNorec,
+					jeniskegiatan: jenisKegiatan,
+					petugaspelayananambulan: petugasLayanan || "",
 
 				}
 				medifirstService.post('kasir/save-input-non-layanan', objSave).then(function (data) {
