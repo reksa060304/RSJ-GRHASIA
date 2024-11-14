@@ -780,6 +780,144 @@ class AmbulanController extends ApiController
     public function savePelayananPasienAmbulan(Request $request)
     {
         $kdProfile = (int) $this->getDataKdProfile($request);
+        $savedPetugas = [];
+        DB::beginTransaction();
+
+        try {
+            // Query jenis petugas
+            $jenisPetugasPe = DB::table('mapjenispetugasptojenispegawai_m as mpp')
+                ->join('jenispegawai_m as jp', 'jp.id', '=', 'mpp.objectjenispegawaifk')
+                ->join('pegawai_m as pg', 'pg.objectjenispegawaifk', '=', 'jp.id')
+                ->join('jenispetugaspelaksana_m as jpp', 'jpp.id', '=', 'mpp.objectjenispetugaspefk')
+                ->select(
+                    'mpp.objectjenispegawaifk',
+                    'jp.jenispegawai',
+                    'mpp.objectjenispetugaspefk',
+                    'jpp.jenispetugaspe',
+                    'pg.namalengkap',
+                    'pg.id'
+                )
+                ->where('mpp.kdprofile', $kdProfile)
+                ->where('pg.id', $request['objectpegawaiorderfk'])
+                ->first();
+
+            if ($request['norec_pp'] == '') {
+                $pd = PasienDaftar::where('norec', $request['norec_pd'])->first();
+                $dataAPD = new AntrianPasienDiperiksa();
+                $dataAPD->norec = $dataAPD->generateNewId();
+                $dataAPD->kdprofile = $kdProfile;
+                $dataAPD->objectasalrujukanfk = 1;
+                $dataAPD->statusenabled = true;
+                $dataAPD->objectkelasfk = $request['objectkelasfk'];
+                $dataAPD->noantrian = 1;
+                $dataAPD->noregistrasifk = $request['norec_pd'];
+                $dataAPD->objectpegawaifk = $request['objectpegawaiorderfk'];
+                $dataAPD->objectruanganfk = $request['objectruangantujuanfk'];
+                $dataAPD->statusantrian = 0;
+                $dataAPD->statuspasien = 1;
+                $dataAPD->objectstrukorderfk = $request['norec_so'];
+                $dataAPD->tglregistrasi = $pd->tglregistrasi;
+                $dataAPD->tglmasuk = date('Y-m-d H:i:s');
+                $dataAPD->tglkeluar = date('Y-m-d H:i:s');
+                $dataAPD->save();
+
+                $dataAPDnorec = $dataAPD->norec;
+                $dataAPDtglPel = $dataAPD->tglregistrasi;
+            } else {
+                $dataAPD = PelayananPasien::where('norec', $request['norec_pp'])->where('kdprofile', $kdProfile)->first();
+                $dataAPDnorec = $dataAPD->noregistrasifk;
+                $dataAPDtglPel = $dataAPD->tglregistrasi;
+
+                PelayananPasien::where('strukorderfk', $request['norec_so'])->where('kdprofile', $kdProfile)->delete();
+                PelayananPasienDetail::where('pelayananpasien', $dataAPD->norec)->where('kdprofile', $kdProfile)->delete();
+                PelayananPasienPetugas::where('pelayananpasien', $dataAPD->norec)->where('kdprofile', $kdProfile)->delete();
+            }
+
+            foreach ($request['bridging'] as $item) {
+                $PelPasien = new PelayananPasien();
+                $PelPasien->norec = $PelPasien->generateNewId();
+                $PelPasien->kdprofile = $kdProfile;
+                $PelPasien->statusenabled = true;
+                $PelPasien->noregistrasifk =  $dataAPDnorec;
+                $PelPasien->tglregistrasi = $dataAPDtglPel;
+                $PelPasien->hargadiscount = 0;
+                $PelPasien->hargajual =  $item['hargasatuan'];
+                $PelPasien->hargasatuan =  $item['hargasatuan'];
+                $PelPasien->jumlah =  $item['qtyproduk'];
+                $PelPasien->kelasfk =  $request['objectkelasfk'];
+                $PelPasien->kdkelompoktransaksi =  1;
+                $PelPasien->piutangpenjamin =  0;
+                $PelPasien->piutangrumahsakit = 0;
+                $PelPasien->produkfk =  $item['produkid'];
+                $PelPasien->stock =  1;
+                $PelPasien->strukorderfk =  $request['norec_so'];
+                $PelPasien->tglpelayanan = $item['tglpelayanan'] ?? date('Y-m-d H:i:s');
+                $PelPasien->harganetto =  $item['hargasatuan'];
+                $PelPasien->save();
+
+                foreach ($item['komponenharga'] as $itemKomponen) {
+                    $PelPasienDetail = new PelayananPasienDetail();
+                    $PelPasienDetail->norec = $PelPasienDetail->generateNewId();
+                    $PelPasienDetail->kdprofile = $kdProfile;
+                    $PelPasienDetail->statusenabled = true;
+                    $PelPasienDetail->noregistrasifk = $dataAPDnorec;
+                    $PelPasienDetail->aturanpakai = '-';
+                    $PelPasienDetail->hargadiscount = 0;
+                    $PelPasienDetail->hargajual = $itemKomponen['hargasatuan'];
+                    $PelPasienDetail->hargasatuan = $itemKomponen['hargasatuan'];
+                    $PelPasienDetail->jumlah = 1;
+                    $PelPasienDetail->komponenhargafk = $itemKomponen['objectkomponenhargafk'];
+                    $PelPasienDetail->pelayananpasien = $PelPasien->norec;
+                    $PelPasienDetail->piutangpenjamin = 0;
+                    $PelPasienDetail->piutangrumahsakit = 0;
+                    $PelPasienDetail->produkfk = $item['produkid'];
+                    $PelPasienDetail->nopolisinorec = $item['nopolisi'];
+                    $PelPasienDetail->jeniskegiatanambulanfk = $item['jeniskegiatan'];
+                    $PelPasienDetail->stock = 1;
+                    $PelPasienDetail->strukorderfk = $request['norec_so'];
+                    $PelPasienDetail->tglpelayanan = $dataAPDtglPel;
+                    $PelPasienDetail->harganetto = $itemKomponen['hargasatuan'];
+                    $PelPasienDetail->save();
+                }
+
+                if (isset($request['petugaspelayananambulan']) && is_array($request['petugaspelayananambulan'])) {
+                    foreach ($request['petugaspelayananambulan'] as $pegawaiId) {
+                        $PetugasPelAmbulan = new PetugasPelayananAmbulan();
+                        $PetugasPelAmbulan->norec = $PetugasPelAmbulan->generateNewId();
+                        $PetugasPelAmbulan->kdprofile = $kdProfile;
+                        $PetugasPelAmbulan->statusenabled = true;
+                        $PetugasPelAmbulan->objectpegawaifk = $pegawaiId;
+                        $PetugasPelAmbulan->nostrukdetailfk = $PelPasien->norec;
+                        $PetugasPelAmbulan->tglpelayanan = $PelPasien->tglregistrasi;
+                        $PetugasPelAmbulan->save();
+                        $savedPetugas[] = $PetugasPelAmbulan;
+                    }
+                }
+            }
+
+            PasienDaftar::where('norec', $request['norec_pd'])
+                ->where('kdprofile', $kdProfile)
+                ->update(['objectruanganlastfk' => $request['objectruangantujuanfk']]);
+
+            DB::commit();
+
+            return response()->json([
+                'status' => 'success',
+                'data' => $savedPetugas,
+            ], 200);
+
+        } catch (\Exception $e) {
+            DB::rollBack();
+            return response()->json([
+                'status' => 'error',
+                'message' => 'Terjadi kesalahan: ' . $e->getMessage(),
+            ], 500);
+        }
+    }
+
+    public function savePelayananPasienAmbulanOld(Request $request)
+    {
+        $kdProfile = (int) $this->getDataKdProfile($request);
         $listPetugasPelAmbulan = [];
         DB::beginTransaction();
         // try {

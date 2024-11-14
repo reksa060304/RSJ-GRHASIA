@@ -746,7 +746,12 @@ define(['initialize'], function (initialize) {
                 } else {
                 	console.log("Tidak ada data petugas layanan");
                 }
-                console.log(petugasLayanan); 
+                console.log('petugas layanan',petugasLayanan); 
+                var idPetugasLayanan = petugasLayanan.map(function(petugas) {
+                    return petugas.listpegawai.map(function(pegawai) {
+                        return pegawai.id;
+                    });
+                }).flat();
 
                 var itemsave = {
                     "bridging": dataPost,
@@ -762,7 +767,8 @@ define(['initialize'], function (initialize) {
                     // "iddokterorder": $scope.item.dokterOrder.id,
                     // "namadokterorder": $scope.item.dokterOrder.namalengkap,
                     // "idpetugaspe": $scope.item.JenisPetugasPe.id
-                    petugaspelayananambulan: petugasLayanan,
+                    // petugaspelayananambulan: petugasLayanan,
+                    "petugaspelayananambulan": idPetugasLayanan
                 }
 
                 if (dataPost.length > 0) {
