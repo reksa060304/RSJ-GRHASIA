@@ -1092,15 +1092,17 @@ define(['initialize', 'Configuration'], function (initialize, config) {
                             messageContainer.error("Data yang sudah diverif tidak bisa diverif ulang");
                             return;
                         } else if (cek == 123) {
+                            var userLogin = medifirstService.getPegawaiLogin();
                             // Jika belum diverifikasi, cek petugas verifikasi
-                            if (e.data.detail[0].petugasverif == null) {
+                            if (e.data.detail[0].petugasverif == null || e.data.detail[0].petugasverif == userLogin.namaLengkap) {
                                 cek2 = 456;
                             } else {
                                 cek2 = 789;
                             }
             
                             if (cek2 == 789) {
-                                toastr.warning("Sedang Dikerjakan Petugas");
+                                let petugasVerif = e.data.detail[0].petugasverif
+                                toastr.warning("Sedang Dikerjakan Petugas: " + petugasVerif);
                                 return;
                             } else if (cek2 == 456) {
                                 // Simpan data verifikasi jika belum dikerjakan
