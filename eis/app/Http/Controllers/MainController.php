@@ -857,6 +857,7 @@ class MainController extends ApiController
                     }
                     $res['obat']= $this->getLaporanPemakaianObat($r);
                     $res['stok']= $this->getInfoStok($r);
+                    $res['kalibrasi']= $this->getDaftarKalibrasi($r);
 //                    dd(  $res['stok']);
                     $res['trend']= $this->getTrendPemakaianObat($r);
                     array_push($compact,'res','r');
@@ -879,12 +880,17 @@ class MainController extends ApiController
                     $res['pegawai']= $this->getCountPegawai($r);
                     $res['info_pangkatgolongan'] = $this->getInfoPangkatGolongan($tglawal,$tglakhir,$kdProfile);
                     $res['sipstr']= $this->getDataSip($r);
-                    $res['kalibrasi']= $this->getDaftarKalibrasi($r);
+                    // return $res['pegawai']['kategoripegawai'];
                     $aktif = 0;
                     $nonaktif = 0;
                     $pns = 0;
                     $naban = 0;
                     $p3k = 0;
+                    $p3klakilaki = 0;
+                    $p3kperempuan = 0;
+                    $blud = 0;
+                    $bludlakilaki = 0;
+                    $bludperempuan = 0;
                     $pnsl = 0;
                     $pnsp = 0;
                     $jfl = 0;
@@ -915,6 +921,8 @@ class MainController extends ApiController
                             $naban =$naban + (float)$s->total;
                         }else if($s->kategorypegawai == 'PPPK '){
                             $p3k =$p3k + (float)$s->total;
+                        }else if($s->kategorypegawai == 'BLUD'){
+                            $blud =$blud + (float)$s->total;
                         }
                     }
                     foreach ($res['pegawai']['kategoripegawai'] as $s){
@@ -922,6 +930,17 @@ class MainController extends ApiController
                             $pnsl =$pnsl + (float)$s->total;
                         }else if($s->kategorypegawai == 'PNS' && $s->jeniskelamin == 'Perempuan'){
                             $pnsp =$pnsp + (float)$s->total;
+                        }
+                    }
+                    foreach ($res['pegawai']['kategoripegawai'] as $s){
+                        if($s->kategorypegawai == 'PPPK ' && $s->jeniskelamin == 'Laki-Laki'){
+                            $p3klakilaki =$p3klakilaki + (float)$s->total;
+                        }else if($s->kategorypegawai == 'PPPK ' && $s->jeniskelamin == 'Perempuan'){
+                            $p3kperempuan =$p3kperempuan + (float)$s->total;
+                        }else if($s->kategorypegawai == 'BLUD' && $s->jeniskelamin == 'Laki-Laki'){
+                            $bludlakilaki =$bludlakilaki + (float)$s->total;
+                        }else if($s->kategorypegawai == 'BLUD' && $s->jeniskelamin == 'Perempuan'){
+                            $bludperempuan =$bludperempuan + (float)$s->total;
                         }
                     }
                     foreach ($res['pegawai']['kategoripegawai'] as $s){
@@ -951,6 +970,11 @@ class MainController extends ApiController
                     $res['pegawai']['cpnsp'] = $cpnsp;
                     $res['pegawai']['lakilakiAktif'] = $lakilakiAktif;
                     $res['pegawai']['perempuanAktif'] = $perempuanAktif;
+                    $res['pegawai']['p3klakilaki'] = $p3klakilaki;
+                    $res['pegawai']['p3kperempuan'] = $p3kperempuan;
+                    $res['pegawai']['blud'] = $blud;
+                    $res['pegawai']['bludlakilaki'] = $bludlakilaki;
+                    $res['pegawai']['bludperempuan'] = $bludperempuan;
                     //dd($res['pegawai']);
                     array_push($compact,'res','r');
                     break;
@@ -1590,6 +1614,70 @@ class MainController extends ApiController
             left join jabatan_m as jb1 on jb1.id = pg.objectjabatanstrukturalfk
             where pg.kdprofile = 30 and pg.statusenabled=true
             and jp.kategorypegawai = 'PPPK '"));
+        }else if($r['jenis'] =='P3K Perempuan'){
+            $data =DB::select(DB::raw("select pg.nip, jp.kategorypegawai,pg.namalengkap, jk.jeniskelamin,
+            gol.namaexternal || ', ' || gol.NAME AS golongan, jb.namajabatan as jbfungsional,
+            jb1.namajabatan as jbstruktural
+                    from pegawai_m  as pg
+            left JOIN kategorypegawai_m as jp on jp.id =pg.kategorypegawai
+            left JOIN jeniskelamin_m as jk on jk.id =pg.objectjeniskelaminfk
+            LEFT JOIN sdm_golongan_m gol ON gol.ID = pg.objectgolonganfk
+            left join jabatan_m as jb on jb.id = pg.objectjabatanfungsionalfk
+            left join jabatan_m as jb1 on jb1.id = pg.objectjabatanstrukturalfk
+            where pg.kdprofile = 30 and pg.statusenabled=true
+            and jp.kategorypegawai = 'PPPK '
+            and jk.id = 2"));
+        }else if($r['jenis'] =='P3K Laki-Laki'){
+            $data =DB::select(DB::raw("select pg.nip, jp.kategorypegawai,pg.namalengkap, jk.jeniskelamin,
+            gol.namaexternal || ', ' || gol.NAME AS golongan, jb.namajabatan as jbfungsional,
+            jb1.namajabatan as jbstruktural
+                    from pegawai_m  as pg
+            left JOIN kategorypegawai_m as jp on jp.id =pg.kategorypegawai
+            left JOIN jeniskelamin_m as jk on jk.id =pg.objectjeniskelaminfk
+            LEFT JOIN sdm_golongan_m gol ON gol.ID = pg.objectgolonganfk
+            left join jabatan_m as jb on jb.id = pg.objectjabatanfungsionalfk
+            left join jabatan_m as jb1 on jb1.id = pg.objectjabatanstrukturalfk
+            where pg.kdprofile = 30 and pg.statusenabled=true
+            and jp.kategorypegawai = 'PPPK '
+            and jk.id = 1"));
+        }else if($r['jenis'] =='BLUD'){
+            $data =DB::select(DB::raw("select pg.nip, jp.kategorypegawai,pg.namalengkap, jk.jeniskelamin,
+            gol.namaexternal || ', ' || gol.NAME AS golongan, jb.namajabatan as jbfungsional,
+            jb1.namajabatan as jbstruktural
+                    from pegawai_m  as pg
+            left JOIN kategorypegawai_m as jp on jp.id =pg.kategorypegawai
+            left JOIN jeniskelamin_m as jk on jk.id =pg.objectjeniskelaminfk
+            LEFT JOIN sdm_golongan_m gol ON gol.ID = pg.objectgolonganfk
+            left join jabatan_m as jb on jb.id = pg.objectjabatanfungsionalfk
+            left join jabatan_m as jb1 on jb1.id = pg.objectjabatanstrukturalfk
+            where pg.kdprofile = 30 and pg.statusenabled=true
+            and jp.kategorypegawai = 'BLUD'"));
+        }else if($r['jenis'] =='BLUD Perempuan'){
+            $data =DB::select(DB::raw("select pg.nip, jp.kategorypegawai,pg.namalengkap, jk.jeniskelamin,
+            gol.namaexternal || ', ' || gol.NAME AS golongan, jb.namajabatan as jbfungsional,
+            jb1.namajabatan as jbstruktural
+                    from pegawai_m  as pg
+            left JOIN kategorypegawai_m as jp on jp.id =pg.kategorypegawai
+            left JOIN jeniskelamin_m as jk on jk.id =pg.objectjeniskelaminfk
+            LEFT JOIN sdm_golongan_m gol ON gol.ID = pg.objectgolonganfk
+            left join jabatan_m as jb on jb.id = pg.objectjabatanfungsionalfk
+            left join jabatan_m as jb1 on jb1.id = pg.objectjabatanstrukturalfk
+            where pg.kdprofile = 30 and pg.statusenabled=true
+            and jp.kategorypegawai = 'BLUD'
+            and jk.id = 2"));
+        }else if($r['jenis'] =='BLUD Laki-Laki'){
+            $data =DB::select(DB::raw("select pg.nip, jp.kategorypegawai,pg.namalengkap, jk.jeniskelamin,
+            gol.namaexternal || ', ' || gol.NAME AS golongan, jb.namajabatan as jbfungsional,
+            jb1.namajabatan as jbstruktural
+                    from pegawai_m  as pg
+            left JOIN kategorypegawai_m as jp on jp.id =pg.kategorypegawai
+            left JOIN jeniskelamin_m as jk on jk.id =pg.objectjeniskelaminfk
+            LEFT JOIN sdm_golongan_m gol ON gol.ID = pg.objectgolonganfk
+            left join jabatan_m as jb on jb.id = pg.objectjabatanfungsionalfk
+            left join jabatan_m as jb1 on jb1.id = pg.objectjabatanstrukturalfk
+            where pg.kdprofile = 30 and pg.statusenabled=true
+            and jp.kategorypegawai = 'BLUD'
+            and jk.id = 1"));
         } else if($r['jenis'] =='Jabatan Fungsional Laki-Laki'){
             $data =DB::select(DB::raw("select pg.nip, jp.kategorypegawai,pg.namalengkap, jk.jeniskelamin,
             gol.namaexternal || ', ' || gol.NAME AS golongan, jb.namajabatan as jbfungsional,
@@ -2447,7 +2535,9 @@ class MainController extends ApiController
             select uk.namaruangan as unitkerja,pg.namalengkap ,pg.id
             from pegawai_m as pg
             left JOIN ruangan_m as uk on uk.id=pg.objectruangankerjafk
+            left JOIN statuspegawai_m as spg on spg.id = pg.objectstatuspegawaifk
              where pg.statusenabled=true
+             and spg.statuspegawai = 'Aktif'
              and pg.kdprofile = $idProfile
               )
             as x GROUP BY x.unitkerja
@@ -2474,8 +2564,9 @@ class MainController extends ApiController
         $pendidikan = DB::select(DB::raw("select x.total, x.pendidikan  from (
                 select jp.pendidikan, count(pg.namalengkap) as total from pegawai_m  as pg
                 left JOIN pendidikan_m as jp on pg.objectpendidikanterakhirfk = jp.id
+                left JOIN statuspegawai_m as spg on spg.id = pg.objectstatuspegawaifk
                 where pg.statusenabled=true
-                   and pg.kdprofile = $idProfile
+                   and pg.kdprofile = $idProfile and spg.statuspegawai = 'Aktif'
                  GROUP by jp.pendidikan
                 )as x
                 order by x.total
@@ -2506,8 +2597,10 @@ class MainController extends ApiController
         $jenispegawai = DB::select(DB::raw("select x.total, x.jenis  from (
                 select jp.jenispegawai as jenis, count(pg.namalengkap) as total from pegawai_m  as pg
                 left JOIN jenispegawai_m as jp on pg.objectjenispegawaifk = jp.id
+                left JOIN statuspegawai_m as spg on spg.id = pg.objectstatuspegawaifk
                 where pg.statusenabled=true
                    and pg.kdprofile = $idProfile
+                   and spg.statuspegawai = 'Aktif'
                  GROUP by jp.jenispegawai
                 )as x
                 order by x.total
@@ -2517,7 +2610,8 @@ class MainController extends ApiController
                 --CONVERT(int,ROUND(DATEDIFF(hour,pg.tgllahir,GETDATE())/8766.0,0)) AS umur
                     date_part('year', age( pg.tgllahir))::int as umur
                  from pegawai_m  as pg
-                where pg.kdprofile = $idProfile and pg.statusenabled=true
+                 left JOIN statuspegawai_m as spg on spg.id = pg.objectstatuspegawaifk
+                where pg.kdprofile = $idProfile and pg.statusenabled=true and spg.statuspegawai = 'Aktif'
                 "));
         $under20 = 0;
         $under30 =0;

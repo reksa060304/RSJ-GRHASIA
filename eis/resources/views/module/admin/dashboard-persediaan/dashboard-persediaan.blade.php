@@ -414,6 +414,50 @@
                                 </div>
                             </div>
                         </div>
+                        <div class="col-lg-12 col-md-12">
+                            <div class="card">
+                                <div class="panel panel-warning">
+                                    <div class="panel-heading  bg-warning">
+                                       Jadwal Kalibrasi
+                                    </div>
+                                    <div class="panel-body" style="height: 480px;overflow-x: auto;">
+                                        <div class="row" style="padding:10px;">
+                                            <div class="col-md-12">
+                                                <div class="table-responsive" >
+                                            <table class="table  table-striped table-sm table-styling" id="t_Kedatangan"
+                                                   style="width:100%">
+                                                <thead>
+                                                <tr class="table-inverse">
+                                                    <th>Tgl Kalibrasi</th>
+                                                    <th>Keterangan</th>
+                                                    <th>Nama PIC</th>
+                                                    <th>Mulai</th>
+                                                    <th>Selesai</th>
+                                                </tr>
+                                                </thead>
+                                                <tbody>
+                                                @forelse($res['kalibrasi'] as $i => $d)
+                                                    <tr>
+                                                        <td>{{ $d->tglplanning }}</td>
+                                                        <td>{{ $d->keteranganlainnya }}</td>
+                                                        <td>{{ $d->namalengkap }}</td>
+                                                        <td>{{ $d->startdate }}</td>
+                                                        <td>{{ $d->duedate }}</td>
+                                                    </tr>
+                                                @empty
+                                                    <tr>
+                                                        <td colspan="6" style="text-align: center">Data Tidak ada</td>
+                                                    </tr>
+                                                @endforelse
+                                                </tbody>
+                                            </table>
+                                        </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
                     </div>
 
                 </div>
