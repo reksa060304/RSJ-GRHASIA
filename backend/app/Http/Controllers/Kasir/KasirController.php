@@ -3004,7 +3004,7 @@ case when pjd.hargasatuand = 0 then pjd.hargasatuank else pjd.hargasatuand end
         $totalBayar = $totalBilling;
         $result = array(
             "noRecStrukPelayanan"  => $strukPelayanan->norec,
-            "jumlahBayar"  => $totalBayar,
+            "jumlahBayar"  => $totalBayar ?? 0,
         );
         return $this->respond($result, "Data Pembayaran");
     }

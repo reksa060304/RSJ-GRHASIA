@@ -337,7 +337,8 @@ define(['initialize'], function (initialize) {
 				medifirstService.post('kasir/save-input-non-layanan', objSave).then(function (data) {
 					if ($scope.KelompokUser !== $scope.KelompokUserDiklit) {
 						const noRegistrasi2 = data.data.data.norec;
-						$scope.changePage("PenerimaanPembayaranKasir");
+						// $scope.changePage("PenerimaanPembayaranKasir");
+						$scope.changePage("PembayaranTagihanNonLayananKasir");
 					} else {
 						window.history.back();
 					}
