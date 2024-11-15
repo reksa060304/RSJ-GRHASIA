@@ -101,6 +101,7 @@ export class ReservasiOnlineComponent implements OnInit {
   kodeReservasi: any;
   tglReservasi: any;
   poliTujuan: any;
+  noantrianRuangan: any;
   dokter: any;
   Estimasi:any
   jamR:any
@@ -690,6 +691,7 @@ export class ReservasiOnlineComponent implements OnInit {
     this.tglReservasi = selected.tanggal
     this.jamR =  selected.jamreservasi
     this.poliTujuan = selected.namaruangan
+    this.noantrianRuangan = selected.noantrian
     this.dokter = selected.dokter
     this.Estimasi = selected.tanggalreservasi
     this.namaPasien = selected.namapasien
