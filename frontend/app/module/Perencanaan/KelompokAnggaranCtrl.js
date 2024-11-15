@@ -1275,6 +1275,8 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
                 $scope.rcn.idmataanggaran = dataItem.objectmataanggaranfk
                 $scope.item.password = dataItem.password
                 $scope.item.passwordbenar = undefined
+                $scope.item.jumlahspjEntryRBA = dataItem.jumlahspj
+
                 $scope.popupTambahKeteranganBelanja.center().open();
             }
             function DetailAlokasi(e) {
@@ -5645,6 +5647,21 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
                     toastr.error('Sudah dilock!')
                     return
                 }
+
+                // console.log($scope.selectedData3)
+                // validasi jika sudah ada nilai spj maka tidak bisa dihapus
+                let dataPunyaSPJ = []
+                $scope.selectedData3.map(function(item){
+                    if(item.jumlahspj > 0){
+                        dataPunyaSPJ.push(item)
+                    }
+                })
+
+                if(dataPunyaSPJ.length > 0){
+                    toastr.error("Rincian sudah ada SPJ")
+                    return
+                }
+
                 var confirm = $mdDialog.confirm()
                     .title('Informasi')
                     .htmlContent("Apakah anda yakin ingin menghapus centangan rincian anggaran?")
@@ -5788,6 +5805,12 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
                         "width": "200px"
                     },
                     {
+                        "field": "jumlahspj",
+                        "title": "Jumlah SPJ",
+                        "width": "150px",
+						"template": "<span class='style-right'>{{formatRupiah2('#: jumlahspj #', '')}}</span>",
+                    },
+                    {
                         command: [{
                             text: "Hapus",
                             click: HapusRincianKas
@@ -5887,6 +5910,13 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
                     toastr.error('Sudah dilock!')
                     return
                 }
+
+                // Jika item belanja sudah ada spj maka tolak
+                if(dataItem.jumlahspj > 0){
+                    toastr.error('Rincian sudah ada SPJ')
+                    return
+                }
+
                 var confirm = $mdDialog.confirm()
                     .title('Informasi')
                     .htmlContent("Apakah anda yakin ingin menghapus " + dataItem.keteranganbelanja + "?")
@@ -5898,7 +5928,6 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
                         "norec": dataItem.norec
                     }
 
-                    
                     medifirstService.post('anggaran/delete-anggaran-kas', itemDelete).then(function (e) {
 
                             medifirstService.get("perencanaan/get-total-anggaran-rcn?kegiatan=" + $scope.idkegiatananggaran).then(function (e) {
@@ -5949,6 +5978,8 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
                                 data: DataTotalMataAnggaran
                             });
                         });
+
+                                        
                                     
                 })
             }
@@ -6408,6 +6439,13 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
                     toastr.error('Sudah dilock!')
                     return
                 }
+
+                // jika subtotal kurang dari spj maka tolak
+                if($scope.item.subTotalKT < $scope.item.jumlahspjEntryRBA){
+                    toastr.error('Subtotal tidak boleh kurang dari spj')
+                    return
+                }
+
                 var objSave =
                     {
                         norec: norecKT,
