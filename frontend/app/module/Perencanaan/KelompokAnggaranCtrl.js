@@ -1950,6 +1950,10 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
                     "title": "Uraian Panjar",
                 },
                 {
+                    "field": "rekening",
+                    "title": "Rekening"
+                },
+                {
                     "field": "tglpanjar",
                     "title": "Tanggal",
                 },
@@ -1998,6 +2002,10 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
                 {
                     "field": "uraian",
                     "title": "Uraian Panjar",
+                },
+                {
+                    "field": "rekening",
+                    "title": "Rekening",
                 },
                 {
                     "field": "tglpanjar",
@@ -2425,6 +2433,8 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
                         }else if (element.uraian.toLowerCase().includes($scope.item.cariPanjarSPJ)) {
                             dataHasilCariPanjar.push(element)
                         }else if(element.jumlah.toString().includes($scope.item.cariPanjarSPJ)){
+                            dataHasilCariPanjar.push(element)
+                        }else if(element.rekening.includes($scope.item.cariPanjarSPJ)){
                             dataHasilCariPanjar.push(element)
                         }
                     }
