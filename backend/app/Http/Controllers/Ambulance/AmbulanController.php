@@ -853,6 +853,8 @@ class AmbulanController extends ApiController
                 $PelPasien->strukorderfk =  $request['norec_so'];
                 $PelPasien->tglpelayanan = $item['tglpelayanan'] ?? date('Y-m-d H:i:s');
                 $PelPasien->harganetto =  $item['hargasatuan'];
+                $PelPasien->nopolisinorec = $item['nopolisi'];
+                $PelPasien->jeniskegiatanambulanfk = $item['jeniskegiatan'];
                 $PelPasien->save();
 
                 foreach ($item['komponenharga'] as $itemKomponen) {
@@ -871,8 +873,6 @@ class AmbulanController extends ApiController
                     $PelPasienDetail->piutangpenjamin = 0;
                     $PelPasienDetail->piutangrumahsakit = 0;
                     $PelPasienDetail->produkfk = $item['produkid'];
-                    $PelPasienDetail->nopolisinorec = $item['nopolisi'];
-                    $PelPasienDetail->jeniskegiatanambulanfk = $item['jeniskegiatan'];
                     $PelPasienDetail->stock = 1;
                     $PelPasienDetail->strukorderfk = $request['norec_so'];
                     $PelPasienDetail->tglpelayanan = $dataAPDtglPel;

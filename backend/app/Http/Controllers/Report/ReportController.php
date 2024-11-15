@@ -25202,29 +25202,33 @@ public function suratBuktiPengembalian(Request $request)
     public function suratTugasAmbulanVerifikasi(Request $request)
     {
         $profile = (int)$request['kdprofile'];
-        $nostrukfk = $request['norec'];
+        $noregistrasi = $request['noregistrasi'];
 
         // Menggunakan parameter binding untuk keamanan
         $data = collect(DB::select(
             "SELECT
-                spd.norec,
-                pg.namalengkap,
+                pd.noregistrasi,
                 pg.nip,
+                pg.namalengkap AS namapetugas,
                 jp.id,
                 jp.jenispegawai AS jabatan,
-                spd.tglpelayanan,
-                jka.namajeniskegiatan
+                jka.namajeniskegiatan,
+                ppt.tglpelayanan
             FROM
-                strukpelayanandetail_t AS spd
-                LEFT JOIN petugaspelayananambulan_t AS ppa ON ppa.nostrukdetailfk = spd.norec
+                pasiendaftar_t AS pd
+                LEFT JOIN antrianpasiendiperiksa_t AS apd ON apd.noregistrasifk = pd.norec
+                LEFT JOIN pelayananpasien_t AS ppt ON ppt.noregistrasifk = apd.norec 
+                LEFT JOIN strukorder_t AS so ON so.noregistrasifk = pd.noregistrasifk 
+                LEFT JOIN petugaspelayananambulan_t AS ppa ON ppa.nostrukdetailfk = ppt.norec
                 LEFT JOIN pegawai_m AS pg ON pg.id = ppa.objectpegawaifk
                 LEFT JOIN jenispegawai_m AS jp ON jp.id = pg.objectjenispegawaifk
-                LEFT JOIN jeniskegiatanambulan_m AS jka ON jka.id = spd.jeniskegiatanambulanfk
+                LEFT JOIN jeniskegiatanambulan_m AS jka ON jka.id = ppt.jeniskegiatanambulanfk
             WHERE
-                spd.kdprofile = :profile
-                AND spd.statusenabled = TRUE
-                AND spd.nostrukfk = :nostrukfk",
-            ['profile' => $profile, 'nostrukfk' => $nostrukfk]
+                pd.kdprofile = :profile
+                AND pd.statusenabled = TRUE
+                AND pd.noregistrasi = :noregistrasi
+                AND apd.objectruanganfk = 72",
+            ['profile' => $profile, 'noregistrasi' => $noregistrasi]
         ));
 
         // dd($data);
@@ -25238,7 +25242,7 @@ public function suratBuktiPengembalian(Request $request)
         $pageWidth = 950;
 
         // Mengembalikan view dengan data yang ditemukan
-        return view('report.kasir.surat-tugas-ambulan', compact('data', 'request', 'pageWidth'));
+        return view('report.ambulance.surat-tugas-ambulan', compact('data', 'request', 'pageWidth'));
     }
 
     public function cetakBiayaAmbulan(Request $request)

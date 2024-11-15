@@ -247,7 +247,7 @@ define(['initialize', 'Configuration'], function (initialize,config) {
                     return;
                 }
                 else {
-                    window.open(config.baseApiBackend + "report/get-cetak-surat-tugas-ambulan-verifikasi?norec=" + $scope.current.noRec + "&kdprofile=" + profile,'_blank');
+                    window.open(config.baseApiBackend + "report/get-cetak-surat-tugas-ambulan-verifikasi?noregistrasi=" + $scope.current.noregistrasi + "&kdprofile=" + profile,'_blank');
                 }
             }
 		//** BATAS SUCI */
