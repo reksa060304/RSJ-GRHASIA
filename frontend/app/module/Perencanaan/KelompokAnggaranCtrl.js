@@ -3328,6 +3328,18 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
                     return
                 }
 
+                // isi jumlah panjar
+                if($scope.item.jumlahpanjar == undefined || $scope.item.jumlahpanjar == null || $scope.item.jumlahpanjar == '0'){
+                    toastr.error('Isi jumlah panjar dulu')
+                    return
+                }
+
+                // jika jumlah panjar lebih dari sisa maka tolak
+                if($scope.item.jumlahpanjar > $scope.item.sisaAnggaranPanjar){
+                    toastr.error('Jumlah panjar melebihi sisa')
+                    return
+                }
+
                 // console.log($scope.item.subkegiatanpanjar.id)
 
                 var objSave =
@@ -6613,6 +6625,10 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
                 $scope.item.asalprodukpanjar = {id: $scope.item.sumberDanaSPJ.id, asalproduk: $scope.item.sumberDanaSPJ.asalproduk}               
                 // console.log($scope.item.darirekeningpanjar)
                 $scope.item.statuspanjar = 1
+                
+                // default bank
+                $scope.item.sumberPanjar = 'Bank'
+
                 $scope.popupPanjar.center().open() 
             }
 
@@ -6948,6 +6964,9 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
                     $scope.listAsalProdukPanjarSPJ = e.data.asalproduk
                 })
                 $scope.item.statuspanjar = 2
+
+                // default bank
+                $scope.item.sumberPanjar = 'Bank'
                 $scope.popupPanjar.center().open()
             }
             $scope.changeCboPilihSubKegiatanSPJ = function () {
