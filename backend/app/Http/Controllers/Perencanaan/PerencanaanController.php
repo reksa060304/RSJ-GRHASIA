@@ -6682,7 +6682,7 @@ order by  split_part(kode, '.', 1)asc, split_part(kode, '.', 2)asc,  split_part(
         $kode = $request['kodemataanggaran'];
 
         $data = DB::select(DB::raw("
-        select pj.norec norecpanjar, ma.id idmataanggaran, ma.kodemataanggaran, subkeg.id idsubkegiatan, subkeg.keterangan subkegiatan, subsubkeg.id idsubsubkegiatan, subsubkeg.keterangan subsubkegiatan, pj.nopanjar, pj.uraian, pj.tglpanjar, pj.jumlah, pj.jenispanjar, pj.jumlahpengembalian, pj.sumberpanjar
+        select pj.norec norecpanjar, ma.id idmataanggaran, ma.kodemataanggaran, ma.kodemataanggaran || ' - ' || ma.namamataanggaran AS rekening, subkeg.id idsubkegiatan, subkeg.keterangan subkegiatan, subsubkeg.id idsubsubkegiatan, subsubkeg.keterangan subsubkegiatan, pj.nopanjar, pj.uraian, pj.tglpanjar, pj.jumlah, pj.jenispanjar, pj.jumlahpengembalian, pj.sumberpanjar
         from panjar_t pj
         inner join mataanggaran_m ma on ma.id = pj.objectmataanggaranfk
         inner join kegiatananggaran_m subkeg on subkeg.id = pj.objectsubkegiatanfk
