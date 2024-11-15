@@ -25177,7 +25177,7 @@ public function suratBuktiPengembalian(Request $request)
                 LEFT JOIN petugaspelayananambulan_t AS ppa ON ppa.nostrukdetailfk = spd.norec
                 LEFT JOIN pegawai_m AS pg ON pg.id = ppa.objectpegawaifk
                 LEFT JOIN jenispegawai_m AS jp ON jp.id = pg.objectjenispegawaifk
-                LEFT JOIN jeniskegiatanambulan_m AS jka ON jka.id = spd.jeniskegiatanambulanfk
+                LEFT JOIN jeniskegiatanambulan_m AS jka ON jka.id = spd.jeniskegiatanambulanfk::bigint
             WHERE
                 spd.kdprofile = :profile
                 AND spd.statusenabled = TRUE
