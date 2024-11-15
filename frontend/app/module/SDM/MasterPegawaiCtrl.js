@@ -4679,12 +4679,13 @@ $scope.formatRupiah = function (value, currency) {
 							const gajiData = response.data.gajigolongan[0];
 							if (!gajiData) {
 								toastr.error('Data gaji tidak ditemukan!');
+								$scope.itemGajiBerkala.gajiakhir = 0;	
 								return;
 							}
 
 							$scope.itemGajiBerkala.tahunmasakerjagolongan = tahun;
 							$scope.itemGajiBerkala.bulanmasakerjagolongan = bulan;
-							$scope.itemGajiBerkala.masakerjagolongan = `${tahun} tahun ${bulan} bulan`;
+							$scope.itemGajiBerkala	.masakerjagolongan = `${tahun} tahun ${bulan} bulan`;
 							$scope.itemGajiBerkala.gajiakhir = gajiData.gajipokok;
 						})
 						.catch(function (error) {
@@ -5286,6 +5287,7 @@ $scope.formatRupiah = function (value, currency) {
 							$scope.itemGajiBerkala.tanggalsk = new Date(moment(datas.tglsk).format('YYYY-MM-DD'));
 							$scope.itemGajiBerkala.noskcetak = datas.nosk;
 							$scope.itemGajiBerkala.tanggaltmtcetak = new Date(moment(datas.tgltmt).format('YYYY-MM-DD'));
+							$scope.itemGajiBerkala.masakerjagolonganlama = datas.masakerjagolongan;
 						} else {
 							$scope.itemGajiBerkala.gajiawal = datas.gajiakhir;
 							$scope.itemGajiBerkala.tanggalsk = new Date(moment(datas.tglskbaru).format('YYYY-MM-DD'));

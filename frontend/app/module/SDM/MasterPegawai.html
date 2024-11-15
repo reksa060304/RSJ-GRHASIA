@@ -1821,6 +1821,8 @@
 
 					</md-content>
 				</md-tab>
+
+				<!-- start Riwayat Gaji Berkala -->
 				<md-tab label="Riwayat Gaji Berkala" ng-disabled="nondiklat">
 					<md-content class="md-padding">
 						<div class="grid_12">
@@ -2001,7 +2003,7 @@
 												</div>
 												<div class="grid_12">
 													<input c-text-box type="input" filter="'varchar'" class="k-textbox"
-														ng-model="itemGajiBerkala.gajiakhir" />
+														ng-model="itemGajiBerkala.gajiakhir" disabled/>
 												</div>
 											</div>
 											
@@ -2041,7 +2043,7 @@
 								</div>
 							</div>
 						</div>
-
+						<!-- end kenaikan gaji berkala -->
 
 						<!-- start kenaikan pangkat -->
 						 
@@ -2073,8 +2075,11 @@
 											<label c-label>Masa Kerja Golongan (Lama)</label>
 										</div>
 										<div class="grid_12">
-											<input c-text-box type="input" filter="'varchar'" class="k-textbox"
-												ng-model="itemGajiBerkala.masakerjagolongan"  disabled/>
+											<!-- <input c-text-box type="input" filter="'varchar'" class="k-textbox"
+												ng-model="itemGajiBerkala.masakerjagolongan"/>																					 -->
+												<input c-text-box type="input" class="k-textbox" ng-model="itemGajiBerkala.masakerjagolonganlama" 
+												ng-disabled="gajilamanya == 'KP'">
+
 										</div>
 										<!-- <div class="grid_6">
 											<input c-text-box type="text" filter="'varchar'" class="k-textbox"
@@ -2217,7 +2222,7 @@
 											</div>
 											<div class="grid_12">
 												<input c-text-box type="input" filter="'varchar'" class="k-textbox"
-													ng-model="itemGajiBerkala.gajiakhir" />
+													ng-model="itemGajiBerkala.gajiakhir" disabled/>
 											</div>
 										</div>
 										
