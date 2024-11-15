@@ -890,6 +890,12 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
                     $scope.totalBundle += parseFloat(item.totalharga)
                 })
 
+                // isi form
+                $scope.item.tahapakhirbundle = $scope.listTahapKegiatan[0]
+                $scope.item.hargasatuantransferbundle = $scope.totalBundle
+                $scope.item.jumlahtransferbundle = 1
+                $scope.item.subtotaltransferbundle = $scope.totalBundle
+
                 $scope.popupTransferBundle.center().open()
             }
 
@@ -969,21 +975,21 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
 
             }
 
-            $scope.transferSatuan = function(data){
-                console.log(data)
-                // $scope.totalSatuan = 0;
-                // $scope.dataSatuan = null;
+            // $scope.transferSatuan = function(data){
+            //     console.log(data)
+            //     $scope.totalSatuan = 0;
+            //     $scope.dataSatuan = null;
 
-                // medifirstService.get('perencanaan/get-detail-rencana-bynorec' 
-                //     + '?norec=' + data).then(function(result){
-                //         // console.log(result)
-                //         $scope.totalSatuan = result.data[0].totalharga
-                //         $scope.dataSatuan = result.data
+            //     medifirstService.get('perencanaan/get-detail-rencana-bynorec' 
+            //         + '?norec=' + data).then(function(result){
+            //             // console.log(result)
+            //             $scope.totalSatuan = result.data[0].totalharga
+            //             $scope.dataSatuan = result.data
 
-                //         $scope.popupTransferSatuan.center().open()
-                //     })
+            //             $scope.popupTransferSatuan.center().open()
+            //         })
 
-            }
+            // }
 
             $scope.batalSatuan = function(){
                 $scope.item.keterangantransfersatuan = null

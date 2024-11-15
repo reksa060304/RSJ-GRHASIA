@@ -1241,6 +1241,7 @@ class RBAController extends ApiController
                 
 
                 $kb = new KeteranganBelanja2024();
+                // $noreckb = $kb->generateNewId();
                 $kb->norec = $kb->generateNewId();
                 $kb->statusenabled = true;
                 $kb->kdprofile = $idProfile;
@@ -1262,7 +1263,8 @@ class RBAController extends ApiController
                     DB::table('strukperencanaandetail_t')
                         ->where('norec', $norec)
                         ->update([
-                            'istransfer' => true
+                            'istransfer' => true,
+                            'objectketeranganbelanjafk' => $kb->norec
                         ]);
 
                 }
@@ -1301,7 +1303,8 @@ class RBAController extends ApiController
                     DB::table('strukperencanaandetail_t')
                         ->where('norec', $norec)
                         ->update([
-                            'istransfer' => true
+                            'istransfer' => true,
+                            'objectketeranganbelanjafk' => $kb->norec
                         ]);
 
                 }
@@ -1401,7 +1404,8 @@ class RBAController extends ApiController
                     DB::table('strukperencanaandetail_t')
                         ->where('norec', $norec)
                         ->update([
-                            'istransfer' => true
+                            'istransfer' => true,
+                            'objectketeranganbelanjafk' => $kb->norec
                         ]);
 
                 }
@@ -1443,18 +1447,28 @@ class RBAController extends ApiController
                     $kb->satuan = $dt['satuanstandar'];
                     $kb->objecttransaksifk = $ta->norec;
                     $kb->save();
-                }
 
-                // update strukperencanaan detail is transfer = true
-                foreach($details as $dt){
+
                     $norec = $dt['norec_detail'];
                     DB::table('strukperencanaandetail_t')
                         ->where('norec', $norec)
                         ->update([
-                            'istransfer' => true
+                            'istransfer' => true,
+                            'objectketeranganbelanjafk' => $kb->norec
                         ]);
-
                 }
+
+                // update strukperencanaan detail is transfer = true
+                // foreach($details as $dt){
+                //     $norec = $dt['norec_detail'];
+                //     DB::table('strukperencanaandetail_t')
+                //         ->where('norec', $norec)
+                //         ->update([
+                //             'istransfer' => true,
+                //             'objectketeranganbelanjafk' => $kb->norec
+                //         ]);
+
+                // }
             }
 
             $transStatus = true;
