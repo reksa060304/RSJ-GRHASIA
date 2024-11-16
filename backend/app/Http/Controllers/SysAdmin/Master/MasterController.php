@@ -5717,10 +5717,11 @@ class MasterController extends ApiController{
                     $prod2->norec = $prod2->generateNewId();
                     $prod2->produkfk = $prod->id;
                     $prod2->ihs_bahanzat = $item['komposisizatfk'];
-                    $prod2->qtynum =$item['numeratorvalue'];
-                    $prod2->qtydenom =$item['denominatorvalue'];
+                    $prod2->qtynum =$item['qtynum'];
+                    $prod2->qtydenom =$item['qtydenom'];
                     $prod2->denomsatuanfk = $item['denominatorfk'];
                     $prod2->numerartorsatuanfk = $item['numeratorfk'];
+                    $prod2->aktif = $item['aktif'];
                     $prod2->save();
                 }
             }

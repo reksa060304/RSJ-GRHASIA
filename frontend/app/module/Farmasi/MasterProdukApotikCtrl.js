@@ -478,11 +478,11 @@ define(['initialize'], function (initialize) {
                     "title": "Komposisi Bahan Zat",
                 },
                 {
-                    "field": "isactive",
+                    "field": "aktif",
                     "title": "Zat Aktif",
                 },
                 {
-                    "field": "numeratorvalue",
+                    "field": "qtynum",
                     "title": "Numerator Qty",
                 },
                 {
@@ -490,7 +490,7 @@ define(['initialize'], function (initialize) {
                     "title": "Numerator Satuan",
                 },
                 {
-                    "field": "denominatorvalue",
+                    "field": "qtydenom",
                     "title": "Denominator Qty",
                 },
                 {
@@ -563,11 +563,11 @@ define(['initialize'], function (initialize) {
                 dataObat = {
                     komposisizatfk: $scope.obat.zataktif.id,
                     komposisizat: $scope.obat.zataktif.nama,
-                    isactive: $scope.obat.isactive ? $scope.obat.isactive :false,
-                    numeratorvalue: $scope.obat.numeratorvalue,
+                    aktif: $scope.obat.isactive ? $scope.obat.isactive :false,
+                    qtynum: $scope.obat.numeratorvalue,
                     numerator: $scope.obat.numerator.nama,
                     numeratorfk: $scope.obat.numerator.id,
-                    denominatorvalue: $scope.obat.denominatorvalue,
+                    qtydenom: $scope.obat.denominatorvalue,
                     denominator: $scope.obat.denominator.nama,
                     denominatorfk: $scope.obat.denominator.id
                 }
@@ -577,7 +577,7 @@ define(['initialize'], function (initialize) {
                 });
 
                 $scope.obat = {
-                    isactive :true
+                    aktif :true
                 };
                 $scope.listObat = null;
             }
