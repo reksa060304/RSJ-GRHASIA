@@ -445,7 +445,7 @@ class KasirController extends ApiController
             $SP->statusenabled = true;
             $SP->nostruk = $noStruk;
         } else {
-            $SP = StrukPelayanan::where('norec', $req['norec'])->where('kprofile', $kdProfile)->first();
+            $SP = StrukPelayanan::where('norec', $req['norec'])->where('kdprofile', $kdProfile)->first();
             $DelSPD = StrukPelayananDetail::where('nostrukfk', $req['norec'])->where('kdprofile', $kdProfile)->delete();
         }
         $SP->objectkelompoktransaksifk = $req['kelompoktransaksifk'];
