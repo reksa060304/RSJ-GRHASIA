@@ -168,6 +168,16 @@ export class ViewerPoliComponent implements OnInit {
 
         //   }
         // })
+        this.apiService
+          .get(`viewer/get-data-status-pelayanan?ruangid=${ru}`)
+          .subscribe((e) => {
+            if (e && e.length > 0) {
+              const data = e[0];
+              this.item.sudahDilayani = data.sudahdilayani;
+              this.item.belumDilayani = data.belumdilayani;
+          }
+            console.log(e);
+          });
       });
     })
 

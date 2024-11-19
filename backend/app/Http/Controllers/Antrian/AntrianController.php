@@ -228,4 +228,40 @@ class AntrianController extends ApiController
         $res['data'] = $data;   
         return $this->respond($res);
     }
+
+    public function getStatusPelayanan(Request $r)
+    {
+        $awal = date('Y-m-d 00:00');
+        $akhir = date('Y-m-d 23:59');
+
+        $query = DB::table('antrianpasiendiperiksa_t as apd')
+            ->join('pasiendaftar_t as pd', 'pd.norec', '=', 'apd.noregistrasifk')
+            ->join('pasien_m as ps', 'ps.id', '=', 'pd.nocmfk')
+            ->join('ruangan_m as ru', 'ru.id', '=', 'apd.objectruanganfk')
+            ->select(
+                'ps.nocm',
+                'ps.namapasien',
+                'apd.tgldipanggildokter',
+                'apd.tgldipanggilsuster',
+                'ru.id',
+                DB::raw('SUM(CASE WHEN apd.tgldipanggildokter IS NOT NULL OR apd.tgldipanggilsuster IS NOT NULL THEN 1 ELSE 0 END) OVER () AS sudahdilayani'),
+                DB::raw('SUM(CASE WHEN apd.tgldipanggildokter IS NULL AND apd.tgldipanggilsuster IS NULL THEN 1 ELSE 0 END) OVER () AS belumdilayani')
+            )
+            ->whereBetween('pd.tglregistrasi', [$awal, $akhir])
+            ->where('pd.statusenabled', true)
+            ->where('ps.statusenabled', true)
+            ->whereIn('ru.objectdepartemenfk', [18, 24, 28, 26, 30, 34]);
+
+        // Tambahkan kondisi if untuk memeriksa apakah ada parameter ruangid
+        if ($r->has('ruangid')) {
+            $query->where('ru.id', $r->input('ruangid'));
+        }
+
+        $data = $query->get();
+
+        return $this->respond($data);
+    }
+
+
+
 }

@@ -65,6 +65,30 @@
                 </div>
             </div>
         </div>
+        <!-- <div class="p-col-12 p-lg-6 p-md-6">
+            <div class="p-grid">
+                <div class="p-col-12 p-md-12  widget-customer-carousel">
+                    <div class="card  brder text-center">
+                        <p-scrollPanel [style]="{width: '100%', height: 'calc(100vh - 430px)'}">
+                            <div class="customer-item-content">
+                                <h4 style="padding:10px;">Antrian Terakhir</h4>
+                            </div>
+                            <div class="badge-light-danger2" style=" height: calc(100vh - 600px);"
+                                [ngClass]="{'blink ' : dipanggil}">
+                                <p class="text-noakhir" style="    padding-top: calc(100% - 700px);">
+                                    {{item.antriTerakhir != undefined ? item.antriTerakhir : '-' }}
+                                </p>
+                               
+                            </div>
+                            <div class="customer-item-content" style="margin-top:10px;">
+                                <span class="text-menu">Silahkan Menuju</span>
+                                <p class="text-poliakhir">{{item.poliPanggil}}</p>
+                            </div>
+                        </p-scrollPanel>
+                    </div>
+                </div>
+            </div>
+        </div> -->
         <div class="p-col-12 p-lg-6 p-md-6">
             <div class="p-grid">
                 <div class="p-col-12 p-md-12  widget-customer-carousel">
@@ -78,14 +102,20 @@
                                 <p class="text-noakhir" style="    padding-top: calc(100% - 700px);">
                                     {{item.antriTerakhir != undefined ? item.antriTerakhir : '-' }}
                                 </p>
-                                <!-- <div class="div-text">
-                                    <span class="text-namapasien"> {{item.namapasien}}</span>
-                                </div> -->
                             </div>
                             <div class="customer-item-content" style="margin-top:10px;">
                                 <span class="text-menu">Silahkan Menuju</span>
                                 <p class="text-poliakhir">{{item.poliPanggil}}</p>
                             </div>
+                            <br>
+                            <div>
+                                <span class="badge badge-success" style="font-size: 18px; padding: 10px;">
+                                    Sudah Dilayani: {{item.sudahDilayani || 0}}
+                                </span>
+                                <span class="badge badge-danger" style="margin-left: 10px; font-size: 18px; padding: 10px;">
+                                    Belum Dilayani: {{item.belumDilayani || 0}}
+                                </span>
+                            </div>                            
                         </p-scrollPanel>
                     </div>
                 </div>
@@ -269,3 +299,19 @@
         </p-button>
     </ng-template>
 </p-dialog>
+<style>
+.badge-success {
+    background-color: #28a745;
+    color: #fff;
+    padding: 5px 10px;
+    border-radius: 5px;
+}
+
+.badge-danger {
+    background-color: #dc3545;
+    color: #fff;
+    padding: 5px 10px;
+    border-radius: 5px;
+}
+
+</style>
