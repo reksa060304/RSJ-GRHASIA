@@ -493,8 +493,8 @@ class KasirController extends ApiController
             $SPD->is_terbayar = 0;
             $SPD->linetotal = 0;
             $SPD->keteranganlainnya = $item['keterangan'];         
-            $SPD->nopolisifk = $req['nopolisi'];
-            $SPD->jeniskegiatanambulanfk = $req['jeniskegiatan'];
+            $SPD->nopolisifk = $req['nopolisi'] ?? null;
+            $SPD->jeniskegiatanambulanfk = $req['jeniskegiatan'] ?? null;
             $SPD->save();
         }
 
