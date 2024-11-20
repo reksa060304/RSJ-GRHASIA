@@ -574,21 +574,24 @@ class KasirController extends ApiController
         $totalBilling = 0;
         $totalKlaim = 0;
         $detailTagihan = array();
-        foreach ($strukPelayananDetail as $value) {
-            $totalBilling = $totalBilling + ($value->harganetto * $value->qtyproduk);
-            $totalKlaim = $totalKlaim + ($value->hargasatuanppenjamin * $value->qtyproduk);
-            $detailTagihan[] = array(
-                'namaLayanan'  => @$value->produk->namaproduk,
-                'namaproduk' => @$value->produk->namaproduk,
-                'id' => @$value->produk->id,
-                'jumlah'  => $value->qtyproduk,
-                'qtyoranglast' => $value->qtyoranglast,
-                'harga'  => $value->hargasatuan,
-                'jasa' => $value->hargatambahan,
-                'total'  => $value->hargasatuan * $value->qtyproduk,
-                'totalK'  => (($value->hargasatuan * $value->qtyoranglast) * $value->qtyproduk) + $value->hargatambahan,
-                'keterangan' => $value->keteranganlainnya,
-            );
+        if (is_array($strukPelayananDetail) || is_object($strukPelayananDetail))
+        {
+            foreach ($strukPelayananDetail as $value) {
+                $totalBilling = $totalBilling + ($value->harganetto * $value->qtyproduk);
+                $totalKlaim = $totalKlaim + ($value->hargasatuanppenjamin * $value->qtyproduk);
+                $detailTagihan[] = array(
+                    'namaLayanan'  => @$value->produk->namaproduk,
+                    'namaproduk' => @$value->produk->namaproduk,
+                    'id' => @$value->produk->id,
+                    'jumlah'  => $value->qtyproduk,
+                    'qtyoranglast' => $value->qtyoranglast,
+                    'harga'  => $value->hargasatuan,
+                    'jasa' => $value->hargatambahan,
+                    'total'  => $value->hargasatuan * $value->qtyproduk,
+                    'totalK'  => (($value->hargasatuan * $value->qtyoranglast) * $value->qtyproduk) + $value->hargatambahan,
+                    'keterangan' => $value->keteranganlainnya,
+                );
+            }
         }
         $totalBayar = $totalBilling - $totalKlaim;
         $result = array(
