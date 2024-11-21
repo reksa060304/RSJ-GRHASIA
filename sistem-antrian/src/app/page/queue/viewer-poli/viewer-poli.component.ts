@@ -217,7 +217,7 @@ export class ViewerPoliComponent implements OnInit {
             //+ '. ' + this.item.nama
             + '. Ke Ruang. ' + this.item.poliPanggil);
         } else {
-          this.playAudio('Nomor Antrian ' + Terbilang(this.item.antriTerakhir) + '. Ke Ruang. ' + this.item.poliPanggil);
+          this.playAudio('Nomor Antrian ' + Terbilang(this.item.antriTerakhir) + '. Silahkan Ke. ' + this.item.poliPanggil);
         }
 
       }
