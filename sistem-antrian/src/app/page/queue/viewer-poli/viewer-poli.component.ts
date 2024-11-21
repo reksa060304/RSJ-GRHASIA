@@ -262,6 +262,9 @@ export class ViewerPoliComponent implements OnInit {
     //   }
     // }
 
+    // Panggil fungsi untuk memulai interval load data
+    this.setupPeriodicLoad();
+
   }
   setNumberStr(nomer) {
     var str = "" + nomer
@@ -292,6 +295,34 @@ export class ViewerPoliComponent implements OnInit {
     //   }
     // })
   }
+
+  setupPeriodicLoad() {
+    // Langsung memanggil API di awal
+    this.loadDataStatusPelayanan();
+
+    // Interval untuk memuat data setiap 3 detik
+    setInterval(() => {
+      this.loadDataStatusPelayanan();
+        // }, 3000); // 3000 ms = 3 detik
+        // }, 120000); // 120000 ms = 2 menit
+    }, 30000); // 30000 ms = 30 detik
+  }
+
+  loadDataStatusPelayanan() {
+    if (this.paramRuang === undefined) return;
+
+    this.apiService
+      .get(`viewer/get-data-status-pelayanan?ruangid=${this.paramRuang}`)
+      .subscribe((e) => {
+        if (e && e.length > 0) {
+          const data = e[0];
+          this.item.sudahDilayani = data.sudahdilayani;
+          this.item.belumDilayani = data.belumdilayani;
+        }
+        console.log(e);
+      });
+  }
+
   replaceGelar(nomor: string) : string {
     return nomor.
     replace(/\.M/g, ' .M').
