@@ -7983,6 +7983,7 @@ order by  split_part(kode, '.', 1)asc, split_part(kode, '.', 2)asc,  split_part(
                 WHERE
                     sr.statusenabled = TRUE
                     AND sr.kdprofile = 30
+                    AND ka.tahun = '".$request['tahun']."'
                     AND sr.objectkegiatanfk IN (".implode(',', $arrIdKegiatan).")
                     AND sr.objectmataanggaranfk = ".$item->objectmataanggaranfk."
                     AND sr.objectasalprodukfk = ".$item->objectasalprodukfk."
@@ -7993,9 +7994,12 @@ order by  split_part(kode, '.', 1)asc, split_part(kode, '.', 2)asc,  split_part(
                     ap.id
             "));
 
-            foreach($spj as $itemspj){
-                $item->jumlahspj = $itemspj->totalspj;
+            if(count($spj) > 0){
+                foreach($spj as $itemspj){
+                    $item->jumlahspj = $itemspj->totalspj;
+                }
             }
+
 
         }
 

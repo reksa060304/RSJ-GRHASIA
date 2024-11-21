@@ -5719,7 +5719,10 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
                             $scope.item.id = $scope.item.id
                         }
 
-                        medifirstService.get("perencanaan/get-keterangan-belanja?objectkegiatanfk=" + $scope.item.id + "&idmataanggaran=" + $scope.rcn.idmataanggaran).then(function (e) {
+                        medifirstService.get("perencanaan/get-keterangan-belanja" 
+                            + "?objectkegiatanfk=" + $scope.item.id 
+                            + "&idmataanggaran=" + $scope.rcn.idmataanggaran
+                            + "&tahun=" + moment($scope.item.tahun).format('YYYY')).then(function (e) {
                             DataKeteranganBelanja = e.data.data
                             $scope.dataSourceRincianAnggaran = new kendo.data.DataSource({
                                 data: DataKeteranganBelanja
@@ -5973,7 +5976,10 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
                                 $scope.item.id = $scope.item.id
                             }
 
-                            medifirstService.get("perencanaan/get-keterangan-belanja?objectkegiatanfk=" + $scope.item.id + "&idmataanggaran=" + $scope.rcn.idmataanggaran).then(function (e) {
+                            medifirstService.get("perencanaan/get-keterangan-belanja" 
+                                + "?objectkegiatanfk=" + $scope.item.id 
+                                + "&idmataanggaran=" + $scope.rcn.idmataanggaran
+                                + "&tahun=" + moment($scope.item.tahun).format('YYYY')).then(function (e) {
                                 DataKeteranganBelanja = e.data.data
                                 $scope.dataSourceRincianAnggaran = new kendo.data.DataSource({
                                     data: DataKeteranganBelanja
@@ -6411,7 +6417,10 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
                     }
 
                     let TotalAnggaran = 0;
-                    medifirstService.get("perencanaan/get-keterangan-belanja?objectkegiatanfk=" + $scope.item.id+"&idmataanggaran="+$scope.rcn.idmataanggaran).then(function (e) {
+                    medifirstService.get("perencanaan/get-keterangan-belanja" 
+                        + "?objectkegiatanfk=" + $scope.item.id 
+                        + "&idmataanggaran=" + $scope.rcn.idmataanggaran
+                        + "&tahun=" + moment($scope.item.tahun).format('YYYY')).then(function (e) {
                         DataKeteranganBelanja = e.data.data
                         $scope.dataSourceRincianAnggaran = new kendo.data.DataSource({
                             data: DataKeteranganBelanja
@@ -6499,7 +6508,10 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
                                 $scope.item.id = $scope.item.id
                             }
                             let TotalAnggaran = 0;
-                            medifirstService.get("perencanaan/get-keterangan-belanja?objectkegiatanfk=" + $scope.item.id+"&idmataanggaran="+$scope.rcn.idmataanggaran).then(function (e) {
+                            medifirstService.get("perencanaan/get-keterangan-belanja" 
+                                + "?objectkegiatanfk=" + $scope.item.id 
+                                + "&idmataanggaran="+$scope.rcn.idmataanggaran
+                                + "&tahun=" + moment($scope.item.tahun).format('YYYY')).then(function (e) {
                                 DataKeteranganBelanja = e.data.data
                                 $scope.dataSourceRincianAnggaran = new kendo.data.DataSource({
                                     data: DataKeteranganBelanja
@@ -6586,7 +6598,10 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
                 } else{
                     $scope.item.id = $scope.item.id
                 }
-                medifirstService.get("perencanaan/get-keterangan-belanja?objectkegiatanfk=" + $scope.item.id+"&idmataanggaran="+$scope.rcn.idmataanggaran).then(function (e) {
+                medifirstService.get("perencanaan/get-keterangan-belanja" 
+                    + "?objectkegiatanfk=" + $scope.item.id 
+                    + "&idmataanggaran="+$scope.rcn.idmataanggaran 
+                    + "&tahun=" + moment($scope.item.tahun).format('YYYY')).then(function (e) {
                     DataKeteranganBelanja = e.data.data
                     $scope.item.noUrutKT = DataKeteranganBelanja[DataKeteranganBelanja.length-1].nourut + 1
                 })
