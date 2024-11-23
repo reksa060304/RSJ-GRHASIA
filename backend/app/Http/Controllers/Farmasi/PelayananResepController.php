@@ -479,7 +479,8 @@ class PelayananResepController extends ApiController
                     ->update([
                         'statusorder'=>null,
                         'namapengambilorder'=>null,
-                        'tglambilorder'=>null
+                        'tglambilorder'=>null,
+                        'petugasverif'=> null,
                     ]);
                 $antrianApotik = AntrianApotik::where('noresep',$newSR->noresep)->where('kdprofile', $idProfile)->delete();
             }
