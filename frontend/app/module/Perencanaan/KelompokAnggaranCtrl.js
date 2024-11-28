@@ -6857,18 +6857,35 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
                         });
                     });
 
-                    medifirstService.get("perencanaan/get-daftar-panjar-dipilih?norecspj="+$scope.norecspj
-                    , true).then(function (dat) {
-                        $scope.isRouteLoading = false;
-                        var datas = dat.data.data
-                        //console.log(datas)
-                        for(var i = 0; i < dat.data.data.length; i++){
-                            dat.data.data[i].no = i+1
-                        }
+                    // jika tidak ada norec 
+                    if($scope.norecspj !== undefined && $scope.norecspj !== null && $scope.norecspj !== ''){
+                        medifirstService.get("perencanaan/get-daftar-panjar-dipilih?norecspj="+$scope.norecspj
+                        , true).then(function (dat) {
+                            $scope.isRouteLoading = false;
+                            var datas = dat.data.data
+                            //console.log(datas)
+                            for(var i = 0; i < dat.data.data.length; i++){
+                                dat.data.data[i].no = i+1
+                            }
+                            $scope.dataSourcePanjarDipilih = new kendo.data.DataSource({
+                                data: datas,
+                                pageSize: 150,
+                                total: datas.length,
+                                serverPaging: false, 
+                                schema: {
+                                    model: {
+                                        fields: {
+                                        }
+                                    }
+                                },
+                            });
+                            
+                        });
+                    }else{
                         $scope.dataSourcePanjarDipilih = new kendo.data.DataSource({
-                            data: datas,
+                            data: $scope.selectedData2,
                             pageSize: 150,
-                            total: datas.length,
+                            total: $scope.selectedData2.length,
                             serverPaging: false, 
                             schema: {
                                 model: {
@@ -6877,8 +6894,8 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
                                 }
                             },
                         });
-                        
-                    });
+                    }
+
 
                 $scope.popupPanjarAktif.center().open()
             }
@@ -7899,6 +7916,12 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
                 medifirstService.get("reservasionline/get-daftar-slotting?id=1").then(function (e) {
 
 				})
+
+                // cek jika sudah ada panjar yang sudah dipilih maka tidak bisa milih panjar lagi
+                if($scope.dataSourcePanjarDipilih.options.data.length > 0){
+                    toastr.error('Sudah ada panjar yang dipilih')
+                    return
+                }
 
                 // console.log($scope.selectedData2)
                 // console.log($scope.dataSourcePanjarDipilih.options.data.length)

@@ -1053,9 +1053,9 @@
                         $totalpajakpenerimaan_bulanlalu = 0;
                         $totalpajakpenerimaan_bulanini = 0;
                         
-                        foreach ($pajakpenerimaan as $pjpen) {
-                            $totalpajakpenerimaan_bulanlalu += $pjpen->total_belanja_bulan_lalu;
-                            $totalpajakpenerimaan_bulanini += $pjpen->total_belanja_bulan_ini;
+                        foreach ($pajak as $pjpen) {
+                            $totalpajakpenerimaan_bulanlalu += $pjpen->penerimaan_bulan_lalu;
+                            $totalpajakpenerimaan_bulanini += $pjpen->penerimaan_bulan_ini;
                         }
                     @endphp
                     <td colspan="2" style="padding-left:1.5cm; border: none; border-left: 1px solid black;"> - Potongan pajak:</td>
@@ -1065,13 +1065,13 @@
                     <td style="border: none; text-align: right;">{{ number_format($totalpajakpenerimaan_bulanlalu + $totalpajakpenerimaan_bulanini,2,'.',',') }}</td>
                     <td colspan="3" style="border:none; border-right: 1px solid black;"></td>
                 </tr>
-                @foreach ($pajakpenerimaan as $pjpen)
+                @foreach ($pajak as $pjpen)
                     <tr>
                         <td colspan="2" style="padding-left:2cm; border: none; border-left: 1px solid black;"> - {{ $pjpen->namaexternal }}:</td>
                         <td style="border: none;"></td>
-                        <td style="border: none; text-align: right;">{{ number_format($pjpen->total_belanja_bulan_lalu,2,'.',',') }}</td>
-                        <td style="border: none; text-align: right;">{{ number_format($pjpen->total_belanja_bulan_ini,2,'.',',') }}</td>
-                        <td style="border: none; text-align: right;">{{ number_format($pjpen->total_belanja_bulan_lalu + $pjpen->total_belanja_bulan_ini,2,'.',',') }}</td>
+                        <td style="border: none; text-align: right;">{{ number_format($pjpen->penerimaan_bulan_lalu,2,'.',',') }}</td>
+                        <td style="border: none; text-align: right;">{{ number_format($pjpen->penerimaan_bulan_ini,2,'.',',') }}</td>
+                        <td style="border: none; text-align: right;">{{ number_format($pjpen->penerimaan_bulan_lalu + $pjpen->penerimaan_bulan_ini,2,'.',',') }}</td>
                         <td colspan="3" style="border:none; border-right: 1px solid black;"></td>
                     </tr>
                 @endforeach
@@ -1156,9 +1156,9 @@
                         $totalpajakpengeluaran_bulanlalu = 0;
                         $totalpajakpengeluaran_bulanini = 0;
                         
-                        foreach ($pajakpengeluaran as $pjpeng) {
-                            $totalpajakpengeluaran_bulanlalu += $pjpeng->total_belanja_bulan_lalu;
-                            $totalpajakpengeluaran_bulanini += $pjpeng->total_belanja_bulan_ini;
+                        foreach ($pajak as $pjpeng) {
+                            $totalpajakpengeluaran_bulanlalu += $pjpeng->pengeluaran_bulan_lalu;
+                            $totalpajakpengeluaran_bulanini += $pjpeng->pengeluaran_bulan_ini;
                         }
                     @endphp
 
@@ -1169,13 +1169,13 @@
                     <td style="border: none; text-align: right;">{{ number_format($totalpajakpengeluaran_bulanlalu + $totalpajakpengeluaran_bulanini,2,'.',',') }}</td>
                     <td colspan="3" style="border:none; border-right: 1px solid black;"></td>
                 </tr>
-                @foreach ($pajakpengeluaran as $pjpeng)
+                @foreach ($pajak as $pjpeng)
                     <tr>
                         <td colspan="2" style="padding-left:2cm; border: none; border-left: 1px solid black;"> - {{ $pjpeng->namaexternal }}:</td>
                         <td style="border: none;"></td>
-                        <td style="border: none; text-align: right;">{{ number_format($pjpeng->total_belanja_bulan_lalu,2,'.',',') }}</td>
-                        <td style="border: none; text-align: right;">{{ number_format($pjpeng->total_belanja_bulan_ini,2,'.',',') }}</td>
-                        <td style="border: none; text-align: right;">{{ number_format($pjpeng->total_belanja_bulan_lalu + $pjpeng->total_belanja_bulan_ini,2,'.',',') }}</td>
+                        <td style="border: none; text-align: right;">{{ number_format($pjpeng->pengeluaran_bulan_lalu,2,'.',',') }}</td>
+                        <td style="border: none; text-align: right;">{{ number_format($pjpeng->pengeluaran_bulan_ini,2,'.',',') }}</td>
+                        <td style="border: none; text-align: right;">{{ number_format($pjpeng->pengeluaran_bulan_lalu + $pjpeng->pengeluaran_bulan_ini,2,'.',',') }}</td>
                         <td colspan="3" style="border:none; border-right: 1px solid black;"></td>
                     </tr>
                 @endforeach
