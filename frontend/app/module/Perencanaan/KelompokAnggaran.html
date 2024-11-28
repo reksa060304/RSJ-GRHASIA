@@ -2182,7 +2182,7 @@
 					</md-radio-group>
 				</div>
 				<div class="grid_3" style="margin-top: -10px;" >
-					<input c-text-box type="input" class="k-textbox" ng-model="item.panjar" ng-hide="dispanjar" />
+					<input c-text-box type="input" class="k-textbox" ng-model="item.panjar" ng-disabled="!dispanjar" ng-hide="dispanjar" />
 				</div>
 				<div ng-if="disidpegawai === false" class="grid_1" style="margin-top: -10px;">
 					<button class="btnTemplate1" ng-click="TambahPanjar()" ng-hide="dispanjar">Add</button>
