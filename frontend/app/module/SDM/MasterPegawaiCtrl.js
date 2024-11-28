@@ -27,6 +27,7 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
 			$scope.item.masakerjatambahan = 0;
 			$scope.item.masakerjatambahantahun = 0;
 			$scope.item.masakerjatambahanbulan = 0;
+			$scope.item.image = "../app/images/avatar.jpg"
 			$scope.now = new Date();
 			var dataKeluarga = [];
 			var dataPegawai = [];
@@ -261,7 +262,21 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
 							var dataCacheCuti = dataCache.datacuti;
 							var dataCacheGajiBerkala = dataCache.datagajiberkala;
 							var dataCachegajiBerkala = dataCache.gajiBerkala
+							var dataCachePhoto = dataCache.photo;
 							// Data Pegawai
+
+							if(dataCachePhoto != null){
+								// $scope.item.image = `public/${dataCachePhoto.namafile}`
+								var sigCanvas = document.getElementById('photo');
+								var context = sigCanvas.getContext("2d");
+								context.clearRect(0, 0, sigCanvas.width, sigCanvas.height);
+								var imagess = dataCachePhoto
+								var background = new Image();
+								background.src = imagess
+								background.onload = function () {
+									context.drawImage(background, 0, 0, 200, 250);
+								}
+							}
 							
 							if (dataCachePegawai.noskcpns != null) {
 								$scope.item.noskcpns = dataCachePegawai.noskcpns
@@ -5346,6 +5361,72 @@ $scope.formatRupiah = function (value, currency) {
 
 				})
 			})
+
+			// UPLOAD FOTO PEGAWAI
+			$scope.TutupPopUp = function () {
+                if ($scope.urlImage != undefined)
+                    $scope.item.image = "../app/images/avatar.jpg"
+                $scope.urlImage = undefined
+                $scope.popUpUpload.close()
+            }
+
+			$scope.showPopUp = function () {
+                $scope.popUpUpload.center().open()
+            }
+
+			$scope.UploadPhoto = function () {
+				const file = document.querySelector("#photo-pegawai").files[0]
+
+                if (file != undefined) {
+                    // saveImageToDirsaveImageToDir($scope.urlImage,'0182781')
+                    // $scope.item.image = $scope.urlImage
+
+					var objSave = {
+						"norec": '',
+						"idPegawai": $scope.item.idPegawai
+					}
+	
+					const url = baseTransaksi + 'sdm/upload-photo-pegawai'
+					const formData = new FormData()
+					if (file == "" || file == undefined) {
+						toastr.error('Silahkan Upload File Sertifikat')
+						return;
+					}
+					if (file.size > 3145728 || file.type != "image/jpeg" && file.type != "image/png") {
+						toastr.error('Maksumum Ukuran File adalah 3 MB dalam Format Image')
+						return;
+					}
+					formData.append('file', file)
+					formData.append('norec', objSave.norec)
+					formData.append('idPegawai', objSave.idPegawai)
+					var arr = document.cookie.split(';')
+					var authorization;
+					for (var i = 0; i < arr.length; i++) {
+						var element = arr[i].split('=');
+						if (element[0].indexOf('authorization') > 0) {
+							authorization = element[1];
+						}
+					}
+					fetch(url, {
+						method: 'POST',
+						body: formData,
+						headers: {
+							'X-AUTH-TOKEN': authorization
+						}
+					}).then(response => {
+						toastr.info("Simpan Photo berhasil");
+						$scope.loadDataSertifikat()
+						$scope.batalSertifikat()
+					}).catch((err) => {
+						toastr.error("Simpan Photo gagal");
+					})
+
+                    $scope.popUpUpload.close()
+                } else {
+                    toastr.info('Gambar belum di pilih')
+                    return
+                }
+            }
 			
 			//* BATAS SUCI *//			
 		}

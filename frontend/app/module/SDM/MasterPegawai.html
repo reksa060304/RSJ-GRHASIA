@@ -3,6 +3,57 @@
 	/* input[type="text"]::placeholder {
 	text-align: right;
 	} */
+
+	label[required]:after {
+        content: ' *';
+        color: red;
+    }
+
+    .carousel-inner>.item>a>img,
+    .carousel-inner>.item>img,
+    .img-responsive,
+    .thumbnail a>img,
+    .thumbnail>img {
+        display: block;
+        max-width: 80%;
+        height: auto;
+    }
+
+    img {
+        vertical-align: middle;
+    }
+
+    img {
+        border: 0;
+    }
+
+    .photo-pasien {
+        /* display: inline-block; */
+        width: 100%;
+        height: auto;
+        border-radius: 50%;
+        /* background-size: 32px 35px; */
+        /* background-position: center center; */
+        vertical-align: middle;
+    }
+
+    html .k-upload {
+        position: relative;
+        background-color: #ffffff;
+        border: 1px solid #777777;
+    }
+
+    .k-upload-selected {
+        display: none;
+        margin-left: .8em;
+        margin-right: .2em;
+    }
+
+	fieldset {
+        border: 1px solid #c8c8c8;
+        background-color: #ffffff;
+        color: #333333;
+    }
 </style>
 <div class="grid_12">
 	<div class="panel panel-default container_12" style="background-color:transparant">
@@ -475,6 +526,32 @@
 										</div>
 									</div>
 									
+								</div>
+							</div>
+						</div>
+					</div>
+					<div class="grid_12" style="margin-top: 16px">
+						<div class="panel panel-default panel-white">
+							<div class="panel-heading-white"><span class="title" c-translate>Photo</span></div>
+							<div class="panel-body">
+								<div class="grid_12">
+									<div class="grid_3">
+										
+										<fieldset class="effect-shadow"
+											style="border-radius: 10px;margin-top:20px; cursor: pointer;">
+											<div class="profile_img" ng-click="showPopUp()">
+												<div id="crop-avatar" style="padding-right: 15px">
+													<canvas src="{{item.image}}" id="photo" width="200px" height="250px"></canvas>
+													<!-- <img style="margin-left: 30px;margin-top: 5px;   
+													width: 250px;
+													height: 200px;
+													object-fit: contain;" class="img-responsive avatar-view"
+														src="{{item.image}}" alt="Avatar" title="Ubah avatar"> -->
+												</div>
+											</div>
+										</fieldset>
+										
+									</div>
 								</div>
 							</div>
 						</div>
@@ -2817,6 +2894,27 @@
 
 					</md-content>
 				</md-tab>
+
+				<div kendo-window="popUpUpload" k-title="'Upload '" k-width="500" k-visible="false"
+					k-on-open="win2visible = true" k-on-close="win2visible = false">
+					<div class="panel panel-default container_12" style="padding: 0px 10px;">
+						<div class="grid_12">
+							<input type="file" id="photo-pegawai">
+						</div>
+
+
+						<div class="grid_12">
+
+							<div class="k-edit-buttons  k-state-default pull-right" style="margin-top:10px">
+								<button class="k-button  k-button-icontext" ng-click="UploadPhoto()"><i
+										class="fa fa-upload"></i> &nbsp; Upload</button>
+								<button class="k-button  k-button-icontext" ng-click="TutupPopUp()"><i
+										class="fa fa-times-circle"></i>&nbsp;Tutup</button>
+							</div>
+						</div>
+
+					</div>
+				</div>
 
 				<!-- <md-tab label="Login User">
 					<md-content class="md-padding">

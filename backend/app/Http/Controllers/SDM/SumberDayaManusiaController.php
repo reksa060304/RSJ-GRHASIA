@@ -8,70 +8,71 @@
  */
 
 namespace App\Http\Controllers\SDM;
-use App\Master\JamKerja;
-use App\Master\Paket;
+use DB;
+use Response;
+use Carbon\Carbon;
 use App\Master\Agama;
-use App\Master\DiklatJurusan;
-use App\Master\DiklatKategory;
+use App\Master\Paket;
+use App\Traits\Valet;
 use App\Master\Eselon;
-use App\Master\GolonganPegawai;
-use App\Master\HubunganKeluarga;
 use App\Master\Jabatan;
+use App\Master\Pegawai;
+use App\Master\Ruangan;
+use App\Master\JamKerja;
+use Webpatser\Uuid\Uuid;
+use App\Master\Pekerjaan;
+use App\Master\Pendidikan;
+use App\Master\ShiftKerja;
+use App\Master\Tanggungan;
 use App\Master\JenisJabatan;
 use App\Master\JenisKelamin;
 use App\Master\JenisPegawai;
+use App\Master\KelompokUser;
+use App\Master\SdmKedudukan;
+use App\Master\SubUnitKerja;
+use Illuminate\Http\Request;
+use App\Master\DiklatJurusan;
 use App\Master\JenisProvider;
-use App\Master\JurusanPeminatan;
+use App\Master\SdmShiftKerja;
+use App\Master\StatusPegawai;
+use App\Transaksi\ABKPegawai;
+use App\Master\DiklatKategory;
+use App\Master\SuratKeputusan;
+use App\Transaksi\LoggingUser;
+use App\Master\GolonganPegawai;
 use App\Master\KategoryPegawai;
 use App\Master\KelompokJabatan;
-use App\Master\KelompokUser;
 use App\Master\KeluargaPegawai;
-use App\Master\Pegawai;
-use App\Master\PegawaiJadwalKerja;
-use App\Master\Pekerjaan;
-use App\Master\Pendidikan;
-use App\Master\Ruangan;
-use App\Master\SdmKedudukan;
-use App\Master\SdmShiftKerja;
-use App\Master\SettingDataFixed;
-use App\Master\ShiftKerja;
-use App\Master\StatusPegawai;
-use App\Master\StatuspPerkawinanPegawai;
-use App\Master\SubUnitKerja;
-use App\Master\SuratKeputusan;
-use App\Master\Tanggungan;
-use App\Master\UnitKerjaPegawai;
-use App\Transaksi\KegiatanPendidikan;
-use App\Transaksi\ListTanggalCuti;
-use App\Transaksi\MasaBerlakuSipStr;
-use App\Transaksi\NomorTelphonePegawai;
-use App\Transaksi\PesertaDidik;
-use App\Transaksi\PlanningPegawaiStatus;
-use App\Transaksi\RiwayatJabatan;
-use App\Transaksi\RiwayatPelatihan;
-use App\Transaksi\RiwayatPendidikan;
 use App\Transaksi\KomponenGaji;
-use App\Transaksi\KomponenGajiPegawai;
+use App\Transaksi\PesertaDidik;
+use App\Transaksi\PhotoPegawai;
 use App\Transaksi\StrukClosing;
 use App\Transaksi\StrukHistori;
-use App\Transaksi\DetailGajiPegawai;
-use App\Transaksi\SDM_AbsensiPegawai;
+use App\Master\HubunganKeluarga;
+use App\Master\JurusanPeminatan;
+use App\Master\MapPegawaiToUnit;
+use App\Master\SettingDataFixed;
+use App\Master\UnitKerjaPegawai;
+use App\Transaksi\RiwayatJabatan;
 use App\Transaksi\TenagaPengajar;
+use App\Master\PegawaiJadwalKerja;
+use App\Transaksi\ListTanggalCuti;
+use App\Transaksi\RiwayatPelatihan;
+use App\Transaksi\DetailGajiPegawai;
+use App\Transaksi\MasaBerlakuSipStr;
+use App\Transaksi\PendidikanPegawai;
+use App\Transaksi\RiwayatPendidikan;
 use App\Transaksi\JadwalKerjaPegawai;
+use App\Transaksi\KegiatanPendidikan;
+use App\Transaksi\SDM_AbsensiPegawai;
+use App\Transaksi\KomponenGajiPegawai;
+use App\Http\Controllers\ApiController;
+use App\Transaksi\NomorTelphonePegawai;
+use Illuminate\Support\Facades\Storage;
+use App\Master\StatuspPerkawinanPegawai;
+use App\Transaksi\PlanningPegawaiStatus;
 use App\Transaksi\StrukBuktiPengeluaran;
 use App\Transaksi\StrukBuktiPengeluaranCaraBayar;
-use App\Transaksi\PendidikanPegawai;
-use App\Transaksi\ABKPegawai;
-use Illuminate\Http\Request;
-use DB;
-use App\Transaksi\LoggingUser;
-use Illuminate\Support\Facades\Storage;
-use Response;
-use App\Http\Controllers\ApiController;
-use App\Traits\Valet;
-use Carbon\Carbon;
-use App\Master\MapPegawaiToUnit;
-use Webpatser\Uuid\Uuid;
 
 class SumberDayaManusiaController extends ApiController {
 
@@ -766,6 +767,18 @@ class SumberDayaManusiaController extends ApiController {
         $gajiBerkala = \DB::select(DB::raw("SELECT distinct gol.id, case when gol.ispppk = true then gol.name else gol.namaexternal || ',  ' ||  gol.name end as golongan, rg.nominal, gol.level FROM riwayatgolongan_t rg inner join sdm_golongan_m gol on gol.id = rg.objectgolonganfk
         where rg.objectpegawaifk = $request[idPegawai]
         "));
+
+$dataPhoto = \DB::table('photopegawai_m')
+->selectRaw('CONCAT(pathfile, CAST(filename AS VARCHAR)) as namafile')
+->where('pegawaifk', $request['idPegawai'])
+->first();
+
+if($dataPhoto != null){
+$photoAja = public_path($dataPhoto->namafile);
+$dataPhotoPegawai = 'data:image/png;base64,'.base64_encode(file_get_contents($photoAja));
+}
+
+
         $result = array(
             'datapegawai' => $data,
             'datakeluarga' => $dataKeluarga,
@@ -783,6 +796,7 @@ class SumberDayaManusiaController extends ApiController {
 			'gajiBerkala'=> $gajiBerkala,
 			'datacutiawal'=> $datacutiawal,
             'datagajiberkala'=> $dataRiwayatGajiBerkala,
+            'photo' => $dataPhoto == null ? '' : $dataPhotoPegawai,
             "createby : " => 'ea@epic',
         );
         return $this->respond($result);
@@ -8217,5 +8231,106 @@ where pg.kdprofile = 30 and pg.statusenabled = true and pg.usereksternal is null
 
         return $this->respond($data);
     }
+
+    public function simpanPhotoPegawai(Request $request){
+        \DB::beginTransaction();
+       $kdProfile = (int) $this->getDataKdProfile($request);
+       $FilePath = 'SDM/PhotoPegawai/';
+       try {
+           if (empty($request['norec']) || $request['norec'] == ""){
+               $dataSaveSipStr = new PhotoPegawai();
+               $dataSaveSipStr->kdprofile = $kdProfile;
+               $dataSaveSipStr->statusenabled=true;
+               $dataSaveSipStr->norec = $dataSaveSipStr->generateNewId();
+
+           }else{
+               $dataSaveSipStr = PhotoPegawai::where('norec', $request['norec'])
+                   ->where('kdprofile',$kdProfile)
+                   ->where('pegawaifk',$request['idPegawai'])
+                   ->first();
+           }
+
+//            if ($request['jenismasaberlakufk'] == 1){
+//                $filename = 'SIP-'.$request['idPegawai'].'.'.$extension;
+//            }elseif ($request['jenismasaberlakufk'] == 2) {
+//                $filename = 'STR-'.$request['idPegawai'].'.'.$extension;
+//            }
+//
+//            Storage::disk('local')->put('SDM/FileSipStr/'.$filename,file_get_contents($request->file('file')));
+//            // $path = $uploadedFile->move('photos',$filename);
+//
+//            $dataSaveSipStr->pegawaifk=$request['idPegawai'];
+//            $dataSaveSipStr->jenismasaberlakufk=$request['jenismasaberlakufk'];
+//            $dataSaveSipStr->nomor =$request['nomorSurat'];
+//            $dataSaveSipStr->tglberakhir = $request['tglBerakhir'];
+//            $dataSaveSipStr->namafileupload = $filename;
+
+           $uploadedFileSip = $request->file('file');
+        //    $uploadedFileStr = $request->file('filestr');
+           $pegawai = Pegawai::where('id',$request['idPegawai'])->first();
+        //    if(!empty($uploadedFileSip)){
+            $extensionSip = $uploadedFileSip->getClientOriginalExtension();
+            $filenameSip = 'Photo_'.$pegawai->namalengkap.'_'.$request['idPegawai'].'.'.$extensionSip;
+
+//                Storage::disk('local')->put('SDM/FileSipStr/'.$filenameSip,file_get_contents($request->file('filesip')));
+            // $dataSaveSipStr->namafilesip = $filenameSip;
+        //    }
+//            if(!empty($uploadedFileStr)){
+//                $extensionStr = $uploadedFileStr->getClientOriginalExtension();
+//                $filenameStr = 'STR-' .$pegawai->namalengkap . '.' . $extensionStr;
+// //                Storage::disk('local')->put('SDM/FileSipStr/'.$filenameStr,file_get_contents($request->file('filestr')));
+//                $dataSaveSipStr->namafilestr =$filenameStr;
+//            }
+
+           $dataSaveSipStr->pegawaifk=$request['idPegawai'];
+           $dataSaveSipStr->filename =$filenameSip;
+           $dataSaveSipStr->pathfile =$FilePath;
+           $norec =  $dataSaveSipStr->norec ;
+           if(!empty($uploadedFileSip)) {
+               $request->file('file')->move($FilePath,
+                   $filenameSip);
+           }
+           $dataSaveSipStr->save();
+           // return $request['nomorsip'];
+        //    $update= Pegawai::where('id',trim($request['idPegawai']))
+        //        ->update([
+        //            'nosip' => $request['nomorsip'],
+        //            'nostr' => $request['nomorstr']
+        //        ]);
+
+           
+        //    if(!empty($uploadedFileStr)) {
+        //        $request->file('filestr')->move('SDM/FileSipStr/'.$norec,
+        //            $filenameStr);
+        //    }
+
+
+           $transStatus = 'true';
+       } catch (\Exception $e) {
+           $transStatus = 'false';
+       }
+
+       if ($transStatus = 'true') {
+           $transMessage = "Sukses ";
+           \DB::commit();
+           $result = array(
+               "status" => 201,
+               "data" => $dataSaveSipStr,
+               "as" => 'kade',
+               "by" => 'kk@epic',
+           );
+       } else {
+           $transMessage = "Simpan Foto Gagal";
+           DB::rollBack();
+           $result = array(
+               "status" => 400,
+               "as" => 'kade',
+               "by" => 'kk@epic',
+           );
+       }
+
+       return $this->setStatusCode($result['status'])->respond($result, $transMessage);
+   }
+
 
 }

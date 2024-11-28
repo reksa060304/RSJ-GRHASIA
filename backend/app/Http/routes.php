@@ -2765,6 +2765,7 @@ Route::group(['middleware' => 'cors', 'prefix' => 'service'], function () {
 
             /*POST*/
             //psikologi
+            Route::post('sdm/upload-photo-pegawai', 'SDM\SumberDayaManusiaController@simpanPhotoPegawai');
             Route::post('sdm/update-pangkat-golongan-terakhir','SDM\SumberDayaManusiaController@updateGolonganTerakhir');
             Route::post('sdm/save-data-cpns','SDM\SumberDayaManusiaController@saveDataCPNS');
             Route::post('psikologi/save-hasil-ist-detail', 'RawatJalan\RawatJalanController@saveHasilISTDetail');
