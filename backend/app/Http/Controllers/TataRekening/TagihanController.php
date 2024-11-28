@@ -5570,7 +5570,7 @@ class TagihanController  extends ApiController
                         left JOIN strukpelayanan_t AS sp ON sp.norec = pp.strukfk
                         left join strukpelayananpenjamin_t as spp on sp.norec = spp.nostrukfk
                         left join rekanan_m as rek on rek.id = pd.objectrekananfk
-                        left join rekapklaimbpjs_t rkbpjs on rkbpjs.norecpdfk = pd.norec
+                        left join rekapklaimbpjs_t rkbpjs on rkbpjs.norecpdfk = pd.norec AND rkbpjs.statusenabled = TRUE
                         where mk.tglpulang between '$tglAwal 00:00' and '$tglAkhir 23:59'
                         $qstatus
                         $qkey
@@ -5773,7 +5773,7 @@ class TagihanController  extends ApiController
         left join rekanan_m as rek on rek.id = pd.objectrekananfk
         left join pemakaianasuransi_t as pa on pa.noregistrasifk = pd.norec
         left join monitoringklaim_t mk on mk.nosep = pa.nosep and mk.statusklaimfk = 3
-        left join rekapklaimbpjs_t rkbpjs on rkbpjs.norecpdfk = pd.norec
+        left join rekapklaimbpjs_t rkbpjs on rkbpjs.norecpdfk = pd.norec AND rkbpjs.statusenabled = TRUE
         where pd.kdprofile = 30 and pd.statusenabled = true
         and pd.tglregistrasi between '$tglAwal 00:00' and '$tglAkhir 23:59'
         and kp.id not in(2, 21, 22, 24, 25)
