@@ -25001,59 +25001,88 @@ public function suratBuktiPengembalian(Request $request)
                 END asc
         "));
 
-        $pajakpenerimaan = DB::select(DB::raw("
-            SELECT
-                jp.id,
-                jp.namaexternal,
+        // $pajakpenerimaan = DB::select(DB::raw("
+        //     SELECT
+        //         jp.id,
+        //         jp.namaexternal,
+        //         SUM(case when extract(year from bku.tglbku) = extract(year from timestamp '".$request['tglbku']."')
+        //             and bku.tglbku <= DATE_TRUNC('MONTH', timestamp '".$request['tglbku']."')
+        //         then bku.penerimaan else 0 end) as total_belanja_bulan_lalu,
+        //         SUM(case when extract(year from bku.tglbku) = extract(year from timestamp '".$request['tglbku']."')
+        //             and extract(month from bku.tglbku) = extract(month from timestamp '".$request['tglbku']."')
+        //         then bku.penerimaan else 0 end) as total_belanja_bulan_ini
+        //     FROM pemungutanpajak_t pj
+        //     JOIN jenispajak_m jp ON jp.id = pj.objectjenispphfk AND jp.statusenabled = TRUE 
+        //     JOIN strukrealisasi_t sr ON sr.norec = pj.objectspjfk AND sr.statusenabled = TRUE 
+        //     JOIN kegiatananggaran_m ka ON ka.id = sr.objectkegiatanfk
+        //     JOIN mataanggaran_m ma ON ma.id = sr.objectmataanggaranfk
+        //     JOIN asalproduk_m ap ON ap.id = sr.objectasalprodukfk
+        //     JOIN bukukasumum_t bku ON bku.norec = pj.objectbkufk AND bku.statusenabled = TRUE 
+        //     WHERE 
+        //         pj.statusenabled = TRUE 
+        //         AND sr.objectasalprodukfk = ".$request['asalproduk']."
+        //     GROUP BY 
+        //         jp.id,
+        //         jp.namaexternal
+        //     ORDER BY
+        //         jp.id
+        // "));
+
+
+        // $pajakpengeluaran = DB::select(DB::raw("
+        //     SELECT
+        //         jp.id,
+        //         jp.namaexternal,
+        //         SUM(case when extract(year from bku.tglbku) = extract(year from timestamp '".$request['tglbku']."')
+        //             and bku.tglbku <= DATE_TRUNC('MONTH', timestamp '".$request['tglbku']."')
+        //         then bku.pengeluaran else 0 end) as total_belanja_bulan_lalu,
+        //         SUM(case when extract(year from bku.tglbku) = extract(year from timestamp '".$request['tglbku']."')
+        //             and extract(month from bku.tglbku) = extract(month from timestamp '".$request['tglbku']."')
+        //         then bku.pengeluaran else 0 end) as total_belanja_bulan_ini
+        //     FROM penyetoranpajak_t pj
+        //     JOIN jenispajak_m jp ON jp.id = pj.objectjenispphfk AND jp.statusenabled = TRUE 
+        //     JOIN strukrealisasi_t sr ON sr.norec = pj.objectspjfk AND sr.statusenabled = TRUE 
+        //     JOIN kegiatananggaran_m ka ON ka.id = sr.objectkegiatanfk
+        //     JOIN mataanggaran_m ma ON ma.id = sr.objectmataanggaranfk
+        //     JOIN asalproduk_m ap ON ap.id = sr.objectasalprodukfk
+        //     JOIN bukukasumum_t bku ON bku.norec = pj.objectbkufk AND bku.statusenabled = TRUE 
+        //     WHERE 
+        //         pj.statusenabled = TRUE 
+        //         AND sr.objectasalprodukfk = ".$request['asalproduk']."
+        //     GROUP BY 
+        //         jp.id,
+        //         jp.namaexternal
+        //     ORDER BY
+        //         jp.id
+        // "));
+
+        $pajak = DB::select(DB::raw("
+            SELECT 
+                jp.id, jp.namaexternal,
                 SUM(case when extract(year from bku.tglbku) = extract(year from timestamp '".$request['tglbku']."')
                     and bku.tglbku <= DATE_TRUNC('MONTH', timestamp '".$request['tglbku']."')
-                then bku.pengeluaran else 0 end) as total_belanja_bulan_lalu,
+                then bku.penerimaan else 0 end) as penerimaan_bulan_lalu,
                 SUM(case when extract(year from bku.tglbku) = extract(year from timestamp '".$request['tglbku']."')
                     and extract(month from bku.tglbku) = extract(month from timestamp '".$request['tglbku']."')
-                then bku.pengeluaran else 0 end) as total_belanja_bulan_ini
-            FROM pemungutanpajak_t pj
-            JOIN jenispajak_m jp ON jp.id = pj.objectjenispphfk AND jp.statusenabled = TRUE 
-            JOIN strukrealisasi_t sr ON sr.norec = pj.objectspjfk AND sr.statusenabled = TRUE 
-            JOIN kegiatananggaran_m ka ON ka.id = sr.objectkegiatanfk
-            JOIN mataanggaran_m ma ON ma.id = sr.objectmataanggaranfk
-            JOIN asalproduk_m ap ON ap.id = sr.objectasalprodukfk
-            JOIN bukukasumum_t bku ON bku.norec = pj.objectbkufk AND bku.statusenabled = TRUE 
-            WHERE 
-                pj.statusenabled = TRUE 
-                AND sr.objectasalprodukfk = ".$request['asalproduk']."
-            GROUP BY 
+                then bku.penerimaan else 0 end) as penerimaan_bulan_ini,
+                SUM(case when extract(year from bku.tglbku) = extract(year from timestamp '".$request['tglbku']."')
+                    and bku.tglbku <= DATE_TRUNC('MONTH', timestamp '".$request['tglbku']."')
+                then bku.pengeluaran else 0 end) as pengeluaran_bulan_lalu,
+                SUM(case when extract(year from bku.tglbku) = extract(year from timestamp '".$request['tglbku']."')
+                    and extract(month from bku.tglbku) = extract(month from timestamp '".$request['tglbku']."')
+                then bku.pengeluaran else 0 end) as pengeluaran_bulan_ini 
+            FROM pemungutanpajak_t pp 
+            JOIN bukukasumum_t bku ON bku.norec = pp.objectbkufk AND bku.statusenabled = TRUE
+            LEFT JOIN penyetoranpajak_t pep ON pep.objectspjfk = pp.objectspjfk AND pep.statusenabled = TRUE
+            LEFT JOIN jenispajak_m jp ON jp.id = pp.objectjenispphfk
+            WHERE
+                pp.statusenabled = TRUE
+                AND pp.kdprofile = 30
+            GROUP BY
                 jp.id,
                 jp.namaexternal
             ORDER BY
-                jp.id
-        "));
-
-
-        $pajakpengeluaran = DB::select(DB::raw("
-            SELECT
-                jp.id,
-                jp.namaexternal,
-                SUM(case when extract(year from bku.tglbku) = extract(year from timestamp '".$request['tglbku']."')
-                    and bku.tglbku <= DATE_TRUNC('MONTH', timestamp '".$request['tglbku']."')
-                then bku.pengeluaran else 0 end) as total_belanja_bulan_lalu,
-                SUM(case when extract(year from bku.tglbku) = extract(year from timestamp '".$request['tglbku']."')
-                    and extract(month from bku.tglbku) = extract(month from timestamp '".$request['tglbku']."')
-                then bku.pengeluaran else 0 end) as total_belanja_bulan_ini
-            FROM penyetoranpajak_t pj
-            JOIN jenispajak_m jp ON jp.id = pj.objectjenispphfk AND jp.statusenabled = TRUE 
-            JOIN strukrealisasi_t sr ON sr.norec = pj.objectspjfk AND sr.statusenabled = TRUE 
-            JOIN kegiatananggaran_m ka ON ka.id = sr.objectkegiatanfk
-            JOIN mataanggaran_m ma ON ma.id = sr.objectmataanggaranfk
-            JOIN asalproduk_m ap ON ap.id = sr.objectasalprodukfk
-            JOIN bukukasumum_t bku ON bku.norec = pj.objectbkufk AND bku.statusenabled = TRUE 
-            WHERE 
-                pj.statusenabled = TRUE 
-                AND sr.objectasalprodukfk = ".$request['asalproduk']."
-            GROUP BY 
-                jp.id,
-                jp.namaexternal
-            ORDER BY
-                jp.id
+                jp.id ASC
         "));
 
         $jasagiro = DB::select(DB::raw("
@@ -25148,11 +25177,12 @@ public function suratBuktiPengembalian(Request $request)
             'setting' => $settingRBA,
             'data' => $dataAnggaran,
             'spjbku' => $dataSPJ,
-            'pajakpenerimaan' => $pajakpenerimaan,
-            'pajakpengeluaran' => $pajakpengeluaran,
+            // 'pajakpenerimaan' => $pajakpenerimaan,
+            // 'pajakpengeluaran' => $pajakpengeluaran,
             'jasagiro' => $jasagiro,
             'spm' => $spm,
             'uangmukakerja' => $uangmukakerja,
+            'pajak' => $pajak
             // 'jenisAnggaran' => $dataJenisAnggaran
         ]);
     } 
