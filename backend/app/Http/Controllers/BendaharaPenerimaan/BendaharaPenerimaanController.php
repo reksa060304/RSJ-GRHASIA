@@ -3221,8 +3221,11 @@ class BendaharaPenerimaanController extends ApiController {
             }
             
             else if($konten->idproduk == 1002121435){
-                $jumlahsewatanah += $konten->totaldibayarclosing;
-                $voljumlahsewatanah++;
+                // $jumlahsewatanah += $konten->totaldibayarclosing;
+                // $voljumlahsewatanah++;
+                // $cekjumlah = $konten->namaproduk;
+                $lainlain += $konten->totaldibayarclosing;
+                $vollainlain++;
                 $cekjumlah = $konten->namaproduk;
             }
             else if($konten->idproduk == 5006036 || $konten->idproduk == 5006035 || $konten->idproduk == 5007117 || $konten->idproduk == 5005995 || $konten->idproduk == 5005996
