@@ -202,16 +202,31 @@ define(['initialize'], function (initialize) {
             }
 
             function loadRiwayat(params) {
-                medifirstService.get('emr/get-riwayat-order-penunjang?' + params).then(function (e) {
-                    for (var i = e.data.daftar.length - 1; i >= 0; i--) {
-                        e.data.daftar[i].no = i + 1
-                    }
+                medifirstService.get('emr/get-riwayat-lab?' + params).then(function(response){
+                    
+                    // let data = response.data
+                    let data = response.data.map((item, index) => ({no: index+1, ...item}))
+
+                    console.log(data)
+
                     $scope.dataGridRiwayat = new kendo.data.DataSource({
-                        data: e.data.daftar,
+                        data: data,
                         pageSize: 10
                     });
 
-                });
+                })
+
+                // Ganti karena ngambil lab yang tidak hanya dari order
+                // medifirstService.get('emr/get-riwayat-order-penunjang?' + params).then(function (e) {
+                //     for (var i = e.data.daftar.length - 1; i >= 0; i--) {
+                //         e.data.daftar[i].no = i + 1
+                //     }
+                //     $scope.dataGridRiwayat = new kendo.data.DataSource({
+                //         data: e.data.daftar,
+                //         pageSize: 10
+                //     });
+
+                // });
             }
 
             $rootScope.getRekamMedisCheck = function (bool) {

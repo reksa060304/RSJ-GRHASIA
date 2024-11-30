@@ -115,6 +115,7 @@ Route::group(['middleware' => 'cors', 'prefix' => 'service'], function () {
         // End bendahara penerimaan
 
 		Route::get('registrasi/laporan/get-rekap-kunjunganrs', 'Registrasi\LaporanRegistrasiController@getRekapKunjunganRS');
+        Route::get('emr/get-riwayat-lab', 'EMR\EMRController@getRiwayatLab');
 
         Route::get('get-profile-login', function(){
            $profile = \App\Web\Profile::where('statusenabled',true)->first();

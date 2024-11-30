@@ -9441,7 +9441,7 @@ class EMRController  extends ApiController
 
         if (isset($request['tanggal']) && $request['tanggal'] != "" && $request['tanggal'] != "undefined" && $request['tanggal'] != "null") {
             $tgllahir = $request['tanggal'];
-            $data = $data->whereRaw("format( emrp.tgllahir, 'yyyy-MM-dd')  ='$tanggal' ");
+            $data = $data->whereRaw("format( emrp.tgllahir, 'yyyy-MM-dd')  ='$tgllahir' ");
         }
         $data = $data->get();
         $result = array(
@@ -15306,5 +15306,165 @@ class EMRController  extends ApiController
         );
 
         return $this->respond($result);
+    }
+
+    public function getRiwayatLab(Request $request)
+    {
+
+        $noregistrasi = '';
+        if(isset($request['noregistrasi']) && $request['noregistrasi'] != "" && $request['noregistrasi'] != "undefined") {
+            $noregistrasi = "AND pd.noregistrasi = '".$request['noregistrasi']."'";
+        }
+
+        $nocm = '';
+        if (isset($request['NoCM']) && $request['NoCM'] != "" && $request['NoCM'] != "undefined") {
+            $nocm = "AND ps.nocm = '".$request['NoCM']."'";
+        }
+
+        $data = DB::select(DB::raw("
+
+            SELECT
+                COALESCE(so.norec, '') AS norec,
+                COALESCE(so.tglorder::TEXT, '') AS tglorder,
+                COALESCE(so.noorder, '') AS noorder,
+                COALESCE(so.keteranganlainnya, '') AS keteranganlainnya,
+                COALESCE(so.cito::TEXT, '') AS cito,
+                COALESCE(pg.namalengkap, '') AS dokter,
+                pd.norec AS norecpd,
+                pd.noregistrasi,
+                pd.tglregistrasi,
+                apd.norec AS norecapd,
+                CASE WHEN ruorderasal.namaruangan IS NULL THEN ru.namaruangan ELSE ruorderasal.namaruangan END AS namaruanganasal,
+                CASE WHEN ruordertujuan.namaruangan IS NULL THEN '' ELSE ruordertujuan.namaruangan END AS namaruangantujuan
+            FROM
+                pelayananpasien_t AS pp
+            INNER JOIN antrianpasiendiperiksa_t AS apd ON apd.norec = pp.noregistrasifk
+            INNER JOIN pasiendaftar_t AS pd ON pd.norec = apd.noregistrasifk
+            INNER JOIN pasien_m AS ps ON ps.id = pd.nocmfk
+            LEFT JOIN jeniskelamin_m AS jk ON jk.id = ps.objectjeniskelaminfk
+            INNER JOIN produk_m AS pr ON pr.id = pp.produkfk
+            INNER JOIN ruangan_m AS ru ON ru.id = apd.objectruanganfk
+            INNER JOIN departemen_m AS dp ON dp.id = ru.objectdepartemenfk
+            LEFT JOIN pmi_m AS pmi ON pmi.id = pp.pmifk
+            LEFT JOIN strukpelayanan_t AS sp ON sp.norec = pp.strukfk
+            LEFT JOIN strukbuktipenerimaan_t AS sbm ON sp.nosbmlastfk = sbm.norec
+            LEFT JOIN strukorder_t AS so ON so.norec = pp.strukorderfk
+            LEFT JOIN order_lab AS lis ON lis.no_lab = so.noorder AND lis.kode_test = CAST (pr.id AS VARCHAR)
+            LEFT JOIN pegawai_m pg ON pg.id = so.objectpegawaiorderfk
+            LEFT JOIN ruangan_m ruorderasal ON ruorderasal.id = so.objectruanganfk
+            LEFT JOIN ruangan_m ruordertujuan ON ruordertujuan.id = so.objectruangantujuanfk
+            WHERE
+                pp.kdprofile = 30
+                AND pp.isobat IS NULL
+                AND ru.objectdepartemenfk = 3
+                $noregistrasi
+                $nocm
+            GROUP BY 
+                so.norec,
+                pd.norec,
+                ru.namaruangan,
+                ruorderasal.namaruangan,
+	            ruordertujuan.namaruangan,
+	            pg.namalengkap,
+                apd.norec 
+            ORDER BY
+                pd.tglregistrasi DESC
+
+        "));
+
+        if(count($data) > 0){
+
+            foreach($data as $item){
+
+                // data jika tidak ada pegawaiorder dari strukorder maka ambil dari log
+                if($item->dokter == ''){
+
+                    $pegawai = DB::select(DB::raw("
+
+                        SELECT 
+                            pg.namalengkap 
+                        FROM logginguser_t lgu 
+                        JOIN loginuser_s lu ON lu.id = lgu.objectloginuserfk AND lu.statusenabled = TRUE 
+                        JOIN pegawai_m pg ON pg.id = lu.objectpegawaifk AND pg.statusenabled = TRUE 
+                        WHERE
+                            lgu.statusenabled = TRUE 
+                            AND lgu.keterangan ILIKE '%Laboratorium%' 
+                            AND lgu.keterangan ILIKE '%No Registrasi ".$item->noregistrasi."'
+                            AND lgu.keterangan NOT ILIKE '%Input Tindakan%'
+                    "));
+
+                    if(count($pegawai) > 0){
+                        $item->dokter = $pegawai[0]->namalengkap;
+                    }
+
+                }
+
+                // status jika ada hasillab maka selesai
+                $item->statusorder = 'PENDING';
+                $hasillab = DB::select(DB::raw("
+                
+                    SELECT
+                        hl.* 
+                    FROM hasillaboratorium_t hl
+                    JOIN antrianpasiendiperiksa_t apd ON apd.norec = hl.noregistrasifk AND apd.statusenabled = TRUE
+                    WHERE
+                        hl.statusenabled = TRUE
+                        AND apd.norec = '".$item->norecapd."'
+                "));
+                if(count($hasillab) > 0){
+                    $item->statusorder = 'SELESAI DIPERIKSA';
+                }
+
+                // detail
+                $detail = DB::select(DB::raw("
+
+                    SELECT
+                        COALESCE(so.norec, '') AS norec,
+                        COALESCE(so.tglorder::TEXT, '') AS tglorder,
+                        COALESCE(so.noorder, '') AS noorder,
+                        COALESCE(so.keteranganlainnya, '') AS keteranganlainnya,
+                        COALESCE(so.cito::TEXT, '') AS cito,
+                        pd.norec AS norecpd,
+                        pd.noregistrasi,
+                        pd.tglregistrasi,
+                        ru.namaruangan AS namaruanganasal,
+                        pr.namaproduk,
+                        pp.jumlah as qtyproduk
+                    FROM
+                        pelayananpasien_t AS pp
+                    INNER JOIN antrianpasiendiperiksa_t AS apd ON apd.norec = pp.noregistrasifk
+                    INNER JOIN pasiendaftar_t AS pd ON pd.norec = apd.noregistrasifk
+                    INNER JOIN pasien_m AS ps ON ps.id = pd.nocmfk
+                    LEFT JOIN jeniskelamin_m AS jk ON jk.id = ps.objectjeniskelaminfk
+                    INNER JOIN produk_m AS pr ON pr.id = pp.produkfk
+                    INNER JOIN ruangan_m AS ru ON ru.id = apd.objectruanganfk
+                    INNER JOIN departemen_m AS dp ON dp.id = ru.objectdepartemenfk
+                    LEFT JOIN pmi_m AS pmi ON pmi.id = pp.pmifk
+                    LEFT JOIN strukpelayanan_t AS sp ON sp.norec = pp.strukfk
+                    LEFT JOIN strukbuktipenerimaan_t AS sbm ON sp.nosbmlastfk = sbm.norec
+                    LEFT JOIN strukorder_t AS so ON so.norec = pp.strukorderfk
+                    LEFT JOIN order_lab AS lis ON lis.no_lab = so.noorder AND lis.kode_test = CAST (pr.id AS VARCHAR)
+                    WHERE
+                        pp.kdprofile = 30
+                        AND pp.isobat IS NULL
+                        AND ru.objectdepartemenfk = 3
+                        AND pd.noregistrasi = '".$item->noregistrasi."'
+                    ORDER BY
+                        pd.tglregistrasi DESC
+
+                "));
+
+                $item->details = $detail;
+
+            }
+
+        }
+
+        // $result = [
+        //     'data' => $data
+        // ];
+        // dd($group[0]->detail);
+
+        return $this->respond($data);
     }
 }
