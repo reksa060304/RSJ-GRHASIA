@@ -11364,4 +11364,199 @@ class BendaharaPenerimaanController extends ApiController {
         return $this->setStatusCode($result['status'])->respond($result, $transMsg);
 
     }
+
+    public function simpanSTSKlaimV2(Request $request)
+    {
+
+        $kdProfile = $this->getDataKdProfile($request);
+        $idProfile = (int) $kdProfile;
+
+        
+        DB::beginTransaction();
+        try {
+            
+            // get data hasil mapping
+            $setoran = $request['setoran'];
+            $rekapKlaim = [];
+            foreach($setoran as $item){
+                array_push($rekapKlaim, $item['norec']);
+            }
+
+            $data = DB::select(DB::raw("
+                SELECT 
+                    x.id as idrekening, x.namarekening, x.koderekening, COALESCE(SUM(x.totalsetujui), 0) AS totalsetujui, x.idlevel7, x.idlevel6, x.idlevel5, x.idlevel4, x.idlevel3, x.idlevel2, x.idlevel1
+                FROM (
+                    SELECT
+                        cap.id,
+                        cap.koderekening, 
+                        cap.namarekening,
+                        cap7.id as idlevel7,
+                        cap6.id as idlevel6,
+                        cap5.id as idlevel5,
+                        cap4.id as idlevel4,
+                        cap3.id as idlevel3,
+                        cap2.id as idlevel2,
+                        cap1.id as idlevel1,
+                        COALESCE(SUM(rkb.totalsetujui), 0) AS totalsetujui
+                    FROM
+                        rekapklaimbpjs_t rkb
+                    LEFT JOIN pasiendaftar_t pd ON pd.norec = rkb.norecpdfk
+                    LEFT JOIN kelompokpasien_m kp ON kp.id = pd.objectkelompokpasienlastfk
+                    LEFT JOIN ruangan_m ru ON ru.id = pd.objectruanganlastfk
+                    JOIN mapbkuakun_t mba 
+                        ON pd.objectkelompokpasienlastfk::VARCHAR = ANY(string_to_array(mba.objectkelompokpasienfk, ','))
+                        AND pd.objectruanganlastfk::VARCHAR = ANY(string_to_array(mba.objectruanganfk , ','))
+                        AND mba.statusenabled = TRUE
+                    LEFT JOIN char_akun_pendapatan_m cap ON cap.id = mba.objectakunpendapatanfk AND cap.statusenabled = TRUE 
+                    LEFT JOIN char_akun_pendapatan_m cap7 ON cap7.id = cap.headfk AND cap7.statusenabled = TRUE 
+                    LEFT JOIN char_akun_pendapatan_m cap6 ON cap6.id = cap7.headfk AND cap6.statusenabled = TRUE 
+                    LEFT JOIN char_akun_pendapatan_m cap5 ON cap5.id = cap6.headfk AND cap5.statusenabled = TRUE 
+                    LEFT JOIN char_akun_pendapatan_m cap4 ON cap4.id = cap5.headfk AND cap4.statusenabled = TRUE 
+                    LEFT JOIN char_akun_pendapatan_m cap3 ON cap3.id = cap4.headfk AND cap3.statusenabled = TRUE 
+                    LEFT JOIN char_akun_pendapatan_m cap2 ON cap2.id = cap3.headfk AND cap2.statusenabled = TRUE 
+                    LEFT JOIN char_akun_pendapatan_m cap1 ON cap1.id = cap2.headfk AND cap1.statusenabled = TRUE 
+                    WHERE
+                        rkb.statusenabled = TRUE
+                        AND rkb.kdprofile = 30
+                        AND (
+                            (mba.isobat IS NOT TRUE AND rkb.isobat IS NULL) 
+                            OR 
+                            (mba.isobat = TRUE AND rkb.isobat = TRUE)
+                        )
+                        AND rkb.norec IN('".implode("','",$rekapKlaim)."')
+                    GROUP BY 
+                        cap.id,
+                        cap.koderekening,
+                        cap.namarekening,
+                        rkb.isobat,
+                        cap7.id,
+                        cap6.id,
+                        cap5.id,
+                        cap4.id,
+                        cap3.id,
+                        cap2.id,
+                        cap1.id
+                ) as x
+                GROUP BY
+                    x.id,
+                    x.koderekening,
+                    x.namarekening,
+                    x.idlevel7,
+                    x.idlevel6,
+                    x.idlevel5,
+                    x.idlevel4,
+                    x.idlevel3,
+                    x.idlevel2,
+                    x.idlevel1
+                ORDER BY
+                    split_part(x.koderekening, '.', 3)::DECIMAL,
+                    split_part(x.koderekening, '.', 4)::DECIMAL,
+                    split_part(x.koderekening, '.', 5)::DECIMAL,
+                    split_part(x.koderekening, '.', 6)::DECIMAL,
+                    split_part(x.koderekening, '.', 7)::DECIMAL,
+                    split_part(x.koderekening, '.', 8)::DECIMAL ASC
+            "));
+
+            // data pegawai
+            $dataLogin = $request->all();
+            $iduser = '';
+            $dataPegawaiUser = DB::select(DB::raw("select pg.id,pg.namalengkap from loginuser_s as lu
+                INNER JOIN pegawai_m as pg on lu.objectpegawaifk=pg.id
+                where pg.kdprofile = $idProfile and lu.id=:idLoginUser"),
+                array(
+                    'idLoginUser' => $dataLogin['userData']['id'],
+                )
+            );
+            foreach($dataPegawaiUser as $dat){
+                $iduser = $dat->id;
+            }
+
+            // admin transfer
+            $transfer = 0;
+            $admin = 0;
+            if(isset($request['biayatransfer'])){
+                $transfer = $request['biayatransfer'];
+            }  
+            if(isset($request['biayaadmin'])){
+                $admin = $request['biayaadmin'];
+            }
+
+            // simpan sts
+            $nosts = $this->generateCode(new SuratTandaSetoran, 'nosts', 11, date('ymd',strtotime($request['tglsts'])),$idProfile);
+            $STS = new SuratTandaSetoran();
+            $STS->norec  = $STS->generateNewId();
+            $STS->kdprofile = $idProfile;
+            $STS->statusenabled = true;
+            $STS->nosts = $nosts;
+            $STS->tglpenerimaan = $request['tglsts'];
+            $STS->totalsetoran = $request['totalsetor'] - $transfer - $admin;
+            $STS->totalsetoranpembulatan = $request['totalsetor'] - $transfer - $admin;
+            $STS->terbilang = $request['terbilang'];
+            $STS->objectpegawaifk = $iduser;
+            $STS->keterangan = $request['uraian'];
+            $STS->ismanual = null;
+            $STS->objectakunpendapatanfk = $data[0]->idlevel6;
+            $STS->save();
+
+            // simpan ststorekapklaim
+            foreach($setoran as $item){
+                $STSR = new STStoRekapKlaim();
+                $STSR->norec  = $STSR->generateNewId();
+                $STSR->kdprofile = $idProfile;
+                $STSR->statusenabled = true;
+                $STSR->objectstsfk = $STS->norec;
+                $STSR->objectrekapklaimfk = $item['norec'];
+                $STSR->save();
+            }
+
+            // satu detail nilainya dikurangi transfer admin
+            $data[0]->totalsetujui = $data[0]->totalsetujui - $transfer - $admin;
+
+            // simpan stsdetail berdasarkan mappingan
+            foreach($data as $item){
+                $newId = SuratTandaSetoranDetailV2::max('nourut') +1 ;
+
+                $stsd = new SuratTandaSetoranDetailV2();
+                $stsd->norec = $stsd->generateNewId();
+                $stsd->statusenabled = TRUE;
+                $stsd->kdprofile = $idProfile;
+                $stsd->objectakunpendapatanfk = $item->idrekening;
+                $stsd->objectstsfk = $STS->nosts;
+                $stsd->totalsetoran = $item->totalsetujui;
+                $stsd->nourut = $newId;
+                $stsd->save();
+            }
+
+            $transStatus = true;
+
+        } catch (\Exception $e) {
+
+            $transStatus= false;
+            
+        }
+
+        $transMsg = "";
+        if($transStatus == true) {
+            $transMsg = 'Simpan Berhasil';
+            DB::commit();
+            $result = array(
+                "status" => 201,
+                "message" => $transMsg,
+                "as" => 'as@epic',
+            );
+        }else {
+            $transMsg = 'Simpan Gagal!!';
+            DB::rollBack();
+            $result = array(
+                "status" => 400,
+                "message"  => $transMsg,
+                "err" => $e->getMessage(),
+                "line" => $e->getLine(),
+                "as" => 'as@epic',
+            );
+        }
+        return $this->setStatusCode($result['status'])->respond($result, $transMsg);
+
+    }
+
 }

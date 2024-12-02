@@ -266,23 +266,25 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
 
                 var terbilang = (parseFloat(total) - parseFloat(transfer) - parseFloat(admin))
 
-                medifirstService.get("sysadmin/general/get-terbilang/" + terbilang).then(
-					function (dat) {
-						$scope.item.terbilang = dat.data.terbilang;
-                        var objSave =
-                        {
-                            terbilang: dat.data.terbilang,
-                            totalsetor: $scope.item.totalSetor,
-                            uraian: $scope.item.uraian,
-                            biayatransfer: $scope.item.biayatransfer,
-                            biayaadmin: $scope.item.biayaadmin,
-                            tglsts: moment($scope.item.tanggalSTS).format('YYYY-MM-DD HH:mm'),
-                            setoran: $scope.selectedData2,
-                        }
+                // console.log($scope.selectedData2)
 
-                        medifirstService.post('bendaharapenerimaan/save-sts-klaim', objSave).then(function (dat) {});
-					}
-                );
+                // medifirstService.get("sysadmin/general/get-terbilang/" + terbilang).then(
+				// 	function (dat) {
+				// 		$scope.item.terbilang = dat.data.terbilang;
+                //         var objSave =
+                //         {
+                //             terbilang: dat.data.terbilang,
+                //             totalsetor: $scope.item.totalSetor,
+                //             uraian: $scope.item.uraian,
+                //             biayatransfer: $scope.item.biayatransfer,
+                //             biayaadmin: $scope.item.biayaadmin,
+                //             tglsts: moment($scope.item.tanggalSTS).format('YYYY-MM-DD HH:mm'),
+                //             setoran: $scope.selectedData2,
+                //         }
+
+                //         medifirstService.post('bendaharapenerimaan/save-sts-klaim', objSave).then(function (dat) {});
+				// 	}
+                // );
 
                 
             }
@@ -879,6 +881,47 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
                 }
 
                 window.open(baseTransaksi + "report/cetak-stsklaimv2?nosts="+$scope.selectedData2[0].nosts, '_blank');
+            }
+
+            $scope.simpanSTSV2 = function() {
+
+                var total = 0
+                for(var i = 0; i < $scope.selectedData2.length; i++){
+                    total += parseFloat($scope.selectedData2[i].totalsetujui)
+                }
+
+                var transfer = 0
+                if($scope.item.biayatransfer != undefined){
+                    transfer += $scope.item.biayatransfer
+                }
+
+                var admin = 0
+                if($scope.item.biayaadmin != undefined){
+                    admin += $scope.item.biayaadmin
+                }
+
+                var terbilang = (parseFloat(total) - parseFloat(transfer) - parseFloat(admin))
+
+                medifirstService.get("sysadmin/general/get-terbilang/" + terbilang).then(
+					function (dat) {
+						$scope.item.terbilang = dat.data.terbilang;
+                        var objSave =
+                        {
+                            terbilang: dat.data.terbilang,
+                            totalsetor: $scope.item.totalSetor,
+                            uraian: $scope.item.uraian,
+                            biayatransfer: $scope.item.biayatransfer,
+                            biayaadmin: $scope.item.biayaadmin,
+                            tglsts: moment($scope.item.tanggalSTS).format('YYYY-MM-DD HH:mm'),
+                            setoran: $scope.selectedData2,
+                        }
+
+                        medifirstService.post('bendaharapenerimaan/simpan-stsklaimv2', objSave).then(function (dat) {
+                            init()
+                        });
+					}
+                );
+
             }
 
             //////////////////////////////////////////////////////////////          END             /////////////////////////////////////////////////////////////////////////////////////       
