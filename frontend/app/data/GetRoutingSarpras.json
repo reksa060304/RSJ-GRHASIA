@@ -6854,5 +6854,25 @@
         "define": "MedifirstService"
       }
     ]
+  },
+  {
+    "name": "KetersediaanTempatTidurNew",
+    "url": "/S2V0ZXJzZWRpYWFuVGVtcGF0VGlkdXJOZXc=",
+    "templateurl": "module/Humas/KetersediaanTempatTidurNew.html",
+    "controller": "KetersediaanTempatTidurNewCtrl",
+    "deps": [
+      {
+        "module": "Services",
+        "define": "Service"
+      },
+      {
+        "module": "LoginServices",
+        "define": "LoginService"
+      },
+      {
+        "module": "MedifirstService",
+        "define": "MedifirstService"
+      }
+    ]
   }
 ]

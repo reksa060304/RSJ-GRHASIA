@@ -1230,6 +1230,7 @@ Route::group(['middleware' => 'cors', 'prefix' => 'service'], function () {
             Route::get('humas/get-daftar-data-produk','Humas\HumasController@getDataproduk');
             Route::get('humas/get-daftar-tarif-layanan-detail','Humas\HumasController@getDaftarTarifDetail');
             Route::get('humas/get-data-view-bed', 'Humas\HumasController@getDataViewBed');
+            Route::get('humas/get-data-view-bed-new', 'Humas\HumasController@getDataViewBedNew');
             Route::get('humas/get-ketersediaan-tempat-tidur-view','Humas\HumasController@getKetersediaanTempatTidurView');
             Route::get('humas/get-daftar-combo-pegawai','Humas\HumasController@getDataPegawai');
             Route::get('humas/get-daftar-jadwal-dokter','Humas\HumasController@getJadwalDokter');

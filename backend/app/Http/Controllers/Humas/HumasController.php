@@ -1231,6 +1231,66 @@ class HumasController extends ApiController
         return $this->respond($data);
     }
 
+    public function getDataViewBedNew(Request $request){
+        $kdProfile = $this->getDataKdProfile($request);
+        $idProfile = (int) $kdProfile;
+        $kdRanapICU = explode(',', $this->settingDataFixed('KdDeptRanapICU', $idProfile));
+        $kdListRanapICU = [];
+        foreach ($kdRanapICU as $items){
+            $kdListRanapICU[] = (int) $items;
+        }
+    
+        $data = \DB::select("
+            SELECT
+                q2.idruangan,
+                q2.namaruangan,
+                COALESCE(q1.isi, 0) AS isi,
+                q2.total,
+                (q2.total - COALESCE(q1.isi, 0)) AS kosong
+            FROM
+                (
+                    SELECT
+                        ru.id AS idruangan,
+                        ru.namaruangan,
+                        COUNT(tt.id) AS total
+                    FROM
+                        tempattidur_m AS tt
+                        INNER JOIN kamar_m AS kmr ON kmr.id = tt.objectkamarfk
+                        INNER JOIN ruangan_m AS ru ON ru.id = kmr.objectruanganfk
+                        INNER JOIN kelas_m AS kl ON kl.id = kmr.objectkelasfk
+                        INNER JOIN statusbed_m AS sb ON sb.id = tt.objectstatusbedfk
+                    WHERE
+                        tt.kdprofile = :idProfile
+                        AND tt.statusenabled = TRUE
+                        AND ru.statusenabled = TRUE
+                        AND kmr.statusenabled = TRUE
+                    GROUP BY
+                        ru.id, ru.namaruangan
+                ) AS q2
+            LEFT JOIN (
+                SELECT
+                    ru.namaruangan,
+                    COUNT(ru.namaruangan) AS isi
+                FROM
+                    pasiendaftar_t AS pd
+                    INNER JOIN antrianpasiendiperiksa_t AS apd ON pd.norec = apd.noregistrasifk
+                    INNER JOIN ruangan_m AS ru ON ru.id = pd.objectruanganlastfk
+                    INNER JOIN kelas_m AS kl ON kl.id = pd.objectkelasfk
+                    INNER JOIN tempattidur_m AS tt ON tt.id = apd.nobed
+                WHERE
+                    pd.tglpulang IS NULL
+                    AND pd.kdprofile = :idProfile
+                    AND pd.statusenabled = TRUE
+                    AND ru.objectdepartemenfk IN (:kdList)
+                GROUP BY
+                    ru.namaruangan
+            ) AS q1 ON q1.namaruangan = q2.namaruangan
+            ORDER BY q2.namaruangan ASC
+        ", ['idProfile' => $idProfile, 'kdList' => implode(',', $kdListRanapICU)]);
+    
+        return $this->respond($data);
+    }    
+
     public function getRuanganPart(Request $request) {
         $kdProfile = $this->getDataKdProfile($request);
         $idProfile = (int) $kdProfile;

@@ -1385,6 +1385,10 @@
         {
             "nameDep": "PengembalianBelanjaCtrl",
             "urlDep": "module/Perencanaan/PengembalianBelanjaCtrl"
+        },
+        {
+            "nameDep": "KetersediaanTempatTidurNewCtrl",
+            "urlDep": "module/Humas/KetersediaanTempatTidurNewCtrl"
         }
     ]
 }
