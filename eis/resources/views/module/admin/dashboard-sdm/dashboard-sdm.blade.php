@@ -86,7 +86,7 @@
                 <div class="card-block tab-icon">
                         <div class="row" style="margin-top:10px ">
                             <!-- order  start -->
-                            <div class="col-md-12 col-lg-6"  style="cursor: pointer" onclick="detailPegawai('Aktif')">
+                            <!-- <div class="col-md-12 col-lg-6"  style="cursor: pointer" onclick="detailPegawai('Aktif')">
                                 <div class="card bg-c-yellow order-card">
                                     <div class="card-block">
                                         <h6>AKTIF</h6>
@@ -105,12 +105,12 @@
                                         <i class="card-icon feather icon-radio"></i>
                                     </div>
                                 </div>
-                            </div>
+                            </div> -->
                             <div class="col-md-12 col-lg-4">
                                 <div class="card bg-c-yellow order-card">
                                     <div class="card-block">
-                                        <h6>TOTAL PEGAWAI</h6>
-                                        <h2>{{$res['pegawai']['aktif']+ $res['pegawai']['nonaktif']}}</h2>
+                                        <h6>TOTAL PEGAWAI AKTIF</h6>
+                                        <h2>{{$res['pegawai']['aktif']}}</h2>
                                         <p class="m-b-0"> <i class="feather icon-arrow-up"></i></p>
                                         <i class="card-icon feather icon-users"></i>
                                     </div>
@@ -256,7 +256,7 @@
                                     </div>
                                 </div>
                             </div>
-                            <div class="col-md-12 col-lg-3"  style="cursor: pointer" onclick="detailPegawaiPNS('Jabatan Fungsional Laki-Laki')">
+                            <!-- <div class="col-md-12 col-lg-3"  style="cursor: pointer" onclick="detailPegawaiPNS('Jabatan Fungsional Laki-Laki')">
                                 <div class="card bg-danger order-card">
                                     <div class="card-block">
                                         <h6>JABATAN FUNGSIONAL LAKI-LAKI</h6>
@@ -275,14 +275,14 @@
                                         <i class="card-icon feather icon-filter"></i>
                                     </div>
                                 </div>
-                            </div>
-                            <div class="col-md-12 col-lg-2"  style="cursor: pointer" onclick="detailPegawaiPNS('Tenaga Bantu')">
+                            </div> -->
+                            <div class="col-md-12 col-lg-12s"  style="cursor: pointer" onclick="detailPegawaiPNS('Tenaga Bantu')">
                                 <div class="card bg-c-green order-card">
                                     <div class="card-block">
                                         <h6>TENAGA BANTU</h6>
-                                        <h2>{{$res['pegawai']['naban']}}</h2>
+                                        <h2>{{$res['pegawai']['naban']}}</h2>   
                                         <p class="m-b-0"> <i class="feather icon-arrow-up"></i></p>
-                                        <i class="card-icon feather icon-filter"></i>
+                                        <i class="card-icon feather icon-user"></i>
                                     </div>
                                 </div>
                             </div>
