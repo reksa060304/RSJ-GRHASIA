@@ -1271,22 +1271,21 @@ class HumasController extends ApiController
                 SELECT
                     ru.namaruangan,
                     COUNT(ru.namaruangan) AS isi
-                FROM
-                    pasiendaftar_t AS pd
-                    INNER JOIN antrianpasiendiperiksa_t AS apd ON pd.norec = apd.noregistrasifk
-                    INNER JOIN ruangan_m AS ru ON ru.id = pd.objectruanganlastfk
-                    INNER JOIN kelas_m AS kl ON kl.id = pd.objectkelasfk
-                    INNER JOIN tempattidur_m AS tt ON tt.id = apd.nobed
+               	FROM
+                    antrianpasiendiperiksa_t AS apd
+                    INNER JOIN pasiendaftar_t AS pd ON pd.norec = apd.noregistrasifk AND pd.objectruanganlastfk = apd.objectruanganfk 
+                    INNER JOIN ruangan_m AS ru ON ru.ID = apd.objectruanganfk
+                    INNER JOIN kelas_m AS kl ON kl.ID = pd.objectkelasfk
                 WHERE
-                    pd.tglpulang IS NULL
+                    pd.tglpulang IS NULL 
+                    AND apd.tglkeluar IS NULL 
                     AND pd.kdprofile = :idProfile
                     AND pd.statusenabled = TRUE
-                    AND ru.objectdepartemenfk IN (:kdList)
                 GROUP BY
                     ru.namaruangan
             ) AS q1 ON q1.namaruangan = q2.namaruangan
             ORDER BY q2.namaruangan ASC
-        ", ['idProfile' => $idProfile, 'kdList' => implode(',', $kdListRanapICU)]);
+        ", ['idProfile' => $idProfile]);
     
         return $this->respond($data);
     }    
