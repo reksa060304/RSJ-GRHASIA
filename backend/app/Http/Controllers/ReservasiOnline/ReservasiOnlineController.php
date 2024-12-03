@@ -417,7 +417,7 @@ class ReservasiOnlineController extends ApiController
             }
 
             $statusDaftarLangsung = $this->settingDataFixed('isDaftarLangsungReservasi', $kdProfile);
-            if (!empty($statusDaftarLangsung) && $statusDaftarLangsung == 'true') {
+            if (!empty($statusDaftarLangsung) && $statusDaftarLangsung == 'true' && $request['isBaru'] == false) {
                 $pasiendaftar = array(
                     'tglregistrasi' => $tglDoang .' '.$antrian['jamkosong'],
                     'tglregistrasidate' => date('Y-m-d',strtotime($tglDoang)),
