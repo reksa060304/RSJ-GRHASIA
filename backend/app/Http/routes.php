@@ -113,6 +113,13 @@ Route::group(['middleware' => 'cors', 'prefix' => 'service'], function () {
         Route::post('bendaharapenerimaan/simpan-stsv2', 'BendaharaPenerimaan\BendaharaPenerimaanController@simpanSTSV2');
         Route::get('report/cetak-stsklaimv2', 'Report\ReportController@cetakSTSKlaimV2');
         Route::post('bendaharapenerimaan/simpan-stsklaimv2', 'BendaharaPenerimaan\BendaharaPenerimaanController@simpanSTSKlaimV2');
+        Route::get('bendaharapenerimaan/get-data-combo-v2', 'BendaharaPenerimaan\BendaharaPenerimaanController@getDataComboV2');
+        Route::get('bendaharapenerimaan/get-jenis-bukti-bku', 'BendaharaPenerimaan\BendaharaPenerimaanController@getJenisBuktiBKU');
+        Route::get('bendaharapenerimaan/get-sts-keuangan', 'BendaharaPenerimaan\BendaharaPenerimaanController@getSTSKeuangan');
+        Route::get('bendaharapenerimaan/get-spm', 'BendaharaPenerimaan\BendaharaPenerimaanController@getSPM');
+        Route::get('bendaharapenerimaan/get-daftar-bkupenerimaan', 'BendaharaPenerimaan\BendaharaPenerimaanController@daftarBKUV2');
+        Route::post('bendaharapenerimaan/hapus-bkuV2', 'BendaharaPenerimaan\BendaharaPenerimaanController@hapusBKUV2');
+        Route::post('bendaharapenerimaan/simpan-bkupenerimaanv2', 'BendaharaPenerimaan\BendaharaPenerimaanController@simpanBKUV2');
         // End bendahara penerimaan
 
 		Route::get('registrasi/laporan/get-rekap-kunjunganrs', 'Registrasi\LaporanRegistrasiController@getRekapKunjunganRS');

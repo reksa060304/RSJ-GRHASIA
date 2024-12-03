@@ -12,6 +12,7 @@ namespace App\Http\Controllers\BendaharaPenerimaan;
 use App\Http\Controllers\ApiController;
 use App\Master\Pegawai;
 use App\Traits\Valet;
+use App\Transaksi\BKUPenerimaanV2;
 use App\Transaksi\StrukBuktiPenerimaan;
 use App\Transaksi\StrukBuktiPenerimaanCaraBayar;
 use App\Transaksi\StrukBuktiPengeluaran;
@@ -11557,6 +11558,281 @@ class BendaharaPenerimaanController extends ApiController {
         }
         return $this->setStatusCode($result['status'])->respond($result, $transMsg);
 
+    }
+
+
+    public function getDataComboV2(Request $request)
+    {
+        $kdProfile = $this->getDataKdProfile($request);
+        $idProfile = (int) $kdProfile;
+        
+        $asalProduk = \DB::table('asalproduk_m')
+            ->select('id','asalproduk')
+            ->where('statusenabled',true)
+            ->where('kdprofile', $idProfile)
+            ->where('isanggaran', true)
+            ->get();
+
+        $result = array(
+            'asalproduk'=>$asalProduk,
+            'message' => 'inhuman',
+        );
+        
+        return $this->respond($result);
+    }
+    
+
+    public function daftarBKUV2(Request $request)
+    {
+        $kdProfile = $this->getDataKdProfile($request);
+        $idProfile = (int) $kdProfile;
+
+        $data = DB::select(DB::raw("
+
+            SELECT
+                bkup.*, COALESCE(cap.koderekening, '0') as norekening
+            FROM bkupenerimaanv2_t bkup
+            LEFT JOIN surattandasetoran_t sts ON sts.norec = bkup.objectstsfk AND sts.statusenabled = TRUE
+            LEFT JOIN char_akun_pendapatan_m cap ON cap.id = bkup.objectakunpendapatanfk AND cap.statusenabled = TRUE
+            LEFT JOIN spm_t spm ON spm.norec = bkup.objectspmfk AND spm.statusenabled = TRUE
+            LEFT JOIN spp_t spp on spp.norec = spm.objectsppfk AND spp.statusenabled = TRUE
+            LEFT JOIN asalproduk_m ap on ap.id = spm.objectasalprodukfk and ap.statusenabled = true 
+            WHERE
+                bkup.statusenabled = TRUE
+                AND bkup.kdprofile = ".$idProfile."
+        "));
+
+        return $this->respond($data);
+    }
+
+
+    public function getJenisBuktiBKU(Request $request)
+    {
+        $kdProfile = $this->getDataKdProfile($request);
+        $idProfile = (int) $kdProfile;
+
+        $data = DB::select(DB::raw("
+            SELECT
+                jb.*
+            FROM jenisbukti_m jb
+            WHERE 
+                jb.statusenabled = TRUE
+                AND jb.kdprofile = ".$idProfile."
+                AND jb.isbkupenerimaan = TRUE
+        "));
+
+        return $this->respond($data);
+    }
+
+    public function getSTSKeuangan(Request $request)
+    {
+        $kdProfile = $this->getDataKdProfile($request);
+        $idProfile = (int) $kdProfile;
+
+        // sts harus pake simpan yang sudah mapping akun pendapatan
+        $data = DB::select(DB::raw("
+           
+            
+            SELECT
+                *
+            FROM
+                (
+                    -- untuk sts biasa
+                    SELECT
+                        DISTINCT sts.norec,
+                        sts.nosts,
+                        sts.tglpenerimaan,
+                        sts.totalsetoran,
+                        sts.totalsetoranpembulatan,
+                        sts.terbilang,
+                        cap.id AS idakunpendapatan,
+                        cap.koderekening,
+                        cap.namarekening, 
+                        cap.koderekening || ' - ' || cap.namarekening AS textrekening
+                    FROM strukclosing_t sc
+                    INNER JOIN strukclosingkasir_t sck ON sck.noclosingfk = sc.norec
+                    INNER JOIN strukbuktipenerimaan_t sbm ON sbm.noclosingfk = sc.norec 
+                    INNER JOIN strukhistori_t sh ON sh.noclosing = sc.norec
+                    LEFT JOIN strukbuktipenerimaancarabayar_t sbmcr ON sbmcr.nosbmfk = sbm.norec
+                    LEFT JOIN carabayar_m cb ON cb.id = sbmcr.objectcarabayarfk
+                    INNER JOIN ststosck_t ssc ON ssc.objectsckfk = sck.norec AND ssc.statusenabled = TRUE
+                    INNER JOIN surattandasetoran_t sts ON sts.norec = ssc.objectstsfk AND sts.statusenabled = TRUE
+                    INNER JOIN char_akun_pendapatan_m cap ON cap.id = sts.objectakunpendapatanfk AND cap.statusenabled = TRUE
+                    WHERE
+                        sc.statusenabled = TRUE
+                        AND sc.kdprofile = 30
+                        AND sbm.statusenabled = TRUE 
+                        AND sbm.kdprofile = 30
+                        AND sh.statusenabled = TRUE
+                        AND sh.kdprofile = 30
+                        AND sts.norec NOT IN (SELECT objectstsfk FROM bkupenerimaanv2_t WHERE statusenabled = TRUE)
+                    
+                    UNION
+                    
+                    SELECT
+                        sts.norec,
+                        sts.nosts,
+                        sts.tglpenerimaan,
+                        sts.totalsetoran,
+                        sts.totalsetoranpembulatan,
+                        sts.terbilang,
+                        cap.id AS idakunpendapatan,
+                        cap.koderekening,
+                        cap.namarekening,
+                        cap.koderekening || ' - ' || cap.namarekening AS textrekening
+                    FROM
+                        rekapklaimbpjs_t rkb
+                    LEFT JOIN pasiendaftar_t pd ON pd.norec = rkb.norecpdfk
+                    LEFT JOIN kelompokpasien_m kp ON kp.id = pd.objectkelompokpasienlastfk
+                    LEFT JOIN ruangan_m ru ON ru.id = pd.objectruanganlastfk
+                    INNER JOIN ststorekapklaim_t str ON str.objectrekapklaimfk = rkb.norec AND str.statusenabled = TRUE AND str.kdprofile = 30
+                    INNER JOIN surattandasetoran_t sts ON sts.norec = str.objectstsfk AND sts.statusenabled = TRUE AND sts.kdprofile = 30
+                    INNER JOIN char_akun_pendapatan_m cap ON cap.id = sts.objectakunpendapatanfk AND cap.statusenabled = TRUE
+                    WHERE
+                        rkb.statusenabled = TRUE
+                        AND rkb.kdprofile = 30
+                        AND sts.norec NOT IN (SELECT objectstsfk FROM bkupenerimaanv2_t WHERE statusenabled = TRUE)
+                    GROUP BY 
+                            sts.norec,
+                            sts.nosts,
+                            sts.tglpenerimaan,
+                            sts.totalsetoran,
+                            sts.terbilang,
+                            cap.id,
+                            cap.koderekening,
+                            cap.namarekening
+
+                ) AS x
+            ORDER BY
+                x.tglpenerimaan
+
+        "));
+
+        return $this->respond($data);
+    }
+
+    public function getSPM(Request $request)
+    {
+        $kdProfile = $this->getDataKdProfile($request);
+        $idProfile = (int) $kdProfile;
+
+        $data = DB::select(DB::raw("
+            SELECT 
+                spm.*, spp.nospp, spp.tglspp, ap.id idasalproduk, ap.asalproduk
+            FROM spm_t spm
+            LEFT JOIN spp_t spp on spp.norec = spm.objectsppfk
+            LEFT JOIN asalproduk_m ap on ap.id = spm.objectasalprodukfk AND ap.statusenabled = true AND spp.statusenabled = true
+            WHERE 
+                spm.statusenabled = true
+                AND spm.norec NOT IN (SELECT objectspmfk FROM bkupenerimaanv2_t WHERE statusenabled = TRUE AND objectspmfk IS NOT NULL)
+        "));
+
+        return $this->respond($data);
+    }
+
+    public function simpanBKUV2(Request $request)
+    {
+
+        $kdProfile = $this->getDataKdProfile($request);
+        $idProfile = (int) $kdProfile;
+
+        DB::beginTransaction();
+        try {
+            
+            // simpan bku
+            $BKU = new BKUPenerimaanV2();
+            $norec = $BKU->generateNewId();
+            $BKU->norec = $norec;
+            $BKU->statusenabled = true;
+            $BKU->kdprofile = $idProfile;
+
+            $nobku = $this->generateCodeBKU(new BKUPenerimaanV2, 'nobku', $request['asalproduk'], 2, '', $idProfile);
+
+            $BKU->nobku = $nobku;
+            $BKU->tglbku = $request['tglbku'];
+            $BKU->uraianbku = $request['uraian'];
+            $BKU->objectstsfk = isset($request['norecSTS']) ? $request['norecSTS'] : null;
+            $BKU->objectakunpendapatanfk = isset($request['akunpendapatan']) ? $request['akunpendapatan'] : null;
+            $BKU->objectspmfk = isset($request['norecSPM']) ? $request['norecSPM'] : null;
+            $BKU->ispenerimaan = $request['ispenerimaan'];
+            $BKU->totalpenerimaan = isset($request['totalpenerimaan']) ? (float)$request['totalpenerimaan'] : null;
+            $BKU->totalpengeluaran = isset($request['totalpengeluaran']) ? (float)$request['totalpengeluaran'] : null;
+            $BKU->save();
+
+            $transStatus = true;
+
+        } catch (\Exception $e) {
+            
+            $transStatus= false;
+            
+        }
+
+        $transMsg = "";
+        if($transStatus == true) {
+            $transMsg = 'Simpan Berhasil';
+            DB::commit();
+            $result = array(
+                "status" => 201,
+                "message" => $transMsg,
+                "as" => 'as@epic',
+            );
+        }else {
+            $transMsg = 'Simpan Gagal!!';
+            DB::rollBack();
+            $result = array(
+                "status" => 400,
+                "message"  => $transMsg,
+                "err" => $e->getMessage(),
+                "line" => $e->getLine(),
+                "as" => 'as@epic',
+            );
+        }
+        return $this->setStatusCode($result['status'])->respond($result, $transMsg);
+
+    }
+
+    public function hapusBKUV2(Request $request)
+    {
+        $kdProfile = $this->getDataKdProfile($request);
+        $idProfile = (int) $kdProfile;
+
+        DB::beginTransaction();
+        try {
+            
+            // hapus bku
+            $data = DB::table('bkupenerimaanv2_t')->where('norec', $request['norec'])->update([
+                'statusenabled' => false
+            ]);
+
+            $transStatus = true;
+
+        } catch (\Exception $e) {
+            
+            $transStatus= false;
+            
+        }
+
+        $transMsg = "";
+        if($transStatus == true) {
+            $transMsg = 'Simpan Berhasil';
+            DB::commit();
+            $result = array(
+                "status" => 201,
+                "message" => $transMsg,
+                "as" => 'as@epic',
+            );
+        }else {
+            $transMsg = 'Simpan Gagal!!';
+            DB::rollBack();
+            $result = array(
+                "status" => 400,
+                "message"  => $transMsg,
+                "err" => $e->getMessage(),
+                "line" => $e->getLine(),
+                "as" => 'as@epic',
+            );
+        }
+        return $this->setStatusCode($result['status'])->respond($result, $transMsg);
     }
 
 }

@@ -1389,6 +1389,10 @@
         {
             "nameDep": "KetersediaanTempatTidurNewCtrl",
             "urlDep": "module/Humas/KetersediaanTempatTidurNewCtrl"
+        },
+        {
+            "nameDep": "BKUBendaharaPenerimaanV2Ctrl",
+            "urlDep": "module/BendaharaPenerimaan/BKUBendaharaPenerimaanV2Ctrl"
         }
     ]
 }
