@@ -25471,4 +25471,76 @@ public function suratBuktiPengembalian(Request $request)
 
         return view('report.spj.cetak-stsklaimv2',compact('rekening', 'data', 'sts'));
     }
+
+    public function cetakBKUPenerimaanV2(Request $request)
+    {
+
+        $profile = DB::select("select*from profile_m where kdprofile = 30 and statusenabled = true");
+
+        // data bulan sebelumnya
+        $bulan_sebelumnya = DB::select(DB::raw("
+
+            SELECT
+                COALESCE(SUM(bkup.totalpenerimaan), 0) as totalpenerimaan,
+                COALESCE(SUM(bkup.totalpengeluaran), 0) as totalpengeluaran,
+                COALESCE(SUM(bkup.totalpengeluaran), 0) - COALESCE(SUM(bkup.totalpengeluaran), 0) as totalakhir
+            FROM bkupenerimaanv2_t bkup
+            LEFT JOIN surattandasetoran_t sts ON sts.norec = bkup.objectstsfk AND sts.statusenabled = TRUE
+            LEFT JOIN char_akun_pendapatan_m cap ON cap.id = bkup.objectakunpendapatanfk AND cap.statusenabled = TRUE
+            LEFT JOIN spm_t spm ON spm.norec = bkup.objectspmfk AND spm.statusenabled = TRUE
+            LEFT JOIN spp_t spp on spp.norec = spm.objectsppfk AND spp.statusenabled = TRUE
+            LEFT JOIN asalproduk_m ap on ap.id = spm.objectasalprodukfk and ap.statusenabled = true 
+            WHERE
+                bkup.statusenabled = TRUE
+                AND bkup.kdprofile = 30
+                AND bkup.tglbku::DATE < date_trunc('month', '".$request['tglbku']."'::DATE)
+        "));
+
+        $saldobulanlalu = 0;
+        foreach($bulan_sebelumnya as $item){
+            $saldobulanlalu += (float)$item->totalpenerimaan;
+            $saldobulanlalu -= (float)$item->totalpengeluaran;
+        }
+
+
+        // data bulan yang dipilih
+        $bulan_sekarang = DB::select(DB::raw("
+
+            SELECT
+                bkup.*, sts.nosts, COALESCE(cap.koderekening, '') as norekening
+            FROM bkupenerimaanv2_t bkup
+            LEFT JOIN surattandasetoran_t sts ON sts.norec = bkup.objectstsfk AND sts.statusenabled = TRUE
+            LEFT JOIN char_akun_pendapatan_m cap ON cap.id = bkup.objectakunpendapatanfk AND cap.statusenabled = TRUE
+            LEFT JOIN spm_t spm ON spm.norec = bkup.objectspmfk AND spm.statusenabled = TRUE
+            LEFT JOIN spp_t spp on spp.norec = spm.objectsppfk AND spp.statusenabled = TRUE
+            LEFT JOIN asalproduk_m ap on ap.id = spm.objectasalprodukfk and ap.statusenabled = true 
+            WHERE
+                bkup.statusenabled = TRUE
+                AND bkup.kdprofile = 30
+                AND bkup.tglbku BETWEEN date_trunc('month', '".$request['tglbku']."'::DATE) AND '".$request['tglbku']."'::DATE 
+        
+        "));
+
+        $saldobulansekarang = 0;
+        foreach($bulan_sekarang as $item){
+            $saldobulansekarang += (float)$item->totalpenerimaan;
+            $saldobulansekarang -= (float)$item->totalpengeluaran;
+        }
+
+        $tglbku = date('d m Y', strtotime($request['tglbku']));
+        
+        setlocale(LC_ALL, 'IND');
+        $bulan = strftime('%B', strtotime($request['tglbku']));
+        $tglindo = strftime('%d %B %Y', strtotime($request['tglbku']));
+        // dd($tglbku);
+        // dd([
+        //     'sebelum' => $bulan_sebelumnya,
+        //     'sekarang' => $bulan_sekarang,
+        //     'saldobulanlalu' => $saldobulanlalu,
+        //     'saldobulansekarang' => $saldobulansekarang,
+        // ]);
+
+        return view('report.keuangan.cetak-bkupenerimaanv2',compact('saldobulanlalu', 'bulan_sekarang', 'saldobulansekarang', 'profile', 'tglbku', 'bulan', 'tglindo'));
+
+    }
 }

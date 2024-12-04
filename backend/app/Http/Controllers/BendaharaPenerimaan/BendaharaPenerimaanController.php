@@ -11600,6 +11600,8 @@ class BendaharaPenerimaanController extends ApiController {
             WHERE
                 bkup.statusenabled = TRUE
                 AND bkup.kdprofile = ".$idProfile."
+            ORDER BY
+                bkup.tglbku DESC
         "));
 
         return $this->respond($data);
@@ -11755,8 +11757,8 @@ class BendaharaPenerimaanController extends ApiController {
             $BKU->objectakunpendapatanfk = isset($request['akunpendapatan']) ? $request['akunpendapatan'] : null;
             $BKU->objectspmfk = isset($request['norecSPM']) ? $request['norecSPM'] : null;
             $BKU->ispenerimaan = $request['ispenerimaan'];
-            $BKU->totalpenerimaan = isset($request['totalpenerimaan']) ? (float)$request['totalpenerimaan'] : null;
-            $BKU->totalpengeluaran = isset($request['totalpengeluaran']) ? (float)$request['totalpengeluaran'] : null;
+            $BKU->totalpenerimaan = isset($request['totalpenerimaan']) ? (float)$request['totalpenerimaan'] : 0;
+            $BKU->totalpengeluaran = isset($request['totalpengeluaran']) ? (float)$request['totalpengeluaran'] : 0;
             $BKU->save();
 
             $transStatus = true;
