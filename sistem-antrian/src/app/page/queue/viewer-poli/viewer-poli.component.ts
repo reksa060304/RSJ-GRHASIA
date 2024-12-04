@@ -400,13 +400,13 @@ export class ViewerPoliComponent implements OnInit {
     synthesis.speak(utterance);
     // this.audio.pause();
     // }, (1500)); //4 detik
+    // setTimeout(() => {
+      
+    // }, (4000));
     setTimeout(() => {
+      
       this.item.poliYangDipanggil = poliPanggilNya
       this.item.antrianYangDipanggil = antrianPanggilNya
-  
-    }, (3000));
-    setTimeout(() => {
-    
       this.dipanggil = false
     }, (5000));
 
