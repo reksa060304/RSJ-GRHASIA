@@ -19,6 +19,7 @@ export class ViewerPoliComponent implements OnInit {
   dateNow: any = new Date()
   jamSekarang: any;
   isLogin: boolean = true
+  poliPanggilNya: string
   tgl: any;
   apiTimer: any;
   listAntri: any[] = []
@@ -212,15 +213,25 @@ export class ViewerPoliComponent implements OnInit {
 
       if (status == true) {
         this.dipanggil = true
-        if (result.jenis != undefined && result.jenis == 'penunjang') {
-          this.playAudio('Nomor Registrasi ' + this.item.antriTerakhir
-            //+ '. ' + this.item.nama
-            + '. Ke Ruang. ' + this.item.poliPanggil);
+        if (this.item.poliPanggil === 'POLIKLINIK JIWA') {
+          this.sound = new Howl({
+            src: ['assets/sound/in.wav'],  // Ganti dengan path file suara lonceng Anda
+            autoplay: true
+          });
+
+          this.dipanggil = false
+      
         } else {
-          this.playAudio('Nomor Antrian ' + Terbilang(this.item.antriTerakhir) + '. Silahkan Ke. ' + this.item.poliPanggil);
-        }
+          if (result.jenis != undefined && result.jenis == 'penunjang') {
+            this.playAudio('Nomor Registrasi ' + this.item.antriTerakhir
+              //+ '. ' + this.item.nama
+              + '. Ke Ruang. ' + this.item.poliPanggil,this.item.poliPanggil);
+          } else {
+            this.playAudio('Nomor Antrian ' + Terbilang(this.item.antriTerakhir) + '. Silahkan Ke. ' + this.item.poliPanggil, this.item.poliPanggil);
+          }
 
       }
+    }
     });
 
     this.apiTimer = setInterval(() => {
@@ -357,24 +368,28 @@ export class ViewerPoliComponent implements OnInit {
     replace(/ DRS\. /ig,' Doktorandus. ')
   }
 
-  playAudio(nomor: string) {
+  poliYangDipanggil:string
+
+  playAudio(nomor: string, poliPanggilNya:string) {
 
     // setTimeout(() => {
 
+  
+    
     var synthesis = window.speechSynthesis;
     // Get the first `en` language voice in the list
-
+    
     var voice = synthesis.getVoices().filter(function (voice) {
       return voice.lang === 'id-ID';
     })[0];
-
+    
     // Create an utterance object
     var utterance = new SpeechSynthesisUtterance(this.replaceGelar(nomor).
-          toLocaleLowerCase());
+    toLocaleLowerCase());
     // Set utterance properties
     utterance.voice = voice;
     utterance.lang = 'id-ID';
-
+    
     // utterance.text = document.querySelector("textarea").value;
     utterance.pitch = 1;
     utterance.rate = 0.8;
@@ -384,6 +399,11 @@ export class ViewerPoliComponent implements OnInit {
     // this.audio.pause();
     // }, (1500)); //4 detik
     setTimeout(() => {
+      this.item.poliYangDipanggil = poliPanggilNya
+  
+    }, (4000));
+    setTimeout(() => {
+    
       this.dipanggil = false
     }, (5000));
 
