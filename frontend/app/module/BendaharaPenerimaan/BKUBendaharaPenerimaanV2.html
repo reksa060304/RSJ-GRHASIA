@@ -33,6 +33,10 @@
 		background: #B5B2B1;
 	}
 </style>
+<div class="grid_12" style="margin-top:60px">
+	<div ng-include='"../app/template/Shared/TemplateLoading"'></div>
+</div>
+
 <div class="grid_12 headerBox">
 	<h1 style="color: white;"><b>Buku Kas Umum V2</b></h1>
 </div>
@@ -88,7 +92,6 @@
 			<div class="grid_12">
 				<label c-label item="item" c-label-text="Periode"></label>
 			</div>
-			<div class="clear"></div>
 
 			<div class="grid_12" style="margin-top: -5px">
 				<!-- PeriodeAwal -->
@@ -106,7 +109,6 @@
 							placeholer="dd-mm-yyyy" k-format="'dd-MM-yyyy'" />
 					</div>
 				</div>
-				<div class="clear"></div>
 			</div>
 		</div>
 		<div class="grid_2 k-edit-buttons  k-state-default " style="margin-top:23px">
@@ -116,9 +118,6 @@
 	</div>
 </div>
 
-<div class="clear"></div>
-
-<br />
 
 <!-- MonitoringRekeningKoran -->
 <div class="grid_12">
@@ -128,11 +127,58 @@
 			k-sortable="'true'" k-resizable="'true'" k-ng-model="dataSelected" ng-click="klikGrid(dataSelected)">
 		</kendo-grid>
 	</div>
+
+    <div style="margin-top: 4em;" class="grid_12">
+        <button class="k-button k-button-icontext k-primary k-grid-update" ng-click="handlePopUpCetak()">Cetak BKU</button>
+    </div>
 </div>
+
+
+<div kendo-window="popUpCetak" k-title="'Cetak'" k-width="800" k-visible="false">
+	<div class="panel panel-default container_12">
+        <div class="grid">
+            <div class="grid_12">
+                <h2 id="filterData">
+                    <b>Filter Cetak</b>
+                </h2>
+            </div>
+
+            <div class="grid_12" style="margin-top: 2em">
+				
+				<div class="grid_6">
+                    <div class="grid_12">
+                        <label for="">Tgl BKU</label>
+                    </div>
+					<div class="grid_12">
+						<input style="width: 100%;" k-ng-model="item.tglbkucetak" kendo-date-picker placeholer="dd-mm-yyyy" k-format="'dd-MM-yyyy'" />
+					</div>
+				</div>
+
+				<div class="grid_6">
+                    <div class="grid_12">
+                        <label for="">Tgl Cetak</label>
+                    </div>
+					<div class="grid_12">
+						<input style="width: 100%;" k-ng-model="item.tglcetak" kendo-date-picker placeholer="dd-mm-yyyy" k-format="'dd-MM-yyyy'" />
+					</div>
+				</div>
+			</div>
+    
+            <div class="grid_12" style="margin-top: 3em;">
+                <button class="k-button  k-button-icontext" ng-click="batalCetak()">
+                    <span class="k-icon k-cancel"></span>
+                    Batal
+                </button>
+                <button class="k-button k-button-icontext k-primary k-grid-update" ng-click="cetakLaporan()" >
+                    <span class="k-icon k-update"></span>
+                    Cetak
+                </button>
+            </div>
+        </div>
+        
+	</div>
 </div>
-<div class="grid_12" style="margin-top:60px">
-	<div ng-include='"../app/template/Shared/TemplateLoading"'></div>
-</div>
+
 <!-- start penerimaan -->
 <div kendo-window="popUpPenerimaan" k-title="'Penerimaan'" k-width="800" k-height="500" 
      k-visible="false" k-on-open="isBendaharaPenerimaan = true" 
@@ -243,6 +289,7 @@
 	</div>
 </div>
 <!-- end penerimaan -->
+
 <!-- start pengelurarn -->
 <div kendo-window="popUpPengeluaran" k-title="'Tambah Pengeluaran'" k-width="800" k-height="500" k-visible="false"
 	k-on-open="isBendaharaPengeluaran = true" k-on-close="isBendaharaPengeluaran = false">

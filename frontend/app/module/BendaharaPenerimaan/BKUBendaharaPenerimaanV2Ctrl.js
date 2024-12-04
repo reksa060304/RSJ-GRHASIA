@@ -1,5 +1,6 @@
-define(['initialize'], function (initialize) {
+define(['initialize', 'Configuration'], function (initialize, configuration) {
 	'use strict';
+    var baseTransaksi = configuration.baseApiBackend;
 	initialize.controller('BKUBendaharaPenerimaanV2Ctrl', ['$scope', '$state', 'CacheHelper', 'DateHelper', 'MedifirstService',
 		function ($scope, $state, cacheHelper, dateHelper, medifirstService) {
 			$scope.now = new Date();
@@ -472,6 +473,38 @@ define(['initialize'], function (initialize) {
 					    loadData()
 				    })
             }
+
+            $scope.handlePopUpCetak = function() {
+
+                $scope.popUpCetak.center().open()
+
+            }
+
+            $scope.cetakLaporan = function(){
+
+                // validasi
+                if($scope.item.tglbkucetak == undefined && $scope.item.tglbkucetak == null){
+                    toastr.error('Pilih tanggal bku dulu')
+                    return
+                }
+
+                if($scope.item.tglcetak == undefined && $scope.item.tglcetak == null){
+                    toastr.error('Pilih tanggal cetak dulu')
+                    return
+                }
+
+                window.open(baseTransaksi + "report/cetak-bkupenerimaanv2?tglbku=" + moment($scope.item.tglbkucetak).format('YYYY-MM-DD'), '_blank')
+            }
+
+            $scope.batalCetak = function(){
+
+                $scope.item.tglbkucetak = null
+                $scope.item.tglcetak = null
+
+                $scope.popUpCetak.close()
+
+            }
+
 
             $scope.formatRupiah = function (value, currency) {
 				if (value == "undefined" || value == "null") {
