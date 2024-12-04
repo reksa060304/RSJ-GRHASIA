@@ -20,6 +20,7 @@ export class ViewerPoliComponent implements OnInit {
   jamSekarang: any;
   isLogin: boolean = true
   poliPanggilNya: string
+  antrianPanggilNya: string
   tgl: any;
   apiTimer: any;
   listAntri: any[] = []
@@ -225,9 +226,9 @@ export class ViewerPoliComponent implements OnInit {
           if (result.jenis != undefined && result.jenis == 'penunjang') {
             this.playAudio('Nomor Registrasi ' + this.item.antriTerakhir
               //+ '. ' + this.item.nama
-              + '. Ke Ruang. ' + this.item.poliPanggil,this.item.poliPanggil);
+              + '. Ke Ruang. ' + this.item.poliPanggil,this.item.poliPanggil,this.item.antriTerakhir);
           } else {
-            this.playAudio('Nomor Antrian ' + Terbilang(this.item.antriTerakhir) + '. Silahkan Ke. ' + this.item.poliPanggil, this.item.poliPanggil);
+            this.playAudio('Nomor Antrian ' + Terbilang(this.item.antriTerakhir) + '. Silahkan Ke. ' + this.item.poliPanggil, this.item.poliPanggil,this.item.antriTerakhir);
           }
 
       }
@@ -369,8 +370,9 @@ export class ViewerPoliComponent implements OnInit {
   }
 
   poliYangDipanggil:string
+  antrianYangDipanggil:string
 
-  playAudio(nomor: string, poliPanggilNya:string) {
+  playAudio(nomor: string, poliPanggilNya:string, antrianPanggilNya:string) {
 
     // setTimeout(() => {
 
@@ -400,8 +402,9 @@ export class ViewerPoliComponent implements OnInit {
     // }, (1500)); //4 detik
     setTimeout(() => {
       this.item.poliYangDipanggil = poliPanggilNya
+      this.item.antrianYangDipanggil = antrianPanggilNya
   
-    }, (4000));
+    }, (3000));
     setTimeout(() => {
     
       this.dipanggil = false
