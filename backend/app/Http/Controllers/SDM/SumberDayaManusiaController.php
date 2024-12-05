@@ -8232,7 +8232,7 @@ where pg.kdprofile = 30 and pg.statusenabled = true and pg.usereksternal is null
         return $this->respond($data);
     }
 
-    public function simpanPhotoPegawaiOld(Request $request) {
+    public function simpanPhotoPegawai(Request $request) {
         \DB::beginTransaction();
         $kdProfile = (int) $this->getDataKdProfile($request);
         $FilePath = 'SDM/PhotoPegawai/';
@@ -8309,7 +8309,7 @@ where pg.kdprofile = 30 and pg.statusenabled = true and pg.usereksternal is null
     }
     
 
-   public function simpanPhotoPegawai(Request $request) {
+   public function simpanPhotoPegawaiOld(Request $request) {
     \DB::beginTransaction();
     
     $kdProfile = (int) $this->getDataKdProfile($request);
