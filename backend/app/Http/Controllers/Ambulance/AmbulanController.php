@@ -2457,32 +2457,33 @@ class AmbulanController extends ApiController
             ->leftJoin('petugaspelayananambulan_t as ppa', 'ppa.nostrukdetailfk', '=', 'spd.norec')
             ->leftJoin('pegawai_m as pg', 'pg.id', '=', 'ppa.objectpegawaifk')
             ->leftJoin('jenispegawai_m as jp', 'jp.id', '=', 'pg.objectjenispegawaifk')
-            ->leftJoin('jeniskegiatanambulan_m as jka', 'jka.id', '=', 'spd.jeniskegiatanambulanfk')
+            ->leftJoin('jeniskegiatanambulan_m as jka', function ($join) {
+                $join->on('jka.id', '=', \DB::raw('CAST(spd.jeniskegiatanambulanfk AS BIGINT)'));
+            })
             ->leftJoin('alamatnonlayanan_m as anl', 'anl.strukpelayanandetail', '=', 'spd.norec')
             ->distinct()
             ->select(
                 'sp.nostruk',
-                \DB::raw('DATE(sp.tglstruk) as tglstruk'), // Hanya tanggal
-                'sp.tglstruk as tglstruk_full', // Menambahkan kolom untuk ORDER BY
+                'sp.tglstruk', // Hanya tanggal
                 'pg.namalengkap AS namapersonel',
                 'spd.hargasatuan',
                 'sp.namapasien_klien',
                 'spd.nopolisifk',
                 'jka.namajeniskegiatan',
-                'anl.alamatlengkap as lokasitujuan '
+                'anl.alamatlengkap as lokasitujuan'
             )
             ->where('sp.statusenabled', true)
             ->where('sp.kdprofile', (int)$kdProfile)
             ->where('jp.id', 48)
-            ->whereNotNull('sp.nosbmlastfk'); // Perbaikan pengecekan null
+            ->whereNotNull('sp.nosbmlastfk');
 
         // Filter berdasarkan tanggal awal
-        if (!empty($filter['tglAwal'])) {
+        if (!empty($filter['tglAwal']) && strtotime($filter['tglAwal'])) {
             $data = $data->where('sp.tglstruk', '>=', $filter['tglAwal']);
         }
 
         // Filter berdasarkan tanggal akhir
-        if (!empty($filter['tglAkhir'])) {
+        if (!empty($filter['tglAkhir']) && strtotime($filter['tglAkhir'])) {
             $data = $data->where('sp.tglstruk', '<=', $filter['tglAkhir']);
         }
 
@@ -2497,5 +2498,6 @@ class AmbulanController extends ApiController
         // Mengembalikan response
         return $this->respond($data);
     }
+
 
 }
