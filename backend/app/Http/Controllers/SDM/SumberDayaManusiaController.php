@@ -8232,104 +8232,155 @@ where pg.kdprofile = 30 and pg.statusenabled = true and pg.usereksternal is null
         return $this->respond($data);
     }
 
-    public function simpanPhotoPegawai(Request $request){
+    public function simpanPhotoPegawaiOld(Request $request) {
         \DB::beginTransaction();
-       $kdProfile = (int) $this->getDataKdProfile($request);
-       $FilePath = 'SDM/PhotoPegawai/';
-       try {
-           if (empty($request['norec']) || $request['norec'] == ""){
-               $dataSaveSipStr = new PhotoPegawai();
-               $dataSaveSipStr->kdprofile = $kdProfile;
-               $dataSaveSipStr->statusenabled=true;
-               $dataSaveSipStr->norec = $dataSaveSipStr->generateNewId();
-
-           }else{
-               $dataSaveSipStr = PhotoPegawai::where('norec', $request['norec'])
-                   ->where('kdprofile',$kdProfile)
-                   ->where('pegawaifk',$request['idPegawai'])
-                   ->first();
-           }
-
-//            if ($request['jenismasaberlakufk'] == 1){
-//                $filename = 'SIP-'.$request['idPegawai'].'.'.$extension;
-//            }elseif ($request['jenismasaberlakufk'] == 2) {
-//                $filename = 'STR-'.$request['idPegawai'].'.'.$extension;
-//            }
-//
-//            Storage::disk('local')->put('SDM/FileSipStr/'.$filename,file_get_contents($request->file('file')));
-//            // $path = $uploadedFile->move('photos',$filename);
-//
-//            $dataSaveSipStr->pegawaifk=$request['idPegawai'];
-//            $dataSaveSipStr->jenismasaberlakufk=$request['jenismasaberlakufk'];
-//            $dataSaveSipStr->nomor =$request['nomorSurat'];
-//            $dataSaveSipStr->tglberakhir = $request['tglBerakhir'];
-//            $dataSaveSipStr->namafileupload = $filename;
-
-           $uploadedFileSip = $request->file('file');
-        //    $uploadedFileStr = $request->file('filestr');
-           $pegawai = Pegawai::where('id',$request['idPegawai'])->first();
-        //    if(!empty($uploadedFileSip)){
+        $kdProfile = (int) $this->getDataKdProfile($request);
+        $FilePath = 'SDM/PhotoPegawai/';
+        
+        try {
+            if (empty($request['norec']) || $request['norec'] == "") {
+                $dataSaveSipStr = new PhotoPegawai();
+                $dataSaveSipStr->kdprofile = $kdProfile;
+                $dataSaveSipStr->statusenabled = true;
+                $dataSaveSipStr->norec = $dataSaveSipStr->generateNewId();
+            } else {
+                $dataSaveSipStr = PhotoPegawai::where('norec', $request['norec'])
+                    ->where('kdprofile', $kdProfile)
+                    ->where('pegawaifk', $request['idPegawai'])
+                    ->first();
+            }
+    
+            // Memastikan file di-upload
+            if (!$request->hasFile('file')) {
+                return response()->json(['message' => 'No file uploaded'], 400);
+            }
+    
+            // Mengambil file yang di-upload
+            $uploadedFileSip = $request->file('file');
+            $pegawai = Pegawai::where('id', $request['idPegawai'])->first();
+    
+            // Mendapatkan ekstensi dan nama file
             $extensionSip = $uploadedFileSip->getClientOriginalExtension();
-            $filenameSip = 'Photo_'.$pegawai->namalengkap.'_'.$request['idPegawai'].'.'.$extensionSip;
+            $filenameSip = 'Photo_' . $pegawai->namalengkap . '_' . $request['idPegawai'] . '.' . $extensionSip;
+    
+            // Menentukan path penyimpanan file di dalam public
+            $destinationPath = public_path('SDM/PhotoPegawai');
+            
+            // Memastikan folder tujuan ada
+            if (!file_exists($destinationPath)) {
+                mkdir($destinationPath, 0755, true); // Membuat folder jika belum ada
+            }
+    
+            // Menyimpan file ke folder yang sudah ditentukan menggunakan public_path
+            $uploadedFileSip->move($destinationPath, $filenameSip);
+    
+            // Menyimpan data ke database
+            $dataSaveSipStr->pegawaifk = $request['idPegawai'];
+            $dataSaveSipStr->filename = $filenameSip;
+            $dataSaveSipStr->pathfile = $FilePath . $filenameSip; // Menyimpan path relatif
+            $dataSaveSipStr->save();
+    
+            \DB::commit();
+            $transStatus = 'true';
+        } catch (\Exception $e) {
+            \DB::rollBack();
+            \Log::error('Error saving photo: ' . $e->getMessage());
+            $transStatus = 'false';
+        }
+    
+        if ($transStatus == 'true') {
+            $transMessage = "Sukses";
+            $result = [
+                "status" => 201,
+                "data" => $dataSaveSipStr,
+                "message" => $transMessage,
+                "by" => 'kk@epic',
+            ];
+        } else {
+            $transMessage = "Simpan Foto Gagal";
+            $result = [
+                "status" => 400,
+                "message" => $transMessage,
+                "by" => 'kk@epic',
+            ];
+        }
+    
+        return $this->setStatusCode($result['status'])->respond($result, $transMessage);
+    }
+    
 
-//                Storage::disk('local')->put('SDM/FileSipStr/'.$filenameSip,file_get_contents($request->file('filesip')));
-            // $dataSaveSipStr->namafilesip = $filenameSip;
-        //    }
-//            if(!empty($uploadedFileStr)){
-//                $extensionStr = $uploadedFileStr->getClientOriginalExtension();
-//                $filenameStr = 'STR-' .$pegawai->namalengkap . '.' . $extensionStr;
-// //                Storage::disk('local')->put('SDM/FileSipStr/'.$filenameStr,file_get_contents($request->file('filestr')));
-//                $dataSaveSipStr->namafilestr =$filenameStr;
-//            }
+   public function simpanPhotoPegawai(Request $request) {
+    \DB::beginTransaction();
+    
+    $kdProfile = (int) $this->getDataKdProfile($request);
+    $FilePath = 'SDM/PhotoPegawai/'; // Folder tujuan di storage
+    $transStatus = 'false'; // Default status transaksi
+    
+    try {
+        if (empty($request['norec'])) {
+            $dataSaveSipStr = new PhotoPegawai();
+            $dataSaveSipStr->kdprofile = $kdProfile;
+            $dataSaveSipStr->statusenabled = true;
+            $dataSaveSipStr->norec = $dataSaveSipStr->generateNewId();
+        } else {
+            $dataSaveSipStr = PhotoPegawai::where('norec', $request['norec'])
+                ->where('kdprofile', $kdProfile)
+                ->where('pegawaifk', $request['idPegawai'])
+                ->first();
+        }
 
-           $dataSaveSipStr->pegawaifk=$request['idPegawai'];
-           $dataSaveSipStr->filename =$filenameSip;
-           $dataSaveSipStr->pathfile =$FilePath;
-           $norec =  $dataSaveSipStr->norec ;
-           if(!empty($uploadedFileSip)) {
-               $request->file('file')->move('SDM/PhotoPegawai/'.$filenameSip);
-           }
-           $dataSaveSipStr->save();
-           // return $request['nomorsip'];
-        //    $update= Pegawai::where('id',trim($request['idPegawai']))
-        //        ->update([
-        //            'nosip' => $request['nomorsip'],
-        //            'nostr' => $request['nomorstr']
-        //        ]);
+        // Validasi file apakah ada yang diupload
+        if (!$request->hasFile('file')) {
+            return response()->json(['message' => 'No file uploaded'], 400);
+        }
 
-           
-        //    if(!empty($uploadedFileStr)) {
-        //        $request->file('filestr')->move('SDM/FileSipStr/'.$norec,
-        //            $filenameStr);
-        //    }
+        // Dapatkan file yang diunggah
+        $uploadedFileSip = $request->file('file');
+        $pegawai = Pegawai::where('id', $request['idPegawai'])->first();
 
+        // Dapatkan ekstensi dan nama file
+        $extensionSip = $uploadedFileSip->getClientOriginalExtension();
+        $filenameSip = 'Photo_' . $pegawai->namalengkap . '_' . $request['idPegawai'] . '.' . $extensionSip;
 
-           $transStatus = 'true';
-       } catch (\Exception $e) {
-           $transStatus = 'false';
-       }
+        // Simpan file di storage menggunakan Storage::disk('local')->put()
+        $path = Storage::disk('local')->putFileAs($FilePath, $uploadedFileSip, $filenameSip);
 
-       if ($transStatus = 'true') {
-           $transMessage = "Sukses ";
-           \DB::commit();
-           $result = array(
-               "status" => 201,
-               "data" => $dataSaveSipStr,
-               "as" => 'kade',
-               "by" => 'kk@epic',
-           );
-       } else {
-           $transMessage = "Simpan Foto Gagal";
-           DB::rollBack();
-           $result = array(
-               "status" => 400,
-               "as" => 'kade',
-               "by" => 'kk@epic',
-           );
-       }
+        // Simpan nama file dan path ke database
+        $dataSaveSipStr->pegawaifk = $request['idPegawai'];
+        $dataSaveSipStr->filename = $filenameSip;
+        $dataSaveSipStr->pathfile = $path; // Simpan path file
 
-       return $this->setStatusCode($result['status'])->respond($result, $transMessage);
-   }
+        // Simpan data ke database
+        $dataSaveSipStr->save();
+
+        $transStatus = 'true'; // Set transaksi berhasil
+    } catch (\Exception $e) {
+        \Log::error($e->getMessage()); // Log pesan kesalahan
+        $transStatus = 'false';
+    }
+
+    if ($transStatus == 'true') {
+        $transMessage = "Sukses";
+        \DB::commit();
+        $result = [
+            "status" => 201,
+            "data" => $dataSaveSipStr,
+            "message" => $transMessage,
+            "by" => 'kk@epic',
+        ];
+    } else {
+        $transMessage = "Simpan Foto Gagal";
+        \DB::rollBack();
+        $result = [
+            "status" => 400,
+            "message" => $transMessage,
+            "by" => 'kk@epic',
+        ];
+    }
+
+    // Kembalikan respon
+    return $this->setStatusCode($result['status'])->respond($result, $transMessage);
+}
 
 
 }
