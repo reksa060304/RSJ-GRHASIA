@@ -8287,8 +8287,7 @@ where pg.kdprofile = 30 and pg.statusenabled = true and pg.usereksternal is null
            $dataSaveSipStr->pathfile =$FilePath;
            $norec =  $dataSaveSipStr->norec ;
            if(!empty($uploadedFileSip)) {
-               $request->file('file')->move($FilePath,
-                   $filenameSip);
+               $request->file('file')->move('SDM/PhotoPegawai/'.$filenameSip);
            }
            $dataSaveSipStr->save();
            // return $request['nomorsip'];
