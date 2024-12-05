@@ -1324,6 +1324,7 @@ class KasirController extends ApiController
                 (case when cb.id = 1 then sbm.totaldibayar else 0 end) as tunai, 
                 (case when cb.id > 1 then sbm.totaldibayar else 0 end) as nontunai')
             )
+            ->where('sbm.statusenabled', true)
             ->where('sbm.kdprofile', $kdProfile);
 
         if (isset($request['tglAwal']) && $request['tglAwal'] != "" && $request['tglAwal'] != "undefined") {
