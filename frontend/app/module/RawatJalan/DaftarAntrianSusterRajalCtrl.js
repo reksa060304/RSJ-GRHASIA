@@ -1773,11 +1773,14 @@ define(['initialize'], function (initialize) {
                 }
                 console.log(data);
                 cacheHelper.set("PanggilPerawat", data)
+                console.log(socket);
                 socket.emit('call-antrian-poli', {
                     namapasien:$scope.dataPasienSelected.namapasien,
                     namaruangan: $scope.item.pilihRuangan.namaruangan,
                     noantri:$scope.dataPasienSelected.noantrian,
                     nocm:$scope.dataPasienSelected.nocm,
+                    namadokter: $scope.dataPasienSelected.namadokter,
+                    iddokter: $scope.dataPasienSelected.objectpegawaifk,
                 });
                 console.log({
                     namapasien: $scope.dataPasienSelected.namapasien,

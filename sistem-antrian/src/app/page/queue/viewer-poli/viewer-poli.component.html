@@ -141,19 +141,44 @@
                 </div>
             </div>
             <div class="p-grid" *ngIf="listRuanganAktif.length > 0 ">
-                <div class="p-col-12 p-md-2 widget-customer-carousel" *ngFor="let items of listRuanganAktif">
-                    <div class="card brder2 text-center">
+                <div class="p-col-12 p-md-3 widget-customer-carousel" *ngFor="let items of listRuanganAktif">
+                    <!-- <div class="card brder2 text-center">
                         <img class="image" src="assets/img/{{items.nocounter}}.png">
                         <p class="text-antrian">Antrian</p>
                         <p class="text-ruangan">{{items.namaruangan}}</p>
+                        <div class="badge-light-danger22">
+                            <p class="">
+                                {{items.namadokter}}
+                            </p>
+                        </div>
                         <div class="badge-light-danger22">
                             <p class="text-nomorantri">
                                 {{items.noantri}}
                             </p>
                         </div>
+                    </div> -->
+                    <div class="container card brder2 text-center">
+                        <div class="content-wrapper">
+                            <!-- <img class="image-left" src="assets/img/{{items.nocounter}}.png"> -->
+                            <img class="image-left" [src]="items.fotoDokter ? items.fotoDokter : 'assets/img/' + items.nocounter + '.png'" alt="Foto Dokter">
+
+                            <div class="text-left">
+                                <!-- <p class="queue-text" style="text-align: left;">Antrian</p> -->
+                                <p class="room-name" style="text-align: left;">{{items.namaruangan}}</p>
+                                <div class="doctor-badge" style="text-align: left;">
+                                    <p>{{items.namadokter}}</p>
+                                </div>
+                                <div class="queue-number-badge" style="text-align: left;">
+                                     <p class="queue-number">No Antrian: {{items.noantri}}</p>
+                                </div>
+                                <div class="doctor-badge" style="text-align: left;">
+                                    <p>{{items.namapasien}}</p>
+                                </div>
+                            </div>
+                        </div>
                     </div>
                 </div>
-                <div class="p-col-12 p-md-2" *ngFor="let itemzz of listSkele">
+                <!-- <div class="p-col-12 p-md-2" *ngFor="let itemzz of listSkele">
                     <div class="card text-center">
                         <div style=" position: relative;
                             left: 20%;">
@@ -166,7 +191,7 @@
                         <p-skeleton width="100%" height="35px" borderRadius="16px"></p-skeleton>
 
                     </div>
-                </div>
+                </div> -->
                 <!-- <div class="p-col-12 p-md-2 widget-customer-carousel">
                     <div class="card brder2 text-center">
                         <img class="image" src="assets/img/11.png">
@@ -312,6 +337,36 @@
     color: #fff;
     padding: 5px 10px;
     border-radius: 5px;
+}
+
+/* TAMBAHAN */
+.container {
+    display: flex;
+    justify-content: left; /* Center the content horizontally */
+    align-items: left; /* Center the content vertically */
+}
+
+.content-wrapper {
+    display: flex;
+    align-items: left; /* Align the image and text vertically */
+}
+
+.image-left {
+    margin-right: 10px; /* Add space between the image and text */
+    width: 100px; /* Set image size as needed */
+    height: auto;
+}
+
+.text-right {
+    display: block; /* Ensures text stays in a block next to the image */
+}
+
+.queue-text, .room-name, .doctor-badge, .queue-number-badge {
+    margin: 5px 0; /* Optional: spacing between text elements */
+}
+
+.queue-number {
+    font-weight: bold; /* Optional: make the queue number bold */
 }
 
 </style>

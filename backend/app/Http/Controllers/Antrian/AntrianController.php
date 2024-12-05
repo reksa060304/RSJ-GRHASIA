@@ -150,6 +150,27 @@ class AntrianController extends ApiController
 
         return $this->respond($res);
     }
+    public function getFotoDokterViewer(Request $request)
+    {
+        $idProfile = Profile::where('statusenabled', true)->first()->id;
+
+        $dataPhoto = \DB::table('photopegawai_m')
+        ->selectRaw('CONCAT(pathfile, CAST(filename AS VARCHAR)) as namafile')
+        ->where('pegawaifk', $request['idPegawai'])
+        ->first();
+
+        if($dataPhoto != null){
+        $photoAja = public_path($dataPhoto->namafile);
+        $dataPhotoPegawai = 'data:image/png;base64,'.base64_encode(file_get_contents($photoAja));
+        }
+
+        $result = array(
+            'photo' => $dataPhoto == null ? '' : $dataPhotoPegawai,
+            "createby : " => 'ea@epic',
+        );
+        return $this->respond($result);
+
+    }
     public function getDipanggil(Request $r){
         $arruangn = [];
         foreach (explode(',', $r['ruangan']) as $z){
@@ -252,9 +273,13 @@ class AntrianController extends ApiController
             ->where('ps.statusenabled', true)
             ->whereIn('ru.objectdepartemenfk', [18, 24, 28, 26, 30, 34]);
 
-        // Tambahkan kondisi if untuk memeriksa apakah ada parameter ruangid
+        // Tambahkan kondisi untuk memeriksa apakah ada parameter ruangid
         if ($r->has('ruangid')) {
-            $query->where('ru.id', $r->input('ruangid'));
+            // Ambil inputan ruangid dari request sebagai string dan pisahkan dengan explode
+            $ruangidArray = explode(',', $r->input('ruangid'));
+
+            // Gunakan whereNotIn untuk mengecualikan ruangid yang diterima
+            $query->whereIn('ru.id', $ruangidArray);
         }
 
         $data = $query->get();

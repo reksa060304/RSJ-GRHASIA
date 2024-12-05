@@ -78,6 +78,7 @@ export class ViewerPoliComponent implements OnInit {
   jmlLoket = 4
   currentFile: any = { index: -1 };
   listRuangan: any[]
+  listFotoDokter: any[]
   sub: any;
   listRuanganAktif: any[] = []
   paramRuang: any
@@ -189,9 +190,10 @@ export class ViewerPoliComponent implements OnInit {
 
 
       let result = JSON.parse(data)
+      console.log(result)
       let namaloket = ''
       var status = false
-      this.listAntri.push({ noantri: result.noantri, namaruangan: result.namaruangan, namapasien: result.namapasien, nocm: result.nocm })
+      this.listAntri.push({ noantri: result.noantri, namaruangan: result.namaruangan, namapasien: result.namapasien, nocm: result.nocm, namadokter: result.namadokter, iddokter: result.iddokter})
       if (this.listAntri.length > 0) {
 
         status = false
@@ -199,8 +201,19 @@ export class ViewerPoliComponent implements OnInit {
           const element2 = this.listRuanganAktif[x];
           if (element2.namaruangan == result.namaruangan) {
             status = true
-
+            this.apiService
+            .get(`viewer/get-fotodokter-viewer?idPegawai=${this.listAntri[this.listAntri.length - 1].iddokter}`)
+            .subscribe((result) => {
+            // console.log(result)
+            if (result) {
+              const base64Image = result.photo;  
+              this.item.listFotoDokter = `${base64Image}`;
+              element2.fotoDokter = this.item.listFotoDokter 
+            }
+            });
             element2.noantri = this.listAntri[this.listAntri.length - 1].noantri
+            element2.namadokter = this.listAntri[this.listAntri.length - 1].namadokter
+            element2.namapasien = this.listAntri[this.listAntri.length - 1].namapasien
 
             this.item.poliPanggil = this.listAntri[this.listAntri.length - 1].namaruangan
             this.item.antriTerakhir = this.listAntri[this.listAntri.length - 1].noantri
@@ -213,8 +226,13 @@ export class ViewerPoliComponent implements OnInit {
       }
 
       if (status == true) {
+
         this.dipanggil = true
-        if (this.item.poliPanggil === 'POLIKLINIK JIWA') {
+        if (this.item.poliPanggil === 'POLIKLINIK JIWA' || this.item.poliPanggil === 'Ruang Dokter 1' || 
+            this.item.poliPanggil === 'Ruang Dokter 2' || this.item.poliPanggil === 'Ruang Dokter 3' ||
+            this.item.poliPanggil === 'Ruang Dokter 4' || this.item.poliPanggil === 'Ruang Perawat 1' ||
+            this.item.poliPanggil === 'Ruang Perawat 2'
+          ) {
           this.sound = new Howl({
             src: ['assets/sound/in.wav'],  // Ganti dengan path file suara lonceng Anda
             autoplay: true

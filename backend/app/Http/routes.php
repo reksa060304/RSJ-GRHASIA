@@ -3584,6 +3584,7 @@ Route::group(['middleware' => 'cors', 'prefix' => 'service'], function () {
         Route::get('viewer/update-antrian','Antrian\AntrianController@updatePanggil');
         Route::get('viewer/get-data-viewer','Antrian\AntrianController@getViewer');
         Route::get('viewer/get-setting-viewer','Antrian\AntrianController@getSettingViewer');
+        Route::get('viewer/get-fotodokter-viewer','Antrian\AntrianController@getFotoDokterViewer');
         Route::get('viewer/get-dipanggil','Antrian\AntrianController@getDipanggil');
         Route::get('viewer/get-list-antrian-farmasi','Antrian\AntrianController@getListAntrianFarm');
         Route::get('viewer/get-data-viewer-far','Antrian\AntrianController@getViewerFar');

@@ -1632,6 +1632,8 @@ define(['initialize'], function (initialize) {
                     namaruangan: $scope.item.pilihRuangan.namaruangan,
                     noantri: $scope.dataPasienSelected.noantrian,
                     nocm: $scope.dataPasienSelected.nocm,
+                    namadokter: $scope.dataPasienSelected.namadokter,
+                    iddokter: $scope.dataPasienSelected.objectpegawaifk,
                 });
                 toastr.info($scope.dataPasienSelected.nocm + ' - ' + $scope.dataPasienSelected.namapasien, 'Panggil')
                 $scope.popUpPanggil.close()
