@@ -307,6 +307,8 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
 
 			};
 
+            let dataAwalSTS = []
+            let dataAwalSPM = []
 		    $scope.$watch('item.itemJenisBukti', function (newValue, oldValue) {
                 if (newValue != oldValue) {
                     
@@ -315,7 +317,9 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
                         $scope.hidespm = false
                         $scope.hidests = true
                         medifirstService.get("bendaharapenerimaan/get-spm").then(function (e) {
-                        
+                            
+                            dataAwalSPM = e.data
+
                             $scope.dataGridSPM = new kendo.data.DataSource({
                                 data:  e.data,
                                 pageSize: 10,
@@ -343,6 +347,7 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
                             
                             
                             let data = res.data
+                            dataAwalSTS = data
 
                             $scope.dataGridSTS = new kendo.data.DataSource({
                                 data:  data,
@@ -371,8 +376,8 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
 				$scope.item.uraian = data.keterangan
 				$scope.item.jumlah = data.totalsetoran
                 $scope.item.idpendapatan = data.idakunpendapatan
-
-                console.log($scope.dataSelectedsts)
+                // console.log($scope.dataGridSTS)
+                // console.log($scope.dataSelectedsts)
 			}
 
 			$scope.klikGridspm = function (data) {
@@ -383,7 +388,7 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
 				$scope.item.uraian = data.untukpengeluaran
 				$scope.item.jumlah = data.nilaispm
 
-                console.log($scope.dataSelectedspm)
+                // console.log($scope.dataSelectedspm)
 
 			}
 
@@ -513,7 +518,123 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
 				} else {
 					return currency + " " + parseFloat(value).toFixed(2).replace(/(\d)(?=(\d{3})+\.)/g, "$1.");
 				}
-			}; 
+			};
+            
+            // cari sts
+            $scope.$watch('item.cariSTS', function(newValue, oldValue){
+                // console.log($scope.item.cariSTS)
+                // console.log($scope.item.cariSTS == '')
+                if($scope.item.cariSTS && $scope.item.cariSTS !== ''){
+                    
+                    let dataHasilCariSTS = []
+                    
+                    for (let index = 0; index < $scope.dataGridSTS.options.data.length; index++) {
+                        let element = $scope.dataGridSTS.options.data[index];
+
+                        if (element.nosts.toLowerCase().includes($scope.item.cariSTS) ) {
+                            dataHasilCariSTS.push(element)
+                        }else if (element.keterangan.toLowerCase().includes($scope.item.cariSTS)) {
+                            dataHasilCariSTS.push(element)
+                        }else if(element.totalsetoran.toString().includes($scope.item.cariSTS)){
+                            dataHasilCariSTS.push(element)
+                        }else if(element.textrekening.includes($scope.item.cariSTS)){
+                            dataHasilCariSTS.push(element)
+                        }
+                    }
+
+                    $scope.dataGridSTS = new kendo.data.DataSource({
+                        data:  dataHasilCariSTS,
+                        pageSize: 10,
+                        total: dataHasilCariSTS.length,
+                        serverPaging: false,
+                        schema: {
+                            model: {
+                                fields: {
+                                }
+                            }
+                        },
+                        aggregate: [
+                        ]
+                    });
+
+                }
+
+                // jika cari kosong
+                if($scope.item.cariSTS == ''){
+                    
+                    $scope.dataGridSTS = new kendo.data.DataSource({
+                        data:  dataAwalSTS,
+                        pageSize: 10,
+                        total: dataAwalSTS.length,
+                        group: $scope.group,
+                        serverPaging: false,
+                        schema: {
+                            model: {
+                                fields: {
+                                }
+                            }
+                        },
+                        aggregate: [
+                        ]
+                    });
+                }
+            })
+
+            $scope.$watch('item.cariSPM', function(newValue, oldValue){
+                
+                if($scope.item.cariSPM && $scope.item.cariSPM !== ''){
+                    
+                    let dataHasilCariSPM = []
+                    
+                    for (let index = 0; index < $scope.dataGridSPM.options.data.length; index++) {
+                        let element = $scope.dataGridSPM.options.data[index];
+
+                        if (element.nospm.toLowerCase().includes($scope.item.cariSPM) ) {
+                            dataHasilCariSPM.push(element)
+                        }else if (element.untukpengeluaran.toLowerCase().includes($scope.item.cariSPM)) {
+                            dataHasilCariSPM.push(element)
+                        }else if(element.nilaispm.toString().includes($scope.item.cariSPM)){
+                            dataHasilCariSPM.push(element)
+                        }
+                    }
+
+                    $scope.dataGridSPM = new kendo.data.DataSource({
+                        data: dataHasilCariSPM,
+                        pageSize: 10,
+                        total: dataHasilCariSPM.length,
+                        serverPaging: false,
+                        schema: {
+                            model: {
+                                fields: {
+                                }
+                            }
+                        },
+                        aggregate: [
+                        ]
+                    });
+
+                }
+
+                // jika cari kosong
+                if($scope.item.cariSPM == ''){
+                    
+                    $scope.dataGridSPM = new kendo.data.DataSource({
+                        data:  dataAwalSPM,
+                        pageSize: 10,
+                        total: dataAwalSPM.length,
+                        group: $scope.group,
+                        serverPaging: false,
+                        schema: {
+                            model: {
+                                fields: {
+                                }
+                            }
+                        },
+                        aggregate: [
+                        ]
+                    });
+                }
+            })
 
             $scope.columnGrid = {
 				toolbar: [
@@ -639,6 +760,13 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
                 sortable: true,
                 selectable: true,
                 pageable: true,
+                toolbar: [
+                    {
+                        name: "Cari", 
+                        text: "cari",
+                        template:  '<div class="grid"><div class="grid_1" style="margin-top: 10px;"><label c-label item="item" c-label-text="Cari"></label></div><div class="grid_4"><input c-text-box type="input" class="k-textbox" ng-model="item.cariSTS" /></div></div>'
+                    }
+                ],
                 columns: [
                     {
                         
@@ -681,6 +809,13 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
                 sortable: true,
                 selectable: "multiple",
                 pageable: true,
+                toolbar: [
+                    {
+                        name: "Cari", 
+                        text: "cari",
+                        template:  '<div class="grid"><div class="grid_1" style="margin-top: 10px;"><label c-label item="item" c-label-text="Cari"></label></div><div class="grid_4"><input c-text-box type="input" class="k-textbox" ng-model="item.cariSPM" /></div></div>'
+                    }
+                ],
                 columns: [
                     // {
 					// 	"template": "<input type='checkbox' class='checkbox style-center' ng-click='onClickSatuSPM($event,2)' />",
