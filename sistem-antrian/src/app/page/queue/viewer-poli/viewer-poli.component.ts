@@ -21,6 +21,8 @@ export class ViewerPoliComponent implements OnInit {
   isLogin: boolean = true
   poliPanggilNya: string
   antrianPanggilNya: string
+  poliYangDipanggil:string
+  antrianYangDipanggil:string
   tgl: any;
   apiTimer: any;
   listAntri: any[] = []
@@ -238,6 +240,9 @@ export class ViewerPoliComponent implements OnInit {
             autoplay: true
           });
 
+          this.item.antrianYangDipanggil = this.item.antriTerakhir
+          this.item.poliYangDipanggil = this.item.poliPanggil
+
           this.dipanggil = false
       
         } else {
@@ -387,8 +392,7 @@ export class ViewerPoliComponent implements OnInit {
     replace(/ DRS\. /ig,' Doktorandus. ')
   }
 
-  poliYangDipanggil:string
-  antrianYangDipanggil:string
+
 
   playAudio(nomor: string, poliPanggilNya:string, antrianPanggilNya:string) {
 
