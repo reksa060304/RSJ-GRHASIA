@@ -249,7 +249,7 @@ define(['initialize', 'Configuration'], function (initialize, config) {
             }
 
             $scope.InputTagihan = function () {
-                $state.go('InputTagihanNonLayanan')
+                $state.go('InputTagihanNonLayananAmbulan')
             }
 
             //fungsi search data
