@@ -583,7 +583,7 @@
                 <div ng-hide='isSimpan' class="grid_2" style="float:right">
                     <!-- title="Harap kirim antrian terlebih dahulu" -->
                     <button ng-show="!isLoading" kendo-button style="width: 100%" class="success" ng-click="Save()"
-                        ng-hide='hideBtnSimpan'><i class="fa fa-save"></i>Simpan</button>
+                        ng-hide='hideBtnSimpan'><i class="fa fa-save"></i>{{ isAntrol ? 'Simpan SEP' : 'Kirim Antrol' }}</button>
                 </div>
                 <!-- <div ng-hide='isSimpan' class="grid_2" style="float:right">
                     <button ng-show="!isLoading" kendo-button style="width: 100%" class="primary" ng-click="kirimAntrian()"
