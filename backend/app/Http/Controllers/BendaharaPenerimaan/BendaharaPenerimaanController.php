@@ -11647,6 +11647,7 @@ class BendaharaPenerimaanController extends ApiController {
                         sts.totalsetoran,
                         sts.totalsetoranpembulatan,
                         sts.terbilang,
+                        sts.keterangan,
                         cap.id AS idakunpendapatan,
                         cap.koderekening,
                         cap.namarekening, 
@@ -11667,7 +11668,7 @@ class BendaharaPenerimaanController extends ApiController {
                         AND sbm.kdprofile = 30
                         AND sh.statusenabled = TRUE
                         AND sh.kdprofile = 30
-                        AND sts.norec NOT IN (SELECT objectstsfk FROM bkupenerimaanv2_t WHERE statusenabled = TRUE)
+                        AND sts.norec NOT IN (SELECT objectstsfk FROM bkupenerimaanv2_t WHERE statusenabled = TRUE AND objectstsfk IS NOT NULL)
                     
                     UNION
                     
@@ -11678,6 +11679,7 @@ class BendaharaPenerimaanController extends ApiController {
                         sts.totalsetoran,
                         sts.totalsetoranpembulatan,
                         sts.terbilang,
+                        sts.keterangan,
                         cap.id AS idakunpendapatan,
                         cap.koderekening,
                         cap.namarekening,
@@ -11693,7 +11695,7 @@ class BendaharaPenerimaanController extends ApiController {
                     WHERE
                         rkb.statusenabled = TRUE
                         AND rkb.kdprofile = 30
-                        AND sts.norec NOT IN (SELECT objectstsfk FROM bkupenerimaanv2_t WHERE statusenabled = TRUE)
+                        AND sts.norec NOT IN (SELECT objectstsfk FROM bkupenerimaanv2_t WHERE statusenabled = TRUE AND objectstsfk IS NOT NULL)
                     GROUP BY 
                             sts.norec,
                             sts.nosts,
@@ -11727,6 +11729,8 @@ class BendaharaPenerimaanController extends ApiController {
             WHERE 
                 spm.statusenabled = true
                 AND spm.norec NOT IN (SELECT objectspmfk FROM bkupenerimaanv2_t WHERE statusenabled = TRUE AND objectspmfk IS NOT NULL)
+            ORDER BY
+                spm.tglspm DESC
         "));
 
         return $this->respond($data);
