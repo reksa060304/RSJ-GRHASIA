@@ -203,6 +203,8 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
 				$scope.popUpPengeluaran.close();
 				$scope.popUpPenerimaan.close();
                 $scope.penerimaan = false
+                $scope.hidespm = true
+                $scope.hidests = true
 			}
 
 			function loadComboPopup() {
@@ -272,7 +274,6 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
 				// $scope.item.tglbku ='';
 				$scope.item.keterangan = '';
 				$scope.item.ketTransaksi = '';
-				$scope.item.ketTransaksi = '';
 				$scope.item.kdPerkiraan = '';
 				$scope.item.noSTS = '';
 				$scope.item.noSPM = '';
@@ -285,6 +286,7 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
                 $scope.item.idpendapatan = null;
                 $scope.dataSelectedsts = null;
                 $scope.dataSelectedspm = null;
+                $scope.item.asalProduk = null;
 
 			}
 
@@ -395,6 +397,10 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
             $scope.SavePenerimaan = function () {
 
                 // validasi
+                if($scope.dataSelectedsts == undefined && $scope.dataSelectedspm == null){
+                    toastr.error('Pilih data dulu')
+                    return
+                }
 				if ($scope.item.jumlah == "") {
 					toastr.error("Jumlah belum diisi!");
 					return;
@@ -405,6 +411,10 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
 				}
                 if ($scope.item.uraian == undefined && $scope.item.uraian == null){
                     toastr.error("Urian harus diisi")
+                    return;
+                }
+                if ($scope.item.asalProduk == undefined && $scope.item.asalProduk == null){
+                    toastr.error("Sumber dana harus diisi")
                     return;
                 }
 				
@@ -418,7 +428,8 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
                     norecSTS: $scope.dataSelectedsts.norec,
 					totalpenerimaan: $scope.item.jumlah,
                     akunpendapatan: $scope.item.idpendapatan,					
-					ispenerimaan: true,					
+					ispenerimaan: true,	
+                    asalproduk: $scope.item.asalProduk.id				
 				}
 
 				if ($scope.isBendaharaPengeluaran) {
@@ -434,12 +445,33 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
 					    kosongkan();
 					    loadData()
                         $scope.popUpPenerimaan.close()
+
+                        // reset data sts
+                        $scope.dataGridSTS = new kendo.data.DataSource({
+                            data:  [],
+                            pageSize: 10,
+                            group: $scope.group,
+                            serverPaging: false,
+                            schema: {
+                                model: {
+                                    fields: {
+                                    }
+                                }
+                            },
+                            aggregate: [
+                            ]
+                        });
+
 				    })
 			}
 
             $scope.SavePengeluaran = function() {
                 
                 // validasi
+                if($scope.dataSelectedspm == undefined && $scope.dataSelectedspm == null){
+                    toastr.error('Pilih data dulu')
+                    return
+                }
                 if ($scope.item.itemJenisBukti== undefined) {
                     toastr.error("Keompok Transaksi belum di pilih!");
                     return;
@@ -452,6 +484,10 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
                     toastr.error("Isi uraian dulu")
                     return
                 }
+                if ($scope.item.asalProduk == undefined && $scope.item.asalProduk == null){
+                    toastr.error("Sumber dana harus diisi")
+                    return;
+                }
 				
 
 				var dataPengeluaran = {};
@@ -462,6 +498,7 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
 					nospm: $scope.item.noSPM,
 					totalpengeluaran: $scope.item.jumlah,
 					ispenerimaan: false,
+                    asalproduk: $scope.item.asalProduk.id				
 				}
 
 				// if ($scope.isBendaharaPengeluaran) {
@@ -476,6 +513,24 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
                     .then(function (e) {
 					    kosongkan();
 					    loadData()
+                        $scope.popUpPengeluaran.close()
+
+                        // reset data spm
+                        $scope.dataGridSPM = new kendo.data.DataSource({
+                            data:  [],
+                            pageSize: 10,
+                            group: $scope.group,
+                            serverPaging: false,
+                            schema: {
+                                model: {
+                                    fields: {
+                                    }
+                                }
+                            },
+                            aggregate: [
+                            ]
+                        });
+
 				    })
             }
 
