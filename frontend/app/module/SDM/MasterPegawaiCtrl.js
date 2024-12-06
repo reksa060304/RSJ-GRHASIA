@@ -128,6 +128,10 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
 				// $scope.itemKeluarga.tglLahir=moment($scope.now).format("DD-MM-YYYY");			
 			};
 
+			function clearRadioButton() {
+				$scope.gajilamanya = null;
+			}
+
 			function ClearDataRiwayatGajiBerkalaPangkat() {
 				$scope.itemGajiBerkalaPangkat = {};
 				// $scope.itemKeluarga.tglLahir=moment($scope.now).format("DD-MM-YYYY");			
@@ -2625,11 +2629,13 @@ $scope.formatRupiah = function (value, currency) {
 			}
 			$scope.batalRiwayatGajiBerkala = function () {
 				ClearDataRiwayatGajiBerkala();
+				clearRadioButton();
 				$scope.popUpRiwayatGajiBerkala.close();
 			}
 
 			$scope.batalRiwayatGajiBerkalaPangkat = function () {
 				ClearDataRiwayatGajiBerkalaPangkat();
+				clearRadioButton();
 				$scope.popUpRiwayatGajiBerkalaPangkat.close();
 			}
 
@@ -4636,10 +4642,10 @@ $scope.formatRupiah = function (value, currency) {
 				var golongan = "";
 			
 				
-				if ($scope.itemGajiBerkala.masakerjagolongan == undefined) {
-					toastr.error('Masukkan Masa Kerja Golongan Terlebih Dahulu!');
-					return;
-				}
+				// if ($scope.itemGajiBerkala.masakerjagolongan == undefined) {
+				// 	toastr.error('Masukkan Masa Kerja Golongan Terlebih Dahulu!');
+				// 	return;
+				// }
 			
 				
 				var masaKerja = $scope.itemGajiBerkala.masakerjagolongan.split(' ');
