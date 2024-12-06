@@ -11763,6 +11763,7 @@ class BendaharaPenerimaanController extends ApiController {
             $BKU->ispenerimaan = $request['ispenerimaan'];
             $BKU->totalpenerimaan = isset($request['totalpenerimaan']) ? (float)$request['totalpenerimaan'] : 0;
             $BKU->totalpengeluaran = isset($request['totalpengeluaran']) ? (float)$request['totalpengeluaran'] : 0;
+            $BKU->objectasalprodukfk = $request['asalproduk'];
             $BKU->save();
 
             $transStatus = true;
