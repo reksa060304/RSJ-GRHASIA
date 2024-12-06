@@ -2484,20 +2484,27 @@ define(['initialize'], function (initialize) {
                     var arrSave2 = [];
                     for (let x = 0; x < $scope.listItemREV.length; x++) {
                         const element = $scope.listItemREV[x];
+                        const tgljampemberi = element.tgljampemberi 
+                        ? new Date(element.tgljampemberi).toLocaleString('sv', {timeZone: 'Asia/Jakarta'})
+                            : null;
+                        const tgljampenerima = element.tgljampenerima 
+                        ? new Date(element.tgljampenerima).toLocaleString('sv', {timeZone: 'Asia/Jakarta'})
+                            : null;
+                        
                         if ($scope.CABAKNEW == true) {
                             arrSave2.push({
                                 norec: element.norec != null ? element.norec : "",
-                                tgljampemberi: element.tgljampemberi != undefined ? element.tgljampemberi : null,
+                                tgljampemberi: tgljampemberi,
                                 namaterangpemberi: element.namaterangpemberi != undefined ? element.namaterangpemberi.value + "~" + element.namaterangpemberi.text : null,
-                                tgljampenerima: element.tgljampenerima != undefined ? element.tgljampenerima : null,
+                                tgljampenerima: tgljampenerima,
                                 namaterangpenerima: element.namaterangpenerima != undefined ? element.namaterangpenerima.value + "~" + element.namaterangpenerima.text : null,
                             })
                         } else {
                             arrSave2.push({
                                 norec: element.norec != null ? element.norec : "",
-                                tgljampemberi: element.tgljampemberi != undefined ? element.tgljampemberi : null,
+                                tgljampemberi: tgljampemberi,
                                 namaterangpemberi: element.namaterangpemberi != undefined ? element.namaterangpemberi.value + "~" + element.namaterangpemberi.text : null,
-                                tgljampenerima: element.tgljampenerima != undefined ? element.tgljampenerima : null,
+                                tgljampenerima: tgljampenerima,
                                 namaterangpenerima: element.namaterangpenerima != undefined ? element.namaterangpenerima.value + "~" + element.namaterangpenerima.text : null,
                             })
                         }
