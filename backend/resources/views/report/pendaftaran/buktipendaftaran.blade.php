@@ -37,7 +37,7 @@
 {{----}}
 <body style="background-color: #CCCCCC;margin: 0" onLoad="window.print()">
 <div align="left">
-    <table  cellspacing="0" cellpadding="0" bgcolor="#FFFFFF" border="0" width="365">
+    <table  cellspacing="0" cellpadding="0" bgcolor="#FFFFFF" border="0" width="365" >
         <tbody>
         <tr>
             <td style="padding: 30px;text-align: left">
@@ -113,7 +113,7 @@
                         </td>
                     </tr>
                     <tr>
-                        <table  ccellspacing="0" cellpadding="0" border="0" width="100%" align="center">
+                        <table  ccellspacing="0" cellpadding="0" border="0" width="100%" align="center"  style="margin-bottom: 10cm;">
                             <tr>
                                 <td style="text-align: center">
                                     <hr/>

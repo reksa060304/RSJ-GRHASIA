@@ -44,7 +44,7 @@
                     <font style="font-size: 11pt;" color="#000000" face="Tahoma"><b>{{$dataReport['namaprofile']}}</b></font><br>
                     <font style="font-size: 10pt;" color="#000000" face="Tahoma">{{$dataReport['alamat']}}</font><br>
                     <hr style="margin-top: 6px;"/><hr />
-                    <table  cellspacing="0" cellpadding="0" bgcolor="#FFFFFF" border="0" width="365">
+                    <table  cellspacing="0" cellpadding="0" bgcolor="#FFFFFF" border="0" width="365" style="margin-bottom: 10cm;">
                         <tr>
                             <td  style="text-align: left">
                                 <font style="font-size: 12pt;text-align: left;" face="Tahoma">Tanggal : {{$dataReport['tanggal']}}</font>
@@ -80,9 +80,11 @@
                                 <font style="font-size: 9t;text-align: left;" face="Tahoma">
                                     Silahkan menunggu nomor Anda dipanggil <br/>
                                     Antrian yang belum dipanggil {{$dataReport['jmlantrian']}} Orang</font>
+                                    <hr style="margin-top: 6px;"/><hr />
+                                                            
                             </td>
                         </tr>
-                    </table>
+                    </table>  
                 </td>
             </tr>
             </tbody>
