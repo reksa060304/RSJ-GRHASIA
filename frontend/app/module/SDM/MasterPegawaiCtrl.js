@@ -4642,10 +4642,10 @@ $scope.formatRupiah = function (value, currency) {
 				var golongan = "";
 			
 				
-				// if ($scope.itemGajiBerkala.masakerjagolongan == undefined) {
-				// 	toastr.error('Masukkan Masa Kerja Golongan Terlebih Dahulu!');
-				// 	return;
-				// }
+				if ($scope.itemGajiBerkala.masakerjagolongan == undefined) {
+					toastr.error('Masukkan Masa Kerja Golongan Terlebih Dahulu!');
+					return;
+				}
 			
 				
 				var masaKerja = $scope.itemGajiBerkala.masakerjagolongan.split(' ');
