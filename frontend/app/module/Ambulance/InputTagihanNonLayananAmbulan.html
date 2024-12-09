@@ -56,7 +56,6 @@
 			</div>
 		</div>
 
-		<!-- tanda1 -->
 		<div class="grid_1" ng-hide="noPolAmbulan">
 			<div class="grid_12">
 				<label c-label item="item" c-label-text="NomorPolisi"></label>
@@ -82,14 +81,15 @@
 		</div>
 	</div>
 
-	<div class="grid_12 borderBox containerBorderBox">
+	<!-- tanda1 -->
+	<div class="grid_12 borderBox containerBorderBox" ng-hide="noPolAmbulan">
 		<div class="panel panel-default panel-white">
 			<!-- <div class="panel-heading-white"><span class="title" c-translate>Alamat Lengkap</span></div> -->
 			<div class="panel-body">
 				<div class="grid_12">
 					<label c-label item="item" c-label-text="pasien.alamat"
 						style=" margin-top: 5px;   margin-left: 5px;" required></label>
-					<textarea required class="k-textbox" style="    height: 76px;
+					<textarea required class="k-textbox" style="height: 76px;
 						width: 100%;
 						margin-top: 5px;
 						margin-left: 5px;
