@@ -364,14 +364,15 @@ class ReservasiOnlineController extends ApiController
             if($request['isBaru'] == true){
                 $newptp->tipepasien = "BARU";
                 $newptp->type = "BARU";
+                $newptp->isconfirm = false; // Set isconfirm to false for new patients
             }else{
                 $newptp->tipepasien = "LAMA";
                 $newptp->type = "LAMA";
+                $newptp->isconfirm = true;
             }
 //            $newptp->objectasalrujukanfk = 0;
 //            $newptp->objectstrukreturfk= 0;
 //            $newptp->objecttitlefk= 0;
-            $newptp->isconfirm = true;
 //            $newptp->jenis = $request['datas']['norecpap'];
 //            $newptp->statuspanggil = 0;
             if(isset($pasien) && !empty($pasien)){
