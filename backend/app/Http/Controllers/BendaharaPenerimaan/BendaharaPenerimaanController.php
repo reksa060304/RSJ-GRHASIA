@@ -11573,8 +11573,14 @@ class BendaharaPenerimaanController extends ApiController {
             ->where('isanggaran', true)
             ->get();
 
+        $tahap = DB::table('tahapanggaran_m')
+            ->where('statusenabled', true)
+            ->where('kdprofile', $idProfile)
+            ->get();
+
         $result = array(
             'asalproduk'=>$asalProduk,
+            'tahap' => $tahap,
             'message' => 'inhuman',
         );
         

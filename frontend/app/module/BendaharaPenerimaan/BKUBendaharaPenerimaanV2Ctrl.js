@@ -41,6 +41,7 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
 					// $scope.listCaraBayar = dataCombo.carabayar;
 					// $scope.listnamaBankTransfer = dataCombo.listbankaccount;
 					$scope.listAsalProduk = dataCombo.asalproduk;
+                    $scope.listTahapKegiatan = dataCombo.tahap;
 				});
 			};
 
@@ -562,6 +563,54 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
                 $scope.item.tglcetak = null
 
                 $scope.popUpCetak.close()
+
+            }
+
+            $scope.handlePopUpCetakSPJ = function() {
+
+                $scope.popUpCetakSPJ.center().open()
+
+            }
+
+            $scope.cetakSPJ = function(){
+
+                // validasi
+                if($scope.item.tahapawal == undefined && $scope.item.tahapawal == null){
+                    toastr.error('Pilih tahap awal dulu')
+                    return
+                }
+
+                if($scope.item.tahapakhir == undefined && $scope.item.tahapakhir == null){
+                    toastr.error('Pilih tahap akhir dulu')
+                    return
+                }
+
+                if($scope.item.tglspj == undefined && $scope.item.tglspj == null){
+                    toastr.error('Pilih tanggal bku dulu')
+                    return
+                }
+
+                if($scope.item.tglcetakspj == undefined && $scope.item.tglcetakspj == null){
+                    toastr.error('Pilih tanggal cetak dulu')
+                    return
+                }
+
+                window.open(baseTransaksi + "report/cetak-spjbpv2" 
+                    + "?tglbku=" + moment($scope.item.tglspj).format('YYYY-MM-DD')
+                    + "&tglcetak=" + moment($scope.item.tglcetakspj).format('YYYY-MM-DD')
+                    + "&tahapawal=" + $scope.item.tahapawal.id
+                    + "&tahapakhir=" + $scope.item.tahapakhir.id, '_blank')
+
+            }
+
+            $scope.batalCetakSPJ = function(){
+
+                $scope.item.tahapawal = null
+                $scope.item.tahapakhir = null
+                $scope.item.tglspj = null
+                $scope.item.tglcetakspj = null
+
+                $scope.popUpCetakSPJ.close()
 
             }
 

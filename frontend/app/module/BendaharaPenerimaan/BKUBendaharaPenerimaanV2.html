@@ -128,8 +128,14 @@
 		</kendo-grid>
 	</div>
 
-    <div style="margin-top: 4em;" class="grid_12">
-        <button class="k-button k-button-icontext k-primary k-grid-update" ng-click="handlePopUpCetak()">Cetak BKU</button>
+    <div style="margin-top: 4em;" class="grid">
+        <div class="grid_2">
+            <button style="width: 100%;" class="k-button k-button-icontext k-primary k-grid-update" ng-click="handlePopUpCetak()">Cetak BKU</button>
+        </div>
+
+        <div class="grid_2">
+            <button style="width: 100%;" class="k-button k-button-icontext k-primary k-grid-update" ng-click="handlePopUpCetakSPJ()">Cetak SPJ</button>
+        </div>
     </div>
 </div>
 
@@ -170,6 +176,73 @@
                     Batal
                 </button>
                 <button class="k-button k-button-icontext k-primary k-grid-update" ng-click="cetakLaporan()" >
+                    <span class="k-icon k-update"></span>
+                    Cetak
+                </button>
+            </div>
+        </div>
+        
+	</div>
+</div>
+
+<div kendo-window="popUpCetakSPJ" k-title="'Cetak SPJ Bendahara Penerimaan'" k-width="800" k-visible="false">
+	<div class="panel panel-default container_12">
+        <div class="grid">
+            <div class="grid_12">
+                <h2 id="filterData">
+                    <b>Filter Cetak</b>
+                </h2>
+            </div>
+
+            <div class="grid_12" style="margin-top: 2em">
+				
+                <div class="grid_6">
+                    <div class="grid_12">
+                        <label for="">Tahap Awal</label>
+                    </div>
+					<div class="grid_12">
+						<input kendo-combo-box k-ng-model="item.tahapawal" k-data-text-field="'tahap'"
+                        k-data-value-field="'id'" k-filter="'contains'" k-auto-bind="false"
+                        k-data-source="listTahapKegiatan" />
+					</div>
+				</div>
+
+				<div class="grid_6">
+                    <div class="grid_12">
+                        <label for="">Tahap Awal</label>
+                    </div>
+					<div class="grid_12">
+						<input kendo-combo-box k-ng-model="item.tahapakhir" k-data-text-field="'tahap'"
+                        k-data-value-field="'id'" k-filter="'contains'" k-auto-bind="false"
+                        k-data-source="listTahapKegiatan" />
+					</div>
+				</div>
+
+				<div class="grid_6">
+                    <div class="grid_12">
+                        <label for="">Tgl BKU</label>
+                    </div>
+					<div class="grid_12">
+						<input style="width: 100%;" k-ng-model="item.tglspj" kendo-date-picker placeholer="dd-mm-yyyy" k-format="'dd-MM-yyyy'" />
+					</div>
+				</div>
+
+				<div class="grid_6">
+                    <div class="grid_12">
+                        <label for="">Tgl Cetak</label>
+                    </div>
+					<div class="grid_12">
+						<input style="width: 100%;" k-ng-model="item.tglcetakspj" kendo-date-picker placeholer="dd-mm-yyyy" k-format="'dd-MM-yyyy'" />
+					</div>
+				</div>
+			</div>
+    
+            <div class="grid_12" style="margin-top: 3em;">
+                <button class="k-button  k-button-icontext" ng-click="batalCetakSPJ()">
+                    <span class="k-icon k-cancel"></span>
+                    Batal
+                </button>
+                <button class="k-button k-button-icontext k-primary k-grid-update" ng-click="cetakSPJ()" >
                     <span class="k-icon k-update"></span>
                     Cetak
                 </button>

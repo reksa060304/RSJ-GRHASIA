@@ -9498,7 +9498,7 @@ order by  split_part(kode, '.', 1)asc, split_part(kode, '.', 2)asc,  split_part(
         $kdProfile = $this->getDataKdProfile($request);
         $idProfile = (int) $kdProfile;
 
-        $sumberpendapatan = \DB::table('asalproduk_m')->where('kdprofile', $idProfile)->where('statusenabled', true)->where('isanggaran', null)->orderBy('id', 'asc')->get();        
+        $sumberpendapatan = \DB::table('asalproduk_m')->where('kdprofile', $idProfile)->where('statusenabled', true)->where('isanggaran', true)->orderBy('id', 'asc')->get();        
         $uraianpendapatan = \DB::table('uraianpendapatan_m')->where('kdprofile', $idProfile)->where('statusenabled', true);
         $rincianpendapatan = \DB::table('rincianpendapatan_t as rp')
         ->join('asalproduk_m as ap','ap.id','=','rp.objectasalprodukfk')
@@ -9516,7 +9516,7 @@ order by  split_part(kode, '.', 1)asc, split_part(kode, '.', 2)asc,  split_part(
             ->where('statusenabled', true)
             ->where('kdprofile', $idProfile)
             ->where('level', 8)
-            ->orderBy('nourut', 'asc')
+            ->orderBy('id', 'asc')
             ->get();
 
         $uraianpendapatan = $uraianpendapatan->orderBy('nourut')->get();
