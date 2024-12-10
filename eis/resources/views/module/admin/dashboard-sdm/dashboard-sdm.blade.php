@@ -109,8 +109,16 @@
                             <div class="col-md-12 col-lg-4">
                                 <div class="card bg-c-yellow order-card">
                                     <div class="card-block">
-                                        <h6>TOTAL PEGAWAI AKTIF</h6>
-                                        <h2>{{$res['pegawai']['aktif']}}</h2>
+                                        <h6>TOTAL PEGAWAI</h6>
+                                        <h2>
+                                        {{
+                                            (isset($res['pegawai']['pns']) ? $res['pegawai']['pns'] : 0) + 
+                                            (isset($res['pegawai']['p3k']) ? $res['pegawai']['p3k'] : 0) + 
+                                            (isset($res['pegawai']['blud']) ? $res['pegawai']['blud'] : 0) + 
+                                            (isset($res['pegawai']['cpns']) ? $res['pegawai']['cpns'] : 0) + 
+                                            (isset($res['pegawai']['naban']) ? $res['pegawai']['naban'] : 0)    
+                                        }}
+                                        </h2>
                                         <p class="m-b-0"> <i class="feather icon-arrow-up"></i></p>
                                         <i class="card-icon feather icon-users"></i>
                                     </div>
@@ -120,7 +128,15 @@
                                 <div class="card bg-c-yellow order-card">
                                     <div class="card-block">
                                         <h6>TOTAL PEGAWAI LAKI LAKI</h6>
-                                        <h2>{{$res['pegawai']['lakilakiAktif']}}</h2>
+                                        <h2>
+                                        {{
+                                            (isset($res['pegawai']['pns']) ? $res['pegawai']['pnsl'] : 0) + 
+                                            (isset($res['pegawai']['p3k']) ? $res['pegawai']['p3klakilaki'] : 0) + 
+                                            (isset($res['pegawai']['blud']) ? $res['pegawai']['bludlakilaki'] : 0) + 
+                                            (isset($res['pegawai']['cpns']) ? $res['pegawai']['cpnsl'] : 0) + 
+                                            (isset($res['pegawai']['naban']) ? $res['pegawai']['nabanlakilaki'] : 0)                                             
+                                        }}
+                                        </h2>
                                         <p class="m-b-0"> <i class="feather icon-arrow-up"></i></p>
                                         <i class="card-icon feather icon-users"></i>
                                     </div>
@@ -130,7 +146,15 @@
                                 <div class="card bg-c-yellow order-card">
                                     <div class="card-block">
                                         <h6>TOTAL PEGAWAI PEREMPUAN</h6>
-                                        <h2>{{$res['pegawai']['perempuanAktif']}}</h2>
+                                        <h2>
+                                        {{
+                                            (isset($res['pegawai']['pns']) ? $res['pegawai']['pnsp'] : 0) + 
+                                            (isset($res['pegawai']['p3k']) ? $res['pegawai']['p3kperempuan'] : 0) + 
+                                            (isset($res['pegawai']['blud']) ? $res['pegawai']['bludperempuan'] : 0) + 
+                                            (isset($res['pegawai']['cpns']) ? $res['pegawai']['cpnsp'] : 0) + 
+                                            (isset($res['pegawai']['naban']) ? $res['pegawai']['nabanperempuan'] : 0) 
+                                        }}
+                                    </h2>
                                         <p class="m-b-0"> <i class="feather icon-arrow-up"></i></p>
                                         <i class="card-icon feather icon-users"></i>
                                     </div>
@@ -149,8 +173,8 @@
                             <div class="col-md-12 col-lg-4"  style="cursor: pointer" onclick="detailPegawaiPNS('PNS Perempuan')">
                                 <div class="card bg-c-blue order-card">
                                     <div class="card-block">
-                                        <h6>PNS PEREMPUAN</h6>
-                                        <h2>{{$res['pegawai']['pnsp']}}</h2>
+                                        <h6>PNS LAKI-LAKI</h6>
+                                        <h2>{{$res['pegawai']['pnsl']}}</h2>
                                         <p class="m-b-0"> <i class="feather icon-arrow-up"></i></p>
                                         <i class="card-icon feather icon-filter"></i>
                                     </div>
@@ -159,8 +183,8 @@
                             <div class="col-md-12 col-lg-4"  style="cursor: pointer" onclick="detailPegawaiPNS('PNS Laki-Laki')">
                                 <div class="card bg-c-blue order-card">
                                     <div class="card-block">
-                                        <h6>PNS LAKI-LAKI</h6>
-                                        <h2>{{$res['pegawai']['pnsl']}}</h2>
+                                        <h6>PNS PEREMPUAN</h6>
+                                        <h2>{{$res['pegawai']['pnsp']}}</h2>
                                         <p class="m-b-0"> <i class="feather icon-arrow-up"></i></p>
                                         <i class="card-icon feather icon-filter"></i>
                                     </div>
@@ -209,8 +233,8 @@
                             <div class="col-md-12 col-lg-4"  style="cursor: pointer" onclick="detailPegawaiPNS('BLUD Perempuan')">
                                 <div class="card bg-c-blue order-card">
                                     <div class="card-block">
-                                        <h6>BLUD PEREMPUAN</h6>
-                                        <h2>{{$res['pegawai']['bludperempuan']}}</h2>
+                                        <h6>BLUD LAKI-LAKI</h6>
+                                        <h2>{{$res['pegawai']['bludlakilaki']}}</h2>
                                         <p class="m-b-0"> <i class="feather icon-arrow-up"></i></p>
                                         <i class="card-icon feather icon-filter"></i>
                                     </div>
@@ -219,8 +243,8 @@
                             <div class="col-md-12 col-lg-4"  style="cursor: pointer" onclick="detailPegawaiPNS('BLUD Laki-Laki')">
                                 <div class="card bg-c-blue order-card">
                                     <div class="card-block">
-                                        <h6>BLUD LAKI-LAKI</h6>
-                                        <h2>{{$res['pegawai']['bludlakilaki']}}</h2>
+                                        <h6>BLUD PEREMPUAN</h6>
+                                        <h2>{{$res['pegawai']['bludperempuan']}}</h2>
                                         <p class="m-b-0"> <i class="feather icon-arrow-up"></i></p>
                                         <i class="card-icon feather icon-filter"></i>
                                     </div>
@@ -276,7 +300,7 @@
                                     </div>
                                 </div>
                             </div> -->
-                            <div class="col-md-12 col-lg-12s"  style="cursor: pointer" onclick="detailPegawaiPNS('Tenaga Bantu')">
+                            <div class="col-md-12 col-lg-4"  style="cursor: pointer" onclick="detailPegawaiPNS('Tenaga Bantu')">
                                 <div class="card bg-c-green order-card">
                                     <div class="card-block">
                                         <h6>TENAGA BANTU</h6>
@@ -286,6 +310,60 @@
                                     </div>
                                 </div>
                             </div>
+                            <div class="col-md-12 col-lg-4"  style="cursor: pointer" onclick="detailPegawaiPNS('Tenaga Bantu Laki-Laki')">
+                                <div class="card bg-c-green order-card">
+                                    <div class="card-block">
+                                        <h6>TENAGA BANTU LAKI-LAKI</h6>
+                                        <h2>{{$res['pegawai']['nabanlakilaki']}}</h2>
+                                        <p class="m-b-0"> <i class="feather icon-arrow-up"></i></p>
+                                        <i class="card-icon feather icon-filter"></i>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-12 col-lg-4"  style="cursor: pointer" onclick="detailPegawaiPNS('Tenaga Bantu Perempuan')">
+                                <div class="card bg-c-green order-card">
+                                    <div class="card-block">
+                                        <h6>TENAGA BANTU PEREMPUAN</h6>
+                                        <h2>{{$res['pegawai']['nabanperempuan']}}</h2>
+                                        <p class="m-b-0"> <i class="feather icon-arrow-up"></i></p>
+                                        <i class="card-icon feather icon-filter"></i>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- outsourcing -->
+                            <!-- <div class="col-md-12 col-lg-4"  style="cursor: pointer" onclick="detailPegawaiPNS('OUTSOURCING')">
+                                <div class="card bg-c-kuning order-card">
+                                    <div class="card-block">
+                                        <h6>OUTSOURCING</h6>
+                                        <h2>{{$res['pegawai']['outsourcing']}}</h2>   
+                                        <p class="m-b-0"> <i class="feather icon-arrow-up"></i></p>
+                                        <i class="card-icon feather icon-user"></i>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-12 col-lg-4"  style="cursor: pointer" onclick="detailPegawaiPNS('OUTSOURCING Laki-Laki')">
+                                <div class="card bg-c-kuning order-card">
+                                    <div class="card-block">
+                                        <h6>OUTSOURCING LAKI-LAKI</h6>
+                                        <h2>{{$res['pegawai']['outsourcinglakilaki']}}</h2>
+                                        <p class="m-b-0"> <i class="feather icon-arrow-up"></i></p>
+                                        <i class="card-icon feather icon-filter"></i>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-12 col-lg-4"  style="cursor: pointer" onclick="detailPegawaiPNS('OUTSOURCING Perempuan')">
+                                <div class="card bg-c-kuning order-card">
+                                    <div class="card-block">
+                                        <h6>OUTSOURCING PEREMPUAN</h6>
+                                        <h2>{{$res['pegawai']['outsourcingperempuan']}}</h2>
+                                        <p class="m-b-0"> <i class="feather icon-arrow-up"></i></p>
+                                        <i class="card-icon feather icon-filter"></i>
+                                    </div>
+                                </div>
+                            </div> -->
+                            <!-- outsourcing end -->
+
                             <!-- order  end -->
                             <div class="col-lg-6 col-md-12">
                                 <div class="card">
