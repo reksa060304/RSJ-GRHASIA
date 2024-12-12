@@ -153,7 +153,7 @@
                                 </td>
                             </tr>
                             <tr>
-                                <table ccellspacing="0" cellpadding="0" border="0" width="100%" align="center" style="margin-bottom: 10cm;">
+                                <table ccellspacing="0" cellpadding="0" border="0" width="100%" align="center">
                                     <tr>
                                         <td style="text-align: center">
                                             <hr />
@@ -163,9 +163,6 @@
                                         </td>
                                     </tr>
                                 </table>
-                                <span style="text-align: center;">
-                                    <p><b>****</b></p>
-                                </span>
                             </tr>
                         </table>
                     </td>
