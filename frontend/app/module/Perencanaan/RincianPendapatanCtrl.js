@@ -10,11 +10,16 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
                 start: "decade",
                 depth: "decade"
             }
+            $scope.bulanOption = {
+                start: "year",
+                depth: "year"
+            }
             var norec = "";
             $scope.listTahapKegiatan = []
             $scope.listRekeningTarget = []
             LoadCombo()
             LoadData()
+            var months = ["Januari", "Februari", "Maret", "April", "Mei", "Juni", "Juli", "Agustus", "September", "Oktober", "November", "Desember"]
 
             function LoadCombo() {
                 
@@ -147,6 +152,7 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
                         "field": "jumlahpendapatan",
                         "title": "Target pendapatan",
                         "width": "60px",
+                        "template": "<span class='style-right'>{{ formatRupiah('#: jumlahpendapatan #', 'Rp. ') }}</span>"
                         // hidden: true
                     },
                     {
@@ -156,10 +162,21 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
                         // hidden: true
                     },
                     {
+                        "field": "tahun",
+                        "title": "Tahun",
+                        "width": "100px",
+                        // hidden: true
+                    },
+                    {
+                        "field": "tglinput",
+                        "title": "Bulan",
+                        "width": "100px",
+                        "template": "<span class='style-right'>{{ formatBulan('#: tglinput #') }}</span>"
+                    },
+                    {
                         "field": "tahap",
                         "title": "Tahap",
                         "width": "100px",
-                        // hidden: true
                     },
                     {
 						"command": [
@@ -226,20 +243,9 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
                 console.log(objSave);
             }
             $scope.batalRincian = function(){
-                $scope.popupTambahRincianPendapatan.close()
+                $scope.popupTambahRencanaPendapatan.close()
                 $scope.itemRincian = {}
             }
-
-            // $scope.$watch('item.tahun', function (newValue, oldValue) {
-            //     if (newValue != oldValue) {
-            //         if ($scope.item.tahun != undefined) {
-            //             var tahun = "tahun=" + moment($scope.item.tahun).format('YYYY')
-            //         }
-            //         medifirstService.get("registrasi/laporan/get-combo-mapping-sts?"+tahun, true).then(function (dat) {
-            //             $scope.listUraianPendapatan = dat.data.uraianpendapatan
-            //         });
-            //     }
-            // });
 
 
             // $scope.Edit=function(){
@@ -331,17 +337,45 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
                 var tahun = $scope.itemRincian.tahun;
                 
                 //tambahain validasi
+                if($scope.itemRincian.tglinput == undefined && $scope.itemRincian.tglinput == null){
+                    toastr.error('Pilih tanggal dulu')
+                    return
+                }
+
+                if($scope.itemRincian.sumberPendapatan == undefined && $scope.itemRincian.sumberPendapatan == null){
+                    toastr.error('Pilih sumber pendapatan')
+                    return
+                }
+
+                if($scope.itemRincian.tahap == undefined && $scope.itemRincian.tahap == null){
+                    toastr.error('Pilih tahap dulu')
+                    return
+                }
+
+                if($scope.itemRincian.uraianPendapatan == undefined && $scope.itemRincian.uraianPendapatan == null){
+                    toastr.error('Pilih uraian dulu')
+                    return
+                }
+
+                if($scope.itemRincian.jumlahPendapatan == undefined && $scope.itemRincian.jumlahPendapatan == null){
+                    toastr.error('Isi jumlah pendapatan')
+                    return
+                }
+
+                // if($scope.itemRincian.bulan == undefined && $scope.itemRincian.bulan == null){
+                //     toastr.error('Pilih bulan dulu')
+                //     return
+                // }
+
                 norec = ''
                 if($scope.itemRincian.norec != undefined){
                     norec = $scope.itemRincian.norec
                 }
-                // var akun = ''
-                // if($scope.itemPendapatan.Akun != undefined){
-                //     akun = $scope.itemPendapatan.Akun.id
-                // }
+                
                 var objSave = {
                     'norec': norec,
-                    'tglinput': $scope.itemRincian.tglinput,
+                    'tglinput': moment($scope.itemRincian.tglinput).format('YYYY-MM-DD'),
+                    // 'bulan': moment($scope.itemRincian.bulan).format('MM'),
                     'tahun': tahun,
                     'objectasalprodukfk': $scope.itemRincian.sumberPendapatan.id,
                     'uraianpendapatan': $scope.itemRincian.uraianPendapatan.namarekening,
@@ -353,17 +387,14 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
                     'isperubahan': false,
                 }
                 
-                // console.log(objSave);
 
                 medifirstService.post('anggaran/save-rincian-pendapatan', objSave).then(function(data){
                     // console.log(data);
                     $scope.popupTambahRencanaPendapatan.close()
-                    $scope.itemRincian = {}
-                    $scope.itemPendapatan = {}
-                    $scope.dataSelected = {}
+                    
+                    reset()
+
                     LoadData()
-                    // norec = ""
-                    // console.log(norec);
                 })
                 
             }
@@ -454,7 +485,6 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
                     // listTarget: selected
                 }
 
-                // console.log(objSave)
 
                 medifirstService.post("perencanaan/simpan-transfer-target", objSave)
                     .then(function (response) {
@@ -472,6 +502,46 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
                         
                     });
 
+            }
+
+            $scope.handleCetakTarget = function(){
+
+                $scope.popUpCetakTarget.center().open()
+
+            }
+
+            $scope.batalCetakTarget = function(){
+                
+                // reset
+                $scope.item.tahapawal = null
+                $scope.item.tahapakhir = null
+
+                $scope.popUpCetakTarget.close()
+
+            }
+
+            function reset() {
+                $scope.itemRincian.tglinput = null
+                $scope.itemRincian.tahun = null
+                $scope.itemRincian.sumberPendapatan = null
+                $scope.itemRincian.tahap = null
+                $scope.itemRincian.uraianPendapatan = null
+                $scope.itemRincian.jumlahPendapatan = null
+            }
+
+            $scope.formatRupiah = function (value, currency) {
+				if (value == "undefined" || value == "null") {
+					value = 0;
+					return currency + " " + parseFloat(value).toFixed(2).replace(/(\d)(?=(\d{3})+\.)/g, "$1.");
+				} else {
+					return currency + " " + parseFloat(value).toFixed(2).replace(/(\d)(?=(\d{3})+\.)/g, "$1.");
+				}
+			};
+
+            var months = ["Januari", "Februari", "Maret", "April", "Mei", "Juni", "Juli", "Agustus", "September", "Oktober", "November", "Desember"]
+            $scope.formatBulan = function(tanggal){
+                let bulan =  moment(tanggal).format('MM')
+                return months[parseInt(bulan - 1)]
             }
 
             // BATASSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSS
