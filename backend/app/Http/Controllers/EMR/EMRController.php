@@ -15429,6 +15429,7 @@ class EMRController  extends ApiController
                         pd.tglregistrasi,
                         ru.namaruangan AS namaruanganasal,
                         pr.namaproduk,
+                        pp.norec as norec_pp,
                         pp.jumlah as qtyproduk
                     FROM
                         pelayananpasien_t AS pp
