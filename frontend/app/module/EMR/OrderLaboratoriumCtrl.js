@@ -246,15 +246,27 @@ define(['initialize'], function (initialize) {
                 var daftarCetak = [];
                 console.log($scope.dataSelectedRiwayat);
                     if ($scope.dataSelectedRiwayat.details != undefined) {
-                        for (let j = 0; j < $scope.dataSelectedRiwayat.detailslab.length; j++) {
-                            console.log($scope.dataSelectedRiwayat.detailslab[j].norec_pp);
+                        
+                        for (let j = 0; j < $scope.dataSelectedRiwayat.details.length; j++) {
+                            console.log($scope.dataSelectedRiwayat.details[j].norec_pp);
                             daftarCetak.push({
-                                "norec_pp": $scope.dataSelectedRiwayat.detailslab[j].norec_pp,
+                                "norec_pp": $scope.dataSelectedRiwayat.details[j].norec_pp,
                                 // "tglPelayanan": $scope.dataGridRiwayat._data[i].tglpelayanan,
                                 // "dokterid": $scope.dataGridRiwayat._data[i].dokterid,
                                 // "dokter": $scope.dataGridRiwayat._data[i].dokter,
                             })
                         }
+
+                        // ganti karena riwayat tidak hanya mengambil dari order
+                        // for (let j = 0; j < $scope.dataSelectedRiwayat.detailslab.length; j++) {
+                        //     console.log($scope.dataSelectedRiwayat.detailslab[j].norec_pp);
+                        //     daftarCetak.push({
+                        //         "norec_pp": $scope.dataSelectedRiwayat.detailslab[j].norec_pp,
+                        //         // "tglPelayanan": $scope.dataGridRiwayat._data[i].tglpelayanan,
+                        //         // "dokterid": $scope.dataGridRiwayat._data[i].dokterid,
+                        //         // "dokter": $scope.dataGridRiwayat._data[i].dokter,
+                        //     })
+                        // }
                     }
                     // daftarCetak.push({
                     //     "norec_pp": $scope.dataGridRiwayat._data[i].norec_pp,
