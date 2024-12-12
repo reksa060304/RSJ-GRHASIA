@@ -24,6 +24,7 @@ export class CheckinComponent implements OnInit {
   dataCache: any
   batasJamCheckin=1
   isloading: boolean = false
+  showCetak: boolean = false
   constructor(private router: Router,
     private route: ActivatedRoute,
     private httpservice: HttpService,
@@ -143,15 +144,15 @@ export class CheckinComponent implements OnInit {
     })
   }
   cetakBukti() {
-    // window.open(Configuration.get().apiBackend + 'medifirst2000/report/cetak-bukti-pendaftaran?noregistrasi='
-    // + this.item.noregistrasi
-    // + '&noReservasi=' + this.item.noreservasi
-    // + '&kdprofile=21',  '_blank');
-    this.service.get('http://127.0.0.1:1237/printvb/Pendaftaran?cetak-buktipendaftaran-online=1&norec='
-      + this.item.noregistrasi + '&view=false'
-      + '&noReservasi=' + this.item.noreservasi).subscribe(response => {
-        // do something with response
-      });
+    window.open(Configuration.get().apiBackend + 'medifirst2000/report/cetak-bukti-pendaftaran?noregistrasi='
+    + this.item.noregistrasi
+    + '&noReservasi=' + this.item.noreservasi
+    + '&kdprofile=21',  '_blank');
+    // this.service.get('http://127.0.0.1:1237/printvb/Pendaftaran?cetak-buktipendaftaran-online=1&norec='
+    //   + this.item.noregistrasi + '&view=false'
+    //   + '&noReservasi=' + this.item.noreservasi).subscribe(response => {
+    //     // do something with response
+    //   });
   }
   checkIn() {
     if (this.item.type == "BARU") {
@@ -227,14 +228,15 @@ export class CheckinComponent implements OnInit {
     this.httpservice.post('medifirst2000/registrasi/save-registrasipasien', objSave).subscribe(response => {
 
       this.item.noregistrasi = response.dataPD.noregistrasi
-      this.cetakBukti()
+      this.showCetak = true
+      // this.cetakBukti()
       // if (this.item.objectkelompokpasienfk == 2 && this.item.type != "BARU") {
       //   this.alertService.info('Peringatan','Pastikan SEP Di Cetak di Loket Pendaftaran !!')
       // }
       this.saveLogging('Pendaftaran Pasien', 'norec Pasien Daftar', response.dataPD.norec,
         'Check-In No Registrasi (' + response.dataPD.noregistrasi + ') ')
       this.updateStatusConfirm()
-      window.history.back()
+      // window.history.back()
     }, error => {
 
     })

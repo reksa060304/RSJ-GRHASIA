@@ -89,12 +89,20 @@
                                                 </div>
 
                                             </div>
-                                            <div class="row mt-2">
+                                            <div class="row mt-2" *ngIf="!showCetak">
                                                 <div class="col-12  col-md-4"></div>
                                                 <div class="col-12  col-md-4">
                                                     <button type="button" class="btn btn-outline-primary mb-1"
                                                         rippleEffect style="width:100%"
                                                         (click)="checkIn()">Check-In</button>
+                                                </div>
+                                            </div>
+                                            <div class="row mt-2" *ngIf="showCetak">
+                                                <div class="col-12  col-md-4"></div>
+                                                <div class="col-12  col-md-4">
+                                                    <button type="button" class="btn btn-outline-warning mb-1" rippleEffect
+                                                    style="width:100%" (click)="cetakBukti()">Cetak
+                                                    Nomor Antrian</button>
                                                 </div>
                                             </div>
                                         </div>
