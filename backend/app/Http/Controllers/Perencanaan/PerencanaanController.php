@@ -9553,7 +9553,8 @@ order by  split_part(kode, '.', 1)asc, split_part(kode, '.', 2)asc,  split_part(
                 'keterangan'=> $request['keterangan'],
                 'isperubahan'=> $request['isperubahan'],
                 'tahun'=> date('Y', strtotime($request['tahun'])),
-                'objecttahapfk' => $request['objecttahapfk']
+                'objecttahapfk' => $request['objecttahapfk'],
+                // 'bulan' => $request['bulan']
                 ]);
             } else {
                 $data = \DB::table('rincianpendapatan_t')->where('norec',$request['norec'])->update([
@@ -9568,7 +9569,8 @@ order by  split_part(kode, '.', 1)asc, split_part(kode, '.', 2)asc,  split_part(
                     'keterangan'=> $request['keterangan'],
                     'isperubahan'=> $request['isperubahan'],
                     'tahun'=> date('Y', strtotime($request['tahun'])),
-                    'objecttahapfk' => $request['objecttahapfk']
+                    'objecttahapfk' => $request['objecttahapfk'],
+                    // 'bulan' => $request['bulan']
                 ]);
             }
             
@@ -9625,6 +9627,7 @@ order by  split_part(kode, '.', 1)asc, split_part(kode, '.', 2)asc,  split_part(
                 rp.keterangan,
                 rp.uraianpendapatan,
                 rp.tahun,
+                rp.tglinput,
                 rp.objectasalprodukfk,
                 rp.jumlahpendapatan,
                 rp.objecturaianpendapatanfk,
@@ -9643,8 +9646,7 @@ order by  split_part(kode, '.', 1)asc, split_part(kode, '.', 2)asc,  split_part(
                 ".$tahap."
                 ".$tahun."
             ORDER BY
-                cap.nourut,
-                CAST(rp.tahun AS INTEGER) asc
+                cap.id asc
         "));
 
         return $this->respond($data);
