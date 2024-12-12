@@ -183,6 +183,11 @@ define(['initialize'], function(initialize) {
                     $scope.item.biaya = 0
                     $scope.item.biaya = $scope.item.hargasatuan * $scope.item.qty;
                 }
+
+                if ($scope.item.jumlahpeserta > 0 && $scope.item.levelpendidikan.id == 40410024) {
+                    $scope.item.biaya = 0
+                    $scope.item.biaya = $scope.item.hargasatuan * $scope.item.qty;
+                }
                 
                 if ($scope.item.jumlahpeserta >= 6 && $scope.item.jumlahpeserta <= 10 && $scope.item.levelpendidikan.id == 40410022) {
                      $scope.item.biaya = 0
