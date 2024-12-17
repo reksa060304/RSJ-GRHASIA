@@ -43,7 +43,7 @@
 
 <body style="background-color: #CCCCCC;margin: 0" onLoad="window.print()">
     <div align="left">
-        <table cellspacing="0" cellpadding="0" bgcolor="#FFFFFF" border="0" width="365">
+        <table cellspacing="0" cellpadding="0" bgcolor="#FFFFFF" border="0" width="365" style="margin-bottom: 5cm;">
             <tbody>
                 <tr>
                     <td style="padding: 30px;text-align: left">
@@ -165,6 +165,10 @@
                                 </table>
                             </tr>
                         </table>
+                        <p style="font-size: 12pt;text-align: left; font-family: Tahoma" >Memo : </p>
+                        <span style="text-align: center;">
+                            <p><b>****</b></p>
+                        </span>
                     </td>
                 </tr>
             </tbody>

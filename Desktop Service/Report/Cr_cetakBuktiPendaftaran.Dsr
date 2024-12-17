@@ -11,6 +11,10 @@ Attribute VB_GlobalNameSpace = False
 Attribute VB_Creatable = False
 Attribute VB_PredeclaredId = True
 Attribute VB_Exposed = False
+Private Sub Section7_Format(ByVal pFormattingInfo As Object)
+
+End Sub
+
 Private Sub Section9_Format(ByVal pFormattingInfo As Object)
     If tglreservasi.Value = "" Then
         Section9.Suppress = True
