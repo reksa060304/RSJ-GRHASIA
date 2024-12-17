@@ -11108,4 +11108,84 @@ order by  split_part(kode, '.', 1)asc, split_part(kode, '.', 2)asc,  split_part(
 
         return $this->setStatusCode($result['status'])->respond($result, $transMessage);
     }
+
+
+    public function getRekapPanjarDetail(Request $request)
+    {
+
+        $kdProfile = $this->getDataKdProfile($request);
+        $idProfile = (int) $kdProfile;
+
+        $kodekegiatan = '';
+        if(isset($request['subsubkegiatan']) && $request['subsubkegiatan'] != "undefined" && $request['subsubkegiatan'] != ''){
+            $kodekegiatan = "and ka.kode = '".$request['subsubkegiatan']."'";
+        }
+
+        $kodemataanggaran = '';
+        if(isset($request['mataanggaran']) && $request['mataanggaran'] != "undefined" && $request['mataanggaran'] != ''){
+            $kodemataanggaran = "and ma.kodemataanggaran = '".$request['mataanggaran']."'";
+        }
+
+        $asalproduk = '';
+        if(isset($request['asalproduk']) && $request['asalproduk'] != "undefined" && $request['asalproduk'] != ''){
+            $asalproduk = "and ap.id = ".$request['asalproduk'];
+        }
+
+        $cari = '';
+        if(isset($request['cari']) && $request['cari'] != "undefined" && $request['cari'] != ''){
+            $cari = "and( 
+                pj.uraian ILIKE '%".$request['cari']."%' OR
+                CAST(pj.jumlah as VARCHAR) ILIKE '%".$request['cari']."%'
+            )";
+        }
+        
+
+        $setting = \DB::table('settinganggaran_t as st')
+            ->join('pegawai_m as pg','pg.id','=','st.objectkepalabludfk')
+            ->join('tahapanggaran_m as ta','ta.id','=','st.objecttahapaktivfk')
+            ->select('st.*','pg.namalengkap', 'ta.tahap', 'ta.id as idtahap', 'pg.id as idpegawai')
+            ->where('st.kdprofile', $idProfile)
+            ->where('st.statusenabled', true)
+            ->orderBy('st.tahunanggaran')
+            ->get();
+
+        $data = DB::select(DB::raw("
+
+            SELECT
+                pj.nopanjar,
+                pj.jumlah AS jumlahpanjar,
+                pj.uraian,
+                COALESCE(SUM(stp.jumlahspj), 0) as jumlahspj,
+                COALESCE(SUM(pengp.jumlahpengembalian),0) as jumlahpengembalian,
+                ka.kode,
+                reverse(split_part(reverse(MIN(ka.keterangan)), '-', 1)) as namakegiatan,
+                ka.kode || ' - ' || reverse(split_part(reverse(MIN(ka.keterangan)), '-', 1)) as textkegiatan,
+                ma.kodemataanggaran,
+                MIN(ma.namamataanggaran) as namamataanggaran,
+                ma.kodemataanggaran || ' - ' || MIN(ma.namamataanggaran) as textmataanggaran,
+                ap.asalproduk
+            FROM panjar_t pj
+            JOIN kegiatananggaran_m ka ON ka.id = pj.objectsubsubkegiatanfk AND ka.statusenabled = TRUE 
+            JOIN mataanggaran_m ma ON ma.id = pj.objectmataanggaranfk AND ka.statusenabled = TRUE 
+            JOIN asalproduk_m ap ON ap.id = pj.objectasalprodukfk  AND ap.statusenabled = TRUE 
+            LEFT JOIN pengembalianpanjar_t pengp ON pengp.objectpanjarfk = pj.norec AND pengp.statusenabled = TRUE 
+            LEFT JOIN spjtopanjar_t stp ON stp.objectpanjarfk = pj.norec AND stp.statusenabled = TRUE 
+            WHERE 
+                pj.kdprofile = 30
+                AND pj.statusenabled = TRUE 
+                AND ka.tahun = '".$setting[0]->tahunanggaran."'
+                $kodekegiatan
+                $kodemataanggaran
+                $asalproduk
+                $cari
+            GROUP BY
+                pj.norec,
+                ka.kode,
+                ma.kodemataanggaran,
+                ap.id
+        "));
+
+        return $this->respond($data);
+
+    }
 }

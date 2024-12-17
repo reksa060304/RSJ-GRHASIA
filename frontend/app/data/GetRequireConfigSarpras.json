@@ -1393,6 +1393,10 @@
         {
             "nameDep": "BKUBendaharaPenerimaanV2Ctrl",
             "urlDep": "module/BendaharaPenerimaan/BKUBendaharaPenerimaanV2Ctrl"
+        },
+        {
+            "nameDep": "RekapPanjarDetailCtrl",
+            "urlDep": "module/BendaharaPengeluaran/RekapPanjarDetailCtrl"
         }
     ]
 }
