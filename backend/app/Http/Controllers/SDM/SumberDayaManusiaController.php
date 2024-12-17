@@ -768,15 +768,21 @@ class SumberDayaManusiaController extends ApiController {
         where rg.objectpegawaifk = $request[idPegawai]
         "));
 
-$dataPhoto = \DB::table('photopegawai_m')
-->selectRaw('CONCAT(pathfile, CAST(filename AS VARCHAR)) as namafile')
-->where('pegawaifk', $request['idPegawai'])
-->first();
+        $dataPhoto = \DB::table('photopegawai_m')
+        ->selectRaw('CONCAT(pathfile, CAST(filename AS VARCHAR)) as namafile')
+        ->where('pegawaifk', $request['idPegawai'])
+        ->first();
 
-if($dataPhoto != null){
-$photoAja = public_path($dataPhoto->namafile);
-$dataPhotoPegawai = 'data:image/png;base64,'.base64_encode(file_get_contents($photoAja));
-}
+        if ($dataPhoto != null) {
+        $photoAja = public_path($dataPhoto->namafile);
+            if (file_exists($photoAja)) {
+                $dataPhotoPegawai = 'data:image/png;base64,' . base64_encode(file_get_contents($photoAja));
+            } else {
+                $dataPhotoPegawai = 'data:image/png;base64,' . base64_encode(file_get_contents(public_path('SDM/default.jpg')));
+            }
+        } else {
+            $dataPhotoPegawai = 'data:image/png;base64,' . base64_encode(file_get_contents(public_path('SDM/default.jpg')));
+        }
 
 
         $result = array(
