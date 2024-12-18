@@ -7939,7 +7939,7 @@ order by  split_part(kode, '.', 1)asc, split_part(kode, '.', 2)asc,  split_part(
         $cari = DB::table('kegiatananggaran_m')
             ->where('statusenabled', true)
             ->where('kdprofile', $idProfile)
-            ->where('tahun', $setting->tahunanggaran)
+            ->where('tahun', $request['tahun'])
             ->where('kode', $kegiatan->kode)
             ->get();
 
