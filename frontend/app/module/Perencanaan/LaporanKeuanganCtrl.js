@@ -124,6 +124,10 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
                 } else if ($state.params.parameter == '101010') {
                     $scope.penyerapanverif = true
                 }
+
+                // medifirstService.get("perencanaan/get-jenis-bukti-bku").then(function (e) {
+                //     $scope.listJenisBukti = e.data.data
+                // });
             });
 
             $scope.formatTanggal = function (tanggal) {
@@ -222,6 +226,11 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
                     return
                 }
 
+                if ($scope.item.asalpertanggungjawaban == undefined && $scope.item.asalpertanggungjawaban == null){
+                    toastr.warning('Sumber dana harus diisi', 'Informasi');
+                    return
+                }
+
                 var tahunpertanggungjawaban = ""
                 if ($scope.item.tahunpertanggungjawaban != undefined){
                     tahunpertanggungjawaban = moment($scope.item.tahunpertanggungjawaban).format('YYYY')
@@ -232,7 +241,12 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
                     bulanpertanggungjawaban = moment($scope.item.bulanpertanggungjawaban).format('MM')
                 }
 
-                window.open(baseTransaksi + "report/get-cetak-pertanggungjawaban-bendahara?tahun="+tahunpertanggungjawaban+"&bulan="+bulanpertanggungjawaban, '_blank');
+                var asalproduk = ""
+                if ($scope.item.asalpertanggungjawaban != undefined){
+                    asalproduk = $scope.item.asalpertanggungjawaban.id
+                }
+
+                window.open(baseTransaksi + "report/get-cetak-pertanggungjawaban-bendahara?tahun="+tahunpertanggungjawaban+"&bulan="+bulanpertanggungjawaban+"&asalproduk="+asalproduk, '_blank');
             }
 
             $scope.CetakBKU = function(){
@@ -301,6 +315,11 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
                 if ($scope.item.tglcetakbku != undefined){
                     tglcetak = moment($scope.item.tglcetakbku).format('YYYY-MM-DD')
                 }
+
+                // let jenisbukti = ""
+                // if($scope.item.jenisbukti !== undefined && $scope.item.jenisbukti !== null){
+                //     jenisbukti = "&jenisbukti=" + $scope.item.jenisbukti.id
+                // }
 
                 window.open(baseTransaksi + "report/get-cetak-bku-real?tahunbku=" + tahunbku + "&bulanbku=" + bulanbku + "&tglcetak=" + tglcetak, '_blank');
             }

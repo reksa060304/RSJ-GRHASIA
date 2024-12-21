@@ -6091,89 +6091,198 @@ class ReportController extends ApiController{
         //     $bulanakhir =  " and extract(month from sr.tglrealisasi) <= '" . $request['bulanakhir']."'";
         // }
 
-        $data = DB::select(DB::raw("select bold, nourut, kode, keterangan, coalesce(sum(jumlahanggaran), 0) jumlahanggaran,
-        coalesce(sum(jumlahspjsdbulanlalu),0) jumlahspjsdbulanlalu,
-        coalesce(sum(jumlahspjbulanini),0) jumlahspjbulanini, coalesce(sum(totalsemuabulan),0) totalsemuabulan,
-        round(cast(coalesce(sum(totalsemuabulan),0)/coalesce(sum(jumlahanggaran), 0)*100 as numeric), 2) as persentase, 
-        coalesce(sum(jumlahanggaran), 0)-coalesce(sum(totalsemuabulan),0) as sisaanggaran
-        from(
-                select 'iya' as bold, nourut, kode, keterangan, jumlahanggaran,
-                case when tglrealisasi < '$bulan' then sum(totalbelanja) end as jumlahspjsdbulanlalu,
-                case when tglrealisasi = '$bulan' then sum(totalbelanja) end as jumlahspjbulanini,
-                sum(totalbelanja) as totalsemuabulan
-                from(
-                    select TO_CHAR(x.tglrealisasi, 'MM') tglrealisasi, RANK ( ) OVER ( order by ka.kode ) AS nourut, ka.kode, 
-                    ka.keterangan, sum(kb.subtotal) jumlahanggaran, x.totalbelanja
-                    from mataanggaran_m ma
-                    inner join keteranganbelanja_t kb on ma.id=kb.objectmataanggaranfk
-                    INNER JOIN kegiatananggaran_m ka on ka.id=kb.objectkegiatanfk
-                    inner join (
-                        select ma.kodemataanggaran, ma.namamataanggaran, sr.totalbelanja, sr.tglrealisasi
-                        from mataanggaran_m ma
-                        inner join strukrealisasi_t sr on ma.id=sr.objectmataanggaranfk
-                        where sr.kdprofile = 30 and sr.statusenabled = true
-                        and sr.status = 'Sudah Diverifikasi'
-                        and extract(year from sr.tglrealisasi) = '$tahun'
-                                        and TO_CHAR(sr.tglrealisasi, 'YYYY-MM') in(
-                                            SELECT TO_CHAR(months, 'YYYY-MM') AS dateMonth
-                                            FROM generate_series(
-                                                    '$tahun-01-01' :: DATE,
-                                                    '$tahun-$bulan-28' :: DATE ,
-                                                    '1 month'
-                                            ) AS months
-                                        )
-                    ) as x on x.kodemataanggaran = ma.kodemataanggaran
-                    where ma.kdprofile = 30 and ma.statusenabled = true
-                    and kb.kdprofile = 30 and kb.statusenabled = true
-                    and ka.kdprofile = 30 and ka.statusenabled = true
-                    group by TO_CHAR(x.tglrealisasi, 'MM'), ka.kode, ka.keterangan, x.totalbelanja
-                ) as y group by bold, nourut, kode, keterangan, jumlahanggaran, tglrealisasi order by nourut
-        ) as a group by bold, nourut, kode, keterangan 
+        // $data = DB::select(DB::raw("select bold, nourut, kode, keterangan, coalesce(sum(jumlahanggaran), 0) jumlahanggaran,
+        // coalesce(sum(jumlahspjsdbulanlalu),0) jumlahspjsdbulanlalu,
+        // coalesce(sum(jumlahspjbulanini),0) jumlahspjbulanini, coalesce(sum(totalsemuabulan),0) totalsemuabulan,
+        // round(cast(coalesce(sum(totalsemuabulan),0)/coalesce(sum(jumlahanggaran), 0)*100 as numeric), 2) as persentase, 
+        // coalesce(sum(jumlahanggaran), 0)-coalesce(sum(totalsemuabulan),0) as sisaanggaran
+        // from(
+        //         select 'iya' as bold, nourut, kode, keterangan, jumlahanggaran,
+        //         case when tglrealisasi < '$bulan' then sum(totalbelanja) end as jumlahspjsdbulanlalu,
+        //         case when tglrealisasi = '$bulan' then sum(totalbelanja) end as jumlahspjbulanini,
+        //         sum(totalbelanja) as totalsemuabulan
+        //         from(
+        //             select TO_CHAR(x.tglrealisasi, 'MM') tglrealisasi, RANK ( ) OVER ( order by ka.kode ) AS nourut, ka.kode, 
+        //             ka.keterangan, sum(kb.subtotal) jumlahanggaran, x.totalbelanja
+        //             from mataanggaran_m ma
+        //             inner join keteranganbelanja_t kb on ma.id=kb.objectmataanggaranfk
+        //             INNER JOIN kegiatananggaran_m ka on ka.id=kb.objectkegiatanfk
+        //             inner join (
+        //                 select ma.kodemataanggaran, ma.namamataanggaran, sr.totalbelanja, sr.tglrealisasi
+        //                 from mataanggaran_m ma
+        //                 inner join strukrealisasi_t sr on ma.id=sr.objectmataanggaranfk
+        //                 where sr.kdprofile = 30 and sr.statusenabled = true
+        //                 and sr.status = 'Sudah Diverifikasi'
+        //                 and extract(year from sr.tglrealisasi) = '$tahun'
+        //                                 and TO_CHAR(sr.tglrealisasi, 'YYYY-MM') in(
+        //                                     SELECT TO_CHAR(months, 'YYYY-MM') AS dateMonth
+        //                                     FROM generate_series(
+        //                                             '$tahun-01-01' :: DATE,
+        //                                             '$tahun-$bulan-28' :: DATE ,
+        //                                             '1 month'
+        //                                     ) AS months
+        //                                 )
+        //             ) as x on x.kodemataanggaran = ma.kodemataanggaran
+        //             where ma.kdprofile = 30 and ma.statusenabled = true
+        //             and kb.kdprofile = 30 and kb.statusenabled = true
+        //             and ka.kdprofile = 30 and ka.statusenabled = true
+        //             group by TO_CHAR(x.tglrealisasi, 'MM'), ka.kode, ka.keterangan, x.totalbelanja
+        //         ) as y group by bold, nourut, kode, keterangan, jumlahanggaran, tglrealisasi order by nourut
+        // ) as a group by bold, nourut, kode, keterangan 
         
-        union all
+        // union all
         
-        select bold, nourut, kode, keterangan, jumlahanggaran,
-        coalesce(sum(jumlahspjsdbulanlalu),0) jumlahspjsdbulanlalu,
-        coalesce(sum(jumlahspjbulanini),0) jumlahspjbulanini, coalesce(sum(totalsemuabulan),0) totalsemuabulan,
-        round(cast(coalesce(sum(totalsemuabulan),0)/jumlahanggaran*100 as numeric), 2) as persentase, 
-        jumlahanggaran-coalesce(sum(totalsemuabulan),0) as sisaanggaran
-        from(
-            select bold, nourut, kode, keterangan, jumlahanggaran,
-            case when tglrealisasi < '$bulan' then sum(totalbelanja) end as jumlahspjsdbulanlalu,
-                            case when tglrealisasi = '$bulan' then sum(totalbelanja) end as jumlahspjbulanini,
-                            sum(totalbelanja) as totalsemuabulan
-            from(
-                            select TO_CHAR(x.tglrealisasi, 'MM') tglrealisasi, 'tidak' as bold, RANK ( ) OVER ( order by ka.kode ) AS nourut, ma.kodemataanggaran kode, 
-                            ma.namamataanggaran keterangan, sum(kb.subtotal) jumlahanggaran, x.totalbelanja
+        // select bold, nourut, kode, keterangan, jumlahanggaran,
+        // coalesce(sum(jumlahspjsdbulanlalu),0) jumlahspjsdbulanlalu,
+        // coalesce(sum(jumlahspjbulanini),0) jumlahspjbulanini, coalesce(sum(totalsemuabulan),0) totalsemuabulan,
+        // round(cast(coalesce(sum(totalsemuabulan),0)/jumlahanggaran*100 as numeric), 2) as persentase, 
+        // jumlahanggaran-coalesce(sum(totalsemuabulan),0) as sisaanggaran
+        // from(
+        //     select bold, nourut, kode, keterangan, jumlahanggaran,
+        //     case when tglrealisasi < '$bulan' then sum(totalbelanja) end as jumlahspjsdbulanlalu,
+        //                     case when tglrealisasi = '$bulan' then sum(totalbelanja) end as jumlahspjbulanini,
+        //                     sum(totalbelanja) as totalsemuabulan
+        //     from(
+        //                     select TO_CHAR(x.tglrealisasi, 'MM') tglrealisasi, 'tidak' as bold, RANK ( ) OVER ( order by ka.kode ) AS nourut, ma.kodemataanggaran kode, 
+        //                     ma.namamataanggaran keterangan, sum(kb.subtotal) jumlahanggaran, x.totalbelanja
                             
-                            --round(cast(x.totalbelanja/sum(kb.subtotal)*100 as numeric), 2) as persentase
-                            from mataanggaran_m ma
-                            inner join keteranganbelanja_t kb on ma.id=kb.objectmataanggaranfk
-                            INNER JOIN kegiatananggaran_m ka on ka.id=kb.objectkegiatanfk
-                            inner join (
-                                    select ma.kodemataanggaran, ma.namamataanggaran, sr.totalbelanja, sr.tglrealisasi
-                                    from mataanggaran_m ma
-                                    inner join strukrealisasi_t sr on ma.id=sr.objectmataanggaranfk
-                                    where sr.kdprofile = 30 and sr.statusenabled = true
-                                    and sr.status = 'Sudah Diverifikasi'
-                                    and extract(year from sr.tglrealisasi) = '$tahun'
-                                    and TO_CHAR(sr.tglrealisasi, 'YYYY-MM') in(
-                                        SELECT TO_CHAR(months, 'YYYY-MM') AS dateMonth
-                                        FROM generate_series(
-                                                '$tahun-01-01' :: DATE,
-                                                '$tahun-$bulan-28' :: DATE ,
-                                                '1 month'
-                                        ) AS months
-                                    )
-                            ) as x on x.kodemataanggaran = ma.kodemataanggaran
-                            where ma.kdprofile = 30 and ma.statusenabled = true
-                            and kb.kdprofile = 30 and kb.statusenabled = true
-                            and ka.kdprofile = 30 and ka.statusenabled = true
-                            group by TO_CHAR(x.tglrealisasi, 'MM'), ka.kode, ma.kodemataanggaran, ma.namamataanggaran, x.totalbelanja
-                            order by nourut
-            ) as y group by bold, nourut, kode, keterangan, jumlahanggaran, tglrealisasi order by nourut
-        ) as a group by bold, nourut, kode, keterangan, jumlahanggaran
-        order by nourut;"));
+        //                     --round(cast(x.totalbelanja/sum(kb.subtotal)*100 as numeric), 2) as persentase
+        //                     from mataanggaran_m ma
+        //                     inner join keteranganbelanja_t kb on ma.id=kb.objectmataanggaranfk
+        //                     INNER JOIN kegiatananggaran_m ka on ka.id=kb.objectkegiatanfk
+        //                     inner join (
+        //                             select ma.kodemataanggaran, ma.namamataanggaran, sr.totalbelanja, sr.tglrealisasi
+        //                             from mataanggaran_m ma
+        //                             inner join strukrealisasi_t sr on ma.id=sr.objectmataanggaranfk
+        //                             where sr.kdprofile = 30 and sr.statusenabled = true
+        //                             and sr.status = 'Sudah Diverifikasi'
+        //                             and extract(year from sr.tglrealisasi) = '$tahun'
+        //                             and TO_CHAR(sr.tglrealisasi, 'YYYY-MM') in(
+        //                                 SELECT TO_CHAR(months, 'YYYY-MM') AS dateMonth
+        //                                 FROM generate_series(
+        //                                         '$tahun-01-01' :: DATE,
+        //                                         '$tahun-$bulan-28' :: DATE ,
+        //                                         '1 month'
+        //                                 ) AS months
+        //                             )
+        //                     ) as x on x.kodemataanggaran = ma.kodemataanggaran
+        //                     where ma.kdprofile = 30 and ma.statusenabled = true
+        //                     and kb.kdprofile = 30 and kb.statusenabled = true
+        //                     and ka.kdprofile = 30 and ka.statusenabled = true
+        //                     group by TO_CHAR(x.tglrealisasi, 'MM'), ka.kode, ma.kodemataanggaran, ma.namamataanggaran, x.totalbelanja
+        //                     order by nourut
+        //     ) as y group by bold, nourut, kode, keterangan, jumlahanggaran, tglrealisasi order by nourut
+        // ) as a group by bold, nourut, kode, keterangan, jumlahanggaran
+        // order by nourut;"));
+
+        $settingrba = DB::table('settinganggaran_t')
+            ->where('statusenabled', true)
+            ->where('kdprofile', 30)
+            ->first();
+
+        $apanggaran = '';
+        $apspj = '';
+        if (isset($request['asalproduk']) && $request['asalproduk'] != "" && $request['asalproduk'] != "undefined") {
+            $apanggaran = "and kb.objectasalprodukfk = ".$request['asalproduk'];
+            $apspj = "and sr.objectasalprodukfk = ".$request['asalproduk']; 
+        }
+
+        $data = DB::select(DB::raw("
+
+            SELECT
+                x.kode, x.keterangankegiatan,
+                x.id, x.kodemataanggaran, x.namamataanggaran, 
+                COALESCE(SUM(x.jumlahanggaran), 0) as jumlahanggaran,
+                COALESCE(SUM(x.totalspjbulanlalu), 0) as totalspjbulanlalu,
+                COALESCE(SUM(x.totalspjbulanini), 0) as totalspjbulanini
+            FROM (
+                
+                --- anggaran
+                SELECT
+                    ka.kode,
+                    reverse(split_part(reverse(MIN(ka.keterangan)), '-', 1)) as keterangankegiatan,
+                    ma.id,
+                    ma.kodemataanggaran,
+                    ma.namamataanggaran,
+                    COALESCE(SUM(CAST(akb.nilai as FLOAT)), 0) as jumlahanggaran,
+                    0 as totalspjbulanlalu,
+                    0 as totalspjbulanini
+                FROM keteranganbelanja_t kb 
+                JOIN alokasiketeranganbelanja_t akb ON akb.keteranganbelanjafk = kb.norec AND akb.statusenabled = TRUE
+                JOIN kegiatananggaran_m ka ON ka.id = kb.objectkegiatanfk AND ka.statusenabled = TRUE
+                JOIN mataanggaran_m ma ON ma.id = kb.objectmataanggaranfk AND ma.statusenabled = TRUE
+                JOIN asalproduk_m ap ON ap.id = kb.objectasalprodukfk AND ap.statusenabled = TRUE
+                WHERE
+                    kb.statusenabled = TRUE
+                    -- opsi
+                    AND ka.tahun = '".$tahun."'
+                    AND kb.objecttahapfk = ".$settingrba->objecttahapaktivfk."
+                    $apanggaran
+                GROUP BY
+                    ka.kode,
+                    ma.id,
+                    ma.kodemataanggaran,
+                    ma.namamataanggaran
+                
+                -- spj
+                UNION 
+                
+                SELECT
+                    ka.kode,
+                    reverse(split_part(reverse(MIN(ka.keterangan)), '-', 1)) as keterangankegiatan,
+                    ma.id,
+                    ma.kodemataanggaran,
+                    ma.namamataanggaran,
+                    0 as jumlahanggaran,
+                    SUM(case 
+                        when extract(year from sr.tglrealisasi) = ".$tahun." and extract(month from sr.tglrealisasi) < ".(float)$bulan."
+                            then rd.subtotal 
+                            else 0 
+                        end) as totalspjbulanlalu,
+                    SUM(case 
+                        when extract(year from sr.tglrealisasi) = ".$tahun." and extract(month from sr.tglrealisasi) = ".(float)$bulan."
+                            then rd.subtotal 
+                            else 0 
+                        end) as totalspjbulanini
+                FROM strukrealisasi_t sr
+                JOIN realisasidetail_t rd ON rd.strukrealisasifk = sr.norec AND rd.statusenabled = TRUE 
+                JOIN kegiatananggaran_m ka ON ka.id = sr.objectkegiatanfk AND ka.statusenabled = TRUE
+                JOIN mataanggaran_m ma ON ma.id = sr.objectmataanggaranfk AND ma.statusenabled = TRUE
+                JOIN asalproduk_m ap ON ap.id = sr.objectasalprodukfk AND ap.statusenabled = TRUE
+                WHERE
+                    sr.statusenabled = TRUE
+                    AND sr.status ILIKE '%Sudah Diverifikasi%'
+                    -- opsi
+                    AND ka.tahun = '".$tahun."'
+                    $apspj
+                GROUP BY
+                    ka.kode,
+                    ma.id,
+                    ma.kodemataanggaran,
+                    ma.namamataanggaran
+            ) as x
+            GROUP BY
+                x.kode,
+                x.keterangankegiatan,
+                x.id,
+                x.kodemataanggaran,
+                x.namamataanggaran
+            ORDER BY
+                CAST(SPLIT_PART(x.kode, '.', 2) AS INTEGER) ASC,
+                CAST(SPLIT_PART(x.kode, '.', 3) AS INTEGER) ASC,
+                CAST(SPLIT_PART(x.kode, '.', 4) AS INTEGER) ASC,
+                CAST(SPLIT_PART(x.kode, '.', 5) AS INTEGER) ASC,
+                CAST(SPLIT_PART(x.kode, '.', 6) AS INTEGER) ASC,
+                CAST(SPLIT_PART(x.kode, '.', 7) AS INTEGER) ASC,
+                SPLIT_PART(x.kodemataanggaran, '.', 1),
+                SPLIT_PART(x.kodemataanggaran, '.', 2),
+                SPLIT_PART(x.kodemataanggaran, '.', 3),
+                case 
+                    when SPLIT_PART(x.kodemataanggaran, '.', 5) = '' THEN cast(SPLIT_PART(x.kodemataanggaran, '.', 4) as INTEGER)
+                    else cast(SPLIT_PART(x.kodemataanggaran, '.', 5) as INTEGER)
+                END asc
+        
+        "));
 
         $pageWidth = 950;
         //return $this->respond($result);
