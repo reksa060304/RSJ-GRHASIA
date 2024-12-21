@@ -68,6 +68,7 @@
                     <td align="center" width="50" style="padding: 10px; font-weight: bold; font-size: 15px; ">Sub Total</td>
                     <td align="center" width="50" style="padding: 10px; font-weight: bold; font-size: 15px; ">%</td>
                 </tr>
+                
                 @php
                 $jumlahanggaran = 0;
                 $jumlahpanjar = 0;
@@ -76,25 +77,26 @@
                 $persentase = 0;
                 $sisaanggaran = 0;
                 @endphp
+
                 @foreach ($data as $dt)
-                @php
-                $jumlahanggaran += $dt->jumlahanggaran;
-                $jumlahpanjar += $dt->jumlahpanjar;
-                $jumlahspj += $dt->jumlahspj;
-                $subtotal += $dt->subtotal;
-                $persentase += $dt->persentase;
-                $sisaanggaran += $dt->sisaanggaran;
-                @endphp
-                <tr style="border: 1px solid black;">
-                    <td align="left" width="50" style="padding: 10px;  font-size: 15px;">{{ $dt->kodemataanggaran }}</td>
-                    <td align="left" width="50" style="padding: 10px; font-size: 15px; ">{{ $dt->namamataanggaran }}</td>
-                    <td align="right" width="50" style="padding: 10px;  font-size: 15px; ">{{ number_format($dt->jumlahanggaran,0,',','.') }}</td>
-                    <td align="right" width="50" style="padding: 10px; font-size: 15px; ">{{ number_format($dt->jumlahpanjar,0,',','.') }}</td>
-                    <td align="right" width="50" style="padding: 10px;  font-size: 15px;">{{ number_format($dt->jumlahspj,0,',','.') }}</td>
-                    <td align="right" width="50" style="padding: 10px;  font-size: 15px;">{{ number_format($dt->subtotal,0,',','.') }}</td>
-                    <td align="right" width="50" style="padding: 10px;  font-size: 15px; ">{{ $dt->persentase }}</td>
-                    <td align="right" width="50" style="padding: 10px;  font-size: 15px; ">{{ number_format($dt->sisaanggaran,0,',','.') }}</td>
-                </tr>
+                    @php
+                    $jumlahanggaran += $dt->jumlahanggaran;
+                    $jumlahpanjar += $dt->jumlahpanjar;
+                    $jumlahspj += $dt->jumlahspj;
+                    $subtotal += $dt->subtotal;
+                    $persentase += $dt->persentase;
+                    $sisaanggaran += $dt->sisaanggaran;
+                    @endphp
+                    <tr style="border: 1px solid black;">
+                        <td align="left" width="50" style="padding: 10px;  font-size: 15px;">{{ $dt->kodemataanggaran }}</td>
+                        <td align="left" width="50" style="padding: 10px; font-size: 15px; ">{{ $dt->namamataanggaran }}</td>
+                        <td align="right" width="50" style="padding: 10px;  font-size: 15px; ">{{ number_format($dt->jumlahanggaran,0,',','.') }}</td>
+                        <td align="right" width="50" style="padding: 10px; font-size: 15px; ">{{ number_format($dt->jumlahpanjar,0,',','.') }}</td>
+                        <td align="right" width="50" style="padding: 10px;  font-size: 15px;">{{ number_format($dt->jumlahspj,0,',','.') }}</td>
+                        <td align="right" width="50" style="padding: 10px;  font-size: 15px;">{{ number_format($dt->subtotal,0,',','.') }}</td>
+                        <td align="right" width="50" style="padding: 10px;  font-size: 15px; ">{{ number_format($dt->persentase, 2) }}</td>
+                        <td align="right" width="50" style="padding: 10px;  font-size: 15px; ">{{ number_format($dt->sisaanggaran,0,',','.') }}</td>
+                    </tr>
                 @endforeach
                 <tr style="border: 1px solid black;">
                     <td align="center" width="50" colspan="2" style="padding: 10px; font-weight: bold;  font-size: 15px;">JUMLAH TOTAL</td>

@@ -3861,40 +3861,145 @@ class ReportController extends ApiController{
             $qasalproduk =  " and kb.objectasalprodukfk =  " . $request['asalproduk'];
         }
 
-        $data = DB::select(DB::raw("select ma.kodemataanggaran, ma.namamataanggaran, sum(kb.subtotal) jumlahanggaran,
-        x.totalbelanja jumlahspj, y.jumlah jumlahpanjar,
-        x.totalbelanja + y.jumlah as subtotal, round(cast(((x.totalbelanja + y.jumlah)/sum(kb.subtotal))*100 as numeric), 2) as persentase,  
-        sum(kb.subtotal) - (x.totalbelanja + y.jumlah) sisaanggaran
-        from mataanggaran_m ma
-        inner join keteranganbelanja_t kb on ma.id=kb.objectmataanggaranfk
-        INNER JOIN kegiatananggaran_m ka on ka.id=kb.objectkegiatanfk
-				inner join (
-					select ma.kodemataanggaran, ma.namamataanggaran, sum(sr.totalbelanja) totalbelanja
-					from mataanggaran_m ma
-					inner join strukrealisasi_t sr on ma.id=sr.objectmataanggaranfk
-					where sr.kdprofile = 30 and sr.statusenabled = true
-					and sr.status = 'Sudah Diverifikasi'
-                    $qtahun
-					group by ma.kodemataanggaran, ma.namamataanggaran
-				) as x on x.kodemataanggaran = ma.kodemataanggaran
-				inner join (
-					select kodemataanggaran, namamataanggaran, sum(jumlah) jumlah
-					from(
-						select ma.kodemataanggaran, ma.namamataanggaran, pj.jumlah panjar, coalesce(sum(sr.totalbelanja),0) totalbelanja,  coalesce(pj.jumlah - coalesce(sum(sr.totalbelanja),0), 0) as jumlah
-						from mataanggaran_m ma
-						left join panjar_t pj on ma.id=pj.objectmataanggaranfk and pj.kdprofile = 30 and pj.statusenabled = true
-						left join strukrealisasi_t sr on sr.objectpanjarfk = pj.norec and sr.kdprofile = 30 and sr.statusenabled = true
-						and sr.status = 'Sudah Diverifikasi'
-                        $qtahun
-						group by ma.kodemataanggaran, ma.namamataanggaran, pj.jumlah
-					) as s group by kodemataanggaran, namamataanggaran
-				) as y on y.kodemataanggaran = ma.kodemataanggaran
-        where ma.kdprofile = 30 and ma.statusenabled = true
-        and kb.kdprofile = 30 and kb.statusenabled = true
-        and ka.kdprofile = 30 and ka.statusenabled = true
-        $qasalproduk
-        $qtahunka
-        group by ma.kodemataanggaran, ma.namamataanggaran, x.totalbelanja, y.jumlah
+        // $data = DB::select(DB::raw("select ma.kodemataanggaran, ma.namamataanggaran, sum(kb.subtotal) jumlahanggaran,
+        // x.totalbelanja jumlahspj, y.jumlah jumlahpanjar,
+        // x.totalbelanja + y.jumlah as subtotal, round(cast(((x.totalbelanja + y.jumlah)/sum(kb.subtotal))*100 as numeric), 2) as persentase,  
+        // sum(kb.subtotal) - (x.totalbelanja + y.jumlah) sisaanggaran
+        // from mataanggaran_m ma
+        // inner join keteranganbelanja_t kb on ma.id=kb.objectmataanggaranfk
+        // INNER JOIN kegiatananggaran_m ka on ka.id=kb.objectkegiatanfk
+		// 		inner join (
+		// 			select ma.kodemataanggaran, ma.namamataanggaran, sum(sr.totalbelanja) totalbelanja
+		// 			from mataanggaran_m ma
+		// 			inner join strukrealisasi_t sr on ma.id=sr.objectmataanggaranfk
+		// 			where sr.kdprofile = 30 and sr.statusenabled = true
+		// 			and sr.status = 'Sudah Diverifikasi'
+        //             $qtahun
+		// 			group by ma.kodemataanggaran, ma.namamataanggaran
+		// 		) as x on x.kodemataanggaran = ma.kodemataanggaran
+		// 		inner join (
+		// 			select kodemataanggaran, namamataanggaran, sum(jumlah) jumlah
+		// 			from(
+		// 				select ma.kodemataanggaran, ma.namamataanggaran, pj.jumlah panjar, coalesce(sum(sr.totalbelanja),0) totalbelanja,  coalesce(pj.jumlah - coalesce(sum(sr.totalbelanja),0), 0) as jumlah
+		// 				from mataanggaran_m ma
+		// 				left join panjar_t pj on ma.id=pj.objectmataanggaranfk and pj.kdprofile = 30 and pj.statusenabled = true
+		// 				left join strukrealisasi_t sr on sr.objectpanjarfk = pj.norec and sr.kdprofile = 30 and sr.statusenabled = true
+		// 				and sr.status = 'Sudah Diverifikasi'
+        //                 $qtahun
+		// 				group by ma.kodemataanggaran, ma.namamataanggaran, pj.jumlah
+		// 			) as s group by kodemataanggaran, namamataanggaran
+		// 		) as y on y.kodemataanggaran = ma.kodemataanggaran
+        // where ma.kdprofile = 30 and ma.statusenabled = true
+        // and kb.kdprofile = 30 and kb.statusenabled = true
+        // and ka.kdprofile = 30 and ka.statusenabled = true
+        // $qasalproduk
+        // $qtahunka
+        // group by ma.kodemataanggaran, ma.namamataanggaran, x.totalbelanja, y.jumlah
+        // "));
+
+        $settingrba = DB::table('settinganggaran_t')
+            ->where('statusenabled', true)
+            ->where('kdprofile', 30)
+            ->first();
+
+        $data = DB::select(DB::raw("
+
+            SELECT
+                x.id, x.kodemataanggaran, x.namamataanggaran, 
+                COALESCE(SUM(x.jumlahanggaran), 0) as jumlahanggaran, 
+                COALESCE(SUM(x.jumlahpanjar), 0) as jumlahpanjar, 
+                COALESCE(SUM(x.jumlahspj), 0) as jumlahspj, 
+                COALESCE(SUM(x.jumlahpanjar), 0) + COALESCE(SUM(x.jumlahspj),0) as subtotal,
+                (COALESCE(SUM(x.jumlahpanjar), 0) + COALESCE(SUM(x.jumlahspj),0)) / COALESCE(SUM(x.jumlahanggaran), 0) * 100 as persentase,
+                (COALESCE(SUM(x.jumlahanggaran), 0) - (COALESCE(SUM(x.jumlahpanjar), 0) + COALESCE(SUM(x.jumlahspj),0))) as sisaanggaran
+            FROM (
+                
+                --- anggaran
+                SELECT
+                    ma.id,
+                    ma.kodemataanggaran,
+                    ma.namamataanggaran,
+                    COALESCE(SUM(kb.subtotal), 0) as jumlahanggaran,
+                    0 as jumlahpanjar,
+                    0 as jumlahspj
+                FROM keteranganbelanja_t kb 
+                JOIN kegiatananggaran_m ka ON ka.id = kb.objectkegiatanfk AND ka.statusenabled = TRUE
+                JOIN mataanggaran_m ma ON ma.id = kb.objectmataanggaranfk AND ma.statusenabled = TRUE
+                JOIN asalproduk_m ap ON ap.id = kb.objectasalprodukfk AND ap.statusenabled = TRUE
+                WHERE
+                    kb.statusenabled = TRUE
+                    -- opsi
+                    AND ka.tahun = '".$request['tahun']."'
+                    AND kb.objectasalprodukfk = ".$request['asalproduk']."
+                    AND kb.objecttahapfk = ".$settingrba->objecttahapaktivfk."
+                GROUP BY
+                    ma.id,
+                    ma.kodemataanggaran,
+                    ma.namamataanggaran
+                
+                -- panjar	
+                UNION
+                
+                SELECT
+                    ma.id,
+                    ma.kodemataanggaran,
+                    ma.namamataanggaran,
+                    0 as jumlahanggaran,
+                    COALESCE(SUM(pj.jumlah), 0) as jumlahpanjar,
+                    0 as jumlahspj
+                FROM panjar_t pj
+                JOIN kegiatananggaran_m ka ON ka.id = pj.objectsubsubkegiatanfk AND ka.statusenabled = TRUE
+                JOIN mataanggaran_m ma ON ma.id = pj.objectmataanggaranfk AND ma.statusenabled = TRUE
+                JOIN asalproduk_m ap ON ap.id = pj.objectasalprodukfk AND ap.statusenabled = TRUE
+                WHERE
+                    pj.statusenabled = TRUE
+                    -- opsi
+                    AND ka.tahun = '".$request['tahun']."'
+                    AND pj.objectasalprodukfk = ".$request['asalproduk']."
+                GROUP BY
+                    ma.id,
+                    ma.kodemataanggaran,
+                    ma.namamataanggaran
+                
+                -- spj
+                UNION 
+                
+                SELECT
+                    ma.id,
+                    ma.kodemataanggaran,
+                    ma.namamataanggaran,
+                    0 as jumlahanggaran,
+                    0 as jumlahpanjar,
+                    SUM(sr.totalbelanja) as jumlahspj
+                FROM strukrealisasi_t sr
+                JOIN realisasidetail_t rd ON rd.strukrealisasifk = sr.norec AND rd.statusenabled = TRUE 
+                JOIN kegiatananggaran_m ka ON ka.id = sr.objectkegiatanfk AND ka.statusenabled = TRUE
+                JOIN mataanggaran_m ma ON ma.id = sr.objectmataanggaranfk AND ma.statusenabled = TRUE
+                JOIN asalproduk_m ap ON ap.id = sr.objectasalprodukfk AND ap.statusenabled = TRUE
+                WHERE
+                    sr.statusenabled = TRUE
+                    AND sr.status ILIKE '%Sudah Diverifikasi%'
+                    -- opsi
+                    AND ka.tahun = '".$request['tahun']."'
+                    AND sr.objectasalprodukfk = ".$request['asalproduk']."
+                GROUP BY
+                    ma.id,
+                    ma.kodemataanggaran,
+                    ma.namamataanggaran
+            ) as x
+            GROUP BY
+                x.id,
+                x.kodemataanggaran,
+                x.namamataanggaran
+            ORDER BY
+                SPLIT_PART(x.kodemataanggaran, '.', 1),
+                SPLIT_PART(x.kodemataanggaran, '.', 2),
+                SPLIT_PART(x.kodemataanggaran, '.', 3),
+                case 
+                        when SPLIT_PART(x.kodemataanggaran, '.', 5) = '' THEN cast(SPLIT_PART(x.kodemataanggaran, '.', 4) as INTEGER)
+                        else cast(SPLIT_PART(x.kodemataanggaran, '.', 5) as INTEGER)
+                END asc
+
         "));
 
         $pageWidth = 950;
