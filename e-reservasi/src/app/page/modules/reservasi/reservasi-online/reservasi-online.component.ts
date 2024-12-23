@@ -353,6 +353,8 @@ export class ReservasiOnlineComponent implements OnInit {
       { label: 'Panduan', icon: 'fa fa-fw fa-question-circle' },
       { label: 'Jadwal Profesional Pemberi Asuhan', icon: 'fa fa-fw fa-stethoscope' },
       { label: 'Info Tempat Tidur', icon: 'fa fa-fw fa-bed' },
+      // { label: 'Master Kemasan', icon: 'fa fa-fw fa-building' },
+      { label: 'Info Jadwal Poliklinik', icon: 'fa fa-fw fa-bed' },
 
       // { label: 'Denah', icon: 'fa fa-fw fa-map-marker' },
     ];

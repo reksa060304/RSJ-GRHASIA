@@ -1,0 +1,73 @@
+<div class="ui-g-12">
+  <div class="ui-g-4">
+    <mat-form-field class="example-full-width">
+      <mat-label>Nama Poliklinik</mat-label>
+      <input matInput placeholder="Masukan Nama Poliklinik" [(ngModel)]="item.namaruangan" >
+    </mat-form-field> 
+  </div>
+  <!-- <div class="ui-g-4">
+    <mat-form-field class="example-full-width">
+      <mat-label>Id</mat-label>
+      <input matInput placeholder="Masukan Id Kemasan" [(ngModel)]="item.id" >
+    </mat-form-field> 
+  </div>
+  <div class="ui-g-2">
+    <p><mat-slide-toggle [(ngModel)]="item.status">Status Aktif</mat-slide-toggle></p>
+  </div> -->
+  <div class="ui-g-2">
+    <button pButton icon="fa fa-search" type="button" label="Cari" (click)="loadData()">
+    </button>
+  </div>
+</div>
+<!-- <div class="ui-g-12">
+  <div class="ui-g-4">
+    <button pButton icon="fa fa-plus" type="button" label="Tambah Data" (click)="tambahData()">
+    </button>
+  </div>
+  <div class="ui-g-4">
+    <button pButton icon="fa fa-trash" type="button" class="ui-button ui-button-danger" label="Hapus Data" (click)="hapusData()">
+    </button>
+  </div>
+</div> -->
+
+<!-- "idjadwalpegawai": 117909,
+            "objectruanganfk": 750,
+            "namaruangan": "TELEMEDICINE",
+            "objectpegawaifk": 100000,
+            "namalengkap": "-",
+            "nosip": null,
+            "nostr": null,
+            "nik": "3201011102640000",
+            "jammulai": null,
+            "jamakhir": null,
+            "keterangan": "",
+            "hari": "SENIN, SELASA, RABU, KAMIS, JUMAT, SABTU, MINGGU" -->
+
+<div class="card card-w-title" style="margin-top:10px" >
+    <div class="card card-form-header">
+      <h1>Informasi Jadwal</h1>
+    </div>
+    <div class="ui-g ui-fluid">
+      <div class="ui-g-12 ui-md-12 ui-lg-12">
+        <p-dataTable  [value]="dataSourceJadwal" [rows]="50" [paginator]="true" [pageLinks]="5"
+          [rowsPerPageOptions]="[50,100,150]" selectionMode="single" [(selection)]="selected"
+          loadingIcon="fa fa-spinner" scrollable="true" expandableRows="true" (click)="klikdata(selected)">
+          <p-column field="namaruangan" header="POLIKLINIK" [sortable]="true"
+            [style]="{'width':'150px', 'white-space': 'pre', 'font-weihgt': 'bold'}">
+          </p-column>
+          <!-- <p-column field="namalengkap" header="NAMA PPA" [sortable]="true"
+           [style]="{'width':'50px','text-align':'center'}">
+          </p-column> -->
+          <p-column field="jammulai" header="JAM MULAI" [sortable]="true"
+            [style]="{'width':'50px','text-align':'center'}">
+          </p-column> 
+          <p-column field="jamakhir" header="JAM SELESAI" [sortable]="true"
+            [style]="{'width':'50px','text-align':'center'}">
+          </p-column>        
+          <p-column field="hari" header="HARI PRAKTEK" [sortable]="true"
+            [style]="{'width':'50px','text-align':'center'}">
+          </p-column> 
+        </p-dataTable>
+      </div>
+    </div>
+  </div>

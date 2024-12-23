@@ -31,7 +31,7 @@ Route::group(['middleware' => 'cors', 'prefix' => 'service'], function () {
 
 		// Masih dalam percobaan. abaikan
 		Route::get('report/coba-lapung', 'Report\ReportController@cobaLapung');
-        Route::get('report/coba-lapung-v3', 'Report\ReportController@cobaLapungV3');
+    Route::get('report/coba-lapung-v3', 'Report\ReportController@cobaLapungV3');
 		
         // terima laundry
 		Route::post('laundry/save-terima-laundryv2', 'Laundry\LaundryController@saveTerimaLaundryV2');
@@ -69,7 +69,6 @@ Route::group(['middleware' => 'cors', 'prefix' => 'service'], function () {
         Route::get('perencanaan/get-pengembalian-belanja', 'Perencanaan\PerencanaanController@getPengembalianBelanja');
         Route::get('perencanaan/get-pengembalian-belanja-bynorec', 'Perencanaan\PerencanaanController@getPengembalianBelanjaByNorec');
         Route::post('perencanaan/hapus-pengembalian-belanja', 'Perencanaan\PerencanaanController@hapusPengembalianBelanja');
-        Route::get('perencanaan/get-rekap-panjar-detail', 'Perencanaan\PerencanaanController@getRekapPanjarDetail');
 
         // Start Verif HAIS Route-------------------------------------------------------------------------------------------
         Route::get('verif-hais/get-bundlehais', 'EMR\BundleHaisController@getBundleHais');
@@ -122,8 +121,6 @@ Route::group(['middleware' => 'cors', 'prefix' => 'service'], function () {
         Route::post('bendaharapenerimaan/hapus-bkuV2', 'BendaharaPenerimaan\BendaharaPenerimaanController@hapusBKUV2');
         Route::post('bendaharapenerimaan/simpan-bkupenerimaanv2', 'BendaharaPenerimaan\BendaharaPenerimaanController@simpanBKUV2');
         Route::get('report/cetak-bkupenerimaanv2', 'Report\ReportController@cetakBKUPenerimaanV2');
-        Route::get('report/cetak-spjbpv2', 'Report\ReportController@cetakSPJBPV2');
-        Route::get('report/cetak-target-pendapatanbp', 'Report\ReportController@cetakTargetPendapatanBP');
         // End bendahara penerimaan
 
 		Route::get('registrasi/laporan/get-rekap-kunjunganrs', 'Registrasi\LaporanRegistrasiController@getRekapKunjunganRS');
@@ -3305,6 +3302,8 @@ Route::group(['middleware' => 'cors', 'prefix' => 'service'], function () {
                 Route::get('sysadmin/master/get-daftar-icdsepuluh', 'SysAdmin\Master\MasterController@getIcdSepuluh');
                 Route::get('sysadmin/master/get-daftar-icdsembilan', 'SysAdmin\Master\MasterController@getIcdSembilan');
                 Route::get('sysadmin/master/get-daftar-master-sifatsurat', 'SysAdmin\Master\MasterController@getDataMasterSifatSurat');
+                
+                Route::get('sysadmin/master/get-daftar-master-kemasan', 'SysAdmin\Master\MasterController@getDataMasterKemasan');
                 // GET //
 
                 // POST //
@@ -3325,7 +3324,11 @@ Route::group(['middleware' => 'cors', 'prefix' => 'service'], function () {
 
                 Route::post('sysadmin/master/save-table-row','SysAdmin\Master\MasterController@saveTable');
                 Route::post('sysadmin/master/hapus-tarif-harganetto', 'SysAdmin\Master\MasterController@hapusHargaNettoByKelas');
-                // Route::post('sysadmin/master/save-harganettoprodukbykelas', 'SysAdmin\Master\MasterController@saveharganettoprodukbykelas_kelasD');
+                //coba
+                Route::post('sysadmin/master/tes-save-kemasan', 'SysAdmin\Master\MasterController@savedataKemasantoni');                
+                Route::post('sysadmin/master/tes-delete-kemasan', 'SysAdmin\Master\MasterController@deleteKemasan');
+                //end
+                Route::post('sysadmin/master/save-harganettoprodukbykelas', 'SysAdmin\Master\MasterController@saveharganettoprodukbykelas_kelasD');
                 Route::post('sysadmin/master/save-harganettoprodukbykelas', 'SysAdmin\Master\MasterController@saveharganettoprodukbykelasM_D');
                 Route::post('sysadmin/master/mapping-ruangan-to-produk-disable','SysAdmin\Master\MasterController@tombolDisable');
                 Route::post('sysadmin/master/mapping-ruangan-to-produk-hide','SysAdmin\Master\MasterController@tombolHide');

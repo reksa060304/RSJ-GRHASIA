@@ -6,6 +6,7 @@
 
 //RESERVASI ONLINE 
 export * from './reservasi/reservasi-online/reservasi-online.component';
+export * from './reservasi/jadwal-dokter/jadwal-dokter.component';
 
 
 

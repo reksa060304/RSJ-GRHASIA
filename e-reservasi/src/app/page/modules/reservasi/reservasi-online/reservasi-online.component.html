@@ -1544,6 +1544,18 @@
     </div>
   </div>
 </div>
+<div *ngIf="activeItem.label == 'Datar Universitas Praktikan' && !isBuktiReservasi">
+  <div class="card card-w-title" style="margin-top:10px" *ngIf="!isShowRiwayatRegis">
+    
+    
+  </div>
+</div>
+<!-- <div *ngIf="activeItem.label == 'Master Kemasan'">
+  <app-master-kemasan></app-master-kemasan>
+</div> -->
+<div *ngIf="activeItem.label == 'Info Jadwal Poliklinik'">
+  <jadwal-dokter></jadwal-dokter>
+</div>
 <div *ngIf="activeItem.label == 'Denah' && !isBuktiReservasi">
   <div class="card card-w-title" style="margin-top:10px" *ngIf="!isShowRiwayatRegis">
     <div class="card card-form-header">

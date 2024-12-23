@@ -15,6 +15,9 @@ export const pathMaster = [
     { path: 'reservasi', component: pMaster.ReservasiOnlineComponent },
     //END Reservasi
 
+    //jadwal
+    {path: 'jadwal', component: pMaster.JadwalDokterComponent},
+
 
     { canActivate: [AuthGuard], path: '404', component: pMaster.NotFoundComponent },
     { canActivate: [AuthGuard], path: '**', redirectTo: '/404' },
