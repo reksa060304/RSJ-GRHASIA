@@ -8403,37 +8403,82 @@ class ReportController extends ApiController{
             $mataanggaran = "and ma.id = ".$request['idmataanggaran'];
         }
 
+        // $data = DB::select(DB::raw("
+        // select * from(
+        //     select 0 nourut, '' nobku, '' tgl, 'ANGGARAN' uraianbku, (saldo-penerimaan+pengeluaran) penerimaan, 0 pengeluaran, 0 saldoawal,
+        //     '' subsubkegiatan, '' subkegiatan, '' kodemataanggaran, '' namamataanggaran
+        //     from bukukasumum_t
+        //     where kdprofile = 30
+        //     and statusenabled = true
+        //     and extract(month from tglbku) = '$bulan'
+        //     and extract(year from tglbku) = '$tahunjudul'
+        //     order by tglbku asc limit 1
+        //     ) as x
+            
+        //     union all
+            
+        //     select ROW_NUMBER ( ) OVER ( ORDER BY bku.tglbku ) nourut, bku.nobku, to_char(bku.tglbku::date, 'DD-MM-YYYY') tgl, bku.uraianbku, bku.penerimaan, bku.pengeluaran, 0 saldoawal,
+        //     ka.keterangan subsubkegiatan, dp0.keterangan subkegiatan, ma.kodemataanggaran, ma.namamataanggaran
+        //     from strukrealisasi_t sr
+        //     inner JOIN kegiatananggaran_m ka on ka.id=sr.objectkegiatanfk
+        //     inner join kegiatananggaran_m as dp0 on ka.kode ilike dp0.kode || '%' and dp0.div = 3
+        //     inner JOIN mataanggaran_m ma on ma.id=sr.objectmataanggaranfk
+        //     inner join bukukasumum_t bku on bku.norec = sr.objectbkufk
+        //     where bku.kdprofile = 30
+        //     and bku.statusenabled = true
+        //     and ka.kdprofile = 30 and ka.statusenabled=true
+        //     and dp0.kdprofile = 30 and dp0.statusenabled=true
+        //     and ma.kdprofile = 30 and ma.statusenabled=true
+        //     and sr.kdprofile = 30 and sr.statusenabled=true
+        //     and extract(month from bku.tglbku) = '$bulan'
+        //     and extract(year from bku.tglbku) = '$tahunjudul'
+        //     $subsubkegiatan
+        //     $mataanggaran"));
+
+        $settingrba = DB::table('settinganggaran_t')
+            ->where('statusenabled', true)
+            ->where('kdprofile', 30)
+            ->first();
+
+        $dtsubsubkegiatan = DB::select(DB::raw("
+            select 
+                ka.*, 
+                kabaru3.kode as kode3,
+                kabaru3.keterangan as keterangan3
+            from kegiatananggaran_m ka 
+            JOIN kegiatananggaran2024_m kabaru ON kabaru.kode = ka.kode AND kabaru.statusenabled = TRUE
+            JOIN kegiatananggaran2024_m kabaru3 ON kabaru3.id = kabaru.headfk AND kabaru3.statusenabled = TRUE
+            where 
+                ka.id = ".$request['idsubsubkegiatan']
+        ));
+
+        $rekening = DB::select(DB::raw("
+            SELECT * FROM mataanggaran_m WHERE statusenabled = TRUE AND id = ".$request['idmataanggaran']."
+        "));
+
         $data = DB::select(DB::raw("
-        select * from(
-            select 0 nourut, '' nobku, '' tgl, 'ANGGARAN' uraianbku, (saldo-penerimaan+pengeluaran) penerimaan, 0 pengeluaran, 0 saldoawal,
-            '' subsubkegiatan, '' subkegiatan, '' kodemataanggaran, '' namamataanggaran
-            from bukukasumum_t
-            where kdprofile = 30
-            and statusenabled = true
-            and extract(month from tglbku) = '$bulan'
-            and extract(year from tglbku) = '$tahunjudul'
-            order by tglbku asc limit 1
-            ) as x
-            
-            union all
-            
-            select ROW_NUMBER ( ) OVER ( ORDER BY bku.tglbku ) nourut, bku.nobku, to_char(bku.tglbku::date, 'DD-MM-YYYY') tgl, bku.uraianbku, bku.penerimaan, bku.pengeluaran, 0 saldoawal,
-            ka.keterangan subsubkegiatan, dp0.keterangan subkegiatan, ma.kodemataanggaran, ma.namamataanggaran
-            from strukrealisasi_t sr
-            inner JOIN kegiatananggaran_m ka on ka.id=sr.objectkegiatanfk
-            inner join kegiatananggaran_m as dp0 on ka.kode ilike dp0.kode || '%' and dp0.div = 3
-            inner JOIN mataanggaran_m ma on ma.id=sr.objectmataanggaranfk
-            inner join bukukasumum_t bku on bku.norec = sr.objectbkufk
-            where bku.kdprofile = 30
-            and bku.statusenabled = true
-            and ka.kdprofile = 30 and ka.statusenabled=true
-            and dp0.kdprofile = 30 and dp0.statusenabled=true
-            and ma.kdprofile = 30 and ma.statusenabled=true
-            and sr.kdprofile = 30 and sr.statusenabled=true
-            and extract(month from bku.tglbku) = '$bulan'
-            and extract(year from bku.tglbku) = '$tahunjudul'
-            $subsubkegiatan
-            $mataanggaran"));
+
+            SELECT
+                bku.tglbku, bku.uraianbku, bku.nobku, bku.pengeluaran
+            FROM strukrealisasi_t sr 
+            JOIN realisasidetail_t rd ON rd.strukrealisasifk = sr.norec AND rd.statusenabled = TRUE
+            JOIN bukukasumum_t bku ON bku.norec = sr.objectbkufk AND bku.statusenabled = TRUE
+            JOIN kegiatananggaran_m ka ON ka.id = sr.objectkegiatanfk AND ka.statusenabled = TRUE
+            JOIN mataanggaran_m ma ON ma.id = sr.objectmataanggaranfk AND ma.statusenabled = TRUE
+            WHERE
+                sr.statusenabled = TRUE
+                AND ka.tahun = '".$request['tahun']."'
+                AND ka.kode = '".$dtsubsubkegiatan[0]->kode."'
+                AND ma.id = ".$request['idmataanggaran']."
+                AND extract(year from bku.tglbku) = ".$request['tahun']." 
+                AND extract(month from bku.tglbku) = ".(float)$request['bulan']."
+            GROUP BY
+                bku.norec
+            ORDER BY
+                bku.tglbku ASC
+                
+        
+        "));
         
         $anggaran = DB::select(DB::raw("select coalesce(sum(kb.subtotal),0) jumlahanggaran
         from keteranganbelanja_t kb
@@ -8450,20 +8495,61 @@ class ReportController extends ApiController{
             $totalanggaran = $anggaran[0]->jumlahanggaran;
         }
 
-        $saldoakhir = 0;
+        // jika memilih bulan januari maka lihat anggaran
+        // jika memeilih bulan setelah januari maka anggaran lihat sisa bulan sebelumnya
+        $anggaran_awal = 0;
+        $bulanlalu = 0;
+        if((float)$request['bulan'] !== 1){
 
-        foreach($data as $row){
-            if($row->uraianbku == 'ANGGARAN'){
-                $saldoakhir = $saldoakhir + $row->penerimaan - $row->pengeluaran;  
-            } else{
-                $saldoakhir = $saldoakhir - $row->pengeluaran;   
+            // data bulan lalu
+            $bku = DB::select(DB::raw("
+
+                SELECT
+                    bku.tglbku, bku.uraianbku, bku.nobku,
+                    COALESCE(SUM(bku.pengeluaran), 0) as jumlahbku
+                FROM strukrealisasi_t sr 
+                JOIN realisasidetail_t rd ON rd.strukrealisasifk = sr.norec AND rd.statusenabled = TRUE
+                JOIN bukukasumum_t bku ON bku.norec = sr.objectbkufk AND bku.statusenabled = TRUE
+                JOIN kegiatananggaran_m ka ON ka.id = sr.objectkegiatanfk AND ka.statusenabled = TRUE
+                JOIN mataanggaran_m ma ON ma.id = sr.objectmataanggaranfk AND ma.statusenabled = TRUE
+                WHERE
+                    sr.statusenabled = TRUE
+                    AND ka.tahun = '".$request['tahun']."'
+                    AND ka.kode = '".$dtsubsubkegiatan[0]->kode."'
+                    AND ma.id = ".$request['idmataanggaran']."
+                    AND extract(year from bku.tglbku) = ".$request['tahun']." 
+                    and extract(month from bku.tglbku) < ".(float)$request['bulan']."
+                GROUP BY
+                    bku.norec
+                ORDER BY
+                    bku.tglbku ASC
+            "));
+
+            foreach($bku as $row){
+                $bulanlalu += $row->jumlahbku;
             }
-            $row->saldoawal = $saldoakhir;
+
+            $anggaran_awal = $totalanggaran - $bulanlalu;
+
+        }else{
+            $anggaran_awal = $totalanggaran;
         }
+
+
+        // $saldoakhir = 0;
+
+        // foreach($data as $row){
+        //     if($row->uraianbku == 'ANGGARAN'){
+        //         $saldoakhir = $saldoakhir + $row->penerimaan - $row->pengeluaran;  
+        //     } else{
+        //         $saldoakhir = $saldoakhir - $row->pengeluaran;   
+        //     }
+        //     $row->saldoawal = $saldoakhir;
+        // }
 
         $pageWidth = 950;
         //return $this->respond($result);
-        return view('report.keuangan.cetakro',compact('data', 'pageWidth', 'tahunjudul', 'tanggalcetak', 'totalanggaran'));
+        return view('report.keuangan.cetakro',compact('data', 'pageWidth', 'tahunjudul', 'tanggalcetak', 'totalanggaran', 'anggaran_awal', 'dtsubsubkegiatan', 'rekening', 'bulanlalu'));
     }
 
     public function CetakBKUReal(Request $request){
