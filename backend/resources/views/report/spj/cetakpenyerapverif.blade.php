@@ -111,8 +111,12 @@
                     </td>
                     <td>
                         <p align="left" style="margin-top:5px">
+                                @php
+                                    $split = explode('-', $subsubkegiatan[0]->keterangan);
+                                    $last = end($split)
+                                @endphp
                                 <font style="font-size: 12pt; " color="#000000" face="Arial">
-                                : {{ $subsubkegiatan[0]->kode.' - '.$subsubkegiatan[0]->keterangan }}
+                                : {{ $subsubkegiatan[0]->kode.' - '.$last }}
                                 </font>
                         </p>
                     </td>
@@ -130,35 +134,32 @@
                     <td align="center" width="50" style="padding: 10px; font-weight: bold ;font-size: 15px; ">%</td>
                 </tr>
                 @php
-                $jumlahanggaran = 0;
-                $jumlahpanjar = 0;
-                $jumlahspj = 0;
-                $subtotal = 0;
-                $persentase = 0;
-                $sisaanggaran = 0;
+                    $jumlahanggaran = 0;
+                    $jumlahspj = 0;
+                    $persentase = 0;
                 @endphp
                 @foreach ($data as $dt)
-                @php
-                $jumlahanggaran += $dt->jumlahanggaran;
-                $jumlahpanjar += $dt->jumlahpanjar;
-                $jumlahspj += $dt->jumlahspj;
-                $subtotal += $dt->subtotal;
-                $persentase += ($dt->jumlahspj/$dt->jumlahanggaran) * 100;
-                $sisaanggaran += $dt->sisaanggaran;
-                @endphp
-                <tr style="border: 1px solid black;">
-                    <td align="left" width="50" style="padding: 10px;  font-size: 15px;">{{ $dt->kodemataanggaran }}</td>
-                    <td align="left" width="50" style="padding: 10px; font-size: 15px; ">{{ $dt->namamataanggaran }}</td>
-                    <td align="right" width="50" style="padding: 10px;  font-size: 15px; ">{{ number_format($dt->jumlahanggaran,2,',','.') }}</td>
-                    <td align="right" width="50" style="padding: 10px;  font-size: 15px;">{{ number_format($dt->jumlahspj,2,',','.') }}</td>
-                    <td align="right" width="50" style="padding: 10px;  font-size: 15px; ">{{ number_format(($dt->jumlahspj/$dt->jumlahanggaran) * 100,2,',','.') }}</td>
-                </tr>
+                    @php
+                    $jumlahanggaran += $dt->jumlahanggaran;
+                    $jumlahspj += $dt->jumlahspj;
+                    @endphp
+                    <tr style="border: 1px solid black;">
+                        <td align="left" width="50" style="padding: 10px;  font-size: 15px;">{{ $dt->kodemataanggaran }}</td>
+                        <td align="left" width="50" style="padding: 10px; font-size: 15px; ">{{ $dt->namamataanggaran }}</td>
+                        <td align="right" width="50" style="padding: 10px;  font-size: 15px; ">{{ number_format($dt->jumlahanggaran,2,',','.') }}</td>
+                        <td align="right" width="50" style="padding: 10px;  font-size: 15px;">{{ number_format($dt->jumlahspj,2,',','.') }}</td>
+                        @if ($dt->jumlahanggaran > 0 && $dt->jumlahspj > 0)
+                            <td align="right" width="50" style="padding: 10px;  font-size: 15px; ">{{ number_format(($dt->jumlahspj/$dt->jumlahanggaran) * 100,2,',','.') }}</td>
+                        @else
+                            <td align="right" width="50" style="padding: 10px;  font-size: 15px; ">0</td>
+                        @endif
+                    </tr>
                 @endforeach
                 <tr style="border: 1px solid black;">
                     <td align="center" width="50" colspan="2" style="padding: 10px; font-weight: bold;  font-size: 15px;">JUMLAH TOTAL</td>
                     <td align="right" width="50" style="padding: 10px; font-size: 15px; ">{{ number_format($jumlahanggaran,2,',','.') }}</td>
                     <td align="right" width="50" style="padding: 10px; font-size: 15px;">{{ number_format($jumlahspj,2,',','.') }}</td>
-                    <td align="right" width="50" style="padding: 10px; font-size: 15px; ">{{ number_format($persentase,2,',','.') }}</td>
+                    <td align="right" width="50" style="padding: 10px; font-size: 15px; ">{{ number_format($jumlahspj/$jumlahanggaran *100,2,',','.') }}</td>
                 </tr>
         </table>
 </div>

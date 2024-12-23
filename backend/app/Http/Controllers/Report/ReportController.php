@@ -21842,56 +21842,142 @@ public function suratBuktiPengembalian(Request $request)
 
         $subkegiatan = DB::select(DB::raw("select * from kegiatananggaran_m where id = ".$subk));
 
-        $data = DB::select(DB::raw("select ma.kodemataanggaran, ma.namamataanggaran
-        , split_part(ma.kodemataanggaran, '.', 1) as subkodepertama
-        , split_part(ma.kodemataanggaran, '.', 2) as subkodekedua
-        , case when split_part(ma.kodemataanggaran, '.', 3) = '' then '0' else split_part(ma.kodemataanggaran, '.', 3)::int4 end as subkodeketiga
-        , case when split_part(ma.kodemataanggaran, '.', 4) = '' then '0' else split_part(ma.kodemataanggaran, '.', 4)::int4 end as subkodekeempat
-        , case when split_part(ma.kodemataanggaran, '.', 5) = '' then '0' else split_part(ma.kodemataanggaran, '.', 5)::int4 end as subkodekelima,
-                sum(kb.subtotal) jumlahanggaran,
-                x.totalbelanja jumlahspj, y.jumlah jumlahpanjar,
-                x.totalbelanja + y.jumlah as subtotal, round(cast(((x.totalbelanja + y.jumlah)/sum(kb.subtotal))*100 as numeric), 2) as persentase,  
-                sum(kb.subtotal) - (coalesce(x.totalbelanja,0) + coalesce(y.jumlah,0)) sisaanggaran
-                from mataanggaran_m ma
-                inner join keteranganbelanja_t kb on ma.id=kb.objectmataanggaranfk
-                INNER JOIN kegiatananggaran_m ka on ka.id=kb.objectkegiatanfk
-                        left join (
-                            select ma.kodemataanggaran, ma.namamataanggaran, sum(sr.totalbelanja) totalbelanja
-                            from mataanggaran_m ma
-                            inner join strukrealisasi_t sr on ma.id=sr.objectmataanggaranfk
-                            where sr.kdprofile = 30 and sr.statusenabled = true
-                            and sr.objectcarabayarfk = 1 and sr.status ilike 'Sudah Diverifikasi'
-                            $qtahun
-                            $qsubsubkegiatansr
-                            group by ma.kodemataanggaran, ma.namamataanggaran
-                        ) as x on x.kodemataanggaran = ma.kodemataanggaran
-                        left join (
-                            select kodemataanggaran, namamataanggaran, sum(jumlah) jumlah
-                            from(
-                                    select ma.kodemataanggaran, ma.namamataanggaran, pj.jumlah panjar, coalesce(sum(sr.totalbelanja),0) totalbelanja, coalesce(sppj.jumlahpanjar,0) as jumlah
-                                    from mataanggaran_m ma
-                                    left join panjar_t pj on ma.id=pj.objectmataanggaranfk and pj.kdprofile = 30 and pj.statusenabled = true
-                                    left join spjtopanjar_t sppj on sppj.objectpanjarfk=pj.norec and sppj.kdprofile = 30 and sppj.statusenabled = true
-                                    left join strukrealisasi_t sr on sppj.objectspjfk = sr.norec and sr.
-                                    kdprofile = 30 and sr.statusenabled = true
-                                    $qtahun
-                                    $qsubsubkegiatansr
-                                    where pj.objectsubsubkegiatanfk = $subsubk
-                                    group by ma.kodemataanggaran, ma.namamataanggaran, sppj.jumlahpanjar, pj.jumlah
-                            ) as s group by kodemataanggaran, namamataanggaran
-                        ) as y on y.kodemataanggaran = ma.kodemataanggaran
-                        left join mataanggaranpermen_m map on map.id = ma.mataanggaranpermenfk
-                        and map.kdprofile = 30 and map.statusenabled = true
-                        left join mataanggaranpermen_m map1 on map1.id = map.mataanggaranpermenfk and map1.div = 4
-                        left join mataanggaranpermen_m map2 on map2.id = map1.mataanggaranpermenfk and map2.div = 3
-                        left join mataanggaranpermen_m map3 on map3.id = map2.mataanggaranpermenfk and map3.div = 2
-                        where ma.kdprofile = 30 and ma.statusenabled = true
-                        and kb.kdprofile = 30 and kb.statusenabled = true
-                        and ka.kdprofile = 30 and ka.statusenabled = true
-                        $qsubsubkegiatan
-                        $qtahunka
-                group by ma.kodemataanggaran, ma.namamataanggaran, x.totalbelanja, y.jumlah  
-                order by subkodepertama asc, subkodekedua asc, subkodeketiga asc, subkodekeempat asc, subkodekelima asc      
+        // $data = DB::select(DB::raw("select ma.kodemataanggaran, ma.namamataanggaran
+        // , split_part(ma.kodemataanggaran, '.', 1) as subkodepertama
+        // , split_part(ma.kodemataanggaran, '.', 2) as subkodekedua
+        // , case when split_part(ma.kodemataanggaran, '.', 3) = '' then '0' else split_part(ma.kodemataanggaran, '.', 3)::int4 end as subkodeketiga
+        // , case when split_part(ma.kodemataanggaran, '.', 4) = '' then '0' else split_part(ma.kodemataanggaran, '.', 4)::int4 end as subkodekeempat
+        // , case when split_part(ma.kodemataanggaran, '.', 5) = '' then '0' else split_part(ma.kodemataanggaran, '.', 5)::int4 end as subkodekelima,
+        //         sum(kb.subtotal) jumlahanggaran,
+        //         x.totalbelanja jumlahspj, y.jumlah jumlahpanjar,
+        //         x.totalbelanja + y.jumlah as subtotal, round(cast(((x.totalbelanja + y.jumlah)/sum(kb.subtotal))*100 as numeric), 2) as persentase,  
+        //         sum(kb.subtotal) - (coalesce(x.totalbelanja,0) + coalesce(y.jumlah,0)) sisaanggaran
+        //         from mataanggaran_m ma
+        //         inner join keteranganbelanja_t kb on ma.id=kb.objectmataanggaranfk
+        //         INNER JOIN kegiatananggaran_m ka on ka.id=kb.objectkegiatanfk
+        //                 left join (
+        //                     select ma.kodemataanggaran, ma.namamataanggaran, sum(sr.totalbelanja) totalbelanja
+        //                     from mataanggaran_m ma
+        //                     inner join strukrealisasi_t sr on ma.id=sr.objectmataanggaranfk
+        //                     where sr.kdprofile = 30 and sr.statusenabled = true
+        //                     and sr.objectcarabayarfk = 1 and sr.status ilike 'Sudah Diverifikasi'
+        //                     $qtahun
+        //                     $qsubsubkegiatansr
+        //                     group by ma.kodemataanggaran, ma.namamataanggaran
+        //                 ) as x on x.kodemataanggaran = ma.kodemataanggaran
+        //                 left join (
+        //                     select kodemataanggaran, namamataanggaran, sum(jumlah) jumlah
+        //                     from(
+        //                             select ma.kodemataanggaran, ma.namamataanggaran, pj.jumlah panjar, coalesce(sum(sr.totalbelanja),0) totalbelanja, coalesce(sppj.jumlahpanjar,0) as jumlah
+        //                             from mataanggaran_m ma
+        //                             left join panjar_t pj on ma.id=pj.objectmataanggaranfk and pj.kdprofile = 30 and pj.statusenabled = true
+        //                             left join spjtopanjar_t sppj on sppj.objectpanjarfk=pj.norec and sppj.kdprofile = 30 and sppj.statusenabled = true
+        //                             left join strukrealisasi_t sr on sppj.objectspjfk = sr.norec and sr.
+        //                             kdprofile = 30 and sr.statusenabled = true
+        //                             $qtahun
+        //                             $qsubsubkegiatansr
+        //                             where pj.objectsubsubkegiatanfk = $subsubk
+        //                             group by ma.kodemataanggaran, ma.namamataanggaran, sppj.jumlahpanjar, pj.jumlah
+        //                     ) as s group by kodemataanggaran, namamataanggaran
+        //                 ) as y on y.kodemataanggaran = ma.kodemataanggaran
+        //                 left join mataanggaranpermen_m map on map.id = ma.mataanggaranpermenfk
+        //                 and map.kdprofile = 30 and map.statusenabled = true
+        //                 left join mataanggaranpermen_m map1 on map1.id = map.mataanggaranpermenfk and map1.div = 4
+        //                 left join mataanggaranpermen_m map2 on map2.id = map1.mataanggaranpermenfk and map2.div = 3
+        //                 left join mataanggaranpermen_m map3 on map3.id = map2.mataanggaranpermenfk and map3.div = 2
+        //                 where ma.kdprofile = 30 and ma.statusenabled = true
+        //                 and kb.kdprofile = 30 and kb.statusenabled = true
+        //                 and ka.kdprofile = 30 and ka.statusenabled = true
+        //                 $qsubsubkegiatan
+        //                 $qtahunka
+        //         group by ma.kodemataanggaran, ma.namamataanggaran, x.totalbelanja, y.jumlah  
+        //         order by subkodepertama asc, subkodekedua asc, subkodeketiga asc, subkodekeempat asc, subkodekelima asc      
+        // "));
+
+        $apanggaran = '';
+        $apspj = '';
+        if (isset($request['asalproduk']) && $request['asalproduk'] != "" && $request['asalproduk'] != "undefined") {
+            $apanggaran = "and kb.objectasalprodukfk = ".$request['asalproduk'];
+            $apspj = "and sr.objectasalprodukfk = ".$request['asalproduk']; 
+        }
+
+        $settingrba = DB::table('settinganggaran_t')
+            ->where('statusenabled', true)
+            ->where('kdprofile', 30)
+            ->first();
+
+        $data = DB::select(DB::raw("
+
+            SELECT
+                x.id, x.kodemataanggaran, x.namamataanggaran, 
+                COALESCE(SUM(x.jumlahanggaran), 0) as jumlahanggaran,
+                COALESCE(SUM(x.jumlahspj), 0) as jumlahspj
+            FROM (
+                
+                --- anggaran
+                SELECT
+                    ma.id,
+                    ma.kodemataanggaran,
+                    ma.namamataanggaran,
+                    COALESCE(SUM(kb.subtotal), 0) as jumlahanggaran,
+                    0 as jumlahspj
+                FROM keteranganbelanja_t kb 
+                JOIN kegiatananggaran_m ka ON ka.id = kb.objectkegiatanfk AND ka.statusenabled = TRUE
+                JOIN mataanggaran_m ma ON ma.id = kb.objectmataanggaranfk AND ma.statusenabled = TRUE
+                JOIN asalproduk_m ap ON ap.id = kb.objectasalprodukfk AND ap.statusenabled = TRUE
+                WHERE
+                    kb.statusenabled = TRUE
+                    -- opsi
+                    AND ka.tahun = '".$tahun."'
+                    $apanggaran
+                    AND kb.objecttahapfk = ".$request['tahap']."
+                    AND ka.id = ".$request['subsubkegiatan']."
+                GROUP BY
+                    ka.kode,
+                    ma.id,
+                    ma.kodemataanggaran,
+                    ma.namamataanggaran
+                
+                -- spj
+                UNION 
+                
+                SELECT
+                    ma.id,
+                    ma.kodemataanggaran,
+                    ma.namamataanggaran,
+                    0 as jumlahanggaran,
+                    COALESCE(SUM(rd.subtotal), 0) as jumlahspj
+                FROM strukrealisasi_t sr
+                JOIN realisasidetail_t rd ON rd.strukrealisasifk = sr.norec AND rd.statusenabled = TRUE 
+                JOIN kegiatananggaran_m ka ON ka.id = sr.objectkegiatanfk AND ka.statusenabled = TRUE
+                JOIN mataanggaran_m ma ON ma.id = sr.objectmataanggaranfk AND ma.statusenabled = TRUE
+                JOIN asalproduk_m ap ON ap.id = sr.objectasalprodukfk AND ap.statusenabled = TRUE
+                WHERE
+                    sr.statusenabled = TRUE
+                    AND sr.status ILIKE '%Sudah Diverifikasi%'
+                    -- opsi
+                    AND ka.tahun = '".$tahun."'
+                    AND ka.kode = '".$subsubkegiatan[0]->kode."'
+                    $apspj
+                GROUP BY
+                    ka.kode,
+                    ma.id,
+                    ma.kodemataanggaran,
+                    ma.namamataanggaran
+            ) as x
+            GROUP BY
+                x.id,
+                x.kodemataanggaran,
+                x.namamataanggaran
+            ORDER BY
+                SPLIT_PART(x.kodemataanggaran, '.', 1),
+                SPLIT_PART(x.kodemataanggaran, '.', 2),
+                SPLIT_PART(x.kodemataanggaran, '.', 3),
+                case 
+                    when SPLIT_PART(x.kodemataanggaran, '.', 5) = '' THEN cast(SPLIT_PART(x.kodemataanggaran, '.', 4) as INTEGER)
+                    else cast(SPLIT_PART(x.kodemataanggaran, '.', 5) as INTEGER)
+                END asc
+        
         "));
 
         $pageWidth = 950;

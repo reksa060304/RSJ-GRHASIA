@@ -771,6 +771,16 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
                     return
                 }
 
+                if ($scope.item.tahapmonev == undefined) {
+                    toastr.warning('Tahap harus diisi', 'Informasi');
+                    return
+                }
+
+                if ($scope.item.asalprodukpenyerapan == undefined) {
+                    toastr.warning('Sumber dana harus diisi', 'Informasi');
+                    return
+                }
+
                 if ($scope.item.jenisrekeningmonev == undefined) {
                     toastr.warning('Jenis Rekening harus diisi', 'Informasi');
                     return
@@ -794,7 +804,7 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
                 if ($scope.item.jenisrekeningmonev.id == 2) {
                     window.open(baseTransaksi + "report/get-cetak-penyerap-verif?tahun=" + tahun + "&jenisrekening=" + $scope.item.jenisrekeningmonev.id + "&subkegiatan=" + $scope.item.kegiatanmonev.id + "&subsubkegiatan=" + $scope.item.subkegiatanmonev.id, '_blank');
                 } else if ($scope.item.jenisrekeningmonev.id == 1) {
-                    window.open(baseTransaksi + "report/get-cetak-penyerap-verif-rba?tahun=" + tahun + "&jenisrekening=" + $scope.item.jenisrekeningmonev.id + "&subkegiatan=" + $scope.item.kegiatanmonev.id + "&subsubkegiatan=" + $scope.item.subkegiatanmonev.id, '_blank');
+                    window.open(baseTransaksi + "report/get-cetak-penyerap-verif-rba?tahun=" + tahun + "&jenisrekening=" + $scope.item.jenisrekeningmonev.id + "&subkegiatan=" + $scope.item.kegiatanmonev.id + "&subsubkegiatan=" + $scope.item.subkegiatanmonev.id + "&asalproduk=" + $scope.item.asalprodukpenyerapan.id + "&tahap=" + $scope.item.tahapmonev.id, '_blank');
                 }
             }
             $scope.changeKegiatanMonev = function () {
