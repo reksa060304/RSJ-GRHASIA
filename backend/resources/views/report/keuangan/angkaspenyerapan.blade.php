@@ -114,7 +114,7 @@
                                     <td>{{ number_format($rek->jumlahanggaran ,2,',','.')}}</td>
                                     <td>{{ number_format($rek->jumlahspj ,2,',','.') }}</td>
                                     @if ($rek->jumlahanggaran > 0 && $rek->jumlahspj > 0)
-                                        <td>{{ number_format($rek->jumlahanggaran / $rek->jumlahspj * 100, 2)}}</td>
+                                        <td>{{ number_format($rek->jumlahspj / $rek->jumlahanggaran * 100, 2)}}</td>
                                     @else
                                         <td>0</td>
                                     @endif
