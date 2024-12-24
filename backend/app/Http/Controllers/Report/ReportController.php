@@ -3907,11 +3907,11 @@ class ReportController extends ApiController{
             SELECT
                 x.id, x.kodemataanggaran, x.namamataanggaran, 
                 COALESCE(SUM(x.jumlahanggaran), 0) as jumlahanggaran, 
-                COALESCE(SUM(x.jumlahpanjar), 0) as jumlahpanjar, 
+                COALESCE(SUM(x.jumlahpanjar), 0) - COALESCE(SUM(x.jumlahpanjarspj), 0) as jumlahpanjar, 
                 COALESCE(SUM(x.jumlahspj), 0) as jumlahspj, 
-                COALESCE(SUM(x.jumlahpanjar), 0) + COALESCE(SUM(x.jumlahspj),0) as subtotal,
-                (COALESCE(SUM(x.jumlahpanjar), 0) + COALESCE(SUM(x.jumlahspj),0)) / COALESCE(SUM(x.jumlahanggaran), 0) * 100 as persentase,
-                (COALESCE(SUM(x.jumlahanggaran), 0) - (COALESCE(SUM(x.jumlahpanjar), 0) + COALESCE(SUM(x.jumlahspj),0))) as sisaanggaran
+                (COALESCE(SUM(x.jumlahpanjar), 0) - COALESCE(SUM(x.jumlahpanjarspj), 0)) + COALESCE(SUM(x.jumlahspj),0) as subtotal,
+                ((COALESCE(SUM(x.jumlahpanjar), 0) - COALESCE(SUM(x.jumlahpanjarspj), 0)) + COALESCE(SUM(x.jumlahspj),0)) / COALESCE(SUM(x.jumlahanggaran), 0) * 100 as persentase,
+                (COALESCE(SUM(x.jumlahanggaran), 0) - ((COALESCE(SUM(x.jumlahpanjar), 0) - COALESCE(SUM(x.jumlahpanjarspj), 0)) + COALESCE(SUM(x.jumlahspj),0))) as sisaanggaran
             FROM (
                 
                 --- anggaran
@@ -3921,7 +3921,8 @@ class ReportController extends ApiController{
                     ma.namamataanggaran,
                     COALESCE(SUM(kb.subtotal), 0) as jumlahanggaran,
                     0 as jumlahpanjar,
-                    0 as jumlahspj
+                    0 as jumlahspj,
+                    0 as jumlahpanjarspj
                 FROM keteranganbelanja_t kb 
                 JOIN kegiatananggaran_m ka ON ka.id = kb.objectkegiatanfk AND ka.statusenabled = TRUE
                 JOIN mataanggaran_m ma ON ma.id = kb.objectmataanggaranfk AND ma.statusenabled = TRUE
@@ -3945,12 +3946,14 @@ class ReportController extends ApiController{
                     ma.kodemataanggaran,
                     ma.namamataanggaran,
                     0 as jumlahanggaran,
-                    COALESCE(SUM(pj.jumlah), 0) as jumlahpanjar,
-                    0 as jumlahspj
+                    COALESCE(SUM(pj.jumlah), 0) - COALESCE(SUM(pp.jumlahpengembalian), 0) as jumlahpanjar,
+                    0 as jumlahspj,
+                    0 as jumlahpanjarspj
                 FROM panjar_t pj
                 JOIN kegiatananggaran_m ka ON ka.id = pj.objectsubsubkegiatanfk AND ka.statusenabled = TRUE
                 JOIN mataanggaran_m ma ON ma.id = pj.objectmataanggaranfk AND ma.statusenabled = TRUE
                 JOIN asalproduk_m ap ON ap.id = pj.objectasalprodukfk AND ap.statusenabled = TRUE
+                LEFT JOIN pengembalianpanjar_t pp ON pp.objectpanjarfk = pj.norec AND pp.statusenabled = TRUE 
                 WHERE
                     pj.statusenabled = TRUE
                     -- opsi
@@ -3970,7 +3973,8 @@ class ReportController extends ApiController{
                     ma.namamataanggaran,
                     0 as jumlahanggaran,
                     0 as jumlahpanjar,
-                    SUM(rd.subtotal) as jumlahspj
+                    SUM(rd.subtotal) as jumlahspj,
+                    0 as jumlahpanjarspj
                 FROM strukrealisasi_t sr
                 JOIN realisasidetail_t rd ON rd.strukrealisasifk = sr.norec AND rd.statusenabled = TRUE 
                 JOIN kegiatananggaran_m ka ON ka.id = sr.objectkegiatanfk AND ka.statusenabled = TRUE
@@ -3982,6 +3986,32 @@ class ReportController extends ApiController{
                     -- opsi
                     AND ka.tahun = '".$request['tahun']."'
                     AND sr.objectasalprodukfk = ".$request['asalproduk']."
+                GROUP BY
+                    ma.id,
+                    ma.kodemataanggaran,
+                    ma.namamataanggaran
+
+                -- panjarspj
+                UNION
+
+                SELECT
+                    ma.id,
+                    ma.kodemataanggaran,
+                    ma.namamataanggaran,
+                    0 as jumlahanggaran,
+                    0 as jumlahpanjar,
+                    0 as jumlahspj,
+                    COALESCE(SUM(sp.jumlahspj), 0) as jumlahpanjarspj
+                FROM panjar_t pj
+                JOIN kegiatananggaran_m ka ON ka.id = pj.objectsubsubkegiatanfk AND ka.statusenabled = TRUE
+                JOIN mataanggaran_m ma ON ma.id = pj.objectmataanggaranfk AND ma.statusenabled = TRUE
+                JOIN asalproduk_m ap ON ap.id = pj.objectasalprodukfk AND ap.statusenabled = TRUE
+                JOIN spjtopanjar_t sp ON sp.objectpanjarfk = pj.norec AND sp.statusenabled = TRUE 
+                WHERE
+                    pj.statusenabled = TRUE
+                    -- opsi
+                    AND ka.tahun = '".$request['tahun']."'
+                    AND pj.objectasalprodukfk = ".$request['asalproduk']."
                 GROUP BY
                     ma.id,
                     ma.kodemataanggaran,
@@ -6373,9 +6403,9 @@ class ReportController extends ApiController{
                 JOIN kegiatananggaran_m ka ON ka.id = sr.objectkegiatanfk AND ka.statusenabled = TRUE
                 JOIN mataanggaran_m ma ON ma.id = sr.objectmataanggaranfk AND ma.statusenabled = TRUE
                 JOIN asalproduk_m ap ON ap.id = sr.objectasalprodukfk AND ap.statusenabled = TRUE
+                JOIN bukukasumum_t bku ON bku.norec = sr.objectbkufk AND bku.statusenabled = TRUE
                 WHERE
                     sr.statusenabled = TRUE
-                    AND sr.status ILIKE '%Sudah Diverifikasi%'
                     -- opsi
                     AND ka.tahun = '".$tahun."'
                     $apspj
