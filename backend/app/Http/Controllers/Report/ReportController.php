@@ -6403,9 +6403,9 @@ class ReportController extends ApiController{
                 JOIN kegiatananggaran_m ka ON ka.id = sr.objectkegiatanfk AND ka.statusenabled = TRUE
                 JOIN mataanggaran_m ma ON ma.id = sr.objectmataanggaranfk AND ma.statusenabled = TRUE
                 JOIN asalproduk_m ap ON ap.id = sr.objectasalprodukfk AND ap.statusenabled = TRUE
+                JOIN bukukasumum_t bku ON bku.norec = sr.objectbkufk AND bku.statusenabled = TRUE
                 WHERE
                     sr.statusenabled = TRUE
-                    AND sr.status ILIKE '%Sudah Diverifikasi%'
                     -- opsi
                     AND ka.tahun = '".$tahun."'
                     $apspj
