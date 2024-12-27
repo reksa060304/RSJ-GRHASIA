@@ -8474,6 +8474,13 @@ class ReportController extends ApiController{
         //     $subsubkegiatan
         //     $mataanggaran"));
 
+        $apAnggaran = '';
+        $apSPJ = '';
+        if(isset($request['asalproduk']) && $request['asalproduk'] != '' && $request['asalproduk'] != null){
+            $apAnggaran = 'and kb.objectasalprodukfk = '.$request['asalproduk'];
+            $apSPJ = 'and sr.objectasalprodukfk = '.$request['asalproduk'];
+        }
+        
         $settingrba = DB::table('settinganggaran_t')
             ->where('statusenabled', true)
             ->where('kdprofile', 30)
@@ -8511,6 +8518,7 @@ class ReportController extends ApiController{
                 AND ma.id = ".$request['idmataanggaran']."
                 AND extract(year from bku.tglbku) = ".$request['tahun']." 
                 AND extract(month from bku.tglbku) = ".(float)$request['bulan']."
+                $apSPJ
             GROUP BY
                 bku.norec
             ORDER BY
@@ -8527,7 +8535,8 @@ class ReportController extends ApiController{
         and kb.kdprofile = 30 and kb.statusenabled=true
         and ma.kdprofile = 30 and ma.statusenabled=true
         $subsubkegiatan
-        $mataanggaran"));
+        $mataanggaran
+        $apAnggaran"));
 
         $totalanggaran = 0;
         if(count($anggaran) != 0){
@@ -8558,6 +8567,7 @@ class ReportController extends ApiController{
                     AND ma.id = ".$request['idmataanggaran']."
                     AND extract(year from bku.tglbku) = ".$request['tahun']." 
                     and extract(month from bku.tglbku) < ".(float)$request['bulan']."
+                    $apSPJ
                 GROUP BY
                     bku.norec
                 ORDER BY
