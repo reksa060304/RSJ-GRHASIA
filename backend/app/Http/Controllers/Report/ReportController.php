@@ -4422,6 +4422,13 @@ class ReportController extends ApiController{
 
         // order by div"));
 
+        $apAnggaran = '';
+        $apSPJ = '';
+        if(isset($request['asalproduk']) && $request['asalproduk'] != '' && $request['asalproduk'] != null){
+            $apAnggaran = 'and kb.objectasalprodukfk = '.$request['asalproduk'];
+            $apSPJ = 'and sr.objectasalprodukfk = '.$request['asalproduk'];
+        }
+
         $settingrba = DB::table('settinganggaran_t')
             ->where('statusenabled', true)
             ->where('kdprofile', 30)
@@ -4473,6 +4480,7 @@ class ReportController extends ApiController{
                     AND kb.objecttahapfk = ".$settingrba->objecttahapaktivfk."
                     AND ka.tahun = '".$request['tahun']."'
                     AND ka.id = ".$request['idsubsubkegiatan']."
+                    $apAnggaran
                 GROUP BY
                     ma.id,
                     ma.kodemataanggaran,
@@ -4514,6 +4522,7 @@ class ReportController extends ApiController{
                     sr.statusenabled = TRUE
                     AND ka.tahun = '".$request['tahun']."'
                     AND ka.kode = '".$subsubkegiatan[0]->kode."'
+                    $apSPJ
                 GROUP BY
                     ma.id,
                     ma.kodemataanggaran,

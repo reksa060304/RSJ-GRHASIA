@@ -713,7 +713,12 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
                     idsubsubkegiatanrk = $scope.item.subsubkegiatanrk.idsubsubkegiatan
                 }
 
-                window.open(baseTransaksi + "report/get-cetak-rk?tahun="+tahunrk+"&bulan="+bulanrk+"&tglcetak="+tglcetakrk+"&idsubsubkegiatan="+idsubsubkegiatanrk, '_blank');
+                var asalprodukRK = ""
+                if($scope.item.asalprodukRK !== undefined && $scope.item.asalprodukRK !== null){
+                    asalprodukRK = "&asalproduk=" + $scope.item.asalprodukRK.id
+                }
+
+                window.open(baseTransaksi + "report/get-cetak-rk?tahun="+tahunrk+"&bulan="+bulanrk+"&tglcetak="+tglcetakrk+"&idsubsubkegiatan="+idsubsubkegiatanrk + asalprodukRK, '_blank');
             }
 
             $scope.$watch('item.subkegiatanro', function (newValue, oldValue) {
