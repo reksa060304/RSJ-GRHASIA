@@ -15,17 +15,17 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
 
                 let kegiatan = ''
                 if($scope.item.kegiatansubsubpanjar !== undefined && $scope.item.kegiatansubsubpanjar !== null){
-                    kegiatan = '?subsubkegiatan=' + $scope.item.kegiatansubsubpanjar.kodesubsubkegiatan
+                    kegiatan = $scope.item.kegiatansubsubpanjar.kodesubsubkegiatan
                 }
 
                 let mataanggaran = ''
                 if($scope.item.mataanggaran !== undefined && $scope.item.mataanggaran !== null){
-                    mataanggaran = '&mataanggaran=' + $scope.item.mataanggaran.kodemataanggaran
+                    mataanggaran = $scope.item.mataanggaran.kodemataanggaran
                 }
 
                 let asalproduk = ''
                 if($scope.item.asalproduk !== undefined && $scope.item.asalproduk !== null){
-                    asalproduk = '&asalproduk=' + $scope.item.asalproduk.id
+                    asalproduk = $scope.item.asalproduk.id
                 }
 
                 let cari = ''
@@ -34,10 +34,10 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
                 }
 
                 medifirstService.get("perencanaan/get-rekap-panjar-detail" 
-                    + kegiatan
-                    + mataanggaran
-                    + asalproduk
-                    + cari)
+                    + "?subsubkegiatan=" + kegiatan
+                    + "&mataanggaran=" + mataanggaran
+                    + "&asalproduk=" + asalproduk
+                    + "&cari=" + cari)
                     .then(function (e) {
                         
                         let resdata = e.data

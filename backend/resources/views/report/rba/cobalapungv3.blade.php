@@ -736,7 +736,7 @@
                 <td style="border: none; text-align: right;">{{ number_format($pegawai_angg,2,'.',',') }}</td>
                 <td style="border: none; text-align: right;">{{ number_format($pegawai_bulanlalu,2,'.',',') }}</td>
                 <td style="border: none; text-align: right;">{{ number_format($pegawai_bulanini,2,'.',',') }}</td>
-                <td style="border: none; text-align: right;">{{ number_format($pegawai_bulanlalu + $bruto_bulanini,2,'.',',') }}</td>
+                <td style="border: none; text-align: right;">{{ number_format($pegawai_bulanlalu + $pegawai_bulanini,2,'.',',') }}</td>
                 <td colspan="3" style="border:none; border-right: 1px solid black;"></td>
             </tr>
 
@@ -766,7 +766,7 @@
                 <td style="border: none; text-align: right;">{{ number_format($barangjasa_angg,2,'.',',') }}</td>
                 <td style="border: none; text-align: right;">{{ number_format($barangjasa_bulanlalu,2,'.',',') }}</td>
                 <td style="border: none; text-align: right;">{{ number_format($barangjasa_bulanini,2,'.',',') }}</td>
-                <td style="border: none; text-align: right;">{{ number_format($barangjasa_bulanlalu + $bruto_bulanini,2,'.',',') }}</td>
+                <td style="border: none; text-align: right;">{{ number_format($barangjasa_bulanlalu + $barangjasa_bulanini,2,'.',',') }}</td>
                 <td colspan="3" style="border:none; border-right: 1px solid black;"></td>
             </tr>
 
@@ -826,7 +826,7 @@
                 <td style="border: none; text-align: right;">{{ number_format($modalgb_angg,2,'.',',') }}</td>
                 <td style="border: none; text-align: right;">{{ number_format($modalgb_bulanlalu,2,'.',',') }}</td>
                 <td style="border: none; text-align: right;">{{ number_format($modalgb_bulanini,2,'.',',') }}</td>
-                <td style="border: none; text-align: right;">{{ number_format($modalgb_bulanlalu + $bruto_bulanini,2,'.',',') }}</td>
+                <td style="border: none; text-align: right;">{{ number_format($modalgb_bulanlalu + $modalgb_bulanini,2,'.',',') }}</td>
                 <td colspan="3" style="border:none; border-right: 1px solid black;"></td>
             </tr>
 
@@ -856,7 +856,7 @@
                 <td style="border: none; text-align: right;">{{ number_format($atb_angg,2,'.',',') }}</td>
                 <td style="border: none; text-align: right;">{{ number_format($atb_bulanlalu,2,'.',',') }}</td>
                 <td style="border: none; text-align: right;">{{ number_format($atb_bulanini,2,'.',',') }}</td>
-                <td style="border: none; text-align: right;">{{ number_format($atb_bulanlalu + $bruto_bulanini,2,'.',',') }}</td>
+                <td style="border: none; text-align: right;">{{ number_format($atb_bulanlalu + $atb_bulanini,2,'.',',') }}</td>
                 <td colspan="3" style="border:none; border-right: 1px solid black;"></td>
             </tr>
 

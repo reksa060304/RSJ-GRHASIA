@@ -145,7 +145,7 @@
                 $last = end($string);
             @endphp
 
-            <tr>
+            <tr style="font-weight: bold;">
                 @php
                     $anggaran = 0;
                     $bulanlalu = 0;
