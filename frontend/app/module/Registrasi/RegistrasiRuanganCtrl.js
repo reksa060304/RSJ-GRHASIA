@@ -521,22 +521,26 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
                         return;
 
                     } else if ($scope.item.kelompokPasien.id == 2) {
-                        var tglRegis = moment($scope.item.tglRegistrasi).format('YYYY-MM-DD')
-                        medifirstService.get("registrasi/cek-pasien-bpjs-daftar-30hari?nocm=" + $scope.noCm + '&tglperiksa=' + tglRegis).then(function (x2) {
-                            if (x2.data.status) {
-                                var confirm = $mdDialog.confirm()
-                                    .title('Peringatan')
-                                    .textContent(`Pasien BPJS ini terakhir daftar di tgl ${moment(x2.data.data.tglregistrasi).format('DD-MM-YYYY')}, belum 30 hari ! Lanjut Simpan? `)
-                                    .ariaLabel('Lucky day')
-                                    .cancel('Tidak')
-                                    .ok('Ya')
-                                $mdDialog.show(confirm).then(function () {
+                        if($scope.item.ruangan.id == 752) {
+                            var tglRegis = moment($scope.item.tglRegistrasi).format('YYYY-MM-DD')
+                            medifirstService.get("registrasi/cek-pasien-bpjs-daftar-30hari?nocm=" + $scope.noCm + '&tglperiksa=' + tglRegis + '&idruangan=' + $scope.item.ruangan.id).then(function (x2) {
+                                if (x2.data.status) {
+                                    var confirm = $mdDialog.confirm()
+                                        .title('Peringatan')
+                                        .textContent(`Pasien BPJS ini terakhir daftar di tgl ${moment(x2.data.data.tglregistrasi).format('DD-MM-YYYY')}, belum 30 hari ! Lanjut Simpan? `)
+                                        .ariaLabel('Lucky day')
+                                        .cancel('Tidak')
+                                        .ok('Ya')
+                                    $mdDialog.show(confirm).then(function () {
+                                        $scope.lanjutDaftar2()
+                                    })
+                                } else {
                                     $scope.lanjutDaftar2()
-                                })
-                            } else {
-                                $scope.lanjutDaftar2()
-                            }
-                        })
+                                }
+                            })
+                        } else {
+                            $scope.lanjutDaftar2()
+                        }
                     } else {
                         $scope.SimpanRegistrasi();
                     }

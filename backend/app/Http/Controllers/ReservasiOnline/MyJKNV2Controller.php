@@ -211,15 +211,19 @@ class MyJKNV2Controller extends ApiController
                 $norm = $pasien->nocm;
                 $jenisrequest = 1;
 
-                $objCek30hr = new \Illuminate\Http\Request();
-                $objCek30hr ['nocm'] = $pasien->id;
-                $objCek30hr ['tglperiksa'] = $request['tanggalperiksa'];
-                $objCek30hr ['userData'] = $userData['userData'];
-                $cek30hr = app('App\Http\Controllers\Registrasi\RegistrasiController')->cekPasienBPJSDaftarMin30Hr($objCek30hr);
-                $cek30hr = json_decode($cek30hr->content(), true);
-                if($cek30hr["status"]) {
-                    $result = array("metadata"=>array("message" => "Pendaftaran Anda ditunda karena pendaftaran sebelumnya kurang dari 30 hari", "code" => 201));
-                    return $this->setStatusCode($result['metadata']['code'])->respond($result);
+                // validasi poli jiwa hanya bisa daftar 30hr dari hari pendaftaran sebelumnya
+                if($ruang->id == 752) {
+                    $objCek30hr = new \Illuminate\Http\Request();
+                    $objCek30hr ['nocm'] = $pasien->id;
+                    $objCek30hr ['tglperiksa'] = $request['tanggalperiksa'];
+                    $objCek30hr ['idruangan'] = $ruang->id;
+                    $objCek30hr ['userData'] = $userData['userData'];
+                    $cek30hr = app('App\Http\Controllers\Registrasi\RegistrasiController')->cekPasienBPJSDaftarMin30Hr($objCek30hr);
+                    $cek30hr = json_decode($cek30hr->content(), true);
+                    if($cek30hr["status"]) {
+                        $result = array("metadata"=>array("message" => "Pendaftaran Anda ditunda karena pendaftaran sebelumnya kurang dari 30 hari", "code" => 201));
+                        return $this->setStatusCode($result['metadata']['code'])->respond($result);
+                    }
                 }
             }
 

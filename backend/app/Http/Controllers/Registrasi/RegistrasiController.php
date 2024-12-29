@@ -6532,6 +6532,7 @@ class RegistrasiController extends ApiController
             ->where('ps.id', $request['nocm'])
             ->where('pd.statusenabled', true)
             ->where('pd.objectkelompokpasienlastfk', 2)
+            ->where('pd.objectruanganlastfk', $request['idruangan'])
             ->where('pd.kdprofile', (int)$kdProfile)
             ->whereIn('rm.objectdepartemenfk', $kdDepartemenRawatJalan)
             ->orderBy('pd.tglregistrasi', 'desc')

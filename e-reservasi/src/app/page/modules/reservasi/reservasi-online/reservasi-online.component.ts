@@ -1239,8 +1239,8 @@ export class ReservasiOnlineComponent implements OnInit {
       accept: async () => {
         this.simpanVisible = false
         if(this.noCmfk) {
-          if (this.formGroup.get('tipePembayaran').value.id == 2) {
-            let cekDaftar30hr = await this.httpService.get(`medifirst2000/registrasi/cek-pasien-bpjs-daftar-30hari?nocm=${this.noCmfk}&tglperiksa=${moment(this.formGroup.get('tglReservasi').value).format('YYYY-MM-DD')}`).toPromise()
+          if (this.formGroup.get('tipePembayaran').value.id == 2 && this.formGroup.get('poliKlinik').value.id == 752) {
+            let cekDaftar30hr = await this.httpService.get(`medifirst2000/registrasi/cek-pasien-bpjs-daftar-30hari?nocm=${this.noCmfk}&tglperiksa=${moment(this.formGroup.get('tglReservasi').value).format('YYYY-MM-DD')}&idruangan=${this.formGroup.get('poliKlinik').value.id}`).toPromise()
             if(cekDaftar30hr.status) {
               this.messageService.info('Info', 'Pendaftaran Anda ditunda karena pendaftaran sebelumnya kurang dari 30 hari')
               return;
