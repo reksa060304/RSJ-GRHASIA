@@ -6516,6 +6516,46 @@ class RegistrasiController extends ApiController
         );
         return $this->respond($result);
     }
+    public  function cekPasienBPJSDaftarMin30Hr(Request $request)
+    {
+        $status = false;
+        $kdProfile = $this->getDataKdProfile($request);
+        $deptJalan = explode(',', $this->settingDataFixed('kdDepartemenRawatJalanFix',  $kdProfile));
+        $kdDepartemenRawatJalan = [];
+        foreach ($deptJalan as $item) {
+            $kdDepartemenRawatJalan[] =  (int)$item;
+        }
+        $data = \DB::table('pasiendaftar_t as pd')
+            ->join('pasien_m as ps', 'ps.id', '=', 'pd.nocmfk')
+            ->join('ruangan_m as rm', 'rm.id', '=', 'pd.objectruanganlastfk')
+            ->select('pd.norec', 'pd.noregistrasi', 'pd.tglregistrasi')
+            ->where('ps.id', $request['nocm'])
+            ->where('pd.statusenabled', true)
+            ->where('pd.objectkelompokpasienlastfk', 2)
+            ->where('pd.objectruanganlastfk', $request['idruangan'])
+            ->where('pd.kdprofile', (int)$kdProfile)
+            ->whereIn('rm.objectdepartemenfk', $kdDepartemenRawatJalan)
+            ->orderBy('pd.tglregistrasi', 'desc')
+            ->first();
+
+        if ($data) {
+            // Menghitung selisih antara tanggal sekarang dan tanggal registrasi terakhir
+            $lastRegistrationDate = Carbon::parse($data->tglregistrasi);
+            $currentDate = Carbon::parse($request->tglperiksa);
+    
+            // Jika selisihnya kurang dari 30 hari, maka proses ditolak
+            if ($currentDate->diffInDays($lastRegistrationDate) < 30) {
+                $status = true; 
+            }
+        }
+
+        $result = array(
+            'data' =>  $data,
+            'status' =>  $status,
+            'msg' => 'er@epic'
+        );
+        return $this->respond($result);
+    }
     public function getDataPegawaiAll(Request $request)
     {
         $kdProfile = $this->getDataKdProfile($request);

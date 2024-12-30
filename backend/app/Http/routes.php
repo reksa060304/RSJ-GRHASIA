@@ -2266,6 +2266,7 @@ Route::group(['middleware' => 'cors', 'prefix' => 'service'], function () {
             Route::post('registrasi/update-false-pasien', 'Registrasi\RegistrasiController@updateStatusEnabledPasien');
             Route::post('registrasi/posting-batal-registrasi', 'Registrasi\RegistrasiController@postingBatalRegistrasi');
             Route::get('registrasi/cek-pasien-bpjs-daftar', 'Registrasi\RegistrasiController@cekPasienBPJSDaftar');
+            Route::get('registrasi/cek-pasien-bpjs-daftar-30hari', 'Registrasi\RegistrasiController@cekPasienBPJSDaftarMin30Hr');
             Route::get('registrasi/get-apd-detail','Registrasi\RegistrasiController@getApdDetail');
             Route::get('registrasi/get-kecamatanbydesa/{idDesa}','Registrasi\RegistrasiController@getKecamatanByDesaKelurahan');
 

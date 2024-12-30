@@ -13,6 +13,7 @@ export class HomeComponent implements OnInit {
     poli: any;
     farmasi: any;
     showPoli: boolean;
+    showPoliKhusus: boolean;
     listPoli: any;
     listFarmasi: any;
     namaProfile = Config.getProfile().namaProfile;
@@ -48,6 +49,17 @@ export class HomeComponent implements OnInit {
 
         data = data.substring(1, data.length);
         this.route.navigate(["/viewer-poli/" + data]);
+    }
+    savePoliKuhuhs(e) {
+        if (e == undefined) return;
+        let data = "";
+        for (let x = 0; x < e.length; x++) {
+            const element = e[x];
+            data = data + "," + element.id;
+        }
+
+        data = data.substring(1, data.length);
+        this.route.navigate(["/viewer-poli-khusus/" + data]);
     }
 
     saveFarma(e) {

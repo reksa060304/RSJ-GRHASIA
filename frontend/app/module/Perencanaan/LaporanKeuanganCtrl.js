@@ -663,7 +663,13 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
                     idmataanggaran = $scope.item.mataanggaranro.id
                 }
 
-                window.open(baseTransaksi + "report/get-cetak-ro?tahun="+tahunro+"&bulan="+bulanro+"&tglcetak="+tglcetakro+"&idsubsubkegiatan="+idsubsubkegiatan+"&idmataanggaran="+idmataanggaran, '_blank');
+                var asalprodukRO = ""
+                if ($scope.item.asalprodukRO != undefined && $scope.item.asalprodukRO != null){
+                    asalprodukRO = "&asalproduk=" + $scope.item.asalprodukRO.id
+                }
+
+
+                window.open(baseTransaksi + "report/get-cetak-ro?tahun="+tahunro+"&bulan="+bulanro+"&tglcetak="+tglcetakro+"&idsubsubkegiatan="+idsubsubkegiatan+"&idmataanggaran="+idmataanggaran + asalprodukRO, '_blank');
             }
 
             $scope.CetakRK = function(){
@@ -713,7 +719,12 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
                     idsubsubkegiatanrk = $scope.item.subsubkegiatanrk.idsubsubkegiatan
                 }
 
-                window.open(baseTransaksi + "report/get-cetak-rk?tahun="+tahunrk+"&bulan="+bulanrk+"&tglcetak="+tglcetakrk+"&idsubsubkegiatan="+idsubsubkegiatanrk, '_blank');
+                var asalprodukRK = ""
+                if($scope.item.asalprodukRK !== undefined && $scope.item.asalprodukRK !== null){
+                    asalprodukRK = "&asalproduk=" + $scope.item.asalprodukRK.id
+                }
+
+                window.open(baseTransaksi + "report/get-cetak-rk?tahun="+tahunrk+"&bulan="+bulanrk+"&tglcetak="+tglcetakrk+"&idsubsubkegiatan="+idsubsubkegiatanrk + asalprodukRK, '_blank');
             }
 
             $scope.$watch('item.subkegiatanro', function (newValue, oldValue) {
