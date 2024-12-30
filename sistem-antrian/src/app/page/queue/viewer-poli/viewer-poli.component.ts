@@ -430,7 +430,7 @@ export class ViewerPoliComponent implements OnInit {
       this.item.poliYangDipanggil = poliPanggilNya
       this.item.antrianYangDipanggil = antrianPanggilNya
       this.dipanggil = false
-    }, (5000));
+    }, 15000);
 
   }
 
