@@ -419,9 +419,10 @@ export class ViewerPoliComponent implements OnInit {
     utterance.rate = 0.8;
     utterance.volume = 1;
     // Speak the utterance
+    setTimeout(() => {
     synthesis.speak(utterance);
-    // this.audio.pause();
-    // }, (1500)); //4 detik
+    this.audio.pause();
+    }, 1500); //4 detik
     // setTimeout(() => {
       
     // }, (4000));
