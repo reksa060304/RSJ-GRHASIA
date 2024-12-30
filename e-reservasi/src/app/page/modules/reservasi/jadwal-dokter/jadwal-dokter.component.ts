@@ -25,6 +25,7 @@ import {
     
     
     
+    
 
     constructor(private Backend : HttpClient,
                 private cacheService : CacheService,
@@ -46,6 +47,7 @@ import {
       if (this.item.namaruangan  !=undefined) {
         namaruangan="search="+this.item.namaruangan
       }
+
       console.log(namaruangan);
       this.Backend.get('medifirst2000/api/get-jadwal-dokter?'+namaruangan)
       .subscribe(e =>{
