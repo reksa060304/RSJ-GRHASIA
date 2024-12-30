@@ -266,25 +266,25 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
 
                 var terbilang = (parseFloat(total) - parseFloat(transfer) - parseFloat(admin))
 
-                // console.log($scope.selectedData2)
+                console.log($scope.selectedData2)
 
-                // medifirstService.get("sysadmin/general/get-terbilang/" + terbilang).then(
-				// 	function (dat) {
-				// 		$scope.item.terbilang = dat.data.terbilang;
-                //         var objSave =
-                //         {
-                //             terbilang: dat.data.terbilang,
-                //             totalsetor: $scope.item.totalSetor,
-                //             uraian: $scope.item.uraian,
-                //             biayatransfer: $scope.item.biayatransfer,
-                //             biayaadmin: $scope.item.biayaadmin,
-                //             tglsts: moment($scope.item.tanggalSTS).format('YYYY-MM-DD HH:mm'),
-                //             setoran: $scope.selectedData2,
-                //         }
+                medifirstService.get("sysadmin/general/get-terbilang/" + terbilang).then(
+					function (dat) {
+						$scope.item.terbilang = dat.data.terbilang;
+                        var objSave =
+                        {
+                            terbilang: dat.data.terbilang,
+                            totalsetor: $scope.item.totalSetor,
+                            uraian: $scope.item.uraian,
+                            biayatransfer: $scope.item.biayatransfer,
+                            biayaadmin: $scope.item.biayaadmin,
+                            tglsts: moment($scope.item.tanggalSTS).format('YYYY-MM-DD HH:mm'),
+                            setoran: $scope.selectedData2,
+                        }
 
-                //         medifirstService.post('bendaharapenerimaan/save-sts-klaim', objSave).then(function (dat) {});
-				// 	}
-                // );
+                        medifirstService.post('bendaharapenerimaan/save-sts-klaim', objSave).then(function (dat) {});
+					}
+                );
 
                 
             }
