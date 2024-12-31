@@ -221,7 +221,7 @@ export class ViewerPoliComponent implements OnInit {
             this.item.antriTerakhir = this.listAntri[this.listAntri.length - 1].noantri
             // this.item.nama = this.listAntri[this.listAntri.length - 1].namapasien
             // this.item.namapasien = this.listAntri[this.listAntri.length - 1].nocm + ',' + this.listAntri[this.listAntri.length - 1].namapasien
-            let nama = this.listAntri[this.listAntri.length - 1].namapasien.split(' ')
+            let nama = this.listAntri[this.listAntri.length - 1].namapasien
             this.item.namapasien = nama[0]
             this.item.namadokter = this.listAntri[this.listAntri.length - 1].namadokter
           }
