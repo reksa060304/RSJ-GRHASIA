@@ -155,7 +155,7 @@
             <td colspan="2" style="padding: 3px; width: 50px;" align="center"></td>
             <td style="padding: 3px;" align="center">Reny Astuti, SE</td>
             <td colspan="2" style="padding: 3px; width: 50px;" align="center"></td>
-            <td style="padding: 3px;" align="center">SURI HERLINA PRATIWI, SKM, M.PH</td>
+            <td style="padding: 3px;" align="center">Suri Herlina Pratiwi, SKM, M.PH</td>
         </tr>
         <tr style="padding: 3px;">
             <td style="padding: 3px; padding-left: 20px;" align="center">NIP. 19680714 200012 1 002</td>
