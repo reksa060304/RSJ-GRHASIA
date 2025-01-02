@@ -175,9 +175,9 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
                         $scope.namapegawailogin = $scope.pegawaiLogin.namaLengkap
 
                     }
-                    medifirstService.get("perencanaan/get-data-combo-pajak").then(function (e) {
-                        $scope.listJenisPajak = e.data.data
-                    })
+                    // medifirstService.get("perencanaan/get-data-combo-pajak").then(function (e) {
+                    //     $scope.listJenisPajak = e.data.data
+                    // })
 
                     // medifirstService.get("perencanaan/get-data-combo?&idpegawai=" + idpegawai).then(function (e) {
                     //     $scope.listJenisBelanja = e.data.jenisbelanja
@@ -207,10 +207,23 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
                         $scope.listDataDivProg = dataCombo.divKg;
                         $scope.listDataDivSubkg = dataCombo.divsubKg;
                         $scope.listDataDivSubsubkg = dataCombo.divsubsubKg;
-                        $scope.listDataDiv4 = dataCombo.divsubsubsubkg;
                         $scope.listTahap = dataCombo.tahap;
                         $scope.listJenisBelanja = dataCombo.jenisbelanja;
+                        $scope.listAsalProduk = dataCombo.asalproduk
+                        $scope.listKegiatanCombo = dataCombo.divsubsubKg
                         // $scope.listTahapKegiatan = dataCombo.tahap
+
+                        // tahap sesuai setting anggaran
+                        $scope.item.searchtahapkeg = {
+                            id: dataCombo.setting[0].objecttahapaktivfk,
+                            tahap: dataCombo.setting[0].tahap
+                        }
+
+                        // ambil tahun sesuai setting
+                        $scope.item.tahun = moment(dataCombo.setting[0].tahunanggaran).format('YYYY'),
+
+                        loadDataGrid();
+
                     });
                 })
                 
@@ -227,7 +240,6 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
                     field: "kegiatan"
                 },
             ];
-            loadDataGrid();
             function loadDataGrid() {
                 $scope.isRouteLoading = true;
                 $scope.item.statusspj = [{ id: 0, status: "Semua" }]
@@ -237,7 +249,6 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
                 medifirstService.get('anggaran/pj-rba?id=' + medifirstService.getPegawaiLogin().id).then(function (data) {
                     $scope.item.ispj = data.data[0].ispj
                     if ($scope.item.ispj == true) {
-                        console.log('testttt');
                         idpegawai = $scope.pegawaiLogin.id
                         $scope.disidpegawai = true
                         $scope.idpegawailogin = $scope.pegawaiLogin.id
@@ -299,8 +310,27 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
                     if($scope.item.searchdivkeg != undefined){
                         div = $scope.item.searchdivkeg.id
                     }
+
+                    // jika ada tahap cari sesuai tahap
+                    let tahap = ''
+                    if($scope.item.searchtahapkeg !== undefined && $scope.item.searchtahapkeg !== null){
+                        tahap = '&tahap=' + $scope.item.searchtahapkeg.id
+                    }
+
+                    // jika ispj di pegawai true maka munculkan kegiatan berdasarkan pptk
+                    let pegawai = ''
+                    if($scope.item.ispj == true){
+                        pegawai = '&pegawai=' + $scope.idpegawailogin
+                    }
+
+                    let tahun = ''
+                    if($scope.item.tahun !== undefined && $scope.item.tahun !== null){
+                        tahun = '&tahun=' + $scope.item.tahun
+                    }
+
+
                     // medifirstService.get("perencanaan/get-data-combo?tahun="+thn+"&idpegawai=" + $scope.idpegawailogin + "&tahapaktif=" + thp + "&div=" + div).then(function (e) {
-                    medifirstService.get("anggaran/get-daftar-master-kegiatanRBA?div=" + div).then(function (e) {
+                    medifirstService.get("anggaran/get-daftar-master-kegiatanRBA?div=" + div + tahap + pegawai + tahun).then(function (e) {
                         DataKegiatan = e.data.kegiatan
                         for (let i = 0; i < DataKegiatan.length; i++) {
                             DataKegiatan[i].statCheckbox = false
@@ -548,7 +578,7 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
             });
 
             $scope.$watch('item.subkegiatanpanjar', function (newValue, oldValue) {
-                console.log('masuk otomatis ga sih iniii');
+                // console.log('masuk otomatis ga sih iniii');
                 if (newValue != oldValue) {
                     medifirstService.get("perencanaan/get-data-combo").then(function (e) {
                         medifirstService.get("perencanaan/get-data-combo?tahunawal="+e.data.setting[0].tahunanggaran+"&tahap="+e.data.setting[0].objecttahapaktivfk+"&subkegiatan="+$scope.item.subkegiatanpanjar.id).then(function (e) {
@@ -885,13 +915,14 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
             $scope.TambahPengembalian = function(){
                 $scope.popupPengembalian.center().open()
             }
+            
             function deleteKegiatanT(e) {
                 e.preventDefault();
                 var dataItem = this.dataItem($(e.currentTarget).closest("tr"));
                 console.log(dataItem)
                 var objSave =
                     {
-                        id: dataItem.id,
+                        norec: dataItem.norec,
                         div: dataItem.div,
                     }
                 if(dataItem.islockrba == true){
@@ -905,31 +936,10 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
                     .cancel('Tidak')
                     .ok('OK')
                 $mdDialog.show(confirm).then(function () {
-                    medifirstService.post('perencanaan/delete-kegiatan-anggaran', objSave).then(function (e) {
-                        var div = ''
-                        if($scope.item.searchdivkeg != undefined){
-                            div = $scope.item.searchdivkeg.id
-                        }
+                    medifirstService.post('anggaran/delete-transaksianggaran', objSave).then(function (e) {
+                        
+                        loadDataGrid()
 
-                        var thn = ''
-                        if($scope.item.tahun != undefined){
-                            thn = moment($scope.item.tahun).format('YYYY')
-                        }
-
-                        var thp = ''
-                        if($scope.item.searchtahapkeg != undefined){
-                            thp = $scope.item.searchtahapkeg.id
-                        }
-
-                        medifirstService.get("perencanaan/get-data-combo?tahun="+thn+"&idpegawai=" + $scope.idpegawailogin + "&tahapaktif=" + thp + "&div=" + div).then(function (e) {
-                            DataKegiatan = e.data.kegiatan
-                            for (let i = 0; i < DataKegiatan.length; i++) {
-                                DataKegiatan[i].statCheckbox = false
-                            }
-                            $scope.dataSourceKegiatan = e.data.kegiatan
-                        })
-                    }, function (error) {
-    
                     })
                 })
 
@@ -950,8 +960,8 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
                 // console.log(dataItem)
                 // $scope.popupSubSubKegiatan.center().open();  
                 
-                // $scope.norecrcntotalanggaran = dataItem.norec 
-                // $scope.datakegiatanbro = dataItem
+                $scope.norecrcntotalanggaran = dataItem.norec 
+                $scope.datakegiatanbro = dataItem
                 // medifirstService.get("perencanaan/get-total-anggaran-rcn?kegiatan=" + $scope.norecrcntotalanggaran).then(function (e) {
                 //     var total = 0
                 //     if(e.data.data.length == 0){
@@ -1082,7 +1092,8 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
                         $scope.item.idpptkpopupkegiatan = dataItem.idpptk 
                         //$scope.item.tolokUkurMasukan = dataItem.indikatormasuk
                         $scope.item.tolokUkurMasukan = 'Dana'
-                        $scope.item.targetKinerjaMasukan = formatRupiah(TotalAnggaran, "Rp. ")//dataItem.targetmasuk
+                        // $scope.item.targetKinerjaMasukan = formatRupiah(TotalAnggaran, "Rp. ")//dataItem.targetmasuk
+                        $scope.item.targetKinerjaMasukan = dataItem.targetmasuk
                         $scope.item.tolokUkurKeluaran = dataItem.indikatorkeluaran
                         $scope.item.targetKinerjaKeluaran = dataItem.targetkeluaran
                         $scope.item.tolokUkurHasil = dataItem.indikatorhasil
@@ -1353,6 +1364,8 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
                 $scope.rcn.idmataanggaran = dataItem.objectmataanggaranfk
                 $scope.item.password = dataItem.password
                 $scope.item.passwordbenar = undefined
+                $scope.item.jumlahspjEntryRBA = dataItem.jumlahspj
+
                 $scope.popupTambahKeteranganBelanja.center().open();
             }
             function DetailAlokasi(e) {
@@ -2649,8 +2662,25 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
             // });
 
             $scope.CariSettingTahap = function () {
-                medifirstService.get("perencanaan/get-data-combo?tahap="+$scope.item.tahapawal.id+"&tahunawal="+moment($scope.item.tahunawal).format('YYYY')+"&subkegiatan="+$scope.item.subkegiatantransfer.id).then(function (e) {
-                    $scope.listSubSubKegiatan = e.data.kegiatansubsub
+
+                // validasi
+                if($scope.item.tahapawal == undefined && $scope.item.tahapawal == null){
+                    toastr.error('Pilih tahap awal dulu')
+                    return
+                }
+
+                if($scope.item.tahunawal == undefined && $scope.item.tahunawal == null){
+                    toastr.error('Pilih tahun awal dulu')
+                    return
+                }
+
+                if($scope.item.subkegiatantransfer == undefined && $scope.item.subkegiatantransfer == null){
+                    toastr.error('Pilih subkegiatan dulu')
+                    return
+                }
+
+                medifirstService.get("anggaran/get-subsubkegiatan-transfer?tahap="+$scope.item.tahapawal.id+"&tahunawal="+moment($scope.item.tahunawal).format('YYYY')+"&subkegiatan="+$scope.item.subkegiatantransfer.id).then(function (e) {
+                    $scope.listSubSubKegiatan = e.data
                     $scope.arrayProdukTemp = []
                     if ($scope.listSubSubKegiatan.length > 0) {
                         for (let i = 0; i < $scope.listSubSubKegiatan.length; i++) {
@@ -2671,17 +2701,34 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
             }
 
             $scope.CariKeteranganPerubahan = function () {
-                medifirstService.get("perencanaan/get-data-combo?idmataanggaran="+$scope.item.combomataanggaran.id+"&tahapaktif="+$scope.item.objecttahappemindahan.id).then(function (e) {
+                // medifirstService.get("perencanaan/get-data-combo?idmataanggaran="+$scope.item.combomataanggaran.id+"&tahapaktif="+$scope.item.objecttahappemindahan.id).then(function (e) {
                     
-                    $scope.listKeteranganPerubahan = e.data.keteranganperubahan
-                    $scope.arrayProdukTemp = []
-                    if ($scope.listKeteranganPerubahan.length > 0) {
-                        for (let i = 0; i < $scope.listKeteranganPerubahan.length; i++) {
-                            const element = $scope.listKeteranganPerubahan[i];
-                            element.isChecked = false
+                //     $scope.listKeteranganPerubahan = e.data.keteranganperubahan
+                //     $scope.arrayProdukTemp = []
+                //     if ($scope.listKeteranganPerubahan.length > 0) {
+                //         for (let i = 0; i < $scope.listKeteranganPerubahan.length; i++) {
+                //             const element = $scope.listKeteranganPerubahan[i];
+                //             element.isChecked = false
+                //         }
+                //     }
+                // });
+
+                medifirstService.get("anggaran/get-keteranganbelanja-pindahrincian" 
+                    + "?mataanggaran="+$scope.item.combomataanggaran.id
+                    + "&tahap="+$scope.item.objecttahappemindahan.id
+                    + "&tahun="+moment($scope.item.tahun).format('YYYY')
+                    + "&subsubkegiatan"+$scope.item.combosubsubkegiatan.idsubsubkegiatan
+                    ).then(function (e) {
+                    
+                        $scope.listKeteranganPerubahan = e.data
+                        $scope.arrayProdukTemp = []
+                        if ($scope.listKeteranganPerubahan.length > 0) {
+                            for (let i = 0; i < $scope.listKeteranganPerubahan.length; i++) {
+                                const element = $scope.listKeteranganPerubahan[i];
+                                element.isChecked = false
+                            }
                         }
-                    }
-                });
+                    });
             }
             
             $scope.$watch('item.searchSPJ', function (newValue, oldValue) {
@@ -2704,7 +2751,7 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
                     });
                 }
             });
-            console.log(medifirstService.getPegawaiLogin());
+            // console.log(medifirstService.getPegawaiLogin());
             $scope.$watch('item.combokegiatan', function (newValue, oldValue) {
                 if (newValue != oldValue) {
                     var idpegawai = '';
@@ -2723,13 +2770,22 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
                         if ($scope.item.objecttahappemindahan != undefined) {
                             tahap = "&tahap=" + $scope.item.objecttahappemindahan.id
                         }
-                        medifirstService.get("perencanaan/get-data-combo" 
-                            + "?subsubkegiatan=" + $scope.item.combokegiatan.kode 
-                            + "&idpegawai=" + idpegawai 
-                            + "&tahun=" + $scope.item.tahunkas + tahap
-                            + "&tahap=" + $scope.item.searchtahap.id).then(function (e) {
-                            $scope.listSubSubKegiatanCombo = e.data.kegiatansubsubcombo
-                        });
+
+                        medifirstService.get("anggaran/get-subsubkegiatan-transfer" 
+                            + "?tahap="+$scope.item.objecttahappemindahan.id
+                            + "&tahunawal="+moment($scope.item.tahun).format('YYYY')
+                            + "&subkegiatan="+$scope.item.combokegiatan.id)
+                            .then(function (e) {
+                                $scope.listSubSubKegiatanCombo = e.data
+                            });
+
+                        // medifirstService.get("perencanaan/get-data-combo" 
+                        //     + "?subsubkegiatan=" + $scope.item.combokegiatan.kode 
+                        //     + "&idpegawai=" + idpegawai 
+                        //     + "&tahun=" + $scope.item.tahunkas + tahap
+                        //     + "&tahap=" + $scope.item.searchtahap.id).then(function (e) {
+                        //     $scope.listSubSubKegiatanCombo = e.data.kegiatansubsubcombo
+                        // });
                     })
                     
                 }
@@ -2745,9 +2801,17 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
 
             $scope.$watch('item.combosubsubkegiatan', function (newValue, oldValue) {
                 if (newValue != oldValue) {
-                    medifirstService.get("perencanaan/get-data-combo?idsubsub="+$scope.item.combosubsubkegiatan.id).then(function (e) {
-                        $scope.listMataAnggaranCombo = e.data.mataanggarancombo
-                    });
+                    // medifirstService.get("perencanaan/get-data-combo?idsubsub="+$scope.item.combosubsubkegiatan.id).then(function (e) {
+                    //     $scope.listMataAnggaranCombo = e.data.mataanggarancombo
+                    // });
+
+                    medifirstService.get("anggaran/get-mataanggaran-pindahrincian" 
+                        + "?subsubkegiatan="+$scope.item.combosubsubkegiatan.idsubsubkegiatan
+                        + "&tahun="+moment($scope.item.tahun).format('YYYY')
+                        + "&tahap="+$scope.item.objecttahappemindahan.id)
+                        .then(function (e) {
+                            $scope.listMataAnggaranCombo = e.data
+                        });
                 }
             });
             
@@ -3758,129 +3822,6 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
                 // $scope.popupDokter.center().open();
             }
             
-           
-            function LoadTotalKeterangan(){
-                var idpegawai = ''
-                    $scope.pegawaiLogin = medifirstService.getPegawaiLogin();
-                    //console.log($scope.pegawaiLogin)
-                    medifirstService.get('anggaran/pj-rba?id=' + medifirstService.getPegawaiLogin().id).then(function (data) {
-                        $scope.item.ispj = data.data[0].ispj
-                        if ($scope.item.ispj == true) {
-                            idpegawai = $scope.pegawaiLogin.id
-                        }
-                        if ($state.params.parameter == '77777') {
-                            $scope.spjaja = true
-                        } else if ($state.params.parameter == '33333') {
-                            $scope.spjpengembalian = true
-                        } else if ($state.params.parameter == '99999') {
-                            $scope.panjaraja = true
-                        } else if ($state.params.parameter == '88888') {
-                            $scope.sppaja = true
-                        } else if ($state.params.parameter == '66666') {
-                            $scope.spmaja = true
-                        } else if ($state.params.parameter == '55555') {
-                            $scope.semuaanggaran = true
-                        } else if ($state.params.parameter == '44444') {
-                            $scope.spjajas = true
-                        } else if ($state.params.parameter == '56565') {
-                            $scope.settingaja = true
-                            $scope.semuaanggaran = true
-                        } else if ($state.params.parameter == '78787') {
-                            $scope.mataanggaranaja = true
-                            $scope.semuaanggaran = true
-                        } else if ($state.params.parameter == '67676') {
-                            $scope.mataanggaranpermenaja = true
-                            $scope.semuaanggaran = true
-                        } else if ($state.params.parameter == '12121') {
-                            $scope.rbaaja = true
-                            $scope.semuaanggaran = true
-                        } else if ($state.params.parameter == '23232') {
-                            $scope.angkasaja = true
-                            $scope.semuaanggaran = true
-                        }
-
-                        // medifirstService.get("perencanaan/get-total-mata-anggaran?tahun=" + moment($scope.item.thnAnggaran).format('YYYY') + "&tahap=" + $scope.item.tahapdetail.id + "&idpegawai=" + idpegawai + "&cek=" + $scope.item.isCekAdaAnggaranSaja + "&noreckegiatan=" + $scope.idkegiatananggaran).then(function (e) {
-                        //     DataTotalMataAnggaran = e.data.data
-                        //     $scope.listAsalProduk = e.data.asalproduk
-                        //     $scope.dataSourceDetailMT = new kendo.data.DataSource({
-                        //         data: DataTotalMataAnggaran
-                        //     });
-                        //     DataTabKeteranganBelanja = []; //e.data.keteranganbelanja
-                        //     // let DataInsertAlokasi = [];
-                        //     console.log(e.data.keteranganbelanja)
-                        //     let dataAlokasi = e.data.alokasi;
-                        //     for (let index = 0; index < e.data.keteranganbelanja.length; index++) {
-                        //         let element = e.data.keteranganbelanja[index];
-                        //         for (let aa = 0; aa < dataAlokasi.length; aa++) {
-                        //             let alokasielement = dataAlokasi[aa];
-                        //             for (let bb = 0; bb < alokasielement.length; bb++) {
-                        //                 let elementbb = alokasielement[bb];
-                        //                 if (elementbb.kodemataanggaran == element.kodemataanggaran) {
-                        //                     if (elementbb.bulanint == 1) {
-                        //                         elementbb.jan = elementbb.nilai
-                        //                     }
-                        //                     if (elementbb.bulanint == 2) {
-                        //                         elementbb.feb = elementbb.nilai
-                        //                     }
-                        //                     if (elementbb.bulanint == 3) {
-                        //                         elementbb.mar = elementbb.nilai
-                        //                     }
-                        //                     if (elementbb.bulanint == 4) {
-                        //                         elementbb.apr = elementbb.nilai
-                        //                     }
-                        //                     if (elementbb.bulanint == 5) {
-                        //                         elementbb.mei = elementbb.nilai
-                        //                     }
-                        //                     if (elementbb.bulanint == 6) {
-                        //                         elementbb.jun = elementbb.nilai
-                        //                     }
-                        //                     if (elementbb.bulanint == 7) {
-                        //                         elementbb.jul = elementbb.nilai
-                        //                     }
-                        //                     if (elementbb.bulanint == 8) {
-                        //                         elementbb.agt = elementbb.nilai
-                        //                     }
-                        //                     if (elementbb.bulanint == 9) {
-                        //                         elementbb.sep = elementbb.nilai
-                        //                     }
-                        //                     if (elementbb.bulanint == 10) {
-                        //                         elementbb.okt = elementbb.nilai
-                        //                     }
-                        //                     if (elementbb.bulanint == 11) {
-                        //                         elementbb.nov = elementbb.nilai
-                        //                     }
-                        //                     if (elementbb.bulanint == 12) {
-                        //                         elementbb.des = elementbb.nilai
-                        //                     }
-
-                        //                     elementbb.subtotal = element.subtotal
-                        //                 }
-                        //                 DataTabKeteranganBelanja.push(elementbb)
-                        //             }
-
-                        //         }
-                        //         // DataInsertAlokasi.push(element)
-
-                        //     }
-                        //     // DataTabKeteranganBelanja = DataInsertAlokasi
-                        //     // $scope.item.dataKeteranganBelanja = DataInsertAlokasi
-                        //     $scope.dataSourceKeteranganBelanja = new kendo.data.DataSource({
-                        //         data: e.data.alokasimataanggaran,
-                        //         group: $scope.groupmataanggaran,
-
-                        //     });
-
-
-                        //     $scope.dataSearchSourceKeteranganBelanja = $scope.dataSourceKeteranganBelanja
-
-                        //     $scope.dataSourceDetailKeteranganBelanja = new kendo.data.DataSource({
-                        //         data: e.data.detailalokasimataanggaran,
-                        //     });
-
-                        // })
-                    })
-                    
-            }
             function cacheLoad(){
                 var chaceSPJ = cacheHelper.get('SPJ')
                 // console.log(chaceSPJ);
@@ -4024,19 +3965,16 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
                 });
             }
             $scope.SettingTahap = function(){
-                medifirstService.get("perencanaan/get-data-combo?tahun="+moment($scope.now).format('YYYY')).then(function (e) {
-                    $scope.listSubKegiatanTransfer = e.data.subkegiatantransfer
+                
+                medifirstService.get("anggaran/get-combo-anggaran", true).then(function (dat) {
+                    var dataCombo = dat.data;
+                    
+                    $scope.listSubKegiatanTransfer = dataCombo.divsubsubKg
+
                 });
                 
                 $scope.popupTambahTahap.center().open()
-            }
-
-            $scope.DataPermenDigitKelima = function(){
-                $scope.popupPermenKelima.center().open()
-            }
-
-            $scope.DataPermenDigitKeempat = function(){
-                $scope.popupPermenKeempat.center().open()
+            
             }
 
             $scope.PemindahanKeterangan = function(){
@@ -4068,8 +4006,7 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
             }
 
             $scope.ceklisOne = function (bool, data) {
-                console.log(data)
-                console.log($scope.listSubSubKegiatan)
+                
                 if (bool) {
                     $scope.listSubSubKegiatan.forEach(function (e) {
                         if (data.idsubsubkegiatan == e.idsubsubkegiatan && bool == e.isChecked) {
@@ -4147,11 +4084,13 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
                     "tgltransfer": moment($scope.now).format('YYYY-MM-DD HH:mm:ss'),
                     "tahapawal": $scope.item.tahapawal,
                     "tahapakhir": $scope.item.tahapakhir,
+                    "tahunawal": moment($scope.item.tahunawal).format('YYYY'),
                     "tahunakhir": moment($scope.item.tahunakhir).format('YYYY'),
                 }
-                console.log(objSave);
-                // return
-                medifirstService.post('perencanaan/save-setting-tahap', objSave).then(function (e) {
+                
+                console.log(objSave)
+                
+                medifirstService.post('anggaran/save-subsubkegiatan-transfer', objSave).then(function (e) {
                     $scope.popupTambahTahap.center().close()
                     loadDataGrid();
 
@@ -5641,6 +5580,20 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
                     toastr.error('Sudah dilock!')
                     return
                 }
+
+                // validasi jika sudah ada nilai spj maka tidak bisa dihapus
+                let dataPunyaSPJ = []
+                $scope.selectedData3.map(function(item){
+                    if(item.jumlahspj > 0){
+                        dataPunyaSPJ.push(item)
+                    }
+                })
+
+                if(dataPunyaSPJ.length > 0){
+                    toastr.error("Rincian sudah ada SPJ")
+                    return
+                }
+
                 var confirm = $mdDialog.confirm()
                     .title('Informasi')
                     .htmlContent("Apakah anda yakin ingin menghapus centangan rincian anggaran?")
@@ -5784,6 +5737,12 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
                         "width": "200px"
                     },
                     {
+                        "field": "jumlahspj",
+                        "title": "Jumlah SPJ",
+                        "width": "150px",
+						"template": "<span class='style-right'>{{formatRupiah2('#: jumlahspj #', '')}}</span>",
+                    },
+                    {
                         command: [{
                             text: "Hapus",
                             click: HapusRincianKas
@@ -5877,12 +5836,19 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
                     alert("Data Belum Dipilih!")
                     return;
                 };
-                //console.log(dataItem);
-                // return 
+                
+                // jika sudah dilock
                 if ($scope.datakegiatanbro.islockrba == true) {
                     toastr.error('Sudah dilock!')
                     return
                 }
+
+                // Jika item belanja sudah ada spj maka tolak
+                if(dataItem.jumlahspj > 0){
+                    toastr.error('Rincian sudah ada SPJ')
+                    return
+                }
+
                 var confirm = $mdDialog.confirm()
                     .title('Informasi')
                     .htmlContent("Apakah anda yakin ingin menghapus " + dataItem.keteranganbelanja + "?")
@@ -6352,11 +6318,11 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
                     } else{
                         $scope.item.id = $scope.item.id
                     }
-
                     let TotalAnggaran = 0;
                     medifirstService.get("anggaran/get-keterangan-belanja" 
                         + "?norec=" + $scope.item.norec 
-                        + "&idmataanggaran=" + dataMataAnggaranSelected.idmataanggaran)
+                        + "&idmataanggaran=" + dataMataAnggaranSelected.idmataanggaran
+                        + "&tahun=" + $scope.item.tahun)
                         .then(function (e) {
                             DataKeteranganBelanja = e.data.data
                             $scope.dataSourceRincianAnggaran = new kendo.data.DataSource({
@@ -6403,83 +6369,70 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
                     toastr.error('Sumber Dana Tidak Boleh Kosong!')
                     return
                 }
-                // if ($scope.datakegiatanbro.islockrba == true) {
-                //     toastr.error('Sudah dilock!')
-                //     return
-                // }
-                var objSave =
-                    {
-                        norec: norecKT,
-                        objectkegiatanfk: $scope.item.id,
-                        objectmataanggaranfk: $scope.rcn.idmataanggaran,
-                        keteranganbelanja: $scope.item.keteranganKT,
-                        nourut: $scope.item.noUrutKT,
-                        jml: $scope.item.jmlKT,
-                        hargasatuan: $scope.item.hargaSatuanKT,
-                        subtotal: $scope.item.subTotalKT,
-                        satuan: $scope.item.satuanKT,
-                        objectasalprodukfk: $idasalproduk,
-                        idtahap: $scope.item.tahapdetail.id,
-                        tahap: $scope.item.tahapdetail.tahap,
-                        password: pass,
-                        objecttransaksifk: $scope.item.norec
-                    }
+                
+                if ($scope.datakegiatanbro.islockrba == true) {
+                    toastr.error('Sudah dilock!')
+                    return
+                }
 
-                    medifirstService.post('anggaran/save-keterangan-belanja', objSave).then(function (e) {
+                // jika subtotal kurang dari spj maka tolak
+                if($scope.item.subTotalKT < $scope.item.jumlahspjEntryRBA){
+                    toastr.error('Subtotal tidak boleh kurang dari spj')
+                    return
+                }
+
+                var objSave ={
+                    norec: norecKT,
+                    objectkegiatanfk: $scope.item.id,
+                    objectmataanggaranfk: $scope.rcn.idmataanggaran,
+                    keteranganbelanja: $scope.item.keteranganKT,
+                    nourut: $scope.item.noUrutKT,
+                    jml: $scope.item.jmlKT,
+                    hargasatuan: $scope.item.hargaSatuanKT,
+                    subtotal: $scope.item.subTotalKT,
+                    satuan: $scope.item.satuanKT,
+                    objectasalprodukfk: $idasalproduk,
+                    idtahap: $scope.item.tahapdetail.id,
+                    tahap: $scope.item.tahapdetail.tahap,
+                    password: pass,
+                    objecttransaksifk: $scope.item.norec
+                }
+
+                medifirstService.post('anggaran/save-keterangan-belanja', objSave).then(function (e) {
                     
-                        // if($scope.idkegiatanangkas != 0){
-                        //     $scope.item.id = $scope.idkegiatanangkas
-                        // } else{
-                        //     $scope.item.id = $scope.item.id
-                        // }
-                        // let TotalAnggaran = 0;
-                        // medifirstService.get("perencanaan/get-keterangan-belanja?objectkegiatanfk=" + $scope.item.id+"&idmataanggaran="+$scope.rcn.idmataanggaran).then(function (e) {
-                        //     DataKeteranganBelanja = e.data.data
-                        //     $scope.dataSourceRincianAnggaran = new kendo.data.DataSource({
-                        //         data: DataKeteranganBelanja
-                        //     });
-                        //     for (let index = 0; index < DataKeteranganBelanja.length; index++) {
-                        //         let element = DataKeteranganBelanja[index];
-                        //         DataKeteranganBelanja[index].statCheckbox2 = false
-                        //         TotalAnggaran = TotalAnggaran + parseFloat(element.subtotal)
-                        //     }
-                        //     TotalAnggaran = parseFloat(TotalAnggaran)
-                        //     medifirstService.get("perencanaan/get-total-anggaran-rcn?kegiatan=" + $scope.norecrcntotalanggaran).then(function (e) {
-                        //         var total = 0
-                        //         if(e.data.data.length == 0){
-                        //             $scope.rcn.totalAnggaran = formatRupiah(total, "Rp. ")
-                        //             $scope.rcn.paguAnggaran = 0
-                        //         } else{
-                        //             total = e.data.data[0].total
-                        //             $scope.rcn.totalAnggaran = formatRupiah(total, "Rp. ")
-                        //             $scope.rcn.paguAnggaran = 0
-                        //         }
-    
-                        //         $scope.item.targetKinerjaMasukan = formatRupiah(total, "Rp. ")
-                        //     })
-                        // })
-                        // // LoadTotalKeterangan()
-    
-                        //     var idpegawai = ''
-                        //     $scope.pegawaiLogin = medifirstService.getPegawaiLogin();
-                        //     idpegawai = $scope.pegawaiLogin.id
-    
-                            
-                        //     medifirstService.get("anggaran/get-total-mata-anggaran?tahun="+moment($scope.item.thnAnggaran).format('YYYY')+"&tahap="+$scope.item.tahapdetail.id+"&idpegawai="+idpegawai+"&cek=" + $scope.item.isCekAdaAnggaranSaja+"&noreckegiatan=" + $scope.idkegiatananggaran).then(function (e) {
-                        //         DataTotalMataAnggaran = e.data.data
-                        //         $scope.listAsalProduk = e.data.asalproduk
-                        //         $scope.dataSourceDetailMT = new kendo.data.DataSource({
-                        //             data: DataTotalMataAnggaran
-                        //         });
-                        //     });
-                        $scope.popupTambahKeteranganBelanja.center().close()
-                    }, function (error) {
-    
-                    })
+                    $scope.norecrcntotalanggaran = $scope.item.norec 
+                    medifirstService.get("anggaran/get-total-anggaran-rcn?norec=" + $scope.norecrcntotalanggaran)
+                        .then(function (e) {
+                            var total = 0
+                            if(e.data.data.length == 0){
+                                $scope.rcn.totalAnggaran = formatRupiah(total, "Rp. ")
+                                $scope.rcn.paguAnggaran = 0
+                            } else{
+                                total = e.data.data[0].total
+                                $scope.rcn.totalAnggaran = formatRupiah(total, "Rp. ")
+                                $scope.rcn.paguAnggaran = 0
+                            }
 
-                $scope.popupTambahKeteranganBelanja.center().close()
+                            $scope.item.targetKinerjaMasukan = formatRupiah(total, "Rp. ")
+                            
+                        })
+
+
+                    medifirstService.get("anggaran/get-total-mataanggaran-transaksi" 
+                        + "?norec_transakianggaran=" + $scope.norecTransaksi
+                        + "&cek=" + $scope.item.isCekAdaAnggaranSaja)
+                        .then(function(response) {
+
+                            $scope.dataSourceDetailMT = new kendo.data.DataSource({
+                                data: response.data.mataanggaran
+                            });
+                        })
+                    
+                    $scope.popupTambahKeteranganBelanja.center().close()
+                })
                 
             }
+
             function formatRupiah(value, currency) {
                 return currency + " " + parseFloat(value).toFixed(2).replace(/(\d)(?=(\d{3})+\.)/g, "$1,");
             }
@@ -8559,20 +8512,21 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
                 // if($scope.item.subsubkegiatanangkas != undefined){
                     // LoadTotalKeterangan()
                     $scope.norecrcntotalanggaran = $scope.item.norec 
-                    medifirstService.get("anggaran/get-total-anggaran-rcn?norec=" + $scope.norecrcntotalanggaran).then(function (e) {
-                        var total = 0
-                        if(e.data.data.length == 0){
-                            $scope.rcn.totalAnggaran = formatRupiah(total, "Rp. ")
-                            $scope.rcn.paguAnggaran = 0
-                        } else{
-                            total = e.data.data[0].total
-                            $scope.rcn.totalAnggaran = formatRupiah(total, "Rp. ")
-                            $scope.rcn.paguAnggaran = 0
-                        }
+                    medifirstService.get("anggaran/get-total-anggaran-rcn?norec=" + $scope.norecrcntotalanggaran)
+                        .then(function (e) {
+                            var total = 0
+                            if(e.data.data.length == 0){
+                                $scope.rcn.totalAnggaran = formatRupiah(total, "Rp. ")
+                                $scope.rcn.paguAnggaran = 0
+                            } else{
+                                total = e.data.data[0].total
+                                $scope.rcn.totalAnggaran = formatRupiah(total, "Rp. ")
+                                $scope.rcn.paguAnggaran = 0
+                            }
 
-                        $scope.item.targetKinerjaMasukan = formatRupiah(total, "Rp. ")
-                        
-                    })
+                            $scope.item.targetKinerjaMasukan = formatRupiah(total, "Rp. ")
+                            
+                        })
 
 
                     medifirstService.get("anggaran/get-total-mataanggaran-transaksi" 

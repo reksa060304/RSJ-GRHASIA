@@ -309,7 +309,7 @@
 							</div>
 						</md-content>
 					</md-tab>
-					<md-tab label="Kegiatan">
+					<md-tab label="Kegiatan" ng-if="spjaja === false && panjaraja === false && sppaja === false && spmaja === false && (rbaaja === true || spjajas === true)">
 						<md-content class="md-padding">
 							
 							<!-- <br /> -->
@@ -2158,7 +2158,7 @@
 				</div>
 				<div class="grid_9" style="margin-top: -10px;">
 					<input kendo-combo-box k-ng-model="item.mataAnggaranSPJ"
-						k-data-text-field="'text'" k-data-value-field="'kodemataanggaran'"
+						k-data-text-field="'text'" k-data-value-field="'id'"
 						k-filter="'contains'" k-auto-bind="false"
 						k-data-source="listMataAnggaranSPJ" />
 				</div>
