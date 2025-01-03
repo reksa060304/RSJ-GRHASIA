@@ -2203,22 +2203,7 @@ class AnggaranController extends ApiController {
 
         $kdProfile = $this->getDataKdProfile($request);
         $idProfile = (int) $kdProfile;
-
-        $subsubkegiatan = '';
-        if (isset($request['subsubkegiatan']) && $request['subsubkegiatan'] != "" && $request['subsubkegiatan'] != "undefined") {
-            $subsubkegiatan =  "and pj.objectsubsubkegiatanfk = ".$request['subsubkegiatan'];
-        }
-
-        $mataanggaran = '';
-        if (isset($request['mataanggaran']) && $request['mataanggaran'] != "" && $request['mataanggaran'] != "undefined") {
-            $mataanggaran =  "and pj.objectmataanggaranfk = ".$request['mataanggaran'];
-        }
-
-        $asalproduk = '';
-        if (isset($request['asalproduk']) && $request['asalproduk'] != "" && $request['asalproduk'] != "undefined") {
-            $asalproduk =  "and pj.objectasalprodukfk = ".$request['asalproduk'];
-        }
-
+        
         $setting = \DB::table('settinganggaran_t as st')
             ->join('pegawai_m as pg','pg.id','=','st.objectkepalabludfk')
             ->join('tahapanggaran_m as ta','ta.id','=','st.objecttahapaktivfk')
@@ -2227,6 +2212,38 @@ class AnggaranController extends ApiController {
             ->where('st.statusenabled', true)
             ->orderBy('st.tahunanggaran')
             ->get();
+
+        $subsubkegiatan = '';
+        if (isset($request['subsubkegiatan']) && $request['subsubkegiatan'] != "" && $request['subsubkegiatan'] != "undefined") {
+            $subsubkegiatan = "and pj.objectsubsubkegiatanfk = ".$request['subsubkegiatan'];
+        }
+
+        $mataanggaran = '';
+        if (isset($request['mataanggaran']) && $request['mataanggaran'] != "" && $request['mataanggaran'] != "undefined") {
+            $mataanggaran = "and pj.objectmataanggaranfk = ".$request['mataanggaran'];
+        }
+
+        $asalproduk = '';
+        if (isset($request['asalproduk']) && $request['asalproduk'] != "" && $request['asalproduk'] != "undefined") {
+            $asalproduk = "and pj.objectasalprodukfk = ".$request['asalproduk'];
+        }
+
+        $tglawal = '';
+        if (isset($request['tglawal']) && $request['tglawal'] != "" && $request['tglawal'] != "undefined") {
+            $tglawal = "and pj.tglpanjar >= '".$request['tglawal']."'";
+        }
+
+        $tglakhir = '';
+        if (isset($request['tglakhir']) && $request['tglakhir'] != "" && $request['tglakhir'] != "undefined") {
+            $tglakhir = "and pj.tglpanjar <= '".$request['tglakhir']."'";
+        }
+
+        $tahun = '';
+        if (isset($request['tahun']) && $request['tahun'] != "" && $request['tahun'] != "undefined") {
+            $tahun = "and ta.tahun = '".$request['tahun']."'";
+        }else{
+            $tahun = "and ta.tahun = '".$setting[0]->tahunanggaran."'";
+        }
 
         $data = DB::select(DB::raw("
             SELECT 
@@ -2255,10 +2272,12 @@ class AnggaranController extends ApiController {
             LEFT JOIN pengembalianpanjar_t pengpj ON pengpj.objectpanjarfk = pj.norec AND pengpj.statusenabled = TRUE AND pengpj.kdprofile = ".$idProfile."
             where pj.kdprofile = 30
                 and pj.statusenabled = true
-                and ta.tahun = '".$setting[0]->tahunanggaran."'
+                $tahun
                 $subsubkegiatan
                 $mataanggaran
                 $asalproduk
+                $tglawal
+                $tglakhir
             GROUP BY
                 pj.norec,
                 ma.id,

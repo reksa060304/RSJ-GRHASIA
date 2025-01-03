@@ -241,7 +241,16 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
                         $scope.spjpengembalian = true
                     } else if ($state.params.parameter == '99999') {
                         $scope.panjaraja = true
+                        
+                        // filter
+                        if ($scope.item.tglPanjarAwal == undefined && $scope.item.tglPanjarAkhir == undefined) {
+                            $scope.item.tglPanjarAwal = moment($scope.now).format('YYYY-01-01')
+                            $scope.item.tglPanjarAkhir = moment($scope.now).format('YYYY-MM-DD')
+                            $scope.item.tahunPanjar = moment($scope.now).format('YYYY')
+                        }
+                        
                         loadDataPanjar()
+
                     } else if ($state.params.parameter == '88888') {
                         $scope.sppaja = true
                     } else if ($state.params.parameter == '66666') {
@@ -313,9 +322,18 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
             
             function loadDataPanjar(){
 
-                medifirstService.get("anggaran/get-grid-panjar").then(function (e) {
-                    $scope.dataSourcePanjarPengembalian = e.data
-                })
+                let tahun = ''
+                if($scope.item.tahunPanjar){
+                    tahun = "&tahun=" + moment($scope.item.tahunPanjar).format('YYYY')
+                }
+
+                medifirstService.get("anggaran/get-grid-panjar" 
+                    + "?tglawal=" + moment($scope.item.tglPanjarAwal).format('YYYY-MM-DD')
+                    + "&tglakhir=" + moment($scope.item.tglPanjarAkhir).format('YYYY-MM-DD')
+                    + tahun)
+                    .then(function (e) {
+                        $scope.dataSourcePanjarPengembalian = e.data
+                    })
 
             }
 
