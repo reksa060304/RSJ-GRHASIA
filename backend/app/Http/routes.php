@@ -1974,6 +1974,9 @@ Route::group(['middleware' => 'cors', 'prefix' => 'service'], function () {
             Route::get('anggaran/get-lock-entry-spj-subsubkegiatan', 'Anggaran_2024\AnggaranController@getLockEntrySPJSubSubKegiatan');
             Route::get('anggaran/get-lock-entry-spj-rekening', 'Anggaran_2024\AnggaranController@getLockEntrySPJMataAnggaran');
             Route::post('anggaran/simpan-spj','Anggaran_2024\AnggaranController@simpanSPJ');
+            Route::get('anggaran/get-grid-panjar','Anggaran_2024\AnggaranController@getGridPanjar');
+            Route::post('anggaran/simpan-panjar','Anggaran_2024\AnggaranController@simpanPanjar');
+            Route::get('anggaran/get-pengembalian-panjar','Anggaran_2024\AnggaranController@getPengembalianPanjar');
             // End Anggaran 2024
 
 

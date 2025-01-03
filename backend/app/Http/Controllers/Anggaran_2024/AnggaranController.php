@@ -2196,4 +2196,237 @@ class AnggaranController extends ApiController {
 
         return $this->respond($data);
     }
+
+    public function getGridPanjar(Request $request)
+    {
+
+
+        $kdProfile = $this->getDataKdProfile($request);
+        $idProfile = (int) $kdProfile;
+
+        $subsubkegiatan = '';
+        if (isset($request['subsubkegiatan']) && $request['subsubkegiatan'] != "" && $request['subsubkegiatan'] != "undefined") {
+            $subsubkegiatan =  "and pj.objectsubsubkegiatanfk = ".$request['subsubkegiatan'];
+        }
+
+        $mataanggaran = '';
+        if (isset($request['mataanggaran']) && $request['mataanggaran'] != "" && $request['mataanggaran'] != "undefined") {
+            $mataanggaran =  "and pj.objectmataanggaranfk = ".$request['mataanggaran'];
+        }
+
+        $asalproduk = '';
+        if (isset($request['asalproduk']) && $request['asalproduk'] != "" && $request['asalproduk'] != "undefined") {
+            $asalproduk =  "and pj.objectasalprodukfk = ".$request['asalproduk'];
+        }
+
+        $setting = \DB::table('settinganggaran_t as st')
+            ->join('pegawai_m as pg','pg.id','=','st.objectkepalabludfk')
+            ->join('tahapanggaran_m as ta','ta.id','=','st.objecttahapaktivfk')
+            ->select('st.*','pg.namalengkap', 'ta.tahap', 'ta.id as idtahap', 'pg.id as idpegawai')
+            ->where('st.kdprofile', $idProfile)
+            ->where('st.statusenabled', true)
+            ->orderBy('st.tahunanggaran')
+            ->get();
+
+        $data = DB::select(DB::raw("
+            SELECT 
+                pj.norec norecpanjar, 
+                pj.nopanjar, pj.uraian, pj.tglpanjar, pj.jumlah, pj.jenispanjar, pj.sumberpanjar, pj.objectmataanggaranfk,
+                ma.id idmataanggaran, ma.kodemataanggaran, ma.namamataanggaran, ma.kodemataanggaran || ' - ' || ma.namamataanggaran AS rekening, 
+                ka.id idsubsubkegiatan, 
+                ka.keterangan subsubkegiatan,
+                ka.kode || ' - ' || ka.keterangan as kegiatan,
+                ka2.id idsubkegiatan,
+                ka2.kode kodesubkegiatan, 
+                ka2.keterangan keterangansubkegiatan,
+                ap.id as idasalproduk,
+                ap.asalproduk,
+                COALESCE(SUM(stp.jumlahspj), 0) as jumlahspj,
+                COALESCE(SUM(pengpj.jumlahpengembalian), 0) as jumlahpengembalian,
+                COALESCE(SUM(stp.jumlahspj), 0) + COALESCE(SUM(pengpj.jumlahpengembalian), 0) as totalpemakaian,
+                COALESCE(pj.jumlah, 0) - ( COALESCE(SUM(stp.jumlahspj), 0) + COALESCE(SUM(pengpj.jumlahpengembalian), 0) ) as selisih
+            FROM panjar_t pj
+            INNER JOIN mataanggaran_m ma on ma.id = pj.objectmataanggaranfk AND ma.statusenabled = TRUE AND ma.kdprofile = ".$idProfile."
+            INNER JOIN kegiatananggaran2024_m ka on ka.id = pj.objectsubsubkegiatanfk AND ka.statusenabled = TRUE AND ka.kdprofile = ".$idProfile."
+            LEFT JOIN kegiatananggaran2024_m ka2 on ka2.id = pj.objectsubkegiatanfk AND ka.statusenabled = TRUE AND ka.kdprofile = ".$idProfile."
+            INNER JOIN transaksianggaran2024_t ta ON ta.objectkegiatanfk = ka.id AND ta.statusenabled = TRUE AND ta.kdprofile = ".$idProfile."
+            INNER JOIN asalproduk_m ap ON ap.id = pj.objectasalprodukfk AND ap.statusenabled = TRUE AND ap.kdprofile = ".$idProfile."
+            LEFT JOIN spjtopanjar_t stp ON stp.objectpanjarfk = pj.norec AND stp.statusenabled = TRUE AND stp.kdprofile = ".$idProfile."
+            LEFT JOIN pengembalianpanjar_t pengpj ON pengpj.objectpanjarfk = pj.norec AND pengpj.statusenabled = TRUE AND pengpj.kdprofile = ".$idProfile."
+            where pj.kdprofile = 30
+                and pj.statusenabled = true
+                and ta.tahun = '".$setting[0]->tahunanggaran."'
+                $subsubkegiatan
+                $mataanggaran
+                $asalproduk
+            GROUP BY
+                pj.norec,
+                ma.id,
+                ka.id,
+                ap.id,
+                ka2.id
+            ORDER BY cast(split_part(nopanjar, '/', 1)  as integer) desc
+        "));
+
+
+        return $this->respond($data);
+        
+    }
+
+    public function simpanPanjar(Request $request)
+    {
+
+        DB::beginTransaction();
+        $kdProfile = $this->getDataKdProfile($request);
+        $idProfile = (int) $kdProfile;
+        
+        $tgl = date("n", strtotime($request['tglPanjar']) );
+        $thn = date("Y", strtotime($request['tglPanjar']) );
+        
+        try{
+
+            $setting = \DB::table('settinganggaran_t as st')
+                ->join('pegawai_m as pg','pg.id','=','st.objectkepalabludfk')
+                ->join('tahapanggaran_m as ta','ta.id','=','st.objecttahapaktivfk')
+                ->select('st.*','pg.namalengkap', 'ta.tahap', 'ta.id as idtahap', 'pg.id as idpegawai')
+                ->where('st.kdprofile', $idProfile)
+                ->where('st.statusenabled', true)
+                ->orderBy('st.tahunanggaran')
+                ->get();
+
+            if($request['norec'] == ''){
+
+                $MA = new Panjar();
+                $norecKS = $MA->generateNewId();
+                $MA->norec = $norecKS;
+                $MA->kdprofile = $idProfile;
+                $MA->statusenabled = true;
+                // $nos = $this->generateCodeBySeqTable(new Panjar, 'nopanjar', 6, ' ',$kdProfile);
+
+                $runningNumber = RunningNumber::where('id',13541)->first();
+                
+                // cek dulu apakah data panjar di tahun setting anggaran yang aktif
+                $cekPanjar = DB::select(DB::raw("
+                    SELECT
+                        pj.*
+                    FROM panjar_t pj 
+                    JOIN kegiatananggaran2024_m ka ON ka.id = pj.objectsubsubkegiatanfk AND ka.statusenabled = TRUE AND ka.kdprofile = ".$idProfile."
+                    JOIN transaksianggaran2024_t ta ON ta.objectkegiatanfk = ka.id AND ta.statusenabled = TRUE AND ta.kdprofile = ".$idProfile."
+                    JOIN mataanggaran_m ma ON ma.id = pj.objectmataanggaranfk AND ma.statusenabled = TRUE AND ma.kdprofile = ".$idProfile."
+                    JOIN asalproduk_m ap ON ap.id = pj.objectasalprodukfk AND ap.statusenabled = TRUE AND ap.kdprofile = ".$idProfile."
+                    WHERE
+                        pj.statusenabled = TRUE
+                        AND pj.kdprofile = ".$idProfile."
+                        AND ta.tahun = '".$setting[0]->tahunanggaran."'
+                    GROUP BY
+                        pj.norec
+                "));
+
+                $nos = 0;
+                if(count($cekPanjar) <= 0){
+
+                    $nomor = 1;
+                    $nos = str_pad((int)$nomor, 5, "0", STR_PAD_LEFT);
+
+                    RunningNumber::where('id', 13541)
+                        ->update(
+                            [
+                                'nomer_terbaru' => $nos
+                            ]
+                        );
+                }else{
+                    $nomor = $runningNumber->nomer_terbaru +1;
+                    $nos = str_pad((int)$nomor, 5, "0", STR_PAD_LEFT);
+                }
+                
+
+                $noPanjar = $nos.'/PANJAR/1.02.2.22.0.00.01.0004/'.$tgl.'/'.$thn;
+                $MA->nopanjar = $noPanjar;
+                
+                $MA->objectsubkegiatanfk = $request['subkegiatan'];
+                $MA->objectsubsubkegiatanfk = $request['subsusbkegiatan'];
+                $MA->objectmataanggaranfk = $request['mataanggaran'];
+                
+            } else{
+                $MA = Panjar::where('norec', '=', $request['norec'])->first();
+                // $MA->nopanjar = $request['nopanjar'];
+            }
+
+            $MA->tglpanjar = $request['tglPanjar'];
+            $MA->uraian = $request['uraianPanjar'];
+            $MA->jumlah = $request['jumlahpanjar'];
+            $MA->sumberpanjar = $request['sumberPanjar'];
+            $MA->idbill = $request['idbill'];
+            $MA->ntpn = $request['ntpn'];
+            $MA->idbillpph = $request['idbillpph'];
+            $MA->ntpnpph = $request['ntpnpph'];
+            $MA->objectjenispphfk = $request['objectjenispphfk'];
+            $MA->pph = $request['pph'];
+            $MA->ppn = $request['ppn'];
+            $MA->idbillpph2 = $request['idbillpph2'];
+            $MA->ntpnpph2 = $request['ntpnpph2'];
+            $MA->objectjenispphfk2 = $request['objectjenispphfk2'];
+            $MA->pph2 = $request['pph2'];
+            $MA->objectasalprodukfk = $request['asalproduk'];
+            $MA->save();
+
+            $transStatus = 'true';
+        } catch (\Exception $e) {
+            $transStatus = 'false';
+        }
+
+        if ($transStatus == 'true') {
+            $transMessage = "Simpan";
+            DB::commit();
+            $result = array(
+                'status' => 201,
+                'message' => $transMessage,
+                'result' => $MA,
+                'as' => '@epic',
+            );
+        } else {
+            $transMessage = "Simpan Gagal";
+            DB::rollBack();
+            $result = array(
+                'status' => 400,
+                'line'=> $e->getLine(),
+                'message'=> $e->getMessage(),
+                'result' => $MA,
+                'as' => '@epic',
+            );
+        }
+        return $this->setStatusCode($result['status'])->respond($result, $transMessage);
+
+    }
+
+    public function getPengembalianPanjar(Request $request)
+    {
+
+        $kdProfile = $this->getDataKdProfile($request);
+        $idProfile = (int) $kdProfile;
+        
+        $norec = $request['norec'];
+
+        $data = DB::select(DB::raw("
+            SELECT 
+                pj.nopengembalian, ma.id idmataanggaran, ma.kodemataanggaran, subkeg.id idsubkegiatan, subkeg.keterangan subkegiatan, subsubkeg.id idsubsubkegiatan, subsubkeg.keterangan subsubkegiatan, pj.norec, pj.tglpengembalian, pj.jumlahpengembalian, pj.keterangan
+            FROM pengembalianpanjar_t pj
+            INNER JOIN mataanggaran_m ma on ma.id = pj.objectmataanggaranfk
+            INNER JOIN kegiatananggaran2024_m subkeg on subkeg.id = pj.objectsubkegiatanfk
+            INNER JOIN kegiatananggaran2024_m subsubkeg on subsubkeg.id = pj.objectsubsubkegiatanfk
+            WHERE 
+                pj.kdprofile = ".$idProfile."
+                AND pj.statusenabled = TRUE
+                AND pj.objectpanjarfk = '$norec'"
+        ));
+
+        $result = array(
+            'data' => $data,
+            'message' => '@epic',
+        );
+
+        return $this->respond($result);
+
+    }
+    
 }
