@@ -2634,49 +2634,7 @@
 		</div>
 	</div>
 </div>
-<div kendo-window="pengembalianPanjar" k-title="'Pengembalian Uang Panjar'" k-visible="false" k-width="700" k-height="400">
-	<div class="panel panel-default container_12">
-		<div class="grid_12">
-			<div class="grid_12">
-				<div class="grid_3" style="text-align: left;">
-					Uraian Panjar
-				</div>
-				<div class="grid_6" style="margin-top: -10px;">
-					<!-- <input c-text-box type="input" class="k-textbox" ng-model="item.tolokUkurKeluaran"  /> -->
-					<textarea class="k-textbox" style="    height: 76px;
-                                        width: 100%;
-                                        margin-top: 5px;
-                                        resize: none;" ng-model="item.uraianPengembalian" disabled="true"></textarea>
-				</div>
-			</div>
-			<div class="grid_12">
-				<div class="grid_3" style="text-align: left;margin-top: 15px;">
-					Jumlah Panjar
-				</div>
-				<div class="grid_6" >
-					<input c-text-box type="input" class="k-textbox" ng-model="item.jumlahpengembalian" disabled="true"/>
-				</div>
-			</div>
-			<div class="grid_12">
-				<div class="grid_3" style="text-align: left;margin-top: 15px;">
-					Uang Pengembalian
-				</div>
-				<div class="grid_4" >
-					<input c-text-box type="input" class="k-textbox" ng-model="item.uangpengembalian"/>
-				</div>
-				<div class="grid_1" style="margin-top: 0px;">
-					<button class="btnTemplate1" ng-click="TambahPengembalian()" ng-hide="dispptk">Add</button>           
-				</div>
-			</div>
-		</div>
-		<div class="grid_12" style="margin-top: 20px;" ng-hide="true">
-			<div class="grid_2">
-				<button class="btnTemplate1" ng-click="SimpanPengembalian()">Simpan</button>
-			</div>
-			<div class="grid_5"></div>
-		</div><br>
-	</div>
-</div>
+
 <div kendo-window="popupSPP" k-title="'Surat Permintaan Pembayaran (SPP)'" k-visible="false" k-width="800" k-height="600">
 	<div class="panel panel-default container_12">
 		<div class="grid_12">
@@ -3014,93 +2972,6 @@
 				k-options="columnPengembalian" k-ng-model="dataPengembalianSelected" ng-click="klikPengembalian(dataPengembalianSelected)">
 			</kendo-grid>
 		</div>
-	</div>
-</div>
-<div kendo-window="popupPengembalianSPJ" k-title="'Pengembalian SPJ'" k-visible="false" k-width="700" k-height="550">
-	<div class="panel panel-default container_12">
-		<div class="grid_12">
-			<div class="grid_12">
-				<div class="grid_3" style="text-align: left;">
-					Tanggal SPJ
-				</div>
-				<div class="grid_9" style="margin-top: -10px;">
-					<input style="width: 100%" k-ng-model="item.tglPengembalian" kendo-datepicker 
-                     placeholer="yyyy-MM-dd" k-format="'yyyy-MM-dd'" disabled="true"/>
-				</div>
-			</div>
-			<input c-text-box type="input" class="k-textbox" ng-model="item.norecpengembalian" ng-hide="true"/>
-			<div class="grid_12">
-				<div class="grid_3" style="text-align: left;">
-					Sumber SPJ
-				</div>
-				<div class="grid_9" >
-					<input c-text-box type="input" class="k-textbox" ng-model="item.sumberpengembalian" disabled="true"/>
-				</div>
-			</div>
-			<div class="grid_12">
-				<div class="grid_3" style="text-align: left;">
-					Sub Kegiatan
-				</div>
-				<div class="grid_9" >
-					<input c-text-box type="input" class="k-textbox" ng-model="item.subkegiatanpengembalian" disabled="true"/>
-				</div>
-			</div>
-			<div class="grid_12">
-				<div class="grid_3" style="text-align: left;">
-					Sub Sub Kegiatan
-				</div>
-				<div class="grid_9" >
-					<input c-text-box type="input" class="k-textbox" ng-model="item.subsubkegiatanpengembalian" disabled="true"/>
-				</div>
-			</div>
-			<div class="grid_12">
-				<div class="grid_3" style="text-align: left;">
-					Dari Rekening
-				</div>
-				<div class="grid_9" >
-					<input c-text-box type="input" class="k-textbox" ng-model="item.rekeningpengembalian" disabled="true"/>
-				</div>
-			</div>
-			<div class="grid_12">
-				<div class="grid_3" style="text-align: left;">
-					Tanggal Pengembalian
-				</div>
-				<div class="grid_9" style="margin-top: -10px;">
-					<input style="width: 100%" k-ng-model="item.tglPengembalian" kendo-datepicker 
-                     placeholer="yyyy-MM-dd" k-format="'yyyy-MM-dd'"/>
-				</div>
-			</div>
-			<div class="grid_12">
-				<div class="grid_3" style="text-align: left;margin-top: 15px;">
-					Jumlah Pengembalian
-				</div>
-				<div class="grid_9" >
-					<input c-text-box type="input" class="k-textbox" ng-model="item.jumlahpengembalianspj"/>
-				</div>
-			</div>
-			<!-- <div class="grid_12">
-				<div class="grid_3" style="text-align: left;">
-					Keterangan
-				</div>
-				<div class="grid_9" style="margin-top: -10px;">
-					<textarea required class="k-textbox" style="    height: 76px;
-                                        width: 100%;
-                                        margin-top: 5px;
-                                        resize: none;" ng-model="item.keteranganpengembalianspj"></textarea>
-				</div>
-			</div> -->
-		</div>
-		<div class="grid_12" style="margin-top: 20px;">
-			<div class="grid_2">
-				<button class="btnTemplate1" ng-click="SimpanPengembalianSPJ()">Simpan</button>
-			</div>
-			<div class="grid_5"></div>
-		</div><br><br>
-		<!-- <div class="grid_12">
-			<kendo-grid id="kGrids" k-data-source="dataSourcePengembalian" k-selectable="'row'"  class="max-height"
-				k-options="columnPengembalian" k-ng-model="dataPengembalianSelected" ng-click="klikPengembalian(dataPengembalianSelected)">
-			</kendo-grid>
-		</div> -->
 	</div>
 </div>
 <div kendo-window="popupSPD" k-title="'Input SPD'" k-visible="false" k-width="700" k-height="400">

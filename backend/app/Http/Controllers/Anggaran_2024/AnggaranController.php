@@ -1470,6 +1470,24 @@ class AnggaranController extends ApiController {
             $subkegiatan =  "and ka.headfk = ".$request['subkegiatan'];
         }
 
+        $ispj = false;
+        $cariPegawai = null;
+        if(isset($request['idpegawai']) && $request['idpegawai'] !== '' && $request['idpegawai'] !== "undefined"){
+            $cariPegawai = DB::table('pegawai_m')
+                ->where('statusenabled', true)
+                ->where('id', $request['idpegawai'])
+                ->first();
+            
+            if($cariPegawai){
+                $ispj = $cariPegawai->ispj;
+            }
+        }
+
+        $pptk = '';
+        if($ispj == true && $cariPegawai){
+            $pptk = "and ta.objectpptkfk = ".$cariPegawai->id;
+        }
+
         $data = DB::select(DB::raw("
 
             SELECT
@@ -1487,6 +1505,7 @@ class AnggaranController extends ApiController {
                 AND ta.tahun = '".$setting[0]->tahunanggaran."'
                 AND ta.objecttahapfk = ".$setting[0]->objecttahapaktivfk."
                 $subkegiatan
+                $pptk
             GROUP BY
                 ka.id
             ORDER BY
@@ -2200,7 +2219,6 @@ class AnggaranController extends ApiController {
     public function getGridPanjar(Request $request)
     {
 
-
         $kdProfile = $this->getDataKdProfile($request);
         $idProfile = (int) $kdProfile;
         
@@ -2266,13 +2284,12 @@ class AnggaranController extends ApiController {
             INNER JOIN mataanggaran_m ma on ma.id = pj.objectmataanggaranfk AND ma.statusenabled = TRUE AND ma.kdprofile = ".$idProfile."
             INNER JOIN kegiatananggaran2024_m ka on ka.id = pj.objectsubsubkegiatanfk AND ka.statusenabled = TRUE AND ka.kdprofile = ".$idProfile."
             LEFT JOIN kegiatananggaran2024_m ka2 on ka2.id = pj.objectsubkegiatanfk AND ka.statusenabled = TRUE AND ka.kdprofile = ".$idProfile."
-            INNER JOIN transaksianggaran2024_t ta ON ta.objectkegiatanfk = ka.id AND ta.statusenabled = TRUE AND ta.kdprofile = ".$idProfile."
             INNER JOIN asalproduk_m ap ON ap.id = pj.objectasalprodukfk AND ap.statusenabled = TRUE AND ap.kdprofile = ".$idProfile."
             LEFT JOIN spjtopanjar_t stp ON stp.objectpanjarfk = pj.norec AND stp.statusenabled = TRUE AND stp.kdprofile = ".$idProfile."
             LEFT JOIN pengembalianpanjar_t pengpj ON pengpj.objectpanjarfk = pj.norec AND pengpj.statusenabled = TRUE AND pengpj.kdprofile = ".$idProfile."
             where pj.kdprofile = 30
                 and pj.statusenabled = true
-                $tahun
+                AND ka.id IN (SELECT DISTINCT ta.objectkegiatanfk FROM transaksianggaran2024_t ta WHERE ta.statusenabled = TRUE AND ta.objectkegiatanfk = ka.id $tahun)
                 $subsubkegiatan
                 $mataanggaran
                 $asalproduk
@@ -2448,4 +2465,43 @@ class AnggaranController extends ApiController {
 
     }
     
+    public function getDaftarPanjarDipilih(Request $request)
+    {
+
+        $kdProfile = $this->getDataKdProfile($request);
+        $idProfile = (int) $kdProfile;
+        $norec = $request['norecspj'];
+
+        $data = DB::select(DB::raw("
+            select 
+                stp.nourut, pj.norec norecpanjar, ma.id idmataanggaran, ma.kodemataanggaran, subkeg.id idsubkegiatan, subkeg.keterangan subkegiatan, subsubkeg.id idsubsubkegiatan, subsubkeg.keterangan subsubkegiatan, pj.nopanjar, pj.uraian, pj.tglpanjar, pj.jumlah, pj.jenispanjar, pj.jumlahpengembalian, pj.sumberpanjar
+            from panjar_t pj
+            inner join spjtopanjar_t stp on stp.objectpanjarfk = pj.norec
+            inner join mataanggaran_m ma on ma.id = pj.objectmataanggaranfk
+            inner join kegiatananggaran2024_m subkeg on subkeg.id = pj.objectsubkegiatanfk
+            inner join kegiatananggaran2024_m subsubkeg on subsubkeg.id = pj.objectsubsubkegiatanfk
+            where 
+                pj.kdprofile = ".$idProfile."
+                and pj.statusenabled = true
+                and ma.kdprofile = ".$idProfile."
+                and ma.statusenabled = true
+                and stp.kdprofile = ".$idProfile."
+                and stp.statusenabled = true
+                and subkeg.kdprofile = ".$idProfile."
+                and subkeg.statusenabled = true
+                and subsubkeg.kdprofile = ".$idProfile."
+                and subsubkeg.statusenabled = true
+                and stp.objectspjfk = '$norec'
+            order by 
+                stp.nourut
+        "));
+
+        $result = array(
+            'data' => $data,
+            'message' => '@epic',
+        );
+
+        return $this->respond($result);
+
+    }
 }
