@@ -117,14 +117,6 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
             $scope.item.ispj = false
 
             var defaultspj = null
-            
-            // $scope.listDiv = [
-            //     { id: 0, div: "Urusan Pemerintahan" },
-            //     { id: 1, div: "Program" },
-            //     { id: 2, div: "Kegiatan" },
-            //     { id: 3, div: "Sub Kegiatan" },
-            //     { id: 4, div: "Sub Sub Kegiatan" },
-            // ];
 
             $scope.listStatusSPJ = [
                 { id: 0, status: "Semua" },
@@ -275,25 +267,6 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
                         $scope.angkasaja = true
                         $scope.semuaanggaran = true
                     }
-                    //console.log($scope.hidespj)
-                    // medifirstService.get("perencanaan/get-total-mata-anggaran").then(function (e) {
-                    //     DataTotalMataAnggaran = e.data.data
-                    //     $scope.listAsalProduk = e.data.asalproduk
-                    //     $scope.dataSourceDetailMT = new kendo.data.DataSource({
-                    //         data: DataTotalMataAnggaran
-                    //     });
-                    //     DataTabKeteranganBelanja  = e.data.keteranganbelanja
-                    //     for (let index = 0; index < e.data.keteranganbelanja.length; index++) {
-                    //         let element = e.data.keteranganbelanja[index];
-                    //         element.idid = index+1;
-                    //     }
-                    //     $scope.dataSourceKeteranganBelanja = new kendo.data.DataSource({
-                    //         data: DataTabKeteranganBelanja,
-                    //         group: $scope.group
-                    //     });
-
-                    // })
-                    cacheLoad()
 
                     var div = ''
                     if($scope.item.searchdivkeg != undefined){
@@ -332,48 +305,6 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
                 })
                 $scope.popupMappingPermen.center().open()
             }
-
-            $scope.$watch('item.div', function (newValue, oldValue) {
-                if (newValue != oldValue) {
-                    // if($scope.item.div.id == 4){
-                    //     $scope.disdiv = false
-                    // } else{
-                    //     $scope.disdiv = true
-                    // }
-
-                    if($scope.item.div.id == 1){
-                        $scope.disdivprog = false
-                        
-                    }else{
-                        $scope.disdivprog = true
-                        
-                    }
-                    
-                    if($scope.item.div.id == 2){
-                        $scope.disdivkg = false
-                        
-                    }else{
-                        $scope.disdivkg = true
-                        
-                    }
-                    
-                    if($scope.item.div.id == 3){
-                        $scope.disdivsubkg = false
-                        
-                    }else{
-                        $scope.disdivsubkg = true
-                        
-                    }
-
-                    if($scope.item.div.id == 4){
-                        $scope.disdivsubsubkg = false
-                        
-                    }else{
-                        $scope.disdivsubsubkg = true
-                        
-                    }
-                }
-            });
 
             $scope.$watch('item.mappingrek', function (newValue, oldValue) {
                 if (newValue != oldValue) {
@@ -2861,82 +2792,7 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
                 },
             ]}
             
-            $scope.columnKegiatan = {
-				toolbar:[
-                    {
-                        name: "add", 
-                        text: "Tambah",
-                        template: '<div class="grid_1"><button ng-hide="disidpegawai" ng-click="Tambah()" class="k-button k-button-icontext k-grid-upload" href="\\#"><span class="k-icon k-i-plus"></span>Tambah</button></div>'                    
-                    }, 
-                    {
-                        name: "add",
-                        text: "Hapus yang dicentang",
-                        template: '<div class="grid_2"><button ng-hide="disidpegawai" ng-click="hapusCentang()" class="k-button k-button-icontext k-grid-upload" href="\\#"><span class="k-icon k-i-plus"></span>Hapus yang dicentang</button></div>'
-                    },
-                    {
-                        name: "ads", 
-                        text: "asd",
-                        template: '<div class="grid_5"></div>'
-                    },
-                    {
-                        name: "src", 
-                        text: "src",
-                        template:  '<div class="grid_4" style="margin-top: -8px;"><div class="grid_1" style="margin-top: 10px;"><label c-label item="item" c-label-text="Search"></label></div><div class="grid_11"><input c-text-box type="input" class="k-textbox" ng-model="item.search" /></div></div>'
-                    }
-                ],
-                selectable: 'row',
-                scrollable: true,
-
-                pageable: true,
-                groupable: true,
-                columns:[
-                {
-                  "command": [
-                        {
-                           text: "Detail",
-                           click: editKegiatanT,
-                           imageClass: "clinic fa"
-                        },
-                    ],
-                       title: "",
-                       width: "130px",
-                },
-                {
-                    "title": "<input type='checkbox' class='checkbox' ng-click='selectUnselectAllRow()' />",
-                    template: "# if (statCheckbox) { #" +
-                        "<input type='checkbox' class='checkbox' ng-click='selectRow($event)' checked />" +
-                        "# } else { #" +
-                        "<input type='checkbox' class='checkbox' ng-click='selectRow($event)' />" +
-                        "# } #",
-                    width: "30px"
-                },
-                // {
-                //     "field": "id",
-                //     "title": "Id",
-                //     "width": "30px"
-                // },
-                {
-                    "field": "kode",
-                    "title": "Kode",
-                    "width": "200px"
-                },
-                {
-                    "field": "keterangan",
-                    "title": "Keterangan",
-                    "width": "400px"
-                },
-                {
-                    "command": [
-                          {
-                             text: "Delete",
-                             click: deleteKegiatanT,
-                             imageClass: "clinic fa",
-                          },
-                      ],
-                         title: "",
-                         width: "100px",
-                }
-            ]};
+            
             $scope.columnSetting = {
                 columns:[
                 {
@@ -4294,14 +4150,6 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
                 // $scope.popupDokter.center().open();
             }
             
-            function cacheLoad(){
-                var chaceSPJ = cacheHelper.get('SPJ')
-                // console.log(chaceSPJ);
-                if (chaceSPJ != undefined) {
-                    $scope.item.statusspj = chaceSPJ[0]
-                }
-            }
-            
             
             $scope.BagiRata = function(){
                 let SubTotal = 0
@@ -5197,69 +5045,6 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
                 }
             }
 
-            $scope.columnMataAnggaran = {
-                toolbar:[
-                    {
-                        name: "add", 
-                        text: "Tambah",
-                        template: '<div class="grid_2"><button ng-click="TambahMT()" class="k-button k-button-icontext k-grid-upload" href="\\#"><span class="k-icon k-i-plus"></span>Tambah</button></div>'                    
-                    },
-                    {
-                        name: "ads", 
-                        text: "asd",
-                        template: '<div class="grid_6"></div>'
-                    },
-                    {
-                        name: "src", 
-                        text: "src",
-                        template:  '<div class="grid_4" style="margin-top: -8px;"><div class="grid_1" style="margin-top: 10px;"><label c-label item="item" c-label-text="Search"></label></div><div class="grid_11"><input c-text-box type="input" class="k-textbox" ng-model="item.searchMata" /></div></div>'
-                    }
-                ],
-                columns:[
-                    {
-                        "command": [
-                              {
-                                 text: "Detail",
-                                 click: editMataT,
-                                 imageClass: "clinic fa"
-                              },
-                          ],
-                             title: "",
-                             width: "30px",
-                      },
-                    {
-                        "field": "id",
-                        "title": "Id",
-                        "width": "50px"
-                    },
-                    {
-                        "field": "kodemataanggaran",
-                        "title": "Kode",
-                        "width": "80px"
-                    },
-                    {
-                        "field": "namamataanggaran",
-                        "title": "Mata Anggaran",
-                        "width": "200px"
-                    },
-                    {
-                        "field": "mataanggaranpermen",
-                        "title": "Mata Anggaran Permen",
-                        "width": "200px"
-                    },
-                    // {
-                    //     "field": "kodeexternal",
-                    //     "title": "Kode External",
-                    //     "width": "80px"
-                    // },
-                    // {
-                    //     "field": "namaexternal",
-                    //     "title": "Nama External",
-                    //     "width": "200px"
-                    // }
-                ]
-            };
-
             $scope.columnRBABelum = {
                 selectable: 'row',
                 scrollable: true,
@@ -5909,93 +5694,7 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
 
                 })
             }
-            $scope.columnRincianAnggaran = {
-                toolbar:[
-                    {
-                        name: "add", 
-                        text: "Tambah",
-                        template: '<div class="grid_1"><button ng-click="TambahKeterangan()" class="k-button k-button-icontext k-grid-upload" href="\\#"><span class="k-icon k-i-plus"></span>Tambah</button></div>'                    
-                    },
-                    {
-                        name: "add",
-                        text: "Hapus yang dicentang",
-                        template: '<div class="grid_2"><button ng-click="hapusCentang2()" class="k-button k-button-icontext k-grid-upload" href="\\#"><span class="k-icon k-i-plus"></span>Hapus yang dicentang</button></div>'
-                    },
-                    {
-                        name: "src", 
-                        text: "src",
-                        template:  '<div class="grid_5" style="margin-top: 10px;margin-left: -50px;">{{rcn.mataAnggaranDipilih}}</div>'
-                    }
-                ],
-                columns:[
-                    {
-                        "command": [
-                              {
-                                 text: "Detail",
-                                 click: editDetailMT,
-                                 imageClass: "clinic fa"
-                              },
-                          ],
-                             title: "",
-                             width: "100px",
-                    },
-                    {
-                        "title": "<input type='checkbox' class='checkbox' ng-click='selectUnselectAllRow2()' />",
-                        template: "# if (statCheckbox2) { #" +
-                            "<input type='checkbox' class='checkbox' ng-click='selectRow2($event)' checked />" +
-                            "# } else { #" +
-                            "<input type='checkbox' class='checkbox' ng-click='selectRow2($event)' />" +
-                            "# } #",
-                        width: "30px"
-                    },
-                    {
-                        "field": "nourut",
-                        "title": "No. Urut",
-                        "width": "130px"
-                    },
-                    {
-                        "field": "keteranganbelanja",
-                        "title": "Keterangan",
-                        "width": "200px"
-                    },
-                    {
-                        "field": "jml",
-                        "title": "Jml",
-                        "width": "140px",
-						"template": "<span class='style-right'>{{formatRupiah2('#: jml #', '')}}</span>",
-                    },
-                    {
-                        "field": "satuan",
-                        "title": "Satuan",
-                        "width": "150px"
-                    },
-                    {
-                        "field": "hargasatuan",
-                        "title": "Harga Satuan",
-                        "width": "150px",
-						"template": "<span class='style-right'>{{formatRupiah2('#: hargasatuan #', '')}}</span>",
-                    },
-                    {
-                        "field": "subtotal",
-                        "title": "Sub Total",
-                        "width": "150px",
-						"template": "<span class='style-right'>{{formatRupiah2('#: subtotal #', '')}}</span>",
-                    },
-                    {
-                        "field": "asalproduk",
-                        "title": "Sumber Dana",
-                        "width": "200px"
-                    },
-                    {
-                        command: [{
-                            text: "Hapus",
-                            click: HapusRincianKas
-                        }],
-                        title: "",
-                        width: "100px",
-                    }
-                ]
-            };
+            
 			var isCheckAll2 = false
             $scope.selectUnselectAllRow2 = function () {
                 var tempData = $scope.dataSourceRincianAnggaran._data;

@@ -1929,8 +1929,9 @@ class AnggaranController extends ApiController {
                         sr.*
                     FROM strukrealisasi_t sr 
                     JOIN realisasidetail_t rd ON rd.strukrealisasifk = sr.norec AND rd.statusenabled = true AND rd.kdprofile = ".$idProfile."
-                    JOIN kegiatananggaran2024_m ka ON ka.id = sr.objectkegiatanfk AND ka.statusenabled = TRUE AND ka.kdprofile = ".$idProfile."
-                    JOIN transaksianggaran2024_t ta ON ta.objectkegiatanfk = ka.id AND ta.statusenabled = TRUE AND ta.kdprofile = ".$idProfile."
+                    JOIN keteranganbelanja_t kb ON kb.norec = rd.keteranganbelanjafk AND kb.statusenabled = TRUE AND kb.kdprofile = ".$idProfile."
+                    JOIN transaksianggaran2024_t ta ON ta.norec = kb.objecttransaksifk AND ta.statusenabled = TRUE AND ta.kdprofile = ".$idProfile."
+                    JOIN kegiatananggaran2024_m ka ON ka.id = ta.objectkegiatanfk AND ka.statusenabled = TRUE AND ka.kdprofile = ".$idProfile."
                     JOIN mataanggaran_m ma ON ma.id = sr.objectmataanggaranfk AND ma.statusenabled = TRUE AND ma.kdprofile = ".$idProfile."
                     JOIN asalproduk_m ap ON ap.id = sr.objectasalprodukfk AND ap.statusenabled = TRUE AND ap.kdprofile = ".$idProfile."
                     WHERE
@@ -1954,8 +1955,17 @@ class AnggaranController extends ApiController {
                             ]
                         );
                 }else{
-                    $nomor = $runningNumber->nomer_terbaru +1;
+                    // $nomor = $runningNumber->nomer_terbaru +1;
+                    // $nos = str_pad((int)$nomor, 5, "0", STR_PAD_LEFT);
+                    $nomor = count($cekSPJ) + 1;
                     $nos = str_pad((int)$nomor, 5, "0", STR_PAD_LEFT);
+
+                    RunningNumber::where('id', 13540)
+                        ->update(
+                            [
+                                'nomer_terbaru' => $nos
+                            ]
+                        );
                 }
 
                 $noRealiasi = $nos.'/BPK/UP/1.02.2.22.0.00.01.0004/B02/'.$thn;
@@ -2421,8 +2431,17 @@ class AnggaranController extends ApiController {
                             ]
                         );
                 }else{
-                    $nomor = $runningNumber->nomer_terbaru +1;
+                    // $nomor = $runningNumber->nomer_terbaru +1;
+                    // $nos = str_pad((int)$nomor, 5, "0", STR_PAD_LEFT);
+                    $nomor = count($cekPanjar) + 1;
                     $nos = str_pad((int)$nomor, 5, "0", STR_PAD_LEFT);
+
+                    RunningNumber::where('id', 13541)
+                        ->update(
+                            [
+                                'nomer_terbaru' => $nos
+                            ]
+                        );
                 }
                 
 
