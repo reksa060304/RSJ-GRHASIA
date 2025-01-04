@@ -3030,7 +3030,7 @@ class AnggaranController extends ApiController {
                 ka2.keterangan || ' - ' || ka.keterangan as text,
                 th.id as idtahap,
                 th.tahap,
-                ta.norec
+                ta.norec,
                 ta.tahun,
                 ta.islock,
                 ta.islockrba,
