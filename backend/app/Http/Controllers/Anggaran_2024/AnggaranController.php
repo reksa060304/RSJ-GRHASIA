@@ -2876,7 +2876,7 @@ class AnggaranController extends ApiController {
                 ta.norec,
                 ta.tahun,
                 ta.islock,
-                ta.isrba,
+                ta.islockrba,
                 ta.islockangkas
             FROM transaksianggaran2024_t ta 
             JOIN kegiatananggaran2024_m ka ON ka.id = ta.objectkegiatanfk AND ka.statusenabled = TRUE AND ka.kdprofile = 30
@@ -2953,7 +2953,7 @@ class AnggaranController extends ApiController {
                 ta.norec,
                 ta.tahun,
                 ta.islock,
-                ta.isrba,
+                ta.islockrba,
                 ta.islockangkas
             FROM transaksianggaran2024_t ta 
             JOIN kegiatananggaran2024_m ka ON ka.id = ta.objectkegiatanfk AND ka.statusenabled = TRUE AND ka.kdprofile = 30
@@ -3031,7 +3031,7 @@ class AnggaranController extends ApiController {
                 ta.norec
                 ta.tahun,
                 ta.islock,
-                ta.isrba,
+                ta.islockrba,
                 ta.islockangkas
             FROM transaksianggaran2024_t ta 
             JOIN kegiatananggaran2024_m ka ON ka.id = ta.objectkegiatanfk AND ka.statusenabled = TRUE AND ka.kdprofile = 30
