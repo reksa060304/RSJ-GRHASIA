@@ -1192,6 +1192,56 @@ class AnggaranController extends ApiController {
 
     }
 
+    public function deleteTransaksiAnggaranCentang(Request $request)
+    {
+
+        DB::beginTransaction();
+        $kdProfile = $this->getDataKdProfile($request);
+        $idProfile = (int) $kdProfile;
+        try{
+            foreach ($request['data'] as $req) {
+                
+                $TA= TransaksiAnggaran2024::where('norec',$req['norec'])
+                    ->where('kdprofile', $idProfile)
+                    ->first();
+                $TA->statusenabled = false;
+                $TA->save();
+
+                if($req['div'] == 4){
+
+                    DB::table('keteranganbelanja_t')->where('objecttransaksifk',$req['norec'])->update([
+                        'statusenabled'=> false
+                    ]);
+                }
+            }
+
+           $transStatus = 'true';
+        } catch (\Exception $e) {
+            $transStatus = 'false';
+        }
+
+        if ($transStatus == 'true') {
+            $transMessage = "Hapus Berhasil";
+            DB::commit();
+            $result = array(
+                'status' => 201,
+                'message' => $transMessage,
+                'as' => '@epic',
+            );
+        } else {
+            $transMessage = "Hapus Gagal";
+            DB::rollBack();
+            $result = array(
+                'status' => 400,
+                'line'=> $e->getLine(),
+                'message'=> $e->getMessage(),
+                'as' => '@epic',
+            );
+        }
+        return $this->setStatusCode($result['status'])->respond($result, $transMessage);
+
+    }
+
     public function getMataAnggaranPindahRincian(Request $request)
     {
 
@@ -2498,6 +2548,269 @@ class AnggaranController extends ApiController {
 
         $result = array(
             'data' => $data,
+            'message' => '@epic',
+        );
+
+        return $this->respond($result);
+
+    }
+
+    public function getDataAngkas(Request $request)
+    {
+
+        $kdProfile = $this->getDataKdProfile($request);
+        $idProfile = (int) $kdProfile;
+
+        $setting = \DB::table('settinganggaran_t as st')
+            ->join('pegawai_m as pg','pg.id','=','st.objectkepalabludfk')
+            ->join('tahapanggaran_m as ta','ta.id','=','st.objecttahapaktivfk')
+            ->select('st.*','pg.namalengkap', 'ta.tahap', 'ta.id as idtahap', 'pg.id as idpegawai')
+            ->where('st.kdprofile', $idProfile)
+            ->where('st.statusenabled', true)
+            ->orderBy('st.tahunanggaran')
+            ->get();
+
+        $subkegiatan = '';
+        if (isset($request['subkegiatan']) && $request['subkegiatan'] != "" && $request['subkegiatan'] != "undefined") {
+            $subkegiatan = "and ka2.id = ".$request['subkegiatan'];
+        }
+
+        $subsubkegiatan = '';
+        if (isset($request['subsubkegiatan']) && $request['subsubkegiatan'] != "" && $request['subsubkegiatan'] != "undefined") {
+            $subsubkegiatan = "and ka.id = ".$request['subsubkegiatan'];
+        }
+
+        $tahap = '';
+        if (isset($request['tahap']) && $request['tahap'] != "" && $request['tahap'] != "undefined") {
+            $tahap = "and th.id = ".$request['tahap'];
+        }
+
+        $tahun = '';
+        if (isset($request['tahun']) && $request['tahun'] != "" && $request['tahun'] != "undefined") {
+            $tahun = "and ta.tahun = '".$request['tahun']."'";
+        }else{
+            $tahun = "and ta.tahun = '".$setting[0]->tahunanggaran."'";
+        }
+
+        $pegawai = '';
+        if(isset($request['idpegawai']) && $request['idpegawai']!= '' && $request['idpegawai'] != "undefined"){
+            $pegawai = "and ta.objectpptkfk = $request[idpegawai]";
+        }
+
+        $subtotalperrekening = DB::select(DB::raw("
+
+            SELECT
+                ma.id as idmataanggaran,
+                ma.kodemataanggaran,
+                ma.namamataanggaran,
+                ma.kodemataanggaran || ' - ' || ma.namamataanggaran mataanggaran,
+                COALESCE(SUM(kb.subtotal), 0) as subtotal
+            FROM keteranganbelanja_t kb
+            JOIN transaksianggaran2024_t ta ON ta.norec = kb.objecttransaksifk AND ta.statusenabled = TRUE AND ta.kdprofile = ".$idProfile."
+            JOIN kegiatananggaran2024_m ka ON ka.id = ta.objectkegiatanfk AND ka.statusenabled = TRUE AND ka.kdprofile = ".$idProfile."
+            JOIN kegiatananggaran2024_m ka2 ON ka2.id = ka.headfk AND ka2.statusenabled = TRUE AND ka2.kdprofile = ".$idProfile."
+            JOIN tahapanggaran_m th ON th.id = ta.objecttahapfk AND th.statusenabled = TRUE AND th.kdprofile = ".$idProfile."
+            JOIN mataanggaran_m ma ON ma.id = kb.objectmataanggaranfk AND ma.statusenabled = TRUE AND ma.kdprofile = ".$idProfile."
+            WHERE
+                kb.statusenabled = TRUE
+                AND kb.kdprofile = ".$idProfile."
+                $tahun
+                $subsubkegiatan
+                $subkegiatan
+                $tahap
+                $pegawai
+            GROUP BY
+                ma.id,
+                ka.id
+            ORDER BY
+                SPLIT_PART(ma.kodemataanggaran, '.', 1),
+                SPLIT_PART(ma.kodemataanggaran, '.', 2),
+                SPLIT_PART(ma.kodemataanggaran, '.', 3),
+                case 
+                    when SPLIT_PART(ma.kodemataanggaran, '.', 5) = '' THEN cast(SPLIT_PART(ma.kodemataanggaran, '.', 4) as INTEGER)
+                    else cast(SPLIT_PART(ma.kodemataanggaran, '.', 5) as INTEGER)
+                END asc
+        "));
+
+        $dataAngkas = DB::select(DB::raw("
+
+            SELECT
+                ma.id as idmataanggaran,
+                ma.kodemataanggaran,
+                ma.namamataanggaran,
+                ma.kodemataanggaran || ' - ' || ma.namamataanggaran mataanggaran,
+                ka.id as idsubsubkegiatan,
+                ka.kode as kodesubsubkegiatan,
+                ka.keterangan,
+                ka.kode || ' - ' || ka.keterangan as kegiatan,
+                SUM(
+                    CASE WHEN ap.bulanint = 1 THEN ap.nilai::FLOAT ELSE 0 END
+                ) as jan,
+                SUM(
+                    CASE WHEN ap.bulanint = 2 THEN ap.nilai::FLOAT ELSE 0 END
+                ) as feb,
+                SUM(
+                    CASE WHEN ap.bulanint = 3 THEN ap.nilai::FLOAT ELSE 0 END
+                ) as mar,
+                SUM(
+                    CASE WHEN ap.bulanint = 4 THEN ap.nilai::FLOAT ELSE 0 END
+                ) as apr,
+                SUM(
+                    CASE WHEN ap.bulanint = 5 THEN ap.nilai::FLOAT ELSE 0 END
+                ) as mei,
+                SUM(
+                    CASE WHEN ap.bulanint = 6 THEN ap.nilai::FLOAT ELSE 0 END
+                ) as jun,
+                SUM(
+                    CASE WHEN ap.bulanint = 7 THEN ap.nilai::FLOAT ELSE 0 END
+                ) as jul,
+                SUM(
+                    CASE WHEN ap.bulanint = 8 THEN ap.nilai::FLOAT ELSE 0 END
+                ) as agt,
+                SUM(
+                    CASE WHEN ap.bulanint = 9 THEN ap.nilai::FLOAT ELSE 0 END
+                ) as sep,
+                SUM(
+                    CASE WHEN ap.bulanint = 10 THEN ap.nilai::FLOAT ELSE 0 END
+                ) as okt,
+                SUM(
+                    CASE WHEN ap.bulanint = 11 THEN ap.nilai::FLOAT ELSE 0 END
+                ) as nov,
+                SUM(
+                    CASE WHEN ap.bulanint = 12 THEN ap.nilai::FLOAT ELSE 0 END
+                ) as des,
+                COALESCE(SUM(ap.nilai::FLOAT), 0) as totalbulanan
+            FROM keteranganbelanja_t kb
+            JOIN transaksianggaran2024_t ta ON ta.norec = kb.objecttransaksifk AND ta.statusenabled = TRUE AND ta.kdprofile = ".$idProfile."
+            JOIN kegiatananggaran2024_m ka ON ka.id = ta.objectkegiatanfk AND ka.statusenabled = TRUE AND ka.kdprofile = ".$idProfile."
+            JOIN kegiatananggaran2024_m ka2 ON ka2.id = ka.headfk AND ka2.statusenabled = TRUE AND ka2.kdprofile = ".$idProfile."
+            JOIN tahapanggaran_m th ON th.id = ta.objecttahapfk AND th.statusenabled = TRUE AND th.kdprofile = ".$idProfile."
+            JOIN mataanggaran_m ma ON ma.id = kb.objectmataanggaranfk AND ma.statusenabled = TRUE AND ma.kdprofile = ".$idProfile."
+            LEFT JOIN alokasiketeranganbelanja_t ap ON ap.keteranganbelanjafk = kb.norec AND ap.statusenabled = TRUE AND ap.kdprofile = ".$idProfile."
+            WHERE
+                kb.statusenabled = TRUE
+                AND kb.kdprofile = ".$idProfile."
+                $tahun
+                $subsubkegiatan
+                $subkegiatan
+                $tahap
+                $pegawai
+            GROUP BY
+                ma.id,
+                ka.id
+            ORDER BY
+                SPLIT_PART(ma.kodemataanggaran, '.', 1),
+                SPLIT_PART(ma.kodemataanggaran, '.', 2),
+                SPLIT_PART(ma.kodemataanggaran, '.', 3),
+                case 
+                    when SPLIT_PART(ma.kodemataanggaran, '.', 5) = '' THEN cast(SPLIT_PART(ma.kodemataanggaran, '.', 4) as INTEGER)
+                    else cast(SPLIT_PART(ma.kodemataanggaran, '.', 5) as INTEGER)
+                END asc
+        "));
+
+        foreach($dataAngkas as $dtangkas){
+            $dtangkas->subtotal = 0;
+            foreach($subtotalperrekening as $item){
+                if($item->idmataanggaran == $dtangkas->idmataanggaran){
+                    $dtangkas->subtotal = $item->subtotal;
+                }
+            }
+        }
+
+        $detailAngkas = DB::select(DB::raw("
+            SELECT
+                ma.id as idmataanggaran,
+                ma.kodemataanggaran,
+                ma.namamataanggaran,
+                ma.kodemataanggaran || ' - ' || ma.namamataanggaran mataanggaran,
+                ka.id as idsubsubkegiatan,
+                ka.kode as kodesubsubkegiatan,
+                ka.keterangan,
+                ka.kode || ' - ' || ka.keterangan as kegiatan,
+                kb.norec,
+                kb.kdprofile,
+                kb.statusenabled,
+                kb.keteranganbelanja,
+                kb.nourut,
+                kb.hargasatuan,
+                kb.jml,
+                kb.satuan,
+                kb.objectasalprodukfk,
+                kb.subtotal,
+                ta.islockangkas,
+                SUM(ap.nilai::FLOAT) as subtotalRP,
+                SUM(
+                    CASE WHEN ap.bulanint = 1 THEN ap.nilai::FLOAT ELSE 0 END
+                ) as jan,
+                SUM(
+                    CASE WHEN ap.bulanint = 2 THEN ap.nilai::FLOAT ELSE 0 END
+                ) as feb,
+                SUM(
+                    CASE WHEN ap.bulanint = 3 THEN ap.nilai::FLOAT ELSE 0 END
+                ) as mar,
+                SUM(
+                    CASE WHEN ap.bulanint = 4 THEN ap.nilai::FLOAT ELSE 0 END
+                ) as apr,
+                SUM(
+                    CASE WHEN ap.bulanint = 5 THEN ap.nilai::FLOAT ELSE 0 END
+                ) as mei,
+                SUM(
+                    CASE WHEN ap.bulanint = 6 THEN ap.nilai::FLOAT ELSE 0 END
+                ) as jun,
+                SUM(
+                    CASE WHEN ap.bulanint = 7 THEN ap.nilai::FLOAT ELSE 0 END
+                ) as jul,
+                SUM(
+                    CASE WHEN ap.bulanint = 8 THEN ap.nilai::FLOAT ELSE 0 END
+                ) as agt,
+                SUM(
+                    CASE WHEN ap.bulanint = 9 THEN ap.nilai::FLOAT ELSE 0 END
+                ) as sep,
+                SUM(
+                    CASE WHEN ap.bulanint = 10 THEN ap.nilai::FLOAT ELSE 0 END
+                ) as okt,
+                SUM(
+                    CASE WHEN ap.bulanint = 11 THEN ap.nilai::FLOAT ELSE 0 END
+                ) as nov,
+                SUM(
+                    CASE WHEN ap.bulanint = 12 THEN ap.nilai::FLOAT ELSE 0 END
+                ) as des
+            FROM keteranganbelanja_t kb
+            JOIN transaksianggaran2024_t ta ON ta.norec = kb.objecttransaksifk AND ta.statusenabled = TRUE AND ta.kdprofile = ".$idProfile."
+            JOIN kegiatananggaran2024_m ka ON ka.id = ta.objectkegiatanfk AND ka.statusenabled = TRUE AND ka.kdprofile = ".$idProfile."
+            JOIN kegiatananggaran2024_m ka2 ON ka2.id = ka.headfk AND ka2.statusenabled = TRUE AND ka2.kdprofile = ".$idProfile."
+            JOIN tahapanggaran_m th ON th.id = ta.objecttahapfk AND th.statusenabled = TRUE AND th.kdprofile = ".$idProfile."
+            JOIN mataanggaran_m ma ON ma.id = kb.objectmataanggaranfk AND ma.statusenabled = TRUE AND ma.kdprofile = ".$idProfile."
+            LEFT JOIN alokasiketeranganbelanja_t ap ON ap.keteranganbelanjafk = kb.norec AND ap.statusenabled = TRUE AND ap.kdprofile = ".$idProfile."
+            WHERE
+                kb.statusenabled = TRUE
+                AND kb.kdprofile = ".$idProfile."
+                $tahun
+                $subsubkegiatan
+                $subkegiatan
+                $tahap
+                $pegawai
+            GROUP BY
+                kb.norec,
+                ka.id,
+                ma.id,
+                ta.islockangkas
+            ORDER BY
+                kb.nourut asc,
+                SPLIT_PART(ma.kodemataanggaran, '.', 1),
+                SPLIT_PART(ma.kodemataanggaran, '.', 2),
+                SPLIT_PART(ma.kodemataanggaran, '.', 3),
+                case 
+                    when SPLIT_PART(ma.kodemataanggaran, '.', 5) = '' THEN cast(SPLIT_PART(ma.kodemataanggaran, '.', 4) as INTEGER)
+                    else cast(SPLIT_PART(ma.kodemataanggaran, '.', 5) as INTEGER)
+                END asc
+
+
+        "));
+
+        $result = array(
+            'alokasimataanggaran' => $dataAngkas,
+            'detailalokasimataanggaran' => $detailAngkas,
             'message' => '@epic',
         );
 
