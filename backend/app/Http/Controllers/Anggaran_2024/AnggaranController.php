@@ -2890,6 +2890,7 @@ class AnggaranController extends ApiController {
                 $tahun
             GROUP BY
                 ka.id,
+                ka2.id,
                 th.id,
                 ta.norec
                 --ta.tahun,
@@ -2968,6 +2969,7 @@ class AnggaranController extends ApiController {
                 $tahap
             GROUP BY
                 ka.id,
+                ka2.id,
                 th.id,
                 ta.norec
                 --ta.tahun,
@@ -3047,6 +3049,7 @@ class AnggaranController extends ApiController {
                 $tahap
             GROUP BY
                 ka.id,
+                ka2.id,
                 th.id,
                 ta.norec
                 --ta.tahun,
