@@ -1982,6 +1982,12 @@ Route::group(['middleware' => 'cors', 'prefix' => 'service'], function () {
             Route::get('report/get-cetak-spjv2', 'Report\ReportController@getCetakSPJ');
             Route::get('anggaran/get-data-angkas', 'Anggaran_2024\AnggaranController@getDataAngkas');
             Route::post('anggaran/delete-transaksianggaran-centang','Anggaran_2024\AnggaranController@deleteTransaksiAnggaranCentang');
+            Route::get('anggaran/get-subsubkegiatan-lockrba', 'Anggaran_2024\AnggaranController@getSubSubKegiatanLockRBA');
+            Route::get('anggaran/get-subsubkegiatan-lockangkas', 'Anggaran_2024\AnggaranController@getSubSubKegiatanLockAngkas');
+            Route::get('anggaran/get-subsubkegiatan-lockspj', 'Anggaran_2024\AnggaranController@getSubSubKegiatanLockSPJ');
+            Route::post('anggaran/simpan-lock-rba-subsubkegiatan', 'Anggaran_2024\AnggaranController@simpanLockRBASubSubKegiatan');
+            Route::post('anggaran/simpan-lock-spj-subsubkegiatan', 'Anggaran_2024\AnggaranController@simpanLockSPJSubSubKegiatan');
+            Route::post('anggaran/simpan-lock-angkas-subsubkegiatan', 'Anggaran_2024\AnggaranController@simpanLockAngkasSubSubKegiatan');
             // End Anggaran 2024
 
 

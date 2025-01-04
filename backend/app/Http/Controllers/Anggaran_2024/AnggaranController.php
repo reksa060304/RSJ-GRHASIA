@@ -2836,4 +2836,349 @@ class AnggaranController extends ApiController {
         return $this->respond($result);
 
     }
+
+    public function getSubSubKegiatanLockSPJ(Request $request)
+    {
+
+        $kdProfile = $this->getDataKdProfile($request);
+        $idProfile = (int) $kdProfile;
+
+        $setting = \DB::table('settinganggaran_t as st')
+            ->join('pegawai_m as pg','pg.id','=','st.objectkepalabludfk')
+            ->join('tahapanggaran_m as ta','ta.id','=','st.objecttahapaktivfk')
+            ->select('st.*','pg.namalengkap', 'ta.tahap', 'ta.id as idtahap', 'pg.id as idpegawai')
+            ->where('st.kdprofile', $idProfile)
+            ->where('st.statusenabled', true)
+            ->orderBy('st.tahunanggaran')
+            ->get();
+
+        $tahun = '';
+        if (isset($request['tahun']) && $request['tahun'] != "" && $request['tahun'] != "undefined") {
+            $tahun = "and ta.tahun = '".$request['tahun']."'";
+        }else{
+            $tahun = "and ta.tahun = '".$setting[0]->tahunanggaran."'";
+        }
+
+        $tahap = '';
+        if (isset($request['tahap']) && $request['tahap'] != "" && $request['tahap'] != "undefined") {
+            $tahap = "and th.id = ".$request['tahap'];
+        }
+
+        $data = DB::select(DB::raw("
+
+            SELECT
+                ka.id as idsubsubkegiatan,
+                ka.kode as kodesubsubkegiatan,
+                ka.keterangan as namasubsubkegiatan,
+                ka2.keterangan || ' - ' || ka.keterangan as text,
+                th.id as idtahap,
+                th.tahap,
+                ta.norec,
+                ta.tahun,
+                ta.islock,
+                ta.isrba,
+                ta.islockangkas
+            FROM transaksianggaran2024_t ta 
+            JOIN kegiatananggaran2024_m ka ON ka.id = ta.objectkegiatanfk AND ka.statusenabled = TRUE AND ka.kdprofile = 30
+            JOIN kegiatananggaran2024_m ka2 ON ka2.id = ka.headfk AND ka2.statusenabled = TRUE AND ka.kdprofile = 30
+            JOIN tahapanggaran_m th ON th.id = ta.objecttahapfk AND th.statusenabled = TRUE AND th.kdprofile = 30
+            JOIN keteranganbelanja_t kb ON kb.objecttransaksifk = ta.norec AND kb.statusenabled = TRUE AND kb.kdprofile = 30
+            JOIN mataanggaran_m ma ON ma.id = kb.objectmataanggaranfk AND ma.statusenabled = TRUE AND ma.kdprofile = 30
+            WHERE
+                ta.statusenabled = TRUE
+                AND ta.kdprofile = 30
+                $tahun
+            GROUP BY
+                ka.id,
+                th.id,
+                ta.norec
+                --ta.tahun,
+                --ta.islock,
+                --ta.isrba,
+                --ta.islockangkas
+            ORDER BY
+                th.id ASC,
+                CAST(SPLIT_PART(ka.kode, '.', 2) AS INTEGER) ASC,
+                CAST(SPLIT_PART(ka.kode, '.', 3) AS INTEGER) ASC,
+                CAST(SPLIT_PART(ka.kode, '.', 4) AS INTEGER) ASC,
+                CAST(SPLIT_PART(ka.kode, '.', 5) AS INTEGER) ASC,
+                CAST(SPLIT_PART(ka.kode, '.', 6) AS INTEGER) ASC,
+                CAST(SPLIT_PART(ka.kode, '.', 7) AS INTEGER) ASC
+        "));
+
+        $result = array(
+            'data' => $data,
+            'message' => '@epic',
+        );
+
+        return $this->respond($result);
+    }
+
+    public function getSubSubKegiatanLockRBA(Request $request)
+    {
+
+        $kdProfile = $this->getDataKdProfile($request);
+        $idProfile = (int) $kdProfile;
+
+        $setting = \DB::table('settinganggaran_t as st')
+            ->join('pegawai_m as pg','pg.id','=','st.objectkepalabludfk')
+            ->join('tahapanggaran_m as ta','ta.id','=','st.objecttahapaktivfk')
+            ->select('st.*','pg.namalengkap', 'ta.tahap', 'ta.id as idtahap', 'pg.id as idpegawai')
+            ->where('st.kdprofile', $idProfile)
+            ->where('st.statusenabled', true)
+            ->orderBy('st.tahunanggaran')
+            ->get();
+
+        $tahun = '';
+        if (isset($request['tahun']) && $request['tahun'] != "" && $request['tahun'] != "undefined") {
+            $tahun = "and ta.tahun = '".$request['tahun']."'";
+        }else{
+            $tahun = "and ta.tahun = '".$setting[0]->tahunanggaran."'";
+        }
+
+        $tahap = '';
+        if (isset($request['tahap']) && $request['tahap'] != "" && $request['tahap'] != "undefined") {
+            $tahap = "and th.id = ".$request['tahap'];
+        }
+
+        $data = DB::select(DB::raw("
+
+            SELECT
+                ka.id as idsubsubkegiatan,
+                ka.kode as kodesubsubkegiatan,
+                ka.keterangan as namasubsubkegiatan,
+                ka2.keterangan || ' - ' || ka.keterangan as text,
+                th.id as idtahap,
+                th.tahap,
+                ta.norec,
+                ta.tahun,
+                ta.islock,
+                ta.isrba,
+                ta.islockangkas
+            FROM transaksianggaran2024_t ta 
+            JOIN kegiatananggaran2024_m ka ON ka.id = ta.objectkegiatanfk AND ka.statusenabled = TRUE AND ka.kdprofile = 30
+            JOIN kegiatananggaran2024_m ka2 ON ka2.id = ka.headfk AND ka2.statusenabled = TRUE AND ka.kdprofile = 30
+            JOIN tahapanggaran_m th ON th.id = ta.objecttahapfk AND th.statusenabled = TRUE AND th.kdprofile = 30
+            JOIN keteranganbelanja_t kb ON kb.objecttransaksifk = ta.norec AND kb.statusenabled = TRUE AND kb.kdprofile = 30
+            JOIN mataanggaran_m ma ON ma.id = kb.objectmataanggaranfk AND ma.statusenabled = TRUE AND ma.kdprofile = 30
+            WHERE
+                ta.statusenabled = TRUE
+                AND ta.kdprofile = 30
+                $tahun
+                $tahap
+            GROUP BY
+                ka.id,
+                th.id,
+                ta.norec
+                --ta.tahun,
+                --ta.islock,
+                --ta.isrba,
+                --ta.islockangkas
+            ORDER BY
+                th.id ASC,
+                CAST(SPLIT_PART(ka.kode, '.', 2) AS INTEGER) ASC,
+                CAST(SPLIT_PART(ka.kode, '.', 3) AS INTEGER) ASC,
+                CAST(SPLIT_PART(ka.kode, '.', 4) AS INTEGER) ASC,
+                CAST(SPLIT_PART(ka.kode, '.', 5) AS INTEGER) ASC,
+                CAST(SPLIT_PART(ka.kode, '.', 6) AS INTEGER) ASC,
+                CAST(SPLIT_PART(ka.kode, '.', 7) AS INTEGER) ASC
+        "));
+
+        $result = array(
+            'data' => $data,
+            'message' => '@epic',
+        );
+
+        return $this->respond($result);
+    }
+
+    public function getSubSubKegiatanLockAngkas(Request $request)
+    {
+
+        $kdProfile = $this->getDataKdProfile($request);
+        $idProfile = (int) $kdProfile;
+
+        $setting = \DB::table('settinganggaran_t as st')
+            ->join('pegawai_m as pg','pg.id','=','st.objectkepalabludfk')
+            ->join('tahapanggaran_m as ta','ta.id','=','st.objecttahapaktivfk')
+            ->select('st.*','pg.namalengkap', 'ta.tahap', 'ta.id as idtahap', 'pg.id as idpegawai')
+            ->where('st.kdprofile', $idProfile)
+            ->where('st.statusenabled', true)
+            ->orderBy('st.tahunanggaran')
+            ->get();
+
+        $tahun = '';
+        if (isset($request['tahun']) && $request['tahun'] != "" && $request['tahun'] != "undefined") {
+            $tahun = "and ta.tahun = '".$request['tahun']."'";
+        }else{
+            $tahun = "and ta.tahun = '".$setting[0]->tahunanggaran."'";
+        }
+
+        $tahap = '';
+        if (isset($request['tahap']) && $request['tahap'] != "" && $request['tahap'] != "undefined") {
+            $tahap = "and th.id = ".$request['tahap'];
+        }
+
+        $data = DB::select(DB::raw("
+
+            SELECT
+                ka.id as idsubsubkegiatan,
+                ka.kode as kodesubsubkegiatan,
+                ka.keterangan as namasubsubkegiatan,
+                ka2.keterangan || ' - ' || ka.keterangan as text,
+                th.id as idtahap,
+                th.tahap,
+                ta.norec
+                ta.tahun,
+                ta.islock,
+                ta.isrba,
+                ta.islockangkas
+            FROM transaksianggaran2024_t ta 
+            JOIN kegiatananggaran2024_m ka ON ka.id = ta.objectkegiatanfk AND ka.statusenabled = TRUE AND ka.kdprofile = 30
+            JOIN kegiatananggaran2024_m ka2 ON ka2.id = ka.headfk AND ka2.statusenabled = TRUE AND ka.kdprofile = 30
+            JOIN tahapanggaran_m th ON th.id = ta.objecttahapfk AND th.statusenabled = TRUE AND th.kdprofile = 30
+            JOIN keteranganbelanja_t kb ON kb.objecttransaksifk = ta.norec AND kb.statusenabled = TRUE AND kb.kdprofile = 30
+            JOIN mataanggaran_m ma ON ma.id = kb.objectmataanggaranfk AND ma.statusenabled = TRUE AND ma.kdprofile = 30
+            JOIN alokasiketeranganbelanja_t akb ON akb.keteranganbelanjafk = kb.norec AND akb.statusenabled  = TRUE  AND akb.kdprofile = 30
+            WHERE
+                ta.statusenabled = TRUE
+                AND ta.kdprofile = 30
+                $tahun
+                $tahap
+            GROUP BY
+                ka.id,
+                th.id,
+                ta.norec
+                --ta.tahun,
+                --ta.islock,
+                --ta.isrba,
+                --ta.islockangkas
+            ORDER BY
+                th.id ASC,
+                CAST(SPLIT_PART(ka.kode, '.', 2) AS INTEGER) ASC,
+                CAST(SPLIT_PART(ka.kode, '.', 3) AS INTEGER) ASC,
+                CAST(SPLIT_PART(ka.kode, '.', 4) AS INTEGER) ASC,
+                CAST(SPLIT_PART(ka.kode, '.', 5) AS INTEGER) ASC,
+                CAST(SPLIT_PART(ka.kode, '.', 6) AS INTEGER) ASC,
+                CAST(SPLIT_PART(ka.kode, '.', 7) AS INTEGER) ASC
+        "));
+
+        $result = array(
+            'data' => $data,
+            'message' => '@epic',
+        );
+
+        return $this->respond($result);
+    }
+
+    public function simpanLockRBASubSubKegiatan(Request $request)
+    {
+
+        $kdProfile = $this->getDataKdProfile($request);
+        $idProfile = (int) $kdProfile;
+        $dataLogin=$request->all();
+
+        for($i = 0; $i < count($request['data']); $i++){
+            $TA = TransaksiAnggaran2024::where('norec', '=', $request['data'][$i]['norec'])->first();
+            $TA->islockrba = $request['data'][$i]['iscek'];
+            $TA->save();
+        }
+        
+        if($TA->save()){
+            $transStatus = 'true';
+        } else{
+            $transStatus = 'false';
+        }
+
+        if ($transStatus == 'true') {
+            $transMessage = "Simpan Sukses";
+            $status = 201;
+        } else if ($transStatus == 'false') {
+            $transMessage = "Simpan Gagal";
+            $status = 400;
+        }
+
+        
+        $result = array(
+            'status' => $status,
+            'message'=> $transMessage,
+            'as' => 'er@epic',
+        );
+        return $this->setStatusCode($result['status'])->respond($result, $result['message']);
+
+    }
+
+    public function simpanLockSPJSubSubKegiatan(Request $request)
+    {
+
+        $kdProfile = $this->getDataKdProfile($request);
+        $idProfile = (int) $kdProfile;
+        $dataLogin=$request->all();
+
+        for($i = 0; $i < count($request['data']); $i++){
+            $TA = TransaksiAnggaran2024::where('norec', '=', $request['data'][$i]['norec'])->first();
+            $TA->islock = $request['data'][$i]['iscek'];
+            $TA->save();
+        }
+        
+        if($TA->save()){
+            $transStatus = 'true';
+        } else{
+            $transStatus = 'false';
+        }
+
+        if ($transStatus == 'true') {
+            $transMessage = "Simpan Sukses";
+            $status = 201;
+        } else if ($transStatus == 'false') {
+            $transMessage = "Simpan Gagal";
+            $status = 400;
+        }
+
+        
+        $result = array(
+            'status' => $status,
+            'message'=> $transMessage,
+            'as' => 'er@epic',
+        );
+        return $this->setStatusCode($result['status'])->respond($result, $result['message']);
+
+    }
+
+    public function simpanLockAngkasSubSubKegiatan(Request $request)
+    {
+
+        $kdProfile = $this->getDataKdProfile($request);
+        $idProfile = (int) $kdProfile;
+        $dataLogin=$request->all();
+
+        for($i = 0; $i < count($request['data']); $i++){
+            $TA = TransaksiAnggaran2024::where('norec', '=', $request['data'][$i]['norec'])->first();
+            $TA->islockangkas = $request['data'][$i]['iscek'];
+            $TA->save();
+        }
+        
+        if($TA->save()){
+            $transStatus = 'true';
+        } else{
+            $transStatus = 'false';
+        }
+
+        if ($transStatus == 'true') {
+            $transMessage = "Simpan Sukses";
+            $status = 201;
+        } else if ($transStatus == 'false') {
+            $transMessage = "Simpan Gagal";
+            $status = 400;
+        }
+
+        
+        $result = array(
+            'status' => $status,
+            'message'=> $transMessage,
+            'as' => 'er@epic',
+        );
+        return $this->setStatusCode($result['status'])->respond($result, $result['message']);
+
+    }
 }
