@@ -59,7 +59,7 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
 
                         $scope.isRouteLoading = false;
 
-                        var datas = e.data
+                        var datas = e.data.data
                         
                         // buat penomeran
                         for(var i = 0; i < datas.length; i++){
