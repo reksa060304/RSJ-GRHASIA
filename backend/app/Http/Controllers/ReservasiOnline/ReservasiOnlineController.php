@@ -320,7 +320,6 @@ class ReservasiOnlineController extends ApiController
             $nontrian = AntrianPasienRegistrasi::where('jenis',$jenis)
             ->whereBetween('tanggalreservasi', [date('Y-m-d 00:00',strtotime($tgl)), date('Y-m-d 23:59',strtotime($tgl))])
             ->max('noantrian') + 1;
-
             $newptp = new AntrianPasienRegistrasi();
             $nontrian=AntrianPasienRegistrasi::max('noantrian')+ 1;
             $newptp->norec = $newptp->generateNewId();;
@@ -521,6 +520,8 @@ class ReservasiOnlineController extends ApiController
                 $join->on('pm.id','=','apr.nocmfk');
                 $join->where('pm.statusenabled','=',true);
              })
+            ->leftJoin('pasiendaftar_t as pd', 'pd.statusschedule', '=', 'apr.noreservasi')
+            ->leftJoin('antrianpasiendiperiksa_t as apd', 'apd.noregistrasifk', '=', 'pd.norec')
             ->leftJoin('alamat_m as alm','alm.nocmfk','=','pm.id')
             ->leftJoin('jeniskelamin_m as jk','jk.id','=','pm.objectjeniskelaminfk')
             ->leftJoin('jeniskelamin_m as jks','jks.id','=','apr.objectjeniskelaminfk')
@@ -529,7 +530,7 @@ class ReservasiOnlineController extends ApiController
             ->leftJoin('ruangan_m as ru','ru.id','=','apr.objectruanganfk')
             ->leftJoin('pegawai_m as pg','pg.id','=','apr.objectpegawaifk')
             ->leftJoin('kelompokpasien_m as kps','kps.id','=','apr.objectkelompokpasienfk')
-            ->select('apr.norec','pm.nocm','apr.noreservasi','apr.tanggalreservasi','apr.objectruanganfk','apr.noantrian',
+            ->select('apr.norec','pm.nocm','apr.noreservasi','apr.tanggalreservasi','apr.objectruanganfk','apd.noantrian',
                 'apr.objectpegawaifk','ru.namaruangan','apr.isconfirm','pg.namalengkap as dokter','pm.id as nocmfk',
                'pm.namapasien','apr.namapasien','alm.alamatlengkap','pk.pekerjaan','pm.noasuransilain','pm.noidentitas',
                 'apr.nobpjs','pm.nohp','pdd.pendidikan','apr.type','kps.kelompokpasien','apr.objectkelompokpasienfk','ru.objectdepartemenfk',
