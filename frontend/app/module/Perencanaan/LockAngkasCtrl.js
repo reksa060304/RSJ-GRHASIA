@@ -25,7 +25,7 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
                 $scope.isRouteLoading = true;
 
                 // load combo
-                medifirstService.get("perencanaan/get-data-combo")
+                medifirstService.get("anggaran/get-combo-anggaran")
                     .then(function (e) {
                         $scope.listTahap = e.data.tahap
 
@@ -52,14 +52,14 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
                 $scope.isRouteLoading = true;
 
                 // load data kegiatan
-                medifirstService.get("perencanaan/get-lock-angkas" 
+                medifirstService.get("anggaran/get-subsubkegiatan-lockangkas" 
                     + "?tahun="+ moment($scope.item.tahunlock).format('YYYY')
                     + "&tahap="+ $scope.item.searchtahap.id)
                     .then(function (e) {
 
                         $scope.isRouteLoading = false;
 
-                        var datas = e.data
+                        var datas = e.data.data
                         
                         // buat penomeran
                         for(var i = 0; i < datas.length; i++){
@@ -138,7 +138,7 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
                     "data": $scope.selectedData2,
                 }
                 // return
-                medifirstService.post('perencanaan/save-lock-angkas', objSave).then(function (e) {
+                medifirstService.post('anggaran/simpan-lock-angkas-subsubkegiatan', objSave).then(function (e) {
                     medifirstService.post('sysadmin/logging/save-log-lock-angkas', objSave).then(function (data) {
                         $scope.isRouteLoading = false;
                         

@@ -3073,6 +3073,122 @@ class ReportController extends ApiController{
         return view('report.spj.cetakspjsatulampiran',compact('kegiatan','pageWidth', 'keterangan', 'mataanggaran', 'spj', 'detail', 'jumlah', 'terbilang', 'tampilsumberdana', 'sumberdana','settingrba'));
     }
 
+    public function getCetakSPJSatuLampiranV2(Request $request){
+        $norec = $request['norec'];
+        $terbilang = $request['terbilang'];
+        $idsumberdana = $request['sumberdana'];
+
+        $tampilsumberdana = false;
+        if($request['sumberdana'] == 18){
+            $tampilsumberdana = true;
+        }
+        
+        $sumberdana = DB::select(DB::raw("
+            select asalproduk from asalproduk_m where id = '$idsumberdana'
+        "));
+
+        $settingrba = DB::select(DB::raw("
+            select pg.namalengkap, pg.nippns from settinganggaran_t sa
+            inner join pegawai_m pg on pg.id = sa.objectkepalabludfk
+            where sa.statusenabled = true
+        "));
+
+        $kegiatan = DB::select(DB::raw("
+            select km.keterangan ktsubsub, km.kode kodesubsub, ta.tahun, km.div divsubsub, pg.namalengkap, pg.nippns, kg.keterangan ktsub, kg.kode kodesub, kg.div divsub
+            from strukrealisasi_t sr
+            inner join realisasidetail_t rd on rd.strukrealisasifk =sr.norec
+            inner join keteranganbelanja_t kb on kb.norec = rd.keteranganbelanjafk
+            inner join transaksianggaran2024_t ta ON ta.norec = kb.objecttransaksifk
+            inner join kegiatananggaran2024_m km on km.id = ta.objectkegiatanfk
+            inner join mataanggaran_m ma on ma.id = sr.objectmataanggaranfk
+            left join kegiatananggaran2024_m kg on kg.id = km.headfk
+            left join pegawai_m pg on pg.id = ta.objectpptkfk
+            where sr.norec = '$norec' AND rd.statusenabled = true
+            group by km.keterangan, km.kode, ta.tahun, km.div, kg.keterangan, kg.kode, kg.div, pg.namalengkap, pg.nippns;
+            ")
+        );
+
+        $keterangan = DB::select(DB::raw("select kb.keteranganbelanja
+        from strukrealisasi_t sr
+        inner join realisasidetail_t rd on rd.strukrealisasifk =sr.norec
+        inner join keteranganbelanja_t kb on kb.norec = rd.keteranganbelanjafk
+        inner join transaksianggaran2024_t ta ON ta.norec = kb.objecttransaksifk
+        inner join kegiatananggaran2024_m km on km.id = ta.objectkegiatanfk
+        left join kegiatananggaran2024_m kg on kg.id = km.headfk
+        inner join mataanggaran_m ma on ma.id = sr.objectmataanggaranfk
+        where sr.norec = '$norec' AND rd.statusenabled = true
+        group by kb.keteranganbelanja;"));
+
+        $mataanggaran = DB::select(DB::raw("select ma.namamataanggaran, ma.kodemataanggaran,
+        map3.kode || '.' || map2.kode || '.' || map1.kode || '.' || map.kode as kodepermendagri
+        from strukrealisasi_t sr
+        inner join realisasidetail_t rd on rd.strukrealisasifk =sr.norec
+        inner join keteranganbelanja_t kb on kb.norec = rd.keteranganbelanjafk
+        inner join transaksianggaran2024_t ta ON ta.norec = kb.objecttransaksifk
+        inner join kegiatananggaran2024_m km on km.id = ta.objectkegiatanfk
+        left join kegiatananggaran2024_m kg on kg.id = km.headfk
+        inner join mataanggaran_m ma on ma.id = sr.objectmataanggaranfk
+        left join mataanggaranpermen_m map on map.id = ma.mataanggaranpermenfk
+        left join mataanggaranpermen_m map1 on map1.id = map.mataanggaranpermenfk and map1.div = 4
+        left join mataanggaranpermen_m map2 on map2.id = map1.mataanggaranpermenfk and map2.div = 3
+        left join mataanggaranpermen_m map3 on map3.id = map2.mataanggaranpermenfk and map3.div = 2
+        where sr.norec = '$norec' AND rd.statusenabled = true
+        group by ma.namamataanggaran, ma.kodemataanggaran, map3.kode || '.' || map2.kode || '.' || map1.kode || '.' || map.kode;"));
+
+        $spj = DB::select(DB::raw("select rk.namarekanan,
+        sr.norealisasi, sr.pph, sr.ppn, sr.pph+sr.ppn as totalpp, pgb.namalengkap as namabendahara, pgb.nippns as nipbendahara, pgp.namalengkap as namapenerima,
+        pgp.nippns as nippenerima, sr.deskripsi        
+        from strukrealisasi_t sr
+        inner join realisasidetail_t rd on rd.strukrealisasifk =sr.norec
+        inner join keteranganbelanja_t kb on kb.norec = rd.keteranganbelanjafk
+        inner join transaksianggaran2024_t ta ON ta.norec = kb.objecttransaksifk
+        inner join kegiatananggaran2024_m km on km.id = ta.objectkegiatanfk
+        left join pegawai_m pgb on pgb.id = sr.bendaharafk 
+        left join pegawai_m pgp on pgp.id = sr.penerimafk 
+        left join rekanan_m rk on rk.id = sr.rekananfk 
+        left join kegiatananggaran2024_m kg on kg.id = km.headfk
+        inner join mataanggaran_m ma on ma.id = sr.objectmataanggaranfk
+        where sr.norec = '$norec' AND rd.statusenabled = true
+        group by pgp.nippns, rk.namarekanan, sr.norealisasi, sr.pph, sr.ppn, pgb.namalengkap, pgp.namalengkap, pgb.nippns, sr.deskripsi "));
+        
+        $detail = DB::select(DB::raw("select row_number() over(order by rd.norec) as nomor, rd.norec, rd.uraian, rd.jml, rd.satuan, rd.harga, rd.subtotal
+        from strukrealisasi_t sr
+        inner join realisasidetail_t rd on rd.strukrealisasifk =sr.norec
+        inner join keteranganbelanja_t kb on kb.norec = rd.keteranganbelanjafk
+        inner join transaksianggaran2024_t ta ON ta.norec = kb.objecttransaksifk
+        inner join kegiatananggaran2024_m km on km.id = ta.objectkegiatanfk
+        left join kegiatananggaran2024_m kg on kg.id = km.headfk
+        inner join mataanggaran_m ma on ma.id = sr.objectmataanggaranfk
+        where sr.norec = '$norec' AND rd.statusenabled = true
+        group by rd.uraian, rd.jml, rd.satuan, rd.harga, rd.subtotal, rd.norec;"));
+
+        $jumlah = DB::select(DB::raw("select sum(subtotal) totalfix, round(sum(subtotal)) totalpembulatan
+        from(
+        select rd.subtotal, rd.norec
+                from strukrealisasi_t sr
+        inner join realisasidetail_t rd on rd.strukrealisasifk =sr.norec
+        inner join keteranganbelanja_t kb on kb.norec = rd.keteranganbelanjafk
+        inner join transaksianggaran2024_t ta ON ta.norec = kb.objecttransaksifk
+        inner join kegiatananggaran2024_m km on km.id = ta.objectkegiatanfk
+        left join pegawai_m pgb on pgb.id = sr.bendaharafk 
+        left join pegawai_m pgp on pgp.id = sr.penerimafk 
+        left join kegiatananggaran2024_m kg on kg.id = km.headfk
+        inner join mataanggaran_m ma on ma.id = sr.objectmataanggaranfk
+        where sr.norec = '$norec' AND rd.statusenabled = true
+        group by rd.subtotal, rd.norec
+        ) as x;"));
+
+
+
+        $result = array(
+            'data' => $detail,
+            'message' => '@epic',
+        );
+
+        $pageWidth = 950;
+        return view('report.spj.cetakspjsatulampiran',compact('kegiatan','pageWidth', 'keterangan', 'mataanggaran', 'spj', 'detail', 'jumlah', 'terbilang', 'tampilsumberdana', 'sumberdana','settingrba'));
+    }
+
     public function cetakSPJPengembalian(Request $request){
         $pegawaimengetahui = '';
         if(isset($request['pegawaiMegetahui'])){
@@ -3656,6 +3772,116 @@ class ReportController extends ApiController{
         left join pegawai_m pgb on pgb.id = sr.bendaharafk 
         left join pegawai_m pgp on pgp.id = sr.penerimafk 
         left join kegiatananggaran_m kg on km.kode ilike kg.kode || '%' and kg.div = 3
+        inner join mataanggaran_m ma on ma.id = sr.objectmataanggaranfk
+        where sr.norec = '$norec' AND rd.statusenabled = true
+        group by rd.subtotal, rd.norec
+        ) as x;"));
+
+
+
+        $result = array(
+            'data' => $detail,
+            'message' => '@epic',
+        );
+
+        $pageWidth = 950;
+        $settingrba = DB::select(DB::raw("
+        select pg.namalengkap, pg.nippns from settinganggaran_t sa
+        inner join pegawai_m pg on pg.id = sa.objectkepalabludfk
+        where sa.statusenabled = true
+        "));
+        return view('report.spj.cetakspj',compact('kegiatan','pageWidth', 'keterangan', 'mataanggaran', 'spj', 'detail', 'jumlah', 'terbilang', 'tampilsumberdana', 'sumberdana','settingrba'));
+    }
+
+    public function getCetakSPJV2(Request $request){
+        $norec = $request['norec'];
+        $terbilang = $request['terbilang'];
+        $idsumberdana = $request['sumberdana'];
+
+        $tampilsumberdana = false;
+        if($request['sumberdana'] == 18){
+            $tampilsumberdana = true;
+        }
+
+        $sumberdana = DB::select(DB::raw("
+            select asalproduk from asalproduk_m where id = '$idsumberdana'
+        "));
+
+        $kegiatan = DB::select(DB::raw("
+            select km.keterangan ktsubsub, km.kode kodesubsub, ta.tahun, km.div divsubsub, kg.keterangan ktsub, kg.kode kodesub, kg.div divsub, pg.namalengkap, pg.nippns
+            from strukrealisasi_t sr
+            inner join realisasidetail_t rd on rd.strukrealisasifk =sr.norec
+            inner join keteranganbelanja_t kb on kb.norec = rd.keteranganbelanjafk
+            inner join transaksianggaran2024_t ta ON ta.norec = kb.objecttransaksifk
+            inner join kegiatananggaran_m km on km.id = ta.objectkegiatanfk
+            inner join mataanggaran_m ma on ma.id = sr.objectmataanggaranfk
+            left join kegiatananggaran_m kg ON kg.id km.headfk
+            left join pegawai_m pg on pg.id = ta.objectpptkfk
+            where sr.norec = '$norec' AND rd.statusenabled = true
+            group by km.keterangan, km.kode, ta.tahun, km.div, kg.keterangan, kg.kode, kg.div, pg.namalengkap, pg.nippns;
+            ")
+        );
+
+        $keterangan = DB::select(DB::raw("select kb.keteranganbelanja
+        from strukrealisasi_t sr
+        inner join realisasidetail_t rd on rd.strukrealisasifk =sr.norec
+        inner join keteranganbelanja_t kb on kb.norec = rd.keteranganbelanjafk
+        inner join transaksianggaran2024_t ta ON ta.norec = kb.objecttransaksifk
+        inner join kegiatananggaran_m km on km.id = ta.objectkegiatanfk
+        left join kegiatananggaran_m kg ON kg.id km.headfk
+        inner join mataanggaran_m ma on ma.id = sr.objectmataanggaranfk
+        where sr.norec = '$norec' AND rd.statusenabled = true
+        group by kb.keteranganbelanja;"));
+
+        $mataanggaran = DB::select(DB::raw("select ma.namamataanggaran, ma.kodemataanggaran
+        from strukrealisasi_t sr
+        inner join realisasidetail_t rd on rd.strukrealisasifk =sr.norec
+        inner join keteranganbelanja_t kb on kb.norec = rd.keteranganbelanjafk
+        inner join transaksianggaran2024_t ta ON ta.norec = kb.objecttransaksifk
+        inner join kegiatananggaran_m km on km.id = ta.objectkegiatanfk
+        left join kegiatananggaran_m kg ON kg.id km.headfk
+        inner join mataanggaran_m ma on ma.id = sr.objectmataanggaranfk
+        where sr.norec = '$norec' AND rd.statusenabled = true
+        group by ma.namamataanggaran, ma.kodemataanggaran;"));
+
+        $spj = DB::select(DB::raw("select rk.namarekanan,
+        sr.norealisasi, sr.pph, sr.ppn, sr.pph+sr.ppn as totalpp, pgb.namalengkap as namabendahara, pgb.nippns as nipbendahara, pgp.namalengkap as namapenerima,
+        pgp.nippns as nippenerima, sr.deskripsi 
+        from strukrealisasi_t sr
+        inner join realisasidetail_t rd on rd.strukrealisasifk =sr.norec
+        inner join keteranganbelanja_t kb on kb.norec = rd.keteranganbelanjafk
+        inner join transaksianggaran2024_t ta ON ta.norec = kb.objecttransaksifk
+        inner join kegiatananggaran_m km on km.id = ta.objectkegiatanfk
+        left join rekanan_m rk on rk.id = sr.rekananfk 
+        left join pegawai_m pgb on pgb.id = sr.bendaharafk 
+        left join pegawai_m pgp on pgp.id = sr.penerimafk 
+        left join kegiatananggaran_m kg ON kg.id km.headfk
+        inner join mataanggaran_m ma on ma.id = sr.objectmataanggaranfk
+        where sr.norec = '$norec' AND rd.statusenabled = true
+        group by pgp.nippns, rk.namarekanan, sr.norealisasi, sr.pph, sr.ppn, pgb.namalengkap, pgp.namalengkap, pgb.nippns, sr.deskripsi"));
+
+        $detail = DB::select(DB::raw("select row_number() over(order by rd.norec) as nomor, rd.norec, rd.uraian, rd.jml, rd.satuan, rd.harga, rd.subtotal
+        from strukrealisasi_t sr
+        inner join realisasidetail_t rd on rd.strukrealisasifk =sr.norec
+        inner join keteranganbelanja_t kb on kb.norec = rd.keteranganbelanjafk
+        inner join transaksianggaran2024_t ta ON ta.norec = kb.objecttransaksifk
+        inner join kegiatananggaran_m km on km.id = ta.objectkegiatanfk
+        left join kegiatananggaran_m kg ON kg.id km.headfk
+        inner join mataanggaran_m ma on ma.id = sr.objectmataanggaranfk
+        where sr.norec = '$norec' AND rd.statusenabled = true
+        group by rd.uraian, rd.jml, rd.satuan, rd.harga, rd.subtotal, rd.norec;"));
+
+        $jumlah = DB::select(DB::raw("select sum(subtotal) totalfix, round(sum(subtotal)) totalpembulatan
+        from(
+        select rd.subtotal, rd.norec
+                from strukrealisasi_t sr
+        inner join realisasidetail_t rd on rd.strukrealisasifk =sr.norec
+        inner join keteranganbelanja_t kb on kb.norec = rd.keteranganbelanjafk
+        inner join transaksianggaran2024_t ta ON ta.norec = kb.objecttransaksifk
+        inner join kegiatananggaran_m km on km.id = ta.objectkegiatanfk
+        left join pegawai_m pgb on pgb.id = sr.bendaharafk 
+        left join pegawai_m pgp on pgp.id = sr.penerimafk 
+        left join kegiatananggaran_m kg ON kg.id km.headfk
         inner join mataanggaran_m ma on ma.id = sr.objectmataanggaranfk
         where sr.norec = '$norec' AND rd.statusenabled = true
         group by rd.subtotal, rd.norec

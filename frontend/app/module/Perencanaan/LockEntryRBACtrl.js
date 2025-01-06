@@ -24,14 +24,15 @@ define(['initialize'], function (initialize) {
                 depth: "decade"
             }
 
-            medifirstService.get("perencanaan/get-data-combo").then(function (e) {
+            medifirstService.get("anggaran/get-combo-anggaran").then(function (e) {
                 $scope.listTahap = e.data.tahap
+                $scope.item.tahunlock = e.data.setting[0].tahunanggaran
             });
 
             function init() {
                 $scope.isRouteLoading = true;
                 
-                medifirstService.get("perencanaan/get-lock-entry-spj?tahun="+moment($scope.item.tahunlock).format('YYYY')+"&tahap="+$scope.item.searchtahap.id).then(function (e) {
+                medifirstService.get("anggaran/get-subsubkegiatan-lockrba?tahun="+moment($scope.item.tahunlock).format('YYYY')+"&tahap="+$scope.item.searchtahap.id).then(function (e) {
                         $scope.isRouteLoading = false;
 
                         var datas = e.data.data
@@ -118,7 +119,7 @@ define(['initialize'], function (initialize) {
                 }
                 console.log(objSave);
                 // return
-                medifirstService.post('perencanaan/save-lock-entry-rba', objSave).then(function (e) {
+                medifirstService.post('anggaran/simpan-lock-rba-subsubkegiatan', objSave).then(function (e) {
                     medifirstService.post('sysadmin/logging/save-log-lock-spj', objSave).then(function (data) {
                         init();
                     })

@@ -1959,6 +1959,35 @@ Route::group(['middleware' => 'cors', 'prefix' => 'service'], function () {
             Route::post('anggaran/save-keterangan-belanja','Anggaran_2024\AnggaranController@saveKeteranganBelanja');
             Route::get('anggaran/get-total-anggaran-rcn', 'Anggaran_2024\AnggaranController@getTotalAnggaranRcn');
             Route::get('anggaran/get-total-mataanggaran-transaksi', 'Anggaran_2024\AnggaranController@getTotalMataAnggaranByTransaksi');
+            Route::get('anggaran/get-subsubkegiatan-transfer', 'Anggaran_2024\AnggaranController@getSubSubKegiatanTransfer');
+            Route::post('anggaran/save-subsubkegiatan-transfer','Anggaran_2024\AnggaranController@saveTransferSubSubKegiatan');
+            Route::post('anggaran/delete-transaksianggaran','Anggaran_2024\AnggaranController@deleteTransaksiAnggaran');
+            Route::get('anggaran/get-mataanggaran-pindahrincian', 'Anggaran_2024\AnggaranController@getMataAnggaranPindahRincian');
+            Route::get('anggaran/get-keteranganbelanja-pindahrincian', 'Anggaran_2024\AnggaranController@getKeteranganBelanjaPindahRincian');
+            Route::get('anggaran/get-subsubkegiatan', 'Anggaran_2024\AnggaranController@getSubSubKegiatan');
+            Route::get('anggaran/get-mataanggaran-bysubsubkegiatan', 'Anggaran_2024\AnggaranController@getMataAnggaranBySubSubKegiatan');
+            Route::get('anggaran/get-total-sisa-anggaranv2', 'Anggaran_2024\AnggaranController@getTotalSisaAnggaran');
+            Route::get('anggaran/get-panjar', 'Anggaran_2024\AnggaranController@getPanjar');
+            Route::get('anggaran/get-rincian-anggaran', 'Anggaran_2024\AnggaranController@getRincianAnggaran');
+            Route::get('anggaran/get-sisa-rincian-anggaran', 'Anggaran_2024\AnggaranController@getSisaRincianAnggaran');
+            Route::get('anggaran/get-spj', 'Anggaran_2024\AnggaranController@getSPJ');
+            Route::get('anggaran/get-lock-entry-spj-subsubkegiatan', 'Anggaran_2024\AnggaranController@getLockEntrySPJSubSubKegiatan');
+            Route::get('anggaran/get-lock-entry-spj-rekening', 'Anggaran_2024\AnggaranController@getLockEntrySPJMataAnggaran');
+            Route::post('anggaran/simpan-spj','Anggaran_2024\AnggaranController@simpanSPJ');
+            Route::get('anggaran/get-grid-panjar','Anggaran_2024\AnggaranController@getGridPanjar');
+            Route::post('anggaran/simpan-panjar','Anggaran_2024\AnggaranController@simpanPanjar');
+            Route::get('anggaran/get-pengembalian-panjar','Anggaran_2024\AnggaranController@getPengembalianPanjar');
+            Route::get('anggaran/get-daftar-panjar-dipilih', 'Anggaran_2024\AnggaranController@getDaftarPanjarDipilih');
+            Route::get('report/get-cetak-spj-satu-lampiranv2','Report\ReportController@getCetakSPJSatuLampiranV2');
+            Route::get('report/get-cetak-spjv2', 'Report\ReportController@getCetakSPJ');
+            Route::get('anggaran/get-data-angkas', 'Anggaran_2024\AnggaranController@getDataAngkas');
+            Route::post('anggaran/delete-transaksianggaran-centang','Anggaran_2024\AnggaranController@deleteTransaksiAnggaranCentang');
+            Route::get('anggaran/get-subsubkegiatan-lockrba', 'Anggaran_2024\AnggaranController@getSubSubKegiatanLockRBA');
+            Route::get('anggaran/get-subsubkegiatan-lockangkas', 'Anggaran_2024\AnggaranController@getSubSubKegiatanLockAngkas');
+            Route::get('anggaran/get-subsubkegiatan-lockspj', 'Anggaran_2024\AnggaranController@getSubSubKegiatanLockSPJ');
+            Route::post('anggaran/simpan-lock-rba-subsubkegiatan', 'Anggaran_2024\AnggaranController@simpanLockRBASubSubKegiatan');
+            Route::post('anggaran/simpan-lock-spj-subsubkegiatan', 'Anggaran_2024\AnggaranController@simpanLockSPJSubSubKegiatan');
+            Route::post('anggaran/simpan-lock-angkas-subsubkegiatan', 'Anggaran_2024\AnggaranController@simpanLockAngkasSubSubKegiatan');
             // End Anggaran 2024
 
 

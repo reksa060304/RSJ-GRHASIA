@@ -3,7 +3,11 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
     var baseTransaksi = configuration.baseApiBackend;
     initialize.controller('EntryRBACtrl', ['$scope', '$state', '$mdDialog', 'MedifirstService',
         function ($scope, $state, $mdDialog, medifirstService) {
-            $state.go("KelompokAnggaran", {
+            // $state.go("KelompokAnggaran", {
+            //     parameter: '12121'
+            // })
+
+            $state.go("EntryRBA2024", {
                 parameter: '12121'
             })
             
