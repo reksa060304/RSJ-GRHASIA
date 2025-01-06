@@ -339,12 +339,56 @@ class SumberDayaManusiaController extends ApiController {
         return $this->respond($result);
     }
 
+    // public function getDaftarPegawai (Request $request) {
+    //     $kdProfile = (int) $this->getDataKdProfile($request);
+    //     $data = \DB::table('pegawai_m as pg')
+    //         ->leftJoin('masaberlakusipstr_t AS mbs', 'mbs.pegawaifk', '=', 'pg.id')
+    //         ->leftJoin('agama_m as ag','ag.id','=','pg.objectagamafk')
+    //         ->leftJoin('detailkategorypegawai_m as dkp','dkp.id','=','pg.objectdetailkategorypegawaifk ')
+    //         ->leftJoin('golongandarah_m as gd','gd.id','=', 'pg.objectgolongandarahfk')
+    //         ->leftJoin('jabatan_m as jb','jb.id','=','pg.objectjabatanfungsionalfk')
+    //         ->leftJoin('jenisjabatan_m as jj','jb.objectjenisjabatanfk','=','jj.id')
+    //         ->leftJoin('jabatan_m as jb1','jb1.id', '=', 'pg.objectjabatanstrukturalfk')
+    //         ->leftJoin('golonganpegawai_m as gp','gp.id','=', 'pg.objectgolonganpegawaifk')
+    //         ->leftJoin('unitkerjapegawai_m as uk','uk.id','=','pg.objectunitkerjapegawaifk')
+    //         ->leftJoin('statuspegawai_m as sp','sp.id','=','pg.objectstatuspegawaifk')
+    //         ->leftJoin('kelompokjabatan_m as kj','kj.id','=','pg.objectkelompokjabatanfk')
+    //         ->leftJoin('statusperkawinanpegawai_m as spp','spp.id','=','pg.objectstatusperkawinanpegawaifk')
+    //         ->leftJoin('kategorypegawai_m as kp','kp.id','=','pg.kategorypegawai')
+    //         ->leftJoin('eselon_m as ese','ese.id','=','pg.objecteselonfk')
+    //         ->leftJoin('pendidikan_m as pend','pend.id', '=','pg.objectpendidikanterakhirfk')
+    //         ->leftJoin('jeniskelamin_m as jk','jk.id','=','pg.objectjeniskelaminfk')
+    //         ->leftJoin('sdm_golongan_m as gol','gol.id','=','pg.objectgolonganfk')
+    //         ->leftJoin('nilaikelompokjabatan_m as nkj','nkj.id','=','pg.objectkelompokjabatanfk')
+    //         ->leftJoin('sdm_kelompokshift_m as ks','ks.id','=','pg.objectshiftkerja')
+    //         ->leftJoin('sdm_kedudukan_m as kdd','kdd.id','=','pg.kedudukanfk')
+    //         ->leftJoin('jenispegawai_m as jp','jp.id','=','pg.objectjenispegawaifk')
+    //         ->select(\DB::raw("jb.objectjenisjabatanfk, jj.jenisjabatan,pg.*,ag.agama,dkp.detailkategorypegawai,gd.golongandarah,jb.namajabatan as jbfungsional,
+	// 		                        jb1.namajabatan as jbstruktural,gp.golonganpegawai,uk.name as unitkerja,sp.statuspegawai,
+	// 		                        kj.namakelompokjabatan,spp.statusperkawinan,ese.eselon,kp.kategorypegawai as namakategorypegawai,pend.pendidikan,jk.jeniskelamin,
+	// 		                        gol.namaexternal||', '||gol.name as golongan,nkj.detailkelompokjabatan,nkj.grade,ks.kelompokshiftkerja,kdd.name as kedudukan,jp.jenispegawai,
+    //                                 mbs.berakhirsip AS berakhirsip, mbs.berakhirstr AS berakhirstr"))
+    //         ->where('pg.kdprofile', $kdProfile)
+    //         ->where('pg.namalengkap', '<>','-')
+    //         ->where('pg.namalengkap', '<>','Programmer Administrator')
+    //         ->whereNull('pg.usereksternal')
+    //         ->where('pg.statusenabled',true)
+    //         // ->take(50)
+    //         ->orderBy('pg.namalengkap');
+
+    //     if(isset($request['idPegawai']) && $request['idPegawai']!="" && $request['idPegawai']!="undefined"){
+    //         $data = $data->where('pg.id','=',$request['idPegawai']);
+    //     }
+    //     $data = $data->get();
+    //     return $this->respond($data);
+    // }
+
     public function getDaftarPegawai (Request $request) {
         $kdProfile = (int) $this->getDataKdProfile($request);
         $data = \DB::table('pegawai_m as pg')
             ->leftJoin('masaberlakusipstr_t AS mbs', 'mbs.pegawaifk', '=', 'pg.id')
             ->leftJoin('agama_m as ag','ag.id','=','pg.objectagamafk')
-            ->leftJoin('detailkategorypegawai_m as dkp','dkp.id','=','pg.objectdetailkategorypegawaifk ')
+            ->leftJoin('detailkategorypegawai_m as dkp','dkp.id','=','pg.objectdetailkategorypegawaifk')
             ->leftJoin('golongandarah_m as gd','gd.id','=', 'pg.objectgolongandarahfk')
             ->leftJoin('jabatan_m as jb','jb.id','=','pg.objectjabatanfungsionalfk')
             ->leftJoin('jenisjabatan_m as jj','jb.objectjenisjabatanfk','=','jj.id')
@@ -363,21 +407,26 @@ class SumberDayaManusiaController extends ApiController {
             ->leftJoin('sdm_kelompokshift_m as ks','ks.id','=','pg.objectshiftkerja')
             ->leftJoin('sdm_kedudukan_m as kdd','kdd.id','=','pg.kedudukanfk')
             ->leftJoin('jenispegawai_m as jp','jp.id','=','pg.objectjenispegawaifk')
-            ->select(\DB::raw("jb.objectjenisjabatanfk, jj.jenisjabatan,pg.*,ag.agama,dkp.detailkategorypegawai,gd.golongandarah,jb.namajabatan as jbfungsional,
-			                        jb1.namajabatan as jbstruktural,gp.golonganpegawai,uk.name as unitkerja,sp.statuspegawai,
-			                        kj.namakelompokjabatan,spp.statusperkawinan,ese.eselon,kp.kategorypegawai as namakategorypegawai,pend.pendidikan,jk.jeniskelamin,
-			                        gol.namaexternal||', '||gol.name as golongan,nkj.detailkelompokjabatan,nkj.grade,ks.kelompokshiftkerja,kdd.name as kedudukan,jp.jenispegawai,
-                                    mbs.berakhirsip AS berakhirsip, mbs.berakhirstr AS berakhirstr"))
+            ->select(\DB::raw("DISTINCT ON (pg.namalengkap) jb.objectjenisjabatanfk, jj.jenisjabatan, pg.*,
+                              ag.agama, dkp.detailkategorypegawai, gd.golongandarah,
+                              jb.namajabatan as jbfungsional, jb1.namajabatan as jbstruktural,
+                              gp.golonganpegawai, uk.name as unitkerja, sp.statuspegawai,
+                              kj.namakelompokjabatan, spp.statusperkawinan, ese.eselon,
+                              kp.kategorypegawai as namakategorypegawai, pend.pendidikan,
+                              jk.jeniskelamin, gol.namaexternal || ', ' || gol.name as golongan,
+                              nkj.detailkelompokjabatan, nkj.grade, ks.kelompokshiftkerja,
+                              kdd.name as kedudukan, jp.jenispegawai,
+                              mbs.berakhirsip, mbs.berakhirstr"))
             ->where('pg.kdprofile', $kdProfile)
-            ->where('pg.namalengkap', '<>','-')
-            ->where('pg.namalengkap', '<>','Programmer Administrator')
+            ->where('pg.namalengkap', '<>', '-')
+            ->where('pg.namalengkap', '<>', 'Programmer Administrator')
             ->whereNull('pg.usereksternal')
-            ->where('pg.statusenabled',true)
-            // ->take(50)
-            ->orderBy('pg.namalengkap');
-
-        if(isset($request['idPegawai']) && $request['idPegawai']!="" && $request['idPegawai']!="undefined"){
-            $data = $data->where('pg.id','=',$request['idPegawai']);
+            ->where('pg.statusenabled', true)
+            ->orderBy('pg.namalengkap', 'ASC') 
+            ->orderBy('pg.id', 'ASC');        
+        
+        if (isset($request['idPegawai']) && $request['idPegawai'] != "" && $request['idPegawai'] != "undefined") {
+            $data = $data->where('pg.id', '=', $request['idPegawai']);
         }
         $data = $data->get();
         return $this->respond($data);
