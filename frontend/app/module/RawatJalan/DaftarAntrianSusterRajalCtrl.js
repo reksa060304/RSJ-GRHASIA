@@ -337,7 +337,7 @@ define(['initialize'], function (initialize) {
                     },
                     {
                         "field": "namadokter",
-                        "title": "Dokter",
+                        "title": "PPA",
                         "width": "100px"
                     },
                     {
