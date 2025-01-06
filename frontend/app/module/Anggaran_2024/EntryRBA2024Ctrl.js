@@ -894,6 +894,11 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
                     return
                 }
                 
+                if ($scope.datakegiatanbro.islockrba == true) {
+                    toastr.error('Sudah dilock!')
+                    return
+                }
+
                 if($scope.idkegiatanangkas != 0){
                     $scope.item.id = $scope.idkegiatanangkas
                 } else{

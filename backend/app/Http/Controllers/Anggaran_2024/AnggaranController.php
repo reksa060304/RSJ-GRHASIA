@@ -1413,9 +1413,10 @@ class AnggaranController extends ApiController {
             FROM
                 strukrealisasi_t sr
                 INNER JOIN realisasidetail_t rd ON rd.strukrealisasifk = sr.norec AND rd.statusenabled = TRUE AND rd.kdprofile = ".$idProfile."
-                JOIN kegiatananggaran2024_m ka ON ka.id = sr.objectkegiatanfk AND ka.statusenabled = TRUE AND ka.kdprofile = ".$idProfile." 
+                JOIN keteranganbelanja_t kb ON kb.norec = rd.keteranganbelanjafk AND kb.statusenabled = TRUE AND kb.kdprofile = ".$idProfile."
+                JOIN transaksianggaran2024_t ta ON ta.norec = kb.objecttransaksifk AND ta.statusenabled = TRUE AND ta.kdprofile = ".$idProfile."
+                JOIN kegiatananggaran2024_m ka ON ka.id = ta.objectkegiatanfk AND ka.statusenabled = TRUE AND ka.kdprofile = ".$idProfile." 
                 JOIN kegiatananggaran2024_m ka2 ON ka2.id = ka.headfk AND ka2.statusenabled = TRUE AND ka2.kdprofile = ".$idProfile."
-                JOIN transaksianggaran2024_t ta ON ta.objectkegiatanfk = ka.id AND ta.statusenabled = TRUE AND ta.kdprofile = ".$idProfile."
                 JOIN mataanggaran_m ma ON ma.id = sr.objectmataanggaranfk AND ma.statusenabled = TRUE AND ma.kdprofile = ".$idProfile."
                 JOIN asalproduk_m ap ON ap.id = sr.objectasalprodukfk
                 LEFT JOIN rekanan_m rkn ON rkn.id = sr.rekananfk
