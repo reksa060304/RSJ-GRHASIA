@@ -64,7 +64,7 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
 
                 var nosts="";
                 if ($scope.item.Nosts != undefined) {
-					nosts = "&nosts=" + $scope.item.Nosts;
+					        nosts = "&nosts=" + $scope.item.Nosts;
                 }
 
                 var status = "";
@@ -73,14 +73,14 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
                 }
 
                 var kelompokpasien = "";
-				if ($scope.item.kelompokpasien != undefined) {
-					kelompokpasien = $scope.item.kelompokpasien.kelompokpasienfix
-				}
+                if ($scope.item.kelompokpasien != undefined) {
+                  kelompokpasien = $scope.item.kelompokpasien.kelompokpasienfix
+                }
 
                 var klaimobat = "";
-				if ($scope.item.klaimobat != undefined && $scope.item.klaimobat == true) {
-					klaimobat = $scope.item.klaimobat
-				}
+                if ($scope.item.klaimobat != undefined && $scope.item.klaimobat == true) {
+                  klaimobat = $scope.item.klaimobat
+                }
 
                 var tglAwal = moment($scope.item.tglAwal).format('YYYY-MM-DD HH:mm:ss');
                 var tglAkhir = moment($scope.item.tglAkhir).format('YYYY-MM-DD HH:mm:ss');
@@ -555,8 +555,12 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
             }
 
             $scope.batal = function () {
-                console.log(objSave)
-                medifirstService.post('sysadmin/logging/save-log-batal-sts-klaim', objSave).then(function (data) {
+                // console.log(objSave)
+                medifirstService.post('sysadmin/logging/save-log-batal-sts-klaim', objSave)
+                .then(function (data) {
+                    
+                    init()
+
                 })
             }
 

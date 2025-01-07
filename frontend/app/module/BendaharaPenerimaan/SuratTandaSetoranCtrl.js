@@ -423,6 +423,7 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
                 }
 
                 medifirstService.post('sysadmin/logging/save-log-batal-sts', objSave).then(function (data) {
+                  init()
                 })
             }
 

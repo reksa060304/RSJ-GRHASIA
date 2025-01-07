@@ -360,6 +360,25 @@ class LoggingController extends ApiController
             set statusenabled = false
             where nosts = '" . $setor[$i]['nosts']. "'");
 
+            // cari sts detailv2 jika ada difalse
+            $stsdetailv2 = DB::select(DB::raw("
+                SELECT 
+                    stsd2.* 
+                FROM surattandasetorandetailv2_t stsd2 
+                WHERE 
+                    stsd2.statusenabled = TRUE
+                    AND stsd2.kdprofile = 30
+                    AND stsd2.objectstsfk = '".$setor[$i]['nosts']."'
+            "));
+
+            if(count($stsdetailv2) > 0){
+                $updatests = DB::statement("update surattandasetorandetailv2_t 
+                    set statusenabled = false
+                    where objectstsfk = '".$setor[$i]['nosts']."' 
+                
+                ");
+            }
+
             $updatestsd = DB::statement("update surattandasetorandetail_t 
             set statusenabled = false
             where objectstsfk = '" . $setor[$i]['nosts']. "'");
@@ -518,6 +537,25 @@ class LoggingController extends ApiController
         $updatersts = DB::statement("update ststorekapklaim_t 
             set statusenabled = false
             where objectstsfk = '" . $norecsts. "'");
+
+        // cari sts detailv2 jika ada difalse
+        $stsdetailv2 = DB::select(DB::raw("
+            SELECT 
+                stsd2.* 
+            FROM surattandasetorandetailv2_t stsd2 
+            WHERE 
+                stsd2.statusenabled = TRUE
+                AND stsd2.kdprofile = 30
+                AND stsd2.objectstsfk = '".$setor[0]['nosts']."'
+        "));
+
+        if(count($stsdetailv2) > 0){
+            $updatests = DB::statement("update surattandasetorandetailv2_t 
+                set statusenabled = false
+                where objectstsfk = '".$setor[0]['nosts']."' 
+            
+            ");
+        }
 
         for($i=0; $i<count($setor); $i++){
 
