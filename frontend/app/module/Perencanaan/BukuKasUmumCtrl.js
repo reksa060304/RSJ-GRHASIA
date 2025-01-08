@@ -154,6 +154,7 @@ define(['initialize'], function (initialize) {
                 if (newValue != oldValue) {
                     // console.log($scope.item.itemJenisBukti.id)
                     if($scope.item.itemJenisBukti.id == 3){
+                        // panjar
                         $scope.hidepanjar = false
                         $scope.hidepengembalianpanjar = true
                         $scope.hidespm =true
@@ -162,7 +163,26 @@ define(['initialize'], function (initialize) {
                         $scope.hidespj =true
                         $scope.hidests =true
                         $scope.hiderekanan = false
-                        medifirstService.get("perencanaan/get-panjar-bku").then(function (e) {
+                        // medifirstService.get("perencanaan/get-panjar-bku").then(function (e) {
+                        
+                        //     $scope.dataGridPanjar = new kendo.data.DataSource({
+                        //         data:  e.data.data,
+                        //         pageSize: 10,
+                        //         total: e.data.data.length,
+                        //         group: $scope.group,
+                        //         serverPaging: false,
+                        //         schema: {
+                        //             model: {
+                        //                 fields: {
+                        //                 }
+                        //             }
+                        //         },
+                        //         aggregate: [
+                        //         ]
+                        //     });
+                        // });
+
+                        medifirstService.get("anggaran/get-panjar-bkuv2").then(function (e) {
                         
                             $scope.dataGridPanjar = new kendo.data.DataSource({
                                 data:  e.data.data,
@@ -180,6 +200,7 @@ define(['initialize'], function (initialize) {
                                 ]
                             });
                         });
+
                     }else if($scope.item.itemJenisBukti.id == 7){
                         $scope.hidepengembalianpanjar = false
                         $scope.hidepanjar = true
@@ -316,6 +337,8 @@ define(['initialize'], function (initialize) {
                             });
                         });
                     } else if($scope.item.itemJenisBukti.id == 2){
+
+                        // SPJ
                         $scope.hidespm = true
                         $scope.hidepengembalianpanjar = true
                         $scope.hidepanjar =true
@@ -324,7 +347,26 @@ define(['initialize'], function (initialize) {
                         $scope.hidests =true
                         $scope.hidespj =false
                         $scope.hiderekanan = false
-                        medifirstService.get("perencanaan/get-spj-bku").then(function (e) {
+                        // medifirstService.get("perencanaan/get-spj-bku").then(function (e) {
+                        
+                        //     $scope.dataGridSPJ = new kendo.data.DataSource({
+                        //         data:  e.data.data,
+                        //         pageSize: 10,
+                        //         total: e.data.data.length,
+                        //         group: $scope.group,
+                        //         serverPaging: false,
+                        //         schema: {
+                        //             model: {
+                        //                 fields: {
+                        //                 }
+                        //             }
+                        //         },
+                        //         aggregate: [
+                        //         ]
+                        //     });
+                        // });
+
+                        medifirstService.get("anggaran/get-spj-bkuv2").then(function (e) {
                         
                             $scope.dataGridSPJ = new kendo.data.DataSource({
                                 data:  e.data.data,
@@ -1566,10 +1608,10 @@ define(['initialize'], function (initialize) {
                     },
                     {
                         
-                        "field": "jumlahpanjar",
+                        "field": "jumlahspj",
                         "title": "Total",
                         "width": "100px",
-                        "template": "<span class='style-right'>{{formatRupiah('#: jumlahpanjar #', 'Rp.')}}</span>",
+                        "template": "<span class='style-right'>{{formatRupiah('#: jumlahspj #', 'Rp.')}}</span>",
                     },
                     {
                         

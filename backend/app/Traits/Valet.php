@@ -103,15 +103,30 @@ Trait Valet {
     }
 
     protected function generateCodeBKU($objectModel, $atrribute, $asalproduk, $length=8, $prefix='',$idProfile){
+        // setting anggaran
+        $setting = \DB::table('settinganggaran_t as st')
+                ->join('pegawai_m as pg','pg.id','=','st.objectkepalabludfk')
+                ->join('tahapanggaran_m as ta','ta.id','=','st.objecttahapaktivfk')
+                ->select('st.*','pg.namalengkap', 'ta.tahap', 'ta.id as idtahap', 'pg.id as idpegawai')
+                ->where('st.kdprofile', $idProfile)
+                ->where('st.statusenabled', true)
+                ->orderBy('st.tahunanggaran')
+                ->get();
+        
         $result = $objectModel->where($atrribute, 'LIKE', $prefix.'%')
         ->where('kdprofile',$idProfile)
         ->where('statusenabled',true)
+        ->whereYear('tglbku', '=',$setting[0]->tahunanggaran)
         // ->where('objectasalprodukfk',$asalproduk)
         ->max($atrribute);
 
         //var_dump($result);
         $prefixLen = strlen($prefix);
-        $subPrefix = substr(trim($result),$prefixLen);
+        if($result !== null){
+            $subPrefix = substr(trim($result),$prefixLen);
+        }else{
+            $subPrefix = 0;
+        }
         return $prefix.(str_pad((int)$subPrefix+1, $length-$prefixLen, "0", STR_PAD_LEFT));
     }
 

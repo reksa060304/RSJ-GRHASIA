@@ -97,7 +97,27 @@ define(['initialize'], function (initialize) {
                 var awal = moment($scope.item.tglawal).format('YYYY-MM-DD');
 				var akhir = moment($scope.item.tglakhir).format('YYYY-MM-DD');
                 // var tgl = moment($scope.tanggal).format('DD/MM/YYYY');
-                medifirstService.get("perencanaan/get-spj-to-pajak?awal="+awal+"&akhir="+akhir).then(function (e) {
+                // medifirstService.get("perencanaan/get-spj-to-pajak?awal="+awal+"&akhir="+akhir).then(function (e) {
+                //         $scope.isRouteLoading = false;
+                        
+                //         $scope.dataGrid = new kendo.data.DataSource({
+                //             data: e.data.data,
+                //             group: $scope.group,
+                //             pageSize: 100,
+                //             total: e.data.data.length,
+                //             serverPaging: false,
+                //             schema: {
+                //                 model: {
+                //                     fields: {
+                //                     }
+                //                 }
+                //             },
+                //             aggregate: [
+                //             ]
+                //         });
+                //     });
+                medifirstService.get("anggaran/get-spj-to-pajakv2?awal="+awal+"&akhir="+akhir)
+                    .then(function (e) {
                         $scope.isRouteLoading = false;
                         
                         $scope.dataGrid = new kendo.data.DataSource({
@@ -124,7 +144,7 @@ define(['initialize'], function (initialize) {
                 var awal = moment($scope.item.tglawal).format('YYYY-MM-DD');
 				var akhir = moment($scope.item.tglakhir).format('YYYY-MM-DD');
                 // var tgl = moment($scope.tanggal).format('DD/MM/YYYY');
-                medifirstService.get("perencanaan/get-spj-to-pajak?awal="+awal+"&akhir="+akhir+"&key="+$scope.item.caridatapajak).then(function (e) {
+                medifirstService.get("anggaran/get-spj-to-pajakv2?awal="+awal+"&akhir="+akhir+"&key="+$scope.item.caridatapajak).then(function (e) {
                         $scope.isRouteLoading = false;
                         
                         $scope.dataGrid = new kendo.data.DataSource({
@@ -447,8 +467,8 @@ define(['initialize'], function (initialize) {
 
             $scope.TambahPPh = function () {
 
-                console.log($scope.dataGridPPh);
-                console.log($scope.dataGridPPN);
+                // console.log($scope.dataGridPPh);
+                // console.log($scope.dataGridPPN);
                 if($scope.nopajakpph != ''){
                     for(var i =0; i<$scope.dataGridPPh.options.data.length; i++){
                         if($scope.dataGridPPh.options.data[i].nopajakpph == $scope.nopajakpph){
@@ -456,7 +476,7 @@ define(['initialize'], function (initialize) {
                             $scope.dataGridPPh.options.data[i].objectjenispphfk = $scope.item.jenispajak.id
                             $scope.dataGridPPh.options.data[i].tglpph = moment($scope.item.tglPPh).format('YYYY-MM-DD')
                             $scope.dataGridPPh.options.data[i].idbillpph = $scope.item.idbillpph
-                            $scope.dataGridPPh.options.data[i].ntpnpph = $scope.item.ntpnpph
+                            $scope.dataGridPPh.options.data[i].ntpnpph = $scope.item.ntpnpph ? $scope.item.ntpnpph : null
                             $scope.dataGridPPh.options.data[i].pph = $scope.item.jumlahPPh
                             $scope.dataGridPPh.options.data[i].norecpp = $scope.norecpp
                             $scope.dataGridPPh.options.data[i].norecpep = $scope.norecpep
@@ -484,7 +504,7 @@ define(['initialize'], function (initialize) {
                         "objectjenispphfk": $scope.item.jenispajak.id,
                         "tglpph": moment($scope.item.tglPPh).format('YYYY-MM-DD'),
                         "idbillpph": $scope.item.idbillpph,
-                        "ntpnpph": $scope.item.ntpnpph,
+                        "ntpnpph": $scope.item.ntpnpph ? $scope.item.ntpnpph : null,
                         "pph": $scope.item.jumlahPPh,
                         "norecpp": '',
                         "norecpep": '',
@@ -492,8 +512,6 @@ define(['initialize'], function (initialize) {
                     }
                     console.log(objSavePPh);
                     
-                    
-    
                     $scope.dataGridPPh.options.data.push(objSavePPh)
     
                     $scope.dataGridPPh = new kendo.data.DataSource({
@@ -528,7 +546,7 @@ define(['initialize'], function (initialize) {
                         if($scope.dataGridPPN.options.data[i].nopajakppn == $scope.nopajakppn){
                             $scope.dataGridPPN.options.data[i].tglppn = moment($scope.item.tglPPn).format('YYYY-MM-DD')
                             $scope.dataGridPPN.options.data[i].idbillppn = $scope.item.idbillppn
-                            $scope.dataGridPPN.options.data[i].ntpnppn = $scope.item.ntpnppn
+                            $scope.dataGridPPN.options.data[i].ntpnppn = $scope.item.ntpnppn ? $scope.item.ntpnppn : null
                             $scope.dataGridPPN.options.data[i].ppn = $scope.item.jumlahPPn
                             $scope.dataGridPPN.options.data[i].norecpp = $scope.norecpp
                             $scope.dataGridPPN.options.data[i].norecpep = $scope.norecpep
@@ -555,7 +573,7 @@ define(['initialize'], function (initialize) {
                         "jenisppn": 'PPN',
                         "tglppn": moment($scope.item.tglPPn).format('YYYY-MM-DD'),
                         "idbillppn": $scope.item.idbillppn,
-                        "ntpnppn": $scope.item.ntpnppn,
+                        "ntpnppn": $scope.item.ntpnppn ? $scope.item.ntpnppn : null,
                         "ppn": $scope.item.jumlahPPn,
                         "norecpp": '',
                         "norecpep": '',

@@ -1988,6 +1988,9 @@ Route::group(['middleware' => 'cors', 'prefix' => 'service'], function () {
             Route::post('anggaran/simpan-lock-rba-subsubkegiatan', 'Anggaran_2024\AnggaranController@simpanLockRBASubSubKegiatan');
             Route::post('anggaran/simpan-lock-spj-subsubkegiatan', 'Anggaran_2024\AnggaranController@simpanLockSPJSubSubKegiatan');
             Route::post('anggaran/simpan-lock-angkas-subsubkegiatan', 'Anggaran_2024\AnggaranController@simpanLockAngkasSubSubKegiatan');
+            Route::get('anggaran/get-spj-bkuv2', 'Anggaran_2024\AnggaranController@getSPJBKU');
+            Route::get('anggaran/get-panjar-bkuv2', 'Anggaran_2024\AnggaranController@getPanjarBKU');
+            Route::get('anggaran/get-spj-to-pajakv2', 'Anggaran_2024\AnggaranController@getSPJToPajak');
             // End Anggaran 2024
 
 

@@ -3517,6 +3517,15 @@ class PerencanaanController extends ApiController {
         $jumlahppn = 0;
         $norecspj = $request['norec'];
 
+        $setting = \DB::table('settinganggaran_t as st')
+            ->join('pegawai_m as pg','pg.id','=','st.objectkepalabludfk')
+            ->join('tahapanggaran_m as ta','ta.id','=','st.objecttahapaktivfk')
+            ->select('st.*','pg.namalengkap', 'ta.tahap', 'ta.id as idtahap', 'pg.id as idpegawai')
+            ->where('st.kdprofile', $idProfile)
+            ->where('st.statusenabled', true)
+            ->orderBy('st.tahunanggaran')
+            ->get();
+
         try{     
             for($i = 0; $i < count($request['pph']); $i++){
                     $cek = PemungutanPajak::where('norec', '=', $request['pph'][$i]['norecpp'])->where('kdprofile', '=', 30)->where('statusenabled', '=', true)->first();
@@ -3528,13 +3537,32 @@ class PerencanaanController extends ApiController {
                         $MA->kdprofile = $idProfile;
                         $MA->statusenabled = true;
                         
+                        // nomor direset setiap ada pergantian tahun anggaran
                         $nopemungutan = DB::select(DB::raw("
                             SELECT 
                                 COALESCE(MAX(CAST(SPLIT_PART(pp.nopajak, '/', 1) as INTEGER)), 0) as max
                             FROM pemungutanpajak_t pp 
-                            WHERE pp.kdprofile = 30
+                            JOIN strukrealisasi_t sr ON sr.norec = pp.objectspjfk AND sr.statusenabled = TRUE AND sr.kdprofile = ".$idProfile."
+                            JOIN realisasidetail_t rd ON rd.strukrealisasifk = sr.norec AND rd.statusenabled = TRUE AND rd.kdprofile = ".$idProfile."
+                            JOIN keteranganbelanja_t kb ON kb.norec = rd.keteranganbelanjafk AND kb.statusenabled = TRUE AND kb.kdprofile = ".$idProfile."
+                            JOIN transaksianggaran2024_t ta ON ta.norec = kb.objecttransaksifk AND ta.statusenabled = TRUE AND ta.kdprofile = ".$idProfile."
+                            WHERE 
+                                pp.kdprofile = ".$idProfile."
+                                AND ta.tahun = '".$setting[0]->tahunanggaran."'
                         "));
-                        $noas = $nopemungutan[0]->max + 1;
+
+                        if(count($nopemungutan) > 0){
+                            $nomorPemungutan = $nopemungutan[0]->max + 1;
+                        }else{
+                            $nomorPemungutan = 0 + 1;
+                        }
+
+                        // jika digit lebih dari 4
+                        if(strlen((string)$nomorPemungutan) > 4){
+                            $noas = $nomorPenyetoran;
+                        }else{
+                            $noas = str_pad((int)$nomorPemungutan, 4, "0", STR_PAD_LEFT);
+                        }
 
                         // $noas = $this->generateCode(new PemungutanPajak, 'nopajak', 3, '', $idProfile);
                         $noa = $this->generateCode(new PemungutanPajak, 'nopajak', 30, '/PJK/1.02.2.22.0.00.01.', $idProfile);
@@ -3546,13 +3574,33 @@ class PerencanaanController extends ApiController {
                         $MP->kdprofile = $idProfile;
                         $MP->statusenabled = true;
 
+                        // nomor direset setiap ada pergantian tahun anggaran
                         $nopenyetoran = DB::select(DB::raw("
                             SELECT 
                                 COALESCE(MAX(CAST(SPLIT_PART(pep.nopajak, '/', 1) as integer)), 0) as max
-                            FROM penyetoranpajak_t pep 
-                            where pep.kdprofile = 30
+                            FROM penyetoranpajak_t pep
+                            JOIN strukrealisasi_t sr ON sr.norec = pep.objectspjfk AND sr.statusenabled = TRUE AND sr.kdprofile = ".$idProfile."
+                            JOIN realisasidetail_t rd ON rd.strukrealisasifk = sr.norec AND rd.statusenabled = TRUE AND rd.kdprofile = ".$idProfile."
+                            JOIN keteranganbelanja_t kb ON kb.norec = rd.keteranganbelanjafk AND kb.statusenabled = TRUE AND kb.kdprofile = ".$idProfile."
+                            JOIN transaksianggaran2024_t ta ON ta.norec = kb.objecttransaksifk AND ta.statusenabled = TRUE AND ta.kdprofile = ".$idProfile." 
+                            where 
+                                pep.kdprofile = 30
+                                AND ta.tahun = '".$setting[0]->tahunanggaran."'
                         "));
-                        $nops = $nopenyetoran[0]->max + 1;
+                        
+                        if(count($nopenyetoran) > 0){
+                            $nomorPenyetoran = $nopenyetoran[0]->max + 1;
+
+                        }else{
+                            $nomorPenyetoran = 0 + 1;
+                        }
+
+                        // jika digit lebih dari 4
+                        if(strlen((string)$nomorPenyetoran) > 4){
+                            $nops = $nomorPenyetoran;
+                        }else{
+                            $nops = str_pad((int)$nomorPenyetoran, 4, "0", STR_PAD_LEFT);
+                        }
 
                         // $nops = $this->generateCode(new PenyetoranPajak, 'nopajak', 3, '', $idProfile);
                         $nop = $this->generateCode(new PenyetoranPajak, 'nopajak', 33, '/STRPJK/1.02.2.22.0.00.01.', $idProfile);
@@ -3604,14 +3652,34 @@ class PerencanaanController extends ApiController {
                     $MA->kdprofile = $idProfile;
                     $MA->statusenabled = true;
                     
+                    // nomor direset setiap ada pergantian tahun anggaran
                     $nopemungutan = DB::select(DB::raw("
-                    SELECT 
-                        COALESCE(MAX(CAST(SPLIT_PART(pp.nopajak, '/', 1) as integer)), 0) as max
-                    FROM pemungutanpajak_t pp 
-                    WHERE pp.kdprofile = 30
+                        SELECT 
+                            COALESCE(MAX(CAST(SPLIT_PART(pp.nopajak, '/', 1) as integer)), 0) as max
+                        FROM pemungutanpajak_t pp 
+                        JOIN strukrealisasi_t sr ON sr.norec = pp.objectspjfk AND sr.statusenabled = TRUE AND sr.kdprofile = ".$idProfile."
+                        JOIN realisasidetail_t rd ON rd.strukrealisasifk = sr.norec AND rd.statusenabled = TRUE AND rd.kdprofile = ".$idProfile."
+                        JOIN keteranganbelanja_t kb ON kb.norec = rd.keteranganbelanjafk AND kb.statusenabled = TRUE AND kb.kdprofile = ".$idProfile."
+                        JOIN transaksianggaran2024_t ta ON ta.norec = kb.objecttransaksifk AND ta.statusenabled = TRUE AND ta.kdprofile = ".$idProfile."
+                        WHERE 
+                            pp.kdprofile = ".$idProfile."
+                            AND ta.tahun = '".$setting[0]->tahunanggaran."'
                     "));
-                    $noas = $nopemungutan[0]->max + 1;
                     
+                    if(count($nopemungutan) > 0){
+                        $nomorPemungutan = $nopemungutan[0]->max + 1;
+                    }else{
+                        $nomorPemungutan = 0 + 1;
+                    }
+
+                    // jika jumlah digit lebih dari 4
+                    if(strlen((string)$nomorPemungutan) > 4){
+                        $noas = $nomorPemungutan;
+                    }else{
+                        $noas = str_pad((int)$nomorPemungutan, 4, "0", STR_PAD_LEFT);
+
+                    }
+
                     // $noas = $this->generateCode(new PemungutanPajak, 'nopajak', 3, '', $idProfile);
                     $noa = $this->generateCode(new PemungutanPajak, 'nopajak', 30, '/PJK/1.02.2.22.0.00.01.', $idProfile);
                     $MA->nopajak = $noas.$noa.'/'.$month.'/'.$year;
@@ -3622,13 +3690,32 @@ class PerencanaanController extends ApiController {
                     $MP->kdprofile = $idProfile;
                     $MP->statusenabled = true;
 
+                    // nomor direset setiap ada pergantian tahun anggaran
                     $nopenyetoran = DB::select(DB::raw("
                         SELECT 
                             COALESCE(MAX(CAST(SPLIT_PART(pep.nopajak, '/', 1) as integer)), 0) as max
                         FROM penyetoranpajak_t pep 
-                        WHERE pep.kdprofile = 30
+                        JOIN strukrealisasi_t sr ON sr.norec = pep.objectspjfk AND sr.statusenabled = TRUE AND sr.kdprofile = ".$idProfile."
+                        JOIN realisasidetail_t rd ON rd.strukrealisasifk = sr.norec AND rd.statusenabled = TRUE AND rd.kdprofile = ".$idProfile."
+                        JOIN keteranganbelanja_t kb ON kb.norec = rd.keteranganbelanjafk AND kb.statusenabled = TRUE AND kb.kdprofile = ".$idProfile."
+                        JOIN transaksianggaran2024_t ta ON ta.norec = kb.objecttransaksifk AND ta.statusenabled = TRUE AND ta.kdprofile = ".$idProfile."
+                        WHERE 
+                            pep.kdprofile = ".$idProfile."
+                            AND ta.tahun = '".$setting[0]->tahunanggaran."'
                     "));
-                    $nops = $nopenyetoran[0]->max + 1;
+
+                    if(count($nopenyetoran) > 0){
+                        $nomorPenyetoran = $nopenyetoran[0]->max + 1;
+                    }else{
+                        $nomorPenyetoran = 0 + 1;
+                    }
+
+                    // jika jumlah digit lebih dari 4
+                    if(strlen((string)$nomorPenyetoran) > 4){
+                        $nops = $nomorPenyetoran;
+                    }else{
+                        $nops = str_pad((int)$nomorPenyetoran, 4, "0", STR_PAD_LEFT);
+                    }
 
                     // $nops = $this->generateCode(new PenyetoranPajak, 'nopajak', 3, '', $idProfile);
                     $nop = $this->generateCode(new PenyetoranPajak, 'nopajak', 33, '/STRPJK/1.02.2.22.0.00.01.', $idProfile);
@@ -4581,11 +4668,11 @@ class PerencanaanController extends ApiController {
                         for($i = 0; $i < count($request['bku']); $i++){
                             if($request['bku'][$i]['carabayar'] == 'TRANSFER BANK'){
                                 $saldofix -= $request['bku'][$i]['jumlahdibayarverif'];
-                                $saldofix += $request['bku'][$i]['jumlahpanjar'];
-                                $penerimaan += $request['bku'][$i]['jumlahpanjar'];
+                                $saldofix += $request['bku'][$i]['jumlahspj'];
+                                $penerimaan += $request['bku'][$i]['jumlahspj'];
                                 $pengeluaran += $request['bku'][$i]['jumlahdibayarverif'];
                             } else if($request['bku'][$i]['carabayar'] == 'PANJAR'){
-                                $saldofix -=$request['bku'][$i]['jumlahpanjar'];;
+                                $saldofix -=$request['bku'][$i]['jumlahspj'];;
                                 $saldofix += $request['bku'][$i]['jumlahdibayarverif'];
                                 $penerimaan += $request['bku'][$i]['jumlahdibayarverif'];
                                 // $pengeluaran += $request['bku'][$i]['jumlahpanjar'];;
