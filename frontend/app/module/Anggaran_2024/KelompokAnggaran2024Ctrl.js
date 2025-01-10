@@ -397,7 +397,7 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
             $scope.$watch('item.subsubkegiatanpanjar', function (newValue, oldValue) {
                 if($scope.item.subsubkegiatanpanjar){
                     medifirstService.get("anggaran/get-mataanggaran-bysubsubkegiatan"
-                        + "?subsubkegiatan="+$scope.item.subkegiatanpanjar.id)
+                        + "?subsubkegiatan="+$scope.item.subsubkegiatanpanjar.id)
                         .then(function (e) {
                             $scope.listMataAnggaranPanjarSPJ = e.data
                         });
