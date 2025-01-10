@@ -842,7 +842,7 @@ define(['initialize'], function (initialize) {
                         $scope.item.tglbkudetail = dataItem.tglbku
                         $scope.item.jenisbku = dataItem.asalproduk
                         $scope.norecbku = dataItem.norecbku
-                        medifirstService.get("perencanaan/get-panjar-bku?norec="+dataItem.norecbku).then(function (e) {
+                        medifirstService.get("anggaran/get-panjar-bkuv2?norec="+dataItem.norecbku).then(function (e) {
                     
                             $scope.dataGridPanjar = new kendo.data.DataSource({
                                 data:  e.data.data,
@@ -1032,7 +1032,7 @@ define(['initialize'], function (initialize) {
                     $scope.item.tglbkudetail = dataItem.tglbku
                     $scope.item.jenisbku = dataItem.asalproduk
                     $scope.norecbku = dataItem.norecbku
-                    medifirstService.get("perencanaan/get-spj-bku?norec="+dataItem.norecbku).then(function (e) {
+                    medifirstService.get("anggaran/get-spj-bkuv2?norec="+dataItem.norecbku).then(function (e) {
                     
                         $scope.dataGridSPJ = new kendo.data.DataSource({
                             data:  e.data.data,

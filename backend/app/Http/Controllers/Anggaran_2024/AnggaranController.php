@@ -3240,6 +3240,13 @@ class AnggaranController extends ApiController {
             $status = "and sr.status = 'Sudah Diverifikasi'";
         }
 
+        $norec = '';
+        if(isset($request['norec']) && $request['norec'] != '' && $request['norec'] != "undefined"){
+            $norec = " and sr.objectbkufk = '".$request['norec']."'";
+        } else{
+            $norec = " and sr.objectbkufk is null ";
+        }
+
         $data = DB::select(DB::raw("
 
             SELECT
@@ -3283,7 +3290,7 @@ class AnggaranController extends ApiController {
                 sr.statusenabled = TRUE
                 AND sr.kdprofile = ".$idProfile."
                 AND ta.tahun = '".$setting[0]->tahunanggaran."'
-                AND sr.objectbkufk IS NULL
+                $norec
             GROUP BY
                 sr.norec,
                 cbs.carabayar,
@@ -3314,6 +3321,13 @@ class AnggaranController extends ApiController {
         $kdProfile = $this->getDataKdProfile($request);
         $idProfile = (int) $kdProfile;
 
+        $norec = '';
+        if(isset($request['norec']) && $request['norec'] != '' && $request['norec'] != "undefined"){
+            $norec = " and pj.objectbkufk = '".$request['norec']."'";
+        } else{
+            $norec = " and pj.objectbkufk is null ";
+        }
+
         $setting = \DB::table('settinganggaran_t as st')
             ->join('pegawai_m as pg','pg.id','=','st.objectkepalabludfk')
             ->join('tahapanggaran_m as ta','ta.id','=','st.objecttahapaktivfk')
@@ -3340,6 +3354,7 @@ class AnggaranController extends ApiController {
             where pj.kdprofile = 30
                 and pj.statusenabled = true
                 and ta.tahun = '".$setting[0]->tahunanggaran."'
+                $norec
             GROUP BY
                 pj.norec, ma.id, subkeg.id, subsubkeg.id
             ORDER BY cast(split_part(nopanjar, '/', 1)  as integer) desc
