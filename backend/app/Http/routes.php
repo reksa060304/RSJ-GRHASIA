@@ -1993,6 +1993,11 @@ Route::group(['middleware' => 'cors', 'prefix' => 'service'], function () {
             Route::get('anggaran/get-spj-to-pajakv2', 'Anggaran_2024\AnggaranController@getSPJToPajak');
             // End Anggaran 2024
 
+            // cetak laporan anggaran 2024
+            Route::get('report/get-cetak-rba-detailv2', 'Report\ReportController@cetakRBADetailV2');
+            Route::get('report/get-cetak-rba-detail-sebelum-sesudahv2', 'Report\ReportController@cetakRBADetailSebelumSesudahV2');
+            // end cetak laporan anggaran 2024
+
 
         // });
         // Route::group(['prefix' => 'piutang'], function () {
