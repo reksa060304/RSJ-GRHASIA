@@ -265,11 +265,11 @@
                                                     <input kendo-combo-box k-ng-model="item.kegiatandetail"
                                                     k-data-text-field="'keterangan'" k-data-value-field="'id'"
                                                     k-filter="'contains'" k-auto-bind="false" 
-                                                    k-data-source="listKegiatan" k-on-change='changeKegiatan()'/>
+                                                    k-data-source="listKegiatanV2" k-on-change='changeKegiatanRBADetail()'/>
                                                 </div>
                                             </div>
                                         </div>
-                                        <div class="grid_2">
+                                        <!-- <div class="grid_2">
                                             <div class="grid_12">
                                                 <label c-label item="item" c-label-text="Sub Sub Kegiatan"></label>
                                             </div>
@@ -277,6 +277,19 @@
                                                 <div class="grid_12">
                                                     <input kendo-combo-box k-ng-model="item.subkegiatandetail"
                                                     k-data-text-field="'text'" k-data-value-field="'id'"
+                                                    k-filter="'contains'" k-auto-bind="false" 
+                                                    k-data-source="listSubKegiatan"/>
+                                                </div>
+                                            </div>
+                                        </div> -->
+                                        <div class="grid_2">
+                                            <div class="grid_12">
+                                                <label c-label item="item" c-label-text="Sub Sub Kegiatan"></label>
+                                            </div>
+                                            <div class="grid_12">
+                                                <div class="grid_12">
+                                                    <input kendo-combo-box k-ng-model="item.subkegiatandetail"
+                                                    k-data-text-field="'keterangan'" k-data-value-field="'id'"
                                                     k-filter="'contains'" k-auto-bind="false" 
                                                     k-data-source="listSubKegiatan"/>
                                                 </div>

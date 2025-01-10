@@ -89,12 +89,28 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
                 $scope.listTahap = e.data.tahap
                 $scope.listKegiatan = e.data.kegiatancombo
                 $scope.listAsalProduk = e.data.asalproduk
+
+                medifirstService.get("anggaran/get-combo-anggaran").then(function (e) {
+                    $scope.listTahap = e.data.tahap
+                    $scope.listKegiatanV2 = e.data.divsubsubKg
+                    $scope.listAsalProduk = e.data.asalproduk
+                });
             });
 
             $scope.changeKegiatan = function () {
                 medifirstService.get("perencanaan/get-detail-sub-kegiatan?kegiatan=" + $scope.item.kegiatandetail.id + "&tahap=" + $scope.item.tahapdetail.id + "&tahun=" + moment($scope.item.tahundetail).format('YYYY') + "&idpegawai=" + idpegawai).then(function (e) {
                     $scope.listSubKegiatan = e.data.data
                 });
+            }
+
+            $scope.changeKegiatanRBADetail = function () {
+                medifirstService.get("anggaran/get-subsubkegiatan" 
+                    +"?subkegiatan=" + $scope.item.kegiatandetail.id 
+                    + "&tahap=" + $scope.item.tahapdetail.id 
+                    + "&tahun=" + moment($scope.item.tahundetail).format('YYYY') 
+                    + "&idpegawai=" + idpegawai).then(function (e) {
+                        $scope.listSubKegiatan = e.data
+                    });
             }
 
             $scope.changeTahap = function () {
@@ -367,15 +383,7 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
 
                 if ($scope.item.terhadapdetail != undefined) {
                     
-                    window.open(baseTransaksi + "report/cetak-rba-detail-sebelum-sesudah-rev" 
-                        + "?tahun=" + moment(tahun).format('YYYY') 
-                        + "&subsubkegiatan=" + subsubkegiatan 
-                        + "&tahap=" + tahap 
-                        + "&terhadap=" + terhadap 
-                        + "&tglcetak=" + moment($scope.item.tglCetak4).format('YYYY-MM-DD HH:mm') 
-                        +kode, '_blank');
-
-                    // window.open(baseTransaksi + "report/get-cetak-rba-detail-sebelum-sesudahv2" 
+                    // window.open(baseTransaksi + "report/cetak-rba-detail-sebelum-sesudah-rev" 
                     //     + "?tahun=" + moment(tahun).format('YYYY') 
                     //     + "&subsubkegiatan=" + subsubkegiatan 
                     //     + "&tahap=" + tahap 
@@ -383,13 +391,22 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
                     //     + "&tglcetak=" + moment($scope.item.tglCetak4).format('YYYY-MM-DD HH:mm') 
                     //     +kode, '_blank');
 
+                    window.open(baseTransaksi + "report/get-cetak-rba-detail-sebelum-sesudahv2" 
+                        + "?tahun=" + moment(tahun).format('YYYY') 
+                        + "&subsubkegiatan=" + subsubkegiatan 
+                        + "&tahap=" + tahap 
+                        + "&terhadap=" + terhadap 
+                        + "&tglcetak=" + moment($scope.item.tglCetak4).format('YYYY-MM-DD HH:mm') 
+                        +kode, '_blank');
+
                 } else if($scope.item.terhadapdetail == undefined){
-                    window.open(baseTransaksi + "report/get-cetak-rba-detail?tahun=" +moment(tahun).format('YYYY')+ "&subsubkegiatan=" + subsubkegiatan + "&tahap="+tahap+"&tglcetak="+moment($scope.item.tglCetak4).format('YYYY-MM-DD HH:mm'), '_blank');
-                    // window.open(baseTransaksi + "report/get-cetak-rba-detailv2" 
-                    //     + "?tahun="+moment(tahun).format('YYYY') 
-                    //     + "&subsubkegiatan="+subsubkegiatan 
-                    //     + "&tahap="+tahap
-                    //     + "&tglcetak="+moment($scope.item.tglCetak4).format('YYYY-MM-DD HH:mm'), '_blank');
+                    // window.open(baseTransaksi + "report/get-cetak-rba-detail?tahun=" +moment(tahun).format('YYYY')+ "&subsubkegiatan=" + subsubkegiatan + "&tahap="+tahap+"&tglcetak="+moment($scope.item.tglCetak4).format('YYYY-MM-DD HH:mm'), '_blank');
+                    
+                    window.open(baseTransaksi + "report/get-cetak-rba-detailv2" 
+                        + "?tahun="+moment(tahun).format('YYYY') 
+                        + "&subsubkegiatan="+subsubkegiatan 
+                        + "&tahap="+tahap
+                        + "&tglcetak="+moment($scope.item.tglCetak4).format('YYYY-MM-DD HH:mm'), '_blank');
                 }
                 
             }
