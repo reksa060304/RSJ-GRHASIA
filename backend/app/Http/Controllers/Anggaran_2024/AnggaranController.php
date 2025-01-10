@@ -1539,6 +1539,20 @@ class AnggaranController extends ApiController {
             $pptk = "and ta.objectpptkfk = ".$cariPegawai->id;
         }
 
+        $tahun = '';
+        if(isset($request['tahun']) && $request['tahun'] !== '' && $request['tahun'] !== "undefined"){
+            $tahun = $request['tahun'];
+        }else{
+            $tahun = $setting[0]->tahunanggaran;
+        }
+
+        $tahap = '';
+        if(isset($request['tahap']) && $request['tahap'] !== '' && $request['tahap'] !== "undefined"){
+            $tahap = $request['tahap'];
+        }else{
+            $tahap = $setting[0]->objecttahapaktivfk;
+        }
+
         $data = DB::select(DB::raw("
 
             SELECT
@@ -1553,8 +1567,8 @@ class AnggaranController extends ApiController {
             WHERE
                 ka.statusenabled = TRUE
                 AND ka.kdprofile = ".$idProfile."
-                AND ta.tahun = '".$setting[0]->tahunanggaran."'
-                AND ta.objecttahapfk = ".$setting[0]->objecttahapaktivfk."
+                AND ta.tahun = '".$tahun."'
+                AND ta.objecttahapfk = ".$tahap."
                 $subkegiatan
                 $pptk
             GROUP BY
