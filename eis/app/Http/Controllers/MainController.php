@@ -893,6 +893,9 @@ class MainController extends ApiController
                     $p3k = 0;
                     $p3klakilaki = 0;
                     $p3kperempuan = 0;
+                    // $p3kdiy = 0;
+                    // $p3kdiylakilaki = 0;
+                    // $p3kdiyperempuan = 0;
                     $blud = 0;
                     $bludlakilaki = 0;
                     $bludperempuan = 0;
@@ -930,7 +933,10 @@ class MainController extends ApiController
                             $blud =$blud + (float)$s->total;
                         }else if($s->kategorypegawai == 'OUTSOURCING'){
                             $outsourcing =$outsourcing + (float)$s->total;
-                        }
+                        } 
+                        // else if ($s->kategorypegawai == 'PPPK DIY'){
+                        //     $p3kdiy = $p3kdiy + (float)$s->total;
+                        // }
                     }
                     foreach ($res['pegawai']['kategoripegawai'] as $s){
                         if($s->kategorypegawai == 'PNS' && $s->jeniskelamin == 'Laki-Laki'){
@@ -957,6 +963,10 @@ class MainController extends ApiController
                         }else if($s->kategorypegawai == 'OUTSOURCING' && $s->jeniskelamin == 'Perempuan'){
                             $outsourcingperempuan = $outsourcingperempuan + (float)$s->total;
                         } 
+                        // else if($s->kategorypegawai == 'PPPK DIY' && $s->jeniskelamin == 'Laki-Laki'){
+                        //     $p3kdiylakilaki = $p3kdiylakilaki + (float)$s->total;
+                        // } else if($s->kategorypegawai == 'PPPK DIY' && $s->jeniskelamin == 'Perempuan'){
+                        //     $p3kdiyperempuan = $p3kdiyperempuan + (float)$s->total;
                     }
                     foreach ($res['pegawai']['kategoripegawai'] as $s){
                         if($s->kategorypegawai == 'CPNS' && $s->jeniskelamin == 'Laki-Laki'){
@@ -1583,7 +1593,7 @@ class MainController extends ApiController
             left join jabatan_m as jb on jb.id = pg.objectjabatanfungsionalfk
             left join jabatan_m as jb1 on jb1.id = pg.objectjabatanstrukturalfk
             where pg.kdprofile = 30 and pg.statusenabled=true
-            and jp.kategorypegawai = 'PNS'"));
+            and jp.kategorypegawai = 'PNS' "));
         }else if($r['jenis'] =='PNS Perempuan'){
             $data =DB::select(DB::raw("select pg.nip, jp.kategorypegawai,pg.namalengkap, jk.jeniskelamin,
             gol.namaexternal || ', ' || gol.NAME AS golongan, jb.namajabatan as jbfungsional,
@@ -6514,19 +6524,49 @@ count(case when x.departemen = 'rahab_medik' then 1 end) AS rehab_medik
             and br.pasiendaftarfk is null
         "));
    $data = array_merge($data,$data2);
-        $dataRanap = DB::select(DB::raw("select count(x.noregistrasi) as jumlah
-            from ( select  pd.noregistrasi,pd.tglregistrasi
-            from pasiendaftar_t as pd
-            inner join ruangan_m as ru on ru.id = pd.objectruanganlastfk
-            where ru.objectdepartemenfk = $idDepRanap
-            and pd.statusenabled = true
-            and pd.kdprofile=$kdProfile
-            and ( (  pd.tglregistrasi < '$tglAwal'
-                AND pd.tglpulang >= '$tglAkhir'
-             ) or pd.tglpulang is null)
+        // $dataRanap = DB::select(DB::raw("select count(x.noregistrasi) as jumlah
+        //     from ( select  pd.noregistrasi,pd.tglregistrasi
+        //     from pasiendaftar_t as pd
+        //     inner join ruangan_m as ru on ru.id = pd.objectruanganlastfk
+        //     where ru.objectdepartemenfk = $idDepRanap
+        //     and pd.statusenabled = true
+        //     and pd.kdprofile=$kdProfile
+        //     and ( (  pd.tglregistrasi < '$tglAwal'
+        //         AND pd.tglpulang >= '$tglAkhir'
+        //      ) or pd.tglpulang is null)
 
-         ) as x
-            "));
+        //  ) as x
+        //     "));
+
+        $dataRanap = DB::select(DB::raw("SELECT 
+        dp.id,
+        dp.namadepartemen, 
+        count(pd.norec) as jumlah,
+        dp.qdepartemen
+        FROM departemen_m dp
+        JOIN ruangan_m as ru on ru.objectdepartemenfk = dp.id
+        LEFT JOIN (
+            SELECT 
+                antrianpasiendiperiksa_t.norec,
+                antrianpasiendiperiksa_t.objectruanganfk, 
+                antrianpasiendiperiksa_t.noregistrasifk, 
+                pasiendaftar_t.norec as norec_pd 
+            FROM antrianpasiendiperiksa_t 
+            INNER JOIN pasiendaftar_t on pasiendaftar_t.norec = antrianpasiendiperiksa_t.noregistrasifk
+            WHERE antrianpasiendiperiksa_t.tglregistrasi::date BETWEEN '$tglAwal' and '$tglAkhir'
+                AND antrianpasiendiperiksa_t.statusenabled = true
+                AND antrianpasiendiperiksa_t.kdprofile = $kdProfile
+                AND pasiendaftar_t.statusenabled = true 
+                AND pasiendaftar_t.kdprofile = $kdProfile
+        ) pd ON (ru.id = pd.objectruanganfk)
+        LEFT JOIN batalregistrasi_t br on pd.norec_pd = br.pasiendaftarfk
+        WHERE dp.id in ( $idDepRanap )
+            AND dp.statusenabled = true
+            AND dp.kdprofile = $kdProfile
+            AND br.pasiendaftarfk is null
+        GROUP BY dp.id, dp.namadepartemen, dp.qdepartemen
+        ORDER BY dp.qdepartemen asc"));
+
         $masihDirawat = 0;
         if (count($dataRanap) > 0) {
             $masihDirawat = $dataRanap[0]->jumlah;
