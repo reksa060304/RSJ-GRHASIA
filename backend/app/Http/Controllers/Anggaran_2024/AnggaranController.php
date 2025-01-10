@@ -2614,7 +2614,12 @@ class AnggaranController extends ApiController {
 
         $pegawai = '';
         if(isset($request['idpegawai']) && $request['idpegawai']!= '' && $request['idpegawai'] != "undefined"){
-            $pegawai = "and ta.objectpptkfk = $request[idpegawai]";
+            $pegawai = "and ta.objectpptkfk = ".$request['idpegawai'];
+        }
+
+        $asalproduk = '';
+        if(isset($request['asalproduk']) && $request['asalproduk']!= '' && $request['asalproduk'] != "undefined"){
+            $asalproduk = "and kb.objectasalprodukfk = " .$request['asalproduk'];
         }
 
         $subtotalperrekening = DB::select(DB::raw("
@@ -2639,6 +2644,7 @@ class AnggaranController extends ApiController {
                 $subkegiatan
                 $tahap
                 $pegawai
+                $asalproduk
             GROUP BY
                 ma.id,
                 ka.id
@@ -2715,6 +2721,7 @@ class AnggaranController extends ApiController {
                 $subkegiatan
                 $tahap
                 $pegawai
+                $asalproduk
             GROUP BY
                 ma.id,
                 ka.id
@@ -2810,6 +2817,7 @@ class AnggaranController extends ApiController {
                 $subkegiatan
                 $tahap
                 $pegawai
+                $asalproduk
             GROUP BY
                 kb.norec,
                 ka.id,

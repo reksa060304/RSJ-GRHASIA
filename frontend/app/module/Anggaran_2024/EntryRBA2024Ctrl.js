@@ -1624,12 +1624,19 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
                     subsubkegiatan = "&subsubkegiatan=" + $scope.item.combosubsubkegiatan.id
                 }
 
+                // jika ada sumberdana maka filter sumberdana
+                let asalProdukAngkas = null
+                if($scope.item.searchAsalProdukAngkas !== undefined && $scope.item.searchAsalProdukAngkas !== null){
+                    asalProdukAngkas = "&asalproduk=" + $scope.item.searchAsalProdukAngkas.id
+                }
+
                 medifirstService.get("anggaran/get-data-angkas" 
                     + "?tahun=" + moment($scope.item.tahunkas).format('YYYY') 
                     + "&tahap=" + $scope.item.searchtahapAngkas.id 
                     + pegawai
                     + subkegiatan 
-                    + subsubkegiatan)
+                    + subsubkegiatan
+                    + asalProdukAngkas)
                     .then(function (e) {
 
                         $scope.dataSourceKeteranganBelanja = new kendo.data.DataSource({

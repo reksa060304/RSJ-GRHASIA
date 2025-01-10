@@ -427,7 +427,7 @@
 											k-data-source="listSubSubKegiatanCombo" />
 									</div>
 								</div>
-								<div class="grid_2">
+								<div class="grid_1">
 									<div class="grid_12">
 										<label c-label item="item">Tahap</label>
 									</div>
@@ -437,7 +437,16 @@
 											k-filter="'contains'" k-auto-bind="false" k-data-source="listTahap" ng-disabled="disidpegawai"/>
 									</div>
 								</div>
-								
+                                <div class="grid_1">
+									<div class="grid_12">
+										<label c-label item="item">Sumber dana</label>
+									</div>
+									<div class="grid_12">
+										<input style="width: 100%;" kendo-combo-box k-ng-model="item.searchAsalProdukAngkas"
+											k-data-text-field="'asalproduk'" k-data-value-field="'id'"
+											k-filter="'contains'" k-auto-bind="false" k-data-source="listAsalProduk" ng-disabled="disidpegawai"/>
+									</div>
+								</div>
 								<div class="grid_1">
 									<div class="grid_12">
 										<label c-label item="item" c-label-text="Tahun"></label>
