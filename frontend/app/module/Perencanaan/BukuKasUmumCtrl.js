@@ -570,7 +570,7 @@ define(['initialize'], function (initialize) {
                         $scope.item.pihakKetiga.namarekanan
                     }
                 }
-                console.log($scope.selectedData2)
+                // console.log($scope.selectedData2)
 			}
 
             $scope.onClickSatuJasaGiro = function (e, param) {
@@ -1608,10 +1608,10 @@ define(['initialize'], function (initialize) {
                     },
                     {
                         
-                        "field": "jumlahspj",
+                        "field": "jumlahpanjar",
                         "title": "Total",
                         "width": "100px",
-                        "template": "<span class='style-right'>{{formatRupiah('#: jumlahspj #', 'Rp.')}}</span>",
+                        "template": "<span class='style-right'>{{formatRupiah('#: jumlahpanjar #', 'Rp.')}}</span>",
                     },
                     {
                         

@@ -4380,16 +4380,61 @@ class PerencanaanController extends ApiController {
                         $MA->statusenabled = true;
 
                         // $noa = $this->generateCodeBKU(new BKU, 'nobku', $request['asalproduk'], 5, '', $idProfile);
-                        $runningNumber = RunningNumber::where('id',13542)->first();
-                        $nomor = $runningNumber->nomer_terbaru +1;
-                        $nos = str_pad((int)$nomor, 5, "0", STR_PAD_LEFT);
+                        // $runningNumber = RunningNumber::where('id',13542)->first();
+                        // $nomor = $runningNumber->nomer_terbaru +1;
+                        // $nos = str_pad((int)$nomor, 5, "0", STR_PAD_LEFT);
 
-                        RunningNumber::where('id', 13542)
-                        ->update(
-                            [
-                                'nomer_terbaru' => $nos
-                            ]
-                        );
+                        // RunningNumber::where('id', 13542)
+                        // ->update(
+                        //     [
+                        //         'nomer_terbaru' => $nos
+                        //     ]
+                        // );
+
+                        $setting = \DB::table('settinganggaran_t as st')
+                            ->join('pegawai_m as pg','pg.id','=','st.objectkepalabludfk')
+                            ->join('tahapanggaran_m as ta','ta.id','=','st.objecttahapaktivfk')
+                            ->select('st.*','pg.namalengkap', 'ta.tahap', 'ta.id as idtahap', 'pg.id as idpegawai')
+                            ->where('st.kdprofile', $idProfile)
+                            ->where('st.statusenabled', true)
+                            ->orderBy('st.tahunanggaran')
+                            ->get();
+
+                        $cekBKU = DB::select(DB::raw("
+                            SELECT
+                                bku.*
+                            FROM bukukasumum_t bku 
+                            WHERE
+                                bku.statusenabled = TRUE
+                                AND bku.kdprofile = 30
+                                AND EXTRACT(YEAR FROM tglbku) = '".$setting[0]->tahunanggaran."'
+                        "));
+
+                        $nos = 0;
+                        if(count($cekBKU) <= 0){
+
+                            $nomor = 1;
+                            $nos = str_pad((int)$nomor, 5, "0", STR_PAD_LEFT);
+
+                            RunningNumber::where('id', 13542)
+                                ->update(
+                                    [
+                                        'nomer_terbaru' => $nos
+                                    ]
+                                );
+                        }else{
+                            // $nomor = $runningNumber->nomer_terbaru +1;
+                            // $nos = str_pad((int)$nomor, 5, "0", STR_PAD_LEFT);
+                            $nomor = count($cekBKU) + 1;
+                            $nos = str_pad((int)$nomor, 5, "0", STR_PAD_LEFT);
+
+                            RunningNumber::where('id', 13542)
+                                ->update(
+                                    [
+                                        'nomer_terbaru' => $nos
+                                    ]
+                                );
+                        }
 
                         $MA->nobku = $nos.'-B02';
                         $MA->objectjenisbuktifk = $request['jenisbukti'];
@@ -4668,11 +4713,11 @@ class PerencanaanController extends ApiController {
                         for($i = 0; $i < count($request['bku']); $i++){
                             if($request['bku'][$i]['carabayar'] == 'TRANSFER BANK'){
                                 $saldofix -= $request['bku'][$i]['jumlahdibayarverif'];
-                                $saldofix += $request['bku'][$i]['jumlahspj'];
-                                $penerimaan += $request['bku'][$i]['jumlahspj'];
+                                $saldofix += $request['bku'][$i]['jumlahpanjar'];
+                                $penerimaan += $request['bku'][$i]['jumlahpanjar'];
                                 $pengeluaran += $request['bku'][$i]['jumlahdibayarverif'];
                             } else if($request['bku'][$i]['carabayar'] == 'PANJAR'){
-                                $saldofix -=$request['bku'][$i]['jumlahspj'];;
+                                $saldofix -=$request['bku'][$i]['jumlahpanjar'];;
                                 $saldofix += $request['bku'][$i]['jumlahdibayarverif'];
                                 $penerimaan += $request['bku'][$i]['jumlahdibayarverif'];
                                 // $pengeluaran += $request['bku'][$i]['jumlahpanjar'];;
