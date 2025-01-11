@@ -893,9 +893,9 @@ class MainController extends ApiController
                     $p3k = 0;
                     $p3klakilaki = 0;
                     $p3kperempuan = 0;
-                    // $p3kdiy = 0;
-                    // $p3kdiylakilaki = 0;
-                    // $p3kdiyperempuan = 0;
+                    $p3kdiy = 0;
+                    $p3kdiylakilaki = 0;
+                    $p3kdiyperempuan = 0;
                     $blud = 0;
                     $bludlakilaki = 0;
                     $bludperempuan = 0;
@@ -934,9 +934,9 @@ class MainController extends ApiController
                         }else if($s->kategorypegawai == 'OUTSOURCING'){
                             $outsourcing =$outsourcing + (float)$s->total;
                         } 
-                        // else if ($s->kategorypegawai == 'PPPK DIY'){
-                        //     $p3kdiy = $p3kdiy + (float)$s->total;
-                        // }
+                        else if ($s->kategorypegawai == 'PPPK DIY'){
+                            $p3kdiy = $p3kdiy + (float)$s->total;
+                        }
                     }
                     foreach ($res['pegawai']['kategoripegawai'] as $s){
                         if($s->kategorypegawai == 'PNS' && $s->jeniskelamin == 'Laki-Laki'){
@@ -962,11 +962,11 @@ class MainController extends ApiController
                             $outsourcinglakilaki = $outsourcinglakilaki + (float)$s->total;
                         }else if($s->kategorypegawai == 'OUTSOURCING' && $s->jeniskelamin == 'Perempuan'){
                             $outsourcingperempuan = $outsourcingperempuan + (float)$s->total;
-                        } 
-                        // else if($s->kategorypegawai == 'PPPK DIY' && $s->jeniskelamin == 'Laki-Laki'){
-                        //     $p3kdiylakilaki = $p3kdiylakilaki + (float)$s->total;
-                        // } else if($s->kategorypegawai == 'PPPK DIY' && $s->jeniskelamin == 'Perempuan'){
-                        //     $p3kdiyperempuan = $p3kdiyperempuan + (float)$s->total;
+                        } else if($s->kategorypegawai == 'PPPK DIY' && $s->jeniskelamin == 'Laki-Laki'){
+                            $p3kdiylakilaki = $p3kdiylakilaki + (float)$s->total;
+                        } else if($s->kategorypegawai == 'PPPK DIY' && $s->jeniskelamin == 'Perempuan'){
+                            $p3kdiyperempuan = $p3kdiyperempuan + (float)$s->total;
+                        }
                     }
                     foreach ($res['pegawai']['kategoripegawai'] as $s){
                         if($s->kategorypegawai == 'CPNS' && $s->jeniskelamin == 'Laki-Laki'){
@@ -994,6 +994,7 @@ class MainController extends ApiController
                     $res['pegawai']['outsourcinglakilaki'] = $outsourcinglakilaki;
                     $res['pegawai']['outsourcingperempuan'] = $outsourcingperempuan;
                     $res['pegawai']['p3k'] = $p3k;
+                    $res['pegawai']['p3kdiy'] = $p3kdiy;
                     $res['pegawai']['jfl'] = $jfl;
                     $res['pegawai']['jfp'] = $jfp;
                     $res['pegawai']['cpnsl'] = $cpnsl;
@@ -1002,6 +1003,8 @@ class MainController extends ApiController
                     $res['pegawai']['perempuanAktif'] = $perempuanAktif;
                     $res['pegawai']['p3klakilaki'] = $p3klakilaki;
                     $res['pegawai']['p3kperempuan'] = $p3kperempuan;
+                    $res['pegawai']['p3kdiylakilaki'] = $p3kdiylakilaki;
+                    $res['pegawai']['p3kdiyperempuan'] = $p3kdiyperempuan;
                     $res['pegawai']['blud'] = $blud;
                     $res['pegawai']['bludlakilaki'] = $bludlakilaki;
                     $res['pegawai']['bludperempuan'] = $bludperempuan;
@@ -1821,6 +1824,44 @@ class MainController extends ApiController
             left join jabatan_m as jb1 on jb1.id = pg.objectjabatanstrukturalfk
             where pg.kdprofile = 30 and pg.statusenabled=true
             and jp.kategorypegawai = 'CPNS'
+            and jk.id = 1"));
+        }else if($r['jenis'] =='P3K DIY'){
+            $data =DB::select(DB::raw("select pg.nip, jp.kategorypegawai,pg.namalengkap, jk.jeniskelamin,
+            gol.namaexternal || ', ' || gol.NAME AS golongan, jb.namajabatan as jbfungsional,
+            jb1.namajabatan as jbstruktural
+                    from pegawai_m  as pg
+            left JOIN kategorypegawai_m as jp on jp.id =pg.kategorypegawai
+            left JOIN jeniskelamin_m as jk on jk.id =pg.objectjeniskelaminfk
+            LEFT JOIN sdm_golongan_m gol ON gol.ID = pg.objectgolonganfk
+            left join jabatan_m as jb on jb.id = pg.objectjabatanfungsionalfk
+            left join jabatan_m as jb1 on jb1.id = pg.objectjabatanstrukturalfk
+            where pg.kdprofile = 30 and pg.statusenabled=true
+            and jp.kategorypegawai = 'PPPK DIY'"));
+        }else if($r['jenis'] =='P3K DIY Perempuan'){
+            $data =DB::select(DB::raw("select pg.nip, jp.kategorypegawai,pg.namalengkap, jk.jeniskelamin,
+            gol.namaexternal || ', ' || gol.NAME AS golongan, jb.namajabatan as jbfungsional,
+            jb1.namajabatan as jbstruktural
+                    from pegawai_m  as pg
+            left JOIN kategorypegawai_m as jp on jp.id =pg.kategorypegawai
+            left JOIN jeniskelamin_m as jk on jk.id =pg.objectjeniskelaminfk
+            LEFT JOIN sdm_golongan_m gol ON gol.ID = pg.objectgolonganfk
+            left join jabatan_m as jb on jb.id = pg.objectjabatanfungsionalfk
+            left join jabatan_m as jb1 on jb1.id = pg.objectjabatanstrukturalfk
+            where pg.kdprofile = 30 and pg.statusenabled=true
+            and jp.kategorypegawai = 'PPPK DIY'
+               and jk.id = 2"));
+        }else if($r['jenis'] =='P3K DIY Laki-Laki'){
+            $data =DB::select(DB::raw("select pg.nip, jp.kategorypegawai,pg.namalengkap, jk.jeniskelamin,
+            gol.namaexternal || ', ' || gol.NAME AS golongan, jb.namajabatan as jbfungsional,
+            jb1.namajabatan as jbstruktural
+                    from pegawai_m  as pg
+            left JOIN kategorypegawai_m as jp on jp.id =pg.kategorypegawai
+            left JOIN jeniskelamin_m as jk on jk.id =pg.objectjeniskelaminfk
+            LEFT JOIN sdm_golongan_m gol ON gol.ID = pg.objectgolonganfk
+            left join jabatan_m as jb on jb.id = pg.objectjabatanfungsionalfk
+            left join jabatan_m as jb1 on jb1.id = pg.objectjabatanstrukturalfk
+            where pg.kdprofile = 30 and pg.statusenabled=true
+            and jp.kategorypegawai = 'PPPK DIY'
             and jk.id = 1"));
         }
         return view('module.shared.detail-pegawai-pns',compact('data'));
