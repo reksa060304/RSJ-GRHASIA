@@ -176,23 +176,23 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
                             "width": "50px",
                             "template": "<span class='style-center'>#: nosbmlastfk != null || nosbklastfk != null  ? 'Lunas': 'Belum Bayar' #</span>"
                         },
-                        {
-                            "field": "biayapenelitian",
-                            "title": "Biaya",
-                            "width": "20%",
-                            "template": "<span class='style-right'>{{formatRupiah('#: biayapenelitian #', 'Rp. ')}}</span>",
-                            aggregates: ['sum'],
-                            footerTemplate: "<span class='style-right'>{{formatRupiah('#: data.biayapenelitian.sum #', 'Rp. ')}}</span>",
-                        },
-                        {
-                            'command': [{
-                                    text: "Invoice",
-                                    click: cetakInvoice,
-                                },
+                        // {
+                        //     "field": "biayapenelitian",
+                        //     "title": "Biaya",
+                        //     "width": "20%",
+                        //     "template": "<span class='style-right'>{{formatRupiah('#: biayapenelitian #', 'Rp. ')}}</span>",
+                        //     aggregates: ['sum'],
+                        //     footerTemplate: "<span class='style-right'>{{formatRupiah('#: data.biayapenelitian.sum #', 'Rp. ')}}</span>",
+                        // },
+                        // {
+                        //     'command': [{
+                        //             text: "Invoice",
+                        //             click: cetakInvoice,
+                        //         },
 
-                            ],
-                            "width": 100
-                        },
+                        //     ],
+                        //     "width": 100
+                        // },
                         
                     ]
                 }
