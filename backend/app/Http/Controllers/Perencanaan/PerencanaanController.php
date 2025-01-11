@@ -7617,6 +7617,16 @@ order by  split_part(kode, '.', 1)asc, split_part(kode, '.', 2)asc,  split_part(
             $qkey = " and (bku.uraianbku ilike '%".$request['key']."%' or jb.jenisbukti ilike '%".$request['key']."%' or bku.penerimaan::varchar ilike '%".$request['key']."%' or bku.pengeluaran::varchar ilike '%".$request['key']."%')";
         }
         
+        // untuk filter hanya dari tahun anggaran
+        $setting = \DB::table('settinganggaran_t as st')
+            ->join('pegawai_m as pg','pg.id','=','st.objectkepalabludfk')
+            ->join('tahapanggaran_m as ta','ta.id','=','st.objecttahapaktivfk')
+            ->select('st.*','pg.namalengkap', 'ta.tahap', 'ta.id as idtahap', 'pg.id as idpegawai')
+            ->where('st.kdprofile', $idProfile)
+            ->where('st.statusenabled', true)
+            ->orderBy('st.tahunanggaran')
+            ->get();
+
         // select ap.id idasalproduk, ap.asalproduk, (right(left(bku.nobku, -4), 2))::int4 nourut, rm.namarekanan, bku.norec norecbku, bku.nobku, jb.jenisbukti, jb.id, bku.objectmataanggaranfk kodemataanggaran, bku.tglbku, bku.uraianbku, bku.penerimaan, bku.pengeluaran, bku.saldo
         $data = DB::select(DB::raw("
             SELECT
@@ -7646,6 +7656,7 @@ order by  split_part(kode, '.', 1)asc, split_part(kode, '.', 2)asc,  split_part(
                     $asalproduk
                     $qkey
             AND tglbku BETWEEN '$tglAwal' AND '$tglAkhir'
+            AND EXTRACT(YEAR FROM tglbku) = '".$setting[0]->tahunanggaran."'
             ORDER BY nobku DESC
             ")
         );
