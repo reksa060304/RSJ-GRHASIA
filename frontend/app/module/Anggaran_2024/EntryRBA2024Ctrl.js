@@ -463,7 +463,7 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
                 $scope.datakegiatanbro = dataItem
                 
                 $scope.item.organisasi = '1.02.2.22.0.00.01.0004 - RS Jiwa GRHASIA DINKES DIY'
-                $scope.item.id = dataItem.id
+                $scope.item.id = dataItem.idsubsubkegiatan
                 $scope.item.subsubketerangan = dataItem.id
                 //console.log($scope.item.subsubketerangan)
                 console.log(dataItem)

@@ -427,7 +427,7 @@ class AnggaranController extends ApiController {
 
         $kegiatan = DB::select(DB::raw("
             SELECT
-                ka.kode,ka.keterangan,ta.tahun,pg.id as idpptk,pg.namalengkap,jb.jenisbelanja,tp.tahap,ta.targetmasuk as targetkinerja,dk.div as namadiv,dk.id as div,ta.norec,
+                ka.id, ka.kode,ka.keterangan,ta.tahun,pg.id as idpptk,pg.namalengkap,jb.jenisbelanja,tp.tahap,ta.targetmasuk as targetkinerja,dk.div as namadiv,dk.id as div,ta.norec,
                 ta.indikatormasuk,ta.indikatorkeluaran,ta.indikatorhasil,ta.targetmasuk,ta.targetkeluaran,ta.targethasil, ta.islock, ta.islockrba, ta.islockangkas
             FROM
                 kegiatananggaran2024_m AS ka
@@ -1390,6 +1390,11 @@ class AnggaranController extends ApiController {
             $status = "and sr.status = 'Sudah Diverifikasi'";
         }
 
+        $subsubkegiatan = '';
+        if(isset($request['subsubkegiatan']) && $request['subsubkegiatan'] != "undefined" && $request['subsubkegiatan'] != ''){
+            $pegawai = "and ta.objectkegiatanfk = ".$request['subsubkegiatan'];
+        }
+
         $data = DB::select(DB::raw("
 
             SELECT
@@ -1430,6 +1435,7 @@ class AnggaranController extends ApiController {
                 AND sr.tglrealisasi between '$tglAwal' and '$tglAkhir'
                 $pegawai
                 $status
+                $subsubkegiatan
             GROUP BY
                 sr.norec,
                 cbs.carabayar,
@@ -1541,9 +1547,9 @@ class AnggaranController extends ApiController {
 
         $tahun = '';
         if(isset($request['tahun']) && $request['tahun'] !== '' && $request['tahun'] !== "undefined"){
-            $tahun = $request['tahun'];
+            $tahun = "and ta.tahun = '".$request['tahun']."'";
         }else{
-            $tahun = $setting[0]->tahunanggaran;
+            $tahun = "and ta.tahun = '".$setting[0]->tahunanggaran."'";
         }
 
         $tahap = '';
@@ -1567,7 +1573,7 @@ class AnggaranController extends ApiController {
             WHERE
                 ka.statusenabled = TRUE
                 AND ka.kdprofile = ".$idProfile."
-                AND ta.tahun = '".$tahun."'
+                $tahun
                 AND ta.objecttahapfk = ".$tahap."
                 $subkegiatan
                 $pptk
@@ -3256,7 +3262,10 @@ class AnggaranController extends ApiController {
                 sr.tglrealisasi,
                 sr.tglverif,
                 COALESCE(sr.jumlahdibayarverif, 0) as jumlahdibayarverif,
-                SUM(rd.subtotal) as jumlahspj,
+                case 
+                    when pj.jumlah is not null then pj.jumlah
+                    when pj.jumlah is null then 0
+                end as jumlahpanjar,
                 cbs.carabayar,
                 ta.tahun,
                 pg1.namalengkap AS bendahara,
@@ -3286,11 +3295,13 @@ class AnggaranController extends ApiController {
                 LEFT JOIN pegawai_m AS pg1 ON pg1.id = sr.bendaharafk
                 LEFT JOIN pegawai_m AS pg2 ON pg2.id = sr.penerimafk
                 LEFT JOIN carabayarspj_m cbs ON cbs.id = sr.objectcarabayarfk
+                left join panjar_t pj on pj.norec = sr.objectpanjarfk
             WHERE 
                 sr.statusenabled = TRUE
                 AND sr.kdprofile = ".$idProfile."
                 AND ta.tahun = '".$setting[0]->tahunanggaran."'
                 $norec
+                and sr.status = 'Sudah Diverifikasi'
             GROUP BY
                 sr.norec,
                 cbs.carabayar,
@@ -3302,7 +3313,8 @@ class AnggaranController extends ApiController {
                 ka2.id,
                 ka2.keterangan,
                 ma.id,
-                ap.id
+                ap.id,
+                pj.norec
             ORDER BY
                 sr.norealisasi DESC
         

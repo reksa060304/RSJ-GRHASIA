@@ -161,12 +161,19 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
                         $scope.listTahap = e.data.tahap
                         $scope.listAsalProduk = e.data.asalproduk
                         $scope.listKonsolidasi2 = e.data.konsolidasi2
-                        $scope.listSubSubKegiatanspj = e.data.kegiatansubsubspj
                         $scope.listKegiatanCombo = e.data.kegiatancombo
                         $scope.listKegiatanComboakhir = e.data.kegiatancombo
                         $scope.dataSourcePermenKelima = e.data.konsolidasikelima
                         $scope.dataSourcePermenKeempat = e.data.konsolidasikeempat
                         $scope.listMataAnggaran = e.data.mataanggarancombodiv
+
+                        // get subsubkegiatan
+                        medifirstService.get("anggaran/get-subsubkegiatan?&idpegawai=" + idpegawai).then(function (res) {
+
+                            $scope.listSubSubKegiatanspj = res.data
+
+                        })
+
                     });
                 })
                 
@@ -566,10 +573,10 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
                     cari = "&cari=" + $scope.item.carispj
                 }
                 
-                medifirstService.get("perencanaan/get-rekap-spj-detail?tglAwal=" + tglawal
+                medifirstService.get("anggaran/get-spj?tglAwal=" + tglawal
                     + "&tglAkhir=" + tglakhir
                     + "&status=" + stat
-                    + "&subkegiatan=" + sub
+                    + "&subsubkegiatan=" + sub
                     + "&asalproduk=" + asalproduk
                     + mataanggaran
                     + cari
