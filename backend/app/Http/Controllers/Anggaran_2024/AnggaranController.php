@@ -344,6 +344,66 @@ class AnggaranController extends ApiController {
         return $this->respond($result);
     }
 
+    public function saveKegitanTransaksi(Request $request)
+    {
+        DB::beginTransaction();
+        $kdProfile = $this->getDataKdProfile($request);
+        $idProfile = (int) $kdProfile;
+        try{
+            
+            // buat data kegiatan baru
+            $newID = KegiatanAnggaran2024::max('id');
+            $KA = new KegiatanAnggaran2024();
+            $KA->id =  $newID + 1;
+            $KA->kdprofile = $idProfile;
+            $KA->statusenabled = true;
+            $KA->kode = $request['kode'];
+            $KA->keterangan = $request['keterangan'];
+            $KA->div = 4;
+            $KA->headfk = $request['objectsubkegitan'];
+            $KA->save();
+
+            // buat transaksi anggaran
+            $TA = new TransaksiAnggaran2024();
+            $norecTA = $TA->generateNewId();
+            $TA->norec = $norecTA;
+            $TA->kdprofile = $idProfile;
+            $TA->statusenabled = true;
+            $TA->tahun = $request['tahun'];
+            $TA->objectjenisbelanjafk = $request['jenisbelanja'];
+            $TA->objectpptkfk = $request['pptk'];
+            $TA->objecttahapfk = $request['tahap'];
+            $TA->objectkegiatanfk = $KA->id;
+            $TA->save();
+
+            $transStatus = 'true';
+        } catch (\Exception $e) {
+            $transStatus = 'false';
+        }
+
+        if ($transStatus == 'true') {
+            $transMessage = "Simpan";
+            DB::commit();
+            $result = array(
+                'status' => 201,
+                'message' => $transMessage,
+                // 'result' => $MA,
+                'as' => '@epic',
+            );
+        } else {
+            $transMessage = "Simpan Gagal";
+            DB::rollBack();
+            $result = array(
+                'status' => 400,
+                'line'=> $e->getLine(),
+                'message'=> $e->getMessage(),
+                // 'result' => $MA,
+                'as' => '@epic',
+            );
+        }
+        return $this->setStatusCode($result['status'])->respond($result, $transMessage);
+    }
+
     public function saveRBAAnggaran(Request $request) {
         DB::beginTransaction();
         $kdProfile = $this->getDataKdProfile($request);
@@ -644,7 +704,7 @@ class AnggaranController extends ApiController {
                 JOIN transaksianggaran2024_t ta ON ta.norec = kt.objecttransaksifk AND ta.statusenabled = true
                 JOIN kegiatananggaran2024_m ka ON ka.id = ta.objectkegiatanfk AND ka.statusenabled = true
                 INNER JOIN asalproduk_m ap on ap.id=kt.objectasalprodukfk
-                INNER JOIN mataanggaran2024_m ma on ma.id=kt.objectmataanggaranfk
+                INNER JOIN mataanggaran_m ma on ma.id=kt.objectmataanggaranfk
                 where kt.objecttransaksifk= '$norec'
                 $mata
                 and kt.statusenabled = true
@@ -814,7 +874,7 @@ class AnggaranController extends ApiController {
                     SUM(kb.subtotal) AS total
                 FROM keteranganbelanja_t kb
                 JOIN transaksianggaran2024_t tra ON tra.norec = kb.objecttransaksifk AND tra.statusenabled = TRUE AND tra.kdprofile = ".$idProfile."
-                JOIN mataanggaran2024_m ma ON ma.id = kb.objectmataanggaranfk AND ma.statusenabled = TRUE AND ma.kdprofile = ".$idProfile."
+                JOIN mataanggaran_m ma ON ma.id = kb.objectmataanggaranfk AND ma.statusenabled = TRUE AND ma.kdprofile = ".$idProfile."
                 JOIN kegiatananggaran2024_m ka ON ka.id = tra.objectkegiatanfk AND ka.statusenabled = TRUE AND ka.kdprofile = ".$idProfile."
                 JOIN asalproduk_m ap ON ap.id = kb.objectasalprodukfk AND ap.statusenabled = TRUE AND ap.kdprofile = ".$idProfile."
                 JOIN tahapanggaran_m ta ON ta.id = kb.objecttahapfk AND ta.statusenabled = TRUE AND ta.kdprofile = ".$idProfile."
@@ -847,7 +907,7 @@ class AnggaranController extends ApiController {
                     ma.kodemataanggaran,
                     ma.namamataanggaran,
                     ma.kodemataanggaran || ' - ' || ma.namamataanggaran AS text
-                FROM mataanggaran2024_m AS ma
+                FROM mataanggaran_m AS ma
                 WHERE
                     ma.statusenabled = TRUE
                     AND ma.kdprofile = ".$idProfile."
@@ -872,7 +932,7 @@ class AnggaranController extends ApiController {
                     SUM(kb.subtotal) AS totalanggaran
                 FROM keteranganbelanja_t kb
                 JOIN transaksianggaran2024_t tra ON tra.norec = kb.objecttransaksifk AND tra.statusenabled = TRUE AND tra.kdprofile = ".$idProfile."
-                JOIN mataanggaran2024_m ma ON ma.id = kb.objectmataanggaranfk AND ma.statusenabled = TRUE AND ma.kdprofile = ".$idProfile."
+                JOIN mataanggaran_m ma ON ma.id = kb.objectmataanggaranfk AND ma.statusenabled = TRUE AND ma.kdprofile = ".$idProfile."
                 JOIN kegiatananggaran2024_m ka ON ka.id = tra.objectkegiatanfk AND ka.statusenabled = TRUE AND ka.kdprofile = ".$idProfile."
                 JOIN asalproduk_m ap ON ap.id = kb.objectasalprodukfk AND ap.statusenabled = TRUE AND ap.kdprofile = ".$idProfile."
                 JOIN tahapanggaran_m ta ON ta.id = kb.objecttahapfk AND ta.statusenabled = TRUE AND ta.kdprofile = ".$idProfile."
@@ -1150,20 +1210,17 @@ class AnggaranController extends ApiController {
             $kdProfile = $this->getDataKdProfile($request);
             $idProfile = (int) $kdProfile;
 
-            foreach ($request['data'] as $req) {
-                
                 // false transaksianggaran
-                $TA= TransaksiAnggaran2024::where('norec',$req['norec'])
+                $TA= TransaksiAnggaran2024::where('norec',$request['norec'])
                     ->where('kdprofile', $idProfile)
                     ->first();
                 $TA->statusenabled = false;
                 $TA->save();
 
                 // false keteranganbelanja
-                $data = DB::table('keteranganbelanja_t')->where('objecttransaksifk',$req['norec'])->update([
+                $data = DB::table('keteranganbelanja_t')->where('objecttransaksifk',$request['norec'])->update([
                     'statusenabled'=> false
                 ]);
-            }
 
            $transStatus = 'true';
        } catch (\Exception $e) {

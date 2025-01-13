@@ -364,6 +364,62 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
                 $scope.popupTambah.center().open()
             }
 
+            $scope.simpanKegiatan = function(){
+
+                // validasi
+                if($scope.item.subKegiatanEntry == undefined && $scope.item.subKegiatanEntry == null){
+                    toastr.error('Pilih Sub Kegiatan Dulu')
+                    return
+                }
+
+                if($scope.item.kodeSubSubKegiaatanEntry == undefined && $scope.item.kodeSubSubKegiaatanEntry == null){
+                    toastr.error('Isi kode subsub kegiatan dulu')
+                    return
+                }
+
+                if($scope.item.keteranganSubSubKegiaatanEntry == undefined && $scope.item.keteranganSubSubKegiaatanEntry == null){
+                    toastr.error('Isi nama subsub kegiatan dulu')
+                    return
+                }
+
+                if($scope.item.tahuntambahkegiatan == undefined && $scope.item.tahuntambahkegiatan == null){
+                    toastr.error('Isi tahun dulu')
+                    return
+                }
+
+                if($scope.item.tahaptambah == undefined && $scope.item.tahaptambah == null){
+                    toastr.error('Pilih tahap dulu')
+                    return
+                }
+
+                if($scope.item.pptktambah == undefined && $scope.item.pptktambah == null){
+                    toastr.error('Pilih PPTK dulu')
+                    return
+                }
+
+                if($scope.item.jenisbelanjatambah == undefined && $scope.item.jenisbelanjatambah == null){
+                    toastr.error('Pilih Jenis belanja dulu')
+                    return
+                }
+
+                let objSave = {
+                    objectsubkegitan: $scope.item.subKegiatanEntry.id,
+                    kode: $scope.item.kodeSubSubKegiaatanEntry,
+                    keterangan: $scope.item.keteranganSubSubKegiaatanEntry,
+                    tahun: moment($scope.item.tahuntambahkegiatan).format('YYYY'),
+                    tahap: $scope.item.tahaptambah.id,
+                    pptk: $scope.item.pptktambah.id,
+                    jenisbelanja: $scope.item.jenisbelanjatambah.id
+                }
+
+                medifirstService.post('anggaran/save-entry-kegiatantransaksi', objSave)
+                    .then(function (e) {
+                        
+                        loadDataGrid()
+
+                    })
+            }
+
             $scope.$watch('item.search', function (newValue, oldValue) {
                 if (newValue != oldValue) {
                     
@@ -2237,6 +2293,7 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
                         norec: '',
                         objectkegiatanfk: $scope.item.div.id,
                         tahun: tahuns,
+
                         objectpptkfk: $scope.item.pptktambah.value,
                         objecttahapfk: $scope.item.tahaptambah.id,
                         objectjenisbelanjafk: $scope.item.jenisbelanjatambah.id,

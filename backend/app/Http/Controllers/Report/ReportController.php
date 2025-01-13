@@ -25781,16 +25781,17 @@ public function suratBuktiPengembalian(Request $request)
             JOIN kegiatananggaran2024_m ka3 ON ka3.id = ka.headfk
             JOIN kegiatananggaran2024_m ka2 ON ka2.id = ka3.headfk 
             JOIN kegiatananggaran2024_m ka1 on ka1.id = ka2.headfk
-            JOIN mataanggaran2024_m ma ON ma.id = kb.objectmataanggaranfk AND ma.statusenabled = TRUE AND ma.kdprofile = 30
-            JOIN mataanggaran2024_m ma3 ON ma3.id = ma.headfk
-            JOIN mataanggaran2024_m ma2 ON ma2.id = ma3.headfk
-            JOIN mataanggaran2024_m ma1 ON ma1.id = ma2.headfk 
+            JOIN mataanggaran_m ma ON ma.id = kb.objectmataanggaranfk AND ma.statusenabled = TRUE AND ma.kdprofile = 30
+            LEFT JOIN mataanggaran_m ma3 ON ma3.id = ma.headfk
+            LEFT JOIN mataanggaran_m ma2 ON ma2.id = ma3.headfk
+            LEFT JOIN mataanggaran_m ma1 ON ma1.id = ma2.headfk 
             JOIN mataanggaranpermen_m mp ON mp.id = ma.mataanggaranpermenfk
             JOIN asalproduk_m ap ON ap.id = kb.objectasalprodukfk AND ap.statusenabled = TRUE AND ap.kdprofile = 30
             JOIN tahapanggaran_m th ON th.id = kb.objecttahapfk AND th.statusenabled = TRUE AND th.kdprofile = 30
             WHERE 
                 kb.statusenabled = TRUE 
                 AND kb.kdprofile = 30
+                AND ta.tahun = '".$settingRBA->tahunanggaran."'
                 AND ta.objecttahapfk = ".$settingRBA->objecttahapaktivfk."
                 -- AND kb.objectasalprodukfk IN (".implode(',', $asalProduk).")
                 ".$asalproduk_kb."
@@ -25863,10 +25864,10 @@ public function suratBuktiPengembalian(Request $request)
             JOIN kegiatananggaran2024_m ka3 ON ka3.id = ka.headfk
             JOIN kegiatananggaran2024_m ka2 ON ka2.id = ka3.headfk 
             JOIN kegiatananggaran2024_m ka1 on ka1.id = ka2.headfk
-            JOIN mataanggaran2024_m ma ON ma.id = sr.objectmataanggaranfk
-            JOIN mataanggaran2024_m ma3 ON ma3.id = ma.headfk
-            JOIN mataanggaran2024_m ma2 ON ma2.id = ma3.headfk
-            JOIN mataanggaran2024_m ma1 ON ma1.id = ma2.headfk 
+            JOIN mataanggaran_m ma ON ma.id = sr.objectmataanggaranfk
+            LEFT JOIN mataanggaran_m ma3 ON ma3.id = ma.headfk
+            LEFT JOIN mataanggaran_m ma2 ON ma2.id = ma3.headfk
+            LEFT JOIN mataanggaran_m ma1 ON ma1.id = ma2.headfk 
             JOIN asalproduk_m ap ON ap.id = sr.objectasalprodukfk
             JOIN bukukasumum_t bku ON bku.norec = sr.objectbkufk AND bku.statusenabled = TRUE AND bku.kdprofile = 30
             JOIN mataanggaranpermen_m mp ON mp.id = ma.mataanggaranpermenfk
@@ -25874,6 +25875,7 @@ public function suratBuktiPengembalian(Request $request)
             WHERE 
                 sr.statusenabled = TRUE
                 AND sr.kdprofile = 30
+                AND ta.tahun = '".$settingRBA->tahunanggaran."'
                 -- AND sr.objectasalprodukfk IN (".implode(',', $asalProduk).")
                 ".$asalproduk_sr."
             GROUP BY

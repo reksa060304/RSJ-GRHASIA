@@ -662,16 +662,36 @@
 <div kendo-window="popupTambah" k-title="'Tambah'" k-visible="false" k-width="1200" k-visible="false"
 	k-on-open="win2visible = true" k-on-close="win2visible = false">
 	<div class="panel panel-default container_12" >
-		<div class="grid_12">
-			<div class="grid_3">
-				<div class="grid_12">
-					<label c-label item="item" c-label-text="Sub Sub Kegiatan"></label>
-				</div>
-				<div class="grid_12">
-					<input style="width: 100%;" kendo-combo-box k-ng-model="item.div" k-data-text-field="'kode_keterangan'"
-						k-data-value-field="'id'" k-filter="'contains'" k-auto-bind="false" k-data-source="listDataDiv4" />
-				</div>
-			</div>
+		<div class="grid">
+            <div class="grid_2">
+                <div class="grid_12">
+                    <label c-label item="item">Sub Kegiatan</label>
+                </div>
+                <div class="grid_12">
+                    <input style="width: 100%;" kendo-combo-box k-ng-model="item.subKegiatanEntry"
+                        k-data-text-field="'keterangan'" k-data-value-field="'id'" k-filter="'contains'" k-auto-bind="false"
+                        k-data-source="listDataDivSubsubkg" />
+                </div>
+            </div>	
+
+            <div class="grid_2">
+                <div class="grid_12">
+                    <label c-label item="item" c-label-text="Kode Kegiatan"></label>
+                </div>
+                <div class="grid_12">
+                    <input c-text-box type="input" class="k-textbox" ng-model="item.kodeSubSubKegiaatanEntry" />
+                </div>
+            </div>
+
+            <div class="grid_2">
+                <div class="grid_12">
+                    <label c-label item="item" c-label-text="Nama Kegiatan"></label>
+                </div>
+                <div class="grid_12">
+                    <input c-text-box type="input" class="k-textbox" ng-model="item.keteranganSubSubKegiaatanEntry" />
+                </div>
+            </div>
+
 			<div class="grid_1" >
 				<div class="grid_12">
 					<label c-label item="item" c-label-text="Tahun"></label>
@@ -700,6 +720,8 @@
 						k-filter="'contains'" k-auto-bind="false" k-data-source="listPenerima" />
 				</div>
 			</div>
+		</div>
+		<div class="grid_12">
 			<div class="grid_2" >
 				<div class="grid_12">
 					<label c-label item="item" c-label-text="Jenis Belanja" real></label>
@@ -710,20 +732,17 @@
 						ng-disabled="disidpegawai" />
 				</div>
 			</div>
-		</div>
-		<div class="grid_12">
-			
 			
 		</div>
 		
 		<div class="grid_12">
 			<div class="grid_2">
-				<button class="btnTemplate1" ng-click="SimpanPopUpTambah()">Simpan</button>
+				<button class="btnTemplate1" ng-click="simpanKegiatan()">Simpan</button>
 			</div>
 			<div class="grid_1"></div>
-			<div class="grid_2">
+			<!-- <div class="grid_2">
 				<button class="btnTemplate1" ng-click="HapusPopUpTambah()">Hapus</button>
-			</div>
+			</div> -->
 		</div>
 	</div>
 </div>
