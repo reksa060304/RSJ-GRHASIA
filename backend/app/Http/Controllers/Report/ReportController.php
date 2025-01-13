@@ -4150,13 +4150,14 @@ class ReportController extends ApiController{
                     0 as jumlahspj,
                     0 as jumlahpanjarspj
                 FROM keteranganbelanja_t kb 
-                JOIN kegiatananggaran_m ka ON ka.id = kb.objectkegiatanfk AND ka.statusenabled = TRUE
+                JOIN transaksianggaran2024_t ta ON ta.norec = kb.objecttransaksifk AND ta.statusenabled = TRUE
+                JOIN kegiatananggaran2024_m ka ON ka.id = ta.objectkegiatanfk
                 JOIN mataanggaran_m ma ON ma.id = kb.objectmataanggaranfk AND ma.statusenabled = TRUE
                 JOIN asalproduk_m ap ON ap.id = kb.objectasalprodukfk AND ap.statusenabled = TRUE
                 WHERE
                     kb.statusenabled = TRUE
                     -- opsi
-                    AND ka.tahun = '".$request['tahun']."'
+                    AND ta.tahun = '".$request['tahun']."'
                     AND kb.objectasalprodukfk = ".$request['asalproduk']."
                     AND kb.objecttahapfk = ".$settingrba->objecttahapaktivfk."
                 GROUP BY
@@ -4176,14 +4177,14 @@ class ReportController extends ApiController{
                     0 as jumlahspj,
                     0 as jumlahpanjarspj
                 FROM panjar_t pj
-                JOIN kegiatananggaran_m ka ON ka.id = pj.objectsubsubkegiatanfk AND ka.statusenabled = TRUE
+                JOIN kegiatananggaran2024_m ka ON ka.id = pj.objectsubsubkegiatanfk
                 JOIN mataanggaran_m ma ON ma.id = pj.objectmataanggaranfk AND ma.statusenabled = TRUE
                 JOIN asalproduk_m ap ON ap.id = pj.objectasalprodukfk AND ap.statusenabled = TRUE
                 LEFT JOIN pengembalianpanjar_t pp ON pp.objectpanjarfk = pj.norec AND pp.statusenabled = TRUE 
                 WHERE
                     pj.statusenabled = TRUE
                     -- opsi
-                    AND ka.tahun = '".$request['tahun']."'
+                    AND EXTRACT(YEAR FROM pj.tglpanjar) = '".$request['tahun']."'
                     AND pj.objectasalprodukfk = ".$request['asalproduk']."
                 GROUP BY
                     ma.id,
@@ -4203,14 +4204,16 @@ class ReportController extends ApiController{
                     0 as jumlahpanjarspj
                 FROM strukrealisasi_t sr
                 JOIN realisasidetail_t rd ON rd.strukrealisasifk = sr.norec AND rd.statusenabled = TRUE 
-                JOIN kegiatananggaran_m ka ON ka.id = sr.objectkegiatanfk AND ka.statusenabled = TRUE
+                JOIN keteranganbelanja_t kb ON kb.norec = rd.keteranganbelanjafk AND kb.statusenabled = TRUE
+                JOIN transaksianggaran2024_t ta ON ta.norec = kb.objecttransaksifk AND ta.statusenabled = TRUE
+                JOIN kegiatananggaran2024_m ka ON ka.id = ta.objectkegiatanfk AND ka.statusenabled = TRUE
                 JOIN mataanggaran_m ma ON ma.id = sr.objectmataanggaranfk AND ma.statusenabled = TRUE
                 JOIN asalproduk_m ap ON ap.id = sr.objectasalprodukfk AND ap.statusenabled = TRUE
                 WHERE
                     sr.statusenabled = TRUE
                     AND sr.status ILIKE '%Sudah Diverifikasi%'
                     -- opsi
-                    AND ka.tahun = '".$request['tahun']."'
+                    AND ta.tahun = '".$request['tahun']."'
                     AND sr.objectasalprodukfk = ".$request['asalproduk']."
                 GROUP BY
                     ma.id,
@@ -4229,14 +4232,14 @@ class ReportController extends ApiController{
                     0 as jumlahspj,
                     COALESCE(SUM(sp.jumlahspj), 0) as jumlahpanjarspj
                 FROM panjar_t pj
-                JOIN kegiatananggaran_m ka ON ka.id = pj.objectsubsubkegiatanfk AND ka.statusenabled = TRUE
+                JOIN kegiatananggaran2024_m ka ON ka.id = pj.objectsubsubkegiatanfk
                 JOIN mataanggaran_m ma ON ma.id = pj.objectmataanggaranfk AND ma.statusenabled = TRUE
                 JOIN asalproduk_m ap ON ap.id = pj.objectasalprodukfk AND ap.statusenabled = TRUE
                 JOIN spjtopanjar_t sp ON sp.objectpanjarfk = pj.norec AND sp.statusenabled = TRUE 
                 WHERE
                     pj.statusenabled = TRUE
                     -- opsi
-                    AND ka.tahun = '".$request['tahun']."'
+                    AND EXTRACT(YEAR FROM pj.tglpanjar) = '".$request['tahun']."'
                     AND pj.objectasalprodukfk = ".$request['asalproduk']."
                 GROUP BY
                     ma.id,
@@ -29281,7 +29284,7 @@ public function suratBuktiPengembalian(Request $request)
                     JOIN realisasidetail_t rd ON rd.strukrealisasifk = sr.norec AND rd.statusenabled = TRUE
                     JOIN keteranganbelanja_t kb ON kb.norec = rd.keteranganbelanjafk AND kb.statusenabled = TRUE
                     JOIN transaksianggaran2024_t ta ON ta.norec = kb.objecttransaksifk AND ta.statusenabled = TRUE
-                    JOIN kegiatananggaran2024_m ka ON ka.id = ta.objectkegiatanfk
+                    JOIN kegiatananggaran2024_m ka ON ka.id = ta.objectkegiatanfk AND ka.statusenabled = TRUE
                     JOIN mataanggaran_m ma ON ma.ID = sr.objectmataanggaranfk 
                 WHERE
                     sr.statusenabled = TRUE 
