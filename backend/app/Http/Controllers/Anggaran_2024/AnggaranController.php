@@ -3360,12 +3360,11 @@ class AnggaranController extends ApiController {
             INNER JOIN mataanggaran_m ma on ma.id = pj.objectmataanggaranfk AND ma.statusenabled = TRUE AND ma.kdprofile = ".$idProfile."
             INNER JOIN kegiatananggaran2024_m subsubkeg on subsubkeg.id = pj.objectsubsubkegiatanfk AND subsubkeg.statusenabled = TRUE AND subsubkeg.kdprofile = ".$idProfile."
             INNER JOIN kegiatananggaran2024_m subkeg ON subkeg.id = subsubkeg.headfk AND subkeg.statusenabled = TRUE AND subkeg.kdprofile = ".$idProfile."
-            INNER JOIN transaksianggaran2024_t ta ON ta.objectkegiatanfk = subsubkeg.id AND ta.statusenabled = TRUE AND ta.kdprofile = ".$idProfile."
             INNER JOIN asalproduk_m ap ON ap.id = pj.objectasalprodukfk AND ap.statusenabled = TRUE AND ap.kdprofile = ".$idProfile."
             LEFT JOIN pengembalianpanjar_t pp on pp.objectpanjarfk = pj.norec AND pp.statusenabled = TRUE AND pp.kdprofile = ".$idProfile."
             where pj.kdprofile = 30
                 and pj.statusenabled = true
-                and ta.tahun = '".$setting[0]->tahunanggaran."'
+                and EXTRACT(YEAR FROM tglpanjar) = '".$setting[0]->tahunanggaran."'
                 $norec
             GROUP BY
                 pj.norec, ma.id, subkeg.id, subsubkeg.id
