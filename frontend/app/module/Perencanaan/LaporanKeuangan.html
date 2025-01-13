@@ -329,10 +329,14 @@
                                         </div>
                                         <div class="grid_12">
                                             <div class="grid_12">
+                                                <!-- <input kendo-combo-box k-ng-model="item.subkegiatanro"
+                                                k-data-text-field="'keterangan'" k-data-value-field="'id'"
+                                                k-filter="'contains'" k-auto-bind="false" 
+                                                k-data-source="listKegiatan" k-on-change='changeKegiatan()'/> -->
                                                 <input kendo-combo-box k-ng-model="item.subkegiatanro"
                                                 k-data-text-field="'keterangan'" k-data-value-field="'id'"
                                                 k-filter="'contains'" k-auto-bind="false" 
-                                                k-data-source="listKegiatan" k-on-change='changeKegiatan()'/>
+                                                k-data-source="listKegiatanV2" k-on-change='changeKegiatanRO()'/>
                                             </div>
                                         </div>
                                     </div>
@@ -343,7 +347,7 @@
                                         <div class="grid_12">
                                             <div class="grid_12">
                                                 <input kendo-combo-box k-ng-model="item.subsubkegiatanro"
-                                                k-data-text-field="'keterangansubsubkegiatan'" k-data-value-field="'idsubsubkegiatan'"
+                                                k-data-text-field="'keterangan'" k-data-value-field="'id'"
                                                 k-filter="'contains'" k-auto-bind="false" 
                                                 k-data-source="listSubSubKegiatanRO"/>
                                             </div>
@@ -430,10 +434,15 @@
                                         </div>
                                         <div class="grid_12">
                                             <div class="grid_12">
+                                                <!-- <input kendo-combo-box k-ng-model="item.subkegiatanrk"
+                                                k-data-text-field="'keterangan'" k-data-value-field="'id'"
+                                                k-filter="'contains'" k-auto-bind="false" 
+                                                k-data-source="listKegiatan" k-on-change='changeKegiatan()'/> -->
+
                                                 <input kendo-combo-box k-ng-model="item.subkegiatanrk"
                                                 k-data-text-field="'keterangan'" k-data-value-field="'id'"
                                                 k-filter="'contains'" k-auto-bind="false" 
-                                                k-data-source="listKegiatan" k-on-change='changeKegiatan()'/>
+                                                k-data-source="listKegiatanV2" k-on-change='changeKegiatan()'/>
                                             </div>
                                         </div>
                                     </div>
@@ -444,7 +453,7 @@
                                         <div class="grid_12">
                                             <div class="grid_12">
                                                 <input kendo-combo-box k-ng-model="item.subsubkegiatanrk"
-                                                k-data-text-field="'keterangansubsubkegiatan'" k-data-value-field="'idsubsubkegiatan'"
+                                                k-data-text-field="'keterangan'" k-data-value-field="'id'"
                                                 k-filter="'contains'" k-auto-bind="false" 
                                                 k-data-source="listSubSubKegiatanRK"/>
                                             </div>

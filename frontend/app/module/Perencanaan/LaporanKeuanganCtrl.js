@@ -655,7 +655,7 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
 
                 var idsubsubkegiatan = ""
                 if ($scope.item.subsubkegiatanro != undefined){
-                    idsubsubkegiatan = $scope.item.subsubkegiatanro.idsubsubkegiatan
+                    idsubsubkegiatan = $scope.item.subsubkegiatanro.id
                 }
 
                 var idmataanggaran = ""
@@ -669,7 +669,7 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
                 }
 
 
-                window.open(baseTransaksi + "report/get-cetak-ro?tahun="+tahunro+"&bulan="+bulanro+"&tglcetak="+tglcetakro+"&idsubsubkegiatan="+idsubsubkegiatan+"&idmataanggaran="+idmataanggaran + asalprodukRO, '_blank');
+                window.open(baseTransaksi + "report/get-cetak-rov2?tahun="+tahunro+"&bulan="+bulanro+"&tglcetak="+tglcetakro+"&idsubsubkegiatan="+idsubsubkegiatan+"&idmataanggaran="+idmataanggaran + asalprodukRO, '_blank');
             }
 
             $scope.CetakRK = function(){
@@ -716,7 +716,7 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
 
                 var idsubsubkegiatanrk = ""
                 if ($scope.item.subsubkegiatanrk != undefined){
-                    idsubsubkegiatanrk = $scope.item.subsubkegiatanrk.idsubsubkegiatan
+                    idsubsubkegiatanrk = $scope.item.subsubkegiatanrk.id
                 }
 
                 var asalprodukRK = ""
@@ -724,45 +724,69 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
                     asalprodukRK = "&asalproduk=" + $scope.item.asalprodukRK.id
                 }
 
-                window.open(baseTransaksi + "report/get-cetak-rk?tahun="+tahunrk+"&bulan="+bulanrk+"&tglcetak="+tglcetakrk+"&idsubsubkegiatan="+idsubsubkegiatanrk + asalprodukRK, '_blank');
+                window.open(baseTransaksi + "report/get-cetak-rkv2?tahun="+tahunrk+"&bulan="+bulanrk+"&tglcetak="+tglcetakrk+"&idsubsubkegiatan="+idsubsubkegiatanrk + asalprodukRK, '_blank');
             }
 
-            $scope.$watch('item.subkegiatanro', function (newValue, oldValue) {
-                if (newValue != oldValue) {
-                    medifirstService.get("perencanaan/get-data-combo").then(function (e) {
-                        medifirstService.get("perencanaan/get-data-combo?tahunawal="+moment($scope.item.tahunro).format('YYYY')+"&tahap="+e.data.setting[0].objecttahapaktivfk+"&subkegiatan="+$scope.item.subkegiatanro.id).then(function (e) {
-                            $scope.listSubSubKegiatanRO = e.data.kegiatansubsub
-                        });
-                    })
-                }
-            });
+            // $scope.$watch('item.subkegiatanro', function (newValue, oldValue) {
+            //     if (newValue != oldValue) {
+            //         medifirstService.get("perencanaan/get-data-combo").then(function (e) {
+            //             medifirstService.get("perencanaan/get-data-combo?tahunawal="+moment($scope.item.tahunro).format('YYYY')+"&tahap="+e.data.setting[0].objecttahapaktivfk+"&subkegiatan="+$scope.item.subkegiatanro.id).then(function (e) {
+            //                 $scope.listSubSubKegiatanRO = e.data.kegiatansubsub
+            //             });
+            //         })
+            //     }
+            // });
 
             $scope.$watch('item.subkegiatanrk', function (newValue, oldValue) {
                 if (newValue != oldValue) {
-                    medifirstService.get("perencanaan/get-data-combo").then(function (e) {
-                        medifirstService.get("perencanaan/get-data-combo?tahunawal="+moment($scope.item.tahunrk).format('YYYY')+"&tahap="+e.data.setting[0].objecttahapaktivfk+"&subkegiatan="+$scope.item.subkegiatanrk.id).then(function (e) {
-                            $scope.listSubSubKegiatanRK = e.data.kegiatansubsub
-                        });
-                    })
+                    // medifirstService.get("perencanaan/get-data-combo").then(function (e) {
+                    //     medifirstService.get("perencanaan/get-data-combo?tahunawal="+moment($scope.item.tahunrk).format('YYYY')+"&tahap="+e.data.setting[0].objecttahapaktivfk+"&subkegiatan="+$scope.item.subkegiatanrk.id).then(function (e) {
+                    //         $scope.listSubSubKegiatanRK = e.data.kegiatansubsub
+                    //     });
+                    // })
+
+                    medifirstService.get("anggaran/get-subsubkegiatan" 
+                        + "?subkegiatan=" + $scope.item.subkegiatanrk.id
+                        + "&tahun=" + moment($scope.item.tahunrk).format('YYYY') 
+                        + "&idpegawai=" + idpegawai).then(function (e) {
+                            $scope.listSubSubKegiatanRK = e.data
+                    });
                 }
             });
 
             $scope.$watch('item.subsubkegiatanro', function (newValue, oldValue) {
                 if (newValue != oldValue) {
-                    medifirstService.get("perencanaan/get-data-combo?tahun="+moment($scope.item.tahunro).format('YYYY')+"&idsubsub="+$scope.item.subsubkegiatanro.id).then(function (e) {
-                        $scope.listMataAnggaranRO = e.data.mataanggarancombo
-                    })
+                    medifirstService.get("anggaran/get-mataanggaran-bysubsubkegiatan" 
+                        + "?tahun="+moment($scope.item.tahunro).format('YYYY')
+                        + "&subsubkegiatan="+$scope.item.subsubkegiatanro.id).then(function (e) {
+                            $scope.listMataAnggaranRO = e.data
+                        })
                 }
             });
 
             medifirstService.get("perencanaan/get-data-combo").then(function (e) {
                 $scope.listTahap = e.data.tahap
                 $scope.listKegiatan = e.data.kegiatancombo
+                
+                medifirstService.get("anggaran/get-combo-anggaran").then(function (res) {
+                    $scope.listTahap = res.data.tahap
+                    $scope.listKegiatanV2 = res.data.divsubsubKg
+                    $scope.listAsalProduk = res.data.asalproduk
+                })
             });
 
             $scope.changeKegiatan = function () {
                 medifirstService.get("perencanaan/get-detail-sub-kegiatan?kegiatan="+$scope.item.kegiatandetail.id+"&tahap="+$scope.item.tahapdetail.id+"&tahun="+moment($scope.item.tahundetail).format('YYYY')).then(function (e) {
                     $scope.listSubKegiatan = e.data.data
+                });
+            }
+
+            $scope.changeKegiatanRO = function () {
+                medifirstService.get("anggaran/get-subsubkegiatan" 
+                    + "?subkegiatan=" + $scope.item.subkegiatanro.id
+                    + "&tahun=" + moment($scope.item.tahunro).format('YYYY') 
+                    + "&idpegawai=" + idpegawai).then(function (e) {
+                        $scope.listSubSubKegiatanRO = e.data
                 });
             }
 

@@ -1607,6 +1607,12 @@ class AnggaranController extends ApiController {
             ->orderBy('st.tahunanggaran')
             ->get();
 
+        $tahun = '';
+        if (isset($request['tahun']) && $request['tahun'] != "" && $request['tahun'] != "undefined") {
+            $tahun = $request['tahun'];
+        }else{
+            $tahun = $setting[0]->tahunanggaran;
+        }
 
         $subsubkegiatan = '';
         if (isset($request['subsubkegiatan']) && $request['subsubkegiatan'] != "" && $request['subsubkegiatan'] != "undefined") {
@@ -1627,7 +1633,7 @@ class AnggaranController extends ApiController {
             WHERE
                 ka.statusenabled = TRUE
                 AND ka.kdprofile = ".$idProfile."
-                AND ta.tahun = '".$setting[0]->tahunanggaran."'
+                AND ta.tahun = '".$tahun."'
                 AND ta.objecttahapfk = ".$setting[0]->objecttahapaktivfk."
                 $subsubkegiatan
             GROUP BY
