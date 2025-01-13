@@ -1625,7 +1625,7 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
                 }
 
                 // jika ada sumberdana maka filter sumberdana
-                let asalProdukAngkas = null
+                let asalProdukAngkas = ''
                 if($scope.item.searchAsalProdukAngkas !== undefined && $scope.item.searchAsalProdukAngkas !== null){
                     asalProdukAngkas = "&asalproduk=" + $scope.item.searchAsalProdukAngkas.id
                 }
