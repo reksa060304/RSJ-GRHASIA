@@ -1996,7 +1996,20 @@ Route::group(['middleware' => 'cors', 'prefix' => 'service'], function () {
             // cetak laporan anggaran 2024
             Route::get('report/get-cetak-rba-detailv2', 'Report\ReportController@cetakRBADetailV2');
             Route::get('report/get-cetak-rba-detail-sebelum-sesudahv2', 'Report\ReportController@cetakRBADetailSebelumSesudahV2');
+            Route::get('report/get-cetak-rba-persubsubv2', 'Report\ReportController@cetakRBAPersubsub');
+            Route::get('report/get-cetak-rba-persubsub-sebelumsesudahv2', 'Report\ReportController@cetakRBAPersubsubSebelumSesudahV2');
+            Route::get('report/get-cetak-rekap-total-anggaranv2', 'Report\ReportController@CetakRekapTotalAnggaranV2');
+            Route::get('report/get-cetak-rekap-total-anggaran-sebelum-sesudahv2', 'Report\ReportController@CetakRekapTotalAnggaranSebelumSesudahV2');
+            Route::get('report/get-cetak-angkas-jadwalv2', 'Report\ReportController@CetakAngkasJadwalV2');
+            Route::get('report/get-cetak-angkasv2', 'Report\ReportController@CetakAngkasV2');
+            Route::get('report/get-cetak-konsolidasi-per-permenv2', 'Report\ReportController@CetakKonsolidasiPermenV2');
+            Route::get('report/get-cetak-spj-dan-monev-rbav2', 'Report\ReportController@CetakSPJMonevRBAV2');
             // end cetak laporan anggaran 2024
+
+            // cetak laporan keuangan 2024
+            Route::get('report/get-cetak-rov2', 'Report\ReportController@CetakROV2');
+            Route::get('report/get-cetak-rkv2', 'Report\ReportController@CetakRKV2');
+            // end cetak laporan keuangan 2024
 
 
         // });

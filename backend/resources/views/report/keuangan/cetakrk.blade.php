@@ -108,7 +108,7 @@
                     </td>
                     <td></td>
                     <td align="left">
-                        <p style="text-align: left; font-size: 20px; margin-top:-5px;">: {{$subsubkegiatan[0]->tahun}}</p>
+                        <p style="text-align: left; font-size: 20px; margin-top:-5px;">: {{$tahunjudul}}</p>
                     </td>
                 </tr>
                 <tr>

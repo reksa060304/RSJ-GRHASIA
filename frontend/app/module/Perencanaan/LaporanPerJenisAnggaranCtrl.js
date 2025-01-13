@@ -63,45 +63,91 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
                 { id: 2, jenisrekening: "Tampilkan Rek Permen"}
             ];
 
-            if($state.params.parameter == '99999'){
-                $scope.sumberdanaaja = true
-            } else if($state.params.parameter == '88888'){
-                $scope.subkegiatanaja = true
-            } else if($state.params.parameter == '77777'){
-                $scope.rbadetailaja = true
-            } else if($state.params.parameter == '66666'){
-                $scope.pendapatanperubahanaja = true
-            } else if($state.params.parameter == '55555'){
-                $scope.totalanggaranaja = true
-            } else if($state.params.parameter == '44444'){
-                $scope.spjmonevaja = true
-            } else if($state.params.parameter == '33333'){
-                $scope.konsolidasiaja = true
-            } else if($state.params.parameter == '22222'){
-                $scope.jadwalaja = true
-            } else if($state.params.parameter == '11111'){
-                $scope.cetakaja = true
-            } else if($state.params.parameter == '00000'){
-                $scope.jenisanggaranaja = true
-            }
-
-            medifirstService.get("perencanaan/get-data-combo?&idpegawai=" + idpegawai).then(function (e) {
-                $scope.listTahap = e.data.tahap
-                $scope.listKegiatan = e.data.kegiatancombo
-                $scope.listAsalProduk = e.data.asalproduk
-
-                medifirstService.get("anggaran/get-combo-anggaran").then(function (e) {
+            loadDataCombo()
+            function loadDataCombo() {
+                medifirstService.get("perencanaan/get-data-combo?&idpegawai=" + idpegawai).then(function (e) {
                     $scope.listTahap = e.data.tahap
-                    $scope.listKegiatanV2 = e.data.divsubsubKg
+                    $scope.listKegiatan = e.data.kegiatancombo
                     $scope.listAsalProduk = e.data.asalproduk
+    
+                    medifirstService.get("anggaran/get-combo-anggaran").then(function (res) {
+                        $scope.listTahap = res.data.tahap
+                        $scope.listKegiatanV2 = res.data.divsubsubKg
+                        $scope.listAsalProduk = res.data.asalproduk
+
+
+                        if($state.params.parameter == '99999'){
+                            $scope.sumberdanaaja = true
+                        } else if($state.params.parameter == '88888'){
+                            $scope.subkegiatanaja = true
+                        } else if($state.params.parameter == '77777'){
+                            $scope.rbadetailaja = true
+                        } else if($state.params.parameter == '66666'){
+                            $scope.pendapatanperubahanaja = true
+                        } else if($state.params.parameter == '55555'){
+                            $scope.totalanggaranaja = true
+                        } else if($state.params.parameter == '44444'){
+                            $scope.spjmonevaja = true
+                        } else if($state.params.parameter == '33333'){
+                            $scope.konsolidasiaja = true
+                        } else if($state.params.parameter == '22222'){
+                            $scope.jadwalaja = true
+                        } else if($state.params.parameter == '11111'){
+                            $scope.cetakaja = true
+                        } else if($state.params.parameter == '00000'){
+                            $scope.jenisanggaranaja = true
+                        }
+                    });
                 });
-            });
+            }
 
             $scope.changeKegiatan = function () {
                 medifirstService.get("perencanaan/get-detail-sub-kegiatan?kegiatan=" + $scope.item.kegiatandetail.id + "&tahap=" + $scope.item.tahapdetail.id + "&tahun=" + moment($scope.item.tahundetail).format('YYYY') + "&idpegawai=" + idpegawai).then(function (e) {
                     $scope.listSubKegiatan = e.data.data
                 });
             }
+
+            $scope.changeKegiatanAngkasJadwal = function () {
+                medifirstService.get("anggaran/get-subsubkegiatan" 
+                    +"?subkegiatan=" + $scope.item.kegiatanjadwal.id 
+                    + "&tahap=" + $scope.item.tahapjadwal.id 
+                    + "&tahun=" + moment($scope.item.tahunjadwal).format('YYYY') 
+                    + "&idpegawai=" + idpegawai).then(function (e) {
+                        $scope.listSubKegiatan = e.data
+                    });
+            }
+
+
+            // ketika tahun rba detail diganti 
+            // reset subkegiatan dan subsubkegitan rba detail
+            $scope.$watch('item.tahundetail', function (newValue, oldValue) {
+                if ($scope.item.tahundetail) {
+                    $scope.item.kegiatandetail = ''
+                    $scope.item.subkegiatandetail = ''
+                }
+            });
+
+            // ketika tahun spj dan monev diganti 
+            // reset subkegiatan dan subsubkegitan laporan spj monev
+            $scope.$watch('item.tahunmonev', function (newValue, oldValue) {
+                if ($scope.item.tahunmonev) {
+                    // reset subkegiatan dan reset subsubkegitan
+                    $scope.item.kegiatanmonev = ''
+                    $scope.item.subkegiatanmonev = ''
+
+                }
+            });
+
+            // ketika tahun anggaran kas jadwal diganti 
+            // reset subkegiatan dan subsubkegitan anggaran kas jadwal
+            $scope.$watch('item.tahunjadwal', function (newValue, oldValue) {
+                if ($scope.item.tahunjadwal) {
+                    // reset subkegiatan dan reset subsubkegitan
+                    $scope.item.kegiatanjadwal = ''
+                    $scope.item.subkegiatanjadwal = ''
+
+                }
+            });
 
             $scope.changeKegiatanRBADetail = function () {
                 medifirstService.get("anggaran/get-subsubkegiatan" 
@@ -125,10 +171,25 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
                 });
             }
 
+            $scope.changeKegiatanMonev2 = function () {
+                medifirstService.get("anggaran/get-subsubkegiatan" 
+                    + "?subkegiatan=" + $scope.item.kegiatanmonev.id 
+                    + "&tahap=" + $scope.item.tahapmonev.id 
+                    + "&tahun=" + moment($scope.item.tahunmonev).format('YYYY') 
+                    + "&idpegawai=" + idpegawai).then(function (e) {
+                    $scope.listSubKegiatan = e.data
+                });
+            }
+
             $scope.CetakMonev = function(){
 
                 if ($scope.item.tahunmonev == undefined){
                     toastr.warning('Tahun harus diisi', 'Informasi');
+                    return
+                }
+
+                if ($scope.item.tahapmonev == undefined){
+                    toastr.warning('Tahap dipilih dulu', 'Informasi');
                     return
                 }
 
@@ -160,12 +221,22 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
                 if($scope.item.jenisrekeningmonev.id == 2){
                     window.open(baseTransaksi + "report/get-cetak-spj-dan-monev?tahun="+tahun+"&jenisrekening="+$scope.item.jenisrekeningmonev+"&subkegiatan="+$scope.item.kegiatanmonev.id+"&subsubkegiatan="+$scope.item.subkegiatanmonev.id, '_blank');
                 } else if($scope.item.jenisrekeningmonev.id == 1){
-                    window.open(baseTransaksi + "report/get-cetak-spj-dan-monev-rba?tahun="
+                    // window.open(baseTransaksi + "report/get-cetak-spj-dan-monev-rba?tahun="
+                    //     +tahun
+                    //     +"&jenisrekening="+$scope.item.jenisrekeningmonev
+                    //     +"&subkegiatan="+$scope.item.kegiatanmonev.id
+                    //     +"&subsubkegiatan="+$scope.item.subkegiatanmonev.id
+                    //     +asalproduk,'_blank');
+                    
+                    window.open(baseTransaksi + "report/get-cetak-spj-dan-monev-rbav2?tahun="
                         +tahun
                         +"&jenisrekening="+$scope.item.jenisrekeningmonev
                         +"&subkegiatan="+$scope.item.kegiatanmonev.id
                         +"&subsubkegiatan="+$scope.item.subkegiatanmonev.id
+                        +"&tahap=" + $scope.item.tahapmonev.id
                         +asalproduk,'_blank');
+                    
+
                 }
                 
                 
@@ -213,7 +284,8 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
                     subsubkegiatan = $scope.item.subkegiatanjadwal.id
                 }
 
-                window.open(baseTransaksi + "report/get-cetak-angkas-jadwal?tahap="+tahap+"&subkegiatan="+subkegiatan+"&subsubkegiatan="+subsubkegiatan+"&tahun="+moment(tahun).format('YYYY'), '_blank');
+                // window.open(baseTransaksi + "report/get-cetak-angkas-jadwal?tahap="+tahap+"&subkegiatan="+subkegiatan+"&subsubkegiatan="+subsubkegiatan+"&tahun="+moment(tahun).format('YYYY'), '_blank');
+                window.open(baseTransaksi + "report/get-cetak-angkas-jadwalv2?tahap="+tahap+"&subkegiatan="+subkegiatan+"&subsubkegiatan="+subsubkegiatan+"&tahun="+moment(tahun).format('YYYY'), '_blank');
                 
             }
 

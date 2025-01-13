@@ -226,7 +226,7 @@
                                             </div>
                                             <div class="grid_12">
                                                 <div class="grid_12">
-                                                    <input style="width: 100%" k-options="yearUngkul" k-ng-model="item.tahundetail"  kendo-date-picker  placeholer="YYYY" k-format="'yyyy'" k-on-change='changeKegiatan()'/>
+                                                    <input style="width: 100%" k-options="yearUngkul" k-ng-model="item.tahundetail"  kendo-date-picker  placeholer="YYYY" k-format="'yyyy'" />
                                                 </div>
                                             </div>
                                         </div>
@@ -239,7 +239,7 @@
                                                     <input kendo-combo-box k-ng-model="item.tahapdetail"
                                                     k-data-text-field="'tahap'" k-data-value-field="'id'"
                                                     k-filter="'contains'" k-auto-bind="false"
-                                                    k-data-source="listTahap" k-on-change='changeKegiatan()' />
+                                                    k-data-source="listTahap" />
                                                 </div>
                                             </div>
                                         </div>
@@ -462,11 +462,17 @@
                                             <label c-label item="item" c-label-text="Sub Kegiatan"></label>
                                         </div>
                                         <div class="grid_12">
-                                            <div class="grid_12">
+                                            <!-- <div class="grid_12">
                                                 <input kendo-combo-box k-ng-model="item.kegiatanmonev"
                                                 k-data-text-field="'keterangan'" k-data-value-field="'id'"
                                                 k-filter="'contains'" k-auto-bind="false" 
                                                 k-data-source="listKegiatan" k-on-change='changeKegiatanMonev()'/>
+                                            </div> -->
+                                            <div class="grid_12">
+                                                <input kendo-combo-box k-ng-model="item.kegiatanmonev"
+                                                k-data-text-field="'keterangan'" k-data-value-field="'id'"
+                                                k-filter="'contains'" k-auto-bind="false" 
+                                                k-data-source="listKegiatanV2" k-on-change='changeKegiatanMonev2()'/>
                                             </div>
                                         </div>
                                     </div>
@@ -477,7 +483,7 @@
                                         <div class="grid_12">
                                             <div class="grid_12">
                                                 <input kendo-combo-box k-ng-model="item.subkegiatanmonev"
-                                                k-data-text-field="'texttahap'" k-data-value-field="'id'"
+                                                k-data-text-field="'keterangan'" k-data-value-field="'id'"
                                                 k-filter="'contains'" k-auto-bind="false" 
                                                 k-data-source="listSubKegiatan"/>
                                             </div>
@@ -552,6 +558,10 @@
                                         </div>
                                         <div class="grid_12">
                                             <div class="grid_12">
+                                                <!-- <input kendo-combo-box k-ng-model="item.kegiatanpermen"
+                                                k-data-text-field="'keterangan'" k-data-value-field="'id'"
+                                                k-filter="'contains'" k-auto-bind="false" 
+                                                k-data-source="listKegiatan"/> -->
                                                 <input kendo-combo-box k-ng-model="item.kegiatanpermen"
                                                 k-data-text-field="'keterangan'" k-data-value-field="'id'"
                                                 k-filter="'contains'" k-auto-bind="false" 
@@ -605,7 +615,7 @@
                                                 <input kendo-combo-box k-ng-model="item.kegiatanjadwal"
                                                 k-data-text-field="'keterangan'" k-data-value-field="'id'"
                                                 k-filter="'contains'" k-auto-bind="false" 
-                                                k-data-source="listKegiatan" k-on-change='changeTahap()'/>
+                                                k-data-source="listKegiatanV2" k-on-change='changeKegiatanAngkasJadwal()'/>
                                             </div>
                                         </div>
                                     </div>
@@ -616,7 +626,7 @@
                                         <div class="grid_12">
                                             <div class="grid_12">
                                                 <input kendo-combo-box k-ng-model="item.subkegiatanjadwal"
-                                                k-data-text-field="'texttahap'" k-data-value-field="'id'"
+                                                k-data-text-field="'keterangan'" k-data-value-field="'id'"
                                                 k-filter="'contains'" k-auto-bind="false" 
                                                 k-data-source="listSubKegiatan"/>
                                             </div>
