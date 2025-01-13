@@ -15746,7 +15746,8 @@ class LogistikController extends ApiController{
                      op.norec as norec_op, op.jumlahstokgudang, pr.kdbhp, op.jumlahstokruangan, case when op.qtyberi is null then op.qtyproduk else op.qtyberi end as qtyberi, pr.id as kdproduk,pr.kdproduk as kdsirs,pr.namaproduk,
                     ss.satuanstandar,op.qtyproduk, op.isveriforder, op.tglverif")
             )
-            ->where('sp.kdprofile', $idProfile);
+            ->where('sp.kdprofile', $idProfile)
+            ->where('op.statusenabled', true);
 
         if(isset($request['tglAwal']) && $request['tglAwal']!="" && $request['tglAwal']!="undefined"){
             $data2 = $data2->where('sp.tglorder','>=', $request['tglAwal']);
