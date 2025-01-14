@@ -808,6 +808,7 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
                     + "?norec_transakianggaran=" + $scope.norecTransaksi)
                     .then(function(response) {
                         
+                        DataTotalMataAnggaran = response.data.mataanggaran
 
                         $scope.dataSourceDetailMT = new kendo.data.DataSource({
                             data: response.data.mataanggaran
@@ -911,7 +912,7 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
                     $scope.rcn.totallv2 = formatRupiah($scope.rcn.totallv2, "Rp. ")
                     $scope.rcn.totallv1 = formatRupiah($scope.rcn.totallv1, "Rp. ")
                     $scope.rcn.mataAnggaranDipilih= dataMataAnggaranSelected.kodemataanggaran + " " + dataMataAnggaranSelected.namamataanggaran
-                    $scope.rcn.idmataanggaran = dataMataAnggaranSelected.id 
+                    $scope.rcn.idmataanggaran = dataMataAnggaranSelected.idmataanggaran 
 
                     if($scope.idkegiatanangkas != 0){
                         $scope.item.id = $scope.idkegiatanangkas
@@ -1218,6 +1219,8 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
                     objecttransaksifk: $scope.item.norec
                 }
 
+                // console.log(objSave)
+
                 medifirstService.post('anggaran/save-keterangan-belanja', objSave).then(function (e) {
                     
                     $scope.norecrcntotalanggaran = $scope.item.norec 
@@ -1247,6 +1250,24 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
                                 data: response.data.mataanggaran
                             });
                         })
+                    
+                    medifirstService.get("anggaran/get-keterangan-belanja" 
+                        + "?norec=" + $scope.item.norec 
+                        + "&idmataanggaran=" + $scope.rcn.idmataanggaran
+                        + "&tahun=" + $scope.item.tahun)
+                        .then(function (e) {
+                            DataKeteranganBelanja = e.data.data
+                            $scope.dataSourceRincianAnggaran = new kendo.data.DataSource({
+                                data: DataKeteranganBelanja
+                            });
+                            for (let index = 0; index < DataKeteranganBelanja.length; index++) {
+                                let element = DataKeteranganBelanja[index];
+                                DataKeteranganBelanja[index].statCheckbox2 = false
+                                TotalAnggaran = TotalAnggaran + parseFloat(element.subtotal)
+                            }
+                            TotalAnggaran = parseFloat(TotalAnggaran)
+                        
+                    })
                     
                     $scope.popupTambahKeteranganBelanja.center().close()
                 })
