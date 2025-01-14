@@ -256,13 +256,13 @@
                             $pengembalianmodal2 = 0;
 
                             foreach ($data as $key => $anggaranKegiatan) {
-                                if($anggaranKegiatan->kode_mataanggaran1 == 'III'){
+                                if($anggaranKegiatan->idjenisanggaran == 6 || $anggaranKegiatan->idjenisanggaran == 5){
                                     $belanjaModal2 += (int)$anggaranKegiatan->total_anggaran;  
                                 }
                             }
 
                             foreach ($spjbku as $row) {
-                                if($row->kode_mataanggaran1 == 'III'){
+                                if($row->idjenisanggaran == 6 || $row->idjenisanggaran == 5){
                                     $belanjaModal2_bulanlalu += (float)$row->total_belanja_bulan_lalu;
                                     $belanjaModal2_bulanini += (float)$row->total_belanja_bulan_ini;
                                     $pengembalianmodal2 += (float)$row->totalpengembalian;
@@ -392,16 +392,16 @@
                             $pengembalianmodal3 = 0;
 
                             foreach ($data as $key => $anggaranKegiatan) {
-                                if($anggaranKegiatan->kode_mataanggaran1 == 'III'){
-                                    $belanjaModal3 += (int)$anggaranKegiatan->total_anggaran;  
+                                if($anggaranKegiatan->idjenisanggaran == 6 || $anggaranKegiatan->idjenisanggaran == 5){
+                                    $belanjaModal2 += (int)$anggaranKegiatan->total_anggaran;  
                                 }
                             }
 
                             foreach ($spjbku as $row) {
-                                if($row->kode_mataanggaran1 == 'III'){
-                                    $belanjaModal3_bulanlalu += (float)$row->total_belanja_bulan_lalu;
-                                    $belanjaModal3_bulanini += (float)$row->total_belanja_bulan_ini;
-                                    $pengembalianmodal3 += (float)$row->totalpengembalian;
+                                if($row->idjenisanggaran == 6 || $row->idjenisanggaran == 5){
+                                    $belanjaModal2_bulanlalu += (float)$row->total_belanja_bulan_lalu;
+                                    $belanjaModal2_bulanini += (float)$row->total_belanja_bulan_ini;
+                                    $pengembalianmodal2 += (float)$row->totalpengembalian;
                                 }
                             }
                         @endphp
@@ -778,13 +778,13 @@
                     $modalpm_bulanini = 0;
 
                     foreach ($data as $key => $item) {
-                        if($item->kode_mataanggaran2 == 'III.2'){
+                        if($item->idjenisanggaran == 6){
                             $modalpm_angg += (float)$item->total_anggaran; 
                         }
                     }
 
                     foreach ($spjbku as $key => $row) {
-                        if($row->kode_mataanggaran2 == 'III.2'){
+                        if($row->idjenisanggaran == 6){
                             $modalpm_bulanlalu += (float)$row->total_belanja_bulan_lalu;
                             $modalpm_bulanini += (float)$row->total_belanja_bulan_ini;
                         }
@@ -808,13 +808,13 @@
                     $modalgb_bulanini = 0;
 
                     foreach ($data as $key => $item) {
-                        if($item->kode_mataanggaran2 == 'III.3'){
+                        if($item->idjenisanggaran == 5){
                             $modalgb_angg += (float)$item->total_anggaran; 
                         }
                     }
 
                     foreach ($spjbku as $key => $row) {
-                        if($row->kode_mataanggaran2 == 'III.3'){
+                        if($row->idjenisanggaran == 5){
                             $modalgb_bulanlalu += (float)$row->total_belanja_bulan_lalu;
                             $modalgb_bulanini += (float)$row->total_belanja_bulan_ini;
                         }
@@ -830,7 +830,7 @@
                 <td colspan="3" style="border:none; border-right: 1px solid black;"></td>
             </tr>
 
-            {{-- belanja Modal Gedung dan Bangunan --}}
+            {{-- belanja ATB --}}
             <tr>
                 @php
                     $atb_angg = 0;
