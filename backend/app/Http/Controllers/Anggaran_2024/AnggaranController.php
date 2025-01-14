@@ -1840,11 +1840,10 @@ class AnggaranController extends ApiController {
             FROM panjar_t pj
             INNER JOIN mataanggaran_m ma on ma.id = pj.objectmataanggaranfk AND ma.statusenabled = TRUE AND ma.kdprofile = ".$idProfile."
             INNER JOIN kegiatananggaran2024_m ka on ka.id = pj.objectsubsubkegiatanfk AND ka.statusenabled = TRUE AND ka.kdprofile = ".$idProfile."
-            INNER JOIN transaksianggaran2024_t ta ON ta.objectkegiatanfk = ka.id AND ta.statusenabled = TRUE AND ta.kdprofile = ".$idProfile."
             INNER JOIN asalproduk_m ap ON ap.id = pj.objectasalprodukfk AND ap.statusenabled = TRUE AND ap.kdprofile = ".$idProfile."
             where pj.kdprofile = 30
                 and pj.statusenabled = true
-                and ta.tahun = '".$setting[0]->tahunanggaran."'
+                EXTRACT(YEAR FROM pj.tglpanjar) = '".$setting[0]->tahunanggaran."'
                 $subsubkegiatan
                 $mataanggaran
                 $asalproduk
@@ -2433,7 +2432,7 @@ class AnggaranController extends ApiController {
             LEFT JOIN pengembalianpanjar_t pengpj ON pengpj.objectpanjarfk = pj.norec AND pengpj.statusenabled = TRUE AND pengpj.kdprofile = ".$idProfile."
             where pj.kdprofile = 30
                 and pj.statusenabled = true
-                AND ka.id IN (SELECT DISTINCT ta.objectkegiatanfk FROM transaksianggaran2024_t ta WHERE ta.statusenabled = TRUE AND ta.objectkegiatanfk = ka.id $tahun)
+                AND EXTRACT(YEAR FROM pj.tglpanjar) = '".$setting[0]->tahunanggaran."'
                 $subsubkegiatan
                 $mataanggaran
                 $asalproduk
