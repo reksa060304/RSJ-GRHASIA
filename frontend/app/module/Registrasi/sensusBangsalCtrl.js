@@ -60,6 +60,7 @@ function (initialize) {
                     sumjumlahpasienkeluarrs += element.jumlahpasienkeluarrs
                     sumjumlahpasienmeninggal += element.jumlahpasienmeninggal
                     sumpasienlbh48 += element.pasienlbh48
+                    element.lamadirawat = element.pasiendipindahkan + element.jumlahpasienkeluarrs + element.pasienmkhs
                 }
 
                 $scope.item.bortt = '0%'
