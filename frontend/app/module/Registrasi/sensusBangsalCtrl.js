@@ -61,12 +61,24 @@ function (initialize) {
                     sumjumlahpasienmeninggal += element.jumlahpasienmeninggal
                     sumpasienlbh48 += element.pasienlbh48
                 }
-                $scope.item.bortt = (sumhariperawatan / ($scope.item.ttlTempatTidur * datas.length)* 100).toFixed(2) + '%'
-                $scope.item.los = ((sumlos/sumjumlahpasienkeluarrs)).toFixed(2)
-                $scope.item.toi = ((($scope.item.ttlTempatTidur*datas.length) - sumhariperawatan)/sumjumlahpasienkeluarrs).toFixed(2)
-                $scope.item.bto = (sumjumlahpasienkeluarrs/datas.length).toFixed(2)
-                $scope.item.ndr = (sumpasienlbh48 / sumjumlahpasienkeluarrs).toFixed(2) + 'permil'
-                $scope.item.gdr = (sumjumlahpasienmeninggal / sumjumlahpasienkeluarrs).toFixed(2) + 'permil'
+
+                $scope.item.bortt = '0%'
+                $scope.item.los = '0'
+                $scope.item.toi = '0'
+                $scope.item.bto = '0'
+                $scope.item.ndr = '0 permil'
+                $scope.item.gdr = '0 permil'
+
+                if (sumhariperawatan > 0) {
+                    $scope.item.bortt = (sumhariperawatan / ($scope.item.ttlTempatTidur * datas.length)* 100).toFixed(2) + '%'
+                }
+                if (sumjumlahpasienkeluarrs > 0) {                    
+                    $scope.item.los = ((sumlos / sumjumlahpasienkeluarrs)).toFixed(2)             
+                    $scope.item.toi = ((($scope.item.ttlTempatTidur*datas.length) - sumhariperawatan)/sumjumlahpasienkeluarrs).toFixed(2)
+                    $scope.item.bto = (sumjumlahpasienkeluarrs/datas.length).toFixed(2)
+                    $scope.item.ndr = (sumpasienlbh48 / sumjumlahpasienkeluarrs).toFixed(2) + 'permil'
+                    $scope.item.gdr = (sumjumlahpasienmeninggal / sumjumlahpasienkeluarrs).toFixed(2) + 'permil'
+                }
                 $scope.dataSourcePendidikan = new kendo.data.DataSource({
                     data: datas,
                     schema: {
@@ -244,7 +256,7 @@ function (initialize) {
                 "width": "50px",
                 "columns": [{
                     "title": "21",
-                    "field": "los",
+                    "field": "lamadirawat",
                 }]
             },
         ];
