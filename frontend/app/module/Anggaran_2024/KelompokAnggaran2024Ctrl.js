@@ -1230,10 +1230,10 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
                 $scope.jumlahspjdipilih = 0
                 $scope.jumlahpanjardipilih = 0
                 $scope.jumlahpengembaliandipilih = 0
-                if($scope.item.pihakKetigaSPJ == undefined){
-                    $scope.isRouteLoading = false
-                    return
-                }
+                // if($scope.item.pihakKetigaSPJ == undefined){
+                //     $scope.isRouteLoading = false
+                //     return
+                // }
                 if($scope.item.subSubKegiatanSPJ == undefined){
                     $scope.isRouteLoading = false
                     return
@@ -1257,7 +1257,7 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
                     tglrealisasi:  moment($scope.item.tglSPJ).format('YYYY-MM-DD'),
                     status: null,
                     totalbelanja:  $scope.item.jumlahSPJ,
-                    rekananfk:  $scope.item.pihakKetigaSPJ.id,
+                    rekananfk:  $scope.item.pihakKetigaSPJ ? $scope.item.pihakKetigaSPJ.id : null,
                     deskripsi:  $scope.item.dasarKontraktualSPJ,
                     objectkegiatanfk:  $scope.item.subSubKegiatanSPJ.id,
                     objectmataanggaranfk:  $scope.item.mataAnggaranSPJ.kodemataanggaran,
