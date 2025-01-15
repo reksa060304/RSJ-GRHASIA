@@ -233,10 +233,10 @@ export class ViewerPoliComponent implements OnInit {
         if (this.item.poliPanggil === 'POLIKLINIK JIWA' || this.item.poliPanggil === 'Ruang Dokter 1' || 
             this.item.poliPanggil === 'Ruang Dokter 2' || this.item.poliPanggil === 'Ruang Dokter 3' ||
             this.item.poliPanggil === 'Ruang Dokter 4' || this.item.poliPanggil === 'Ruang Perawat 1' ||
-            this.item.poliPanggil === 'Ruang Perawat 2' || this.item.poliPanggil === 'Poliklinik Umum' ||
-            this.item.poliPanggil === 'Ruang psikiater 1' || this.item.poliPanggil === 'Ruang psikiater 2' ||
-            this.item.poliPanggil === 'Ruang psikiater 3' || this.item.poliPanggil === 'Ruang psikiater 4' ||
-            this.item.poliPanggil === 'Ruang psikiater 5' || this.item.poliPanggil === 'Ruang psikiater 6' ||
+          this.item.poliPanggil === 'Ruang Perawat 2' || this.item.poliPanggil === 'Poliklinik Umum' ||
+          this.item.poliPanggil === 'Ruang psikiater 1' || this.item.poliPanggil === 'Ruang psikiater 2' ||
+          this.item.poliPanggil === 'Ruang psikiater 3' || this.item.poliPanggil === 'Ruang psikiater 4' ||
+          this.item.poliPanggil === 'Ruang psikiater 5' || this.item.poliPanggil === 'Ruang psikiater 6' 
           ) {
           this.sound = new Howl({
             src: ['assets/sound/in.wav'],  // Ganti dengan path file suara lonceng Anda
