@@ -1843,7 +1843,7 @@ class AnggaranController extends ApiController {
             INNER JOIN asalproduk_m ap ON ap.id = pj.objectasalprodukfk AND ap.statusenabled = TRUE AND ap.kdprofile = ".$idProfile."
             where pj.kdprofile = 30
                 and pj.statusenabled = true
-                EXTRACT(YEAR FROM pj.tglpanjar) = '".$setting[0]->tahunanggaran."'
+                and EXTRACT(YEAR FROM pj.tglpanjar) = '".$setting[0]->tahunanggaran."'
                 $subsubkegiatan
                 $mataanggaran
                 $asalproduk
