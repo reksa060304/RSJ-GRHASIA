@@ -233,7 +233,10 @@ export class ViewerPoliComponent implements OnInit {
         if (this.item.poliPanggil === 'POLIKLINIK JIWA' || this.item.poliPanggil === 'Ruang Dokter 1' || 
             this.item.poliPanggil === 'Ruang Dokter 2' || this.item.poliPanggil === 'Ruang Dokter 3' ||
             this.item.poliPanggil === 'Ruang Dokter 4' || this.item.poliPanggil === 'Ruang Perawat 1' ||
-            this.item.poliPanggil === 'Ruang Perawat 2' || this.item.poliPanggil === 'Poliklinik Umum'
+            this.item.poliPanggil === 'Ruang Perawat 2' || this.item.poliPanggil === 'Poliklinik Umum' ||
+            this.item.poliPanggil === 'Ruang psikiater 1' || this.item.poliPanggil === 'Ruang psikiater 2' ||
+            this.item.poliPanggil === 'Ruang psikiater 3' || this.item.poliPanggil === 'Ruang psikiater 4' ||
+            this.item.poliPanggil === 'Ruang psikiater 5' || this.item.poliPanggil === 'Ruang psikiater 6' ||
           ) {
           this.sound = new Howl({
             src: ['assets/sound/in.wav'],  // Ganti dengan path file suara lonceng Anda
@@ -419,10 +422,10 @@ export class ViewerPoliComponent implements OnInit {
     utterance.rate = 0.8;
     utterance.volume = 1;
     // Speak the utterance
-    setTimeout(() => {
+    // setTimeout(() => {
     synthesis.speak(utterance);
     this.audio.pause();
-    }, 1500); //4 detik
+    // }, 1500); //4 detik
     // setTimeout(() => {
       
     // }, (4000));

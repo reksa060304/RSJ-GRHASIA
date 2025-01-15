@@ -228,50 +228,29 @@ export class ViewerPoliComponent implements OnInit {
         }
       }
 
-      // if (status == true) {
+      if (status == true) {
 
-      //   this.dipanggil = true
-      //   if (this.item.poliPanggil === 'POLIKLINIK JIWA' || this.item.poliPanggil === 'Ruang Dokter 1' || 
-      //       this.item.poliPanggil === 'Ruang Dokter 2' || this.item.poliPanggil === 'Ruang Dokter 3' ||
-      //       this.item.poliPanggil === 'Ruang Dokter 4' || this.item.poliPanggil === 'Ruang Perawat 1' ||
-      //     this.item.poliPanggil === 'Ruang Perawat 2' || this.item.poliPanggil === 'Poliklinik Umum' ||
-      //     this.item.poliPanggil === 'Ruang psikiater 1' || this.item.poliPanggil === 'Ruang psikiater 2' ||
-      //     this.item.poliPanggil === 'Ruang psikiater 3' || this.item.poliPanggil === 'Ruang psikiater 4' ||
-      //     this.item.poliPanggil === 'Ruang psikiater 5' || this.item.poliPanggil === 'Ruang psikiater 6' ||
-      //     ) {
-      //     this.sound = new Howl({
-      //       src: ['assets/sound/in.wav'],  // Ganti dengan path file suara lonceng Anda
-      //       autoplay: true
-      //     });
+        this.dipanggil = true
+        if (this.item.poliPanggil === 'POLIKLINIK JIWA' || this.item.poliPanggil === 'Ruang Dokter 1' || 
+            this.item.poliPanggil === 'Ruang Dokter 2' || this.item.poliPanggil === 'Ruang Dokter 3' ||
+            this.item.poliPanggil === 'Ruang Dokter 4' || this.item.poliPanggil === 'Ruang Perawat 1' ||
+            this.item.poliPanggil === 'Ruang Perawat 2' || this.item.poliPanggil === 'Poliklinik Umum' ||
+            this.item.poliPanggil === 'Ruang psikiater 1' || this.item.poliPanggil === 'Ruang psikiater 2' ||
+            this.item.poliPanggil === 'Ruang psikiater 3' || this.item.poliPanggil === 'Ruang psikiater 4' ||
+            this.item.poliPanggil === 'Ruang psikiater 5' || this.item.poliPanggil === 'Ruang psikiater 6' ||
+          ) {
+          this.sound = new Howl({
+            src: ['assets/sound/in.wav'],  // Ganti dengan path file suara lonceng Anda
+            autoplay: true
+          });
 
-      //     this.item.antrianYangDipanggil = this.item.antriTerakhir
-      //     this.item.poliYangDipanggil = this.item.poliPanggil
+          this.item.antrianYangDipanggil = this.item.antriTerakhir
+          this.item.poliYangDipanggil = this.item.poliPanggil
 
-      //     this.dipanggil = false
+          this.dipanggil = false
       
-      //   } else {
+        } else {
       
-        if (status) {
-          this.dipanggil = true;
-        
-          const poliList = [
-            'POLIKLINIK JIWA', 'Ruang Dokter 1', 'Ruang Dokter 2', 'Ruang Dokter 3', 
-            'Ruang Dokter 4', 'Ruang Perawat 1', 'Ruang Perawat 2', 'Poliklinik Umum', 
-            'Ruang psikiater 1', 'Ruang psikiater 2', 'Ruang psikiater 3', 
-            'Ruang psikiater 4', 'Ruang psikiater 5', 'Ruang psikiater 6'
-          ];
-        
-          if (poliList.includes(this.item.poliPanggil)) {
-            this.sound = new Howl({
-              src: ['assets/sound/in.wav'], // Ganti dengan path file suara lonceng Anda
-              autoplay: true
-            });
-        
-            this.item.antrianYangDipanggil = this.item.antriTerakhir;
-            this.item.poliYangDipanggil = this.item.poliPanggil;
-        
-            this.dipanggil = false;
-          } else {
           if (result.jenis != undefined && result.jenis == 'penunjang') {
             this.playAudio('Nomor Registrasi ' + this.item.antriTerakhir
               //+ '. ' + this.item.nama
