@@ -27010,12 +27010,14 @@ public function suratBuktiPengembalian(Request $request)
                 END asc
         "));
 
+        $tanggalcetak = $this->tanggal_indonesia(date('Y-m-d',strtotime($request['tglcetak'])));
+
         return view('report.rba.cetak-rba-detailv2', [
             'data' => $data,
             'asalproduk' => $asalproduk,
             'kegiatan' => $kegiatan,
             'tahun' => $request['tahun'],
-            'tanggalcetak' => $request['tglcetak'],
+            'tanggalcetak' => $tanggalcetak,
             'settingrba' => $setting
         ]);
 
@@ -28199,9 +28201,9 @@ public function suratBuktiPengembalian(Request $request)
 
         $tahap = DB::select(DB::raw("select * from tahapanggaran_m where id = ".$thp));
 
-        $subkegiatan = DB::select(DB::raw("select * from kegiatananggaran_m where id = ".$subk));
+        $subkegiatan = DB::select(DB::raw("select * from kegiatananggaran2024_m where id = ".$subk));
 
-        $subsubkegiatan = DB::select(DB::raw("select * from kegiatananggaran_m where id = ".$subsubk));
+        $subsubkegiatan = DB::select(DB::raw("select * from kegiatananggaran2024_m where id = ".$subsubk));
 
         $data = DB::select(DB::raw("
         select * from (
