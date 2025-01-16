@@ -2596,7 +2596,15 @@ class ReportController extends ApiController{
         }
 
         return $pdf->stream();
-        // return view('report.EMR.suratketerangandokter',compact('data','pageWidth'));
+        // return view('report.EMR.suratketerangandokter', array(
+        //     'res' => $res,
+        //     'pageWidth' => $pageWidth,
+        //     'data' => $data,
+        //     'item'=> $item,
+        //     'peg'=> $peg,
+        //     'tte' => (isset($request['isttd']) && $request['isttd'] == true) ? 'true' : 'false',
+        //     'sip' => $dataSip
+        // ));
     }
 
     public function CetakSKGawatDarurat(Request $request)

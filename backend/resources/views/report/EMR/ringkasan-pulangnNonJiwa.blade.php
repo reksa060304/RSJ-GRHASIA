@@ -145,7 +145,7 @@
         {{-- KOP --}}
         <table cellspacing="0" cellpadding="0" border="0" width="100%">
             <tbody>
-                <tr>
+                {{-- <tr>
                     <td style="text-align: center;" width="15%">
                         <img src="img/logo_grhasia_com.png" alt="Logo" style="width: 70px; margin: 0 !important;
                         padding: 0 !important;">
@@ -202,27 +202,41 @@
                             </table>
                         </div>
                     </td>
-                </tr>
+                </tr> --}}
+
+                {{-- kop baru --}}
                 <tr>
-                    <td colspan="3">
-                        <hr>
+                    <td style="border-bottom:3px solid black; padding-bottom:1em; width: 15%;">
+                        <img src="img/diy.png" alt="Logo" style="width: 100%;">
+                    </td>
+                    <td style="border-bottom:3px solid black; padding-bottom:1em; text-align:center;">
+                        <p style="margin:0; padding:0;">{{ $res['profile']->baris1 }}</p>
+                        <p style="font-weight:bold; margin:0; padding:0;">{{ $res['profile']->baris2 }}</p>
+                        <p style="font-weight:bold; margin:0; margin-bottom:.3cm; padding:0;">{{ strtoupper($res['profile']->namalengkap) }}</p>
+                        <img src="img/aksara_jawa-com.png" alt="Logo" style="height: .8cm;">
+                        <p style="font-size:8pt; margin:0;">Jalan Kaliurang Km 17 Sleman, Kode Pos {{ $res['profile']->kodepos }}, Telepon: (0274) 895143, 895297</p>
+                        <p style="font-size:8pt; margin:0;">Faksimile: {{ $res['profile']->faksimile }}, Pos-el: <span style="text-decoration:underline; color:blue;">{{ $res['profile']->alamatemail }}</span>,</p>
+                        <p style="font-size:8pt; margin:0;">Laman: {{ $res['profile']->website }}</p>
+                    </td>
+                    <td style="border-bottom:3px solid black; padding-bottom:1em; width: 25%;">
+                        <img src="img/logo_grhasiafull.png" alt="Logo" style="width: 100%;">
                     </td>
                 </tr>
-                <tr>
-                    <th colspan="3" style="text-decoration:underline;">RINGKASAN PULANG NON JIWA</th>
 
-                </tr>
-                <tr>
-                    <th colspan="3" >DISCHARGE SUMMARY</th>
-
-                </tr>
             </tbody> 
               
 
         </table>
 
         {{-- Isi --}}
-        <table  cellspacing="0" cellpadding="0"  width="100%" style="padding: 3px; ">
+        <table  cellspacing="0" cellpadding="0"  width="100%" style="padding-top: .5cm; ">
+            <tr>
+                <th colspan="4" style="margin-top:1cm;text-decoration:underline;">RINGKASAN PULANG NON JIWA</th>
+
+            </tr>
+            <tr>
+                <th colspan="4" style="padding-bottom: .5cm;">DISCHARGE SUMMARY</th>
+            </tr>
             <tr >
                 <td style="font-size: 8pt;padding-left:5px;"> 
                     <font style="font-size: 9px; font-weight: 400;">
@@ -872,8 +886,8 @@
                 <td></td>
                 <td style="font-size: 9px; font-weight: 400; text-align: center">
                     NIP/SIP :  
-                    @if (isset($peg->nip))
-                        {{ $peg->nip }}
+                    @if (isset($peg->nippns))
+                        {{ $peg->nippns }} {{ (isset($sip->nosip)) ? ' / '.$sip->nosip : '' }}
                     @else
                         {{ (isset($sip->nosip)) ? $sip->nosip : '' }}
                     @endif

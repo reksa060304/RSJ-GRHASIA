@@ -78,7 +78,7 @@
         {{-- Kop --}}
         <table cellspacing="0" cellpadding="0" border="0" width="100%">
             <tbody>
-                <tr>
+                {{-- <tr>
                     <td width="10%">
                         <img src="img/logo_grhasia_com.png" alt="Logo" style="width: 70px; margin-bottom:10px">
                         <br>
@@ -114,6 +114,25 @@
                                 </tr>
                             </table>
                         </div>
+                    </td>
+                </tr> --}}
+
+                {{-- kop baru --}}
+                <tr>
+                    <td style="border-bottom:3px solid black; padding-bottom:1em; width: 15%;">
+                        <img src="img/diy.png" alt="Logo" style="width: 100%;">
+                    </td>
+                    <td style="border-bottom:3px solid black; padding-bottom:1em; text-align:center;">
+                        <p style="margin:0; padding:0;">{{ $profile->baris1 }}</p>
+                        <p style="font-weight:bold; margin:0; padding:0;">{{ $profile->baris2 }}</p>
+                        <p style="font-weight:bold; margin:0; margin-bottom:.3cm; padding:0;">{{ strtoupper($profile->namalengkap) }}</p>
+                        <img src="img/aksara_jawa-com.png" alt="Logo" style="height: .8cm;">
+                        <p style="font-size:8pt; margin:0;">Jalan Kaliurang Km 17 Sleman, Kode Pos {{ $profile->kodepos }}, Telepon: (0274) 895143, 895297</p>
+                        <p style="font-size:8pt; margin:0;">Faksimile: {{ $profile->faksimile }}, Pos-el: <span style="text-decoration:underline; color:blue;">{{ $profile->alamatemail }}</span>,</p>
+                        <p style="font-size:8pt; margin:0;">Laman: {{ $profile->website }}</p>
+                    </td>
+                    <td style="border-bottom:3px solid black; padding-bottom:1em; width: 25%;">
+                        <img src="img/logo_grhasiafull.png" alt="Logo" style="width: 100%;">
                     </td>
                 </tr>
             </tbody>
@@ -214,8 +233,8 @@
             <tr>
                 <td style="text-align: center">
                     NIP/SIP :  
-                    @if (isset($peg->nip))
-                        {{ $peg->nip }}
+                    @if (isset($peg->nippns))
+                        {{ $peg->nippns }} {{ (isset($sip->nosip)) ? ' / '.$sip->nosip : '' }}
                     @else
                         {{ (isset($sip->nosip)) ? $sip->nosip : '' }}
                     @endif
