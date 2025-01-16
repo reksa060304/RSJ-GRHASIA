@@ -6544,7 +6544,7 @@ class RegistrasiController extends ApiController
             $currentDate = Carbon::parse($request->tglperiksa);
     
             // Jika selisihnya kurang dari 30 hari, maka proses ditolak
-            if ($currentDate->diffInDays($lastRegistrationDate) < 30) {
+            if ($currentDate->diffInDays($lastRegistrationDate) < 29) {
                 $status = true; 
             }
         }
