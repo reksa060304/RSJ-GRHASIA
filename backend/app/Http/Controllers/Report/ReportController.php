@@ -3821,9 +3821,9 @@ class ReportController extends ApiController{
             inner join realisasidetail_t rd on rd.strukrealisasifk =sr.norec
             inner join keteranganbelanja_t kb on kb.norec = rd.keteranganbelanjafk
             inner join transaksianggaran2024_t ta ON ta.norec = kb.objecttransaksifk
-            inner join kegiatananggaran_m km on km.id = ta.objectkegiatanfk
+            inner join kegiatananggaran2024_m km on km.id = ta.objectkegiatanfk
             inner join mataanggaran_m ma on ma.id = sr.objectmataanggaranfk
-            left join kegiatananggaran_m kg ON kg.id km.headfk
+            left join kegiatananggaran2024_m kg ON kg.id = km.headfk
             left join pegawai_m pg on pg.id = ta.objectpptkfk
             where sr.norec = '$norec' AND rd.statusenabled = true
             group by km.keterangan, km.kode, ta.tahun, km.div, kg.keterangan, kg.kode, kg.div, pg.namalengkap, pg.nippns;
@@ -3835,8 +3835,8 @@ class ReportController extends ApiController{
         inner join realisasidetail_t rd on rd.strukrealisasifk =sr.norec
         inner join keteranganbelanja_t kb on kb.norec = rd.keteranganbelanjafk
         inner join transaksianggaran2024_t ta ON ta.norec = kb.objecttransaksifk
-        inner join kegiatananggaran_m km on km.id = ta.objectkegiatanfk
-        left join kegiatananggaran_m kg ON kg.id km.headfk
+        inner join kegiatananggaran2024_m km on km.id = ta.objectkegiatanfk
+        left join kegiatananggaran2024_m kg ON kg.id = km.headfk
         inner join mataanggaran_m ma on ma.id = sr.objectmataanggaranfk
         where sr.norec = '$norec' AND rd.statusenabled = true
         group by kb.keteranganbelanja;"));
@@ -3846,8 +3846,8 @@ class ReportController extends ApiController{
         inner join realisasidetail_t rd on rd.strukrealisasifk =sr.norec
         inner join keteranganbelanja_t kb on kb.norec = rd.keteranganbelanjafk
         inner join transaksianggaran2024_t ta ON ta.norec = kb.objecttransaksifk
-        inner join kegiatananggaran_m km on km.id = ta.objectkegiatanfk
-        left join kegiatananggaran_m kg ON kg.id km.headfk
+        inner join kegiatananggaran2024_m km on km.id = ta.objectkegiatanfk
+        left join kegiatananggaran2024_m kg ON kg.id = km.headfk
         inner join mataanggaran_m ma on ma.id = sr.objectmataanggaranfk
         where sr.norec = '$norec' AND rd.statusenabled = true
         group by ma.namamataanggaran, ma.kodemataanggaran;"));
@@ -3859,11 +3859,11 @@ class ReportController extends ApiController{
         inner join realisasidetail_t rd on rd.strukrealisasifk =sr.norec
         inner join keteranganbelanja_t kb on kb.norec = rd.keteranganbelanjafk
         inner join transaksianggaran2024_t ta ON ta.norec = kb.objecttransaksifk
-        inner join kegiatananggaran_m km on km.id = ta.objectkegiatanfk
+        inner join kegiatananggaran2024_m km on km.id = ta.objectkegiatanfk
         left join rekanan_m rk on rk.id = sr.rekananfk 
         left join pegawai_m pgb on pgb.id = sr.bendaharafk 
         left join pegawai_m pgp on pgp.id = sr.penerimafk 
-        left join kegiatananggaran_m kg ON kg.id km.headfk
+        left join kegiatananggaran2024_m kg ON kg.id = km.headfk
         inner join mataanggaran_m ma on ma.id = sr.objectmataanggaranfk
         where sr.norec = '$norec' AND rd.statusenabled = true
         group by pgp.nippns, rk.namarekanan, sr.norealisasi, sr.pph, sr.ppn, pgb.namalengkap, pgp.namalengkap, pgb.nippns, sr.deskripsi"));
@@ -3873,8 +3873,8 @@ class ReportController extends ApiController{
         inner join realisasidetail_t rd on rd.strukrealisasifk =sr.norec
         inner join keteranganbelanja_t kb on kb.norec = rd.keteranganbelanjafk
         inner join transaksianggaran2024_t ta ON ta.norec = kb.objecttransaksifk
-        inner join kegiatananggaran_m km on km.id = ta.objectkegiatanfk
-        left join kegiatananggaran_m kg ON kg.id km.headfk
+        inner join kegiatananggaran2024_m km on km.id = ta.objectkegiatanfk
+        left join kegiatananggaran2024_m kg ON kg.id = km.headfk
         inner join mataanggaran_m ma on ma.id = sr.objectmataanggaranfk
         where sr.norec = '$norec' AND rd.statusenabled = true
         group by rd.uraian, rd.jml, rd.satuan, rd.harga, rd.subtotal, rd.norec;"));
@@ -3886,10 +3886,10 @@ class ReportController extends ApiController{
         inner join realisasidetail_t rd on rd.strukrealisasifk =sr.norec
         inner join keteranganbelanja_t kb on kb.norec = rd.keteranganbelanjafk
         inner join transaksianggaran2024_t ta ON ta.norec = kb.objecttransaksifk
-        inner join kegiatananggaran_m km on km.id = ta.objectkegiatanfk
+        inner join kegiatananggaran2024_m km on km.id = ta.objectkegiatanfk
         left join pegawai_m pgb on pgb.id = sr.bendaharafk 
         left join pegawai_m pgp on pgp.id = sr.penerimafk 
-        left join kegiatananggaran_m kg ON kg.id km.headfk
+        left join kegiatananggaran2024_m kg ON kg.id = km.headfk
         inner join mataanggaran_m ma on ma.id = sr.objectmataanggaranfk
         where sr.norec = '$norec' AND rd.statusenabled = true
         group by rd.subtotal, rd.norec

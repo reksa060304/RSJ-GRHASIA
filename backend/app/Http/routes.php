@@ -1980,7 +1980,7 @@ Route::group(['middleware' => 'cors', 'prefix' => 'service'], function () {
             Route::get('anggaran/get-pengembalian-panjar','Anggaran_2024\AnggaranController@getPengembalianPanjar');
             Route::get('anggaran/get-daftar-panjar-dipilih', 'Anggaran_2024\AnggaranController@getDaftarPanjarDipilih');
             Route::get('report/get-cetak-spj-satu-lampiranv2','Report\ReportController@getCetakSPJSatuLampiranV2');
-            Route::get('report/get-cetak-spjv2', 'Report\ReportController@getCetakSPJ');
+            Route::get('report/get-cetak-spjv2', 'Report\ReportController@getCetakSPJV2');
             Route::get('anggaran/get-data-angkas', 'Anggaran_2024\AnggaranController@getDataAngkas');
             Route::post('anggaran/delete-transaksianggaran-centang','Anggaran_2024\AnggaranController@deleteTransaksiAnggaranCentang');
             Route::get('anggaran/get-subsubkegiatan-lockrba', 'Anggaran_2024\AnggaranController@getSubSubKegiatanLockRBA');
