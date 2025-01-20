@@ -1832,7 +1832,7 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
                 $scope.item.thnAnggaran = dataItem.tahun
                 $scope.item.tahap = dataItem.tahap
                 $scope.item.subKegiatan = dataItem.kodesubkegiatan+' - '+dataItem.keterangansubkegiatan
-                $scope.item.subSubKegiatan = dataItem.kode+' - '+dataItem.keterangan
+                $scope.item.subSubKegiatan = dataItem.kodesubkegiatan+' - '+dataItem.keterangan
                 $scope.item.mataanggaran = dataItem.mataanggaran
                 $scope.totalanggaranperalokasi = totalAnggaran
                 $scope.item.totalanggaran = formatRupiah(totalAnggaran, "Rp. ")
@@ -2013,38 +2013,39 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
                     }
                 medifirstService.post('perencanaan/save-alokasi-keterangan-belanja',datasave).then(function (e) {
                     //LoadTotalKeterangan();
-                    $scope.findData();
+                    // $scope.findData();
     
-                        var idpegawai = ''
-                        $scope.pegawaiLogin = medifirstService.getPegawaiLogin();
-                        //console.log($scope.pegawaiLogin)
-                        // console.log($scope.item.ispj)
-                        medifirstService.get('anggaran/pj-rba?id=' + medifirstService.getPegawaiLogin().id).then(function (data) {
-                            $scope.item.ispj = data.data[0].ispj
-                            if ($scope.item.ispj == true) {
-                                idpegawai = $scope.pegawaiLogin.id
-                            }
+                    //     var idpegawai = ''
+                    //     $scope.pegawaiLogin = medifirstService.getPegawaiLogin();
+                    //     //console.log($scope.pegawaiLogin)
+                    //     // console.log($scope.item.ispj)
+                    //     medifirstService.get('anggaran/pj-rba?id=' + medifirstService.getPegawaiLogin().id).then(function (data) {
+                    //         $scope.item.ispj = data.data[0].ispj
+                    //         if ($scope.item.ispj == true) {
+                    //             idpegawai = $scope.pegawaiLogin.id
+                    //         }
 
-                            var subkegiatan = '';
-                            var subsubkegiatan = '';
-                            if ($scope.item.combokegiatan != undefined) {
-                                subkegiatan = '&subkegiatan=' + $scope.item.combokegiatan.kode
-                            }
-                            if ($scope.item.combosubsubkegiatan != undefined) {
-                                subsubkegiatan = '&subsubkegiatan=' + $scope.item.combosubsubkegiatan.kode
-                            }
+                    //         var subkegiatan = '';
+                    //         var subsubkegiatan = '';
+                    //         if ($scope.item.combokegiatan != undefined) {
+                    //             subkegiatan = '&subkegiatan=' + $scope.item.combokegiatan.kode
+                    //         }
+                    //         if ($scope.item.combosubsubkegiatan != undefined) {
+                    //             subsubkegiatan = '&subsubkegiatan=' + $scope.item.combosubsubkegiatan.kode
+                    //         }
 
-                            medifirstService.get("perencanaan/get-total-mata-anggaran?tahun=" + moment($scope.item.thnAnggaran).format('YYYY') + "&tahap=" + $scope.item.tahapdetail.id + "&idpegawai=" + idpegawai + "&mataanggaran=" + $scope.kodemataanggaranalokasi + "&noreckegiatan=" + $scope.idkegiatananggaran + subkegiatan + subsubkegiatan).then(function (e) {
+                    //         medifirstService.get("perencanaan/get-total-mata-anggaran?tahun=" + moment($scope.item.thnAnggaran).format('YYYY') + "&tahap=" + $scope.item.tahapdetail.id + "&idpegawai=" + idpegawai + "&mataanggaran=" + $scope.kodemataanggaranalokasi + "&noreckegiatan=" + $scope.idkegiatananggaran + subkegiatan + subsubkegiatan).then(function (e) {
 
-                                $scope.item.totalbulanan = formatRupiah(e.data.alokasimataanggaran[0].totalbulanan, "Rp. ")
-                                let selisih = 0
-                                selisih = $scope.totalanggaranperalokasi - e.data.alokasimataanggaran[0].totalbulanan
-                                $scope.item.selisihanggaran = formatRupiah(selisih, "Rp. ")
+                    //             $scope.item.totalbulanan = formatRupiah(e.data.alokasimataanggaran[0].totalbulanan, "Rp. ")
+                    //             let selisih = 0
+                    //             selisih = $scope.totalanggaranperalokasi - e.data.alokasimataanggaran[0].totalbulanan
+                    //             $scope.item.selisihanggaran = formatRupiah(selisih, "Rp. ")
 
-                            })
-                            $scope.popupAlokasiKeteranganBelanja.center().close()
-                        })
-
+                    //         })
+                    //         $scope.popupAlokasiKeteranganBelanja.center().close()
+                    //     })
+                    loadDataAngkas()
+                    $scope.popupAlokasiKeteranganBelanja.center().close()
                         
                 }, function (error) {
 

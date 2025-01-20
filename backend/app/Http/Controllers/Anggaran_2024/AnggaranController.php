@@ -2751,6 +2751,8 @@ class AnggaranController extends ApiController {
                 ka.kode as kodesubsubkegiatan,
                 ka.keterangan,
                 ka.kode || ' - ' || ka.keterangan as kegiatan,
+                ka2.kode as kodesubkegiatan,
+                ka2.keterangan as keterangansubkegiatan,
                 SUM(
                     CASE WHEN ap.bulanint = 1 THEN ap.nilai::FLOAT ELSE 0 END
                 ) as jan,
@@ -2806,7 +2808,8 @@ class AnggaranController extends ApiController {
                 $asalproduk
             GROUP BY
                 ma.id,
-                ka.id
+                ka.id,
+                ka2.id
             ORDER BY
                 SPLIT_PART(ma.kodemataanggaran, '.', 1),
                 SPLIT_PART(ma.kodemataanggaran, '.', 2),
@@ -3494,27 +3497,25 @@ class AnggaranController extends ApiController {
         foreach ($data as $d) {
             $norec = $d->norec;
             $detail = DB::select(DB::raw("select 
-            pep.nopajak nopajakpep, pp.nopajak nopajakpp, pp.uraianpajak, sr.norealisasi,string_agg(DISTINCT rd.uraian, ',') uraian, sr.tglverif tglrealisasi, coalesce(jp.jenispajak,'PPh') as kode, pp.pph as jumlah 
+            pp.nopajak nopajakpp, pp.uraianpajak, sr.norealisasi,string_agg(DISTINCT rd.uraian, ',') uraian, sr.tglverif tglrealisasi, coalesce(jp.jenispajak,'PPh') as kode, pp.pph as jumlah 
             from strukrealisasi_t sr 
             left join realisasidetail_t rd on rd.strukrealisasifk = sr.norec
             inner join pemungutanpajak_t pp on pp.objectspjfk = sr.norec and pp.statusenabled = true and pp.kdprofile = 30 
-            inner join penyetoranpajak_t pep on left(pep.nopajak, 3) = left(pp.nopajak, 3) and pep.statusenabled = true and pep.kdprofile = 30
             left join jenispajak_m jp on jp.id = pp.objectjenispphfk and jp.statusenabled = true and jp.kdprofile = 30
             where sr.norec = '$norec'
             and pp.objectjenispphfk is not null
-            group by jp.jenispajak, pep.nopajak, pp.nopajak, pp.uraianpajak, sr.norealisasi, sr.tglverif, pp.pph
+            group by jp.jenispajak, pp.nopajak, pp.uraianpajak, sr.norealisasi, sr.tglverif, pp.pph
 
             union all
 
             select 
-            pep.nopajak nopajakpep, pp.nopajak nopajakpp, pp.uraianpajak, sr.norealisasi,string_agg(DISTINCT rd.uraian, ',') uraian, sr.tglverif tglrealisasi, 'PPn' as kode, pp.ppn as jumlah 
+            pp.nopajak nopajakpp, pp.uraianpajak, sr.norealisasi,string_agg(DISTINCT rd.uraian, ',') uraian, sr.tglverif tglrealisasi, 'PPn' as kode, pp.ppn as jumlah 
             from strukrealisasi_t sr 
             left join realisasidetail_t rd on rd.strukrealisasifk = sr.norec
             inner join pemungutanpajak_t pp on pp.objectspjfk = sr.norec and pp.statusenabled = true and pp.kdprofile = 30
-            inner join penyetoranpajak_t pep on left(pep.nopajak, 3) = left(pp.nopajak, 3) and pep.statusenabled = true and pep.kdprofile = 30
             where sr.norec = '$norec'
             and pp.objectjenispphfk is null
-            group by pep.nopajak, pp.nopajak, pp.uraianpajak, sr.norealisasi, sr.tglverif, pp.ppn
+            group by pp.nopajak, pp.uraianpajak, sr.norealisasi, sr.tglverif, pp.ppn
                 ")
             );
             $d->details = $detail;
