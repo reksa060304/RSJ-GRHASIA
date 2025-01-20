@@ -18588,17 +18588,18 @@ public function suratBuktiPengembalian(Request $request)
 
                         from(
                                 select kmss.keterangan kegiatan, ap.id as id_asalproduk,kmss.kode, 0 kode1, kmss.div, kms.keterangan subkegiatan, sum(kb.subtotal) subtotal
-                                from kegiatananggaran_m km
-                                inner join kegiatananggaran_m kms on km.kode ilike kms.kode || '%' and kms.div = 3
-                                inner join kegiatananggaran_m kmss on km.kode ilike kmss.kode || '%' and kmss.div = 2
-                                inner join keteranganbelanja_t kb on kb.objectkegiatanfk = km.id
+                                from kegiatananggaran2024_m km
+                                inner join kegiatananggaran2024_m kms on km.headfk = kms.id
+                                inner join kegiatananggaran2024_m kmss on kms.headfk = kmss.id
+                                inner join transaksianggaran2024_t ta ON ta.objectkegiatanfk = km.id AND ta.statusenabled = TRUE
+                                inner join keteranganbelanja_t kb on kb.objecttransaksifk = ta.norec
                                 inner join asalproduk_m ap on ap.id = kb.objectasalprodukfk
                                 where km.kdprofile = 30 and km.statusenabled = true
                                 and kms.kdprofile = 30 and kms.statusenabled = true
                                 and kmss.kdprofile = 30 and kmss.statusenabled = true
                                 and kb.kdprofile = 30 and kb.statusenabled = true
                                 and ap.kdprofile = 30 and ap.statusenabled = true
-                                and km.tahun = '$tahun'
+                                and ta.tahun = '$tahun'
                                 $qtahap
                                 group by kms.keterangan, kmss.keterangan, kmss.kode, kmss.div, ap.id
                         ) as x group by x.kegiatan, x.subkegiatan, x.subtotal, x.kode, x.kode1, x.div, x.id_asalproduk
@@ -18619,17 +18620,18 @@ public function suratBuktiPengembalian(Request $request)
 
                         from(
                                 select kmss.keterangan kegiatan, kms.keterangan subkegiatan, kms.kode, 0 kode1, kms.div, ap.id as id_asalproduk,sum(kb.subtotal) subtotal
-                                from kegiatananggaran_m km
-                                inner join kegiatananggaran_m kms on km.kode ilike kms.kode || '%' and kms.div = 3
-                                inner join kegiatananggaran_m kmss on km.kode ilike kmss.kode || '%' and kmss.div = 2
-                                inner join keteranganbelanja_t kb on kb.objectkegiatanfk = km.id
+                                from kegiatananggaran2024_m km
+                                inner join kegiatananggaran2024_m kms on km.headfk = kms.id
+                                inner join kegiatananggaran2024_m kmss on kms.headfk = kmss.id
+                                inner join transaksianggaran2024_t ta ON ta.objectkegiatanfk = km.id AND ta.statusenabled = TRUE
+                                inner join keteranganbelanja_t kb on kb.objecttransaksifk = ta.norec
                                 inner join asalproduk_m ap on ap.id = kb.objectasalprodukfk
                                 where km.kdprofile = 30 and km.statusenabled = true
                                 and kms.kdprofile = 30 and kms.statusenabled = true
                                 and kmss.kdprofile = 30 and kmss.statusenabled = true
                                 and kb.kdprofile = 30 and kb.statusenabled = true
                                 and ap.kdprofile = 30 and ap.statusenabled = true
-                                and km.tahun = '$tahun'
+                                and ta.tahun = '$tahun'
                                 $qtahap
                                 group by kms.keterangan, kmss.keterangan, kms.kode, kms.div, ap.id
                         ) as x group by x.kegiatan, x.subkegiatan, x.subtotal, x.kode, x.kode1, x.div, x.id_asalproduk
@@ -18654,17 +18656,18 @@ public function suratBuktiPengembalian(Request $request)
                                 km.kode as kode,
                                 CAST(split_part(km.kode,'.',7) as int) as kode1,
                                 km.div, ap.id as id_asalproduk,sum(kb.subtotal) subtotal
-                                from kegiatananggaran_m km
-                                inner join kegiatananggaran_m kms on km.kode ilike kms.kode || '%' and kms.div = 3
-                                inner join kegiatananggaran_m kmss on km.kode ilike kmss.kode || '%' and kmss.div = 2
-                                inner join keteranganbelanja_t kb on kb.objectkegiatanfk = km.id
+                                from kegiatananggaran2024_m km
+                                inner join kegiatananggaran2024_m kms on km.headfk = kms.id
+                                inner join kegiatananggaran2024_m kmss on kms.headfk = kmss.id
+                                inner join transaksianggaran2024_t ta ON ta.objectkegiatanfk = km.id AND ta.statusenabled = TRUE
+                                inner join keteranganbelanja_t kb on kb.objecttransaksifk = ta.norec
                                 inner join asalproduk_m ap on ap.id = kb.objectasalprodukfk
                                 where km.kdprofile = 30 and km.statusenabled = true
                                 and kms.kdprofile = 30 and kms.statusenabled = true
                                 and kmss.kdprofile = 30 and kmss.statusenabled = true
                                 and kb.kdprofile = 30 and kb.statusenabled = true
                                 and ap.kdprofile = 30 and ap.statusenabled = true
-                                and km.tahun = '$tahun'
+                                and ta.tahun = '$tahun'
                                 $qtahap
                                 group by km.keterangan, km.keterangan, km.kode, km.div, ap.id
                         ) as x group by x.kegiatan, x.subkegiatan, x.subtotal, x.kode, x.kode1, x.div, x.id_asalproduk
@@ -18689,19 +18692,18 @@ public function suratBuktiPengembalian(Request $request)
                             FROM ( SELECT kmss.keterangan kegiatan, ap.ID AS id_asalproduk, kmss.kode, 0 kode1, kmss.div, kms.keterangan subkegiatan,
                                     SUM ( kb.subtotal ) subtotal  FROM
                                     kegiatananggaran_m km
-                                    INNER JOIN kegiatananggaran_m kms ON km.kode ILIKE kms.kode || '%' 
-                                    AND kms.div = 3
-                                    inner JOIN kegiatananggaran_m kmss ON km.kode ILIKE kmss.kode || '%' 
-                                    AND kmss.div = 2
-                                    INNER JOIN keteranganbelanja_t kb ON kb.objectkegiatanfk = km.
-                                    ID INNER JOIN asalproduk_m ap ON ap.ID = kb.objectasalprodukfk 
+                                    inner join kegiatananggaran2024_m kms on km.headfk = kms.id
+                                    inner join kegiatananggaran2024_m kmss on kms.headfk = kmss.id
+                                    inner join transaksianggaran2024_t ta ON ta.objectkegiatanfk = km.id AND ta.statusenabled = TRUE
+                                    inner join keteranganbelanja_t kb on kb.objecttransaksifk = ta.norec
+                                    INNER JOIN asalproduk_m ap ON ap.ID = kb.objectasalprodukfk 
                                 WHERE
                                     km.kdprofile = 30  AND km.statusenabled = TRUE 
                                     AND kms.kdprofile = 30 AND kms.statusenabled = TRUE 
                                     AND kmss.kdprofile = 30 AND kmss.statusenabled = TRUE 
                                     AND kb.kdprofile = 30 AND kb.statusenabled = TRUE 
                                     and ap.kdprofile = 30 and ap.statusenabled = true
-                                    AND km.tahun = '$tahun' 
+                                    AND ta.tahun = '$tahun' 
                                     $qtahap
                                 GROUP BY
                                     kms.keterangan,
@@ -18781,19 +18783,18 @@ public function suratBuktiPengembalian(Request $request)
                                     SUM ( kb.subtotal ) subtotal 
                                 FROM
                                     kegiatananggaran_m km
-                                    INNER JOIN kegiatananggaran_m kms ON km.kode ILIKE kms.kode || '%' 
-                                    AND kms.div = 3
-                                    inner JOIN kegiatananggaran_m kmss ON km.kode ILIKE kmss.kode || '%' 
-                                    AND kmss.div = 2
-                                    INNER JOIN keteranganbelanja_t kb ON kb.objectkegiatanfk = km.
-                                    ID INNER JOIN asalproduk_m ap ON ap.ID = kb.objectasalprodukfk 
+                                    inner join kegiatananggaran2024_m kms on km.headfk = kms.id
+                                    inner join kegiatananggaran2024_m kmss on kms.headfk = kmss.id
+                                    inner join transaksianggaran2024_t ta ON ta.objectkegiatanfk = km.id
+                                    inner join keteranganbelanja_t kb on kb.objecttransaksifk = ta.norec
+                                    INNER JOIN asalproduk_m ap ON ap.ID = kb.objectasalprodukfk 
                                 WHERE
                                     km.kdprofile = 30 AND km.statusenabled = TRUE 
                                     AND kms.kdprofile = 30 AND kms.statusenabled = TRUE 
                                     AND kmss.kdprofile = 30 AND kmss.statusenabled = TRUE 
                                     AND kb.kdprofile = 30 AND kb.statusenabled = TRUE 
                                     and ap.kdprofile = 30 and ap.statusenabled = true
-                                    AND km.tahun = '$tahun' 
+                                    AND ta.tahun = '$tahun' 
                                     $qtahap
                                 GROUP BY
                                     kms.keterangan,
@@ -18885,19 +18886,18 @@ public function suratBuktiPengembalian(Request $request)
                                     SUM ( kb.subtotal ) subtotal 
                                 FROM
                                     kegiatananggaran_m km
-                                    INNER JOIN kegiatananggaran_m kms ON km.kode ILIKE kms.kode || '%' 
-                                    AND kms.div = 3
-                                    inner JOIN kegiatananggaran_m kmss ON km.kode ILIKE kmss.kode || '%' 
-                                    AND kmss.div = 2
-                                    INNER JOIN keteranganbelanja_t kb ON kb.objectkegiatanfk = km.
-                                    ID INNER JOIN asalproduk_m ap ON ap.ID = kb.objectasalprodukfk 
+                                    inner join kegiatananggaran2024_m kms on km.headfk = kms.id
+                                    inner join kegiatananggaran2024_m kmss on kms.headfk = kmss.id
+                                    inner join transaksianggaran2024_t ta ON ta.objectkegiatanfk = km.id AND ta.statusenabled = TRUE
+                                    inner join keteranganbelanja_t kb on kb.objecttransaksifk = ta.norec
+                                    INNER JOIN asalproduk_m ap ON ap.ID = kb.objectasalprodukfk 
                                 WHERE
                                     km.kdprofile = 30 AND km.statusenabled = TRUE 
                                     AND kms.kdprofile = 30 AND kms.statusenabled = TRUE 
                                     AND kmss.kdprofile = 30 AND kmss.statusenabled = TRUE 
                                     AND kb.kdprofile = 30 AND kb.statusenabled = TRUE 
                                     and ap.kdprofile = 30 and ap.statusenabled = true
-                                    AND km.tahun = '$tahun' 
+                                    AND ta.tahun = '$tahun' 
                                     $qtahap
                                 GROUP BY
                                     km.keterangan,
@@ -18967,10 +18967,11 @@ public function suratBuktiPengembalian(Request $request)
                         (
                         SELECT kmss.keterangan kegiatan, ap.ID AS id_asalproduk, kms.keterangan subkegiatan, kmss.kode, kmss.div, km.keterangan subsubkegiatan, ta.tahap, ta.ID, ap.asalproduk, SUM ( kb.subtotal ) subtotal 
                         FROM
-                            kegiatananggaran_m km
-                            INNER JOIN kegiatananggaran_m kms ON km.kode ILIKE kms.kode || '%' AND kms.div = 3
-                            LEFT JOIN kegiatananggaran_m kmss ON km.kode ILIKE kmss.kode || '%' AND kmss.div = 2
-                            INNER JOIN keteranganbelanja_t kb ON kb.objectkegiatanfk = km.ID 
+                            kegiatananggaran2024_m km
+                            inner join kegiatananggaran2024_m kms on km.headfk = kms.id
+                            inner join kegiatananggaran2024_m kmss on kms.headfk = kmss.id
+                            inner join transaksianggaran2024_t th ON th.objectkegiatanfk = km.id AND th.statusenabled = TRUE
+                            inner join keteranganbelanja_t kb on kb.objecttransaksifk = th.norec 
                             INNER JOIN asalproduk_m ap ON ap.ID = kb.objectasalprodukfk
                             LEFT JOIN tahapanggaran_m ta ON ta.ID = kb.objecttahapfk 
                         WHERE
@@ -18980,15 +18981,16 @@ public function suratBuktiPengembalian(Request $request)
                             and kmss.kdprofile = 30 and kmss.statusenabled = true
                             and kb.kdprofile = 30 and kb.statusenabled = true
                             $qterhadap
-                            and km.tahun = '$request[tahun]'
+                            and th.tahun = '$request[tahun]'
                             AND km.keterangan IN (
                             SELECT
                                 km.keterangan 
                             FROM
-                                kegiatananggaran_m km
-                                INNER JOIN kegiatananggaran_m kms ON km.kode ILIKE kms.kode || '%' AND kms.div = 3
-                                LEFT JOIN kegiatananggaran_m kmss ON km.kode ILIKE kmss.kode || '%' AND kmss.div = 2
-                                INNER JOIN keteranganbelanja_t kb ON kb.objectkegiatanfk = km.ID INNER JOIN asalproduk_m ap ON ap.ID = kb.objectasalprodukfk
+                                kegiatananggaran2024_m km
+                                inner join kegiatananggaran2024_m kms on km.headfk = kms.id
+                                inner join kegiatananggaran2024_m kmss on kms.headfk = kmss.id
+                                inner join transaksianggaran2024_t th ON th.objectkegiatanfk = km.id AND th.statusenabled = TRUE
+                                inner join keteranganbelanja_t kb on kb.objecttransaksifk = th.norec
                                 LEFT JOIN tahapanggaran_m ta ON ta.ID = kb.objecttahapfk 
                             WHERE
                                 km.kdprofile = 30 
@@ -18997,7 +18999,7 @@ public function suratBuktiPengembalian(Request $request)
                                 and kmss.kdprofile = 30 and kmss.statusenabled = true
                                 and kb.kdprofile = 30 and kb.statusenabled = true
                                 $qtahap
-                                and km.tahun = '$request[tahun]'
+                                and th.tahun = '$request[tahun]'
                             GROUP BY kms.keterangan, kmss.keterangan, kmss.kode, ap.asalproduk, kmss.div, km.keterangan, ta.tahap, ta.ID 
                             ) 
                         GROUP BY kms.keterangan, kmss.keterangan, kmss.kode, ap.asalproduk, kmss.div, km.keterangan, ta.tahap, ta.ID, ap.ID 
@@ -19019,13 +19021,12 @@ public function suratBuktiPengembalian(Request $request)
                         (
                         SELECT ap.ID AS id_asalproduk, kmss.keterangan kegiatan, kms.keterangan subkegiatan, kms.kode, kms.div, km.keterangan subsubkegiatan, ta.tahap, ta.ID, SUM ( kb.subtotal ) subtotal 
                         FROM
-                            kegiatananggaran_m km
-                            INNER JOIN kegiatananggaran_m kms ON km.kode ILIKE kms.kode || '%' 
-                            AND kms.div = 3
-                            LEFT JOIN kegiatananggaran_m kmss ON km.kode ILIKE kmss.kode || '%' 
-                            AND kmss.div = 2
-                            INNER JOIN keteranganbelanja_t kb ON kb.objectkegiatanfk = km.
-                            ID INNER JOIN asalproduk_m ap ON ap.ID = kb.objectasalprodukfk
+                            kegiatananggaran2024_m km
+                            inner join kegiatananggaran2024_m kms on km.headfk = kms.id
+                            inner join kegiatananggaran2024_m kmss on kms.headfk = kmss.id
+                            inner join transaksianggaran2024_t th ON th.objectkegiatanfk = km.id AND th.statusenabled = TRUE
+                            inner join keteranganbelanja_t kb on kb.objecttransaksifk = th.norec
+                            INNER JOIN asalproduk_m ap ON ap.ID = kb.objectasalprodukfk
                             LEFT JOIN tahapanggaran_m ta ON ta.ID = kb.objecttahapfk 
                         WHERE
                             km.kdprofile = 30 
@@ -19034,18 +19035,17 @@ public function suratBuktiPengembalian(Request $request)
                             and kmss.kdprofile = 30 and kmss.statusenabled = true
                             and kb.kdprofile = 30 and kb.statusenabled = true
                             $qterhadap
-                                and km.tahun = '$request[tahun]'
+                            and th.tahun = '$request[tahun]'
                             AND km.keterangan IN (
                             SELECT
                                 km.keterangan 
                             FROM
-                                kegiatananggaran_m km
-                                INNER JOIN kegiatananggaran_m kms ON km.kode ILIKE kms.kode || '%' 
-                                AND kms.div = 3
-                                LEFT JOIN kegiatananggaran_m kmss ON km.kode ILIKE kmss.kode || '%' 
-                                AND kmss.div = 2
-                                INNER JOIN keteranganbelanja_t kb ON kb.objectkegiatanfk = km.
-                                ID INNER JOIN asalproduk_m ap ON ap.ID = kb.objectasalprodukfk
+                                kegiatananggaran2024_m km
+                                inner join kegiatananggaran2024_m kms on km.headfk = kms.id
+                                inner join kegiatananggaran2024_m kmss on kms.headfk = kmss.id
+                                inner join transaksianggaran2024_t th ON th.objectkegiatanfk = km.id AND th.statusenabled = TRUE
+                                inner join keteranganbelanja_t kb on kb.objecttransaksifk = th.norec
+                                INNER JOIN asalproduk_m ap ON ap.ID = kb.objectasalprodukfk
                                 LEFT JOIN tahapanggaran_m ta ON ta.ID = kb.objecttahapfk 
                             WHERE
                                 km.kdprofile = 30 
@@ -19054,7 +19054,7 @@ public function suratBuktiPengembalian(Request $request)
                                 and kmss.kdprofile = 30 and kmss.statusenabled = true
                                 and kb.kdprofile = 30 and kb.statusenabled = true
                                 $qtahap
-                                and km.tahun = '$request[tahun]' 
+                                and th.tahun = '$request[tahun]' 
                             GROUP BY kms.keterangan, kmss.keterangan, kms.kode, ap.asalproduk, kms.div, km.keterangan, ta.tahap, ta.ID, ap.ID 
                             ) 
                         GROUP BY kms.keterangan, kmss.keterangan, kms.kode, ap.asalproduk, kms.div, km.keterangan, ta.tahap, ta.ID, ap.ID 
@@ -19087,13 +19087,12 @@ public function suratBuktiPengembalian(Request $request)
                         (
                         SELECT kmss.keterangan kegiatan, kmss.kode, kmss.div, km.keterangan subsubkegiatan, ta.tahap, ta.ID, ap.ID AS id_asalproduk, ap.asalproduk, SUM ( kb.subtotal ) subtotal 
                         FROM
-                            kegiatananggaran_m km
-                            INNER JOIN kegiatananggaran_m kms ON km.kode ILIKE kms.kode || '%' 
-                            AND kms.div = 3
-                            LEFT JOIN kegiatananggaran_m kmss ON km.kode ILIKE kmss.kode || '%' 
-                            AND kmss.div = 2
-                            INNER JOIN keteranganbelanja_t kb ON kb.objectkegiatanfk = km.
-                            ID INNER JOIN asalproduk_m ap ON ap.ID = kb.objectasalprodukfk
+                            kegiatananggaran2024_m km
+                            inner join kegiatananggaran2024_m kms on km.headfk = kms.id
+                            inner join kegiatananggaran2024_m kmss on kms.headfk = kmss.id
+                            inner join transaksianggaran2024_t th ON th.objectkegiatanfk = km.id AND th.statusenabled = TRUE
+                            inner join keteranganbelanja_t kb on kb.objecttransaksifk = th.norec
+                            INNER JOIN asalproduk_m ap ON ap.ID = kb.objectasalprodukfk
                             LEFT JOIN tahapanggaran_m ta ON ta.ID = kb.objecttahapfk 
                         WHERE
                             km.kdprofile = 30 
@@ -19102,18 +19101,17 @@ public function suratBuktiPengembalian(Request $request)
                             and kmss.kdprofile = 30 and kmss.statusenabled = true
                             and kb.kdprofile = 30 and kb.statusenabled = true
                             $qtahap
-                                and km.tahun = '$request[tahun]' 
+                            and th.tahun = '$request[tahun]' 
                             AND km.keterangan IN (
                             SELECT
                                 km.keterangan 
                             FROM
-                                kegiatananggaran_m km
-                                INNER JOIN kegiatananggaran_m kms ON km.kode ILIKE kms.kode || '%' 
-                                AND kms.div = 3
-                                LEFT JOIN kegiatananggaran_m kmss ON km.kode ILIKE kmss.kode || '%' 
-                                AND kmss.div = 2
-                                INNER JOIN keteranganbelanja_t kb ON kb.objectkegiatanfk = km.
-                                ID INNER JOIN asalproduk_m ap ON ap.ID = kb.objectasalprodukfk
+                                kegiatananggaran2024_m km
+                                inner join kegiatananggaran2024_m kms on km.headfk = kms.id
+                                inner join kegiatananggaran2024_m kmss on kms.headfk = kmss.id
+                                inner join transaksianggaran2024_t th ON th.objectkegiatanfk = km.id AND th.statusenabled = TRUE
+                                inner join keteranganbelanja_t kb on kb.objecttransaksifk = th.norec
+                                INNER JOIN asalproduk_m ap ON ap.ID = kb.objectasalprodukfk
                                 LEFT JOIN tahapanggaran_m ta ON ta.ID = kb.objecttahapfk 
                             WHERE
                                 km.kdprofile = 30 
@@ -19122,7 +19120,7 @@ public function suratBuktiPengembalian(Request $request)
                             and kmss.kdprofile = 30 and kmss.statusenabled = true
                             and kb.kdprofile = 30 and kb.statusenabled = true
                                 $qterhadap
-                                and km.tahun = '$request[tahun]'
+                                and th.tahun = '$request[tahun]'
                             GROUP BY kmss.keterangan, kmss.kode, ap.asalproduk, kmss.div, km.keterangan, ta.tahap, ta.ID 
                             ) 
                         GROUP BY kmss.keterangan, kmss.kode, ap.asalproduk, ap.ID, kmss.div, km.keterangan, ta.tahap, ta.ID 
@@ -19143,13 +19141,12 @@ public function suratBuktiPengembalian(Request $request)
                         (
                         SELECT kms.keterangan subkegiatan, kms.kode, kms.div, km.keterangan subsubkegiatan, ta.tahap, ta.ID, ap.ID AS id_asalproduk, ap.asalproduk, SUM ( kb.subtotal ) subtotal 
                         FROM
-                            kegiatananggaran_m km
-                            INNER JOIN kegiatananggaran_m kms ON km.kode ILIKE kms.kode || '%' 
-                            AND kms.div = 3
-                            LEFT JOIN kegiatananggaran_m kmss ON km.kode ILIKE kmss.kode || '%' 
-                            AND kmss.div = 2
-                            INNER JOIN keteranganbelanja_t kb ON kb.objectkegiatanfk = km.
-                            ID INNER JOIN asalproduk_m ap ON ap.ID = kb.objectasalprodukfk
+                            kegiatananggaran2024_m km
+                            inner join kegiatananggaran2024_m kms on km.headfk = kms.id
+                            inner join kegiatananggaran2024_m kmss on kms.headfk = kmss.id
+                            inner join transaksianggaran2024_t th ON th.objectkegiatanfk = km.id AND th.statusenabled = TRUE
+                            inner join keteranganbelanja_t kb on kb.objecttransaksifk = th.norec
+                            INNER JOIN asalproduk_m ap ON ap.ID = kb.objectasalprodukfk
                             LEFT JOIN tahapanggaran_m ta ON ta.ID = kb.objecttahapfk 
                         WHERE
                             km.kdprofile = 30 
@@ -19158,23 +19155,24 @@ public function suratBuktiPengembalian(Request $request)
                             and kmss.kdprofile = 30 and kmss.statusenabled = true
                             and kb.kdprofile = 30 and kb.statusenabled = true
                             $qtahap
-                                and km.tahun = '$request[tahun]'
+                                and th.tahun = '$request[tahun]'
                             AND km.keterangan IN (
                             SELECT
                                 km.keterangan 
                             FROM
-                                kegiatananggaran_m km
-                                INNER JOIN kegiatananggaran_m kms ON km.kode ILIKE kms.kode || '%' AND kms.div = 3
-                                LEFT JOIN kegiatananggaran_m kmss ON km.kode ILIKE kmss.kode || '%' AND kmss.div = 2
-                                INNER JOIN keteranganbelanja_t kb ON kb.objectkegiatanfk = km.
-                                ID INNER JOIN asalproduk_m ap ON ap.ID = kb.objectasalprodukfk
-                                LEFT JOIN tahapanggaran_m ta ON ta.ID = kb.objecttahapfk 
+                                kegiatananggaran2024_m km
+                            inner join kegiatananggaran2024_m kms on km.headfk = kms.id
+                            inner join kegiatananggaran2024_m kmss on kms.headfk = kmss.id
+                            inner join transaksianggaran2024_t th ON th.objectkegiatanfk = km.id AND th.statusenabled = TRUE
+                            inner join keteranganbelanja_t kb on kb.objecttransaksifk = th.norec
+                            INNER JOIN asalproduk_m ap ON ap.ID = kb.objectasalprodukfk
+                            LEFT JOIN tahapanggaran_m ta ON ta.ID = kb.objecttahapfk 
                             WHERE km.kdprofile = 30  AND km.statusenabled = TRUE  
                             and kms.kdprofile = 30 and kms.statusenabled = true
                             and kmss.kdprofile = 30 and kmss.statusenabled = true
                             and kb.kdprofile = 30 and kb.statusenabled = true
                             $qterhadap 
-                            and km.tahun = '$request[tahun]'
+                            and th.tahun = '$request[tahun]'
                             GROUP BY kms.keterangan, kmss.kode, ap.asalproduk, kmss.div, km.keterangan, ta.tahap, ta.ID 
                             ) GROUP BY kms.keterangan, kms.kode, ap.asalproduk, ap.ID, kms.div, km.keterangan, ta.tahap, ta.ID 
                         ) AS x GROUP BY x.subkegiatan, x.tahap, x.asalproduk, x.subtotal, x.kode, x.div, x.id_asalproduk 
