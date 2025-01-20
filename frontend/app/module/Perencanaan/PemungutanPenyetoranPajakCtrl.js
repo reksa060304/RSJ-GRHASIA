@@ -336,73 +336,79 @@ define(['initialize'], function (initialize) {
                     "uraianpajak": $scope.item.uraianPajak,
                     "nopajak": $scope.item.nopajak,
                     "pph": $scope.dataGridPPh.options.data,
-                    "ppn": $scope.dataGridPPN.options.data,
+                    // "ppn": $scope.dataGridPPN.options.data,
                     "tglpph": $scope.item.tglPPh,
                 }
                 console.log(objSave);
                 // return
-                medifirstService.post('perencanaan/save-pajak', objSave).then(function (e) {
-                    medifirstService.get("perencanaan/get-pajak-pph-ppn?norec="+$scope.norecspj).then(function (e) {
-                        $scope.dataGridPemungutan = e.data.data
-                        $scope.dataGridPenyetoran = e.data.data
-                    });
+                medifirstService.post('anggaran/save-pajakv2', objSave).then(function (e) {
+                    // medifirstService.get("perencanaan/get-pajak-pph-ppn?norec="+$scope.norecspj).then(function (res) {
+                    //     $scope.dataGridPemungutan = res.data.data
+                    //     $scope.dataGridPenyetoran = e.data.data
+                    // });
+
+                    // get pajak pph
+                    medifirstService.get("anggaran/get-pajak-pph?norec=" + e.data.result.objectspjfk).then(function (res_pph) {
+                        $scope.dataGridPemungutan = res_pph.data.data
+                    })
 
                     console.log(e.data.result.nopajak)
                     $scope.item.nospjpemungutan = e.data.result.nopajak
-                    $scope.item.nospjpenyetoran = e.data.results.nopajak
+                    // $scope.item.nospjpenyetoran = e.data.results.nopajak
                     $scope.item.uraianspjp = e.data.result.uraianpajak
                     $scope.item.tglPPh = moment($scope.now).format('YYYY-MM-DD');
                     $scope.item.tglPPn = moment($scope.now).format('YYYY-MM-DD');
                     $scope.item.jenispajak = {id: 20, jenispajak: 'PPh : Pajak Penghasilan'}
                     $scope.item.jumlahPPh = 0
-                    $scope.item.jumlahPPn = 0
-                    $scope.item.idbillppn = e.data.result.idbillppn
-                    $scope.item.ntpnppn = e.data.result.ntpnppn
+                    // $scope.item.jumlahPPn = 0
+                    // $scope.item.idbillppn = e.data.result.idbillppn
+                    // $scope.item.ntpnppn = e.data.result.ntpnppn
                     $scope.item.idbillpph = e.data.result.idbillpph
                     $scope.item.ntpnpph = e.data.result.ntpnpph
                     $scope.item.jumlahPPhDinamis = 0
-                    $scope.item.jumlahPPnDinamis = 0
+                    // $scope.item.jumlahPPnDinamis = 0
                     $scope.item.nopajak = ''
                     $scope.item.uraianpajak = ''
-                    $scope.item.idbillppn = ''
-                    $scope.item.ntpnppn = ''
+                    // $scope.item.idbillppn = ''
+                    // $scope.item.ntpnppn = ''
                     $scope.item.idbillpph = ''
                     $scope.item.ntpnpph = ''
                     $scope.norecpp = ''
                     $scope.norecpep = ''
                     $scope.nopajakppn = ''
+                    $scope.norecspj = null
 
-                    $scope.dataGridPPh = new kendo.data.DataSource({
-                            data:  [],
-                            pageSize: 10,
-                            total: 0,
-                            group: $scope.group,
-                            serverPaging: false,
-                            schema: {
-                                model: {
-                                    fields: {
-                                    }
-                                }
-                            },
-                            aggregate: [
-                            ]
-                        });
+                    // $scope.dataGridPPh = new kendo.data.DataSource({
+                    //         data:  [],
+                    //         pageSize: 10,
+                    //         total: 0,
+                    //         group: $scope.group,
+                    //         serverPaging: false,
+                    //         schema: {
+                    //             model: {
+                    //                 fields: {
+                    //                 }
+                    //             }
+                    //         },
+                    //         aggregate: [
+                    //         ]
+                    //     });
 
-                        $scope.dataGridPPN = new kendo.data.DataSource({
-                            data:  [],
-                            pageSize: 10,
-                            total: 0,
-                            group: $scope.group,
-                            serverPaging: false,
-                            schema: {
-                                model: {
-                                    fields: {
-                                    }
-                                }
-                            },
-                            aggregate: [
-                            ]
-                        });
+                        // $scope.dataGridPPN = new kendo.data.DataSource({
+                        //     data:  [],
+                        //     pageSize: 10,
+                        //     total: 0,
+                        //     group: $scope.group,
+                        //     serverPaging: false,
+                        //     schema: {
+                        //         model: {
+                        //             fields: {
+                        //             }
+                        //         }
+                        //     },
+                        //     aggregate: [
+                        //     ]
+                        // });
 
                     $scope.popupTambahPajak.center().close()
                 })
@@ -945,13 +951,31 @@ define(['initialize'], function (initialize) {
                     $scope.item.jumlahPPh = e.pph
                 }
                 console.log($scope.tglveriftopajak)
-                medifirstService.get("perencanaan/get-pajak-pph-ppn?norec=" + e.norec).then(function (e) {
-                    $scope.dataGridPemungutan = e.data.data
-                    $scope.dataGridPenyetoran = e.data.data
+                // medifirstService.get("perencanaan/get-pajak-pph-ppn?norec=" + e.norec).then(function (e) {
+                //     $scope.dataGridPemungutan = e.data.data
+                //     $scope.dataGridPenyetoran = e.data.data
 
+
+                //     $scope.item.nospjpemungutan = e.data.data[0].nopajakpp
+                //     $scope.item.nospjpenyetoran = e.data.data[0].nopajakpep
+                //     if (e.data.data[0].uraianpajak != null) {
+                //         $scope.item.uraianspjp = e.data.data[0].uraianpajak
+                //         $scope.item.uraianPajak = e.data.data[0].uraianpajak
+                //     } else {
+                //         $scope.item.uraianspjp = 'PPh dan PPn ' + e.data.data[0].uraian
+                //         $scope.item.uraianPajak = 'PPh dan PPn ' + e.data.data[0].uraian
+                //     }
+
+                //     $scope.item.jumlahPPh = e.data.data[0].jumlah
+                //     $scope.item.jumlahPPhDinamis = 'Rp' + e.data.data[0].jumlah
+                //     $scope.item.jumlahPPn = e.data.data[1].jumlah
+                //     $scope.item.jumlahPPnDinamis = 'Rp' + e.data.data[1].jumlah
+                // });
+
+                medifirstService.get("anggaran/get-pajak-pph?norec=" + e.norec).then(function (e) {
+                    $scope.dataGridPemungutan = e.data.data
 
                     $scope.item.nospjpemungutan = e.data.data[0].nopajakpp
-                    $scope.item.nospjpenyetoran = e.data.data[0].nopajakpep
                     if (e.data.data[0].uraianpajak != null) {
                         $scope.item.uraianspjp = e.data.data[0].uraianpajak
                         $scope.item.uraianPajak = e.data.data[0].uraianpajak
@@ -962,8 +986,6 @@ define(['initialize'], function (initialize) {
 
                     $scope.item.jumlahPPh = e.data.data[0].jumlah
                     $scope.item.jumlahPPhDinamis = 'Rp' + e.data.data[0].jumlah
-                    $scope.item.jumlahPPn = e.data.data[1].jumlah
-                    $scope.item.jumlahPPnDinamis = 'Rp' + e.data.data[1].jumlah
                 });
             }
             

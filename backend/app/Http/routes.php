@@ -1992,6 +1992,10 @@ Route::group(['middleware' => 'cors', 'prefix' => 'service'], function () {
             Route::get('anggaran/get-spj-bkuv2', 'Anggaran_2024\AnggaranController@getSPJBKU');
             Route::get('anggaran/get-panjar-bkuv2', 'Anggaran_2024\AnggaranController@getPanjarBKU');
             Route::get('anggaran/get-spj-to-pajakv2', 'Anggaran_2024\AnggaranController@getSPJToPajak');
+            Route::post('anggaran/save-pajakv2', 'Anggaran_2024\AnggaranController@savePajakV2');
+            Route::get('anggaran/get-pemungutanpajak-bkuv2', 'Anggaran_2024\AnggaranController@getPemungutanPajakBKUV2');
+            Route::get('anggaran/get-pajak-pph', 'Anggaran_2024\AnggaranController@getPajakPPH');
+            Route::get('anggaran/get-bku-pemungutanpajak', 'Anggaran_2024\AnggaranController@getBKUPemungutanPajak');
             // End Anggaran 2024
 
             // cetak laporan anggaran 2024

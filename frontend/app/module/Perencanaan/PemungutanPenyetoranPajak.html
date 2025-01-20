@@ -139,7 +139,7 @@
                 <input c-text-box type="input" class="k-textbox" ng-model="item.nospj" disabled />
             </div>
         </div>
-        <div class="grid_6" style="margin-top:50px;">
+        <!-- <div class="grid_6" style="margin-top:50px;">
             <div class="grid_4" >
                 <legend id="filterData">
                     <a ng-click="showAndHide()">Pemungutan Pajak</a>
@@ -228,9 +228,45 @@
             <div class="grid_4" >
                 <button class="btnTemplate1" ng-click="EntryPenyetoran()">Entry</button>
             </div>
-        </div>
+        </div> -->
 
-        
+        <!-- Pemungutan -->
+        <div class="grid_12" style="margin-top:50px;">
+            <div class="grid_6">
+                <div class="grid_12">
+                    <div class="grid_4" >
+                        <legend id="filterData">
+                            <a ng-click="showAndHide()">Pemungutan Pajak</a>
+                        </legend>
+                    </div>
+                    <div class="grid_12" style="margin-top:10px; margin-left: 10px;">
+                        <div class="grid_3" style="text-align: left; margin-top: 10px;">
+                            <label c-label item="item" c-label-text="Uraian Pajak"></label>
+                        </div>
+                        <div class="grid_9" style="margin-top: 10px;">
+                            <input c-text-box type="input" class="k-textbox" ng-model="item.uraianspjp" disabled/>
+                        </div>
+                    </div>
+                </div>
+                <div class="grid_12" style="margin-top:5px;">
+                    <div class="grid_12 borderBox">
+                        <kendo-grid id="grid" data-source="dataGridPemungutan" options="columnGridPemungutan" k-pageable="'true'"
+                            k-sortable="'true'" k-groupable="'false'" k-resizable="'true'" k-selectable="'row'"
+                            k-ng-model="dataSelected" style="min-height: 0px; max-height: 1500px;">
+                        </kendo-grid>
+                    </div>
+                </div>
+                <div class="grid_12" style="margin-top:5px;">
+                    <div class="grid_4" >
+                        <button class="btnTemplate1" ng-click="HapusPenyetoran()">Hapus</button>
+                    </div>
+                    <div class="grid_4"></div>
+                    <div class="grid_4" >
+                        <button class="btnTemplate1" ng-click="EntryPemungutan()">Entry</button>
+                    </div>
+                </div>
+            </div>
+        </div>
 
 
         <div class="grid_12" kendo-window="popupTambahPajak" k-title="'Entry Pemungutan Pajak'" k-visible="false" width="1000" style="overflow-x: hidden;">
@@ -302,7 +338,7 @@
                         </div>
                     </div>
 
-                    <div class="grid_12 borderBox containerBorderBox" style="overflow-y: scroll; height:260px;">
+                    <!-- <div class="grid_12 borderBox containerBorderBox" style="overflow-y: scroll; height:260px;">
                         <legend id="filterData">
                             <a ng-click="showAndHide()">PPn:</a>
                         </legend>
@@ -341,7 +377,7 @@
                                 k-ng-model="dataSelectedPPN" ng-click="klikPPN(dataSelectedPPN)" style="min-height: 0px; max-height: 1500px;">
                             </kendo-grid>
                         </div>
-                    </div>
+                    </div> -->
 
             </div>
             

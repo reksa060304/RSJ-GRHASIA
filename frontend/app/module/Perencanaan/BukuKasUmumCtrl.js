@@ -19,6 +19,7 @@ define(['initialize'], function (initialize) {
             $scope.hidespj =true
             $scope.hidests =true
             $scope.hidepengembalian =true
+            $scope.hidepemungutanpajak = true
             $scope.selectedData2 = []; 
             $scope.norecbku = ''
             $scope.hiderekanan = false
@@ -384,12 +385,43 @@ define(['initialize'], function (initialize) {
                                 ]
                             });
                         });
+                    }else if($scope.item.itemJenisBukti.id == 8){
+
+                        $scope.hidespm = true
+                        $scope.hidepengembalianpanjar = true
+                        $scope.hidepanjar =true
+                        $scope.hidejasgir =true
+                        $scope.hidepajak =true
+                        $scope.hidests =true
+                        $scope.hidespj =true
+                        $scope.hiderekanan = false
+                        $scope.hidepemungutanpajak = false
+
+
+                        // get data pemungutan pajak yang belum dibku
+                        medifirstService.get("anggaran/get-pemungutanpajak-bkuv2").then(function (e) {
+                            
+                            $scope.dataGridPemungutanPajak = new kendo.data.DataSource({
+                                data:  e.data,
+                                pageSize: 10,
+                                total: e.data.length,
+                                serverPaging: false,
+                                schema: {
+                                    model: {
+                                        fields: {
+                                        }
+                                    }
+                                },
+                                aggregate: [
+                                ]
+                            });
+                        });
+
                     }
                 }
             });
 
             
-
             $scope.SaveBKU = function () {
 
                 var rekanan = null
@@ -405,9 +437,7 @@ define(['initialize'], function (initialize) {
                     "uraian": $scope.item.uraianBKU,
                     "rekananfk": rekanan,
                 }
-                console.log(objSave);
-                // return
-
+                // console.log(objSave);
                 
                 for(var a=0; a<$scope.selectedData2.length; a++){
                     if(a!=0){
@@ -750,6 +780,7 @@ define(['initialize'], function (initialize) {
                 }
                 console.log($scope.selectedData2)
 			}
+
             $scope.onClickSatuPengembalianPanjar = function (e, param) {
 
 				var element = $(e.currentTarget);
@@ -791,6 +822,46 @@ define(['initialize'], function (initialize) {
                         $scope.item.uraianBKU += $scope.selectedData2[i].uraian
                     }
                 }
+                console.log($scope.selectedData2)
+			}
+
+            $scope.onClickSatuPemungutanPajak = function (e, param) {
+
+				var element = $(e.currentTarget);
+				var checked = element.is(':checked')
+				var row = element.closest('tr')
+				var grid = $("#gridpemungutanpajak").data("kendoGrid")
+				var dataItem = grid.dataItem(row);
+                $scope.item.uraianBKU = ''
+
+				if (checked) {
+					var result = $.grep($scope.selectedData2, function (e) {
+						return e.nopajak == dataItem.nopajak;
+					});
+					if (result.length == 0) {
+						$scope.selectedData2.push(dataItem);
+					} else {
+						for (var i = 0; i < $scope.selectedData2.length; i++)
+							if ($scope.selectedData2[i].nopajak === dataItem.nopajak) {
+								$scope.selectedData2.splice(i, 1);
+								break;
+							}
+						$scope.selectedData2.push(dataItem);
+					}
+					row.addClass("k-state-selected");
+                    
+				} else {
+					for (var i = 0; i < $scope.selectedData2.length; i++)
+						if ($scope.selectedData2[i].nopajak === dataItem.nopajak) {
+							$scope.selectedData2.splice(i, 1);
+							break;
+						}
+					row.removeClass("k-state-selected");
+				}
+
+                $scope.item.sumberDana = {id: dataItem.idasalproduk, asalproduk: dataItem.asalproduk}
+                $scope.item.uraianBKU = dataItem.uraianpajak
+                
                 console.log($scope.selectedData2)
 			}
 
@@ -1050,12 +1121,46 @@ define(['initialize'], function (initialize) {
                             ]
                         });
                     });
+
+                } else if(dataItem.id == 8){
+                    
+                    // Pemungutan pajak
+                    $scope.hidespm = true
+                    $scope.hidepanjar =true
+                    $scope.hidepengembalianpanjar = true
+                    $scope.hidejasgir =true
+                    $scope.hidepajak =true
+                    $scope.hidespj = true
+                    $scope.hidepengembalian =true
+                    $scope.hidests =true
+                    $scope.hidepemungutanpajak = false
+                    $scope.item.nobkudetail = dataItem.nobku
+                    $scope.item.tglbkudetail = dataItem.tglbku
+                    $scope.item.jenisbku = dataItem?.asalproduk
+                    $scope.norecbku = dataItem.norecbku
+
+                    medifirstService.get("anggaran/get-bku-pemungutanpajak?norec="+dataItem.norecbku).then(function (e) {
+                    
+                        $scope.dataGridPemungutanPajak = new kendo.data.DataSource({
+                            data:  e.data.data,
+                            pageSize: 10,
+                            total: e.data.data.length,
+                            serverPaging: false,
+                            schema: {
+                                model: {
+                                    fields: {
+                                    }
+                                }
+                            },
+                            aggregate: [
+                            ]
+                        });
+                    });
                 }
 
                 $scope.popupDetailBKU.center().open()
             }
             
-
             $scope.columnGrid = {
                 sortable: true,
                 selectable: true,
@@ -1635,6 +1740,49 @@ define(['initialize'], function (initialize) {
                 ]
             };
 
+            $scope.columnGridPemungutan = {
+                sortable: true,
+                selectable: "multiple",
+                pageable: true,
+                columns: [
+                    {
+						"template": "<input type='checkbox' class='checkbox style-center' ng-click='onClickSatuPemungutanPajak($event,2)' />",
+						"width": "30px"
+					},
+                    {
+                        
+                        "field": "tglpph",
+                        "title": "Tanggal",
+                    },
+                    {
+                        
+                        "field": "nopajak",
+                        "title": "Nomor Pajak",
+                    },
+                    {
+                        
+                        "field": "uraianpajak",
+                        "title": "Uraian",
+                    },
+                    {
+                        
+                        "field": "jenispajak",
+                        "title": "Jenis Pajak",
+                        "width": "100px",
+                    },
+                    {
+                        
+                        "field": "asalproduk",
+                        "title": "Sumber Dana",
+                    },
+                    {
+                        
+                        "field": "pph",
+                        "title": "Jumlah",
+                        "template": "<span class='style-right'>{{formatRupiah('#: pph #', 'Rp.')}}</span>",
+                    },
+                ]
+            };
 
             // $scope.formatRupiah = function (value, currency) {
             //     return currency + " " + value.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".");

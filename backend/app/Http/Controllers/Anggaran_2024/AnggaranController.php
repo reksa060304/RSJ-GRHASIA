@@ -3528,4 +3528,230 @@ class AnggaranController extends ApiController {
 
         return $this->respond($result);
     }
+    
+    public function savePajakV2(Request $request) {
+        DB::beginTransaction();
+        $kdProfile = $this->getDataKdProfile($request);
+        $idProfile = (int) $kdProfile;
+        $month = (int)date("m",strtotime($request['tglpph']));
+        $year = (int)date("Y",strtotime($request['tglpph']));
+        $jumlahpph = 0;
+        $jumlahppn = 0;
+        $norecspj = $request['norec'];
+
+        $setting = \DB::table('settinganggaran_t as st')
+            ->join('pegawai_m as pg','pg.id','=','st.objectkepalabludfk')
+            ->join('tahapanggaran_m as ta','ta.id','=','st.objecttahapaktivfk')
+            ->select('st.*','pg.namalengkap', 'ta.tahap', 'ta.id as idtahap', 'pg.id as idpegawai')
+            ->where('st.kdprofile', $idProfile)
+            ->where('st.statusenabled', true)
+            ->orderBy('st.tahunanggaran')
+            ->get();
+
+        try{     
+            for($i = 0; $i < count($request['pph']); $i++){
+                $cek = PemungutanPajak::where('norec', '=', $request['pph'][$i]['norecpp'])->where('kdprofile', '=', 30)->where('statusenabled', '=', true)->first();
+
+                if(empty($cek)){
+                    $MA = new PemungutanPajak();
+                    $norecKS = $MA->generateNewId();
+                    $MA->norec = $norecKS;
+                    $MA->kdprofile = $idProfile;
+                    $MA->statusenabled = true;
+                    
+                    // nomor direset setiap ada pergantian tahun anggaran
+                    $nopemungutan = DB::select(DB::raw("
+                        SELECT 
+                            COALESCE(MAX(CAST(SPLIT_PART(pp.nopajak, '/', 1) as INTEGER)), 0) as max
+                        FROM pemungutanpajak_t pp 
+                        JOIN strukrealisasi_t sr ON sr.norec = pp.objectspjfk AND sr.statusenabled = TRUE AND sr.kdprofile = ".$idProfile."
+                        JOIN realisasidetail_t rd ON rd.strukrealisasifk = sr.norec AND rd.statusenabled = TRUE AND rd.kdprofile = ".$idProfile."
+                        JOIN keteranganbelanja_t kb ON kb.norec = rd.keteranganbelanjafk AND kb.statusenabled = TRUE AND kb.kdprofile = ".$idProfile."
+                        JOIN transaksianggaran2024_t ta ON ta.norec = kb.objecttransaksifk AND ta.statusenabled = TRUE AND ta.kdprofile = ".$idProfile."
+                        WHERE 
+                            pp.kdprofile = ".$idProfile."
+                            AND ta.tahun = '".$setting[0]->tahunanggaran."'
+                    "));
+
+                    if(count($nopemungutan) > 0){
+                        $nomorPemungutan = $nopemungutan[0]->max + 1;
+                    }else{
+                        $nomorPemungutan = 0 + 1;
+                    }
+
+                    // jika digit lebih dari 4
+                    if(strlen((string)$nomorPemungutan) > 4){
+                        $noas = $nomorPemungutan;
+                    }else{
+                        $noas = str_pad((int)$nomorPemungutan, 4, "0", STR_PAD_LEFT);
+                    }
+
+                    // $noas = $this->generateCode(new PemungutanPajak, 'nopajak', 3, '', $idProfile);
+                    $noa = $this->generateCode(new PemungutanPajak, 'nopajak', 30, '/PJK/1.02.2.22.0.00.01.', $idProfile);
+                    $MA->nopajak = $noas.$noa.'/'.$month.'/'.$year;
+
+                } else{
+                    $MA = PemungutanPajak::where('norec', '=', $request['pph'][$i]['norecpp'])->first();
+                }
+                
+                
+                $MA->uraianpajak = $request['uraianpajak'];
+                $MA->objectspjfk = $norecspj;
+                $MA->objectjenispphfk = $request['pph'][$i]['objectjenispphfk'];
+                $MA->pph = $request['pph'][$i]['pph'];
+                $MA->tglpph = $request['pph'][$i]['tglpph'];
+                $MA->idbillpph = $request['pph'][$i]['idbillpph'];
+                $MA->ntpnpph = $request['pph'][$i]['ntpnpph'];
+                $MA->save();
+
+                $SP = StrukRealisasi::where('norec', '=', $request['norec'])->first();
+                $SP->pph = $jumlahpph + $request['pph'][$i]['pph'];
+                $SP->save();
+            }
+            
+           $transStatus = 'true';
+       } catch (\Exception $e) {
+            $transStatus = 'false';
+       }
+
+        if ($transStatus == 'true') {
+            $transMessage = "Simpan";
+            DB::commit();
+            $result = array(
+                'status' => 201,
+                'message' => $transMessage,
+                'result' => $MA,
+                'as' => '@epic',
+            );
+        } else {
+            $transMessage = "Simpan Gagal";
+            DB::rollBack();
+            $result = array(
+                'status' => 400,
+                'line'=> $e->getLine(),
+                'message'=> $e->getMessage(),
+                'as' => '@epic',
+            );
+        }
+        return $this->setStatusCode($result['status'])->respond($result, $transMessage);
+    }
+    
+    public function getPajakPPH(Request $request)
+    {
+
+        $kdProfile = $this->getDataKdProfile($request);
+        $idProfile = (int) $kdProfile;
+        $norec = $request['norec'];
+
+        $data = DB::select(DB::raw("
+            SELECT
+                pp.objectbkufk,
+                pp.nopajak nopajakpp,
+                pp.uraianpajak,
+                sr.norealisasi,
+                string_agg ( DISTINCT rd.uraian, ',' ) uraian,
+                sr.tglverif tglrealisasi,
+                jp.jenispajak AS kode,
+                pp.pph AS jumlah 
+            FROM strukrealisasi_t sr
+            INNER JOIN realisasidetail_t rd ON rd.strukrealisasifk = sr.norec AND rd.statusenabled = TRUE AND rd.kdprofile = ".$idProfile."
+            LEFT JOIN pemungutanpajak_t pp ON pp.objectspjfk = sr.norec AND pp.statusenabled = TRUE AND pp.kdprofile = ".$idProfile."
+            LEFT JOIN jenispajak_m jp ON jp.ID = pp.objectjenispphfk AND jp.statusenabled = TRUE AND jp.kdprofile = ".$idProfile."
+            WHERE
+                sr.norec = '".$norec."'
+                AND sr.kdprofile = ".$idProfile." 
+                AND jp.namaexternal ILIKE'%pph%' 
+            GROUP BY
+                pp.objectbkufk,
+                jp.jenispajak,
+                pp.nopajak,
+                pp.uraianpajak,
+                sr.norealisasi,
+                sr.tglverif,
+                pp.pph
+        "));
+
+        $result = array(
+            'data' => $data,
+            'message' => '@epic',
+        );
+
+        return $this->respond($result);
+    }
+
+    public function getPemungutanPajakBKUV2(Request $request)
+    {
+
+        $kdProfile = $this->getDataKdProfile($request);
+        $idProfile = (int) $kdProfile;
+
+        $setting = \DB::table('settinganggaran_t as st')
+            ->join('pegawai_m as pg','pg.id','=','st.objectkepalabludfk')
+            ->join('tahapanggaran_m as ta','ta.id','=','st.objecttahapaktivfk')
+            ->select('st.*','pg.namalengkap', 'ta.tahap', 'ta.id as idtahap', 'pg.id as idpegawai')
+            ->where('st.kdprofile', $idProfile)
+            ->where('st.statusenabled', true)
+            ->orderBy('st.tahunanggaran')
+            ->get();
+
+        $data = DB::select(DB::raw("
+            SELECT
+                pemp.*,
+                jp.id idjenispajak,
+                jp.jenispajak,
+                ap.id idasalproduk,
+                ap.asalproduk
+            FROM pemungutanpajak_t pemp 
+            INNER JOIN strukrealisasi_t sr ON sr.norec = pemp.objectspjfk AND sr.statusenabled = TRUE
+            INNER JOIN realisasidetail_t rd ON rd.strukrealisasifk = sr.norec AND rd.statusenabled = TRUE
+            INNER JOIN keteranganbelanja_t kb ON kb.norec = rd.keteranganbelanjafk AND kb.statusenabled = TRUE
+            INNER JOIN transaksianggaran2024_t ta ON ta.norec = kb.objecttransaksifk AND ta.statusenabled = TRUE
+            LEFT JOIN jenispajak_m jp ON jp.id = pemp.objectjenispphfk AND jp.statusenabled = TRUE
+            LEFT JOIN asalproduk_m ap ON ap.id = sr.objectasalprodukfk AND ap.statusenabled = TRUE
+            WHERE
+                pemp.statusenabled = TRUE
+                AND pemp.kdprofile = ".$idProfile."
+                AND ta.tahun = '".$setting[0]->tahunanggaran."'
+                AND pemp.objectbkufk IS NULL
+            GROUP BY
+                pemp.norec, jp.id, ap.id
+        "));
+
+        return $this->respond($data);
+    }
+
+    public function getBKUPemungutanPajak(Request $request)
+    {
+        $kdProfile = $this->getDataKdProfile($request);
+        $idProfile = (int) $kdProfile;
+        $norec = $request['norec'];
+
+        $data = DB::select(DB::raw("
+            SELECT
+                pemp.*,
+                jp.id idjenispajak,
+                jp.jenispajak,
+                ap.id idasalproduk,
+                ap.asalproduk
+            FROM pemungutanpajak_t pemp 
+            INNER JOIN strukrealisasi_t sr ON sr.norec = pemp.objectspjfk AND sr.statusenabled = TRUE
+            INNER JOIN realisasidetail_t rd ON rd.strukrealisasifk = sr.norec AND rd.statusenabled = TRUE
+            INNER JOIN bukukasumum_t bku ON bku.norec = pemp.objectbkufk AND bku.statusenabled = TRUE
+            LEFT JOIN jenispajak_m jp ON jp.id = pemp.objectjenispphfk AND jp.statusenabled = TRUE
+            LEFT JOIN asalproduk_m ap ON ap.id = sr.objectasalprodukfk AND ap.statusenabled = TRUE
+            WHERE
+                pemp.statusenabled = TRUE
+                AND pemp.kdprofile = ".$idProfile."
+                AND pemp.objectbkufk = '".$norec."'
+            GROUP BY
+                pemp.norec, jp.id, ap.id
+        "));
+
+        $result = array(
+            'data' => $data,
+            'message' => '@epic',
+        );
+
+        return $this->respond($result);
+    }
 }
