@@ -143,9 +143,9 @@
                             <div class="card-body">
                                 <a href="javascript:void(0);" class="brand-logo">
                                     @if (stripos(\Request::url(), 'localhost') !== false) 
-                                    <img style="width:90px" src="{!! asset('img/logo_only.png') !!}">
+                                    <img style="width:90px" src="{!! asset('img/logo_grhasiafull.png') !!}">
                                     @else
-                                    <img style="width:90px" src="{!! asset('service/img/logo_only.png') !!}">
+                                    <img style="width:90px" src="{!! asset('service/img/logo_grhasiafull.png') !!}">
                                     @endif
                                     <h2 class="brand-text ml-1 mt-1">{{ $profile->namaexternal }}</h2>
                                 </a>
@@ -186,9 +186,9 @@
                                         <div>
                                             <div class="logo-wrapper">
                                                 @if (stripos(\Request::url(), 'localhost') !== false) 
-                                                <img style="width:100px" src="{!! asset('img/logo_only.png') !!}">
+                                                <img style="width:100px" src="{!! asset('img/logo_grhasiafull.png') !!}">
                                                 @else
-                                                <img style="width:100px" src="{!! asset('service/img/logo_only.png') !!}">
+                                                <img style="width:100px" src="{!! asset('service/img/logo_grhasiafull.png') !!}">
                                                 @endif
                                             
                                                 <h3 class=" invoice-logo">{{ $profile->namaexternal }}</h3>
