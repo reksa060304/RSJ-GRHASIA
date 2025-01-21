@@ -1734,70 +1734,158 @@ class AnggaranController extends ApiController {
         }
 
         $asalproduk = '';
+        $sumberdanapanjar = '';
         if (isset($request['asalproduk']) && $request['asalproduk'] != "" && $request['asalproduk'] != "undefined") {
             $asalproduk =  "and kb.objectasalprodukfk = ".$request['asalproduk'];
+            $sumberdanapanjar = "and pj.objectasalprodukfk = ".$request['asalproduk'];
         }
 
-        $data = DB::select(DB::raw("
+        // $data = DB::select(DB::raw("
 
-            SELECT
-                COALESCE(SUM(x.totalanggaran), 0) as totalanggaran,
-                COALESCE(SUM(x.totalspj), 0) as totalspj,
-                (COALESCE(SUM(x.jumlahpanjar), 0) - COALESCE(SUM(x.totalpengembalianpanjar), 0)) - COALESCE(SUM(x.totalspjpanjar), 0) as totalpanjar,
-                COALESCE(SUM(x.totalanggaran), 0) - ( COALESCE(SUM(x.totalspj), 0) + ( (COALESCE(SUM(x.jumlahpanjar), 0) - COALESCE(SUM(x.totalpengembalianpanjar), 0)) - COALESCE(SUM(x.totalspjpanjar), 0) ) ) as sisa
-            FROM (
-                SELECT
-                    COALESCE(SUM(kb.subtotal), 0) as totalanggaran,
-                    0 as totalspj,
-                    0 as totalspjpanjar,
-                    0 as totalpengembalianpanjar,
-                    0 as jumlahpanjar
-                FROM keteranganbelanja_t kb 
-                JOIN transaksianggaran2024_t ta ON ta.norec = kb.objecttransaksifk AND ta.statusenabled = TRUE AND ta.kdprofile = ".$idProfile."
-                JOIN kegiatananggaran2024_m ka ON ka.id = ta.objectkegiatanfk AND ka.statusenabled = TRUE AND ka.kdprofile = ".$idProfile."
-                JOIN mataanggaran_m ma ON ma.id = kb.objectmataanggaranfk AND ma.statusenabled = TRUE AND ma.kdprofile = ".$idProfile."
-                JOIN tahapanggaran_m th ON th.id = kb.objecttahapfk AND th.statusenabled = TRUE AND th.kdprofile = ".$idProfile."
-                JOIN asalproduk_m ap ON ap.id = kb.objectasalprodukfk AND ap.statusenabled = TRUE AND ap.kdprofile = ".$idProfile."
-                WHERE
-                    kb.statusenabled = TRUE
-                    AND kb.kdprofile = ".$idProfile."
+        //     SELECT
+        //         COALESCE(SUM(x.totalanggaran), 0) as totalanggaran,
+        //         COALESCE(SUM(x.totalspj), 0) as totalspj,
+        //         (COALESCE(SUM(x.jumlahpanjar), 0) - COALESCE(SUM(x.totalpengembalianpanjar), 0)) - COALESCE(SUM(x.totalspjpanjar), 0) as totalpanjar,
+        //         COALESCE(SUM(x.totalanggaran), 0) - ( COALESCE(SUM(x.totalspj), 0) + ( (COALESCE(SUM(x.jumlahpanjar), 0) - COALESCE(SUM(x.totalpengembalianpanjar), 0)) - COALESCE(SUM(x.totalspjpanjar), 0) ) ) as sisa
+        //     FROM (
+        //         SELECT
+        //             COALESCE(SUM(kb.subtotal), 0) as totalanggaran,
+        //             0 as totalspj,
+        //             0 as totalspjpanjar,
+        //             0 as totalpengembalianpanjar,
+        //             0 as jumlahpanjar
+        //         FROM keteranganbelanja_t kb 
+        //         JOIN transaksianggaran2024_t ta ON ta.norec = kb.objecttransaksifk AND ta.statusenabled = TRUE AND ta.kdprofile = ".$idProfile."
+        //         JOIN kegiatananggaran2024_m ka ON ka.id = ta.objectkegiatanfk AND ka.statusenabled = TRUE AND ka.kdprofile = ".$idProfile."
+        //         JOIN mataanggaran_m ma ON ma.id = kb.objectmataanggaranfk AND ma.statusenabled = TRUE AND ma.kdprofile = ".$idProfile."
+        //         JOIN tahapanggaran_m th ON th.id = kb.objecttahapfk AND th.statusenabled = TRUE AND th.kdprofile = ".$idProfile."
+        //         JOIN asalproduk_m ap ON ap.id = kb.objectasalprodukfk AND ap.statusenabled = TRUE AND ap.kdprofile = ".$idProfile."
+        //         WHERE
+        //             kb.statusenabled = TRUE
+        //             AND kb.kdprofile = ".$idProfile."
+        //             AND ta.tahun = '".$setting[0]->tahunanggaran."'
+        //             AND kb.objecttahapfk = ".$setting[0]->objecttahapaktivfk."
+        //             $subsubkegiatan
+        //             $mataanggaran
+        //             $asalproduk
+
+        //         UNION 
+
+        //         SELECT
+        //             0 as totalanggaran,
+        //             COALESCE(SUM(rd.subtotal), 0) as totalspj,
+        //             COALESCE(SUM(stp.jumlahspj), 0) as totalspjpanjar,
+        //             COALESCE(SUM(pengpj.jumlahpengembalian), 0) as totalpengembalianpanjar,
+        //             COALESCE(SUM(pj.jumlah), 0) as jumlahpanjar
+        //         FROM keteranganbelanja_t kb 
+        //         JOIN transaksianggaran2024_t ta ON ta.norec = kb.objecttransaksifk AND ta.statusenabled = TRUE AND ta.kdprofile = ".$idProfile."
+        //         JOIN kegiatananggaran2024_m ka ON ka.id = ta.objectkegiatanfk AND ka.statusenabled = TRUE AND ka.kdprofile = ".$idProfile."
+        //         JOIN mataanggaran_m ma ON ma.id = kb.objectmataanggaranfk AND ma.statusenabled = TRUE AND ma.kdprofile = ".$idProfile."
+        //         JOIN tahapanggaran_m th ON th.id = kb.objecttahapfk AND th.statusenabled = TRUE AND th.kdprofile = ".$idProfile."
+        //         JOIN asalproduk_m ap ON ap.id = kb.objectasalprodukfk AND ap.statusenabled = TRUE AND ap.kdprofile = ".$idProfile."
+        //         LEFT JOIN realisasidetail_t rd ON rd.keteranganbelanjafk = kb.norec AND rd.statusenabled = TRUE AND rd.kdprofile = ".$idProfile."
+        //         LEFT JOIN strukrealisasi_t sr ON sr.norec = rd.strukrealisasifk AND sr.statusenabled = TRUE AND rd.kdprofile = ".$idProfile."
+        //         LEFT JOIN spjtopanjar_t stp ON stp.objectspjfk = sr.norec AND stp.statusenabled = TRUE AND stp.kdprofile = ".$idProfile."
+        //         LEFT JOIN panjar_t pj ON pj.norec = stp.objectpanjarfk AND pj.statusenabled = TRUE AND pj.kdprofile = ".$idProfile."
+        //         LEFT JOIN pengembalianpanjar_t pengpj ON pengpj.objectpanjarfk = pj.norec AND pengpj.statusenabled = TRUE AND pengpj.kdprofile = ".$idProfile."
+        //         WHERE
+        //             kb.statusenabled = TRUE
+        //             AND kb.kdprofile = ".$idProfile."
+        //             AND ta.tahun = '".$setting[0]->tahunanggaran."'
+        //             $subsubkegiatan
+        //             $mataanggaran
+        //             $asalproduk
+        //     ) as x
+
+        // "));
+
+        $spj = collect(
+            DB::select(DB::raw("
+                SELECT 
+                    COALESCE(SUM(rd.subtotal),0) AS totalspj
+                FROM strukrealisasi_t AS sr
+                JOIN realisasidetail_t rd ON rd.strukrealisasifk = sr.norec AND rd.statusenabled = TRUE
+                JOIN keteranganbelanja_t kb ON kb.norec = rd.keteranganbelanjafk AND kb.statusenabled = TRUE
+                JOIN transaksianggaran2024_t ta ON ta.norec = kb.objecttransaksifk AND ta.statusenabled = TRUE
+                JOIN kegiatananggaran2024_m ka ON ka.id = sr.objectkegiatanfk AND ka.statusenabled = TRUE
+                JOIN mataanggaran_m ma ON ma.id = sr.objectmataanggaranfk AND ma.statusenabled = TRUE
+                JOIN asalproduk_m ap ON ap.id = sr.objectasalprodukfk AND ap.statusenabled = TRUE
+                WHERE 
+                    sr.statusenabled = TRUE
+                    AND sr.kdprofile = ".$idProfile."
                     AND ta.tahun = '".$setting[0]->tahunanggaran."'
-                    AND kb.objecttahapfk = ".$setting[0]->objecttahapaktivfk."
                     $subsubkegiatan
-                    $mataanggaran
+                    AND sr.objectmataanggaranfk = ".$request['mataanggaran']."
                     $asalproduk
-
-                UNION 
-
-                SELECT
-                    0 as totalanggaran,
-                    COALESCE(SUM(rd.subtotal), 0) as totalspj,
-                    COALESCE(SUM(stp.jumlahspj), 0) as totalspjpanjar,
-                    COALESCE(SUM(pengpj.jumlahpengembalian), 0) as totalpengembalianpanjar,
-                    COALESCE(SUM(pj.jumlah), 0) as jumlahpanjar
-                FROM keteranganbelanja_t kb 
-                JOIN transaksianggaran2024_t ta ON ta.norec = kb.objecttransaksifk AND ta.statusenabled = TRUE AND ta.kdprofile = ".$idProfile."
-                JOIN kegiatananggaran2024_m ka ON ka.id = ta.objectkegiatanfk AND ka.statusenabled = TRUE AND ka.kdprofile = ".$idProfile."
-                JOIN mataanggaran_m ma ON ma.id = kb.objectmataanggaranfk AND ma.statusenabled = TRUE AND ma.kdprofile = ".$idProfile."
-                JOIN tahapanggaran_m th ON th.id = kb.objecttahapfk AND th.statusenabled = TRUE AND th.kdprofile = ".$idProfile."
-                JOIN asalproduk_m ap ON ap.id = kb.objectasalprodukfk AND ap.statusenabled = TRUE AND ap.kdprofile = ".$idProfile."
-                LEFT JOIN realisasidetail_t rd ON rd.keteranganbelanjafk = kb.norec AND rd.statusenabled = TRUE AND rd.kdprofile = ".$idProfile."
-                LEFT JOIN strukrealisasi_t sr ON sr.norec = rd.strukrealisasifk AND sr.statusenabled = TRUE AND rd.kdprofile = ".$idProfile."
-                LEFT JOIN spjtopanjar_t stp ON stp.objectspjfk = sr.norec AND stp.statusenabled = TRUE AND stp.kdprofile = ".$idProfile."
-                LEFT JOIN panjar_t pj ON pj.norec = stp.objectpanjarfk AND pj.statusenabled = TRUE AND pj.kdprofile = ".$idProfile."
-                LEFT JOIN pengembalianpanjar_t pengpj ON pengpj.objectpanjarfk = pj.norec AND pengpj.statusenabled = TRUE AND pengpj.kdprofile = ".$idProfile."
-                WHERE
-                    kb.statusenabled = TRUE
-                    AND kb.kdprofile = ".$idProfile."
-                    AND ta.tahun = '".$setting[0]->tahunanggaran."'
-                    $subsubkegiatan
-                    $mataanggaran
-                    $asalproduk
-            ) as x
-
+            "))
+        )->first();
+        
+        $panjar = DB::select(DB::raw("
+            SELECT 
+                COALESCE(SUM(pj.jumlah), 0) - COALESCE (SUM(pengpj.jumlahpengembalian), 0) AS totalpanjar
+            FROM panjar_t AS pj
+            JOIN kegiatananggaran2024_m ka ON ka.id = pj.objectsubsubkegiatanfk AND ka.statusenabled = TRUE
+            JOIN mataanggaran_m ma ON ma.id = pj.objectmataanggaranfk AND ma.statusenabled = TRUE
+            JOIN asalproduk_m ap ON ap.id = pj.objectasalprodukfk AND ap.statusenabled = TRUE
+            LEFT JOIN pengembalianpanjar_t AS pengpj ON pengpj.objectpanjarfk = pj.norec AND pengpj.statusenabled = TRUE AND pengpj.kdprofile=".$idProfile."
+            WHERE 
+                pj.statusenabled = TRUE 
+                AND pj.kdprofile =  ".$idProfile."
+                AND EXTRACT(YEAR FROM pj.tglpanjar) = '".$setting[0]->tahunanggaran."'                
+                AND pj.objectsubsubkegiatanfk = ".$request['subsubkegiatan']."
+                AND pj.objectmataanggaranfk = ".$request['mataanggaran']."
+                $sumberdanapanjar
         "));
 
-        return $this->respond($data);
+        $panjarspj = DB::select(DB::raw("
+            SELECT 
+                COALESCE ( SUM ( spjtopanjar.jumlahspj ), 0 ) AS totalpanjarspj
+            FROM panjar_t AS pj
+            JOIN kegiatananggaran2024_m ka ON ka.ID = pj.objectsubsubkegiatanfk AND ka.statusenabled = TRUE
+            JOIN mataanggaran_m ma ON ma.ID = pj.objectmataanggaranfk AND ma.statusenabled = TRUE
+            JOIN asalproduk_m ap ON ap.id = pj.objectasalprodukfk AND ap.statusenabled = TRUE
+            LEFT JOIN pengembalianpanjar_t AS pengpj ON pengpj.objectpanjarfk = pj.norec AND pengpj.statusenabled = TRUE AND pengpj.kdprofile=".$idProfile."
+            LEFT JOIN spjtopanjar_t AS spjtopanjar ON spjtopanjar.objectpanjarfk = pj.norec AND spjtopanjar.statusenabled = TRUE AND spjtopanjar.kdprofile = ".$idProfile."
+            WHERE 
+                pj.statusenabled = TRUE 
+                AND pj.kdprofile =  ".$idProfile."
+                AND EXTRACT(YEAR FROM pj.tglpanjar) = '".$setting[0]->tahunanggaran."'  
+                AND pj.objectsubsubkegiatanfk = ".$request['subsubkegiatan']."
+                AND pj.objectmataanggaranfk = ".$request['mataanggaran']."
+                $sumberdanapanjar
+        "));
+
+        $anggaran = collect(DB::select(DB::raw("
+            SELECT SUM
+                ( kb.subtotal ) AS totalanggaran
+            FROM
+                kegiatananggaran2024_m AS ka
+                JOIN transaksianggaran2024_t ta ON ta.objectkegiatanfk = ka.id AND ta.statusenabled = TRUE
+                JOIN keteranganbelanja_t AS kb ON kb.objecttransaksifk = ta.norec AND kb.statusenabled = TRUE AND kb.kdprofile = ".$idProfile." 
+                JOIN mataanggaran_m ma ON ma.id = kb.objectmataanggaranfk AND ma.statusenabled = TRUE
+                JOIN asalproduk_m ap ON ap.id = kb.objectasalprodukfk AND ap.statusenabled = TRUE
+            WHERE
+                ka.statusenabled = TRUE 
+                AND ka.kdprofile = ".$idProfile." 
+                AND ta.tahun = '".$setting[0]->tahunanggaran."'
+                AND kb.objecttahapfk = ".$setting[0]->objecttahapaktivfk."
+                $subsubkegiatan
+                AND kb.objectmataanggaranfk = ".$request['mataanggaran']."
+                $asalproduk
+        ")))->first();
+
+        $total = $spj->totalspj + ( $panjar[0]->totalpanjar - $panjarspj[0]->totalpanjarspj );
+        
+        $sisa = $anggaran->totalanggaran - $total;
+        $res = [
+            [
+                'sisa' => $sisa,
+                'message' => '@epic'
+            ]
+        ];
+        return $this->respond($res);
+
+        // return $this->respond($data);
     }
 
     public function getPanjar(Request $request)
