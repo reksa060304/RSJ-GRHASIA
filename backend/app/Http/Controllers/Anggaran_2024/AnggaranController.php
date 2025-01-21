@@ -1959,7 +1959,7 @@ class AnggaranController extends ApiController {
         $keterangan = DB::select(DB::raw("
             SELECT
                 kb.*, 
-                ta.objectkegiatanfk, ka.keterangan,
+                ta.objectkegiatanfk as objectkegiatanbaru, ka.keterangan,
                 kb.objectmataanggaranfk, ma.namamataanggaran
             FROM keteranganbelanja_t kb 
             JOIN transaksianggaran2024_t ta ON ta.norec = kb.objecttransaksifk AND ta.statusenabled = TRUE AND ta.kdprofile = ".$idProfile."
@@ -1973,23 +1973,45 @@ class AnggaranController extends ApiController {
                 AND kb.norec = '".$request['norec']."'
         "));
 
+        // $spj = DB::select(DB::raw("
+        //     SELECT
+        //         COALESCE(SUM(rd.subtotal), 0) as totalspj    
+        //     FROM keteranganbelanja_t kb 
+        //     JOIN transaksianggaran2024_t ta ON ta.norec = kb.objecttransaksifk AND ta.statusenabled = TRUE AND ta.kdprofile = ".$idProfile."
+        //     JOIN kegiatananggaran2024_m ka ON ka.id = ta.objectkegiatanfk AND ka.statusenabled = TRUE AND ka.kdprofile = ".$idProfile."
+        //     JOIN mataanggaran_m ma ON ma.id = kb.objectmataanggaranfk AND ma.statusenabled = TRUE AND ma.kdprofile = ".$idProfile."
+        //     JOIN tahapanggaran_m th ON th.id = kb.objecttahapfk AND th.statusenabled = TRUE AND th.kdprofile = ".$idProfile."
+        //     JOIN asalproduk_m ap ON ap.id = kb.objectasalprodukfk AND ap.statusenabled = TRUE AND ap.kdprofile = ".$idProfile."
+        //     LEFT JOIN realisasidetail_t rd ON rd.keteranganbelanjafk = kb.norec AND rd.statusenabled = TRUE AND rd.kdprofile = ".$idProfile."
+        //     LEFT JOIN strukrealisasi_t sr ON sr.norec = rd.strukrealisasifk AND sr.statusenabled = TRUE AND rd.kdprofile = ".$idProfile."
+        //     WHERE
+        //         kb.statusenabled = TRUE
+        //         AND kb.kdprofile = ".$idProfile."
+        //         AND ta.tahun = '".$setting[0]->tahunanggaran."'
+        //         AND ta.objectkegiatanfk = ".$keterangan[0]->objectkegiatanbaru."
+        //         AND kb.objectmataanggaranfk = ".$keterangan[0]->objectmataanggaranfk."
+        //         AND kb.keteranganbelanja ilike '%".$keterangan[0]->keteranganbelanja."%'
+        //     GROUP BY
+        //         sr.norec
+        // "));
+
         $spj = DB::select(DB::raw("
-            SELECT
-                COALESCE(SUM(rd.subtotal), 0) as totalspj    
-            FROM keteranganbelanja_t kb 
-            JOIN transaksianggaran2024_t ta ON ta.norec = kb.objecttransaksifk AND ta.statusenabled = TRUE AND ta.kdprofile = ".$idProfile."
-            JOIN kegiatananggaran2024_m ka ON ka.id = ta.objectkegiatanfk AND ka.statusenabled = TRUE AND ka.kdprofile = ".$idProfile."
-            JOIN mataanggaran_m ma ON ma.id = kb.objectmataanggaranfk AND ma.statusenabled = TRUE AND ma.kdprofile = ".$idProfile."
-            JOIN tahapanggaran_m th ON th.id = kb.objecttahapfk AND th.statusenabled = TRUE AND th.kdprofile = ".$idProfile."
-            JOIN asalproduk_m ap ON ap.id = kb.objectasalprodukfk AND ap.statusenabled = TRUE AND ap.kdprofile = ".$idProfile."
-            LEFT JOIN realisasidetail_t rd ON rd.keteranganbelanjafk = kb.norec AND rd.statusenabled = TRUE AND rd.kdprofile = ".$idProfile."
-            LEFT JOIN strukrealisasi_t sr ON sr.norec = rd.strukrealisasifk AND sr.statusenabled = TRUE AND rd.kdprofile = ".$idProfile."
-            WHERE
-                kb.statusenabled = TRUE
-                AND kb.kdprofile = ".$idProfile."
+            SELECT 
+                COALESCE(SUM(rd.subtotal),0) AS totalspj
+            FROM strukrealisasi_t AS sr
+            JOIN realisasidetail_t rd ON rd.strukrealisasifk = sr.norec AND rd.statusenabled = TRUE
+            JOIN keteranganbelanja_t kb ON kb.norec = rd.keteranganbelanjafk AND kb.statusenabled = TRUE
+            JOIN transaksianggaran2024_t ta ON ta.norec = kb.objecttransaksifk AND ta.statusenabled = TRUE
+            JOIN kegiatananggaran2024_m ka ON ka.id = sr.objectkegiatanfk AND ka.statusenabled = TRUE
+            JOIN mataanggaran_m ma ON ma.id = sr.objectmataanggaranfk AND ma.statusenabled = TRUE
+            JOIN asalproduk_m ap ON ap.id = sr.objectasalprodukfk AND ap.statusenabled = TRUE
+            WHERE 
+                sr.statusenabled = TRUE
+                AND sr.kdprofile = ".$idProfile."
                 AND ta.tahun = '".$setting[0]->tahunanggaran."'
-                AND ta.objectkegiatanfk = ".$keterangan[0]->objectkegiatanfk."
-                AND kb.objectmataanggaranfk = ".$keterangan[0]->objectmataanggaranfk."
+                AND ta.objectkegiatanfk = ".$keterangan[0]->objectkegiatanbaru."
+                AND sr.objectmataanggaranfk = ".$keterangan[0]->objectmataanggaranfk."
+                AND sr.objectasalprodukfk = ".$keterangan[0]->objectasalprodukfk."
                 AND kb.keteranganbelanja ilike '%".$keterangan[0]->keteranganbelanja."%'
         "));
 
