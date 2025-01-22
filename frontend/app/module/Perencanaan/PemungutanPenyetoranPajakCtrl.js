@@ -426,8 +426,24 @@ define(['initialize'], function (initialize) {
                 console.log(objSave);
                 // return
                 medifirstService.post('perencanaan/delete-pajak', objSave).then(function (e) {
-                    $scope.item.nospjpemungutan = ''
-                    $scope.item.nospjpenyetoran = ''
+                    // $scope.item.nospjpemungutan = ''
+                    // $scope.item.nospjpenyetoran = ''
+                    medifirstService.get("anggaran/get-pajak-pph?norec=" + $scope.norecspj).then(function (e) {
+                        $scope.dataGridPemungutan = e.data.data
+    
+                        $scope.item.nospjpemungutan = e.data.data[0].nopajakpp
+                        if (e.data.data[0].uraianpajak != null) {
+                            $scope.item.uraianspjp = e.data.data[0].uraianpajak
+                            $scope.item.uraianPajak = e.data.data[0].uraianpajak
+                        } else {
+                            $scope.item.uraianspjp = 'PPh dan PPn ' + e.data.data[0].uraian
+                            $scope.item.uraianPajak = 'PPh dan PPn ' + e.data.data[0].uraian
+                        }
+    
+                        $scope.item.jumlahPPh = e.data.data[0].jumlah
+                        $scope.item.jumlahPPhDinamis = 'Rp' + e.data.data[0].jumlah
+                    });
+
                 })
 
             }
