@@ -5119,9 +5119,11 @@ class PerencanaanController extends ApiController {
             $MA = PemungutanPajak::where('objectspjfk', '=', $request['norec'])->where('kdprofile', '=', 30)->where('statusenabled', '=', true)->first();
             $MA->statusenabled = false;
             $MA->save();
-            $MP = PenyetoranPajak::where('objectspjfk', '=', $request['norec'])->where('kdprofile', '=', 30)->where('statusenabled', '=', true)->first();
-            $MP->statusenabled = false;
-            $MP->save();
+            
+            // disesuaikan karena pemungutan dan penyetoran dipisah
+            // $MP = PenyetoranPajak::where('objectspjfk', '=', $request['norec'])->where('kdprofile', '=', 30)->where('statusenabled', '=', true)->first();
+            // $MP->statusenabled = false;
+            // $MP->save();
            $transStatus = 'true';
        } catch (\Exception $e) {
             $transStatus = 'false';
