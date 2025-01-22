@@ -426,8 +426,8 @@ define(['initialize'], function (initialize) {
                 console.log(objSave);
                 // return
                 medifirstService.post('perencanaan/delete-pajak', objSave).then(function (e) {
-                    // $scope.item.nospjpemungutan = ''
-                    // $scope.item.nospjpenyetoran = ''
+                    $scope.item.nospjpemungutan = ''
+                    $scope.item.nospjpenyetoran = ''
                     medifirstService.get("anggaran/get-pajak-pph?norec=" + $scope.norecspj).then(function (e) {
                         $scope.dataGridPemungutan = e.data.data
     
