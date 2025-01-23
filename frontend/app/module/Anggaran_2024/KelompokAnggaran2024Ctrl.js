@@ -1632,6 +1632,11 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
 
                 $scope.norecspjpanjar = dataItem.norec
 
+                if(dataItem.objectbkufk != null){
+                    toastr.error('Sudah dibuat BKU tidak bisa dirubah')
+                    return
+                }
+
                 medifirstService.getPart('emr/get-datacombo-part-pegawai', true, true, 20).then(function (data) {
                     $scope.listBendahara = data
                     $scope.listPenerima = data
