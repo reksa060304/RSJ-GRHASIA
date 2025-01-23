@@ -487,6 +487,10 @@
         {
             "nameDep": "KelompokAnggaran2024Ctrl",
             "urlDep": "module/Anggaran_2024/KelompokAnggaran2024Ctrl"
+        },
+        {
+            "nameDep": "PenyetoranPajakV2Ctrl",
+            "urlDep": "module/BendaharaPengeluaran/PenyetoranPajakV2Ctrl"
         }
     ]
 }

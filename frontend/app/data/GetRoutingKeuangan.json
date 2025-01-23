@@ -2418,5 +2418,25 @@
         "define": "MedifirstService"
       }
     ]
+  },
+  {
+    "name": "PenyetoranPajakV2",
+    "url": "/UGVueWV0b3JhblBhamFrVjI=",
+    "templateurl": "module/BendaharaPengeluaran/PenyetoranPajakV2.html",
+    "controller": "PenyetoranPajakV2Ctrl",
+    "deps": [
+      {
+        "module": "Services",
+        "define": "Service"
+      },
+      {
+        "module": "LoginServices",
+        "define": "LoginService"
+      },
+      {
+        "module": "MedifirstService",
+        "define": "MedifirstService"
+      }
+    ]
   }
 ]

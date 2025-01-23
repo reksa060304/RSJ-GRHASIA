@@ -1,0 +1,298 @@
+<style>
+    .k-grid .k-grid-header .k-header .k-link {
+        height: auto;
+    }
+
+    .k-grid .k-grid-header .k-header {
+        white-space: normal;
+    }
+
+    .k-grid .k-grid-header .k-header {
+        text-align: center;
+    }
+
+    .k-window-content .k-content {
+        overflow: none
+    }
+
+    legend {
+        cursor: pointer;
+        padding: 10px;
+    }
+
+    .effect-shadow {
+        -webkit-box-shadow: 2px 2px 5px #b6b6b6;
+        -moz-box-shadow: 2px 2px 5px #b6b6b6;
+        box-shadow: 2px 2px 5px #b6b6b6;
+    }
+
+    .warnaa {
+        color: black
+    }
+
+    .align-right{
+        text-align: right;
+    }
+
+    hr {
+        border: 1px solid black;
+        margin-top: 0px;
+        margin-bottom: 0px;
+        display: inline-block;
+        width: 100%;
+    }
+
+    h1 {
+        color: black;
+        display: block;
+        font-size: 14px;
+        margin-block-start: 0px;
+        margin-block-end: 0;
+        margin-inline-start: 0px;
+        margin-inline-end: 0px;
+        font-weight: bold;
+    }
+
+    h2 {
+        color: black;
+        display: block;
+        font-size: 14px;
+        margin-block-start: 0px;
+        margin-block-end: 0;
+        margin-inline-start: 0px;
+        margin-inline-end: 0px;
+        font-weight: bold;
+    }
+</style>
+<div class="grid_12">
+    <div class="panel panel-default container_12">
+        <div class="panel-heading" c-translate>Penyetoran Pajak</div>
+    </div>
+    <div class="panel panel-default panel-white" ng-hide="isMasuk">
+
+        <fieldset class="effect-shadow" style=" border-radius: 4px">
+            <legend id="filterData">
+                <a ng-click="showAndHide()">
+                    <h2><span class="fa fa-plus warnaa">
+                        </span> &nbsp;Pencarian</h2>
+                </a>
+            </legend>
+            <div class="grid_12" id="contentPencarian">
+                <div class="grid_12" style="margin-top: 15px;">
+                    <div class="grid_12">
+                        <!-- AwalPeriode -->
+                        <div class="grid_2">
+                            <div class="grid_12">
+                                <label c-label item="item" c-label-text="Periode"></label>
+                            </div>
+                            <div class="grid_12">
+                                <div class="grid_12">
+                                    <input style="width: 100%" k-ng-model="item.tglawal" kendo-datepicker placeholer="yyyy-mm-dd"
+                                    k-format="'yyyy-MM-dd'" />
+                                </div>
+                            </div>
+                        </div>
+                        <div class="grid_2">
+                            <br>
+                            <div class="grid_12">
+                                <div class="grid_12">
+                                    <input style="width: 100%" k-ng-model="item.tglakhir" kendo-datepicker placeholer="yyyy-mm-dd"
+                                    k-format="'yyyy-MM-dd'" />
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="grid_1" style="margin-top: 5px;">
+                            <br>
+                            <button class="c-button" ng-click="cariFilter()">Cari</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </fieldset>
+
+        <!-- Tabel Hasil Pencarian -->
+        <div class="grid_12" style="margin-top:50px;">
+            <div class="grid_12 borderBox">
+                <kendo-grid id="gridPenyetoranPajak" data-source="dataGridPenyetoranPajak" options="columnGridPenyetoranPajak" k-pageable="'true'"
+                    k-sortable="'true'" k-groupable="'false'" k-resizable="'true'" k-selectable="'row'"
+                    k-ng-model="dataSelectedPenyetoranPajak">
+                </kendo-grid>
+            </div>
+        </div>
+
+        <div class="grid_12">
+            <div class="grid_10"></div>
+            <div class="grid_2">
+                <button class="btnTemplate1" ng-click="tambahPenyetoranPajak()">Tambah</button>
+            </div>
+        </div>
+
+        <div class="grid_12" kendo-window="popupTambahPenyetoranPajak" k-title="'Entry Penyetoran Pajak'" k-visible="false" width="1000" style="overflow-x: hidden;">
+	
+            <div class="grid_12">
+                <div>
+                    <div class="grid_12" style="text-align: left; margin-top: 10px;">
+                        <label c-label item="item">ID Bill</label>
+                    </div>
+                    <div class="grid_12" style="margin-top: 10px;">
+                        <input c-text-box type="input" class="k-textbox" ng-model="item.idbill" />
+                    </div>
+                </div>
+
+                <div>
+                    <div class="grid_12" style="text-align: left; margin-top: 10px;">
+                        <label c-label item="item">Tanggal Penyetoran</label>
+                    </div>
+                    <div class="grid_12" style="margin-top: 10px;">
+                        <input style="width: 100%" k-ng-model="item.tglpenyetoran" kendo-datepicker 
+                        placeholer="yyyy-MM-dd" k-format="'yyyy-MM-dd'"/>
+                    </div>
+                </div>
+
+                <div>
+                    <div class="grid_12" style="text-align: left; margin-top: 10px;">
+                        <label c-label item="item">Uraian</label>
+                    </div>
+                    <div class="grid_12" style="margin-top: 10px;">
+                        <!-- <input c-text-box type="input" class="k-textbox" ng-model="item.tolokUkurKeluaran"  /> -->
+                        <textarea required class="k-textbox" ng-model="item.uraian" rows="6"></textarea>
+                    </div>
+                </div>
+
+                <div style="margin-top: 40px;">
+                    <p style="margin: 0;">Rincian Penyetoran Pajak</p>
+
+                    <button style="width: 15%;" class="btnTemplate1" ng-click="tambahRincian()">Tambah Rincian</button>
+                    
+                    <kendo-grid data-source="dataGridRincianPenyetoran" options="columnGridRincianPenyetoran" k-pageable="'true'"
+                        k-sortable="'true'" k-resizable="'true'" k-selectable="'row'"
+                        k-ng-model="selectedRincianPenyetoran">
+                    </kendo-grid>
+                </div>
+
+                <div>
+                    <div class="grid_12" style="text-align: left; margin-top: 10px;">
+                        <label c-label item="item">Total Setoran</label>
+                    </div>
+                    <div class="grid_12" style="margin-top: 10px;">
+                        <input c-text-box type="number" class="k-textbox" ng-model="item.totalsetoran" />
+                    </div>
+                </div>
+            </div>
+            
+            <div class="grid_12" style="margin-top: 10px;">
+                <div class="grid_4" >
+                    <button class="btnTemplate1" ng-click="simpanPenyetoranPajak()">Simpan Penyetoran Pajak</button>
+                </div>
+            </div>
+        </div>
+
+        <div kendo-window="popupTambahRincianPenyetoranPajak" k-title="'Rincian Penyetoran Pajak'" k-visible="false" width="800" style="overflow-x: hidden;">
+            
+            <div class="panel panel-default container_12">
+
+                <div class="grid_12">
+                    <div class="grid_12" style="text-align: left; margin-top: 10px;">
+                        <label c-label item="item">Pilih Pemungutan</label>
+                    </div>
+                    <div class="grid_12" style="margin-top: 10px;">
+                        <div class="grid_12">
+                            <input kendo-combo-box k-ng-model="item.pemungutanPajak"
+                                k-data-text-field="'nopajak'" k-data-value-field="'norec'"
+                                k-filter="'contains'" k-auto-bind="false"
+                                k-data-source="listPemungutanPajak"  />
+                        </div>
+                    </div>
+                </div>
+
+                <div class="grid_12">
+    
+                    <div class="grid_6">
+                        <div class="grid_12" style="text-align: left; margin-top: 10px;">
+                            <label c-label item="item">Nomor Pajak</label>
+                        </div>
+                        <div class="grid_12" style="margin-top: 10px;">
+                            <input disabled c-text-box type="input" class="k-textbox" ng-model="item.nomorpemungutanpajak" />
+                        </div>
+                    </div>
+
+                    <div class="grid_6">
+                        <div class="grid_12" style="text-align: left; margin-top: 10px;">
+                            <label c-label item="item">Nomor BKU</label>
+                        </div>
+                        <div class="grid_12" style="margin-top: 10px;">
+                            <input disabled c-text-box type="input" class="k-textbox" ng-model="item.nomorbkupemungutanpajak" />
+                        </div>
+                    </div>
+                    
+                </div>
+    
+                <div class="grid_12">
+                    <div class="grid_6">
+                        <div class="grid_12" style="text-align: left; margin-top: 10px;">
+                            <label c-label item="item">Uraian Pajak</label>
+                        </div>
+                        <div class="grid_12" style="margin-top: 10px;">
+                            <textarea disabled class="k-textbox" ng-model="item.uraianpemungutanpajak" rows="4"></textarea>
+                        </div>
+                    </div>
+
+                    <div class="grid_6">
+                        <div class="grid_12" style="text-align: left; margin-top: 10px;">
+                            <label c-label item="item">Uraian BKU</label>
+                        </div>
+                        <div class="grid_12" style="margin-top: 10px;">
+                            <textarea disabled class="k-textbox" ng-model="item.uraianbkupemungutanpajak" rows="4"></textarea>
+                        </div>
+                    </div>
+                    
+                </div>
+
+                <div class="grid_12">
+                    <div class="grid_4">
+                        <div class="grid_12" style="text-align: left; margin-top: 10px;">
+                            <label c-label item="item">Tanggal Pemungutan</label>
+                        </div>
+                        <div class="grid_12" style="margin-top: 10px;">
+                            <input disabled style="width: 100%" k-ng-model="item.tglpemungutanpajak" kendo-datepicker 
+                            placeholer="yyyy-MM-dd" k-format="'yyyy-MM-dd'"/>
+                        </div>
+                    </div>
+
+                    <div class="grid_4">
+                        <div class="grid_12" style="text-align: left; margin-top: 10px;">
+                            <label c-label item="item">Total Pemungutan</label>
+                        </div>
+                        <div class="grid_12" style="margin-top: 10px;">
+                            <input disabled c-text-box type="input" class="k-textbox" ng-model="item.totalpemungutanpajak" />
+                        </div>
+                    </div>
+                </div>
+
+                <hr>
+
+                <div class="grid_12">
+                    <div class="grid_4">
+                        <div class="grid_12" style="text-align: left; margin-top: 10px;">
+                            <label c-label item="item">Total Setoran</label>
+                        </div>
+                        <div class="grid_12" style="margin-top: 10px;">
+                            <input c-text-box type="number" class="k-textbox" ng-model="item.totalsetorandetail" />
+                        </div>
+                    </div>
+
+                    <div class="grid_3">
+                        <div class="grid_12" style="text-align: left; margin-top: 10px;">
+                            <label style="opacity: 0;" c-label item="item">Total Setoran</label>
+                        </div>
+                        <div class="grid_12" style="margin-top: 8px;">
+                            <button class="btnTemplate1" ng-click="simpanRincian()">Simpan Rincian</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+</div>

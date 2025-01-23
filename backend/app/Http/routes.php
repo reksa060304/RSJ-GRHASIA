@@ -1998,6 +1998,13 @@ Route::group(['middleware' => 'cors', 'prefix' => 'service'], function () {
             Route::get('anggaran/get-bku-pemungutanpajak', 'Anggaran_2024\AnggaranController@getBKUPemungutanPajak');
             // End Anggaran 2024
 
+            // Penyetoran pajak v2
+            Route::get('pajak/get-penyetoranpajakv2', 'Anggaran_2024\AnggaranController@getPenyetoranPajak');
+            Route::get('pajak/get-bkupemungutanpajaksetor', 'Anggaran_2024\AnggaranController@getBKUPemungutanPajakSetor');
+            Route::post('pajak/simpan-penyetoranpajakv2', 'Anggaran_2024\AnggaranController@simpanPenyetoranPajakV2');
+            Route::post('pajak/hapus-penyetoranpajakv2', 'Anggaran_2024\AnggaranController@hapusPenyetoranPajakV2');
+            // End penyetoran pajak v2
+
             // cetak laporan anggaran 2024
             Route::get('report/get-cetak-rba-detailv2', 'Report\ReportController@cetakRBADetailV2');
             Route::get('report/get-cetak-rba-detail-sebelum-sesudahv2', 'Report\ReportController@cetakRBADetailSebelumSesudahV2');
