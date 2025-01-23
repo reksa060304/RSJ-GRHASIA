@@ -12,7 +12,7 @@
             src: url('{{ asset('fonts/BookmanOldStyle.TTF') }}')
         }
         @page {
-            size: 33cm 21.5cm;
+            size: auto;
             margin: 1cm;
         }
         p {
@@ -29,10 +29,13 @@
         }
         table {
             border-collapse: collapse;
+            font-size: 10pt;
         }
-        table tr td {
+        table tbody tr td {
             border: 1px solid black;
-            page-break-inside: avoid;
+        }
+        table thead tr th {
+            border: 1px solid black;
         }
     </style>
 </head>
@@ -41,7 +44,7 @@
     <table cellpadding="0" cellspacing="0"  border="0" width="100%" class="tabel">
         <tbody >
             <tr>
-                <td rowspan="2"  style="padding: 10px; width: 100px;" align="center">
+                <td rowspan="2" style="padding: 10px; width: 100px;" align="center">
                     <p align="center">
                             @if(stripos(\Request::url(), 'localhost') !== FALSE)
                             <img src="{{ asset('img/LOGO GRHASIA.png') }}" style="width: 120px" >
@@ -52,13 +55,13 @@
                     </p>
                 </td>
                 <td align="center" style="width: 300px;">
-                    <b style="font-size: 25px;">
+                    <b style="font-size: 14pt;">
                         RENCANA BISNIS DAN ANGGARAN<br>
                         BADAN LAYANAN UMUM DAERAH
                     </b>
                 </td>
                 <td rowspan="2"  align="center" style="width: 100px;">
-                    <b style="font-size: 25px;">
+                    <b style="font-size: 14pt;">
                         RBA
                     </b>
                     <br>
@@ -86,22 +89,22 @@
     {{-- Program, Kegiatan, Sub --}}
     <table style="border-top: 0; border-left: 1px solid black; border-right: 1px solid black" cellpadding="0" cellspacing="0" width="100%" border="0">
         <tr>
-            <td style="border: 0; padding-left: 1em;">Program</td>
+            <td style="border: 0; width: 4cm; padding-left: 1em;">Program</td>
             <td style="border: 0; padding-left: 1em;">: {{ $program[0]->kodeprogram.' - '.$program[0]->keteranganprogram }}</td>
         </tr>
 
         <tr>
-            <td style="border: 0; padding-left: 1em;">Kegiatan</td>
+            <td style="border: 0; width: 4cm; padding-left: 1em;">Kegiatan</td>
             <td style="border: 0; padding-left: 1em;">: {{ $program[0]->kodekegiatan.' - '.$program[0]->keterangankegiatan }}</td>
         </tr>
 
         <tr>
-            <td style="border: 0; padding-left: 1em;">Sub Kegiatan</td>
+            <td style="border: 0; width: 4cm; padding-left: 1em;">Sub Kegiatan</td>
             <td style="border: 0; padding-left: 1em;">: {{ $program[0]->kodesubkegiatan.' - '.$program[0]->keterangansubkegiatan }}</td>
         </tr>
 
         <tr>
-            <td style="border: 0; padding-left: 1em;">Sub Sub Kegiatan</td>
+            <td style="border: 0; width: 4cm; padding-left: 1em;">Sub Sub Kegiatan</td>
             @php
                 $arr = explode('-', $program[0]->keterangansubsubkegiatan);
 
@@ -111,12 +114,12 @@
         </tr>
 
         <tr>
-            <td style="border: 0; padding-left: 1em;">Waktu Pelaksanaan</td>
+            <td style="border: 0; width: 4cm; padding-left: 1em;">Waktu Pelaksanaan</td>
             <td style="border: 0; padding-left: 1em;">: {{ $program[0]->tahun }}</td>
         </tr>
 
         <tr>
-            <td style="border: 0; padding-left: 1em;">Lokasi Kegiatan</td>
+            <td style="border: 0; width: 4cm; padding-left: 1em;">Lokasi Kegiatan</td>
             <td style="border: 0; padding-left: 1em;">: RS Jiwa GRHASIA DINKES DIY</td>
         </tr>
             
@@ -124,152 +127,115 @@
 
     {{-- Indikator --}}
     <table style="border: 0;" cellpadding="0" cellspacing="0"  border="0" width="100%">
-        <tr>
-            <td style="text-align: center; padding: .2em .4em;" rowspan="2"><b>Indikator</b></td>
-            <td style="text-align: center; padding: .2em .4em;" colspan="2"><b>Sebelum Perubahan</b></td>
-            <td style="text-align: center; padding: .2em .4em;" colspan="2"><b>Sesudah Perubahan</b></td>
-        </tr>
-        <tr>
-            <td style="text-align: center; padding: .2em .4em;"><b>Tolok Ukur</b></td>
-            <td style="text-align: center; padding: .2em .4em;"><b>Target Kinerja</b></td>
-            <td style="text-align: center; padding: .2em .4em;"><b>Tolok Ukur</b></td>
-            <td style="text-align: center; padding: .2em .4em;"><b>Target Kinerja</b></td>
-        </tr>
-        <tr>
-            <td style="padding: .2em .4em;">Masukan</td>
-            {{-- <td style="padding: .2em .4em;">{{ $data[0]->indikatormasuk_sesudah }}</td> --}}
-            <td style="padding: .2em .4em;">{{ $data[0]->indikatormasuk }}</td>
-            {{-- <td style="padding: .2em .4em;">{{ $data[0]->targetmasuk }}</td> --}}
-            <td style="padding: .2em .4em;">{{ $data[0]->targetmasuk_sesudah }}</td>
-            {{-- <td style="padding: .2em .4em;">{{ $data[0]->indikatormasuk_sesudah }}</td> --}}
-            <td style="padding: .2em .4em;">{{ $data[0]->indikatormasuk }}</td>
-            {{-- <td style="padding: .2em .4em;">{{ $data[0]->targetmasuk_sesudah }}</td> --}}
-            <td style="padding: .2em .4em;">{{ $data[0]->targetmasuk }}</td>
-        </tr>
-        <tr>
-            <td style="padding: .2em .4em;">Keluaran</td>
-            <td style="padding: .2em .4em;">
-                {{-- @php
-                    $indikatorkeluaran = explode(chr(10), $data[0]->indikatorkeluaran);            
-                    for ($i = 0; $i < count($indikatorkeluaran); $i++) {
-                        echo "$indikatorkeluaran[$i]";
-                        echo "<br>";
-                    }
-                @endphp --}}
-                @php
-                    $indikatorkeluaranSesudah = explode(chr(10), $data[0]->indikatorkeluaran_sesudah);            
-                    for ($i = 0; $i < count($indikatorkeluaranSesudah); $i++) {
-                        echo "$indikatorkeluaranSesudah[$i]";
-                        echo "<br>";
-                    }
-                @endphp
-            </td>
-            <td style="padding: .2em .4em;">
-                {{-- @php
-                    $targetkeluaran = explode(chr(10), $data[0]->targetkeluaran);            
-                    for ($i = 0; $i < count($targetkeluaran); $i++) {
-                        echo "$targetkeluaran[$i]";
-                        echo "<br>";
-                    }
-                @endphp --}}
-                @php
-                    $targetkeluaranSesudah = explode(chr(10), $data[0]->targetkeluaran_sesudah);            
-                    for ($i = 0; $i < count($targetkeluaranSesudah); $i++) {
-                        echo "$targetkeluaranSesudah[$i]";
-                        echo "<br>";
-                    }
-                @endphp
-            </td>
-            <td style="padding: .2em .4em;">
-                {{-- @php
-                    $indikatorkeluaranSesudah = explode(chr(10), $data[0]->indikatorkeluaran_sesudah);            
-                    for ($i = 0; $i < count($indikatorkeluaranSesudah); $i++) {
-                        echo "$indikatorkeluaranSesudah[$i]";
-                        echo "<br>";
-                    }
-                @endphp --}}
-                @php
-                    $indikatorkeluaran = explode(chr(10), $data[0]->indikatorkeluaran);            
-                    for ($i = 0; $i < count($indikatorkeluaran); $i++) {
-                        echo "$indikatorkeluaran[$i]";
-                        echo "<br>";
-                    }
-                @endphp
-            </td>
-            <td style="padding: .2em .4em;">
-                {{-- @php
-                    $targetkeluaranSesudah = explode(chr(10), $data[0]->targetkeluaran_sesudah);            
-                    for ($i = 0; $i < count($targetkeluaranSesudah); $i++) {
-                        echo "$targetkeluaranSesudah[$i]";
-                        echo "<br>";
-                    }
-                @endphp --}}
-                @php
-                    $targetkeluaran = explode(chr(10), $data[0]->targetkeluaran);            
-                    for ($i = 0; $i < count($targetkeluaran); $i++) {
-                        echo "$targetkeluaran[$i]";
-                        echo "<br>";
-                    }
-                @endphp
-            </td>
-        </tr>
-        <tr>
-            <td style="padding: .2em .4em; border-bottom: 0;">Hasil</td>
-            {{-- <td style="padding: .2em .4em; border-bottom: 0;">{{ $data[0]->indikatorhasil }}</td> --}}
-            <td style="padding: .2em .4em; border-bottom: 0;">{{ $data[0]->indikatorhasil_sesudah }}</td>
-            {{-- <td style="padding: .2em .4em; border-bottom: 0;">{{ $data[0]->targethasil }}</td> --}}
-            <td style="padding: .2em .4em; border-bottom: 0;">{{ $data[0]->targethasil_sesudah }}</td>
-            {{-- <td style="padding: .2em .4em; border-bottom: 0;">{{ $data[0]->indikatorhasil_sesudah }}</td> --}}
-            <td style="padding: .2em .4em; border-bottom: 0;">{{ $data[0]->indikatorhasil }}</td>
-            {{-- <td style="padding: .2em .4em; border-bottom: 0;">{{ $data[0]->targethasil_sesudah }}</td> --}}
-            <td style="padding: .2em .4em; border-bottom: 0;">{{ $data[0]->targethasil }}</td>
-        </tr>
+        <thead>
+            <tr>
+                <th style="width:8%; text-align:center; padding:5px;" rowspan="2"><b>Indikator</b></th>
+                <th style="width:46%; text-align:center; padding:5px;" colspan="2"><b>Sebelum Perubahan</b></th>
+                <th style="width:46%; text-align:center; padding:5px;" colspan="2"><b>Sesudah Perubahan</b></th>
+            </tr>
+            <tr>
+                <th style="width:34%; text-align:center; padding:5px;"><b>Tolok Ukur</b></th>
+                <th style="width:12%; text-align:center; padding:5px;"><b>Target Kinerja</b></th>
+                <th style="width:34%; text-align:center; padding:5px;"><b>Tolok Ukur</b></th>
+                <th style="width:12%; text-align:center; padding:5px;"><b>Target Kinerja</b></th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td style="padding:5px; width:8%;">Masukan</td>
+                <td style="padding:5px; width:34%;">{{ $data[0]->indikatormasuk }}</td>
+                <td style="padding:5px; width:12%;">{{ $data[0]->targetmasuk_sesudah }}</td>
+                <td style="padding:5px; width:34%;">{{ $data[0]->indikatormasuk }}</td>
+                <td style="padding:5px; width:12%;">{{ $data[0]->targetmasuk }}</td>
+            </tr>
+            <tr>
+                <td style="padding:5px; width:8%;">Keluaran</td>
+                <td style="padding:5px; width:34%;">
+                    @php
+                        $indikatorkeluaranSesudah = explode(chr(10), $data[0]->indikatorkeluaran_sesudah);            
+                        for ($i = 0; $i < count($indikatorkeluaranSesudah); $i++) {
+                            echo "$indikatorkeluaranSesudah[$i]";
+                            echo "<br>";
+                        }
+                    @endphp
+                </td>
+                <td style="padding:5px; width:12%;">
+                    @php
+                        $targetkeluaranSesudah = explode(chr(10), $data[0]->targetkeluaran_sesudah);            
+                        for ($i = 0; $i < count($targetkeluaranSesudah); $i++) {
+                            echo "$targetkeluaranSesudah[$i]";
+                            echo "<br>";
+                        }
+                    @endphp
+                </td>
+                <td style="padding:5px; width:34%;">
+                    @php
+                        $indikatorkeluaran = explode(chr(10), $data[0]->indikatorkeluaran);            
+                        for ($i = 0; $i < count($indikatorkeluaran); $i++) {
+                            echo "$indikatorkeluaran[$i]";
+                            echo "<br>";
+                        }
+                    @endphp
+                </td>
+                <td style="padding:5px; width:12%;">
+                    @php
+                        $targetkeluaran = explode(chr(10), $data[0]->targetkeluaran);            
+                        for ($i = 0; $i < count($targetkeluaran); $i++) {
+                            echo "$targetkeluaran[$i]";
+                            echo "<br>";
+                        }
+                    @endphp
+                </td>
+            </tr>
+            <tr>
+                <td style="padding:5px; width:8%; border-bottom: 0;">Hasil</td>
+                <td style="padding:5px; width:34%; border-bottom: 0;">{{ $data[0]->indikatorhasil_sesudah }}</td>
+                <td style="padding:5px; width:12%; border-bottom: 0;">{{ $data[0]->targethasil_sesudah }}</td>
+                <td style="padding:5px; width:34%; border-bottom: 0;">{{ $data[0]->indikatorhasil }}</td>
+                <td style="padding:5px; width:12%; border-bottom: 0;">{{ $data[0]->targethasil }}</td>
+            </tr>
+        </tbody>
     </table>
 
     {{-- Content --}}
-    <table style="border-top: 0;" cellpadding="0" cellspacing="0"  border="0" width="100%" class="tabel">
-        <tbody>
+    <table style="border-top:0; font-size:9pt;" cellpadding="0" cellspacing="0"  border="0" width="100%" class="tabel">
+        <thead>
             <tr style="text-align: center;">
-                <td style="width: 40%; padding: .2em .4em;" colspan="5"><b>Anggaran Belanja</b></td>
-                <td style="padding: .2em .4em;" colspan="{{ count($asalproduk)+3 }}"><b>Sebelum Perubahan</b></td>
-                <td style="padding: .2em .4em;" colspan="{{ count($asalproduk)+3 }}"><b>Sesudah Perubahan</b></td>
-                <td style="padding: .2em .4em;" rowspan="3">
-                    Bertambah/
-                    Berkurang
-                </td>
-                <td style="padding: .2em .4em;" rowspan="3">%</td>
-                
+                <th style="width:25%; padding:5px;" colspan="5"><b>Anggaran Belanja</b></th>
+                <th style="width:30%; padding:5px;" colspan="{{ count($asalproduk)+3 }}"><b>Sebelum Perubahan</b></th>
+                <th style="width:30%; padding:5px;" colspan="{{ count($asalproduk)+3 }}"><b>Sesudah Perubahan</b></th>
+                <th style="width:10%; padding:5px;" rowspan="3">Bertambah/ Berkurang</th>
+                <th style="width:5%; padding:5px;" rowspan="3">%</th>
             </tr>
 
             <tr style="text-align: center;">
-                <td style="padding: .2em .4em;" rowspan="2" colspan="4"><b>No Rekening</b></td>
-                <td style="padding: .2em .4em;" rowspan="2"><b>Komponen Biaya</b></td>
-                <td style="padding: .2em .4em;" colspan="3"><b>Rincian Biaya</b></td>
-                <td style="padding: .2em .4em;" colspan="{{ count($asalproduk) }}"><b>Jumlah Anggaran</b></td>
-                <td style="padding: .2em .4em;" colspan="3"><b>Rincian Biaya</b></td>
-                <td style="padding: .2em .4em;" colspan="{{ count($asalproduk) }}"><b>Jumlah Anggaran</b></td>
+                <th style="width:13%; padding:5px;" rowspan="2" colspan="4"><b>No Rekening</b></th>
+                <th style="width:12%; padding:5px;" rowspan="2"><b>Komponen Biaya</b></th>
+                <th style="width:10%; padding:5px;" colspan="3"><b>Rincian Biaya</b></th>
+                <th style="width:20%; padding:5px;" colspan="{{ count($asalproduk) }}"><b>Jumlah Anggaran</b></th>
+                <th style="widht:10%; padding:5px;" colspan="3"><b>Rincian Biaya</b></th>
+                <th style="width:20%; padding:5px;" colspan="{{ count($asalproduk) }}"><b>Jumlah Anggaran</b></th>
             </tr>
             
             <tr style="text-align: center;">
-                <td style="padding: .2em .4em;"><b>Jumlah</b></td>
-                <td style="padding: .2em .4em;"><b>Satuan</b></td>
-                <td style="padding: .2em .4em;"><b>Harga Satuan</b></td>
+                <th style="padding:5px;"><b>Jumlah</b></th>
+                <th style="padding:5px;"><b>Satuan</b></th>
+                <th style="padding:5px;"><b>Harga Satuan</b></th>
 
-                {{-- coba perbaiki --}}
                 @foreach ($asalproduk as $item)
-                    <td style="padding: .2em .4em;"><b>{{ $item->asalproduk }}</b></td>
+                    <th style="padding:5px;"><b>{{ $item->asalproduk }}</b></th>
                 @endforeach
                 
-                <td style="padding: .2em .4em;">Jumlah</td>
-                <td style="padding: .2em .4em;">Satuan</td>
-                <td style="padding: .2em .4em;">Harga Satuan</td>
+                <th style="padding:5px;">Jumlah</th>
+                <th style="padding:5px;">Satuan</th>
+                <th style="padding:5px;">Harga Satuan</th>
                 
-                {{-- coba perbaiki  --}}
                 @foreach ($asalproduk as $item)
-                    <td style="padding: .2em .4em;"><b>{{ $item->asalproduk }}</b></td>
+                    <th style="padding:5px;"><b>{{ $item->asalproduk }}</b></th>
                 @endforeach
             </tr>
-
+        </thead>
+        <tbody>
             @php
                 $parent1 = null;
                 $parent2 = null;
@@ -278,7 +244,6 @@
                 $totalSemua = 0;
                 $totalSemuaSesudah =0;
             @endphp
-
             @foreach ($data as $item)
 
                 {{-- Mata anggaran 1 --}}
@@ -293,20 +258,17 @@
                             }
                         }
                         $selisihParent1 = (int)$totalParent1 - (int)$totalParent1Sesudah;
-                        // $persenParent1 = (abs($selisihParent1) / ($totalParent1 + $totalParent1Sesudah) * 100);
                     @endphp
 
                     <tr>
-                        <td style="padding: .2em .4em;"><b>{{ $item->kode_mataanggaran1 }}</b></td>
-                        <td style="padding: .2em .4em;"></td>
-                        <td style="padding: .2em .4em;"></td>
-                        <td style="padding: .2em .4em;"></td>
-                        <td style="padding: .2em .4em;"><b>{{ $item->nama_mataanggaran1 }}</b></td>
-                        <td style="padding: .2em .4em;"></td>
-                        <td style="padding: .2em .4em;"></td>
-                        <td style="padding: .2em .4em;"></td>
-                        {{-- <td style="text-align: right; padding: .2em .4em;">{{ number_format($totalParent1,0,',','.') }}</td> --}}
-                        {{-- <td style="text-align: right; padding: .2em .4em;">{{ number_format($totalParent1Sesudah,0,',','.') }}</td> --}}
+                        <td style="padding:5px;"><b>{{ $item->kode_mataanggaran1 }}</b></td>
+                        <td style="padding:5px;"></td>
+                        <td style="padding:5px;"></td>
+                        <td style="padding:5px;"></td>
+                        <td style="padding:5px;"><b>{{ $item->nama_mataanggaran1 }}</b></td>
+                        <td style="padding:5px;"></td>
+                        <td style="padding:5px;"></td>
+                        <td style="padding:5px;"></td>
 
                         @foreach ($asalproduk as $ap)
                             {{-- untuk menghitung total setiap belanja berdasarkan asal produk --}}
@@ -323,19 +285,16 @@
                             @endphp
 
                             @if ($ap->id == $item->objectasalprodukfk)
-                                <td style="text-align: right; padding: .2em .4em;">{{ number_format($ap->subtotal,0,',','.') }}</td>
+                                <td style="text-align: right; padding:5px;">{{ number_format($ap->subtotal,0,',','.') }}</td>
                             @else
-                                <td style="text-align: right; padding: .2em .4em;">{{ number_format($ap->subtotal,0,',','.') }}</td>
+                                <td style="text-align: right; padding:5px;">{{ number_format($ap->subtotal,0,',','.') }}</td>
                             @endif
                         @endforeach
 
 
-                        <td style="padding: .2em .4em;"></td>
-                        <td style="padding: .2em .4em;"></td>
-                        <td style="padding: .2em .4em;"></td>
-                        {{-- <td style="text-align: right; padding: .2em .4em;">{{ number_format($totalParent1Sesudah,0,',','.') }}</td> --}}
-                        {{-- <td style="text-align: right; padding: .2em .4em;">{{ number_format($totalParent1,0,',','.') }}</td> --}}
-
+                        <td style="padding:5px;"></td>
+                        <td style="padding:5px;"></td>
+                        <td style="padding:5px;"></td>
                         
                         @foreach ($asalproduk as $ap)
                             {{-- untuk menghitung total setiap belanja berdasarkan asal produk --}}
@@ -352,19 +311,16 @@
                             @endphp
                             
                             @if ($ap->id == $item->objectasalprodukfk)
-                                <td style="text-align: right; padding: .2em .4em;">{{ number_format($ap->subtotal,0,',','.') }}</td>
+                                <td style="text-align: right; padding:5px;">{{ number_format($ap->subtotal,0,',','.') }}</td>
                             @else
-                                <td style="text-align: right; padding: .2em .4em;">{{ number_format($ap->subtotal,0,',','.') }}</td>
+                                <td style="text-align: right; padding:5px;">{{ number_format($ap->subtotal,0,',','.') }}</td>
                             @endif
                         @endforeach
 
-                        {{-- selisih masih salah karena cara asal produk lebih dua --}}
-                        <td style="text-align: right; padding: .2em .4em;">{{ number_format($selisihParent1,0,',','.') }}</td>
-                        <td style="text-align: right; padding: .2em .4em;">0</td>
-                        {{-- <td style="text-align: right; padding: .2em .4em;">{{ number_format($persenParent1, 3) }}</td> --}}
+                        <td style="text-align: right; padding:5px;">{{ number_format($selisihParent1,0,',','.') }}</td>
+                        <td style="text-align: right; padding:5px;">0</td>
                     </tr>
                 @endif
-                
 
                 {{-- Mata anggaran 2 --}}
                 @if ($item->id_mataanggaran2 && ($item->id_mataanggaran2 !== $parent2))
@@ -378,20 +334,16 @@
                             }
                         }
                         $selisihParent2 =  (int)$totalParent2 - (int)$totalParent2Sesudah;
-                        // $persenParent2 = (abs($selisihParent2) / ($totalParent2 + $totalParent2Sesudah) * 100);
                     @endphp
                     <tr>
-                        <td style="padding: .2em .4em;"></td>
-                        <td style="padding: .2em .4em;"><b>{{ $item->kode_mataanggaran2 }}</b></td>
-                        <td style="padding: .2em .4em;"></td>
-                        <td style="padding: .2em .4em;"></td>
-                        <td style="padding: .2em .4em;"><b>{{ $item->nama_mataanggaran2 }}</b></td>
-                        <td style="padding: .2em .4em;"></td>
-                        <td style="padding: .2em .4em;"></td>
-                        <td style="padding: .2em .4em;"></td>
-                        {{-- <td style="text-align:right; padding: .2em .4em;"><b>{{ number_format($totalParent2,0,',','.') }}</b></td> --}}
-                        {{-- <td style="text-align:right; padding: .2em .4em;"><b>{{ number_format($totalParent2Sesudah,0,',','.') }}</b></td> --}}
-
+                        <td style="padding:5px;"></td>
+                        <td style="padding:5px;"><b>{{ $item->kode_mataanggaran2 }}</b></td>
+                        <td style="padding:5px;"></td>
+                        <td style="padding:5px;"></td>
+                        <td style="padding:5px;"><b>{{ $item->nama_mataanggaran2 }}</b></td>
+                        <td style="padding:5px;"></td>
+                        <td style="padding:5px;"></td>
+                        <td style="padding:5px;"></td>
 
                         @foreach ($asalproduk as $ap)
                             {{-- untuk menghitung total setiap belanja berdasarkan asal produk --}}
@@ -408,18 +360,16 @@
                             @endphp
 
                             @if ($ap->id == $item->objectasalprodukfk)
-                                <td style="text-align: right; padding: .2em .4em;">{{ number_format($ap->subtotal,0,',','.') }}</td>
+                                <td style="text-align: right; padding:5px;">{{ number_format($ap->subtotal,0,',','.') }}</td>
                             @else
-                                <td style="text-align: right; padding: .2em .4em;">{{ number_format($ap->subtotal,0,',','.') }}</td>
+                                <td style="text-align: right; padding:5px;">{{ number_format($ap->subtotal,0,',','.') }}</td>
                             @endif
                         @endforeach
 
 
-                        <td style="padding: .2em .4em;"></td>
-                        <td style="padding: .2em .4em;"></td>
-                        <td style="padding: .2em .4em;"></td>
-                        {{-- <td style="text-align: right; padding: .2em .4em;"><b>{{ number_format($totalParent2Sesudah,0,',','.') }}</b></td> --}}
-                        {{-- <td style="text-align: right; padding: .2em .4em;"><b>{{ number_format($totalParent2,0,',','.') }}</b></td> --}}
+                        <td style="padding:5px;"></td>
+                        <td style="padding:5px;"></td>
+                        <td style="padding:5px;"></td>
 
                         @foreach ($asalproduk as $ap)
                             {{-- untuk menghitung total setiap belanja berdasarkan asal produk --}}
@@ -436,23 +386,19 @@
                             @endphp
                             
                             @if ($ap->id == $item->objectasalprodukfk)
-                                <td style="text-align: right; padding: .2em .4em;">{{ number_format($ap->subtotal,0,',','.') }}</td>
+                                <td style="text-align: right; padding:5px;">{{ number_format($ap->subtotal,0,',','.') }}</td>
                             @else
-                                <td style="text-align: right; padding: .2em .4em;">{{ number_format($ap->subtotal,0,',','.') }}</td>
+                                <td style="text-align: right; padding:5px;">{{ number_format($ap->subtotal,0,',','.') }}</td>
                             @endif
                         @endforeach
 
-                        {{-- selisih masih salah karena cara asal produk lebih dua --}}
-                        <td style="text-align: right; padding: .2em .4em;"><b>{{ number_format($selisihParent2,0,',','.') }}</b></td>
-                        <td style="text-align: right; padding: .2em .4em;">0</td>
-                        {{-- <td style="text-align: right; padding: .2em .4em;">{{ number_format($persenParent2, 3) }}</td> --}}
+                        <td style="text-align: right; padding:5px;"><b>{{ number_format($selisihParent2,0,',','.') }}</b></td>
+                        <td style="text-align: right; padding:5px;">0</td>
                     </tr>
                 @endif
 
-                
                 {{-- Mata anggaran 3 --}}
-                @if ($item->id_mataanggaran3 && ($item->id_mataanggaran3 !== $parent3))
-                    {{-- directive php ini masih memiliki kesalahan karena belanja memiliki dua asal produk --}}
+                @if ($item->id_mataanggaran3 && ($item->id_mataanggaran3 !== $parent3) && $item->kode_mataanggaran1 !== 'III')
                     @php
                         $totalParent3 = 0;
                         $totalParent3Sesudah = 0;
@@ -463,19 +409,17 @@
                             }
                         }
                         $selisihParent3 = (int)$totalParent3 - (int)$totalParent3Sesudah;
-                        // $persenParent3 = (abs($selisihParent3) / ($totalParent3 + $totalParent3Sesudah) * 100);
                     @endphp
 
                     <tr>
-                        <td style="padding: .2em .4em;"></td>
-                        <td style="padding: .2em .4em;"></td>
-                        <td style="padding: .2em .4em;"><b>{{ $item->kode_mataanggaran3 }}</b></td>
-                        <td style="padding: .2em .4em;"></td>
-                        <td style="padding: .2em .4em;"><b>{{ $item->nama_mataanggaran3 }}</b></td>
-                        <td style="padding: .2em .4em;"></td>
-                        <td style="padding: .2em .4em;"></td>
-                        <td style="padding: .2em .4em;"></td>
-                        {{-- <td style="text-align:right; padding: .2em .4em;">{{ number_format($totalParent3,0,',','.') }}</td> --}}
+                        <td style="padding:5px;"></td>
+                        <td style="padding:5px;"></td>
+                        <td style="padding:5px;"><b>{{ $item->kode_mataanggaran3 }}</b></td>
+                        <td style="padding:5px;"></td>
+                        <td style="padding:5px;"><b>{{ $item->nama_mataanggaran3 }}</b></td>
+                        <td style="padding:5px;"></td>
+                        <td style="padding:5px;"></td>
+                        <td style="padding:5px;"></td>
                         
                         @foreach ($asalproduk as $ap)
                             {{-- untuk menghitung total setiap belanja berdasarkan asal produk --}}
@@ -492,16 +436,16 @@
                             @endphp
 
                             @if ($ap->id == $item->objectasalprodukfk)
-                                <td style="text-align: right; padding: .2em .4em;">{{ number_format($ap->subtotal,0,',','.') }}</td>
+                                <td style="text-align: right; padding:5px;">{{ number_format($ap->subtotal,0,',','.') }}</td>
                             @else
-                                <td style="text-align: right; padding: .2em .4em;">{{ number_format($ap->subtotal,0,',','.') }}</td>
+                                <td style="text-align: right; padding:5px;">{{ number_format($ap->subtotal,0,',','.') }}</td>
                             @endif
                         @endforeach
 
-                        <td style="padding: .2em .4em;"></td>
-                        <td style="padding: .2em .4em;"></td>
-                        <td style="padding: .2em .4em;"></td>
-                        {{-- <td style="text-align:right; padding: .2em .4em;">{{ number_format($totalParent3Sesudah,0,',','.') }}</td> --}}
+                        <td style="padding:5px;"></td>
+                        <td style="padding:5px;"></td>
+                        <td style="padding:5px;"></td>
+                        {{-- <td style="text-align:right; padding:5px;">{{ number_format($totalParent3Sesudah,0,',','.') }}</td> --}}
                         
                         
                         @foreach ($asalproduk as $ap)
@@ -519,24 +463,20 @@
                             @endphp
                             
                             @if ($ap->id == $item->objectasalprodukfk)
-                                <td style="text-align: right; padding: .2em .4em;">{{ number_format($ap->subtotal,0,',','.') }}</td>
+                                <td style="text-align: right; padding:5px;">{{ number_format($ap->subtotal,0,',','.') }}</td>
                             @else
-                                <td style="text-align: right; padding: .2em .4em;">{{ number_format($ap->subtotal,0,',','.') }}</td>
+                                <td style="text-align: right; padding:5px;">{{ number_format($ap->subtotal,0,',','.') }}</td>
                             @endif
                         @endforeach
                         
 
-                        {{-- selisih masih salah karena cara asal produk lebih dua --}}
-                        <td style="text-align:right; padding: .2em .4em;">{{ number_format($selisihParent3,0,',','.') }}</td>
-                        <td style="text-align: right; padding: .2em .4em;">0</td>
-                        {{-- <td style="text-align:right; padding: .2em .4em;">{{ number_format($persenParent3, 3) }}</td> --}}
+                        <td style="text-align:right; padding:5px;">{{ number_format($selisihParent3,0,',','.') }}</td>
+                        <td style="text-align: right; padding:5px;">0</td>
                     </tr>
                 @endif
 
-
                 {{-- Mata anggaran 4 --}}
                 @if ($item->id_mataanggaran4 && ($item->id_mataanggaran4 !== $parent4))
-                    {{-- directive php ini masih memiliki kesalahan karena belanja memiliki dua asal produk --}}
                     @php
                         $totalParent4 = 0;
                         $totalParent4Sesudah = 0;
@@ -551,15 +491,14 @@
                         // $persenParent4 = (abs($selisihParent4) / ($totalParent4 + $totalParent4Sesudah) * 100);
                     @endphp
                     <tr>
-                        <td style="padding: .2em .4em;"></td>
-                        <td style="padding: .2em .4em;"></td>
-                        <td style="padding: .2em .4em;"></td>
-                        <td style="padding: .2em .4em;"><b>{{ $item->kode_mataanggaran4 }}</b></td>
-                        <td style="padding: .2em .4em;">{{ $item->nama_mataanggaran4 }}</td>
-                        <td style="padding: .2em .4em;"></td>
-                        <td style="padding: .2em .4em;"></td>
-                        <td style="text-align: right; padding: .2em .4em;"></td>
-                        {{-- <td style="text-align: right; padding: .2em .4em;">{{ number_format($totalParent4,0,',','.') }}</td> --}}
+                        <td style="padding:5px;"></td>
+                        <td style="padding:5px;"></td>
+                        <td style="padding:5px;"></td>
+                        <td style="padding:5px;"><b>{{ $item->kode_mataanggaran4 }}</b></td>
+                        <td style="padding:5px;">{{ $item->nama_mataanggaran4 }}</td>
+                        <td style="padding:5px;"></td>
+                        <td style="padding:5px;"></td>
+                        <td style="text-align: right; padding:5px;"></td>
                         
                         {{-- total setiap asal produk sudah benar --}}
                         @foreach ($asalproduk as $ap)
@@ -577,16 +516,15 @@
                             @endphp
 
                             @if ($ap->id == $item->objectasalprodukfk)
-                                <td style="text-align: right; padding: .2em .4em;">{{ number_format($ap->subtotal,0,',','.') }}</td>
+                                <td style="text-align: right; padding:5px;">{{ number_format($ap->subtotal,0,',','.') }}</td>
                             @else
-                                <td style="text-align: right; padding: .2em .4em;">{{ number_format($ap->subtotal,0,',','.') }}</td>
+                                <td style="text-align: right; padding:5px;">{{ number_format($ap->subtotal,0,',','.') }}</td>
                             @endif
                         @endforeach
                         
-                        <td style="padding: .2em .4em;"></td>
-                        <td style="padding: .2em .4em;"></td>
-                        <td style="padding: .2em .4em;"></td>
-                        {{-- <td style="text-align: right; padding: .2em .4em;">{{ number_format($totalParent4Sesudah,0,',','.') }}</td> --}}
+                        <td></td>
+                        <td></td>
+                        <td></td>
                         
                         {{-- total setiap asal produk sudah benar --}}
                         @foreach ($asalproduk as $ap)
@@ -604,40 +542,33 @@
                             @endphp
                             
                             @if ($ap->id == $item->objectasalprodukfk)
-                                <td style="text-align: right; padding: .2em .4em;">{{ number_format($ap->subtotal,0,',','.') }}</td>
+                                <td style="text-align: right; padding:5px;">{{ number_format($ap->subtotal,0,',','.') }}</td>
                             @else
-                                <td style="text-align: right; padding: .2em .4em;">{{ number_format($ap->subtotal,0,',','.') }}</td>
+                                <td style="text-align: right; padding:5px;">{{ number_format($ap->subtotal,0,',','.') }}</td>
                             @endif
                         @endforeach
                             
-                        {{-- selisih masih salah karena cara asal produk lebih dua --}}
-                        <td style="text-align: right; padding: .2em .4em;">{{ number_format($selisihParent4,0,',','.') }}</td>
-                        <td style="text-align: right; padding: .2em .4em;">0</td>
-                        {{-- <td style="text-align: right; padding: .2em .4em;">{{ number_format($persenParent4, 3) }}</td> --}}
+                        <td style="text-align: right; padding:5px;">{{ number_format($selisihParent4,0,',','.') }}</td>
+                        <td style="text-align: right; padding:5px;">0</td>
                     </tr>
                 @endif
-
-
+                
                 {{-- Belanja --}}
                 @php
                     $totalKB = ( (int)$item->jml * (int)$item->hargasatuan );
                     $totalKBSesudah = ( (int)$item->jml_sesudah * (int)$item->hargasatuan_sesudah );
                     $selisih = $totalKB - $totalKBSesudah;
-                    // $persen = (abs($selisih) / ($totalKB + $totalKBSesudah) * 100);
                 @endphp
+                
                 <tr>
                     <td style="padding: .2em .4em;"></td>
                     <td style="padding: .2em .4em;"></td>
                     <td style="padding: .2em .4em;"></td>
                     <td style="padding: .2em .4em;"></td>
                     <td style="padding: .2em .4em;">{{ $item->keteranganbelanja }}</td>
-                    {{-- <td style="padding: .2em .4em;">{{ $item->jml }}</td> --}}
                     <td style="padding: .2em .4em;">{{ $item->jml_sesudah }}</td>
-                    {{-- <td style="padding: .2em .4em;">{{ $item->satuan }}</td> --}}
                     <td style="padding: .2em .4em;">{{ $item->satuan_sesudah }}</td>
-                    {{-- <td style="text-align: right; padding: .2em .4em;">{{ number_format($item->hargasatuan,0,',','.') }}</td> --}}
                     <td style="text-align: right; padding: .2em .4em;">{{ number_format($item->hargasatuan_sesudah,0,',','.') }}</td>
-                    {{-- <td style="text-align: right; padding: .2em .4em;">{{ number_format( $totalKB,0,',','.' ) }}</td> --}}
                     
                     @foreach ($asalproduk as $ap)
                         @if ($ap->id == $item->objectasalprodukfk)
@@ -647,13 +578,9 @@
                         @endif
                     @endforeach
                     
-                    {{-- <td style="text-align: right; padding: .2em .4em;">{{ $item->jml_sesudah }}</td> --}}
                     <td style="text-align: right; padding: .2em .4em;">{{ $item->jml }}</td>
-                    {{-- <td style="text-align: center; padding: .2em .4em;">{{ $item->satuan_sesudah }}</td> --}}
                     <td style="text-align: center; padding: .2em .4em;">{{ $item->satuan }}</td>
-                    {{-- <td style="text-align: right; padding: .2em .4em;">{{ number_format($item->hargasatuan_sesudah,0,',','.') }}</td> --}}
                     <td style="text-align: right; padding: .2em .4em;">{{ number_format($item->hargasatuan,0,',','.') }}</td>
-                    {{-- <td style="text-align: right; padding: .2em .4em;">{{ number_format($totalKBSesudah,0,',','.') }}</td> --}}
                     
                     @foreach ($asalproduk as $ap)
                         @if ($ap->id == $item->objectasalprodukfk)
@@ -664,10 +591,8 @@
                     @endforeach
                     
                     {{-- selisih masih salah karena cara asal produk lebih dua --}}
-                    {{-- <td style="text-align: right; padding: .2em .4em;">0</td> --}}
                     <td style="text-align: right; padding: .2em .4em;">{{ number_format($selisih,0,',','.') }}</td>
                     <td style="text-align: right; padding: .2em .4em;">0</td>
-                    {{-- <td style="text-align: right; padding: .2em .4em;">{{ number_format($persen, 3) }}</td> --}}
                 </tr>
 
                 @php
@@ -680,11 +605,9 @@
                 @endphp
 
             @endforeach
-            
+
             <tr>
-                <td colspan="8" style="text-align: center; padding: .2em .4em;"><b>Total</b></td>
-                {{-- <td style="text-align: right; padding: .2em .4em;"><b>{{ number_format($totalSemua,0,',','.') }}</b></td> --}}
-                {{-- <td style="text-align: right; padding: .2em .4em;"><b>{{ number_format($totalSemuaSesudah,0,',','.') }}</b></td> --}}
+                <td colspan="8" style="text-align: center; padding:5px;"><b>Total</b></td>
 
                 @foreach ($asalproduk as $ap_sesudah)
                     @php
@@ -697,14 +620,10 @@
                         }
                     @endphp
 
-                    <td style="text-align: right; padding: .2em .4em;">{{ number_format($ap_sesudah->subtotal,0,',','.') }}</td>
+                    <td style="text-align: right; padding:5px;">{{ number_format($ap_sesudah->subtotal,0,',','.') }}</td>
                 @endforeach
 
-
-                <td colspan="3" style="text-align: center; padding: .2em .4em;"><b></b></td>
-                {{-- <td style="text-align: right; padding: .2em .4em;"><b>{{ number_format($totalSemuaSesudah,0,',','.') }}</b></td> --}}
-                {{-- <td style="text-align: right; padding: .2em .4em;"><b>{{ number_format($totalSemua,0,',','.') }}</b></td> --}}
-
+                <td colspan="3" style="text-align: center; padding:5px;"><b></b></td>
                 
                 @foreach ($asalproduk as $ap)
                     @php
@@ -717,9 +636,8 @@
                         }
                     @endphp
 
-                    <td style="text-align: right; padding: .2em .4em;">{{ number_format($ap->subtotal,0,',','.') }}</td>
+                    <td style="text-align: right; padding:5px;">{{ number_format($ap->subtotal,0,',','.') }}</td>
                 @endforeach
-
 
                 <td></td>
                 <td></td>
@@ -787,5 +705,9 @@
                 </td>
             </tr>
     </table>
+
+    <script>
+        window.print()
+    </script>
 </body>
 </html>

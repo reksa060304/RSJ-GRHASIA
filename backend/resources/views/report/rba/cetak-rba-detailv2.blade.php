@@ -18,53 +18,59 @@
         p{
             margin: 0;
         }
-        table{
+        table {
             border-collapse: collapse;
-            font-size: 11pt;
+            font-size: 10pt;
         }
-        table tr th,td{
+        table tbody tr td {
             border: 1px solid black;
-            padding: .3em;
-            overflow: hidden; 
-            text-overflow: ellipsis; 
-            word-wrap: break-word;
+        }
+        table thead tr th {
+            border: 1px solid black;
         }
     </style>
 </head>
 <body>
     <div style="width: 100%">
-        <table style="width:100%;">
-            <tbody>
+
+        {{-- Kop --}}
+        <table cellpadding="0" cellspacing="0"  border="0" width="100%" class="tabel">
+            <tbody >
                 <tr>
-                    <td style="padding: 5px; width: 50px;">
+                    <td rowspan="2" style="padding: 10px; width: 100px;" align="center">
                         <p align="center">
-                            @if(stripos(\Request::url(), 'localhost') !== FALSE)
-                            <img src="{{ asset('img/LOGO GRHASIA.png') }}" style="width: 100%;height=60%;" >
-                            @else
-                            <img src="{{ asset('service/img/LOGO GRHASIA.png') }}" style="width: 100%;height=60%;" >
-                            @endif
+                                @if(stripos(\Request::url(), 'localhost') !== FALSE)
+                                <img src="{{ asset('img/LOGO GRHASIA.png') }}" style="width: 120px" >
+                                @else
+                                    <img src="{{ asset('service/img/LOGO GRHASIA.png') }}" style="width: 120px" >
+                                @endif
+                            
                         </p>
                     </td>
                     <td align="center" style="width: 300px;">
-                        <b style="font-size: 25px;">
+                        <b style="font-size: 14pt;">
                             RENCANA BISNIS DAN ANGGARAN<br>
-                            BADAN LAYANAN UMUM DAERAH<br>
-                            RSJ GRHASIA
+                            BADAN LAYANAN UMUM DAERAH
                         </b>
                     </td>
-                    <td align="center" style="width: 50px;">
-                        <b style="font-size: 25px;">
+                    <td rowspan="2"  align="center" style="width: 100px;">
+                        <b style="font-size: 14pt;">
                             RBA
                         </b>
                         <br>
                         {{ $kegiatan[0]->tahap }}
                     </td>
                 </tr>
+                <tr align="center">
+                    <td>
+                        <b>RS Jiwa GRHASIA<br>TAHUN {{ $tahun }}</b>
+                    </td>
+                </tr>
                 <tr>
                     <td colspan="3">
                         <p align="center" style="margin-top: 10px; margin-bottom:10px">
-                            <font style="font-size: 12pt; ">
-                                <b>REKAP ANGGARAN TIAP SUB KEGIATAN (JENIS ANGGARAN) <br> TAHUN ANGGARAN {{ $tahun }}</b>
+                            <font style="font-size: 12pt; " color="#000000" face="Arial">
+                                    <b>REKAP ANGGARAN TIAP SUB KEGIATAN (JENIS ANGGARAN) <br> TAHUN ANGGARAN {{ $tahun }}</b>
                             </font>
                             <br>
                         </p>
@@ -74,58 +80,50 @@
         </table>
 
         {{-- kegiatan --}}
-        <div style="padding: .5em; border-left:1px solid black; border-right:1px solid black; border-top:1px solid black;">
-            <table style="width:100%;">
-                <tbody>
-                    <tr>
-                        <td style="border:none; padding:0;">Program</td>
-                        <td style="border:none; padding:0;"> : </td>
-                        <td style="border:none; padding:0;"> {{ $kegiatan[0]->kodeprogram }} - {{ $kegiatan[0]->keteranganprogram }}</td>
-                    </tr>
-                    <tr>
-                        <td style="border:none; padding:0;">Kegiatan</td>
-                        <td style="border:none; padding:0;"> : </td>
-                        <td style="border:none; padding:0;"> {{ $kegiatan[0]->kodekegiatan }} - {{ $kegiatan[0]->keterangankegiatan }}</td>
-                    </tr>
-                    <tr>
-                        <td style="border:none; padding:0;">Sub Kegiatan</td>
-                        <td style="border:none; padding:0;"> : </td>
-                        <td style="border:none; padding:0;"> {{ $kegiatan[0]->kodesubkegiatan }} - {{ $kegiatan[0]->keterangansubkegiatan }}</td>
-                    </tr>
-                    <tr>
-                        <td style="border:none; padding:0;">Sub Sub Kegiatan</td>
-                        <td style="border:none; padding:0;"> : </td>
-                        <td style="border:none; padding:0;"> {{ $kegiatan[0]->kodesubsubkegiatan }} - {{ $kegiatan[0]->keterangansubsubkegiatan }}</td>
-                    </tr>
-                    <tr>
-                        <td style="border:none; padding:0;">Waktu Pelaksanaan</td>
-                        <td style="border:none; padding:0;"> : </td>
-                        <td style="border:none; padding:0;"> {{ $tahun }}</td>
-                    </tr>
-                    <tr>
-                        <td style="border:none; padding:0;">Lokasi Kegiatan</td>
-                        <td style="border:none; padding:0;"> : </td>
-                        <td style="border:none; padding:0;"> RSJ Grhasia</td>
-                    </tr>
-                </tbody>
-            </table>
-        </div>
+        <table style="border-top: 0; border-left: 1px solid black; border-right: 1px solid black" cellpadding="0" cellspacing="0" width="100%" border="0">
+            <tbody>
+                <tr>
+                    <td style="border: 0; width: 4cm; padding-left: 1em;">Program</td>
+                    <td style="border: 0; padding-left: 1em;">: {{ $kegiatan[0]->kodeprogram }} - {{ $kegiatan[0]->keteranganprogram }}</td>
+                </tr>
+                <tr>
+                    <td style="border: 0; width: 4cm; padding-left: 1em;">Kegiatan</td>
+                    <td style="border: 0; padding-left: 1em;">: {{ $kegiatan[0]->kodekegiatan }} - {{ $kegiatan[0]->keterangankegiatan }}</td>
+                </tr>
+                <tr>
+                    <td style="border: 0; width: 4cm; padding-left: 1em;">Sub Kegiatan</td>
+                    <td style="border: 0; padding-left: 1em;">: {{ $kegiatan[0]->kodesubkegiatan }} - {{ $kegiatan[0]->keterangansubkegiatan }}</td>
+                </tr>
+                <tr>
+                    <td style="border: 0; width: 4cm; padding-left: 1em;">Sub Sub Kegiatan</td>
+                    <td style="border: 0; padding-left: 1em;">: {{ $kegiatan[0]->kodesubsubkegiatan }} - {{ $kegiatan[0]->keterangansubsubkegiatan }}</td>
+                </tr>
+                <tr>
+                    <td style="border: 0; width: 4cm; padding-left: 1em;">Waktu Pelaksanaan</td>
+                    <td style="border: 0; padding-left: 1em;">: {{ $tahun }}</td>
+                </tr>
+                <tr>
+                    <td style="border: 0; width: 4cm; padding-left: 1em;">Lokasi Kegiatan</td>
+                    <td style="border: 0; padding-left: 1em;">: RSJ Grhasia</td>
+                </tr>
+            </tbody>
+        </table>
     
         {{-- indikator tolok ukur target kinerja --}}
         <div>
             <table style="width: 100%;">
                 <thead>
                     <tr>
-                        <th>Indikator</th>
-                        <th>Tolok Ukur</th>
-                        <th>Target Kinerja</th>
+                        <th style="width:8%; padding:5px;">Indikator</th>
+                        <th style="width:46%; padding:5px;">Tolok Ukur</th>
+                        <th style="width:46%; padding:5px;">Target Kinerja</th>
                     </tr>
                 </thead>
                 <tbody>
                     <tr>
-                        <td>Masukan</td>
-                        <td>{{ $kegiatan[0]->indikatormasuk }}</td>
-                        <td>
+                        <td style="padding:5px;">Masukan</td>
+                        <td style="padding:5px;">{{ $kegiatan[0]->indikatormasuk }}</td>
+                        <td style="padding:5px;">
                             @php
                                 $total = 0;
                                 foreach ($data as $key => $item) {
@@ -136,8 +134,8 @@
                         </td>
                     </tr>
                     <tr>
-                        <td>Keluaran</td>
-                        <td>
+                        <td style="padding:5px;">Keluaran</td>
+                        <td style="padding:5px;">
                             @php
                             $indikatorkeluaran = explode(chr(10), $kegiatan[0]->indikatorkeluaran);            
                             for ($i = 0; $i < count($indikatorkeluaran); $i++) {
@@ -146,7 +144,7 @@
                             }
                             @endphp
                         </td>
-                        <td>
+                        <td style="padding:5px;">
                             @php
                             $targetkeluaran = explode(chr(10), $kegiatan[0]->targetkeluaran);            
                             for ($i = 0; $i < count($targetkeluaran); $i++) {
@@ -157,11 +155,11 @@
                         </td>
                     </tr>
                     <tr>
-                        <td>Hasil</td>
-                        <td>
+                        <td style="padding:5px;">Hasil</td>
+                        <td style="padding:5px;">
                             {{ $kegiatan[0]->indikatorhasil }}
                         </td>
-                        <td>
+                        <td style="padding:5px;">
                             {{ $kegiatan[0]->targethasil }}
                         </td>
                     </tr>
@@ -170,20 +168,20 @@
         </div>
     
         {{-- data --}}
-        <table style="width: 100%;">
+        <table style="border-top:0;" cellpadding="0" cellspacing="0"  border="0" width="100%" class="tabel">
             <thead>
                 <tr>
-                    <th rowspan="2" colspan="4">No Rekening</th>
-                    <th rowspan="2">Komponen Biaya</th>
-                    <th colspan="3">Rincian Biaya</th>
-                    <th colspan="{{ count($asalproduk) }}">Jumlah Anggaran (Sumber Dana)</th>
+                    <th style="width:8%; padding:5px;" rowspan="2" colspan="4">No Rekening</th>
+                    <th style="width:28%; padding:5px;" rowspan="2">Komponen Biaya</th>
+                    <th style="width:27%; padding:5px;" colspan="3">Rincian Biaya</th>
+                    <th style="width:37%; padding:5px;" colspan="{{ count($asalproduk) }}">Jumlah Anggaran (Sumber Dana)</th>
                 </tr>
                 <tr>
-                    <th>Jumlah</th>
-                    <th>Satuan</th>
-                    <th>Harga Satuan</th>
+                    <th style="width:8.5%; padding:5px;">Jumlah</th>
+                    <th style="width:8.5%; padding:5px;">Satuan</th>
+                    <th style="width:10%; padding:5px;">Harga Satuan</th>
                     @foreach ($asalproduk as $ap)
-                        <th>{{ $ap->asalproduk }}</th>
+                        <th style="padding:5px;">{{ $ap->asalproduk }}</th>
                     @endforeach
                 </tr>
             </thead>
@@ -199,21 +197,21 @@
                     
                     @if ($item->idmataanggaran1 && ($item->idmataanggaran1 !== $idmataanggaran1))
                         <tr style="font-weight: bold">
-                            <td>
+                            <td style="padding:5px;">
                                 @php
                                     $split1 = explode('.', $item->kodemataanggaran1);
                                 @endphp
                                 {{ end($split1) }}
                             </td>
-                            <td></td>
-                            <td></td>
-                            <td></td>
-                            <td>{{ $item->namamataanggaran1 }}</td>
-                            <td></td>
-                            <td></td>
-                            <td></td>
+                            <td style="padding:5px;"></td>
+                            <td style="padding:5px;"></td>
+                            <td style="padding:5px;"></td>
+                            <td style="padding:5px;">{{ $item->namamataanggaran1 }}</td>
+                            <td style="padding:5px;"></td>
+                            <td style="padding:5px;"></td>
+                            <td style="padding:5px;"></td>
                             @foreach ($asalproduk as $ap)
-                                <td style="text-align:right;">
+                                <td style="padding:5px; text-align:right;">
                                     @php
                                         $total1 = 0;
                                         foreach ($data as $key => $dt) {
@@ -230,21 +228,21 @@
     
                     @if ($item->idmataanggaran2 && ($item->idmataanggaran2 !== $idmataanggaran2) && $item->kodemataanggaran1 !== 'III')
                         <tr style="font-weight: bold">
-                            <td></td>
-                            <td>
+                            <td style="padding:5px;"></td>
+                            <td style="padding:5px;">
                                 @php
                                     $split2 = explode('.', $item->kodemataanggaran2);
                                 @endphp
                                 {{ end($split2) }}
                             </td>
-                            <td></td>
-                            <td></td>
-                            <td>{{ $item->namamataanggaran2 }}</td>
-                            <td></td>
-                            <td></td>
-                            <td></td>
+                            <td style="padding:5px;"></td>
+                            <td style="padding:5px;"></td>
+                            <td style="padding:5px;">{{ $item->namamataanggaran2 }}</td>
+                            <td style="padding:5px;"></td>
+                            <td style="padding:5px;"></td>
+                            <td style="padding:5px;"></td>
                             @foreach ($asalproduk as $ap)
-                                <td style="text-align:right;">
+                                <td style="padding:5px; text-align:right;">
                                     @php
                                         $total2 = 0;
                                         foreach ($data as $key => $dt) {
@@ -262,21 +260,21 @@
                     @if ($item->idmataanggaran3 && ($item->idmataanggaran3 !== $idmataanggaran3))
                     
                         <tr style="font-weight: bold">
-                            <td></td>
-                            <td></td>
-                            <td>
+                            <td style="padding:5px;"></td>
+                            <td style="padding:5px;"></td>
+                            <td style="padding:5px;">
                                 @php
                                     $split3 = explode('.', $item->kodemataanggaran3);
                                 @endphp
                                 {{ end($split3) }}
                             </td>
-                            <td></td>
-                            <td>{{ $item->namamataanggaran3 }}</td>
-                            <td></td>
-                            <td></td>
-                            <td></td>
+                            <td style="padding:5px;"></td>
+                            <td style="padding:5px;">{{ $item->namamataanggaran3 }}</td>
+                            <td style="padding:5px;"></td>
+                            <td style="padding:5px;"></td>
+                            <td style="padding:5px;"></td>
                             @foreach ($asalproduk as $ap)
-                                <td style="text-align:right;">
+                                <td style="padding:5px; text-align:right;">
                                     @php
                                         $total3 = 0;
                                         foreach ($data as $key => $dt) {
@@ -293,22 +291,22 @@
     
                     @if ($item->idmataanggaran && ($item->idmataanggaran !== $idmataanggaran))
                         <tr style="font-weight: bold">
-                            <td></td>
-                            <td></td>
-                            <td></td>
-                            <td>
+                            <td style="padding:5px;"></td>
+                            <td style="padding:5px;"></td>
+                            <td style="padding:5px;"></td>
+                            <td style="padding:5px;">
                                 @php
                                     $split = explode('.', $item->kodemataanggaran);
                                     $getKode = array_slice($split, -2, 2, true)
                                 @endphp
                                 {{ array_values($getKode)[0] }}.{{ end($getKode) }}
                             </td>
-                            <td>{{ $item->namamataanggaran }}</td>
-                            <td></td>
-                            <td></td>
-                            <td></td>
+                            <td style="padding:5px;">{{ $item->namamataanggaran }}</td>
+                            <td style="padding:5px;"></td>
+                            <td style="padding:5px;"></td>
+                            <td style="padding:5px;"></td>
                             @foreach ($asalproduk as $ap)
-                                <td style="text-align:right;">
+                                <td style="padding:5px; text-align:right;">
                                     @php
                                         $total4 = 0;
                                         foreach ($data as $key => $dt) {
@@ -324,16 +322,16 @@
                     @endif
     
                     <tr>
-                        <td></td>
-                        <td></td>
-                        <td></td>
-                        <td></td>
-                        <td>{{ $item->keteranganbelanja }}</td>
-                        <td style="text-align:right;">{{ $item->jml }}</td>
-                        <td style="text-align:center;">{{ $item->satuan }}</td>
-                        <td style="text-align:right;">{{ number_format($item->hargasatuan,0,',','.') }}</td>
+                        <td style="padding:5px;"></td>
+                        <td style="padding:5px;"></td>
+                        <td style="padding:5px;"></td>
+                        <td style="padding:5px;"></td>
+                        <td style="padding:5px;">{{ $item->keteranganbelanja }}</td>
+                        <td style="padding:5px; text-align:right;">{{ $item->jml }}</td>
+                        <td style="padding:5px; text-align:center;">{{ $item->satuan }}</td>
+                        <td style="padding:5px; text-align:right;">{{ number_format($item->hargasatuan,0,',','.') }}</td>
                         @foreach ($asalproduk as $ap)
-                            <td style="text-align:right;">
+                            <td style="padding:5px; text-align:right;">
                                 @if ($ap->id == $item->idasalproduk)
                                     {{ number_format($item->subtotal,0,',','.') }}
                                 @else
@@ -353,9 +351,9 @@
                 @endforeach
     
                 <tr style="font-weight: bold;">
-                    <td colspan="8" style="text-align: center;">Jumlah Total</td>
+                    <td colspan="8" style="padding:5px; text-align: center;">Jumlah Total</td>
                     @foreach ($asalproduk as $ap)
-                        <td style="text-align:right;">
+                        <td style="padding:5px; text-align:right;">
                             @php
                                 $semua = 0;
                                 foreach ($data as $key => $dt) {
