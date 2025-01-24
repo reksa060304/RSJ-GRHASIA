@@ -2004,6 +2004,7 @@ Route::group(['middleware' => 'cors', 'prefix' => 'service'], function () {
             Route::post('pajak/simpan-penyetoranpajakv2', 'Anggaran_2024\AnggaranController@simpanPenyetoranPajakV2');
             Route::post('pajak/hapus-penyetoranpajakv2', 'Anggaran_2024\AnggaranController@hapusPenyetoranPajakV2');
             Route::get('pajak/get-penyetoranpajak-bkuv2', 'Anggaran_2024\AnggaranController@getPenyetoranPajakBKUV2');
+            Route::get('pajak/get-bku-penyetoranpajak', 'Anggaran_2024\AnggaranController@getBKUPenyetoranPajak');
             // End penyetoran pajak v2
 
             // cetak laporan anggaran 2024

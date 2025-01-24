@@ -1009,6 +1009,9 @@ define(['initialize'], function (initialize) {
                         $scope.hidespj =true
                         $scope.hidepengembalian =true
                         $scope.hidests =true
+                        $scope.hidepemungutanpajak = true
+                        $scope.hidePenyetoranPajak = true
+
                         $scope.item.nobkudetail = dataItem.nobku
                         $scope.item.tglbkudetail = dataItem.tglbku
                         $scope.item.jenisbku = dataItem.asalproduk
@@ -1040,6 +1043,9 @@ define(['initialize'], function (initialize) {
                         $scope.hidespj =true
                         $scope.hidepengembalian =false
                         $scope.hidests =true
+                        $scope.hidepemungutanpajak = true
+                        $scope.hidePenyetoranPajak = true
+
                         $scope.item.nobkudetail = dataItem.nobku
                         $scope.item.tglbkudetail = dataItem.tglbku
                         $scope.item.jenisbku = dataItem.asalproduk
@@ -1073,6 +1079,9 @@ define(['initialize'], function (initialize) {
                     $scope.hidespj =true
                     $scope.hidepengembalian =true
                     $scope.hidests =true
+                    $scope.hidepemungutanpajak = true
+                    $scope.hidePenyetoranPajak = true
+
                     $scope.item.nobkudetail = dataItem.nobku
                     $scope.item.tglbkudetail = dataItem.tglbku
                     $scope.item.jenisbku = dataItem.asalproduk
@@ -1104,6 +1113,9 @@ define(['initialize'], function (initialize) {
                     $scope.hidespj =true
                     $scope.hidepengembalian =true
                     $scope.hidests =true
+                    $scope.hidepemungutanpajak = true
+                    $scope.hidePenyetoranPajak = true
+
                     $scope.item.nobkudetail = dataItem.nobku
                     $scope.item.tglbkudetail = dataItem.tglbku
                     $scope.item.jenisbku = dataItem.asalproduk
@@ -1135,6 +1147,9 @@ define(['initialize'], function (initialize) {
                     $scope.hidespj =true
                     $scope.hidepengembalian =true
                     $scope.hidests =false
+                    $scope.hidepemungutanpajak = true
+                    $scope.hidePenyetoranPajak = true
+
                     $scope.item.nobkudetail = dataItem.nobku
                     $scope.item.tglbkudetail = dataItem.tglbku
                     $scope.item.jenisbku = dataItem.asalproduk
@@ -1167,6 +1182,9 @@ define(['initialize'], function (initialize) {
                     $scope.hidespj =true
                     $scope.hidepengembalian =true
                     $scope.hidests =true
+                    $scope.hidepemungutanpajak = true
+                    $scope.hidePenyetoranPajak = true
+
                     $scope.item.nobkudetail = dataItem.nobku
                     $scope.item.tglbkudetail = dataItem.tglbku
                     $scope.item.jenisbku = dataItem.asalproduk
@@ -1199,6 +1217,9 @@ define(['initialize'], function (initialize) {
                     $scope.hidespj =false
                     $scope.hidepengembalian =true
                     $scope.hidests =true
+                    $scope.hidepemungutanpajak = true
+                    $scope.hidePenyetoranPajak = true
+
                     $scope.item.nobkudetail = dataItem.nobku
                     $scope.item.tglbkudetail = dataItem.tglbku
                     $scope.item.jenisbku = dataItem.asalproduk
@@ -1234,9 +1255,16 @@ define(['initialize'], function (initialize) {
                     $scope.hidepengembalian =true
                     $scope.hidests =true
                     $scope.hidepemungutanpajak = false
+                    $scope.hidePenyetoranPajak = true
+
                     $scope.item.nobkudetail = dataItem.nobku
                     $scope.item.tglbkudetail = dataItem.tglbku
                     $scope.item.jenisbku = dataItem?.asalproduk
+                    $scope.norecbku = dataItem.norecbku
+
+                    $scope.item.nobkudetail = dataItem.nobku
+                    $scope.item.tglbkudetail = moment(dataItem.tglbku).format('YYYY-MM-DD')
+                    $scope.item.jenisbku = dataItem.asalproduk
                     $scope.norecbku = dataItem.norecbku
 
                     medifirstService.get("anggaran/get-bku-pemungutanpajak?norec="+dataItem.norecbku).then(function (e) {
@@ -1245,6 +1273,41 @@ define(['initialize'], function (initialize) {
                             data:  e.data.data,
                             pageSize: 10,
                             total: e.data.data.length,
+                            serverPaging: false,
+                            schema: {
+                                model: {
+                                    fields: {
+                                    }
+                                }
+                            },
+                            aggregate: [
+                            ]
+                        });
+                    });
+                } else if(dataItem.id == 9){
+                    // Pemungutan pajak
+                    $scope.hidespm = true
+                    $scope.hidepanjar =true
+                    $scope.hidepengembalianpanjar = true
+                    $scope.hidejasgir =true
+                    $scope.hidepajak =true
+                    $scope.hidespj = true
+                    $scope.hidepengembalian =true
+                    $scope.hidests =true
+                    $scope.hidepemungutanpajak = true
+                    $scope.hidePenyetoranPajak = false
+
+                    $scope.item.nobkudetail = dataItem.nobku
+                    $scope.item.tglbkudetail = dataItem.tglbku
+                    $scope.item.jenisbku = dataItem?.asalproduk
+                    $scope.norecbku = dataItem.norecbku
+
+                    medifirstService.get("pajak/get-bku-penyetoranpajak?norec="+dataItem.norecbku).then(function (e) {
+                    
+                        $scope.dataGridPenyetoranPajak = new kendo.data.DataSource({
+                            data:  e.data,
+                            pageSize: 10,
+                            total: e.data.length,
                             serverPaging: false,
                             schema: {
                                 model: {
