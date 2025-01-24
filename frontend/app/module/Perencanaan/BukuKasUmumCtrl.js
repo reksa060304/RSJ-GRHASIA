@@ -20,6 +20,8 @@ define(['initialize'], function (initialize) {
             $scope.hidests =true
             $scope.hidepengembalian =true
             $scope.hidepemungutanpajak = true
+            $scope.hidePenyetoranPajak = true
+
             $scope.selectedData2 = []; 
             $scope.norecbku = ''
             $scope.hiderekanan = false
@@ -164,6 +166,9 @@ define(['initialize'], function (initialize) {
                         $scope.hidespj =true
                         $scope.hidests =true
                         $scope.hiderekanan = false
+                        $scope.hidePenyetoranPajak = true
+                        $scope.hidepemungutanpajak = true
+
                         // medifirstService.get("perencanaan/get-panjar-bku").then(function (e) {
                         
                         //     $scope.dataGridPanjar = new kendo.data.DataSource({
@@ -211,6 +216,9 @@ define(['initialize'], function (initialize) {
                         $scope.hidespj =true
                         $scope.hidests =true
                         $scope.hiderekanan = false
+                        $scope.hidePenyetoranPajak = true
+                        $scope.hidepemungutanpajak = true
+
                         medifirstService.get("perencanaan/get-datapengembalian-panjar-bku").then(function (e) {
                         
                             $scope.dataGridPengembalianPanjar = new kendo.data.DataSource({
@@ -238,6 +246,9 @@ define(['initialize'], function (initialize) {
                         $scope.hidespj =true
                         $scope.hidests =true
                         $scope.hiderekanan = true
+                        $scope.hidePenyetoranPajak = true
+                        $scope.hidepemungutanpajak = true
+
                         medifirstService.get("perencanaan/get-spm-bku").then(function (e) {
                         
                             $scope.dataGridSPM = new kendo.data.DataSource({
@@ -265,6 +276,9 @@ define(['initialize'], function (initialize) {
                         $scope.hidespj =true
                         $scope.hidests =true
                         $scope.hiderekanan = true
+                        $scope.hidePenyetoranPajak = true
+                        $scope.hidepemungutanpajak = true
+
                         medifirstService.get("perencanaan/get-jasgir-bku").then(function (e) {
                         
                             $scope.dataGridJasaGiro = new kendo.data.DataSource({
@@ -292,6 +306,9 @@ define(['initialize'], function (initialize) {
                         $scope.hidespj =true
                         $scope.hidests =true
                         $scope.hiderekanan = false
+                        $scope.hidePenyetoranPajak = true
+                        $scope.hidepemungutanpajak = true
+
                         medifirstService.get("perencanaan/get-pajak-bku").then(function (e) {
                         
                             $scope.dataGridPajak = new kendo.data.DataSource({
@@ -319,6 +336,9 @@ define(['initialize'], function (initialize) {
                         $scope.hidespj =true
                         $scope.hidests =false
                         $scope.hiderekanan = false
+                        $scope.hidePenyetoranPajak = true
+                        $scope.hidepemungutanpajak = true
+
                         medifirstService.get("perencanaan/get-sts-keuangan?key=bku").then(function (e) {
                         
                             $scope.dataGridSTS = new kendo.data.DataSource({
@@ -348,6 +368,8 @@ define(['initialize'], function (initialize) {
                         $scope.hidests =true
                         $scope.hidespj =false
                         $scope.hiderekanan = false
+                        $scope.hidePenyetoranPajak = true
+                        $scope.hidepemungutanpajak = true
                         // medifirstService.get("perencanaan/get-spj-bku").then(function (e) {
                         
                         //     $scope.dataGridSPJ = new kendo.data.DataSource({
@@ -396,6 +418,7 @@ define(['initialize'], function (initialize) {
                         $scope.hidespj =true
                         $scope.hiderekanan = false
                         $scope.hidepemungutanpajak = false
+                        $scope.hidePenyetoranPajak = true
 
 
                         // get data pemungutan pajak yang belum dibku
@@ -417,6 +440,37 @@ define(['initialize'], function (initialize) {
                             });
                         });
 
+                    }else if($scope.item.itemJenisBukti.id == 9){
+
+                        $scope.hidespm = true
+                        $scope.hidepengembalianpanjar = true
+                        $scope.hidepanjar =true
+                        $scope.hidejasgir =true
+                        $scope.hidepajak =true
+                        $scope.hidests =true
+                        $scope.hidespj =true
+                        $scope.hiderekanan = true
+                        $scope.hidepemungutanpajak = true
+                        $scope.hidePenyetoranPajak = false
+
+                        // get data penyetoran pajak yang belum dibku
+                        medifirstService.get("pajak/get-penyetoranpajak-bkuv2").then(function (e) {
+                            
+                            $scope.dataGridPenyetoranPajak = new kendo.data.DataSource({
+                                data:  e.data,
+                                pageSize: 10,
+                                total: e.data.length,
+                                serverPaging: false,
+                                schema: {
+                                    model: {
+                                        fields: {
+                                        }
+                                    }
+                                },
+                                aggregate: [
+                                ]
+                            });
+                        });
                     }
                 }
             });
@@ -427,6 +481,12 @@ define(['initialize'], function (initialize) {
                 var rekanan = null
                 if($scope.item.pihakKetiga != undefined){
                     rekanan = $scope.item.pihakKetiga.id
+                }
+
+                // validasi sumber dana
+                if($scope.item.sumberDana == undefined || $scope.item.sumberDana == null){
+                    toastr.error('Pilih sumber dana dulu')
+                    return
                 }
 
                 var objSave = {
@@ -862,6 +922,46 @@ define(['initialize'], function (initialize) {
                 $scope.item.sumberDana = {id: dataItem.idasalproduk, asalproduk: dataItem.asalproduk}
                 $scope.item.uraianBKU = dataItem.uraianpajak
                 
+                console.log($scope.selectedData2)
+			}
+
+            $scope.onClickSatuPenyetoranPajak = function (e, param) {
+
+				var element = $(e.currentTarget);
+				var checked = element.is(':checked')
+				var row = element.closest('tr')
+				var grid = $("#gridPenyetoranPajak").data("kendoGrid")
+				var dataItem = grid.dataItem(row);
+                $scope.item.uraianBKU = ''
+
+				if (checked) {
+					var result = $.grep($scope.selectedData2, function (e) {
+						return e.nopajak == dataItem.nopajak;
+					});
+					if (result.length == 0) {
+						$scope.selectedData2.push(dataItem);
+					} else {
+						for (var i = 0; i < $scope.selectedData2.length; i++)
+							if ($scope.selectedData2[i].nopajak === dataItem.nopajak) {
+								$scope.selectedData2.splice(i, 1);
+								break;
+							}
+						$scope.selectedData2.push(dataItem);
+					}
+					row.addClass("k-state-selected");
+                    
+				} else {
+					for (var i = 0; i < $scope.selectedData2.length; i++)
+						if ($scope.selectedData2[i].nopajak === dataItem.nopajak) {
+							$scope.selectedData2.splice(i, 1);
+							break;
+						}
+					row.removeClass("k-state-selected");
+				}
+
+                // $scope.item.sumberDana = {id: dataItem.idasalproduk, asalproduk: dataItem.asalproduk}
+                $scope.item.uraianBKU = dataItem.uraianpajak
+
                 console.log($scope.selectedData2)
 			}
 
@@ -1780,6 +1880,51 @@ define(['initialize'], function (initialize) {
                         "field": "pph",
                         "title": "Jumlah",
                         "template": "<span class='style-right'>{{formatRupiah('#: pph #', 'Rp.')}}</span>",
+                    },
+                ]
+            };
+
+            $scope.columnGridPenyetoran = {
+                sortable: true,
+                selectable: "multiple",
+                pageable: true,
+                columns: [
+                    {
+						"template": "<input type='checkbox' class='checkbox style-center' ng-click='onClickSatuPenyetoranPajak($event,2)' />",
+						"width": "30px"
+					},
+                    {
+                        
+                        "field": "tglppn",
+                        "title": "Tanggal",
+                    },
+                    {
+                        
+                        "field": "nopajak",
+                        "title": "Nomor Pajak",
+                    },
+                    {
+                        
+                        "field": "uraianpajak",
+                        "title": "Uraian",
+                    },
+                    {
+                        
+                        "field": "idbillppn",
+                        "title": "ID Bill",
+                        "width": "100px",
+                    },
+                    {
+                        
+                        "field": "jenispajak",
+                        "title": "Jenis Pajak",
+                        "width": "100px",
+                    },
+                    {
+                        
+                        "field": "ppn",
+                        "title": "Jumlah",
+                        "template": "<span class='style-right'>{{formatRupiah('#: ppn #', 'Rp.')}}</span>",
                     },
                 ]
             };

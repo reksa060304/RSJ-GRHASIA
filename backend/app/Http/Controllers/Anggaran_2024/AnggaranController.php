@@ -3888,7 +3888,7 @@ class AnggaranController extends ApiController {
             FROM penyetoranpajak_t penp
             INNER JOIN penyetoranpajakdetail_t dpenp ON dpenp.objectpenyetoranpajakfk = penp.norec AND dpenp.statusenabled = TRUE
             INNER JOIN pemungutanpajak_t pemp ON pemp.norec = dpenp.objectpemungutanpajakfk AND pemp.statusenabled = TRUE
-            LEFT JOIN jenispajak_m jp ON jp.id = pemp.objectjenispphfk AND jp.statusenabled = TRUE
+            LEFT JOIN jenispajak_m jp ON jp.id = penp.objectjenispphfk AND jp.statusenabled = TRUE
             WHERE
                 penp.statusenabled = TRUE
                 AND penp.kdprofile = ".$idProfile."
@@ -4105,7 +4105,6 @@ class AnggaranController extends ApiController {
         return $this->setStatusCode($result['status'])->respond($result, $transMessage);
 
     }
-    
     public function hapusPenyetoranPajakV2(Request $request)
     {
 
@@ -4153,6 +4152,74 @@ class AnggaranController extends ApiController {
         }
         return $this->setStatusCode($result['status'])->respond($result, $transMessage);
 
+    }
+
+    public function getPenyetoranPajakBKUV2(Request $request)
+    {
+        // get penyetoran pajak yang belum dibkukan untuk dientry di bku
+
+        $kdProfile = $this->getDataKdProfile($request);
+        $idProfile = (int) $kdProfile;
+
+        $setting = \DB::table('settinganggaran_t as st')
+            ->join('pegawai_m as pg','pg.id','=','st.objectkepalabludfk')
+            ->join('tahapanggaran_m as ta','ta.id','=','st.objecttahapaktivfk')
+            ->select('st.*','pg.namalengkap', 'ta.tahap', 'ta.id as idtahap', 'pg.id as idpegawai')
+            ->where('st.kdprofile', $idProfile)
+            ->where('st.statusenabled', true)
+            ->orderBy('st.tahunanggaran')
+            ->get();
+
+        // diesuaikan dulu datanya yang mau keluar apa
+        $data = DB::select(DB::raw("
+            SELECT 
+                penp.*,
+                jp.jenispajak
+            FROM penyetoranpajak_t penp
+            INNER JOIN penyetoranpajakdetail_t dpenp ON dpenp.objectpenyetoranpajakfk = penp.norec AND dpenp.statusenabled = TRUE
+            INNER JOIN pemungutanpajak_t pemp ON pemp.norec = dpenp.objectpemungutanpajakfk AND pemp.statusenabled = TRUE
+            LEFT JOIN jenispajak_m jp ON jp.id = penp.objectjenispphfk AND jp.statusenabled = TRUE
+            WHERE
+                penp.statusenabled = TRUE
+                AND penp.kdprofile = ".$idProfile."
+                AND EXTRACT(YEAR FROM penp.tglppn) = '".$setting[0]->tahunanggaran."'
+                AND penp.objectbkufk IS NULL
+            GROUP BY
+                penp.norec, jp.id
+            ORDER BY
+                penp.tglppn DESC
+
+        "));
+
+        foreach($data as $dt){
+            $dt->detail = [];
+
+            $detail = DB::select(DB::raw("
+                SELECT 
+                    penpd.norec norecdetail,
+                    penpd.objectpenyetoranpajakfk,
+                    penpd.objectpemungutanpajakfk,
+                    penpd.setoran,
+                    pemp.nopajak,
+                    pemp.tglpph,
+                    pemp.uraianpajak,
+                    pemp.pph,
+                    bku.nobku
+                FROM penyetoranpajak_t penp
+                INNER JOIN penyetoranpajakdetail_t penpd ON penpd.objectpenyetoranpajakfk = penp.norec AND penpd.statusenabled = TRUE
+                INNER JOIN pemungutanpajak_t pemp ON pemp.norec = penpd.objectpemungutanpajakfk AND pemp.statusenabled = TRUE
+                INNER JOIN bukukasumum_t bku ON bku.norec = pemp.objectbkufk AND bku.statusenabled = TRUE
+                --LEFT JOIN jenispajak_m jp ON jp.id = pemp.objectjenispphfk AND jp.statusenabled = TRUE
+                WHERE
+                    penp.statusenabled = TRUE
+                    AND penp.kdprofile = ".$idProfile."
+                    AND penpd.objectpenyetoranpajakfk = '".$dt->norec."'
+            "));
+
+            $dt->detail = $detail;
+        }
+
+        return $this->respond($data);
     }
 
 }

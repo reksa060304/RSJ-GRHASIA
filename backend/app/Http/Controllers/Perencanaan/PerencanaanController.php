@@ -4804,6 +4804,7 @@ class PerencanaanController extends ApiController {
                             
                             $penerimaan += (float)$request['bku'][$i]['pph'];
                             $pengeluaran = 0;
+                            $saldofix += $request['bku'][$i]['pph'];
                         }
 
                         $MA->tgljam = date('Y-m-d H:i:s');
@@ -4818,6 +4819,45 @@ class PerencanaanController extends ApiController {
                             $PP->objectbkufk = $MA->norec;
                             $PP->save();
                         }
+                    }else if($request['jenisbukti'] == 9){
+
+                        // Penyetoran pajak
+
+                        // simpan data bku
+                        $MA = new BKU();
+                        $norecKS = $MA->generateNewId();
+                        $MA->norec = $norecKS;
+                        $MA->kdprofile = $idProfile;
+                        $MA->statusenabled = true;
+                        $noa = $this->generateCodeBKU(new BKU, 'nobku', $request['asalproduk'], 5, '', $idProfile);
+                        $MA->nobku = $noa.'-B02';
+                        $MA->objectjenisbuktifk = $request['jenisbukti'];
+                        $MA->tglbku = $request['tglbku'];
+                        $MA->uraianbku = $request['uraian'];
+                        $MA->rekananfk = $request['rekananfk'];
+                        $MA->objectasalprodukfk = $request['asalproduk'];
+                        $MA->objectmataanggaranfk = null;
+
+                        for($i = 0; $i < count($request['bku']); $i++){
+                            
+                            $pengeluaran += (float)$request['bku'][$i]['ppn'];
+                            $penerimaan = 0;
+                            $saldofix -= $request['bku'][$i]['ppn'];
+                        }
+
+                        $MA->tgljam = date('Y-m-d H:i:s');
+                        $MA->penerimaan = $penerimaan;
+                        $MA->pengeluaran = $pengeluaran;
+                        $MA->saldo = $saldofix;
+                        $MA->save();
+
+                        // update objectbkufk di pemungutan pajak
+                        for($x = 0; $x < count($request['bku']); $x++){
+                            $PP = PenyetoranPajak::where('norec', '=', $request['bku'][$x]['norec'])->first();
+                            $PP->objectbkufk = $MA->norec;
+                            $PP->save();
+                        }
+
                     }
 
                     

@@ -211,6 +211,14 @@
                     k-ng-model="dataSelected" ng-click="klikGrid(dataSelected)" style="min-height: 0px; max-height: 500px;" >
                 </kendo-grid>
             </div>
+
+            <div class="grid_12 borderBox" ng-hide="hidePenyetoranPajak">
+                <kendo-grid id="gridPenyetoranPajak" data-source="dataGridPenyetoranPajak" options="columnGridPenyetoran" k-pageable="'true'"
+                    k-sortable="'true'" k-groupable="'false'" k-resizable="'true'" k-selectable="'row'"
+                    k-ng-model="dataSelected" ng-click="klikGrid(dataSelected)" style="min-height: 0px; max-height: 500px;" >
+                </kendo-grid>
+            </div>
+
             <div class="grid_12">
                     <div class="grid_12" style="text-align: left; margin-top: 10px;">
                         Nomor BKU
@@ -353,6 +361,14 @@
                     k-ng-model="dataSelected" ng-click="klikGrid(dataSelected)" style="min-height: 0px; max-height: 500px;" >
                 </kendo-grid>
             </div>
+
+            <div class="grid_12 borderBox" ng-hide="hidePenyetoranPajak">
+                <kendo-grid id="gridPenyetoranPajak" data-source="dataGridPenyetoranPajak" options="columnGridPenyetoran" k-pageable="'true'"
+                    k-sortable="'true'" k-groupable="'false'" k-resizable="'true'" k-selectable="'row'"
+                    style="min-height: 0px; max-height: 500px;" >
+                </kendo-grid>
+            </div>
+
             <div class="grid_12" style="margin-top: 10px;">
                 <div class="grid_8" ></div>
                 <div class="grid_4" >
