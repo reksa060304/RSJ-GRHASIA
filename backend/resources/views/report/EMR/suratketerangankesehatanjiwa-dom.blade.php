@@ -138,70 +138,82 @@
             </tbody>
         </table>
 
-        {{-- awalan --}}
-        <table cellspacing="0" cellpadding="0" width="100%" style="margin-top: 1em; text-align:center;">
+        {{-- Awalan --}}
+        <table cellspacing="0" cellpadding="0" width="100%" style="margin-top: 1em; text-align:center; border-collapse: collapse;">
             <tr>
                 <td style="font-size:14pt; font-weight:bold; text-decoration:underline;">
                     SURAT KETERANGAN PEMERIKSAAN KESEHATAN JIWA
                 </td>
             </tr>
             <tr>
-                <td> 
-                    Nomor : {{ $item[3003952] ? $item[3003952] : '' }}
+                <td style="padding-top: 0.5em;">
+                    Nomor: {{ $kodeawalsurat ?? '' }}{{ $item[3003952] ?? '' }}{{ $kodeakhirsurat ?? '' }}
+                </td>
+            </tr>
+            <tr>
+                <td style="padding-top: 1em; text-align: justify;">
+                    Yang bertanda tangan di bawah ini, telah melakukan pemeriksaan psikiatrik pada tanggal {{ $item[3003951] ?? '' }}, terhadap:
+                </td>
+            </tr>
+        </table>
+
+        {{-- Pasien --}}
+        <table cellspacing="0" cellpadding="5" width="100%" style="margin: 1em 0; padding: 0 3em; text-align: left; border-collapse: collapse;">
+            <tr>
+                <td style="width: 30%; text-align: left;">Nama</td>
+                <td style="width: 2%; text-align: center;">:</td>
+                <td style="width: 68%; text-align: left;">{{ $item[3003957] ?? '' }}</td>
+            </tr>
+            <tr>
+                <td>Tempat/Tanggal Lahir</td>
+                <td style="text-align: center;">:</td>
+                <td>{{ $item[3003958] ?? '' }}</td>
+            </tr>
+            <tr>
+                <td>Jenis Kelamin</td>
+                <td style="text-align: center;">:</td>
+                <td>{{ $item[3003959] ?? '' }}</td>
+            </tr>
+            <tr>
+                <td>Pekerjaan</td>
+                <td style="text-align: center;">:</td>
+                <td>{{ $item[3003960] ?? '' }}</td>
+            </tr>
+            <tr>
+                <td>Alamat</td>
+                <td style="text-align: center;">:</td>
+                <td>{{ $item[3003961] ?? '' }}</td>
+            </tr>
+        </table>
+
+        {{-- Ditemukan / Tidak ditemukan --}}
+        <table cellspacing="0" cellpadding="0" width="100%" style="text-align: justify; margin-top: 1em; border-collapse: collapse;">
+            <tr>
+                <td>
+                    Dengan Hasil Pemeriksaan Kesehatan Jiwa pada saat ini: 
+                    @if (isset($item[3003953]) && $item[3003953]) 
+                        <b>DITEMUKAN</b> 
+                    @else 
+                        <s>DITEMUKAN</s> 
+                    @endif
+                    /
+                    @if (isset($item[3003954]) && $item[3003954]) 
+                        <b>TIDAK DITEMUKAN</b> 
+                    @else 
+                        <s>TIDAK DITEMUKAN</s> 
+                    @endif 
+                    TANDA DAN GEJALA GANGGUAN JIWA BERMAKNA YANG DAPAT MENGGANGGU AKTIVITAS KEHIDUPAN SEHARI-HARI.
                 </td>
             </tr>
             <tr>
                 <td style="padding-top: 1em;">
-                    Yang bertanda tangan di bawah ini, telah melakukan pemeriksaan psikiatrik pada tanggal {{ $item[3003951] ? $item[3003951] : '' }}, terhadap :
-                </td>
-            </tr>
-        </table>
-
-        {{-- pasien --}}
-        <table cellspacing="0" cellpadding="0" width="100%" style="padding: 0 3em; margin: 1em 0;">
-            <tr>
-                <td style="width: 40%">Nama</td>
-                <td style="width: 1%">:</td>
-                <td>{{ $item[3003957] ? $item[3003957] : '' }}</td>
-            </tr>
-            <tr>
-                <td style="width: 40%">Tempat/Tanggal Lahir</td>
-                <td style="width: 1%">:</td>
-                <td>{{ $item[3003958] ? $item[3003958] : '' }}</td>
-            </tr>
-            <tr>
-                <td style="width: 40%">Jenis Kelamin</td>
-                <td style="width: 1%">:</td>
-                <td>{{ $item[3003959] ? $item[3003959] : '' }}</td>
-            </tr>
-            <tr>
-                <td style="width: 40%">Pekerjaan</td>
-                <td style="width: 1%">:</td>
-                <td>{{ $item[3003960] ? $item[3003960] : '' }}</td>
-            </tr>
-            <tr>
-                <td style="width: 40%">Alamat</td>
-                <td style="width: 1%">:</td>
-                <td>{{ $item[3003961] ? $item[3003961] : '' }}</td>
-            </tr>
-        </table>
-
-        {{-- ditemukan / tidak ditemukan --}}
-        <table cellspacing="0" cellpadding="0" width="100%">
-            <tr>
-                <td>
-                    Dengah Hasil Pemeriksaan Kesehatan Jiwa pada saat ini : 
-                    @if ( isset($item[3003953]) && $item[3003953] == true) DITEMUKAN @else <s>DITEMUKAN</s>
-                    @endif / @if (isset($item[3003954]) && $item[3003954] == true) TIDAK DITEMUKAN @else <s>TIDAK DITEMUKAN</s>
-                    @endif TANDA DAN GEJALA GANGGUAN JIWA BERMAKNA YANG DAPAT MENGGANGGU AKTIVITAS KEHIDUPAN SEHARI-HARI.
+                    Demikian Surat Keterangan Pemeriksaan Kesehatan Jiwa ini dibuat dengan sebenarnya untuk keperluan: {{ $item[3003955] ?? '' }}.
                 </td>
             </tr>
             <tr>
                 <td>
-                    Demikian Surat Keterangan Pemeriksaan Kesehatan Jiwa ini dibuat dengan sebenarnya untuk keperluan : {{ $item[3003955] ? $item[3003955] : '' }}</td>
-            </tr>
-            <tr>
-                <td>dan tidak dapat digunakan untuk kepentingan hukum lainnya.</td>
+                    Dan tidak dapat digunakan untuk kepentingan hukum lainnya.
+                </td>
             </tr>
         </table>
 
@@ -230,16 +242,22 @@
             </tr>
             
             {{-- jika ada nip tampilkan nip jika tidak tampilkan siip --}}
+            @if (isset($peg->nippns) && $peg->nippns)
             <tr>
                 <td style="text-align: center">
-                    NIP/SIP :  
-                    @if (isset($peg->nippns))
-                        {{ $peg->nippns }} {{ (isset($sip->nosip)) ? ' / '.$sip->nosip : '' }}
-                    @else
-                        {{ (isset($sip->nosip)) ? $sip->nosip : '' }}
-                    @endif
+                    NIP: {{ $peg->nippns }}
                 </td>
             </tr>
+            @endif
+
+            @if (isset($sip->nosip) && $sip->nosip)
+            <tr>
+                <td style="text-align: center">
+                    SIP: {{ $sip->nosip }}
+                </td>
+            </tr>
+        @endif
+
         </table>
 
     </section>

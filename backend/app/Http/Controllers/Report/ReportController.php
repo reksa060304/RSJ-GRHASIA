@@ -2447,6 +2447,8 @@ class ReportController extends ApiController{
     {   
         $norec = $request['emr'];
         $kdProfile = (int) $request['kdprofile'];
+        $kodeAwalSurat = $this->settingDataFixed('KodeAwalSurat', $kdProfile);
+        $kodeAkhirSurat = $this->settingDataFixed('KodeAkhirSurat', $kdProfile);
         $data = DB::select(DB::raw("
         SELECT
             epd.emrdfk,
@@ -2571,6 +2573,8 @@ class ReportController extends ApiController{
             array(
                 'res' => $res,
                 'pageWidth' => $pageWidth,
+                'kodeawalsurat' => $kodeAwalSurat,
+                'kodeakhirsurat' => $kodeAkhirSurat,
                 'data' => $data,
                 'item'=> $item,
                 'peg'=> $peg,
@@ -17861,6 +17865,8 @@ from kegiatananggaran_m km
         $noemr = $request['noemr'];
         $kdProfile = (int) $request['kdprofile'];
         $emrfk = $request['emrfk'];
+        $kodeAwalSurat = $this->settingDataFixed('KodeAwalSurat', $kdProfile);
+        $kodeAkhirSurat = $this->settingDataFixed('KodeAkhirSurat', $kdProfile);
         $data = DB::select(DB::raw("
             SELECT
                 epd.emrdfk,
@@ -17979,6 +17985,8 @@ from kegiatananggaran_m km
             'report.EMR.suratketerangankesehatanjiwa-dom',
             array(
                 'pageWidth' => $pageWidth,
+                'kodeawalsurat' => $kodeAwalSurat,
+                'kodeakhirsurat' => $kodeAkhirSurat,
                 'data' => $data,
                 'profile' => $profile,
                 'item' => $item,
@@ -24790,6 +24798,8 @@ public function suratBuktiPengembalian(Request $request)
         $norec = $request['emr'];
         $noemr = $request['noemr'];
         $kdProfile = (int) $request['kdprofile'];
+        $kodeAwalSurat = $this->settingDataFixed('KodeAwalSurat', $kdProfile);
+        $kodeAkhirSurat = $this->settingDataFixed('KodeAkhirSurat', $kdProfile);
         $emrfk = $request['emfk'];
         $data = DB::select(DB::raw("
             SELECT
@@ -24914,6 +24924,8 @@ public function suratBuktiPengembalian(Request $request)
             array(
                 'res' => $res,
                 'pageWidth' => $pageWidth,
+                'kodeawalsurat' => $kodeAwalSurat,
+                'kodeakhirsurat' => $kodeAkhirSurat,
                 'data' => $data,
                 'profile' => $profile,
                 'item'=> $item,

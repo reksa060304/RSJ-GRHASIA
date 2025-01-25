@@ -111,7 +111,8 @@
                             </font>
                             <br>
                             <font style="font-size: 13pt; vertical-align: top;" color="#000000" face="Arial">
-                                <b>Nomor : </b>400.7.22.1 / {{$tb->nomor}}
+                                <!-- <b>Nomor : </b>400.7.22.1 / {{$tb->nomor}} -->
+                                <b>Nomor : </b>{{ $kodeawalsurat ?? '' }}{{$tb->nomor}}{{ $kodeakhirsurat ?? '' }}
                             </font>
                         </p>
                     </td>

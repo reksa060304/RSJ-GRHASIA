@@ -149,7 +149,7 @@
             <tr>
                 <th style=" font-size: 14px"> 
                     <p>Nomor :</p>
-                    <p>{{ $item[3003972] ? $item[3003972] : '' }}</p>
+                    <p>{{ $kodeawalsurat ?? '' }}{{ $item[3003972] ? $item[3003972] : '' }}{{ $kodeakhirsurat ?? '' }}</p>
                 </th>
             </tr>
             <tr>
@@ -239,17 +239,22 @@
                 <td align="center">{{ isset($item[3003976]) ? $item[3003976] : '' }}</td>
             </tr>
             
-            {{-- NIP/SIP --}}
-            <tr>
-                <td style="text-align: center;">
-                    NIP/SIP : 
-                    @if (isset($peg->nippns))
-                        {{ $peg->nippns }} {{ (isset($sip->nosip)) ? ' / '.$sip->nosip : '' }}
-                    @else
-                        {{ (isset($sip->nosip)) ? $sip->nosip : '' }}
-                    @endif
-                </td>
-            </tr>
+            {{-- jika ada nip tampilkan nip jika tidak tampilkan siip --}}
+            @if (isset($peg->nippns) && $peg->nippns)
+                <tr>
+                    <td style="text-align: center">
+                        NIP: {{ $peg->nippns }}
+                    </td>
+                </tr>
+                @endif
+
+                @if (isset($sip->nosip) && $sip->nosip)
+                <tr>
+                    <td style="text-align: center">
+                        SIP: {{ $sip->nosip }}
+                    </td>
+                </tr>
+            @endif
         </table>
     </section>
 
