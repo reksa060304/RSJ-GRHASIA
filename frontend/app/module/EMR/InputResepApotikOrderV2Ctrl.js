@@ -1236,8 +1236,9 @@ define(['initialize', 'Configuration'], function (initialize, config) {
                 //$state.go("TransaksiPelayananApotik")
                 window.history.back();
             }
-
-        $scope.save = function () {
+        
+            //simpan order resep
+            $scope.save = function () {
                 if ($scope.dataGridRiwayat != undefined && $scope.dataGridRiwayat._data.length > 0 && $scope.norecOrder == '' && $scope.item.ruangan.id == 94) {
                     var confirm = $mdDialog.confirm()
                         .title('Peringatan')
@@ -1249,10 +1250,28 @@ define(['initialize', 'Configuration'], function (initialize, config) {
                         $scope.simpan();
                     })
                 } else {
-                    $scope.simpan();
+                    medifirstService.get("farmasi/get-penjagaan-order-sudah-verif?noorder=" + $scope.dataSelectedRiwayat.noorder, true)
+                        .then(function (response) {
+                            const orderData = response.data[0].data[0];
+                            //cek status verif
+                            if (orderData.statusorder === 5) {
+                                messageContainer.error('Tidak bisa di edit, sudah di verifikasi');
+                                return; 
+                            }
+                            //cek sedang dalam pengerjaan atau tidak
+                            if (orderData.petugasverif) {
+                                const petugasVerif = orderData.petugasverif;
+                                toastr.warning("Resep tidak dapat disimpan karena sedang dikerjakan oleh petugas: " + petugasVerif +
+                                    ". Jika ada perubahan, silakan hubungi Farmasi."
+                                );
+                            } else {
+                            // proses simpan
+                                $scope.simpan();
+                            }
+                        })                    
                 }
-
             }
+        
             function sendNotification(e) {
                 var body = {
                     norec: e.noresep.norec,
@@ -1759,7 +1778,8 @@ define(['initialize', 'Configuration'], function (initialize, config) {
                     }
                     if (dat.data[0].data[0].petugasverif != null) {
                         let petugasVerif = dat.data[0].data[0].petugasverif;
-                        toastr.warning("Sedang Dikerjakan Petugas: " + petugasVerif);
+                        toastr.warning("Resep tidak dapat diedit karena sedang dikerjakan oleh petugas: " + petugasVerif +
+                                    ". Jika ada perubahan, silakan hubungi Farmasi.");
                     } 
                     else if (dat.data[0].data[0].statusorder == 0 || dat.data[0].data[0].statusorder == null) {
                         medifirstService.get("farmasi/get-detail-order?noorder=" + $scope.dataSelectedRiwayat.noorder, true).then(function (dat) {
