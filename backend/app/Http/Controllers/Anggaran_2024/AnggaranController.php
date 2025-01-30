@@ -3719,11 +3719,70 @@ class AnggaranController extends ApiController {
                 $SP->pph = $jumlahpph + $request['pph'][$i]['pph'];
                 $SP->save();
             }
+
+            for($x = 0; $x < count($request['ppn']); $x++){
+                $cek = PemungutanPajak::where('norec', '=', $request['ppn'][$x]['norecpp'])->where('kdprofile', '=', 30)->where('statusenabled', '=', true)->first();
+
+                if(empty($cek)){
+                    $MA = new PemungutanPajak();
+                    $norecKS = $MA->generateNewId();
+                    $MA->norec = $norecKS;
+                    $MA->kdprofile = $idProfile;
+                    $MA->statusenabled = true;
+                    
+                    // nomor direset setiap ada pergantian tahun anggaran
+                    $nopemungutan = DB::select(DB::raw("
+                        SELECT 
+                            COALESCE(MAX(CAST(SPLIT_PART(pp.nopajak, '/', 1) as integer)), 0) as max
+                        FROM pemungutanpajak_t pp 
+                        JOIN strukrealisasi_t sr ON sr.norec = pp.objectspjfk AND sr.statusenabled = TRUE AND sr.kdprofile = ".$idProfile."
+                        JOIN realisasidetail_t rd ON rd.strukrealisasifk = sr.norec AND rd.statusenabled = TRUE AND rd.kdprofile = ".$idProfile."
+                        JOIN keteranganbelanja_t kb ON kb.norec = rd.keteranganbelanjafk AND kb.statusenabled = TRUE AND kb.kdprofile = ".$idProfile."
+                        JOIN transaksianggaran2024_t ta ON ta.norec = kb.objecttransaksifk AND ta.statusenabled = TRUE AND ta.kdprofile = ".$idProfile."
+                        WHERE 
+                            pp.kdprofile = ".$idProfile."
+                            AND ta.tahun = '".$setting[0]->tahunanggaran."'
+                    "));
+                    
+                    if(count($nopemungutan) > 0){
+                        $nomorPemungutan = $nopemungutan[0]->max + 1;
+                    }else{
+                        $nomorPemungutan = 0 + 1;
+                    }
+
+                    // jika jumlah digit lebih dari 4
+                    if(strlen((string)$nomorPemungutan) > 4){
+                        $noas = $nomorPemungutan;
+                    }else{
+                        $noas = str_pad((int)$nomorPemungutan, 4, "0", STR_PAD_LEFT);
+                    }
+
+                    // $noas = $this->generateCode(new PemungutanPajak, 'nopajak', 3, '', $idProfile);
+                    $noa = $this->generateCode(new PemungutanPajak, 'nopajak', 30, '/PJK/1.02.2.22.0.00.01.', $idProfile);
+                    $MA->nopajak = $noas.$noa.'/'.$month.'/'.$year;
+                } else{
+                    $MA = PemungutanPajak::where('norec', '=', $request['ppn'][$x]['norecpp'])->first();
+                }
+                
+                
+                $MA->uraianpajak = $request['uraianpajak'];
+                $MA->objectspjfk = $norecspj;
+                $MA->objectjenispphfk = '1';
+                $MA->ppn = $request['ppn'][$x]['ppn'];
+                $MA->tglppn = $request['ppn'][$x]['tglppn'];
+                $MA->idbillppn = $request['ppn'][$x]['idbillppn'];
+                $MA->ntpnppn = $request['ppn'][$x]['ntpnppn'];
+                $MA->save();
+
+                $SP = StrukRealisasi::where('norec', '=', $request['norec'])->first();
+                $SP->ppn = $jumlahppn + $request['ppn'][$x]['ppn'];
+                $SP->save();
+            }
             
            $transStatus = 'true';
-       } catch (\Exception $e) {
+        } catch (\Exception $e) {
             $transStatus = 'false';
-       }
+        }
 
         if ($transStatus == 'true') {
             $transMessage = "Simpan";
@@ -3747,7 +3806,7 @@ class AnggaranController extends ApiController {
         return $this->setStatusCode($result['status'])->respond($result, $transMessage);
     }
     
-    public function getPajakPPH(Request $request)
+    public function getPajakPPHPPN(Request $request)
     {
 
         $kdProfile = $this->getDataKdProfile($request);
@@ -3763,20 +3822,18 @@ class AnggaranController extends ApiController {
                 string_agg ( DISTINCT rd.uraian, ',' ) uraian,
                 sr.tglverif tglrealisasi,
                 jp.jenispajak AS kode,
-                pp.pph AS jumlah 
+                CASE WHEN pp.pph IS NOT NULL THEN pp.pph ELSE pp.ppn END AS jumlah 
             FROM strukrealisasi_t sr
             INNER JOIN realisasidetail_t rd ON rd.strukrealisasifk = sr.norec AND rd.statusenabled = TRUE AND rd.kdprofile = ".$idProfile."
-            LEFT JOIN pemungutanpajak_t pp ON pp.objectspjfk = sr.norec AND pp.statusenabled = TRUE AND pp.kdprofile = ".$idProfile."
+            JOIN pemungutanpajak_t pp ON pp.objectspjfk = sr.norec AND pp.statusenabled = TRUE AND pp.kdprofile = ".$idProfile."
             LEFT JOIN jenispajak_m jp ON jp.ID = pp.objectjenispphfk AND jp.statusenabled = TRUE AND jp.kdprofile = ".$idProfile."
             WHERE
                 sr.norec = '".$norec."'
                 AND sr.kdprofile = ".$idProfile." 
-                AND jp.namaexternal ILIKE'%pph%' 
+                --AND jp.namaexternal ILIKE'%pph%' 
             GROUP BY
-                pp.objectbkufk,
+                pp.norec,
                 jp.jenispajak,
-                pp.nopajak,
-                pp.uraianpajak,
                 sr.norealisasi,
                 sr.tglverif,
                 pp.pph
@@ -3811,7 +3868,10 @@ class AnggaranController extends ApiController {
                 jp.id idjenispajak,
                 jp.jenispajak,
                 ap.id idasalproduk,
-                ap.asalproduk
+                ap.asalproduk,
+                jp.namaexternal as koderek,
+                CASE WHEN pemp.tglpph IS NOT NULL THEN pemp.tglpph ELSE pemp.tglppn END AS tglpajak,
+                CASE WHEN pemp.pph IS NOT NULL THEN pemp.pph ELSE pemp.ppn END AS jumlahpajak
             FROM pemungutanpajak_t pemp 
             INNER JOIN strukrealisasi_t sr ON sr.norec = pemp.objectspjfk AND sr.statusenabled = TRUE
             INNER JOIN realisasidetail_t rd ON rd.strukrealisasifk = sr.norec AND rd.statusenabled = TRUE
@@ -3950,11 +4010,14 @@ class AnggaranController extends ApiController {
             SELECT
                 pemp.*,
                 jp.id idjenispajak,
+                jp.namaexternal,
                 jp.jenispajak,
                 ap.id idasalproduk,
                 ap.asalproduk,
                 bku.nobku,
-                bku.uraianbku
+                bku.uraianbku,
+                CASE WHEN pemp.pph IS NOT NULL THEN pemp.pph ELSE pemp.ppn END AS jumlahpajak,
+                CASE WHEN pemp.tglpph IS NOT NULL THEN pemp.tglpph ELSE pemp.tglppn END AS tglpajak 
             FROM pemungutanpajak_t pemp 
             INNER JOIN strukrealisasi_t sr ON sr.norec = pemp.objectspjfk AND sr.statusenabled = TRUE
             INNER JOIN realisasidetail_t rd ON rd.strukrealisasifk = sr.norec AND rd.statusenabled = TRUE
@@ -3978,6 +4041,8 @@ class AnggaranController extends ApiController {
                 )
             GROUP BY
                 pemp.norec, jp.id, ap.id, bku.norec
+            ORDER BY
+                CAST(split_part(pemp.nopajak, '/', 1) AS INTEGER) DESC
         "));
 
         return $this->respond($data);
@@ -4047,10 +4112,27 @@ class AnggaranController extends ApiController {
             }
 
             $PENP->uraianpajak = $request['uraian'];
-            $PENP->objectjenispphfk = 1;
+            // $PENP->objectjenispphfk = 1;
+
+            // simpan semua jenis pajak, karena dalam satu setoran bisa beberapa jenis
+            $jenispajak = '';
+            if(sizeof($request['rincian']) > 0){
+                foreach($request['rincian'] as $index => $item){
+                    
+                    // jika rincian lebih dari 1 kasih koma dijenis pajak
+                    if($index + 1 < sizeof($request['rincian'])){
+                        $jenispajak = $jenispajak . $item['jenispajak'] . ',';
+                    }else{
+                        $jenispajak = $jenispajak . $item['jenispajak'] . '';
+                    }
+
+                }
+            }
+
             $PENP->ppn = $request['totalsetoran'];
             $PENP->tglppn = $request['tglpenyetoran'];
             $PENP->idbillppn = $request['idbill'];
+            $PENP->jenispajak = $jenispajak;
             $PENP->save();
 
             // jika ada detail
@@ -4174,6 +4256,7 @@ class AnggaranController extends ApiController {
         $data = DB::select(DB::raw("
             SELECT 
                 penp.*,
+                penp.jenispajak as koderek,
                 jp.jenispajak
             FROM penyetoranpajak_t penp
             INNER JOIN penyetoranpajakdetail_t dpenp ON dpenp.objectpenyetoranpajakfk = penp.norec AND dpenp.statusenabled = TRUE
@@ -4292,4 +4375,44 @@ class AnggaranController extends ApiController {
         return $this->respond($data);
     }
 
+    public function getPajakUdahSaveV2(Request $request)
+    {
+        $kdProfile = $this->getDataKdProfile($request);
+        $idProfile = (int) $kdProfile;
+        $norec = $request['norec'];
+
+        $pph = DB::select(DB::raw("
+            select 
+                pp.uraianpajak, pp.nopajak nopajakpph, pp.uraianpajak, sr.norealisasi,
+                jp.jenispajak jenispph, pp.pph, jp.id objectjenispphfk, pp.tglpph, pp.idbillpph, pp.ntpnpph, pp.norec norecpp
+            from strukrealisasi_t sr 
+            inner join pemungutanpajak_t pp on pp.objectspjfk = sr.norec and pp.statusenabled = true and pp.kdprofile = ".$idProfile." 
+            left join jenispajak_m jp on jp.id = pp.objectjenispphfk and jp.statusenabled = true and jp.kdprofile = ".$idProfile."
+            where
+                sr.statusenabled = TRUE 
+                AND jp.jenispajak ILIKE '%pph%'
+                AND sr.norec = '$norec'
+        "));
+
+        $ppn = DB::select(DB::raw("
+            select 
+                pp.uraianpajak, pp.nopajak nopajakppn, pp.uraianpajak, sr.norealisasi, 
+                jp.jenispajak as jenisppn, pp.ppn, jp.id objectjenispphfk, pp.tglppn, pp.idbillppn, pp.ntpnppn, pp.norec norecpp
+            from strukrealisasi_t sr 
+            inner join pemungutanpajak_t pp on pp.objectspjfk = sr.norec and pp.statusenabled = true and pp.kdprofile = ".$idProfile."
+            left join jenispajak_m jp on jp.id = pp.objectjenispphfk and jp.statusenabled = true and jp.kdprofile = ".$idProfile."
+            where 
+                sr.statusenabled = TRUE
+                AND jp.jenispajak ILIKE '%PPN%'
+                AND sr.norec = '$norec'
+        "));
+
+        $result = array(
+            'pph' => $pph,
+            'ppn' => $ppn,
+            'message' => '@epic',
+        );
+
+        return $this->respond($result);
+    }
 }

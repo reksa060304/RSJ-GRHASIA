@@ -104,9 +104,14 @@ define(['initialize'], function (initialize) {
                 $scope.hidests =true
                 $scope.hidepajak =true
                 $scope.hidepengembalianpanjar = true
+                $scope.hidepemungutanpajak = true
+                $scope.hidePenyetoranPajak = true
                 medifirstService.get("perencanaan/get-jenis-bukti-bku").then(function (e) {
                     $scope.listJenisBukti = e.data.data
                 });
+
+                $scope.selectedData2 = []
+
                 $scope.popupTambahBKU.center().open()
             }
 
@@ -1914,7 +1919,7 @@ define(['initialize'], function (initialize) {
 					},
                     {
                         
-                        "field": "tglpph",
+                        "field": "tglpajak",
                         "title": "Tanggal",
                     },
                     {
@@ -1940,9 +1945,9 @@ define(['initialize'], function (initialize) {
                     },
                     {
                         
-                        "field": "pph",
+                        "field": "jumlahpajak",
                         "title": "Jumlah",
-                        "template": "<span class='style-right'>{{formatRupiah('#: pph #', 'Rp.')}}</span>",
+                        "template": "<span class='style-right'>{{formatRupiah('#: jumlahpajak #', 'Rp.')}}</span>",
                     },
                 ]
             };
@@ -1979,7 +1984,7 @@ define(['initialize'], function (initialize) {
                     },
                     {
                         
-                        "field": "jenispajak",
+                        "field": "koderek",
                         "title": "Jenis Pajak",
                         "width": "100px",
                     },

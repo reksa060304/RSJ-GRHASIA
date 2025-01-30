@@ -4360,7 +4360,23 @@ class PerencanaanController extends ApiController {
         $penerimaan = 0;
         $pengeluaran = 0;
 
-        $saldoakhir = DB::select(DB::raw("SELECT saldo FROM bukukasumum_t WHERE statusenabled = true AND kdprofile = 30 AND objectasalprodukfk = '" . $request['asalproduk'] . "' ORDER BY nobku DESC LIMIT 1"));
+        $setting = \DB::table('settinganggaran_t as st')
+            ->join('pegawai_m as pg','pg.id','=','st.objectkepalabludfk')
+            ->join('tahapanggaran_m as ta','ta.id','=','st.objecttahapaktivfk')
+            ->select('st.*','pg.namalengkap', 'ta.tahap', 'ta.id as idtahap', 'pg.id as idpegawai')
+            ->where('st.kdprofile', $idProfile)
+            ->where('st.statusenabled', true)
+            ->orderBy('st.tahunanggaran')
+            ->get();
+
+        $saldoakhir = DB::select(DB::raw("
+            SELECT saldo 
+            FROM bukukasumum_t 
+            WHERE statusenabled = true 
+            AND kdprofile = 30 
+            AND objectasalprodukfk = '" . $request['asalproduk'] . "'
+            AND EXTRACT(YEAR FROM tglbku) = '".$setting[0]->tahunanggaran."' 
+            ORDER BY nobku DESC LIMIT 1"));
         
         if(count($saldoakhir) == 0){
             $saldofix = 0;
@@ -4798,13 +4814,16 @@ class PerencanaanController extends ApiController {
                         $MA->uraianbku = $request['uraian'];
                         $MA->rekananfk = $request['rekananfk'];
                         $MA->objectasalprodukfk = $request['asalproduk'];
-                        $MA->objectmataanggaranfk = null;
+                        // $MA->objectmataanggaranfk = null;
 
                         for($i = 0; $i < count($request['bku']); $i++){
-                            
-                            $penerimaan += (float)$request['bku'][$i]['pph'];
+
+                            $penerimaan += (isset($request['bku'][$i]['pph'])) ? (float)$request['bku'][$i]['pph'] : (float)$request['bku'][$i]['ppn'];
                             $pengeluaran = 0;
-                            $saldofix += $request['bku'][$i]['pph'];
+                            $saldofix += (isset($request['bku'][$i]['pph'])) ? $request['bku'][$i]['pph'] : $request['bku'][$i]['ppn'];
+
+                            $MA->objectmataanggaranfk = $request['bku'][$i]['koderek'];
+                            
                         }
 
                         $MA->tgljam = date('Y-m-d H:i:s');
@@ -4843,6 +4862,8 @@ class PerencanaanController extends ApiController {
                             $pengeluaran += (float)$request['bku'][$i]['ppn'];
                             $penerimaan = 0;
                             $saldofix -= $request['bku'][$i]['ppn'];
+                            
+                            $MA->objectmataanggaranfk = $request['bku'][$i]['koderek'];
                         }
 
                         $MA->tgljam = date('Y-m-d H:i:s');

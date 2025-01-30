@@ -111,8 +111,9 @@ define(['initialize'], function (initialize) {
                     $scope.item.nomorbkupemungutanpajak = $scope.item.pemungutanPajak.nobku
                     $scope.item.uraianpemungutanpajak = $scope.item.pemungutanPajak.uraianpajak
                     $scope.item.uraianbkupemungutanpajak = $scope.item.pemungutanPajak.uraianbku
-                    $scope.item.tglpemungutanpajak = new Date($scope.item.pemungutanPajak.tglpph)
-                    $scope.item.totalpemungutanpajak = $scope.item.pemungutanPajak.pph
+                    $scope.item.tglpemungutanpajak = new Date($scope.item.pemungutanPajak.tglpajak)
+                    $scope.item.totalpemungutanpajak = $scope.item.pemungutanPajak.jumlahpajak
+                    $scope.item.jenispajak = $scope.item.pemungutanPajak.namaexternal
                 }
 
             });
@@ -138,12 +139,13 @@ define(['initialize'], function (initialize) {
                 // simpan rincian
                 let objRincian = {
                     nopajak: $scope.item.pemungutanPajak.nopajak,
-                    tglpph: $scope.item.pemungutanPajak.tglpph,
+                    tglpajak: $scope.item.pemungutanPajak.tglpajak,
                     uraianpajak: $scope.item.pemungutanPajak.uraianpajak,
-                    pph: $scope.item.pemungutanPajak.pph,
+                    jumlahpajak: $scope.item.pemungutanPajak.jumlahpajak,
                     nobku: $scope.item.pemungutanPajak.nobku,
                     objectpemungutanpajakfk: $scope.item.pemungutanPajak.norec,
                     setoran: $scope.item.totalsetorandetail,
+                    jenispajak: $scope.item.pemungutanPajak.namaexternal,
                 }
 
                 // update grid rincian
@@ -289,6 +291,12 @@ define(['initialize'], function (initialize) {
                 medifirstService.get("reservasionline/get-daftar-slotting?id=1").then(function (e) {
 
 				})
+
+                if(dataItem.objectbkufk !== null){
+                    toastr.error('Sudah dibkukan')
+                    return
+                }
+
                 // console.log(dataItem)
                 $scope.norecPenyetoran = dataItem.norec
 
@@ -339,7 +347,7 @@ define(['initialize'], function (initialize) {
                     },
                     {
                         
-                        "field": "tglpph",
+                        "field": "tglpajak",
                         "title": "Tanggal Pemungutan",
                     },
                     {
@@ -349,8 +357,8 @@ define(['initialize'], function (initialize) {
                     },
                     {
                         
-                        "field": "pph",
-                        "title": "Total PPH",
+                        "field": "jumlahpajak",
+                        "title": "Jumlah Pajak",
                     },
                     {
                         

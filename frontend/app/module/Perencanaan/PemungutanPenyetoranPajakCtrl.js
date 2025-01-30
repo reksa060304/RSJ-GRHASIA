@@ -168,7 +168,7 @@ define(['initialize'], function (initialize) {
 
             $scope.EntryPenyetoran = function(){
                 //$scope.item.itemJenisBukti = { id: 1, jenisbukti: "UP" }
-                medifirstService.get("perencanaan/get-pajak-udah-save?norec="+$scope.norecspj).then(function (e) {
+                medifirstService.get("pajak/get-pajak-udah-savev2?norec="+$scope.norecspj).then(function (e) {
                     if(e.data.data.length != 0){
                         $scope.item.tglPPh = moment(e.data.data[0].tglpph).format('YYYY-MM-DD');
                         $scope.item.tglPPn = moment(e.data.data[0].tglppn).format('YYYY-MM-DD');
@@ -200,7 +200,7 @@ define(['initialize'], function (initialize) {
 
             $scope.EntryPemungutan = function(){
                 //$scope.item.itemJenisBukti = { id: 1, jenisbukti: "UP" }
-                medifirstService.get("perencanaan/get-pajak-udah-save?norec="+$scope.norecspj).then(function (e) {
+                medifirstService.get("pajak/get-pajak-udah-savev2?norec="+$scope.norecspj).then(function (e) {
                     //console.log(e.data.data.length)
                     
                     if(e.data.pph.length != 0){
@@ -336,7 +336,7 @@ define(['initialize'], function (initialize) {
                     "uraianpajak": $scope.item.uraianPajak,
                     "nopajak": $scope.item.nopajak,
                     "pph": $scope.dataGridPPh.options.data,
-                    // "ppn": $scope.dataGridPPN.options.data,
+                    "ppn": $scope.dataGridPPN.options.data,
                     "tglpph": $scope.item.tglPPh,
                 }
                 console.log(objSave);
@@ -348,7 +348,7 @@ define(['initialize'], function (initialize) {
                     // });
 
                     // get pajak pph
-                    medifirstService.get("anggaran/get-pajak-pph?norec=" + e.data.result.objectspjfk).then(function (res_pph) {
+                    medifirstService.get("anggaran/get-pajak-pphppn?norec=" + e.data.result.objectspjfk).then(function (res_pph) {
                         $scope.dataGridPemungutan = res_pph.data.data
                     })
 
@@ -428,7 +428,7 @@ define(['initialize'], function (initialize) {
                 medifirstService.post('perencanaan/delete-pajak', objSave).then(function (e) {
                     $scope.item.nospjpemungutan = ''
                     $scope.item.nospjpenyetoran = ''
-                    medifirstService.get("anggaran/get-pajak-pph?norec=" + $scope.norecspj).then(function (e) {
+                    medifirstService.get("anggaran/get-pajak-pphppn?norec=" + $scope.norecspj).then(function (e) {
                         $scope.dataGridPemungutan = e.data.data
     
                         $scope.item.nospjpemungutan = e.data.data[0].nopajakpp
@@ -476,7 +476,7 @@ define(['initialize'], function (initialize) {
 
             $scope.klikPPN = function (dataSelectedPPN) {
                 if (dataSelectedPPN != undefined) {
-                    console.log(dataSelectedPPN)
+                    // console.log(dataSelectedPPN)
                     $scope.item.tglPPn = moment(dataSelectedPPN.tglppn).format('YYYY-MM-DD')
                     $scope.item.idbillppn = dataSelectedPPN.idbillppn
                     $scope.item.ntpnppn = dataSelectedPPN.ntpnppn
@@ -602,7 +602,7 @@ define(['initialize'], function (initialize) {
                         "nopajakpph": '',
                         "nopajakppn": '',
                     }
-                    console.log(objSavePPN);
+                    // console.log(objSavePPN);
     
                     $scope.dataGridPPN.options.data.push(objSavePPN)
     
@@ -988,7 +988,7 @@ define(['initialize'], function (initialize) {
                 //     $scope.item.jumlahPPnDinamis = 'Rp' + e.data.data[1].jumlah
                 // });
 
-                medifirstService.get("anggaran/get-pajak-pph?norec=" + e.norec).then(function (e) {
+                medifirstService.get("anggaran/get-pajak-pphppn?norec=" + e.norec).then(function (e) {
                     $scope.dataGridPemungutan = e.data.data
 
                     $scope.item.nospjpemungutan = e.data.data[0].nopajakpp

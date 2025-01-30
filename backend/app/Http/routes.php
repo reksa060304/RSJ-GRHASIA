@@ -1994,7 +1994,7 @@ Route::group(['middleware' => 'cors', 'prefix' => 'service'], function () {
             Route::get('anggaran/get-spj-to-pajakv2', 'Anggaran_2024\AnggaranController@getSPJToPajak');
             Route::post('anggaran/save-pajakv2', 'Anggaran_2024\AnggaranController@savePajakV2');
             Route::get('anggaran/get-pemungutanpajak-bkuv2', 'Anggaran_2024\AnggaranController@getPemungutanPajakBKUV2');
-            Route::get('anggaran/get-pajak-pph', 'Anggaran_2024\AnggaranController@getPajakPPH');
+            Route::get('anggaran/get-pajak-pphppn', 'Anggaran_2024\AnggaranController@getPajakPPHPPN');
             Route::get('anggaran/get-bku-pemungutanpajak', 'Anggaran_2024\AnggaranController@getBKUPemungutanPajak');
             // End Anggaran 2024
 
@@ -2005,6 +2005,7 @@ Route::group(['middleware' => 'cors', 'prefix' => 'service'], function () {
             Route::post('pajak/hapus-penyetoranpajakv2', 'Anggaran_2024\AnggaranController@hapusPenyetoranPajakV2');
             Route::get('pajak/get-penyetoranpajak-bkuv2', 'Anggaran_2024\AnggaranController@getPenyetoranPajakBKUV2');
             Route::get('pajak/get-bku-penyetoranpajak', 'Anggaran_2024\AnggaranController@getBKUPenyetoranPajak');
+            Route::get('pajak/get-pajak-udah-savev2', 'Anggaran_2024\AnggaranController@getPajakUdahSaveV2');
             // End penyetoran pajak v2
 
             // cetak laporan anggaran 2024
