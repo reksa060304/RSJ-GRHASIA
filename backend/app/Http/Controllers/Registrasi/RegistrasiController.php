@@ -13252,7 +13252,7 @@ GROUP BY y.KET
 
                                     WHERE apd.objectruanganfk IN (39,41,575) 
                                     AND to_char(pp.tglpelayanan, 'YYYY')='$tahun' 
-                                    and pp.kdprofile = 21
+                                    and pp.kdprofile = 30
                                     AND pp.strukresepfk is NULL) as x
                                     GROUP BY x.bulan, x.namaproduk,x.detailjenisproduk
 
