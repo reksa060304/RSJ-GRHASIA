@@ -668,19 +668,20 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
                         background: "#ffffff",
                     }];
                     
-                    var selectedSubKegiatan = $scope.item.kegiatansubsubspj ? $scope.item.kegiatansubsubspj.keterangansubsubkegiatan || "" : "";
-                    var kodesubsubkegiatan = $scope.item.kegiatansubsubspj.kodesubsubkegiatan || "";
+                    var selectedSubKegiatan = ($scope.item.kegiatansubsubspj !== undefined && $scope.item.kegiatansubsubspj !== null) ? $scope.item.kegiatansubsubspj.namakegiatan : "";
+                    var kodesubsubkegiatan = ($scope.item.kegiatansubsubspj !== undefined && $scope.item.kegiatansubsubspj !== null) ? $scope.item.kegiatansubsubspj.kodekegiatan : "";
 
-                    function extractNamaKegiatan(kegiatan) {
-                        var parts = kegiatan.split('-');
-                        if (parts.length > 1) {
-                            var nama = parts.slice(-1).join(' ').trim();
-                            return nama ? nama : "Sub Kegiatan tidak tersedia";
-                        }
-                        return "Sub Kegiatan tidak tersedia";
-                    }
+                    // function extractNamaKegiatan(kegiatan) {
+                    //     var parts = kegiatan.split('-');
+                    //     if (parts.length > 1) {
+                    //         var nama = parts.slice(-1).join(' ').trim();
+                    //         return nama ? nama : "Sub Kegiatan tidak tersedia";
+                    //     }
+                    //     return "Sub Kegiatan tidak tersedia";
+                    // }
                 
-                    var namaKegiatan = extractNamaKegiatan(selectedSubKegiatan);
+                    // var namaKegiatan = extractNamaKegiatan(selectedSubKegiatan);
+                    var namaKegiatan = selectedSubKegiatan
                 
                     var subKegiatanValue = "Rekening: " + kodesubsubkegiatan + " | Sub Kegiatan: " + namaKegiatan;
                 
