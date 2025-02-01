@@ -369,9 +369,9 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
                 
 
                 if($scope.item.terhadaprekap == undefined || tahap == terhadap){
-                    window.open(baseTransaksi + "report/get-cetak-rekap-total-anggaran?tahap="+tahap+"&tahun="+moment($scope.item.tahunrekap).format('YYYY')+"&tglcetak="+moment($scope.item.tglCetak6).format('YYYY-MM-DD HH:mm'), '_blank');
+                    window.open(baseTransaksi + "report/get-cetak-rekap-total-anggaranv2?tahap="+tahap+"&tahun="+moment($scope.item.tahunrekap).format('YYYY')+"&tglcetak="+moment($scope.item.tglCetak6).format('YYYY-MM-DD HH:mm'), '_blank');
                 } else if($scope.item.terhadaprekap != undefined || tahap != terhadap){
-                    window.open(baseTransaksi + "report/get-cetak-rekap-total-anggaran-sebelum-sesudah?tahap="+tahap+"&tahun="+moment($scope.item.tahunrekap).format('YYYY') +"&terhadap="+terhadap+"&tglcetak="+moment($scope.item.tglCetak6).format('YYYY-MM-DD HH:mm'), '_blank');
+                    window.open(baseTransaksi + "report/get-cetak-rekap-total-anggaran-sebelum-sesudahv2?tahap="+tahap+"&tahun="+moment($scope.item.tahunrekap).format('YYYY') +"&terhadap="+terhadap+"&tglcetak="+moment($scope.item.tglCetak6).format('YYYY-MM-DD HH:mm'), '_blank');
                 }
             }
 
