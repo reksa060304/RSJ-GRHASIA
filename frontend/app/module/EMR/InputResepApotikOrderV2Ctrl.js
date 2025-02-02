@@ -1237,40 +1237,78 @@ define(['initialize', 'Configuration'], function (initialize, config) {
                 window.history.back();
             }
         
-            //simpan order resep
+            // //simpan order resep
+            // $scope.save = function () {
+            //     if ($scope.dataGridRiwayat != undefined && $scope.dataGridRiwayat._data.length > 0 && $scope.norecOrder == '' && $scope.item.ruangan.id == 94) {
+            //         var confirm = $mdDialog.confirm()
+            //             .title('Peringatan')
+            //             .textContent('Order Resep sudah dilakukan, Apakah ingin order lagi ?')
+            //             .ariaLabel('Lucky day')
+            //             .cancel('Tidak')
+            //             .ok('OK')
+            //         $mdDialog.show(confirm).then(function () {
+            //             $scope.simpan();
+            //         })
+            //     } else {
+            //         medifirstService.get("farmasi/get-penjagaan-order-sudah-verif?noorder=" + $scope.dataSelectedRiwayat.noorder, true)
+            //             .then(function (response) {
+            //                 const orderData = response.data[0].data[0];
+            //                 //cek status verif
+            //                 if (orderData.statusorder === 5) {
+            //                     messageContainer.error('Tidak bisa di edit, sudah di verifikasi');
+            //                     return; 
+            //                 }
+            //                 //cek sedang dalam pengerjaan atau tidak
+            //                 if (orderData.petugasverif) {
+            //                     const petugasVerif = orderData.petugasverif;
+            //                     toastr.warning("Resep tidak dapat disimpan karena sedang dikerjakan oleh petugas: " + petugasVerif +
+            //                         ". Jika ada perubahan, silakan hubungi Farmasi."
+            //                     );
+            //                     return;
+            //                 } else {
+            //                 // proses simpan
+            //                     $scope.simpan();
+            //                 }
+            //             })                    
+            //     }
+            // }
+            
             $scope.save = function () {
-                if ($scope.dataGridRiwayat != undefined && $scope.dataGridRiwayat._data.length > 0 && $scope.norecOrder == '' && $scope.item.ruangan.id == 94) {
+                if ($scope.dataGridRiwayat !== undefined && $scope.dataGridRiwayat._data.length > 0 && $scope.norecOrder === '' && $scope.item.ruangan.id === 94) {
                     var confirm = $mdDialog.confirm()
                         .title('Peringatan')
                         .textContent('Order Resep sudah dilakukan, Apakah ingin order lagi ?')
                         .ariaLabel('Lucky day')
                         .cancel('Tidak')
-                        .ok('OK')
+                        .ok('OK');
+                    
                     $mdDialog.show(confirm).then(function () {
                         $scope.simpan();
-                    })
-                } else {
+                    });
+                } else if ($scope.dataSelectedRiwayat && $scope.dataSelectedRiwayat.noorder) {
                     medifirstService.get("farmasi/get-penjagaan-order-sudah-verif?noorder=" + $scope.dataSelectedRiwayat.noorder, true)
                         .then(function (response) {
                             const orderData = response.data[0].data[0];
-                            //cek status verif
+                            
                             if (orderData.statusorder === 5) {
                                 messageContainer.error('Tidak bisa di edit, sudah di verifikasi');
-                                return; 
+                                return;
                             }
-                            //cek sedang dalam pengerjaan atau tidak
+                            
                             if (orderData.petugasverif) {
                                 const petugasVerif = orderData.petugasverif;
                                 toastr.warning("Resep tidak dapat disimpan karena sedang dikerjakan oleh petugas: " + petugasVerif +
                                     ". Jika ada perubahan, silakan hubungi Farmasi."
                                 );
-                            } else {
-                            // proses simpan
-                                $scope.simpan();
+                                return;
                             }
-                        })                    
+                            
+                        });
+                } else {
+                    $scope.simpan();
                 }
             }
+            
         
             function sendNotification(e) {
                 var body = {
