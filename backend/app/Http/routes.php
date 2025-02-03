@@ -1944,6 +1944,7 @@ Route::group(['middleware' => 'cors', 'prefix' => 'service'], function () {
             Route::get('perencanaan/get-data-spm', 'Perencanaan\PerencanaanController@getDataSPM');
             Route::get('perencanaan/get-data-rba-belum', 'Perencanaan\PerencanaanController@getRBABelum');
             Route::get('perencanaan/get-password-rba', 'Perencanaan\PerencanaanController@getPassRBA');
+            Route::get('perencanaan/get-rekap-panjar-detail', 'Perencanaan\PerencanaanController@getRekapPanjarDetail');
 
             // Route Anggaran 2024
             Route::get('anggaran/get-pertama', 'Anggaran_2024\AnggaranController@getpertama');

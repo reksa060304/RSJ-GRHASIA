@@ -11408,7 +11408,7 @@ order by  split_part(kode, '.', 1)asc, split_part(kode, '.', 2)asc,  split_part(
                 ma.kodemataanggaran || ' - ' || MIN(ma.namamataanggaran) as textmataanggaran,
                 ap.asalproduk
             FROM panjar_t pj
-            JOIN kegiatananggaran_m ka ON ka.id = pj.objectsubsubkegiatanfk AND ka.statusenabled = TRUE 
+            JOIN kegiatananggaran2024_m ka ON ka.id = pj.objectsubsubkegiatanfk AND ka.statusenabled = TRUE 
             JOIN mataanggaran_m ma ON ma.id = pj.objectmataanggaranfk AND ka.statusenabled = TRUE 
             JOIN asalproduk_m ap ON ap.id = pj.objectasalprodukfk  AND ap.statusenabled = TRUE 
             LEFT JOIN pengembalianpanjar_t pengp ON pengp.objectpanjarfk = pj.norec AND pengp.statusenabled = TRUE 
@@ -11416,7 +11416,7 @@ order by  split_part(kode, '.', 1)asc, split_part(kode, '.', 2)asc,  split_part(
             WHERE 
                 pj.kdprofile = 30
                 AND pj.statusenabled = TRUE 
-                AND ka.tahun = '".$setting[0]->tahunanggaran."'
+                AND EXTRACT(YEAR FROM pj.tglpanjar) = '".$setting[0]->tahunanggaran."'
                 $kodekegiatan
                 $kodemataanggaran
                 $asalproduk
