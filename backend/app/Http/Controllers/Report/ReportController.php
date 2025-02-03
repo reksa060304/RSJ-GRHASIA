@@ -8473,7 +8473,7 @@ class ReportController extends ApiController{
                 from bukukasumum_t
                 where kdprofile = 30
                 and statusenabled = true
-                and objectjenisbuktifk<>4
+                and objectjenisbuktifk NOT IN (4,8,9)
                 $qbulanSaldo
                 $qtahun
                 order by tglbku asc limit 1
@@ -8485,7 +8485,7 @@ class ReportController extends ApiController{
             from bukukasumum_t bku
             where bku.kdprofile = 30
             and bku.statusenabled = true
-            and bku.objectjenisbuktifk<>4
+            and bku.objectjenisbuktifk NOT IN (4,8,9)
             $qbulan
             $qtahun"));
 
