@@ -258,7 +258,8 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
                     subkegiatan = $scope.item.kegiatanpermen.id
                 }
 
-                window.open(baseTransaksi + "report/get-cetak-konsolidasi-per-permen?tahap="+tahap+"&subkegiatan="+subkegiatan+"&tahun="+moment(tahun).format('YYYY'), '_blank');
+                // window.open(baseTransaksi + "report/get-cetak-konsolidasi-per-permen?tahap="+tahap+"&subkegiatan="+subkegiatan+"&tahun="+moment(tahun).format('YYYY'), '_blank');
+                window.open(baseTransaksi + "report/get-cetak-konsolidasi-per-permenv2?tahap="+tahap+"&subkegiatan="+subkegiatan+"&tahun="+moment(tahun).format('YYYY'), '_blank');
                 
             }
 

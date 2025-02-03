@@ -28815,7 +28815,7 @@ public function suratBuktiPengembalian(Request $request)
 
         $qtahunka  = '';
         if (isset($request['tahun']) && $request['tahun'] != "" && $request['tahun'] != "undefined") {
-            $qtahunka =  " and ta.tahun =  '" . $request['tahun']."'";
+            $qtahunka =  " and ta.tahun =  '". $request['tahun']."'";
         }
 
         $qsubkegiatan  = '';
