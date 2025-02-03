@@ -1450,12 +1450,12 @@ class AnggaranController extends ApiController {
 
         $subsubkegiatan = '';
         if(isset($request['subsubkegiatan']) && $request['subsubkegiatan'] != "undefined" && $request['subsubkegiatan'] != ''){
-            $pegawai = "and ta.objectkegiatanfk = ".$request['subsubkegiatan'];
+            $subsubkegiatan = "and ta.objectkegiatanfk = ".$request['subsubkegiatan'];
         }
 
         $mataanggaran = '';
         if(isset($request['mataanggaran']) && $request['mataanggaran'] != "undefined" && $request['mataanggaran'] != ''){
-            $pegawai = "and kb.objectmataanggaranfk = ".$request['mataanggaran'];
+            $mataanggaran = "and sr.objectmataanggaranfk = ".$request['mataanggaran'];
         }
 
         $data = DB::select(DB::raw("
