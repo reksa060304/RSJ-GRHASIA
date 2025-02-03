@@ -1453,6 +1453,11 @@ class AnggaranController extends ApiController {
             $pegawai = "and ta.objectkegiatanfk = ".$request['subsubkegiatan'];
         }
 
+        $mataanggaran = '';
+        if(isset($request['mataanggaran']) && $request['mataanggaran'] != "undefined" && $request['mataanggaran'] != ''){
+            $pegawai = "and kb.objectmataanggaranfk = ".$request['mataanggaran'];
+        }
+
         $data = DB::select(DB::raw("
 
             SELECT
@@ -1494,6 +1499,7 @@ class AnggaranController extends ApiController {
                 $pegawai
                 $status
                 $subsubkegiatan
+                $mataanggaran
             GROUP BY
                 sr.norec,
                 cbs.carabayar,
