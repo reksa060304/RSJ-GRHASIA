@@ -27747,436 +27747,81 @@ public function suratBuktiPengembalian(Request $request)
 
         $itahap = DB::select(DB::raw("select id, tahap from tahapanggaran_m where id = $tahap"));
 
-        $sebelum = DB::select(DB::raw("SELECT o.*, p.subtotal, p.subtotalsetelah, p.tahap
-        from
-        (
-            select kodemataanggaran, namamataanggaran from mataanggaran_m WHERE
-            case 
-                when kodemataanggaran ilike 'I%' then (char_length(kodemataanggaran) = 5 or char_length(kodemataanggaran) = 3)
-                when kodemataanggaran ilike 'II%' then (char_length(kodemataanggaran) = 4 or char_length(kodemataanggaran) = 2)
-                when kodemataanggaran ilike 'III%' then (char_length(kodemataanggaran) = 5 or char_length(kodemataanggaran) = 3)
-            end
-        ) as o
-        left join
-        (
-			select s.*, t.subtotal as subtotalsetelah
-			from(
-					select id, tahap,
-					case 
-						when kodemataanggaran = 'A' then 'I.A'
-						when kodemataanggaran = 'B' then 'I.B'
-						when kodemataanggaran = 'II' then 'II'
-						when kodemataanggaran = 'III' then 'III'
-					end as kodemataanggaran,
-					case 
-						when kodemataanggaran = 'A' then 'BIAYA PELAYANAN '
-						when kodemataanggaran = 'B' then 'BIAYA UMUM DAN ADMINISTRASI'
-						when kodemataanggaran = 'II' then 'BIAYA NON OPERASIONAL'
-						when kodemataanggaran = 'III' then 'BIAYA PENGELUARAN INVESTASI'
-					end as keterangan,
-					case 
-						when kodemataanggaran = 'A' then sum(subtotal)
-						when kodemataanggaran = 'B' then sum(subtotal)
-						when kodemataanggaran = 'II' then sum(subtotal)
-						when kodemataanggaran = 'III' then sum(subtotal)
-					end as subtotal
-					from(
-						select id, tahap,
-						case 
-							when kodemataanggaran ilike 'I.A.%' then 'A'
-							when kodemataanggaran ilike 'I.B.%' then 'B'
-							when kodemataanggaran ilike 'II.%' then 'II'
-							when kodemataanggaran ilike 'III.%' then 'III'
-						end as kodemataanggaran,
-						case 
-							when kodemataanggaran ilike 'I.A.%' then sum(subtotal)
-							when kodemataanggaran ilike 'I.B.%' then sum(subtotal)
-							when kodemataanggaran ilike 'II.%' then sum(subtotal)
-							when kodemataanggaran ilike 'III.%' then sum(subtotal)
-						end as subtotal
-						from(
-									select th.id, th.tahap, mat.kodemataanggaran, mat.namamataanggaran, kb.keteranganbelanja, sum(kb.subtotal) subtotal
-									from kegiatananggaran2024_m km
-                                    inner join transaksianggaran2024_t ta ON ta.objectkegiatanfk = km.id
-									inner join keteranganbelanja_t kb on kb.objecttransaksifk = ta.norec
-									inner join mataanggaran_m ma on ma.id = kb.objectmataanggaranfk
-									inner join mataanggaran_m mat on ma.kodemataanggaran ilike mat.kodemataanggaran || '%'
-									and 
-									case 
-										when mat.kodemataanggaran ilike 'I%' then char_length(mat.kodemataanggaran) = 5
-										when mat.kodemataanggaran ilike 'II%' then char_length(mat.kodemataanggaran) = 4
-										when mat.kodemataanggaran ilike 'III%' then char_length(mat.kodemataanggaran) = 5
-									end
-									inner join tahapanggaran_m th on th.id = ta.objecttahapfk 
-									where km.kdprofile = 30 and km.statusenabled = true
-																and ma.kdprofile = 30 and ma.statusenabled = true
-																and mat.kdprofile = 30 and mat.statusenabled = true
-																and kb.kdprofile = 30 and kb.statusenabled = true
-                                                                $qtahap
-									and ta.tahun = '$tahun'
-									and ma.id in(
-											select ma.id
-											from kegiatananggaran2024_m km
-                                            inner join transaksianggaran2024_t ta ON ta.objectkegiatanfk = km.id
-											inner join keteranganbelanja_t kb on kb.objecttransaksifk = ta.norec
-											inner join mataanggaran_m ma on ma.id = kb.objectmataanggaranfk
-											inner join mataanggaran_m mat on ma.kodemataanggaran ilike mat.kodemataanggaran || '%'
-											and 
-											case 
-												when mat.kodemataanggaran ilike 'I%' then char_length(mat.kodemataanggaran) = 5
-												when mat.kodemataanggaran ilike 'II%' then char_length(mat.kodemataanggaran) = 4
-												when mat.kodemataanggaran ilike 'III%' then char_length(mat.kodemataanggaran) = 5
-											end
-											inner join tahapanggaran_m th on th.id = ta.objecttahapfk 
-											where km.kdprofile = 30 and km.statusenabled = true
-																		and ma.kdprofile = 30 and ma.statusenabled = true
-																		and mat.kdprofile = 30 and mat.statusenabled = true
-																		and kb.kdprofile = 30 and kb.statusenabled = true
-                                                                        $qterhadap
-											and ta.tahun = '$tahun'
-											group by ma.id
-									)
-									group by th.id, th.tahap, mat.kodemataanggaran, mat.namamataanggaran, kb.keteranganbelanja
-						) as x group by id, tahap, kodemataanggaran
-					) as y group by id, tahap, kodemataanggaran
+        $sebelum = DB::select(DB::raw("
+            SELECT
+                ma1.id as idmataanggaran1,
+                ma1.kodemataanggaran as kodemataanggaran1,
+                ma1.namamataanggaran as namamataanggaran1,
+                ma2.id as idmataanggaran2,
+                ma2.kodemataanggaran as kodemataanggaran2,
+                ma2.namamataanggaran as namamataanggaran2,
+                ma3.id as idmataanggaran3,
+                ma3.kodemataanggaran as kodemataanggaran3,
+                ma3.namamataanggaran as namamataanggaran3,
+                SUM(kb.subtotal) as total
+            FROM kegiatananggaran2024_m ka 
+            JOIN transaksianggaran2024_t ta ON ta.objectkegiatanfk = ka.id AND ta.statusenabled = TRUE
+            JOIN keteranganbelanja_t kb ON kb.objecttransaksifk = ta.norec AND kb.statusenabled = TRUE
+            JOIN mataanggaran_m ma ON ma.id = kb.objectmataanggaranfk AND ma.statusenabled = TRUE
+            JOIN mataanggaran_m ma3 ON ma3.id = ma.headfk AND ma3.statusenabled = TRUE
+            JOIN mataanggaran_m ma2 ON ma2.id = ma3.headfk AND ma2.statusenabled = TRUE
+            JOIN mataanggaran_m ma1 ON ma1.id = ma2.headfk AND ma1.statusenabled = TRUE
+            JOIN asalproduk_m ap ON ap.id = kb.objectasalprodukfk AND ap.statusenabled = TRUE
+            WHERE
+                ka.statusenabled = TRUE
+                AND ta.tahun = '".$tahun."'
+                $qterhadap
+            GROUP BY
+                ma1.id, ma2.id, ma3.id
+            ORDER BY
+                ma1.kodemataanggaran ASC,
+                ma2.kodemataanggaran ASC,
+                ma3.kodemataanggaran ASC
+        "));
 
-					union all
+        $sesudah = DB::select(DB::raw("
+            SELECT
+                ma1.id as idmataanggaran1,
+                ma1.kodemataanggaran as kodemataanggaran1,
+                ma1.namamataanggaran as namamataanggaran1,
+                ma2.id as idmataanggaran2,
+                ma2.kodemataanggaran as kodemataanggaran2,
+                ma2.namamataanggaran as namamataanggaran2,
+                ma3.id as idmataanggaran3,
+                ma3.kodemataanggaran as kodemataanggaran3,
+                ma3.namamataanggaran as namamataanggaran3,
+                SUM(kb.subtotal) as total
+            FROM kegiatananggaran2024_m ka 
+            JOIN transaksianggaran2024_t ta ON ta.objectkegiatanfk = ka.id AND ta.statusenabled = TRUE
+            JOIN keteranganbelanja_t kb ON kb.objecttransaksifk = ta.norec AND kb.statusenabled = TRUE
+            JOIN mataanggaran_m ma ON ma.id = kb.objectmataanggaranfk AND ma.statusenabled = TRUE
+            JOIN mataanggaran_m ma3 ON ma3.id = ma.headfk AND ma3.statusenabled = TRUE
+            JOIN mataanggaran_m ma2 ON ma2.id = ma3.headfk AND ma2.statusenabled = TRUE
+            JOIN mataanggaran_m ma1 ON ma1.id = ma2.headfk AND ma1.statusenabled = TRUE
+            JOIN asalproduk_m ap ON ap.id = kb.objectasalprodukfk AND ap.statusenabled = TRUE
+            WHERE
+                ka.statusenabled = TRUE
+                AND ta.tahun = '".$tahun."'
+                $qtahap
+            GROUP BY
+                ma1.id, ma2.id, ma3.id
+            ORDER BY
+                ma1.kodemataanggaran ASC,
+                ma2.kodemataanggaran ASC,
+                ma3.kodemataanggaran ASC
+        "));
 
-					select th.id, th.tahap, mat.kodemataanggaran, mat.namamataanggaran keterangan, sum(kb.subtotal) subtotal
-					from kegiatananggaran2024_m km
-                    inner join transaksianggaran2024_t ta ON ta.objectkegiatanfk = km.id
-					inner join keteranganbelanja_t kb on kb.objecttransaksifk = ta.norec
-					inner join mataanggaran_m ma on ma.id = kb.objectmataanggaranfk
-					inner join mataanggaran_m mat on ma.kodemataanggaran ilike mat.kodemataanggaran || '%'
-					and 
-					case 
-						when mat.kodemataanggaran ilike 'I%' then char_length(mat.kodemataanggaran) = 5
-						when mat.kodemataanggaran ilike 'II%' then char_length(mat.kodemataanggaran) = 4
-						when mat.kodemataanggaran ilike 'III%' then char_length(mat.kodemataanggaran) = 5
-					end
-					inner join tahapanggaran_m th on th.id = ta.objecttahapfk 
-					where km.kdprofile = 30 and km.statusenabled = true
-					$qtahap
-					and ta.tahun = '$tahun'
-								and ma.kdprofile = 30 and ma.statusenabled = true
-								and mat.kdprofile = 30 and mat.statusenabled = true
-								and kb.kdprofile = 30 and kb.statusenabled = true
-					and ma.id in (
-							select ma.id
-							from kegiatananggaran2024_m km
-                            inner join transaksianggaran2024_t ta ON ta.objectkegiatanfk = km.id
-							inner join keteranganbelanja_t kb on kb.objecttransaksifk = ta.norec
-							inner join mataanggaran_m ma on ma.id = kb.objectmataanggaranfk
-							inner join mataanggaran_m mat on ma.kodemataanggaran ilike mat.kodemataanggaran || '%'
-							and 
-							case 
-								when mat.kodemataanggaran ilike 'I%' then char_length(mat.kodemataanggaran) = 5
-								when mat.kodemataanggaran ilike 'II%' then char_length(mat.kodemataanggaran) = 4
-								when mat.kodemataanggaran ilike 'III%' then char_length(mat.kodemataanggaran) = 5
-							end
-							inner join tahapanggaran_m th on th.id = ta.objecttahapfk 
-							where km.kdprofile = 30 and km.statusenabled = true
-							$qterhadap
-							and ta.tahun = '$tahun'
-							and ma.kdprofile = 30 and ma.statusenabled = true
-							and mat.kdprofile = 30 and mat.statusenabled = true
-							and kb.kdprofile = 30 and kb.statusenabled = true
-							group by ma.id
-					)
-					group by th.id, th.tahap, mat.kodemataanggaran, mat.namamataanggaran
-			) as s inner join(
-					select id, tahap,
-					case 
-						when kodemataanggaran = 'A' then 'I.A'
-						when kodemataanggaran = 'B' then 'I.B'
-						when kodemataanggaran = 'II' then 'II'
-						when kodemataanggaran = 'III' then 'III'
-					end as kodemataanggaran,
-					case 
-						when kodemataanggaran = 'A' then 'BIAYA PELAYANAN '
-						when kodemataanggaran = 'B' then 'BIAYA UMUM DAN ADMINISTRASI'
-						when kodemataanggaran = 'II' then 'BIAYA NON OPERASIONAL'
-						when kodemataanggaran = 'III' then 'BIAYA PENGELUARAN INVESTASI'
-					end as keterangan,
-					case 
-						when kodemataanggaran = 'A' then sum(subtotal)
-						when kodemataanggaran = 'B' then sum(subtotal)
-						when kodemataanggaran = 'II' then sum(subtotal)
-						when kodemataanggaran = 'III' then sum(subtotal)
-					end as subtotal
-					from(
-						select id, tahap,
-						case 
-							when kodemataanggaran ilike 'I.A.%' then 'A'
-							when kodemataanggaran ilike 'I.B.%' then 'B'
-							when kodemataanggaran ilike 'II.%' then 'II'
-							when kodemataanggaran ilike 'III.%' then 'III'
-						end as kodemataanggaran,
-						case 
-							when kodemataanggaran ilike 'I.A.%' then sum(subtotal)
-							when kodemataanggaran ilike 'I.B.%' then sum(subtotal)
-							when kodemataanggaran ilike 'II.%' then sum(subtotal)
-							when kodemataanggaran ilike 'III.%' then sum(subtotal)
-						end as subtotal
-						from(
-									select th.id, th.tahap, mat.kodemataanggaran, mat.namamataanggaran, kb.keteranganbelanja, sum(kb.subtotal) subtotal
-									from kegiatananggaran2024_m km
-                                    inner join transaksianggaran2024_t ta ON ta.objectkegiatanfk = km.id
-									inner join keteranganbelanja_t kb on kb.objecttransaksifk = ta.norec
-									inner join mataanggaran_m ma on ma.id = kb.objectmataanggaranfk
-									inner join mataanggaran_m mat on ma.kodemataanggaran ilike mat.kodemataanggaran || '%'
-									and 
-									case 
-										when mat.kodemataanggaran ilike 'I%' then char_length(mat.kodemataanggaran) = 5
-										when mat.kodemataanggaran ilike 'II%' then char_length(mat.kodemataanggaran) = 4
-										when mat.kodemataanggaran ilike 'III%' then char_length(mat.kodemataanggaran) = 5
-									end
-									inner join tahapanggaran_m th on th.id = ta.objecttahapfk 
-									where km.kdprofile = 30 and km.statusenabled = true
-																and ma.kdprofile = 30 and ma.statusenabled = true
-																and mat.kdprofile = 30 and mat.statusenabled = true
-																and kb.kdprofile = 30 and kb.statusenabled = true
-                                                                $qterhadap
-									and ta.tahun = '$tahun'
-									and ma.id in(
-											select ma.id
-											from kegiatananggaran2024_m km
-                                            inner join transaksianggaran2024_t ta ON ta.objectkegiatanfk = km.id
-											inner join keteranganbelanja_t kb on kb.objecttransaksifk = ta.norec
-											inner join mataanggaran_m ma on ma.id = kb.objectmataanggaranfk
-											inner join mataanggaran_m mat on ma.kodemataanggaran ilike mat.kodemataanggaran || '%'
-											and 
-											case 
-												when mat.kodemataanggaran ilike 'I%' then char_length(mat.kodemataanggaran) = 5
-												when mat.kodemataanggaran ilike 'II%' then char_length(mat.kodemataanggaran) = 4
-												when mat.kodemataanggaran ilike 'III%' then char_length(mat.kodemataanggaran) = 5
-											end
-											inner join tahapanggaran_m th on th.id = ta.objecttahapfk 
-											where km.kdprofile = 30 and km.statusenabled = true
-																		and ma.kdprofile = 30 and ma.statusenabled = true
-																		and mat.kdprofile = 30 and mat.statusenabled = true
-																		and kb.kdprofile = 30 and kb.statusenabled = true
-                                                                        $qtahap
-											and ta.tahun = '$tahun'
-											group by ma.id
-									)
-									group by th.id, th.tahap, mat.kodemataanggaran, mat.namamataanggaran, kb.keteranganbelanja
-						) as x group by id, tahap, kodemataanggaran
-					) as y group by id, tahap, kodemataanggaran
 
-					union all
-
-					select th.id, th.tahap, mat.kodemataanggaran, mat.namamataanggaran keterangan, sum(kb.subtotal) subtotal
-					from kegiatananggaran2024_m km
-                    inner join transaksianggaran2024_t ta ON ta.objectkegiatanfk = km.id
-					inner join keteranganbelanja_t kb on kb.objecttransaksifk = ta.norec
-					inner join mataanggaran_m ma on ma.id = kb.objectmataanggaranfk
-					inner join mataanggaran_m mat on ma.kodemataanggaran ilike mat.kodemataanggaran || '%'
-					and 
-					case 
-						when mat.kodemataanggaran ilike 'I%' then char_length(mat.kodemataanggaran) = 5
-						when mat.kodemataanggaran ilike 'II%' then char_length(mat.kodemataanggaran) = 4
-						when mat.kodemataanggaran ilike 'III%' then char_length(mat.kodemataanggaran) = 5
-					end
-					inner join tahapanggaran_m th on th.id = ta.objecttahapfk 
-					where km.kdprofile = 30 and km.statusenabled = true
-					$qterhadap
-					and ta.tahun = '$tahun'
-								and ma.kdprofile = 30 and ma.statusenabled = true
-								and mat.kdprofile = 30 and mat.statusenabled = true
-								and kb.kdprofile = 30 and kb.statusenabled = true
-					and ma.id in (
-							select ma.id
-							from kegiatananggaran2024_m km
-                            inner join transaksianggaran2024_t ta ON ta.objectkegiatanfk = km.id
-							inner join keteranganbelanja_t kb on kb.objecttransaksifk = ta.norec
-							inner join mataanggaran_m ma on ma.id = kb.objectmataanggaranfk
-							inner join mataanggaran_m mat on ma.kodemataanggaran ilike mat.kodemataanggaran || '%'
-							and 
-							case 
-								when mat.kodemataanggaran ilike 'I%' then char_length(mat.kodemataanggaran) = 5
-								when mat.kodemataanggaran ilike 'II%' then char_length(mat.kodemataanggaran) = 4
-								when mat.kodemataanggaran ilike 'III%' then char_length(mat.kodemataanggaran) = 5
-							end
-							inner join tahapanggaran_m th on th.id = ta.objecttahapfk 
-							where km.kdprofile = 30 and km.statusenabled = true
-                            $qtahap
-							and ta.tahun = '$tahun'
-							and ma.kdprofile = 30 and ma.statusenabled = true
-							and mat.kdprofile = 30 and mat.statusenabled = true
-							and kb.kdprofile = 30 and kb.statusenabled = true
-							group by ma.id
-					)
-					group by th.id, th.tahap, mat.kodemataanggaran, mat.namamataanggaran
-			) as t on s.kodemataanggaran = t.kodemataanggaran
-        ) as p on o.kodemataanggaran = p.kodemataanggaran 
-        group by o.kodemataanggaran, o.namamataanggaran, p.subtotal, p.subtotalsetelah, p.tahap
-        order by o.kodemataanggaran"));
+        foreach($sebelum as $key => $item){
+            $item->totalsesudah = 0;
+            foreach($sesudah as $key2 => $item2){
+                if($item->idmataanggaran3 == $item2->idmataanggaran3){
+                    $item->totalsesudah += $item2->total;
+                }
+            }
+        }
 
         // dd($sebelum);
-
-        $jumlah = DB::select(DB::raw("select sum(subtotal) totalawalsebelum, sum(subtotalsetelah) totalawalsetelah from(
-            select s.*, t.subtotal subtotalsetelah 
-            from(
-            select id, tahap,
-            case 
-            when kodemataanggaran = 'A' then 'I.A'
-            when kodemataanggaran = 'B' then 'I.B'
-            when kodemataanggaran = 'II' then 'II'
-            when kodemataanggaran = 'III' then 'III'
-            end as kodemataanggaran,
-            case 
-            when kodemataanggaran = 'A' then 'BIAYA PELAYANAN '
-            when kodemataanggaran = 'B' then 'BIAYA UMUM DAN ADMINISTRASI'
-            when kodemataanggaran = 'II' then 'BIAYA NON OPERASIONAL'
-            when kodemataanggaran = 'III' then 'BIAYA PENGELUARAN INVESTASI'
-            end as keterangan,
-            case 
-            when kodemataanggaran = 'A' then sum(subtotal)
-            when kodemataanggaran = 'B' then sum(subtotal)
-            when kodemataanggaran = 'II' then sum(subtotal)
-            when kodemataanggaran = 'III' then sum(subtotal)
-            end as subtotal
-            from(
-            select id, tahap,
-            case 
-                when kodemataanggaran ilike 'I.A.%' then 'A'
-                when kodemataanggaran ilike 'I.B.%' then 'B'
-                when kodemataanggaran ilike 'II.%' then 'II'
-                when kodemataanggaran ilike 'III.%' then 'III'
-            end as kodemataanggaran,
-            case 
-                when kodemataanggaran ilike 'I.A.%' then sum(subtotal)
-                when kodemataanggaran ilike 'I.B.%' then sum(subtotal)
-                when kodemataanggaran ilike 'II.%' then sum(subtotal)
-                when kodemataanggaran ilike 'III.%' then sum(subtotal)
-            end as subtotal
-            from(
-            select th.id, th.tahap, mat.kodemataanggaran, mat.namamataanggaran, kb.keteranganbelanja, sum(kb.subtotal) subtotal
-            from kegiatananggaran2024_m km
-            inner join transaksianggaran2024_t ta ON ta.objectkegiatanfk = km.id
-            inner join keteranganbelanja_t kb on kb.objecttransaksifk = ta.norec
-            inner join mataanggaran_m ma on ma.id = kb.objectmataanggaranfk
-            inner join mataanggaran_m mat on ma.kodemataanggaran ilike mat.kodemataanggaran || '%'
-            and 
-            case 
-                when mat.kodemataanggaran ilike 'I%' then char_length(mat.kodemataanggaran) = 5
-                when mat.kodemataanggaran ilike 'II%' then char_length(mat.kodemataanggaran) = 4
-                when mat.kodemataanggaran ilike 'III%' then char_length(mat.kodemataanggaran) = 5
-            end
-            inner join tahapanggaran_m th on th.id = ta.objecttahapfk 
-            where km.kdprofile = 30 and km.statusenabled = true
-            and ma.kdprofile = 30 and ma.statusenabled = true
-            and mat.kdprofile = 30 and mat.statusenabled = true
-            and kb.kdprofile = 30 and kb.statusenabled = true
-            $qtahap
-                                                    and ta.tahun = '$tahun'
-                                                    and ma.id in(
-                                                            select ma.id
-                                                            from kegiatananggaran2024_m km
-                                                            inner join transaksianggaran2024_t ta ON ta.objectkegiatanfk = km.id
-                                                            inner join keteranganbelanja_t kb on kb.objecttransaksifk = ta.norec
-                                                            inner join mataanggaran_m ma on ma.id = kb.objectmataanggaranfk
-                                                            inner join mataanggaran_m mat on ma.kodemataanggaran ilike mat.kodemataanggaran || '%'
-                                                            and 
-                                                            case 
-                                                                    when mat.kodemataanggaran ilike 'I%' then char_length(mat.kodemataanggaran) = 5
-                                                                    when mat.kodemataanggaran ilike 'II%' then char_length(mat.kodemataanggaran) = 4
-                                                                    when mat.kodemataanggaran ilike 'III%' then char_length(mat.kodemataanggaran) = 5
-                                                            end
-                                                            inner join tahapanggaran_m th on th.id = ta.objecttahapfk 
-                                                            where km.kdprofile = 30 and km.statusenabled = true
-                                                            and ma.kdprofile = 30 and ma.statusenabled = true
-                                                            and mat.kdprofile = 30 and mat.statusenabled = true
-                                                            and kb.kdprofile = 30 and kb.statusenabled = true
-                                                            $qterhadap
-                                                            and ta.tahun = '$tahun'
-                                                            group by ma.id
-                                                    )
-            group by th.id, th.tahap, mat.kodemataanggaran, mat.namamataanggaran, kb.keteranganbelanja
-            ) as x group by id, tahap, kodemataanggaran
-            ) as y where y.kodemataanggaran not in('II', 'III') group by id, tahap, kodemataanggaran
-                        ) as s inner join(
-                                select id, tahap,
-            case 
-            when kodemataanggaran = 'A' then 'I.A'
-            when kodemataanggaran = 'B' then 'I.B'
-            when kodemataanggaran = 'II' then 'II'
-            when kodemataanggaran = 'III' then 'III'
-            end as kodemataanggaran,
-            case 
-            when kodemataanggaran = 'A' then 'BIAYA PELAYANAN '
-            when kodemataanggaran = 'B' then 'BIAYA UMUM DAN ADMINISTRASI'
-            when kodemataanggaran = 'II' then 'BIAYA NON OPERASIONAL'
-            when kodemataanggaran = 'III' then 'BIAYA PENGELUARAN INVESTASI'
-            end as keterangan,
-            case 
-            when kodemataanggaran = 'A' then sum(subtotal)
-            when kodemataanggaran = 'B' then sum(subtotal)
-            when kodemataanggaran = 'II' then sum(subtotal)
-            when kodemataanggaran = 'III' then sum(subtotal)
-            end as subtotal
-            from(
-            select id, tahap,
-            case 
-                when kodemataanggaran ilike 'I.A.%' then 'A'
-                when kodemataanggaran ilike 'I.B.%' then 'B'
-                when kodemataanggaran ilike 'II.%' then 'II'
-                when kodemataanggaran ilike 'III.%' then 'III'
-            end as kodemataanggaran,
-            case 
-                when kodemataanggaran ilike 'I.A.%' then sum(subtotal)
-                when kodemataanggaran ilike 'I.B.%' then sum(subtotal)
-                when kodemataanggaran ilike 'II.%' then sum(subtotal)
-                when kodemataanggaran ilike 'III.%' then sum(subtotal)
-            end as subtotal
-            from(
-            select th.id, th.tahap, mat.kodemataanggaran, mat.namamataanggaran, kb.keteranganbelanja, sum(kb.subtotal) subtotal
-            from kegiatananggaran2024_m km
-            inner join transaksianggaran2024_t ta ON ta.objectkegiatanfk = km.id
-            inner join keteranganbelanja_t kb on kb.objecttransaksifk = ta.norec
-            inner join mataanggaran_m ma on ma.id = kb.objectmataanggaranfk
-            inner join mataanggaran_m mat on ma.kodemataanggaran ilike mat.kodemataanggaran || '%'
-            and 
-            case 
-                when mat.kodemataanggaran ilike 'I%' then char_length(mat.kodemataanggaran) = 5
-                when mat.kodemataanggaran ilike 'II%' then char_length(mat.kodemataanggaran) = 4
-                when mat.kodemataanggaran ilike 'III%' then char_length(mat.kodemataanggaran) = 5
-            end
-            inner join tahapanggaran_m th on th.id = kb.objecttahapfk 
-            where km.kdprofile = 30 and km.statusenabled = true
-            and ma.kdprofile = 30 and ma.statusenabled = true
-            and mat.kdprofile = 30 and mat.statusenabled = true
-            and kb.kdprofile = 30 and kb.statusenabled = true
-            $qterhadap
-                                                    and ta.tahun = '$tahun'
-                                                    and ma.id in(
-                                                            select ma.id
-                                                            from kegiatananggaran2024_m km
-                                                            inner join transaksianggaran2024_t ta ON ta.objectkegiatanfk = km.id
-                                                            inner join keteranganbelanja_t kb on kb.objecttransaksifk = ta.norec
-                                                            inner join mataanggaran_m ma on ma.id = kb.objectmataanggaranfk
-                                                            inner join mataanggaran_m mat on ma.kodemataanggaran ilike mat.kodemataanggaran || '%'
-                                                            and 
-                                                            case 
-                                                                    when mat.kodemataanggaran ilike 'I%' then char_length(mat.kodemataanggaran) = 5
-                                                                    when mat.kodemataanggaran ilike 'II%' then char_length(mat.kodemataanggaran) = 4
-                                                                    when mat.kodemataanggaran ilike 'III%' then char_length(mat.kodemataanggaran) = 5
-                                                            end
-                                                            inner join tahapanggaran_m th on th.id = ta.objecttahapfk 
-                                                            where km.kdprofile = 30 and km.statusenabled = true
-                                                            and ma.kdprofile = 30 and ma.statusenabled = true
-                                                            and mat.kdprofile = 30 and mat.statusenabled = true
-                                                            and kb.kdprofile = 30 and kb.statusenabled = true
-                                                            $qtahap
-                                                            and ta.tahun = '$tahun'
-                                                            group by ma.id
-                                                    )
-            group by th.id, th.tahap, mat.kodemataanggaran, mat.namamataanggaran, kb.keteranganbelanja
-        ) as x group by id, tahap, kodemataanggaran
-        ) as y where y.kodemataanggaran not in('II', 'III') group by id, tahap, kodemataanggaran
-                    ) as t on s.kodemataanggaran = t.kodemataanggaran
-        )  as i"));
 
         $result = array(
             'data' => $sebelum,
@@ -28184,7 +27829,7 @@ public function suratBuktiPengembalian(Request $request)
         );
 
         $pageWidth = 1200;
-        return view('report.spj.cetakrekaptotalanggaransebelumsesudah',compact('sebelum','pageWidth', 'jumlah', 'itahap', 'tanggalcetak'));
+        return view('report.rba.cetakrekaptotalanggaransebelumsesudahv2',compact('sebelum','pageWidth', 'itahap', 'tanggalcetak', 'tahun'));
     }
 
     public function CetakAngkasJadwalV2(Request $request){
