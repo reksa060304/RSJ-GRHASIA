@@ -301,7 +301,8 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
                     tahun = $scope.item.tahunkas
                 }
 
-                window.open(baseTransaksi + "report/get-cetak-kas?tahap="+tahap+"&tahun="+moment(tahun).format('YYYY'), '_blank');
+                // window.open(baseTransaksi + "report/get-cetak-kas?tahap="+tahap+"&tahun="+moment(tahun).format('YYYY'), '_blank');
+                window.open(baseTransaksi + "report/get-cetak-angkasv2?tahap="+tahap+"&tahun="+moment(tahun).format('YYYY'), '_blank');
                 
             }
 
