@@ -25996,33 +25996,50 @@ public function suratBuktiPengembalian(Request $request)
         //         jp.id
         // "));
 
-        $pajak = DB::select(DB::raw("
-            SELECT 
-                jp.id, jp.namaexternal,
+        $pemungutanPajak = DB::select(DB::raw("
+            SELECT
+                jp.id as idjenispajak,
+                jp.namaexternal,
                 SUM(case when extract(year from bku.tglbku) = extract(year from timestamp '".$request['tglbku']."')
                     and bku.tglbku <= DATE_TRUNC('MONTH', timestamp '".$request['tglbku']."')
                 then bku.penerimaan else 0 end) as penerimaan_bulan_lalu,
                 SUM(case when extract(year from bku.tglbku) = extract(year from timestamp '".$request['tglbku']."')
                     and extract(month from bku.tglbku) = extract(month from timestamp '".$request['tglbku']."')
-                then bku.penerimaan else 0 end) as penerimaan_bulan_ini,
-                SUM(case when extract(year from bku.tglbku) = extract(year from timestamp '".$request['tglbku']."')
-                    and bku.tglbku <= DATE_TRUNC('MONTH', timestamp '".$request['tglbku']."')
-                then bku.pengeluaran else 0 end) as pengeluaran_bulan_lalu,
-                SUM(case when extract(year from bku.tglbku) = extract(year from timestamp '".$request['tglbku']."')
-                    and extract(month from bku.tglbku) = extract(month from timestamp '".$request['tglbku']."')
-                then bku.pengeluaran else 0 end) as pengeluaran_bulan_ini 
-            FROM pemungutanpajak_t pp 
-            JOIN bukukasumum_t bku ON bku.norec = pp.objectbkufk AND bku.statusenabled = TRUE
-            LEFT JOIN penyetoranpajak_t pep ON pep.objectspjfk = pp.objectspjfk AND pep.statusenabled = TRUE
-            LEFT JOIN jenispajak_m jp ON jp.id = pp.objectjenispphfk
+                then bku.penerimaan else 0 end) as penerimaan_bulan_ini
+            FROM bukukasumum_t bku 
+            JOIN pemungutanpajak_t pemp ON pemp.objectbkufk = bku.norec AND pemp.statusenabled = TRUE
+            LEFT JOIN jenispajak_m jp ON jp.id = pemp.objectjenispphfk AND jp.statusenabled = TRUE
             WHERE
-                pp.statusenabled = TRUE
-                AND pp.kdprofile = 30
+                bku.statusenabled = TRUE
+                AND EXTRACT(YEAR FROM bku.tglbku) = '".$settingRBA->tahunanggaran."'
             GROUP BY
-                jp.id,
-                jp.namaexternal
+                jp.id
             ORDER BY
                 jp.id ASC
+        "));
+
+        $penyetoranPajak = DB::select(DB::raw("
+            SELECT
+                jp.id as idjenispajak,
+                jp.namaexternal,
+                SUM(case when extract(year from bku.tglbku) = extract(year from timestamp '".$request['tglbku']."')
+                    and bku.tglbku <= DATE_TRUNC('MONTH', timestamp '".$request['tglbku']."')
+                then penpd.setoran else 0 end) as pengeluaran_bulan_lalu,
+                SUM(case when extract(year from bku.tglbku) = extract(year from timestamp '".$request['tglbku']."')
+                    and extract(month from bku.tglbku) = extract(month from timestamp '".$request['tglbku']."')
+                then penpd.setoran else 0 end) as pengeluaran_bulan_ini
+            FROM bukukasumum_t bku 
+            JOIN penyetoranpajak_t penp ON penp.objectbkufk = bku.norec AND penp.statusenabled = TRUE
+            JOIN penyetoranpajakdetail_t penpd ON penpd.objectpenyetoranpajakfk = penp.norec AND penpd.statusenabled = TRUE
+            JOIN pemungutanpajak_t pemp ON pemp.norec = penpd.objectpemungutanpajakfk AND pemp.statusenabled = TRUE
+            LEFT JOIN jenispajak_m jp ON jp.id = pemp.objectjenispphfk AND jp.statusenabled = TRUE
+            WHERE
+                bku.statusenabled = TRUE
+                AND EXTRACT(YEAR FROM bku.tglbku) = '".$settingRBA->tahunanggaran."'
+            GROUP BY
+                jp.id
+            ORDER BY
+                jp.id
         "));
 
         $jasagiro = DB::select(DB::raw("
@@ -26121,7 +26138,9 @@ public function suratBuktiPengembalian(Request $request)
             'jasagiro' => $jasagiro,
             'spm' => $spm,
             'uangmukakerja' => $uangmukakerja,
-            'pajak' => $pajak
+            'penyetoranPajak' => $penyetoranPajak,
+            'pemungutanPajak' => $pemungutanPajak
+            // 'pajak' => $pajak
             // 'jenisAnggaran' => $dataJenisAnggaran
         ]);
     } 

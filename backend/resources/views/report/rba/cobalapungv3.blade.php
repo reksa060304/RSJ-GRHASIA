@@ -1053,7 +1053,7 @@
                         $totalpajakpenerimaan_bulanlalu = 0;
                         $totalpajakpenerimaan_bulanini = 0;
                         
-                        foreach ($pajak as $pjpen) {
+                        foreach ($pemungutanPajak as $pjpen) {
                             $totalpajakpenerimaan_bulanlalu += $pjpen->penerimaan_bulan_lalu;
                             $totalpajakpenerimaan_bulanini += $pjpen->penerimaan_bulan_ini;
                         }
@@ -1065,7 +1065,7 @@
                     <td style="border: none; text-align: right;">{{ number_format($totalpajakpenerimaan_bulanlalu + $totalpajakpenerimaan_bulanini,2,'.',',') }}</td>
                     <td colspan="3" style="border:none; border-right: 1px solid black;"></td>
                 </tr>
-                @foreach ($pajak as $pjpen)
+                @foreach ($pemungutanPajak as $pjpen)
                     <tr>
                         <td colspan="2" style="padding-left:2cm; border: none; border-left: 1px solid black;"> - {{ $pjpen->namaexternal }}:</td>
                         <td style="border: none;"></td>
@@ -1156,7 +1156,7 @@
                         $totalpajakpengeluaran_bulanlalu = 0;
                         $totalpajakpengeluaran_bulanini = 0;
                         
-                        foreach ($pajak as $pjpeng) {
+                        foreach ($penyetoranPajak as $pjpeng) {
                             $totalpajakpengeluaran_bulanlalu += $pjpeng->pengeluaran_bulan_lalu;
                             $totalpajakpengeluaran_bulanini += $pjpeng->pengeluaran_bulan_ini;
                         }
@@ -1169,7 +1169,7 @@
                     <td style="border: none; text-align: right;">{{ number_format($totalpajakpengeluaran_bulanlalu + $totalpajakpengeluaran_bulanini,2,'.',',') }}</td>
                     <td colspan="3" style="border:none; border-right: 1px solid black;"></td>
                 </tr>
-                @foreach ($pajak as $pjpeng)
+                @foreach ($penyetoranPajak as $pjpeng)
                     <tr>
                         <td colspan="2" style="padding-left:2cm; border: none; border-left: 1px solid black;"> - {{ $pjpeng->namaexternal }}:</td>
                         <td style="border: none;"></td>
