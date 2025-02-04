@@ -3505,6 +3505,7 @@ class AnggaranController extends ApiController {
                 ka2.keterangan keterangansubkegiatan,
                 ap.id idasalproduk,
                 ap.asalproduk,
+                rkn.id as idrekanan,
                 rkn.namarekanan
             FROM
                 strukrealisasi_t sr
@@ -3532,6 +3533,7 @@ class AnggaranController extends ApiController {
                 pg1.namalengkap,
                 pg2.namalengkap,
                 rkn.namarekanan,
+                rkn.id,
                 ta.tahun,
                 ka.id,
                 ka2.id,
