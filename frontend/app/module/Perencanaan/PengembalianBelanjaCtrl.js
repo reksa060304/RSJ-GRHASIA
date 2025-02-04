@@ -47,11 +47,11 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
             }
 
             function loadCombo() {
-                medifirstService.get("perencanaan/get-data-combo").then(function (e) {
+                medifirstService.get("anggaran/get-combo-anggaran").then(function (e) {
                     $scope.listTahap = e.data.tahap
                     $scope.listAsalProduk = e.data.asalproduk
-                    $scope.listKegiatan = e.data.kegiatansubsubspj
-                    $scope.listMataAnggaran = e.data.mataanggarancombodiv
+                    $scope.listKegiatan = e.data.divsubsubsubkg
+                    $scope.listMataAnggaran = e.data.mataanggaran
 
                     loadData()
                 });
@@ -102,7 +102,7 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
                 
                 medifirstService.get("perencanaan/get-rekap-spj-detail" 
                     + "?status=" + stat
-                    + "&subkegiatan=" + sub
+                    + "&subsubkegiatan=" + sub
                     + "&asalproduk=" + asalproduk
                     + mataanggaran
                     + cari

@@ -181,6 +181,23 @@ class AnggaranController extends ApiController {
             ->where('statusenabled', true)
             ->where('isanggaran', true)
             ->get();
+        
+        $mataAnggaran = DB::select(DB::raw("
+            SELECT 
+                ma.id, ma.namamataanggaran, ma.kodemataanggaran, ma.kodemataanggaran || ' - ' || ma.namamataanggaran as text
+            FROM mataanggaran_m ma
+            WHERE
+                ma.statusenabled = TRUE
+                AND ma.div = 4
+            ORDER BY
+                SPLIT_PART(ma.kodemataanggaran, '.', 1) ASC,
+                SPLIT_PART(ma.kodemataanggaran, '.', 2) ASC,
+                SPLIT_PART(ma.kodemataanggaran, '.', 3) ASC,
+                case 
+                    when SPLIT_PART(ma.kodemataanggaran, '.', 5) = '' THEN cast(SPLIT_PART(ma.kodemataanggaran, '.', 4) as INTEGER)
+                    else cast(SPLIT_PART(ma.kodemataanggaran, '.', 5) as INTEGER)
+                END asc
+        "));
 
         $result = array(
             'pegawai' => $data,
@@ -195,6 +212,7 @@ class AnggaranController extends ApiController {
             'setting' => $setting,
             'asalproduk' => $asalproduk,
             'bendahara' => $bendahara,
+            'mataanggaran' => $mataAnggaran,
             'by' => 'ea@epic',
         );
         return $this->respond($result);
@@ -1458,6 +1476,20 @@ class AnggaranController extends ApiController {
             $mataanggaran = "and sr.objectmataanggaranfk = ".$request['mataanggaran'];
         }
 
+        $asalproduk = '';
+        if(isset($request['asalproduk']) && $request['asalproduk'] != "undefined" && $request['asalproduk'] != ''){
+            $asalproduk = "and sr.objectasalprodukfk = ".$request['asalproduk'];
+        }
+
+        $cari = "";
+        if(isset($request['cari']) && $request['cari'] != "undefined" && $request['cari'] != ''){
+            $cari = "and( 
+                rd.uraian ILIKE '%".$request['cari']."%' OR
+                CAST(sr.totalbelanja as VARCHAR) ILIKE '%".$request['cari']."%' OR
+                rkn.namarekanan ILIKE '%".$request['cari']."%'
+            )";
+        }
+
         $data = DB::select(DB::raw("
 
             SELECT
@@ -1500,6 +1532,8 @@ class AnggaranController extends ApiController {
                 $status
                 $subsubkegiatan
                 $mataanggaran
+                $asalproduk
+                $cari
             GROUP BY
                 sr.norec,
                 cbs.carabayar,

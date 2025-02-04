@@ -10970,7 +10970,6 @@ order by  split_part(kode, '.', 1)asc, split_part(kode, '.', 2)asc,  split_part(
             $tglAkhir = "and sr.tglrealisasi <= '".$request['tglAkhir']."'";
         }
 
-
         $setting = \DB::table('settinganggaran_t as st')
             ->join('pegawai_m as pg','pg.id','=','st.objectkepalabludfk')
             ->join('tahapanggaran_m as ta','ta.id','=','st.objecttahapaktivfk')
@@ -10980,23 +10979,9 @@ order by  split_part(kode, '.', 1)asc, split_part(kode, '.', 2)asc,  split_part(
             ->orderBy('st.tahunanggaran')
             ->first();
 
-        $sub = '';
-        if(isset($request['subkegiatan']) && $request['subkegiatan'] != "undefined" && $request['subkegiatan'] != ''){
-            // cari subsubkegiatan dari semua tahap
-            $subsub = DB::select(DB::raw("
-                SELECT
-                    ka.*
-                FROM kegiatananggaran_m ka
-                WHERE
-                    ka.statusenabled = true
-                    AND ka.kdprofile = ".$idProfile."
-                    AND ka.id = ".$request['subkegiatan']."
-            "));
-
-            if(count($subsub) > 0){
-                $sub = "and ka.kode = '".$subsub[0]->kode."' and ka.tahun = '".$setting->tahunanggaran."'";
-            }
-        
+        $pegawai = '';
+        if(isset($request['idpegawai']) && $request['idpegawai'] != "undefined" && $request['idpegawai'] != ''){
+            $pegawai = "and ta.objectpptkfk = ".$request['idpegawai'];
         }
 
         $status = '';
@@ -11010,14 +10995,19 @@ order by  split_part(kode, '.', 1)asc, split_part(kode, '.', 2)asc,  split_part(
             $status = "and sr.status = 'Sudah Diverifikasi'";
         }
 
-        $asal = '';
-        if(isset($request['asalproduk']) && $request['asalproduk'] != "undefined" && $request['asalproduk'] != ''){
-            $asal = "and sr.objectasalprodukfk = ".$request['asalproduk'];
+        $subsubkegiatan = '';
+        if(isset($request['subsubkegiatan']) && $request['subsubkegiatan'] != "undefined" && $request['subsubkegiatan'] != ''){
+            $subsubkegiatan = "and ta.objectkegiatanfk = ".$request['subsubkegiatan'];
         }
 
         $mataanggaran = '';
         if(isset($request['mataanggaran']) && $request['mataanggaran'] != "undefined" && $request['mataanggaran'] != ''){
             $mataanggaran = "and sr.objectmataanggaranfk = ".$request['mataanggaran'];
+        }
+
+        $asalproduk = '';
+        if(isset($request['asalproduk']) && $request['asalproduk'] != "undefined" && $request['asalproduk'] != ''){
+            $asalproduk = "and sr.objectasalprodukfk = ".$request['asalproduk'];
         }
 
         $cari = "";
@@ -11030,58 +11020,81 @@ order by  split_part(kode, '.', 1)asc, split_part(kode, '.', 2)asc,  split_part(
         }
 
         $data = DB::select(DB::raw("
-        select string_agg(DISTINCT rd.uraian, ',') uraian, sr.*, cbs.carabayar, sr.tglverif, sr.keterangan, sr.jumlahdibayarverif, ka.tahun,--sr.norealisasi,sr.deskripsi,sr.totalbelanja,
-                pg1.namalengkap as bendahara, pg2.namalengkap as penerima, rkn.namarekanan as pihakketiga,
-                ka.kode || '~' || ka.keterangan as kegiatan, ma.kodemataanggaran || '~' || ma.namamataanggaran as mataanggaran,
-                dp0.kode kodesubkegiatan, dp0.keterangan keterangansubkegiatan, ma.kodemataanggaran, ma.namamataanggaran, dp0.id idsubkegiatan, ka.keterangan subsubkegiatan, ka.id idsubsubkegiatan,
-                ap.id idasalproduk, ap.asalproduk, sr.objectbkufk
-                from strukrealisasi_t sr
-                inner join realisasidetail_t rd on rd.strukrealisasifk = sr.norec
-                left join asalproduk_m ap on ap.id = sr.objectasalprodukfk
-                left JOIN kegiatananggaran_m ka on ka.id=sr.objectkegiatanfk and ka.kdprofile = 30 and ka.statusenabled=true
-                left join kegiatananggaran_m as dp0 on ka.kode ilike dp0.kode || '%' and dp0.div = 3 and dp0.kdprofile = 30 and dp0.statusenabled=true
-                left JOIN rekanan_m rkn on rkn.id=sr.rekananfk
-                left JOIN pegawai_m as pg1 on pg1.id=sr.bendaharafk
-                left JOIN pegawai_m as pg2 on pg2.id=sr.penerimafk
-                left join carabayarspj_m cbs on cbs.id = sr.objectcarabayarfk
-                left JOIN mataanggaran_m ma on ma.id=sr.objectmataanggaranfk
-                where 
-                sr.statusenabled = true
-                --and sr.tglrealisasi between '$tglAwal' and '$tglAkhir'
-                $tglAwal
-                $tglAkhir
-                and rd.statusenabled = true
-                and rd.kdprofile = 30
-                $sub
+
+            SELECT
+                string_agg ( DISTINCT rd.uraian, ',' ) uraian,
+                sr.*,
+                cbs.carabayar,
+                ta.tahun,
+                pg1.namalengkap AS bendahara,
+                pg2.namalengkap AS penerima,
+                rkn.namarekanan AS pihakketiga,
+                ka.kode || ' - ' || ka.keterangan AS kegiatan,
+                ma.kodemataanggaran || ' - ' || ma.namamataanggaran AS mataanggaran,
+                ma.kodemataanggaran,
+                ma.namamataanggaran,
+                ka.keterangan subsubkegiatan,
+                ka.id idsubsubkegiatan,
+                ka2.id idsubkegiatan,
+                ka2.keterangan keterangansubkegiatan,
+                ap.id idasalproduk,
+                ap.asalproduk
+            FROM
+                strukrealisasi_t sr
+                INNER JOIN realisasidetail_t rd ON rd.strukrealisasifk = sr.norec AND rd.statusenabled = TRUE AND rd.kdprofile = ".$idProfile."
+                JOIN keteranganbelanja_t kb ON kb.norec = rd.keteranganbelanjafk AND kb.statusenabled = TRUE AND kb.kdprofile = ".$idProfile."
+                JOIN transaksianggaran2024_t ta ON ta.norec = kb.objecttransaksifk AND ta.statusenabled = TRUE AND ta.kdprofile = ".$idProfile."
+                JOIN kegiatananggaran2024_m ka ON ka.id = ta.objectkegiatanfk AND ka.statusenabled = TRUE AND ka.kdprofile = ".$idProfile." 
+                JOIN kegiatananggaran2024_m ka2 ON ka2.id = ka.headfk AND ka2.statusenabled = TRUE AND ka2.kdprofile = ".$idProfile."
+                JOIN mataanggaran_m ma ON ma.id = sr.objectmataanggaranfk AND ma.statusenabled = TRUE AND ma.kdprofile = ".$idProfile."
+                JOIN asalproduk_m ap ON ap.id = sr.objectasalprodukfk
+                LEFT JOIN rekanan_m rkn ON rkn.id = sr.rekananfk
+                LEFT JOIN pegawai_m AS pg1 ON pg1.id = sr.bendaharafk
+                LEFT JOIN pegawai_m AS pg2 ON pg2.id = sr.penerimafk
+                LEFT JOIN carabayarspj_m cbs ON cbs.id = sr.objectcarabayarfk
+            WHERE 
+                sr.statusenabled = TRUE
+                AND sr.kdprofile = ".$idProfile."
+                AND ta.tahun = '".$setting->tahunanggaran."'
+                $pegawai
                 $status
-                $asal
+                $subsubkegiatan
                 $mataanggaran
+                $asalproduk
                 $cari
-				group by dp0.kode, dp0.keterangan, sr.norec, cbs.carabayar, sr.tglverif, sr.keterangan, sr.jumlahdibayarverif, sr.kdprofile, sr.statusenabled, sr.tglrealisasi, sr.norealisasi, sr.status, sr.totalbelanja, sr.objectcarabayarfk, sr.rekananfk, sr.deskripsi, sr.objectkegiatanfk, sr.objectmataanggaranfk, sr.bendaharafk, sr.penerimafk, sr.pph, sr.ppn, pg1.namalengkap, pg2.namalengkap, rkn.namarekanan ,
-                ka.kode || '~' || ka.keterangan, ma.kodemataanggaran || '~' || ma.namamataanggaran, ka.tahun, ma.kodemataanggaran, ma.namamataanggaran, dp0.id, ka.keterangan, ka.id, ap.id, ap.asalproduk, sr.objectbkufk
-                order by sr.norealisasi desc
-            ")
-        );
+            GROUP BY
+                sr.norec,
+                cbs.carabayar,
+                pg1.namalengkap,
+                pg2.namalengkap,
+                rkn.namarekanan,
+                ta.tahun,
+                ka.id,
+                ka2.id,
+                ka2.keterangan,
+                ma.id,
+                ap.id
+            ORDER BY
+                sr.norealisasi DESC
+        
+        "));
 
         $dataDetail = DB::select(DB::raw("
-                    select rd.*,ka.keteranganbelanja,0 as nourut
-                    from strukrealisasi_t sr
-                    inner join realisasidetail_t rd on rd.strukrealisasifk = sr.norec
-                    INNER JOIN keteranganbelanja_t ka on ka.norec=rd.keteranganbelanjafk
-                    where  rd.statusenabled = true
-                    and rd.kdprofile = 30
-                    and ka.statusenabled = true
-                    and ka.kdprofile = 30
-                    --and sr.tglrealisasi between  '$tglAwal' and '$tglAkhir'
-                    $tglAwal
-                    $tglAkhir
-                ")
-            );
+            select 
+                rd.*,ka.keteranganbelanja,0 as nourut
+            from strukrealisasi_t sr
+            inner join realisasidetail_t rd on rd.strukrealisasifk = sr.norec
+            INNER JOIN keteranganbelanja_t ka on ka.norec=rd.keteranganbelanjafk
+            where  rd.statusenabled = true
+                and rd.kdprofile = 30
+                and ka.statusenabled = true
+                and ka.kdprofile = 30
+        "));
 
-        $dataDetail1=[];
+        $result = [];
         foreach($data as $item){
-            // $strukrealisasifk= ;
             $dataDetail1 =[];
+            
             foreach($dataDetail as $detail){
                 if($item->norec == $detail->strukrealisasifk){
                     $dataDetail1[]=array(
@@ -11098,25 +11111,24 @@ order by  split_part(kode, '.', 1)asc, split_part(kode, '.', 2)asc,  split_part(
                         'keteranganbelanja'	=> $detail->keteranganbelanja,
                         'nourut'	=> $detail->nourut
                     );
-                    // break;
                 }
-                
+
             }
 
             $result[] = array(
                 'strukrealisasifk' => $item->norec,
                 'data' => $dataDetail1,
             );
-        };
 
+        }
 
-        $result = array(
+        $response = [
             'data' => $data,
             'detail' => $result,
             'message' => '@epic',
-        );
+        ];
 
-        return $this->respond($result);
+        return $this->respond($response);
     }
 
     public function getSPJByNorec(Request $request)
@@ -11181,7 +11193,7 @@ order by  split_part(kode, '.', 1)asc, split_part(kode, '.', 2)asc,  split_part(
             FROM pengembalianbelanja_t pb
             JOIN strukrealisasi_t sr ON sr.norec = pb.objectspjfk AND sr.statusenabled = true AND sr.kdprofile = ".$idProfile."
             JOIN realisasidetail_t rd on rd.strukrealisasifk = sr.norec
-            JOIN kegiatananggaran_m ka ON ka.id = sr.objectkegiatanfk
+            JOIN kegiatananggaran2024_m ka ON ka.id = sr.objectkegiatanfk
             JOIN mataanggaran_m ma ON ma.id = sr.objectmataanggaranfk
             JOIN asalproduk_m ap ON ap.id = sr.objectasalprodukfk
             WHERE
