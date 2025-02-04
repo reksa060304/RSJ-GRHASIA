@@ -25779,9 +25779,13 @@ public function suratBuktiPengembalian(Request $request)
 
         }
 
-        $settingRBA = DB::table('settinganggaran_t')
-            ->where('statusenabled', true)
-            ->where('kdprofile', 30)
+        $settingRBA = DB::table('settinganggaran_t as st')
+            ->join('pegawai_m as pg','pg.id','=','st.objectkepalabludfk')
+            ->join('tahapanggaran_m as ta','ta.id','=','st.objecttahapaktivfk')
+            ->select('st.*','pg.namalengkap', 'ta.tahap', 'ta.id as idtahap', 'pg.id as idpegawai', 'pg.nippns')
+            ->where('st.kdprofile', 30)
+            ->where('st.statusenabled', true)
+            ->orderBy('st.tahunanggaran')
             ->first();
 
         $dataAnggaran = DB::select(DB::raw("
@@ -26129,6 +26133,8 @@ public function suratBuktiPengembalian(Request $request)
 
         // dd($uangmukakerja);
 
+        $tanggalcetak = $this->tanggal_indonesia(date('Y-m-d',strtotime($request['tglcetak'])));
+        $tanggalbkuindo = $this->tanggal_indonesia(date('Y-m-d',strtotime($request['tglbku'])));
         return view('report.rba.cobalapungv3', [
             'setting' => $settingRBA,
             'data' => $dataAnggaran,
@@ -26139,7 +26145,9 @@ public function suratBuktiPengembalian(Request $request)
             'spm' => $spm,
             'uangmukakerja' => $uangmukakerja,
             'penyetoranPajak' => $penyetoranPajak,
-            'pemungutanPajak' => $pemungutanPajak
+            'pemungutanPajak' => $pemungutanPajak,
+            'tanggalcetak' => $tanggalcetak,
+            'tanggalbku' => $tanggalbkuindo
             // 'pajak' => $pajak
             // 'jenisAnggaran' => $dataJenisAnggaran
         ]);

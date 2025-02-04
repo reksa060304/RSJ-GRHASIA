@@ -63,7 +63,7 @@
             </tr>
             <tr>
                 <td align="left" style="border:none;">Kuasa Pengguna Anggaran</td>
-                <td align="left" style="border:none;">: dr. Akhmad Akhadi Syamsudhuha, M.P.H</p></td>
+                <td align="left" style="border:none;">: {{ $setting->namalengkap }}</p></td>
             </tr>
             <tr>
                 <td align="left" style="border:none;">Bendahara</td>
@@ -75,7 +75,7 @@
             </tr>
             <tr>
                 <td align="left" style="border:none;">Periode s/d</td>
-                <td align="left" style="border:none;"></td>
+                <td align="left" style="border:none;">: {{ $tanggalbku }}</td>
             </tr>
         </tbody>
     </table>
@@ -131,7 +131,7 @@
                         }
                     @endphp
 
-                    <tr>
+                    <tr style="font-weight: bold;">
                         <td>{{ $item->kode_kegiatan1 }}</td>
                         <td style="width: auto;">{{ $item->keterangan_kegiatan1 }}</td>
                         <td style="text-align: right;">{{ number_format($anggaranKegiatan1,2,'.',',') }}</td>
@@ -1235,7 +1235,7 @@
                 <td colspan="3" style="font-weight:bold; font-size: 10pt; border: none; border-left: 1px solid black;">Saldo Kas BLUD</td>
                 <td colspan="2" style="font-weight:bold; font-size: 10pt; border: none; text-align:center;">Mengetahui</td>
                 <td colspan="2" style="border: none;"></td>
-                <td colspan="2" style="font-weight:bold; font-size: 10pt; border:none; border-right: 1px solid black; text-align:center;">Yogyakarta, 30 September 2024</td>
+                <td colspan="2" style="font-weight:bold; font-size: 10pt; border:none; border-right: 1px solid black; text-align:center;">Yogyakarta, {{ $tanggalcetak }}</td>
             </tr>
             <tr>
                 <td colspan="3" style="font-weight:bold; border: none; border-left: 1px solid black;">Terdiri dari : </td>
@@ -1362,17 +1362,21 @@
             </tr>
             <tr>
                 <td colspan="3" style="border: none; border-left: 1px solid black;"></td>
-                <td colspan="2" style="font-weight:bold; font-size: 10pt; border: none; text-align:center;">dr. Akhmad Akhadi S, M.P.H</td>
+                <td colspan="2" style="font-weight:bold; font-size: 10pt; border: none; text-align:center;">{{ $setting->namalengkap }}</td>
                 <td colspan="2" style="border: none;"></td>
                 <td colspan="2" style="font-weight:bold; font-size: 10pt; border:none; border-right: 1px solid black; text-align:center;">Christina Dewi Isti Paramita, S.E</td>
             </tr>
             <tr>
                 <td colspan="3" style="border: none; border-left: 1px solid black; border-bottom: 1px solid black;"></td>
-                <td colspan="2" style="font-weight:bold; font-size: 10pt; border: none; text-align:center; border-bottom: 1px solid black;">NIP. 19680714 200012 1 002</td>
+                <td colspan="2" style="font-weight:bold; font-size: 10pt; border: none; text-align:center; border-bottom: 1px solid black;">NIP. {{ $setting->nippns }}</td>
                 <td colspan="2" style="border: none; border-bottom: 1px solid black;"></td>
                 <td colspan="2" style="font-weight:bold; font-size: 10pt; border:none; border-right: 1px solid black; text-align:center; border-bottom: 1px solid black;">NIP. 19841027 201502 2 001</td>
             </tr>
         </tbody>
     </table>
+
+    <script>
+        window.print()
+    </script>
 </body>
 </html>
