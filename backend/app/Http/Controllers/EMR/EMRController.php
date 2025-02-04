@@ -15368,7 +15368,7 @@ class EMRController  extends ApiController
 	            pg.namalengkap,
                 apd.norec 
             ORDER BY
-                pd.tglregistrasi DESC
+                so.tglorder DESC
 
         "));
 
