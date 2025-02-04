@@ -119,6 +119,16 @@
 <c-panel item="item" header="'REKAP SPJ DETAIL'">
     <div class="grid_12" style="margin-top: 2em;">
         <div class="grid_1">
+            <div class="grid_12">
+                <label c-label item="item" c-label-text="Tahun"></label>
+            </div>
+                <div class="grid_12">
+                    <input style="width: 100%;" k-options="yearUngkul" k-ng-model="item.tahunspj" kendo-date-picker
+                        placeholer="YYYY" k-format="'yyyy'" ng-disabled="disidpegawai"/>
+            </div>
+        </div>
+
+        <div class="grid_1">
             <label c-label item="item" c-label-text="Tanggal awal"></label>
             <input style="width: 100%" k-ng-model="item.tglawal" kendo-datepicker placeholer="yyyy-mm-dd"
                 k-format="'yyyy-MM-dd'" />

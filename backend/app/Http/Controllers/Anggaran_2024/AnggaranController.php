@@ -1490,6 +1490,14 @@ class AnggaranController extends ApiController {
             )";
         }
 
+        // jika ada filter tahun ambil dari filter atau dari settinganggaran
+        $tahunSPJ = "";
+        if(isset($request['tahun']) && $request['tahun'] != "undefined" && $request['tahun'] != ''){
+            $tahunSPJ = "and ta.tahun = '".$request['tahun']."'";
+        }else{
+            $tahunSPJ = "and ta.tahun = '".$setting[0]->tahunanggaran."'";
+        }
+
         $data = DB::select(DB::raw("
 
             SELECT
@@ -1526,7 +1534,7 @@ class AnggaranController extends ApiController {
             WHERE 
                 sr.statusenabled = TRUE
                 AND sr.kdprofile = ".$idProfile."
-                AND ta.tahun = '".$setting[0]->tahunanggaran."'
+                $tahunSPJ
                 AND sr.tglrealisasi between '$tglAwal' and '$tglAkhir'
                 $pegawai
                 $status
