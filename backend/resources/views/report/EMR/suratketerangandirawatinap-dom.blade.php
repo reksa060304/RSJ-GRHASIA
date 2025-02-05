@@ -272,11 +272,11 @@
                                 <td style="text-align: center"></td>
                                 <td style="text-align: center">&nbsp;</td>
                                 <td style="text-align: center">
-                                    NIP/SIP :  
-                                    @if (isset($peg->nippns))
-                                        {{ $peg->nippns }} {{ (isset($sip->nosip)) ? ' / '.$sip->nosip : '' }}
-                                    @else
-                                        {{ (isset($sip->nosip)) ? $sip->nosip : '' }}
+                                    @if (isset($peg->nippns) && $peg->nippns)
+                                        NIP: {{ $peg->nippns }}
+                                    @endif
+                                    @if (isset($sip->nosip) && $sip->nosip)
+                                        <br>SIP: {{ $sip->nosip }}
                                     @endif
                                 </td>
                             </tr>
