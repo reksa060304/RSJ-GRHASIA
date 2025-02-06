@@ -835,7 +835,8 @@ class PerencanaanController extends ApiController {
         , split_part(ma.kodemataanggaran, '.', 2) as subkodekedua
         , case when split_part(ma.kodemataanggaran, '.', 3) = '' then '0' else split_part(ma.kodemataanggaran, '.', 3)::int4 end as subkodeketiga
         , case when split_part(ma.kodemataanggaran, '.', 4) = '' then '0' else split_part(ma.kodemataanggaran, '.', 4)::int4 end as subkodekeempat
-        , case when split_part(ma.kodemataanggaran, '.', 5) = '' then '0' else split_part(ma.kodemataanggaran, '.', 5)::int4 end as subkodekelima
+        , case when split_part(ma.kodemataanggaran, '.', 5) = '' then '0' else split_part(ma.kodemataanggaran, '.', 5)::int4 end as subkodekelima,
+        ma.div, ma.headfk
         from mataanggaran_m ma 
         left JOIN mataanggaranpermen_m map on map.id=ma.mataanggaranpermenfk
 		left JOIN keteranganbelanja_t kt on kt.objectmataanggaranfk=ma.id
@@ -852,7 +853,8 @@ class PerencanaanController extends ApiController {
             ")
         );
 
-        $mataanggaranpermen = DB::select(DB::raw("select map.id, map2.kode || '.' || map3.kode || '.' || map4.kode || '.' || map.kode as kode,
+        $mataanggaranpermen = DB::select(DB::raw("
+        select map.id, map2.kode || '.' || map3.kode || '.' || map4.kode || '.' || map.kode as kode,
         map.mataanggaranpermen
         from mataanggaranpermen_m map
         inner join mataanggaranpermen_m map4 on map.mataanggaranpermenfk = map4.id and map4.div = 4
@@ -6174,7 +6176,8 @@ class PerencanaanController extends ApiController {
             $MA->kodeexternal = $request['kodeexternal'];
             $MA->namaexternal = $request['namaexternal'];
             $MA->mataanggaranpermenfk = $request['mataanggaranpermenfk'];
-
+            $MA->headfk = $request['headfk'];
+            $MA->div = $request['div'];
             $MA->save();
            $transStatus = 'true';
        } catch (\Exception $e) {

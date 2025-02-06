@@ -389,6 +389,9 @@
 					<md-tab label="Mata Anggaran" ng-if="spjaja === false && spjajas === false && panjaraja === false && sppaja === false && spmaja === false && mataanggaranaja === true && disidpegawai === false">
 						<md-content class="md-padding">
 							<div class="grid_12">
+                                <div class="grid_12">
+									<label c-label item="item">Div MataAnggaran</label>
+								</div>
 								<div class="grid_2">
 									<input style="width: 100%;" kendo-combo-box k-ng-model="item.divkonsolidasi"
 									k-data-text-field="'div'" k-data-value-field="'id'"
@@ -1627,6 +1630,43 @@
 <div kendo-window="popupTambahMT" k-title="'Tambah'" k-visible="false" k-width="1000" k-height="600">
 	<div class="panel panel-default container_12">
 		<div class="grid_12">
+
+            <!-- list mataanggaran div 3 -->
+            <div class="grid_4" ng-if="divMataAnggaran == 4">
+                <div class="grid_12">
+					<label c-label item="item">Mata Anggaran Div 3</label>
+				</div>
+				<div class="grid_12">
+					<input style="width: 100%;" kendo-combo-box k-ng-model="item.mataAnggaranDiv3"
+                    k-data-text-field="'text'" k-data-value-field="'id'"
+                    k-filter="'contains'" k-auto-bind="false" k-data-source="listMataAnggaranDiv3"/>
+				</div>
+            </div>
+
+            <!-- list mataanggaran div 2 -->
+            <div class="grid_4" ng-if="divMataAnggaran == 3">
+                <div class="grid_12">
+					<label c-label item="item">Mata Anggaran Div 2</label>
+				</div>
+				<div class="grid_12">
+					<input style="width: 100%;" kendo-combo-box k-ng-model="item.mataAnggaranDiv2"
+                    k-data-text-field="'text'" k-data-value-field="'id'"
+                    k-filter="'contains'" k-auto-bind="false" k-data-source="listMataAnggaranDiv2"/>
+				</div>
+            </div>
+
+            <!-- list mataanggaran div 1 -->
+            <div class="grid_4" ng-if="divMataAnggaran == 2">
+                <div class="grid_12">
+					<label c-label item="item">Mata Anggaran Div 1</label>
+				</div>
+				<div class="grid_12">
+					<input style="width: 100%;" kendo-combo-box k-ng-model="item.mataAnggaranDiv1"
+                    k-data-text-field="'text'" k-data-value-field="'id'"
+                    k-filter="'contains'" k-auto-bind="false" k-data-source="listMataAnggaranDiv1"/>
+				</div>
+            </div>
+
 			<div class="grid_3">
 				<div class="grid_12">
 					<label c-label item="item" c-label-text="Kode"></label>
@@ -1635,7 +1675,7 @@
 					<input c-text-box type="input" class="k-textbox" ng-model="item.kodeAddMT"  />
 				</div>
 			</div>
-			<div class="grid_12">
+			<div class="grid_4">
 				<div class="grid_12">
 					<label c-label item="item" c-label-text="Mata Anggaran"></label>
 				</div>

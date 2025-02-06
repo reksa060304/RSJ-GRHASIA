@@ -1950,6 +1950,7 @@ Route::group(['middleware' => 'cors', 'prefix' => 'service'], function () {
             // Route Anggaran 2024
             Route::get('anggaran/get-pertama', 'Anggaran_2024\AnggaranController@getpertama');
             Route::get('anggaran/get-combo-anggaran','Anggaran_2024\AnggaranController@getComboLogistik');
+            Route::get('anggaran/get-mataanggaran-bydiv', 'Anggaran_2024\AnggaranController@getMataAnggaranByDiv');
             Route::post('anggaran/save-kegiatan-anggaran','Anggaran_2024\AnggaranController@saveKegiatanAnggaran');
             Route::get('anggaran/get-daftar-master-kegiatan','Anggaran_2024\AnggaranController@getKegiatanAnggaran');
             Route::post('anggaran/save-entry-rbav2','Anggaran_2024\AnggaranController@saveRBAAnggaran');

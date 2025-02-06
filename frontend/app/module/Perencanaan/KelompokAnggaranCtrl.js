@@ -112,6 +112,8 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
             $scope.selectedData3 = [];
             $scope.item.ispj = false
 
+            $scope.divMataAnggaran = null;
+
             var defaultspj = null
             
             $scope.listDiv = [
@@ -620,6 +622,29 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
                         console.log(e.data.mataanggaran)
                         $scope.dataSourceMataAnggaran = e.data.mataanggaran
                     });
+
+                    if($scope.item.divkonsolidasi.id){
+
+                        // jika div 4 maka ambil div3 untuk headfk
+                        let div = parseInt($scope.item.divkonsolidasi.id) - 1
+                        
+                        $scope.divMataAnggaran = $scope.item.divkonsolidasi.id
+
+                        medifirstService.get("anggaran/get-mataanggaran-bydiv" + "?div=" + div).then(function(res) {
+                            
+                            if(div == 3){
+                                $scope.listMataAnggaranDiv3 = res.data
+                            }else if(div == 2){
+                                $scope.listMataAnggaranDiv2 = res.data
+                            }else if(div == 1){
+                                $scope.listMataAnggaranDiv1 = res.data
+                            }
+
+
+                        });
+
+                    }
+                    
                 }
             });
 
@@ -813,6 +838,13 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
                 
             }
             $scope.TambahMT = function(){
+
+                // pilih div dulu
+                if($scope.item.divkonsolidasi == undefined && $scope.item.divkonsolidasi == null){
+                    toastr.error('Pilih Div Dahulu')
+                    return
+                }
+
                 $scope.item.id = ''
                 $scope.item.kodeAddMT = undefined
                 $scope.item.keteranganAdd = undefined
@@ -1049,7 +1081,55 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
                 $scope.item.konsolidasi3 = undefined
                 $scope.item.konsolidasi2 = undefined
                 $scope.item.konsolidasi4 = undefined
-                //console.log(dataItem)
+                console.log(dataItem)
+                
+                // ambil data headfk
+                if(dataItem.div){
+
+                    // jika div 4 maka ambil div3 untuk headfk dst
+                    let div = dataItem.div - 1
+                    
+                    $scope.divMataAnggaran = dataItem.div
+
+                    medifirstService.get("anggaran/get-mataanggaran-bydiv" + "?div=" + div).then(function(res) {
+                        
+                        if($scope.divMataAnggaran == 4){
+                            $scope.listMataAnggaranDiv3 = res.data
+
+                            if($scope.listMataAnggaranDiv3.length > 0){
+                                $scope.listMataAnggaranDiv3.map(function(itemDiv3){
+                                    if(itemDiv3.id == dataItem.headfk){
+                                        $scope.item.mataAnggaranDiv3 = itemDiv3
+                                    }
+                                })
+                            }
+                        }else if($scope.divMataAnggaran == 3){
+                            $scope.listMataAnggaranDiv2 = res.data
+
+                            if($scope.listMataAnggaranDiv2.length > 0){
+                                $scope.listMataAnggaranDiv2.map(function(itemDiv2){
+                                    if(itemDiv2.id == dataItem.headfk){
+                                        $scope.item.mataAnggaranDiv2 = itemDiv2
+                                    }
+                                })
+                            }
+                        }else if($scope.divMataAnggaran == 2){
+                            $scope.listMataAnggaranDiv1 = res.data
+
+                            if($scope.listMataAnggaranDiv1.length > 0){
+                                $scope.listMataAnggaranDiv1.map(function(itemDiv1){
+                                    if(itemDiv1.id == dataItem.headfk){
+                                        $scope.item.mataAnggaranDiv1 = itemDiv1
+                                    }
+                                })
+                            }
+                        }
+
+
+                    });
+
+                }
+
                 
                 var yangdicount = dataItem.kodemataanggaran
                 //console.log(yangdicount)
@@ -1081,8 +1161,13 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
                 $scope.item.keteranganAddMT = dataItem.namamataanggaran
                 $scope.item.keteranganAdd = dataItem.namamataanggaran
                 $scope.item.radioPencairan = dataItem.objectcarabayarfk
-                $scope.item.konsolidasi5 = {id: dataItem.idmap, mataanggaranpermen: dataItem.mataanggaranpermen} 
-
+                // $scope.item.konsolidasi5 = {id: dataItem.idmap, mataanggaranpermen: dataItem.mataanggaranpermen} 
+                
+                $scope.listKonsolidasi5.map(function(konsolidasi5){
+                    if(konsolidasi5.id == dataItem.idmap){
+                        $scope.item.konsolidasi5 = konsolidasi5
+                    }
+                })
                 //console.log($scope.item.radioPencairan)
 
                 medifirstService.get("perencanaan/get-jenis-angagran?id="+dataItem.id).then(function (e) {
@@ -5581,6 +5666,38 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
             };
             
             $scope.SimpanPopUpTambahMT = function(){
+                
+                // validasi untuk headfk
+                if($scope.divMataAnggaran == 4 && $scope.item.mataAnggaranDiv3 == undefined && $scope.item.mataAnggaranDiv3 == null){
+                    toastr.error('Pilih mata anggaran div 3 dulu')
+                    return
+                }
+
+                if($scope.divMataAnggaran == 3 && $scope.item.mataAnggaranDiv2 == undefined && $scope.item.mataAnggaranDiv2 == null){
+                    toastr.error('Pilih mata anggaran div 2 dulu')
+                    return
+                }
+
+                if($scope.item.kodeAddMT == undefined && $scope.item.kodeAddMT == null){
+                    toastr.error('Isi kode mataanggaran dulu')
+                    return
+                }
+
+                if($scope.item.keteranganAdd == undefined && $scope.item.kodeAddMT == null){
+                    toastr.error('Isi mataanggaran dulu')
+                    return
+                }
+                
+                // menentukan headfk
+                let headfk = null
+                if($scope.divMataAnggaran == 4 && $scope.item.mataAnggaranDiv3 !== undefined && $scope.item.mataAnggaranDiv3 !== null){
+                    headfk = $scope.item.mataAnggaranDiv3.id
+                }else if($scope.divMataAnggaran == 3 && $scope.item.mataAnggaranDiv2 !== undefined && $scope.item.mataAnggaranDiv2 !== null){
+                    headfk = $scope.item.mataAnggaranDiv2.id
+                }else if($scope.divMataAnggaran == 2 && $scope.item.mataAnggaranDiv1 !== undefined && $scope.item.mataAnggaranDiv1 !== null){
+                    headfk = $scope.item.mataAnggaranDiv1.id
+                }
+
                 var jmlkode = $scope.item.kodeAddMT.length
                 var divS = 0;
                 var IDD = undefined
@@ -5611,7 +5728,7 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
                     konsolidasi5 = $scope.item.konsolidasi5.id
                 }
 
-                
+
                 var objSave =
                     {
                         id: IDD,
@@ -5623,6 +5740,8 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
                         kodeexternal: null,
                         namaexternal: null,
                         mataanggaranpermenfk: konsolidasi5,
+                        div: $scope.divMataAnggaran,
+                        headfk: headfk
                     }
                 medifirstService.post('perencanaan/save-mata-anggaran', objSave).then(function (e) {
                     $scope.item.jenisanggaran = undefined
@@ -5630,6 +5749,13 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
                     $scope.item.konsolidasi4 = undefined
                     $scope.item.konsolidasi3 = undefined
                     $scope.item.konsolidasi2 = undefined
+
+                    // reset 
+                    $scope.item.kodeAddMT = null
+                    $scope.item.keteranganAdd = null
+                    $scope.divMataAnggaran = null
+                    $scope.item.divkonsolidasi = null
+
                     loadDataGrid();
                     $scope.popupTambahMT.center().close()
                 }, function (error) {

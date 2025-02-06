@@ -218,6 +218,32 @@ class AnggaranController extends ApiController {
         return $this->respond($result);
     }
 
+    public function getMataAnggaranByDiv(Request $request)
+    {
+
+        $kdProfile = $this->getDataKdProfile($request);
+        $idProfile = (int) $kdProfile;
+
+        $data = DB::select(DB::raw("
+
+            SELECT
+                ma.id, 
+                ma.kodemataanggaran, 
+                ma.namamataanggaran, 
+                ma.kodemataanggaran || ' - ' || ma.namamataanggaran as text
+            FROM mataanggaran_m ma
+            WHERE
+                ma.statusenabled = TRUE
+                AND ma.kdprofile = ".$idProfile."
+                AND ma.div = ".$request['div']."
+            ORDER BY
+                ma.kodemataanggaran
+        "));
+
+        return $this->respond($data);
+    }
+
+
     public function getMataAnggaran(Request $request) {
         $kdProfile = $this->getDataKdProfile($request);
         $idProfile = (int) $kdProfile;
