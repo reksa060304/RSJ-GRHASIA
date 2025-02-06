@@ -11681,14 +11681,16 @@ class EMRController  extends ApiController
 
         $data = \DB::select(DB::raw("SELECT --x.noemr, 
         string_agg(x.bb, null)as bb, string_agg(x.nadi, null)as nadi, string_agg(x.pernapasan, null)as pernapasan, string_agg(x.suhu, null)as suhu,
-        string_agg(x.tb, null) as tb, string_agg(x.td, null)as td --x.tgl 
+        string_agg(x.tb, null) as tb, string_agg(x.td, null)as td, string_agg(x.imt, null)as imt --x.tgl 
         FROM (SELECT ep.noemr, 
         case when epd.emrdfk = 4241 and epd.value <> '-' then epd.value end as td, 
         case when epd.emrdfk = 4242 and epd.value <> '-' then epd.value end as tb, 
         case when epd.emrdfk = 4243 and epd.value <> '-' then epd.value end as bb, 
         case when epd.emrdfk = 4244 and epd.value <> '-' then epd.value end as suhu, 
         case when epd.emrdfk = 4245 and epd.value <> '-' then epd.value end as nadi, 
-        case when epd.emrdfk = 4246 and epd.value <> '-' then epd.value end as pernapasan, epd.tgl 
+        case when epd.emrdfk = 4246 and epd.value <> '-' then epd.value end as pernapasan,
+        case when epd.emrdfk = 901308930 and epd.value <> '-' then epd.value end as imt, 
+        epd.tgl 
         FROM emrpasien_t ep inner join emrpasiend_t epd on epd.emrpasienfk = ep.noemr 
         where ep.statusenabled = TRUE AND ep.emrfk = 147 and ep.noregistrasifk= '$request[noregistrasi]'
         
@@ -15368,7 +15370,7 @@ class EMRController  extends ApiController
 	            pg.namalengkap,
                 apd.norec 
             ORDER BY
-                so.tglorder DESC
+                pd.tglregistrasi DESC
 
         "));
 

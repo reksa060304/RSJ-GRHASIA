@@ -1,3 +1,9 @@
+@php
+    function toUppercase($string) {
+        $string = str_replace(['-', '_'], ' ', $string); 
+        return ucwords(strtolower($string));
+    }
+@endphp
 <!DOCTYPE html>
 <html lang="en">
 
@@ -137,6 +143,24 @@
                 </tr>
             </tbody>
         </table>
+            <br>
+            <br>
+            <table cellspacing="0" cellpadding="0" border="0" width="100%">
+                <tbody>
+                    <tr>
+                        <td width="100%" >
+                            <div style="text-align: right; margin-left:12cm">
+                                <table>
+                                    <tr>
+                                        <td style="width: 100px;font-size: 13px; font-weight: bold;">Yogyakarta, {{$item[3003951]}} 
+                                    </tr>
+                                </table>
+                            </div>
+                        </td>
+                    </tr>
+                    
+                </tbody>
+            </table>
 
         {{-- Awalan --}}
         <table cellspacing="0" cellpadding="0" width="100%" style="margin-top: 1em; text-align:center; border-collapse: collapse;">
@@ -162,27 +186,27 @@
             <tr>
                 <td style="width: 30%; text-align: left;">Nama</td>
                 <td style="width: 2%; text-align: center;">:</td>
-                <td style="width: 68%; text-align: left;">{{ $item[3003957] ?? '' }}</td>
+                <td style="width: 68%; text-align: left;">{{ toUppercase($item[3003957] ?? '') }}</td>
             </tr>
             <tr>
                 <td>Tempat/Tanggal Lahir</td>
                 <td style="text-align: center;">:</td>
-                <td>{{ $item[3003958] ?? '' }}</td>
+                <td>{{ toUppercase($item[3003958] ?? '') }}</td>
             </tr>
             <tr>
                 <td>Jenis Kelamin</td>
                 <td style="text-align: center;">:</td>
-                <td>{{ $item[3003959] ?? '' }}</td>
+                <td>{{ toUppercase($item[3003959] ?? '') }}</td>
             </tr>
             <tr>
                 <td>Pekerjaan</td>
                 <td style="text-align: center;">:</td>
-                <td>{{ $item[3003960] ?? '' }}</td>
+                <td>{{ toUppercase($item[3003960] ?? '') }}</td>
             </tr>
             <tr>
                 <td>Alamat</td>
                 <td style="text-align: center;">:</td>
-                <td>{{ $item[3003961] ?? '' }}</td>
+                <td>{{ toUppercase($item[3003961] ?? '') }}</td>
             </tr>
         </table>
 

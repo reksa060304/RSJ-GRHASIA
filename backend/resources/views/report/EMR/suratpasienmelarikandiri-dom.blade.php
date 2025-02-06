@@ -278,16 +278,21 @@
             </tr>
 
             {{-- jika ada nip tampilkan nip jika tidak tampilkan siip --}}
-            <tr>
-                <td style="text-align: center">
-                    NIP/SIP :  
-                    @if (isset($peg->nippns))
-                        {{ $peg->nippns }} {{ (isset($sip->nosip)) ? ' / '.$sip->nosip : '' }}
-                    @else
-                        {{ (isset($sip->nosip)) ? $sip->nosip : '' }}
-                    @endif
-                </td>
-            </tr>
+            @if (isset($peg->nippns) && $peg->nippns)
+                <tr>
+                    <td style="text-align: center">
+                        NIP: {{ $peg->nippns }}
+                    </td>
+                </tr>
+                @endif
+
+                @if (isset($sip->nosip) && $sip->nosip)
+                <tr>
+                    <td style="text-align: center">
+                        SIP: {{ $sip->nosip }}
+                    </td>
+                </tr>
+            @endif
         </table>
 
     </section>

@@ -1272,7 +1272,6 @@ define(['initialize', 'Configuration'], function (initialize, config) {
             //             })                    
             //     }
             // }
-            
             $scope.save = function () {
                 if ($scope.dataGridRiwayat !== undefined && $scope.dataGridRiwayat._data.length > 0 && $scope.norecOrder === '' && $scope.item.ruangan.id === 94) {
                     var confirm = $mdDialog.confirm()
@@ -1303,6 +1302,11 @@ define(['initialize', 'Configuration'], function (initialize, config) {
                                 return;
                             }
                             
+                            $scope.simpan();
+                        })
+                        .catch(function(error) {
+                            console.error('Error checking order:', error);
+                            messageContainer.error('Terjadi kesalahan saat memeriksa order');
                         });
                 } else {
                     $scope.simpan();

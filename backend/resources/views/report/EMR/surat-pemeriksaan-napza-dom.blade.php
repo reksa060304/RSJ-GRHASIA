@@ -1,4 +1,10 @@
 {{-- @extends('report.dom') --}}
+@php
+    function toUppercase($string) {
+        $string = str_replace(['-', '_'], ' ', $string); 
+        return ucwords(strtolower($string));
+    }
+@endphp
 <!DOCTYPE html>
 <html lang="en" ng-app="angularApp">
 
@@ -124,13 +130,13 @@
                         <img src="img/diy.png" alt="Logo" style="width: 100%;">
                     </td>
                     <td style="border-bottom:3px solid black; padding-bottom:1em; text-align:center;">
-                        <p style="margin:0; padding:0;">{{ $res['profile']->baris1 }}</p>
-                        <p style="font-weight:bold; margin:0; padding:0;">{{ $res['profile']->baris2 }}</p>
-                        <p style="font-weight:bold; margin:0; margin-bottom:.3cm; padding:0;">{{ strtoupper($res['profile']->namalengkap) }}</p>
+                        <p style="margin:0; padding:0; font-size: 12px;">{{ $res['profile']->baris1 }}</p>
+                        <p style="font-weight:bold; margin:0; padding:0; font-size: 12px;">{{ $res['profile']->baris2 }}</p>
+                        <p style="font-weight:bold; margin:0; margin-bottom:.3cm; padding:0; font-size: 12px;">{{ strtoupper($res['profile']->namalengkap) }}</p>
                         <img src="img/aksara_jawa-com.png" alt="Logo" style="height: .8cm;">
-                        <p style="font-size:8pt; margin:0;">Jalan Kaliurang Km 17 Sleman, Kode Pos {{ $res['profile']->kodepos }}, Telepon: (0274) 895143, 895297</p>
-                        <p style="font-size:8pt; margin:0;">Faksimile: {{ $res['profile']->faksimile }}, Pos-el: <span style="text-decoration:underline; color:blue;">{{ $res['profile']->alamatemail }}</span>,</p>
-                        <p style="font-size:8pt; margin:0;">Laman: {{ $res['profile']->website }}</p>
+                        <p style="font-size: 10px; margin:0;">Jalan Kaliurang Km 17 Sleman, Kode Pos {{ $res['profile']->kodepos }}, Telepon: (0274) 895143, 895297</p>
+                        <p style="font-size: 10px; margin:0;">Faksimile: {{ $res['profile']->faksimile }}, Pos-el: <span style="text-decoration:underline; color:blue;">{{ $res['profile']->alamatemail }}</span>,</p>
+                        <p style="font-size: 10px; margin:0;">Laman: {{ $res['profile']->website }}</p>
                     </td>
                     <td style="border-bottom:3px solid black; padding-bottom:1em; width: 25%;">
                         <img src="img/logo_grhasiafull.png" alt="Logo" style="width: 100%;">
@@ -138,18 +144,35 @@
                 </tr>
             </tbody>
         </table>
-        
+
+        <br>
+        <br>
+        <table cellspacing="0" cellpadding="0" border="0" width="100%">
+            <tbody>
+                <tr>
+                    <td width="100%">
+                        <div style="text-align: right; margin-left:12cm">
+                            <table>
+                                <tr>
+                                    <td style="width: 100px; font-size: 12px; font-weight: bold;">Yogyakarta, {{$item[3003971]}}</td>
+                                </tr>
+                            </table>
+                        </div>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+
         {{-- awalan --}}
-        <table width="100%"  style="margin-top: 10px" cellspacing="0" cellpadding="0">
+        <table width="100%" style="margin-top: 10px" cellspacing="0" cellpadding="0">
             <tr>
-                <th style="text-decoration: underline; font-size: 15px">
+                <th style="text-decoration: underline; font-size: 20px;">
                     SURAT KETERANGAN PEMERIKSAAN NAPZA
                 </th>
             </tr>
             <tr>
-                <th style=" font-size: 14px"> 
-                    <p>Nomor :</p>
-                    <p>{{ $kodeawalsurat ?? '' }}{{ $item[3003972] ? $item[3003972] : '' }}{{ $kodeakhirsurat ?? '' }}</p>
+                <th style="font-size: 12px;">
+                    <p>Nomor : {{ $kodeawalsurat ?? '' }}{{ $item[3003972] ? $item[3003972] : '' }}{{ $kodeakhirsurat ?? '' }}</p>
                 </th>
             </tr>
             <tr>
@@ -159,73 +182,73 @@
 
         <table style="padding-left: 1cm; width: 100%;">
             <tr>
-                <td colspan="3" style="text-align:justify;"> 
-                    Yang bertanda tangan di bawah ini, telah melakukan pemeriksaan NAPZA pada tanggal {{ isset($item[3003971]) ? $item[3003971] : '' }}, terhadap : 
+                <td colspan="3" style="text-align:justify; font-size: 12px;">
+                    Yang bertanda tangan di bawah ini, telah melakukan pemeriksaan NAPZA pada tanggal {{ isset($item[3003971]) ? $item[3003971] : '' }}, terhadap :
                 </td>
             </tr>
             <tr>
-                <td style="width: 35%; padding-left: 60px">Nama</td>
-                <td style="width: 1%">:</td>
-                <td>{{ isset($item[3003977]) ? $item[3003977] : '' }}</td>
+                <td style="width: 35%; padding-left: 60px; font-size: 12px;">Nama</td>
+                <td style="width: 1%; font-size: 12px;">:</td>
+                <td style="font-size: 12px;">{{ toUppercase($item[3003977]) ?? '' }}</td>
             </tr>
             <tr>
-                <td style="width: 35%; padding-left: 60px">Tempat/Tanggal Lahir</td>
-                <td style="width: 1%">:</td>
-                <td>{{ isset($item[3003978]) ? $item[3003978] : '' }}</td>
+                <td style="width: 35%; padding-left: 60px; font-size: 12px;">Tempat/Tanggal Lahir</td>
+                <td style="width: 1%; font-size: 12px;">:</td>
+                <td style="font-size: 12px;">{{ toUppercase($item[3003978]) ?? '' }}</td>
             </tr>
             <tr>
-                <td style="width: 35%; padding-left: 60px">Jenis Kelamin</td>
-                <td style="width: 1%">:</td>
-                <td>{{ isset($item[3003979]) ? $item[3003979] : '' }}</td>
+                <td style="width: 35%; padding-left: 60px; font-size: 12px;">Jenis Kelamin</td>
+                <td style="width: 1%; font-size: 12px;">:</td>
+                <td style="font-size: 12px;">{{ toUppercase($item[3003979]) ?? '' }}</td>
             </tr>
             <tr>
-                <td style="width: 35%; padding-left: 60px">Pekerjaan</td>
-                <td style="width: 1%">:</td>
-                <td>{{ isset($item[3003980]) ? $item[3003980] : '' }}</td>
+                <td style="width: 35%; padding-left: 60px; font-size: 12px;">Pekerjaan</td>
+                <td style="width: 1%; font-size: 12px;">:</td>
+                <td style="font-size: 12px;">{{ toUppercase($item[3003980]) ?? '' }}</td>
             </tr>
             <tr>
-                <td style="width: 35%; padding-left: 60px">Alamat</td>
-                <td style="width: 1%">:</td>
-                <td>{{ isset($item[3003981]) ? $item[3003981] : '' }}</td>
+                <td style="width: 35%; padding-left: 60px; font-size: 12px;">Alamat</td>
+                <td style="width: 1%; font-size: 12px;">:</td>
+                <td style="font-size: 12px;">{{ toUppercase($item[3003981]) ?? '' }}</td>
             </tr>
         </table>
 
         <table style="padding-left: 1cm; width: 100%">
             <tr>
-                <td style="text-align:justify;">
+                <td style="text-align:justify; font-size: 12px;">
                     Dengah Hasil NAPZA menunjukkan :
-                    @if (isset($item[3003973]) && $item[3003973] == true) 
-                        ADA 
-                    @else 
+                    @if (isset($item[3003973]) && $item[3003973] == true)
+                        ADA
+                    @else
                         <s>ADA</s>
-                    @endif 
-                    / 
-                    @if (isset($item[3003974]) && $item[3003974] == true) 
-                        TIDAK ADA 
-                    @else 
+                    @endif
+                    /
+                    @if (isset($item[3003974]) && $item[3003974] == true)
+                        TIDAK ADA
+                    @else
                         <s>TIDAK ADA</s>
-                    @endif 
+                    @endif
                     TANDA DAN GEJALA PENGGUNAAN NAPZA.
                 </td>
             </tr>
 
             <tr>
-                <td>Demikian Surat Keterangan Pemeriksaan NAPZA ini digunakan untuk keperluan : {{ isset($item[3003975]) ? $item[3003975] : '' }}</td>
+                <td style="font-size: 12px;">Demikian Surat Keterangan Pemeriksaan NAPZA ini digunakan untuk keperluan : {{ isset($item[3003975]) ? $item[3003975] : '' }}</td>
             </tr>
             <tr>
-                <td>dan tidak dapat digunakan untuk kepentingan hukum lainnya.</td>
+                <td style="font-size: 12px;">dan tidak dapat digunakan untuk kepentingan hukum lainnya.</td>
             </tr>
         </table>
-        
+
         {{-- dokter --}}
         <table style="padding-top: 2em; width:35%; margin-left: auto;">
             <tr>
-                <td align="center">Dokter yang memeriksa</td>
+                <td align="center" style="font-size: 12px;">Dokter yang memeriksa</td>
             </tr>
             @if ($tte == 'true')
                 <tr>
                     <td style="padding: 0 2em;">
-                        <p style="text-align: center; color:grey;font-size: 16px;">
+                        <p style="text-align: center; color:grey; font-size: 12px;">
                             Ditandatangani Secara<br>Elektronik
                         </p>
                     </td>
@@ -236,21 +259,21 @@
             </tr>
             @endif
             <tr>
-                <td align="center">{{ isset($item[3003976]) ? $item[3003976] : '' }}</td>
+                <td align="center" style="font-size: 12px;">{{ isset($item[3003976]) ? $item[3003976] : '' }}</td>
             </tr>
-            
+
             {{-- jika ada nip tampilkan nip jika tidak tampilkan siip --}}
             @if (isset($peg->nippns) && $peg->nippns)
                 <tr>
-                    <td style="text-align: center">
+                    <td style="text-align: center; font-size: 12px;">
                         NIP: {{ $peg->nippns }}
                     </td>
                 </tr>
-                @endif
+            @endif
 
-                @if (isset($sip->nosip) && $sip->nosip)
+            @if (isset($sip->nosip) && $sip->nosip)
                 <tr>
-                    <td style="text-align: center">
+                    <td style="text-align: center; font-size: 12px;">
                         SIP: {{ $sip->nosip }}
                     </td>
                 </tr>

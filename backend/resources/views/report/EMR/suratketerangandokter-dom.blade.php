@@ -1,4 +1,10 @@
 {{-- @extends('report.dom') --}}
+@php
+    function toUppercase($string) {
+        $string = str_replace(['-', '_'], ' ', $string); 
+        return ucwords(strtolower($string));
+    }
+@endphp
 <!DOCTYPE html>
 <html lang="en" ng-app="angularApp">
 
@@ -170,7 +176,7 @@
                     <th style="text-decoration: underline; font-size: 15px">SURAT KETERANGAN DOKTER</th>
                 </tr>
                 <tr>
-                    <th style=" font-size: 14px">Nomor :{{ $kodeawalsurat ?? '' }}{{isset($item[3003992]) ? $item[3003992] : '' }}{{ $kodeakhirsurat ?? '' }}</th>
+                    <th style=" font-size: 14px">Nomor : {{ $kodeawalsurat ?? '' }} {{isset($item[3003992]) ? $item[3003992] : '' }} {{ $kodeakhirsurat ?? '' }}</th>
                 </tr>
                 <tr>
                     <td><br></td>
@@ -185,7 +191,7 @@
                             <tr>
                                 <td width="30%" style="padding-left: 60px ">Nama</td>
                                 <td width="1%">:</td>
-                                <td>{{$item[3003982]}}</td>
+                                <td>{{ toUppercase($item[3003982]) }}</td>
                             </tr>
                             <tr>
                                 <td width="30%" style="padding-left: 60px ">Tempat/Tanggal Lahir</td>
@@ -193,8 +199,7 @@
                                 <td width="250">
                                 <table>
                                     <tr>
-                                        {{-- <td></td> --}}
-                                        <td>{{$item[3003983]}} &nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </td>
+                                        <td>{{toUppercase($item[3003983])}} </td>
                                         <td></td>
                                         <td></td>
                                     </tr>
@@ -205,36 +210,39 @@
                             <tr>
                                 <td width="30%"  style="padding-left: 60px ">Jenis Kelamin</td>
                                 <td width="1%">:</td>
-                                <td>{{$item[3003984]}}</td>
+                                <td>{{toUppercase($item[3003984])}}</td>
                             </tr>
                             <tr>
                                 <td width="30%"  style="padding-left: 60px ">Pekerjaan</td>
                                 <td width="1%">:</td>
-                                <td>{{$item[3003985]}}</td>
+                                <td>{{toUppercase($item[3003985])}}</td>
                             </tr>
                             <tr>
                                 <td width="30%" style="padding-left: 60px ">Alamat</td>
                                 <td width="1%">:</td>
-                                <td >{{$item[3003986]}}</td>
+                                <td>{{toUppercase($item[3003986])}}</td>
                             </tr>
                             <tr>
-                                <td  width="30%"style="padding-left: 60px ">Pada waktu diperiksa</td>
-                                <td  width="1%">:</td>
-                                <td>
-                                    <table>
-                                        <tr>
-                                            <td>TB: {{ isset($item[3003993]) ? $item[3003993] : ''}} cm</td>
-                                            <td style="padding-left: 100px">TD: {{ isset($item[3003994]) ? $item[3003994] : '' }} mmHg</td>
-                                            
-                                        </tr>
-                                        <tr>
-                                            <td >BB: {{$item[3003995]}} kg</td>
-                                            <td style="padding-left: 100px">Nadi: {{$item[3003996]}} kali/menit</td>   
-                                        </tr>
-                                    </table>
-                                </td>                    
-                            </tr>
-                            <tr>
+                            <td width="30%" style="padding-left: 60px;">Pada waktu diperiksa</td>
+                            <td width="1%">:</td>
+                            <td>
+                                <table style="width: 100%;">
+                                    <tr>
+                                        <td style="width: 150px;">TB: {{ isset($item[3003993]) ? $item[3003993] : '' }} cm</td>
+                                        <td style="width: 150px; padding-left: 50px;">TD: {{ isset($item[3003994]) ? $item[3003994] : '' }} mmHg</td>
+                                    </tr>
+                                    <tr>
+                                        <td style="width: 150px;">BB: {{ $item[3003995] }} kg</td>
+                                        <td style="width: 150px; padding-left: 50px;">Nadi: {{ $item[3003996] }} kali/menit</td>
+                                    </tr>
+                                    <tr>
+                                        <td style="width: 150px;">Imt: {{ $item[901308930] }} kg/m²</td>
+                                        <td style="width: 150px; padding-left: 50px;"></td> <!-- Kolom kosong untuk menjaga alignment -->
+                                    </tr>
+                                </table>
+                            </td>
+                        </tr>
+                                                    <tr>
                                 <td  width="30%" style="padding-left: 60px ">Dalam Kondisi</td>
                                 <td  width="1%">:</td>
                                 <td>{{$item[3003999]}}</td>
