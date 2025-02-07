@@ -171,7 +171,7 @@
             </tr>
             <tr>
                 <td style="padding-top: 0.5em;">
-                    Nomor: {{ $kodeawalsurat ?? '' }}{{ $item[3003952] ?? '' }}{{ $kodeakhirsurat ?? '' }}
+                    Nomor: {{ $kodeawalsurat ?? '' }} {{ $item[3003952] ?? '' }} {{ $kodeakhirsurat ?? '' }}
                 </td>
             </tr>
             <tr>
@@ -201,8 +201,14 @@
             <tr>
                 <td>Pekerjaan</td>
                 <td style="text-align: center;">:</td>
-                <td>{{ toUppercase($item[3003960] ?? '') }}</td>
-            </tr>
+                <td>
+                    @if (($item[3003960] ?? '') === 'LAIN-LAIN')
+                        {{ toUppercase($item[3003960] ?? '') }} - {{ toUppercase($item[1901308921] ?? '') }}
+                    @else
+                        {{ toUppercase($item[3003960] ?? '') }}
+                    @endif
+                </td>
+            </tr>         
             <tr>
                 <td>Alamat</td>
                 <td style="text-align: center;">:</td>

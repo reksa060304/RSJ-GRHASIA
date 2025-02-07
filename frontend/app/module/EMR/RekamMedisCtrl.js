@@ -117,6 +117,7 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
                     38: $scope.header.agama,
                     39: $scope.header.nohp,
                     40: $scope.header.ketalergi,
+                    41: $scope.header.pekerjaanlain,
                 }
                 cacheHelper.set('CacheInputDiagnosaDokter', arrStr);
                 cacheHelper.set('InputResepApotikOrderRevCtrl', arrStr);

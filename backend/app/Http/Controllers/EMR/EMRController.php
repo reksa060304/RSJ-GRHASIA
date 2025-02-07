@@ -1697,6 +1697,7 @@ class EMRController  extends ApiController
                 'ps.nobpjs',
                 'pa.nosep',
                 'pa.tanggalsep',
+                'ps.pekerjaanlain',
                 //                DB::raw('encode(foto, \'base64\') AS foto'),
                 'pg1.namalengkap as dokterdpjp',
                 'pg1.id as iddpjp',
