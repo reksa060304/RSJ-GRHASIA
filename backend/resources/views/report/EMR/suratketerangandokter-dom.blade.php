@@ -236,8 +236,8 @@
                                         <td style="width: 150px; padding-left: 50px;">Nadi: {{ $item[3003996] }} kali/menit</td>
                                     </tr>
                                     <tr>
-                                        <td style="width: 150px;">Imt: {{ $item[901308930] }} kg/m²</td>
-                                        <td style="width: 150px; padding-left: 50px;"></td> <!-- Kolom kosong untuk menjaga alignment -->
+                                        <td style="width: 150px;">Imt: {{ $item[901308931] }} kg/m²</td>
+                                        <td style="width: 150px; padding-left: 50px;"></td>
                                     </tr>
                                 </table>
                             </td>
