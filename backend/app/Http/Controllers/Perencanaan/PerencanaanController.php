@@ -7949,14 +7949,41 @@ order by  split_part(kode, '.', 1)asc, split_part(kode, '.', 2)asc,  split_part(
         //     $norec = " and pj.objectbkufk is null ";
         // }
         
+        // ganti data baru
+        // $data = DB::select(DB::raw("
+        // select ma.id idmataanggaran, ma.kodemataanggaran, subkeg.id idsubkegiatan, subkeg.keterangan subkegiatan, subsubkeg.id idsubsubkegiatan, subsubkeg.keterangan subsubkegiatan, pj.norec, pj.tglpanjar, pp.nopengembalian as nopanjar, pj.uraian, pj.jumlah, pj.jenispanjar, coalesce(sum(pp.jumlahpengembalian),0) jumlahpengembalian, pj.sumberpanjar 
+        // from panjar_t pj
+        // inner join mataanggaran_m ma on ma.id = pj.objectmataanggaranfk
+        // inner join kegiatananggaran_m subkeg on subkeg.id = pj.objectsubkegiatanfk
+        // inner join kegiatananggaran_m subsubkeg on subsubkeg.id = pj.objectsubsubkegiatanfk
+        // left join pengembalianpanjar_t pp on pp.objectpanjarfk = pj.norec
+        // where pj.kdprofile = 30 and pj.statusenabled = true
+        // and pp.kdprofile = 30
+        // and pp.statusenabled = true
+        // and pp.jumlahpengembalian is not null
+       
+        // group by ma.id, ma.kodemataanggaran, subkeg.id, subkeg.keterangan, subsubkeg.id, subsubkeg.keterangan, pj.norec, pj.tglpanjar, pp.nopengembalian, pj.uraian, pj.jumlah, pj.jenispanjar, pj.sumberpanjar
+        // ")
+        // );
+
+        $setting = \DB::table('settinganggaran_t as st')
+            ->join('pegawai_m as pg','pg.id','=','st.objectkepalabludfk')
+            ->join('tahapanggaran_m as ta','ta.id','=','st.objecttahapaktivfk')
+            ->select('st.*','pg.namalengkap', 'ta.tahap', 'ta.id as idtahap', 'pg.id as idpegawai')
+            ->where('st.kdprofile', $idProfile)
+            ->where('st.statusenabled', true)
+            ->orderBy('st.tahunanggaran')
+            ->get();
+
         $data = DB::select(DB::raw("
         select ma.id idmataanggaran, ma.kodemataanggaran, subkeg.id idsubkegiatan, subkeg.keterangan subkegiatan, subsubkeg.id idsubsubkegiatan, subsubkeg.keterangan subsubkegiatan, pj.norec, pj.tglpanjar, pp.nopengembalian as nopanjar, pj.uraian, pj.jumlah, pj.jenispanjar, coalesce(sum(pp.jumlahpengembalian),0) jumlahpengembalian, pj.sumberpanjar 
         from panjar_t pj
         inner join mataanggaran_m ma on ma.id = pj.objectmataanggaranfk
-        inner join kegiatananggaran_m subkeg on subkeg.id = pj.objectsubkegiatanfk
-        inner join kegiatananggaran_m subsubkeg on subsubkeg.id = pj.objectsubsubkegiatanfk
+        inner join kegiatananggaran2024_m subkeg on subkeg.id = pj.objectsubkegiatanfk
+        inner join kegiatananggaran2024_m subsubkeg on subsubkeg.id = pj.objectsubsubkegiatanfk
         left join pengembalianpanjar_t pp on pp.objectpanjarfk = pj.norec
         where pj.kdprofile = 30 and pj.statusenabled = true
+        AND EXTRACT(YEAR FROM pj.tglpanjar) = '".$setting[0]->tahunanggaran."'
         and pp.kdprofile = 30
         and pp.statusenabled = true
         and pp.jumlahpengembalian is not null
