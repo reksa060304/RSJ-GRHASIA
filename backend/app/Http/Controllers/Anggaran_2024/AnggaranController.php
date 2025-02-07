@@ -4381,6 +4381,48 @@ class AnggaranController extends ApiController {
         return $this->respond($data);
     }
 
+    public function getBKUPengembalianPanjar(Request $request)
+    {
+        $kdProfile = $this->getDataKdProfile($request);
+        $idProfile = (int) $kdProfile;
+
+
+        $setting = \DB::table('settinganggaran_t as st')
+            ->join('pegawai_m as pg','pg.id','=','st.objectkepalabludfk')
+            ->join('tahapanggaran_m as ta','ta.id','=','st.objecttahapaktivfk')
+            ->select('st.*','pg.namalengkap', 'ta.tahap', 'ta.id as idtahap', 'pg.id as idpegawai')
+            ->where('st.kdprofile', $idProfile)
+            ->where('st.statusenabled', true)
+            ->orderBy('st.tahunanggaran')
+            ->get();
+        
+        $norec = '';
+        if(isset($request['norec']) && $request['norec'] != '' && $request['norec'] != "undefined"){
+            $norec = " and pp.objectbkufk = '".$request['norec']."'";
+        }
+
+        $data = DB::select(DB::raw("
+            select 
+                ma.id idmataanggaran, ma.kodemataanggaran, subkeg.id idsubkegiatan, subkeg.keterangan subkegiatan, subsubkeg.id idsubsubkegiatan, subsubkeg.keterangan subsubkegiatan, pj.norec, pj.tglpanjar, pp.nopengembalian as nopanjar, pj.uraian, pj.jumlah, pj.jenispanjar, coalesce(sum(pp.jumlahpengembalian),0) jumlahpengembalian, pj.sumberpanjar 
+            from panjar_t pj
+            inner join mataanggaran_m ma on ma.id = pj.objectmataanggaranfk
+            inner join kegiatananggaran2024_m subkeg on subkeg.id = pj.objectsubkegiatanfk AND subkeg.statusenabled = true
+            inner join kegiatananggaran2024_m subsubkeg on subsubkeg.id = pj.objectsubsubkegiatanfk AND subsubkeg.statusenabled = true
+            inner join pengembalianpanjar_t pp on pp.objectpanjarfk = pj.norec AND pp.statusenabled = true
+            inner join bukukasumum_t bku ON bku.norec = pp.objectbkufk AND bku.statusenabled = true
+            where 
+                pj.kdprofile = 30 
+                and pj.statusenabled = true
+                AND EXTRACT(YEAR FROM pj.tglpanjar) = '".$setting[0]->tahunanggaran."'
+                and pp.jumlahpengembalian is not null
+                $norec
+            group by 
+                ma.id, ma.kodemataanggaran, subkeg.id, subkeg.keterangan, subsubkeg.id, subsubkeg.keterangan, pj.norec, pj.tglpanjar, pp.nopengembalian, pj.uraian, pj.jumlah, pj.jenispanjar, pj.sumberpanjar
+        "));
+
+        return $this->respond($data);
+    }
+
     public function getBKUPenyetoranPajak(Request $request)
     {
         // get penyetoran pajak yang belum dibkukan untuk dientry di bku

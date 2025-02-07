@@ -1999,6 +1999,7 @@ Route::group(['middleware' => 'cors', 'prefix' => 'service'], function () {
             Route::get('anggaran/get-pemungutanpajak-bkuv2', 'Anggaran_2024\AnggaranController@getPemungutanPajakBKUV2');
             Route::get('anggaran/get-pajak-pphppn', 'Anggaran_2024\AnggaranController@getPajakPPHPPN');
             Route::get('anggaran/get-bku-pemungutanpajak', 'Anggaran_2024\AnggaranController@getBKUPemungutanPajak');
+            Route::get('anggaran/get-bku-pengembalianpanjar', 'Anggaran_2024\AnggaranController@getBKUPengembalianPanjar');
             // End Anggaran 2024
 
             // Penyetoran dan pemungutan pajak v2

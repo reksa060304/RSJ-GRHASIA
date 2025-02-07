@@ -7974,16 +7974,17 @@ order by  split_part(kode, '.', 1)asc, split_part(kode, '.', 2)asc,  split_part(
             ->where('st.statusenabled', true)
             ->orderBy('st.tahunanggaran')
             ->get();
-
+        
         $data = DB::select(DB::raw("
         select ma.id idmataanggaran, ma.kodemataanggaran, subkeg.id idsubkegiatan, subkeg.keterangan subkegiatan, subsubkeg.id idsubsubkegiatan, subsubkeg.keterangan subsubkegiatan, pj.norec, pj.tglpanjar, pp.nopengembalian as nopanjar, pj.uraian, pj.jumlah, pj.jenispanjar, coalesce(sum(pp.jumlahpengembalian),0) jumlahpengembalian, pj.sumberpanjar 
         from panjar_t pj
         inner join mataanggaran_m ma on ma.id = pj.objectmataanggaranfk
-        inner join kegiatananggaran2024_m subkeg on subkeg.id = pj.objectsubkegiatanfk
-        inner join kegiatananggaran2024_m subsubkeg on subsubkeg.id = pj.objectsubsubkegiatanfk
-        left join pengembalianpanjar_t pp on pp.objectpanjarfk = pj.norec
+        inner join kegiatananggaran2024_m subkeg on subkeg.id = pj.objectsubkegiatanfk AND subkeg.statusenabled = true
+        inner join kegiatananggaran2024_m subsubkeg on subsubkeg.id = pj.objectsubsubkegiatanfk AND subsubkeg.statusenabled = true
+        inner join pengembalianpanjar_t pp on pp.objectpanjarfk = pj.norec
         where pj.kdprofile = 30 and pj.statusenabled = true
         AND EXTRACT(YEAR FROM pj.tglpanjar) = '".$setting[0]->tahunanggaran."'
+        AND pp.objectbkufk IS NULL
         and pp.kdprofile = 30
         and pp.statusenabled = true
         and pp.jumlahpengembalian is not null

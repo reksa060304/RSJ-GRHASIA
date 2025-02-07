@@ -1324,6 +1324,40 @@ define(['initialize'], function (initialize) {
                             ]
                         });
                     });
+                } else if(dataItem.id == 7){
+                    $scope.hidespm = true
+                    $scope.hidepanjar =true
+                    $scope.hidepengembalianpanjar = false
+                    $scope.hidejasgir =true
+                    $scope.hidepajak =true
+                    $scope.hidespj =true
+                    $scope.hidepengembalian = true
+                    $scope.hidests =true
+                    $scope.hidepemungutanpajak = true
+                    $scope.hidePenyetoranPajak = true
+
+                    $scope.item.nobkudetail = dataItem.nobku
+                    $scope.item.tglbkudetail = dataItem.tglbku
+                    $scope.item.jenisbku = dataItem.asalproduk
+                    $scope.norecbku = dataItem.norecbku
+                    medifirstService.get("anggaran/get-bku-pengembalianpanjar?norec="+dataItem.norecbku).then(function (e) {
+                    
+                        $scope.dataGridPengembalianPanjar = new kendo.data.DataSource({
+                            data:  e.data,
+                            pageSize: 10,
+                            total: e.data.length,
+                            group: $scope.group,
+                            serverPaging: false,
+                            schema: {
+                                model: {
+                                    fields: {
+                                    }
+                                }
+                            },
+                            aggregate: [
+                            ]
+                        });
+                    });
                 }
 
                 $scope.popupDetailBKU.center().open()
