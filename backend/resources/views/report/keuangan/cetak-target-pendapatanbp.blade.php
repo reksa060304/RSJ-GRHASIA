@@ -46,7 +46,7 @@
     <table style="font-weight:bold;" cellspacing="0" cellpadding="0" width="100%">
         <tr>
             <td style="text-align: center;">
-                TARGET PENDAPATAN RUMAH SAKIT JIWA GRHASIA
+                TARGET PENDAPATAN RUMAH SAKIT JIWA GRHASIA {{ $tahun }}
             </td>
         </tr>
         <tr>
@@ -312,7 +312,7 @@
                             $jumlahpendapatanlv8[$keybln] = 0;
                             foreach ($targetawal as $keytga => $row) {
                                 if($row->idrekening == $rek->idrekening && $keybln + 1 == $row->bulan){
-                                    $jumlahpendapatanlv8[$keybln] = $row->jumlahpendapatan;
+                                    $jumlahpendapatanlv8[$keybln] += $row->jumlahpendapatan;
                                 }
                             }
                         @endphp

@@ -375,7 +375,7 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
                 var objSave = {
                     'norec': norec,
                     'tglinput': moment($scope.itemRincian.tglinput).format('YYYY-MM-DD'),
-                    // 'bulan': moment($scope.itemRincian.bulan).format('MM'),
+                    'bulan': parseInt(moment($scope.itemRincian.bulan).format('MM')),
                     'tahun': tahun,
                     'objectasalprodukfk': $scope.itemRincian.sumberPendapatan.id,
                     'uraianpendapatan': $scope.itemRincian.uraianPendapatan.namarekening,
@@ -542,6 +542,26 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
             $scope.formatBulan = function(tanggal){
                 let bulan =  moment(tanggal).format('MM')
                 return months[parseInt(bulan - 1)]
+            }
+
+            $scope.cetakTargetPendapatan = function() {
+
+                // validasi
+                if($scope.item.tahapawal == undefined && $scope.item.tahapawal == null){
+                    toastr.error('Pilih tahap awal dulu')
+                    return
+                }
+
+                if($scope.item.tahapakhir == undefined && $scope.item.tahapakhir == null){
+                    toastr.error('Pilih tahap akhir dulu')
+                    return
+                }
+
+                window.open(baseTransaksi + "report/cetak-targetpendapatan-bp" 
+                    + "?tahapawal="+ $scope.item.tahapawal.id
+                    + "&tahapakhir="+ $scope.item.tahapakhir.id
+                    + "&tahun=" + moment($scope.item.tahunCetakTarget).format('YYYY'), '_blank');
+
             }
 
             // BATASSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSS

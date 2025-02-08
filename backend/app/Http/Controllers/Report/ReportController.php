@@ -26778,6 +26778,18 @@ public function suratBuktiPengembalian(Request $request)
     public function cetakTargetPendapatanBP(Request $request)
     {
 
+        $settingrba = DB::table('settinganggaran_t')
+            ->where('statusenabled', true)
+            ->where('kdprofile', 30)
+            ->first();
+
+        $tahun = '';
+        if (isset($request['tahun']) && $request['tahun'] != "" && $request['tahun'] != "undefined") {
+            $tahun = $request['tahun'];
+        }else{
+            $tahun = $settingrba->tahunanggaran;
+        }
+
         // data rekening
         $rekening = DB::select(DB::raw("
             SELECT 
@@ -26881,6 +26893,7 @@ public function suratBuktiPengembalian(Request $request)
                 rp.statusenabled = true 
                 AND rp.kdprofile = 30
                 AND rp.objecttahapfk = ".$request['tahapawal']."
+                AND rp.tahun = '".$tahun."'
         "));
 
         $targetakhir = DB::select(DB::raw("
@@ -26934,7 +26947,7 @@ public function suratBuktiPengembalian(Request $request)
                 rp.statusenabled = true 
                 AND rp.kdprofile = 30
                 AND rp.objecttahapfk = ".$request['tahapakhir']."
-        
+                AND rp.tahun = '".$tahun."'
         "));
 
         $bulan = ["Januari", "Februari", "Maret", "April", "Mei", "Juni", "Juli", "Agustus", "September", "Oktober", "November", "Desember"];
@@ -26944,7 +26957,8 @@ public function suratBuktiPengembalian(Request $request)
             'rekening'      => $rekening,
             'targetawal'    => $targetawal,
             'targetakhir'   => $targetakhir,
-            'bulan'         => $bulan
+            'bulan'         => $bulan,
+            'tahun'         => $tahun
         ]);
     }
 
