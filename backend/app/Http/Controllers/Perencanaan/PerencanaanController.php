@@ -11168,16 +11168,18 @@ order by  split_part(kode, '.', 1)asc, split_part(kode, '.', 2)asc,  split_part(
         $idProfile = (int) $kdProfile;
 
         $data = DB::select(DB::raw("
-            select string_agg(DISTINCT rd.uraian, ',') uraian, sr.*, cbs.carabayar, sr.tglverif, sr.keterangan, sr.jumlahdibayarverif, ka.tahun,--sr.norealisasi,sr.deskripsi,sr.totalbelanja,
+            select string_agg(DISTINCT rd.uraian, ',') uraian, sr.*, cbs.carabayar, sr.tglverif, sr.keterangan, sr.jumlahdibayarverif, ta.tahun,--sr.norealisasi,sr.deskripsi,sr.totalbelanja,
                 pg1.namalengkap as bendahara, pg2.namalengkap as penerima, rkn.namarekanan as pihakketiga,
                 ka.kode || '~' || ka.keterangan as kegiatan, ma.kodemataanggaran || '~' || ma.namamataanggaran as mataanggaran,
                 dp0.kode kodesubkegiatan, dp0.keterangan keterangansubkegiatan, ma.kodemataanggaran, ma.namamataanggaran, dp0.id idsubkegiatan, ka.keterangan subsubkegiatan, ka.id idsubsubkegiatan,
                 ap.id idasalproduk, ap.asalproduk, sr.objectbkufk
             from strukrealisasi_t sr
             inner join realisasidetail_t rd on rd.strukrealisasifk = sr.norec
+            inner join keteranganbelanja_t kb ON kb.norec = rd.keteranganbelanjafk AND kb.statusenabled = true
+            inner join transaksianggaran2024_t ta ON ta.norec = kb.objecttransaksifk AND ta.statusenabled = true
+            left JOIN kegiatananggaran2024_m ka on ka.id = ta.objectkegiatanfk and ka.kdprofile = ".$idProfile." and ka.statusenabled=true
+            left join kegiatananggaran2024_m as dp0 on ka.headfk = dp0.id and dp0.kdprofile = ".$idProfile." and dp0.statusenabled=true
             left join asalproduk_m ap on ap.id = sr.objectasalprodukfk
-            left JOIN kegiatananggaran_m ka on ka.id=sr.objectkegiatanfk and ka.kdprofile = ".$idProfile." and ka.statusenabled=true
-            left join kegiatananggaran_m as dp0 on ka.kode ilike dp0.kode || '%' and dp0.div = 3 and dp0.kdprofile = ".$idProfile." and dp0.statusenabled=true
             left JOIN rekanan_m rkn on rkn.id=sr.rekananfk
             left JOIN pegawai_m as pg1 on pg1.id=sr.bendaharafk
             left JOIN pegawai_m as pg2 on pg2.id=sr.penerimafk
@@ -11189,7 +11191,7 @@ order by  split_part(kode, '.', 1)asc, split_part(kode, '.', 2)asc,  split_part(
                 and rd.kdprofile = ".$idProfile."
                 and sr.norec = '".$request['norec']."'
 			group by dp0.kode, dp0.keterangan, sr.norec, cbs.carabayar, sr.tglverif, sr.keterangan, sr.jumlahdibayarverif, sr.kdprofile, sr.statusenabled, sr.tglrealisasi, sr.norealisasi, sr.status, sr.totalbelanja, sr.objectcarabayarfk, sr.rekananfk, sr.deskripsi, sr.objectkegiatanfk, sr.objectmataanggaranfk, sr.bendaharafk, sr.penerimafk, sr.pph, sr.ppn, pg1.namalengkap, pg2.namalengkap, rkn.namarekanan ,
-                ka.kode || '~' || ka.keterangan, ma.kodemataanggaran || '~' || ma.namamataanggaran, ka.tahun, ma.kodemataanggaran, ma.namamataanggaran, dp0.id, ka.keterangan, ka.id, ap.id, ap.asalproduk, sr.objectbkufk
+                ka.kode || '~' || ka.keterangan, ma.kodemataanggaran || '~' || ma.namamataanggaran, ta.tahun, ma.kodemataanggaran, ma.namamataanggaran, dp0.id, ka.keterangan, ka.id, ap.id, ap.asalproduk, sr.objectbkufk
                 order by sr.norealisasi desc
             ")
         );
