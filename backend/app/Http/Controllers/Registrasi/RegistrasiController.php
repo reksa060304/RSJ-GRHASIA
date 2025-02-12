@@ -381,7 +381,10 @@ class RegistrasiController extends ApiController
             ->wherenull('tglpulang')
             ->where('statusenabled', true)
             ->count();
-        if ($cekUdahDaftar > 0 && $r_NewPD['norec_pd'] == '') {
+        
+        // ada tambahan jika pasien ke lab dan pembiyaan umum maka masih bisa diregistrasi
+        // jika bukan umum maka tidak bisa
+        if (($cekUdahDaftar > 0 && $r_NewPD['norec_pd'] == '' && $r_NewPD['objectruanganfk'] !== 575) || ($r_NewPD['objectruanganfk'] == 575 && $r_NewPD['objectkelompokpasienlastfk'] !== 1)) {
             $transStatus = 'belumdipulangkan';
         } else {
             //menambahkan kondisi pasien statusnya lama atau baru 
