@@ -9426,7 +9426,7 @@ class ReportController extends ApiController{
             to_char( bku.tglbku :: DATE, 'DD-MM-YYYY' ) tgl,
             bku.uraianbku,
             spj.jumlahdibayarverif AS penerimaan,
-            0 pengeluaran,
+            bku.pengeluaran pengeluaran,
             0 saldo 
         FROM
             bukukasumum_t bku
@@ -25462,54 +25462,54 @@ public function suratBuktiPengembalian(Request $request)
         $nosts = $request['nosts'];
         $data = [];
 
-        $rekening = DB::select(DB::raw("
-            SELECT 
-                cap.id as idrekening,
-                cap.koderekening,
-                cap.namarekening,
-                cap.headfk,
-                cap7.id as idlevel7,
-                cap7.koderekening as koderekeninglevel7,
-                cap7.namarekening as namarekeninglevel7,
-                cap7.headfk as headfklevel7,
-                cap6.id as idlevel6,
-                cap6.koderekening as koderekeninglevel6,
-                cap6.namarekening as namarekeninglevel6,
-                cap6.headfk as headfklevel6,
-                cap5.id as idlevel5,
-                cap5.koderekening as koderekeninglevel5,
-                cap5.namarekening as namarekeninglevel5,
-                cap5.headfk as headfklevel5,
-                cap4.id as idlevel4,
-                cap4.koderekening as koderekeninglevel4,
-                cap4.namarekening as namarekeninglevel4,
-                cap4.headfk as headfklevel4,
-                cap3.id as idlevel3,
-                cap3.koderekening as koderekeninglevel3,
-                cap3.namarekening as namarekeninglevel3,
-                cap3.headfk as headfklevel3,
-                cap2.id as idlevel2,
-                cap2.koderekening as koderekeninglevel2,
-                cap2.namarekening as namarekeninglevel2,
-                cap2.headfk as headfklevel2,
-                cap1.id as idlevel1,
-                cap1.koderekening as koderekeninglevel1,
-                cap1.namarekening as namarekeninglevel1,
-                cap1.headfk as headfklevel1
-            FROM char_akun_pendapatan_m cap
-            LEFT JOIN char_akun_pendapatan_m cap7 ON cap7.id = cap.headfk
-            LEFT JOIN char_akun_pendapatan_m cap6 ON cap6.id = cap7.headfk
-            LEFT JOIN char_akun_pendapatan_m cap5 ON cap5.id = cap6.headfk
-            LEFT JOIN char_akun_pendapatan_m cap4 ON cap4.id = cap5.headfk
-            LEFT JOIN char_akun_pendapatan_m cap3 ON cap3.id = cap4.headfk
-            LEFT JOIN char_akun_pendapatan_m cap2 ON cap2.id = cap3.headfk
-            LEFT JOIN char_akun_pendapatan_m cap1 ON cap1.id = cap2.headfk
-            WHERE 
-                cap.statusenabled = TRUE
-                AND cap.kdprofile = 30
-                AND cap.level = 8
-            ORDER BY cap.id ASC
-        "));
+        // $rekening = DB::select(DB::raw("
+        //     SELECT 
+        //         cap.id as idrekening,
+        //         cap.koderekening,
+        //         cap.namarekening,
+        //         cap.headfk,
+        //         cap7.id as idlevel7,
+        //         cap7.koderekening as koderekeninglevel7,
+        //         cap7.namarekening as namarekeninglevel7,
+        //         cap7.headfk as headfklevel7,
+        //         cap6.id as idlevel6,
+        //         cap6.koderekening as koderekeninglevel6,
+        //         cap6.namarekening as namarekeninglevel6,
+        //         cap6.headfk as headfklevel6,
+        //         cap5.id as idlevel5,
+        //         cap5.koderekening as koderekeninglevel5,
+        //         cap5.namarekening as namarekeninglevel5,
+        //         cap5.headfk as headfklevel5,
+        //         cap4.id as idlevel4,
+        //         cap4.koderekening as koderekeninglevel4,
+        //         cap4.namarekening as namarekeninglevel4,
+        //         cap4.headfk as headfklevel4,
+        //         cap3.id as idlevel3,
+        //         cap3.koderekening as koderekeninglevel3,
+        //         cap3.namarekening as namarekeninglevel3,
+        //         cap3.headfk as headfklevel3,
+        //         cap2.id as idlevel2,
+        //         cap2.koderekening as koderekeninglevel2,
+        //         cap2.namarekening as namarekeninglevel2,
+        //         cap2.headfk as headfklevel2,
+        //         cap1.id as idlevel1,
+        //         cap1.koderekening as koderekeninglevel1,
+        //         cap1.namarekening as namarekeninglevel1,
+        //         cap1.headfk as headfklevel1
+        //     FROM char_akun_pendapatan_m cap
+        //     LEFT JOIN char_akun_pendapatan_m cap7 ON cap7.id = cap.headfk
+        //     LEFT JOIN char_akun_pendapatan_m cap6 ON cap6.id = cap7.headfk
+        //     LEFT JOIN char_akun_pendapatan_m cap5 ON cap5.id = cap6.headfk
+        //     LEFT JOIN char_akun_pendapatan_m cap4 ON cap4.id = cap5.headfk
+        //     LEFT JOIN char_akun_pendapatan_m cap3 ON cap3.id = cap4.headfk
+        //     LEFT JOIN char_akun_pendapatan_m cap2 ON cap2.id = cap3.headfk
+        //     LEFT JOIN char_akun_pendapatan_m cap1 ON cap1.id = cap2.headfk
+        //     WHERE 
+        //         cap.statusenabled = TRUE
+        //         AND cap.kdprofile = 30
+        //         AND cap.level = 8
+        //     ORDER BY cap.id ASC
+        // "));
 
         $detailv2 = DB::select(DB::raw("
             SELECT
@@ -25518,12 +25518,26 @@ public function suratBuktiPengembalian(Request $request)
                 cap_stsd.namarekening,
                 stsd2.totalsetoran as totaldibayarclosing,
                 cap7.id as idlevel7,
+                cap7.koderekening as koderekeninglevel7,
+                cap7.namarekening as namarekeninglevel7,
                 cap6.id as idlevel6,
+                cap6.koderekening as koderekeninglevel6,
+                cap6.namarekening as namarekeninglevel6,
                 cap5.id as idlevel5,
+                cap5.koderekening as koderekeninglevel5,
+                cap5.namarekening as namarekeninglevel5,
                 cap4.id as idlevel4,
+                cap4.koderekening as koderekeninglevel4,
+                cap4.namarekening as namarekeninglevel4,
                 cap3.id as idlevel3,
+                cap3.koderekening as koderekeninglevel3,
+                cap3.namarekening as namarekeninglevel3,
                 cap2.id as idlevel2,
-                cap1.id as idlevel1
+                cap2.koderekening as koderekeninglevel2,
+                cap2.namarekening as namarekeninglevel2,
+                cap1.id as idlevel1,
+                cap1.koderekening as koderekeninglevel1,
+                cap1.namarekening as namarekeninglevel1
             FROM surattandasetoran_t sts
             JOIN surattandasetorandetailv2_t stsd2 ON stsd2.objectstsfk = sts.nosts AND stsd2.statusenabled = TRUE AND stsd2.kdprofile = 30
             JOIN char_akun_pendapatan_m cap_stsd ON cap_stsd.id = stsd2.objectakunpendapatanfk AND cap_stsd.statusenabled = TRUE AND cap_stsd.kdprofile = 30
@@ -25547,19 +25561,41 @@ public function suratBuktiPengembalian(Request $request)
             $detail = DB::select(DB::raw("
     
                 SELECT 
-                    x.id as idrekening, x.namarekening, x.koderekening, x.idlevel7, x.idlevel6, x.idlevel5, x.idlevel4, x.idlevel3, x.idlevel2, x.idlevel1, SUM(x.totaldibayarclosing)::DECIMAL as totaldibayarclosing
+                    x.id as idrekening, x.namarekening, x.koderekening, 
+                    x.idlevel7, x.koderekeninglevel7, x.namarekeninglevel7, 
+                    x.idlevel6, x.koderekeninglevel6, x.namarekeninglevel6,
+                    x.idlevel5, x.koderekeninglevel5, x.namarekeninglevel5,
+                    x.idlevel4, x.koderekeninglevel4, x.namarekeninglevel4,
+                    x.idlevel3, x.koderekeninglevel3, x.namarekeninglevel3,
+                    x.idlevel2, x.koderekeninglevel2, x.namarekeninglevel2,
+                    x.idlevel1, x.koderekeninglevel1, x.namarekeninglevel1,
+                    SUM(x.totaldibayarclosing)::DECIMAL as totaldibayarclosing
                 FROM (	
                     SELECT
                         cap.id,
                         cap.koderekening, 
                         cap.namarekening,
                         cap7.id as idlevel7,
+                        cap7.koderekening as koderekeninglevel7,
+                        cap7.namarekening as namarekeninglevel7,
                         cap6.id as idlevel6,
+                        cap6.koderekening as koderekeninglevel6,
+                        cap6.namarekening as namarekeninglevel6,
                         cap5.id as idlevel5,
+                        cap5.koderekening as koderekeninglevel5,
+                        cap5.namarekening as namarekeninglevel5,
                         cap4.id as idlevel4,
+                        cap4.koderekening as koderekeninglevel4,
+                        cap4.namarekening as namarekeninglevel4,
                         cap3.id as idlevel3,
+                        cap3.koderekening as koderekeninglevel3,
+                        cap3.namarekening as namarekeninglevel3,
                         cap2.id as idlevel2,
+                        cap2.koderekening as koderekeninglevel2,
+                        cap2.namarekening as namarekeninglevel2,
                         cap1.id as idlevel1,
+                        cap1.koderekening as koderekeninglevel1,
+                        cap1.namarekening as namarekeninglevel1,
                         COALESCE(SUM(
                                     (((COALESCE(pp.hargajual::DECIMAL, 0) - COALESCE(pp.hargadiscount::DECIMAL, 0)) * pp.jumlah::DECIMAL) + COALESCE(pp.jasa::DECIMAL, 0))
                             ), 0) AS totaldibayarclosing
@@ -25594,9 +25630,9 @@ public function suratBuktiPengembalian(Request $request)
                         AND pd.statusenabled = TRUE
                         AND pd.kdprofile = 30
                         AND (
-                                    (mba.isobat IS NOT TRUE AND pp.isobat IS NULL) 
-                                    OR 
-                                    (mba.isobat = TRUE AND pp.isobat = TRUE)
+                                (mba.isobat IS NOT TRUE AND pp.isobat IS NULL) 
+                                OR 
+                                (mba.isobat = TRUE AND pp.isobat = TRUE)
                             )
                         AND pp.kelasfk::VARCHAR = ANY(string_to_array(mba.objectkelasfk , ','))
                     GROUP BY
@@ -25619,12 +25655,26 @@ public function suratBuktiPengembalian(Request $request)
                         cap.koderekening, 
                         cap.namarekening,
                         cap7.id as idlevel7,
+                        cap7.koderekening as koderekeninglevel7,
+                        cap7.namarekening as namarekeninglevel7,
                         cap6.id as idlevel6,
+                        cap6.koderekening as koderekeninglevel6,
+                        cap6.namarekening as namarekeninglevel6,
                         cap5.id as idlevel5,
+                        cap5.koderekening as koderekeninglevel5,
+                        cap5.namarekening as namarekeninglevel5,
                         cap4.id as idlevel4,
+                        cap4.koderekening as koderekeninglevel4,
+                        cap4.namarekening as namarekeninglevel4,
                         cap3.id as idlevel3,
+                        cap3.koderekening as koderekeninglevel3,
+                        cap3.namarekening as namarekeninglevel3,
                         cap2.id as idlevel2,
+                        cap2.koderekening as koderekeninglevel2,
+                        cap2.namarekening as namarekeninglevel2,
                         cap1.id as idlevel1,
+                        cap1.koderekening as koderekeninglevel1,
+                        cap1.namarekening as namarekeninglevel1,
                         SUM(((COALESCE(pp.hargajual::DECIMAL, 0) - COALESCE(pp.hargadiscount::DECIMAL, 0)) * pp.jumlah::DECIMAL) + COALESCE(pp.jasa::DECIMAL, 0))
                     FROM pasiendaftar_t pd 
                     JOIN antrianpasiendiperiksa_t apd ON apd.noregistrasifk = pd.norec AND apd.statusenabled = TRUE AND apd.kdprofile = 30
@@ -25676,12 +25726,26 @@ public function suratBuktiPengembalian(Request $request)
                         cap.koderekening,
                         cap.namarekening,
                         cap7.id as idlevel7,
+                        cap7.koderekening as koderekeninglevel7,
+                        cap7.namarekening as namarekeninglevel7,
                         cap6.id as idlevel6,
+                        cap6.koderekening as koderekeninglevel6,
+                        cap6.namarekening as namarekeninglevel6,
                         cap5.id as idlevel5,
+                        cap5.koderekening as koderekeninglevel5,
+                        cap5.namarekening as namarekeninglevel5,
                         cap4.id as idlevel4,
+                        cap4.koderekening as koderekeninglevel4,
+                        cap4.namarekening as namarekeninglevel4,
                         cap3.id as idlevel3,
+                        cap3.koderekening as koderekeninglevel3,
+                        cap3.namarekening as namarekeninglevel3,
                         cap2.id as idlevel2,
+                        cap2.koderekening as koderekeninglevel2,
+                        cap2.namarekening as namarekeninglevel2,
                         cap1.id as idlevel1,
+                        cap1.koderekening as koderekeninglevel1,
+                        cap1.namarekening as namarekeninglevel1,
                         SUM(spd.qtyproduk * spd.hargasatuan * spd.qtyoranglast) as totaldibayarclosing
                     FROM strukclosingkasir_t AS sck
                     JOIN strukclosing_t AS sc ON sc.norec = sck.noclosingfk
@@ -25728,13 +25792,13 @@ public function suratBuktiPengembalian(Request $request)
                         x.id,
                         x.koderekening,
                         x.namarekening,
-                        x.idlevel7,
-                        x.idlevel6,
-                        x.idlevel5,
-                        x.idlevel4,
-                        x.idlevel3,
-                        x.idlevel2,
-                        x.idlevel1
+                        x.idlevel7, x.koderekeninglevel7, x.namarekeninglevel7, 
+                        x.idlevel6, x.koderekeninglevel6, x.namarekeninglevel6,
+                        x.idlevel5, x.koderekeninglevel5, x.namarekeninglevel5,
+                        x.idlevel4, x.koderekeninglevel4, x.namarekeninglevel4,
+                        x.idlevel3, x.koderekeninglevel3, x.namarekeninglevel3,
+                        x.idlevel2, x.koderekeninglevel2, x.namarekeninglevel2,
+                        x.idlevel1, x.koderekeninglevel1, x.namarekeninglevel1
                     ORDER BY
                         split_part(x.koderekening, '.', 3)::DECIMAL,
                         split_part(x.koderekening, '.', 4)::DECIMAL,
@@ -25760,7 +25824,7 @@ public function suratBuktiPengembalian(Request $request)
                 AND sts.nosts = '".$request['nosts']."'  
         "));
 
-        return view('report.spj.cetak-stsv2',compact('rekening', 'data', 'sts'));
+        return view('report.spj.cetak-stsv2',compact('data', 'sts'));
 
     }
 
