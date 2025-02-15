@@ -9426,7 +9426,7 @@ class ReportController extends ApiController{
             to_char( bku.tglbku :: DATE, 'DD-MM-YYYY' ) tgl,
             bku.uraianbku,
             spj.jumlahdibayarverif AS penerimaan,
-            bku.pengeluaran pengeluaran,
+            0 pengeluaran,
             0 saldo 
         FROM
             bukukasumum_t bku
