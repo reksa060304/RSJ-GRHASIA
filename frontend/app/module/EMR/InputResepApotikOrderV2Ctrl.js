@@ -2121,25 +2121,105 @@ define(['initialize', 'Configuration'], function (initialize, config) {
                 }
                 $scope.item.KeteranganPakai = $scope.item.chkp + "-" + $scope.item.chks + "-" + $scope.item.chksr + "-" + $scope.item.chkm
             }
-            $scope.hapusOrder = function () {
-                if ($scope.dataSelectedRiwayat == undefined) return
-                if ($scope.dataSelectedRiwayat.statusorder != "Menunggu") {
-                    toastr.error('Tidak bisa di Hapus sudah di verifikasi')
-                    return
-                }
-                var stt = '';
-                if (confirm('Yakin Mau Menghapus data? ')) {
-                    stt = 'true';
-                } else {
-                    return;
-                }
-                medifirstService.post('emr/hapus-order-pelayananobatfarmasi', { norec: $scope.dataSelectedRiwayat.norec_order }).then(function (e) {
-                    medifirstService.postLogging('Hapus Order Resep', 'Norec strukresep_t', '...',
-                    'Order Resep No Order - ' + $scope.dataSelectedRiwayat.noorder + ' dengan No Registrasi ' + $scope.item.noregistrasi).then(function (res) {
-                    })
+        // $scope.hapusOrder = function () {
+        //     if ($scope.dataSelectedRiwayat && $scope.dataSelectedRiwayat.noorder) {
+        //         medifirstService.get("farmasi/get-penjagaan-order-sudah-verif?noorder=" + $scope.dataSelectedRiwayat.noorder, true)
+        //             .then(function (response) {
+        //                 const orderData = response.data[0].data[0];
+                        
+        //                 if (orderData.statusorder === 5) {
+        //                     messageContainer.error('Tidak bisa di hapus, sudah di verifikasi');
+        //                     return;
+        //                 }
+                        
+        //                 if (orderData.petugasverif) {
+        //                     const petugasVerif = orderData.petugasverif;
+        //                     toastr.warning("Resep tidak dapat hapus karena sedang dikerjakan oleh petugas: " + petugasVerif +
+        //                         ". Jika ada perubahan, silakan hubungi Farmasi."
+        //                     );
+        //                     return;
+        //                 }
+                        
+        //                 $scope.simpan();
+        //             })
+        //             .catch(function(error) {
+        //                 console.error('Error checking order:', error);
+        //                 messageContainer.error('Terjadi kesalahan saat memeriksa order');
+        //             });
+        //     } else {
+        //         $scope.simpan();
+        //     }
+        //         // if ($scope.dataSelectedRiwayat == undefined) return
+        //         // if ($scope.dataSelectedRiwayat.statusorder == 5 ) {
+        //         //     toastr.error('Tidak bisa di Hapus sudah di verifikasi')
+        //         //     return
+        //         // }
+        //         var stt = '';
+        //         if (confirm('Yakin Mau Menghapus data? ')) {
+        //             stt = 'true';
+        //         } else {
+        //             return;
+        //         }
+        //         medifirstService.post('emr/hapus-order-pelayananobatfarmasi', { norec: $scope.dataSelectedRiwayat.norec_order }).then(function (e) {
+        //             medifirstService.postLogging('Hapus Order Resep', 'Norec strukresep_t', '...',
+        //             'Order Resep No Order - ' + $scope.dataSelectedRiwayat.noorder + ' dengan No Registrasi ' + $scope.item.noregistrasi).then(function (res) {
+        //             })
+        //             init();
+        //         })
+        //     }
+        $scope.hapusOrder = function () {
+            if (!$scope.dataSelectedRiwayat || !$scope.dataSelectedRiwayat.noorder) {
+                $scope.simpan();
+                return;
+            }
+        
+            medifirstService.get("farmasi/get-penjagaan-order-sudah-verif?noorder=" + $scope.dataSelectedRiwayat.noorder, true)
+                .then(function (response) {
+                    if (!response.data || response.data.length === 0 || !response.data[0].data || response.data[0].data.length === 0) {
+                        messageContainer.error('Data order tidak ditemukan');
+                        return;
+                    }
+        
+                    const orderData = response.data[0].data[0];
+                    
+                    if (orderData.statusorder === 5) {
+                        messageContainer.error('Tidak bisa dihapus, sudah diverifikasi');
+                        return;
+                    }
+                    
+                    if (orderData.petugasverif) {
+                        toastr.warning("Resep tidak dapat dihapus karena sedang dikerjakan oleh petugas: " + orderData.petugasverif +
+                            ". Jika ada perubahan, silakan hubungi Farmasi.");
+                        return;
+                    }
+                    
+                    konfirmasiHapus();
+                })
+                .catch(function (error) {
+                    console.error('Error checking order:', error);
+                    messageContainer.error('Terjadi kesalahan saat memeriksa order');
+                });
+        };
+        
+        function konfirmasiHapus() {
+            if (!confirm('Yakin Mau Menghapus data?')) {
+                return;
+            }
+        
+            medifirstService.post('emr/hapus-order-pelayananobatfarmasi', { norec: $scope.dataSelectedRiwayat.norec_order })
+                .then(function () {
+                    return medifirstService.postLogging('Hapus Order Resep', 'Norec strukresep_t', '...',
+                        'Order Resep No Order - ' + $scope.dataSelectedRiwayat.noorder + ' dengan No Registrasi ' + $scope.item.noregistrasi);
+                })
+                .then(function () {
                     init();
                 })
-            }
+                .catch(function (error) {
+                    console.error('Error saat menghapus order:', error);
+                    messageContainer.error('Terjadi kesalahan saat menghapus order');
+                });
+        }
+        
             $scope.columnGridResepExist = [
                 {
                     "field": "no",
