@@ -15198,14 +15198,88 @@ GROUP BY y.KET
         and date_part('year', apd.tglkeluar::date ) = $bl  and ru.objectdepartemenfk = 16 and apd.tglmasuk::date = apd.tglkeluar::date
         group by apd.tglkeluar::date
         order by apd.tglkeluar::date asc"));
-        $los = DB::select(DB::raw("SELECT sum(x.jml)::integer as jml, x.tgl FROM (select date_part('day', apd.tglkeluar::date ) as tgl , case when apd.tglkeluar::date = apd.tglkeluar::date then 1 else sum(apd.tglkeluar::date - apd.tglkeluar::date) end as jml from pasiendaftar_t pd 
-        inner join antrianpasiendiperiksa_t apd on apd.noregistrasifk = pd.norec
-        inner join ruangan_m ru on ru.id = apd.objectruanganfk
-        where pd.kdprofile = 30 and pd.statusenabled = true and date_part('month', apd.tglkeluar::date ) =$th and date_part('year', apd.tglkeluar::date ) = $bl  and ru.objectdepartemenfk = 16 and apd.tglkeluar is not null and apd.objectruanganfk = $request[ruangan]
-        GROUP BY apd.tglkeluar::date
-        )as x
-        GROUP BY x.tgl
-        order by x.tgl asc"));
+        // $los = DB::select(DB::raw("SELECT sum(x.jml)::integer as jml, x.tgl FROM (select date_part('day', apd.tglkeluar::date ) as tgl , case when apd.tglkeluar::date = apd.tglkeluar::date then 1 else sum(apd.tglkeluar::date - apd.tglkeluar::date) end as jml from pasiendaftar_t pd 
+        // inner join antrianpasiendiperiksa_t apd on apd.noregistrasifk = pd.norec
+        // inner join ruangan_m ru on ru.id = apd.objectruanganfk
+        // where pd.kdprofile = 30 and pd.statusenabled = true and date_part('month', apd.tglkeluar::date ) =$th and date_part('year', apd.tglkeluar::date ) = $bl  and ru.objectdepartemenfk = 16 and apd.tglkeluar is not null and apd.objectruanganfk = $request[ruangan]
+        // GROUP BY apd.tglkeluar::date
+        // )as x
+        // GROUP BY x.tgl
+        // order by x.tgl asc"));
+        $los = DB::select(DB::raw("            
+       WITH riwayat_ruangan AS (        
+        -- Track room transfer history for each patient        
+        SELECT
+          pd.norec,        
+          apd.objectruanganfk,
+          date_part('day', apd.tglkeluar::date) as tgl_keluar,
+          apd.tglmasuk,
+          apd.tglkeluar,
+          -- Get previous discharge time and room for tracking transfers        
+          LAG(apd.tglkeluar) OVER (        
+           PARTITION BY pd.norec        
+           ORDER BY apd.tglmasuk        
+          ) as prev_keluar,        
+          LAG(apd.objectruanganfk) OVER (        
+           PARTITION BY pd.norec        
+           ORDER BY apd.tglmasuk        
+          ) as prev_ruangan,        
+          -- Create unique identifier for each patient per discharge date        
+          ROW_NUMBER() OVER (        
+           PARTITION BY pd.norec, date_part('day', apd.tglkeluar::date)        
+           ORDER BY apd.tglkeluar        
+          ) as pasien_sequence        
+        FROM pasiendaftar_t pd        
+        INNER JOIN antrianpasiendiperiksa_t apd ON apd.noregistrasifk = pd.norec        
+        INNER JOIN ruangan_m ru ON ru.id = apd.objectruanganfk        
+        WHERE pd.kdprofile = 30        
+          AND pd.statusenabled = true        
+          AND date_part('month', apd.tglkeluar::date) = $th        
+          AND date_part('year', apd.tglkeluar::date) = $bl        
+          AND ru.objectdepartemenfk = 16        
+          AND apd.tglkeluar IS NOT NULL        
+          AND apd.objectruanganfk = $request[ruangan]        
+       ),        
+       durasi_per_ruangan AS (        
+        -- Calculate duration in hours for each room stay        
+        SELECT        
+          norec,        
+          objectruanganfk,        
+          tgl_keluar,        
+          pasien_sequence,        
+          EXTRACT(EPOCH FROM (        
+           CASE        
+             WHEN prev_keluar IS NOT NULL THEN tglkeluar - prev_keluar        
+             ELSE tglkeluar - tglmasuk        
+           END        
+          ))/3600 as durasi_jam        
+        FROM riwayat_ruangan        
+       ),        
+       los_per_ruangan AS (        
+        -- Convert duration to LOS days based on business rules:        
+        -- ≤12 hours = 0 days        
+        -- ≤24 hours = 1 day        
+        -- >24 hours = ceil(hours/24)        
+        SELECT        
+          norec,        
+          tgl_keluar,        
+          pasien_sequence,        
+          CASE        
+           WHEN durasi_jam <= 12 THEN 0        
+           WHEN durasi_jam <= 24 THEN 1        
+           ELSE CEIL(durasi_jam/24)::integer        
+          END as los        
+        FROM durasi_per_ruangan        
+       )        
+       -- Final aggregation by discharge date        
+       SELECT        
+        tgl_keluar as tgl,        
+        SUM(los)::integer as jml        
+       FROM los_per_ruangan        
+       GROUP BY tgl_keluar        
+       ORDER BY tgl_keluar ASC;        
+       "));
+        
         $tgl = 0;
         $detail = [];
         foreach ($date_series as $date) {
