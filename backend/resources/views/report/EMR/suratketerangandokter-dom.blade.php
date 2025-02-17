@@ -212,11 +212,22 @@
                                 <td width="1%">:</td>
                                 <td>{{toUppercase($item[3003984])}}</td>
                             </tr>
-                            <tr>
+                            <!-- <tr>
                                 <td width="30%"  style="padding-left: 60px ">Pekerjaan</td>
                                 <td width="1%">:</td>
                                 <td>{{toUppercase($item[3003985])}}</td>
-                            </tr>
+                            </tr> -->
+                            <tr>
+                                <td width="30%"  style="padding-left: 60px">Pekerjaan</td>
+                                <td width="1%">:</td>
+                                <td>
+                                    @if (($item[3003985] ?? '') === 'LAIN-LAIN')
+                                       {{ toUppercase($item[1901308923] ?? '') }}
+                                    @else
+                                        {{ toUppercase($item[3003985] ?? '') }}
+                                    @endif
+                                </td>
+                            </tr> 
                             <tr>
                                 <td width="30%" style="padding-left: 60px ">Alamat</td>
                                 <td width="1%">:</td>

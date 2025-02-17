@@ -203,7 +203,7 @@
                 <td style="text-align: center;">:</td>
                 <td>
                     @if (($item[3003960] ?? '') === 'LAIN-LAIN')
-                        {{ toUppercase($item[3003960] ?? '') }} - {{ toUppercase($item[1901308921] ?? '') }}
+                       {{ toUppercase($item[1901308921] ?? '') }}
                     @else
                         {{ toUppercase($item[3003960] ?? '') }}
                     @endif

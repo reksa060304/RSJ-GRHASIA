@@ -280,6 +280,7 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
                 $scope.cc.tglLahir = chacePeriode[18]
                 $scope.cc.gawean = chacePeriode[31]
                 $scope.cc.tempatLahir = chacePeriode[32]
+                $scope.cc.pekerjaanlain = chacePeriode[41]
 
                 if (nomorEMR == '-') {
                     $scope.cc.norec_emr = '-'
@@ -305,6 +306,7 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
                 }
 
                 $scope.item.obj[3003990] = $scope.cc.nocm
+                $scope.item.obj[1901308923] = $scope.cc.pekerjaanlain
 
                 medifirstService.get("emr/get-emr-otomatisvitalsign?emrfk=147"+"&noregistrasi="+$scope.cc.noregistrasi).then(function (dat) {
                     var datas = dat.data.data2

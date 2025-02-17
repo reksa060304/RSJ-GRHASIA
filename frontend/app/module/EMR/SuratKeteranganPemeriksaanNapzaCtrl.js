@@ -279,6 +279,7 @@ define(['initialize','Configuration'], function (initialize, configuration) {
                 $scope.cc.tglLahir = chacePeriode[18]
                 $scope.cc.gawean = chacePeriode[31]
                 $scope.cc.tempatLahir = chacePeriode[32]
+                $scope.cc.pekerjaanlain = chacePeriode[41]
                 if (nomorEMR == '-') {
                     $scope.cc.norec_emr = '-'
                 } else {
@@ -299,6 +300,7 @@ define(['initialize','Configuration'], function (initialize, configuration) {
                 $scope.item.obj[3003979]=$scope.cc.jeniskelamin
                 $scope.item.obj[3003980]=$scope.cc.gawean
                 $scope.item.obj[3003981]=$scope.cc.alamat
+                $scope.item.obj[1901308922]=$scope.cc.pekerjaanlain
 
                 $scope.item.obj[3003971] = moment($scope.now).format('YYYY-MM-DD HH:mm')
                 $scope.item.obj[3003991] = 
