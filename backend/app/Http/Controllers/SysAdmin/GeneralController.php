@@ -6129,4 +6129,15 @@ class GeneralController extends ApiController
         return $this->respond($result);
     }
 
+    public function getTindakanPPI(Request $request) {
+        $kdProfile = (int) $this->getDataKdProfile($request);
+        $aktifitas = \DB::table('aktifitas_ppi_m as ap')
+                    ->select('ap.id','ap.namaaktifitas')
+                    ->where('ap.kdprofile', $kdProfile)
+                    ->where('ap.statusenabled', true);
+        $aktifitas = $aktifitas->get();
+
+        return $this->respond($aktifitas);
+    }
+
 }

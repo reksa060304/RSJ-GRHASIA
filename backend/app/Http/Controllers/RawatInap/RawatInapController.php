@@ -2180,14 +2180,14 @@ class RawatInapController extends ApiController
         ->get();
 
         $data = DB::table('auditapd_t as au')
-        ->select('au.*', 'pg.namalengkap as observer', 'jp.jenispegawai as profesi', 'pr.namaproduk')
+        ->select('au.*', 'pg.namalengkap as observer', 'jp.jenispegawai as profesi', 'pr.namaaktifitas')
         ->join('pegawai_m as pg', 'au.objectpegawaifk', '=', 'pg.id')
         ->join('jenispegawai_m as jp', 'au.objectjenispegawaifk', '=', 'jp.id')
-        ->join('produk_m as pr', 'pr.id', '=', 'au.jenisaktifitas')
+        ->join('aktifitas_ppi_m as pr', DB::raw('CAST(au.jenisaktifitas AS INTEGER)'), '=', 'pr.id')
         ->where('au.kdprofile', $kdProfile)
         ->where('au.statusenabled', true)
         ->where('au.objectruanganfk', $request['objectruanganfk'])
-        ->whereRaw('to_char(au.tanggal, \'MM-YYYY\') = ?', [$request['bulan']])
+        ->whereRaw("to_char(au.tanggal, 'MM-YYYY') = ?", [$request['bulan']])
         ->orderBy('au.tanggal', 'desc')
         ->get();
 

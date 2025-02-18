@@ -59,7 +59,10 @@ define(['initialize', 'Configuration'], function (initialize, config) {
 
             $scope.search = function () {
                 if($scope.item.ruangan) {
-                    medifirstService.get('sysadmin/general/get-tindakan?idRuangan='+ $scope.item.ruangan.id, true, true, 10).then(function (e) {
+                    // medifirstService.get('sysadmin/general/get-tindakan?idRuangan='+ $scope.item.ruangan.id, true, true, 10).then(function (e) {
+                    //     $scope.listTindakan = e;
+                    // });
+                    medifirstService.get('sysadmin/general/get-tindakan-ppi').then(function (e) {
                         $scope.listTindakan = e;
                     });
                 }
@@ -167,7 +170,7 @@ define(['initialize', 'Configuration'], function (initialize, config) {
                         locked: true,
                     },
                     {
-                        field: 'namaproduk',
+                        field: 'namaaktifitas',
                         title: "JENIS AKTIFITAS",
                         width: 250,
                         locked: true,
@@ -205,7 +208,11 @@ define(['initialize', 'Configuration'], function (initialize, config) {
                     toastr.error('Harap pilih Ruangan terlebih dahulu !')
                     return
                 }
-
+                $scope.item.observer = {
+                    id: medifirstService.getPegawaiLogin().id,
+                    namalengkap: medifirstService.getPegawaiLogin().namaLengkap
+                }
+                // console.log($scope.item.observer);
                 $scope.popUpIndex.center().open();
             });
 
@@ -275,7 +282,10 @@ define(['initialize', 'Configuration'], function (initialize, config) {
                 $scope.item.observer = { id: dataItem.objectpegawaifk, namalengkap: dataItem.observer, }
                 $scope.item.tanggal = dataItem.tanggal
                 $scope.item.profesi = { value: dataItem.objectjenispegawaifk, text: dataItem.profesi, }
-                $scope.item.aktifitas = { id: dataItem.jenisaktifitas, namaproduk: dataItem.namaproduk, }
+                $scope.item.aktifitas = {
+                    id: dataItem.id,
+                    namaaktifitas: dataItem.namaaktifitas,
+                }
 
                 for (let i = 0; i < $scope.columndinamis.length; i++) {
                     const element = $scope.columndinamis[i];
@@ -456,6 +466,8 @@ define(['initialize', 'Configuration'], function (initialize, config) {
                         // console.log(res.data)
                     })
             }
+
+     
 
             /////////////////////////////// // ///////
         }
