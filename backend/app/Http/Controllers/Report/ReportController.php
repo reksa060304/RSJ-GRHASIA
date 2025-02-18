@@ -28997,9 +28997,9 @@ public function suratBuktiPengembalian(Request $request)
         $subk = $request['subkegiatan'];
         $subsubk = $request['subsubkegiatan'];
       
-        $subsubkegiatan = DB::select(DB::raw("select regexp_replace(keterangan, '\d|-', '', 'g') as keterangan2,*  from kegiatananggaran_m where id = ".$subsubk));
+        $subsubkegiatan = DB::select(DB::raw("select regexp_replace(keterangan, '\d|-', '', 'g') as keterangan2,*  from kegiatananggaran2024_m where id = ".$subsubk));
 
-        $subkegiatan = DB::select(DB::raw("select * from kegiatananggaran_m where id = ".$subk));
+        $subkegiatan = DB::select(DB::raw("select * from kegiatananggaran2024_m where id = ".$subk));
 
         $asalproduk_kb = "";
         $asalproduk_sr = "";
