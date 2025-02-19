@@ -123,6 +123,7 @@ Route::group(['middleware' => 'cors', 'prefix' => 'service'], function () {
         Route::get('report/cetak-bkupenerimaanv2', 'Report\ReportController@cetakBKUPenerimaanV2');
         Route::get('report/cetak-spjbpv2', 'Report\ReportController@cetakSPJBPV2');
         Route::get('report/cetak-targetpendapatan-bp', 'Report\ReportController@cetakTargetPendapatanBP');
+        Route::get('bendaharapenerimaan/cek-target-pendapatan', 'BendaharaPenerimaan\BendaharaPenerimaanController@cekTargetPendapatan');
         // End bendahara penerimaan
 
 		Route::get('registrasi/laporan/get-rekap-kunjunganrs', 'Registrasi\LaporanRegistrasiController@getRekapKunjunganRS');

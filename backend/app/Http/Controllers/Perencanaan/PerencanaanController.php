@@ -4735,7 +4735,7 @@ class PerencanaanController extends ApiController {
                                 $penerimaan += $request['bku'][$i]['jumlahpanjar'];
                                 $pengeluaran += $request['bku'][$i]['jumlahdibayarverif'];
                             } else if($request['bku'][$i]['carabayar'] == 'PANJAR'){
-                                $saldofix -=$request['bku'][$i]['jumlahpanjar'];;
+                                $saldofix -=$request['bku'][$i]['jumlahpanjar'];
                                 $saldofix += $request['bku'][$i]['jumlahdibayarverif'];
                                 $penerimaan += $request['bku'][$i]['jumlahdibayarverif'];
                                 // $pengeluaran += $request['bku'][$i]['jumlahpanjar'];;
@@ -9828,6 +9828,18 @@ order by  split_part(kode, '.', 1)asc, split_part(kode, '.', 2)asc,  split_part(
                 'isperubahan'=> $request['isperubahan'],
                 'tahun'=> date('Y', strtotime($request['tahun'])),
                 'objecttahapfk' => $request['objecttahapfk'],
+                'januari' => isset($request['bulan']['januari']) ? $request['bulan']['januari'] : null,
+                'februari' => isset($request['bulan']['februari']) ? $request['bulan']['februari'] : null,
+                'maret' => isset($request['bulan']['maret']) ? $request['bulan']['maret'] : null,
+                'april' => isset($request['bulan']['april']) ? $request['bulan']['april'] : null,
+                'mei' => isset($request['bulan']['mei']) ? $request['bulan']['mei'] : null,
+                'juni' => isset($request['bulan']['juni']) ? $request['bulan']['juni'] : null,
+                'juli' => isset($request['bulan']['juli']) ? $request['bulan']['juli'] : null,
+                'agustus' => isset($request['bulan']['agustus']) ? $request['bulan']['agustus'] : null,
+                'september' => isset($request['bulan']['september']) ? $request['bulan']['september'] : null,
+                'oktober' => isset($request['bulan']['oktober']) ? $request['bulan']['oktober'] : null,
+                'november' => isset($request['bulan']['november']) ? $request['bulan']['november'] : null,
+                'desember' => isset($request['bulan']['desember']) ? $request['bulan']['desember'] : null,
                 // 'bulan' => $request['bulan']
                 ]);
             } else {
@@ -9844,6 +9856,18 @@ order by  split_part(kode, '.', 1)asc, split_part(kode, '.', 2)asc,  split_part(
                     'isperubahan'=> $request['isperubahan'],
                     'tahun'=> date('Y', strtotime($request['tahun'])),
                     'objecttahapfk' => $request['objecttahapfk'],
+                    'januari' => isset($request['bulan']['januari']) ? $request['bulan']['januari'] : null,
+                    'februari' => isset($request['bulan']['februari']) ? $request['bulan']['februari'] : null,
+                    'maret' => isset($request['bulan']['maret']) ? $request['bulan']['maret'] : null,
+                    'april' => isset($request['bulan']['april']) ? $request['bulan']['april'] : null,
+                    'mei' => isset($request['bulan']['mei']) ? $request['bulan']['mei'] : null,
+                    'juni' => isset($request['bulan']['juni']) ? $request['bulan']['juni'] : null,
+                    'juli' => isset($request['bulan']['juli']) ? $request['bulan']['juli'] : null,
+                    'agustus' => isset($request['bulan']['agustus']) ? $request['bulan']['agustus'] : null,
+                    'september' => isset($request['bulan']['september']) ? $request['bulan']['september'] : null,
+                    'oktober' => isset($request['bulan']['oktober']) ? $request['bulan']['oktober'] : null,
+                    'november' => isset($request['bulan']['november']) ? $request['bulan']['november'] : null,
+                    'desember' => isset($request['bulan']['desember']) ? $request['bulan']['desember'] : null,
                     // 'bulan' => $request['bulan']
                 ]);
             }
@@ -9897,15 +9921,7 @@ order by  split_part(kode, '.', 1)asc, split_part(kode, '.', 2)asc,  split_part(
 
         $data = \DB::select(DB::raw("
             SELECT
-                rp.norec,
-                rp.keterangan,
-                rp.uraianpendapatan,
-                rp.tahun,
-                rp.tglinput,
-                rp.objectasalprodukfk,
-                rp.jumlahpendapatan,
-                rp.objecturaianpendapatanfk,
-                rp.objecttahapfk,
+                rp.*,
                 cap.koderekening,
                 cap.namarekening,
                 ta.tahap 
@@ -10008,7 +10024,19 @@ order by  split_part(kode, '.', 1)asc, split_part(kode, '.', 2)asc,  split_part(
                     'keterangan'=> $item->keterangan,
                     'tahun'=> $request['tahunakhir'],
                     'objecttahapfk' => $request['tahapakhir'],
-                    'norectransfer' => $item->norec
+                    'norectransfer' => $item->norec,
+                    'januari' => $item->januari,
+                    'februari' => $item->februari,
+                    'maret' => $item->maret,
+                    'april' => $item->april,
+                    'mei' => $item->mei,
+                    'juni' => $item->juni,
+                    'juli' => $item->juli,
+                    'agustus' => $item->agustus,
+                    'september' => $item->september,
+                    'oktober' => $item->oktober,
+                    'november' => $item->november,
+                    'desember' => $item->desember
                 ]);
 
             }

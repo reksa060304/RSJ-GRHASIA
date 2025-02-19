@@ -21,6 +21,22 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
             LoadData()
             var months = ["Januari", "Februari", "Maret", "April", "Mei", "Juni", "Juli", "Agustus", "September", "Oktober", "November", "Desember"]
 
+            $scope.itemRincian.bulan = {
+                januari: 0,
+                februari: 0,
+                maret: 0,
+                april: 0,
+                mei: 0,
+                juni: 0,
+                juli: 0,
+                agustus: 0,
+                september: 0,
+                oktober: 0,
+                november: 0,
+                desember: 0,
+                total: 0 // Menyimpan total pendapatan
+            }
+
             function LoadCombo() {
                 
                 // console.log($scope.dataSelected)
@@ -161,17 +177,11 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
                         "width": "100px",
                         // hidden: true
                     },
-                    {
-                        "field": "tahun",
-                        "title": "Tahun",
-                        "width": "100px",
-                        // hidden: true
-                    },
+                    
                     {
                         "field": "tglinput",
-                        "title": "Bulan",
+                        "title": "Tanggal Input",
                         "width": "100px",
-                        "template": "<span class='style-right'>{{ formatBulan('#: tglinput #') }}</span>"
                     },
                     {
                         "field": "tahap",
@@ -198,6 +208,16 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
                 // console.log($scope.dataSelected)
                 $scope.itemRincian.norec = undefined
                 // $scope.popupTambahRincianPendapatan.center().open()
+
+                // ambil sumber dana hanya jasa layanan
+                let jasaLayanan = $scope.listSumberPendapatan.filter(item => item.namaexternal.includes('Jasa Layanan'))
+                if(jasaLayanan.length > 0){
+                    $scope.listSumberPendapatan = jasaLayanan
+                }else{
+                    toastr.error('Belum ada data sumber dana jasa layanan')
+                    return
+                }
+
                 $scope.popupTambahRencanaPendapatan.center().open()
             }
             
@@ -280,8 +300,6 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
 					alert("Data Belum Dipilih!")
 					return;
 				};
-                // console.log(dataItem.tahun)
-                // console.log(moment(dataItem.tahun).format('YYYY'))
 
                 $scope.itemRincian.tglinput = moment(dataItem.tglinput).format('YYYY-MM-DD')
                 $scope.itemRincian.tahun = dataItem.tahun
@@ -302,6 +320,20 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
                 $scope.itemRincian.tahap = $scope.cariDariList($scope.listTahapKegiatan, dataItem.objecttahapfk)
                 $scope.itemRincian.sumberPendapatan = $scope.cariDariList($scope.listSumberPendapatan, dataItem.objectasalprodukfk)
                 $scope.itemRincian.uraianPendapatan = $scope.cariDariList($scope.listUrianPendapatanBaru, dataItem.objecturaianpendapatanfk)
+                
+                $scope.itemRincian.bulan.januari = parseFloat(dataItem.januari)
+                $scope.itemRincian.bulan.februari = parseFloat(dataItem.februari)
+                $scope.itemRincian.bulan.maret = parseFloat(dataItem.maret)
+                $scope.itemRincian.bulan.april = parseFloat(dataItem.april)
+                $scope.itemRincian.bulan.mei = parseFloat(dataItem.mei)
+                $scope.itemRincian.bulan.juni = parseFloat(dataItem.juni)
+                $scope.itemRincian.bulan.juli = parseFloat(dataItem.juli)
+                $scope.itemRincian.bulan.agustus = parseFloat(dataItem.agustus)
+                $scope.itemRincian.bulan.september = parseFloat(dataItem.september)
+                $scope.itemRincian.bulan.oktober = parseFloat(dataItem.oktober)
+                $scope.itemRincian.bulan.november = parseFloat(dataItem.november)
+                $scope.itemRincian.bulan.desember = parseFloat(dataItem.desember)
+
 
                 $scope.popupTambahRencanaPendapatan.center().open()
                 
@@ -357,10 +389,10 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
                     return
                 }
 
-                if($scope.itemRincian.jumlahPendapatan == undefined && $scope.itemRincian.jumlahPendapatan == null){
-                    toastr.error('Isi jumlah pendapatan')
-                    return
-                }
+                // if($scope.itemRincian.jumlahPendapatan == undefined && $scope.itemRincian.jumlahPendapatan == null){
+                //     toastr.error('Isi jumlah pendapatan')
+                //     return
+                // }
 
                 // if($scope.itemRincian.bulan == undefined && $scope.itemRincian.bulan == null){
                 //     toastr.error('Pilih bulan dulu')
@@ -372,31 +404,48 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
                     norec = $scope.itemRincian.norec
                 }
                 
-                var objSave = {
-                    'norec': norec,
-                    'tglinput': moment($scope.itemRincian.tglinput).format('YYYY-MM-DD'),
-                    'bulan': parseInt(moment($scope.itemRincian.bulan).format('MM')),
-                    'tahun': tahun,
-                    'objectasalprodukfk': $scope.itemRincian.sumberPendapatan.id,
-                    'uraianpendapatan': $scope.itemRincian.uraianPendapatan.namarekening,
-                    'jumlahpendapatan': $scope.itemRincian.jumlahPendapatan,                    
-                    'objecturaianpendapatanfk':$scope.itemRincian.uraianPendapatan.id,
-                    'keterangan':$scope.itemRincian.uraianPendapatan.text,
-                    // 'objectakunpendapatanfk': $scope.itemPendapatan.jumlahPendapatan,
-                    'objecttahapfk' : $scope.itemRincian.tahap.id,
-                    'isperubahan': false,
-                }
-                
-
-                medifirstService.post('anggaran/save-rincian-pendapatan', objSave).then(function(data){
-                    // console.log(data);
-                    $scope.popupTambahRencanaPendapatan.close()
+                // validasi jika sudah ada urian, tahap, dan sumberpendapatan yang sama tidak boleh entry
+                medifirstService.get('bendaharapenerimaan/cek-target-pendapatan' 
+                    + '?sumberdana=' + $scope.itemRincian.sumberPendapatan.id
+                    + '&tahap=' + $scope.itemRincian.tahap.id
+                    + '&rekening=' + $scope.itemRincian.uraianPendapatan.id
+                    + '&norec=' + norec)
+                    .then(function(response){
                     
-                    reset()
+                        let data = response.data
 
-                    LoadData()
-                })
-                
+                        // jika ada maka error
+                        if(data.length > 0){
+                            toastr.error('Sudah Ada Data Target Pendapatan')
+                            return
+                        }
+
+                        var objSave = {
+                            'norec': norec,
+                            'tglinput': moment($scope.itemRincian.tglinput).format('YYYY-MM-DD'),
+                            'bulan': parseInt(moment($scope.itemRincian.bulan).format('MM')),
+                            'tahun': tahun,
+                            'objectasalprodukfk': $scope.itemRincian.sumberPendapatan.id,
+                            'uraianpendapatan': $scope.itemRincian.uraianPendapatan.namarekening,
+                            'jumlahpendapatan': $scope.itemRincian.jumlahPendapatan,                    
+                            'objecturaianpendapatanfk':$scope.itemRincian.uraianPendapatan.id,
+                            'keterangan':$scope.itemRincian.uraianPendapatan.text,
+                            // 'objectakunpendapatanfk': $scope.itemPendapatan.jumlahPendapatan,
+                            'objecttahapfk' : $scope.itemRincian.tahap.id,
+                            'isperubahan': false,
+                            'bulan': $scope.itemRincian.bulan
+                        }
+        
+                        medifirstService.post('anggaran/save-rincian-pendapatan', objSave).then(function(data){
+                            // console.log(data);
+                            $scope.popupTambahRencanaPendapatan.close()
+                            
+                            reset()
+        
+                            LoadData()
+                        })
+
+                    })
             }
 
             $scope.cariDariList = function(arrayList, idCari){
@@ -563,6 +612,21 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
                     + "&tahun=" + moment($scope.item.tahunCetakTarget).format('YYYY'), '_blank');
 
             }
+
+            $scope.$watch('itemRincian.bulan', function(newValue, oldValue) {
+                if (newValue !== oldValue) {
+                  $scope.itemRincian.jumlahPendapatan = $scope.totalTarget(); // Mengupdate total setiap ada perubahan
+                }
+              }, true);
+
+            $scope.totalTarget = function() {
+                var total = 0;
+                // Menghitung jumlah semua bulan
+                for (var bulan in $scope.itemRincian.bulan) {
+                  total += $scope.itemRincian.bulan[bulan] || 0;  // Tambahkan nilai bulan atau 0 jika undefined
+                }
+                return total;
+            };
 
             // BATASSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSS
         }

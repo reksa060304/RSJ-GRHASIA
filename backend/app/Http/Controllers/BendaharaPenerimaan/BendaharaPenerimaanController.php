@@ -11848,4 +11848,55 @@ class BendaharaPenerimaanController extends ApiController {
         return $this->setStatusCode($result['status'])->respond($result, $transMsg);
     }
 
+    public function cekTargetPendapatan(Request $request)
+    {
+
+        $kdProfile = $this->getDataKdProfile($request);
+        $idProfile = (int) $kdProfile;
+
+
+        $sumberdana = '';
+        if(isset($request['sumberdana']) && $request['sumberdana'] !== '' && $request['sumberdana'] !== "undefined"){
+            $sumberdana = "AND rp.objectasalprodukfk = ".$request['sumberdana'];
+        }
+
+        $tahap = '';
+        if(isset($request['tahap']) && $request['tahap'] !== '' && $request['tahap'] !== "undefined"){
+            $tahap = "AND rp.objecttahapfk = ". $request['tahap'];
+        }
+
+        $rekening = '';
+        if(isset($request['rekening']) && $request['rekening'] !== '' && $request['rekening'] !== "undefined"){
+            $rekening = "AND cap.id = ". $request['rekening'];
+        }
+
+        $norec = '';
+        if(isset($request['norec']) && $request['norec'] !== '' && $request['norec'] !== "undefined"){
+            $norec = "AND rp.norec != '".$request['norec']."'";
+        }
+
+        $cek = DB::select(DB::raw("
+            SELECT
+                rp.*,
+                cap.koderekening,
+                cap.namarekening,
+                ta.tahap 
+            FROM rincianpendapatan_t rp
+            JOIN char_akun_pendapatan_m AS cap ON cap.id = rp.objecturaianpendapatanfk AND cap.statusenabled = TRUE AND cap.kdprofile = ".$idProfile."
+            JOIN tahapanggaran_m AS ta ON ta.id = rp.objecttahapfk AND ta.statusenabled = true AND ta.kdprofile = ".$idProfile."
+            JOIN asalproduk_m AS ap ON ap.id = rp.objectasalprodukfk AND ap.statusenabled = true AND ap.kdprofile = ".$idProfile."
+            WHERE 
+                rp.statusenabled = true 
+                AND rp.kdprofile = ".$idProfile."
+                $sumberdana
+                $tahap
+                $rekening
+                $norec
+            ORDER BY
+                cap.id asc
+        "));
+
+        return $this->respond($cek);
+    }
+
 }

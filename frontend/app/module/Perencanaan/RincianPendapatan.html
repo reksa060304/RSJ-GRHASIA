@@ -288,11 +288,11 @@
                     <input style="width: 100%" k-ng-model="itemRincian.tglinput" kendo-datetimepicker placeholer="yyyy-mm-dd"
                         k-format="'yyyy-MM-dd HH:mm'" />
                 </div>
-                <div class="grid_3">
+                <!-- <div class="grid_3">
                     <label c-label item="item" c-label-text="Bulan Target"></label>
                     <input style="width: 100%" k-options="bulanOption" k-ng-model="itemRincian.bulan" kendo-date-picker
                         placeholer="Bulan" k-format="'MMMM'" />
-                </div>
+                </div> -->
                 <div class="grid_3">
                     <label c-label item="item" c-label-text="Tahun Diperoleh"></label>
                     <input style="width: 100%" k-options="yearUngkul" k-ng-model="itemRincian.tahun" kendo-date-picker
@@ -327,12 +327,63 @@
             </div>
             <div class="grid_6">
                 <label c-label item="item">Target Pendapatan</label>
-                <input c-text-box type="number" class="k-textbox" ng-model="itemRincian.jumlahPendapatan"
-                     />
+                <input disabled c-text-box type="number" class="k-textbox" ng-model="itemRincian.jumlahPendapatan" />
             </div>
            
-           
         </div>
+
+        <!-- bulan -->
+         <div class="grid_12">
+            <div class="grid_3">
+                <label c-label item="item">Januari</label>
+                <input c-text-box type="number" class="k-textbox" ng-model="itemRincian.bulan.januari"/>
+            </div>
+            <div class="grid_3">
+                <label c-label item="item">Februari</label>
+                <input c-text-box type="number" class="k-textbox" ng-model="itemRincian.bulan.februari"/>
+            </div>
+            <div class="grid_3">
+                <label c-label item="item">Maret</label>
+                <input c-text-box type="number" class="k-textbox" ng-model="itemRincian.bulan.maret"/>
+            </div>
+            <div class="grid_3">
+                <label c-label item="item">April</label>
+                <input c-text-box type="number" class="k-textbox" ng-model="itemRincian.bulan.april"/>
+            </div>
+            <div class="grid_3">
+                <label c-label item="item">Mei</label>
+                <input c-text-box type="number" class="k-textbox" ng-model="itemRincian.bulan.mei"/>
+            </div>
+            <div class="grid_3">
+                <label c-label item="item">Juni</label>
+                <input c-text-box type="number" class="k-textbox" ng-model="itemRincian.bulan.juni"/>
+            </div>
+            <div class="grid_3">
+                <label c-label item="item">Juli</label>
+                <input c-text-box type="number" class="k-textbox" ng-model="itemRincian.bulan.juli"/>
+            </div>
+            <div class="grid_3">
+                <label c-label item="item">Agustus</label>
+                <input c-text-box type="number" class="k-textbox" ng-model="itemRincian.bulan.agustus"/>
+            </div>
+            <div class="grid_3">
+                <label c-label item="item">September</label>
+                <input c-text-box type="number" class="k-textbox" ng-model="itemRincian.bulan.september"/>
+            </div>
+            <div class="grid_3">
+                <label c-label item="item">Oktober</label>
+                <input c-text-box type="number" class="k-textbox" ng-model="itemRincian.bulan.oktober"/>
+            </div>
+            <div class="grid_3">
+                <label c-label item="item">November</label>
+                <input c-text-box type="number" class="k-textbox" ng-model="itemRincian.bulan.november"/>
+            </div>
+            <div class="grid_3">
+                <label c-label item="item">Desember</label>
+                <input c-text-box type="number" class="k-textbox" ng-model="itemRincian.bulan.desember"/>
+            </div>
+         </div>
+
         <div class="grid_12" style="margin-top: 10px;">
             <div class="grid_2" style="margin: 10px;">
                 <button class="btnTemplate1" ng-click="simpanPendapatan()">Simpan</button>

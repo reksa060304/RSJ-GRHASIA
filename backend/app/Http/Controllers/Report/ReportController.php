@@ -26902,7 +26902,13 @@ public function suratBuktiPengembalian(Request $request)
                 AND cap.kdprofile = 30
                 AND cap.level = 8
             ORDER BY 
-                cap.id asc
+                split_part(cap1.koderekening, '.', 1)::INTEGER asc,
+                split_part(cap2.koderekening, '.', 2)::INTEGER asc,
+                split_part(cap3.koderekening, '.', 3)::INTEGER asc,
+                split_part(cap4.koderekening, '.', 4)::INTEGER asc,
+                split_part(cap5.koderekening, '.', 5)::INTEGER asc,
+                split_part(cap6.koderekening, '.', 6)::INTEGER asc,
+                cap.koderekening asc
         "));
 
 
@@ -26911,6 +26917,18 @@ public function suratBuktiPengembalian(Request $request)
             SELECT 
                 rp.jumlahpendapatan,
                 EXTRACT(MONTH FROM rp.tglinput) AS bulan,
+                rp.januari,
+                rp.februari,
+                rp.maret,
+                rp.april,
+                rp.mei,
+                rp.juni,
+                rp.juli,
+                rp.agustus,
+                rp.september,
+                rp.oktober,
+                rp.november,
+                rp.desember,
                 cap.id as idrekening,
                 cap.koderekening,
                 cap.namarekening,
@@ -26965,6 +26983,18 @@ public function suratBuktiPengembalian(Request $request)
             SELECT 
                 rp.jumlahpendapatan,
                 EXTRACT(MONTH FROM rp.tglinput) AS bulan,
+                rp.januari,
+                rp.februari,
+                rp.maret,
+                rp.april,
+                rp.mei,
+                rp.juni,
+                rp.juli,
+                rp.agustus,
+                rp.september,
+                rp.oktober,
+                rp.november,
+                rp.desember,
                 cap.id as idrekening,
                 cap.koderekening,
                 cap.namarekening,
