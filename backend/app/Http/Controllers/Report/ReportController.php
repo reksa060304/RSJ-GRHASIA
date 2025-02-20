@@ -23450,14 +23450,16 @@ public function suratBuktiPengembalian(Request $request)
             ->get();
 
         $data = DB::table('auditapd_t as au')
-            ->select('au.*', 'pg.namalengkap as observer', 'jp.jenispegawai as profesi', 'pr.namaproduk', 'ru.namaruangan')
+            ->select('au.*', 'pg.namalengkap as observer', 'jp.jenispegawai as profesi', 'pr.namaaktifitas', 'ru.namaruangan')
             ->join('pegawai_m as pg', 'au.objectpegawaifk', '=', 'pg.id')
             ->join('jenispegawai_m as jp', 'au.objectjenispegawaifk', '=', 'jp.id')
-            ->join('produk_m as pr', 'pr.id', '=', 'au.jenisaktifitas')
+            ->join('aktifitas_ppi_m as pr', DB::raw('CAST(au.jenisaktifitas AS INTEGER)'), '=', 'pr.id')
             ->join('ruangan_m as ru', 'ru.id', '=', 'au.objectruanganfk')
             ->where('au.kdprofile', $kdProfile)
             ->where('au.statusenabled', true)
-            ->where('au.objectruanganfk', $request['objectruanganfk'])
+            ->when($request['objectruanganfk'], function($query) use ($request) {
+                return $query->where('au.objectruanganfk', $request['objectruanganfk']);
+            })
             ->whereRaw('to_char(au.tanggal, \'MM-YYYY\') = ?', [$request['bulan']])
             ->where('au.isverifikasi', true)
             ->orderBy('au.tanggal', 'desc')
@@ -23468,7 +23470,9 @@ public function suratBuktiPengembalian(Request $request)
             ->join('auditapddetail_t as apddt', 'apd.norec', '=', 'apddt.norecauditapd')
             ->where('apd.kdprofile', $kdProfile)
             ->where('apd.statusenabled', true)
-            ->where('apd.objectruanganfk', $request['objectruanganfk'])
+            ->when($request['objectruanganfk'], function($query) use ($request) {
+                return $query->where('apd.objectruanganfk', $request['objectruanganfk']);
+            })
             ->whereRaw('to_char(apd.tanggal, \'MM-YYYY\') = ?', [$request['bulan']])
             ->get();
 
@@ -23661,8 +23665,10 @@ public function suratBuktiPengembalian(Request $request)
             ->join('ruangan_m as ru', 'ru.id', '=', 'apd.objectruanganfk')
             ->where('apd.kdprofile', $kdProfile)
             ->where('apd.statusenabled', true)
-            ->where('apd.objectruanganfk', $request['objectruanganfk'])
             ->where('apd.isverifikasi', true)
+            ->when($request['objectruanganfk'], function($query) use ($request) {
+                return $query->where('apd.objectruanganfk', $request['objectruanganfk']);
+            })
             ->whereRaw('to_char(apd.tanggal, \'MM-YYYY\') = ?', [$request['bulan']])
             ->groupBy('apdm.description')
             ->get();

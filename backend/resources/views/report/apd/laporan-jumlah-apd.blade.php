@@ -10,16 +10,54 @@
             size: 21.5cm 33cm;
             margin: 1cm;
         }
-        p {
-            margin: 0;
+        * {
+            box-sizing: border-box;
         }
         body {
             margin: 0;
+            padding: 0;
+            font-family: Arial, sans-serif;
+            font-size: 11pt;
+            line-height: 1.3;
+        }
+        p {
+            margin: 0;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
         }
         .content {
-            padding: 3px 5px;
+            padding: 6px 8px;
             border: 1px solid black;
             font-size: 11pt;
+            vertical-align: middle;
+        }
+        th.content {
+            background-color: #f0f0f0;
+            font-weight: bold;
+        }
+        td.content {
+            height: 25px;
+        }
+        @media print {
+            body {
+                -webkit-print-color-adjust: exact;
+                print-color-adjust: exact;
+            }
+            table {
+                page-break-inside: auto;
+            }
+            tr {
+                page-break-inside: avoid;
+                page-break-after: auto;
+            }
+            thead {
+                display: table-header-group;
+            }
+            tfoot {
+                display: table-footer-group;
+            }
         }
     </style>
 </head>
@@ -50,26 +88,24 @@
         </thead>
         <tbody>
             <tr>
-                <td>WISMA</td>
+                <td>RUANGAN</td>
                 <td style="padding-left: 1em; padding-right: 1em">:</td>
                 <td>
-                    {{-- {{ $jumlahAPD[0]->namaruangan }} --}}
-                    @if ($jumlahAPD && count($jumlahAPD) > 0)
+                    @if (request()->has('objectruanganfk') && $jumlahAPD && count($jumlahAPD) > 0)
                         {{ $jumlahAPD[0]->namaruangan }}
                     @else
-                        -
+                        SEMUA RUANGAN
                     @endif
                 </td>
             </tr>
             <tr>
                 <td>BULAN</td>
                 <td style="padding-left: 1em; padding-right: 1em">:</td>
-                {{-- <td>{{ date_format(date_create($jumlahAPD[0]->tanggal_apd), 'm-Y') }}</td> --}}
                 <td>
-                    @if ($jumlahAPD && count($jumlahAPD) > 0)
-                        {{ date_format(date_create($jumlahAPD[0]->tanggal_apd), 'm-Y') }}
+                    @if (request()->has('bulan'))
+                        {{ date('F Y', strtotime('01-'.request()->get('bulan'))) }}
                     @else
-                        {{ date('m-Y') }}
+                        {{ date('F Y') }}
                     @endif
                 </td>
             </tr>
@@ -121,7 +157,7 @@
                     <td class="content">{{ $jumlah }}</td>
                 </tr>
             @endforeach
-            <tr>
+            <!-- <tr>
                 <td class="content"><b>Cuci tangan sebelum menggunakan APD</b></td>
                 <td class="content"></td>
             </tr>
@@ -138,7 +174,7 @@
                     <td class="content">{{ $row->description }}</td>
                     <td class="content">{{ $jumlah }}</td>
                 </tr>
-            @endforeach
+            @endforeach -->
         </tbody>
     </table>
 

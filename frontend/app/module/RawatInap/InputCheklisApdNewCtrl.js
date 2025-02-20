@@ -12,10 +12,10 @@ define(['initialize', 'Configuration'], function (initialize, config) {
             $scope.selectedData = [];
             var dataARR = []
             var dataLoad = []
-            
+
             let verifikator = []
             let pegawai = JSON.parse(window.localStorage.getItem('pegawai'))
-            
+
             FormLoad();
 
             function FormLoad() {
@@ -43,7 +43,7 @@ define(['initialize', 'Configuration'], function (initialize, config) {
                     $scope.listJenisPegawai = e.data
                 });
 
-            
+
                 $scope.isRouteLoading = true;
                 medifirstService.get("rawatinap/get-master-audit-apd", true).then(async function (dat) {
                     $scope.isRouteLoading = false;
@@ -58,7 +58,7 @@ define(['initialize', 'Configuration'], function (initialize, config) {
             }
 
             $scope.search = function () {
-                if($scope.item.ruangan) {
+                if ($scope.item.ruangan) {
                     // medifirstService.get('sysadmin/general/get-tindakan?idRuangan='+ $scope.item.ruangan.id, true, true, 10).then(function (e) {
                     //     $scope.listTindakan = e;
                     // });
@@ -69,12 +69,12 @@ define(['initialize', 'Configuration'], function (initialize, config) {
             }
 
             function searchData() {
-                if(!$scope.item.bulan) {
+                if (!$scope.item.bulan) {
                     toastr.error("Harap pilih bulan terlebih dahulu !");
                     return
                 }
 
-                if(!$scope.item.ruangan) {
+                if (!$scope.item.ruangan) {
                     toastr.error("Harap pilih ruangan terlebih dahulu !");
                     return
                 }
@@ -82,10 +82,10 @@ define(['initialize', 'Configuration'], function (initialize, config) {
                 $scope.isRouteLoading = true;
                 medifirstService.get(`rawatinap/get-audit-apd?bulan=${moment($scope.item.bulan).format("MM-YYYY")}&objectruanganfk=${$scope.item.ruangan.id}`).then(function (dat) {
                     $scope.isRouteLoading = false;
-                    
+
                     verifikator = dat.data.verifikator
-                    
-                    if(verifikator.includes(pegawai.id.toString()) && $scope.columndinamis[0].command.length == 2){
+
+                    if (verifikator.includes(pegawai.id.toString()) && $scope.columndinamis[0].command.length == 2) {
                         $scope.columndinamis[0].command.push({ text: "verifikasi", click: verifikasi })
                     }
 
@@ -103,12 +103,12 @@ define(['initialize', 'Configuration'], function (initialize, config) {
                 setColumnDefault();
                 for (let i = 0; i < data.length; i++) {
                     const element = data[i];
-                    var header = $scope.columndinamis.map(function(e) { return e.title; }).indexOf(element.header);
-                    if(header > -1) {
-                        var item = 
+                    var header = $scope.columndinamis.map(function (e) { return e.title; }).indexOf(element.header);
+                    if (header > -1) {
+                        var item =
                         {
-                            field: `w${element.id}`, 
-                            title: element.description, 
+                            field: `w${element.id}`,
+                            title: element.description,
                             width: 150,
                             template: `# if(w${element.id}==true) {# ✔ # } else {# - #} #`,
                             headerAttributes: { style: "text-align : center" },
@@ -116,16 +116,16 @@ define(['initialize', 'Configuration'], function (initialize, config) {
                         // console.log(item);
                         $scope.columndinamis[header].columns.push(item);
                     } else {
-                        var item = 
-                        { 
-                            field: '', 
+                        var item =
+                        {
+                            field: '',
                             title: element.header,
                             // width: 100,
                             headerAttributes: { style: "text-align : center" },
                             columns: [
                                 {
-                                    field: `w${element.id}`, 
-                                    title: element.description, 
+                                    field: `w${element.id}`,
+                                    title: element.description,
                                     width: 150,
                                     template: `# if(w${element.id}==true) {# ✔ # } else {# - #} #`,
                                     headerAttributes: { style: "text-align : center" },
@@ -135,7 +135,7 @@ define(['initialize', 'Configuration'], function (initialize, config) {
                         $scope.columndinamis.push(item);
                     }
                 }
-               
+
                 // console.log($scope.columndinamis);
                 creategrid();
             }
@@ -178,17 +178,17 @@ define(['initialize', 'Configuration'], function (initialize, config) {
                 ]
             }
 
-            function creategrid () {
+            function creategrid() {
                 $("#grid").empty();
                 $("#grid").kendoGrid({
                     toolbar:
-                    [
-                        {
-                            name: "tambah",
-                            text: "Tambah",
-                            template: '<button class="k-button k-button-icontext addData">Tambah Data</button>'
-                        },
-                    ],
+                        [
+                            {
+                                name: "tambah",
+                                text: "Tambah",
+                                template: '<button class="k-button k-button-icontext addData">Tambah Data</button>'
+                            },
+                        ],
                     dataSource: {
                         data: dataLoad,
                         pageSize: 10
@@ -202,7 +202,7 @@ define(['initialize', 'Configuration'], function (initialize, config) {
                 }).data("kendoGrid");
             }
 
-            $('body').on('click','.addData',function(e){
+            $('body').on('click', '.addData', function (e) {
                 // $("#grid").data("kendoGrid").addRow();
                 if ($scope.item.ruangan == undefined) {
                     toastr.error('Harap pilih Ruangan terlebih dahulu !')
@@ -222,7 +222,7 @@ define(['initialize', 'Configuration'], function (initialize, config) {
                 else
                     return '-'
             }
-            
+
             $scope.bulanSelected = moment($scope.item.bulan).format("MMMM YYYY")
 
             $scope.getBulan = function () {
@@ -230,7 +230,7 @@ define(['initialize', 'Configuration'], function (initialize, config) {
                 return "<center>" + $scope.bulanString + "</center>";
             }
 
-            function onDataBound (e) {
+            function onDataBound(e) {
                 var grid = $("#grid").data("kendoGrid");
                 if (grid.select().length > 0) {
                     var selectedItem = grid.dataItem(grid.select());
@@ -252,7 +252,7 @@ define(['initialize', 'Configuration'], function (initialize, config) {
                 delete $scope.item.aktifitas
                 for (let i = 0; i < $scope.columndinamis.length; i++) {
                     const element = $scope.columndinamis[i];
-                    if(element.field == '') {
+                    if (element.field == '') {
 
                         for (let j = 0; j < element.columns.length; j++) {
                             const element2 = element.columns[j];
@@ -262,18 +262,17 @@ define(['initialize', 'Configuration'], function (initialize, config) {
                 }
             }
 
-            function editData(e) 
-            {
+            function editData(e) {
                 e.preventDefault();
                 var grid = $("#grid").data("kendoGrid");
-				var dataItem = grid.dataItem($(e.currentTarget).closest("tr"));
+                var dataItem = grid.dataItem($(e.currentTarget).closest("tr"));
 
                 if ($scope.item.ruangan == undefined) {
                     toastr.error('Harap pilih Ruangan terlebih dahulu !')
                     return
                 }
 
-                if(dataItem.isverifikasi == true && (verifikator.includes(pegawai.id.toString()) == false)){
+                if (dataItem.isverifikasi == true && (verifikator.includes(pegawai.id.toString()) == false)) {
                     toastr.error('Data Sudah Diverifikasi !')
                     return
                 }
@@ -289,22 +288,22 @@ define(['initialize', 'Configuration'], function (initialize, config) {
 
                 for (let i = 0; i < $scope.columndinamis.length; i++) {
                     const element = $scope.columndinamis[i];
-                    if(element.field == '') {
+                    if (element.field == '') {
                         for (let j = 0; j < element.columns.length; j++) {
                             const element2 = element.columns[j];
                             $scope.item[element2.field] = dataItem[element2.field]
                         }
                     }
-                    
+
                 }
                 $scope.popUpIndex.center().open();
+                console.log($scope.item.aktifitas);
             }
 
-            function hapusData(e) 
-            {
+            function hapusData(e) {
                 e.preventDefault();
                 var grid = $("#grid").data("kendoGrid");
-				var dataItem = grid.dataItem($(e.currentTarget).closest("tr"));
+                var dataItem = grid.dataItem($(e.currentTarget).closest("tr"));
 
                 var confirm = $mdDialog.confirm()
                     .title('Peringatan')
@@ -313,7 +312,7 @@ define(['initialize', 'Configuration'], function (initialize, config) {
                     .cancel('Tidak')
                     .ok('Ya')
                 $mdDialog.show(confirm).then(function () {
-                    medifirstService.post('rawatinap/delete-audit-apd',{norec:dataItem.norec}).then(function(e){
+                    medifirstService.post('rawatinap/delete-audit-apd', { norec: dataItem.norec }).then(function (e) {
                         searchData()
                     })
                 })
@@ -321,23 +320,23 @@ define(['initialize', 'Configuration'], function (initialize, config) {
 
             $scope.SaveRow = function () {
 
-                if(!$scope.item.ruangan){
+                if (!$scope.item.ruangan) {
                     toastr.error("Harap pilih Ruangan terlebih dahulu.")
                     return
                 }
-                if(!$scope.item.observer){
+                if (!$scope.item.observer) {
                     toastr.error("Harap pilih Observer terlebih dahulu.")
                     return
                 }
-                if(!$scope.item.tanggal){
+                if (!$scope.item.tanggal) {
                     toastr.error("Harap pilih Tanggal terlebih dahulu.")
                     return
                 }
-                if(!$scope.item.profesi){
+                if (!$scope.item.profesi) {
                     toastr.error("Harap pilih Profesi terlebih dahulu.")
                     return
                 }
-                if(!$scope.item.aktifitas){
+                if (!$scope.item.aktifitas) {
                     toastr.error("Harap isi Jenis Aktifitas terlebih dahulu.")
                     return
                 }
@@ -346,14 +345,14 @@ define(['initialize', 'Configuration'], function (initialize, config) {
                 var jsontemp = {}
                 for (let i = 0; i < $scope.columndinamis.length; i++) {
                     const element = $scope.columndinamis[i];
-                    if(element.field == '') {
+                    if (element.field == '') {
 
                         for (let j = 0; j < element.columns.length; j++) {
                             const element2 = element.columns[j];
                             jsontemp[element2.field] = $scope.item[element2.field]
                         }
                     }
-                    
+
                 }
                 var json = {
                     "norec": $scope.item.norecaudit == undefined ? '' : $scope.item.norecaudit,
@@ -389,24 +388,24 @@ define(['initialize', 'Configuration'], function (initialize, config) {
 
             $scope.onlyone = function (item) {
 
-                if(item == "w9" || item == "w10") {
+                if (item == "w9" || item == "w10") {
                     $scope.item["w9"] = false;
                     $scope.item["w10"] = false;
                 }
 
-                if(item == "w11" || item == "w12") {
+                if (item == "w11" || item == "w12") {
                     $scope.item["w11"] = false;
                     $scope.item["w12"] = false;
                 }
                 $scope.item[item] = true;
             }
 
-            function verifikasi(e){
+            function verifikasi(e) {
                 e.preventDefault()
 
-				let dataItem = this.dataItem($(e.currentTarget).closest("tr"));
+                let dataItem = this.dataItem($(e.currentTarget).closest("tr"));
 
-                if(dataItem.isverifikasi == true){
+                if (dataItem.isverifikasi == true) {
                     toastr.error("Data Telah diverifikasi")
                     return
                 }
@@ -414,57 +413,66 @@ define(['initialize', 'Configuration'], function (initialize, config) {
                 return medifirstService.post('rawatinap/verifikasi-audit-apd', {
                     norec: dataItem.norec,
                 })
-                .then(function(e){
-                    searchData()
-                })
+                    .then(function (e) {
+                        searchData()
+                    })
             }
 
-            $scope.laporanAPD = function(){
-                if(!$scope.item.bulan) {
+            $scope.laporanAPD = function () {
+
+                var tempBulan = $scope.item.bulan;
+                var tempRuangan = $scope.item.ruangan;
+
+                $scope.item = {};
+
+                if (tempBulan) {
+                    $scope.item.bulan = tempBulan;
+                }
+                if (tempRuangan) {
+                    $scope.item.ruangan = tempRuangan;
+                }
+
+                if (!$scope.item.bulan) {
                     toastr.error("Harap pilih bulan terlebih dahulu !");
                     return
                 }
 
-                if(!$scope.item.ruangan) {
-                    toastr.error("Harap pilih ruangan terlebih dahulu !");
-                    return
-                }
-
                 var profile = JSON.parse(localStorage.getItem('profile'));
+                var ruanganParam = $scope.item.ruangan ? '&objectruanganfk=' + $scope.item.ruangan.id : '';
 
                 window.open(config.baseApiBackend
                     + 'report/cetak-apd-bulanan?'
                     + 'bulan=' + moment($scope.item.bulan).format("MM-YYYY")
-                    + '&objectruanganfk=' + $scope.item.ruangan.id
-                    + '&kdprofile=' + profile.id)
-                    .then(function(res){
-                        // console.log(res.data)
-                    })
-                
-
+                    + ruanganParam
+                    + '&kdprofile=' + profile.id);
             }
 
-            $scope.laporanJumlahAPD = function(){
-                if(!$scope.item.bulan) {
+            $scope.laporanJumlahAPD = function () {
+                var tempBulan = $scope.item.bulan;
+                var tempRuangan = $scope.item.ruangan;
+
+                $scope.item = {};
+
+                if (tempBulan) {
+                    $scope.item.bulan = tempBulan;
+                }
+                if (tempRuangan) {
+                    $scope.item.ruangan = tempRuangan;
+                }
+
+                if (!$scope.item.bulan) {
                     toastr.error("Harap pilih bulan terlebih dahulu !");
                     return
                 }
 
-                if(!$scope.item.ruangan) {
-                    toastr.error("Harap pilih ruangan terlebih dahulu !");
-                    return
-                }
-
                 var profile = JSON.parse(localStorage.getItem('profile'));
+                var ruanganParam = $scope.item.ruangan ? '&objectruanganfk=' + $scope.item.ruangan.id : '';
 
                 window.open(config.baseApiBackend
                     + 'report/cetak-jumlah-apd?'
                     + 'bulan=' + moment($scope.item.bulan).format("MM-YYYY")
-                    + '&objectruanganfk=' + $scope.item.ruangan.id
-                    + '&kdprofile=' + profile.id)
-                    .then(function(res){
-                        // console.log(res.data)
-                    })
+                    + ruanganParam
+                    + '&kdprofile=' + profile.id);
             }
 
      

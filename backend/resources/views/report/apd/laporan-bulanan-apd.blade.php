@@ -7,19 +7,57 @@
     <title>FORMULIR AUDIT KEPATUHAN PENGGUNAAN APD</title>
     <style>
         @page {
-            size: 33cm 21.5cm;
+            size: 33cm 21.5cm landscape;
             margin: 1cm;
+        }
+        * {
+            box-sizing: border-box;
+        }
+        body {
+            margin: 0;
+            padding: 0;
+            font-family: Arial, sans-serif;
+            font-size: 11pt;
+            line-height: 1.3;
         }
         p {
             margin: 0;
         }
-        body {
-            margin: 0;
+        table {
+            width: 100%;
+            border-collapse: collapse;
         }
         .content {
-            padding: 3px 5px;
+            padding: 6px 8px;
             border: 1px solid black;
             font-size: 11pt;
+            vertical-align: middle;
+        }
+        th.content {
+            background-color: #f0f0f0;
+            font-weight: bold;
+        }
+        td.content {
+            height: 25px;
+        }
+        @media print {
+            body {
+                -webkit-print-color-adjust: exact;
+                print-color-adjust: exact;
+            }
+            table {
+                page-break-inside: auto;
+            }
+            tr {
+                page-break-inside: avoid;
+                page-break-after: auto;
+            }
+            thead {
+                display: table-header-group;
+            }
+            tfoot {
+                display: table-footer-group;
+            }
         }
     </style>
 
@@ -44,8 +82,7 @@
                 </td>
             </tr>
         </table>
-    
-        {{-- Deskripsi --}}
+    {{-- Deskripsi --}}
         <table style="width: auto; margin-bottom: 1rem;font-weight:bold;">
             <thead>
                 <tr><td></td></tr>
@@ -54,13 +91,13 @@
             </thead>
             <tbody>
                 <tr>
-                    <td>WISMA</td>
+                    <td>RUANGAN</td>
                     <td style="padding-left: 1em; padding-right: 1em">:</td>
                     <td>
-                        @if ($data && count($data) > 0)
+                        @if (request()->has('objectruanganfk') && $data && count($data) > 0 && isset($data[0]->namaruangan))
                             {{ $data[0]->namaruangan }}
                         @else
-                            -
+                            SEMUA RUANGAN
                         @endif
                     </td>
                 </tr>
@@ -68,8 +105,8 @@
                     <td>BULAN</td>
                     <td style="padding-left: 1em; padding-right: 1em">:</td>
                     <td>
-                        @if ($data && count($data) > 0)
-                            {{ date_format(date_create($data[0]->tanggal), 'F Y') }}
+                        @if (request()->has('bulan'))
+                            {{ date('F Y', strtotime('01-'.request()->get('bulan'))) }}
                         @else
                             {{ date('F Y') }}
                         @endif
@@ -88,7 +125,7 @@
                     <th rowspan="2" class="content">JENIS AKTIVITAS</th>
                     <th colspan="{{ count($masterapd) }}" class="content">PILIHAN APD</th>
                     <th colspan="{{ count($masterkesesuaian) }}" class="content">KESESUIAN</th>
-                    <th colspan="{{ count($mastercucitangan) }}" class="content">Cuci tangan sebelum menggunakan APD</th>
+                    <!-- <th colspan="{{ count($mastercucitangan) }}" class="content">Cuci tangan sebelum menggunakan APD</th> -->
                 </tr>
                 <tr>
                     @foreach ($masterapd as $mapd)
@@ -97,9 +134,9 @@
                     @foreach ($masterkesesuaian as $sesuai)
                         <th class="content">{{ $sesuai->description }}</th>
                     @endforeach
-                    @foreach ($mastercucitangan as $cucitangan)
+                    <!-- @foreach ($mastercucitangan as $cucitangan)
                         <th class="content">{{ $cucitangan->description }}</th>
-                    @endforeach
+                    @endforeach -->
                 </tr>
             </thead>
             <tbody>
@@ -108,7 +145,7 @@
                         <td class="content">{{ $item->observer }}</td>
                         <td class="content">{{ date_format(date_create($item->tanggal), 'd-m-Y') }}</td>
                         <td class="content">{{ $item->profesi }}</td>
-                        <td class="content">{{ $item->namaproduk }}</td>
+                        <td class="content">{{ $item->namaaktifitas }}</td>
                         @foreach ($masterapd as $mapd)
                             @php
                                 $checklist = 0; 
@@ -129,23 +166,51 @@
                             @endphp
                             <td class="content">{{ $checklist }}</td>
                         @endforeach
-                        @foreach ($mastercucitangan as $cucitangan)
-                            @php
-                                $checklist = 0;
-                                if($item->cucitangan->id == $cucitangan->id){
-                                    $checklist = 1;
-                                }   
-                            @endphp
-                            <td class="content">{{ $checklist }}</td>
-                        @endforeach
                     </tr>
                 @endforeach
+                
+                <tr>
+                    <td colspan="12" class="content"><strong>Jumlah</strong></td>
+                
+                    @foreach ($masterkesesuaian as $sesuai)
+                        @php
+                            $total = array_filter($data, function($item) use ($sesuai) {
+                                return $item->kesesuaian->id == $sesuai->id;
+                            });
+                            $count = count($total);
+                        @endphp
+                        <td class="content"><strong>{{ $count }}</strong></td>
+                    @endforeach
+                </tr>
+                <tr>
+                    <td colspan="12" class="content"><strong>Jumlah Total</strong></td>               
+                    @php
+                        $totalAll = count($data);
+                    @endphp
+                    <td colspan="{{ count($masterkesesuaian) }}" class="content"><strong>{{ $totalAll }}</strong></td>
+                </tr>
+
+                <tr>
+                    <td colspan="12" class="content"><strong>Presentase Kepatuhan</strong></td>               
+                    @php
+                        $totalAll = count($data);
+                        $idSesuai = 9;
+                        $idTidakSesuai = 10;
+
+                        $totalKesesuaian = array_filter($data, function($item) use ($idSesuai) {
+                            return $item->kesesuaian->id == $idSesuai;
+                        });                     
+                        $countKesesuaian = count($totalKesesuaian);
+                        $percentage = $totalAll > 0 ? ($countKesesuaian / $totalAll * 100) : 0;
+                    @endphp
+                    <td colspan="{{ count($masterkesesuaian) }}" class="content"><strong>{{ number_format($percentage, 2) }}%</strong></td>
+                </tr>
             </tbody>
         </table>
     </table>
 
     <script>
-        window.print()
+         window.print()
     </script>
 </body>
 </html>
