@@ -339,7 +339,6 @@ class LoggingController extends ApiController
     public function saveLoggingBatalSts(Request $request) {
         $kdProfile = (int) $this->getDataKdProfile($request);
         $setor = $request['setoran'];
-
         $dataLogin = $request->all();
         $iduser = '';
         $dataPegawaiUser = DB::select(DB::raw("select pg.id,pg.namalengkap from loginuser_s as lu
@@ -376,6 +375,16 @@ class LoggingController extends ApiController
                     set statusenabled = false
                     where objectstsfk = '".$setor[$i]['nosts']."' 
                 
+                ");
+
+                // disable bku karena ketika buat sts langsung dibkin bku
+                $updatests = DB::statement("
+                    update bkupenerimaanv2_t 
+                        set statusenabled = false
+                    from surattandasetoran_t
+                    where
+                        bkupenerimaanv2_t.objectstsfk = surattandasetoran_t.norec
+                        AND surattandasetoran_t.nosts = '" . $setor[$i]['nosts']. "'
                 ");
             }
 
