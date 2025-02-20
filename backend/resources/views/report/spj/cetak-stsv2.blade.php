@@ -44,7 +44,38 @@
         <tr>
             <td>Terbilang</td>
             <td style="padding: 0 0.3em;">:</td>
-            <td>{{ $sts[0]->terbilang }}</td>
+            <td>
+                @php
+                    function penyebut($nilai) {
+                        $nilai = abs($nilai);
+                        $huruf = array("", "Satu", "Dua", "Tiga", "Empat", "Lima", "Enam", "Tujuh", "Delapan", "Sembilan", "Sepuluh", "Sebelas");
+                        $temp = "";
+                        if ($nilai < 12) {
+                            $temp = " ". $huruf[$nilai];
+                        } else if ($nilai <20) {
+                            $temp = penyebut($nilai - 10). " Belas";
+                        } else if ($nilai < 100) {
+                            $temp = penyebut($nilai/10)." Puluh". penyebut($nilai % 10);
+                        } else if ($nilai < 200) {
+                            $temp = " seratus" . penyebut($nilai - 100);
+                        } else if ($nilai < 1000) {
+                            $temp = penyebut($nilai/100) . " Ratus" . penyebut($nilai % 100);
+                        } else if ($nilai < 2000) {
+                            $temp = " seribu" . penyebut($nilai - 1000);
+                        } else if ($nilai < 1000000) {
+                            $temp = penyebut($nilai/1000) . " Ribu" . penyebut($nilai % 1000);
+                        } else if ($nilai < 1000000000) {
+                            $temp = penyebut($nilai/1000000) . " Juta" . penyebut($nilai % 1000000);
+                        } else if ($nilai < 1000000000000) {
+                            $temp = penyebut($nilai/1000000000) . " Milyar" . penyebut(fmod($nilai,1000000000));
+                        } else if ($nilai < 1000000000000000) {
+                            $temp = penyebut($nilai/1000000000000) . " Trilyun" . penyebut(fmod($nilai,1000000000000));
+                        }     
+                        return $temp;
+                    }
+                @endphp
+                {{ penyebut((float)$sts[0]->totalsetoran) }}
+            </td>
         </tr>
         <tr>
             <td>Tanggal</td>
@@ -245,6 +276,33 @@
                 {{ number_format($jmlsemua, 2, '.', ',') }}
             </td>
         </tr>
+    </table>
+
+
+    <table style="width: 90%; font-size: 10pt; text-align: center; margin-left: auto; margin-right: auto; margin-top: 1cm;">
+        <tbody>
+            <tr>
+                <td style="width:30%; padding: 5px;" align="center">MENGETAHUI:</td>
+                <td style="width:30%; padding: 5px;" align="center">TELAH DIPERIKSA</td>
+                <td style="width:30%; padding: 5px;" align="center"></td>
+            </tr>
+            <tr>
+                <td style="width:30%; padding: 5px;" align="center">Pimpinan BLUD</td>
+                <td style="width:30%; padding: 5px;" align="center">Verifikator</td>
+                <td style="width:30%; padding: 5px;" align="center">Bendahara Penerima Pembantu</td>
+            </tr>
+            
+            <tr>
+                <td style="width:30%; padding: 5px; padding-top: 80px;" align="center">dr. Akhmad Akhadi S, MPH</td>
+                <td style="width:30%; padding: 5px; padding-top: 80px;" align="center">Reny Astuti, SE</td>
+                <td style="width:30%; padding: 5px; padding-top: 80px;" align="center">Suri Herlina Pratiwi, SKM, M.PH</td>
+            </tr>
+            <tr>
+                <td style="width:30%; padding: 5px;" align="center">NIP. 19680714 200012 1 002</td>
+                <td style="width:30%; padding: 5px;" align="center">NIP. 19700404 199303 2 005</td>
+                <td style="width:30%; padding: 5px;" align="center">NIP. 19860422 201101 2 013</td>
+            </tr>
+        </tbody>
     </table>
 
     <script>

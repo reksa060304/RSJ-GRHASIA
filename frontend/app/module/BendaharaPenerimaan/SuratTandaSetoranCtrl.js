@@ -889,8 +889,6 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
 
                         return item
                     })
-                    
-                    // console.log($scope.dataSTS)
 
                     let objSimpanSTSV2 = {
                         sts: $scope.dataSTS

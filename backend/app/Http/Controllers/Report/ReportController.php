@@ -25558,6 +25558,17 @@ public function suratBuktiPengembalian(Request $request)
                 sts.statusenabled = TRUE
                 AND sts.kdprofile = 30
                 AND sts.nosts = '".$nosts."'
+            GROUP BY
+                sts.nosts, stsd2.totalsetoran,
+                cap_stsd.id,cap7.id,cap6.id,cap5.id,cap4.id,cap3.id,cap2.id,cap1.id
+            ORDER BY
+                split_part(cap1.koderekening, '.', 1)::INTEGER asc,
+                split_part(cap2.koderekening, '.', 2)::INTEGER asc,
+                split_part(cap3.koderekening, '.', 3)::INTEGER asc,
+                split_part(cap4.koderekening, '.', 4)::INTEGER asc,
+                split_part(cap5.koderekening, '.', 5)::INTEGER asc,
+                split_part(cap6.koderekening, '.', 6)::INTEGER asc,
+                cap_stsd.koderekening asc
         "));
 
         // check jika punya detailv2
@@ -25822,12 +25833,17 @@ public function suratBuktiPengembalian(Request $request)
 
 
         $sts = DB::select(DB::raw("
-            SELECT * 
+            SELECT
+                sts.nosts,
+                SUM(sts.totalsetoran) as totalsetoran,
+                sts.tglpenerimaan
             FROM surattandasetoran_t sts 
             WHERE 
                 sts.statusenabled = TRUE 
                 AND sts.kdprofile = 30 
                 AND sts.nosts = '".$request['nosts']."'  
+            GROUP BY
+                sts.nosts, sts.tglpenerimaan  
         "));
 
         return view('report.spj.cetak-stsv2',compact('data', 'sts'));
@@ -26513,31 +26529,59 @@ public function suratBuktiPengembalian(Request $request)
 
         $profile = DB::select("select*from profile_m where kdprofile = 30 and statusenabled = true");
 
-        // data bulan sebelumnya
-        $bulan_sebelumnya = DB::select(DB::raw("
-
+        // ambil saldo awal dari saldoawal_bkubp untuk januari
+        $saldoawal = DB::select(DB::raw("
             SELECT
-                COALESCE(SUM(bkup.totalpenerimaan), 0) as totalpenerimaan,
-                COALESCE(SUM(bkup.totalpengeluaran), 0) as totalpengeluaran,
-                COALESCE(SUM(bkup.totalpengeluaran), 0) - COALESCE(SUM(bkup.totalpengeluaran), 0) as totalakhir
-            FROM bkupenerimaanv2_t bkup
-            LEFT JOIN surattandasetoran_t sts ON sts.norec = bkup.objectstsfk AND sts.statusenabled = TRUE
-            LEFT JOIN char_akun_pendapatan_m cap ON cap.id = bkup.objectakunpendapatanfk AND cap.statusenabled = TRUE
-            LEFT JOIN spm_t spm ON spm.norec = bkup.objectspmfk AND spm.statusenabled = TRUE
-            LEFT JOIN spp_t spp on spp.norec = spm.objectsppfk AND spp.statusenabled = TRUE
-            LEFT JOIN asalproduk_m ap on ap.id = spm.objectasalprodukfk and ap.statusenabled = true 
+                sabp.*
+            FROM saldoawal_bkubp_t sabp
             WHERE
-                bkup.statusenabled = TRUE
-                AND bkup.kdprofile = 30
-                AND bkup.tglbku::DATE < date_trunc('month', '".$request['tglbku']."'::DATE)
+                sabp.statusenabled = true
+                AND sabp.kdprofile = 30
+                AND tahun = ".date('Y', strtotime($request['tglbku']))."
+                AND bulan = 1
         "));
 
         $saldobulanlalu = 0;
-        foreach($bulan_sebelumnya as $item){
-            $saldobulanlalu += (float)$item->totalpenerimaan;
-            $saldobulanlalu -= (float)$item->totalpengeluaran;
-        }
+        // jika tglbku bukan bulan januari maka saldo bulan lalu diambil dari saldo bulanjanuari
+        // jika tglbku bulan januari maka ambil saldo dari entrian saldo awal
+        if(date('m', strtotime($request['tglbku'])) !== '01'){
 
+            // data bulan sebelumnya
+            $bulan_sebelumnya = DB::select(DB::raw("
+
+                SELECT
+                    COALESCE(SUM(bkup.totalpenerimaan), 0) as totalpenerimaan,
+                    COALESCE(SUM(bkup.totalpengeluaran), 0) as totalpengeluaran,
+                    COALESCE(SUM(bkup.totalpengeluaran), 0) - COALESCE(SUM(bkup.totalpengeluaran), 0) as totalakhir
+                FROM bkupenerimaanv2_t bkup
+                LEFT JOIN surattandasetoran_t sts ON sts.norec = bkup.objectstsfk AND sts.statusenabled = TRUE
+                LEFT JOIN char_akun_pendapatan_m cap ON cap.id = bkup.objectakunpendapatanfk AND cap.statusenabled = TRUE
+                LEFT JOIN spm_t spm ON spm.norec = bkup.objectspmfk AND spm.statusenabled = TRUE
+                LEFT JOIN spp_t spp on spp.norec = spm.objectsppfk AND spp.statusenabled = TRUE
+                LEFT JOIN asalproduk_m ap on ap.id = spm.objectasalprodukfk and ap.statusenabled = true 
+                WHERE
+                    bkup.statusenabled = TRUE
+                    AND bkup.kdprofile = 30
+                    AND extract(year from bkup.tglbku) = ".date('Y', strtotime($request['tglbku']))."
+                    AND bkup.tglbku::DATE < date_trunc('month', '".$request['tglbku']."'::DATE)
+            "));
+
+            // masukan dulu saldoawaljanuari
+            if(count($saldoawal) > 0){
+                $saldobulanlalu = $saldoawal[0]->saldoawal;
+            }
+
+            foreach($bulan_sebelumnya as $item){
+                $saldobulanlalu += (float)$item->totalpenerimaan;
+                $saldobulanlalu -= (float)$item->totalpengeluaran;
+            }
+
+        }else{
+            if(count($saldoawal) > 0){
+                $saldobulanlalu = $saldoawal[0]->saldoawal;
+            }
+
+        }
 
         // data bulan yang dipilih
         $bulan_sekarang = DB::select(DB::raw("
@@ -26567,9 +26611,8 @@ public function suratBuktiPengembalian(Request $request)
         
         setlocale(LC_ALL, 'IND');
         $bulan = strftime('%B', strtotime($request['tglbku']));
-        $tglindo = strftime('%d %B %Y', strtotime($request['tglcetak']));
+        $tglindo = $this->tanggal_indonesia($request['tglcetak']);
         
-
         return view('report.keuangan.cetak-bkupenerimaanv2',compact('saldobulanlalu', 'bulan_sekarang', 'saldobulansekarang', 'profile', 'tglbku', 'bulan', 'tglindo'));
 
     }

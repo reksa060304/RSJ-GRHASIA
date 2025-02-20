@@ -11289,7 +11289,7 @@ class BendaharaPenerimaanController extends ApiController {
 
             // buat no sts dulu karena jika ada rekening pelayanan dan nonlayanan dibku harus beda tapi di sts harus sama
             // maka buat dibuat beda sts namun nomo sts sama
-            // $nosts = $this->generateCode(new SuratTandaSetoran, 'nosts', 11, date('ymd',strtotime($dataSTS[0]['tanggalSTS'])),$idProfile);
+            $nosts = $this->generateCode(new SuratTandaSetoran, 'nosts', 11, date('ymd',strtotime($dataSTS[0]['tanggalSTS'])),$idProfile);
 
             // memngkunkin dua sts jika rekening berbeda
             foreach($dataSTS as $row){
@@ -11298,7 +11298,7 @@ class BendaharaPenerimaanController extends ApiController {
                 $pembulatan = ceil($row['totalSetoran']);
 
                 // nosts
-                $nosts = $this->generateCode(new SuratTandaSetoran, 'nosts', 11, date('ymd',strtotime($row['tanggalSTS'])),$idProfile);
+                // $nosts = $this->generateCode(new SuratTandaSetoran, 'nosts', 11, date('ymd',strtotime($row['tanggalSTS'])),$idProfile);
 
                 // simpan sts
                 $sts = new SuratTandaSetoran();
@@ -11341,25 +11341,25 @@ class BendaharaPenerimaanController extends ApiController {
                 }
 
                 // setelah sts langsung buat bku
-                // $BKU = new BKUPenerimaanV2();
-                // $norec = $BKU->generateNewId();
-                // $BKU->norec = $norec;
-                // $BKU->statusenabled = true;
-                // $BKU->kdprofile = $idProfile;
+                $BKU = new BKUPenerimaanV2();
+                $norec = $BKU->generateNewId();
+                $BKU->norec = $norec;
+                $BKU->statusenabled = true;
+                $BKU->kdprofile = $idProfile;
 
-                // $nobku = $this->generateCodeBKU(new BKUPenerimaanV2, 'nobku', $request['asalproduk'], 2, '', $idProfile);
+                $nobku = $this->generateCodeBKU(new BKUPenerimaanV2, 'nobku', $request['asalproduk'], 2, '', $idProfile);
 
-                // $BKU->nobku = $nobku;
-                // $BKU->tglbku = $sts->tglpenerimaan;
-                // $BKU->uraianbku = $sts->keterangan;
-                // $BKU->objectstsfk = $sts->norec;
-                // $BKU->objectakunpendapatanfk = $sts->objectakunpendapatanfk;
-                // $BKU->objectspmfk = null;
-                // $BKU->ispenerimaan = true;
-                // $BKU->totalpenerimaan = $sts->totalsetoran;
-                // $BKU->totalpengeluaran = 0;
-                // $BKU->objectasalprodukfk = 18;
-                // $BKU->save();
+                $BKU->nobku = $nobku;
+                $BKU->tglbku = $sts->tglpenerimaan;
+                $BKU->uraianbku = $sts->keterangan;
+                $BKU->objectstsfk = $sts->norec;
+                $BKU->objectakunpendapatanfk = $sts->objectakunpendapatanfk;
+                $BKU->objectspmfk = null;
+                $BKU->ispenerimaan = true;
+                $BKU->totalpenerimaan = $sts->totalsetoran;
+                $BKU->totalpengeluaran = 0;
+                $BKU->objectasalprodukfk = 18;
+                $BKU->save();
 
             }
 
