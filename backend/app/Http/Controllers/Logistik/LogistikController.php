@@ -5180,7 +5180,7 @@ class LogistikController extends ApiController{
         $kdProfile = $this->getDataKdProfile($request);
         $idProfile = (int) $kdProfile;
         \DB::beginTransaction();
-        // try {
+        try {
             $req = $request;
             $status = "";
             $noStruk = "";
@@ -5635,10 +5635,10 @@ class LogistikController extends ApiController{
             $dataRR->save();
 
             $transStatus = 'true';
-        // } catch (\Exception $e) {
-        //     $transStatus = 'false';
-        //     $transMessage = $status;
-        // }
+        } catch (\Exception $e) {
+            $transStatus = 'false';
+            $transMessage = $status;
+        }
 
         if ($transStatus == 'true') {
             $transMessage = "Simpan Struk Pelayanan";
