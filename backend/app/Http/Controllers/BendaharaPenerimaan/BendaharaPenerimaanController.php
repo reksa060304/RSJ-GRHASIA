@@ -30,6 +30,7 @@ use App\Transaksi\STStoSCK;
 use App\Transaksi\STStoRekapKlaim;
 use App\Transaksi\RekapKlaim;
 use App\Transaksi\MonitoringKlaim;
+use App\Transaksi\SaldoAwalBKUBP;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Http\Request;
 use Excel;
@@ -11285,6 +11286,11 @@ class BendaharaPenerimaanController extends ApiController {
             
             $dataSTS = $request['sts'];
 
+
+            // buat no sts dulu karena jika ada rekening pelayanan dan nonlayanan dibku harus beda tapi di sts harus sama
+            // maka buat dibuat beda sts namun nomo sts sama
+            // $nosts = $this->generateCode(new SuratTandaSetoran, 'nosts', 11, date('ymd',strtotime($dataSTS[0]['tanggalSTS'])),$idProfile);
+
             // memngkunkin dua sts jika rekening berbeda
             foreach($dataSTS as $row){
 
@@ -11333,6 +11339,27 @@ class BendaharaPenerimaanController extends ApiController {
                     $stsd->nourut = $key + 1;
                     $stsd->save();
                 }
+
+                // setelah sts langsung buat bku
+                // $BKU = new BKUPenerimaanV2();
+                // $norec = $BKU->generateNewId();
+                // $BKU->norec = $norec;
+                // $BKU->statusenabled = true;
+                // $BKU->kdprofile = $idProfile;
+
+                // $nobku = $this->generateCodeBKU(new BKUPenerimaanV2, 'nobku', $request['asalproduk'], 2, '', $idProfile);
+
+                // $BKU->nobku = $nobku;
+                // $BKU->tglbku = $sts->tglpenerimaan;
+                // $BKU->uraianbku = $sts->keterangan;
+                // $BKU->objectstsfk = $sts->norec;
+                // $BKU->objectakunpendapatanfk = $sts->objectakunpendapatanfk;
+                // $BKU->objectspmfk = null;
+                // $BKU->ispenerimaan = true;
+                // $BKU->totalpenerimaan = $sts->totalsetoran;
+                // $BKU->totalpengeluaran = 0;
+                // $BKU->objectasalprodukfk = 18;
+                // $BKU->save();
 
             }
 
@@ -11897,6 +11924,115 @@ class BendaharaPenerimaanController extends ApiController {
         "));
 
         return $this->respond($cek);
+    }
+
+    public function getSaldoAwalBKUBP(Request $request)
+    {
+        $kdProfile = $this->getDataKdProfile($request);
+        $idProfile = (int) $kdProfile;
+
+        $data = DB::select(DB::raw("
+            SELECT
+                sabp.*
+            FROM saldoawal_bkubp_t sabp
+            WHERE
+                sabp.statusenabled = TRUE
+                AND sabp.kdprofile = ".$idProfile."
+        "));
+
+        return $this->respond($data);
+    }
+
+    public function simpanSaldoAwalBKUBP(Request $request)
+    {
+        $kdProfile = $this->getDataKdProfile($request);
+        $idProfile = (int) $kdProfile;
+
+        DB::beginTransaction();
+        try {
+            
+            $saldoAwalBKUBP = new SaldoAwalBKUBP();
+            $saldoAwalBKUBP->norec = $saldoAwalBKUBP->generateNewId();
+            $saldoAwalBKUBP->statusenabled = true;
+            $saldoAwalBKUBP->kdprofile = $idProfile;
+            $saldoAwalBKUBP->tahun = $request['tahun'];
+            $saldoAwalBKUBP->bulan = $request['bulan'];
+            $saldoAwalBKUBP->saldoawal = $request['saldoawal'];
+            $saldoAwalBKUBP->save();
+
+            $transStatus= true;
+
+        } catch (\Exception $e) {
+            
+            $transStatus= false;
+            
+        }
+
+        $transMsg = "";
+        if($transStatus == true) {
+            $transMsg = 'Simpan Berhasil';
+            DB::commit();
+            $result = array(
+                "status" => 201,
+                "message" => $transMsg,
+                "as" => 'as@epic',
+            );
+        }else {
+            $transMsg = 'Simpan Gagal!!';
+            DB::rollBack();
+            $result = array(
+                "status" => 400,
+                "message"  => $transMsg,
+                "err" => $e->getMessage(),
+                "line" => $e->getLine(),
+                "as" => 'as@epic',
+            );
+        }
+        return $this->setStatusCode($result['status'])->respond($result, $transMsg);
+    }
+
+    public function hapusSaldoAwalBKUBP(Request $request)
+    {
+        $kdProfile = $this->getDataKdProfile($request);
+        $idProfile = (int) $kdProfile;
+
+        DB::beginTransaction();
+        try {
+            
+            // hapus bku
+            $data = DB::table('saldoawal_bkubp_t')->where('norec', $request['norec'])->update([
+                'statusenabled' => false
+            ]);
+
+            $transStatus = true;
+
+        } catch (\Exception $e) {
+            
+            $transStatus= false;
+            
+        }
+
+        $transMsg = "";
+        if($transStatus == true) {
+            $transMsg = 'Hapus Berhasil';
+            DB::commit();
+            $result = array(
+                "status" => 201,
+                "message" => $transMsg,
+                "as" => 'as@epic',
+            );
+        }else {
+            $transMsg = 'Hapus Gagal!!';
+            DB::rollBack();
+            $result = array(
+                "status" => 400,
+                "message"  => $transMsg,
+                "err" => $e->getMessage(),
+                "line" => $e->getLine(),
+                "as" => 'as@epic',
+            );
+        }
+        return $this->setStatusCode($result['status'])->respond($result, $transMsg);
     }
 
 }

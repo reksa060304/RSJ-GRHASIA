@@ -26,6 +26,16 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
 			showButton();
 			loadData()
 
+            $scope.yearUngkul = {
+                start: "decade",
+                depth: "decade"
+            }
+            $scope.bulanOption = {
+                start: "year",
+                depth: "year"
+            }
+
+
 			function showButton() {
 				$scope.showBtnTerima = true;
 				$scope.showBtnDetail = true;
@@ -554,7 +564,9 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
                     return
                 }
 
-                window.open(baseTransaksi + "report/cetak-bkupenerimaanv2?tglbku=" + moment($scope.item.tglbkucetak).format('YYYY-MM-DD'), '_blank')
+                window.open(baseTransaksi + "report/cetak-bkupenerimaanv2" 
+                    + "?tglbku=" + moment($scope.item.tglbkucetak).format('YYYY-MM-DD')
+                    + "&tglcetak=" + moment($scope.item.tglcetak).format('YYYY-MM-DD'), '_blank')
             }
 
             $scope.batalCetak = function(){
@@ -990,6 +1002,106 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
 
                 ]
 			};
+
+            // #region saldo awal bku
+            $scope.handlePopUpSaldoAwal = function(){
+
+                // reset tahun bulan 
+                $scope.item.tahunSaldoAwalBKU = null
+                $scope.item.bulanSaldoAwalBKU = null
+                $scope.item.saldoAwalBKU = null
+
+                // get data saldo awal
+                medifirstService.get('bendaharapenerimaan/get-saldoawal-bkubp').then(function(response){
+
+                    let listData = response.data
+
+                    $scope.dataSaldoAwalBKU = new kendo.data.DataSource({
+                        data: listData,
+                        total: listData.length,
+                        pageSize: 10,
+                        serverPaging: false,
+                        schema: {
+                            model: {
+                                fields: {}
+                            }
+                        },
+                    });
+
+                })
+
+                $scope.popUpSaldoAwalBKU.open().center()
+
+            }
+
+            $scope.columnSaldoAwalBKU = {
+                selectable: 'row',
+                scrollable: true,
+                pageable: true,
+                columns: [
+                    { "field": "tahun", "title": "Tahun" },
+                    { "field": "bulan", "title": "Bulan" },
+                    { "field": "saldoawal", "title": "Saldo Awal" },
+                    {
+						"command": [
+							{ text: "Hapus", click: hapusSaldoAwalBKU, imageClass: "k-icon k-i-delete" },
+						],
+						title: "",
+						width: "185px",
+					}
+                ]
+            }
+
+            $scope.simpanSaldoAwalBKU = function(){
+
+                // validasi
+                if($scope.item.tahunSaldoAwalBKU == undefined && $scope.item.tahunSaldoAwalBKU == null){
+                    toastr.error('Isi tahun dulu')
+                    return
+                }
+                if($scope.item.bulanSaldoAwalBKU == undefined && $scope.item.bulanSaldoAwalBKU == null){
+                    toastr.error('Isi bulan dulu')
+                    return
+                }
+                if($scope.item.saldoAwalBKU == undefined && $scope.item.saldoAwalBKU == null){
+                    toastr.error('Isi saldo dulu')
+                    return
+                }
+
+                let dataSave = {
+                    tahun: parseInt(moment($scope.item.tahunSaldoAwalBKU).format('YYYY')),
+                    bulan: parseInt(moment($scope.item.bulanSaldoAwalBKU).format('MM')),
+                    saldoawal: $scope.item.saldoAwalBKU,
+                }
+
+                medifirstService.post('bendaharapenerimaan/simpan-saldoawal-bkubp', dataSave).then(function(data){
+                    
+                    // close popup
+                    $scope.popUpSaldoAwalBKU.close()
+
+                    // reset input
+                    $scope.item.tahunSaldoAwalBKU = null
+                    $scope.item.bulanSaldoAwalBKU = null
+                    $scope.item.saldoAwalBKU = null
+                })
+            }
+
+            function hapusSaldoAwalBKU(e){
+                e.preventDefault()
+                var dataItem = this.dataItem($(e.currentTarget).closest("tr"));
+
+                var objSave = {
+                    'norec': dataItem.norec
+                }
+                medifirstService.post('bendaharapenerimaan/hapus-saldoawal-bkubp', objSave).then(function () {
+                    
+                    // close popup
+                    $scope.popUpSaldoAwalBKU.close()
+
+                })
+
+            }
+            // #endregion saldo awal bku
 
 			////////////// -TAMAT- ////////////////////
 

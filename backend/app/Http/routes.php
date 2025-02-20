@@ -124,6 +124,9 @@ Route::group(['middleware' => 'cors', 'prefix' => 'service'], function () {
         Route::get('report/cetak-spjbpv2', 'Report\ReportController@cetakSPJBPV2');
         Route::get('report/cetak-targetpendapatan-bp', 'Report\ReportController@cetakTargetPendapatanBP');
         Route::get('bendaharapenerimaan/cek-target-pendapatan', 'BendaharaPenerimaan\BendaharaPenerimaanController@cekTargetPendapatan');
+        Route::get('bendaharapenerimaan/get-saldoawal-bkubp', 'BendaharaPenerimaan\BendaharaPenerimaanController@getSaldoAwalBKUBP');
+        Route::post('bendaharapenerimaan/simpan-saldoawal-bkubp', 'BendaharaPenerimaan\BendaharaPenerimaanController@simpanSaldoAwalBKUBP');
+        Route::post('bendaharapenerimaan/hapus-saldoawal-bkubp', 'BendaharaPenerimaan\BendaharaPenerimaanController@hapusSaldoAwalBKUBP');
         // End bendahara penerimaan
 
 		Route::get('registrasi/laporan/get-rekap-kunjunganrs', 'Registrasi\LaporanRegistrasiController@getRekapKunjunganRS');

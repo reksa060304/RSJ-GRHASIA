@@ -136,6 +136,10 @@
         <div class="grid_2">
             <button style="width: 100%;" class="k-button k-button-icontext k-primary k-grid-update" ng-click="handlePopUpCetakSPJ()">Cetak SPJ</button>
         </div>
+
+        <div class="grid_2">
+            <button style="width: 100%;" class="k-button k-button-icontext k-primary k-grid-update" ng-click="handlePopUpSaldoAwal()">Entry Saldo Awal BKU</button>
+        </div>
     </div>
 </div>
 
@@ -486,3 +490,60 @@
 	</div>
 </div>
 <!-- end penegluaran -->
+
+<!-- start saldo awal -->
+<div kendo-window="popUpSaldoAwalBKU" k-title="'Saldo Awal BKU Penerimaan'" k-width="800" k-visible="false">
+	<div class="panel panel-default container_12">
+        <div class="grid">
+
+            <div class="grid_12">
+				<div class="grid_3">
+                    <div class="grid_12">
+                        <label for="">Tahun Saldo Awal</label>
+                    </div>
+					<div class="grid_12">
+						<input style="width: 100%" k-options="yearUngkul" k-ng-model="item.tahunSaldoAwalBKU" kendo-date-picker
+                        placeholer="YYYY" k-format="'yyyy'" />
+					</div>
+				</div>
+
+				<div class="grid_3">
+                    <div class="grid_12">
+                        <label for="">Bulan Saldo Awal</label>
+                    </div>
+					<div class="grid_12">
+						<input style="width: 100%" k-options="bulanOption" k-ng-model="item.bulanSaldoAwalBKU" kendo-date-picker
+                        placeholer="Bulan" k-format="'MMMM'" />
+					</div>
+				</div>
+
+                <div class="grid_3">
+                    <div class="grid_12">
+                        <label for="">Saldo Awal BKU</label>
+                    </div>
+					<div class="grid_12">
+						<input style="width: 100%" c-text-box type="number" class="k-textbox" ng-model="item.saldoAwalBKU" />
+					</div>
+				</div>
+			</div>
+    
+            <div class="grid_12" style="margin-top: 2em; margin-bottom: 2em;">
+                <button class="k-button  k-button-icontext" ng-click="simpanSaldoAwalBKU()">
+                    Simpan
+                </button>
+            </div>
+
+            <div style="margin-top: 2em;">
+                <div class="grid_12">
+                    <kendo-grid id="kGrids" data-source="dataSaldoAwalBKU" options="columnSaldoAwalBKU" k-selectable="'row'"
+                        k-sortable="'true'" k-resizable="'true'" k-ng-model="dataSelectedSaldoAwalBKU" ng-click="klikGridSaldoAwalBKU(dataSelectedSaldoAwalBKU)">
+                    </kendo-grid>
+                </div>
+            </div>
+        </div>
+
+
+        
+	</div>
+</div>
+<!-- end saldo awal -->
