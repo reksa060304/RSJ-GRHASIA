@@ -2200,10 +2200,7 @@ class RawatInapController extends ApiController
         ->join('auditapddetail_t as apddt', 'apd.norec', '=', 'apddt.norecauditapd')
         ->where('apd.kdprofile', $kdProfile)
         ->where('apd.statusenabled', true)
-        // ->where('apd.objectruanganfk', $request['objectruanganfk'])
-        ->when($request['objectruanganfk'], function($query) use ($request) {
-            return $query->where('au.objectruanganfk', $request['objectruanganfk']);
-        })
+        ->where('apd.objectruanganfk', $request['objectruanganfk'])
         ->whereRaw('to_char(apd.tanggal, \'MM-YYYY\') = ?', [$request['bulan']])
         ->get();
         
