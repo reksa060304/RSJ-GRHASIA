@@ -416,17 +416,31 @@ define(['initialize', 'Configuration'], function (initialize, config) {
 
                 let dataItem = this.dataItem($(e.currentTarget).closest("tr"));
 
-                if (dataItem.isverifikasi == true) {
+                if (dataItem.isverifikasi == true || dataItem.isverifikasi === 1) {
                     toastr.error("Data Telah diverifikasi")
-                    return
+                    return false
                 }
 
-                return medifirstService.post('rawatinap/verifikasi-audit-apd', {
-                    norec: dataItem.norec,
-                })
-                    .then(function (e) {
-                        searchData()
+                var confirm = $mdDialog.confirm()
+                    .title('Konfirmasi')
+                    .textContent('Apakah anda yakin ingin memverifikasi data ini?')
+                    .cancel('Tidak')
+                    .ok('Ya')
+
+                $mdDialog.show(confirm).then(function () {
+                    $scope.isRouteLoading = true;
+                    return medifirstService.post('rawatinap/verifikasi-audit-apd', {
+                        norec: dataItem.norec,
                     })
+                    .then(function (e) {
+                        $scope.isRouteLoading = false;
+                        toastr.success('Data berhasil diverifikasi');
+                        searchData();
+                    })
+                    .catch(function() {
+                        $scope.isRouteLoading = false;
+                    });
+                });
             }
 
             $scope.laporanAPD = function () {
