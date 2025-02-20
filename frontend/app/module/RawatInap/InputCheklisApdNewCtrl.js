@@ -74,13 +74,18 @@ define(['initialize', 'Configuration'], function (initialize, config) {
                     return
                 }
 
-                if (!$scope.item.ruangan) {
-                    toastr.error("Harap pilih ruangan terlebih dahulu !");
-                    return
-                }
-
+                // if (!$scope.item.ruangan) {
+                //     toastr.error("Harap pilih ruangan terlebih dahulu !");
+                //     return
+                // }
                 $scope.isRouteLoading = true;
-                medifirstService.get(`rawatinap/get-audit-apd?bulan=${moment($scope.item.bulan).format("MM-YYYY")}&objectruanganfk=${$scope.item.ruangan.id}`).then(function (dat) {
+                let url = `rawatinap/get-audit-apd?bulan=${moment($scope.item.bulan).format("MM-YYYY")}`;
+                
+                if ($scope.item.ruangan && $scope.item.ruangan.id) {
+                    url += `&objectruanganfk=${$scope.item.ruangan.id}`;
+                }
+                
+                medifirstService.get(url).then(function (dat) {
                     $scope.isRouteLoading = false;
 
                     verifikator = dat.data.verifikator
@@ -173,6 +178,12 @@ define(['initialize', 'Configuration'], function (initialize, config) {
                         field: 'namaaktifitas',
                         title: "JENIS AKTIFITAS",
                         width: 250,
+                        locked: true,
+                    },
+                    {
+                        field: 'namaruangan',
+                        title: "RUANGAN",
+                        width: 200,
                         locked: true,
                     },
                 ]
