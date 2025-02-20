@@ -60,7 +60,7 @@ function (initialize) {
                     sumjumlahpasienkeluarrs += element.jumlahpasienkeluarrs
                     sumjumlahpasienmeninggal += element.jumlahpasienmeninggal
                     sumpasienlbh48 += element.pasienlbh48
-                    element.lamadirawat = element.pasiendipindahkan + element.jumlahpasienkeluarrs + element.pasienmkhs
+                    // element.lamadirawat = element.pasiendipindahkan + element.jumlahpasienkeluarrs + element.pasienmkhs
                 }
 
                 $scope.item.bortt = '0%'
@@ -90,7 +90,8 @@ function (initialize) {
 
             })
         }
-        $scope.columnProduk = [{
+        $scope.columnProduk = [            
+            {
                 "title": "Tanggal",
                 "width": "50px",
                 "columns": [
@@ -257,7 +258,7 @@ function (initialize) {
                 "width": "50px",
                 "columns": [{
                     "title": "21",
-                    "field": "lamadirawat",
+                    "field": "los",
                 }]
             },
         ];
