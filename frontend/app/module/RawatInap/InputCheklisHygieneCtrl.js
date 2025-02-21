@@ -99,7 +99,7 @@ define(['initialize', 'Configuration'], function (initialize, config) {
                             title: element.description, 
                             width: 150,
                             template: `# if(w${element.id}==true) {# ✔ # } else {# - #} #`,
-                            headerAttributes: { style: "text-align : center" },
+                            // headerAttributes: { style: "text-align : center" },
                         }
                         // console.log(item);
                         $scope.columndinamis[header].columns.push(item);
@@ -109,14 +109,14 @@ define(['initialize', 'Configuration'], function (initialize, config) {
                             field: '', 
                             title: element.header,
                             // width: 100,
-                            headerAttributes: { style: "text-align : center" },
+                            // headerAttributes: { style: "text-align : center" },
                             columns: [
                                 {
                                     field: `w${element.id}`, 
                                     title: element.description, 
                                     width: 150,
                                     template: `# if(w${element.id}==true) {# ✔ # } else {# - #} #`,
-                                    headerAttributes: { style: "text-align : center" },
+                                    // headerAttributes: { style: "text-align : center" },
                                 }
                             ]
                         }
@@ -159,6 +159,13 @@ define(['initialize', 'Configuration'], function (initialize, config) {
                         width: 150,
                         locked: true,
                     },
+                    {
+                        field: 'isverifikasi',
+                        title: 'Verifikasi',
+                        width: 100,
+                        locked: true,
+                        template: `# if(isverifikasi==true) {# Sudah # } else {# Belum #} #`
+                    }
                 ]
             }
 
