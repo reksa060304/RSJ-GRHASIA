@@ -98,6 +98,11 @@ define(['initialize'], function (initialize) {
                 $scope.dataGridPengembalianPanjar = []
                 $scope.dataGridSPM = []
                 $scope.dataGridJasaGiro = []
+                $scope.dataGridSTS = []
+                $scope.dataGridSPJ = []
+                $scope.dataGridPemungutanPajak = []
+                $scope.dataGridPenyetoranPajak = []
+                
                 $scope.hidepanjar =true
                 $scope.hidespm =true
                 $scope.hidejasgir =true
@@ -106,6 +111,7 @@ define(['initialize'], function (initialize) {
                 $scope.hidepengembalianpanjar = true
                 $scope.hidepemungutanpajak = true
                 $scope.hidePenyetoranPajak = true
+                $scope.hidespj =true
                 medifirstService.get("perencanaan/get-jenis-bukti-bku").then(function (e) {
                     $scope.listJenisBukti = e.data.data
                 });
@@ -483,6 +489,21 @@ define(['initialize'], function (initialize) {
             
             $scope.SaveBKU = function () {
 
+                if($scope.item.itemJenisBukti == undefined && $scope.item.itemJenisBukti == null){
+                    toastr.error('Pilih jenis bukti dulu')
+                    return
+                }
+
+                if($scope.selectedData2.length <= 0){
+                    toastr.error('Pilih data dulu')
+                    return
+                }
+
+                if($scope.selectedData2.length <= 0){
+                    toastr.error('Pilih data dulu')
+                    return
+                }
+
                 var rekanan = null
                 if($scope.item.pihakKetiga != undefined){
                     rekanan = $scope.item.pihakKetiga.id
@@ -523,6 +544,148 @@ define(['initialize'], function (initialize) {
                 }
                 medifirstService.post('perencanaan/save-bku', objSave).then(function (e) {
                     $scope.popupTambahBKU.center().close()
+
+                    // hidden grid
+                    $scope.hidespm = true
+                    $scope.hidepengembalianpanjar = true
+                    $scope.hidepanjar =true
+                    $scope.hidejasgir =true
+                    $scope.hidepajak =true
+                    $scope.hidests =true
+                    $scope.hidespj =true
+                    $scope.hiderekanan = true
+                    $scope.hidepemungutanpajak = true
+                    $scope.hidePenyetoranPajak = true
+
+                    // reset data grid
+                    $scope.dataGridSPJ = new kendo.data.DataSource({
+                        data:  [],
+                        pageSize: 10,
+                        total: 0,
+                        group: $scope.group,
+                        serverPaging: false,
+                        schema: {
+                            model: {
+                                fields: {
+                                }
+                            }
+                        },
+                        aggregate: [
+                        ]
+                    });
+                    $scope.dataGridPemungutanPajak = new kendo.data.DataSource({
+                        data:  [],
+                        pageSize: 10,
+                        total: 0,
+                        serverPaging: false,
+                        schema: {
+                            model: {
+                                fields: {
+                                }
+                            }
+                        },
+                        aggregate: [
+                        ]
+                    });
+                    $scope.dataGridPenyetoranPajak = new kendo.data.DataSource({
+                        data:  [],
+                        pageSize: 10,
+                        total: 0,
+                        serverPaging: false,
+                        schema: {
+                            model: {
+                                fields: {
+                                }
+                            }
+                        },
+                        aggregate: [
+                        ]
+                    });
+                    $scope.dataGridSTS = new kendo.data.DataSource({
+                        data:  [],
+                        pageSize: 10,
+                        total: 0,
+                        group: $scope.group,
+                        serverPaging: false,
+                        schema: {
+                            model: {
+                                fields: {
+                                }
+                            }
+                        },
+                        aggregate: [
+                        ]
+                    });
+                    $scope.dataGridJasaGiro = new kendo.data.DataSource({
+                        data:  [],
+                        pageSize: 10,
+                        total: 0,
+                        group: $scope.group,
+                        serverPaging: false,
+                        schema: {
+                            model: {
+                                fields: {
+                                }
+                            }
+                        },
+                        aggregate: [
+                        ]
+                    });
+                    $scope.dataGridSPM = new kendo.data.DataSource({
+                        data:  [],
+                        pageSize: 10,
+                        total: 0,
+                        group: $scope.group,
+                        serverPaging: false,
+                        schema: {
+                            model: {
+                                fields: {
+                                }
+                            }
+                        },
+                        aggregate: [
+                        ]
+                    });
+                    $scope.dataGridPengembalianPanjar = new kendo.data.DataSource({
+                        data:  [],
+                        pageSize: 10,
+                        total: 0,
+                        group: $scope.group,
+                        serverPaging: false,
+                        schema: {
+                            model: {
+                                fields: {
+                                }
+                            }
+                        },
+                        aggregate: [
+                        ]
+                    });
+                    $scope.dataGridPanjar = new kendo.data.DataSource({
+                        data:  [],
+                        pageSize: 10,
+                        total: 0,
+                        group: $scope.group,
+                        serverPaging: false,
+                        schema: {
+                            model: {
+                                fields: {
+                                }
+                            }
+                        },
+                        aggregate: [
+                        ]
+                    });
+
+                    // reset data yang dipilih
+                    $scope.selectedData2 = []
+
+                    // reset input
+                    $scope.item.itemJenisBukti = null
+                    $scope.item.pihakKetiga = null
+                    $scope.item.sumberDana = null
+                    $scope.item.uraianBKU = null
+
                     init();
                 })
 
