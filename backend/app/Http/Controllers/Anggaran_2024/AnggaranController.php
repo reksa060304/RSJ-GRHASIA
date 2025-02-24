@@ -783,7 +783,7 @@ class AnggaranController extends ApiController {
                     AND ka.kode = '".$item->kodekegiatan."'
                     AND sr.objectmataanggaranfk = ".$item->objectmataanggaranfk."
                     AND sr.objectasalprodukfk = ".$item->objectasalprodukfk."
-                    AND kb.keteranganbelanja ilike '%".$item->keteranganbelanja."%'
+                    AND kb.keteranganbelanja ilike '%".$item->keteranganbelanja."'
                 GROUP BY
                     ka.kode,
                     ma.kodemataanggaran,
@@ -2087,7 +2087,7 @@ class AnggaranController extends ApiController {
                 AND ta.objectkegiatanfk = ".$keterangan[0]->objectkegiatanbaru."
                 AND sr.objectmataanggaranfk = ".$keterangan[0]->objectmataanggaranfk."
                 AND sr.objectasalprodukfk = ".$keterangan[0]->objectasalprodukfk."
-                AND kb.keteranganbelanja ilike '%".$keterangan[0]->keteranganbelanja."%'
+                AND kb.keteranganbelanja ilike '%".$keterangan[0]->keteranganbelanja."'
         "));
 
         $result = array(
