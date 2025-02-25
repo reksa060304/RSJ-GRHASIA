@@ -49,7 +49,6 @@
         .double-border:before {
 
             border: 4px solid #fff;
-
         }
 
         .box {
@@ -93,217 +92,218 @@
 
 <body class="A4" style="font-family:Arial;height: auto">
     <section class="sheet padding-15mm" style="font-family:Arial">
-    <table cellspacing="0" cellpadding="0" border="0" width="100%">
-            <tbody>
-                <tr>
-                    <td width="10%" style="padding: 5px">
-                        <img src="data:image/jpeg;base64,{{$profile[0]->logopemerintahan}}" alt=""
-                            style="width: 95px; margin-bottom:15px">
-                    </td>
-                    <td style="text-align: center; font-family: Arial">
+        <table cellspacing="0" cellpadding="0" border="0" width="100%">
+            <table cellspacing="0" cellpadding="0" border="0" width="100%">
+                <tbody>
+                    <tr>
+                        <td style="padding-bottom:1em; width: 15%;">
+                            <img src="{{ asset('img/diy.png') }}" alt="Logo" style="width: 100%;">
+                        </td>
+                        <td style="text-align: center; font-family: Arial">
                         <span style="font-size: 12pt">{{strtoupper($profile[0]->baris1)}}</span><br>
-                        <span style="font-size: 16pt;">{{strtoupper($profile[0]->baris2)}}</span><br>
+                        <span style="font-size: 12pt;">{{strtoupper($profile[0]->baris2)}}</span><br>
                         <span style="font-size: 14pt;">{{strtoupper($profile[0]->namalengkap)}}</span><br>
                         <img src="data:image/jpeg;base64,{{$profile[0]->gambarlogo}}" alt="" style="width: 200px;"><br>
                         <span color="#000000" style="font-size: 10pt">
                             Jalan Kaliurang Km 17 Yogyakarta
-                            Telepon {{$profile[0]->fixedphone}}
+                            Telepon {{$profile[0]->fixedphone}} <br>
                             Faksimile: {{$profile[0]->faksimile}}
-                            <br>Laman: {{ $profile[0]->website}},
+                            Laman: {{ $profile[0]->website}}, <br>
                             Surel:
                             {{-- {{ $profile[0]['website']}} --}}
-                            {{$profile[0]->alamatemail}}<br>
+                            {{$profile[0]->alamatemail}}
                             Kode Pos {{$profile[0]->kodepos}}
                         </span>
                     </td>
-                </tr>               
-            </tbody>
-        </table>
+                        <td style="padding-bottom:1em; width: 20%;">
+                            <img src="{{ asset('img/logo_grhasiafull.png') }}" alt="Logo" style="width: 100%;">
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+            <hr style="border:1px solid #000;margin-bottom:0px">
+            <hr style="border:0.5px solid #000;margin-top:2px">
+            <table id="dt" cellspacing="0" cellpadding="0" border="0" width="100%">
+                <tr>
+                    <td style="text-align: center; font-family: Arial; font-size: 12pt">
+                        <b><u>SURAT PEMBERITAHUAN KENAIKAN GAJI BERKALA</u></b>
+                        <div style="margin-top: 10px;">
+                            NOMOR : {{ $data[0]->nosk }}
+                        </div>
+                    </td>
+                </tr>
 
+                <tr>
+                    <td style="padding-left: 50%; padding-top: 20px; font-family: Arial; font-size: 11pt">
+                        K e p a d a : <br>
+                        Yth. Kepala Badan Pengelola Keuangan dan Aset <br>
+                        c.q. Kepala Bidang Pengelolaan Kas Daerah DIY <br>
+                        di - <br>
+                        Yogyakarta <br>
+                    </td>
+                </tr>
+                <tr>
+                    <td height="50" style="padding-left: 5%;font-family: Arial; font-size: 11pt">
+                        Dengan ini diberitahukan bahwa berhubung telah dipenuhi masa kerja dan syarat-syarat lainnya maka kepada:
+                    </td>
+                </tr>
+                <tr>
+                    <td style="font-size: 11pt">
+                        <table style="font-family: Arial; padding-left: 15%;line-height: 12px">
+                            <tr>
+                                <td style="font-size: 11pt">1. </td>
+                                <td style="font-size: 11pt">N a m a</td>
+                                <td style="font-size: 11pt"> : </td>
+                                <td style="font-size: 11pt">{{$data[0]->namalengkap}}</td>
+                            </tr>
+                            <tr>
+                                <td style="font-size: 11pt">2. </td>
+                                <td style="font-size: 11pt">NIP</td>
+                                <td style="font-size: 11pt"> : </td>
+                                <td style="font-size: 11pt">{{$data[0]->nippns}}</td>
+                            </tr>
+                            <tr>
+                                <td style="font-size: 11pt">3. </td>
+                                <td style="font-size: 11pt">Pangkat/Golongan</td>
+                                <td style="font-size: 11pt"> : </td>
+                                <td style="font-size: 11pt">{{$data[0]->panggol}}</td>
+                            </tr>
+                            <tr>
+                                <td style="font-size: 11pt">4. </td>
+                                <td style="font-size: 11pt">Instansi</td>
+                                <td style="font-size: 11pt"> : </td>
+                                <td style="font-size: 11pt">Rumah Sakit Jiwa Grhasia Dinkes DIY</td>
+                            </tr>
+                            <tr>
+                                <td style="font-size: 11pt">5. </td>
+                                <td style="font-size: 11pt">Gaji Pokok Lama</td>
+                                <td style="font-size: 11pt"> : </td>
+                                <td style="font-size: 11pt">{{$data[0]->gajiawal}}</td>
+                            </tr>
+                            <tr>
+                                <td style="font-size: 11pt"></td>
+                                <td style="font-size: 11pt">Berdasarkan</td>
+                                <td style="font-size: 11pt"> : </td>
+                                <td style="font-size: 11pt">
+                                    {{-- {{var_dump($data[0]->jenissk)}} --}}
 
-        <hr style="border:1px solid #000;margin-bottom:0px">
-        <hr style="border:0.5px solid #000;margin-top:2px">
-        <table id="dt" cellspacing="0" cellpadding="0" border="0" width="100%">
-            <tr>
-            <td style="text-align: center; font-family: Arial; font-size: 12pt">
-                <b><u>SURAT PEMBERITAHUAN KENAIKAN GAJI BERKALA</u></b>
-                <div style="margin-top: 10px;">
-                    NOMOR : {{ $data[0]->nosk }}
-                </div>
+                                    @if ($data[0]->jenisskco == 'KGB')
+
+                                    Surat Pemberitahuan Kenaikan Gaji Berkala
+                                    @elseif($data[0]->jenisskco == 'KP')
+                                    Surat Keputusan Kenaikan Pangkat
+                                    @endif
+
+                                    {{-- {{ $data[0]->jenissk == 'KGB' ? 'Kenaikan Gaji Berkala' : $data[0]->jenissk == 'KP' ? 'SK Kenaikan Pangkat': ''}} --}}
+
+                                </td>
+                            </tr>
+                            <tr>
+                                <td style="font-size: 11pt"></td>
+                                <td style="font-size: 11pt; padding-left: 20px;">Nomor</td>
+                                <td style="font-size: 11pt">:</td>
+                                <td style="font-size: 11pt"> {{$data[0]->sklama }}</td>
+                            </tr>
+                            <tr>
+                                <td style="font-size: 11pt"></td>
+                                <td style="font-size: 11pt; padding-left: 20px;">Tanggal</td>
+                                <td style="font-size: 11pt"> : </td>
+                                <td style="font-size: 11pt"> {{$data[0]->tglsklama }}</td>
+                            </tr>
+                            <tr>
+                                <td style="font-size: 11pt"></td>
+                                <td style="font-size: 11pt; padding-left: 20px;">Terhitung Mulai Tanggal</td>
+                                <td style="font-size: 11pt"> : </td>
+                                <td style="font-size: 11pt"> {{$data[0]->tmtlama }} </td>
+                            </tr>
+                            <tr>
+                                <td style="font-size: 11pt" colspan="4" height="30" style="padding-left: 6%">Diberikan Kenaikan Gaji Berkala sehingga memperoleh :</td>
+                            </tr>
+                            <tr>
+                                <td style="font-size: 11pt">1. </td>
+                                <td style="font-size: 11pt">Gaji Pokok Baru</td>
+                                <td style="font-size: 11pt"> : </td>
+                                <td style="font-size: 11pt">{{$data[0]->gajiakhir}}</td>
+                            </tr>
+                            <tr>
+                                <td style="font-size: 11pt">2. </td>
+                                <td style="font-size: 11pt">Berdasarkan Masa Kerja</td>
+                                <td style="font-size: 11pt"> : </td>
+                                <td style="font-size: 11pt">{{explode(" ",$data[0]->masakerjagolongan)[0]}} Th {{sprintf("%02d", explode(" ",$data[0]->masakerjagolongan)[2])}} Bln</td>
+                                {{-- <td style="font-size: 11pt">{{$data[0]->thn}} Thn {{$data[0]->bln}} Bln
+                    </td> --}}
+                </tr>
+                <tr>
+                    <td style="font-size: 11pt">3. </td>
+                    <td style="font-size: 11pt">Dalam Golongan Ruang</td>
+                    <td style="font-size: 11pt"> : </td>
+                    <td style="font-size: 11pt">{{$data[0]->golongan}}</td>
+                </tr>
+                <tr>
+                    <td style="font-size: 11pt">4. </td>
+                    <td style="font-size: 11pt">Terhitung Mulai Tanggal</td>
+                    <td style="font-size: 11pt"> : </td>
+                    <td style="font-size: 11pt">{{$data[0]->tmtbaru}}</td>
+                </tr>
+
+            </table>
             </td>
             </tr>
-
             <tr>
-                <td style="padding-left: 50%; padding-top: 20px; font-family: Arial; font-size: 11pt">
-                    K e p a d a : <br>
-                    Yth. Kepala Badan Pengelola Keuangan dan Aset <br>
-                    c.q. Kepala Bidang Pengelolaan Kas Daerah DIY <br>
-                    di - <br>
-                    Yogyakarta <br>
+                <td height="50" style="padding-left: 5%;font-size: 11pt" colspan="4">
+                    Diharap agar sesuai dengan Peraturan Pemerintah {{$data[0]->namask}}. Pegawai tersebut
+                    dapat dibayarkan penghasilannya berdasarkan gaji pokok yang baru.
                 </td>
             </tr>
             <tr>
-                <td height="50" style="padding-left: 5%;font-family: Arial; font-size: 11pt">
-                    Dengan ini diberitahukan bahwa berhubung telah dipenuhi masa kerja dan syarat-syarat lainnya maka kepada:
+                <td>
+                    <table style="text-align:center;font-family: Arial; padding-left: 60%">
+                        <tr>
+                            <td style="font-size: 11pt">Yogyakarta, {{$data[0]->tglttd}}</td>
+                        </tr>
+                        <tr>
+                            <td style="padding-bottom: 81px;font-size: 11pt">DIREKTUR,</td>
+                        </tr>
+                        <tr>
+                            <td style="font-size: 11pt"><b>dr. AKHMAD AKHADI S., M.P.H. <br>
+                                    <hr style="margin: 0;" color="black">
+                                </b></td>
+                        </tr>
+                        <tr>
+                            <td style="font-size: 11pt"><b>NIP. 19680714 200012 1 002</b></td>
+                        </tr>
+                    </table>
                 </td>
             </tr>
             <tr>
-                <td style="font-size: 11pt">
-                    <table style="font-family: Arial; padding-left: 15%;line-height: 12px">
+                <td>
+                    <table style="font-family: Arial;line-height: 12px">
                         <tr>
-                            <td style="font-size: 11pt">1. </td>
-                            <td style="font-size: 11pt">N a m a</td>
-                            <td style="font-size: 11pt"> : </td>
-                            <td style="font-size: 11pt">{{$data[0]->namalengkap}}</td>
+                            <td colspan="2" style="font-size: 11pt">Tembusan disampaikan kepada Yth.:</td>
                         </tr>
                         <tr>
-                            <td style="font-size: 11pt">2. </td>
-                            <td style="font-size: 11pt">NIP</td>
-                            <td style="font-size: 11pt"> : </td>
-                            <td style="font-size: 11pt">{{$data[0]->nippns}}</td>
+                            <td style="padding-left: 20px; font-size: 11pt">1. </td>
+                            <td style="font-size: 11pt">Kepala Dinas Kesehatan DIY</td>
                         </tr>
                         <tr>
-                            <td style="font-size: 11pt">3. </td>
-                            <td style="font-size: 11pt">Pangkat/Golongan</td>
-                            <td style="font-size: 11pt"> : </td>
-                            <td style="font-size: 11pt">{{$data[0]->panggol}}</td>
+                            <td style="padding-left: 20px; font-size: 11pt">2. </td>
+                            <td style="font-size: 11pt">Kepala Badan Kepegawaian Daerah DIY</td>
                         </tr>
                         <tr>
-                            <td style="font-size: 11pt">4. </td>
-                            <td style="font-size: 11pt">Instansi</td>
-                            <td style="font-size: 11pt"> : </td>
-                            <td style="font-size: 11pt">Rumah Sakit Jiwa Grhasia Dinkes DIY</td>
+                            <td style="padding-left: 20px; font-size: 11pt">3. </td>
+                            <td style="font-size: 11pt">Inspektur DIY</td>
                         </tr>
                         <tr>
-                            <td style="font-size: 11pt">5. </td>
-                            <td style="font-size: 11pt">Gaji Pokok Lama</td>
-                            <td style="font-size: 11pt"> : </td>
-                            <td style="font-size: 11pt">{{$data[0]->gajiawal}}</td>
+                            <td style="padding-left: 20px; font-size: 11pt">4. </td>
+                            <td style="font-size: 11pt">Ka. Kantor Cabang PT.TASPEN (PERSERO) Yogyakarta</td>
                         </tr>
                         <tr>
-                            <td style="font-size: 11pt"></td>
-                            <td style="font-size: 11pt">Berdasarkan</td>
-                            <td style="font-size: 11pt"> : </td>
-                            <td style="font-size: 11pt">
-                                {{-- {{var_dump($data[0]->jenissk)}} --}}
-
-                                @if ($data[0]->jenisskco == 'KGB')
-
-                                Surat Pemberitahuan Kenaikan Gaji Berkala
-                                @elseif($data[0]->jenisskco == 'KP')
-                                Surat Keputusan Kenaikan Pangkat
-                                @endif
-
-                                {{-- {{ $data[0]->jenissk == 'KGB' ? 'Kenaikan Gaji Berkala' : $data[0]->jenissk == 'KP' ? 'SK Kenaikan Pangkat': ''}} --}}
-
-                            </td>
+                            <td style="padding-left: 20px; font-size: 11pt">5. </td>
+                            <td style="font-size: 11pt">Pertinggal</td>
                         </tr>
-                        <tr>
-                            <td style="font-size: 11pt"></td>
-                            <td style="font-size: 11pt; padding-left: 20px;" >Nomor</td>
-                            <td style="font-size: 11pt">:</td>
-                            <td style="font-size: 11pt"> {{$data[0]->sklama }}</td>
-                        </tr>
-                        <tr>
-                            <td style="font-size: 11pt"></td>
-                            <td style="font-size: 11pt; padding-left: 20px;">Tanggal</td>
-                            <td style="font-size: 11pt"> : </td>
-                            <td style="font-size: 11pt"> {{$data[0]->tglsklama }}</td>
-                        </tr>
-                        <tr>
-                            <td style="font-size: 11pt"></td>
-                            <td style="font-size: 11pt; padding-left: 20px;">Terhitung Mulai Tanggal</td>
-                            <td style="font-size: 11pt"> : </td>
-                            <td style="font-size: 11pt"> {{$data[0]->tmtlama }} </td>
-                        </tr>
-                        <tr>
-                            <td style="font-size: 11pt" colspan="4" height="30" style="padding-left: 6%">Diberikan Kenaikan Gaji Berkala sehingga memperoleh :</td>
-                        </tr>
-                        <tr>
-                            <td style="font-size: 11pt">1. </td>
-                            <td style="font-size: 11pt">Gaji Pokok Baru</td>
-                            <td style="font-size: 11pt"> : </td>
-                            <td style="font-size: 11pt">{{$data[0]->gajiakhir}}</td>
-                        </tr>
-                        <tr>
-                            <td style="font-size: 11pt">2. </td>
-                            <td style="font-size: 11pt">Berdasarkan Masa Kerja</td>
-                            <td style="font-size: 11pt"> : </td>
-                            <td style="font-size: 11pt">{{explode(" ",$data[0]->masakerjagolongan)[0]}} Th {{sprintf("%02d", explode(" ",$data[0]->masakerjagolongan)[2])}} Bln</td>
-                            {{-- <td style="font-size: 11pt">{{$data[0]->thn}} Thn {{$data[0]->bln}} Bln
-                </td> --}}
+                    </table>
+                </td>
             </tr>
-            <tr>
-                <td style="font-size: 11pt">3. </td>
-                <td style="font-size: 11pt">Dalam Golongan Ruang</td>
-                <td style="font-size: 11pt"> : </td>
-                <td style="font-size: 11pt">{{$data[0]->golongan}}</td>
-            </tr>
-            <tr>
-                <td style="font-size: 11pt">4. </td>
-                <td style="font-size: 11pt">Terhitung Mulai Tanggal</td>
-                <td style="font-size: 11pt"> : </td>
-                <td style="font-size: 11pt">{{$data[0]->tmtbaru}}</td>
-            </tr>
-
-        </table>
-        </td>
-        </tr>
-        <tr>
-            <td height="50" style="padding-left: 5%;font-size: 11pt" colspan="4">
-                Diharap agar sesuai dengan Peraturan Pemerintah {{$data[0]->namask}}. Pegawai tersebut
-                dapat dibayarkan penghasilannya berdasarkan gaji pokok yang baru.
-            </td>
-        </tr>
-        <tr>
-            <td>
-                <table style="text-align:center;font-family: Arial; padding-left: 60%">
-                    <tr>
-                        <td style="font-size: 11pt">Yogyakarta, {{$data[0]->tglttd}}</td>
-                    </tr>
-                    <tr>
-                        <td style="padding-bottom: 81px;font-size: 11pt">DIREKTUR,</td>
-                    </tr>
-                    <tr>
-                        <td style="font-size: 11pt"><b>dr. AKHMAD AKHADI S., M.P.H. <br>
-                                <hr style="margin: 0;" color="black">
-                            </b></td>
-                    </tr>
-                    <tr>
-                        <td style="font-size: 11pt"><b>NIP. 19680714 200012 1 002</b></td>
-                    </tr>
-                </table>
-            </td>
-        </tr>
-        <tr>
-            <td>
-                <table style="font-family: Arial;line-height: 12px">
-                    <tr>
-                        <td colspan="2" style="font-size: 11pt">Tembusan disampaikan kepada Yth.:</td>
-                    </tr>
-                    <tr>
-                        <td style="padding-left: 20px; font-size: 11pt">1. </td>
-                        <td style="font-size: 11pt">Kepala Dinas Kesehatan DIY</td>
-                    </tr>
-                    <tr>
-                        <td style="padding-left: 20px; font-size: 11pt">2. </td>
-                        <td style="font-size: 11pt">Kepala Badan Kepegawaian Daerah DIY</td>
-                    </tr>
-                    <tr>
-                        <td style="padding-left: 20px; font-size: 11pt">3. </td>
-                        <td style="font-size: 11pt">Inspektur DIY</td>
-                    </tr>
-                    <tr>
-                        <td style="padding-left: 20px; font-size: 11pt">4. </td>
-                        <td style="font-size: 11pt">Ka. Kantor Cabang PT.TASPEN (PERSERO) Yogyakarta</td>
-                    </tr>
-                    <tr>
-                        <td style="padding-left: 20px; font-size: 11pt">5. </td>
-                        <td style="font-size: 11pt">Pertinggal</td>
-                    </tr>
-                </table>
-            </td>
-        </tr>
         </table>
     </section>
 </body>
