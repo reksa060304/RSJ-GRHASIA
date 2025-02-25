@@ -506,7 +506,7 @@ class LogistikController extends ApiController{
             ->JOIN('satuanstandar_m as ss','ss.id','=','pr.objectsatuanstandarfk')
             ->select(DB::raw("sp.tglstruk, sp.nostruk as noterima,spd.objectprodukfk,pr.kdproduk as kdsirs,pr.namaproduk,ap.asalproduk,CAST(spd.qtyproduk AS FLOAT),
                               ss.satuanstandar,spd.tglkadaluarsa,spd.nobatch,CAST(spd.harganetto1 AS FLOAT),spd.norec as norec_spd,
-                              spd.nostrukterimafk"))
+                              spd.nostrukterimafk, spd.tglpelayanan"))
             ->where('pr.statusenabled', true)
             ->where('spd.statusenabled', true)
             ->where('pr.kdprofile', $idProfile)
@@ -568,6 +568,7 @@ class LogistikController extends ApiController{
                 'qtyProduk' => $item->qtyproduk,
                 'satuanStandar' => $item->satuanstandar,
                 'tglKadaluarsa' => $item->tglkadaluarsa,
+                'tglpelayanan' => $item->tglpelayanan,
                 'noBatch' => $item->nobatch,
                 'harga' => $item->harganetto1,
                 'norec_spd' => $item->norec_spd,

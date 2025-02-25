@@ -21,7 +21,8 @@ define(['initialize'], function (initialize) {
                     $scope.bukanLogistik = true;
                     $scope.iniFarmasi = false;
                 }
-                $scope.item.jmlRows = 100
+                
+                // $scope.item.jmlRows = 10000;
                 $scope.listRuangan = medifirstService.getMapLoginUserToRuangan();
                 $scope.item.ruangan = { id: $scope.listRuangan[0].id, namaruangan: $scope.listRuangan[0].namaruangan }
                 medifirstService.get('logistik/get-combo-logistik-mini').then(function (data) {
@@ -127,6 +128,11 @@ define(['initialize'], function (initialize) {
                     {
                         "field": "tglKadaluarsa",
                         "title": "Tgl Kadaluarsa",
+                        "width": "80px",
+                    },
+                    {
+                        "field": "tglpelayanan",
+                        "title": "Tgl Pelayanan",
                         "width": "80px",
                     },
                     {
@@ -241,8 +247,7 @@ define(['initialize'], function (initialize) {
                     '&namaproduk=' + $scope.item.namaProduk +
                     '&ruanganfk=' + ruanganId +
                     '&asalprodukfk=' + asalProdukId +
-                    KdSirs1 + KdSirs2 + kdproduk +
-                    '&jmlRows=' + jmlRows).then(function (data) {
+                    KdSirs1 + KdSirs2 + kdproduk).then(function (data) {
                         $scope.isRouteLoading = false;
                         var datas = data.data.detail;
                         var datasOrder = data.data.detailorder;
