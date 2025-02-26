@@ -396,30 +396,89 @@ class AnggaranController extends ApiController {
         $idProfile = (int) $kdProfile;
         try{
             
-            // buat data kegiatan baru
-            $newID = KegiatanAnggaran2024::max('id');
-            $KA = new KegiatanAnggaran2024();
-            $KA->id =  $newID + 1;
-            $KA->kdprofile = $idProfile;
-            $KA->statusenabled = true;
-            $KA->kode = $request['kode'];
-            $KA->keterangan = $request['keterangan'];
-            $KA->div = 4;
-            $KA->headfk = $request['objectsubkegitan'];
-            $KA->save();
+            // jika div 4 / sub sub kegiatan
+            if($request['div'] == 4){
+                // buat data kegiatan baru
+                $newID = KegiatanAnggaran2024::max('id');
+                $KA = new KegiatanAnggaran2024();
+                $KA->id =  $newID + 1;
+                $KA->kdprofile = $idProfile;
+                $KA->statusenabled = true;
+                $KA->kode = $request['kode'];
+                $KA->keterangan = $request['keterangan'];
+                $KA->div = $request['div'];
+                $KA->headfk = $request['headfk'];
+                $KA->save();
+    
+                // buat transaksi anggaran
+                $TA = new TransaksiAnggaran2024();
+                $norecTA = $TA->generateNewId();
+                $TA->norec = $norecTA;
+                $TA->kdprofile = $idProfile;
+                $TA->statusenabled = true;
+                $TA->tahun = $request['tahun'];
+                $TA->objectjenisbelanjafk = $request['jenisbelanja'];
+                $TA->objectpptkfk = $request['pptk'];
+                $TA->objecttahapfk = $request['tahap'];
+                $TA->objectkegiatanfk = $KA->id;
+                $TA->save();
 
-            // buat transaksi anggaran
-            $TA = new TransaksiAnggaran2024();
-            $norecTA = $TA->generateNewId();
-            $TA->norec = $norecTA;
-            $TA->kdprofile = $idProfile;
-            $TA->statusenabled = true;
-            $TA->tahun = $request['tahun'];
-            $TA->objectjenisbelanjafk = $request['jenisbelanja'];
-            $TA->objectpptkfk = $request['pptk'];
-            $TA->objecttahapfk = $request['tahap'];
-            $TA->objectkegiatanfk = $KA->id;
-            $TA->save();
+            }
+
+            // jika div 3 / sub kegiatan
+            if($request['div'] == 3){
+                $newID = KegiatanAnggaran2024::max('id');
+                $KA = new KegiatanAnggaran2024();
+                $KA->id =  $newID + 1;
+                $KA->kdprofile = $idProfile;
+                $KA->statusenabled = true;
+                $KA->kode = $request['kode'];
+                $KA->keterangan = $request['keterangan'];
+                $KA->div = $request['div'];
+                $KA->headfk = $request['headfk'];
+                $KA->save();
+            }
+
+            // jika div 2 / kegiatan
+            if($request['div'] == 2){
+                $newID = KegiatanAnggaran2024::max('id');
+                $KA = new KegiatanAnggaran2024();
+                $KA->id =  $newID + 1;
+                $KA->kdprofile = $idProfile;
+                $KA->statusenabled = true;
+                $KA->kode = $request['kode'];
+                $KA->keterangan = $request['keterangan'];
+                $KA->div = $request['div'];
+                $KA->headfk = $request['headfk'];
+                $KA->save();
+            }
+
+            // jika div 1 / Program
+            if($request['div'] == 1){
+                $newID = KegiatanAnggaran2024::max('id');
+                $KA = new KegiatanAnggaran2024();
+                $KA->id =  $newID + 1;
+                $KA->kdprofile = $idProfile;
+                $KA->statusenabled = true;
+                $KA->kode = $request['kode'];
+                $KA->keterangan = $request['keterangan'];
+                $KA->div = $request['div'];
+                $KA->headfk = $request['headfk'];
+                $KA->save();
+            }
+
+            // jika div 0 / Urusan
+            if($request['div'] == 0){
+                $newID = KegiatanAnggaran2024::max('id');
+                $KA = new KegiatanAnggaran2024();
+                $KA->id =  $newID + 1;
+                $KA->kdprofile = $idProfile;
+                $KA->statusenabled = true;
+                $KA->kode = $request['kode'];
+                $KA->keterangan = $request['keterangan'];
+                $KA->div = $request['div'];
+                $KA->save();
+            }
 
             $transStatus = 'true';
         } catch (\Exception $e) {

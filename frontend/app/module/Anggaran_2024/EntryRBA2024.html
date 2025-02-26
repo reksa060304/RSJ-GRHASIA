@@ -663,66 +663,117 @@
 	k-on-open="win2visible = true" k-on-close="win2visible = false">
 	<div class="panel panel-default container_12" >
 		<div class="grid">
-            <div class="grid_2">
-                <div class="grid_12">
-                    <label c-label item="item">Sub Kegiatan</label>
-                </div>
-                <div class="grid_12">
-                    <input style="width: 100%;" kendo-combo-box k-ng-model="item.subKegiatanEntry"
-                        k-data-text-field="'keterangan'" k-data-value-field="'id'" k-filter="'contains'" k-auto-bind="false"
-                        k-data-source="listDataDivSubsubkg" />
-                </div>
-            </div>	
 
-            <div class="grid_2">
-                <div class="grid_12">
-                    <label c-label item="item" c-label-text="Kode Kegiatan"></label>
+            
+            <div class="grid_12">
+                <div class="grid_3">
+                    <div class="grid_12">
+                        <label c-label item="item" c-label-text="Div"></label>
+                    </div>
+                    <div class="grid_12">
+                        <input style="width: 100%;" kendo-combo-box k-ng-model="item.divKegiatan" k-data-text-field="'div'"
+                            k-data-value-field="'id'" k-filter="'contains'" k-auto-bind="false" k-data-source="listDiv" />
+                    </div>
                 </div>
-                <div class="grid_12">
-                    <input c-text-box type="input" class="k-textbox" ng-model="item.kodeSubSubKegiaatanEntry" />
+			</div>
+
+            <div class="grid_12">
+                <div class="grid_3" ng-if="item.divKegiatan.id == 4">
+                    <div class="grid_12">
+                        <label c-label item="item">Sub Kegiatan</label>
+                    </div>
+                    <div class="grid_12">
+                        <input style="width: 100%;" kendo-combo-box k-ng-model="item.subKegiatanEntry"
+                            k-data-text-field="'keterangan'" k-data-value-field="'id'" k-filter="'contains'" k-auto-bind="false"
+                            k-data-source="listDataDivSubsubkg" />
+                    </div>
+                </div>	
+
+                <div class="grid_3" ng-if="item.divKegiatan.id == 3">
+                    <div class="grid_12">
+                        <label c-label item="item">Kegiatan</label>
+                    </div>
+                    <div class="grid_12">
+                        <input style="width: 100%;" kendo-combo-box k-ng-model="item.kegiatanDiv2"
+                            k-data-text-field="'kode_keterangan'" k-data-value-field="'id'" k-filter="'contains'" k-auto-bind="false"
+                            k-data-source="listDataDivSubkg" />
+                    </div>
+                </div>
+                
+                <div class="grid_3" ng-if="item.divKegiatan.id == 2">
+                    <div class="grid_12">
+                        <label c-label item="item">Program</label>
+                    </div>
+                    <div class="grid_12">
+                        <input style="width: 100%;" kendo-combo-box k-ng-model="item.kegiatanDiv1"
+                            k-data-text-field="'kode_keterangan'" k-data-value-field="'id'" k-filter="'contains'" k-auto-bind="false"
+                            k-data-source="listDataDivProg" />
+                    </div>
+                </div>
+                
+                <div class="grid_3" ng-if="item.divKegiatan.id == 1">
+                    <div class="grid_12">
+                        <label c-label item="item">Urusan Pemerintah</label>
+                    </div>
+                    <div class="grid_12">
+                        <input style="width: 100%;" kendo-combo-box k-ng-model="item.kegiatanDiv0"
+                            k-data-text-field="'kode_keterangan'" k-data-value-field="'id'" k-filter="'contains'" k-auto-bind="false"
+                            k-data-source="listDataDivUsulan" />
+                    </div>
+                </div>
+    
+                <div class="grid_3">
+                    <div class="grid_12">
+                        <label c-label item="item" c-label-text="Kode Kegiatan"></label>
+                    </div>
+                    <div class="grid_12">
+                        <input c-text-box type="input" class="k-textbox" ng-model="item.kodeSubSubKegiaatanEntry" />
+                    </div>
+                </div>
+    
+                <div class="grid_3">
+                    <div class="grid_12">
+                        <label c-label item="item" c-label-text="Nama Kegiatan"></label>
+                    </div>
+                    <div class="grid_12">
+                        <input c-text-box type="input" class="k-textbox" ng-model="item.keteranganSubSubKegiaatanEntry" />
+                    </div>
+                </div>
+    
+                <div class="grid_1" ng-hide="item.divKegiatan.id !== 4">
+                    <div class="grid_12">
+                        <label c-label item="item" c-label-text="Tahun"></label>
+                    </div>
+                    <div class="grid_12">
+                        <input style="width: 100%;" k-options="yearUngkul" k-ng-model="item.tahuntambahkegiatan" kendo-date-picker
+                            placeholer="YYYY" k-format="'yyyy'" />
+                    </div>
+                </div>
+
+                <div class="grid_2" ng-hide="item.divKegiatan.id !== 4">
+                    <div class="grid_12">
+                        <label c-label item="item" c-label-text="Tahap"></label>
+                    </div>
+                    <div class="grid_12" >
+                        <input style="width: 100%;" kendo-combo-box k-ng-model="item.tahaptambah" k-data-text-field="'tahap'"
+                            k-data-value-field="'id'" k-filter="'contains'" k-auto-bind="false" k-data-source="listTahap"
+                            />
+                    </div>
                 </div>
             </div>
-
-            <div class="grid_2">
-                <div class="grid_12">
-                    <label c-label item="item" c-label-text="Nama Kegiatan"></label>
-                </div>
-                <div class="grid_12">
-                    <input c-text-box type="input" class="k-textbox" ng-model="item.keteranganSubSubKegiaatanEntry" />
-                </div>
-            </div>
-
-			<div class="grid_1" >
-				<div class="grid_12">
-					<label c-label item="item" c-label-text="Tahun"></label>
-				</div>
-				<div class="grid_12">
-					<input style="width: 100%;" k-options="yearUngkul" k-ng-model="item.tahuntambahkegiatan" kendo-date-picker
-						placeholer="YYYY" k-format="'yyyy'" />
-				</div>
-			</div>
-			<div class="grid_2" >
-				<div class="grid_12">
-					<label c-label item="item" c-label-text="Tahap"></label>
-				</div>
-				<div class="grid_12" >
-					<input style="width: 100%;" kendo-combo-box k-ng-model="item.tahaptambah" k-data-text-field="'tahap'"
-						k-data-value-field="'id'" k-filter="'contains'" k-auto-bind="false" k-data-source="listTahap"
-						/>
-				</div>
-			</div>
-			<div class="grid_3" >
-				<div class="grid_12">
-					<label c-label item="item" c-label-text="PPTK" real></label>
-				</div>
-				<div class="grid_12">
-					<input kendo-combo-box k-ng-model="item.pptktambah" k-data-text-field="'text'" k-data-value-field="'value'"
-						k-filter="'contains'" k-auto-bind="false" k-data-source="listPenerima" />
-				</div>
-			</div>
 		</div>
 		<div class="grid_12">
-			<div class="grid_2" >
+            <div class="grid_3" ng-hide="item.divKegiatan.id !== 4">
+                <div class="grid_12">
+                    <label c-label item="item" c-label-text="PPTK" real></label>
+                </div>
+                <div class="grid_12">
+                    <input kendo-combo-box k-ng-model="item.pptktambah" k-data-text-field="'text'" k-data-value-field="'value'"
+                        k-filter="'contains'" k-auto-bind="false" k-data-source="listPenerima" />
+                </div>
+            </div>
+
+			<div class="grid_2"  ng-hide="item.divKegiatan.id == 3 || item.divKegiatan.id == 2 || item.divKegiatan.id == 1 || item.divKegiatan.id == 0">
 				<div class="grid_12">
 					<label c-label item="item" c-label-text="Jenis Belanja" real></label>
 				</div>
