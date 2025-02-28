@@ -552,6 +552,10 @@
 									k-data-text-field="'status'" k-data-value-field="'id'"
 									k-filter="'contains'" k-auto-bind="false" k-data-source="listStatusSPJ" />
 							</div>
+                            <div class="grid_3">
+								<label c-label item="item" c-label-text="Pencarian" real></label>
+								<input c-text-box type="input" filter="'varchar'" class="k-textbox" ng-model="item.carispj" />
+							</div>
 							<div class="grid_1" style="margin-top: 12px;">
 								<button class="btnTemplate1" ng-click="CariSPJ()">Cari</button>
 							</div>
