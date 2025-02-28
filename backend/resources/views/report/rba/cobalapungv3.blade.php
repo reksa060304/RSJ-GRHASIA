@@ -67,7 +67,7 @@
             </tr>
             <tr>
                 <td align="left" style="border:none;">Bendahara</td>
-                <td align="left" style="border:none;">: Paula Sofyanita, SE.</td>
+                <td align="left" style="border:none;">: Christina Dewi Isti Paramita, S.E</td>
             </tr>
             <tr>
                 <td align="left" style="border:none;">Tahun Anggaran</td>
