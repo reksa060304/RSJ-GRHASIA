@@ -148,10 +148,10 @@ define(['initialize'], function (initialize) {
                                         field: 'saldokeluar',
                                         aggregate: 'sum'
                                     },
-                                    {
-                                        field: 'saldoakhir',
-                                        aggregate: 'sum'
-                                    },
+                                    // {
+                                    //     field: 'saldoakhir',
+                                    //     aggregate: 'sum'
+                                    // },
                                 ],
                                 model: {
                                     fields: {
@@ -164,9 +164,9 @@ define(['initialize'], function (initialize) {
                                         saldokeluar: {
                                             type: "number"
                                         },
-                                        saldoakhir: {
-                                            type: "number"
-                                        }
+                                        // saldoakhir: {
+                                        //     type: "number"
+                                        // }
                                     }
                                 }
 
@@ -257,35 +257,38 @@ define(['initialize'], function (initialize) {
 
                         $scope.daftarKartuStok = new kendo.data.DataSource({
                             data: e.data,
-                            aggregate: [{
-                                        field: 'saldoawal',
-                                        aggregate: 'sum'
-                                    }, {
+                            aggregate: [
+                                    // {
+                                    //     field: 'saldoawal',
+                                    //     aggregate: 'sum'
+                                    // }, 
+                                    {
                                         field: 'saldomasuk',
                                         aggregate: 'sum'
-                                    }, {
+                                    }, 
+                                    {
                                         field: 'saldokeluar',
                                         aggregate: 'sum'
                                     },
-                                    {
-                                        field: 'saldoakhir',
-                                        aggregate: 'sum'
-                                    },
+                                    // {
+                                    //     field: 'saldoakhir',
+                                    //     aggregate: 'sum'
+                                    // },
                                 ],
                                 model: {
                                     fields: {
-                                        saldoawal: {
-                                            type: "number"
-                                        },
+                                        // saldoawal: {
+                                        //     type: "number"
+                                        // },
                                         saldomasuk: {
                                             type: "number"
                                         },
                                         saldokeluar: {
                                             type: "number"
                                         },
-                                        saldoakhir: {
-                                            type: "number"
-                                        }
+                                        // saldoakhir: {
+                                        //     type: "number"
+                                        // }
                                     }
                                 }
                         });
@@ -346,7 +349,7 @@ define(['initialize'], function (initialize) {
                         "title": "Saldo Awal",
                         "width": "120px",
                         aggregates: ["sum"],
-                        footerTemplate: "#: data.saldoawal.sum #",
+                        // footerTemplate: "#: data.saldoawal.sum #",
                     },
                     {
                         "field": "saldomasuk",
@@ -368,8 +371,8 @@ define(['initialize'], function (initialize) {
                         "field": "saldoakhir",
                         "title": "Saldo Akhir",
                         "width": "120px",
-                        aggregates: ["sum"],
-                        footerTemplate: "#: data.saldoakhir.sum #",
+                        // aggregates: ["sum"],
+                        // footerTemplate: "#: data.saldoakhir.sum #",
 
                     },
                     {
