@@ -2051,17 +2051,56 @@ define(['initialize'], function (initialize) {
                     alert("Tgl Jatuh Tempo Tidak Boleh Kosong!!")
                     return
                 }
-
-                var confirm = $mdDialog.confirm()
-                    .title('Peringatan')
-                    .textContent('Apakah Anda Yakin Menyimpan Data?')
-                    .ariaLabel('Lucky day')
-                    .cancel('Tidak')
-                    .ok('Ya')
-                $mdDialog.show(confirm).then(function () {
-                    $scope.SavePenerimaan();
-                })
-
+                
+                var cekBarangSudahDiPakai = false;
+                for (var i = 0; i < data2.length; i++) {
+                    if (data2[i].jumlahdipakai > 0) {
+                        cekBarangSudahDiPakai = true;
+                        break;
+                    }
+                }
+                
+                if (cekBarangSudahDiPakai) {
+                    toastr.error("Beberapa barang sudah dikirim, tidak bisa mengubah penerimaan!", "", {
+                        timeOut: 10000, 
+                        extendedTimeOut: 2000,
+                        progressBar: true
+                    });
+                    return;
+                }                
+                
+                if (norecTerima && norecTerima !== '') {
+                    $scope.isRouteLoading = true;
+                    medifirstService.get('logistik/cek-transaksi-use?norec=' + norecTerima).then(function (e) {
+                        $scope.isRouteLoading = false;
+                        if (e.data.isedit == false) {
+                            toastr.error("Stok Telah Digunakan, Tidak Bisa Ubah Penerimaan", "", {
+                                timeOut: 10000,
+                                extendedTimeOut: 2000,
+                                progressBar: true
+                            });
+                            return;
+                        }                      
+                        confirm();
+                    }).catch(function(error) {
+                        $scope.isRouteLoading = false;
+                        toastr.error("Terjadi kesalahan saat memeriksa transaksi");
+                    });
+                } else {                    
+                    confirm();
+                }
+                
+                function confirm() {
+                    var confirm = $mdDialog.confirm()
+                        .title('Peringatan')
+                        .textContent('Apakah Anda Yakin Menyimpan Data?')
+                        .ariaLabel('Lucky day')
+                        .cancel('Tidak')
+                        .ok('Ya')
+                    $mdDialog.show(confirm).then(function () {
+                        $scope.SavePenerimaan();
+                    });
+                }
             }
             var HttpClient = function () {
                 this.get = function (aUrl, aCallback) {
