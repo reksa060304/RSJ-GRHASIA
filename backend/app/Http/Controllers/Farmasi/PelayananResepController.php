@@ -3432,6 +3432,8 @@ class PelayananResepController extends ApiController
         $dokid= '';
         $kpid='';
         $ruid='';
+        $rupasien='';
+        $rugudang = '';
         $sudahbayar= '';
         $rajalRanap= '';
         $isobat= '';
@@ -3461,7 +3463,8 @@ class PelayananResepController extends ApiController
             $kpid = ' and pd.objectkelompokpasienlastfk='.$request['kpid'];
         }
         if(isset($request['ruid']) && $request['ruid']!="" && $request['ruid']!="undefined"){
-            $ruid = ' and ru.id='.$request['ruid'];
+            $rupasien = ' and ru1.id='.$request['ruid'];
+            $rugudang = 'and ru.id='.$request['ruid'];
         }
         if(isset( $request['rajalRanap'])&&  $request['rajalRanap']=='1'){//rajal
             $rajalRanap = "and ru1.objectdepartemenfk <> 16 ";
@@ -3623,22 +3626,22 @@ class PelayananResepController extends ApiController
         AND sr.kdprofile = 30
         LEFT JOIN antrianpasiendiperiksa_t AS apd ON apd.norec = pp.noregistrasifk
         LEFT JOIN pasiendaftar_t AS pd ON pd.norec = apd.noregistrasifk
-        LEFT JOIN pasien_m AS ps ON ps. ID = pd.nocmfk
-        LEFT JOIN jeniskelamin_m AS jk ON jk. ID = ps.objectjeniskelaminfk
-        LEFT JOIN pegawai_m AS pg ON pg. ID = sr.penulisresepfk
-        LEFT JOIN ruangan_m AS ru ON ru. ID = sr.ruanganfk
-        LEFT JOIN ruangan_m AS ru1 ON ru1. ID = apd.objectruanganfk
-        LEFT JOIN departemen_m AS dep ON dep. ID = ru1.objectdepartemenfk
-        LEFT JOIN departemen_m AS dep1 ON dep1. ID = ru.objectdepartemenfk
-        LEFT JOIN kamar_m AS kmr ON kmr. ID = apd.objectkamarfk
-        LEFT JOIN tempattidur_m AS tt ON tt. ID = apd.nobed
-        LEFT JOIN kelompokpasien_m kp ON kp. ID = pd.objectkelompokpasienlastfk
+        LEFT JOIN pasien_m AS ps ON ps.id = pd.nocmfk
+        LEFT JOIN jeniskelamin_m AS jk ON jk.id = ps.objectjeniskelaminfk
+        LEFT JOIN pegawai_m AS pg ON pg.id = sr.penulisresepfk
+        LEFT JOIN ruangan_m AS ru ON ru.id = sr.ruanganfk
+        LEFT JOIN ruangan_m AS ru1 ON ru1.id = apd.objectruanganfk
+        LEFT JOIN departemen_m AS dep ON dep.id = ru1.objectdepartemenfk
+        LEFT JOIN departemen_m AS dep1 ON dep1.id = ru.objectdepartemenfk
+        LEFT JOIN kamar_m AS kmr ON kmr.id = apd.objectkamarfk
+        LEFT JOIN tempattidur_m AS tt ON tt.id = apd.nobed
+        LEFT JOIN kelompokpasien_m kp ON kp.id = pd.objectkelompokpasienlastfk
         LEFT JOIN strukpelayanan_t AS sp ON sp.norec = pp.strukfk
         LEFT JOIN strukbuktipenerimaan_t AS sbm ON sbm.norec = sp.nosbmlastfk
         LEFT JOIN strukbuktipenerimaan_t AS sbmsdhbyr ON sbmsdhbyr.norec = sp.nosbmlastfk
         AND sbmsdhbyr.statusenabled = TRUE
-        LEFT JOIN produk_m AS pro ON pro. ID = pp.produkfk
-        LEFT JOIN satuanstandar_m AS ss ON ss. ID = pp.satuanviewfk
+        LEFT JOIN produk_m AS pro ON pro.id = pp.produkfk
+        LEFT JOIN satuanstandar_m AS ss ON ss.id = pp.satuanviewfk
         LEFT JOIN cte ON cte.noreff = pp.norec
         LEFT JOIN cter ON cter.noreff = sr.norec
         WHERE
@@ -3650,7 +3653,7 @@ class PelayananResepController extends ApiController
 
 )) 
                         $dokid
-                        $ruid
+                        $rupasien
                         $rajalRanap
                         $namaItem    
                         $namaItemText
@@ -3697,7 +3700,7 @@ class PelayananResepController extends ApiController
                         AND substring(sp.nostruk,1,2)='OB'
 
                         $dokid
-                        $ruid
+                        $rugudang
                         $rajalRanapObatBebas    
                         $namaItem    
                         $namaItemText

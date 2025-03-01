@@ -19,7 +19,7 @@ define(['initialize'], function (initialize) {
 
             function LoadCombo() {
                 medifirstService.get("farmasi/get-datacombo?", true).then(function (dat) {
-                    $scope.listRuangan = dat.data.ruanganfarmasi;
+                    $scope.listRuangan = dat.data.ruanganall;
                     $scope.listDataDokter = dat.data.dokter;
                     $scope.listKelompokPasien = dat.data.kelompokpasien;
                     $scope.listNamaItem = dat.data.produkall;
