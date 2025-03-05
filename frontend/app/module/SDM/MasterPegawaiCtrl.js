@@ -2060,6 +2060,7 @@ $scope.formatRupiah = function (value, currency) {
 			}
 
 			function EditGajiBerkala(e) {
+				$scope.isEditMode = true;
 				$scope.itemGajiBerkala = [];
 				e.preventDefault();
 				var dataItem = this.dataItem($(e.currentTarget).closest("tr"));
@@ -2067,8 +2068,11 @@ $scope.formatRupiah = function (value, currency) {
 					alert("Data Belum Dipilih!")
 					return;
 				};
+				
+				console.log("Data yang dimuat:", dataItem);
+				
+				// Basic data
 				$scope.item.IdGajiBerkala = dataItem.no;
-				// console.log(dataItem);
 				$scope.item.norecGajiBerkala = dataItem.norec;
 				$scope.itemGajiBerkala.golongan = {
 					id: dataItem.objectgolonganfk,
@@ -2098,7 +2102,11 @@ $scope.formatRupiah = function (value, currency) {
 				$scope.itemGajiBerkala.tanggaltmtcetak = moment(dataItem.tgltmtcetak).format('YYYY-MM-DD HH:mm');
 				$scope.itemGajiBerkala.tanggalskbaru = moment(dataItem.tglskbaru).format('YYYY-MM-DD HH:mm');
 
-				$scope.popUpRiwayatGajiBerkala.center().open();
+				if (dataItem.jenissk === "KP") {
+					$scope.popUpRiwayatGajiBerkalaPangkat.center().open();
+				} else {
+					$scope.popUpRiwayatGajiBerkala.center().open();
+				}
 				$scope.getDataGolongan()
 			}
 
@@ -2628,12 +2636,14 @@ $scope.formatRupiah = function (value, currency) {
 				$scope.popUpRiwayatPendidikan.close();
 			}
 			$scope.batalRiwayatGajiBerkala = function () {
+				$scope.isEditMode = false;
 				ClearDataRiwayatGajiBerkala();
 				clearRadioButton();
 				$scope.popUpRiwayatGajiBerkala.close();
 			}
 
 			$scope.batalRiwayatGajiBerkalaPangkat = function () {
+				$scope.isEditMode = false;
 				ClearDataRiwayatGajiBerkalaPangkat();
 				clearRadioButton();
 				$scope.popUpRiwayatGajiBerkalaPangkat.close();
@@ -5296,48 +5306,51 @@ $scope.formatRupiah = function (value, currency) {
 			//end orang tua
 			$scope.$watch('gajilamanya', function (newValue, oldValue) {
 				if (newValue != oldValue) {
-					$scope.itemGajiBerkala = {}
+					if (!$scope.isEditMode) {
+						$scope.itemGajiBerkala = {};
+					}					
 					if ($scope.gajilamanya == undefined) {
 						return;
-					}
+					}			
 					medifirstService.get('sdm/get-gaji-pokok-lama?gaji=' + $scope.gajilamanya + '&idpegawai=' + $scope.item.idPegawai).then(function (data) {
-						var datas = data.data.data[0]
-						// $scope.itemGajiBerkala.jenissk = $scope.gajilamanya
-						if ($scope.gajilamanya == 'KP') {
-							$scope.itemGajiBerkala.gajiawal = datas.nominal;
-							$scope.itemGajiBerkala.tanggalsk = new Date(moment(datas.tglsk).format('YYYY-MM-DD'));
-							$scope.itemGajiBerkala.noskcetak = datas.nosk;
-							$scope.itemGajiBerkala.tanggaltmtcetak = new Date(moment(datas.tgltmt).format('YYYY-MM-DD'));
-							$scope.itemGajiBerkala.masakerjagolonganlama = datas.masakerjagolongan;
-						} else {
-							$scope.itemGajiBerkala.gajiawal = datas.gajiakhir;
-							$scope.itemGajiBerkala.tanggalsk = new Date(moment(datas.tglskbaru).format('YYYY-MM-DD'));
-							$scope.itemGajiBerkala.noskcetak = datas.nosk;
-							$scope.itemGajiBerkala.tanggaltmtcetak = new Date(moment(datas.tgltmt).format('YYYY-MM-DD'));
-							$scope.itemGajiBerkala.masakerjagolongan = datas.masakerjagolongan;
-							$scope.itemGajiBerkala.masakerjagolonganlama = datas.masakerjagolongan;
-						}
-			
-						
-						if ($scope.itemGajiBerkala.tanggaltmtcetak  !== 'KP') {
-							var tmtBaru = new Date($scope.itemGajiBerkala.tanggaltmtcetak);
-							tmtBaru.setFullYear(tmtBaru.getFullYear() + 2);
-							$scope.itemGajiBerkala.tanggaltmt = tmtBaru;
-						} 			
-
-						if ($scope.itemGajiBerkala.masakerjagolongan) {
-							var masaKerja = $scope.itemGajiBerkala.masakerjagolongan.split(" ");
-							var tahun = parseInt(masaKerja[0]); 
-							var bulan = parseInt(masaKerja[2]) || 0;  
-						
-							if (!isNaN(tahun)) {
-								tahun += 2;
-
-								if (bulan >= 12) {
-									tahun += Math.floor(bulan / 12); 
-									bulan = bulan % 12; 
+						if (!data.data.data || !data.data.data[0]) return;				
+						var datas = data.data.data[0];	
+						if (!$scope.isEditMode) {
+							if ($scope.gajilamanya == 'KP') {
+								$scope.itemGajiBerkala.gajiawal = datas.nominal;
+								$scope.itemGajiBerkala.tanggalsk = new Date(moment(datas.tglsk).format('YYYY-MM-DD'));
+								$scope.itemGajiBerkala.noskcetak = datas.nosk;
+								$scope.itemGajiBerkala.tanggaltmtcetak = new Date(moment(datas.tgltmt).format('YYYY-MM-DD'));
+								$scope.itemGajiBerkala.masakerjagolonganlama = datas.masakerjagolongan;
+							} else {
+								$scope.itemGajiBerkala.gajiawal = datas.gajiakhir;
+								$scope.itemGajiBerkala.tanggalsk = new Date(moment(datas.tglskbaru).format('YYYY-MM-DD'));
+								$scope.itemGajiBerkala.noskcetak = datas.nosk;
+								$scope.itemGajiBerkala.tanggaltmtcetak = new Date(moment(datas.tgltmt).format('YYYY-MM-DD'));
+								$scope.itemGajiBerkala.masakerjagolongan = datas.masakerjagolongan;
+								$scope.itemGajiBerkala.masakerjagolonganlama = datas.masakerjagolongan;
+							}
+							
+							// Update TMT 
+							if ($scope.itemGajiBerkala.tanggaltmtcetak !== 'KP') {
+								var tmtBaru = new Date($scope.itemGajiBerkala.tanggaltmtcetak);
+								tmtBaru.setFullYear(tmtBaru.getFullYear() + 2);
+								$scope.itemGajiBerkala.tanggaltmt = tmtBaru;
+							}
+							
+							if ($scope.itemGajiBerkala.masakerjagolongan) {
+								var masaKerja = $scope.itemGajiBerkala.masakerjagolongan.split(" ");
+								var tahun = parseInt(masaKerja[0]); 
+								var bulan = parseInt(masaKerja[2]) || 0;
+								
+								if (!isNaN(tahun)) {
+									tahun += 2;
+									if (bulan >= 12) {
+										tahun += Math.floor(bulan / 12);
+										bulan = bulan % 12;
+									}
+									$scope.itemGajiBerkala.masakerjagolongan = tahun + " tahun " + bulan + " bulan";
 								}
-								$scope.itemGajiBerkala.masakerjagolongan = tahun + " tahun " + bulan + " bulan";
 							}
 						}
 					});
