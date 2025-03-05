@@ -41,6 +41,8 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
             $scope.item.volklaimcovid = 0
             $scope.item.terbilang = ''
 
+            $scope.selectedData2 = [];
+
             FormLoad();
 
             $scope.showAndHide = function () {
@@ -111,7 +113,18 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
                             },
                             aggregate: [
                             ]
-                        });                                             
+                        });
+
+                        // reset data yang dipilih
+                        $scope.item.kasusbaru = false
+                        $scope.selectedData2 = []
+                        $scope.item.totalSetor = null
+                        $scope.item.terbilang = null
+                        $scope.item.dipilih = null
+                        $scope.item.uraian = null
+                        $scope.item.biayatransfer = null
+                        $scope.item.biayaadmin = null
+
                     });
             }
 
@@ -160,7 +173,6 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
             $scope.group = [
             ];
 
-            $scope.selectedData2 = [];
 			$scope.onClickSatu = function (e, param) {
 				var tol = 0;
 
@@ -282,7 +294,9 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
                             setoran: $scope.selectedData2,
                         }
 
-                        medifirstService.post('bendaharapenerimaan/save-sts-klaim', objSave).then(function (dat) {});
+                        medifirstService.post('bendaharapenerimaan/save-sts-klaim', objSave).then(function (dat) {
+                            init()
+                        });
 					}
                 );
 
@@ -556,7 +570,11 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
 
             $scope.batal = function () {
                 // console.log(objSave)
-                medifirstService.post('sysadmin/logging/save-log-batal-sts-klaim', objSave)
+                let objBatal = {
+                    setoran: $scope.selectedData2
+                }
+
+                medifirstService.post('sysadmin/logging/save-log-batal-sts-klaim', objBatal)
                 .then(function (data) {
                     
                     init()
