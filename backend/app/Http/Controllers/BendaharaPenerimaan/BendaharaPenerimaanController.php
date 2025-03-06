@@ -11555,6 +11555,27 @@ class BendaharaPenerimaanController extends ApiController {
                 $stsd->save();
             }
 
+            // setelah sts langsung buat bku
+            $BKU = new BKUPenerimaanV2();
+            $norec = $BKU->generateNewId();
+            $BKU->norec = $norec;
+            $BKU->statusenabled = true;
+            $BKU->kdprofile = $idProfile;
+
+            $nobku = $this->generateCodeBKU(new BKUPenerimaanV2, 'nobku', $request['asalproduk'], 2, '', $idProfile);
+
+            $BKU->nobku = $nobku;
+            $BKU->tglbku = $STS->tglpenerimaan;
+            $BKU->uraianbku = $STS->keterangan;
+            $BKU->objectstsfk = $STS->norec;
+            $BKU->objectakunpendapatanfk = $STS->objectakunpendapatanfk;
+            $BKU->objectspmfk = null;
+            $BKU->ispenerimaan = true;
+            $BKU->totalpenerimaan = $STS->totalsetoran;
+            $BKU->totalpengeluaran = 0;
+            $BKU->objectasalprodukfk = 18;
+            $BKU->save();
+
             $transStatus = true;
 
         } catch (\Exception $e) {

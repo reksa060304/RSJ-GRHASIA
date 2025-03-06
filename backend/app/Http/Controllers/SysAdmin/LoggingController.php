@@ -564,6 +564,16 @@ class LoggingController extends ApiController
                 where objectstsfk = '".$setor[0]['nosts']."' 
             
             ");
+
+            // disable bku karena ketika buat sts langsung dibkin bku
+            $updatests = DB::statement("
+                update bkupenerimaanv2_t 
+                    set statusenabled = false
+                from surattandasetoran_t
+                where
+                    bkupenerimaanv2_t.objectstsfk = surattandasetoran_t.norec
+                    AND surattandasetoran_t.nosts = '" . $setor[0]['nosts']. "'
+            ");
         }
 
         for($i=0; $i<count($setor); $i++){
