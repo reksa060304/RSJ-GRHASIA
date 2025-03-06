@@ -78,10 +78,10 @@
             vertical-align: text-top;
         }
 
-        table {
-            /* width: 100%;
-            height: 100%; */
-        }
+        /* .table {
+            width: 100%;
+            height: 100%; 
+        } */
 
         #dt td {
             font-family: Arial;
@@ -97,7 +97,11 @@
                 <tbody>
                     <tr>
                         <td style="padding-bottom:1em; width: 15%;">
-                            <img src="{{ asset('img/diy.png') }}" alt="Logo" style="width: 100%;">
+                            @if(stripos(\Request::url(), 'localhost') !== FALSE)
+                                <img src="{{ asset('img/diy.png') }}" alt="Logo" style="width: 100%;">
+                            @else
+                                <img src="{{ asset('service/img/diy.png') }}" alt="Logo" style="width: 100%;">
+                            @endif
                         </td>
                         <td style="text-align: center; font-family: Arial">
                         <span style="font-size: 12pt">{{strtoupper($profile[0]->baris1)}}</span><br>
@@ -116,7 +120,11 @@
                         </span>
                     </td>
                         <td style="padding-bottom:1em; width: 20%;">
-                            <img src="{{ asset('img/logo_grhasiafull.png') }}" alt="Logo" style="width: 100%;">
+                            @if (stripos(\Request::url(), 'localhost')!== FALSE)
+                                <img src="{{ asset('img/logo_grhasiafull.png') }}" alt="Logo" style="width: 100%;">
+                            @else
+                                <img src="{{ asset('service/img/logo_grhasiafull.png') }}" alt="Logo" style="width: 100%;">
+                            @endif
                         </td>
                     </tr>
                 </tbody>
