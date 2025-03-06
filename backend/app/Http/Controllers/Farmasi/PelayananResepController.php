@@ -881,7 +881,7 @@ class PelayananResepController extends ApiController
         $dataRuanganAll = \DB::table('ruangan_m as ru')
             ->where('ru.kdprofile', $idProfile)
             ->where('ru.statusenabled', true)
-            ->whereIn('ru.objectdepartemenfk', [16,25,18])
+            ->whereIn('ru.objectdepartemenfk', [16,25,18,24])
             ->orderBy('ru.namaruangan')
             ->get();
 
