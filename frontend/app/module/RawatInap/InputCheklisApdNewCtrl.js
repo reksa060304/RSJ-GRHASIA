@@ -206,7 +206,6 @@ define(['initialize', 'Configuration'], function (initialize, config) {
                     },
                     pageable: true,
                     scrollable: true,
-                    // editable: true,
                     selectable: "single",
                     change: onDataBound,
                     columns: $scope.columndinamis
@@ -272,7 +271,7 @@ define(['initialize', 'Configuration'], function (initialize, config) {
                     }
                 }
             }
-
+ 
             function editData(e) {
                 e.preventDefault();
                 var grid = $("#grid").data("kendoGrid");
@@ -283,15 +282,20 @@ define(['initialize', 'Configuration'], function (initialize, config) {
                     return
                 }
 
-                if (dataItem.isverifikasi == true && (verifikator.includes(pegawai.id.toString()) == false)) {
-                    toastr.error('Data Sudah Diverifikasi !')
+                if (dataItem.isverifikasi === true || dataItem.isverifikasi === 1) {
+                    toastr.error('Data Sudah Diverifikasi!')
+                    return
+                }
+
+                if (verifikator.includes(pegawai.id.toString()) === false) {
+                    toastr.error('Anda tidak memiliki akses untuk mengedit data ini!')
                     return
                 }
 
                 $scope.item.norecaudit = dataItem.norec
-                $scope.item.observer = { id: dataItem.objectpegawaifk, namalengkap: dataItem.observer, }
+                $scope.item.observer = { id: dataItem.objectpegawaifk, namalengkap: dataItem.observer }
                 $scope.item.tanggal = dataItem.tanggal
-                $scope.item.profesi = { value: dataItem.objectjenispegawaifk, text: dataItem.profesi, }
+                $scope.item.profesi = { value: dataItem.objectjenispegawaifk, text: dataItem.profesi }
                 $scope.item.aktifitas = {
                     id: dataItem.id,
                     namaaktifitas: dataItem.namaaktifitas,
@@ -305,28 +309,46 @@ define(['initialize', 'Configuration'], function (initialize, config) {
                             $scope.item[element2.field] = dataItem[element2.field]
                         }
                     }
-
                 }
                 $scope.popUpIndex.center().open();
-                console.log($scope.item.aktifitas);
             }
 
             function hapusData(e) {
                 e.preventDefault();
+                e.stopImmediatePropagation();
+                
                 var grid = $("#grid").data("kendoGrid");
                 var dataItem = grid.dataItem($(e.currentTarget).closest("tr"));
 
-                var confirm = $mdDialog.confirm()
-                    .title('Peringatan')
-                    .textContent('Yakin mau menghapus data?')
-                    .ariaLabel('Lucky day')
-                    .cancel('Tidak')
-                    .ok('Ya')
-                $mdDialog.show(confirm).then(function () {
-                    medifirstService.post('rawatinap/delete-audit-apd', { norec: dataItem.norec }).then(function (e) {
-                        searchData()
-                    })
-                })
+                if (dataItem.isverifikasi === true || dataItem.isverifikasi === 1) {
+                    toastr.error('Data Sudah Diverifikasi!')
+                    return
+                }
+
+                if (verifikator.includes(pegawai.id.toString()) === false) {
+                    toastr.error('Anda tidak memiliki akses untuk menghapus data ini!')
+                    return
+                }
+
+                $scope.$apply(function() {
+                    var confirm = $mdDialog.confirm({
+                        title: 'Peringatan',
+                        textContent: 'Yakin mau menghapus data?',
+                        ariaLabel: 'Lucky day',
+                        ok: 'Ya',
+                        cancel: 'Tidak'
+                    });
+
+                    $mdDialog.show(confirm).then(function () {
+                        $scope.isRouteLoading = true;
+                        medifirstService.post('rawatinap/delete-audit-apd', { 
+                            norec: dataItem.norec 
+                        }).then(function() {
+                            $scope.isRouteLoading = false;
+                            searchData();
+                        });
+                    });
+                });
             }
 
             $scope.SaveRow = function () {
