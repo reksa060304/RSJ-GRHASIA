@@ -11923,6 +11923,11 @@ class BendaharaPenerimaanController extends ApiController {
             $norec = "AND rp.norec != '".$request['norec']."'";
         }
 
+        $tahun = '';
+        if(isset($request['tahun']) && $request['tahun'] !== '' && $request['tahun'] !== "undefined"){
+            $tahun = "AND cap.tahun = '". $request['tahun']."'";
+        }
+
         $cek = DB::select(DB::raw("
             SELECT
                 rp.*,
@@ -11939,6 +11944,7 @@ class BendaharaPenerimaanController extends ApiController {
                 $sumberdana
                 $tahap
                 $rekening
+                $tahun
                 $norec
             ORDER BY
                 cap.id asc

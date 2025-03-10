@@ -404,20 +404,29 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
                     norec = $scope.itemRincian.norec
                 }
                 
-                // validasi jika sudah ada urian, tahap, dan sumberpendapatan yang sama tidak boleh entry
+                // validasi jika sudah ada tahun, urian, tahap, dan sumberpendapatan yang sama tidak boleh entry
                 medifirstService.get('bendaharapenerimaan/cek-target-pendapatan' 
                     + '?sumberdana=' + $scope.itemRincian.sumberPendapatan.id
                     + '&tahap=' + $scope.itemRincian.tahap.id
                     + '&rekening=' + $scope.itemRincian.uraianPendapatan.id
+                    + '&tahun=' + moment($scope.itemRincian.tglinput).format('YYYY')
                     + '&norec=' + norec)
                     .then(function(response){
                     
                         let data = response.data
 
                         // jika ada maka error
-                        if(data.length > 0){
-                            toastr.error('Sudah Ada Data Target Pendapatan')
-                            return
+                        if(norec){
+                            if(data.length > 0 && data.norec !== norec){
+                                toastr.error('Sudah Ada Data Target Pendapatan')
+                                return
+                            }
+                        }else{
+                            if(data.length > 0){
+                                toastr.error('Sudah Ada Data Target Pendapatan')
+                                return
+                                
+                            }
                         }
 
                         var objSave = {
