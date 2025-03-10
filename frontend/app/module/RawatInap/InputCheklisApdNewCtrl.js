@@ -12,6 +12,8 @@ define(['initialize', 'Configuration'], function (initialize, config) {
             $scope.selectedData = [];
             var dataARR = []
             var dataLoad = []
+            var currentPage = 1;
+
 
             let verifikator = []
             let pegawai = JSON.parse(window.localStorage.getItem('pegawai'))
@@ -99,7 +101,14 @@ define(['initialize', 'Configuration'], function (initialize, config) {
                         element.tanggalformat = $scope.formatTanggal(element.tanggal);
                     }
                     dataLoad = dat.data.auditapd;
-                    creategrid()
+                    creategrid();
+                   
+                    setTimeout(function() {
+                        var grid = $("#grid").data("kendoGrid");
+                        if (grid) {
+                            grid.dataSource.page(currentPage);
+                        }
+                    }, 100);
                 })
             }
 
@@ -192,23 +201,42 @@ define(['initialize', 'Configuration'], function (initialize, config) {
             function creategrid() {
                 $("#grid").empty();
                 $("#grid").kendoGrid({
-                    toolbar:
-                        [
-                            {
-                                name: "tambah",
-                                text: "Tambah",
-                                template: '<button class="k-button k-button-icontext addData">Tambah Data</button>'
-                            },
-                        ],
+                    toolbar: [
+                        {
+                            name: "tambah",
+                            text: "Tambah",
+                            template: '<button class="k-button k-button-icontext addData">Tambah Data</button>'
+                        }
+                    ],
                     dataSource: {
                         data: dataLoad,
-                        pageSize: 10
+                        pageSize: 3
                     },
-                    pageable: true,
-                    scrollable: true,
+                    pageable: {
+                        refresh: true,
+                        pageSizes: [10, 20, 50, 100, "all"],
+                        buttonCount: 5
+                    },
+                    height: "100%", 
                     selectable: "single",
+                    page: currentPage,
                     change: onDataBound,
-                    columns: $scope.columndinamis
+                    columns: $scope.columndinamis,
+                    resizable: true,
+                    reorderable: true,
+                    dataBound: function() {
+                        var grid = this;
+                        grid.tbody.find("tr").each(function() {
+                            var dataItem = grid.dataItem(this);
+                            if (dataItem.isverifikasi === true || dataItem.isverifikasi === 1) {
+                                $(this).find("td").css("background-color", "rgba(0, 249, 21, 0.3)");
+                            }
+                        });
+                        grid.resize(true);
+                    },
+               change: function(e) {
+                        currentPage = this.dataSource.page();
+                    }
                 }).data("kendoGrid");
             }
 
@@ -434,9 +462,11 @@ define(['initialize', 'Configuration'], function (initialize, config) {
             }
 
             function verifikasi(e) {
-                e.preventDefault()
-
+                e.preventDefault();
+                e.stopImmediatePropagation();
                 let dataItem = this.dataItem($(e.currentTarget).closest("tr"));
+                var grid = $("#grid").data("kendoGrid");
+                currentPage = grid.dataSource.page(); // Store current page
 
                 if (dataItem.isverifikasi == true || dataItem.isverifikasi === 1) {
                     toastr.error("Data Telah diverifikasi")
@@ -457,6 +487,12 @@ define(['initialize', 'Configuration'], function (initialize, config) {
                     .then(function (e) {
                         $scope.isRouteLoading = false;
                         toastr.success('Data berhasil diverifikasi');
+                        setTimeout(function() {
+                            var newGrid = $("#grid").data("kendoGrid");
+                            if (newGrid) {
+                                newGrid.dataSource.page(currentPage);
+                            }
+                        }, 100);
                         searchData();
                     })
                     .catch(function() {
