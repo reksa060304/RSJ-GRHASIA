@@ -1124,7 +1124,8 @@ class PelayananResepController extends ApiController
                 'op.objectsatuanstandarfk','jr.jenisracikan as satuanstandar','op.satuanviewfk','ss2.satuanstandar as ssview',
                 'op.qtyproduk','op.hargadiscount','op.hasilkonversi','op.qtystokcurrent','op.dosis','op.jenisobatfk',
                 'op.hargasatuan','op.hargadiscount','pr.kekuatan','sdn.name as sediaan','op.ispagi','op.issiang','op.ismalam',
-                'op.issore','op.keteranganpakai','op.keteranganpakai as catatandokter','op.satuanresepfk','sn.satuanresep','op.tglkadaluarsa','so.isreseppulang', 
+                'op.issore','op.keteranganpakai','op.keteranganpakai as catatandokter','op.satuanresepfk','sn.satuanresep','op.tglkadaluarsa','so.isreseppulang',
+                'op.jumlah', 
                 DB::raw("
                 CASE
                 WHEN op.jumlahracikan <> NULL AND op.jeniskemasanfk = 1 THEN
@@ -1280,7 +1281,7 @@ class PelayananResepController extends ApiController
                 'satuanviewfk' => $item->satuanviewfk,
                 'satuanview' => $item->ssview,
                 'jmlstok' => $item->qtystokcurrent,
-                'jumlah' => ceil($item->qtyproduk),
+                'jumlah' => $item->jeniskemasanfk == 1 ? $item->jumlah : ceil($item->qtyproduk),
                 'jumlahobat' => $item->qtyproduk,
                 'jumlahracikan' => $item->jumlahracikan,
                 'dosis' => $item->dosis,
