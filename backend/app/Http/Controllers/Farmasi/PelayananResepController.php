@@ -1281,7 +1281,7 @@ class PelayananResepController extends ApiController
                 'satuanviewfk' => $item->satuanviewfk,
                 'satuanview' => $item->ssview,
                 'jmlstok' => $item->qtystokcurrent,
-                'jumlah' => $item->jeniskemasanfk == 1 ? $item->jumlah : ceil($item->qtyproduk),
+                'jumlah' =>ceil($item->qtyproduk),
                 'jumlahobat' => $item->qtyproduk,
                 'jumlahracikan' => $item->jumlahracikan,
                 'dosis' => $item->dosis,
