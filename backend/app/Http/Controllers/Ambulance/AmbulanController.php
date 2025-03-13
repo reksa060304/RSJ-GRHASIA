@@ -2542,7 +2542,6 @@ class AmbulanController extends ApiController
             ->where('het.objectkelasfk', 6)
             ->where('het.objectjenispelayananfk', 1)
             ->where('het.statusenabled', true)
-            ->where('het.statusenabled', true)
             ->where('het.kodeexternal', '2024') //membedakan tarif baru
             ->whereIn('het.objectprodukfk', [5008618,5008619])
             ->get();
@@ -2578,7 +2577,13 @@ class AmbulanController extends ApiController
                         (spd.hargasatuan * spd.qtyproduk) AS rate,
                         sp.tglstruk AS order_date,
                         STRING_AGG(pm.namalengkap, ',') AS driver_name,
-                        ra.nopolisi AS ambulance_plat
+                        ra.nopolisi AS ambulance_plat,
+                        sp.nostruk AS order_number,
+                        CASE 
+                            WHEN sp.isapprove IS NULL THEN 'Menunggu'
+                            WHEN sp.isapprove = FALSE THEN 'Ditolak'
+                            WHEN sp.isapprove = TRUE THEN 'Diterima'
+                        END AS status
                     FROM
                         strukpelayanan_t AS sp
                         INNER JOIN strukpelayanandetail_t AS spd ON spd.nostrukfk = sp.norec
@@ -2596,7 +2601,9 @@ class AmbulanController extends ApiController
                         spd.qtyproduk,
                         spd.hargasatuan,
                         sp.tglstruk,
-                        ra.nopolisi")
+                        ra.nopolisi,
+                        sp.nostruk,
+	                    sp.isapprove")
                 );
 
         if(!empty($data)){
