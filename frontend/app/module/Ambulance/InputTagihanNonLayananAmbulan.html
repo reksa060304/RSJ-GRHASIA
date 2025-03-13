@@ -19,6 +19,20 @@
 					k-format="'yyyy-MM-dd HH:mm'" />
 			</div>
 		</div>
+		<div class="grid_1">
+			<div class="grid_12">
+				<label c-label item="item" c-label-text="noCm"></label>
+			</div>
+			<div class="clear"></div>
+
+			<!-- <div class="grid_12">
+				<input c-text-box type="input" filter="" class="k-textbox" ng-model="item.nocm_pasien" />
+			</div> -->
+			<div class="grid_12">
+				<input c-text-box type="input" filter="" ng-blur="CariPasien()" class="k-textbox" ng-model="item.nocm_pasien"/>
+				<img ng-show="isLoadingNoCM" style="position:absolute;right:0;top:7px;" height="24" src="stylesheets\Flat\loading-image.gif" />
+			</div>
+		</div>
 		<div class="grid_3">
 			<div class="grid_12">
 				<label c-label item="item" c-label-text="NamaPelanggan"></label>

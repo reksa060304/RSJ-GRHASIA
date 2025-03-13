@@ -2499,5 +2499,248 @@ class AmbulanController extends ApiController
         return $this->respond($data);
     }
 
+    public function getJenisKegiatanAmbulan(Request $request)
+    {
+        $kdProfile = $this->getDataKdProfile($request);
+        $idProfile = (int) $kdProfile;
+        $jeniskegiatan = \DB::table('jeniskegiatanambulan_m')
+        ->select('id', 'namajeniskegiatan as nama')
+        ->where('kdprofile', $idProfile)
+        ->where('statusenabled', true)
+        ->where('id', 1) //menjemput pasien
+        ->whereNotNull('namajeniskegiatan')
+        ->get();
+
+        if(!empty($jeniskegiatan)){
+            $result = array(
+                'code' => 200,
+                'data' => $jeniskegiatan,
+                'message' => "Data kegiatan berhasil ditemukan",
+                'success' => true
+            );
+        } else {
+            $result = array(
+                'code' => 404,
+                'data' => null,
+                'message' => 'Data kegiatan tidak ditemukan',
+                'success' => false
+            );
+        }
+        
+
+        return $this->setStatusCode($result['code'])->respond($result);
+    }
+
+    public function getTarifAmbulan(Request $request)
+    {
+        $kdProfile = (int) $this->getDataKdProfile($request);
+        $data = \DB::table('produk_m as pr')
+            ->JOIN('harganettoprodukbykelas_m as het', 'het.objectprodukfk', '=', 'pr.id')
+            ->select('pr.id', 'pr.namaproduk', 'het.harganetto1 as harga')
+            ->where('pr.kdprofile', $kdProfile)
+            ->where('pr.statusenabled', true)
+            ->where('het.objectkelasfk', 6)
+            ->where('het.objectjenispelayananfk', 1)
+            ->where('het.statusenabled', true)
+            ->where('het.statusenabled', true)
+            ->where('het.kodeexternal', '2024') //membedakan tarif baru
+            ->whereIn('het.objectprodukfk', [5008618,5008619])
+            ->get();
+
+        if(!empty($data)){
+            $result = array(
+                'code' => 200,
+                'data' => $data,
+                'message' => 'Tarif berhasil ditemukan',
+                'success' => true
+            );
+        } else {
+            $result = array(
+                'code' => 404,
+                'data' => null,
+                'message' => 'Tarif tidak ditemukan',
+                'success' => false
+            );
+        }
+
+        return $this->setStatusCode($result['code'])->respond($result);
+    }
+
+    public function getRiwayatPelayananAmbulance(Request $request)
+    {
+        $kdProfile = (int) $this->getDataKdProfile($request);
+        $no_rm = $request['nocm'];
+        $data = DB::select(
+            DB::raw("SELECT
+                        pr.namaproduk AS activity_type_name,
+                        spd.qtyproduk AS qty,
+                        spd.hargasatuan AS harga,
+                        (spd.hargasatuan * spd.qtyproduk) AS rate,
+                        sp.tglstruk AS order_date,
+                        STRING_AGG(pm.namalengkap, ',') AS driver_name,
+                        ra.nopolisi AS ambulance_plat
+                    FROM
+                        strukpelayanan_t AS sp
+                        INNER JOIN strukpelayanandetail_t AS spd ON spd.nostrukfk = sp.norec
+                        INNER JOIN produk_m AS pr ON pr.id = spd.objectprodukfk
+                        INNER JOIN petugaspelayananambulan_t AS ppa ON ppa.nostrukdetailfk = spd.norec
+                        INNER JOIN pegawai_m AS pm ON pm.id = ppa.objectpegawaifk
+                        INNER JOIN pasien_m AS ps ON ps.nocm = sp.nocmklien
+                        INNER JOIN registrasiaset_t AS ra ON ra.norec = spd.nopolisifk
+                    WHERE
+                        sp.nocmklien = '$no_rm'
+                        AND sp.kdprofile = $kdProfile
+                        AND sp.statusenabled = TRUE
+                    GROUP BY
+                        pr.namaproduk,
+                        spd.qtyproduk,
+                        spd.hargasatuan,
+                        sp.tglstruk,
+                        ra.nopolisi")
+                );
+
+        if(!empty($data)){
+            $result = array(
+                'code' => 200,
+                'data' => $data,
+                'message' => 'Data history berhasil ditemukan',
+                'success' => true
+            );
+        } else {
+            $result = array(
+                'code' => 404,
+                'data' => null,
+                'message' => 'Data history tidak ditemukan',
+                'success' => false
+            );
+        }
+
+        return $this->setStatusCode($result['code'])->respond($result);
+    }
+
+    // public function SaveInputTagihanFromTelemedicine(Request $request) //comment sementara
+    // {
+    //     $kdProfile = (int) $this->getDataKdProfile($request);
+    //     $transMessage = '';
+    //     $req = $request->all();
+    //     //        return $this->respond($req);
+
+    //     //get pasien
+    //     $data = \DB::table('pasien_m as pm')
+    //         ->select('pr.id', 'pr.namaproduk', 'het.harganetto1 as harga')
+    //         ->where('pr.kdprofile', $kdProfile)
+    //         ->where('pr.statusenabled', true)
+    //         ->where('het.objectkelasfk', 6)
+    //         ->where('het.objectjenispelayananfk', 1)
+    //         ->where('het.statusenabled', true)
+    //         ->where('het.statusenabled', true)
+    //         ->where('het.kodeexternal', '2024') //membedakan tarif baru
+    //         ->whereIn('het.objectprodukfk', [5008618,5008619])
+    //         ->get();
+        
+    //     \DB::beginTransaction();
+    //     try {
+
+    //         if ($req['norec'] == '') {
+    //             $SP = new StrukPelayanan();
+    //             $norecSP = $SP->generateNewId();
+    //             $noStruk = $this->generateCode(new StrukPelayanan, 'nostruk', 10, 'NLA' . $this->getDateTime()->format('ym'), $kdProfile);
+    //             $SP->norec = $norecSP;
+    //             $SP->kdprofile = $kdProfile;
+    //             $SP->statusenabled = true;
+    //             $SP->nostruk = $noStruk;
+    //         } else {
+    //             $SP = StrukPelayanan::where('norec', $req['norec'])->where('kprofile', $kdProfile)->first();
+    //             $DelSPD = StrukPelayananDetail::where('nostrukfk', $req['norec'])->where('kdprofile', $kdProfile)->delete();
+    //         }
+    //         $SP->objectkelompoktransaksifk = 9; //pelayanan ambulance
+    //         $SP->keteranganlainnya = $req['keterangan'];
+    //         $SP->namapasien_klien = $req['namaPasien_klien'];
+    //         $SP->nostruk_intern = $req['nocm'];
+    //         if (isset($req['notelp_klien'])) {
+    //             $SP->noteleponfaks = $req['notelp_klien'];
+    //         }
+    //         if (isset($req['alamat'])) {
+    //             $SP->namatempattujuan =  $req['alamat']; //alamat
+    //         }
+    //         if (isset($req['tglLahir'])) {
+    //             $SP->tglfaktur =  $req['tglLahir']; //tgllahir
+    //         }
+    //         $SP->tglstruk = $req['tglstruk'];
+    //         $SP->totalharusdibayar = $req['totalharusdibayar'];
+    //         $SP->save();
+
+    //         $hargaTambahanP = 0;
+    //         $hargaTambahanD = 0;
+
+    //         foreach ($req['details'] as $item) {
+    //             if ($req['perawat'] == true || $req['perawat'] == 'true') {
+    //                 $hargaTambahanP = (float) $item['harga'] * 25 / 100;
+    //             }
+    //             if ($req['dokter'] == true || $req['dokter'] == 'true') {
+    //                 $hargaTambahanD = (float) $item['harga'] * 25 / 100;
+    //             }
+    //             $SPD = new StrukPelayananDetail();
+    //             $norecKS = $SPD->generateNewId();
+    //             $SPD->norec = $norecKS;
+    //             $SPD->kdprofile = $kdProfile;
+    //             $SPD->statusenabled = true;
+    //             $SPD->nostrukfk = $SP->norec;
+    //             $SPD->objectprodukfk = $item['id'];
+    //             $SPD->hargadiscount = 0;
+    //             $SPD->hargadiscountgive = 0;
+    //             $SPD->hargadiscountsave = 0;
+    //             $SPD->harganetto = $item['harga'];
+    //             $SPD->hargapph = 0;
+    //             $SPD->hargappn = 0;
+    //             $SPD->hargasatuan = $item['harga'];
+    //             $SPD->hargasatuandijamin = 0;
+    //             $SPD->hargasatuanppenjamin = 0;
+    //             $SPD->hargasatuanpprofile = 0;
+    //             $SPD->hargatambahan = $hargaTambahanP + $hargaTambahanD;
+    //             $SPD->isonsiteservice = 0;
+    //             $SPD->kdpenjaminpasien = 0;
+    //             $SPD->persendiscount = 0;
+    //             $SPD->qtyproduk = $item['jumlah'];
+    //             $SPD->qtyoranglast = $item['qtyoranglast'];
+    //             $SPD->qtyprodukoutext = 0;
+    //             $SPD->qtyprodukoutint = 0;
+    //             $SPD->qtyprodukretur = 0;
+    //             $SPD->satuan = 0;
+    //             $SPD->tglpelayanan = $req['tglstruk'];
+    //             $SPD->is_terbayar = 0;
+    //             $SPD->linetotal = 0;
+    //             $SPD->keteranganlainnya = $item['keterangan'];
+    //             $SPD->isjasaperawat = $req['perawat'];
+    //             $SPD->isjasadokter = $req['dokter'];
+    //             $SPD->save();
+    //         }
+
+    //         $transStatus = 'true';
+    //     } catch (\Exception $e) {
+    //         $transStatus = 'false';
+    //     }
+
+    //     if ($transStatus == 'true') {
+    //         $transMessage = "Simpan Tagihan Berhasil";
+    //         DB::commit();
+    //         $result = array(
+    //             "status" => 201,
+    //             "message" => $transMessage,
+    //             "data" => $SP,
+    //             "as" => 'as@epic',
+    //         );
+    //     } else {
+    //         $transMessage = "Simpan Tagihan Gagal!!";
+    //         DB::rollBack();
+    //         $result = array(
+    //             "status" => 400,
+    //             "message"  => $transMessage,
+    //             "data" => $SP,
+    //             "as" => 'as@epic',
+    //         );
+    //     }
+    //     return $this->setStatusCode($result['status'])->respond($result, $transMessage);
+    // }
 
 }

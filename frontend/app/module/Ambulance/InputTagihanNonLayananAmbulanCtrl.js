@@ -20,6 +20,7 @@ define(['initialize'], function (initialize) {
 			$scope.pelaksanaAmbulan1 = true;
 			$scope.pelaksanaAmbulan2 = false;
 			$scope.pelaksanaAmbulan3 = false;
+			$scope.isLoadingNoCM = false;
 			var data2 = [];
 			var dataProduk = [];
 			var norec = '';
@@ -352,6 +353,7 @@ define(['initialize'], function (initialize) {
 					nopolisi: $scope.item.noPolisi.norec,
 					jeniskegiatan: $scope.item.jenisKegiatan.id,
 					petugaspelayananambulan: petugasLayanan,
+					nocm_klien: $scope.item.nocm_pasien != undefined && $scope.item.nocm_pasien != null && $scope.item.nocm_pasien != '' ? $scope.item.nocm_pasien : '-'
 				}
 				
 				const alamat = {
@@ -1016,6 +1018,25 @@ define(['initialize'], function (initialize) {
                     $scope.item.alamatLengkap = nama;
                 }
             });
+
+						$scope.CariPasien = function () {
+							if ($scope.item.nocm_pasien == "" || $scope.item.nocm_pasien == "-" || $scope.item.nocm_pasien == undefined) {
+									$scope.item.namaPasien_klien = undefined
+									$scope.item.noTelp_klien = undefined
+									$scope.item.alamatLengkap = undefined
+									return
+							}
+							if ($scope.item.nocm_pasien.length > 3) {
+								$scope.isLoadingNoCM = true;
+								medifirstService.get("farmasi/get-detail-pasien?nocm=" + $scope.item.nocm_pasien, true).then(function (data_ih) {
+										$scope.item.nocm_pasien = data_ih.data.nocm
+										$scope.item.namaPasien_klien = data_ih.data.namapasien
+										$scope.item.noTelp_klien = data_ih.data.notelepon
+										$scope.item.alamatLengkap = data_ih.data.alamatlengkap
+										$scope.isLoadingNoCM = false;
+								})
+							}
+						}
 
 			// $scope.salinAlamat = function (data) {
             //     if (data == true) {

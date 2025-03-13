@@ -459,6 +459,10 @@ class KasirController extends ApiController
         }
         $SP->tglstruk = $req['tglstruk'];
         $SP->totalharusdibayar = $req['totalharusdibayar'];
+        
+        if (isset($req['nocm_klien'])) {
+            $SP->nocmklien = $req['nocm_klien'];
+        }
         $SP->save();
 
         foreach ($req['details'] as $item) {
