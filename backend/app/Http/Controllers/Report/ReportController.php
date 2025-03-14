@@ -23530,6 +23530,156 @@ public function suratBuktiPengembalian(Request $request)
         //     'mastercucitangan' => $mastercucitangan
         // ]);
     }
+    public function cetakAPDTahun(Request $request)
+    {
+        $kdProfile = (int) $request['kdprofile'];
+        $tahun = $request['tahun'];
+
+        $dataRuangan = DB::table('ruangan_m')
+            ->where('kdprofile', $kdProfile)
+            ->where('statusenabled', true)
+            ->when($request['objectruanganfk'], function($query) use ($request) {
+                return $query->where('id', $request['objectruanganfk']);
+            })
+            ->orderBy('namaruangan', 'asc')
+            ->get();
+
+        $hasilRuangan = [];
+        foreach ($dataRuangan as $r) {
+            $hasilRuangan[$r->id] = [
+                'namaruangan' => $r->namaruangan,
+                'statistik_bulanan' => [],
+                'rata_tahunan' => 0,
+                'total_audit' => 0,
+                'total_sesuai' => 0
+            ];
+            
+            for ($bulan = 1; $bulan <= 12; $bulan++) {
+                $strBulan = sprintf("%02d", $bulan);
+                $hasilRuangan[$r->id]['statistik_bulanan'][$strBulan] = [
+                    'total' => 0,
+                    'sesuai' => 0,
+                    'persentase' => 0
+                ];
+            }
+        }
+
+        $statistikRumahSakit = [];
+        for ($bulan = 1; $bulan <= 12; $bulan++) {
+            $strBulan = sprintf("%02d", $bulan);
+            $statistikRumahSakit[$strBulan] = [
+                'total' => 0,
+                'sesuai' => 0,
+                'persentase' => 0
+            ];
+        }
+
+        for ($bulan = 1; $bulan <= 12; $bulan++) {
+            $strBulan = sprintf("%02d", $bulan);
+            
+          
+            $dataBulanan = DB::table('auditapd_t as au')
+                ->select(
+                    'au.objectruanganfk',
+                    DB::raw('COUNT(au.norec) as total_audits'),
+                    DB::raw('SUM(CASE WHEN EXISTS (
+                        SELECT 1 FROM auditapddetail_t as apddt 
+                        JOIN auditapd_m as apdm ON apdm.id = apddt.auditapdfk 
+                        WHERE apddt.norecauditapd = au.norec 
+                        AND apdm.header = \'Kesesuaian\' 
+                        AND apdm.description LIKE \'%Sesuai%\'
+                    ) THEN 1 ELSE 0 END) as total_sesuai')
+                )
+                ->where('au.kdprofile', $kdProfile)
+                ->where('au.statusenabled', true)
+                ->where('au.isverifikasi', true)
+                ->whereRaw('EXTRACT(MONTH FROM au.tanggal) = ?', [$bulan])
+                ->whereRaw('EXTRACT(YEAR FROM au.tanggal) = ?', [$tahun])
+                ->when($request['objectruanganfk'], function($query) use ($request) {
+                    return $query->where('au.objectruanganfk', $request['objectruanganfk']);
+                })
+                ->groupBy('au.objectruanganfk')
+                ->get();
+            
+           
+            foreach ($dataBulanan as $data) {
+                if (isset($hasilRuangan[$data->objectruanganfk])) {
+                    $hasilRuangan[$data->objectruanganfk]['statistik_bulanan'][$strBulan]['total'] = $data->total_audits;
+                    $hasilRuangan[$data->objectruanganfk]['statistik_bulanan'][$strBulan]['sesuai'] = $data->total_sesuai;
+                    
+                    if ($data->total_audits > 0) {
+                        $persentase = round(($data->total_sesuai / $data->total_audits) * 100, 2);
+                        $hasilRuangan[$data->objectruanganfk]['statistik_bulanan'][$strBulan]['persentase'] = $persentase;
+                    }
+              
+                    $statistikRumahSakit[$strBulan]['total'] += $data->total_audits;
+                    $statistikRumahSakit[$strBulan]['sesuai'] += $data->total_sesuai;
+
+                    $hasilRuangan[$data->objectruanganfk]['total_audit'] += $data->total_audits;
+                    $hasilRuangan[$data->objectruanganfk]['total_sesuai'] += $data->total_sesuai;
+                }
+            }
+        }
+        
+        foreach ($hasilRuangan as $ruanganId => &$ruangan) {
+            $totalPersentase = 0;
+            $bulanDenganData = 0;
+            
+            foreach ($ruangan['statistik_bulanan'] as $bulan => $statistik) {
+                if ($statistik['total'] > 0) {
+                    $totalPersentase += $statistik['persentase'];
+                    $bulanDenganData++;
+                }
+            }
+            
+            if ($bulanDenganData > 0) {
+                $ruangan['rata_tahunan'] = round($totalPersentase / $bulanDenganData, 2);
+            } else if ($ruangan['total_audit'] > 0) {
+                $ruangan['rata_tahunan'] = round(($ruangan['total_sesuai'] / $ruangan['total_audit']) * 100, 2);
+            }
+        }
+        
+        foreach ($statistikRumahSakit as $bulan => &$statistik) {
+            if ($statistik['total'] > 0) {
+                $statistik['persentase'] = round(($statistik['sesuai'] / $statistik['total']) * 100, 2);
+            }
+        }
+
+        $totalPersentaseRS = 0;
+        $bulanDenganDataRS = 0;
+        $totalAuditRS = 0;
+        $totalSesuaiRS = 0;
+        
+        foreach ($statistikRumahSakit as $bulan => $statistik) {
+            if ($statistik['total'] > 0) {
+                $totalPersentaseRS += $statistik['persentase'];
+                $bulanDenganDataRS++;
+                $totalAuditRS += $statistik['total'];
+                $totalSesuaiRS += $statistik['sesuai'];
+            }
+        }
+        
+        $rataRataRS = 0;
+        if ($bulanDenganDataRS > 0) {
+            $rataRataRS = round($totalPersentaseRS / $bulanDenganDataRS, 2);
+        } else if ($totalAuditRS > 0) {
+            $rataRataRS = round(($totalSesuaiRS / $totalAuditRS) * 100, 2);
+        }
+
+        foreach ($hasilRuangan as $ruanganId => $ruangan) {
+            if ($ruangan['total_audit'] == 0) {
+                unset($hasilRuangan[$ruanganId]);
+            }
+        }
+
+        return view('report.apd.laporan-tahunan-apd', [
+            'ruanganData' => $hasilRuangan,
+            'statistikBulan' => $statistikRumahSakit,
+            'statistikTahun' => $rataRataRS,
+            'tahun' => $tahun
+        ]);
+    }
+    
 
     public function cetakHygieneBulanan(Request $request)
     {
