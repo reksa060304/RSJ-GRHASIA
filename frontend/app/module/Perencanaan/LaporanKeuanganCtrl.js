@@ -109,6 +109,10 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
                     $scope.panjaraja = true
                 } else if($state.params.parameter == '33333'){
                     $scope.fungsionalaja = true
+
+                    // tambah gabungan jasa layanan dan silpa
+                    $scope.listAsalProduk.push({id: 99, asalproduk: 'Jasa Layanan dan Silpa'})
+
                 } else if($state.params.parameter == '22222'){
                     $scope.rkaja = true
                 } else if($state.params.parameter == '11111'){
@@ -772,6 +776,12 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
                     $scope.listTahap = res.data.tahap
                     $scope.listKegiatanV2 = res.data.divsubsubKg
                     $scope.listAsalProduk = res.data.asalproduk
+
+                    // tambah gabungan jasa layanan dan silpa
+                    if($state.params.parameter == '33333'){
+                        $scope.listAsalProduk.push({id: 99, asalproduk: 'Jasa Layanan dan Silpa'})
+    
+                    }
                 })
             });
 
