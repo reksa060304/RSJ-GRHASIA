@@ -26005,17 +26005,8 @@ public function suratBuktiPengembalian(Request $request)
         $asalproduk_kb = '';
         $asalproduk_sr = '';
         if (isset($request['asalproduk']) && $request['asalproduk'] != "" && $request['asalproduk'] != "undefined") {
-            
-            // jika asalproduk gabungan jasa layanan dan silpa atau tidak
-            if($request['asalproduk'] == 99){
-                $asalproduk_kb = 'and kb.objectasalprodukfk IN (18,4)';
-                $asalproduk_sr = 'and sr.objectasalprodukfk IN (18,4)';
-            }else{
-                $asalproduk_kb = 'and kb.objectasalprodukfk = '.$request['asalproduk'];
-                $asalproduk_sr = 'and sr.objectasalprodukfk = '.$request['asalproduk'];
-            }
-            
-            
+            $asalproduk_kb = 'and kb.objectasalprodukfk = '.$request['asalproduk'];
+            $asalproduk_sr = 'and sr.objectasalprodukfk = '.$request['asalproduk'];
             if($request['asalproduk'] == 18 || $request['asalproduk'] == 4){
                 $asalProduk = [18,4];
             }else {
