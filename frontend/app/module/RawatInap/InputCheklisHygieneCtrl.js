@@ -193,16 +193,19 @@ define(['initialize', 'Configuration'], function (initialize, config) {
                 }).data("kendoGrid");
             }
 
-            $('body').on('click','.addData',function(e){
+            $('body').on('click', '.addData', function (e) {
                 // $("#grid").data("kendoGrid").addRow();
-                if (!$scope.item.ruangan) {
+                if ($scope.item.ruangan == undefined) {
                     toastr.error('Harap pilih Ruangan terlebih dahulu !')
                     return
                 }
-
+                $scope.item.observer = {
+                    id: medifirstService.getPegawaiLogin().id,
+                    namalengkap: medifirstService.getPegawaiLogin().namaLengkap
+                }
+                // console.log($scope.item.observer);
                 $scope.popUpIndex.center().open();
             });
-
             $scope.formatTanggal = function (tanggal) {
                 if (tanggal != "null")
                     return moment(tanggal).format('DD-MMM-YYYY');
