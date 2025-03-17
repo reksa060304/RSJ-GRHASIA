@@ -531,15 +531,14 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
                     {
                         "field": "status",
                         "title": "Verifikasi",
-                        "width": "200px",
+                        "width": "150px",
                         //hidden: true
                     },
-                    // Tambahkan kolom baru di grid untuk "Sub Kegiatan"
-                    // {
-                    //     "field": "subKegiatan",
-                    //     "title": "Sub Kegiatan",
-                    //     "width": "150px",
-                    // }
+                    {
+                        "field": "tglbku",
+                        "title": "Tanggal BKU",
+                        "width": "150px",
+                    }
                 ]
             };
             

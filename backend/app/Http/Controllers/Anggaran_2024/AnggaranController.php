@@ -1602,7 +1602,8 @@ class AnggaranController extends ApiController {
                 ka2.id idsubkegiatan,
                 ka2.keterangan keterangansubkegiatan,
                 ap.id idasalproduk,
-                ap.asalproduk
+                ap.asalproduk,
+                bku.tglbku
             FROM
                 strukrealisasi_t sr
                 INNER JOIN realisasidetail_t rd ON rd.strukrealisasifk = sr.norec AND rd.statusenabled = TRUE AND rd.kdprofile = ".$idProfile."
@@ -1611,6 +1612,7 @@ class AnggaranController extends ApiController {
                 JOIN kegiatananggaran2024_m ka ON ka.id = ta.objectkegiatanfk AND ka.statusenabled = TRUE AND ka.kdprofile = ".$idProfile." 
                 JOIN kegiatananggaran2024_m ka2 ON ka2.id = ka.headfk AND ka2.statusenabled = TRUE AND ka2.kdprofile = ".$idProfile."
                 JOIN mataanggaran_m ma ON ma.id = sr.objectmataanggaranfk AND ma.statusenabled = TRUE AND ma.kdprofile = ".$idProfile."
+                LEFT JOIN bukukasumum_t bku ON bku.norec = sr.objectbkufk AND bku.statusenabled = TRUE AND bku.kdprofile = ".$idProfile."
                 JOIN asalproduk_m ap ON ap.id = sr.objectasalprodukfk
                 LEFT JOIN rekanan_m rkn ON rkn.id = sr.rekananfk
                 LEFT JOIN pegawai_m AS pg1 ON pg1.id = sr.bendaharafk
@@ -1638,7 +1640,8 @@ class AnggaranController extends ApiController {
                 ka2.id,
                 ka2.keterangan,
                 ma.id,
-                ap.id
+                ap.id,
+                bku.tglbku
             ORDER BY
                 sr.norealisasi DESC
         
