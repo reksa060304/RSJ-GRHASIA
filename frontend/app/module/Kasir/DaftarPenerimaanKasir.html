@@ -339,6 +339,14 @@
 					<button class="btnTemplate1" ng-click="CetakKwD()">Cetak Kwitansi Diklatlitbang</button>
 				</div>
 			</div>
+
+			<div class="grid_12" style="margin-top: 2em;">
+				<div class="grid_2" ng-show="btn_0">
+					<button class="btnTemplate1" ng-click="entryPengembalianPembayaran()">
+						Entry Pengembalian Pembayaran
+					</button>
+				</div>
+			</div>
 		</div>
 	</div>
 </div>
@@ -411,22 +419,101 @@
 	</fieldset>
 </div>
 
-<div class="grid_12">
-	<div class="grid_2" ng-show="btn_1">
-		<div class="grid_12">
-			<label c-label item="item" c-label-text="CaraBayar"></label>
-		</div>
-		<div class="clear"></div>
+<!-- start saldo awal -->
+<div kendo-window="popUpEntryPengembalianPembayaran" k-title="'Entry Pengembalian Pembayaran'" k-width="800" k-visible="false">
+	<div class="panel panel-default container_12">
+        <div class="grid">
 
-		<div class="grid_12">
-			<input style="width: 100%;" kendo-combo-box k-ng-model="item.caraBayar1" k-data-text-field="'carabayar'"
-				k-data-value-field="'id'" k-filter="'contains'" k-auto-bind="false" k-data-source="listCaraBayar" />
-		</div>
-	</div>
-	<div class="grid_1" style="margin-top: 15px" ng-show="btn_1">
-		<button class="btnTemplate1" ng-click="saveCarabayar()">Simpan</button>
-	</div>
-	<div class="grid_1" style="margin-top: 15px" ng-show="btn_1">
-		<button class="btnTemplate1" ng-click="batal()">Batal</button>
+			<!-- Data SBM -->
+			<div class="grid_12">
+				<div class="grid_12">
+                    <div class="grid_12">
+                        <label for="">No SBM</label>
+                    </div>
+					<div class="grid_12">
+						<input disabled="disabled" style="width: 100%" c-text-box type="text" class="k-textbox" ng-model="item.noSBM" />
+					</div>
+				</div>
+
+                <div class="grid_12">
+                    <div class="grid_12">
+                        <label for="">Keterangan</label>
+                    </div>
+					<div class="grid_12">
+						<input disabled="disabled" style="width: 100%" c-text-box type="text" class="k-textbox" ng-model="item.keteranganSBM" />
+					</div>
+				</div>
+
+				<div class="grid_12">
+                    <div class="grid_12">
+                        <label for="">Cara Bayar</label>
+                    </div>
+					<div class="grid_12">
+						<input disabled="disabled" style="width: 100%" c-text-box type="text" class="k-textbox" ng-model="item.caraBayarSBM" />
+					</div>
+				</div>
+
+				<div class="grid_12">
+                    <div class="grid_12">
+                        <label for="">Total Penerimaan</label>
+                    </div>
+					<div class="grid_12">
+						<input disabled="disabled" style="width: 100%" c-text-box type="text" class="k-textbox" ng-model="item.jumlahSBM" />
+					</div>
+				</div>
+			</div>
+
+			<!-- Pengembalian Pembayaran -->
+            <div class="grid_12" style="margin-top: 2em;">
+				<div class="grid_4">
+                    <div class="grid_12">
+                        <label for="">Tanggal</label>
+                    </div>
+					<div class="grid_12">
+						<input style="width: 100%" k-ng-model="item.tglPengembalianPembayaran" kendo-datetimepicker k-max="now"
+						placeholer="yyyy-MM-dd HH:mm" k-format="'yyyy-MM-dd HH:mm'" />
+					</div>
+				</div>
+
+                <div class="grid_4">
+                    <div class="grid_12">
+                        <label for="">Jumlah</label>
+                    </div>
+					<div class="grid_12">
+						<input style="width: 100%" c-text-box type="number" class="k-textbox" ng-model="item.jumlahPengembalianPembayaran" />
+					</div>
+				</div>
+
+				<div class="grid_4">
+                    <div class="grid_12">
+                        <label for="">Keterangan</label>
+                    </div>
+					<div class="grid_12">
+						<input style="width: 100%" c-text-box type="text" class="k-textbox" ng-model="item.keteranganPengembalianPembayaran" />
+					</div>
+				</div>
+			</div>
+    
+            <div class="grid_12" style="margin-top: 2em; margin-bottom: 2em;">
+				<button class="k-button  k-button-icontext" ng-click="simpanPengembalianPembayaran()">
+					Simpan
+				</button>
+				<button class="k-button  k-button-icontext" ng-click="batalPengembalianPembayaran()">
+					Batal
+				</button>
+            </div>
+
+            <div style="margin-top: 2em;">
+                <div class="grid_12">
+                    <kendo-grid id="kGrids" data-source="dataPengembalianPembayaran" options="columnPengembalianPembayaran" k-selectable="'row'"
+                        k-sortable="'true'" k-resizable="'true'">
+                    </kendo-grid>
+                </div>
+            </div>
+        </div>
+
+
+        
 	</div>
 </div>
+<!-- end saldo awal -->

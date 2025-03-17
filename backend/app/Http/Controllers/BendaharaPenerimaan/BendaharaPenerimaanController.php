@@ -13,6 +13,7 @@ use App\Http\Controllers\ApiController;
 use App\Master\Pegawai;
 use App\Traits\Valet;
 use App\Transaksi\BKUPenerimaanV2;
+use App\Transaksi\PengembalianPembayaran;
 use App\Transaksi\StrukBuktiPenerimaan;
 use App\Transaksi\StrukBuktiPenerimaanCaraBayar;
 use App\Transaksi\StrukBuktiPengeluaran;
@@ -11774,15 +11775,27 @@ class BendaharaPenerimaanController extends ApiController {
         $kdProfile = $this->getDataKdProfile($request);
         $idProfile = (int) $kdProfile;
 
+        $setting = \DB::table('settinganggaran_t as st')
+            ->join('pegawai_m as pg','pg.id','=','st.objectkepalabludfk')
+            ->join('tahapanggaran_m as ta','ta.id','=','st.objecttahapaktivfk')
+            ->select('st.*','pg.namalengkap', 'ta.tahap', 'ta.id as idtahap', 'pg.id as idpegawai')
+            ->where('st.kdprofile', $idProfile)
+            ->where('st.statusenabled', true)
+            ->orderBy('st.tahunanggaran')
+            ->get();
+
         $data = DB::select(DB::raw("
             SELECT 
                 spm.*, spp.nospp, spp.tglspp, ap.id idasalproduk, ap.asalproduk
             FROM spm_t spm
             LEFT JOIN spp_t spp on spp.norec = spm.objectsppfk
             LEFT JOIN asalproduk_m ap on ap.id = spm.objectasalprodukfk AND ap.statusenabled = true AND spp.statusenabled = true
+            LEFT JOIN bkupenerimaanv2_t bkubp ON bkubp.objectspmfk = spm.norec AND bkubp.statusenabled = TRUE
             WHERE 
                 spm.statusenabled = true
                 AND spm.norec NOT IN (SELECT objectspmfk FROM bkupenerimaanv2_t WHERE statusenabled = TRUE AND objectspmfk IS NOT NULL)
+                AND EXTRACT(YEAR FROM spm.tglspm) = '".$setting[0]->tahunanggaran."'
+                AND bkubp.objectspmfk IS NULL
             ORDER BY
                 spm.tglspm DESC
         "));
@@ -11814,11 +11827,19 @@ class BendaharaPenerimaanController extends ApiController {
             $BKU->objectstsfk = isset($request['norecSTS']) ? $request['norecSTS'] : null;
             $BKU->objectakunpendapatanfk = isset($request['akunpendapatan']) ? $request['akunpendapatan'] : null;
             $BKU->objectspmfk = isset($request['norecSPM']) ? $request['norecSPM'] : null;
+            $BKU->objectpengembalianpembayaranfk = isset($request['norecPengembalianPembayaran']) ? $request['norecPengembalianPembayaran'] : null;
             $BKU->ispenerimaan = $request['ispenerimaan'];
             $BKU->totalpenerimaan = isset($request['totalpenerimaan']) ? (float)$request['totalpenerimaan'] : 0;
             $BKU->totalpengeluaran = isset($request['totalpengeluaran']) ? (float)$request['totalpengeluaran'] : 0;
             $BKU->objectasalprodukfk = $request['asalproduk'];
             $BKU->save();
+
+            // update pengembalian pembayaran
+            if(isset($request['norecPengembalianPembayaran'])){
+                PengembalianPembayaran::where('norec', $request['norecPengembalianPembayaran'])->update([
+                    'objectbkufk' => $BKU->norec
+                ]);
+            }
 
             $transStatus = true;
 
@@ -11863,6 +11884,11 @@ class BendaharaPenerimaanController extends ApiController {
             // hapus bku
             $data = DB::table('bkupenerimaanv2_t')->where('norec', $request['norec'])->update([
                 'statusenabled' => false
+            ]);
+
+            // update tabel pengemblaian pembayaran
+            $data = DB::table('pengembalianpembayaran_t')->where('objectbkufk', $request['norec'])->update([
+                'objectbkufk' => null
             ]);
 
             $transStatus = true;
@@ -12062,4 +12088,172 @@ class BendaharaPenerimaanController extends ApiController {
         return $this->setStatusCode($result['status'])->respond($result, $transMsg);
     }
 
+
+    public function getPengembalianPembayaran(Request $request)
+    {
+        $kdProfile = $this->getDataKdProfile($request);
+        $idProfile = (int) $kdProfile;
+
+        $data = DB::select(DB::raw("
+            SELECT
+                pp.*, sbm.nosbm
+            FROM pengembalianpembayaran_t pp
+            JOIN strukbuktipenerimaan_t sbm ON sbm.norec = pp.objectsbmfk AND sbm.statusenabled = TRUE AND sbm.kdprofile = ".$idProfile."
+            WHERE
+                pp.statusenabled = TRUE
+                AND pp.kdprofile = ".$idProfile."
+        "));
+
+        return $this->respond($data);
+    }
+
+    public function cekSBMPengembalianPembayaran(Request $request)
+    {
+        $kdProfile = $this->getDataKdProfile($request);
+        $idProfile = (int) $kdProfile;
+
+        $data = DB::select(DB::raw("
+            SELECT
+                pp.*, sbm.nosbm
+            FROM pengembalianpembayaran_t pp
+            JOIN strukbuktipenerimaan_t sbm ON sbm.norec = pp.objectsbmfk AND sbm.statusenabled = TRUE AND sbm.kdprofile = ".$idProfile."
+            WHERE
+                pp.statusenabled = TRUE
+                AND pp.kdprofile = ".$idProfile."
+                AND sbm.norec = '".$request['norec']."'
+        "));
+
+        return $this->respond($data);
+    }
+
+    public function simpanPengembalianPembayaran(Request $request)
+    {
+        $kdProfile = $this->getDataKdProfile($request);
+        $idProfile = (int) $kdProfile;
+
+        DB::beginTransaction();
+        try {
+            
+            // simpan pengembalian pembayaran
+            $PP = new PengembalianPembayaran();
+            $PP->norec = $PP->generateNewId();
+            $PP->kdprofile = $idProfile;
+            $PP->statusenabled = true;
+            $PP->objectsbmfk = $request['objectsmbfk'];
+            $PP->tglpengembalian = $request['tglpengembalian'];
+            $PP->jumlah = $request['jumlah'];
+            $PP->keterangan = $request['keterangan'];
+            $PP->save();
+
+            $transStatus= true;
+
+        } catch (\Exception $e) {
+            
+            $transStatus= false;
+            
+        }
+
+        $transMsg = "";
+        if($transStatus == true) {
+            $transMsg = 'Simpan Berhasil';
+            DB::commit();
+            $result = array(
+                "status" => 201,
+                "message" => $transMsg,
+                "as" => 'as@epic',
+            );
+        }else {
+            $transMsg = 'Simpan Gagal!!';
+            DB::rollBack();
+            $result = array(
+                "status" => 400,
+                "message"  => $transMsg,
+                "err" => $e->getMessage(),
+                "line" => $e->getLine(),
+                "as" => 'as@epic',
+            );
+        }
+        return $this->setStatusCode($result['status'])->respond($result, $transMsg);
+    }
+
+    public function cekBKUPengembalianPembayaran(Request $request)
+    {
+        $kdProfile = $this->getDataKdProfile($request);
+        $idProfile = (int) $kdProfile;
+
+        $data = DB::select(DB::raw("
+            SELECT
+                pp.*, smb.nosmb
+            FROM pengembalianpembayaran_t pp
+            JOIN strukbuktipenerimaan_t sbm ON sbm.norec = pp.objectsbmfk AND sbm.statusenabled = TRUE AND sbm.kdprofile = ".$idProfile."
+            WHERE
+                pp.statusenabled = TRUE
+                AND sabp.kdprofile = ".$idProfile."
+                AND pp.norec = '".$request['norec']."'
+                AND pp.objectbkufk IS NOT NULL
+        "));
+
+        return $this->respond($data);
+    }
+
+    public function hapusPengembalianPembayaran(Request $request)
+    {
+        $kdProfile = $this->getDataKdProfile($request);
+        $idProfile = (int) $kdProfile;
+
+        DB::beginTransaction();
+        try {
+            
+            // simpan pengembalian pembayaran
+            $data = PengembalianPembayaran::where('norec', $request['norec'])->update('statusenabled', true);
+
+            $transStatus= true;
+
+        } catch (\Exception $e) {
+            
+            $transStatus= false;
+            
+        }
+
+        $transMsg = "";
+        if($transStatus == true) {
+            $transMsg = 'Simpan Berhasil';
+            DB::commit();
+            $result = array(
+                "status" => 201,
+                "message" => $transMsg,
+                "as" => 'as@epic',
+            );
+        }else {
+            $transMsg = 'Simpan Gagal!!';
+            DB::rollBack();
+            $result = array(
+                "status" => 400,
+                "message"  => $transMsg,
+                "err" => $e->getMessage(),
+                "line" => $e->getLine(),
+                "as" => 'as@epic',
+            );
+        }
+        return $this->setStatusCode($result['status'])->respond($result, $transMsg);
+    }
+
+    public function getBKUPengembalianPembayaran(Request $request)
+    {
+        $kdProfile = $this->getDataKdProfile($request);
+        $idProfile = (int) $kdProfile;
+
+        $data = DB::select(DB::raw("
+            SELECT
+                pp.*, sbm.nosbm
+            FROM pengembalianpembayaran_t pp
+            JOIN strukbuktipenerimaan_t sbm ON sbm.norec = pp.objectsbmfk AND sbm.statusenabled = TRUE AND sbm.kdprofile = ".$idProfile."
+            WHERE
+                pp.statusenabled = TRUE
+                AND pp.kdprofile = ".$idProfile."
+                AND pp.objectbkufk IS NULL
+        "));
+
+        return $this->respond($data);
+    }
 }

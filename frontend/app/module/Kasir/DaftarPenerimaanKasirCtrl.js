@@ -820,6 +820,163 @@ define(['initialize','Configuration'], function (initialize,configuration) {
 					});
 			}
 
+
+			$scope.entryPengembalianPembayaran = function(){
+
+				if($scope.dataSbnSelected.noSbm == null){
+					toastr.error('Pilih data sbm dulu')
+					return
+				}
+
+				$scope.item.tglPengembalianPembayaran = null
+				$scope.item.jumlahPengembalianPembayaran = null
+				$scope.item.keteranganPengembalianPembayaran = null
+
+				// load semua data pengembalian pembayaran berdasarkan tahun ini
+				medifirstService.get("bendaharapenerimaan/get-pengembalian-pembayaran").then(function (response) {
+                        
+					let data = response.data.map((item, index) => ({...item, no: index+1}))
+
+					$scope.dataPengembalianPembayaran = new kendo.data.DataSource({
+						data: data,
+						total: data.length,
+						pageSize: 10,
+						serverPaging: false,
+						schema: {
+							model: {
+								fields: {}
+							}
+						},
+					});
+
+					// open popup
+					$scope.popUpEntryPengembalianPembayaran.open().center()
+
+					// masukkan data sbm
+					$scope.item.noSBM = $scope.dataSbnSelected.noSbm
+					$scope.item.keteranganSBM = $scope.dataSbnSelected.keterangan
+					$scope.item.caraBayarSBM = $scope.dataSbnSelected.caraBayar
+					$scope.item.jumlahSBM = $scope.formatRupiah($scope.dataSbnSelected.totalPenerimaan, 'Rp. ')
+				});
+
+			}
+
+			$scope.batalPengembalianPembayaran = function(){
+				$scope.item.noSBM = null
+				$scope.item.keteranganSBM = null
+				$scope.item.caraBayarSBM = null
+				$scope.item.jumlahSBM = null
+				$scope.item.tglPengembalianPembayaran = null
+				$scope.item.jumlahPengembalianPembayaran = null
+				$scope.item.keteranganPengembalianPembayaran = null
+
+				$scope.popUpEntryPengembalianPembayaran.close()
+			}
+
+			$scope.simpanPengembalianPembayaran = function(){
+
+				// validasi
+				if($scope.item.tglPengembalianPembayaran == undefined && $scope.item.tglPengembalianPembayaran == null){
+					toastr.error('Pilih tanggal pengembalian')
+					return
+				}
+
+				if($scope.item.jumlahPengembalianPembayaran == undefined && $scope.item.jumlahPengembalianPembayaran == null){
+					toastr.error('Isi jumlah terlebih dahulu')
+					return
+				}
+
+				if($scope.item.keteranganPengembalianPembayaran == undefined && $scope.item.keteranganPengembalianPembayaran == null){
+					toastr.error('Isi keterangan terlebih dahulu')
+					return
+				}
+
+				if(parseFloat($scope.item.jumlahPengembalianPembayaran) > parseFloat($scope.dataSbnSelected.totalPenerimaan)){
+					toastr.error('Jumlah pengembalian tidak boleh melebihi total sbm')
+					return
+				}
+
+				let objSave = {
+					objectsmbfk: $scope.dataSbnSelected.noRec,
+					tglpengembalian: moment($scope.item.tglPengembalianPembayaran).format('YYYY-MM-DD'),
+					jumlah: $scope.item.jumlahPengembalianPembayaran,
+					keterangan: $scope.item.keteranganPengembalianPembayaran
+				}
+
+				// cek apakah sbm sudah ada pengembalian pembayaran
+				medifirstService.get('bendaharapenerimaan/cek-sbm-pengembalian-pembayaran' 
+					+ '?norec=' + $scope.dataSbnSelected.noRec).then(function(response){
+
+                    let dataPengembalianPembayaran = response.data
+
+                    if(dataPengembalianPembayaran.length > 0){
+						toastr.error('SBM sudah ada pengembalian pembayaran')
+						return
+					}
+
+					// simpan
+					medifirstService.post('bendaharapenerimaan/simpan-pengembalian-pembayaran', objSave).then(function () {
+						
+						// close popup and reload
+						$scope.popUpEntryPengembalianPembayaran.close()
+
+						// reset
+						$scope.item.tglPengembalianPembayaran = null
+						$scope.item.jumlahPengembalianPembayaran = null
+						$scope.item.keteranganPengembalianPembayaran = null
+
+					})
+
+                })
+
+			}
+
+			function hapusPengembalianPembayaran(e){
+				e.preventDefault()
+                var dataItem = this.dataItem($(e.currentTarget).closest("tr"));
+
+                var objSave = {
+                    'norec': dataItem.noRec
+                }
+
+				// cek apakah pengembalian pembayaran sudah dibkukan
+				medifirstService.get('bendaharapenerimaan/cek-bku-pengembalian-pembayaran' 
+					+ '?norec=' + dataItem.norec).then(function(response){
+
+                    let dataPengembalianPembayaran = response.data
+
+                    if(dataPengembalianPembayaran.length > 0){
+						toastr.error('SBM sudah ada pengembalian pembayaran')
+						return
+					}
+
+					// simpan
+					medifirstService.post('bendaharapenerimaan/hapus-pengembalian-pembayaran', objSave).then(function () {
+                    
+						// close popup
+						$scope.popUpEntryPengembalianPembayaran.close()
+	
+					})
+
+                })
+
+			}
+
+			$scope.columnPengembalianPembayaran = {
+				columns: [
+					{"field": "nosbm", "title" : "No SBM"},
+					{"field": "tglpengembalian", "title": "Tanggal Pengembalian"},
+					{"field": "jumlah", "title": "Jumlah Pengembalian"},
+					{"field": "keterangan", "title": "Keterangan Pengembalian"},
+					{
+						"command": [
+							{ text: "Hapus", click: hapusPengembalianPembayaran, imageClass: "k-icon k-i-delete" },
+						],
+						width: "70px",
+					}
+				]
+			}
+
 			//** BATAS */
 		}
 	]);

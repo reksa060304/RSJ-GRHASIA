@@ -20,6 +20,7 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
 			$scope.dataSelected = {};
 			$scope.hidespm = true;
 			$scope.hidests = true;
+            $scope.hidePengembalianPembayaran = true;
 			$scope.isBendaharaPenerimaan = false;
 			$scope.isBendaharaPengeluaran = false;
 			loadCombo();
@@ -226,7 +227,7 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
                     if($scope.penerimaan == true){
                         jenisbukti = response.data.filter(item => item.jenisbukti == 'Surat Tanda Setoran')
                     }else{
-                        jenisbukti = response.data.filter(item => item.jenisbukti == 'SPM')
+                        jenisbukti = response.data.filter(item => item.jenisbukti !== 'Surat Tanda Setoran')
                     }
 
                     $scope.listJenisBukti = jenisbukti
@@ -298,6 +299,7 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
                 $scope.dataSelectedsts = null;
                 $scope.dataSelectedspm = null;
                 $scope.item.asalProduk = null;
+                $scope.norecPengembalianPembayaran = null
 
 			}
 
@@ -378,7 +380,33 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
                                 ]
                             });
                         });
-                    } 
+                    }
+                    
+                    // untuk pengembalian pembayaran
+                    if($scope.item.itemJenisBukti.id == 10){
+                        $scope.hidespm = true
+                        $scope.hidests = true
+                        medifirstService.get("bendaharapenerimaan/get-bku-pengembalian-pembayaran").then(function (e) {
+                            
+                            let dataPengembalianPembayaran = e.data
+
+                            $scope.dataGridPengembalianPembayaran = new kendo.data.DataSource({
+                                data:  dataPengembalianPembayaran,
+                                pageSize: 10,
+                                total: dataPengembalianPembayaran.length,
+                                group: $scope.group,
+                                serverPaging: false,
+                                schema: {
+                                    model: {
+                                        fields: {
+                                        }
+                                    }
+                                },
+                                aggregate: [
+                                ]
+                            });
+                        });
+                    }
                 }
             });
 
@@ -405,10 +433,16 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
 
 			}
 
+            $scope.klikGridPengembalianPembayaran = function (data){
+                $scope.item.uraian = data.keterangan
+				$scope.item.jumlah = data.jumlah
+                $scope.norecPengembalianPembayaran = data.norec
+            }
+
             $scope.SavePenerimaan = function () {
 
                 // validasi
-                if($scope.dataSelectedsts == undefined && $scope.dataSelectedspm == null){
+                if($scope.dataSelectedsts == undefined){
                     toastr.error('Pilih data dulu')
                     return
                 }
@@ -479,11 +513,19 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
             $scope.SavePengeluaran = function() {
                 
                 // validasi
-                if($scope.dataSelectedspm == undefined && $scope.dataSelectedspm == null){
-                    toastr.error('Pilih data dulu')
+                if($scope.item.itemJenisBukti.jenisbukti == 'SPM' && $scope.dataSelectedspm == undefined && $scope.dataSelectedspm == null){
+                    toastr.error('Pilih data SPM dulu')
                     return
                 }
-                if ($scope.item.itemJenisBukti== undefined) {
+                if($scope.item.itemJenisBukti.jenisbukti == 'Pengembalian Pembayaran' && ($scope.norecPengembalianPembayaran == undefined || $scope.norecPengembalianPembayaran == null)){
+                    toastr.error('Pilih data pengembalian pembayaran dulu')
+                    return
+                }
+                if ($scope.item.tglbku == undefined && $scope.item.tglbku == null) {
+                    toastr.error("Tanggal bku harus diisi!");
+                    return;
+                }
+                if ($scope.item.itemJenisBukti == undefined) {
                     toastr.error("Keompok Transaksi belum di pilih!");
                     return;
                 }
@@ -495,7 +537,7 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
                     toastr.error("Isi uraian dulu")
                     return
                 }
-                if ($scope.item.asalProduk == undefined && $scope.item.asalProduk == null){
+                if ($scope.item.itemJenisBukti.jenisbukti == 'SPM' && $scope.item.asalProduk == undefined && $scope.item.asalProduk == null){
                     toastr.error("Sumber dana harus diisi")
                     return;
                 }
@@ -507,9 +549,11 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
 					uraian: $scope.item.uraian,
 					tglbku: moment($scope.item.tglbku).format('YYYY-MM-DD HH:mm'),
 					nospm: $scope.item.noSPM,
+                    norecSPM: $scope.dataSelectedspm ? $scope.dataSelectedspm.norec : null,
 					totalpengeluaran: $scope.item.jumlah,
 					ispenerimaan: false,
-                    asalproduk: $scope.item.asalProduk.id				
+                    asalproduk: $scope.item.asalProduk ? $scope.item.asalProduk.id : null,
+                    norecPengembalianPembayaran: $scope.norecPengembalianPembayaran		
 				}
 
 				// if ($scope.isBendaharaPengeluaran) {
@@ -528,6 +572,22 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
 
                         // reset data spm
                         $scope.dataGridSPM = new kendo.data.DataSource({
+                            data:  [],
+                            pageSize: 10,
+                            group: $scope.group,
+                            serverPaging: false,
+                            schema: {
+                                model: {
+                                    fields: {
+                                    }
+                                }
+                            },
+                            aggregate: [
+                            ]
+                        });
+
+                        // reset data pengembalian pembayaran
+                        $scope.dataGridPengembalianPembayaran = new kendo.data.DataSource({
                             data:  [],
                             pageSize: 10,
                             group: $scope.group,
@@ -1000,6 +1060,18 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
                         "hidden": true
                     }
 
+                ]
+			};
+
+            $scope.columnGridPengembalianPembayaran = {
+                sortable: true,
+                selectable: "multiple",
+                pageable: true,
+                columns: [
+                    {"field": "nosbm", "title" : "No SBM"},
+					{"field": "tglpengembalian", "title": "Tanggal Pengembalian"},
+					{"field": "jumlah", "title": "Jumlah Pengembalian"},
+					{"field": "keterangan", "title": "Keterangan Pengembalian"},
                 ]
 			};
 
