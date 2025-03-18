@@ -1272,6 +1272,27 @@ class AnggaranController extends ApiController {
                         $KB->objecttransaksifk = $TA->norec;
                         $KB->save();
 
+                        // Get alokasi keterangkan belanja (angkas) berdasarkan keterangan belanja
+                        $listAngkas = AlokasiKeteranganBelanja::where('keteranganbelanjafk', $kb->norec)
+                            ->where('statusenabled', true)
+                            ->where('kdprofile', $idProfile)
+                            ->get();
+                        
+                        if(count($listAngkas) > 0){
+                            // Membuat angkas baru sesuai dengan norec keterangan belanja baru dan tgl transfer
+                            foreach($listAngkas as $angkas){
+                                $newAngkas = new AlokasiKeteranganBelanja();
+                                $newAngkas->norec = $newAngkas->generateNewId();
+                                $newAngkas->kdprofile = $idProfile;
+                                $newAngkas->statusenabled = true;
+                                $newAngkas->keteranganbelanjafk = $KB->norec;
+                                $newAngkas->bulanint = $angkas->bulanint;
+                                $newAngkas->nilai = $angkas->nilai;
+                                $newAngkas->tgltransfer = $request['tgltransfer'];
+                                $newAngkas->save();
+                            }
+                        }
+
                     }
 
                 }
