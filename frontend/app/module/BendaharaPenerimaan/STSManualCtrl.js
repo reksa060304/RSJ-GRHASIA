@@ -45,7 +45,7 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
             $scope.item.voldiklat = 0
             $scope.item.terbilang = ''
 
-            FormLoad();
+            init();
 
             $scope.showAndHide = function () {
                 $('#contentPencarian').fadeToggle("fast", "linear");
@@ -93,13 +93,20 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
                             },
                             aggregate: [
                             ]
-                        });                                             
+                        });
+                        
+                        FormLoad()
                     });
             }
 
             function FormLoad() {
                 $scope.item.tanggalSTS = moment($scope.now).format('YYYY-MM-DD HH:mm');
                 $scope.item.tglAkhir = moment($scope.now).format('YYYY-MM-DD 23:59');
+
+                medifirstService.get("bendaharapenerimaan/get-data-combo-v2").then(function (response) {
+                    $scope.listRekeningSTS = response.data.rekening_lv8
+                });
+
             }
 
             $scope.ClearData = function () {
@@ -516,8 +523,19 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
             }
 
             $scope.batal = function () {
-                console.log(objSave)
-                medifirstService.post('sysadmin/logging/save-log-batal-sts-manual', objSave).then(function (data) {
+
+                if($scope.selectedData2.length <= 0){
+                    toastr.error('Centang data dulu')
+                    return
+                }
+
+                let objBatal = {
+                    setoran: $scope.selectedData2
+                }
+                medifirstService.post('sysadmin/logging/save-log-batal-sts-manual', objBatal).then(function (data) {
+                    
+                    init()
+                
                 })
             }
 
@@ -809,6 +827,71 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
             $scope.formatRupiah = function (value, currency) {
                 return currency + " " + value.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".");
             }
+
+            $scope.tambahSTSV2 = function(){
+                // reset 
+                $scope.item.tglstsmanualv2 = null
+                $scope.item.uraianstsv2 = null
+                $scope.item.rekeningPendapatan = null
+                $scope.item.jumlahstsv2 = null
+
+                $scope.popUpTambahSTSManualV2.center().open()
+            }
+
+            $scope.simpanSTSManualV2 = function(){
+
+                // validasi
+                if($scope.item.tglstsmanualv2 == undefined && $scope.item.tglstsmanualv2 == null){
+                    toastr.error('Isi tanggal sts dulu')
+                    return
+                }
+                if($scope.item.uraianstsv2 == undefined && $scope.item.uraianstsv2 == null){
+                    toastr.error('Isi uraian dulu')
+                    return
+                }
+                if($scope.item.rekeningPendapatan == undefined && $scope.item.rekeningPendapatan == null){
+                    toastr.error('Pilih rekening dulu')
+                    return
+                }
+                if($scope.item.jumlahstsv2 == undefined && $scope.item.jumlahstsv2 == null){
+                    toastr.error('Isi jumlah dulu')
+                    return
+                }
+
+                // get terbilang
+                medifirstService.get("sysadmin/general/get-terbilang-tidak-bulat/" + $scope.item.jumlahstsv2)
+                    .then(function (dat) {
+						
+                        let objSave = {
+                            tglsts: moment($scope.item.tglstsmanualv2).format('YYYY-MM-DD'),
+                            uraian: $scope.item.uraianstsv2,
+                            rekeningsts: $scope.item.rekeningPendapatan.id,
+                            jumlah: $scope.item.jumlahstsv2,
+                            terbilang: dat.data.terbilang
+                        }
+        
+                        medifirstService.post('bendaharapenerimaan/simpan-stsmanual-v2', objSave).then(function(response){
+                            
+                            // reset 
+                            $scope.item.tglstsmanualv2 = null
+                            $scope.item.uraianstsv2 = null
+                            $scope.item.rekeningPendapatan = null
+                            $scope.item.jumlahstsv2 = null
+
+                            $scope.popUpTambahSTSManualV2.close()
+
+                            // load data
+                            init()
+                        
+                        })
+                        
+
+                        
+                    }
+                );
+
+            }
+
             //////////////////////////////////////////////////////////////          END             /////////////////////////////////////////////////////////////////////////////////////       
         }
     ]);

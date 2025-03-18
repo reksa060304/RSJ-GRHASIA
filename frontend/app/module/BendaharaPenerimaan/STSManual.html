@@ -374,14 +374,22 @@
 		</div>
         <div class="grid_1" style="margin-top: 15px;"></div>
         <div class="grid_10" style="margin-top: 15px;">
-            <div class="grid_8" ng-include='"../app/template/Shared/TemplateLoading"'></div>
-            <div class="grid_4" style="float:right;">
+            <div class="grid_6" ng-include='"../app/template/Shared/TemplateLoading"'></div>
+            <div class="grid_6" style="float:right;">
                 <div class="grid_3">
                     <button class="c-button" ng-click="cetakpdf()">Cetak PDF</button>
                 </div>
                 <div class="grid_3">
+                    <button class="c-button" ng-click="cetakPDFV2()">Cetak PDF V2</button>
+                </div>
+                <div class="grid_3">
                     <button class="c-button" ng-click="tambahsts()">Tambah STS</button>
                 </div>
+
+                <div class="grid_3">
+                    <button class="c-button" ng-click="tambahSTSV2()">Tambah STS V2</button>
+                </div>
+
                 <div class="grid_3">
                     <button class="c-button" ng-click="detail()">Detail STS</button>
                 </div>
@@ -418,6 +426,67 @@
         <div class="grid_12" hidden="">
             <input c-text-box type="input" filter="" class="k-textbox" ng-model="item.namasts" />
         </div>
+
+        <div kendo-window="popUpTambahSTSManualV2" k-title="'STS Manual V2'" k-width="1000" k-visible="false"
+            k-on-open="win2visible = true" k-on-close="win2visible = false">
+            <div class="panel panel-default container_12" style="padding: 0px 10px;">
+                <div class="grid_11">
+                    <div class="grid_12">
+                        <div class="grid_4" style="text-align: left;">
+                            Tanggal STS
+                        </div>
+                        <div class="grid_8" style="margin-top: -10px;">
+                            <input style="width: 100%" k-ng-model="item.tglstsmanualv2" kendo-datepicker 
+                                placeholer="dd-MM-yyyy" k-format="'dd-MM-yyyy'"/>
+                        </div>
+                    </div>
+
+                    <div class="grid_12">
+                        <div class="grid_4" style="text-align: left;margin-top: 15px;">
+                            Uraian
+                        </div>
+                        <div class="grid_8" >
+                            <input c-text-box type="input" class="k-textbox" ng-model="item.uraianstsv2" />
+                        </div>
+                    </div>
+                    
+                    <div class="grid_12">
+                        <!-- list rekening pendapatan lv8 -->
+                        <div class="grid_4">
+                            <div class="grid_12">
+                                <label c-label item="item" c-label-text="Rekening STS"></label>
+                            </div>
+                            <div class="grid_12">
+                                <input style="width: 100%;" kendo-combo-box k-ng-model="item.rekeningPendapatan"
+                                    k-data-text-field="'text'" k-data-value-field="'id'" k-filter="'contains'"
+                                    k-auto-bind="false" k-data-source="listRekeningSTS" />
+                            </div>
+                        </div>
+                        
+                        <div class="grid_3" >
+                            <div class="grid_12">
+                                <label c-label item="item" c-label-text="Jumlah"></label>
+                            </div>
+                            <div class="grid_12">
+                                <input c-text-box type="input" class="k-textbox" ng-model="item.jumlahstsv2"/>
+                            </div>
+                        </div>
+                    </div>
+
+
+                    <div class="grid_12">
+                        <div class="grid_10"></div>
+                        <div class="grid_2">
+                            <div class="k-edit-buttons  k-state-default pull-right" style="margin-top:10px">
+                                <button class="k-button  k-button-icontext" ng-click="simpanSTSManualV2()"><i
+                                        class="fa fa-times-circle"></i>&nbsp;Simpan</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
     </div>
 </div>
 <script id="status-template" type="text/kendo-templ">

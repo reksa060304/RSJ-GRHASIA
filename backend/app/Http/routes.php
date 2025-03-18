@@ -128,12 +128,14 @@ Route::group(['middleware' => 'cors', 'prefix' => 'service'], function () {
         Route::post('bendaharapenerimaan/simpan-saldoawal-bkubp', 'BendaharaPenerimaan\BendaharaPenerimaanController@simpanSaldoAwalBKUBP');
         Route::post('bendaharapenerimaan/hapus-saldoawal-bkubp', 'BendaharaPenerimaan\BendaharaPenerimaanController@hapusSaldoAwalBKUBP');
         
-        Route:: get('bendaharapenerimaan/get-pengembalian-pembayaran', 'BendaharaPenerimaan\BendaharaPenerimaanController@getPengembalianPembayaran');
-        Route:: get('bendaharapenerimaan/cek-sbm-pengembalian-pembayaran', 'BendaharaPenerimaan\BendaharaPenerimaanController@cekSBMPengembalianPembayaran');
-        Route:: post('bendaharapenerimaan/simpan-pengembalian-pembayaran', 'BendaharaPenerimaan\BendaharaPenerimaanController@simpanPengembalianPembayaran');
-        Route:: get('bendaharapenerimaan/cek-bku-pengembalian-pembayaran', 'BendaharaPenerimaan\BendaharaPenerimaanController@cekBKUPengembalianPembayaran');
-        Route:: post('bendaharapenerimaan/hapus-pengembalian-pembayaran', 'BendaharaPenerimaan\BendaharaPenerimaanController@hapusPengembalianPembayaran');
-        Route:: get('bendaharapenerimaan/get-bku-pengembalian-pembayaran', 'BendaharaPenerimaan\BendaharaPenerimaanController@getBKUPengembalianPembayaran');
+        Route::get('bendaharapenerimaan/get-pengembalian-pembayaran', 'BendaharaPenerimaan\BendaharaPenerimaanController@getPengembalianPembayaran');
+        Route::get('bendaharapenerimaan/cek-sbm-pengembalian-pembayaran', 'BendaharaPenerimaan\BendaharaPenerimaanController@cekSBMPengembalianPembayaran');
+        Route::post('bendaharapenerimaan/simpan-pengembalian-pembayaran', 'BendaharaPenerimaan\BendaharaPenerimaanController@simpanPengembalianPembayaran');
+        Route::get('bendaharapenerimaan/cek-bku-pengembalian-pembayaran', 'BendaharaPenerimaan\BendaharaPenerimaanController@cekBKUPengembalianPembayaran');
+        Route::post('bendaharapenerimaan/hapus-pengembalian-pembayaran', 'BendaharaPenerimaan\BendaharaPenerimaanController@hapusPengembalianPembayaran');
+        Route::get('bendaharapenerimaan/get-bku-pengembalian-pembayaran', 'BendaharaPenerimaan\BendaharaPenerimaanController@getBKUPengembalianPembayaran');
+        
+        Route::post('bendaharapenerimaan/simpan-stsmanual-v2', 'BendaharaPenerimaan\BendaharaPenerimaanController@simpanSTSManualV2');
         // End bendahara penerimaan
 
 		Route::get('registrasi/laporan/get-rekap-kunjunganrs', 'Registrasi\LaporanRegistrasiController@getRekapKunjunganRS');

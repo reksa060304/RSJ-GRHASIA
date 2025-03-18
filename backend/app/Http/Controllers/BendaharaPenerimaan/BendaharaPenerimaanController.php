@@ -11627,9 +11627,32 @@ class BendaharaPenerimaanController extends ApiController {
             ->where('kdprofile', $idProfile)
             ->get();
 
+        $rekeningLv8 = DB::select(DB::raw("
+
+            SELECT 
+                cap.id,
+                cap.koderekening,
+                cap.namarekening,
+                cap.namarekening || ' - ' || cap.koderekening AS text
+            FROM char_akun_pendapatan_m cap
+            WHERE 
+                cap.statusenabled = TRUE 
+                AND cap.kdprofile = ".$idProfile." 
+                AND cap.level = 8
+            ORDER BY
+                split_part(cap.koderekening, '.', 3)::DECIMAL,
+                split_part(cap.koderekening, '.', 4)::DECIMAL,
+                split_part(cap.koderekening, '.', 5)::DECIMAL,
+                split_part(cap.koderekening, '.', 6)::DECIMAL,
+                split_part(cap.koderekening, '.', 7)::DECIMAL,
+                split_part(cap.koderekening, '.', 8)::DECIMAL ASC
+        
+        "));
+
         $result = array(
             'asalproduk'=>$asalProduk,
             'tahap' => $tahap,
+            'rekening_lv8' => $rekeningLv8,
             'message' => 'inhuman',
         );
         
@@ -12255,5 +12278,121 @@ class BendaharaPenerimaanController extends ApiController {
         "));
 
         return $this->respond($data);
+    }
+
+    public function simpanSTSManualV2(Request $request)
+    {
+        $kdProfile = $this->getDataKdProfile($request);
+        $idProfile = (int) $kdProfile;
+
+        DB::beginTransaction();
+        try {
+            
+            $dataLogin = $request->all();
+            $iduser = '';
+
+            $dataPegawaiUser = DB::select(DB::raw("select pg.id,pg.namalengkap from loginuser_s as lu
+                INNER JOIN pegawai_m as pg on lu.objectpegawaifk=pg.id
+                where pg.kdprofile = $idProfile and lu.id=:idLoginUser"),
+                array(
+                    'idLoginUser' => $dataLogin['userData']['id'],
+                )
+            );
+
+            foreach($dataPegawaiUser as $dat){
+                $iduser = $dat->id;
+            }
+
+            $nosts = $this->generateCode(new SuratTandaSetoran, 'nosts', 11, date('ymd',strtotime($request['tglsts'])),$idProfile);
+
+            // cari id lv6 dari kode rekening
+            $akunLv6 = DB::select(DB::raw("
+                SELECT 
+                    cap6.*
+                FROM char_akun_pendapatan_m cap
+                JOIN char_akun_pendapatan_m cap7 ON cap7.id = cap.headfk AND cap7.statusenabled = TRUE 
+                JOIN char_akun_pendapatan_m cap6 ON cap6.id = cap7.headfk AND cap6.statusenabled  = TRUE 
+                WHERE 
+                    cap.statusenabled = TRUE 
+                    AND cap.kdprofile  = 30
+                    AND cap.id = ".$request['rekeningsts']."
+            "));
+
+            $STS = new SuratTandaSetoran();
+            $STS->norec  = $STS->generateNewId();
+            $STS->kdprofile = $idProfile;
+            $STS->statusenabled = true;
+            $STS->nosts = $nosts;
+            $STS->tglpenerimaan = $request['tglsts'];
+            $STS->totalsetoran = $request['jumlah'];
+            $STS->totalsetoranpembulatan = $request['jumlah'];
+            $STS->terbilang = $request['terbilang'];
+            $STS->objectpegawaifk = $iduser;
+            $STS->keterangan = $request['uraian'];
+            $STS->ismanual = true;
+            $STS->objectakunpendapatanfk = $akunLv6[0]->id;
+            $STS->save();
+
+            // simpan detail
+            $STSD = new SuratTandaSetoranDetailV2();
+            $STSD->norec = $STSD->generateNewId();
+            $STSD->statusenabled = TRUE;
+            $STSD->kdprofile = $idProfile;
+            $STSD->objectakunpendapatanfk = $request['rekeningsts'];
+            $STSD->objectstsfk = $STS->nosts;
+            $STSD->totalsetoran = $request['jumlah'];
+            $STSD->nourut = 1;
+            $STSD->save();
+            
+            // setelah sts langsung buat bku
+            $BKU = new BKUPenerimaanV2();
+            $norec = $BKU->generateNewId();
+            $BKU->norec = $norec;
+            $BKU->statusenabled = true;
+            $BKU->kdprofile = $idProfile;
+
+            $nobku = $this->generateCodeBKU(new BKUPenerimaanV2, 'nobku', $request['asalproduk'], 2, '', $idProfile);
+
+            $BKU->nobku = $nobku;
+            $BKU->tglbku = $STS->tglpenerimaan;
+            $BKU->uraianbku = $STS->keterangan;
+            $BKU->objectstsfk = $STS->norec;
+            $BKU->objectakunpendapatanfk = $STS->objectakunpendapatanfk;
+            $BKU->objectspmfk = null;
+            $BKU->ispenerimaan = true;
+            $BKU->totalpenerimaan = $STS->totalsetoran;
+            $BKU->totalpengeluaran = 0;
+            $BKU->objectasalprodukfk = 18;
+            $BKU->save();
+
+            $transStatus= true;
+
+        } catch (\Exception $e) {
+            
+            $transStatus= false;
+            
+        }
+
+        $transMsg = "";
+        if($transStatus == true) {
+            $transMsg = 'Simpan Berhasil';
+            DB::commit();
+            $result = array(
+                "status" => 201,
+                "message" => $transMsg,
+                "as" => 'as@epic',
+            );
+        }else {
+            $transMsg = 'Simpan Gagal!!';
+            DB::rollBack();
+            $result = array(
+                "status" => 400,
+                "message"  => $transMsg,
+                "err" => $e->getMessage(),
+                "line" => $e->getLine(),
+                "as" => 'as@epic',
+            );
+        }
+        return $this->setStatusCode($result['status'])->respond($result, $transMsg);
     }
 }

@@ -815,10 +815,10 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
             $scope.columnGrid = {
 				toolbar: [
 					"excel",
-					{
-						name: "penerimaan", text: "Penerimaan",
-						template: '<button ng-click="Terima()" class="k-button k-button-icontext k-grid-upload" href="\\#"><span class="k-icon k-i-plus"></span>Penerimaan</button>'
-					},
+					// {
+					// 	name: "penerimaan", text: "Penerimaan",
+					// 	template: '<button ng-click="Terima()" class="k-button k-button-icontext k-grid-upload" href="\\#"><span class="k-icon k-i-plus"></span>Penerimaan</button>'
+					// },
 					{
 						name: "pengeluaran", text: "Pengeluaran",
 						template: '<button ng-click="Pengeluaran()" class="k-button k-button-icontext k-grid-upload" href="\\#"><span class="k-icon k-i-cancel"></span>Pengeluaran</button>'

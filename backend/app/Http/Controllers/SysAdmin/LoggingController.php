@@ -469,6 +469,35 @@ class LoggingController extends ApiController
             set statusenabled = false
             where nosts = '" . $setor[$i]['nosts']. "'");
 
+            // cari sts detailv2 jika ada difalse
+            $stsdetailv2 = DB::select(DB::raw("
+                SELECT 
+                    stsd2.* 
+                FROM surattandasetorandetailv2_t stsd2 
+                WHERE 
+                    stsd2.statusenabled = TRUE
+                    AND stsd2.kdprofile = 30
+                    AND stsd2.objectstsfk = '".$setor[$i]['nosts']."'
+            "));
+
+            if(count($stsdetailv2) > 0){
+                $updatests = DB::statement("update surattandasetorandetailv2_t 
+                    set statusenabled = false
+                    where objectstsfk = '".$setor[$i]['nosts']."' 
+                
+                ");
+
+                // disable bku karena ketika buat sts langsung dibkin bku
+                $updatests = DB::statement("
+                    update bkupenerimaanv2_t 
+                        set statusenabled = false
+                    from surattandasetoran_t
+                    where
+                        bkupenerimaanv2_t.objectstsfk = surattandasetoran_t.norec
+                        AND surattandasetoran_t.nosts = '" . $setor[$i]['nosts']. "'
+                ");
+            }
+
             $updatestsd = DB::statement("update surattandasetorandetail_t 
             set statusenabled = false
             where objectstsfk = '" . $setor[$i]['nosts']. "'");
