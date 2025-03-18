@@ -44,7 +44,38 @@
         <tr>
             <td>Terbilang</td>
             <td style="padding: 0 0.3em;">:</td>
-            <td>{{ $sts[0]->terbilang }}</td>
+            <td>
+                @php
+                    function penyebut($nilai) {
+                        $nilai = abs($nilai);
+                        $huruf = array("", "Satu", "Dua", "Tiga", "Empat", "Lima", "Enam", "Tujuh", "Delapan", "Sembilan", "Sepuluh", "Sebelas");
+                        $temp = "";
+                        if ($nilai < 12) {
+                            $temp = " ". $huruf[$nilai];
+                        } else if ($nilai <20) {
+                            $temp = penyebut($nilai - 10). " Belas";
+                        } else if ($nilai < 100) {
+                            $temp = penyebut($nilai/10)." Puluh". penyebut($nilai % 10);
+                        } else if ($nilai < 200) {
+                            $temp = " Seratus" . penyebut($nilai - 100);
+                        } else if ($nilai < 1000) {
+                            $temp = penyebut($nilai/100) . " Ratus" . penyebut($nilai % 100);
+                        } else if ($nilai < 2000) {
+                            $temp = " Seribu" . penyebut($nilai - 1000);
+                        } else if ($nilai < 1000000) {
+                            $temp = penyebut($nilai/1000) . " Ribu" . penyebut($nilai % 1000);
+                        } else if ($nilai < 1000000000) {
+                            $temp = penyebut($nilai/1000000) . " Juta" . penyebut($nilai % 1000000);
+                        } else if ($nilai < 1000000000000) {
+                            $temp = penyebut($nilai/1000000000) . " Milyar" . penyebut(fmod($nilai,1000000000));
+                        } else if ($nilai < 1000000000000000) {
+                            $temp = penyebut($nilai/1000000000000) . " Trilyun" . penyebut(fmod($nilai,1000000000000));
+                        }     
+                        return $temp;
+                    }
+                @endphp
+                {{ penyebut((float)$sts[0]->totalsetoran) }}
+            </td>
         </tr>
         <tr>
             <td>Tanggal</td>
@@ -69,7 +100,7 @@
             $idlevel6 = 0;
             $idlevel7 = 0;
         @endphp
-        @foreach ($rekening as $rek)
+        @foreach ($data as $rek)
             
             {{-- level-1 --}}
             @if ($rek->idlevel1 && ($rek->idlevel1 !== $idlevel1))
