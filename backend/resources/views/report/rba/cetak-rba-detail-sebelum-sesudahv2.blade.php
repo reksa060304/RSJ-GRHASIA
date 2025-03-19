@@ -144,9 +144,24 @@
             <tr>
                 <td style="padding:5px; width:8%;">Masukan</td>
                 <td style="padding:5px; width:34%;">{{ $data[0]->indikatormasuk }}</td>
-                <td style="padding:5px; width:12%;">{{ $data[0]->targetmasuk_sesudah }}</td>
+                <td style="padding:5px; width:12%;">
+                    @php
+                        $totalSesudah = 0;
+                        foreach ($data as $key => $item) {
+                            $totalSesudah += ( (int)$item->jml_sesudah * (int)$item->hargasatuan_sesudah );
+                        }
+                    @endphp
+                    Rp. {{ number_format($totalSesudah,2,',','.') }}</td>
                 <td style="padding:5px; width:34%;">{{ $data[0]->indikatormasuk }}</td>
-                <td style="padding:5px; width:12%;">{{ $data[0]->targetmasuk }}</td>
+                <td style="padding:5px; width:12%;">
+                    @php
+                        $totalSebelum = 0;
+                        foreach ($data as $key => $item) {
+                            $totalSebelum += ( (int)$item->jml * (int)$item->hargasatuan );
+                        }
+                    @endphp
+                    Rp. {{ number_format($totalSebelum,2,',','.') }}</td>
+                </td>
             </tr>
             <tr>
                 <td style="padding:5px; width:8%;">Keluaran</td>
