@@ -11974,7 +11974,7 @@ class BendaharaPenerimaanController extends ApiController {
 
         $tahun = '';
         if(isset($request['tahun']) && $request['tahun'] !== '' && $request['tahun'] !== "undefined"){
-            $tahun = "AND cap.tahun = '". $request['tahun']."'";
+            $tahun = "AND rp.tahun = '". $request['tahun']."'";
         }
 
         $cek = DB::select(DB::raw("

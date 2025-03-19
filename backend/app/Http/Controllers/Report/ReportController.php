@@ -26934,6 +26934,7 @@ public function suratBuktiPengembalian(Request $request)
                 rp.statusenabled = true 
                 AND rp.kdprofile = 30
                 AND rp.objecttahapfk = ".$request['tahapawal']."
+                AND rp.tahun = '".date('Y', strtotime($request['tglbku']))."'
             GROUP BY
                 cap.id,
                 cap7.id,
@@ -27004,6 +27005,7 @@ public function suratBuktiPengembalian(Request $request)
                 rp.statusenabled = true 
                 AND rp.kdprofile = 30
                 AND rp.objecttahapfk = ".$request['tahapakhir']."
+                AND rp.tahun = '".date('Y', strtotime($request['tglbku']))."'
             GROUP BY
                 cap.id,
                 cap7.id,
@@ -29797,5 +29799,235 @@ public function suratBuktiPengembalian(Request $request)
         $pageWidth = 950;
         //return $this->respond($result);
         return view('report.keuangan.cetakrk',compact('data', 'pageWidth', 'tahunjudul', 'tanggalcetak', 'periode', 'subsubkegiatan'));
+    }
+
+    public function cetakSPJBulananBP(Request $request)
+    {
+
+        // data rekening
+        $rekening = DB::select(DB::raw("
+            SELECT 
+                cap.id as idrekening,
+                cap.koderekening,
+                cap.namarekening,
+                cap.headfk,
+                cap7.id as idlevel7,
+                cap7.koderekening as koderekeninglevel7,
+                cap7.namarekening as namarekeninglevel7,
+                cap7.headfk as headfklevel7,
+                cap6.id as idlevel6,
+                cap6.koderekening as koderekeninglevel6,
+                cap6.namarekening as namarekeninglevel6,
+                cap6.headfk as headfklevel6,
+                cap5.id as idlevel5,
+                cap5.koderekening as koderekeninglevel5,
+                cap5.namarekening as namarekeninglevel5,
+                cap5.headfk as headfklevel5,
+                cap4.id as idlevel4,
+                cap4.koderekening as koderekeninglevel4,
+                cap4.namarekening as namarekeninglevel4,
+                cap4.headfk as headfklevel4,
+                cap3.id as idlevel3,
+                cap3.koderekening as koderekeninglevel3,
+                cap3.namarekening as namarekeninglevel3,
+                cap3.headfk as headfklevel3,
+                cap2.id as idlevel2,
+                cap2.koderekening as koderekeninglevel2,
+                cap2.namarekening as namarekeninglevel2,
+                cap2.headfk as headfklevel2,
+                cap1.id as idlevel1,
+                cap1.koderekening as koderekeninglevel1,
+                cap1.namarekening as namarekeninglevel1,
+                cap1.headfk as headfklevel1
+            FROM char_akun_pendapatan_m cap
+            LEFT JOIN char_akun_pendapatan_m cap7 ON cap7.id = cap.headfk
+            LEFT JOIN char_akun_pendapatan_m cap6 ON cap6.id = cap7.headfk
+            LEFT JOIN char_akun_pendapatan_m cap5 ON cap5.id = cap6.headfk
+            LEFT JOIN char_akun_pendapatan_m cap4 ON cap4.id = cap5.headfk
+            LEFT JOIN char_akun_pendapatan_m cap3 ON cap3.id = cap4.headfk
+            LEFT JOIN char_akun_pendapatan_m cap2 ON cap2.id = cap3.headfk
+            LEFT JOIN char_akun_pendapatan_m cap1 ON cap1.id = cap2.headfk
+            WHERE 
+                cap.statusenabled = TRUE
+                AND cap.kdprofile = 30
+                AND cap.level = 8
+            ORDER BY 
+                cap.id asc
+        "));
+
+        // data target pendapatan
+        $target = DB::select(DB::raw("
+            SELECT
+                --rp.norec,
+                --rp.keterangan,
+                --rp.uraianpendapatan,
+                --rp.tahun,
+                --rp.objectasalprodukfk,
+                SUM(rp.jumlahpendapatan) as jumlahpendapatan,
+                --rp.objecturaianpendapatanfk,
+                --rp.objecttahapfk,
+                --ta.tahap, 
+                cap.id as idrekening,
+                cap.koderekening,
+                cap.namarekening,
+                cap7.id as idlevel7,
+                cap7.koderekening as koderekeninglevel7,
+                cap7.namarekening as namarekeninglevel7,
+                cap7.headfk as headfklevel7,
+                cap6.id as idlevel6,
+                cap6.koderekening as koderekeninglevel6,
+                cap6.namarekening as namarekeninglevel6,
+                cap6.headfk as headfklevel6,
+                cap5.id as idlevel5,
+                cap5.koderekening as koderekeninglevel5,
+                cap5.namarekening as namarekeninglevel5,
+                cap5.headfk as headfklevel5,
+                cap4.id as idlevel4,
+                cap4.koderekening as koderekeninglevel4,
+                cap4.namarekening as namarekeninglevel4,
+                cap4.headfk as headfklevel4,
+                cap3.id as idlevel3,
+                cap3.koderekening as koderekeninglevel3,
+                cap3.namarekening as namarekeninglevel3,
+                cap3.headfk as headfklevel3,
+                cap2.id as idlevel2,
+                cap2.koderekening as koderekeninglevel2,
+                cap2.namarekening as namarekeninglevel2,
+                cap2.headfk as headfklevel2,
+                cap1.id as idlevel1,
+                cap1.koderekening as koderekeninglevel1,
+                cap1.namarekening as namarekeninglevel1,
+                cap1.headfk as headfklevel1
+            FROM rincianpendapatan_t rp
+            JOIN char_akun_pendapatan_m AS cap ON cap.id = rp.objecturaianpendapatanfk AND cap.statusenabled = TRUE AND cap.kdprofile = 30
+            LEFT JOIN char_akun_pendapatan_m cap7 ON cap7.id = cap.headfk
+            LEFT JOIN char_akun_pendapatan_m cap6 ON cap6.id = cap7.headfk
+            LEFT JOIN char_akun_pendapatan_m cap5 ON cap5.id = cap6.headfk
+            LEFT JOIN char_akun_pendapatan_m cap4 ON cap4.id = cap5.headfk
+            LEFT JOIN char_akun_pendapatan_m cap3 ON cap3.id = cap4.headfk
+            LEFT JOIN char_akun_pendapatan_m cap2 ON cap2.id = cap3.headfk
+            LEFT JOIN char_akun_pendapatan_m cap1 ON cap1.id = cap2.headfk
+            JOIN tahapanggaran_m AS ta ON ta.id = rp.objecttahapfk AND ta.statusenabled = true AND ta.kdprofile = 30
+            JOIN asalproduk_m AS ap ON ap.id = rp.objectasalprodukfk AND ap.statusenabled = true AND ap.kdprofile = 30
+            WHERE 
+                rp.statusenabled = true 
+                AND rp.kdprofile = 30
+                AND rp.objecttahapfk = ".$request['tahap']."
+                AND rp.tahun = '".$request['tahun']."'
+            GROUP BY
+                cap.id,
+                cap7.id,
+                cap6.id,
+                cap5.id,
+                cap4.id,
+                cap3.id,
+                cap2.id,
+                cap1.id
+            ORDER BY
+                cap.id asc
+        "));
+
+        $data = DB::select(DB::raw("
+        
+            SELECT
+                bkup.nobku, 
+                bkup.tglbku,
+                CASE WHEN extract(year from bkup.tglbku) = '".$request['tahun']."'
+                    and extract(month from bkup.tglbku) = 1
+                THEN stsd.totalsetoran else 0 end as januari,
+                CASE WHEN extract(year from bkup.tglbku) = '".$request['tahun']."'
+                    and extract(month from bkup.tglbku) = 2
+                THEN stsd.totalsetoran else 0 end as februari,
+                CASE WHEN extract(year from bkup.tglbku) = '".$request['tahun']."'
+                    and extract(month from bkup.tglbku) = 3
+                THEN stsd.totalsetoran else 0 end as maret,
+                CASE WHEN extract(year from bkup.tglbku) = '".$request['tahun']."'
+                    and extract(month from bkup.tglbku) = 4
+                THEN stsd.totalsetoran else 0 end as april,
+                CASE WHEN extract(year from bkup.tglbku) = '".$request['tahun']."'
+                    and extract(month from bkup.tglbku) = 5
+                THEN stsd.totalsetoran else 0 end as mei,
+                CASE WHEN extract(year from bkup.tglbku) = '".$request['tahun']."'
+                    and extract(month from bkup.tglbku) = 6
+                THEN stsd.totalsetoran else 0 end as juni,
+                CASE WHEN extract(year from bkup.tglbku) = '".$request['tahun']."'
+                    and extract(month from bkup.tglbku) = 7
+                THEN stsd.totalsetoran else 0 end as juli,
+                CASE WHEN extract(year from bkup.tglbku) = '".$request['tahun']."'
+                    and extract(month from bkup.tglbku) = 8
+                THEN stsd.totalsetoran else 0 end as agustus,
+                CASE WHEN extract(year from bkup.tglbku) = '".$request['tahun']."'
+                    and extract(month from bkup.tglbku) = 9
+                THEN stsd.totalsetoran else 0 end as september,
+                CASE WHEN extract(year from bkup.tglbku) = '".$request['tahun']."'
+                    and extract(month from bkup.tglbku) = 10
+                THEN stsd.totalsetoran else 0 end as oktober,
+                CASE WHEN extract(year from bkup.tglbku) = '".$request['tahun']."'
+                    and extract(month from bkup.tglbku) = 11
+                THEN stsd.totalsetoran else 0 end as november,
+                CASE WHEN extract(year from bkup.tglbku) = '".$request['tahun']."'
+                    and extract(month from bkup.tglbku) = 12
+                THEN stsd.totalsetoran else 0 end as desember,
+                sts.nosts,
+                stsd.totalsetoran AS totalsetoransts, 
+                ap.asalproduk,
+                cap.id AS idrekening,
+                cap.namarekening, 
+                cap.koderekening, 
+                cap7.id as idlevel7,
+                cap7.koderekening as koderekeninglevel7,
+                cap7.namarekening as namarekeninglevel7,
+                cap7.headfk as headfklevel7,
+                cap6.id as idlevel6,
+                cap6.koderekening as koderekeninglevel6,
+                cap6.namarekening as namarekeninglevel6,
+                cap6.headfk as headfklevel6,
+                cap5.id as idlevel5,
+                cap5.koderekening as koderekeninglevel5,
+                cap5.namarekening as namarekeninglevel5,
+                cap5.headfk as headfklevel5,
+                cap4.id as idlevel4,
+                cap4.koderekening as koderekeninglevel4,
+                cap4.namarekening as namarekeninglevel4,
+                cap4.headfk as headfklevel4,
+                cap3.id as idlevel3,
+                cap3.koderekening as koderekeninglevel3,
+                cap3.namarekening as namarekeninglevel3,
+                cap3.headfk as headfklevel3,
+                cap2.id as idlevel2,
+                cap2.koderekening as koderekeninglevel2,
+                cap2.namarekening as namarekeninglevel2,
+                cap2.headfk as headfklevel2,
+                cap1.id as idlevel1,
+                cap1.koderekening as koderekeninglevel1,
+                cap1.namarekening as namarekeninglevel1,
+                cap1.headfk as headfklevel1
+            FROM bkupenerimaanv2_t bkup
+            JOIN surattandasetoran_t sts ON sts.norec = bkup.objectstsfk AND sts.statusenabled = TRUE
+            JOIN surattandasetorandetailv2_t stsd ON stsd.objectstsfk = sts.nosts AND sts.statusenabled = TRUE 
+            LEFT JOIN asalproduk_m ap on ap.id = bkup.objectasalprodukfk AND ap.statusenabled = TRUE 
+            LEFT JOIN char_akun_pendapatan_m cap ON cap.id = stsd.objectakunpendapatanfk AND cap.statusenabled = TRUE
+            LEFT JOIN char_akun_pendapatan_m cap7 ON cap7.id = cap.headfk
+            LEFT JOIN char_akun_pendapatan_m cap6 ON cap6.id = cap7.headfk
+            LEFT JOIN char_akun_pendapatan_m cap5 ON cap5.id = cap6.headfk
+            LEFT JOIN char_akun_pendapatan_m cap4 ON cap4.id = cap5.headfk
+            LEFT JOIN char_akun_pendapatan_m cap3 ON cap3.id = cap4.headfk
+            LEFT JOIN char_akun_pendapatan_m cap2 ON cap2.id = cap3.headfk
+            LEFT JOIN char_akun_pendapatan_m cap1 ON cap1.id = cap2.headfk 
+            WHERE
+                bkup.statusenabled = TRUE
+                AND bkup.kdprofile = 30
+                AND extract(year from bkup.tglbku) = '".$request['tahun']."'
+        "));
+
+        $settingrba = DB::table('settinganggaran_t')->where('statusenabled', true)->where('kdprofile', 30)->first();
+
+        setlocale(LC_ALL, 'IND');
+        $bulan = strftime('%B', strtotime($request['tglbku']));
+        $tglindo = strftime('%d %B %Y', strtotime($request['tglcetak']));
+        $tahun = $request['tahun'];
+
+        return view('report.spj.cetak-spj-bulanan-bp',compact('rekening', 'target', 'data', 'bulan', 'settingrba', 'tglindo', 'tahun'));
+
     }
 }

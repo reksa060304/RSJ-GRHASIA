@@ -136,6 +136,7 @@ Route::group(['middleware' => 'cors', 'prefix' => 'service'], function () {
         Route::get('bendaharapenerimaan/get-bku-pengembalian-pembayaran', 'BendaharaPenerimaan\BendaharaPenerimaanController@getBKUPengembalianPembayaran');
         
         Route::post('bendaharapenerimaan/simpan-stsmanual-v2', 'BendaharaPenerimaan\BendaharaPenerimaanController@simpanSTSManualV2');
+        Route::get('report/cetak-spj-bulanan-bp', 'Report\ReportController@cetakSPJBulananBP');
         // End bendahara penerimaan
 
 		Route::get('registrasi/laporan/get-rekap-kunjunganrs', 'Registrasi\LaporanRegistrasiController@getRekapKunjunganRS');

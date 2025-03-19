@@ -1175,6 +1175,39 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
             }
             // #endregion saldo awal bku
 
+
+            $scope.handlePopUpCetakSPJBulanan = function(){
+
+                $scope.popUpCetakSPJBulanan.open().center()
+            }
+
+            $scope.cetakSPJBulanan = function(){
+
+                // validasi
+                if($scope.item.tahunSPJBulanan == undefined && $scope.item.tahunSPJBulanan == null){
+                    toastr.error('Pilih tahun spj dulu')
+                    return
+                }
+
+                if($scope.item.tahapSPJBulanan == undefined && $scope.item.tahapSPJBulanan == null){
+                    toastr.error('Pilih tahap spj dulu')
+                    return
+                }
+
+                if($scope.item.tglCetakSPJBulanan == undefined && $scope.item.tglCetakSPJBulanan == null){
+                    toastr.error('Pilih tanggal cetak dulu')
+                    return
+                }
+
+                window.open(baseTransaksi + "report/cetak-spj-bulanan-bp" 
+                    + "?tahun=" + moment($scope.item.tahunSPJBulanan).format('YYYY')
+                    + "&tahap=" + $scope.item.tahapSPJBulanan.id
+                    + "&tglcetak=" + moment($scope.item.tglCetakSPJBulanan).format('YYYY-MM-DD'), '_blank')
+                
+            }
+
+            // #endregion saldo awal bku
+
 			////////////// -TAMAT- ////////////////////
 
 		}
