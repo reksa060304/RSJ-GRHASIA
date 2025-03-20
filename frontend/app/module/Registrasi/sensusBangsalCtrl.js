@@ -77,7 +77,7 @@ function (initialize) {
                 if (sumhariperawatan > 0) {
                     $scope.item.bortt = (sumhariperawatan / ($scope.item.ttlTempatTidur * datas.length)* 100).toFixed(2) + '%'
                 }
-                if (sumjumlahpasienkeluarrs > 0) {                    
+                if (sumjumlahpasienkeluarrs ||  sumjumlahpasienkeluar > 0) {                    
                     $scope.item.los = ((sumlos / sumjumlahpasienkeluar)).toFixed(2)             
                     $scope.item.toi = ((($scope.item.ttlTempatTidur*datas.length) - sumhariperawatan)/sumjumlahpasienkeluar).toFixed(2)
                     $scope.item.bto = (sumjumlahpasienkeluarrs/datas.length).toFixed(2)
