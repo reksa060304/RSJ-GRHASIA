@@ -64,17 +64,19 @@ function (initialize) {
                     sumpasienlbh48 += element.pasienlbh48
                     // element.lamadirawat = element.pasiendipindahkan + element.jumlahpasienkeluarrs + element.pasienmkhs
                 }
-                console.log(sumlos)
-                console.log(sumjumlahpasienkeluarrs)
-                console.log(sumjumlahpasienkeluar)
-                $scope.item.bortt = '0%'
+                
+                // $scope.item.bortt = '0%'
                 $scope.item.los = '0'
                 $scope.item.toi = '0'
                 $scope.item.bto = '0'
                 $scope.item.ndr = '0 permil'
                 $scope.item.gdr = '0 permil'
 
-                if (sumhariperawatan > 0) {
+                if($scope.item.ttlTempatTidur == null){
+                    $scope.item.bortt = '0%'
+                }
+
+                if ($scope.item.ttlTempatTidur !== null && sumhariperawatan > 0) {
                     $scope.item.bortt = (sumhariperawatan / ($scope.item.ttlTempatTidur * datas.length)* 100).toFixed(2) + '%'
                 }
                 if (sumjumlahpasienkeluarrs ||  sumjumlahpasienkeluar > 0) {                    
