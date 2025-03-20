@@ -49,6 +49,7 @@ function (initialize) {
                 var sumhariperawatan = 0;
                 var sumlos = 0;
                 var sumjumlahpasienkeluarrs = 0
+                var sumjumlahpasienkeluar = 0
                 var sumpasienlbh48 = 0
                 var sumjumlahpasienmeninggal = 0
                 var jumlahtt = data.data.jumlahtt[0].totalperperiode
@@ -58,11 +59,14 @@ function (initialize) {
                     sumhariperawatan += element.hariperawatan
                     sumlos += element.los
                     sumjumlahpasienkeluarrs += element.jumlahpasienkeluarrs
+                    sumjumlahpasienkeluar += element.jumlahpasienkeluar
                     sumjumlahpasienmeninggal += element.jumlahpasienmeninggal
                     sumpasienlbh48 += element.pasienlbh48
                     // element.lamadirawat = element.pasiendipindahkan + element.jumlahpasienkeluarrs + element.pasienmkhs
                 }
-
+                console.log(sumlos)
+                console.log(sumjumlahpasienkeluarrs)
+                console.log(sumjumlahpasienkeluar)
                 $scope.item.bortt = '0%'
                 $scope.item.los = '0'
                 $scope.item.toi = '0'
@@ -74,8 +78,8 @@ function (initialize) {
                     $scope.item.bortt = (sumhariperawatan / ($scope.item.ttlTempatTidur * datas.length)* 100).toFixed(2) + '%'
                 }
                 if (sumjumlahpasienkeluarrs > 0) {                    
-                    $scope.item.los = ((sumlos / sumjumlahpasienkeluarrs)).toFixed(2)             
-                    $scope.item.toi = ((($scope.item.ttlTempatTidur*datas.length) - sumhariperawatan)/sumjumlahpasienkeluarrs).toFixed(2)
+                    $scope.item.los = ((sumlos / sumjumlahpasienkeluar)).toFixed(2)             
+                    $scope.item.toi = ((($scope.item.ttlTempatTidur*datas.length) - sumhariperawatan)/sumjumlahpasienkeluar).toFixed(2)
                     $scope.item.bto = (sumjumlahpasienkeluarrs/datas.length).toFixed(2)
                     $scope.item.ndr = (sumpasienlbh48 / sumjumlahpasienkeluarrs).toFixed(2) + 'permil'
                     $scope.item.gdr = (sumjumlahpasienmeninggal / sumjumlahpasienkeluarrs).toFixed(2) + 'permil'
