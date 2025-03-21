@@ -26154,7 +26154,7 @@ public function suratBuktiPengembalian(Request $request)
             JOIN bukukasumum_t bku ON bku.norec = sr.objectbkufk AND bku.statusenabled = TRUE AND bku.kdprofile = 30
             JOIN mataanggaranpermen_m mp ON mp.id = ma.mataanggaranpermenfk
             join jenisanggaran_m ja on ja.id = ma3.objectjenisanggaranfk
-            LEFT JOIN pengembalianbelanja_t pb ON pb.objectspjfk = sr.norec AND pb.statusenabled = true
+            LEFT JOIN pengembalianbelanja_t pb ON pb.objectspjfk = sr.norec AND pb.statusenabled = true AND pb.objectbkufk IS NOT NULL
             WHERE 
                 sr.statusenabled = TRUE
                 AND sr.kdprofile = 30

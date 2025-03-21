@@ -21,6 +21,7 @@ define(['initialize'], function (initialize) {
             $scope.hidepengembalian =true
             $scope.hidepemungutanpajak = true
             $scope.hidePenyetoranPajak = true
+            $scope.hidePengembalianBelanja = true
 
             $scope.selectedData2 = []; 
             $scope.norecbku = ''
@@ -102,6 +103,7 @@ define(['initialize'], function (initialize) {
                 $scope.dataGridSPJ = []
                 $scope.dataGridPemungutanPajak = []
                 $scope.dataGridPenyetoranPajak = []
+                $scope.dataGridPengembalianBelanja = []
                 
                 $scope.hidepanjar =true
                 $scope.hidespm =true
@@ -112,6 +114,7 @@ define(['initialize'], function (initialize) {
                 $scope.hidepemungutanpajak = true
                 $scope.hidePenyetoranPajak = true
                 $scope.hidespj =true
+                $scope.hidePengembalianBelanja = true
                 medifirstService.get("perencanaan/get-jenis-bukti-bku").then(function (e) {
                     $scope.listJenisBukti = e.data.data
                 });
@@ -482,6 +485,39 @@ define(['initialize'], function (initialize) {
                                 ]
                             });
                         });
+                    }else if($scope.item.itemJenisBukti.id == 11){
+                        // untuk pengembalian belanja
+                        $scope.hidespm = true
+                        $scope.hidepengembalianpanjar = true
+                        $scope.hidepanjar =true
+                        $scope.hidejasgir =true
+                        $scope.hidepajak =true
+                        $scope.hidests =true
+                        $scope.hidespj =true
+                        $scope.hiderekanan = false
+                        $scope.hidepemungutanpajak = true
+                        $scope.hidePenyetoranPajak = true
+                        $scope.hidePengembalianBelanja = false
+
+                        // get data penyetoran pajak yang belum dibku
+                        medifirstService.get("bendahara-pengeluaran/get-pengembalianbelanja-bku").then(function(e) {
+                            
+                            $scope.dataGridPengembalianBelanja = new kendo.data.DataSource({
+                                data:  e.data,
+                                pageSize: 10,
+                                total: e.data.length,
+                                serverPaging: false,
+                                schema: {
+                                    model: {
+                                        fields: {
+                                        }
+                                    }
+                                },
+                                aggregate: [
+                                ]
+                            });
+                        });
+
                     }
                 }
             });
@@ -1133,6 +1169,47 @@ define(['initialize'], function (initialize) {
                 console.log($scope.selectedData2)
 			}
 
+            $scope.onClickSatuPengembalianBelanja = function(e, param){
+                var element = $(e.currentTarget);
+				var checked = element.is(':checked')
+				var row = element.closest('tr')
+				var grid = $("#gridPengembalianBelanja").data("kendoGrid")
+				var dataItem = grid.dataItem(row);
+                $scope.item.uraianBKU = ''
+
+				if (checked) {
+					var result = $.grep($scope.selectedData2, function (e) {
+						return e.nopajak == dataItem.nopajak;
+					});
+					if (result.length == 0) {
+						$scope.selectedData2.push(dataItem);
+					} else {
+						for (var i = 0; i < $scope.selectedData2.length; i++)
+							if ($scope.selectedData2[i].nopajak === dataItem.nopajak) {
+								$scope.selectedData2.splice(i, 1);
+								break;
+							}
+						$scope.selectedData2.push(dataItem);
+					}
+					row.addClass("k-state-selected");
+                    
+				} else {
+					for (var i = 0; i < $scope.selectedData2.length; i++)
+						if ($scope.selectedData2[i].nopajak === dataItem.nopajak) {
+							$scope.selectedData2.splice(i, 1);
+							break;
+						}
+					row.removeClass("k-state-selected");
+				}
+
+                // $scope.item.sumberDana = {id: dataItem.idasalproduk, asalproduk: dataItem.asalproduk}
+                $scope.item.uraianBKU = dataItem.keterangan
+                $scope.item.sumberDana = {id: dataItem.idasalproduk, asalproduk: dataItem.asalproduk}
+                $scope.item.pihakKetiga = {id: dataItem.idrekanan, namarekanan: dataItem.namarekanan}
+
+                console.log($scope.selectedData2)
+            }
+
             var HttpClient = function () {
                 this.get = function (aUrl, aCallback) {
                     var anHttpRequest = new XMLHttpRequest();
@@ -1179,6 +1256,8 @@ define(['initialize'], function (initialize) {
                         $scope.hidests =true
                         $scope.hidepemungutanpajak = true
                         $scope.hidePenyetoranPajak = true
+                        $scope.hidePengembalianBelanja = true
+
 
                         $scope.item.nobkudetail = dataItem.nobku
                         $scope.item.tglbkudetail = dataItem.tglbku
@@ -1213,6 +1292,7 @@ define(['initialize'], function (initialize) {
                         $scope.hidests =true
                         $scope.hidepemungutanpajak = true
                         $scope.hidePenyetoranPajak = true
+                        $scope.hidePengembalianBelanja = true
 
                         $scope.item.nobkudetail = dataItem.nobku
                         $scope.item.tglbkudetail = dataItem.tglbku
@@ -1249,6 +1329,7 @@ define(['initialize'], function (initialize) {
                     $scope.hidests =true
                     $scope.hidepemungutanpajak = true
                     $scope.hidePenyetoranPajak = true
+                    $scope.hidePengembalianBelanja = true
 
                     $scope.item.nobkudetail = dataItem.nobku
                     $scope.item.tglbkudetail = dataItem.tglbku
@@ -1283,6 +1364,7 @@ define(['initialize'], function (initialize) {
                     $scope.hidests =true
                     $scope.hidepemungutanpajak = true
                     $scope.hidePenyetoranPajak = true
+                    $scope.hidePengembalianBelanja = true
 
                     $scope.item.nobkudetail = dataItem.nobku
                     $scope.item.tglbkudetail = dataItem.tglbku
@@ -1317,6 +1399,7 @@ define(['initialize'], function (initialize) {
                     $scope.hidests =false
                     $scope.hidepemungutanpajak = true
                     $scope.hidePenyetoranPajak = true
+                    $scope.hidePengembalianBelanja = true
 
                     $scope.item.nobkudetail = dataItem.nobku
                     $scope.item.tglbkudetail = dataItem.tglbku
@@ -1352,6 +1435,7 @@ define(['initialize'], function (initialize) {
                     $scope.hidests =true
                     $scope.hidepemungutanpajak = true
                     $scope.hidePenyetoranPajak = true
+                    $scope.hidePengembalianBelanja = true
 
                     $scope.item.nobkudetail = dataItem.nobku
                     $scope.item.tglbkudetail = dataItem.tglbku
@@ -1387,6 +1471,7 @@ define(['initialize'], function (initialize) {
                     $scope.hidests =true
                     $scope.hidepemungutanpajak = true
                     $scope.hidePenyetoranPajak = true
+                    $scope.hidePengembalianBelanja = true
 
                     $scope.item.nobkudetail = dataItem.nobku
                     $scope.item.tglbkudetail = dataItem.tglbku
@@ -1424,6 +1509,7 @@ define(['initialize'], function (initialize) {
                     $scope.hidests =true
                     $scope.hidepemungutanpajak = false
                     $scope.hidePenyetoranPajak = true
+                    $scope.hidePengembalianBelanja = true
 
                     $scope.item.nobkudetail = dataItem.nobku
                     $scope.item.tglbkudetail = dataItem.tglbku
@@ -1453,7 +1539,7 @@ define(['initialize'], function (initialize) {
                         });
                     });
                 } else if(dataItem.id == 9){
-                    // Pemungutan pajak
+                    // Penyetoran pajak
                     $scope.hidespm = true
                     $scope.hidepanjar =true
                     $scope.hidepengembalianpanjar = true
@@ -1464,6 +1550,7 @@ define(['initialize'], function (initialize) {
                     $scope.hidests =true
                     $scope.hidepemungutanpajak = true
                     $scope.hidePenyetoranPajak = false
+                    $scope.hidePengembalianBelanja = true
 
                     $scope.item.nobkudetail = dataItem.nobku
                     $scope.item.tglbkudetail = dataItem.tglbku
@@ -1498,6 +1585,7 @@ define(['initialize'], function (initialize) {
                     $scope.hidests =true
                     $scope.hidepemungutanpajak = true
                     $scope.hidePenyetoranPajak = true
+                    $scope.hidePengembalianBelanja = true
 
                     $scope.item.nobkudetail = dataItem.nobku
                     $scope.item.tglbkudetail = dataItem.tglbku
@@ -1509,6 +1597,43 @@ define(['initialize'], function (initialize) {
                             data:  e.data,
                             pageSize: 10,
                             total: e.data.length,
+                            group: $scope.group,
+                            serverPaging: false,
+                            schema: {
+                                model: {
+                                    fields: {
+                                    }
+                                }
+                            },
+                            aggregate: [
+                            ]
+                        });
+                    });
+                } else if(dataItem.id == 11){
+                    $scope.hidespm = true
+                    $scope.hidepanjar =true
+                    $scope.hidepengembalianpanjar = true
+                    $scope.hidejasgir =true
+                    $scope.hidepajak =true
+                    $scope.hidespj =true
+                    $scope.hidepengembalian = true
+                    $scope.hidests =true
+                    $scope.hidepemungutanpajak = true
+                    $scope.hidePenyetoranPajak = true
+                    $scope.hidePengembalianBelanja = false
+
+                    $scope.item.nobkudetail = dataItem.nobku
+                    $scope.item.tglbkudetail = dataItem.tglbku
+                    $scope.item.jenisbku = dataItem.asalproduk
+                    $scope.norecbku = dataItem.norecbku
+                    medifirstService.get("bendahara-pengeluaran/get-bku-pengembalianbelanja?norec="+dataItem.norecbku).then(function (e) {
+                        
+                        // karena pengembalian belanja ingin dua data penerimaan dan pengeluaran maka ditambah satu data lagi
+                        let dataBKU = e.data
+                        $scope.dataGridBKUPengembalianBelanja = new kendo.data.DataSource({
+                            data:  dataBKU,
+                            pageSize: 10,
+                            total: dataBKU.length,
                             group: $scope.group,
                             serverPaging: false,
                             schema: {
@@ -2191,6 +2316,37 @@ define(['initialize'], function (initialize) {
                         "title": "Jumlah",
                         "template": "<span class='style-right'>{{formatRupiah('#: ppn #', 'Rp.')}}</span>",
                     },
+                ]
+            };
+
+            $scope.columnGridPengembalianBelanja = {
+                selectable: 'row',
+                scrollable: true,
+                pageable: true,
+                columns: [
+                    {
+						"template": "<input type='checkbox' class='checkbox style-center' ng-click='onClickSatuPengembalianBelanja($event,2)' />",
+						"width": "30px"
+					},
+                    { field: 'norealisasi', title: 'No SPJ' },
+                    { field: 'tglpengembalian', title: 'Tanggal Pengembalian' },
+                    { field: 'keterangan', title: 'Keterangan Pengembalian' },
+                    { field: 'totalpengembalian', title: 'Total Pengembalian' },
+                    { field: 'asalproduk', title: 'Sumber Dana' },
+                ]
+            };
+
+            $scope.columnGridBKUPengembalianBelanja = {
+                selectable: 'row',
+                scrollable: true,
+                pageable: true,
+                columns: [
+                    { field: 'norealisasi', title: 'No SPJ' },
+                    { field: 'keterangan', title: 'Keterangan Pengembalian' },
+                    { field: 'totalpengembalian', title: 'Total Pengembalian' },
+                    { field: 'asalproduk', title: 'Sumber Dana' },
+                    { field: 'penerimaan', title: 'Penerimaan' },
+                    { field: 'pengeluaran', title: 'Pengeluaran' },
                 ]
             };
 

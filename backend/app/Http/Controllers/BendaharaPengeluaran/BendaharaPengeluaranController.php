@@ -1098,4 +1098,125 @@ class BendaharaPengeluaranController extends ApiController {
         }
         return $this->setStatusCode($result['status'])->respond($result, $transMessage);
     }
+
+    public function getPengembalianBelanjaBKU(Request $request)
+    {
+        $kdProfile = $this->getDataKdProfile($request);
+        $idProfile = (int) $kdProfile;
+
+        $setting = \DB::table('settinganggaran_t as st')
+            ->join('pegawai_m as pg','pg.id','=','st.objectkepalabludfk')
+            ->join('tahapanggaran_m as ta','ta.id','=','st.objecttahapaktivfk')
+            ->select('st.*','pg.namalengkap', 'ta.tahap', 'ta.id as idtahap', 'pg.id as idpegawai')
+            ->where('st.kdprofile', $idProfile)
+            ->where('st.statusenabled', true)
+            ->orderBy('st.tahunanggaran')
+            ->get();
+
+        $data = DB::select(DB::raw("
+            SELECT
+                pb.*, sr.norealisasi, 
+                ka.kode || '~' || ka.keterangan as kegiatan,
+                ma.kodemataanggaran || '~' || ma.namamataanggaran as mataanggaran,
+                ma.kodemataanggaran as koderek,
+                ap.id as idasalproduk,
+                ap.asalproduk,
+                sr.totalbelanja,
+                rkn.id as idrekanan,
+                rkn.namarekanan
+            FROM pengembalianbelanja_t pb
+            JOIN strukrealisasi_t sr ON sr.norec = pb.objectspjfk AND sr.statusenabled = true AND sr.kdprofile = ".$idProfile."
+            JOIN realisasidetail_t rd on rd.strukrealisasifk = sr.norec
+            JOIN keteranganbelanja_t kb ON kb.norec = rd.keteranganbelanjafk AND kb.statusenabled = TRUE
+            JOIN transaksianggaran2024_t ta ON ta.norec = kb.objecttransaksifk AND ta.statusenabled = TRUE AND ta.tahun = '".$setting[0]->tahunanggaran."'
+            JOIN kegiatananggaran2024_m ka ON ka.id = ta.objectkegiatanfk
+            JOIN mataanggaran_m ma ON ma.id = sr.objectmataanggaranfk
+            JOIN asalproduk_m ap ON ap.id = sr.objectasalprodukfk
+            left join rekanan_m rkn ON rkn.id = sr.rekananfk and rkn.statusenabled = true and rkn.kdprofile = 30
+            WHERE
+                pb.statusenabled = true
+                AND pb.kdprofile = ".$idProfile."
+                AND pb.objectbkufk IS NULL
+            GROUP BY
+                pb.norec, 
+                sr.norealisasi, sr.totalbelanja, 
+                ka.kode, ka.keterangan, 
+                ma.kodemataanggaran, ma.namamataanggaran, 
+                ap.id,
+                rkn.id
+            ORDER BY
+                pb.tglpengembalian desc
+        "));
+
+        return $this->respond($data);
+    }
+
+    public function getBKUPengembalianBelanja(Request $request)
+    {
+        $kdProfile = $this->getDataKdProfile($request);
+        $idProfile = (int) $kdProfile;
+
+        // karena pengembalian belanja ingin dua data penerimaan dan pengeluaran maka ditambah satu data lagi
+        $data = DB::select(DB::raw("
+            SELECT
+                pb.*, sr.norealisasi, 
+                ka.kode || '~' || ka.keterangan as kegiatan,
+                ma.kodemataanggaran || '~' || ma.namamataanggaran as mataanggaran,
+                ma.kodemataanggaran as koderek,
+                ap.id as idasalproduk,
+                ap.asalproduk,
+                sr.totalbelanja,
+                rkn.id as idrekanan,
+                rkn.namarekanan,
+                bku.nobku,
+                bku.tglbku,
+                bku.penerimaan,
+                0 as pengeluaran
+            FROM pengembalianbelanja_t pb
+            JOIN bukukasumum_t bku ON bku.norec = pb.objectbkufk
+            JOIN strukrealisasi_t sr ON sr.norec = pb.objectspjfk AND sr.statusenabled = true AND sr.kdprofile = ".$idProfile."
+            JOIN realisasidetail_t rd on rd.strukrealisasifk = sr.norec
+            JOIN kegiatananggaran2024_m ka ON ka.id = sr.objectkegiatanfk
+            JOIN mataanggaran_m ma ON ma.id = sr.objectmataanggaranfk
+            JOIN asalproduk_m ap ON ap.id = sr.objectasalprodukfk
+            left join rekanan_m rkn ON rkn.id = sr.rekananfk and rkn.statusenabled = true and rkn.kdprofile = 30
+            WHERE
+                pb.statusenabled = true
+                AND pb.kdprofile = ".$idProfile."
+                AND pb.objectbkufk IS NOT NULL
+                AND pb.objectbkufk = '".$request['norec']."'
+
+            UNION 
+
+            SELECT
+                pb.*, sr.norealisasi, 
+                ka.kode || '~' || ka.keterangan as kegiatan,
+                ma.kodemataanggaran || '~' || ma.namamataanggaran as mataanggaran,
+                ma.kodemataanggaran as koderek,
+                ap.id as idasalproduk,
+                ap.asalproduk,
+                sr.totalbelanja,
+                rkn.id as idrekanan,
+                rkn.namarekanan,
+                bku.nobku,
+                bku.tglbku,
+                0 as penerimaan,
+                bku.pengeluaran as pengeluaran
+            FROM pengembalianbelanja_t pb
+            JOIN bukukasumum_t bku ON bku.norec = pb.objectbkufk
+            JOIN strukrealisasi_t sr ON sr.norec = pb.objectspjfk AND sr.statusenabled = true AND sr.kdprofile = ".$idProfile."
+            JOIN realisasidetail_t rd on rd.strukrealisasifk = sr.norec
+            JOIN kegiatananggaran2024_m ka ON ka.id = sr.objectkegiatanfk
+            JOIN mataanggaran_m ma ON ma.id = sr.objectmataanggaranfk
+            JOIN asalproduk_m ap ON ap.id = sr.objectasalprodukfk
+            left join rekanan_m rkn ON rkn.id = sr.rekananfk and rkn.statusenabled = true and rkn.kdprofile = 30
+            WHERE
+                pb.statusenabled = true
+                AND pb.kdprofile = ".$idProfile."
+                AND pb.objectbkufk IS NOT NULL
+                AND pb.objectbkufk = '".$request['norec']."'
+        "));
+
+        return $this->respond($data);
+    }
 }

@@ -3482,9 +3482,14 @@ class PerencanaanController extends ApiController {
             $SK->save();
             }
 
+            $PB = PengembalianBelanja::where('objectbkufk', '=', $request['norec'])->update([
+                'objectbkufk' => NULL
+            ]);
+
            $transStatus = 'true';
        } catch (\Exception $e) {
             $transStatus = 'false';
+            $message = $e->getMessage();
        }
 
         if ($transStatus == 'true') {
@@ -4881,6 +4886,46 @@ class PerencanaanController extends ApiController {
                             $PP->save();
                         }
 
+                    }else if($request['jenisbukti'] == 11){
+                        // simpan bku pengembalian belanja
+
+                        $MA = new BKU();
+                        $norecKS = $MA->generateNewId();
+                        $MA->norec = $norecKS;
+                        $MA->kdprofile = $idProfile;
+                        $MA->statusenabled = true;
+                        $noa = $this->generateCodeBKU(new BKU, 'nobku', $request['asalproduk'], 5, '', $idProfile);
+                        $MA->nobku = $noa.'-B02';
+                        $MA->objectjenisbuktifk = $request['jenisbukti'];
+                        $MA->tglbku = $request['tglbku'];
+                        $MA->uraianbku = $request['uraian'];
+                        $MA->rekananfk = $request['rekananfk'];
+                        $MA->objectasalprodukfk = $request['asalproduk'];
+                        $MA->objectmataanggaranfk = null;
+
+                        for($i = 0; $i < count($request['bku']); $i++){
+                            
+                            $pengeluaran += (float)$request['bku'][$i]['totalpengembalian'];
+                            // $saldofix += $request['bku'][$i]['totalpengembalian'];
+                            $penerimaan += (float)$request['bku'][$i]['totalpengembalian'];
+                            // $saldofix -= $request['bku'][$i]['totalpengembalian'];
+                            
+                            
+                            $MA->objectmataanggaranfk = $request['bku'][$i]['koderek'];
+                        }
+
+                        $MA->tgljam = date('Y-m-d H:i:s');
+                        $MA->penerimaan = $penerimaan;
+                        $MA->pengeluaran = $pengeluaran;
+                        $MA->saldo = $saldofix;
+                        $MA->save();
+
+                        // update objectbkufk di pengembalianbelanja
+                        for($x = 0; $x < count($request['bku']); $x++){
+                            $PP = PengembalianBelanja::where('norec', '=', $request['bku'][$x]['norec'])->first();
+                            $PP->objectbkufk = $MA->norec;
+                            $PP->save();
+                        }
                     }
 
                     
@@ -7779,6 +7824,7 @@ order by  split_part(kode, '.', 1)asc, split_part(kode, '.', 2)asc,  split_part(
         $data = DB::select(DB::raw("
         select id, jenisbukti from jenisbukti_m where kdprofile = 30 and statusenabled = true
         and kodeexternal = 'BKU'
+        and isbkupengeluaran = TRUE
         ")
         );
 
@@ -11243,6 +11289,14 @@ order by  split_part(kode, '.', 1)asc, split_part(kode, '.', 2)asc,  split_part(
             $tglAkhir = "and pb.tglpengembalian <= '".$request['tglAkhir']."'";
         }
 
+        $setting = \DB::table('settinganggaran_t as st')
+            ->join('pegawai_m as pg','pg.id','=','st.objectkepalabludfk')
+            ->join('tahapanggaran_m as ta','ta.id','=','st.objecttahapaktivfk')
+            ->select('st.*','pg.namalengkap', 'ta.tahap', 'ta.id as idtahap', 'pg.id as idpegawai')
+            ->where('st.kdprofile', $idProfile)
+            ->where('st.statusenabled', true)
+            ->orderBy('st.tahunanggaran')
+            ->get();
 
         $data = DB::select(DB::raw("
             SELECT
@@ -11254,7 +11308,9 @@ order by  split_part(kode, '.', 1)asc, split_part(kode, '.', 2)asc,  split_part(
             FROM pengembalianbelanja_t pb
             JOIN strukrealisasi_t sr ON sr.norec = pb.objectspjfk AND sr.statusenabled = true AND sr.kdprofile = ".$idProfile."
             JOIN realisasidetail_t rd on rd.strukrealisasifk = sr.norec
-            JOIN kegiatananggaran2024_m ka ON ka.id = sr.objectkegiatanfk
+            JOIN keteranganbelanja_t kb ON kb.norec = rd.keteranganbelanjafk AND kb.statusenabled = TRUE
+            JOIN transaksianggaran2024_t ta ON ta.norec = kb.objecttransaksifk AND ta.statusenabled = TRUE AND ta.tahun = '".$setting[0]->tahunanggaran."'
+            JOIN kegiatananggaran2024_m ka ON ka.id = ta.objectkegiatanfk
             JOIN mataanggaran_m ma ON ma.id = sr.objectmataanggaranfk
             JOIN asalproduk_m ap ON ap.id = sr.objectasalprodukfk
             WHERE
@@ -11352,6 +11408,15 @@ order by  split_part(kode, '.', 1)asc, split_part(kode, '.', 2)asc,  split_part(
         $kdProfile = $this->getDataKdProfile($request);
         $idProfile = (int) $kdProfile;
 
+        $setting = \DB::table('settinganggaran_t as st')
+            ->join('pegawai_m as pg','pg.id','=','st.objectkepalabludfk')
+            ->join('tahapanggaran_m as ta','ta.id','=','st.objecttahapaktivfk')
+            ->select('st.*','pg.namalengkap', 'ta.tahap', 'ta.id as idtahap', 'pg.id as idpegawai')
+            ->where('st.kdprofile', $idProfile)
+            ->where('st.statusenabled', true)
+            ->orderBy('st.tahunanggaran')
+            ->get();
+
         $data = DB::select(DB::raw("
             SELECT
                 pb.*, sr.norealisasi,
@@ -11361,8 +11426,10 @@ order by  split_part(kode, '.', 1)asc, split_part(kode, '.', 2)asc,  split_part(
                 sr.totalbelanja
             FROM pengembalianbelanja_t pb
             JOIN strukrealisasi_t sr ON sr.norec = pb.objectspjfk AND sr.statusenabled = true AND sr.kdprofile = ".$idProfile."
-            JOIN realisasidetail_t rd on rd.strukrealisasifk = sr.norec
-            JOIN kegiatananggaran_m ka ON ka.id = sr.objectkegiatanfk
+            JOIN realisasidetail_t rd on rd.strukrealisasifk = sr.norec AND rd.statusenabled = TRUE AND rd.kdprofile = ".$idProfile."
+            JOIN keteranganbelanja_t kb ON kb.norec = rd.keteranganbelanjafk AND kb.statusenabled = TRUE AND kb.kdprofile = ".$idProfile."
+            JOIN transaksianggaran2024_t ta ON ta.norec = kb.objecttransaksifk AND ta.statusenabled = TRUE AND ta.tahun = '".$setting[0]->tahunanggaran."'
+            JOIN kegiatananggaran2024_m ka ON ka.id = ta.objectkegiatanfk
             JOIN mataanggaran_m ma ON ma.id = sr.objectmataanggaranfk
             JOIN asalproduk_m ap ON ap.id = sr.objectasalprodukfk
             WHERE
