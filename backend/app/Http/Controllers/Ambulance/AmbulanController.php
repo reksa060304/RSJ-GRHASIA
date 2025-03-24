@@ -2544,12 +2544,14 @@ class AmbulanController extends ApiController
             ->where('het.statusenabled', true)
             ->where('het.kodeexternal', '2024') //membedakan tarif baru
             ->whereIn('het.objectprodukfk', [5008618,5008619])
+            ->orderBy('pr.id')
             ->get();
 
         if(!empty($data)){
             $result = array(
                 'code' => 200,
                 'data' => $data,
+                'disclaimer' => "* Rp." . number_format($data[0]->harga, 0, ',', '.') . " <10 KM, jika >10 KM Rp." . number_format($data[0]->harga, 0, ',', '.') . " + " . number_format($data[1]->harga, 0, ',', '.') . "/KM",
                 'message' => 'Tarif berhasil ditemukan',
                 'success' => true
             );
