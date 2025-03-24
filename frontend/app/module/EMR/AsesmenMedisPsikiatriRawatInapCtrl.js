@@ -2929,6 +2929,27 @@ define(['initialize'], function (initialize) {
                 }
             }
 
+            // jika input 'nama' yang diatas diketik akan nyambung dengan hubungan pasien yang dibawah dan penanggung jawab
+            $scope.$watch('item.obj[120003]', function(newValue,oldValue){
+                if(newValue!=oldValue){
+
+                    $scope.item.obj[120300] = newValue;
+                    $scope.item.obj[120294] = newValue;
+                
+                }
+
+            })
+
+            // jika input 'hubungan' yang diatas diketik akan nyambung dengan hubungan yang dibawah
+            $scope.$watch('item.obj[120004]', function(newValue,oldValue){
+                if(newValue!=oldValue){
+
+                    $scope.item.obj[120301] = newValue; 
+                
+                }
+
+            })
+
         }
     ]);
 });

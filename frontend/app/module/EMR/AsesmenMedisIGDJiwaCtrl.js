@@ -1021,6 +1021,26 @@ define(['initialize'], function (initialize) {
                 });
             }
 
+            // jika input 'hubungan pasien' yang diatas diketik akan nyambung dengan hubungan pasien yang dibawah
+            $scope.$watch('item.obj[3002002]', function(newValue,oldValue){
+                if(newValue!=oldValue){
+
+                    $scope.item.obj[3002070] = newValue 
+                
+                }
+
+            })
+
+            // jika input 'diperoleh dari' yang diatas diketik akan nyambung dengan penanggung jawab yang dibawah
+            $scope.$watch('item.obj[3002001]', function(newValue,oldValue){
+                if(newValue!=oldValue){
+
+                    $scope.item.obj[3002090] = newValue 
+                
+                }
+
+            })
+
         }
         
     ]);
