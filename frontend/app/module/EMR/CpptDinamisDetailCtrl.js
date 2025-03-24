@@ -1047,13 +1047,13 @@ define(['initialize', 'Configuration'], function (initialize, config) {
                             "kodedokter": dpjpLayan ? parseInt(dpjpLayan) : null
                         }
                     }
-                    medifirstService.postNonMessage("bridging/bpjs/tools", Send).then(function (e) {
-                        if (e.data.metaData.code == "200") {
-                            window.open(e.data.response.url, "_blank")
-                        } else {
-                            window.messageContainer.error(e.data.metaData.message);
-                        }
-                    })
+                    // medifirstService.postNonMessage("bridging/bpjs/tools", Send).then(function (e) {
+                    //     if (e.data.metaData.code == "200") {
+                    //         window.open(e.data.response.url, "_blank")
+                    //     } else {
+                    //         window.messageContainer.error(e.data.metaData.message);
+                    //     }
+                    // })
                 })
             }
             //batas
