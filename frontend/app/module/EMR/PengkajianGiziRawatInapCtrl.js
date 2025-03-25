@@ -253,19 +253,19 @@ define(['initialize'], function (initialize) {
                 },
             ]
             $scope.listPD = [
-                {
-                    "id" : 1, "nama": "",
-                    "detail": [
-                        {"id": 3019713, "nama": "Keadaan Umum","type": "textbox"},
-                    ]
-                },
+                // {
+                //     "id" : 1, "nama": "",
+                //     "detail": [
+                //         {"id": 3019713, "nama": "Keadaan Umum","type": "textbox"},
+                //     ]
+                // },
                 {
                     "id" : 2, "nama": "Vital Sign",
                     "detail": [
                         {"id": 3019714, "nama": "TD ","satuan": "mmHg","type": "textbox2"},
                         {"id": 3019715, "nama": "Nadi ","satuan": "x / menit","type": "textbox2"},
                         {"id": 3019716, "nama": "Respirasi ","satuan": "x / menit","type": "textbox2"},
-                        {"id": 3019717, "nama": "Saturasi ","satuan": "%","type": "textbox2"},
+                        // {"id": 3019717, "nama": "Saturasi ","satuan": "%","type": "textbox2"},
                         {"id": 3019718, "nama": "Suhu ","satuan": "°C","type": "textbox2"},
                         
                     ]
@@ -273,8 +273,9 @@ define(['initialize'], function (initialize) {
                 {
                     "id" : 3, "nama": "",
                     "detail": [
-                        {"id": 3019719, "nama": "Rontgen","type": "textbox"},
-                        {"id": 3019720, "nama": "Lain-lain","type": "textbox"},
+                        // {"id": 3019719, "nama": "Rontgen","type": "textbox"},
+                        // {"id": 3019720, "nama": "Lain-lain","type": "textbox"},
+                        {"id": 3019738, "nama": "Status Generalis","type": "textarea"},
                     ]
                 },
             ]
