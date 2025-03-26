@@ -1189,7 +1189,7 @@
                     <td colspan="2" style="padding-left:1cm; border: none; border-left: 1px solid black;">JUMLAH PENGELUARAN</td>
                     <td style="border: none;"></td>
                     <td style="border: none; text-align: right; padding-left: 2em;">{{ number_format($totalpengeluaran_bulanlalu,2,'.',',') }}</td>
-                    <td style="border: none; text-align: right; padding-left: 2em;">{{ number_format($totalpengeluaran_bulanlalu + $totalpengeluaran_bulanini,2,'.',',') }}</td>
+                    <td style="border: none; text-align: right; padding-left: 2em;">{{ number_format($totalpengeluaran_bulanini,2,'.',',') }}</td>
                     <td style="border: none; text-align: right; padding-left: 2em;">{{ number_format($totalpengeluaran_bulanlalu + $totalpengeluaran_bulanini,2,'.',',') }}</td>
                     <td colspan="3" style="border:none; border-right: 1px solid black;"></td>
                 </tr>
@@ -1203,7 +1203,7 @@
                     <td colspan="2" style="padding-left:1cm; border: none; border-left: 1px solid black;">SALDO KAS</td>
                     <td style="border: none;"></td>
                     <td style="border: none; text-align: right; padding-left: 2em;">{{ number_format($saldokas_bulanlalu,2,'.',',') }}</td>
-                    <td style="border: none; text-align: right; padding-left: 2em;">{{ number_format($saldokas_bulanini + $totalpengeluaran_bulanini,2,'.',',') }}</td>
+                    <td style="border: none; text-align: right; padding-left: 2em;">{{ number_format($saldokas_bulanini,2,'.',',') }}</td>
                     <td style="border: none; text-align: right; padding-left: 2em;">{{ number_format($saldokas_bulanlalu + $saldokas_bulanini,2,'.',',') }}</td>
                     <td colspan="3" style="border:none; border-right: 1px solid black;"></td>
                 </tr>
