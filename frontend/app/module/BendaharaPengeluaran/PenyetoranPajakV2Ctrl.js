@@ -50,6 +50,10 @@ define(['initialize'], function (initialize) {
 
             }
 
+            $scope.cariFilter = function(){
+                loadData()
+            }
+
             $scope.tambahPenyetoranPajak = function(){
 
                 // reset
@@ -150,6 +154,9 @@ define(['initialize'], function (initialize) {
 
                 // update grid rincian
                 $scope.listRincianPenyetoranPajak.push(objRincian)
+
+                console.log($scope.listRincianPenyetoranPajak)
+
                 $scope.dataGridRincianPenyetoran = new kendo.data.DataSource({
                     data: $scope.listRincianPenyetoranPajak,
                     pageSize: 100,

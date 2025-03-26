@@ -4133,12 +4133,15 @@ class AnggaranController extends ApiController {
                     pemp.tglpph,
                     pemp.uraianpajak,
                     pemp.pph,
-                    bku.nobku
+                    bku.nobku,
+                    jp.namaexternal as jenispajak,
+                    CASE WHEN pemp.tglpph IS NOT NULL THEN pemp.tglpph ELSE pemp.tglppn END AS tglpajak,
+                    CASE WHEN pemp.pph IS NOT NULL THEN pemp.pph ELSE pemp.ppn END AS jumlahpajak
                 FROM penyetoranpajak_t penp
                 INNER JOIN penyetoranpajakdetail_t penpd ON penpd.objectpenyetoranpajakfk = penp.norec AND penpd.statusenabled = TRUE
                 INNER JOIN pemungutanpajak_t pemp ON pemp.norec = penpd.objectpemungutanpajakfk AND pemp.statusenabled = TRUE
                 INNER JOIN bukukasumum_t bku ON bku.norec = pemp.objectbkufk AND bku.statusenabled = TRUE
-                --LEFT JOIN jenispajak_m jp ON jp.id = pemp.objectjenispphfk AND jp.statusenabled = TRUE
+                LEFT JOIN jenispajak_m jp ON jp.id = pemp.objectjenispphfk AND jp.statusenabled = TRUE
                 WHERE
                     penp.statusenabled = TRUE
                     AND penp.kdprofile = ".$idProfile."
