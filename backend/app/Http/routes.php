@@ -372,6 +372,7 @@ Route::group(['middleware' => 'cors', 'prefix' => 'service'], function () {
               Route::get('registrasi/setting-data-fixed-dukcapil','Bridging\BridgingDukcapilController@getSettingDataFixedDukcapil');
               Route::get('registrasi/laporan/get-data-masalah-Perawat','Bridging\BridgingDukcapilController@getDataMasalahKeperawatan');
               Route::post('bridging/bpjs/tools', 'Bridging\BridgingBPJSV2Controller@bpjsTools');
+              Route::get('bridging/bpjs/tools/cek-pasien-potensi-prb', 'Bridging\BridgingBPJSV2Controller@cekPasienPotensiPrb');
               //End SEP
               //*PESERTA
               Route::get('bridging/bpjs/get-no-peserta', 'Bridging\BridgingBPJSV2Controller@getNoPeserta');

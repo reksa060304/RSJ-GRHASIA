@@ -4279,4 +4279,26 @@ class BridgingBPJSV2Controller extends ApiController
           
        }
     }
+
+    public function cekPasienPotensiPrb(Request $request){
+        $nosep = '';
+        if(isset($request['nosep']) && $request['nosep'] != "" && $request['nosep'] != "undefined") {
+            $nosep = $request['nosep'];
+        }
+
+        $data = DB::select(DB::raw("
+            SELECT 
+                prolanisprb             
+            FROM
+                pemakaianasuransi_t
+            WHERE
+                kdprofile = 30
+                AND nosep = '$nosep'
+        "));
+
+        return $this->respond([
+            'data' => $data,
+            'message' => 'Inhuman'
+        ]);
+    }
 }
