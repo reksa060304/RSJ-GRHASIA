@@ -914,7 +914,7 @@ class LaboratoriumController extends ApiController
                 where pp.statusenabled = true
                 -- pp.norec in ($r[norec])  
                 $paramsPro
-                order by  maps.nourutjenispemeriksaan,maps.nourutdetail asc"));
+                order by  maps.nourutjenispemeriksaan,maps.nourutdetail asc, pp.tglpelayanan asc"));
         $id = null;
         $nama= null;
         foreach($data as $d){

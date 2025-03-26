@@ -594,6 +594,7 @@ class KasirController extends ApiController
                     'total'  => $value->hargasatuan * $value->qtyproduk,
                     'totalK'  => (($value->hargasatuan * $value->qtyoranglast) * $value->qtyproduk) + $value->hargatambahan,
                     'keterangan' => $value->keteranganlainnya,
+                    'jeniskegiatanambulance' => $value->jeniskegiatanambulanfk
                 );
             }
         }
@@ -609,7 +610,7 @@ class KasirController extends ApiController
             "noRecStruk"  => $strukPelayanan->norec,
             "totalBilling" => $strukPelayanan->totalharusdibayar,
             "detailTagihan"  => $detailTagihan,
-
+            "nocmklien" => $strukPelayanan->nocmklien
         );
 
         return $this->respond($result, "Detail Tagihan Pasien");
