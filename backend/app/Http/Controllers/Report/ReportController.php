@@ -26249,7 +26249,7 @@ public function suratBuktiPengembalian(Request $request)
                 jp.id as idjenispajak,
                 jp.namaexternal,
                 SUM(case when extract(year from bku.tglbku) = extract(year from timestamp '".$request['tglbku']."')
-                    and bku.tglbku <= DATE_TRUNC('MONTH', timestamp '".$request['tglbku']."')
+                    and bku.tglbku < DATE_TRUNC('MONTH', timestamp '".$request['tglbku']."')
                 then bku.penerimaan else 0 end) as penerimaan_bulan_lalu,
                 SUM(case when extract(year from bku.tglbku) = extract(year from timestamp '".$request['tglbku']."')
                     and extract(month from bku.tglbku) = extract(month from timestamp '".$request['tglbku']."')
@@ -26271,7 +26271,7 @@ public function suratBuktiPengembalian(Request $request)
                 jp.id as idjenispajak,
                 jp.namaexternal,
                 SUM(case when extract(year from bku.tglbku) = extract(year from timestamp '".$request['tglbku']."')
-                    and bku.tglbku <= DATE_TRUNC('MONTH', timestamp '".$request['tglbku']."')
+                    and bku.tglbku < DATE_TRUNC('MONTH', timestamp '".$request['tglbku']."')
                 then penpd.setoran else 0 end) as pengeluaran_bulan_lalu,
                 SUM(case when extract(year from bku.tglbku) = extract(year from timestamp '".$request['tglbku']."')
                     and extract(month from bku.tglbku) = extract(month from timestamp '".$request['tglbku']."')
@@ -26293,7 +26293,7 @@ public function suratBuktiPengembalian(Request $request)
         $jasagiro = DB::select(DB::raw("
             SELECT 
                 SUM(case when extract(year from bku.tglbku) = extract(year from timestamp '".$request['tglbku']."')
-                    and bku.tglbku <= DATE_TRUNC('MONTH', timestamp '".$request['tglbku']."')
+                    and bku.tglbku < DATE_TRUNC('MONTH', timestamp '".$request['tglbku']."')
                 then bku.penerimaan else 0 end) as jasagiro_bulan_lalu,
                 SUM(case when extract(year from bku.tglbku) = extract(year from timestamp '".$request['tglbku']."')
                     and extract(month from bku.tglbku) = extract(month from timestamp '".$request['tglbku']."')
@@ -26308,7 +26308,7 @@ public function suratBuktiPengembalian(Request $request)
         $spm = DB::select(DB::raw("
             SELECT 
                 SUM(case when extract(year from bku.tglbku) = extract(year from timestamp '".$request['tglbku']."')
-                    and bku.tglbku <= DATE_TRUNC('MONTH', timestamp '".$request['tglbku']."')
+                    and bku.tglbku < DATE_TRUNC('MONTH', timestamp '".$request['tglbku']."')
                 then bku.penerimaan else 0 end) as spm_bulan_lalu,
                 SUM(case when extract(year from bku.tglbku) = extract(year from timestamp '".$request['tglbku']."')
                     and extract(month from bku.tglbku) = extract(month from timestamp '".$request['tglbku']."')
