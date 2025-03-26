@@ -1027,11 +1027,21 @@ define(['initialize', 'Configuration'], function (initialize, config) {
             })
 			$scope.CetakSEP = function () {
 				if ($scope.dataPasienSelected.noregistrasi != undefined && $scope.dataPasienSelected.kelompokpasien !== "Umum/Pribadi") {
-				
 					if ($scope.dataPasienSelected.nosep === "" || $scope.dataPasienSelected.nosep === undefined) {
 						window.messageContainer.error("No SEP Tidak Ada");
 						return;
 					}
+					
+					var prb = false;
+                    medifirstService.get('bridging/bpjs/tools/cek-pasien-potensi-prb?nosep=' + $scope.dataPasienSelected.nosep)
+                        .then(function (dat) {
+                            if (dat.data.data && dat.data.data.length > 0) {
+								prb = "";
+								if (dat.data.data[0].prolanisprb) {
+									prb = "1"
+								}
+                            }
+                        });
 					if(statusBridgingTemporary =='false'){
 						// medifirstService.get("bridging/bpjs/cek-sep?nosep=" + $scope.dataPasienSelected.nosep).then(function (e) {
 	                    //         if (e.data.metaData.code === "200" || e.data.metaData.code === "404") {
@@ -1050,7 +1060,7 @@ define(['initialize', 'Configuration'], function (initialize, config) {
 						}
 						medifirstService.postNonMessage("bridging/bpjs/tools", json).then(function (e) {
 							if (e.data.metaData.code == 200) {
-								cetakSEP(e.data.response)
+								cetakSEP(e.data.response, prb)
 							}
 							else toastr.info(e.data.metaData.message, 'Info')
 							console.log(e);
@@ -3061,7 +3071,7 @@ define(['initialize', 'Configuration'], function (initialize, config) {
                 { "id": 15, "name": "ASABRI PT", "value": 4 }
             ];
 			$scope.currentListPenjaminLaka =[]
-			function cetakSEP(response) {
+			function cetakSEP(response, prb) {
            
                 var nosep = response.noSep
                 var nmperujuk = $scope.dataPasienSelected.nmprovider
@@ -3096,7 +3106,7 @@ define(['initialize', 'Configuration'], function (initialize, config) {
                 //var penjaminTP = $('#chkjaminan_TASPEN').is(":checked") == true ? 'PT TASPEN' : '';
                 //var penjaminAS = $('#chkjaminan_ASABRI').is(":checked") == true ? 'ASABRI' : '';
                 var katarak = response.katarak ;
-                var potensiprb = ""
+                var potensiprb = prb;
                 var statuskll = response.kdStatusKecelakaan
                 var _kodejaminan = '-';
                 if (response.kdStatusKecelakaan !='' && response.kdStatusKecelakaan!='0') {

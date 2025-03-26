@@ -2733,9 +2733,9 @@ class AmbulanController extends ApiController
                 "message" => $transMessage,
                 "data" => [
                     "order_number" => $SP->nostruk,
-                    "price" => $SP->totalharusdibayar
+                    "price" => $SP->totalharusdibayar,
+                    "status_order" => 'Menunggu',
                 ],
-                "status_order" => 'Menunggu',
                 "as" => 'as@epic',
             );
         } else {
