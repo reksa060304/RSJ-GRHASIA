@@ -83,19 +83,32 @@ define(['initialize'], function (initialize) {
 					if (Kegiatan == 'EditTagihan') {
 						medifirstService.get("kasir/detail-tagihan-non-layanan?noRec=" + norec, true).then(function (data) {
 							$scope.isRouteLoading = false;
+							var jenisKegiatanAmbulance = false;
 							var data_ih = data.data;
-							debugger;
+							// debugger;
 							$scope.item.tglStruk = new Date(moment(data_ih.tglTransaksi).format('YYYY-MM-DD HH:mm'));
 							$scope.item.namaPasien_klien = data_ih.namaPasien_klien;
 							$scope.item.noTelp_klien = data_ih.notelepon;
 							$scope.item.kelompokTransaksi = { id: data_ih.kdkelompokTransaksi, kelompoktransaksi: data_ih.kelompokTransaksi };
 							$scope.item.keterangan = data_ih.keterangan;
+							$scope.item.nocm_pasien = data_ih.nocmklien;
 							dataProduk = data_ih.detailTagihan;
 							var subTotal = 0;
 							// var total = 0;
 							for (var i = dataProduk.length - 1; i >= 0; i--) {
 								dataProduk[i].no = i + 1
 								subTotal = subTotal + parseFloat(dataProduk[i].totalK)
+								if (dataProduk[i].jeniskegiatanambulance != null) {
+									jenisKegiatanAmbulance = true;
+								}
+							}
+							if (jenisKegiatanAmbulance) {
+								$scope.item.jenisKegiatan = {id: 1, namajeniskegiatan: "Menjemput Pasien"}
+							}
+							if (data_ih.kdkelompokTransaksi == 9) {
+								$scope.noPolAmbulan = false;
+								$scope.hargabahanbakar = false;
+								$scope.pelaksanaAmbulan1 = false;
 							}
 							$scope.item.totalBilling = parseFloat(subTotal).toFixed(2).replace(/(\d)(?=(\d{3})+\.)/g, "$1,")
 							$scope.dataDaftarTagihan = new kendo.data.DataSource({
