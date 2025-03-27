@@ -104,7 +104,7 @@
             
             {{-- level-1 --}}
             @if ($rek->idlevel1 && ($rek->idlevel1 !== $idlevel1))
-                <tr>
+                <tr style="font-weight:bold;">
                     <td>{{ $rek->koderekeninglevel1 }}</td>
                     <td>{{ $rek->namarekeninglevel1 }}</td>
                     <td>
@@ -123,7 +123,7 @@
 
             {{-- level-2 --}}
             @if ($rek->idlevel2 && ($rek->idlevel2 !== $idlevel2))
-                <tr>
+                <tr style="font-weight:bold;">
                     <td>{{ $rek->koderekeninglevel2 }}</td>
                     <td>{{ $rek->namarekeninglevel2 }}</td>
                     <td>
@@ -161,7 +161,7 @@
 
             {{-- level-4 --}}
             @if ($rek->idlevel4 && ($rek->idlevel4 !== $idlevel4))
-                <tr>
+                <tr style="font-weight:bold;">
                     <td>{{ $rek->koderekeninglevel4 }}</td>
                     <td>{{ $rek->namarekeninglevel4 }}</td>
                     <td>
@@ -180,7 +180,7 @@
 
             {{-- level-5 --}}
             @if ($rek->idlevel5 && ($rek->idlevel5 !== $idlevel5))
-                <tr>
+                <tr style="font-weight:bold;">
                     <td>{{ $rek->koderekeninglevel5 }}</td>
                     <td>{{ $rek->namarekeninglevel5 }}</td>
                     <td>
@@ -199,7 +199,7 @@
 
             {{-- level-6 --}}
             @if ($rek->idlevel6 && ($rek->idlevel6 !== $idlevel6))
-                <tr>
+                <tr style="font-weight:bold;">
                     <td>{{ $rek->koderekeninglevel6 }}</td>
                     <td>{{ $rek->namarekeninglevel6 }}</td>
                     <td>
@@ -217,9 +217,9 @@
             @endif
 
             {{-- level-7 --}}
-            @if ($rek->idlevel7 && ($rek->idlevel7 !== $idlevel7))
+            @if ($rek->idlevel7 && ($rek->idlevel7 !== $idlevel7) && str_contains($rek->koderekeninglevel4, '4.1.02.01'))
                 <tr>
-                    <td style="font-weight:bold;">{{ $rek->koderekeninglevel7 }}</td>
+                    <td style="font-weight:bold;"></td>
                     <td style="font-weight:bold;">{{ $rek->namarekeninglevel7 }}</td>
                     <td style="font-weight:bold;">
                         @php
@@ -236,7 +236,7 @@
             @endif
 
             <tr>
-                <td>{{ $rek->koderekening }}</td>
+                <td></td>
                 <td>{{ $rek->namarekening }}</td>
                 <td>
                     @php

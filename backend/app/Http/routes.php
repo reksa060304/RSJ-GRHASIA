@@ -137,6 +137,8 @@ Route::group(['middleware' => 'cors', 'prefix' => 'service'], function () {
         
         Route::post('bendaharapenerimaan/simpan-stsmanual-v2', 'BendaharaPenerimaan\BendaharaPenerimaanController@simpanSTSManualV2');
         Route::get('report/cetak-spj-bulanan-bp', 'Report\ReportController@cetakSPJBulananBP');
+        Route::get('bendaharapenerimaan/cek-sts-manual', 'BendaharaPenerimaan\BendaharaPenerimaanController@cekSTSManual');
+        Route::get('report/cetak-sts-manualv2', 'Report\ReportController@cetakSTSManualV2');
         // End bendahara penerimaan
 
 		Route::get('registrasi/laporan/get-rekap-kunjunganrs', 'Registrasi\LaporanRegistrasiController@getRekapKunjunganRS');

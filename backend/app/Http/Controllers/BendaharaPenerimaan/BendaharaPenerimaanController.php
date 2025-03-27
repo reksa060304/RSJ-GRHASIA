@@ -12395,4 +12395,85 @@ class BendaharaPenerimaanController extends ApiController {
         }
         return $this->setStatusCode($result['status'])->respond($result, $transMsg);
     }
+
+    public function cekSTSManual(Request $request)
+    {
+        $nosts = $request['nosts'];
+        $data = [];
+
+        $detailv2 = DB::select(DB::raw("
+            SELECT
+                cap_stsd.id as idrekening,
+                cap_stsd.koderekening,
+                cap_stsd.namarekening,
+                stsd2.totalsetoran as totaldibayarclosing,
+                cap7.id as idlevel7,
+                cap7.koderekening as koderekeninglevel7,
+                cap7.namarekening as namarekeninglevel7,
+                cap6.id as idlevel6,
+                cap6.koderekening as koderekeninglevel6,
+                cap6.namarekening as namarekeninglevel6,
+                cap5.id as idlevel5,
+                cap5.koderekening as koderekeninglevel5,
+                cap5.namarekening as namarekeninglevel5,
+                cap4.id as idlevel4,
+                cap4.koderekening as koderekeninglevel4,
+                cap4.namarekening as namarekeninglevel4,
+                cap3.id as idlevel3,
+                cap3.koderekening as koderekeninglevel3,
+                cap3.namarekening as namarekeninglevel3,
+                cap2.id as idlevel2,
+                cap2.koderekening as koderekeninglevel2,
+                cap2.namarekening as namarekeninglevel2,
+                cap1.id as idlevel1,
+                cap1.koderekening as koderekeninglevel1,
+                cap1.namarekening as namarekeninglevel1
+            FROM surattandasetoran_t sts
+            JOIN surattandasetorandetailv2_t stsd2 ON stsd2.objectstsfk = sts.nosts AND stsd2.statusenabled = TRUE AND stsd2.kdprofile = 30
+            JOIN char_akun_pendapatan_m cap_stsd ON cap_stsd.id = stsd2.objectakunpendapatanfk AND cap_stsd.statusenabled = TRUE AND cap_stsd.kdprofile = 30
+            LEFT JOIN char_akun_pendapatan_m cap7 ON cap7.id = cap_stsd.headfk
+            LEFT JOIN char_akun_pendapatan_m cap6 ON cap6.id = cap7.headfk
+            LEFT JOIN char_akun_pendapatan_m cap5 ON cap5.id = cap6.headfk
+            LEFT JOIN char_akun_pendapatan_m cap4 ON cap4.id = cap5.headfk
+            LEFT JOIN char_akun_pendapatan_m cap3 ON cap3.id = cap4.headfk
+            LEFT JOIN char_akun_pendapatan_m cap2 ON cap2.id = cap3.headfk
+            LEFT JOIN char_akun_pendapatan_m cap1 ON cap1.id = cap2.headfk
+            WHERE 
+                sts.statusenabled = TRUE
+                AND sts.kdprofile = 30
+                AND sts.nosts = '".$nosts."'
+            GROUP BY
+                sts.nosts, stsd2.totalsetoran,
+                cap_stsd.id,cap7.id,cap6.id,cap5.id,cap4.id,cap3.id,cap2.id,cap1.id
+            ORDER BY
+                split_part(cap1.koderekening, '.', 1)::INTEGER asc,
+                split_part(cap2.koderekening, '.', 2)::INTEGER asc,
+                split_part(cap3.koderekening, '.', 3)::INTEGER asc,
+                split_part(cap4.koderekening, '.', 4)::INTEGER asc,
+                split_part(cap5.koderekening, '.', 5)::INTEGER asc,
+                split_part(cap6.koderekening, '.', 6)::INTEGER asc,
+                cap_stsd.koderekening asc
+        "));
+
+        $sts = DB::select(DB::raw("
+            SELECT
+                sts.nosts,
+                SUM(sts.totalsetoran) as totalsetoran,
+                sts.tglpenerimaan
+            FROM surattandasetoran_t sts 
+            WHERE 
+                sts.statusenabled = TRUE 
+                AND sts.kdprofile = 30 
+                AND sts.nosts = '".$request['nosts']."'  
+            GROUP BY
+                sts.nosts, sts.tglpenerimaan  
+        "));
+
+        $response = [
+            'dataDetailSTS' => $detailv2,
+            'sts' => $sts
+        ];
+
+        return $this->respond($response);
+    }
 }

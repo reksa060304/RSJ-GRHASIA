@@ -892,6 +892,32 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
 
             }
 
+            $scope.cetakPDFV2 = function(){
+
+                // validasi
+                if($scope.selectedData2.length <= 0){
+                    toastr.error('Pilih data dulu')
+                    return
+                }
+
+                // cek jika ada data
+                medifirstService.get("bendaharapenerimaan/cek-sts-manual?nosts=" + $scope.selectedData2[0].nosts)
+                    .then(function (response) {
+
+                        let data = response.data
+
+                        if(data.dataDetailSTS.length <= 0){
+                            toastr.error('STS belum input berdasarkan rekening')
+                            return
+                        }
+
+                        window.open(baseTransaksi + "report/cetak-sts-manualv2?nosts="+$scope.selectedData2[0].nosts, '_blank');
+                        
+                    })
+
+
+            }
+
             //////////////////////////////////////////////////////////////          END             /////////////////////////////////////////////////////////////////////////////////////       
         }
     ]);
