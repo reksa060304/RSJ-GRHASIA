@@ -289,19 +289,28 @@ define(['initialize'], function (initialize) {
                     field: "namaruangan",
                     aggregate: "count"
                 }]
-            var onDataBound = function () {
-                $('td').each(function () {
-                    if ($(this).text() == '-') { $(this).addClass('red') }
-                    if ($(this).text() == 'Selesai') { $(this).addClass('green') }
-                    //if ($(this).text() == 'Di Panggil Perawat') { $(this).addClass('green') }
-                    if ($(this).text() == 'Selesai Periksa Perawat') { $(this).addClass('green') }
-                    if ($(this).text() == 'Di Panggil Dokter') { $(this).addClass('blue') }
-                    if ($(this).text() == 'Di Panggil Psikologi') { $(this).addClass('blue') }
-                    if ($(this).text() == 'Selesai Periksa Dokter') { $(this).addClass('birulaut') }
-                    if ($(this).text() == 'Selesai Periksa Psikologi') { $(this).addClass('birulaut') }
-                    if ($(this).text() == 'Online') { $(this).addClass('koneng') }
+                var onDataBound = function () {
+                    var grid = this;
+                    var rows = grid.tbody.find("tr");
+                    
+                    rows.each(function() {
+                        var dataItem = grid.dataItem(this);
+                        if (dataItem.prolanisprb) {
+                            $(this).addClass('koneng');
+                        }
 
-                })
+                        $(this).find('td').each(function () {
+                            if ($(this).text() == '-') { $(this).addClass('red') }
+                            if ($(this).text() == 'Selesai') { $(this).addClass('green') }
+                            //if ($(this).text() == 'Di Panggil Perawat') { $(this).addClass('green') }
+                            if ($(this).text() == 'Selesai Periksa Perawat') { $(this).addClass('green') }
+                            if ($(this).text() == 'Di Panggil Dokter') { $(this).addClass('blue') }
+                            if ($(this).text() == 'Di Panggil Psikologi') { $(this).addClass('blue') }
+                            if ($(this).text() == 'Selesai Periksa Dokter') { $(this).addClass('birulaut') }
+                            if ($(this).text() == 'Selesai Periksa Psikologi') { $(this).addClass('birulaut') }
+                            if ($(this).text() == 'Online') { $(this).addClass('koneng') }
+                        });
+                    });
             }
             // $scope.ColumnPasien = [
             $scope.mainGridOptions = {
@@ -332,7 +341,8 @@ define(['initialize'], function (initialize) {
                             type: "header",
                             height: 70
                         });
-                    },
+                },
+               
                 dataBound: onDataBound,
                 columns: [
                     {
@@ -410,6 +420,12 @@ define(['initialize'], function (initialize) {
                         "field": "durasi",
                         "title": "WTRJ",
                         "width": "80px"
+                    },
+                    {
+                        "field": "prolanisprb",
+                        "title": "Potensi PRB",
+                        "width": "80px",
+                        hidden: true
                     },
                     // {
                     //     field: "statusAntrian",
