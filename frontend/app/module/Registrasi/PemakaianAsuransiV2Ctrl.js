@@ -2542,7 +2542,16 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
                     //     var datas = data.data;
                     // })
                     // //##end
-
+                    var prb = false;
+                    medifirstService.get('bridging/bpjs/tools/cek-pasien-potensi-prb?nosep=' + $scope.model.noSep)
+                        .then(function (dat) {
+                            if (dat.data.data && dat.data.data.length > 0) {
+								prb = "";
+								if (dat.data.data[0].prolanisprb) {
+									prb = "1"
+								}
+                            }
+                        });
 
                     if (statusBridgingTemporary == 'false') {
                         medifirstService.get("bridging/bpjs/cek-sep?nosep=" + $scope.model.noSep).then(function (e) {
@@ -2551,7 +2560,7 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
                                 // client.get('http://127.0.0.1:1237/printvb/Pendaftaran?cetak-sep-new=1&norec=' + noRegistrasis + '&view=false', function (response) {
                                 //     // do something with response
                                 // });
-                                cetakSEP()
+                                cetakSEP(prb)
                             } else {
                                 window.messageContainer.error('SEP tidak ada atau tidak sesuai dengan Vclaim mohon dicek kembali !');
                             }
@@ -2577,7 +2586,16 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
                     //     var datas = data.data;
                     // })
                     // //##end
-
+                    var prb = false;
+                    medifirstService.get('bridging/bpjs/tools/cek-pasien-potensi-prb?nosep=' + $scope.model.noSep)
+                        .then(function (dat) {
+                            if (dat.data.data && dat.data.data.length > 0) {
+								prb = "";
+								if (dat.data.data[0].prolanisprb) {
+									prb = "1"
+								}
+                            }
+                        });
 
                     if (statusBridgingTemporary == 'false') {
                         medifirstService.get("bridging/bpjs/cek-sep?nosep=" + $scope.model.noSep).then(function (e) {
@@ -2587,7 +2605,7 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
                                 //     // do something with response
                                 // });
                                 $scope.isRouteLoading = true
-                                cetakSEP2()
+                                cetakSEP2(prb)
                             } else {
                                 window.messageContainer.error('SEP tidak ada atau tidak sesuai dengan Vclaim mohon dicek kembali !');
                             }
@@ -2825,7 +2843,7 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
             //         } else toastr.info(e.data.metaData.message, 'Info')
             //     })
             // }
-            function cetakSEP() {
+            function cetakSEP(prb) {
                 //onCetakSEP($('#lblnosep').html());
                 var nosep = $scope.model.noSep
                 var nmperujuk = $scope.model.namaAsalRujukan.split(" - ")[1]
@@ -2860,7 +2878,7 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
                 //var penjaminTP = $('#chkjaminan_TASPEN').is(":checked") == true ? 'PT TASPEN' : '';
                 //var penjaminAS = $('#chkjaminan_ASABRI').is(":checked") == true ? 'ASABRI' : '';
                 var katarak = $scope.model.katarak == true ? '1' : '0';
-                var potensiprb = $scope.model.prolanis ? $scope.model.prolanis : ""
+                var potensiprb = prb;
                 var statuskll = $scope.model.lakalantas ? $scope.model.lakalantas.id : ""
                 var _kodejaminan = '-';
                 if ($scope.model.lakalantas) {
@@ -2908,7 +2926,7 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
 
 
             }
-            function cetakSEP2() {
+            function cetakSEP2(prb) {
                 //onCetakSEP($('#lblnosep').html());
                 var nosep = $scope.model.noSep
                 var nmperujuk = $scope.model.namaAsalRujukan.split(" - ")[1]
@@ -2943,7 +2961,7 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
                 //var penjaminTP = $('#chkjaminan_TASPEN').is(":checked") == true ? 'PT TASPEN' : '';
                 //var penjaminAS = $('#chkjaminan_ASABRI').is(":checked") == true ? 'ASABRI' : '';
                 var katarak = $scope.model.katarak == true ? '1' : '0';
-                var potensiprb = $scope.model.prolanis ? $scope.model.prolanis : ""
+                var potensiprb = prb;
                 var statuskll = $scope.model.lakalantas ? $scope.model.lakalantas.id : ""
                 var _kodejaminan = '-';
                 if ($scope.model.lakalantas) {

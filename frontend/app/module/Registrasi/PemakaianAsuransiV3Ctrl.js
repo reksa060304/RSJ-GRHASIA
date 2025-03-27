@@ -1991,7 +1991,17 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
 					colorDark : "#000000",
 					colorLight : "#ffffff",
 					correctLevel : QRCode.CorrectLevel.H
-				});
+                });
+                var prb = false;
+                medifirstService.get('bridging/bpjs/tools/cek-pasien-potensi-prb?nosep=' + $scope.item.pemakaianasuransi.nosep)
+                    .then(function (dat) {
+                        if (dat.data.data && dat.data.data.length > 0) {
+                            prb = "";
+                            if (dat.data.data[0].prolanisprb) {
+                                prb = "1"
+                            }
+                        }
+                    });
 
                 if ($scope.item.pasien.noregistrasi != undefined && $scope.item.pasien.kelompokpasien !== "Umum/Pribadi") {
 					let json = {
@@ -2001,7 +2011,7 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
 					}
 					medifirstService.postNonMessage("bridging/bpjs/tools", json).then(function (e) {
 						if (e.data.metaData.code == 200) {
-							cetakSEP(e.data.response)
+							cetakSEP(e.data.response, prb)
 						}
 						else toastr.info(e.data.metaData.message, 'Info')
 					})
@@ -2015,7 +2025,7 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
                 { "id": 15, "name": "ASABRI PT", "value": 4 }
             ];
 			$scope.currentListPenjaminLaka = []
-            function cetakSEP(response) {
+            function cetakSEP(response, prb) {
            
                 var nosep = response.noSep
                 var nmperujuk = $scope.item.pemakaianasuransi.nmprovider
@@ -2051,7 +2061,7 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
                 var prolanis =  ""
                 var eksekutif = response.jnsPelayanan == 'Rawat Inap'  ? '' : response.poliEksekutif== 1 ? ' (Poli Eksekutif)' : '';
                 var katarak = response.katarak ;
-                var potensiprb = ""
+                var potensiprb = prb;
                 var statuskll = response.kdStatusKecelakaan
                 var _kodejaminan = '-';
                 if (response.kdStatusKecelakaan !='' && response.kdStatusKecelakaan!='0') {
