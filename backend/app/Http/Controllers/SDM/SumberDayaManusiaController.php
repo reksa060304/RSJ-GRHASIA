@@ -1463,6 +1463,54 @@ class SumberDayaManusiaController extends ApiController {
         }
 
         if ($transStatus == 'true') {
+            if($dataPegawai['jenispegawai'] == 48) {  //jika supir, hit data ke telemedicine sebagai driver
+                $baseUrlTelemedicine = $this->settingDataFixed('UrlBridgingTelemedicine', $kdProfile);
+                $token = $this->settingDataFixed('BearerBridgingTelemedicine', $kdProfile);
+
+                $headers = array(
+                    "Authorization: Bearer " . $token,
+                    "Content-Type: application/json",
+                    "Accept: application/json",
+                );
+
+                if($dataSavePegawai->uuid_telemedicine != null && $dataSavePegawai->uuid_telemedicine != ''){
+                    $methods = 'PUT';
+                    $urlTelemedicine = $baseUrlTelemedicine . "officers" . "/" . $dataSavePegawai->uuid_telemedicine;
+                } else{
+                    $methods = 'POST';
+                    $urlTelemedicine = $baseUrlTelemedicine . "officers";
+                }
+
+                $dataJsonSend = array(
+                    "full_name" => $dataPegawai['namalengkap'],
+                    "gender" => $dataPegawai['jeniskelamin'] == 1 ? "L" : "P",
+                    "email" => $dataPegawai['email'],
+                    "phone_number" => $dataTelp != "" ? $dataTelp[0]['noTelp'] : 0000000000,
+                    "employee_no" => $dataPegawai['nippns'] != null && $dataPegawai['nippns'] != "" ? $dataPegawai['nippns'] : "-",
+                    "position" => "driver"
+                );
+
+                $data_kirim = json_encode($dataJsonSend);
+                $send_data_telemedicine = $this->sendBridgingCurl($headers, $data_kirim, $urlTelemedicine, $methods);
+
+                if ($send_data_telemedicine->code == 200){
+                    $data_update_pegawai = Pegawai::where('id', $dataSavePegawai->id)->where('kdprofile', $kdProfile)->first();
+                    if($data_update_pegawai->uuid_telemedicine == null || $data_update_pegawai->uuid_telemedicine == ''){
+                        $data_update_pegawai->uuid_telemedicine = $send_data_telemedicine->data->uuid;
+                        $data_update_pegawai->save();
+                    }
+                } else {
+                    $transMessage = "Simpan Gagal!!";
+                    DB::rollBack();
+                    $result = array(
+                        "status" => 400,
+                        "message"  => $transMessage,
+                        "error" => $send_data_telemedicine->messages,
+                        "as" => 'ea@epic',
+                    );
+                    return $this->setStatusCode($result['status'])->respond($result, $transMessage);
+                }
+            }
             $transMessage = "Simpan Berhasil";
             DB::commit();
             $result = array(
@@ -1477,7 +1525,7 @@ class SumberDayaManusiaController extends ApiController {
                 "status" => 400,
                 "message"  => $transMessage,
                 "error" => $e->getMessage().' '.$e->getLine(),
-                'p'=>$dataSavePegawai,
+                // 'p'=>$dataSavePegawai,
                 "as" => 'ea@epic',
             );
         }
