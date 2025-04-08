@@ -10481,7 +10481,7 @@ class LogistikController extends ApiController{
                      'ru.id as ruanganasalfk','ru.namaruangan as namaruanganasal','ru1.id as ruangancurrenfk','ru1.namaruangan as ruangancurrent',
                      'ra.tglregisteraset','ra.tglstrukterima','ra.qtyprodukaset','ra.hargaperolehan','ra.tglregisteraset','ra.tglstrukterima',
                      'rek.namarekanan as namasupplier','rek.alamatlengkap as almSupplier','sp.norec as norecsp',
-                     'spd.norec as norecspd','ap.asalproduk','ra.keteranganlainnya','ra.spesifikasi','ra.jenisaset','ra.judul','ra.kdbmn','ra.luasbangunan','ra.luaslantai')
+                     'spd.norec as norecspd','ap.asalproduk','ra.keteranganlainnya','ra.spesifikasi','ra.jenisaset','ra.judul','ra.kdbmn','ra.luasbangunan','ra.luaslantai', 'ra.nopolisi')
             ->where('ra.kdprofile', $idProfile)
             ->where('ra.statusenabled', true)
             ->where('pr.statusenabled', true);
@@ -17446,5 +17446,91 @@ FROM
         return $this->respond($result);
     }
 
-    
+    public function saveDataAmbulanceToTelemedicine(Request $request) {
+        $kdProfile = (int) $this->getDataKdProfile($request);
+        $transMessage = '';
+
+        $data = \DB::table('registrasiaset_t as ra')
+            ->JOIN('produk_m as prd','prd.id','=','ra.objectprodukfk')
+            ->select('ra.nopolisi', 'prd.namaproduk', 'ra.uuid_telemedicine')
+            ->where('ra.kdprofile', $kdProfile)
+            ->where('ra.statusenabled', true)
+            ->where('ra.norec', $request['norec'])
+            ->first();
+
+        \DB::beginTransaction();
+
+        try {
+            $baseUrlTelemedicine = $this->settingDataFixed('UrlBridgingTelemedicine', $kdProfile);
+            $token = $this->settingDataFixed('BearerBridgingTelemedicine', $kdProfile);
+
+            $headers = array(
+                "Authorization: Bearer " . $token,
+                "Content-Type: application/json",
+                "Accept: application/json",
+            );
+
+            if($data->uuid_telemedicine != null && $data->uuid_telemedicine != ''){
+                $methods = 'PUT';
+                $urlTelemedicine = $baseUrlTelemedicine . "ambulances" . "/" . $data->uuid_telemedicine;
+            } else{
+                $methods = 'POST';
+                $urlTelemedicine = $baseUrlTelemedicine . "ambulances";
+            }
+
+            $dataJsonSend = array(
+                "plate_number" => $data->nopolisi,
+                "vehicle_type" => $data->namaproduk,
+                "ambulance_type" => "Ambulance Transport",
+                "bed_number" => 1,
+                "status" => "Not Available"
+            );
+
+            $data_kirim = json_encode($dataJsonSend);
+            $send_data_telemedicine = $this->sendBridgingCurl($headers, $data_kirim, $urlTelemedicine, $methods);
+
+            if ($send_data_telemedicine->code == 201 || $send_data_telemedicine->code == 200){
+                $data_update_asset = RegistrasiAset::where('norec', $request['norec'])->where('kdprofile', $kdProfile)->first();
+                if($data_update_asset->uuid_telemedicine == null || $data_update_asset->uuid_telemedicine == ''){
+                    $data_update_asset->uuid_telemedicine = $send_data_telemedicine->data->uuid;
+                    $data_update_asset->save();
+                }
+            } else {
+                $transMessage = "Kirim Data Ambulan ke Telemedicine Gagal";
+                DB::rollBack();
+                $result = array(
+                    "status" => 400,
+                    "message"  => $transMessage,
+                    "error" => $send_data_telemedicine->messages,
+                    "as" => 'as@epic',
+                );
+                return $this->setStatusCode($result['status'])->respond($result, $transMessage);
+            }
+
+            $transStatus = 'true';
+        }catch (\Exception $e) {
+            $transStatus = 'false';
+        }
+
+
+        if ($transStatus == 'true') {
+            $transMessage = "Kirim Data Ambulan ke Telemedicine Berhasil";
+            DB::commit();
+            $result = array(
+                "status" => 201,
+                "message" => $transMessage,
+                "as" => 'as@epic',
+            );
+        } else {
+            $transMessage = "Kirim Data Ambulan ke Telemedicine Gagal";
+            DB::rollBack();
+            $result = array(
+                "status" => 400,
+                "message"  => $transMessage,
+                "error" => $e->getMessage().' '.$e->getLine(),
+                "as" => 'as@epic',
+            );
+        }
+        return $this->setStatusCode($result['status'])->respond($result, $transMessage);
+    }
 }

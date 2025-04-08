@@ -422,6 +422,24 @@ define(['initialize', 'Configuration'], function (initialize, config) {
                     "title": "SumberDana"
                 }
             ]
+
+            $scope.kirimTelemedicine = function () {
+                let keterangan = $scope.dataSelected.keteranganlainnya
+                if (keterangan.toLowerCase().includes("ambulan")) {
+                    if ($scope.dataSelected.nopolisi != null && $scope.dataSelected.nopolisi != '') {
+                        let objSave= {
+                            norec: $scope.dataSelected.norec
+                        }
+                        medifirstService.post('logistik/save-data-ambulance-to-telemedicine',objSave).then(function (data) {});
+                    } else {
+                        toastr.error('Hanya Asset mobil Ambulance yang bisa menggunakan fitur ini')
+                        return
+                    }
+                } else {
+                    toastr.error('Hanya Asset mobil Ambulance yang bisa menggunakan fitur ini')
+                    return
+                }
+            }
         }
     ])
 })
