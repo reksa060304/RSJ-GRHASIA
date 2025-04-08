@@ -202,6 +202,7 @@ class KasirController extends ApiController
         ->where('statusenabled', true)
         ->whereNotNull('nopolisi')
         ->where('keteranganlainnya', 'ilike', '%ambulan%')
+        ->where('nopolisi', '<>', '')
         ->get();
 
         $jeniskegiatan = \DB::table('jeniskegiatanambulan_m')
