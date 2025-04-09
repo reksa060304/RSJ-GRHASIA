@@ -556,6 +556,62 @@ define(['initialize'], function (initialize) {
 				}
 			};
 
+			function HttpClient() {
+                this.get = function(aUrl, aCallback) {
+                    var anHttpRequest = new XMLHttpRequest();
+                    anHttpRequest.onreadystatechange = function() { 
+                        if (anHttpRequest.readyState == 4 && anHttpRequest.status == 200)
+                            aCallback(anHttpRequest.responseText);
+                    }
+                    anHttpRequest.open("GET", aUrl, true);     
+                    anHttpRequest.send(null);
+                }
+            }
+                
+            //fungsi cetak identitas pasien
+            $scope.cetakIdentifikasiPasien = function () {
+				if ($scope.dataPasienSelected == undefined) {
+					toastr.error('Pilih data dulu')
+					return
+				}
+				// $scope.popUpIdentitas.center().open();
+				CetakWeh();
+            }
+
+            function CetakWeh() {
+                try {
+                    var user = medifirstService.getPegawaiLogin();
+                    var NomorRm = $scope.dataPasienSelected.nocm || "";
+                    var kelompokPasien = $scope.dataPasienSelected.kelompokpasien || "";
+                    var umurPasien = $scope.dataPasienSelected.umur || "";
+                    
+                    var stt = confirm('View Lembar Identitas Pasien?') ? 'true' : 'false';
+                    
+                    var client = new HttpClient();
+                    client.get('http://127.0.0.1:1237/printvb/Pendaftaran?' + 
+                        'cetak-lembar-identitas=1' +
+                        '&noCm=' + (NomorRm) +
+                        '&noregis=' + ($scope.dataPasienSelected.noregistrasi) +
+                        '&caraBayar=' + (kelompokPasien) +
+                        '&Umur=' + (umurPasien) +
+                        '&petugas=' + (user.namaLengkap) +
+                        '&view=' + stt, 
+                        function (response) {
+                            if (response) {
+                                toastr.success('Berhasil mencetak dokumen');
+                            } else {
+                                toastr.error('Gagal mencetak dokumen');
+                            }
+                        });
+                    
+                    $scope.dataItem = {};                
+                    
+                } catch (error) {
+                    toastr.error('Terjadi kesalahan: ' + error.message);
+                    console.error('Error saat mencetak:', error);
+                }
+            }        
+
 			/* END */
 		}
 	]);
