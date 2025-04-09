@@ -325,6 +325,7 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
                         });
                 }
             }
+            
             $scope.$watch('item.kelas', function (e) {
                 if (e === undefined) return;
                 if (!$scope.item.kelas && !$scope.item.ruangan) return;
@@ -2572,6 +2573,27 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
                     })
                 })
             }
+
+            //isi otomatis beberapa kolom jika ruangan laboratorium umum penelitian
+            $scope.$watch('item.ruangan', function (newValue, oldValue) {
+                if (!newValue) return;
+                            
+                if (newValue.namaruangan === "Laboratorium Umum (Penelitian)") {
+                    $scope.item.asalRujukan = $scope.sourceAsalRujukan[0]; //asal datang sendiri
+                    $scope.item.kelompokPasien = $scope.sourceKelompokPasien[15]; // kelompok umum                
+                    $scope.item.jenisPasien = {
+                        id: $scope.listJenisPelayanan[1].id,
+                        jenispelayanan: $scope.listJenisPelayanan[1].jenispelayanan //reguler
+                    };
+
+                    var dokterDefault = {
+                        id: 2668,
+                        namalengkap: "dr. DEA NOVIANA PRAMANTIK, Sp.PK(K).",
+                    };
+                    // Set dokter default
+                    $scope.item.dokter = dokterDefault;
+                }
+            });
             //** BATAS */
         }
     ]);
