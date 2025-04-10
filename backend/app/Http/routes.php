@@ -237,7 +237,11 @@ Route::group(['middleware' => 'cors', 'prefix' => 'service'], function () {
           Route::get('ambulance/get-jenis-kegiatan','Ambulance\AmbulanController@getJenisKegiatanAmbulan');
           Route::get('ambulance/get-tarif-harga-ambulance','Ambulance\AmbulanController@getTarifAmbulan');
           Route::get('ambulance/riwayat-pelayanan-ambulance','Ambulance\AmbulanController@getRiwayatPelayananAmbulance');
+          Route::get('ambulance/get-data-order-ambulan-dari-telemedicine', 'Ambulance\AmbulanController@getDaftarOrderAmbulanDariTelemedicine');
+          Route::get('ambulance/get-data-detail-order-ambulan-dari-telemedicine', 'Ambulance\AmbulanController@getDaftarDetailOrderAmbulanDariTelemedicine');
+          Route::get('ambulance/data/get-combo-telemedicine', 'Ambulance\AmbulanController@getComboTelemedicine');
           Route::post('ambulance/save-input-order-from-telemedicine', 'Ambulance\AmbulanController@SaveInputTagihanFromTelemedicine');
+          Route::post('ambulance/simpan-data-pelayanan-ambulan-dari-telemedicine', 'Ambulance\AmbulanController@savePelayananPasienAmbulanDariTelemedicine');
 
         // });
         Route::group(['prefix' => 'askep'], function () {

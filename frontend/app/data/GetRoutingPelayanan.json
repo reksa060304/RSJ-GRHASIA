@@ -20765,6 +20765,26 @@
         "define": "MedifirstService"
       }
     ]
+  },
+  {
+    "name": "DaftarOrderAmbulanTelemedicine",
+    "url": "/RGFmdGFyT3JkZXJBbWJ1bGFuVGVsZW1lZGljaW5l",
+    "templateurl": "module/Ambulance/DaftarOrderAmbulanTelemedicine.html",
+    "controller": "DaftarOrderAmbulanTelemedicineCtrl",
+    "deps": [
+      {
+        "module": "Services",
+        "define": "Service"
+      },
+      {
+        "module": "LoginServices",
+        "define": "LoginService"
+      },
+      {
+        "module": "MedifirstService",
+        "define": "MedifirstService"
+      }
+    ]
   }
 ]
 

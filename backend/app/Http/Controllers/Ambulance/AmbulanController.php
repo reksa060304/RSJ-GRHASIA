@@ -24,6 +24,7 @@ use App\Transaksi\StrukPelayanan;
 use App\Transaksi\StrukPelayananDetail;
 use DB;
 use Illuminate\Http\Request;
+use Carbon\Carbon;
 
 class AmbulanController extends ApiController
 {
@@ -2744,6 +2745,233 @@ class AmbulanController extends ApiController
             $result = array(
                 "status" => 400,
                 "message"  => $transMessage,
+                "as" => 'as@epic',
+            );
+        }
+        return $this->setStatusCode($result['status'])->respond($result);
+    }
+
+    public function getDaftarOrderAmbulanDariTelemedicine(Request $request)
+    {
+        $kdProfile = $this->getDataKdProfile($request);
+        $idProfile = (int) $kdProfile;
+        $data = \DB::table('strukpelayanan_t as sp')
+            ->join('pasien_m as pm', 'pm.id', '=', 'sp.nocmfk')
+            ->select(
+                'sp.norec',
+                'sp.totalharusdibayar',
+                'sp.tglstruk',
+                'sp.nostruk',
+                'pm.nocm',
+                'pm.namapasien',
+                DB::raw("CASE 
+                    WHEN sp.isapprove IS NULL THEN 'MENUNGGU' 
+                    WHEN sp.isapprove = true THEN 'DITERIMA' 
+                    ELSE 'DITOLAK' 
+                END AS status")
+            )
+            ->where('sp.kdprofile', $idProfile)
+            ->where('sp.statusenabled', true)
+            ->where('sp.objectkelompoktransaksifk', 9) //pelayanan ambulance
+            ->where('sp.istelemedicine', true);
+
+        if (isset($request['isNotVerif']) && $request['isNotVerif'] != "" && $request['isNotVerif'] != "undefined") {
+            if ($request['isNotVerif'] == true) {
+                $data = $data->whereNull('sp.isapprove');
+            }
+        } else {
+            if (isset($request['tglAwal']) && $request['tglAwal'] != "" && $request['tglAwal'] != "undefined") {
+                $data = $data->where('sp.tglstruk', '>=', $request['tglAwal']);
+            }
+            if (isset($request['tglAkhir']) && $request['tglAkhir'] != "" && $request['tglAkhir'] != "undefined") {
+                $tgl = $request['tglAkhir'];
+                $data = $data->where('sp.tglstruk', '<=', $tgl);
+            }
+        }
+        
+        if (isset($request['nocm']) && $request['nocm'] != "" && $request['nocm'] != "undefined") {
+            $data = $data->where('pm.nocm', 'ilike', '%' . $request['nocm'] . '%');
+        }
+        if (isset($request['namapasien']) && $request['namapasien'] != "" && $request['namapasien'] != "undefined") {
+            $data = $data->where('pm.namapasien', 'ilike', '%' . $request['namapasien'] . '%');
+        }
+        if (isset($request['noOrders']) && $request['noOrders'] != "" && $request['noOrders'] != "undefined") {
+            $data = $data->where('sp.nostruk', 'ilike', '%' . $request['noOrders'] . '%');
+        }
+        if (isset($request['jmlRow']) && $request['jmlRow'] != "" && $request['jmlRow'] != "undefined") {
+            $data = $data->take($request['jmlRow']);
+        }
+        $data = $data->orderBy('sp.tglstruk', 'desc');
+        $data = $data->get();
+
+        $dataResult = array(
+            'message' =>  'inhuman',
+            'data' =>  $data,
+        );
+        return $this->respond($dataResult);
+    }
+
+    public function getDaftarDetailOrderAmbulanDariTelemedicine(Request $request)
+    {
+        $kdProfile = $this->getDataKdProfile($request);
+        $idProfile = (int) $kdProfile;
+        $data = \DB::table('strukpelayanandetail_t as spd')
+            ->join('produk_m as prd', 'prd.id', '=', 'spd.objectprodukfk')
+            ->select(
+                'spd.norec as norec_pp',
+                'spd.qtyproduk',
+                'spd.hargasatuan',
+                'prd.namaproduk',
+                DB::raw("spd.qtyproduk * spd.hargasatuan AS hargatotal")
+            )
+            ->where('spd.kdprofile', $idProfile)
+            ->where('spd.statusenabled', true)
+            ->where('spd.nostrukfk', $request['norec'])
+            ->get();
+
+        $dataResult = array(
+            'message' =>  'inhuman',
+            'data' =>  $data,
+        );
+        return $this->respond($dataResult);
+    }
+
+    public function getComboTelemedicine(Request $request){
+        $kdProfile = $this->getDataKdProfile($request);
+        $idProfile =(int) $kdProfile;
+        $pegawai = \DB::table('pegawai_m as pg')
+            ->select('id', 'namalengkap', 'uuid_telemedicine')
+            ->where('pg.statusenabled', true)
+            ->where('pg.kdprofile', $idProfile)
+            ->whereNotNull('uuid_telemedicine')
+            ->orderBy('pg.namalengkap')
+            ->get();
+
+        $nopol = \DB::table('registrasiaset_t')
+        ->select('norec', 'nopolisi', 'uuid_telemedicine')
+        ->where('kdprofile', $kdProfile)
+        ->where('statusenabled', true)
+        ->whereNotNull('nopolisi')
+        ->whereNotNull('uuid_telemedicine')
+        ->where('keteranganlainnya', 'ilike', '%ambulan%')
+        ->get();
+
+        $result = array(
+            'pegawai' => $pegawai,
+            'nopol' => $nopol,
+            'message' => 'ramdanegie',
+        );
+
+        return $this->respond($result);
+    }
+
+    public function savePelayananPasienAmbulanDariTelemedicine(Request $request)
+    {
+        $kdProfile = (int) $this->getDataKdProfile($request);
+        $transMessage = '';
+        $req = $request->all();
+        $verifikasi = strtolower($req['verifikasi']);
+        $ket_verif_simrs = null;
+        $ket_verif_telemedicine = "menunggu";
+
+        if($verifikasi == "diterima"){
+            $ket_verif_simrs = true;
+            $ket_verif_telemedicine = 'verifikasi';
+        }  else if($verifikasi == "ditolak") {
+            $ket_verif_simrs = false;
+            $ket_verif_telemedicine = 'ditolak';
+        } else {
+            $ket_verif_simrs = null;
+            $ket_verif_telemedicine = "menunggu";
+        }
+
+        $pasien = \DB::table('pasien_m')
+            ->where('kdprofile', $kdProfile)
+            ->where('nocm', $req['nocm'])
+            ->first();
+        
+        if(empty($pasien)){
+            $transMessage = "Pasien tidak terdaftar";
+            $result = array(
+                "status" => 404,
+                "message"  => $transMessage,
+                "as" => 'as@epic',
+            );
+            return $this->setStatusCode($result['status'])->respond($result, $transMessage);
+        }
+
+        \DB::beginTransaction();
+        try {
+            $SP = StrukPelayanan::where('norec', $req['norec_sp'])->where('kdprofile', $kdProfile)->first();
+            $SP->isapprove = $ket_verif_simrs;
+            $SP->save();
+
+            foreach ($req['bridging_data'] as $item) {
+                $PetugasPelAmbulan = new PetugasPelayananAmbulan();
+                $PetugasPelAmbulan->norec = $PetugasPelAmbulan->generateNewId();
+                $PetugasPelAmbulan->kdprofile = $kdProfile;
+                $PetugasPelAmbulan->statusenabled = true;
+                $PetugasPelAmbulan->objectpegawaifk = $req['driver_id'];
+                $PetugasPelAmbulan->nostrukdetailfk = $item['norec_pp'];
+                $PetugasPelAmbulan->tglpelayanan = Carbon::now()->format('Y-m-d H:i:s');
+                $PetugasPelAmbulan->save();
+            }
+
+            $baseUrlTelemedicine = $this->settingDataFixed('UrlBridgingTelemedicine', $kdProfile);
+            $token = $this->settingDataFixed('BearerBridgingTelemedicine', $kdProfile);
+
+            $headers = array(
+                "Authorization: Bearer " . $token,
+                "Content-Type: application/json",
+                "Accept: application/json",
+            );
+
+            $methods = 'PUT';
+            $urlTelemedicine = $baseUrlTelemedicine . "verification-ambulance-orders";
+
+            $dataJsonSend = array(
+                "order_number" => $req['nomor_order'],
+                "uuid_officer" => $req['driver_uuid_telemedicine'],
+                "uuid_ambulance" => $req['kendaraan_uuid_telemedicine'],
+                "status_order" => $ket_verif_telemedicine,
+                "reason" => "-"
+            );
+
+            $data_kirim = json_encode($dataJsonSend);
+            $send_data_telemedicine = $this->sendBridgingCurl($headers, $data_kirim, $urlTelemedicine, $methods);
+            
+            if ($send_data_telemedicine->code != 200){
+                $transMessage = "Verifikasi Gagal.";
+                DB::rollBack();
+                $result = array(
+                    "status" => 400,
+                    "message"  => $transMessage,
+                    "error" => $send_data_telemedicine->messages,
+                    "as" => 'ea@epic',
+                );
+                return $this->setStatusCode($result['status'])->respond($result, $transMessage);
+            }
+
+            $transStatus = 'true';
+        } catch (\Exception $e) {
+            $transStatus = 'false';
+        }
+
+        if ($transStatus == 'true') {
+            $transMessage = "Verifikasi Berhasil.";
+            DB::commit();
+            $result = array(
+                "status" => 201,
+                "message" => $transMessage,
+                "as" => 'as@epic',
+            );
+        } else {
+            $transMessage = "Verifikasi Gagal.";
+            DB::rollBack();
+            $result = array(
+                "status" => 400,
+                "message"  => $transMessage,
+                "error" => $e->getMessage().' '.$e->getLine(),
                 "as" => 'as@epic',
             );
         }
