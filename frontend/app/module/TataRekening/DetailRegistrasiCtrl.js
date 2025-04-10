@@ -379,6 +379,16 @@ define(['initialize'], function (initialize) {
 				}
 			}
 			$scope.simpanKonsul = function () {
+				if (!$scope.currentRowData) {
+					window.messageContainer.warning('Pilih data ruangan sebelumnya terlebih dahulu!');
+					return;
+				}
+
+				if (!$scope.konsul.namaDokter || !$scope.konsul.ruangan) {
+                    window.messageContainer.error('Pilih Dokter dan Ruangan terlebih dahulu!');
+                    return;
+				}
+				
 				var current = $scope.currentRowData;
 				var length = $scope.dataRincianTagihan._data.length + 1;
 				var dataKonsul = {
@@ -394,7 +404,6 @@ define(['initialize'], function (initialize) {
 					LoadData();
 					$scope.saveLogKonsul();
 					$scope.batalKonsul();
-
 				})
 			}
 			//#save Log Konsul
