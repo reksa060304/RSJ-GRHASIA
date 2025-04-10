@@ -883,6 +883,8 @@
             {{-- jika ada nip tampilkan nip jika tidak tampilkan siip --}}
             @if (isset($peg->nippns) && $peg->nippns)
                 <tr>
+                    <td></td>
+                    <td></td>
                     <td style="text-align: center">
                         NIP: {{ $peg->nippns }}
                     </td>
@@ -891,6 +893,8 @@
 
                 @if (isset($sip->nosip) && $sip->nosip)
                 <tr>
+                    <td></td>
+                    <td></td>
                     <td style="text-align: center">
                         SIP: {{ $sip->nosip }}
                     </td>
