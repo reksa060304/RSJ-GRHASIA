@@ -5929,6 +5929,7 @@ class GeneralController extends ApiController
             })
             ->select(DB::raw("id AS idbundle,namaexternal || '. ' || kelompok AS kelompok, 
                 namabundle as keterangan, jenisbundle, nourut, kelompok AS namakelompok"))
+            ->where('statusenabled', true)
             ->orderBy('nourut', 'asc')
             ->get();
 

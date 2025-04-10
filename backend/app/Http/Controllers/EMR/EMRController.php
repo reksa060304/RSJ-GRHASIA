@@ -14547,7 +14547,7 @@ class EMRController  extends ApiController
 
         $data = collect(DB::select("
             SELECT bd.norec,bd.notransaksi,bd.tglpemeriksaan,bd.petugasfk,pg.namalengkap,
-                   apd.objectruanganfk,ru.namaruangan,bd.jenisbundle,bd.suhu,bd.diagnosa,bd.tirahbaring
+                   apd.objectruanganfk,ru.namaruangan,bd.jenisbundle,bd.suhu,bd.diagnosa,bd.tirahbaring,bd.pemeriksaan, bd.terapi, bd.keterangan, bd.obatantibiotik
             FROM bundlehai_t AS bd
             INNER JOIN pasiendaftar_t AS pd ON pd.norec = bd.norec_pd
             INNER JOIN antrianpasiendiperiksa_t AS apd ON apd.norec = bd.norec_apd
@@ -14681,6 +14681,12 @@ class EMRController  extends ApiController
             if (isset($request['tirahbaring'])) {
                 $head->tirahbaring = $request['tirahbaring'];
             }
+            if (isset($request['keterangan'])) {
+                $head->keterangan = $request['keterangan'];
+            }
+            if (isset($request['obatantibiotik'])) {
+                $head->obatantibiotik = $request['obatantibiotik'];
+            }
             $head->save();
             $norec = $head->norec;
 
@@ -14692,7 +14698,7 @@ class EMRController  extends ApiController
                     'norec' => $detail->generateNewId(),
                     'kdprofile' => $idProfile,
                     'statusenabled' => true,
-                    'jeniskonten' => 'TINDAKAN',
+                    'jeniskonten' => 'TINDAKAN INVANSIF',
                     'namakonten' => $tindakan['keterangan'],
                     'bundlefk' => $tindakan['idbundle'],
                     'bundlehaifk' => $head->norec,
@@ -14707,7 +14713,22 @@ class EMRController  extends ApiController
                     'norec' => $detail->generateNewId(),
                     'kdprofile' => $idProfile,
                     'statusenabled' => true,
-                    'jeniskonten' => 'INFEKSIRUMAHSAKIT',
+                    'jeniskonten' => 'INFEKSI LAIN',
+                    'namakonten' => $infeksi['keterangan'],
+                    'bundlefk' => $infeksi['idbundle'],
+                    'bundlehaifk' => $head->norec,
+                ]);
+            }
+
+            // Simpan HAIs
+            foreach ($request['hais'] as $infeksi) {
+                $detail = new BundleHaiDetail();
+
+                $infeksi = DB::table('bundlehaidetail_t')->insert([
+                    'norec' => $detail->generateNewId(),
+                    'kdprofile' => $idProfile,
+                    'statusenabled' => true,
+                    'jeniskonten' => 'HAIs',
                     'namakonten' => $infeksi['keterangan'],
                     'bundlefk' => $infeksi['idbundle'],
                     'bundlehaifk' => $head->norec,

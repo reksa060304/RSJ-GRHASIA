@@ -21,11 +21,13 @@ define(['initialize'], function (initialize) {
             var dataPHLEBITIS = [];
             var dataTINDAKAN = [];
             var dataINFEKSIRUMAHSAKIT = [];
+            var dataHAIs = []
             var noRegistrasi = '';
             var nocm_str = '';
 
             $scope.listTindakan = []
             $scope.listInfeksiRS = []
+            $scope.listHAIs = []
             $scope.listPilihanTindakan = [{name: 'Ya', value: 'ya'}, {name: 'Tidak', value: 'tidak'}]
 
             LoadCacheHelper();           
@@ -84,137 +86,137 @@ define(['initialize'], function (initialize) {
                 });                        
             }
 
-            function loadIAD(){
-                $scope.isRouteLoading = true;
-                medifirstService.get('sysadmin/general/get-data-master-bundlehai-iad').then(function (data) {
-                    $scope.isRouteLoading = false;
-                    var dataBundle = data.data;
-                    for (var i = dataBundle.length - 1; i >= 0; i--) {
-                        // dataBundle[i].no = i + 1;
-                        dataBundle[i].statusiya = false;
-                        dataBundle[i].statustidak = false;
-                    }
-                    dataIAD = dataBundle;
-                    $scope.dataSource1 = new kendo.data.DataSource({
-                        data: dataIAD,
-                        group: $scope.group,
-                        pageSize: dataIAD.length,
-                        total: dataIAD.length,
-                        serverPaging: false,
-                        schema: {
-                            model: {
-                                fields: {
-                                }
-                            }
-                        }                        
-                    });
-                })
-            }
+            // function loadIAD(){
+            //     $scope.isRouteLoading = true;
+            //     medifirstService.get('sysadmin/general/get-data-master-bundlehai-iad').then(function (data) {
+            //         $scope.isRouteLoading = false;
+            //         var dataBundle = data.data;
+            //         for (var i = dataBundle.length - 1; i >= 0; i--) {
+            //             // dataBundle[i].no = i + 1;
+            //             dataBundle[i].statusiya = false;
+            //             dataBundle[i].statustidak = false;
+            //         }
+            //         dataIAD = dataBundle;
+            //         $scope.dataSource1 = new kendo.data.DataSource({
+            //             data: dataIAD,
+            //             group: $scope.group,
+            //             pageSize: dataIAD.length,
+            //             total: dataIAD.length,
+            //             serverPaging: false,
+            //             schema: {
+            //                 model: {
+            //                     fields: {
+            //                     }
+            //                 }
+            //             }                        
+            //         });
+            //     })
+            // }
 
-            function loadISK(){
-                $scope.isRouteLoading = true;
-                medifirstService.get('sysadmin/general/get-data-master-bundlehai?jenis=ISK').then(function (data) {
-                    $scope.isRouteLoading = false;
-                    var dataBundle = data.data;
-                    for (var i = dataBundle.length - 1; i >= 0; i--) {
-                        // dataBundle[i].no = i + 1;
-                        dataBundle[i].statusiya = false;
-                        dataBundle[i].statustidak = false;
-                    }
-                    dataISK = dataBundle;
-                    $scope.dataSource2 = new kendo.data.DataSource({
-                        data: dataISK,                        
-                        pageSize: dataISK.length,
-                        total: dataISK.length,
-                        serverPaging: false,
-                        schema: {
-                            model: {
-                                fields: {
-                                }
-                            }
-                        }                        
-                    });
-                })
-            }
+            // function loadISK(){
+            //     $scope.isRouteLoading = true;
+            //     medifirstService.get('sysadmin/general/get-data-master-bundlehai?jenis=ISK').then(function (data) {
+            //         $scope.isRouteLoading = false;
+            //         var dataBundle = data.data;
+            //         for (var i = dataBundle.length - 1; i >= 0; i--) {
+            //             // dataBundle[i].no = i + 1;
+            //             dataBundle[i].statusiya = false;
+            //             dataBundle[i].statustidak = false;
+            //         }
+            //         dataISK = dataBundle;
+            //         $scope.dataSource2 = new kendo.data.DataSource({
+            //             data: dataISK,                        
+            //             pageSize: dataISK.length,
+            //             total: dataISK.length,
+            //             serverPaging: false,
+            //             schema: {
+            //                 model: {
+            //                     fields: {
+            //                     }
+            //                 }
+            //             }                        
+            //         });
+            //     })
+            // }
 
-            function loadVAP(){
-                $scope.isRouteLoading = true;
-                medifirstService.get('sysadmin/general/get-data-master-bundlehai?jenis=VAP').then(function (data) {
-                    $scope.isRouteLoading = false;
-                    var dataBundle = data.data;
-                    for (var i = dataBundle.length - 1; i >= 0; i--) {
-                        // dataBundle[i].no = i + 1;
-                        dataBundle[i].statusiya = false;
-                        dataBundle[i].statustidak = false;
-                    }
-                    dataVAP = dataBundle;
-                    $scope.dataSource3 = new kendo.data.DataSource({
-                        data: dataVAP,                        
-                        pageSize: dataVAP.length,
-                        total: dataVAP.length,
-                        serverPaging: false,
-                        schema: {
-                            model: {
-                                fields: {
-                                }
-                            }
-                        }                        
-                    });
-                })
-            }
+            // function loadVAP(){
+            //     $scope.isRouteLoading = true;
+            //     medifirstService.get('sysadmin/general/get-data-master-bundlehai?jenis=VAP').then(function (data) {
+            //         $scope.isRouteLoading = false;
+            //         var dataBundle = data.data;
+            //         for (var i = dataBundle.length - 1; i >= 0; i--) {
+            //             // dataBundle[i].no = i + 1;
+            //             dataBundle[i].statusiya = false;
+            //             dataBundle[i].statustidak = false;
+            //         }
+            //         dataVAP = dataBundle;
+            //         $scope.dataSource3 = new kendo.data.DataSource({
+            //             data: dataVAP,                        
+            //             pageSize: dataVAP.length,
+            //             total: dataVAP.length,
+            //             serverPaging: false,
+            //             schema: {
+            //                 model: {
+            //                     fields: {
+            //                     }
+            //                 }
+            //             }                        
+            //         });
+            //     })
+            // }
 
-            function loadIDO(){
-                $scope.isRouteLoading = true;
-                medifirstService.get('sysadmin/general/get-data-master-bundlehai?jenis=IDO').then(function (data) {
-                    $scope.isRouteLoading = false;
-                    var dataBundle = data.data;
-                    for (var i = dataBundle.length - 1; i >= 0; i--) {
-                        // dataBundle[i].no = i + 1;
-                        dataBundle[i].statusiya = false;
-                        dataBundle[i].statustidak = false;
-                    }
-                    dataIDO = dataBundle;
-                    $scope.dataSource4 = new kendo.data.DataSource({
-                        data: dataIDO,
-                        group: $scope.group2,
-                        pageSize: dataIDO.length,
-                        total: dataIDO.length,
-                        serverPaging: false,
-                        schema: {
-                            model: {
-                                fields: {
-                                }
-                            }
-                        }                        
-                    });
-                })
-            }
+            // function loadIDO(){
+            //     $scope.isRouteLoading = true;
+            //     medifirstService.get('sysadmin/general/get-data-master-bundlehai?jenis=IDO').then(function (data) {
+            //         $scope.isRouteLoading = false;
+            //         var dataBundle = data.data;
+            //         for (var i = dataBundle.length - 1; i >= 0; i--) {
+            //             // dataBundle[i].no = i + 1;
+            //             dataBundle[i].statusiya = false;
+            //             dataBundle[i].statustidak = false;
+            //         }
+            //         dataIDO = dataBundle;
+            //         $scope.dataSource4 = new kendo.data.DataSource({
+            //             data: dataIDO,
+            //             group: $scope.group2,
+            //             pageSize: dataIDO.length,
+            //             total: dataIDO.length,
+            //             serverPaging: false,
+            //             schema: {
+            //                 model: {
+            //                     fields: {
+            //                     }
+            //                 }
+            //             }                        
+            //         });
+            //     })
+            // }
 
-            function loadPHLEBITIS(){
-                $scope.isRouteLoading = true;
-                medifirstService.get('sysadmin/general/get-data-master-bundlehai?jenis=PHLEBITIS').then(function (data) {
-                    $scope.isRouteLoading = false;
-                    var dataBundle = data.data;
-                    for (var i = dataBundle.length - 1; i >= 0; i--) {
-                        // dataBundle[i].no = i + 1;
-                        dataBundle[i].statusiya = false;
-                        dataBundle[i].statustidak = false;
-                    }
-                    dataPHLEBITIS = dataBundle;
-                    $scope.dataSource5 = new kendo.data.DataSource({
-                        data: dataPHLEBITIS,                        
-                        pageSize: dataPHLEBITIS.length,
-                        total: dataPHLEBITIS.length,
-                        serverPaging: false,
-                        schema: {
-                            model: {
-                                fields: {
-                                }
-                            }
-                        }                        
-                    });
-                })
-            }
+            // function loadPHLEBITIS(){
+            //     $scope.isRouteLoading = true;
+            //     medifirstService.get('sysadmin/general/get-data-master-bundlehai?jenis=PHLEBITIS').then(function (data) {
+            //         $scope.isRouteLoading = false;
+            //         var dataBundle = data.data;
+            //         for (var i = dataBundle.length - 1; i >= 0; i--) {
+            //             // dataBundle[i].no = i + 1;
+            //             dataBundle[i].statusiya = false;
+            //             dataBundle[i].statustidak = false;
+            //         }
+            //         dataPHLEBITIS = dataBundle;
+            //         $scope.dataSource5 = new kendo.data.DataSource({
+            //             data: dataPHLEBITIS,                        
+            //             pageSize: dataPHLEBITIS.length,
+            //             total: dataPHLEBITIS.length,
+            //             serverPaging: false,
+            //             schema: {
+            //                 model: {
+            //                     fields: {
+            //                     }
+            //                 }
+            //             }                        
+            //         });
+            //     })
+            // }
 
             function loadTINDAKAN(){
                 $scope.isRouteLoading = true;
@@ -278,14 +280,44 @@ define(['initialize'], function (initialize) {
                 })
             }
 
+            function loadHAIs(){
+                $scope.isRouteLoading = true;
+                medifirstService.get('sysadmin/general/get-data-master-bundlehai?jenis=HAIs').then(function (data) {
+                    $scope.isRouteLoading = false;
+                    var dataBundle = data.data;
+                    for (var i = dataBundle.length - 1; i >= 0; i--) {
+                        // dataBundle[i].no = i + 1;
+                        dataBundle[i].statusiya = false;
+                        dataBundle[i].statustidak = false;
+                    }
+
+                    dataHAIs = dataBundle;
+                    $scope.listHAIs = dataBundle
+
+                    $scope.dataSource7 = new kendo.data.DataSource({
+                        data: dataHAIs,                        
+                        pageSize: dataHAIs.length,
+                        total: dataHAIs.length,
+                        serverPaging: false,
+                        schema: {
+                            model: {
+                                fields: {
+                                }
+                            }
+                        }                        
+                    });
+                })
+            }
+
             function firstLoad(){
-                loadIAD();
-                loadISK();
-                loadVAP();
-                loadIDO();
-                loadPHLEBITIS();          
+                // loadIAD();
+                // loadISK();
+                // loadVAP();
+                // loadIDO();
+                // loadPHLEBITIS();          
                 loadTINDAKAN();          
-                loadINFEKSIRUMAHSAKIT();          
+                loadINFEKSIRUMAHSAKIT();
+                loadHAIs()          
             }
 
             function ClearAll(){
@@ -301,6 +333,22 @@ define(['initialize'], function (initialize) {
                 delete $scope.item.suhu;
                 delete $scope.item.diagnosa;
                 delete $scope.item.tirahbaring;
+
+                // Reset input
+                $scope.item.norecTINDAKAN = null
+                $scope.item.suhu = null
+                $scope.item.diagnosa = null
+                $scope.item.tirahbaring = null
+                $scope.item.tindakan = null
+                $scope.item.infeksiRS = null
+                $scope.item.HAIs = null
+                $scope.item.pemeriksaan = null
+                $scope.item.terapi = null
+                $scope.item.keterangan = null
+                $scope.item.obatantibiotik = null
+                pilihanTindakan = []
+                pilihanInfeksiRS = []
+                pilihanHAIs = []
             }
 
             $scope.klikGrid = function(dataSelected){
@@ -323,6 +371,8 @@ define(['initialize'], function (initialize) {
                     $scope.item.tirahbaring = $scope.dataSelected.tirahbaring;
                     $scope.item.pemeriksaan = $scope.dataSelected.pemeriksaan
                     $scope.item.terapi = $scope.dataSelected.terapi
+                    $scope.item.keterangan = $scope.dataSelected.keterangan
+                    $scope.item.obatantibiotik = $scope.dataSelected.obatantibiotik
                     LoadHistory();
                 } else {
                     window.messageContainer.error("Data Belum Dipilih!");
@@ -361,6 +411,7 @@ define(['initialize'], function (initialize) {
                     // list tindakan yang dipilih
                     let listTindakan = {}
                     let listInfeksiRS = {}
+                    let listHAIs = {}
                     datas.forEach(function(detail){
                         $scope.listTindakan.forEach(function(tindakan){
                             if(tindakan.idbundle == detail.idbundle){
@@ -374,10 +425,17 @@ define(['initialize'], function (initialize) {
                                 listInfeksiRS[detail.idbundle] = "true"
                             }
                         })
+
+                        $scope.listHAIs.forEach(function(infeksi){
+                            if(infeksi.idbundle == detail.idbundle){
+                                listHAIs[detail.idbundle] = "true"
+                            }
+                        })
                     })
 
                     $scope.item.tindakan = listTindakan
                     $scope.item.infeksiRS = listInfeksiRS
+                    $scope.item.HAIs = listHAIs
 
                     if (jenisBundle == "IAD") {
                         $scope.item.norecIAD = norecTransaksi;
@@ -1020,291 +1078,291 @@ define(['initialize'], function (initialize) {
                 loadIAD();
             }
 
-            $scope.SimpanIAD = function(){
-                $scope.isRouteLoading = true;
-                $scope.visSimpan = false;
-                var objSave = {
-                    norec : $scope.item.norecIAD != undefined ? $scope.item.norecIAD : "",
-                    tanggal : moment($scope.item.tglInput).format('YYYY-MM-DD HH:mm'),
-                    petugas : $scope.item.Petugas.id,
-                    suhu : $scope.item.suhu,
-                    diagnosa : $scope.item.diagnosa,
-                    tirahbaring : $scope.item.tirahbaring,
-                    norec_pd : norec_pd,
-                    norec_apd : norec_apd,
-                    jenis : "IAD",
-                    detail : $scope.dataSource1._data
-                }
-                medifirstService.post('emr/save-emr-bundlehai', objSave).then(function (e) {
-                    $scope.isRouteLoading = false;
-                    $scope.visSimpan = true;
-                    init();
-                }, function (error) {
-                    $scope.isRouteLoading = false;
-                    $scope.visSimpan = true;
-                });
-            }
+            // $scope.SimpanIAD = function(){
+            //     $scope.isRouteLoading = true;
+            //     $scope.visSimpan = false;
+            //     var objSave = {
+            //         norec : $scope.item.norecIAD != undefined ? $scope.item.norecIAD : "",
+            //         tanggal : moment($scope.item.tglInput).format('YYYY-MM-DD HH:mm'),
+            //         petugas : $scope.item.Petugas.id,
+            //         suhu : $scope.item.suhu,
+            //         diagnosa : $scope.item.diagnosa,
+            //         tirahbaring : $scope.item.tirahbaring,
+            //         norec_pd : norec_pd,
+            //         norec_apd : norec_apd,
+            //         jenis : "IAD",
+            //         detail : $scope.dataSource1._data
+            //     }
+            //     medifirstService.post('emr/save-emr-bundlehai', objSave).then(function (e) {
+            //         $scope.isRouteLoading = false;
+            //         $scope.visSimpan = true;
+            //         init();
+            //     }, function (error) {
+            //         $scope.isRouteLoading = false;
+            //         $scope.visSimpan = true;
+            //     });
+            // }
 
-            $scope.BatalISK = function(){
-                $scope.item.norecISK = undefined;
-                loadISK();
-            }
+            // $scope.BatalISK = function(){
+            //     $scope.item.norecISK = undefined;
+            //     loadISK();
+            // }
 
-            $scope.SimpanISK = function(){
-                $scope.isRouteLoading = true;
-                $scope.visSimpan = false;
-                var objSave = {
-                    norec : $scope.item.norecISK != undefined ? $scope.item.norecISK : "",
-                    tanggal : moment($scope.item.tglInput).format('YYYY-MM-DD HH:mm'),
-                    petugas : $scope.item.Petugas.id,
-                    suhu : $scope.item.suhu,
-                    diagnosa : $scope.item.diagnosa,
-                    tirahbaring : $scope.item.tirahbaring,
-                    norec_pd : norec_pd,
-                    norec_apd : norec_apd,
-                    jenis : "ISK",
-                    detail : $scope.dataSource2._data
-                }
-                medifirstService.post('emr/save-emr-bundlehai', objSave).then(function (e) {
-                    $scope.isRouteLoading = false;
-                    $scope.visSimpan = true;
-                    init();
-                }, function (error) {
-                    $scope.isRouteLoading = false;
-                    $scope.visSimpan = true;
-                });
-            }
+            // $scope.SimpanISK = function(){
+            //     $scope.isRouteLoading = true;
+            //     $scope.visSimpan = false;
+            //     var objSave = {
+            //         norec : $scope.item.norecISK != undefined ? $scope.item.norecISK : "",
+            //         tanggal : moment($scope.item.tglInput).format('YYYY-MM-DD HH:mm'),
+            //         petugas : $scope.item.Petugas.id,
+            //         suhu : $scope.item.suhu,
+            //         diagnosa : $scope.item.diagnosa,
+            //         tirahbaring : $scope.item.tirahbaring,
+            //         norec_pd : norec_pd,
+            //         norec_apd : norec_apd,
+            //         jenis : "ISK",
+            //         detail : $scope.dataSource2._data
+            //     }
+            //     medifirstService.post('emr/save-emr-bundlehai', objSave).then(function (e) {
+            //         $scope.isRouteLoading = false;
+            //         $scope.visSimpan = true;
+            //         init();
+            //     }, function (error) {
+            //         $scope.isRouteLoading = false;
+            //         $scope.visSimpan = true;
+            //     });
+            // }
 
-            $scope.BatalVAP = function(){
-                $scope.item.norecVAP = undefined;
-                loadVAP();
-            }
+            // $scope.BatalVAP = function(){
+            //     $scope.item.norecVAP = undefined;
+            //     loadVAP();
+            // }
 
-            $scope.SimpanVAP = function(){
-                $scope.isRouteLoading = true;
-                $scope.visSimpan = false;
-                var objSave = {
-                    norec : $scope.item.norecVAP != undefined ? $scope.item.norecVAP : "",
-                    tanggal : moment($scope.item.tglInput).format('YYYY-MM-DD HH:mm'),
-                    petugas : $scope.item.Petugas.id,
-                    suhu : $scope.item.suhu,
-                    diagnosa : $scope.item.diagnosa,
-                    tirahbaring : $scope.item.tirahbaring,
-                    norec_pd : norec_pd,
-                    norec_apd : norec_apd,
-                    jenis : "VAP",
-                    detail : $scope.dataSource3._data
-                }
-                medifirstService.post('emr/save-emr-bundlehai', objSave).then(function (e) {
-                    $scope.isRouteLoading = false;
-                    $scope.visSimpan = true;
-                    init();
-                }, function (error) {
-                    $scope.isRouteLoading = false;
-                    $scope.visSimpan = true;
-                });
-            }
+            // $scope.SimpanVAP = function(){
+            //     $scope.isRouteLoading = true;
+            //     $scope.visSimpan = false;
+            //     var objSave = {
+            //         norec : $scope.item.norecVAP != undefined ? $scope.item.norecVAP : "",
+            //         tanggal : moment($scope.item.tglInput).format('YYYY-MM-DD HH:mm'),
+            //         petugas : $scope.item.Petugas.id,
+            //         suhu : $scope.item.suhu,
+            //         diagnosa : $scope.item.diagnosa,
+            //         tirahbaring : $scope.item.tirahbaring,
+            //         norec_pd : norec_pd,
+            //         norec_apd : norec_apd,
+            //         jenis : "VAP",
+            //         detail : $scope.dataSource3._data
+            //     }
+            //     medifirstService.post('emr/save-emr-bundlehai', objSave).then(function (e) {
+            //         $scope.isRouteLoading = false;
+            //         $scope.visSimpan = true;
+            //         init();
+            //     }, function (error) {
+            //         $scope.isRouteLoading = false;
+            //         $scope.visSimpan = true;
+            //     });
+            // }
 
-            $scope.BatalIDO = function(){
-                $scope.item.norecIDO = undefined;
-                loadIDO();
-            }
+            // $scope.BatalIDO = function(){
+            //     $scope.item.norecIDO = undefined;
+            //     loadIDO();
+            // }
 
-            $scope.SimpanIDO = function(){
-                $scope.isRouteLoading = true;
-                $scope.visSimpan = false;
-                var objSave = {
-                    norec : $scope.item.norecIDO != undefined ? $scope.item.norecIDO : "",
-                    tanggal : moment($scope.item.tglInput).format('YYYY-MM-DD HH:mm'),
-                    petugas : $scope.item.Petugas.id,
-                    suhu : $scope.item.suhu,
-                    diagnosa : $scope.item.diagnosa,
-                    tirahbaring : $scope.item.tirahbaring,
-                    norec_pd : norec_pd,
-                    norec_apd : norec_apd,
-                    jenis : "IDO",
-                    detail : $scope.dataSource4._data
-                }
-                medifirstService.post('emr/save-emr-bundlehai', objSave).then(function (e) {
-                    $scope.isRouteLoading = false;
-                    $scope.visSimpan = true;
-                    init();
-                }, function (error) {
-                    $scope.isRouteLoading = false;
-                    $scope.visSimpan = true;
-                });
-            }
+            // $scope.SimpanIDO = function(){
+            //     $scope.isRouteLoading = true;
+            //     $scope.visSimpan = false;
+            //     var objSave = {
+            //         norec : $scope.item.norecIDO != undefined ? $scope.item.norecIDO : "",
+            //         tanggal : moment($scope.item.tglInput).format('YYYY-MM-DD HH:mm'),
+            //         petugas : $scope.item.Petugas.id,
+            //         suhu : $scope.item.suhu,
+            //         diagnosa : $scope.item.diagnosa,
+            //         tirahbaring : $scope.item.tirahbaring,
+            //         norec_pd : norec_pd,
+            //         norec_apd : norec_apd,
+            //         jenis : "IDO",
+            //         detail : $scope.dataSource4._data
+            //     }
+            //     medifirstService.post('emr/save-emr-bundlehai', objSave).then(function (e) {
+            //         $scope.isRouteLoading = false;
+            //         $scope.visSimpan = true;
+            //         init();
+            //     }, function (error) {
+            //         $scope.isRouteLoading = false;
+            //         $scope.visSimpan = true;
+            //     });
+            // }
 
-            $scope.BatalPHLEBITIS = function(){
-                $scope.item.norecPHLEBITIS = undefined;
-                loadPHLEBITIS();
-            }
+            // $scope.BatalPHLEBITIS = function(){
+            //     $scope.item.norecPHLEBITIS = undefined;
+            //     loadPHLEBITIS();
+            // }
 
-            $scope.SimpanPHLEBITIS = function(){
-                $scope.isRouteLoading = true;
-                $scope.visSimpan = false;
-                var objSave = {
-                    norec : $scope.item.norecPHLEBITIS != undefined ? $scope.item.norecPHLEBITIS : "",
-                    tanggal : moment($scope.item.tglInput).format('YYYY-MM-DD HH:mm'),
-                    petugas : $scope.item.Petugas.id,
-                    suhu : $scope.item.suhu,
-                    diagnosa : $scope.item.diagnosa,
-                    tirahbaring : $scope.item.tirahbaring,
-                    norec_pd : norec_pd,
-                    norec_apd : norec_apd,
-                    jenis : "PHLEBITIS",
-                    detail : $scope.dataSource5._data
-                }
-                medifirstService.post('emr/save-emr-bundlehai', objSave).then(function (e) {
-                    $scope.isRouteLoading = false;
-                    $scope.visSimpan = true;
-                    init();
-                }, function (error) {
-                    $scope.isRouteLoading = false;
-                    $scope.visSimpan = true;
-                });
-            }
+            // $scope.SimpanPHLEBITIS = function(){
+            //     $scope.isRouteLoading = true;
+            //     $scope.visSimpan = false;
+            //     var objSave = {
+            //         norec : $scope.item.norecPHLEBITIS != undefined ? $scope.item.norecPHLEBITIS : "",
+            //         tanggal : moment($scope.item.tglInput).format('YYYY-MM-DD HH:mm'),
+            //         petugas : $scope.item.Petugas.id,
+            //         suhu : $scope.item.suhu,
+            //         diagnosa : $scope.item.diagnosa,
+            //         tirahbaring : $scope.item.tirahbaring,
+            //         norec_pd : norec_pd,
+            //         norec_apd : norec_apd,
+            //         jenis : "PHLEBITIS",
+            //         detail : $scope.dataSource5._data
+            //     }
+            //     medifirstService.post('emr/save-emr-bundlehai', objSave).then(function (e) {
+            //         $scope.isRouteLoading = false;
+            //         $scope.visSimpan = true;
+            //         init();
+            //     }, function (error) {
+            //         $scope.isRouteLoading = false;
+            //         $scope.visSimpan = true;
+            //     });
+            // }
 
-            $scope.BatalTINDAKAN = function(){
-                $scope.item.norecTINDAKAN = undefined;
-                loadTINDAKAN();
-            }
+            // $scope.BatalTINDAKAN = function(){
+            //     $scope.item.norecTINDAKAN = undefined;
+            //     loadTINDAKAN();
+            // }
 
-            $scope.SimpanTINDAKAN = function(){
+            // $scope.SimpanTINDAKAN = function(){
 
-                if(!$scope.item.suhu){
-                    toastr.error('Isi data suhu terlebih dahulu')
-                    return
-                }
+            //     if(!$scope.item.suhu){
+            //         toastr.error('Isi data suhu terlebih dahulu')
+            //         return
+            //     }
 
-                if(!$scope.item.diagnosa){
-                    toastr.error('Isi data diagnosa terlebih dahulu')
-                    return
-                }
+            //     if(!$scope.item.diagnosa){
+            //         toastr.error('Isi data diagnosa terlebih dahulu')
+            //         return
+            //     }
 
-                if(!$scope.item.tirahbaring){
-                    toastr.error('Isi data tirahbaring terlebih dahulu')
-                    return
-                }
+            //     if(!$scope.item.tirahbaring){
+            //         toastr.error('Isi data tirahbaring terlebih dahulu')
+            //         return
+            //     }
 
-                if(!$scope.item.tindakan){
-                    toastr.error('Pilih Data Tindakan')
-                    return
-                }
+            //     if(!$scope.item.tindakan){
+            //         toastr.error('Pilih Data Tindakan')
+            //         return
+            //     }
 
-                let pilihanTindakan = []
-                $scope.listTindakan.map(function(data){
-                    if(data.idbundle in $scope.item.tindakan){
-                        let keyObj = data.idbundle
+            //     let pilihanTindakan = []
+            //     $scope.listTindakan.map(function(data){
+            //         if(data.idbundle in $scope.item.tindakan){
+            //             let keyObj = data.idbundle
                         
-                        if($scope.item.tindakan[keyObj] == 'true'){
-                            pilihanTindakan.push(data)
-                        }
-                    }
-                })
+            //             if($scope.item.tindakan[keyObj] == 'true'){
+            //                 pilihanTindakan.push(data)
+            //             }
+            //         }
+            //     })
 
-                $scope.isRouteLoading = true;
-                $scope.visSimpan = false;
-                var objSave = {
-                    norec : $scope.item.norecTINDAKAN != undefined ? $scope.item.norecTINDAKAN : "",
-                    tanggal : moment($scope.item.tglInput).format('YYYY-MM-DD HH:mm'),
-                    petugas : $scope.item.Petugas.id,
-                    suhu : $scope.item.suhu,
-                    diagnosa : $scope.item.diagnosa,
-                    tirahbaring : $scope.item.tirahbaring,
-                    norec_pd : norec_pd,
-                    norec_apd : norec_apd,
-                    jenis : "TINDAKAN",
-                    detail : pilihanTindakan
-                }
+            //     $scope.isRouteLoading = true;
+            //     $scope.visSimpan = false;
+            //     var objSave = {
+            //         norec : $scope.item.norecTINDAKAN != undefined ? $scope.item.norecTINDAKAN : "",
+            //         tanggal : moment($scope.item.tglInput).format('YYYY-MM-DD HH:mm'),
+            //         petugas : $scope.item.Petugas.id,
+            //         suhu : $scope.item.suhu,
+            //         diagnosa : $scope.item.diagnosa,
+            //         tirahbaring : $scope.item.tirahbaring,
+            //         norec_pd : norec_pd,
+            //         norec_apd : norec_apd,
+            //         jenis : "TINDAKAN",
+            //         detail : pilihanTindakan
+            //     }
 
-                // console.log(objSave)
+            //     // console.log(objSave)
 
-                medifirstService.post('emr/save-emr-bundlehai', objSave).then(function (e) {
-                    $scope.isRouteLoading = false;
-                    $scope.visSimpan = true;
+            //     medifirstService.post('emr/save-emr-bundlehai', objSave).then(function (e) {
+            //         $scope.isRouteLoading = false;
+            //         $scope.visSimpan = true;
                     
-                    // Reset input
-                    $scope.item.suhu = null
-                    $scope.item.diagnosa = null
-                    $scope.item.tirahbaring = null
-                    $scope.item.tindakan = null
+            //         // Reset input
+            //         $scope.item.suhu = null
+            //         $scope.item.diagnosa = null
+            //         $scope.item.tirahbaring = null
+            //         $scope.item.tindakan = null
                     
-                    init();
-                }, function (error) {
-                    $scope.isRouteLoading = false;
-                    $scope.visSimpan = true;
-                });
-            }
+            //         init();
+            //     }, function (error) {
+            //         $scope.isRouteLoading = false;
+            //         $scope.visSimpan = true;
+            //     });
+            // }
 
-            $scope.BatalINFEKSIRUMAHSAKIT = function(){
-                $scope.item.norecINFEKSIRUMAHSAKIT = undefined;
-                loadINFEKSIRUMAHSAKIT();
-            }
+            // $scope.BatalINFEKSIRUMAHSAKIT = function(){
+            //     $scope.item.norecINFEKSIRUMAHSAKIT = undefined;
+            //     loadINFEKSIRUMAHSAKIT();
+            // }
 
-            $scope.SimpanINFEKSIRUMAHSAKIT = function(){
-                if(!$scope.item.suhu){
-                    toastr.error('Isi data suhu terlebih dahulu')
-                    return
-                }
+            // $scope.SimpanINFEKSIRUMAHSAKIT = function(){
+            //     if(!$scope.item.suhu){
+            //         toastr.error('Isi data suhu terlebih dahulu')
+            //         return
+            //     }
 
-                if(!$scope.item.diagnosa){
-                    toastr.error('Isi data diagnosa terlebih dahulu')
-                    return
-                }
+            //     if(!$scope.item.diagnosa){
+            //         toastr.error('Isi data diagnosa terlebih dahulu')
+            //         return
+            //     }
 
-                if(!$scope.item.tirahbaring){
-                    toastr.error('Isi data tirahbaring terlebih dahulu')
-                    return
-                }
+            //     if(!$scope.item.tirahbaring){
+            //         toastr.error('Isi data tirahbaring terlebih dahulu')
+            //         return
+            //     }
 
-                if(!$scope.item.infeksiRS){
-                    toastr.error('Pilih data infeksi rumah sakit terlebih dahulu')
-                    return
-                }
+            //     if(!$scope.item.infeksiRS){
+            //         toastr.error('Pilih data infeksi rumah sakit terlebih dahulu')
+            //         return
+            //     }
 
-                let pilihanInfeksiRS = []
-                $scope.listInfeksiRS.map(function(data){
-                    if(data.idbundle in $scope.item.infeksiRS){
-                        let keyObj = data.idbundle
+            //     let pilihanInfeksiRS = []
+            //     $scope.listInfeksiRS.map(function(data){
+            //         if(data.idbundle in $scope.item.infeksiRS){
+            //             let keyObj = data.idbundle
                         
-                        if($scope.item.infeksiRS[keyObj] == 'true'){
-                            pilihanInfeksiRS.push(data)
-                        }
-                    }
-                })
+            //             if($scope.item.infeksiRS[keyObj] == 'true'){
+            //                 pilihanInfeksiRS.push(data)
+            //             }
+            //         }
+            //     })
  
-                $scope.isRouteLoading = true;
-                $scope.visSimpan = false;
+            //     $scope.isRouteLoading = true;
+            //     $scope.visSimpan = false;
 
-                let objSave = {
-                    norec : $scope.item.norecINFEKSIRUMAHSAKIT != undefined ? $scope.item.norecINFEKSIRUMAHSAKIT : "",
-                    tanggal : moment($scope.item.tglInput).format('YYYY-MM-DD HH:mm'),
-                    petugas : $scope.item.Petugas.id,
-                    suhu : $scope.item.suhu,
-                    diagnosa : $scope.item.diagnosa,
-                    tirahbaring : $scope.item.tirahbaring,
-                    norec_pd : norec_pd,
-                    norec_apd : norec_apd,
-                    detail : pilihanInfeksiRS
-                }
+            //     let objSave = {
+            //         norec : $scope.item.norecINFEKSIRUMAHSAKIT != undefined ? $scope.item.norecINFEKSIRUMAHSAKIT : "",
+            //         tanggal : moment($scope.item.tglInput).format('YYYY-MM-DD HH:mm'),
+            //         petugas : $scope.item.Petugas.id,
+            //         suhu : $scope.item.suhu,
+            //         diagnosa : $scope.item.diagnosa,
+            //         tirahbaring : $scope.item.tirahbaring,
+            //         norec_pd : norec_pd,
+            //         norec_apd : norec_apd,
+            //         detail : pilihanInfeksiRS
+            //     }
 
-                medifirstService.post('emr/save-emr-bundlehai', objSave).then(function (e) {
-                    $scope.isRouteLoading = false;
-                    $scope.visSimpan = true;
+            //     medifirstService.post('emr/save-emr-bundlehai', objSave).then(function (e) {
+            //         $scope.isRouteLoading = false;
+            //         $scope.visSimpan = true;
 
-                    // Reset input
-                    $scope.item.suhu = null
-                    $scope.item.diagnosa = null
-                    $scope.item.tirahbaring = null
-                    $scope.item.infeksiRS = null
+            //         // Reset input
+            //         $scope.item.suhu = null
+            //         $scope.item.diagnosa = null
+            //         $scope.item.tirahbaring = null
+            //         $scope.item.infeksiRS = null
 
-                    init();
-                }, function (error) {
-                    $scope.isRouteLoading = false;
-                    $scope.visSimpan = true;
-                });
-            }
+            //         init();
+            //     }, function (error) {
+            //         $scope.isRouteLoading = false;
+            //         $scope.visSimpan = true;
+            //     });
+            // }
 
             $scope.simpanSemua = function(){
                 if(!$scope.item.suhu){
@@ -1342,6 +1400,11 @@ define(['initialize'], function (initialize) {
                     return
                 }
 
+                if($scope.item.HAIs == undefined || $scope.item.HAIs == null){
+                    toastr.error('Pilih data HAIs terlebih dahulu')
+                    return
+                }
+
                 let pilihanTindakan = []
                 $scope.listTindakan.map(function(data){
                     if(data.idbundle in $scope.item.tindakan){
@@ -1363,12 +1426,23 @@ define(['initialize'], function (initialize) {
                         }
                     }
                 })
+
+                let pilihanHAIs = []
+                $scope.listHAIs.map(function(data){
+                    if(data.idbundle in $scope.item.HAIs){
+                        let keyObj = data.idbundle
+                        
+                        if($scope.item.HAIs[keyObj] == 'true'){
+                            pilihanHAIs.push(data)
+                        }
+                    }
+                })
                 
                 // $scope.isRouteLoading = true;
                 // $scope.visSimpan = false;
 
                 var objSave = {
-                    norec : $scope.item.norecTINDAKAN != undefined ? $scope.item.norecTINDAKAN : "",
+                    norec : $scope.item.norecTINDAKAN ? $scope.item.norecTINDAKAN : "",
                     tanggal : moment($scope.item.tglInput).format('YYYY-MM-DD HH:mm'),
                     petugas : $scope.item.Petugas.id,
                     suhu : $scope.item.suhu,
@@ -1379,12 +1453,15 @@ define(['initialize'], function (initialize) {
                     norec_pd : norec_pd,
                     norec_apd : norec_apd,
                     jenis : "TINDAKAN",
+                    keterangan: $scope.item.keterangan,
+                    obatantibiotik: $scope.item.obatantibiotik,
                     tindakan : pilihanTindakan,
-                    infeksi: pilihanInfeksiRS
+                    infeksi: pilihanInfeksiRS, 
+                    hais: pilihanHAIs,
                 }
 
 
-                console.log(objSave)
+                // console.log(objSave)
                 medifirstService.post('emr/save-emr-bundlehai', objSave).then(function (e) {
                     $scope.isRouteLoading = false;
                     $scope.visSimpan = true;
@@ -1395,8 +1472,14 @@ define(['initialize'], function (initialize) {
                     $scope.item.tirahbaring = null
                     $scope.item.tindakan = null
                     $scope.item.infeksiRS = null
+                    $scope.item.HAIs = null
                     $scope.item.pemeriksaan = null
                     $scope.item.terapi = null
+                    $scope.item.keterangan = null
+                    $scope.item.obatantibiotik = null
+                    pilihanTindakan = []
+                    pilihanInfeksiRS = []
+                    pilihanHAIs = []
                     
                     init();
                 }, function (error) {

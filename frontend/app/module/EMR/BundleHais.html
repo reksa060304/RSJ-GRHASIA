@@ -146,6 +146,22 @@
                                         <input class="k-textbox" ng-model="item.terapi" type="text" placeholder="Terapi">
                                     </div>
                                 </div>
+                                <div class="grid_4">
+                                    <div class="grid_12">
+                                        <label c-label item="item" c-label-text="Keterangan"></label>
+                                    </div>
+                                    <div class="grid_12">
+                                        <input class="k-textbox" ng-model="item.keterangan" type="text" placeholder="keterangan">
+                                    </div>
+                                </div>
+                                <div class="grid_4">
+                                    <div class="grid_12">
+                                        <label c-label item="item" c-label-text="Obat Antibiotik"></label>
+                                    </div>
+                                    <div class="grid_12">
+                                        <input class="k-textbox" ng-model="item.obatantibiotik" type="text" placeholder="Obat Anti Biotik">
+                                    </div>
+                                </div>
                             </div>
                             <div class="grid_12"> 
                                 <md-content class="md-padding">
@@ -257,7 +273,7 @@
                                                 </md-content>
                                             </md-tab> -->
 
-                                            <md-tab label="TINDAKAN">
+                                            <md-tab label="TINDAKAN INFANSIF">
                                                 <md-content class="md-padding">                                                
                                                     <div class="grid_12">
                                                         <!-- <kendo-grid id="kGrid6" data-source="dataSource6" options="column6"
@@ -323,7 +339,7 @@
                                                     </div> -->
                                                 </md-content>
                                             </md-tab>
-                                            <md-tab label="Infeksi Rumah Sakit">
+                                            <md-tab label="Infeksi Lain">
                                                 <md-content class="md-padding">                                                
                                                     <div class="grid_12">
                                                         <!-- <kendo-grid id="kGrid7" data-source="dataSource7" options="column7"
@@ -345,6 +361,49 @@
                                                                     </td>
                                                                     <td style="padding: 1em 2em; border: 1px solid black;">
                                                                         <md-radio-group style="display: flex; flex-direction: row; gap: 1em;" ng-model="item.infeksiRS[data.idbundle]">
+                                                                            <md-radio-button style="margin: 0;" value="true" class="md-primary">Ya</md-radio-button>
+                                                                            <md-radio-button style="margin: 0;" value="false" class="md-primary">Tidak</md-radio-button>
+                                                                        </md-radio-group>
+                                                                    </td>
+                                                                </tr>
+                                                            </tbody>
+                                                        </table>
+                                                    </div>
+                                                    <!-- <div class="grid_12">
+                                                        <div class="grid_8"></div>
+                                                        <div class="grid_2">
+                                                            <button class="btnTemplate1" style="margin-left: 0;background-color: green;" ng-click="SimpanINFEKSIRUMAHSAKIT()" ><i
+                                                                    class="fa fa-floppy-o"></i>Simpan</button>
+                                                        </div>
+                                                        <div class="grid_2">
+                                                            <button class="btnTemplate1" style="margin-left: 0;background-color: red;" ng-click="BatalINFEKSIRUMAHSAKIT()" ><i
+                                                                    class="fa fa-ban"></i>Batal</button>
+                                                        </div>
+                                                    </div> -->
+                                                </md-content>
+                                            </md-tab>
+                                            <md-tab label="HAIs">
+                                                <md-content class="md-padding">                                                
+                                                    <div class="grid_12">
+                                                        <!-- <kendo-grid id="kGrid7" data-source="dataSource7" options="column7"
+                                                            k-selectable="'row'" k-sortable="'true'" k-resizable="'true'"
+                                                            k-ng-model="dataSelected7" ng-click="klikGrid7(dataSelected7)">
+                                                        </kendo-grid> -->
+
+                                                        <table style="border-collapse: collapse;">
+                                                            <thead>
+                                                                <tr style="background-color: black; color: white;">
+                                                                    <th style="padding: 1em 2em;">Kegiatan</th>
+                                                                    <th style="padding: 1em 2em;">Pilihan</th>
+                                                                </tr>
+                                                            </thead>
+                                                            <tbody ng-repeat="data in listHAIs">
+                                                                <tr>
+                                                                    <td style="padding: 1em 2em; border: 1px solid black;">
+                                                                        <h1 style="text-align: left;">{{ data.keterangan }}</h1>
+                                                                    </td>
+                                                                    <td style="padding: 1em 2em; border: 1px solid black;">
+                                                                        <md-radio-group style="display: flex; flex-direction: row; gap: 1em;" ng-model="item.HAIs[data.idbundle]">
                                                                             <md-radio-button style="margin: 0;" value="true" class="md-primary">Ya</md-radio-button>
                                                                             <md-radio-button style="margin: 0;" value="false" class="md-primary">Tidak</md-radio-button>
                                                                         </md-radio-group>
