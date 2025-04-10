@@ -20356,7 +20356,7 @@ public function suratBuktiPengembalian(Request $request)
             ->get();
         
         if(count($cekPdf) > 0){
-            $link = "/service/storage_path?path=".$cekPdf[0]->file."&filename=".$cekPdf[0]->namafile."&mimetype=application/pdf";
+            $link = "/service/storage_path?path=".$cekPdf[0]->file."&mimetype=application/pdf";
             
             return redirect($link);
         }
