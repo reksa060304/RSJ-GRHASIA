@@ -2592,6 +2592,12 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
                     };
                     // Set dokter default
                     $scope.item.dokter = dokterDefault;
+                } else if (oldValue && oldValue.namaruangan === "Laboratorium Umum (Penelitian)") {
+                    // Reset nilai kolom jika ruangan bukan laboratorium umum penelitian
+                    $scope.item.asalRujukan = undefined;
+                    $scope.item.kelompokPasien = undefined;
+                    $scope.item.jenisPasien = undefined;
+                    $scope.item.dokter = undefined;
                 }
             });
             //** BATAS */
