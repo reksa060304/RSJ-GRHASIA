@@ -120,7 +120,8 @@ define(['initialize'], function (initialize) {
                     },
                     selectable: 'row',
                     pageable: true,
-                    sortable: true,     
+                    sortable: true,   
+                    editable: true,
                     
                     // dataBound: onDataBound,
                     excelExport: function (e) {
