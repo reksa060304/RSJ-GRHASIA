@@ -360,10 +360,10 @@ define(['initialize'], function (initialize) {
 			}
 
 			$scope.DaftarRuangan = function () {
-				// if ($scope.currentRowData === undefined) {
-				// 	messageContainer.error("Pilih data terlebih dahulu");
-				// 	return
-				// } else {
+				if ($scope.currentRowData === undefined) {
+					messageContainer.error("Pilih data terlebih dahulu");
+					return
+				} else {
 
 					$scope.konsul.kelas = $scope.listKelas[3]
 
@@ -371,7 +371,7 @@ define(['initialize'], function (initialize) {
 					$scope.cboUbahDokter = false;
 					$scope.cboKonsul = true;
 					$scope.showUbahTanggal = false;
-				// }
+				}
 			}
 			$scope.getKelas = function (ruangan) {
 				if (ruangan != undefined && ruangan.namaruangan.indexOf('Bedah') > -1) {
@@ -379,10 +379,10 @@ define(['initialize'], function (initialize) {
 				}
 			}
 			$scope.simpanKonsul = function () {
-				if (!$scope.currentRowData) {
-					window.messageContainer.warning('Pilih data ruangan sebelumnya terlebih dahulu!');
-					return;
-				}
+				// if (!$scope.currentRowData) {
+				// 	window.messageContainer.warning('Pilih data ruangan sebelumnya terlebih dahulu!');
+				// 	return;
+				// }
 
 				if (!$scope.konsul.namaDokter || !$scope.konsul.ruangan) {
                     window.messageContainer.error('Pilih Dokter dan Ruangan terlebih dahulu!');
