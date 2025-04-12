@@ -151,7 +151,7 @@ class BundleHaisController extends ApiController
             WHERE
                 bd.statusenabled = true
                 AND bd.kdprofile = 30
-                AND bd.tglpemeriksaan BETWEEN '".$request['tglawal']." 00:00' AND '".$request['tglakhir']." 23:59'
+                AND bd.tglpemeriksaan BETWEEN '".$request['tglawal']."' AND '".$request['tglakhir']."'
                 $departemen
                 $ruangan
                 $kelompokPasien

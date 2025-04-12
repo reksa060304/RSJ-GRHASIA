@@ -1,17 +1,28 @@
 <!-- <div ng-controller="LaporanKematianRsCtrl"> -->
 
 <style>
-	.k-grid .k-grid-header .k-header .k-link {
-		height: auto;
-	}
+	.k-checkbox:checked+.k-checkbox-label:before {
+        /* background-color: #fff; */
+        border-color: #10c4b2;
+        color: white;
+        background-color: #10c4b2;
+    }
 
-	.k-grid .k-grid-header .k-header {
-		white-space: normal;
-	}
+    .k-grid-content-locked, .k-grid-footer-locked, .k-grid-header-locked {
+        display: inline-block;
+        vertical-align: top;
+        overflow: hidden;
+        position: relative;
+        border-style: solid;
+        border-width: 0 1px 0 0;
+        height: auto !important;
+    }
 
-	.k-grid .k-grid-header .k-header {
-		text-align: center;
-	}
+    md-content.md-default-theme,
+    md-content {
+        color: rgba(0, 0, 0, 0.87);
+        background-color: #FFFFFF;
+    }
 </style>
 
 <div class="grid_12 headerBox">
@@ -59,7 +70,7 @@
 			<button class="btnTemplate1" style="margin-left: 0;" ng-click="Search()">Cari</button>
 		</div>
 	</div>
-	<div class="grid_1">
+	<!-- <div class="grid_1">
 		<div class="grid_12">
 			<label>&nbsp;</label>
 		</div>
@@ -67,7 +78,7 @@
 		<div class="grid_12">
 			<button class="btnTemplate1" style="margin-left: 0;" ng-click="ClearSearch()">Clear</button>
 		</div>
-	</div>
+	</div> -->
 </div>
 
 <div class="grid_12" style="margin-top:10px">
@@ -75,24 +86,23 @@
 		<p>Details</p>
 	</div>
 	<div class="grid_12 borderBox">
-		<kendo-grid k-data-source="sourceLaporan" k-selectable="'row'" k-groupable="'false'" k-options="columnLaporan"
+		<!-- <kendo-grid k-data-source="sourceLaporan" k-selectable="'row'" k-groupable="'false'" k-options="columnLaporan"
 			k-ng-model="current" ng-click="click(dataPasienSelected)">
-		</kendo-grid>
+		</kendo-grid> -->
+		<div id="grid" k-ng-model="dataBundleHais" class="height-auto"></div>
 	</div>
 </div>
 <div class="grid_12">
 	<div class="grid_12" style="float:right">
-		<div class="grid_6"></div>
+		<div class="grid_9"></div>
 		<div class="grid_3 " style="margin-top: 25px ">
-			<button class="c-button" ng-show="!isLoading" item="item" is-validate ng-click="surveilans_Harian()">
-				<span class="title">Surveilans Harian</span>
-			</button>
+			<button class="c-button" ng-click="cetakLaporanBulanan()">Cetak Laporan Bulanan</button>
 		</div>
-		<div class="grid_3 " style="margin-top: 25px ">
+		<!-- <div class="grid_3 " style="margin-top: 25px ">
 			<button class="c-button" ng-show="!isLoading" item="item" is-validate ng-click="surveilans_IDO()">
 				<span class="title">Surveilans IDO</span>
 			</button>
-		</div>
+		</div> -->
 	</div>
 </div>
 <br />
@@ -128,4 +138,53 @@
 			</div>
 		</div>
 	</div>
+</div>
+
+<div kendo-window="popUpEntryPengembalian" k-title="'Entry Pengembalian'" k-visible="false" k-width="900">
+    <div class="panel panel-default container_12">
+         
+        <div class="grid" style="margin-top: 1.5em;">
+            <div class="grid_3">
+                <div class="grid_12">
+                    Tanggal Cetak
+                </div>
+                <div class="grid_12">
+                    <input style="width: 100%" k-ng-model="item.tglCetakBulanan" kendo-datepicker k-format="'yyyy-MM-dd'" />
+                </div>
+            </div>
+			<div class="grid_3">
+				<label c-label item="item" c-label-text="Departement"></label>
+				<input style="width: 100%;" kendo-combo-box k-ng-model="item.departementCetak" k-data-text-field="'departemen'"
+					k-data-value-field="'id'" k-filter="'contains'" k-auto-bind="false" k-data-source="listDepartemen"
+					k-on-change="getIsiComboRuanganCetak()" />
+			</div>
+			<div class="grid_3">
+				<label c-label item="item" c-label-text="Ruangan"></label>
+				<input ng-disabled="isDisable" style="width: 100%;" kendo-combo-box k-ng-model="item.ruanganCetak"
+					k-data-text-field="'ruangan'" k-data-value-field="'id'" k-filter="'contains'" k-auto-bind="false"
+					k-data-source="listRuanganCetak" />
+			</div>
+        </div>
+
+        <!-- Button -->
+        <div class="grid" >
+            <div class="grid_6"></div>
+            <div class="grid_6">
+                <div class="grid_12">
+                    <div class="grid_6">
+                        <button class="btnTemplate1 cancel" ng-click="batalCetakBulanan()">
+                            Batal
+                        </button>
+
+                    </div>
+                    <div class="grid_6">
+                        <button class="btnTemplate1" ng-click="cetakLaporanSurveilansBulanan()">
+                            Cetak
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </div>
 </div>
