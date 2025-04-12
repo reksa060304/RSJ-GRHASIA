@@ -23956,46 +23956,20 @@ public function suratBuktiPengembalian(Request $request)
 
     }
 
-    public function laporanBundleHais(Request $request)
+    public function laporanBundleHaisHarian(Request $request)
     {
         $kdProfile = (int) $request['kdprofile'];
 
-        $master = DB::table('haisbundle_m')
-            ->where('kdprofile', $kdProfile)
-            ->where('statusenabled', true)
-            ->where('jenisbundle', 'TINDAKAN')
-            ->orWhere('jenisbundle', 'INFEKSIRUMAHSAKIT')
-            ->orderBy('id', 'asc')
-            ->get();
-
-        // $data = $data = DB::table('bundlehai_t as bd')
-        //     ->select(DB::raw("bd.norec,bd.notransaksi,bd.tglpemeriksaan,bd.petugasfk,
-        //             pg.namalengkap, apd.objectruanganfk,ru.namaruangan, bd.isverifikasi,
-        //             bd.jenisbundle,bd.suhu,bd.diagnosa,bd.tirahbaring,
-        //             pm.id as idpasien, pm.namapasien, pm.tgllahir, bd.pemeriksaan, bd.terapi"))
-        //     ->when($request['objectruanganfk'], function($query) use ($request){
-        //         return $query->where('ru.id', $request['objectruanganfk']);
-        //     })
-        //     ->when($request['bulan'], function($query) use ($request){
-        //         return $query->whereRaw('to_char(bd.tglpemeriksaan, \'MM-YYYY\') = ?', [$request['bulan']]);
-        //     })
-        //     ->join('pasiendaftar_t as pd', 'pd.norec', '=', 'bd.norec_pd')
-        //     ->join('antrianpasiendiperiksa_t as apd', 'apd.norec', '=', 'bd.norec_apd')
-        //     ->join('pasien_m as pm', 'pm.id', '=', 'pd.nocmfk')
-        //     ->leftJoin('ruangan_m as ru', 'ru.id', '=', 'apd.objectruanganfk')
-        //     ->leftJoin('pegawai_m as pg', 'pg.id', '=', 'bd.petugasfk')
-        //     ->where('bd.statusenabled', true)
-        //     ->where('bd.kdprofile', $kdProfile)
-        //     ->where('bd.isverifikasi', true)
-        //     ->orderBy('bd.tglpemeriksaan', 'desc')
-        //     ->get();
+        $master = DB::select(DB::raw("
+            select * from haisbundle_m WHERE statusenabled = true and kdprofile = 30 AND jenisbundle IN ('TINDAKAN', 'INFEKSIRUMAHSAKIT', 'HAIs') ORDER BY nourut ASC
+        "));
 
         $data = DB::select(DB::raw("
             SELECT
                 bd.norec,bd.notransaksi,bd.tglpemeriksaan,bd.petugasfk,
                 pg.namalengkap, apd.objectruanganfk,ru.namaruangan, bd.isverifikasi,
                 bd.jenisbundle,bd.suhu,bd.diagnosa,bd.tirahbaring,
-                pm.id as idpasien, pm.namapasien, pm.tgllahir, bd.pemeriksaan, bd.terapi
+                pm.id as idpasien, pm.namapasien, pm.tgllahir, bd.pemeriksaan, bd.terapi, bd.keterangan, bd.obatantibiotik
             FROM
                 bundlehai_t bd
             INNER JOIN pasiendaftar_t pd ON pd.norec = bd.norec_pd AND pd.statusenabled = TRUE AND pd.kdprofile = 30
@@ -24008,24 +23982,28 @@ public function suratBuktiPengembalian(Request $request)
             WHERE
                 bd.statusenabled = true
                 AND bd.kdprofile = 30
-                AND to_char(bd.tglpemeriksaan, \'MM-YYYY\') = ".$request['bulan']."
+                AND bd.tglpemeriksaan BETWEEN DATE_TRUNC('MONTH', timestamp '".$request['tglcetak']."') AND '".$request['tglcetak']."'
                 AND ru.id = ".$request['objectruanganfk']."
             ORDER BY
                 bd.tglpemeriksaan DESC
         
         "));
     
-        $detail = DB::table('bundlehai_t as bdh')
-            ->select('bdhd.*')
-            ->join('bundlehaidetail_t as bdhd', 'bdh.norec', '=', 'bdhd.bundlehaifk')
-            ->where('bdh.kdprofile', $kdProfile)
-            ->where('bdh.statusenabled', true)
-            ->whereRaw('to_char(bdh.tglpemeriksaan, \'MM-YYYY\') = ?', [$request['bulan']])
-            ->get();
+        $detail = DB::select(DB::raw("
+            SELECT
+                bdt.*
+            FROM
+                bundlehai_t bd
+            INNER JOIN bundlehaidetail_t bdt ON bdt.bundlehaifk = bd.norec AND bdt.statusenabled = TRUE AND bdt.kdprofile = 30
+            WHERE
+                bd.statusenabled = true
+                AND bd.kdprofile = 30
+                AND to_char(bd.tglpemeriksaan, 'YYYY-MM-DD') BETWEEN to_char(MAKE_DATE(EXTRACT(YEAR FROM DATE '".$request['tglcetak']."')::int - 1, 4, 1), 'YYYY-MM-DD') AND '".$request['tglcetak']."'
+        "));
     
         $masterTindakan = array();
         $masterInfeksi = array();
-        $masterHAIs = array();
+        $masterDekubitus = array();
     
         foreach($master as $ma){
             if($ma->jenisbundle == 'TINDAKAN'){
@@ -24034,8 +24012,8 @@ public function suratBuktiPengembalian(Request $request)
             if($ma->jenisbundle == 'INFEKSIRUMAHSAKIT'){
                 array_push($masterInfeksi, $ma);
             }
-            if($ma->jenisbundle == 'HAIs'){
-                array_push($masterHAIs, $ma);
+            if($ma->namabundle == 'Dekubitus'){
+                array_push($masterDekubitus, $ma);
             }
         }
     
@@ -24043,6 +24021,7 @@ public function suratBuktiPengembalian(Request $request)
 
             $dat->tindakan = array();
             $dat->infeksi = array();
+            $dat->dekubitus = array();
 
             foreach($master as $ma){
                 
@@ -24056,16 +24035,25 @@ public function suratBuktiPengembalian(Request $request)
                         if($dtl->bundlefk == $ma->id && $ma->jenisbundle == 'INFEKSIRUMAHSAKIT'){
                             array_push($dat->infeksi, $ma);
                         }
+                        if($dtl->bundlefk == $ma->id && $ma->namabundle == 'Dekubitus'){
+                            array_push($dat->dekubitus, $ma);
+                        }
                     }
                 }
             }
         }
 
+        $ruangan = DB::select(DB::raw("
+            SELECT * FROM ruangan_m WHERE statusenabled = true AND id = ".$request['objectruanganfk']."
+        "));
+
         return view('report.hais.laporan-hais', [
             'data' => $data,
             'masterTindakan' => $masterTindakan,
             'masterInfeksi' => $masterInfeksi,
-            'masterHAIs' => $masterHAIs,
+            'masterDekubitus' => $masterDekubitus,
+            'ruangan' => $ruangan,
+            'tanggalcetak' => $request['tglcetak']
         ]);
     }
 
@@ -30143,7 +30131,7 @@ public function suratBuktiPengembalian(Request $request)
         $kdProfile = (int) $request['kdprofile'];
 
         $master = DB::select(DB::raw("
-            select * from haisbundle_m WHERE statusenabled = true and kdprofile = 30 AND jenisbundle IN ('TINDAKAN', 'INFEKSIRUMAHSAKIT', 'HAIs')
+            select * from haisbundle_m WHERE statusenabled = true and kdprofile = 30 AND jenisbundle IN ('TINDAKAN', 'INFEKSIRUMAHSAKIT', 'HAIs') ORDER BY nourut ASC
         "));
 
         $data = DB::select(DB::raw("
@@ -30151,7 +30139,7 @@ public function suratBuktiPengembalian(Request $request)
                 bd.norec,bd.notransaksi,bd.tglpemeriksaan,bd.petugasfk,
                 pg.namalengkap, apd.objectruanganfk,ru.namaruangan, bd.isverifikasi,
                 bd.jenisbundle,bd.suhu,bd.diagnosa,bd.tirahbaring,
-                pm.id as idpasien, pm.namapasien, pm.tgllahir, bd.pemeriksaan, bd.terapi, bd.keterangan
+                pm.id as idpasien, pm.namapasien, pm.tgllahir, bd.pemeriksaan, bd.terapi, bd.keterangan, bd.obatantibiotik
             FROM
                 bundlehai_t bd
             INNER JOIN pasiendaftar_t pd ON pd.norec = bd.norec_pd AND pd.statusenabled = TRUE AND pd.kdprofile = 30

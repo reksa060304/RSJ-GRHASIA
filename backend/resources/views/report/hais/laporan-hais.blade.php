@@ -37,7 +37,7 @@
                 <td>FORMULIR SURVEILANS HAIs</td>
             </tr>
             <tr>
-                <td>DI RS JIWA GRHASIA DIY TAHUN {{ date_format(date_create($data[0]->tglpemeriksaan), 'Y') }}</td>
+                <td>DI RS JIWA GRHASIA DIY TAHUN {{ date_format(date_create($tanggalcetak), 'Y') }}</td>
             </tr>
         </table>
     
@@ -52,32 +52,29 @@
                 <tr>
                     <td>WISMA</td>
                     <td style="padding-left: 1em; padding-right: 1em">:</td>
-                    <td>{{ $data[0]->namaruangan }}</td>
+                    <td>{{ $ruangan[0]->namaruangan }}</td>
                 </tr>
                 <tr>
                     <td>BULAN</td>
                     <td style="padding-left: 1em; padding-right: 1em">:</td>
-                    <td>{{ date_format(date_create($data[0]->tglpemeriksaan), 'F Y') }}</td>
+                    <td>{{ date_format(date_create($tanggalcetak), 'F') }}</td>
                 </tr>
             </tbody>
         </table>
     
         {{-- Content --}}
-        <table id="table-content" style="border: 1px solid black; border-collapse: collapse;">
+        <table id="table-content" style="width:100%; border: 1px solid black; border-collapse: collapse;">
             <thead>
                 <tr>
                     <th rowspan="2" class="content">Tanggal</th>
                     <th rowspan="2" class="content">No</th>
                     <th rowspan="2" class="content">Nama Pasien</th>
-                    <th rowspan="2" class="content">Jenis Kelamin</th>
-                    <th rowspan="2" class="content">Suhu</th>
-                    <th rowspan="2" class="content">Umur</th>
-                    <th rowspan="2" class="content">Diagnosa Medis</th>
+                    <th rowspan="2" class="content">Tirah Baring</th>
                     <th colspan="{{ count($masterTindakan) }}" class="content">Tindakan</th>
+                    <th rowspan="2" class="content">Keterangan</th>
+                    <th rowspan="2" class="content">Obat Antibiotik</th>
+                    <th rowspan="2" class="content">Dekubitus</th>
                     <th colspan="{{ count($masterInfeksi) }}" class="content">Infeksi Rumah Sakit</th>
-                    <th rowspan="2" class="content">Tirah Baring (Ya=1, Tidak=0)</th>
-                    <th rowspan="2" class="content">Pemeriksaan</th>
-                    <th rowspan="2" class="content">Terapi (terutama bila diberikan antibiotik, tuliskan nama obatnya dan dosisnya, tabinjeksi)</th>
                 </tr>
                 <tr>
                     @foreach ($masterTindakan as $maT)
@@ -89,68 +86,87 @@
                 </tr>
             </thead>
             <tbody>
-                @php
-                    $nomor = 1;
-                @endphp
-                @foreach ($data as $key=>$item)
+                @foreach ($data as $key => $dt)
                     <tr>
-                        <td class="content">{{ date_format(date_create($item->tglpemeriksaan), 'd-m-Y') }}</td>
-                        <td class="content">{{ $nomor }}</td>
-                        <td class="content">{{ $item->namapasien }}</td>
-                        <td class="content">L</td>
-                        <td class="content">{{ $item->suhu }}</td>
-                        <td class="content">{{ \Carbon\Carbon::parse($item->tgllahir)->diffInYears(date('Y-m-d')) }} Tahun</td>
-                        <td class="content">{{ $item->diagnosa }}</td>
-                        @foreach ($masterTindakan as $maT)
+                        <td class="content">{{ date_format(date_create($dt->tglpemeriksaan), 'd/m/Y') }}</td>
+                        <td class="content">{{ $key + 1 }}</td>
+                        <td class="content">{{ $dt->namapasien }}</td>
+                        <td class="content">{{ (isset($dt->tirahbaring)) ? '1' : '-'}}</td>
+                        @foreach ($masterTindakan as $mT)
                             @php
-                                $checklist = 0; 
-                                foreach ($item->tindakan as $pilihanTindakan) {
-                                    if($pilihanTindakan->id == $maT->id){
-                                        $checklist = 1;
+                                $checkTindakan = '-';
+                                foreach($dt->tindakan as $tindakan){
+                                    if($tindakan->id == $mT->id){
+                                        $checkTindakan = '1';
                                     }
-                                }  
+                                }
                             @endphp
-                            <td class="content">{{ $checklist }}</td>
+                            <td class="content">{{ $checkTindakan }}</td>
                         @endforeach
-                        @foreach ($masterInfeksi as $maI)
+                        <td class="content">{{ isset($dt->keterangan) ? $dt->keterangan : '' }}</td>
+                        <td class="content">{{ isset($dt->obatantibiotik) ? $dt->obatantibiotik : '' }}</td>
+                        <td class="content">
                             @php
-                                $checklist = 0;
-                                foreach ($item->infeksi as $pilihanInfeksi) {
-                                    if($pilihanInfeksi->id == $maI->id){
-                                        $checklist = 1;
-                                    }
-                                } 
+                                $checkDekubitus = '-';
+                                if(count($dt->dekubitus) > 0){
+                                    $checkDekubitus = '1';
+                                }
                             @endphp
-                            <td class="content">{{ $checklist }}</td>
+                            {{ $checkDekubitus }}
+                        </td>
+                        @foreach ($masterInfeksi as $mI)
+                            @php
+                                $checkInfeksi = '-';
+                                foreach($dt->infeksi as $infeksi){
+                                    if($infeksi->id == $mI->id){
+                                        $checkInfeksi = '1';
+                                    }
+                                }
+                            @endphp
+                            <td class="content">{{ $checkInfeksi }}</td>
                         @endforeach
+                    </tr>
+                @endforeach
+                <tr>
+                    <td class="content"></td>
+                    <td class="content"></td>
+                    <td class="content"></td>
+                    @php
+                        $countTirahBaring = 0;
+                        foreach($data as $dat){
+                            if(isset($dat->tirahbaring)){
+                                $countTirahBaring ++;
+                            }
+                        }
+                    @endphp
+                    <td class="content">{{ $countTirahBaring }}</td>
+                    @php
+                        $countTindakanKuy = array();
+                    @endphp
+                    @foreach ($masterTindakan as $itemTindakan)
                         @php
-                            $statusTirah = null;
-                            if($item->tirahbaring !== null || $item->tirahbaring !== undefined){
-                                $statusTirah = 1;
-                            }else{
-                                $statusTirah = 0;
+                            $countTindakanKuy[$itemTindakan->namabundle] = 0;
+                        @endphp
+
+                        @php
+                            foreach($data as $item){
+                                    
+                                foreach($item->tindakan as $tindakan){
+                                    if($tindakan->id == $itemTindakan->id){
+                                        $countTindakanKuy[$itemTindakan->namabundle]++;
+                                    }
+                                }
                             }
                         @endphp
-                        <td class="content">{{ $statusTirah }}</td>
-                        <td class="content">
-                            @if (isset($item->pemeriksaan))
-                                <p>{{ $item->pemeriksaan }}</p>
-                            @else
-                                <p>-</p>
-                            @endif
-                        </td>
-                        <td class="content">
-                            @if (isset($item->terapi))
-                                <p>{{ $item->terapi }}</p>
-                            @else
-                                <p>-</p>
-                            @endif
-                        </td>
-                    </tr>
-                    @php
-                        $nomor = $nomor+1
-                    @endphp
-                @endforeach
+                        <td class="content">{{ $countTindakanKuy[$itemTindakan->namabundle] }}</td>
+                    @endforeach
+                    <td class="content"></td>
+                    <td class="content"></td>
+                    <td class="content"></td>
+                    @foreach ($masterInfeksi as $maI)
+                        <td class="content"></td>
+                    @endforeach
+                </tr>
             </tbody>
         </table>
     </table>

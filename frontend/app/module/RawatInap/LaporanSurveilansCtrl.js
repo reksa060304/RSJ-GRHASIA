@@ -335,14 +335,16 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
             // };
 
             $scope.cetakLaporanBulanan = function(){
-                $scope.popUpEntryPengembalian.center().open()
+                $scope.popUpCetakLaporanBulanan.center().open()
             }
 
             $scope.batalCetakBulanan = function(){
                 // reset tgl cetak
-                $scope.item.tglCetakBulanan = null
+                $scope.item.tglCetakBulanan = ''
+                $scope.item.departementCetak = null
+                $scope.item.ruanganCetak = null
 
-                $scope.popUpEntryPengembalian.close()
+                $scope.popUpCetakLaporanBulanan.close()
             }
 
             $scope.getIsiComboRuanganCetak = function () {
@@ -367,6 +369,43 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
                     + "&objectruanganfk=" + $scope.item.ruanganCetak.id, '_blank');
 
             }
+
+            // #region cetak harian
+            $scope.cetakLaporanHarian = function(){
+                $scope.popUpCetakLaporanHarian.center().open()
+            }
+
+            $scope.batalCetakHarian = function(){
+                // reset tgl cetak
+                $scope.item.tglCetakHarian = ''
+                $scope.item.departementCetakHarian = null
+                $scope.item.ruanganCetakHarian = null
+
+                $scope.popUpCetakLaporanHarian.close()
+            }
+
+            $scope.getIsiComboRuanganCetakHarian = function () {
+                $scope.listRuanganCetakHarian = $scope.item.departementCetakHarian.ruangan
+            }
+
+            $scope.cetakLaporanSurveilansHarian = function(){
+                // validasi
+                if(!$scope.item.tglCetakHarian){
+                    toastr.error('Pilih tanggal dulu')
+                    return
+                }
+
+                if(!$scope.item.ruanganCetakHarian){
+                    toastr.error('Pilih ruangan dulu')
+                    return
+                }
+
+                window.open(baseTransaksi + "report/laporan-bundle-hais-harian" 
+                    + "?tglcetak=" + moment($scope.item.tglCetakHarian).format('YYYY-MM-DD')
+                    + "&objectruanganfk=" + $scope.item.ruanganCetakHarian.id, '_blank');
+            }
+
+            // #endregion cetak harian
 
             // $scope.columnLaporanHarian = {
             //     toolbar: ["excel"],

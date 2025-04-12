@@ -1375,10 +1375,10 @@ define(['initialize'], function (initialize) {
                     return
                 }
 
-                if(!$scope.item.tirahbaring){
-                    toastr.error('Isi data tirah baring terlebih dahulu')
-                    return
-                }
+                // if(!$scope.item.tirahbaring){
+                //     toastr.error('Isi data tirah baring terlebih dahulu')
+                //     return
+                // }
 
                 if(!$scope.item.pemeriksaan){
                     toastr.error('Isi pemeriksaan terlebih dahulu')

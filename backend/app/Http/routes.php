@@ -75,7 +75,7 @@ Route::group(['middleware' => 'cors', 'prefix' => 'service'], function () {
         Route::get('verif-hais/get-bundlehaisv2', 'EMR\BundleHaisController@getBundleHaisV2');
         Route::get('verif-hais/get-combo-verif-hais', 'EMR\BundleHaisController@getComboVerifHais');
         Route::post('verif-hais/verif-bundle-hais', 'EMR\BundleHaisController@verifBundleHais');
-        Route::get('verif-hais/laporan-bundle-hais', 'Report\ReportController@laporanBundleHais');
+        Route::get('report/laporan-bundle-hais-harian', 'Report\ReportController@laporanBundleHaisHarian');
         Route::get('report/laporan-bundle-hais-bulanan', 'Report\ReportController@laporanBundleHaisBulanan');
         // End Verif Hais Route----------------------------------------------------------------------------------------------
 

@@ -94,9 +94,12 @@
 </div>
 <div class="grid_12">
 	<div class="grid_12" style="float:right">
-		<div class="grid_9"></div>
+		<div class="grid_6"></div>
 		<div class="grid_3 " style="margin-top: 25px ">
 			<button class="c-button" ng-click="cetakLaporanBulanan()">Cetak Laporan Bulanan</button>
+		</div>
+		<div class="grid_3 " style="margin-top: 25px ">
+			<button class="c-button" ng-click="cetakLaporanHarian()">Cetak Laporan Harian</button>
 		</div>
 		<!-- <div class="grid_3 " style="margin-top: 25px ">
 			<button class="c-button" ng-show="!isLoading" item="item" is-validate ng-click="surveilans_IDO()">
@@ -140,7 +143,7 @@
 	</div>
 </div>
 
-<div kendo-window="popUpEntryPengembalian" k-title="'Entry Pengembalian'" k-visible="false" k-width="900">
+<div kendo-window="popUpCetakLaporanBulanan " k-title="'Cetak Laporan Bulanan'" k-visible="false" k-width="900">
     <div class="panel panel-default container_12">
          
         <div class="grid" style="margin-top: 1.5em;">
@@ -179,6 +182,55 @@
                     </div>
                     <div class="grid_6">
                         <button class="btnTemplate1" ng-click="cetakLaporanSurveilansBulanan()">
+                            Cetak
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </div>
+</div>
+
+<div kendo-window="popUpCetakLaporanHarian " k-title="'Cetak Laporan Harian'" k-visible="false" k-width="900">
+    <div class="panel panel-default container_12">
+         
+        <div class="grid" style="margin-top: 1.5em;">
+            <div class="grid_3">
+                <div class="grid_12">
+                    Tanggal Cetak
+                </div>
+                <div class="grid_12">
+                    <input style="width: 100%" k-ng-model="item.tglCetakHarian" kendo-datepicker k-format="'yyyy-MM-dd'" />
+                </div>
+            </div>
+			<div class="grid_3">
+				<label c-label item="item" c-label-text="Departement"></label>
+				<input style="width: 100%;" kendo-combo-box k-ng-model="item.departementCetakHarian" k-data-text-field="'departemen'"
+					k-data-value-field="'id'" k-filter="'contains'" k-auto-bind="false" k-data-source="listDepartemen"
+					k-on-change="getIsiComboRuanganCetakHarian()" />
+			</div>
+			<div class="grid_3">
+				<label c-label item="item" c-label-text="Ruangan"></label>
+				<input ng-disabled="isDisable" style="width: 100%;" kendo-combo-box k-ng-model="item.ruanganCetakHarian"
+					k-data-text-field="'ruangan'" k-data-value-field="'id'" k-filter="'contains'" k-auto-bind="false"
+					k-data-source="listRuanganCetakHarian" />
+			</div>
+        </div>
+
+        <!-- Button -->
+        <div class="grid" >
+            <div class="grid_6"></div>
+            <div class="grid_6">
+                <div class="grid_12">
+                    <div class="grid_6">
+                        <button class="btnTemplate1 cancel" ng-click="batalCetakHarian()">
+                            Batal
+                        </button>
+
+                    </div>
+                    <div class="grid_6">
+                        <button class="btnTemplate1" ng-click="cetakLaporanSurveilansHarian()">
                             Cetak
                         </button>
                     </div>
