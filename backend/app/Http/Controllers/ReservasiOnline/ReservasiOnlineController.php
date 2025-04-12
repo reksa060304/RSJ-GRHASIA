@@ -92,7 +92,7 @@ class ReservasiOnlineController extends ApiController
 			->select('id','kelompokpasien')
            ->where('kdprofile', $kdProfile)
 			->where('statusenabled', true)
-            ->whereIn('id', [1,2])
+            ->whereIn('id', [1,2,26])
 			->orderBy('kelompokpasien')
 			->get();
         $now = date('Y-m-d');   
