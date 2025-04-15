@@ -9532,8 +9532,8 @@ class EMRController  extends ApiController
             $dataSave->tanggal = $dataReq['tanggal'];
             $dataSave->objectjenispegawaifk = $dataReq['objectjenispegawaifk'];
             $dataSave->objectpegawaifk = $dataReq['objectpegawaifk'];
-            $dataSave->objectindikasifk = $dataReq['objectindikasifk'];
-            $dataSave->objecthygienefk = $dataReq['objecthygienefk'];
+            $dataSave->objectindikasifk = implode(',', $dataReq['objectindikasifk']);
+            $dataSave->objecthygienefk = implode(',', $dataReq['objecthygienefk']);
             $dataSave->langkah = $dataReq['langkah'];
             $dataSave->objectruanganfk = $dataReq['objectruanganfk'];
             $dataSave->kesempatan = $dataReq['kesempatan'];

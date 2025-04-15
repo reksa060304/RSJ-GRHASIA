@@ -4605,7 +4605,7 @@ class GeneralController extends ApiController
             $req['filter']['filters'][0]['value']!="undefined"){
             $dataProduk = $dataProduk->where('jenispegawai','ilike','%'. $req['filter']['filters'][0]['value'].'%' );
         };
-        $dataProduk = $dataProduk->take(10);
+        // $dataProduk = $dataProduk->take(10);
         $dataProduk = $dataProduk->get();
 
         return $this->respond($dataProduk);

@@ -12,7 +12,9 @@
     }
 </style>
 <div class="panel panel-default container_12">
-    <div class="panel-heading"><label class='title' c-label item="item">IPCN</label></div>
+    <div class="panel-heading">
+        <label class='title' c-label item="item">IPCN</label>
+    </div>
     <div class="panel-body">
         <div class="grid_12">
             <div ng-cloak>
@@ -47,14 +49,12 @@
                                             <label c-label item="item" c-label-text="Bangsal"></label>
                                         </div>
                                         <div class="clear"></div>
-                            
-                                        
-                                            <div class="grid_12">
-                                                    <input style="width: 100%;" kendo-combo-box k-ng-model="item.bangsal" k-data-text-field="'text'" k-data-value-field="'value'" k-filter="'contains'" k-auto-bind="false" k-data-source="listRuang" />
-                                            </div>
-                                        
+
+                                        <div class="grid_12">
+                                            <input style="width: 100%;" kendo-combo-box k-ng-model="item.bangsal" k-data-text-field="'text'" k-data-value-field="'value'" k-filter="'contains'" k-auto-bind="false" k-data-source="listRuang" />
+                                        </div>
                                     </div>
-                                    <div class="grid_1">
+                                    <!-- <div class="grid_1">
                                         <div class="grid_12">
                                             <label c-label item="item" c-label-text="Indikasi"></label>
                                         </div>
@@ -66,7 +66,7 @@
                                                 k-auto-bind="false" k-data-source="listIndikasi" />
                                         </div>
                             
-                                    </div>
+                                    </div> -->
                             
                                     <!-- Periode Pulang -->
                                     <div class="grid_4">
@@ -95,9 +95,6 @@
                                         <em style="margin-top:6px;" ng-click='cariFilter2()' id="iconButton" data-role="button"
                                             class="k-button k-button-icon k-primary" role="button" aria-disabled="false" tabindex="0"><span
                                                 class="k-sprite k-icon k-i-search">Refresh</span></em>
-                                        <em style="margin-top:6px;" ng-click='resetFilter2()' id="iconButton" data-role="button"
-                                            class="k-button k-button-icon k-primary" role="button" aria-disabled="false" tabindex="0"><span
-                                                class="k-sprite k-icon k-i-cancel">Refresh</span></em>
                                     </div>
                                 </div>
                                 <div class="grid_12">
@@ -167,9 +164,7 @@
                                         <em style="margin-top:6px;" ng-click='cariFilter()' id="iconButton" data-role="button"
                                             class="k-button k-button-icon k-primary" role="button" aria-disabled="false" tabindex="0"><span
                                                 class="k-sprite k-icon k-i-search">Refresh</span></em>
-                                        <em style="margin-top:6px;" ng-click='resetFilter()' id="iconButton" data-role="button"
-                                            class="k-button k-button-icon k-primary" role="button" aria-disabled="false" tabindex="0"><span
-                                                class="k-sprite k-icon k-i-cancel">Refresh</span></em>
+                                        
                                     </div>
                                 </div>
                                 <div class="grid_12">
@@ -199,13 +194,13 @@
                                         </c-button>
                                     </div> -->
                                     <div class="grid_2" style="float:right">
-                                        <c-button style="width: 100%; font-size: 24px; padding:0px, margin:0px;" size="36" position=" 'right'"
+                                        <c-button style="width: 100%; font-size: 24px; padding:0px; margin:0px;" size="36" position=" 'right'"
                                             ng-click="Tambah()">
                                             <span class="title">Input</span>
                                         </c-button>
                                     </div>
                                     <div class="grid_2" style="float:right">
-                                        <c-button style="width: 100%; font-size: 24px; padding:0px, margin:0px;" size="36" position=" 'right'"
+                                        <c-button style="width: 100%; font-size: 24px; padding:0px; margin:0px;" size="36" position=" 'right'"
                                             ng-click="Edit()">
                                             <span class="title">Lihat Detail</span>
                                         </c-button>
@@ -219,133 +214,8 @@
         </div>
     </div>
 </div>
-<!-- popup konfirmasi -->
-<div kendo-window="dialogPopup" k-title="'Form Input'" k-width="900" k-height="600" k-visible="false"
-    k-on-close="customClicked()">
-    <div class="panel panel-default panel-white container_12">
-        <div class="grid_12">
-            <div class="grid_12">
-                <div class="grid_6">
-                    <div class="grid_12">
-                        <label c-label item="item" c-label-text="Bangsal"></label>
-                    </div>
-                    <div class="grid_12">
-                        <input style="width: 100%;" kendo-combo-box k-ng-model="item.noruanganfk" k-data-text-field="'text'" k-data-value-field="'value'" k-filter="'contains'" k-auto-bind="false" k-data-source="listRuang" />
-                    </div>
-                </div>
-                <div class="grid_6">
-                    <div class="grid_12">
-                        <label c-label item="item" c-label-text="Tanggal"></label>
-                    </div>
-                    <div class="grid_12">
-                        <input style="width: 100%" k-ng-model="item.tanggal" kendo-datetimepicker
-                        placeholer="yyyy-MM-dd HH:mm" k-format="'yyyy-MM-dd HH:mm'" parsedate="yyyy-MM-dd HH:mm" />
-                    </div>
-                </div>
-                </div>
-                <div class="grid_12" style="margin-top: 10px">
-                    <div class="grid_4" style="margin-right: -150px">
-                        <label c-label item="item">Dokter SP</label>
-                    </div>
-                    <div class="grid_8" style="margin-top: -10px">
-                        <input c-text-box type="input" filter="'numeric'" data-bind="value: pic" class="k-textbox" ng-model="item.doktersp_p"
-                            ng-disabled='disabledText' placeholder="Patuh(P)" />
-                        <input c-text-box type="input" filter="'numeric'" data-bind="value: pic" class="k-textbox" ng-model="item.doktersp_t"
-                            ng-disabled='disabledText' placeholder="Tidak Patuh(T)" />
-                    </div>
-                </div>
-                <div class="grid_12" style="margin-top: 10px">
-                    <div class="grid_4" style="margin-right: -150px">
-                        <label c-label item="item">Dokter Umum</label>
-                    </div>
-                    <div class="grid_8" style="margin-top: -10px">
-                        <input c-text-box type="input" filter="'numeric'" data-bind="value: pic" class="k-textbox" ng-model="item.dokteru_p"
-                            ng-disabled='disabledText' placeholder="Patuh(P)" />
-                        <input c-text-box type="input" filter="'numeric'" data-bind="value: pic" class="k-textbox" ng-model="item.dokteru_t"
-                            ng-disabled='disabledText' placeholder="Tidak Patuh(T)" />
-                    </div>
-                </div>
-                <div class="grid_12" style="margin-top: 10px">
-                    <div class="grid_4" style="margin-right: -150px">
-                        <label c-label item="item">Perawat</label>
-                    </div>
-                    <div class="grid_8" style="margin-top: -10px">
-                        <input c-text-box type="input" filter="'numeric'" data-bind="value: pic" class="k-textbox" ng-model="item.perawat_p"
-                            ng-disabled='disabledText' placeholder="Patuh(P)" />
-                        <input c-text-box type="input" filter="'numeric'" data-bind="value: pic" class="k-textbox" ng-model="item.perawat_t"
-                            ng-disabled='disabledText' placeholder="Tidak Patuh(T)" />
-                    </div>
-                </div>
-                <div class="grid_12" style="margin-top: 10px">
-                    <div class="grid_4" style="margin-right: -150px">
-                        <label c-label item="item">Penunjang</label>
-                    </div>
-                    <div class="grid_8" style="margin-top: -10px">
-                        <input c-text-box type="input" filter="'numeric'" data-bind="value: pic" class="k-textbox" ng-model="item.penunjang_p"
-                            ng-disabled='disabledText' placeholder="Patuh(P)" />
-                        <input c-text-box type="input" filter="'numeric'" data-bind="value: pic" class="k-textbox" ng-model="item.penunjang_t"
-                            ng-disabled='disabledText' placeholder="Tidak Patuh(T)" />
-                    </div>
-                </div>
-                <div class="grid_12" style="margin-top: 10px">
-                    <div class="grid_4" style="margin-right: -150px">
-                        <label c-label item="item">Administrasi</label>
-                    </div>
-                    <div class="grid_8" style="margin-top: -10px">
-                        <input c-text-box type="input" filter="'numeric'" data-bind="value: pic" class="k-textbox" ng-model="item.administrasi_p"
-                            ng-disabled='disabledText' placeholder="Patuh(P)" />
-                        <input c-text-box type="input" filter="'numeric'" data-bind="value: pic" class="k-textbox" ng-model="item.administrasi_t"
-                            ng-disabled='disabledText' placeholder="Tidak Patuh(T)" />
-                    </div>
-                </div>
-                <div class="grid_12" style="margin-top: 10px">
-                    <div class="grid_4" style="margin-right: -150px">
-                        <label c-label item="item">Coass</label>
-                    </div>
-                    <div class="grid_8" style="margin-top: -10px">
-                        <input c-text-box type="input" filter="'numeric'" data-bind="value: pic" class="k-textbox" ng-model="item.coas_p"
-                            ng-disabled='disabledText' placeholder="Patuh(P)" />
-                        <input c-text-box type="input" filter="'numeric'" data-bind="value: pic" class="k-textbox" ng-model="item.coas_t"
-                            ng-disabled='disabledText' placeholder="Tidak Patuh(T)" />
-                    </div>
-                </div>
-                <div class="grid_12" style="margin-top: 10px">
-                    <div class="grid_4" style="margin-right: -150px">
-                        <label c-label item="item">Siswa Perawat</label>
-                    </div>
-                    <div class="grid_8" style="margin-top: -10px">
-                        <input c-text-box type="input" filter="'numeric'" data-bind="value: pic" class="k-textbox" ng-model="item.siswa_p"
-                            ng-disabled='disabledText' placeholder="Patuh(P)" />
-                        <input c-text-box type="input" filter="'numeric'" data-bind="value: pic" class="k-textbox" ng-model="item.siswa_t"
-                            ng-disabled='disabledText' placeholder="Tidak Patuh(T)" />
-                    </div>
-                </div>
-                <div class="grid_12" style="margin-top: 10px">
-                    <div class="grid_4" style="margin-right: -150px">
-                        <label c-label item="item">Lain-lain</label>
-                    </div>
-                    <div class="grid_8" style="margin-top: -10px">
-                        <input c-text-box type="input" filter="'numeric'" data-bind="value: pic" class="k-textbox" ng-model="item.lain_p"
-                            ng-disabled='disabledText' placeholder="Patuh(P)" />
-                        <input c-text-box type="input" filter="'numeric'" data-bind="value: pic" class="k-textbox" ng-model="item.lain_t"
-                            ng-disabled='disabledText' placeholder="Tidak Patuh(T)" />
-                    </div>
-                </div>            
-    </div>
-    
-    <div class="grid_12">
-        <div class="k-edit-buttons k-state-default pull-right" style="margin-top:10px" ng-hide='isEdit'>
-            <button class="k-button k-button-icontext k-primary k-grid-update" ng-click="Save()">
-                <span class="k-icon k-update"></span>Simpan
-            </button>
-            <button class="k-button k-button-icontext k-grid-cancel" ng-click="Batal()">
-                <span class="k-icon k-cancel"></span>Tutup
-            </button>
-        </div>
-    </div>
-</div>
-<div kendo-window="dialogPopup2" k-title="'Form Edit'"  k-visible="false"
-    k-on-close="customClicked()">
+
+<div kendo-window="dialogPopup2" k-title="'Form Edit'"  k-visible="false" k-on-close="customClicked()">
         
         <div class="grid_12">
             <div class="panel-body grid_12">
@@ -367,10 +237,9 @@
             </button>
         </div>
     </div>
-            
+</div>
                     
-    </div>
-    <div kendo-window="dialogPopup3" k-title="'Form /'" k-width="900" k-height="600" k-visible="false"
+<div kendo-window="dialogPopup3" k-title="'Form /'" k-width="900" k-height="600" k-visible="false"
     k-on-close="customClicked()">
     <div class="panel panel-default panel-white container_12">
         <div class="grid_12">
@@ -393,89 +262,90 @@
                     </div>
                 </div>
                 <div class="grid_12">
-                <div class="grid_6">
-                    <div class="grid_12">
-                        <label c-label item="item" c-label-text="Profesi"></label>
-                    </div>
-                    <div class="grid_12">
-                        <input style="width: 100%;" kendo-combo-box k-ng-model="item.objectjenispegawaifk" k-data-text-field="'text'" k-data-value-field="'value'" k-filter="'contains'" k-auto-bind="false" k-data-source="listJenisPegawai" />
-                    </div>
-                </div>
-                <div class="grid_6">
-                    <div class="grid_12">
-                        <label c-label item="item" c-label-text="Pegawai"></label>
-                    </div>
-                    <div class="grid_12">
-                        <input style="width: 100%;" kendo-combo-box k-ng-model="item.objectpegawaifk" k-data-text-field="'text'" k-data-value-field="'value'" k-filter="'contains'" k-auto-bind="false" k-data-source="listPegawai" />
-                    </div>
-                </div></div>
-            </div>
-                <div class="grid_12" style="margin-top: 10px;margin-bottom: 20px">
-                    <div class="panel panel-default container_12">
-                        <div class="panel-heading" c-translate> Moment</div>
-                    </div>
-                </div>
-                <div class="grid_12" >
-                    <div class="grid_6" >
-                        <div class="grid_12" style="margin-top: -10px;margin-bottom: 10px">
-                            <label c-label item="item">Indikasi</label>
+                    <div class="grid_6">
+                        <div class="grid_12">
+                            <label c-label item="item" c-label-text="Profesi"></label>
                         </div>
                         <div class="grid_12">
-                            <div class="grid_12" ng-repeat="data in listIndikasi" style="margin-bottom: 10px">
-                                <input type="checkbox" ng-checked="data.isChecked" class="k-checkbox"
-                                    name="{{data.indikasi}}" id="{{data.indikasi}}" value="{{data.value}}"
-                                    ng-click="addlistIndikasi(data)" ng-disabled="model.lakalantas===false">
-                                <label class="c-label k-checkbox-label"
-                                    for="{{data.indikasi}}">{{data.indikasi}}</label>
-                            </div>
+                            <input style="width: 100%;" kendo-combo-box k-ng-model="item.objectjenispegawaifk" k-data-text-field="'text'" k-data-value-field="'value'" k-filter="'contains'" k-auto-bind="false" k-data-source="listJenisPegawai" />
                         </div>
                     </div>
-                    <div class="grid_3" >
-                        <div class="grid_12" style="margin-top: -10px">
-                            <label c-label item="item">Tindakan</label>
+                    <div class="grid_6">
+                        <div class="grid_12">
+                            <label c-label item="item" c-label-text="Pegawai"></label>
                         </div>
-                        <div class="grid_12" ng-repeat="data in listHand" style="margin-bottom: 10px">
-                            <input type="checkbox" ng-checked="data.isChecked" class="k-checkbox"
-                                name="{{data.tindakan}}" id="{{data.tindakan}}" value="{{data.value}}"
-                                ng-click="addlistHand(data)" ng-disabled="model.lakalantas===false">
+                        <div class="grid_12">
+                            <input style="width: 100%;" kendo-combo-box k-ng-model="item.objectpegawaifk" k-data-text-field="'text'" k-data-value-field="'value'" k-filter="'contains'" k-auto-bind="false" k-data-source="listPegawai" />
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="grid_12" style="margin-top: 10px;margin-bottom: 20px">
+                <div class="panel panel-default container_12">
+                    <div class="panel-heading" c-translate> Moment</div>
+                </div>
+            </div>
+            <div class="grid_12" >
+                <div class="grid_6" >
+                    <div class="grid_12" style="margin-top: -10px;margin-bottom: 10px">
+                        <label c-label item="item">Indikasi</label>
+                    </div>
+                    <div class="grid_12">
+                        <div class="grid_12" ng-repeat="data in listIndikasi" style="margin-bottom: 10px">
+                            <input type="checkbox" ng-model="data.isChecked" class="k-checkbox"
+                                name="{{data.indikasi}}" id="{{data.indikasi}}" value="{{data.value}}"
+                                ng-disabled="model.lakalantas===false">
                             <label class="c-label k-checkbox-label"
-                                for="{{data.tindakan}}">{{data.tindakan}}</label>
+                                for="{{data.indikasi}}">{{data.indikasi}}</label>
                         </div>
                     </div>
-                    <div class="grid_3" >
-                        <div class="grid_12" style="margin-top: -10px;margin-left: 15px;margin-bottom: 10px">
-                            <label c-label item="item">Kesempatan ke</label>
-                        </div>
+                </div>
+                <div class="grid_3" >
+                    <div class="grid_12" style="margin-top: -10px">
+                        <label c-label item="item">Tindakan</label>
+                    </div>
+                    <div class="grid_12" ng-repeat="data in listHand" style="margin-bottom: 10px">
+                        <input type="checkbox" ng-model="data.isChecked" class="k-checkbox"
+                            name="{{data.tindakan}}" id="{{data.tindakan}}" value="{{data.value}}"
+                            ng-click="addlistHand(data)" ng-disabled="model.lakalantas===false">
+                        <label class="c-label k-checkbox-label"
+                            for="{{data.tindakan}}">{{data.tindakan}}</label>
+                    </div>
+                </div>
+                <div class="grid_3" >
+                    <div class="grid_12" style="margin-top: -10px;margin-left: 15px;margin-bottom: 10px">
+                        <label c-label item="item">Kesempatan ke</label>
+                    </div>
 
-                        <div class="grid_12" >
-                            <div class="grid_12">
-                            <input class="k-textbox" ng-model="item.kesempatan" style="width: 50%" data-bind="value: pic" type="number" min="1" max="5">
-                            </div>
-                        </div>
-                    </div>
-                        
-                </div>
-                <div class="grid_12" style="margin-top: 10px;margin-bottom: 20px">
-                    <div class="panel panel-default container_12">
-                        <div class="panel-heading" c-translate> Audit Cuci Tangan</div>
-                    </div>
-                </div>
-                <div class="grid_12" >
-                    
-                    <div class="grid_4" >
+                    <div class="grid_12" >
                         <div class="grid_12">
-                            <input class="k-textbox" ng-model="item.langkah" style="height: 50px" data-bind="value: pic" type="number" min="0" max="2" placeholder="masukan nilai">
+                        <input class="k-textbox" ng-model="item.kesempatan" style="width: 50%" data-bind="value: pic" type="number" min="1" max="5">
                         </div>
                     </div>
-                    <div class="grid_12">
-                     <label c-label item="item">Keterangan :</label>
-                     <label c-label item="item">0: Tidak bisa melakukan</label>
-                     <label c-label item="item">1: Melakukan tapi salah</label>
-                     <label c-label item="item">2: Melakukan dengan benar</label>
-                 </div>  
                 </div>
-
+                    
             </div>
+            <div class="grid_12" style="margin-top: 10px;margin-bottom: 20px">
+                <div class="panel panel-default container_12">
+                    <div class="panel-heading" c-translate> Audit Cuci Tangan</div>
+                </div>
+            </div>
+            <div class="grid_12" >
+                
+                <div class="grid_4" >
+                    <div class="grid_12">
+                        <input class="k-textbox" ng-model="item.langkah" style="height: 50px" data-bind="value: pic" type="number" min="0" max="2" placeholder="masukan nilai">
+                    </div>
+                </div>
+                <div class="grid_12">
+                    <label c-label item="item">Keterangan :</label>
+                    <label c-label item="item">0: Tidak bisa melakukan</label>
+                    <label c-label item="item">1: Melakukan tapi salah</label>
+                    <label c-label item="item">2: Melakukan dengan benar</label>
+                </div>  
+            </div>
+
+        </div>
 
     </div>
     
@@ -490,9 +360,11 @@
         </div>
     </div>
 </div>
-<div class="grid_12" style="margin-top:60px">
+
+<div class="grid_12" style="margin-top:60px" ng-show="isRouteLoading">
     <div ng-include='"../app/template/Shared/TemplateLoading"'></div>
 </div>
+
 <style>
     p {
         font-size: 16px;
