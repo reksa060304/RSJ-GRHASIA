@@ -2918,35 +2918,68 @@ class AmbulanController extends ApiController
             }
 
             $baseUrlTelemedicine = $this->settingDataFixed('UrlBridgingTelemedicine', $kdProfile);
-            $token = $this->settingDataFixed('BearerBridgingTelemedicine', $kdProfile);
+            $username = $this->settingDataFixed('UsernameBridgingTelemedicine', $kdProfile);
+            $password = $this->settingDataFixed('PwBridgingTelemedicine', $kdProfile);
+            // $token = $this->settingDataFixed('BearerBridgingTelemedicine', $kdProfile);
+            $token = "";
 
-            $headers = array(
-                "Authorization: Bearer " . $token,
+            //get token
+            $header_auth = array(
                 "Content-Type: application/json",
                 "Accept: application/json",
             );
-
-            $methods = 'PUT';
-            $urlTelemedicine = $baseUrlTelemedicine . "verification-ambulance-orders";
-
-            $dataJsonSend = array(
-                "order_number" => $req['nomor_order'],
-                "uuid_officer" => $req['driver_uuid_telemedicine'],
-                "uuid_ambulance" => $req['kendaraan_uuid_telemedicine'],
-                "status_order" => $ket_verif_telemedicine,
-                "reason" => "-"
+            $urlTelemedicineAuth = $baseUrlTelemedicine . "auth/token";
+            $methodAuth = 'POST';
+            $dataJsonSendAuth = array(
+                "email" => $username,
+                "password" => $password
             );
+            $data_kirim_auth = json_encode($dataJsonSendAuth);
+            $send_auth_telemedicine = $this->sendBridgingCurl($header_auth, $data_kirim_auth, $urlTelemedicineAuth, $methodAuth);
 
-            $data_kirim = json_encode($dataJsonSend);
-            $send_data_telemedicine = $this->sendBridgingCurl($headers, $data_kirim, $urlTelemedicine, $methods);
-            
-            if ($send_data_telemedicine->code != 200){
+            if($send_auth_telemedicine->code == 200){
+                $token = $send_auth_telemedicine->data->token;
+            }
+
+            if($token != ""){
+                $headers = array(
+                    "Authorization: Bearer " . $token,
+                    "Content-Type: application/json",
+                    "Accept: application/json",
+                );
+    
+                $methods = 'PUT';
+                $urlTelemedicine = $baseUrlTelemedicine . "verification-ambulance-orders";
+    
+                $dataJsonSend = array(
+                    "order_number" => $req['nomor_order'],
+                    "uuid_officer" => $req['driver_uuid_telemedicine'],
+                    "uuid_ambulance" => $req['kendaraan_uuid_telemedicine'],
+                    "status_order" => $ket_verif_telemedicine,
+                    "reason" => "-"
+                );
+    
+                $data_kirim = json_encode($dataJsonSend);
+                $send_data_telemedicine = $this->sendBridgingCurl($headers, $data_kirim, $urlTelemedicine, $methods);
+                
+                if ($send_data_telemedicine->code != 200){
+                    $transMessage = "Verifikasi Gagal.";
+                    DB::rollBack();
+                    $result = array(
+                        "status" => 400,
+                        "message"  => $transMessage,
+                        "error" => $send_data_telemedicine->messages,
+                        "as" => 'ea@epic',
+                    );
+                    return $this->setStatusCode($result['status'])->respond($result, $transMessage);
+                }
+            } else {
                 $transMessage = "Verifikasi Gagal.";
                 DB::rollBack();
                 $result = array(
                     "status" => 400,
                     "message"  => $transMessage,
-                    "error" => $send_data_telemedicine->messages,
+                    "error" => $send_auth_telemedicine->messages,
                     "as" => 'ea@epic',
                 );
                 return $this->setStatusCode($result['status'])->respond($result, $transMessage);

@@ -17462,38 +17462,71 @@ FROM
 
         try {
             $baseUrlTelemedicine = $this->settingDataFixed('UrlBridgingTelemedicine', $kdProfile);
-            $token = $this->settingDataFixed('BearerBridgingTelemedicine', $kdProfile);
+            $username = $this->settingDataFixed('UsernameBridgingTelemedicine', $kdProfile);
+            $password = $this->settingDataFixed('PwBridgingTelemedicine', $kdProfile);
+            // $token = $this->settingDataFixed('BearerBridgingTelemedicine', $kdProfile);
+            $token = "";
 
-            $headers = array(
-                "Authorization: Bearer " . $token,
+            //get token
+            $header_auth = array(
                 "Content-Type: application/json",
                 "Accept: application/json",
             );
+            $urlTelemedicineAuth = $baseUrlTelemedicine . "auth/token";
+            $methodAuth = 'POST';
+            $dataJsonSendAuth = array(
+                "email" => $username,
+                "password" => $password
+            );
+            $data_kirim_auth = json_encode($dataJsonSendAuth);
+            $send_auth_telemedicine = $this->sendBridgingCurl($header_auth, $data_kirim_auth, $urlTelemedicineAuth, $methodAuth);
 
-            if($data->uuid_telemedicine != null && $data->uuid_telemedicine != ''){
-                $methods = 'PUT';
-                $urlTelemedicine = $baseUrlTelemedicine . "ambulances" . "/" . $data->uuid_telemedicine;
-            } else{
-                $methods = 'POST';
-                $urlTelemedicine = $baseUrlTelemedicine . "ambulances";
+            if($send_auth_telemedicine->code == 200){
+                $token = $send_auth_telemedicine->data->token;
             }
 
-            $dataJsonSend = array(
-                "plate_number" => $data->nopolisi,
-                "vehicle_type" => $data->namaproduk,
-                "ambulance_type" => "Ambulance Transport",
-                "bed_number" => 1,
-                "status" => "Not Available"
-            );
-
-            $data_kirim = json_encode($dataJsonSend);
-            $send_data_telemedicine = $this->sendBridgingCurl($headers, $data_kirim, $urlTelemedicine, $methods);
-
-            if ($send_data_telemedicine->code == 201 || $send_data_telemedicine->code == 200){
-                $data_update_asset = RegistrasiAset::where('norec', $request['norec'])->where('kdprofile', $kdProfile)->first();
-                if($data_update_asset->uuid_telemedicine == null || $data_update_asset->uuid_telemedicine == ''){
-                    $data_update_asset->uuid_telemedicine = $send_data_telemedicine->data->uuid;
-                    $data_update_asset->save();
+            if($token != ""){
+                $headers = array(
+                    "Authorization: Bearer " . $token,
+                    "Content-Type: application/json",
+                    "Accept: application/json",
+                );
+    
+                if($data->uuid_telemedicine != null && $data->uuid_telemedicine != ''){
+                    $methods = 'PUT';
+                    $urlTelemedicine = $baseUrlTelemedicine . "ambulances" . "/" . $data->uuid_telemedicine;
+                } else{
+                    $methods = 'POST';
+                    $urlTelemedicine = $baseUrlTelemedicine . "ambulances";
+                }
+    
+                $dataJsonSend = array(
+                    "plate_number" => $data->nopolisi,
+                    "vehicle_type" => $data->namaproduk,
+                    "ambulance_type" => "Ambulance Transport",
+                    "bed_number" => 1,
+                    "status" => "Not Available"
+                );
+    
+                $data_kirim = json_encode($dataJsonSend);
+                $send_data_telemedicine = $this->sendBridgingCurl($headers, $data_kirim, $urlTelemedicine, $methods);
+    
+                if ($send_data_telemedicine->code == 201 || $send_data_telemedicine->code == 200){
+                    $data_update_asset = RegistrasiAset::where('norec', $request['norec'])->where('kdprofile', $kdProfile)->first();
+                    if($data_update_asset->uuid_telemedicine == null || $data_update_asset->uuid_telemedicine == ''){
+                        $data_update_asset->uuid_telemedicine = $send_data_telemedicine->data->uuid;
+                        $data_update_asset->save();
+                    }
+                } else {
+                    $transMessage = "Kirim Data Ambulan ke Telemedicine Gagal";
+                    DB::rollBack();
+                    $result = array(
+                        "status" => 400,
+                        "message"  => $transMessage,
+                        "error" => $send_data_telemedicine->messages,
+                        "as" => 'as@epic',
+                    );
+                    return $this->setStatusCode($result['status'])->respond($result, $transMessage);
                 }
             } else {
                 $transMessage = "Kirim Data Ambulan ke Telemedicine Gagal";
@@ -17501,7 +17534,7 @@ FROM
                 $result = array(
                     "status" => 400,
                     "message"  => $transMessage,
-                    "error" => $send_data_telemedicine->messages,
+                    "error" => $send_auth_telemedicine->messages,
                     "as" => 'as@epic',
                 );
                 return $this->setStatusCode($result['status'])->respond($result, $transMessage);
