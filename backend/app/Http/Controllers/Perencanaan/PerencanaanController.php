@@ -10349,10 +10349,10 @@ order by  split_part(kode, '.', 1)asc, split_part(kode, '.', 2)asc,  split_part(
         $dataLogin = $request->all();
 
         $sql = DB::select(DB::raw("
-            SELECT map.*, lu.namauser, ka.kode, ka.id || '-' || ka.keterangan as keterangan, ka.targetmasuk, ka.targetkeluaran
+            SELECT map.*, lu.namauser, ka.kode, ka.keterangan as keterangan
             FROM maploginusertosubsubkegiatan_s AS map
             LEFT JOIN loginuser_s AS lu ON lu.id = map.objectloginuserfk
-            LEFT JOIN kegiatananggaran_m AS ka ON ka.id = map.objectsubsubkegiatanfk
+            LEFT JOIN kegiatananggaran2024_m AS ka ON ka.id = map.objectsubsubkegiatanfk
             WHERE map.kdprofile = ".$idProfile."
             AND map.statusenabled = TRUE
             AND lu.id = ".$request['idLogin']."

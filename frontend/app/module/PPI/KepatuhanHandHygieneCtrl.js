@@ -31,75 +31,35 @@ define(['initialize'], function (initialize) {
                   
 
             LoadCombo();
+            init()
             function LoadCombo() {
-                var chacePeriode = cacheHelper.get('KepatuhanHandHygieneCtrl');
-                if (chacePeriode != undefined) {
-                    $scope.item.periodeAwal = new Date(chacePeriode[0]);;
-                    $scope.item.periodeAkhir = new Date(chacePeriode[1]);
+                $scope.item.periodeAwal = new Date(moment($scope.now).format('YYYY-MM-01 00:00'));
+                $scope.item.periodeAkhir = new Date(moment($scope.now).format('YYYY-MM-DD 23:59'))
 
-                    if (chacePeriode[2] != undefined) {
-                        $scope.item.pegawai = chacePeriode[2]
-                    }
-
-                    if (chacePeriode[3] != undefined) {
-                        $scope.item.profesor = chacePeriode[3]
-                    }
-
-                    if (chacePeriode[4] != undefined) {
-                        $scope.item.bangsal = chacePeriode[4]
-                    }
-
-                    if (chacePeriode[5] != undefined) {
-                        $scope.item.indikasi = chacePeriode[5]
-                    }
-
-                    // if (chacePeriode[6] != undefined) {
-                    //     $scope.listRuangan = [chacePeriode[6]]
-                    //     $scope.item.ruangan = chacePeriode[6]
-                    // }
-
-                    // if (chacePeriode[7] != undefined) {
-                    //     $scope.item.listKelompokPasien = [chacePeriode[7]]
-                    //     $scope.item.kelompokpasien = chacePeriode[7]
-                    // }
-
-                    // if (chacePeriode[8] != undefined) {
-                    //     $scope.item.dokter = chacePeriode[8]
-                    //     $scope.item.listDokter2 = chacePeriode[8]
-                    // }
-
-                    // if (chacePeriode[9] != undefined) {
-                    //     $scope.item.jmlRows = chacePeriode[9]
-                    // }
-
-                } else {
-                    $scope.item.periodeAwal = new Date(moment($scope.now).format('YYYY-MM-DD 00:00'));
-                    $scope.item.periodeAkhir = new Date(moment($scope.now).format('YYYY-MM-DD 23:59'))
-                    
-                }
-                 medifirstService.getPart("sysadmin/general/get-datacombo-ruangan", true, true, 20).then(function (data) {
+                medifirstService.getPart("sysadmin/general/get-datacombo-ruangan", true, true, 20).then(function (data) {
                     $scope.listRuang = data;
                 });
-                medifirstService.get("sysadmin/general/get-datacombo-handhygiene-general", true, true, 20).then(function (data) {
-                    $scope.listHand = data.data;
+                
+                $scope.item.bulan =$scope.now;
+                $scope.item.tanggal = moment(new Date()).format('YYYY-MM-DD HH:mm');    
+                // init();   
+                
+                medifirstService.get("sysadmin/general/get-datacombo-indikasi-general", true, true, 20).then(function (data) {
+                    let masterIndikasi = data.data
+                    
+                    $scope.listIndikasi = masterIndikasi;
                 });
-                 medifirstService.getPart("sysadmin/general/get-datacombo-departemen", true, true, 20).then(function (data) {
-                    $scope.listDepartemen = data;
-                });
-                 medifirstService.getPart("sysadmin/general/get-datacombo-jenispegawai-general", true, true, 20).then(function (data) {
+                medifirstService.getPart("sysadmin/general/get-datacombo-jenispegawai-general", true, true, 20).then(function (data) {
                     $scope.listJenisPegawai = data;
                 });
-                  medifirstService.get("sysadmin/general/get-datacombo-indikasi-general", true, true, 20).then(function (data) {
-                    $scope.listIndikasi = data.data;
+                medifirstService.getPart('emr/get-datacombo-part-pegawai', true, true, 20).then(function (data) {
+                    $scope.listPegawai = data
                 });
-                 medifirstService.getPart('emr/get-datacombo-part-pegawai', true, true, 20).then(function (data) {
-                $scope.listPegawai = data
-                });
-                
-                $scope.item.bulan = moment($scope.now).format('MMMM');
-                $scope.item.tanggal = moment(new Date()).format('YYYY-MM-DD HH:mm'); 
-                // $scope.listStatus = [{ "id": "1", "langkah": "Melakukan tapi salah" }, { "id": "0", "langkah": "Tidak Melakukan" }, { "id": "2", "langkah": "melakukan dengan" }, { "id": "4", "namaExternal": "Lunas" }]   
-                // init();    
+                medifirstService.get("sysadmin/general/get-datacombo-handhygiene-general", true, true, 20).then(function (data) {
+                    let masterHand = data.data
+                    
+                    $scope.listHand = masterHand;
+                });   
             }
            
             
@@ -217,19 +177,14 @@ define(['initialize'], function (initialize) {
                 ],
             }
 
-            function textareaNameEditor(container, options) {
-                $('<textarea required name="' + options.field + '" cols="20" row="4" style="line-height: 6em;"></textarea>')
-                    .appendTo(container)
-            }
-
             $scope.cariFilter = function () {
                 init()
             }
 
             function init() {
                 $scope.isRouteLoading = false;
-               var tglAwal = moment($scope.item.periodeAwal).format('YYYY-MM-DD HH:mm:ss');
-                var tglAkhir = moment($scope.item.periodeAkhir).format('YYYY-MM-DD HH:mm:ss');
+               var tglAwal = moment($scope.item.periodeAwal).format('YYYY-MM-DD HH:mm');
+                var tglAkhir = moment($scope.item.periodeAkhir).format('YYYY-MM-DD HH:mm');
                 var peg = ""
                 var tempNoReg = "";
                 if ($scope.item.pegawai != undefined) {
@@ -252,76 +207,70 @@ define(['initialize'], function (initialize) {
 
 
                 }
-                var ind = ""
-                var temindikasi = "";
-                if ($scope.item.indikasi2 != undefined) {
-                    var ind = "&indikasiid=" + $scope.item.indikasi2.value
-                    temindikasi =  { value: $scope.item.indikasi2.value, text: $scope.item.indikasi2.indikasi }
-
-
-                }               
+                               
                 medifirstService.get('emr/get-data-kepatuhan-handhygiene?' + "tglAwal=" + tglAwal +
-                        "&tglAkhir=" + tglAkhir + peg + pr + bng + ind
+                        "&tglAkhir=" + tglAkhir + peg + pr + bng
                     ).then(function (data) {
                         $scope.isLoadingData = false;
                         var datas = data.data.data;
                         for (let index = 0; index < datas.length; index++) {
-                                datas[index].no = index + 1;
-                                var langkah = datas[index].langkah
-                                if (langkah==0){
-                                  datas[index].nilailangkah=0
-                                  datas[index].snilailangkah="0 %"
-                                } else if (langkah==1){
-                                  datas[index].nilailangkah=50
-                                  datas[index].snilailangkah="50 %"
-                                } else if (langkah==2){
-                                  datas[index].nilailangkah=100
-                                  datas[index].snilailangkah="100 %"
-                                }
-                                if(  datas[index].objectindikasifk != null){
-                                  var inidikasiArr =   datas[index].objectindikasifk .split(',')
-                                    var a = ''
-                                       var b =''
-                                  for (var i = 0; i < inidikasiArr.length; i++) {
-                                     var elem = inidikasiArr[i]
-                                    
-                                       var listIndikasi =''
-                                    for (var u = 0; u < $scope.listIndikasi.length; u++) {
-                                       var indik = $scope.listIndikasi[u]
-                                       
-                                       if(indik.value == elem){
-                                        var c = indik.indikasi
-                                          b = "," + c
-                                           a = a + b
-                                       }
-                                    }
-                                     listIndikasi = a.slice(1, a.length)
-                                      datas[index].indikasi =listIndikasi
-                                  }
-                                }
-
-                                 if(  datas[index].objecthygienefk != null){
-                                  var objecthygienefkArr =   datas[index].objecthygienefk .split(',')
-                                    var a = ''
-                                       var b =''
-                                  for (var i = 0; i < objecthygienefkArr.length; i++) {
-                                     var elem = objecthygienefkArr[i]
-                                    
-                                       var listHand =''
-                                    for (var u = 0; u < $scope.listHand.length; u++) {
-                                       var indik = $scope.listHand[u]
-                                       
-                                       if(indik.value == elem){
-                                        var c = indik.tindakan
-                                          b = "," + c
-                                           a = a + b
-                                       }
-                                    }
-                                     listHand = a.slice(1, a.length)
-                                      datas[index].tindakan =listHand
-                                  }
-                                }
+                            datas[index].no = index + 1;
+                            datas[index].statCheckbox = false
+                            var langkah = datas[index].langkah
+                            if (langkah==0){
+                              datas[index].nilailangkah=0
+                              datas[index].snilailangkah="0 %"
+                            } else if (langkah==1){
+                              datas[index].nilailangkah=50
+                              datas[index].snilailangkah="50 %"
+                            } else if (langkah==2){
+                              datas[index].nilailangkah=100
+                              datas[index].snilailangkah="100 %"
                             }
+                            if(  datas[index].objectindikasifk != null){
+                              var inidikasiArr =   datas[index].objectindikasifk .split(',')
+                                var a = ''
+                                   var b =''
+                              for (var i = 0; i < inidikasiArr.length; i++) {
+                                 var elem = inidikasiArr[i]
+                                
+                                   var listIndikasi =''
+                                for (var u = 0; u < $scope.listIndikasi.length; u++) {
+                                   var indik = $scope.listIndikasi[u]
+                                   
+                                   if(indik.value == elem){
+                                    var c = indik.indikasi
+                                      b = "," + c
+                                       a = a + b
+                                   }
+                                }
+                                 listIndikasi = a.slice(1, a.length)
+                                  datas[index].indikasi =listIndikasi
+                              }
+                            }
+
+                            if(  datas[index].objecthygienefk != null){
+                                var objecthygienefkArr =   datas[index].objecthygienefk .split(',')
+                                var a = ''
+                                var b =''
+                                for (var i = 0; i < objecthygienefkArr.length; i++) {
+                                    var elem = objecthygienefkArr[i]
+                                
+                                    var listHand =''
+                                    for (var u = 0; u < $scope.listHand.length; u++) {
+                                        var indik = $scope.listHand[u]
+                                   
+                                        if(indik.value == elem){
+                                            var c = indik.tindakan
+                                            b = "," + c
+                                            a = a + b
+                                        }
+                                    }
+                                listHand = a.slice(1, a.length)
+                                datas[index].tindakan =listHand
+                              }
+                            }
+                        }
                         $scope.dataSource = new kendo.data.DataSource({
                             data: datas,
                             pageSize: 10,
@@ -343,20 +292,7 @@ define(['initialize'], function (initialize) {
                             aggregate:[{ field: "nilailangkah", aggregate: "average"}]
                 
                         });
-                        var chacePeriode = {
-                        0: tglAwal,
-                        1: tglAkhir,
-                        2: tempNoReg,
-                        3: temppr,
-                        4: tembng,
-                        5: temindikasi,
                         
-                    }
-                    
-                    cacheHelper.set('KepatuhanHandHygieneCtrl', chacePeriode);
-                    },function (error) {
-                    $scope.isRouteLoading = false;
-                    throw error;
                 })
             }
             function loadData() {
@@ -470,28 +406,33 @@ define(['initialize'], function (initialize) {
 
             $scope.Save = function () {
                 var listRawRequired = [
-                    // "item.indikator|k-ng-model|Indikator",
-                    // "item.jenisIndikator|k-ng-model|Jenis Indikator",
-                    // "item.Departemen|k-ng-model|Departemen"
+                    "item.objectruanganfk|k-ng-model|Ruangan",
+                    "item.objectjenispegawaifk|k-ng-model|Profesi yang di audit",
+                    "item.objectpegawaifk|k-ng-model|Pegawai"
                 ]
-                var listIndikasi = ""
-                        var a = ""
-                        var b = ""
-                        for (var i = $scope.currentlistIndikasi.length - 1; i >= 0; i--) {
-                            var c = $scope.currentlistIndikasi[i].value
-                            b = "," + c
-                            a = a + b
-                        }
-                        listIndikasi = a.slice(1, a.length)
-                var listHand = ""
-                        var a = ""
-                        var b = ""
-                        for (var i = $scope.currentlistHand.length - 1; i >= 0; i--) {
-                            var c = $scope.currentlistHand[i].value
-                            b = "," + c
-                            a = a + b
-                        }
-                        listHand = a.slice(1, a.length)
+                var listIndikasi = []
+                $scope.listIndikasi.map(function(item){
+                    if(item.isChecked == true){
+                        listIndikasi.push(item.value)
+                    }
+                })
+
+                var listHand = []
+                $scope.listHand.map(function(item){
+                    if(item.isChecked == true){
+                        listHand.push(item.value)
+                    }
+                })
+
+                if(listIndikasi.length <= 0){
+                    toastr.error('Pilih indikasi dulu')
+                    return
+                }
+
+                if(listHand.length <= 0){
+                    toastr.error('Pilih tindakan dulu')
+                    return
+                }
                     
                 var isValid = medifirstService.setValidation($scope, listRawRequired);
                 if (isValid.status) {
@@ -509,9 +450,30 @@ define(['initialize'], function (initialize) {
 
                         
                     }
+
+                    
                     medifirstService.post("emr/save-kepatuhanhandhygiene", data).then(function (e) {
                         init();
                         loadData();
+                        $scope.dialogPopup.close()
+
+                        // reset
+                        listIndikasi = []
+                        $scope.listIndikasi.map(function(item){
+                            item.isChecked = false
+                        })
+                        listHand = []
+                        $scope.listHand.map(function(item){
+                            item.isChecked = false
+                            
+                        })
+                        $scope.item.objectruanganfk = null
+                        $scope.item.objectjenispegawaifk = null
+                        $scope.item.objectpegawaifk = null
+                        $scope.item.langkah = null
+                        $scope.item.kesempatan = null
+                        norec = ''
+                        $scope.dataSelect = null
                         // $scope.item = {}
                     });
                 } else {

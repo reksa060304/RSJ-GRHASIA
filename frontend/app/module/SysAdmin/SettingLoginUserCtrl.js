@@ -93,8 +93,8 @@ define(['initialize'], function (initialize) {
                     // console.log($scope.listdatapegawai);
                 });
 
-                medifirstService.get("perencanaan/get-sub-sub-kegiatan?tahun="+$scope.now.getFullYear()).then(function(response){
-                    $scope.listSubSubKegiatan = response.data
+                medifirstService.get("anggaran/get-combo-anggaran").then(function(response){
+                    $scope.listSubSubKegiatan = response.data.divsubsubsubkg
                 })
             }
 

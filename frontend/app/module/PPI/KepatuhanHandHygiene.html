@@ -48,19 +48,6 @@
                 </div>
             
         </div>
-        <div class="grid_1">
-            <div class="grid_12">
-                <label c-label item="item" c-label-text="Indikasi"></label>
-            </div>
-            <div class="clear"></div>
-
-            <div class="grid_12">
-                <input style="width: 100%;" kendo-combo-box k-ng-model="item.indikasi2"
-                    k-data-text-field="'text'" k-data-value-field="'id'" k-filter="'contains'"
-                    k-auto-bind="false" k-data-source="listIndikasi" />
-            </div>
-
-        </div>
 
         <!-- Periode Pulang -->
         <div class="grid_4">
@@ -99,9 +86,7 @@
                 <em style="margin-top:6px;" ng-click='cariFilter()' id="iconButton" data-role="button"
                     class="k-button k-button-icon k-primary" role="button" aria-disabled="false" tabindex="0"><span
                         class="k-sprite k-icon k-i-search">Refresh</span></em>
-                <em style="margin-top:6px;" ng-click='resetFilter()' id="iconButton" data-role="button"
-                    class="k-button k-button-icon k-primary" role="button" aria-disabled="false" tabindex="0"><span
-                        class="k-sprite k-icon k-i-cancel">Refresh</span></em>
+                
             </div>
         </div>
         <div class="grid_12">
@@ -219,9 +204,9 @@
                         </div> -->
                         <div class="grid_12">
                             <div class="grid_12" ng-repeat="data in listIndikasi" style="margin-bottom: 10px">
-                                <input type="checkbox" ng-checked="data.isChecked" class="k-checkbox"
+                                <input type="checkbox" ng-model="data.isChecked" class="k-checkbox"
                                     name="{{data.indikasi}}" id="{{data.indikasi}}" value="{{data.value}}"
-                                    ng-click="addlistIndikasi(data)" ng-disabled="model.lakalantas===false">
+                                    ng-disabled="model.lakalantas===false">
                                 <label class="c-label k-checkbox-label"
                                     for="{{data.indikasi}}">{{data.indikasi}}</label>
                             </div>
@@ -232,9 +217,9 @@
                             <label c-label item="item">Tindakan</label>
                         </div>
                         <div class="grid_12" ng-repeat="data in listHand" style="margin-bottom: 10px">
-                            <input type="checkbox" ng-checked="data.isChecked" class="k-checkbox"
+                            <input type="checkbox" ng-model="data.isChecked" class="k-checkbox"
                                 name="{{data.tindakan}}" id="{{data.tindakan}}" value="{{data.value}}"
-                                ng-click="addlistHand(data)" ng-disabled="model.lakalantas===false">
+                                ng-disabled="model.lakalantas===false">
                             <label class="c-label k-checkbox-label"
                                 for="{{data.tindakan}}">{{data.tindakan}}</label>
                         </div>

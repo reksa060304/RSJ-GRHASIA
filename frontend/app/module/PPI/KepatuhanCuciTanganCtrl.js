@@ -30,10 +30,10 @@ define(['initialize'], function (initialize) {
             }     
 
             function LoadCombo() {
-                $scope.item.periodeAwal = new Date(moment($scope.now).format('YYYY-MM-DD 00:00'));
+                $scope.item.periodeAwal = new Date(moment($scope.now).format('YYYY-MM-01 00:00'));
                 $scope.item.periodeAkhir = new Date(moment($scope.now).format('YYYY-MM-DD 23:59'))
 
-                 medifirstService.getPart("sysadmin/general/get-datacombo-ruangan", true, true, 20).then(function (data) {
+                medifirstService.getPart("sysadmin/general/get-datacombo-ruangan", true, true, 20).then(function (data) {
                     $scope.listRuang = data;
                 });
                 
@@ -439,6 +439,16 @@ define(['initialize'], function (initialize) {
                         listHand.push(item.value)
                     }
                 })
+
+                if(listIndikasi.length <= 0){
+                    toastr.error('Pilih indikasi dulu')
+                    return
+                }
+
+                if(listHand.length <= 0){
+                    toastr.error('Pilih tindakan dulu')
+                    return
+                }
                     
                 var isValid = medifirstService.setValidation($scope, listRawRequired);
                 
