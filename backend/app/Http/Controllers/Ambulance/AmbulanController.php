@@ -2589,16 +2589,17 @@ class AmbulanController extends ApiController
                         END AS status
                     FROM
                         strukpelayanan_t AS sp
-                        INNER JOIN strukpelayanandetail_t AS spd ON spd.nostrukfk = sp.norec
-                        INNER JOIN produk_m AS pr ON pr.id = spd.objectprodukfk
-                        INNER JOIN petugaspelayananambulan_t AS ppa ON ppa.nostrukdetailfk = spd.norec
-                        INNER JOIN pegawai_m AS pm ON pm.id = ppa.objectpegawaifk
+                        LEFT JOIN strukpelayanandetail_t AS spd ON spd.nostrukfk = sp.norec
+                        LEFT JOIN produk_m AS pr ON pr.id = spd.objectprodukfk
+                        LEFT JOIN petugaspelayananambulan_t AS ppa ON ppa.nostrukdetailfk = spd.norec
+                        LEFT JOIN pegawai_m AS pm ON pm.id = ppa.objectpegawaifk
                         INNER JOIN pasien_m AS ps ON ps.nocm = sp.nocmklien
-                        INNER JOIN registrasiaset_t AS ra ON ra.norec = spd.nopolisifk
+                        LEFT JOIN registrasiaset_t AS ra ON ra.norec = spd.nopolisifk
                     WHERE
                         sp.nocmklien = '$no_rm'
                         AND sp.kdprofile = $kdProfile
                         AND sp.statusenabled = TRUE
+                        AND sp.isapprove IS NOT NULL
                     GROUP BY
                         pr.namaproduk,
                         spd.qtyproduk,
@@ -2906,15 +2907,29 @@ class AmbulanController extends ApiController
             $SP->isapprove = $ket_verif_simrs;
             $SP->save();
 
-            foreach ($req['bridging_data'] as $item) {
-                $PetugasPelAmbulan = new PetugasPelayananAmbulan();
-                $PetugasPelAmbulan->norec = $PetugasPelAmbulan->generateNewId();
-                $PetugasPelAmbulan->kdprofile = $kdProfile;
-                $PetugasPelAmbulan->statusenabled = true;
-                $PetugasPelAmbulan->objectpegawaifk = $req['driver_id'];
-                $PetugasPelAmbulan->nostrukdetailfk = $item['norec_pp'];
-                $PetugasPelAmbulan->tglpelayanan = Carbon::now()->format('Y-m-d H:i:s');
-                $PetugasPelAmbulan->save();
+            $SPD = StrukPelayananDetail::where('nostrukfk', $req['norec_sp'])->where('kdprofile', $kdProfile)->get();
+
+            if($verifikasi == "diterima"){
+                foreach ($SPD as $data) {
+                    $update_SPD = StrukPelayananDetail::where('norec', $data['norec'])->where('kdprofile', $kdProfile)->first();
+                    $update_SPD->nopolisifk = $req['kendaraan'];
+                    $update_SPD->save();
+                }
+
+                foreach ($req['bridging_data'] as $item) {
+                    $PetugasPelAmbulan = new PetugasPelayananAmbulan();
+                    $PetugasPelAmbulan->norec = $PetugasPelAmbulan->generateNewId();
+                    $PetugasPelAmbulan->kdprofile = $kdProfile;
+                    $PetugasPelAmbulan->statusenabled = true;
+                    $PetugasPelAmbulan->objectpegawaifk = $req['driver_id'];
+                    $PetugasPelAmbulan->nostrukdetailfk = $item['norec_pp'];
+                    $PetugasPelAmbulan->tglpelayanan = Carbon::now()->format('Y-m-d H:i:s');
+                    $PetugasPelAmbulan->save();
+                }
+            } else if($verifikasi == "ditolak") {
+                foreach ($SPD as $data) {
+                    $update_SPD = StrukPelayananDetail::where('norec', $data['norec'])->where('kdprofile', $kdProfile)->delete();
+                }
             }
 
             $baseUrlTelemedicine = $this->settingDataFixed('UrlBridgingTelemedicine', $kdProfile);
