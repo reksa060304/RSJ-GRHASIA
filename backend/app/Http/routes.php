@@ -29,8 +29,7 @@ Route::group(['middleware' => 'cors', 'prefix' => 'service'], function () {
 
     Route::group(['prefix' => 'medifirst2000'], function () {
 
-		// Masih dalam percobaan. abaikan
-		Route::get('report/coba-lapung', 'Report\ReportController@cobaLapung');
+		
     Route::get('report/coba-lapung-v3', 'Report\ReportController@cobaLapungV3');
 		
         // terima laundry
@@ -142,6 +141,11 @@ Route::group(['middleware' => 'cors', 'prefix' => 'service'], function () {
         Route::get('bendaharapenerimaan/cek-sts-manual', 'BendaharaPenerimaan\BendaharaPenerimaanController@cekSTSManual');
         Route::get('report/cetak-sts-manualv2', 'Report\ReportController@cetakSTSManualV2');
         // End bendahara penerimaan
+
+        // start bendahara pengeluaran
+        Route::get('bendaharapengeluaran/get-sppspmspj-byspj', 'BendaharaPengeluaran\BendaharaPengeluaranController@getSPPSPMSPJBySPJ');
+        Route::get('report/get-cetak-sppspj', 'Report\ReportController@getCetakSPPSPJ');
+        // end bendahara pengeluaran
 
 		Route::get('registrasi/laporan/get-rekap-kunjunganrs', 'Registrasi\LaporanRegistrasiController@getRekapKunjunganRS');
         Route::get('emr/get-riwayat-lab', 'EMR\EMRController@getRiwayatLab');

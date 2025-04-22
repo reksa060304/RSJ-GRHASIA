@@ -71,6 +71,7 @@ use App\Transaksi\StrukPelayanan;
 
 use App\Transaksi\StrukPerencanaan;
 use App\Transaksi\StrukPerencanaanDetail;
+use App\Transaksi\SPPSPMSPJ;
 
 class PerencanaanController extends ApiController {
     use Valet;
@@ -5670,9 +5671,77 @@ class PerencanaanController extends ApiController {
             $KB->pph = $request['pph'];
             $KB->save();
             $transStatus = 'true';
-       } catch (\Exception $e) {
+
+            // jika issppspm = true maka buat data sppdanspm
+            if($request['sppspm'] == true){
+                $setting = \DB::table('settinganggaran_t as st')
+                ->join('pegawai_m as pg','pg.id','=','st.objectkepalabludfk')
+                ->join('tahapanggaran_m as ta','ta.id','=','st.objecttahapaktivfk')
+                ->select('st.*','pg.namalengkap', 'ta.tahap', 'ta.id as idtahap', 'pg.id as idpegawai')
+                ->where('st.kdprofile', $idProfile)
+                ->where('st.statusenabled', true)
+                ->orderBy('st.tahunanggaran')
+                ->get();
+
+                $maxsppspm = DB::select(DB::raw("
+                    SELECT 
+                        COALESCE(MAX(CAST(SPLIT_PART(sppspm.nomorspp , '/', 3) as integer)), 0) as maxspp,
+                        COALESCE(MAX(CAST(SPLIT_PART(sppspm.nomorspm , '/', 3) as integer)), 0) as maxspm
+                    FROM sppspmspj_t sppspm
+                    JOIN strukrealisasi_t sr ON sr.norec = sppspm.objectspjfk AND sr.statusenabled = TRUE
+                    JOIN realisasidetail_t rd ON rd.strukrealisasifk = sr.norec AND rd.statusenabled = TRUE
+                    JOIN keteranganbelanja_t kb ON kb.norec = rd.keteranganbelanjafk AND kb.statusenabled = TRUE
+                    JOIN transaksianggaran2024_t ta ON ta.norec = kb.objecttransaksifk AND ta.statusenabled = TRUE
+                    WHERE
+                        sppspm.statusenabled = TRUE 
+                        AND ta.tahun = '".$setting[0]->tahunanggaran."'
+                "));
+
+                $nomorSPP = 0;
+                $nomorSPM = 0;
+                if(count($maxsppspm) > 0){
+                    $nomorSPP = $maxsppspm[0]->maxspp + 1;
+                    $nomorSPM = $maxsppspm[0]->maxspm + 1;
+                }else{
+                    $nomorSPP = 0 + 1;
+                    $nomorSPM = 0 + 1;
+                }
+
+                // jika digit >= dari 6
+                if(strlen((string)$nomorSPP) >= 6){
+                    $nomorSPPFix = '34.00/02.0/'.$nomorSPP.'/LS/1.02.0.00.0.00.01.0000/PPR1/'.date('m', strtotime($request['tglverif'])).'/'.date('Y', strtotime($request['tglverif']));;
+                }else{
+                    $nomorSPPFix = '34.00/02.0/'.str_pad((int)$nomorSPP, 6, "0", STR_PAD_LEFT).'/LS/1.02.0.00.0.00.01.0000/PPR1/'.date('m', strtotime($request['tglverif'])).'/'.date('Y', strtotime($request['tglverif']));
+                }
+                if(strlen((string)$nomorSPM) >= 6){
+                    $nomorSPMFix = '34.00/03.0/'.$nomorSPM.'/LS/1.02.0.00.0.00.01.0000/PPR1/'.date('m', strtotime($request['tglverif'])).'/'.date('Y', strtotime($request['tglverif']));
+                }else{
+                    $nomorSPMFix = '34.00/03.0/'.str_pad((int)$nomorSPM, 6, "0", STR_PAD_LEFT).'/LS/1.02.0.00.0.00.01.0000/PPR1/'.date('m', strtotime($request['tglverif'])).'/'.date('Y', strtotime($request['tglverif']));
+                }
+
+                // Simpan
+                $SPP = new SPPSPMSPJ();
+                $norecSPP = $SPP->generateNewId();
+                $SPP->norec = $norecSPP;
+                $SPP->statusenabled = true;
+                $SPP->kdprofile = 30;
+                $SPP->nomorspp = $nomorSPPFix;
+                $SPP->nomorspm = $nomorSPMFix;
+                $SPP->objectspjfk = $request['norec'];
+                $SPP->tanggal = $request['tglverif'];
+                $SPP->save();
+
+                // $SPM = new SPPSPMSPJ();
+                // $norecSPM = $SPM->generateNewId();
+                // $SPM->norec = $norecSPM;
+                // $SPM->nomorSPM = $nomorSPMFix;
+                // $SPM->objectspjfk = $request['norec'];
+                // $SPM->tanggal = $request['tglverif'];
+                // $SPM->save();
+            }
+        } catch (\Exception $e) {
             $transStatus = 'false';
-       }
+        }
 
         if ($transStatus == 'true') {
             $transMessage = "Simpan";
@@ -5732,6 +5801,12 @@ class PerencanaanController extends ApiController {
             $KB->keterangan = null;
             $KB->jumlahdibayarverif = null;
             $KB->save();
+
+            // disable sppspm
+            DB::table('sppspmspj_t')->where('objectspjfk', $request['norec'])->update([
+                'statusenabled' => false
+            ]);
+
             $transStatus = 'true';
        } catch (\Exception $e) {
             $transStatus = 'false';
@@ -6141,6 +6216,13 @@ class PerencanaanController extends ApiController {
             $MA->objectkepalabludfk = $request['objectkepalabludfk'];
             $MA->objecttahapaktivfk = $request['objecttahapaktivfk'];
             $MA->nomornpwp = $request['nomornpwp'];
+            $MA->objectbendpengeluaran = $request['objectbendpengeluaran'];
+            $MA->namabank = $request['namabank'];
+            $MA->norekening = $request['norekening'];
+            $MA->namadirekeningbank = $request['namadirekening'];
+            $MA->dasarpengeluaran = $request['dasarpengeluaran'];
+            $MA->nomordasarpengeluaran = $request['nodasarpengeluaran'];
+            $MA->tanggaldasarpengeluaran = $request['tglDasarPengeluaran'];
 
             $MA->save();
 

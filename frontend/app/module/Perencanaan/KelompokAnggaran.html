@@ -283,6 +283,65 @@
 													<input c-text-box type="input" class="k-textbox" ng-model="item.nomornpwp" />
 												</div>
 											</div>
+											<div class="grid_6">
+												<div class="grid_12">
+													<label c-label item="item" c-label-text="Nama Bendaha Pengeluaran" real></label>
+												</div>
+												<div class="grid_12">
+													<input style="width: 100%;" kendo-combo-box k-ng-model="item.objectbendpengeluaran"
+														k-data-text-field="'text'" k-data-value-field="'value'"
+														k-filter="'contains'" k-auto-bind="false" k-data-source="listBendahara" />
+												</div>
+											</div>
+											<div class="grid_6">
+												<div class="grid_12">
+													<label c-label item="item" c-label-text="Nama Bank" real></label>
+												</div>
+												<div class="grid_12">
+													<input c-text-box type="input" class="k-textbox" ng-model="item.namabank" />
+												</div>
+											</div>
+											<div class="grid_6">
+												<div class="grid_12">
+													<label c-label item="item" c-label-text="Nomor Rekening" real></label>
+												</div>
+												<div class="grid_12">
+													<input c-text-box type="input" class="k-textbox" ng-model="item.norekening" />
+												</div>
+											</div>
+											<div class="grid_6">
+												<div class="grid_12">
+													<label c-label item="item" c-label-text="Nama di Rekening" real></label>
+												</div>
+												<div class="grid_12">
+													<input c-text-box type="input" class="k-textbox" ng-model="item.namadirekening" />
+												</div>
+											</div>
+											<div class="grid_6">
+												<div class="grid_12">
+													<label c-label item="item" c-label-text="Dasar Pengeluaran" real></label>
+												</div>
+												<div class="grid_12">
+													<input c-text-box type="input" class="k-textbox" ng-model="item.dasarpengeluaran" />
+												</div>
+											</div>
+											<div class="grid_6">
+												<div class="grid_12">
+													<label c-label item="item" c-label-text="Nomor Dasar Pengeluaran" real></label>
+												</div>
+												<div class="grid_12">
+													<input c-text-box type="input" class="k-textbox" ng-model="item.nodasarpengeluaran" />
+												</div>
+											</div>
+											<div class="grid_6">
+												<div class="grid_12">
+													<label c-label item="item" c-label-text="Tanggal Dasar Pengeluaran" real></label>
+												</div>
+												<div class="grid_12">
+													<input style="width: 100%" k-ng-model="item.tglDasarPengeluaran" kendo-datepicker k-format="'yyyy-MM-dd'" />
+												</div>
+											</div>
+											
 										</div>
 										
 										<div class="grid_12">

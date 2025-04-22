@@ -116,6 +116,8 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
             $scope.selectedData3 = [];
             $scope.item.ispj = false
 
+            $scope.item.buatSPPSPM = false
+
             var defaultspj = null
 
             $scope.listStatusSPJ = [
@@ -1917,6 +1919,7 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
                     norec: $scope.norecverif,
                     pph: $scope.item.pph != undefined ? $scope.item.pph : 0,
                     ppn: $scope.item.ppn != undefined ? $scope.item.ppn : 0,
+                    sppspm: $scope.item.buatSPPSPM
                 }
 
                 if($scope.item.radioPencairanVerifikasi == '2'){
@@ -5436,6 +5439,12 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
                                     click: cetakSPJPlusLampiran,
                                     imageClass: "clinic fa"
                                 },
+                                {
+                                    text: "Cetak SPP",
+                                    click: cetakSPPSPJ,
+                                    imageClass: "clinic fa"
+                                },
+                                
                                 
                             ],
                                 title: "",
@@ -7135,6 +7144,29 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
                 })
             }
 
+            function cetakSPPSPJ(e){
+                e.preventDefault()
+
+                var dataItem = this.dataItem($(e.currentTarget).closest("tr"));
+
+                // cek jika punya spp dan spm
+                medifirstService.get("bendaharapengeluaran/get-sppspmspj-byspj" 
+                    + "?norecspj=" + dataItem.norec)
+                    .then(function (res) {
+
+                        if(res.data.length > 0){
+
+                            window.open(baseTransaksi + "report/get-cetak-sppspj?norecspj="+dataItem.norec, '_blank');
+
+                        }else{
+                            
+                            toastr.error('Tidak ada SPP dan SPM')
+                            return
+                        
+                        }
+                    });
+
+            }
 
             /////////////////////////////////////////////////////////////////////
         }

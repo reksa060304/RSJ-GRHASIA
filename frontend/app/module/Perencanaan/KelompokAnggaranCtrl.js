@@ -199,6 +199,7 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
                         $scope.listKonsolidasi3 = e.data.konso3
                         $scope.dataSourcePermenKelima = e.data.konsolidasikelima
                         $scope.dataSourcePermenKeempat = e.data.konsolidasikeempat
+                        $scope.listBendahara = e.data.bendahara
                     });
                 })
                 
@@ -332,6 +333,19 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
                         $scope.item.telepon = e.data.setting[0].telepon
                         $scope.item.faximile = e.data.setting[0].faximile
                         $scope.item.tahunanggaran = e.data.setting[0].tahunanggaran
+                        $scope.item.namabank = e.data.setting[0].namabank
+                        $scope.item.norekening = e.data.setting[0].norekening
+                        $scope.item.namadirekening = e.data.setting[0].namadirekeningbank
+                        $scope.item.dasarpengeluaran = e.data.setting[0].dasarpengeluaran
+                        $scope.item.nodasarpengeluaran = e.data.setting[0].nomordasarpengeluaran
+                        $scope.item.tglDasarPengeluaran = moment(e.data.setting[0].tanggaldasarpengeluaran).format('YYYY-MM-DD')
+
+                        $scope.listBendahara.map(function(item){
+                            if(item.value == e.data.setting[0].objectbendpengeluaran){
+                                $scope.item.objectbendpengeluaran = item
+                            }
+                        })
+
                         if ($scope.item.tahun == null) {
                             $scope.item.tahun = e.data.setting[0].tahunanggaran
                         }
@@ -3151,6 +3165,13 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
                         objecttahapaktivfk: $scope.item.objecttahapaktivfk.id,
                         namatahap: $scope.item.objecttahapaktivfk.tahap,
                         nomornpwp: $scope.item.nomornpwp,
+                        objectbendpengeluaran: $scope.item.objectbendpengeluaran ? $scope.item.objectbendpengeluaran.value : null,
+                        namabank: $scope.item.namabank,
+                        norekening: $scope.item.norekening,
+                        namadirekening: $scope.item.namadirekening,
+                        dasarpengeluaran: $scope.item.dasarpengeluaran,
+                        nodasarpengeluaran: $scope.item.nodasarpengeluaran,
+                        tglDasarPengeluaran: $scope.item.tglDasarPengeluaran ? moment($scope.item.tglDasarPengeluaran).format('YYYY-MM-DD') : null,
                     }
 
                     medifirstService.get('perencanaan/get-penjagaan-setting-anggaran?tahunanggaran='+ $scope.item.tahunanggaran ).then(function (e) {

@@ -1219,4 +1219,50 @@ class BendaharaPengeluaranController extends ApiController {
 
         return $this->respond($data);
     }
+
+    public function getSPPSPMSPJBySPJ(Request $request)
+    {
+
+        $kdProfile = $this->getDataKdProfile($request);
+        $idProfile = (int) $kdProfile;
+
+        $setting = \DB::table('settinganggaran_t as st')
+            ->join('pegawai_m as pg','pg.id','=','st.objectkepalabludfk')
+            ->join('tahapanggaran_m as ta','ta.id','=','st.objecttahapaktivfk')
+            ->select('st.*','pg.namalengkap', 'ta.tahap', 'ta.id as idtahap', 'pg.id as idpegawai')
+            ->where('st.kdprofile', $idProfile)
+            ->where('st.statusenabled', true)
+            ->orderBy('st.tahunanggaran')
+            ->get();
+
+        $data = DB::select(DB::raw("
+
+            SELECT
+                sppspm.norec AS norecsppspm,
+                sppspm.nomorspp,
+                sppspm.nomorspm,
+                sppspm.tanggal AS tglsppspm,
+                sr.norec AS norecspj,
+                sr.norealisasi AS nospj,
+                sr.tglrealisasi AS tglspj,
+                sr.totalbelanja AS totalspj
+            FROM sppspmspj_t sppspm
+            JOIN strukrealisasi_t sr ON sr.norec = sppspm.objectspjfk AND sr.statusenabled = TRUE
+            JOIN realisasidetail_t rd ON rd.strukrealisasifk = sr.norec AND rd.statusenabled = TRUE
+            JOIN keteranganbelanja_t kb ON kb.norec = rd.keteranganbelanjafk AND kb.statusenabled = TRUE
+            JOIN transaksianggaran2024_t ta ON ta.norec = kb.objecttransaksifk AND ta.statusenabled = TRUE
+            WHERE
+                sppspm.statusenabled = TRUE 
+                AND ta.tahun = '".$setting[0]->tahunanggaran."'
+                AND sr.norec = '".$request['norecspj']."'
+            GROUP BY
+                sppspm.norec,
+                sr.norec
+            ORDER BY
+                sppspm.tanggal DESC;
+        
+        "));
+
+        return $this->respond($data);
+    }
 }
