@@ -298,7 +298,7 @@
                     <td style="padding-top: 100px; text-align:center;">{{ isset($setting) ? $setting[0]->namabendahara : '' }}</td>
                 </tr>
                 <tr style="font-weight:bold;">
-                    <td style="text-align:center;">{{ isset($data) ? $setting[0]->nipkuasa : '' }}</td>
+                    <td style="text-align:center;">{{ isset($setting) ? $setting[0]->nipkuasa : '' }}</td>
                     <td style="text-align:center;">{{ isset($setting) ? $setting[0]->nipbendahara : '' }}</td>
                 </tr>
             </tbody>

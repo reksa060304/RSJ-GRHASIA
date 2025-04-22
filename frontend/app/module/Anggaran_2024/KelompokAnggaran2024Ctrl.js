@@ -5444,6 +5444,11 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
                                     click: cetakSPPSPJ,
                                     imageClass: "clinic fa"
                                 },
+                                {
+                                    text: "Cetak SPM",
+                                    click: cetakSPMSPJ,
+                                    imageClass: "clinic fa"
+                                },
                                 
                                 
                             ],
@@ -7157,6 +7162,30 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
                         if(res.data.length > 0){
 
                             window.open(baseTransaksi + "report/get-cetak-sppspj?norecspj="+dataItem.norec, '_blank');
+
+                        }else{
+                            
+                            toastr.error('Tidak ada SPP dan SPM')
+                            return
+                        
+                        }
+                    });
+
+            }
+
+            function cetakSPMSPJ(e){
+                e.preventDefault()
+
+                var dataItem = this.dataItem($(e.currentTarget).closest("tr"));
+
+                // cek jika punya spp dan spm
+                medifirstService.get("bendaharapengeluaran/get-sppspmspj-byspj" 
+                    + "?norecspj=" + dataItem.norec)
+                    .then(function (res) {
+
+                        if(res.data.length > 0){
+
+                            window.open(baseTransaksi + "report/get-cetak-spmspj?norecspj="+dataItem.norec, '_blank');
 
                         }else{
                             
