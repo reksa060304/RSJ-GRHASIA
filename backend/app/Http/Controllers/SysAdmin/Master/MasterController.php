@@ -1210,6 +1210,7 @@ class MasterController extends ApiController{
             $newR->alamatlengkap = $r_R['alamatlengkap'];
             $newR->bankrekeningnama = $r_R['bankrekeningnama'];
             $newR->bankrekeningnomor = $r_R['bankrekeningnomor'];
+            $newR->bankrekeningatasnama = $r_R['bankrekeningatasnama'];
             $newR->contactperson = $r_R['contactperson'];
             $newR->desakelurahan = $r_R['desakelurahan'];
             $newR->email = $r_R['email'];
@@ -1274,7 +1275,7 @@ class MasterController extends ApiController{
             DB::rollBack();
             $result = array(
                 "status" => 400,
-                "message"  => $transMessage,
+                "message"  => $e->getMessage(),
                 "datRekanan" => $newR,
                 "as" => 'egie@epic',
             );

@@ -30347,8 +30347,8 @@ public function suratBuktiPengembalian(Request $request)
                 rk.namarekanan,
                 rk.bankrekeningnomor as norekrekenan,
                 rk.bankrekeningatasnama as namarekrekanan,
-                rk.npwp as npwprekanan,
-                rk.namabankcabang
+                rk.bankrekeningnama,
+                rk.npwp as npwprekanan
             FROM sppspmspj_t sppspm
             JOIN strukrealisasi_t sr ON sr.norec = sppspm.objectspjfk AND sr.statusenabled = TRUE
             JOIN realisasidetail_t rd ON rd.strukrealisasifk = sr.norec AND rd.statusenabled = TRUE

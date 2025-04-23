@@ -283,6 +283,10 @@ define(['initialize'], function (initialize) {
 				if ($scope.item.idMap != undefined) {
 					idmap = $scope.item.idMap
 				}
+				var bankRekeningAtasNama = "";
+				if ($scope.item.bankRekeningAtasNama != undefined) {
+					bankRekeningAtasNama = $scope.item.bankRekeningAtasNama
+				}
 
 				var rekanan = {
 					//  kdruangan: $scope.item.kdRuangan,
@@ -300,6 +304,7 @@ define(['initialize'], function (initialize) {
 					// objectrekananheadfk: $scope.item.rekananhead.id,
 					bankrekeningnama: bankRekeningNama,
 					bankrekeningnomor: bankRekeningNomor,
+					bankrekeningatasnama: bankRekeningAtasNama,
 					contactperson: contactPerson,
 					desakelurahan: desaKelurahan,
 					email: email,

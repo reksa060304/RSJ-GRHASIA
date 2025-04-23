@@ -111,7 +111,7 @@
                                 </tr>
                                 <tr>
                                     <td style="width: 40%;">Nama Bank Cabang</td>
-                                    <td colspan="2" style="font-weight:bold;">: {{ isset($data) ? $data[0]->namabankcabang : '' }}</td>
+                                    <td colspan="2" style="font-weight:bold;">: {{ isset($data) ? $data[0]->bankrekeningnama : '' }}</td>
                                 </tr>
                                 <tr>
                                     <td style="width: 40%;">NPWP</td>
