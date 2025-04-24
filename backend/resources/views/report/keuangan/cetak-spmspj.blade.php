@@ -49,7 +49,7 @@
         <table style="font-weight:bold; line-height: 1.5;" cellspacing="0" cellpadding="0" width="100%">
             <tr>
                 <td style="text-align: center;">
-                    PROVINSI DI YOGYAKARTA
+                    PEMERINTAH PROVINSI DI YOGYAKARTA
                 </td>
             </tr>
             <tr>
@@ -237,10 +237,10 @@
                         </table>
                         <hr style="margin: 20px 0;" />
                         <p style="font-weight: bold;">Nomor dan Tanggal SPP</p>
-                        <p>{{ isset($data) ? $data[0]->nomorspp : '' }}, {{ $tglindo }}</p>
+                        <p>{{ isset($data) ? $data[0]->nomorspp : '' }}, {{ isset($tglsppspmindo) ? $tglsppspmindo : '' }}</p>
                     </td>
                     <td style="text-align: center;">
-                        <p>Yogyakarta, {{ $tglindo }}</p>
+                        <p>Yogyakarta, {{ isset($tglsppspmindo) ? $tglsppspmindo : '' }}</p>
                         <p>KUASA PENGGUNA ANGGARAN</p>
                         <P style="margin-top:80px; font-weight:bold; text-decoration:underline;">{{ isset($setting) ? $setting[0]->namalengkap : '' }}</P>
                         <p style="font-weight:bold;">{{ isset($setting) ? $setting[0]->nipkuasa : '' }}</p>

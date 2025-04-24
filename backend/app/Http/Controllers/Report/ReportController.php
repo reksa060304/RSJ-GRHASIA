@@ -30427,6 +30427,131 @@ public function suratBuktiPengembalian(Request $request)
             'data' => $data,
             'setting' => $setting,
             'tglindo' => isset($data) ? $this->tanggal_indonesia($data[0]->tglspj) : '',
+            'tglsppspmindo' => isset($data) ? $this->tanggal_indonesia($data[0]->tglsppspm) : '',
+            'tgldasarpengeluaran' => isset($setting) ? $this->tanggal_indonesia($setting[0]->tanggaldasarpengeluaran) : null,
+            'anggaran' => $anggaran,
+            'terbilang' => $terbilang,
+            'terbilangSPJ' => $terbilangSPJ,
+            'pajak' => $pajak,
+        ]);
+    }
+
+    public function getCetakSPTJM(Request $request)
+    {
+        $setting = \DB::table('settinganggaran_t as st')
+            ->join('pegawai_m as pg','pg.id','=','st.objectkepalabludfk')
+            ->join('pegawai_m as bend', 'bend.id', '=', 'st.objectbendpengeluaran')
+            ->join('tahapanggaran_m as ta','ta.id','=','st.objecttahapaktivfk')
+            ->select('st.*','pg.namalengkap', 'pg.nip as nipkuasa', 'ta.tahap', 'ta.id as idtahap', 'pg.id as idpegawai', 'bend.namalengkap as namabendahara', 'bend.nip as nipbendahara')
+            ->where('st.kdprofile', 30)
+            ->where('st.statusenabled', true)
+            ->orderBy('st.tahunanggaran')
+            ->get();
+
+        $data = DB::select(DB::raw("
+
+            SELECT
+                sppspm.norec AS norecsppspm,
+                sppspm.nomorspp,
+                sppspm.nomorspm,
+                sppspm.nomorsptjm,
+                sppspm.tanggal AS tglsppspm,
+                sr.norec AS norecspj,
+                sr.norealisasi AS nospj,
+                sr.tglrealisasi AS tglspj,
+                sr.totalbelanja AS totalspj,
+                subsub.kode AS kodesubsub,
+                subsub.keterangan AS keterangansubsub,
+                sub.kode AS kodesub,
+                sub.keterangan AS keterangansub,
+                ma.kodemataanggaran,
+                ma.namamataanggaran,
+                pptk.namalengkap,
+                pptk.nip as nippptk,
+                rk.namarekanan,
+                rk.bankrekeningnomor as norekrekenan,
+                rk.bankrekeningatasnama as namarekrekanan,
+                rk.bankrekeningnama,
+                rk.npwp as npwprekanan
+            FROM sppspmspj_t sppspm
+            JOIN strukrealisasi_t sr ON sr.norec = sppspm.objectspjfk AND sr.statusenabled = TRUE
+            JOIN realisasidetail_t rd ON rd.strukrealisasifk = sr.norec AND rd.statusenabled = TRUE
+            JOIN keteranganbelanja_t kb ON kb.norec = rd.keteranganbelanjafk AND kb.statusenabled = TRUE
+            JOIN transaksianggaran2024_t ta ON ta.norec = kb.objecttransaksifk AND ta.statusenabled = TRUE
+            JOIN pegawai_m pptk ON pptk.id = ta.objectpptkfk AND pptk.statusenabled = TRUE
+            JOIN kegiatananggaran2024_m subsub ON subsub.id = sr.objectkegiatanfk AND subsub.statusenabled = TRUE
+            JOIN kegiatananggaran2024_m sub ON sub.id = subsub.headfk AND sub.statusenabled = TRUE
+            JOIN mataanggaran_m ma ON ma.id = sr.objectmataanggaranfk AND ma.statusenabled = TRUE
+            LEFT JOIN rekanan_m rk ON rk.id = sr.rekananfk AND rk.statusenabled = TRUE
+            WHERE
+                sppspm.statusenabled = TRUE 
+                AND ta.tahun = '".$setting[0]->tahunanggaran."'
+                AND sr.norec = '".$request['norecspj']."'
+            GROUP BY
+                sppspm.norec,
+                sr.norec,
+                subsub.id,
+                sub.id,
+                ma.id,
+                pptk.id,
+                rk.id
+            ORDER BY
+                sppspm.tanggal DESC;
+        "));
+
+        $anggaran = DB::select(DB::raw("
+
+            SELECT
+                SUM(kb.subtotal) AS totalanggaran
+            FROM keteranganbelanja_t kb
+            JOIN transaksianggaran2024_t ta ON ta.norec = kb.objecttransaksifk AND ta.statusenabled = TRUE
+            JOIN kegiatananggaran2024_m ka ON ka.id = ta.objectkegiatanfk AND ka.statusenabled = TRUE
+            JOIN mataanggaran_m ma ON ma.id = kb.objectmataanggaranfk AND ma.statusenabled = TRUE
+            WHERE
+                kb.statusenabled = TRUE 
+                AND ta.tahun = '".$setting[0]->tahunanggaran."'
+                AND ta.objecttahapfk = ".$setting[0]->objecttahapaktivfk."
+                AND kb.objectasalprodukfk = 18
+        
+        "));
+
+        $pajak = DB::select(DB::raw("
+
+            SELECT
+                pp.objectbkufk,
+                pp.nopajak nopajakpp,
+                pp.uraianpajak,
+                sr.norealisasi,
+                string_agg ( DISTINCT rd.uraian, ',' ) uraian,
+                sr.tglverif tglrealisasi,
+                jp.reportspm,
+                CASE WHEN pp.pph IS NOT NULL THEN pp.pph ELSE pp.ppn END AS jumlah,
+                CASE WHEN pp.idbillpph IS NOT NULL THEN pp.idbillpph ELSE pp.idbillppn END AS idbill 
+            FROM strukrealisasi_t sr
+            INNER JOIN realisasidetail_t rd ON rd.strukrealisasifk = sr.norec AND rd.statusenabled = TRUE AND rd.kdprofile = 30
+            JOIN pemungutanpajak_t pp ON pp.objectspjfk = sr.norec AND pp.statusenabled = TRUE AND pp.kdprofile = 30
+            LEFT JOIN jenispajak_m jp ON jp.ID = pp.objectjenispphfk AND jp.statusenabled = TRUE AND jp.kdprofile = 30
+            WHERE
+                sr.statusenabled = TRUE
+                AND sr.norec = '".$request['norecspj']."'
+                AND sr.kdprofile = 30
+            GROUP BY
+                pp.norec,
+                jp.reportspm,
+                sr.norealisasi,
+                sr.tglverif,
+                pp.pph
+
+        "));
+
+        $terbilang = isset($anggaran) ? $this->terbilang($anggaran[0]->totalanggaran) : '';
+        $terbilangSPJ = isset($data) ? $this->terbilang($data[0]->totalspj) : '';
+
+        return view('report.keuangan.cetak-sptjm', [
+            'data' => $data,
+            'setting' => $setting,
+            'tglindo' => isset($data) ? $this->tanggal_indonesia($data[0]->tglspj) : '',
+            'tglsppspmindo' => isset($data) ? $this->tanggal_indonesia($data[0]->tglsppspm) : '',
             'tgldasarpengeluaran' => isset($setting) ? $this->tanggal_indonesia($setting[0]->tanggaldasarpengeluaran) : null,
             'anggaran' => $anggaran,
             'terbilang' => $terbilang,

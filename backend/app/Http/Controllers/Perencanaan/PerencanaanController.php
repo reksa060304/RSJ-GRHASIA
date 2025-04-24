@@ -5686,7 +5686,8 @@ class PerencanaanController extends ApiController {
                 $maxsppspm = DB::select(DB::raw("
                     SELECT 
                         COALESCE(MAX(CAST(SPLIT_PART(sppspm.nomorspp , '/', 3) as integer)), 0) as maxspp,
-                        COALESCE(MAX(CAST(SPLIT_PART(sppspm.nomorspm , '/', 3) as integer)), 0) as maxspm
+                        COALESCE(MAX(CAST(SPLIT_PART(sppspm.nomorspm , '/', 3) as integer)), 0) as maxspm,
+                        COALESCE(MAX(CAST(SPLIT_PART(sppspm.nomorsptjm , '/', 3) as integer)), 0) as maxsptjm
                     FROM sppspmspj_t sppspm
                     JOIN strukrealisasi_t sr ON sr.norec = sppspm.objectspjfk AND sr.statusenabled = TRUE
                     JOIN realisasidetail_t rd ON rd.strukrealisasifk = sr.norec AND rd.statusenabled = TRUE
@@ -5699,12 +5700,15 @@ class PerencanaanController extends ApiController {
 
                 $nomorSPP = 0;
                 $nomorSPM = 0;
+                $nomorSPTJM = 0;
                 if(count($maxsppspm) > 0){
                     $nomorSPP = $maxsppspm[0]->maxspp + 1;
                     $nomorSPM = $maxsppspm[0]->maxspm + 1;
+                    $nomorSPTJM = $maxsppspm[0]->maxsptjm + 1;
                 }else{
                     $nomorSPP = 0 + 1;
                     $nomorSPM = 0 + 1;
+                    $nomorSPTJM = 0 + 1;
                 }
 
                 // jika digit >= dari 6
@@ -5718,6 +5722,12 @@ class PerencanaanController extends ApiController {
                 }else{
                     $nomorSPMFix = '34.00/03.0/'.str_pad((int)$nomorSPM, 6, "0", STR_PAD_LEFT).'/LS/1.02.0.00.0.00.01.0000/PPR1/'.date('m', strtotime($request['tglverif'])).'/'.date('Y', strtotime($request['tglverif']));
                 }
+                
+                if(strlen((string)$nomorSPTJM) >= 6){
+                    $nomorSPTJMFix = '34.00/03.0/'.$nomorSPTJM.'/SPTJM-SPM-LS/1.02.0.00.0.00.01.0000/PPR1/'.date('m', strtotime($request['tglverif'])).'/'.date('Y', strtotime($request['tglverif']));
+                }else{
+                    $nomorSPTJMFix = '34.00/03.0/'.str_pad((int)$nomorSPTJM, 6, "0", STR_PAD_LEFT).'/SPTJM-SPM-LS/1.02.0.00.0.00.01.0000/PPR1/'.date('m', strtotime($request['tglverif'])).'/'.date('Y', strtotime($request['tglverif']));
+                }
 
                 // Simpan
                 $SPP = new SPPSPMSPJ();
@@ -5727,6 +5737,7 @@ class PerencanaanController extends ApiController {
                 $SPP->kdprofile = 30;
                 $SPP->nomorspp = $nomorSPPFix;
                 $SPP->nomorspm = $nomorSPMFix;
+                $SPP->nomorsptjm = $nomorSPTJMFix;
                 $SPP->objectspjfk = $request['norec'];
                 $SPP->tanggal = $request['tglverif'];
                 $SPP->save();
