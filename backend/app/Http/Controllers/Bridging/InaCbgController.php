@@ -1415,8 +1415,7 @@ class InaCbgController   extends ApiController
             // ->join('antrianpasiendiperiksa_t as apd', 'pd.norec', '=', 'apd.noregistrasifk')
             ->join(DB::raw('antrianpasiendiperiksa_t as apd'), function ($join) {
                 $join->on('apd.noregistrasifk', '=', 'pd.norec')
-                     ->on('apd.objectruanganfk', '=', 'pd.objectruanganlastfk')
-                     ->on('apd.tglkeluar','=','pd.tglpulang');
+                     ->on('apd.objectruanganfk', '=', 'pd.objectruanganlastfk');
                     //  ->on(DB::raw('apd.tglmasuk'), '=', DB::raw('(SELECT tglmasuk FROM antrianpasiendiperiksa_t WHERE noregistrasifk = pd.norec and objectruanganfk = pd.objectruanganlastfk order by tglmasuk desc limit 1)'));
             })
             ->leftjoin('asalrujukan_m as asl', 'asl.id', '=', 'apd.objectasalrujukanfk')
