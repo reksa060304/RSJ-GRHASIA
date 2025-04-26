@@ -59,7 +59,9 @@ define(['initialize'], function (initialize) {
                     let masterHand = data.data
                     
                     $scope.listHand = masterHand;
-                });   
+                });
+                
+                $scope.pegawai = medifirstService.getPegawaiLogin();
             }
            
             
@@ -221,9 +223,6 @@ define(['initialize'], function (initialize) {
                               datas[index].nilailangkah=0
                               datas[index].snilailangkah="0 %"
                             } else if (langkah==1){
-                              datas[index].nilailangkah=50
-                              datas[index].snilailangkah="50 %"
-                            } else if (langkah==2){
                               datas[index].nilailangkah=100
                               datas[index].snilailangkah="100 %"
                             }
@@ -273,7 +272,7 @@ define(['initialize'], function (initialize) {
                         }
                         $scope.dataSource = new kendo.data.DataSource({
                             data: datas,
-                            pageSize: 10,
+                            pageSize: 5,
                             total: data.length,
                             serverPaging: false,
                             schema:{
@@ -331,6 +330,10 @@ define(['initialize'], function (initialize) {
                 $scope.isRouteLoading = false;
                 $scope.isEdit = false
                 $scope.disabledText = false
+
+                // default kesempatan
+                $scope.item.kesempatan = 1
+
                 $scope.dialogPopup.center().open()
                 
                 var tglAwal = moment($scope.item.periodeAwal).format('YYYY-MM-DD HH:mm:ss');
@@ -404,7 +407,10 @@ define(['initialize'], function (initialize) {
                 }
             }
 
+            // #region simpan
             $scope.Save = function () {
+
+
                 var listRawRequired = [
                     "item.objectruanganfk|k-ng-model|Ruangan",
                     "item.objectjenispegawaifk|k-ng-model|Profesi yang di audit",
@@ -447,8 +453,7 @@ define(['initialize'], function (initialize) {
                         "objecthygienefk" :listHand != undefined ? listHand : null,
                         "langkah" :$scope.item.langkah != undefined ? $scope.item.langkah : 0,
                         "kesempatan" :$scope.item.kesempatan != undefined ? $scope.item.kesempatan : 0,
-
-                        
+                        "objectobserverfk" : $scope.pegawai.id
                     }
 
                     
@@ -484,6 +489,7 @@ define(['initialize'], function (initialize) {
                 var tglAkhir = moment($scope.item.periodeAkhir).format('YYYY-MM-DD HH:mm:ss');
                 
             }
+            // #endregion simpan
 
             $scope.resetFilter = function () {
                 $scope.cari = {};
@@ -729,6 +735,37 @@ define(['initialize'], function (initialize) {
                     $scope.item.formula = text
                 }
             });
+
+            // #region cetak laporan
+            $scope.cetakLaporan = function(){
+                $scope.popUpCetakLaporan.center().open()
+            }
+
+            $scope.batalCetak = function(){
+                // reset tgl cetak
+                $scope.item.tglCetak = ''
+                $scope.item.ruanganCetak = null
+
+                $scope.popUpCetakLaporan.close()
+            }
+
+            $scope.cetakLaporanHygien = function(){
+                // validasi
+                if(!$scope.item.tglCetak){
+                    toastr.error('Pilih tanggal dulu')
+                    return
+                }
+
+                if(!$scope.item.ruanganCetak){
+                    toastr.error('Pilih ruangan dulu')
+                    return
+                }
+
+                window.open(baseTransaksi + "report/cetak-laporan-ipcn" 
+                    + "?tglcetak=" + moment($scope.item.tglCetak).format('YYYY-MM-DD')
+                    + "&objectruanganfk=" + $scope.item.ruanganCetak.id, '_blank');
+            }
+            // #endregion cetak laporan
 
             //** BATAS SUCI */
         }

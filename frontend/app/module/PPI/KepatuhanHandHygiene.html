@@ -134,11 +134,18 @@
                     <span class="title">Input</span>
                 </c-button>
             </div>
+
+            <div class="grid_2" style="float:right">
+                <c-button style="width: 100%; font-size: 24px;" size="36" position=" 'right'"
+                    ng-click="cetakLaporan()">
+                    <span class="title">Cetak Laporan</span>
+                </c-button>
+            </div>
         </div>
     </div>
 </div>
 <!-- popup konfirmasi -->
-<div kendo-window="dialogPopup" k-title="'Form /'" k-width="900" k-height="600" k-visible="false"
+<div kendo-window="dialogPopup" k-title="'Form /'" k-width="900" k-visible="false"
     k-on-close="customClicked()">
     <div class="panel panel-default panel-white container_12">
         <div class="grid_12">
@@ -237,7 +244,19 @@
 
                         <div class="grid_12" >
                             <div class="grid_12">
-                            <input class="k-textbox" ng-model="item.kesempatan" style="width: 50%" data-bind="value: pic" type="number" min="1" max="5">
+                                <input class="k-textbox" ng-model="item.kesempatan" style="width: 50%" data-bind="value: pic" type="number" min="1" max="5">
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="grid_3" >
+                        <div class="grid_12" style="margin-left: 15px;">
+                            <label c-label item="item">Kesesuaian</label>
+                        </div>
+
+                        <div class="grid_12" >
+                            <div class="grid_12">
+                                <input class="k-textbox" ng-model="item.langkah" type="number" min="0" max="1" placeholder="masukan nilai">
                             </div>
                         </div>
                     </div>
@@ -364,7 +383,7 @@
                     </div>
                         
                 </div>  -->
-                <div class="grid_12" style="margin-top: 10px;margin-bottom: 20px">
+                <!-- <div class="grid_12" style="margin-top: 10px;margin-bottom: 20px">
                     <div class="panel panel-default container_12">
                         <div class="panel-heading" c-translate> Audit Cuci Tangan</div>
                     </div>
@@ -381,8 +400,8 @@
                      <label c-label item="item">0: Tidak bisa melakukan</label>
                      <label c-label item="item">1: Melakukan tapi salah</label>
                      <label c-label item="item">2: Melakukan dengan benar</label>
-                 </div>  
-                </div>
+                    </div>  
+                </div> -->
 
             </div>
 
@@ -424,7 +443,51 @@
     </div>
             
                     
+</div>
+
+<div kendo-window="popUpCetakLaporan " k-title="'Cetak Laporan'" k-visible="false" k-width="900">
+    <div class="panel panel-default container_12">
+         
+        <div class="grid" style="margin-top: 1.5em;">
+            <div class="grid_3">
+                <div class="grid_12">
+                    Tanggal Cetak
+                </div>
+                <div class="grid_12">
+                    <input style="width: 100%" k-ng-model="item.tglCetak" kendo-datepicker k-format="'yyyy-MM-dd'" />
+                </div>
+            </div>
+			<div class="grid_3">
+				<label c-label item="item" c-label-text="Ruangan"></label>
+				<input ng-disabled="isDisable" style="width: 100%;" kendo-combo-box k-ng-model="item.ruanganCetak"
+					k-data-text-field="'text'" k-data-value-field="'value'" k-filter="'contains'" k-auto-bind="false"
+					k-data-source="listRuang" />
+			</div>
+        </div>
+
+        <!-- Button -->
+        <div class="grid" >
+            <div class="grid_6"></div>
+            <div class="grid_6">
+                <div class="grid_12">
+                    <div class="grid_6">
+                        <button class="btnTemplate1 cancel" ng-click="batalCetak()">
+                            Batal
+                        </button>
+
+                    </div>
+                    <div class="grid_6">
+                        <button class="btnTemplate1" ng-click="cetakLaporanSurveilansHarian()">
+                            Cetak
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
     </div>
+</div>
+
 <div class="grid_12" style="margin-top:60px">
     <div ng-include='"../app/template/Shared/TemplateLoading"'></div>
 </div>

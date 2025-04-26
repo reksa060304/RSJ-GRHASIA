@@ -179,7 +179,7 @@
 
                             <td>
                                 @foreach ($data as $itemKet)
-                                    @if ($dt->namaruangan == $itemKet->namaruangan)
+                                    @if ($dt->namaruangan == $itemKet->namaruangan && $itemKet->keterangan !== null)
                                         {{ $itemKet->keterangan }},
                                     @endif
                                 @endforeach

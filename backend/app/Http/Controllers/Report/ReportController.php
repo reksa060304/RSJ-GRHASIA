@@ -30559,4 +30559,62 @@ public function suratBuktiPengembalian(Request $request)
             'pajak' => $pajak,
         ]);
     }
+
+    public function cetakLaporanIPCN(Request $request)
+    {
+
+        $data = DB::select(DB::raw("
+            SELECT
+                obs.id as idobserver,
+                obs.namalengkap as namaobserver,
+                kh.tanggal,
+                jpg.jenispegawai as profesiaudit,
+                kh.objectindikasifk,
+                kh.objecthygienefk,
+                kh.langkah,
+                kh.kesempatan,
+                ru.namaruangan
+            FROM kepatuhanhandhygiene_t kh
+            JOIN pegawai_m pg ON pg.id = kh.objectpegawaifk AND pg.statusenabled = TRUE
+            JOIN ruangan_m ru ON ru.id = kh.objectruanganfk AND ru.statusenabled = TRUE
+            LEFT JOIN pegawai_m obs ON obs.id = kh.objectobserverfk AND obs.statusenabled = TRUE
+            LEFT JOIN jenispegawai_m jpg ON jpg.id = kh.objectjenispegawaifk AND jpg.statusenabled = TRUE
+            WHERE
+                kh.statusenabled = TRUE
+                AND kh.kdprofile = 30
+                AND kh.tanggal BETWEEN DATE_TRUNC('MONTH', timestamp '".$request['tglcetak']."') AND '".$request['tglcetak']."'
+                AND ru.id = ".$request['objectruanganfk']."
+            ORDER BY
+                kh.tanggal DESC
+        
+        "));
+
+        $masterIndikasi = DB::select(DB::raw("
+            SELECT
+                ind.*
+            FROM indikasi_m ind
+            WHERE
+                ind.statusenabled = TRUE
+                AND ind.kdprofile = 30
+            ORDER BY
+                ind.id ASC
+        "));
+
+        $masterHand = DB::select(DB::raw("
+            SELECT
+                hnd.*
+            FROM handhygiene_m hnd
+            WHERE
+                hnd.statusenabled = TRUE
+                AND hnd.kdprofile = 30
+            ORDER BY
+                hnd.id ASC
+        "));
+
+        return view('report.EMR.cetak-laporan-ipcn', [
+            'data' => $data,
+            'masterIndikasi' => $masterIndikasi,
+            'masterHand' => $masterHand
+        ]);
+    }
 }

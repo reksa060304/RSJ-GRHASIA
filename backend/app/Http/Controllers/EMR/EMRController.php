@@ -9537,6 +9537,7 @@ class EMRController  extends ApiController
             $dataSave->langkah = $dataReq['langkah'];
             $dataSave->objectruanganfk = $dataReq['objectruanganfk'];
             $dataSave->kesempatan = $dataReq['kesempatan'];
+            $dataSave->objectobserverfk = $dataReq['objectobserverfk'];
             $dataSave->save();
             $norec = $dataSave->norec;
 
