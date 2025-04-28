@@ -120,35 +120,42 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
                     var row = rows[i];
                     var berakhirsip = kendoGrid.dataItem(row).berakhirsip;
                     var berakhirstr = kendoGrid.dataItem(row).berakhirstr;
-                    if (berakhirsip != null) {
-                        var dateEx = new Date(berakhirsip);
-                        var diffDays = monthDiff(
-                            dateNow,
-                            dateEx, // November 4th, 2008
-                            // March 12th, 2010
-                        );
-                        if (diffDays <= 3) {
-                            $(row.cells[3]).addClass("red");
-                        }
-                        else if (diffDays <= 6) {
-                            toastr.warning("SIP dan STR " + kendoGrid.dataItem(row).namapegawai + " akan berakhir dalam " + diffDays + " bulan");
-                            $(row.cells[3]).addClass("koneng");
-                        }
-                        console.log(diffDays);
+
+                   if (berakhirsip != null) {
+                    var dateEx = new Date(berakhirsip);
+                    var diffDays = monthDiff(
+                        dateNow,
+                        dateEx
+                    );
+                    
+                    if (dateEx < dateNow) {
+                        $(row.cells[4]).addClass("red");
                     }
-                    if (berakhirstr != null) {
-                        var dateExx = new Date(berakhirstr);
-                        var diffDayss = monthDiff(
-                            // November 4th, 2008
-                            dateNow,  // March 12th, 2010,
-                            dateExx
-                        );
-                        if (diffDayss <= 3) {
-                            $(row.cells[6]).addClass("red");
-                        } else if (diffDays <= 6) {
-                            $(row.cells[6]).addClass("koneng");
-                        }
+   
+                    else if (diffDays <= 6) {
+                        toastr.warning("SIP " + kendoGrid.dataItem(row).namapegawai + " akan berakhir dalam " + diffDays + " bulan");
+                        $(row.cells[4]).addClass("koneng");
                     }
+
+                }
+
+                if (berakhirstr != null) {
+                    var dateExx = new Date(berakhirstr);
+                    var diffDayss = monthDiff(
+                        dateNow,
+                        dateExx
+                    );
+                    if (dateExx < dateNow) {
+                        $(row.cells[7]).addClass("red");
+                    } 
+                    
+                    else if (diffDayss <= 6) {
+                        toastr.warning("STR " + kendoGrid.dataItem(row).namapegawai + " akan berakhir dalam " + diffDayss + " bulan");
+                        $(row.cells[7]).addClass("koneng");
+                    }                 
+                }
+
+                    
                 }
             }
             $scope.opsiGridSip = {
