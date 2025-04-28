@@ -1679,23 +1679,36 @@ class SumberDayaManusiaController extends ApiController {
         $kdProfile = (int) $this->getDataKdProfile($request);
         $tglSekarang = Carbon::now();
         $data = \DB::table('masaberlakusipstr_t as mbs')
-            ->leftJoin('jenismasaberlakustrsip_m as jmb','jmb.id','=','mbs.jenismasaberlakufk')
-            ->leftJoin('pegawai_m as pg','pg.id','=','mbs.pegawaifk')
-            ->leftJoin('unitkerjapegawai_m as uk','uk.id','=','pg.objectunitkerjapegawaifk')
-            ->leftJoin('unitkerjapegawai_m as uk2','uk2.id','=','mbs.subunitkerjafk')
-            ->select(\DB::raw("mbs.*,jmb.jenismasaberlaku, pg.namalengkap as namapegawai,pg.nip_pns as nipPns, uk.name as unitkerja,
-			                  uk2.name as subunit"))
-            ->where('pg.statusenabled',true)
-            ->where('mbs.kdprofile', $kdProfile)
-            // ->where('mbs.jenismasaberlakufk',1)
-            // ->orderBy('mbs.berakhirstr','asc');
-            ->orderByRaw("
-            CASE 
-                WHEN mbs.berakhirstr <= ? THEN 0 
-                WHEN mbs.berakhirsip <= ? THEN 1 
-                ELSE 2 
-            END, 
-            mbs.berakhirstr ASC, mbs.berakhirsip ASC", [$tglSekarang, $tglSekarang]);           
+        ->leftJoin('jenismasaberlakustrsip_m as jmb','jmb.id','=','mbs.jenismasaberlakufk')
+        ->leftJoin('pegawai_m as pg','pg.id','=','mbs.pegawaifk')
+        ->leftJoin('unitkerjapegawai_m as uk','uk.id','=','pg.objectunitkerjapegawaifk')
+        ->leftJoin('unitkerjapegawai_m as uk2','uk2.id','=','mbs.subunitkerjafk')
+        ->select(\DB::raw("mbs.*,jmb.jenismasaberlaku, pg.namalengkap as namapegawai,pg.nip_pns as nipPns, uk.name as unitkerja,
+        uk2.name as subunit, 
+        CASE 
+          WHEN (mbs.berakhirsip IS NOT NULL AND mbs.berakhirsip <= CURRENT_DATE + INTERVAL '180 days') OR 
+               (mbs.berakhirstr IS NOT NULL AND mbs.berakhirstr <= CURRENT_DATE + INTERVAL '180 days') 
+          THEN 1 ELSE 0 
+        END as mendekati_kedaluwarsa"))
+        ->where('pg.statusenabled',true)
+        ->where('mbs.kdprofile', $kdProfile)
+        // ->where('mbs.jenismasaberlakufk',1)
+        ->orderBy('mendekati_kedaluwarsa', 'desc')
+        ->orderBy('mbs.berakhirsip', 'asc')
+        ->orderBy('mbs.berakhirstr', 'asc');
+            
+            // ->where('pg.statusenabled',true)
+            // ->where('mbs.kdprofile', $kdProfile)
+            // // ->where('mbs.jenismasaberlakufk',1)
+            // // ->orderBy('mbs.berakhirstr','asc');
+            // ->orderByRaw("
+            // CASE 
+            //     WHEN mbs.berakhirstr <= ? THEN 0 
+            //     WHEN mbs.berakhirsip <= ? THEN 1 
+            //     ELSE 2 
+            // END, 
+            // mbs.berakhirstr ASC, mbs.berakhirsip ASC", [$tglSekarang, $tglSekarang]);     
+
 
 //        if (isset($request['tglAwal']) && $request['tglAwal'] != "" && $request['tglAwal'] != "undefined") {
 //            $data = $data->where('pjk.tgljadwal', '>=', $request['tglAwal']);
