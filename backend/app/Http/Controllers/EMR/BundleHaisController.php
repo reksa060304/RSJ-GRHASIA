@@ -170,10 +170,10 @@ class BundleHaisController extends ApiController
         foreach($data as $da){
             foreach($masterTindakandanInfeksi as $ma){
                 $func = 'w'. $ma->id;
-                $da->$func = false;
+                $da->$func = '0';
                 foreach($detail as $dt){
                     if($da->norec == $dt->bundlehaifk && $dt->bundlefk == $ma->id){
-                        $da->$func = true;
+                        $da->$func = '1';
                     }
                 }
             }

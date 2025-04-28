@@ -64,7 +64,7 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
                             field: `w${element.id}`, 
                             title: element.namabundle, 
                             width: 150,
-                            template: `# if(w${element.id}==true) {# ✔ # } else {# - #} #`,
+                            template: `# if(w${element.id}=='1') {# ✔ # } else {# - #} #`,
                             headerAttributes: { style: "text-align : center" },
                         }
                         // console.log(item);
@@ -81,7 +81,7 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
                                     field: `w${element.id}`, 
                                     title: element.namabundle, 
                                     width: 150,
-                                    template: `# if(w${element.id}==true) {# ✔ # } else {# - #} #`,
+                                    template: `# if(w${element.id}=='1') {# ✔ # } else {# - #} #`,
                                     headerAttributes: { style: "text-align : center" },
                                 }
                             ]
