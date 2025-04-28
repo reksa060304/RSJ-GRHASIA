@@ -1,5 +1,8 @@
-define(['initialize'], function (initialize) {
+define(['initialize', 'Configuration'], function (initialize, configuration) {
     'use strict';
+
+    var baseTransaksi = configuration.baseApiBackend;
+
     initialize.controller('KepatuhanHandHygieneCtrl', ['$state', '$q', '$scope', 'CacheHelper', 'DateHelper', 'MedifirstService',
         function ($state, $q, $scope, cacheHelper, dateHelper, medifirstService) {
             
@@ -272,7 +275,7 @@ define(['initialize'], function (initialize) {
                         }
                         $scope.dataSource = new kendo.data.DataSource({
                             data: datas,
-                            pageSize: 5,
+                            pageSize: 10,
                             total: data.length,
                             serverPaging: false,
                             schema:{
@@ -749,7 +752,7 @@ define(['initialize'], function (initialize) {
                 $scope.popUpCetakLaporan.close()
             }
 
-            $scope.cetakLaporanHygien = function(){
+            $scope.cetakLaporanIPCN = function(){
                 // validasi
                 if(!$scope.item.tglCetak){
                     toastr.error('Pilih tanggal dulu')
@@ -763,7 +766,7 @@ define(['initialize'], function (initialize) {
 
                 window.open(baseTransaksi + "report/cetak-laporan-ipcn" 
                     + "?tglcetak=" + moment($scope.item.tglCetak).format('YYYY-MM-DD')
-                    + "&objectruanganfk=" + $scope.item.ruanganCetak.id, '_blank');
+                    + "&objectruanganfk=" + $scope.item.ruanganCetak.value, '_blank');
             }
             // #endregion cetak laporan
 

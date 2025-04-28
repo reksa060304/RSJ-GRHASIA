@@ -1,5 +1,8 @@
-define(['initialize'], function (initialize) {
+define(['initialize', 'Configuration'], function (initialize, configuration) {
     'use strict';
+
+    var baseTransaksi = configuration.baseApiBackend;
+
     initialize.controller('KepatuhanCuciTanganCtrl', ['$q', '$scope', '$timeout', 'MedifirstService',
         function ($q, $scope, $timeout, medifirstService) {
             $scope.isRouteLoading = false;
@@ -581,6 +584,37 @@ define(['initialize'], function (initialize) {
                     init2();
                 })
             }
+
+            // #region cetak laporan
+            $scope.cetakLaporan = function(){
+                $scope.popUpCetakLaporan.center().open()
+            }
+
+            $scope.batalCetak = function(){
+                // reset tgl cetak
+                $scope.item.tglCetak = ''
+                $scope.item.ruanganCetak = null
+
+                $scope.popUpCetakLaporan.close()
+            }
+
+            $scope.cetakLaporanIPCN = function(){
+                // validasi
+                if(!$scope.item.tglCetak){
+                    toastr.error('Pilih tanggal dulu')
+                    return
+                }
+
+                if(!$scope.item.ruanganCetak){
+                    toastr.error('Pilih ruangan dulu')
+                    return
+                }
+
+                window.open(baseTransaksi + "report/cetak-laporan-ipcn" 
+                    + "?tglcetak=" + moment($scope.item.tglCetak).format('YYYY-MM-DD')
+                    + "&objectruanganfk=" + $scope.item.ruanganCetak.value, '_blank');
+            }
+            // #endregion cetak laporan
 
             //** BATAS SUCI */
         }

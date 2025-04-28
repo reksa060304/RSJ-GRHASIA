@@ -30,7 +30,7 @@
             <td>LAPORAN PENGGUNAAN IPCN</td>
         </tr>
         <tr>
-            <td>DI RS JIWA GRHASIA DIY TAHUN {{ isset($data) ? date_format(date_create($data[0]->tanggal), 'Y') : '' }}</td>
+            <td>DI RS JIWA GRHASIA DIY TAHUN {{ (isset($tanggalcetak)) ? date_format(date_create($tanggalcetak), 'Y') : '' }}</td>
         </tr>
     </table>
 
@@ -45,12 +45,12 @@
             <tr>
                 <td>WISMA</td>
                 <td>:</td>
-                <td>{{ isset($data) ? $data[0]->namaruangan : '' }}</td>
+                <td>{{ (isset($ruangan) && count($ruangan) > 0) ? $ruangan[0]->namaruangan : '' }}</td>
             </tr>
             <tr>
                 <td>BULAN</td>
                 <td>:</td>
-                <td>{{ date_format(date_create($data[0]->tanggal), 'm-Y') }}</td>
+                <td>{{  isset($tanggalcetak) ? date_format(date_create($tanggalcetak), 'm-Y') : '' }}</td>
             </tr>
         </tbody>
     </table>
