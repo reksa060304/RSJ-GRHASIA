@@ -56,6 +56,8 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
                 medifirstService.get("sysadmin/general/get-datacombo-handhygiene-general", true, true, 20).then(function (data) {
                     $scope.listHand = data.data;
                 });
+
+                $scope.pegawai = medifirstService.getPegawaiLogin();
             }
 
             $scope.cariFilter = function () {
@@ -248,9 +250,6 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
                                   datas[index].nilailangkah=0
                                   datas[index].snilailangkah="0 %"
                                 } else if (langkah==1){
-                                  datas[index].nilailangkah=50
-                                  datas[index].snilailangkah="50 %"
-                                } else if (langkah==2){
                                   datas[index].nilailangkah=100
                                   datas[index].snilailangkah="100 %"
                                 }
@@ -411,17 +410,24 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
                 ],
             }
 
+            // #region popup input
             $scope.Tambah2 = function () {
                 // $scope.item = {}
                 $scope.isRouteLoading = false;
                 $scope.isEdit = false
                 $scope.disabledText = false
+
+                // default kesempatan
+                $scope.item.kesempatan = 1
+
                 $scope.dialogPopup3.center().open()
                 
                 var tglAwal = moment($scope.item.periodeAwal).format('YYYY-MM-DD HH:mm:ss');
                 var tglAkhir = moment($scope.item.periodeAkhir).format('YYYY-MM-DD HH:mm:ss');
             }
+            // #endregion popup input
 
+            // #region simpan
             $scope.Save2 = function () {
                 var listRawRequired = [
                     "item.objectruanganfk|k-ng-model|Ruangan",
@@ -467,6 +473,7 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
                         "objecthygienefk" :listHand != undefined ? listHand : null,
                         "langkah" :$scope.item.langkah != undefined ? $scope.item.langkah : 0,
                         "kesempatan" :$scope.item.kesempatan != undefined ? $scope.item.kesempatan : 0,
+                        "objectobserverfk" : $scope.pegawai.id
                     }
 
                     medifirstService.post("emr/save-kepatuhanhandhygiene", data).then(function (e) {
@@ -496,6 +503,8 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
                 }
                 $scope.isRouteLoading = false;
             }
+            // #endregion simpan
+
             $scope.Batal3 = function () {
                 $scope.dialogPopup3.close();
             }

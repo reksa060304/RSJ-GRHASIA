@@ -245,7 +245,7 @@
     </div>
 </div>
                     
-<div kendo-window="dialogPopup3" k-title="'Form /'" k-width="900" k-height="600" k-visible="false"
+<div kendo-window="dialogPopup3" k-title="'Form /'" k-width="900" k-visible="false"
     k-on-close="customClicked()">
     <div class="panel panel-default panel-white container_12">
         <div class="grid_12">
@@ -329,9 +329,21 @@
                         </div>
                     </div>
                 </div>
+
+                <div class="grid_3" >
+                    <div class="grid_12" style="margin-left: 15px;">
+                        <label c-label item="item">Kesesuaian</label>
+                    </div>
+
+                    <div class="grid_12" >
+                        <div class="grid_12">
+                            <input class="k-textbox" ng-model="item.langkah" type="number" min="0" max="1" placeholder="masukan nilai">
+                        </div>
+                    </div>
+                </div>
                     
             </div>
-            <div class="grid_12" style="margin-top: 10px;margin-bottom: 20px">
+            <!-- <div class="grid_12" style="margin-top: 10px;margin-bottom: 20px">
                 <div class="panel panel-default container_12">
                     <div class="panel-heading" c-translate> Audit Cuci Tangan</div>
                 </div>
@@ -349,7 +361,7 @@
                     <label c-label item="item">1: Melakukan tapi salah</label>
                     <label c-label item="item">2: Melakukan dengan benar</label>
                 </div>  
-            </div>
+            </div> -->
 
         </div>
 

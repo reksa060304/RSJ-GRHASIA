@@ -23982,7 +23982,7 @@ public function suratBuktiPengembalian(Request $request)
             WHERE
                 bd.statusenabled = true
                 AND bd.kdprofile = 30
-                AND bd.tglpemeriksaan BETWEEN DATE_TRUNC('MONTH', timestamp '".$request['tglcetak']."') AND '".$request['tglcetak']."'
+                AND bd.tglpemeriksaan BETWEEN DATE_TRUNC('MONTH', timestamp '".$request['tglcetak']."') AND '".$request['tglcetak']." 23:59'
                 AND ru.id = ".$request['objectruanganfk']."
             ORDER BY
                 bd.tglpemeriksaan DESC
@@ -30152,7 +30152,7 @@ public function suratBuktiPengembalian(Request $request)
             WHERE
                 bd.statusenabled = true
                 AND bd.kdprofile = 30
-                AND bd.tglpemeriksaan BETWEEN DATE_TRUNC('MONTH', timestamp '".$request['tglcetak']."') AND '".$request['tglcetak']."'
+                AND bd.tglpemeriksaan BETWEEN DATE_TRUNC('MONTH', timestamp '".$request['tglcetak']."') AND '".$request['tglcetak']." 23:59'
                 AND ru.id = ".$request['objectruanganfk']."
             ORDER BY
                 bd.tglpemeriksaan DESC
@@ -30582,7 +30582,7 @@ public function suratBuktiPengembalian(Request $request)
             WHERE
                 kh.statusenabled = TRUE
                 AND kh.kdprofile = 30
-                AND kh.tanggal BETWEEN DATE_TRUNC('MONTH', timestamp '".$request['tglcetak']."') AND '".$request['tglcetak']."'
+                AND kh.tanggal BETWEEN DATE_TRUNC('MONTH', timestamp '".$request['tglcetak']."') AND '".$request['tglcetak']." 23:59'
                 AND ru.id = ".$request['objectruanganfk']."
             ORDER BY
                 kh.tanggal DESC
@@ -30611,10 +30611,16 @@ public function suratBuktiPengembalian(Request $request)
                 hnd.id ASC
         "));
 
+        $ruangan = DB::select(DB::raw("
+            SELECT * FROM ruangan_m WHERE statusenabled = true AND id = ".$request['objectruanganfk']."
+        "));
+
         return view('report.EMR.cetak-laporan-ipcn', [
             'data' => $data,
             'masterIndikasi' => $masterIndikasi,
-            'masterHand' => $masterHand
+            'masterHand' => $masterHand,
+            'ruangan' => $ruangan,
+            'tanggalcetak' => $request['tglcetak']
         ]);
     }
 }

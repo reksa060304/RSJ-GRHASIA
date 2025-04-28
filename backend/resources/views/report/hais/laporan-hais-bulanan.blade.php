@@ -94,16 +94,21 @@
                     @if ($dt->namaruangan !== $currentRuangan)
                         <tr>
                             @php
-                                $count = 0;
+                                $jumlahPasien = 0;
+                                $currentPasien = null;
                                 foreach($data as $item){
+
                                     if($dt->namaruangan == $item->namaruangan){
-                                        $count++;
+                                        if($currentPasien !== $item->idpasien){
+                                            $jumlahPasien++;
+                                            $currentPasien = $item->idpasien;
+                                        }
                                     }
 
                                 }
                             @endphp
                             <td class="content">{{ $dt->namaruangan }}</td>
-                            <td class="content">{{ $count }}</td>
+                            <td class="content">{{ $jumlahPasien }}</td>
                             
                             {{-- tindakan --}}
                             @php
@@ -153,7 +158,7 @@
                                 <td class="content">{{ $countHAIs[$itemHAIs->namabundle] }}</td>
                             @endforeach
 
-                            {{-- hais --}}
+                            {{-- Infeksi --}}
                             @php
                                 $countInfeksi = array();
                             @endphp
@@ -178,11 +183,7 @@
                             @endforeach
 
                             <td>
-                                @foreach ($data as $itemKet)
-                                    @if ($dt->namaruangan == $itemKet->namaruangan && $itemKet->keterangan !== null)
-                                        {{ $itemKet->keterangan }},
-                                    @endif
-                                @endforeach
+                                
                             </td>
                         </tr>
                     @endif
