@@ -29307,7 +29307,7 @@ public function suratBuktiPengembalian(Request $request)
         $asalproduk_kb = "";
         $asalproduk_sr = "";
         $asalproduk_pj = "";
-        if (isset($request['asalproduk']) && $request['tahun'] != "" && $request['asalproduk'] != "undefined") {
+        if (isset($request['asalproduk']) && $request['asalproduk'] != "" && $request['asalproduk'] != "undefined") {
             $asalproduk_kb = "and kb.objectasalprodukfk = ".$request['asalproduk'];
             $asalproduk_sr = "and sr.objectasalprodukfk = ".$request['asalproduk'];
             $asalproduk_pj = "and P.objectasalprodukfk = ".$request['asalproduk'];
@@ -29422,6 +29422,7 @@ public function suratBuktiPengembalian(Request $request)
                     AND ma.statusenabled = TRUE 
                     AND ma.kdprofile = 30 
                     $asalproduk_pj
+                    AND EXTRACT(YEAR FROM tglpanjar) = '".$tahun."'
                 GROUP BY
                     ma.ID,
                     ka.kode,
@@ -29454,6 +29455,7 @@ public function suratBuktiPengembalian(Request $request)
                     AND ma.statusenabled = TRUE 
                     AND ma.kdprofile = 30 
                     $asalproduk_pj
+                    AND EXTRACT(YEAR FROM tglpanjar) = '".$tahun."'
                 GROUP BY
                     ma.ID,
                     ka.kode,
