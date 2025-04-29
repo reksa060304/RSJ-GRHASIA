@@ -662,13 +662,14 @@ define(['initialize'], function (initialize) {
                 // alert("ASDASD")
             }
 
-            
+            //tambah is verif petugas
+            $scope.verifPetugas = true; 
 
             $scope.simpan = function () {
                 $scope.save = true;
-                $scope.isRouteLoading = true
+                $scope.isRouteLoading = true;
                 var dataArray = [];
-
+            
                 for (var i = $scope.resultGrids._data.length - 1; i >= 0; i--) {
                     if ($scope.resultGrids._data[i].hasil != null)
                         dataArray.push({
@@ -677,17 +678,17 @@ define(['initialize'], function (initialize) {
                             "noregistrasifk": $state.params.norecApd,
                             "flag": $scope.resultGrids._data[i].flag,
                             "detailpemeriksaan": $scope.resultGrids._data[i].detailpemeriksaan,
-                            "norecpelayanan" : $scope.resultGrids._data[i].norecpp,
-                            "catatan" :$scope.item.catatan?$scope.item.catatan:null,
-                            "dokterfk" :$scope.item.DataPegawai?$scope.item.DataPegawai.id:null,
-                            "loinc_name" : $scope.resultGrids._data[i].loinc_name,
-                            "loinc_id" : $scope.resultGrids._data[i].loinc_id,
-                            "nilainormal" : $scope.resultGrids._data[i].nilaitext,
-                            "satuan" : $scope.resultGrids._data[i].satuanstandar != null && $scope.resultGrids._data[i].satuanstandar != ''?$scope.resultGrids._data[i].satuanstandar != null :'-' ,
-             
+                            "norecpelayanan": $scope.resultGrids._data[i].norecpp,
+                            "catatan": $scope.item.catatan ? $scope.item.catatan : null,
+                            "dokterfk": $scope.item.DataPegawai ? $scope.item.DataPegawai.id : null,
+                            "loinc_name": $scope.resultGrids._data[i].loinc_name,
+                            "loinc_id": $scope.resultGrids._data[i].loinc_id,
+                            "nilainormal": $scope.resultGrids._data[i].nilaitext,
+                            "satuan": $scope.resultGrids._data[i].satuanstandar != null && $scope.resultGrids._data[i].satuanstandar != '' ? $scope.resultGrids._data[i].satuanstandar != null : '-',
+                            "verifpetugas": $scope.verifPetugas 
                         });
                 }
-
+            
                 if (dataArray.length !== 0) {
                     var objSave = {
                         "hasil": dataArray
@@ -696,10 +697,10 @@ define(['initialize'], function (initialize) {
                         $scope.save = false;
                         $scope.isRouteLoading = false;
                         $scope.result();
-
                     })
                 }
             }
+
             $scope.simpanTAT = function () {
                 
             let json = {

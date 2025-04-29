@@ -972,6 +972,7 @@ class LaboratoriumController extends ApiController
                                 'loinc_name' => isset($value['loinc_name'])?$value['loinc_name']:null,
                                 'nilainormal' => isset($value['nilainormal'])?$value['nilainormal']:null,
                                 'satuan' => isset($value['satuan'])?$value['satuan']:null,
+                                'isverifpetugas' => true,
                             ]
                         );
                 }else
@@ -1006,7 +1007,7 @@ class LaboratoriumController extends ApiController
                     $h->loinc_name =isset($value['loinc_name'])?$value['loinc_name']:null;
                     $h->nilainormal = isset($value['nilainormal'])?$value['nilainormal']:null;
                     $h->satuan = isset($value['satuan'])?$value['satuan']:null;
-          
+                    $h->isverifpetugas = true;
                     $h->save();
                     $norec[] = $h->norec;
                     
