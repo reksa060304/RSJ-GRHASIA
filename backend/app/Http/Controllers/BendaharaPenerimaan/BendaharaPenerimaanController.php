@@ -2946,7 +2946,7 @@ class BendaharaPenerimaanController extends ApiController {
 
             // pasien ipwl ranap
             // masukk ke kelas III
-            if($konten->idkelompokpasien == 4 && $konten->objectdepartemenfk2 == 16 && $konten->totaldibayarclosing != $konten->totaldibayarsbm){
+            if($konten->idkelompokpasien == 4 && $konten->objectdepartemenfk2 == 16 && $konten->idkelompokpasien != 26 && $konten->totaldibayarclosing != $konten->totaldibayarsbm){
                 $jumlahkelastiga += $konten->totaldibayarclosing;
                 $voljumlahkelastiga++;
                 $cekjumlah = $konten->namaproduk;
