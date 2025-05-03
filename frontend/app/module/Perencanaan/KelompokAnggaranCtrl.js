@@ -199,7 +199,8 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
                         $scope.listKonsolidasi3 = e.data.konso3
                         $scope.dataSourcePermenKelima = e.data.konsolidasikelima
                         $scope.dataSourcePermenKeempat = e.data.konsolidasikeempat
-                        $scope.listBendahara = e.data.bendahara
+                        $scope.listBendaharaPenerimaan = e.data.bendahara
+                        loadDataGrid()
                     });
                 })
                 
@@ -216,7 +217,7 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
                     field: "kegiatan"
                 },
             ];
-            loadDataGrid();
+            // loadDataGrid();
             function loadDataGrid() {
                 $scope.isRouteLoading = true;
                 $scope.item.statusspj = [{ id: 0, status: "Semua" }]
@@ -340,11 +341,13 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
                         $scope.item.nodasarpengeluaran = e.data.setting[0].nomordasarpengeluaran
                         $scope.item.tglDasarPengeluaran = moment(e.data.setting[0].tanggaldasarpengeluaran).format('YYYY-MM-DD')
 
-                        $scope.listBendahara.map(function(item){
-                            if(item.value == e.data.setting[0].objectbendpengeluaran){
-                                $scope.item.objectbendpengeluaran = item
-                            }
-                        })
+                        if($scope.listBendahara.length > 0)  {
+                            $scope.listBendahara.map(function(item){
+                                if(item.value == e.data.setting[0].objectbendpengeluaran){
+                                    $scope.item.objectbendpengeluaran = item
+                                }
+                            })
+                         }
 
                         if ($scope.item.tahun == null) {
                             $scope.item.tahun = e.data.setting[0].tahunanggaran
