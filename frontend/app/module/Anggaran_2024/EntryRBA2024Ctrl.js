@@ -1353,6 +1353,7 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
                             $scope.dataSourceRincianAnggaran = new kendo.data.DataSource({
                                 data: DataKeteranganBelanja
                             });
+                            let TotalAnggaran = 0; 
                             for (let index = 0; index < DataKeteranganBelanja.length; index++) {
                                 let element = DataKeteranganBelanja[index];
                                 DataKeteranganBelanja[index].statCheckbox2 = false
