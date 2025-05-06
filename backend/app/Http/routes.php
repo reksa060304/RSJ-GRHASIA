@@ -2257,6 +2257,7 @@ Route::group(['middleware' => 'cors', 'prefix' => 'service'], function () {
           Route::post('rawatinap/delete-audit-hygiene','RawatInap\RawatInapController@deleteAuditHygiene');
           
           Route::post('rawatinap/verifikasi-audit-apd', 'RawatInap\RawatInapController@verifikasiAuditAPD');
+          Route::post('rawatinap/batal-verifikasi-audit-apd', 'RawatInap\RawatInapController@batalVerifikasiAuditAPD');
           Route::post('rawatinap/verifikasi-audit-hygiene', 'RawatInap\RawatInapController@verifikasiAuditHygiene');
 
         // });

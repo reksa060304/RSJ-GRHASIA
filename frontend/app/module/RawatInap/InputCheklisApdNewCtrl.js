@@ -93,7 +93,16 @@ define(['initialize', 'Configuration'], function (initialize, config) {
                     verifikator = dat.data.verifikator
 
                     if (verifikator.includes(pegawai.id.toString()) && $scope.columndinamis[0].command.length == 2) {
-                        $scope.columndinamis[0].command.push({ text: "verifikasi", click: verifikasi })
+                        $scope.columndinamis[0].command.push({ 
+                            text: "Verifikasi", 
+                            click: verifikasi, 
+                            attributes: { style: "margin-right: 10px; margin-top: 10px;" } 
+                        })
+                        $scope.columndinamis[0].command.push({ 
+                            text: "Batalverif",
+                            click: batalVerifikasi, 
+                            attributes: { style: "margin-right: 10px; margin-top: 10px;" } 
+                        })
                     }
 
                     for (let i = 0; i < dat.data.auditapd.length; i++) {
@@ -158,11 +167,19 @@ define(['initialize', 'Configuration'], function (initialize, config) {
                 $scope.columndinamis = [
                     {
                         "command": [
-                            { text: "Edit", click: editData },
-                            { text: "Hapus", click: hapusData }
+                            { 
+                                text: "Edit", 
+                                click: editData,
+                                attributes: { style: "margin-right: 10px; margin-bottom: 10px;" }
+                            },
+                            { 
+                                text: "Hapus", 
+                                click: hapusData,
+                                attributes: { style: "margin-right: 10px; margin-bottom: 10px;" }
+                            }
                         ],
                         title: "",
-                        width: 100,
+                        width: 200, 
                         locked: true,
                     },
                     {
@@ -487,6 +504,46 @@ define(['initialize', 'Configuration'], function (initialize, config) {
                     .then(function (e) {
                         $scope.isRouteLoading = false;
                         toastr.success('Data berhasil diverifikasi');
+                        setTimeout(function() {
+                            var newGrid = $("#grid").data("kendoGrid");
+                            if (newGrid) {
+                                newGrid.dataSource.page(currentPage);
+                            }
+                        }, 100);
+                        searchData();
+                    })
+                    .catch(function() {
+                        $scope.isRouteLoading = false;
+                    });
+                });
+            }
+
+            function batalVerifikasi(e) {
+                e.preventDefault();
+                e.stopImmediatePropagation();
+                let dataItem = this.dataItem($(e.currentTarget).closest("tr"));
+                var grid = $("#grid").data("kendoGrid");
+                currentPage = grid.dataSource.page(); // Store current page
+
+                if (!dataItem.isverifikasi == true || dataItem.isverifikasi === 1) {
+                    toastr.error("Data Belum diverifikasi")
+                    return false
+                }
+
+                var confirm = $mdDialog.confirm()
+                    .title('Konfirmasi')
+                    .textContent('Apakah anda yakin ingin batal verifikasi data ini?')
+                    .cancel('Tidak')
+                    .ok('Ya')
+
+                $mdDialog.show(confirm).then(function () {
+                    $scope.isRouteLoading = true;
+                    return medifirstService.post('rawatinap/batal-verifikasi-audit-apd', {
+                        norec: dataItem.norec,
+                    })
+                    .then(function (e) {
+                        $scope.isRouteLoading = false;
+                        toastr.success('Data berhasil di batal verifikasi');
                         setTimeout(function() {
                             var newGrid = $("#grid").data("kendoGrid");
                             if (newGrid) {

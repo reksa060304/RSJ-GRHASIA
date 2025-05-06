@@ -2510,6 +2510,38 @@ class RawatInapController extends ApiController
         return $this->setStatusCode($result['status'])->respond($result, $transMessage);
     }
 
+    public function batalVerifikasiAuditAPD(Request $request)
+    {
+        $kdProfile = (int) $this->getDataKdProfile($request);
+
+        DB::beginTransaction();
+        try{
+            DB::table('auditapd_t')->where('norec', $request['norec'])->update([
+                'isverifikasi' => null
+            ]);
+            $transStatus = true;
+        }catch(Exception $e){
+            $transStatus = false;
+        }
+
+        if ($transStatus) {
+            $transMessage = "Batal Verifikasi Data Berhasil";
+            DB::commit();
+            $result = array(
+                "status" => 201,
+                "message" => $transMessage,
+            );
+        } else {
+            $transMessage = "Verifikasi Gagal";
+            DB::rollBack();
+            $result = array(
+                "status" => 400,
+                "message"  => $transMessage,
+            );
+        }
+        return $this->setStatusCode($result['status'])->respond($result, $transMessage);
+    }
+
     public function verifikasiAuditHygiene(Request $request)
     {
         $kdProfile = (int) $this->getDataKdProfile($request);
