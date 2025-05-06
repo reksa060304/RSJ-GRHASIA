@@ -164,6 +164,13 @@ define(['initialize', 'Configuration'], function (initialize, config) {
             }
 
             function setColumnDefault() {
+                const defaultColumnAttributes = {
+                    locked: true,
+                    attributes: {
+                        style: "#= isverifikasi === true || isverifikasi === 1 ? 'background-color: rgba(0, 249, 21, 0.3);' : '' #"
+                    }
+                };
+
                 $scope.columndinamis = [
                     {
                         "command": [
@@ -179,40 +186,40 @@ define(['initialize', 'Configuration'], function (initialize, config) {
                             }
                         ],
                         title: "",
-                        width: 200, 
-                        locked: true,
+                        width: 200,
+                        ...defaultColumnAttributes
                     },
                     {
                         field: 'observer',
                         title: "OBSERVER",
                         width: 200,
-                        locked: true,
+                        ...defaultColumnAttributes
                     },
                     {
                         field: 'tanggalformat',
                         title: "TANGGAL",
                         width: 100,
-                        locked: true,
+                        ...defaultColumnAttributes
                     },
                     {
                         field: 'profesi',
-                        title: "PROFESI \nYANG DIAUDIT",
+                        title: "PROFESI YANG DIAUDIT",
                         width: 150,
-                        locked: true,
+                        ...defaultColumnAttributes
                     },
                     {
                         field: 'namaaktifitas',
                         title: "JENIS AKTIFITAS",
                         width: 250,
-                        locked: true,
+                        ...defaultColumnAttributes
                     },
                     {
                         field: 'namaruangan',
                         title: "RUANGAN",
                         width: 200,
-                        locked: true,
-                    },
-                ]
+                        ...defaultColumnAttributes
+                    }
+                ];
             }
 
             function creategrid() {
