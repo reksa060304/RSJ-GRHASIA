@@ -19235,6 +19235,49 @@ public function suratBuktiPengembalian(Request $request)
         , compact('data','pageWidth', 'profile'));
     }
 
+    public function cetakKGBlama(Request $request)
+    {
+        // $kdProfile = (int) $request['kdprofile'];
+        $kdProfile = 30;
+        $profile = DB::select("select*from profile_m where kdprofile = $kdProfile and statusenabled = true");
+        if (isset($request['rgb'])) {
+            $data = \DB::select(DB::raw("
+            SELECT rgb.jenisskco, rgb.jenissk, rgb.nosk, pg.namalengkap, pg.nippns, gol.namaexternal || ' / ' || gol.reportdisplay as panggol,gol.reportdisplay as golongan, 'Rumah Sakit Jiwa Grhasia Dinkes DIY' as instansi, rgb.gajiawal, rgb.noskcetak as sklama, rgb.tglsk as tglsklama, rgb.tgltmtcetak as tmtlama, rgb.gajiakhir, rgb.masakerjagolongan, rgb.tgltmt as tmtbaru, rgb.objectsuratkeputusanfk AS suratkeputusanfk, skp.namask FROM riwayatgajiberkala_t rgb 
+            inner join pegawai_m pg on pg.id= rgb.objectpegawaifk
+            JOIN suratkeputusan_m skp ON skp.id = rgb.objectsuratkeputusanfk
+            inner join sdm_golongan_m gol  on gol.id = rgb.objectgolonganfk
+            where rgb.norec ilike '$request[norec]'
+            "));
+        }else{
+            $data = \DB::select(DB::raw("
+            SELECT rgb.jenisskco, rgb.jenissk, rgb.nosk, pg.namalengkap, pg.nippns, gol.namaexternal || ' / ' || gol.reportdisplay as panggol,gol.reportdisplay as golongan, 'Rumah Sakit Jiwa Grhasia Dinkes DIY' as instansi, rgb.gajiawal, rgb.noskcetak as sklama, rgb.tglsk as tglsklama, rgb.tgltmtcetak as tmtlama, rgb.gajiakhir, rgb.masakerjagolongan, rgb.tgltmt as tmtbaru, rgb.objectsuratkeputusanfk AS suratkeputusanfk, skp.namask FROM riwayatgajiberkala_t rgb 
+            inner join pegawai_m pg on pg.id= rgb.objectpegawaifk
+            JOIN suratkeputusan_m skp ON skp.id = rgb.objectsuratkeputusanfk
+            inner join sdm_golongan_m gol  on gol.id = rgb.objectgolonganfk
+            where rgb.norec ilike '$request[id_pegawai]'"));
+        }
+        
+        $detail = [];
+        $id=0;
+        $value="";
+        foreach ($data as $dt) {
+            if(isset($dt->gajiawal) && isset($dt->gajiakhir) ){
+                $dt->gajiawal = $this->rupiah($dt->gajiawal);
+                $dt->gajiakhir = $this->rupiah($dt->gajiakhir);
+            }
+            if(isset($dt->tglsklama) && isset($dt->tmtbaru)){
+                $dt->tglsklama=$this->tanggal_indonesia(date('Y-m-d',strtotime($dt->tglsklama)));
+                $dt->tmtbaru=$this->tanggal_indonesia(date('Y-m-d',strtotime($dt->tmtbaru)));
+                $dt->tmtlama=$this->tanggal_indonesia(date('Y-m-d',strtotime($dt->tmtlama)));
+                $dt->tglttd=$this->tanggal_indonesia(date('Y-m-d'));
+            }
+        }
+        $pageWidth = 950;
+        // dd($profile);
+        return view('report.kgblama'
+        , compact('data','pageWidth', 'profile'));
+    }
+
     public function cetakKGBPPPK(Request $request)
     {
         // $kdProfile = (int) $request['kdprofile'];

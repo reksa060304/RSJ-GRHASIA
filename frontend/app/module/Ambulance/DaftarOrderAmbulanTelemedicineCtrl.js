@@ -1,4 +1,4 @@
-define(['initialize'], function (initialize) {
+define(['initialize', 'Configuration'], function (initialize, config) {
     'use strict';
     initialize.controller('DaftarOrderAmbulanTelemedicineCtrl', ['$scope', '$state', 'CacheHelper', '$parse', 'DateHelper', '$window', 'MedifirstService',
         function ($scope, $state, cacheHelper, $parse, dateHelper, $window, medifirstService) {
@@ -485,6 +485,19 @@ define(['initialize'], function (initialize) {
                 $scope.item.namaPasiens = undefined
             }
             //********************************  $scope.cekBelumVerifs=true;***
+
+            $scope.cetakSuratTugasAmbulan = function () {
+                var local = JSON.parse(localStorage.getItem('profile'));
+                var profile = local.id;
+                if ($scope.dataSelected == null) {
+                    toastr.error("Pilih data yang ingin di cetak");
+                    return;
+                } else {
+                    window.open(config.baseApiBackend +
+                         "report/get-cetak-surat-tugas-ambulan?norec=" + $scope.dataSelected.norec + 
+                         "&kdprofile=" + profile,'_blank');
+                }
+            }
 
         }
     ]);
