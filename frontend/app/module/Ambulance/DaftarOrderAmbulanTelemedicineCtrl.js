@@ -492,11 +492,16 @@ define(['initialize', 'Configuration'], function (initialize, config) {
                 if ($scope.dataSelected == null) {
                     toastr.error("Pilih data yang ingin di cetak");
                     return;
-                } else {
-                    window.open(config.baseApiBackend +
-                         "report/get-cetak-surat-tugas-ambulan?norec=" + $scope.dataSelected.norec + 
-                         "&kdprofile=" + profile,'_blank');
                 }
+                
+                if ($scope.dataSelected.status !== "DITERIMA") {
+                    toastr.error("Data harus diverifikasi terlebih dahulu");
+                    return;
+                }
+                
+                window.open(config.baseApiBackend + 
+                    "report/get-cetak-surat-tugas-ambulan?norec=" + $scope.dataSelected.norec + 
+                    "&kdprofile=" + profile,'_blank');
             }
 
         }
