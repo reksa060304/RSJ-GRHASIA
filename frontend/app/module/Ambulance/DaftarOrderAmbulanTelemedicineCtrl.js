@@ -546,7 +546,7 @@ define(['initialize', 'Configuration'], function (initialize, config) {
                 }
                 
                 window.open(config.baseApiBackend + 
-                    "report/get-cetak-surat-tugas-ambulan?norec=" + $scope.dataSelected.norec + 
+                    "report/get-cetak-surat-tugas-ambulan-telemedicine?norec=" + $scope.dataSelected.norec + 
                     "&kdprofile=" + profile,'_blank');
             }
 
