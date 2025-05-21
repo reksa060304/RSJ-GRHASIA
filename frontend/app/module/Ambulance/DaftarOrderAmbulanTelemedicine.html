@@ -255,7 +255,7 @@ k-on-close="win2visible = false">
                 ng-disabled="true" />
         </div>
     </div>
-    <div class="grid_8">
+    <div class="grid_6">
         <div class="grid_12">
             <label c-label item="item" c-label-text="Nama Pasien"></label>
         </div>
@@ -264,6 +264,17 @@ k-on-close="win2visible = false">
         <div class="grid_12">
             <input c-text-box type="input" filter="" class="k-textbox" ng-model="item.namaPasiens"
                 ng-disabled="true" />
+        </div>
+    </div>
+    <div class="grid_2">
+        <div class="grid_12">
+            <label c-label item="item" c-label-text="Jenis Kegiatan"></label>
+        </div>
+        <div class="clear"></div>
+        <div class="grid_12">
+            <input style="width: 100%;" kendo-combo-box k-ng-model="popUp.kegiatan"
+            k-data-text-field="'namajeniskegiatan'" k-data-value-field="'id'" k-filter="'contains'" k-auto-bind="false"
+            k-data-source="listJenisKegiatan">
         </div>
     </div>
 
@@ -299,7 +310,32 @@ k-on-close="win2visible = false">
                 k-data-source="listSupir">
             </div>
         </div>
-        <div class="grid_2">
+        <div class="grid_4">
+            <div class="grid_12">
+                <label c-label item="item" c-label-text="Dokter"></label>
+            </div>
+            <div class="clear"></div>
+            <div class="grid_12">
+                <input style="width: 100%;" kendo-combo-box k-ng-model="popUp.dokter"
+                k-data-text-field="'namalengkap'" k-data-value-field="'id'" k-filter="'contains'" k-auto-bind="false"
+                k-data-source="listDokter">
+            </div>
+        </div>       
+    </div>
+
+    <div class="grid_12">        
+        <div class="grid_5">
+            <div class="grid_12">
+                <label c-label item="item" c-label-text="Perawat"></label>
+            </div>
+            <div class="clear"></div>
+            <div class="grid_12">
+                <input style="width: 100%;" kendo-combo-box k-ng-model="popUp.perawat"
+                k-data-text-field="'namalengkap'" k-data-value-field="'id'" k-filter="'contains'" k-auto-bind="false"
+                k-data-source="listPerawat">
+            </div>
+        </div>
+        <div class="grid_5">
             <div class="grid_12">
                 <label c-label item="item" c-label-text="Verifikasi Order"></label>
             </div>

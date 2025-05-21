@@ -74,6 +74,17 @@ define(['initialize', 'Configuration'], function (initialize, config) {
 
                 medifirstService.get("ambulance/data/get-combo-telemedicine")
                     .then(function (da) {
+    
+                        $scope.listJenisKegiatan = new kendo.data.DataSource({
+                            data: da.data.jeniskegiatan.map(function(item) {
+                                return {
+                                    id: item.id,
+                                    namajeniskegiatan: item.namajeniskegiatan || item.namajeniskegiatan 
+                                };
+                            })
+                        });
+                        $scope.listDokter = da.data.dokter;
+                        $scope.listPerawat = da.data.perawat;
                         $scope.listSupir = da.data.pegawai;
                         $scope.listAmbulan = da.data.nopol;
                         $scope.listVerifikasi = [
@@ -271,6 +282,11 @@ define(['initialize', 'Configuration'], function (initialize, config) {
             }
 
             $scope.verifikasi = function () {
+                if ($scope.dataSelected.status == "DITERIMA") {
+                    toastr.error("Data Sudah diverifikasi tidak bisa di verifikasi kembali");
+                    return;
+                }
+
                 if ($scope.dataSelected == undefined) {
                     toastr.error('Pilih data dulu');
                     return
@@ -287,6 +303,23 @@ define(['initialize', 'Configuration'], function (initialize, config) {
             function loadDataVerif() {
                 $scope.isRouteLoading = true;
                 data2 = []
+                if (!$scope.popUp) {
+                    $scope.popUp = {};
+                }
+
+                if (!$scope.popUp.kegiatan) {
+                    $scope.popUp.kegiatan = $scope.listJenisKegiatan.data()[0] || {
+                        id: 1,
+                        namajeniskegiatan: "Menjemput Pasien"
+                    };
+                }
+
+                $scope.$watch('popUp.kegiatan', function(newVal, oldVal) {
+                    if (newVal !== oldVal) {
+                        $scope.popUp.kegiatan = newVal;
+                    }
+                });
+
                 medifirstService.get("ambulance/get-data-detail-order-ambulan-dari-telemedicine?norec=" + $scope.dataSelected.norec, true).then(function (dat) {
                         $scope.isRouteLoading = false;
                         var dataSource = dat.data.data;
@@ -369,6 +402,13 @@ define(['initialize', 'Configuration'], function (initialize, config) {
                     return
                 }
 
+                if (!$scope.popUp.kegiatan || !$scope.popUp.kegiatan.id) {
+                    toastr.error('Jenis Kegiatan harus dipilih');
+                    return;
+                }
+
+
+
                 if ($scope.popUp.verifikasiOrder == undefined || $scope.popUp.verifikasiOrder == '' || $scope.popUp.verifikasiOrder == null) {
                     toastr.error('Harus Diverifikasi')
                     return
@@ -387,6 +427,12 @@ define(['initialize', 'Configuration'], function (initialize, config) {
                     "driver_id": $scope.popUp.driver.id,
                     "driver_nama_lengkap": $scope.popUp.driver.namalengkap,
                     "driver_uuid_telemedicine": $scope.popUp.driver.uuid_telemedicine,
+                    "dokter_id": $scope.popUp.dokter.id,
+                    "dokter_nama_lengkap": $scope.popUp.dokter.namalengkap,
+                    "perawat_id": $scope.popUp.perawat.id,
+                    "kegiatan_id": $scope.popUp.kegiatan.id,
+                    "kegiatan_nama": $scope.popUp.kegiatan.namajeniskegiatan,
+                    "perawat_nama_lengkap": $scope.popUp.perawat.namalengkap,
                     "verifikasi": $scope.popUp.verifikasiOrder.jenis
                 }
 

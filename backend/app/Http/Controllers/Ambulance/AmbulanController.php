@@ -2823,7 +2823,8 @@ class AmbulanController extends ApiController
                 'spd.qtyproduk',
                 'spd.hargasatuan',
                 'prd.namaproduk',
-                DB::raw("spd.qtyproduk * spd.hargasatuan AS hargatotal")
+                DB::raw("spd.qtyproduk * spd.hargasatuan AS hargatotal"),
+                'spd.jeniskegiatanambulanfk'
             )
             ->where('spd.kdprofile', $idProfile)
             ->where('spd.statusenabled', true)
@@ -2857,7 +2858,33 @@ class AmbulanController extends ApiController
         ->where('keteranganlainnya', 'ilike', '%ambulan%')
         ->get();
 
+        $dokter = \DB::table('pegawai_m as pg')
+        ->select('id', 'namalengkap')
+        ->where('pg.statusenabled', true)
+        ->where('pg.kdprofile', $idProfile)
+        ->where('pg.objectjenispegawaifk', 1)
+        ->orderBy('pg.namalengkap')
+        ->get();
+
+        $perawat = \DB::table('pegawai_m as pg')
+        ->select('id', 'namalengkap')
+        ->where('pg.statusenabled', true)
+        ->where('pg.kdprofile', $idProfile)
+        ->where('pg.objectjenispegawaifk', 2)
+        ->orderBy('pg.namalengkap')
+        ->get();
+
+        $jeniskegiatan = \DB::table('jeniskegiatanambulan_m')
+        ->select('id', 'namajeniskegiatan')
+        ->where('kdprofile', $kdProfile)
+        ->where('statusenabled', true)
+        ->whereNotNull('namajeniskegiatan')
+        ->get();
+
         $result = array(
+            'jeniskegiatan' => $jeniskegiatan,
+            'dokter' => $dokter,
+            'perawat' => $perawat,
             'pegawai' => $pegawai,
             'nopol' => $nopol,
             'message' => 'ramdanegie',
@@ -2913,6 +2940,7 @@ class AmbulanController extends ApiController
                 foreach ($SPD as $data) {
                     $update_SPD = StrukPelayananDetail::where('norec', $data['norec'])->where('kdprofile', $kdProfile)->first();
                     $update_SPD->nopolisifk = $req['kendaraan'];
+                    $update_SPD->jeniskegiatanambulanfk = $req['kegiatan_id'];
                     $update_SPD->save();
                 }
 
@@ -2922,6 +2950,8 @@ class AmbulanController extends ApiController
                     $PetugasPelAmbulan->kdprofile = $kdProfile;
                     $PetugasPelAmbulan->statusenabled = true;
                     $PetugasPelAmbulan->objectpegawaifk = $req['driver_id'];
+                    $PetugasPelAmbulan->objectdokterfk =  $req['dokter_id'];
+                    $PetugasPelAmbulan->objectperawatfk = $req['perawat_id'];
                     $PetugasPelAmbulan->nostrukdetailfk = $item['norec_pp'];
                     $PetugasPelAmbulan->tglpelayanan = Carbon::now()->format('Y-m-d H:i:s');
                     $PetugasPelAmbulan->save();
