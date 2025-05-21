@@ -550,6 +550,54 @@ define(['initialize', 'Configuration'], function (initialize, config) {
                     "&kdprofile=" + profile,'_blank');
             }
 
+            $scope.isinomersurat = function () {
+                if ($scope.dataSelected == undefined) {
+                    toastr.error('Pilih data dulu');
+                    return
+                }
+            
+                if ($scope.dataSelected.status !== "DITERIMA") {
+                    toastr.error("Data harus diverifikasi terlebih dahulu");
+                    return;
+                }
+                
+                // Set nomor surat yang sudah ada jika tersedia
+                $scope.item.nomorSurat = $scope.dataSelected.nomorsurat || ''; 
+                $scope.popUpNomorSurat.center().open();
+            }
+            
+            $scope.simpanNomorSurat = function () {
+                if (!$scope.item.nomorSurat) {
+                    toastr.error('Nomor surat harus diisi');
+                    return;
+                }
+            
+                var dataSimpan = {
+                    norec: $scope.dataSelected.norec,
+                    nomorsurat: $scope.item.nomorSurat
+                };
+            
+                medifirstService.post('ambulance/simpan-nomor-surat-ambulan', dataSimpan)
+                    .then(function (response) {
+                        if (response.data.status) {
+                            toastr.success(response.data.message);
+                            $scope.popUpNomorSurat.close();
+                            init();
+                        } else {
+                            toastr.error(response.data.message);
+                        }
+                    })
+                    .catch(function(error) {
+                        toastr.error('Terjadi kesalahan saat menyimpan nomor surat');
+                    });
+            }
+            
+            $scope.batalNomorSurat = function () {
+                $scope.popUpNomorSurat.close();
+            }
+            
+            // batas
+
         }
     ]);
 });

@@ -3056,4 +3056,56 @@ class AmbulanController extends ApiController
         return $this->setStatusCode($result['status'])->respond($result);
     }
 
+    public function simpanNomorSurat(Request $request)
+    {
+        $kdProfile = $this->getDataKdProfile($request);
+        $idProfile = (int) $kdProfile;
+        
+        DB::beginTransaction();
+        try {
+            $req = $request->all();
+            
+            if (!isset($req['nomorsurat']) || empty($req['nomorsurat'])) {
+                return $this->respond([
+                    'status' => false,
+                    'message' => 'Nomor surat tidak boleh kosong!'
+                ]);
+            }
+
+            $dataSO = StrukPelayananDetail::where('nostrukfk', $req['norec'])
+                ->where('kdprofile', $idProfile)
+                ->get();
+
+            if ($dataSO->isEmpty()) {
+                DB::rollBack();
+                return $this->respond([
+                    'status' => false,
+                    'message' => 'Data order tidak ditemukan!'
+                ]);
+            }
+            
+            foreach ($dataSO as $detail) {
+                $detail->nomorsurat = $req['nomorsurat'];
+                $detail->save();
+            }
+
+            DB::commit();
+            
+            return $this->respond([
+                'status' => true,
+                'message' => 'Nomor surat berhasil disimpan untuk semua data terkait',
+                'data' => $dataSO
+            ]);
+            
+        } catch (\Exception $e) {
+            DB::rollBack();
+            return $this->respond([
+                'status' => false,
+                'message' => 'Terjadi kesalahan: ' . $e->getMessage()
+            ]);
+        }
+    }
+
+// batas
+
 }

@@ -225,6 +225,11 @@
         <div class="grid_2" style="margin-top: 22px">
             <button class="c-button" ng-click="verifikasi()">Verifikasi</button>
         </div>
+        <div class="grid_2" style="margin-top: 22px"> 
+            <button class="c-button" ng-click="isinomersurat()"><i class="fa fa-print"></i>
+            Isi Nomer Surat
+            </button>
+        </div>
     </div>
 </c-panel>
 
@@ -361,6 +366,34 @@ k-on-close="win2visible = false">
 
 
 </div>
+
+
+<!--  popup tambah nomor surat -->
+<div kendo-window="popUpNomorSurat" k-title="'Input Nomor Surat'" k-visible="false" k-width="500" k-on-close="win3visible = false">
+    <div class="panel panel-default container_12">
+        <div class="grid_12">
+            <div class="grid_12">
+                <label c-label item="item" c-label-text="Nomor Surat"></label>
+            </div>
+            <div class="clear"></div>
+            <div class="grid_12">
+                <input c-text-box type="input" filter="" class="k-textbox" ng-model="item.nomorSurat"/>
+            </div>
+        </div>
+
+        <div class="grid_12">
+            <div class="grid_8"></div>
+            <div class="grid_4">
+                <div class="pull-right" style="margin-top:4%">
+                    <button class="k-button" ng-click="simpanNomorSurat()">Simpan</button>
+                    <button class="k-button" ng-click="batalNomorSurat()">Tutup</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- end tambah nomor surat -->
+
 
 <!-- </fieldset> -->
 </div>

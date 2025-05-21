@@ -250,6 +250,7 @@ Route::group(['middleware' => 'cors', 'prefix' => 'service'], function () {
           Route::get('ambulance/data/get-combo-telemedicine', 'Ambulance\AmbulanController@getComboTelemedicine');
           Route::post('ambulance/save-input-order-from-telemedicine', 'Ambulance\AmbulanController@SaveInputTagihanFromTelemedicine');
           Route::post('ambulance/simpan-data-pelayanan-ambulan-dari-telemedicine', 'Ambulance\AmbulanController@savePelayananPasienAmbulanDariTelemedicine');
+          Route::post('ambulance/simpan-nomor-surat-ambulan', 'Ambulance\AmbulanController@SimpanNomorSurat');
 
         // });
         Route::group(['prefix' => 'askep'], function () {
@@ -3379,8 +3380,9 @@ Route::group(['middleware' => 'cors', 'prefix' => 'service'], function () {
                 Route::get('sysadmin/master/get-setting-combo','SysAdmin\Master\MasterController@getComboPartTable');
 
                 Route::get('sysadmin/master/get-kelompok-user','SysAdmin\Master\MasterController@getKelompokUser');
-                Route::get('sysadmin/master/get-tarif-harganettoprodukbykelas', 'SysAdmin\Master\MasterController@view_harganettoprodukbykelas');
-                Route::get('sysadmin/master/get-tarif-harganettoprodukbykelas_d', 'SysAdmin\Master\MasterController@view_harganettoprodukbykelasD');
+                Route::get('sysadmin/master/get-tarif-harganettoprodukbykelas', 'SysAdmin\Master\MasterController@  ');
+                Route::get('sysadmin/master/get-tarif-harganettoprodukbykelas_d', 'SysAdmin\Master\MasterContro
+                ller@view_harganettoprodukbykelasD');
                 Route::get('sysadmin/master/get-tarif-produk', 'SysAdmin\Master\MasterController@GetTarifProduk');
                 Route::get('sysadmin/master/get-combo-tarif', 'SysAdmin\Master\MasterController@getComboHargaNetto');
                 Route::get('sysadmin/master/get-list-komponen', 'SysAdmin\Master\MasterController@ListMaster');
@@ -3674,6 +3676,7 @@ Route::group(['middleware' => 'cors', 'prefix' => 'service'], function () {
         Route::get('report/cetak-cppt','Report\ReportController@cetakCPPT');
         Route::get('report/cetak-cppt-ranap','Report\ReportController@cetakCPPTRanap');
         Route::get('report/get-cetak-suratkgb', 'Report\ReportController@cetakKGB');
+        Route::get('report/get-cetak-suratkgblama', 'Report\ReportController@cetakKGBlama');
 
         Route::get('report/get-cetak-suratkgbPPPK', 'Report\ReportController@cetakKGBPPPK');
 
