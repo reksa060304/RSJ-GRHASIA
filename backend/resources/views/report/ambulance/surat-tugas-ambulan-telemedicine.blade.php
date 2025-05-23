@@ -86,14 +86,23 @@
             <div class="col-12">
                 <div class="row">
                     <div class="col-2 d-flex justify-content-center align-items-center">
+                        @if(stripos(\Request::url(), 'localhost') !== FALSE)
                         <img src="{{ asset('img/logo-diy.jpeg') }}" style="width: 100%;" border="0" />
+                        @else
+                        <img src="{{ asset('service/img/logo-diy.jpeg') }}" style="width: 100%;" border="0" />
+                        @endif
                     </div>
                     <div class="col-8 d-flex flex-column justify-content-center align-items-center text-center">
                         <p style="font-size: 15px; margin-bottom: 0;">PEMERINTAH DAERAH DAERAH ISTIMEWA YOGYAKARTA</p>
                         <h5 class="h5">DINAS KESEHATAN</h5>
                         <h5 class="h5">RUMAH SAKIT JIWA GRHASIA</h5>
+                        @if(stripos(\Request::url(), 'localhost') !== FALSE)
                         <img src="{{ asset('img/Aksara Jawa_surat.png') }}"
                             style="width: 30%; margin-top: 2px; margin-bottom: 2px;" border="0" />
+                        @else
+                        <img src="{{ asset('service/img/Aksara Jawa_surat.png') }}"
+                            style="width: 30%; margin-top: 2px; margin-bottom: 2px;" border="0" />
+                        @endif
                         <p class="paragraph-header">Jalan Kaliurang Km 17 Sleman, Telepon: (0274) 895143, 895297,
                             Faksimile: (0274) 895142</p>
                         <p class="paragraph-header">Laman: grhasia.jogjaprov.go.id, Surel:
