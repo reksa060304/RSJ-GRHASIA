@@ -240,6 +240,7 @@ Route::group(['middleware' => 'cors', 'prefix' => 'service'], function () {
           Route::get('ambulance/daftar-tagihan-non-layanan', 'Ambulance\AmbulanController@daftarTagihanNonLayanan');
           Route::get('ambulance/detail-tagihan-non-layanan', 'Ambulance\AmbulanController@detailTagihanNonLayanan');
           Route::get('ambulance/laporan-kegiatan-ambulan','Ambulance\AmbulanController@lapKegiatanAmbulan');
+          Route::get('report/get-cetak-surat-tugas-ambulan-telemedicine','Report\ReportController@suratTugasAmbulanTelemedicine');
 
           // bridging ambulan telemedicine
           Route::get('ambulance/get-jenis-kegiatan','Ambulance\AmbulanController@getJenisKegiatanAmbulan');
