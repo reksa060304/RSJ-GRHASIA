@@ -2719,6 +2719,7 @@ class AmbulanController extends ApiController
                 $SPD->is_terbayar = 0;
                 $SPD->linetotal = 0;
                 $SPD->jeniskegiatanambulanfk = $req['jeniskegiatan'];
+                $SPD->jarak = $item['jarak'];
                 $SPD->save();
             }
 
