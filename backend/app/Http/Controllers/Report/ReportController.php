@@ -30668,7 +30668,6 @@ public function suratBuktiPengembalian(Request $request)
             'tanggalcetak' => $request['tglcetak']
         ]);
     }
-    
     public function suratTugasAmbulanTelemedicine(Request $request)
     {
         $profile = (int)$request['kdprofile'];
@@ -30705,9 +30704,9 @@ public function suratBuktiPengembalian(Request $request)
         // dd($data);
 
         // Pastikan data ditemukan
-        if ($data->isEmpty()) {
-            return response()->json(['message' => 'Data tidak ditemukan'], 404);
-        }
+        // if ($data->isEmpty()) {
+        //     return response()->json(['message' => 'Data tidak ditemukan'], 404);
+        // }
 
         $height = 600;
         $pageWidth = 950;
