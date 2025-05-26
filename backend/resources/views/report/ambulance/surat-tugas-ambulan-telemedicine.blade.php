@@ -97,10 +97,10 @@
                         <h5 class="h5">DINAS KESEHATAN</h5>
                         <h5 class="h5">RUMAH SAKIT JIWA GRHASIA</h5>
                         @if(stripos(\Request::url(), 'localhost') !== FALSE)
-                        <img src="{{ asset('img/Aksara Jawa_surat.png') }}"
+                        <img src="{{ asset('img/Aksara Jawa_Surat.png') }}"
                             style="width: 30%; margin-top: 2px; margin-bottom: 2px;" border="0" />
                         @else
-                        <img src="{{ asset('service/img/Aksara Jawa_surat.png') }}"
+                        <img src="{{ asset('service/img/Aksara Jawa_Surat.png') }}"
                             style="width: 30%; margin-top: 2px; margin-bottom: 2px;" border="0" />
                         @endif
                         <p class="paragraph-header">Jalan Kaliurang Km 17 Sleman, Telepon: (0274) 895143, 895297,
