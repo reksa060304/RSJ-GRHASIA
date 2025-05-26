@@ -3756,6 +3756,10 @@
         {
             "nameDep": "DaftarOrderAmbulanTelemedicineCtrl",
             "urlDep": "module/Ambulance/DaftarOrderAmbulanTelemedicineCtrl"
+        },
+        {
+            "nameDep": "LapKegiatanAmbulanTelemedicineCtrl",
+            "urlDep": "module/Ambulance/LapKegiatanAmbulanTelemedicineCtrl"
         }
     ]
 }

@@ -3107,6 +3107,123 @@ class AmbulanController extends ApiController
         }
     }
 
+    public function lapKegiatanAmbulanTelemedicine(Request $request)
+{
+    $kdProfile = $this->getDataKdProfile($request);
+    $filter = $request->all();
+
+    // Query untuk mendapatkan data
+    $data = \DB::table('strukpelayanan_t as sp')
+        ->leftJoin('strukpelayanandetail_t as spd', 'spd.nostrukfk', '=', 'sp.norec')
+        ->leftJoin('petugaspelayananambulan_t as ppa', 'ppa.nostrukdetailfk', '=', 'spd.norec')
+        ->leftJoin('pegawai_m as pg', 'pg.id', '=', 'ppa.objectpegawaifk')
+        ->leftJoin('jenispegawai_m as jp', 'jp.id', '=', 'pg.objectjenispegawaifk')
+        ->leftJoin('jeniskegiatanambulan_m as jka', function ($join) {
+            $join->on('jka.id', '=', \DB::raw('CAST(spd.jeniskegiatanambulanfk AS BIGINT)'));
+        })
+        ->leftJoin('alamatnonlayanan_m as anl', 'anl.strukpelayanandetail', '=', 'spd.norec')
+        ->leftJoin('registrasiaset_t as ra', 'ra.norec', '=', 'spd.nopolisifk')
+        ->distinct()
+        ->select(
+            'sp.nostruk',
+            'sp.tglstruk',
+            'pg.namalengkap AS namapersonel',
+            'spd.hargasatuan',
+            'sp.namapasien_klien',
+            'ra.nopolisi',
+            'ra.keteranganlainnya',
+            'jka.namajeniskegiatan',
+            'spd.jarak',
+            'anl.alamatlengkap as lokasitujuan'
+        )
+        ->where('sp.statusenabled', true)
+        ->where('sp.kdprofile', (int)$kdProfile)
+        ->where('jp.id', 48);
+
+    // Filter berdasarkan tanggal awal
+    if (!empty($filter['tglAwal']) && strtotime($filter['tglAwal'])) {
+        $data = $data->where('sp.tglstruk', '>=', $filter['tglAwal']);
+    }
+
+    // Filter berdasarkan tanggal akhir
+    if (!empty($filter['tglAkhir']) && strtotime($filter['tglAkhir'])) {
+        $data = $data->where('sp.tglstruk', '<=', $filter['tglAkhir']);
+    }
+
+    // Filter berdasarkan nama pasien/klien
+    if (!empty($filter['nama'])) {
+        $data = $data->where('sp.namapasien_klien', 'ilike', '%' . $filter['nama'] . '%');
+    }
+
+    // Filter berdasarkan jenis kegiatan
+    if (!empty($filter['jenisKegiatan'])) {
+        $data = $data->where('spd.jeniskegiatanambulanfk', '=', $filter['jenisKegiatan']);
+    }
+    
+            // Filter berdasarkan jenis mobil (no polisi)
+            if (!empty($filter['jenisMobil'])) {
+                $data = $data->where('ra.norec', '=', $filter['jenisMobil']);
+            }
+
+    // Urutkan berdasarkan tanggal struk
+    $data = $data->orderBy('sp.tglstruk')->get();
+
+    // Mengembalikan response
+    return $this->respond($data);
+}
+
+public function getJenisKegiatan(Request $request)
+{
+    $kdProfile = $this->getDataKdProfile($request);
+    $idProfile = (int) $kdProfile;
+    $jeniskegiatan = \DB::table('jeniskegiatanambulan_m')
+    ->select('id', 'namajeniskegiatan as nama')
+    ->where('kdprofile', $idProfile)
+    ->where('statusenabled', true)
+    ->whereNotNull('namajeniskegiatan')
+    ->get();
+
+    if(!empty($jeniskegiatan)){
+        $result = array(
+            'code' => 200,
+            'data' => $jeniskegiatan,
+            'message' => "Data kegiatan berhasil ditemukan",
+            'success' => true
+        );
+    } else {
+        $result = array(
+            'code' => 404,
+            'data' => null,
+            'message' => 'Data kegiatan tidak ditemukan',
+            'success' => false
+        );
+    }
+    
+    return $this->setStatusCode($result['code'])->respond($result);
+}
+
+public function getJenisMobil(Request $request){
+    $kdProfile = $this->getDataKdProfile($request);
+    $idProfile = (int) $kdProfile;
+    
+    $data = \DB::table('registrasiaset_t as ra')
+        ->select('ra.norec as id', 'ra.nopolisi as jenismobil', 'ra.keteranganlainnya as namamobil')
+        ->where('ra.kdprofile', $idProfile)
+        ->where('ra.statusenabled', true)
+        ->whereNotNull('ra.nopolisi')
+        ->where('ra.keteranganlainnya', 'ilike', '%ambulan%')
+        ->where('ra.nopolisi', '<>', '')
+        ->orderBy('ra.nopolisi')
+        ->get();
+        
+    $result = array(
+        'data' => $data,
+        'message' => 'er@epic',
+    );
+    
+    return $this->respond($result);
+}
+
 // batas
 
 }
