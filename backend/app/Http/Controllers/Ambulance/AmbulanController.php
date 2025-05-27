@@ -2823,6 +2823,7 @@ class AmbulanController extends ApiController
                 'spd.norec as norec_pp',
                 'spd.qtyproduk',
                 'spd.hargasatuan',
+                'spd.jarak',
                 'prd.namaproduk',
                 DB::raw("spd.qtyproduk * spd.hargasatuan AS hargatotal"),
                 'spd.jeniskegiatanambulanfk'
@@ -2831,7 +2832,6 @@ class AmbulanController extends ApiController
             ->where('spd.statusenabled', true)
             ->where('spd.nostrukfk', $request['norec'])
             ->get();
-
         $dataResult = array(
             'message' =>  'inhuman',
             'data' =>  $data,
@@ -3108,7 +3108,7 @@ class AmbulanController extends ApiController
     }
 
     public function lapKegiatanAmbulanTelemedicine(Request $request)
-{
+    {
     $kdProfile = $this->getDataKdProfile($request);
     $filter = $request->all();
 
@@ -3160,10 +3160,10 @@ class AmbulanController extends ApiController
         $data = $data->where('spd.jeniskegiatanambulanfk', '=', $filter['jenisKegiatan']);
     }
     
-            // Filter berdasarkan jenis mobil (no polisi)
-            if (!empty($filter['jenisMobil'])) {
-                $data = $data->where('ra.norec', '=', $filter['jenisMobil']);
-            }
+    // Filter berdasarkan jenis mobil (no polisi)
+    if (!empty($filter['jenisMobil'])) {
+        $data = $data->where('ra.norec', '=', $filter['jenisMobil']);
+    }
 
     // Urutkan berdasarkan tanggal struk
     $data = $data->orderBy('sp.tglstruk')->get();

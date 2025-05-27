@@ -171,6 +171,8 @@ define(['initialize', 'Configuration'], function (initialize, config) {
                     });
             }
 
+          
+
             $scope.cariFilter = function () {
                 init();
                 var tglAwal = moment($scope.item.tglAwal).format('YYYY-MM-DD HH:mm:ss');
@@ -378,6 +380,11 @@ define(['initialize', 'Configuration'], function (initialize, config) {
                         "title": "Total",
                         "width": "90px"
                     },
+                    {
+                        "field": "jarak",
+                        "title": "Jarak (Kilometer)",
+                        "width": "90px"
+                    }
                 ]
             }
 

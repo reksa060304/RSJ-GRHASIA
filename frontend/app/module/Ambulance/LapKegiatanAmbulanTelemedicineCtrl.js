@@ -201,6 +201,11 @@ define(['initialize', 'Configuration'], function (initialize, config) {
                         "width": "70px",
                     },
                     {
+                        "field": "nostruk",
+                        "title": "No Order",
+                        "width": "70px",
+                    },
+                    {
                         "field": "namajeniskegiatan",
                         "title": "Jenis Kegiatan",
                         "width": "130px"
@@ -227,7 +232,7 @@ define(['initialize', 'Configuration'], function (initialize, config) {
                     },
                     {
                         "field": "jarak",
-                        "title": "Jarak Tempuh",
+                        "title": "Jarak Tempuh (Kilometer)",
                         "width": "100px",
                     },
                     {
@@ -240,12 +245,12 @@ define(['initialize', 'Configuration'], function (initialize, config) {
                         "title": "Nama Pasien",
                         "width": "120px",
                     },
-                    {
-                        "field": "",
-                        "title": "Jenis Pasien",
-                        "template" : "Non Layanan",
-                        "width": "100px",
-                    }
+                    // {
+                    //     "field": "",
+                    //     "title": "Jenis Pasien",
+                    //     "template" : "Non Layanan",
+                    //     "width": "100px",
+                    // }
                 ]
             };
             //** BATAS */
