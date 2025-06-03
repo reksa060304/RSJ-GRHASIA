@@ -3185,10 +3185,11 @@ class AmbulanController extends ApiController
             'ra.keteranganlainnya',
             'jka.namajeniskegiatan',
             'spd.jarak',
-            'anl.alamatlengkap as lokasitujuan'
+            'anl.alamatlengkap as lokasitujuan',
+            'sp.istelemedicine',
         )
         ->where('sp.statusenabled', true)
-        ->where('sp.istelemedicine', true)
+        // ->where('sp.istelemedicine', true)
         ->where('sp.kdprofile', (int)$kdProfile)
         ->where('jp.id', 48)
         ->groupBy(
@@ -3200,7 +3201,8 @@ class AmbulanController extends ApiController
             'ra.keteranganlainnya',
             'jka.namajeniskegiatan',
             'spd.jarak',
-            'anl.alamatlengkap'
+            'anl.alamatlengkap',
+            'sp.istelemedicine',
         );
 
     // Filter berdasarkan tanggal awal

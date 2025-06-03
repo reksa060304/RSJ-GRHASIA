@@ -243,9 +243,15 @@ define(['initialize', 'Configuration'], function (initialize, config) {
                     },
                     {
                         "field": "namapasien_klien",
-                        "title": "Nama Pengorder",
+                        "title": "Nama Pelanggan",
                         "width": "120px",
                     },
+                    {
+                        "field": "istelemedicine",
+                        "title": "Jenis Order",
+                        "width": "100px",
+                        "template": "#= istelemedicine ? 'Telemedicine' : 'Manual' #"
+                    }
                     // {
                     //     "field": "",
                     //     "title": "Jenis Pasien",
