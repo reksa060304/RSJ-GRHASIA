@@ -3123,12 +3123,11 @@ class AmbulanController extends ApiController
         })
         ->leftJoin('alamatnonlayanan_m as anl', 'anl.strukpelayanandetail', '=', 'spd.norec')
         ->leftJoin('registrasiaset_t as ra', 'ra.norec', '=', 'spd.nopolisifk')
-        ->distinct()
         ->select(
             'sp.nostruk',
             'sp.tglstruk',
             'pg.namalengkap AS namapersonel',
-            'spd.hargasatuan',
+            \DB::raw('SUM(spd.hargasatuan) as total_harga'),
             'sp.namapasien_klien',
             'ra.nopolisi',
             'ra.keteranganlainnya',
@@ -3138,7 +3137,18 @@ class AmbulanController extends ApiController
         )
         ->where('sp.statusenabled', true)
         ->where('sp.kdprofile', (int)$kdProfile)
-        ->where('jp.id', 48);
+        ->where('jp.id', 48)
+        ->groupBy(
+            'sp.nostruk',
+            'sp.tglstruk',
+            'pg.namalengkap',
+            'sp.namapasien_klien',
+            'ra.nopolisi',
+            'ra.keteranganlainnya',
+            'jka.namajeniskegiatan',
+            'spd.jarak',
+            'anl.alamatlengkap'
+        );
 
     // Filter berdasarkan tanggal awal
     if (!empty($filter['tglAwal']) && strtotime($filter['tglAwal'])) {

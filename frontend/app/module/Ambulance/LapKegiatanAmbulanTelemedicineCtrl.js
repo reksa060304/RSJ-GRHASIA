@@ -8,7 +8,7 @@ define(['initialize', 'Configuration'], function (initialize, config) {
             $scope.item = {};
             $scope.popupExp = {};
             $scope.user = medifirstService.getPegawaiLogin();
-            $scope.item.periodeAwal = $scope.now
+            $scope.item.periodeAwal = new Date(moment($scope.now).format('YYYY-MM-DD 00:00:00'))
             $scope.item.periodeAkhir = new Date();
             $scope.item.jmlRows = 50;
             getListJenisMobil();
@@ -177,7 +177,7 @@ define(['initialize', 'Configuration'], function (initialize, config) {
                     sheet.name = "Orders";
 
                     var myHeaders = [{
-                        value: "Daftar Registrasi Pasien",
+                        value: "Laporan Kegiatan Ambulan Telemedicine",
                         fontSize: 20,
                         textAlign: "center",
                         background: "#ffffff",
@@ -236,13 +236,14 @@ define(['initialize', 'Configuration'], function (initialize, config) {
                         "width": "100px",
                     },
                     {
-                        "field": "hargasatuan",
+                        "field": "total_harga",
                         "title": "Biaya",
-                        "width": "50px",
+                        "width": "100px",
+                        "template": "#= 'Rp ' + kendo.toString(total_harga, 'n0').replace(/,/g, '.') #"
                     },
                     {
                         "field": "namapasien_klien",
-                        "title": "Nama Pasien",
+                        "title": "Nama Pengorder",
                         "width": "120px",
                     },
                     // {
