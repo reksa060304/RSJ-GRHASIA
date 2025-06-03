@@ -3188,6 +3188,7 @@ class AmbulanController extends ApiController
             'anl.alamatlengkap as lokasitujuan'
         )
         ->where('sp.statusenabled', true)
+        ->where('sp.istelemedicine', true)
         ->where('sp.kdprofile', (int)$kdProfile)
         ->where('jp.id', 48)
         ->groupBy(
