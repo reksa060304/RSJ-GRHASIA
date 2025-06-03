@@ -2168,46 +2168,98 @@ class AmbulanController extends ApiController
             ->where('lu.id', '=', $filter['userData']['id'])
             ->get();
 
-        if ($datakelompokuser[0]->objectkelompokuserfk == 58) {
-            $dataNonLayanan = \DB::table('strukpelayanan_t as sp')
-                ->join('kelompoktransaksi_m as kt', 'sp.objectkelompoktransaksifk', '=', 'kt.id')
-                ->select(
-                    'sp.norec',
-                    'sp.tglstruk',
-                    'sp.namapasien_klien',
-                    'kt.reportdisplay as jenistagihan',
-                    'sp.isverifikasi',
-                    'keteranganlainnya',
-                    'sp.nosbklastfk',
-                    'sp.nosbmlastfk',
-                    'kt.id as jenisTagihanId',
-                    \DB::raw("CAST(sp.totalharusdibayar AS FLOAT) AS totalharusdibayar ")
-                )
-                ->where('sp.kdprofile', $kdProfile)
-                ->whereNotNull('sp.totalharusdibayar')
-                ->whereIn('sp.objectkelompoktransaksifk', $KdList)
-                ->where('kt.id', '=', 13);
-        } else {
-            $dataNonLayanan = \DB::table('strukpelayanan_t as sp')
-                ->join('kelompoktransaksi_m as kt', 'sp.objectkelompoktransaksifk', '=', 'kt.id')
-                ->select(
-                    'sp.norec',
-                    'sp.tglstruk',
-                    'sp.namapasien_klien',
-                    'kt.reportdisplay as jenistagihan',
-                    'keteranganlainnya',
-                    'sp.nosbklastfk',
-                    'sp.nosbmlastfk',
-                    'kt.id as jenisTagihanId',
-                    \DB::raw("CAST(sp.totalharusdibayar AS FLOAT) AS totalharusdibayar")
-                )
-                //            ->whereNull('sp.noregistrasifk')
-                ->where('sp.kdprofile', $kdProfile)
-                ->whereNotNull('sp.totalharusdibayar')
-                ->where('sp.objectkelompoktransaksifk', '=', 9);
-                // ->whereIn('sp.objectkelompoktransaksifk', $KdList);
-            //            ->where('spp.kdrekananpenjamin', 0);->whereIn('id', [1, 2, 3])
-        }
+            if ($datakelompokuser[0]->objectkelompokuserfk == 58) {
+                $dataNonLayanan = \DB::table('strukpelayanan_t as sp')
+                    ->join('kelompoktransaksi_m as kt', 'sp.objectkelompoktransaksifk', '=', 'kt.id')
+                    ->select(
+                        'sp.norec',
+                        'sp.tglstruk',
+                        'sp.namapasien_klien',
+                        'kt.reportdisplay as jenistagihan',
+                        'sp.isverifikasi',
+                        'keteranganlainnya',
+                        'sp.nosbklastfk',
+                        'sp.nosbmlastfk',
+                        'kt.id as jenisTagihanId',
+                        \DB::raw("CAST(sp.totalharusdibayar AS FLOAT) AS totalharusdibayar ")
+                    )
+                    ->where('sp.kdprofile', $kdProfile)
+                    ->whereNotNull('sp.totalharusdibayar')
+                    ->whereIn('sp.objectkelompoktransaksifk', $KdList)
+                    ->where(function($query) {
+                        $query->where(function($q) {
+                            $q->where('sp.istelemedicine', true)
+                              ->where('sp.isapprove', true);
+                        })->orWhereNull('sp.istelemedicine');
+                    })
+                    ->whereIn('sp.objectkelompoktransaksifk', $KdList)
+                    ->where('kt.id', '=', 13);
+            } else {
+                $dataNonLayanan = \DB::table('strukpelayanan_t as sp')
+                    ->join('kelompoktransaksi_m as kt', 'sp.objectkelompoktransaksifk', '=', 'kt.id')
+                    ->select(
+                        'sp.norec',
+                        'sp.tglstruk',
+                        'sp.namapasien_klien',
+                        'kt.reportdisplay as jenistagihan',
+                        'keteranganlainnya',
+                        'sp.nosbklastfk',
+                        'sp.nosbmlastfk',
+                        'kt.id as jenisTagihanId',
+                        \DB::raw("CAST(sp.totalharusdibayar AS FLOAT) AS totalharusdibayar")
+                    )
+                    ->where('sp.kdprofile', $kdProfile)
+                    ->whereNotNull('sp.totalharusdibayar')
+                    ->whereIn('sp.objectkelompoktransaksifk', $KdList)
+                    ->where(function($query) {
+                        $query->where(function($q) {
+                            $q->where('sp.istelemedicine', true)
+                              ->where('sp.isapprove', true);
+                        })->orWhereNull('sp.istelemedicine');
+                    })
+                    ->where('sp.objectkelompoktransaksifk', '=', 9);
+            }
+
+        // if ($datakelompokuser[0]->objectkelompokuserfk == 58) {
+        //     $dataNonLayanan = \DB::table('strukpelayanan_t as sp')
+        //         ->join('kelompoktransaksi_m as kt', 'sp.objectkelompoktransaksifk', '=', 'kt.id')
+        //         ->select(
+        //             'sp.norec',
+        //             'sp.tglstruk',
+        //             'sp.namapasien_klien',
+        //             'kt.reportdisplay as jenistagihan',
+        //             'sp.isverifikasi',
+        //             'keteranganlainnya',
+        //             'sp.nosbklastfk',
+        //             'sp.nosbmlastfk',
+        //             'kt.id as jenisTagihanId',
+        //             \DB::raw("CAST(sp.totalharusdibayar AS FLOAT) AS totalharusdibayar ")
+        //         )
+        //         ->where('sp.kdprofile', $kdProfile)
+        //         ->whereNotNull('sp.totalharusdibayar')
+        //         ->whereIn('sp.objectkelompoktransaksifk', $KdList)
+        //         ->where('kt.id', '=', 13);
+        // } else {
+        //     $dataNonLayanan = \DB::table('strukpelayanan_t as sp')
+        //         ->join('kelompoktransaksi_m as kt', 'sp.objectkelompoktransaksifk', '=', 'kt.id')
+        //         ->select(
+        //             'sp.norec',
+        //             'sp.tglstruk',
+        //             'sp.namapasien_klien',
+        //             'kt.reportdisplay as jenistagihan',
+        //             'keteranganlainnya',
+        //             'sp.nosbklastfk',
+        //             'sp.nosbmlastfk',
+        //             'kt.id as jenisTagihanId',
+        //             \DB::raw("CAST(sp.totalharusdibayar AS FLOAT) AS totalharusdibayar")
+        //         )
+        //         //            ->whereNull('sp.noregistrasifk')
+        //         ->where('sp.kdprofile', $kdProfile)
+        //         ->whereNotNull('sp.totalharusdibayar')
+        //         ->where('sp.objectkelompoktransaksifk', '=', 9);
+        //         // ->whereIn('sp.objectkelompoktransaksifk', $KdList);
+        //     //            ->where('spp.kdrekananpenjamin', 0);->whereIn('id', [1, 2, 3])
+        // }
 
         if (isset($filter['tglAwal']) && $filter['tglAwal'] != "") {
             $dataNonLayanan = $dataNonLayanan->where('sp.tglstruk', '>=', $filter['tglAwal']);
