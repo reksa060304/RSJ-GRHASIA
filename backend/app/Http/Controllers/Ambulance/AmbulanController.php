@@ -2625,42 +2625,40 @@ class AmbulanController extends ApiController
         $kdProfile = (int) $this->getDataKdProfile($request);
         $no_rm = $request['nocm'];
         $data = DB::select(
-            DB::raw("SELECT
-                        pr.namaproduk AS activity_type_name,
-                        spd.qtyproduk AS qty,
-                        spd.hargasatuan AS harga,
-                        (spd.hargasatuan * spd.qtyproduk) AS rate,
-                        sp.tglstruk AS order_date,
-                        STRING_AGG(pm.namalengkap, ',') AS driver_name,
-                        ra.nopolisi AS ambulance_plat,
-                        sp.nostruk AS order_number,
-                        CASE 
-                            WHEN sp.isapprove IS NULL THEN 'Menunggu'
-                            WHEN sp.isapprove = FALSE THEN 'Ditolak'
-                            WHEN sp.isapprove = TRUE THEN 'Diterima'
-                        END AS status
-                    FROM
-                        strukpelayanan_t AS sp
-                        LEFT JOIN strukpelayanandetail_t AS spd ON spd.nostrukfk = sp.norec
-                        LEFT JOIN produk_m AS pr ON pr.id = spd.objectprodukfk
-                        LEFT JOIN petugaspelayananambulan_t AS ppa ON ppa.nostrukdetailfk = spd.norec
-                        LEFT JOIN pegawai_m AS pm ON pm.id = ppa.objectpegawaifk
-                        INNER JOIN pasien_m AS ps ON ps.nocm = sp.nocmklien
-                        LEFT JOIN registrasiaset_t AS ra ON ra.norec = spd.nopolisifk
-                    WHERE
-                        sp.nocmklien = '$no_rm'
-                        AND sp.kdprofile = $kdProfile
-                        AND sp.statusenabled = TRUE
-                        AND sp.isapprove IS NOT NULL
-                    GROUP BY
-                        pr.namaproduk,
-                        spd.qtyproduk,
-                        spd.hargasatuan,
-                        sp.tglstruk,
-                        ra.nopolisi,
-                        sp.nostruk,
-	                    sp.isapprove")
-                );
+    DB::raw("
+            SELECT 
+                STRING_AGG(pr.namaproduk, ', ') AS activity_type_name,
+                SUM(spd.qtyproduk) AS total_qty,
+                STRING_AGG(CONCAT(pr.namaproduk, ' (', spd.qtyproduk, ' x ', spd.hargasatuan, ')'), ', ') AS detail_items,
+                SUM(spd.hargasatuan * spd.qtyproduk) AS total_rate,
+                sp.tglstruk AS order_date,
+                STRING_AGG(DISTINCT pm.namalengkap, ', ') AS driver_name,
+                ra.nopolisi AS ambulance_plat,
+                sp.nostruk AS order_number,
+                CASE 
+                    WHEN sp.isapprove IS NULL THEN 'Menunggu'
+                    WHEN sp.isapprove = FALSE THEN 'Ditolak'
+                    WHEN sp.isapprove = TRUE THEN 'Diterima'
+                END AS status
+            FROM strukpelayanan_t AS sp
+            LEFT JOIN strukpelayanandetail_t AS spd ON spd.nostrukfk = sp.norec
+            LEFT JOIN produk_m AS pr ON pr.id = spd.objectprodukfk
+            LEFT JOIN petugaspelayananambulan_t AS ppa ON ppa.nostrukdetailfk = spd.norec
+            LEFT JOIN pegawai_m AS pm ON pm.id = ppa.objectpegawaifk
+            INNER JOIN pasien_m AS ps ON ps.nocm = sp.nocmklien
+            LEFT JOIN registrasiaset_t AS ra ON ra.norec = spd.nopolisifk
+            WHERE sp.nocmklien = '$no_rm' 
+                AND sp.kdprofile = $kdProfile 
+                AND sp.statusenabled = TRUE 
+                AND sp.isapprove IS NOT NULL
+            GROUP BY 
+                sp.nostruk, 
+                sp.tglstruk, 
+                sp.isapprove, 
+                ra.nopolisi
+            ORDER BY sp.tglstruk DESC
+            ")
+        );
 
         if(!empty($data)){
             $result = array(
