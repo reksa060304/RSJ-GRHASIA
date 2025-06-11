@@ -2770,6 +2770,9 @@ class AmbulanController extends ApiController
                 $SPD->linetotal = 0;
                 $SPD->jeniskegiatanambulanfk = $req['jeniskegiatan'];
                 $SPD->jarak = $item['jarak'];
+                $SPD->address = $item['address'];
+                $SPD->map_lat = $item['map_lat'];
+                $SPD->map_lng = $item['map_lng'];
                 $SPD->save();
             }
 
