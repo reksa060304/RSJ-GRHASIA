@@ -183,6 +183,16 @@ class ReservasiOnlineController extends ApiController
                         ->orWhere('ps.noidentitas', '=', $nocm);
                 });
         }
+
+        if(isset($tgllahir) && $tgllahir != "" && $tgllahir != "undefined" && $tgllahir != "null") {
+            if (is_numeric($tgllahir) && strlen($tgllahir) > 10) {
+                // Jika berupa timestamp dalam milidetik, konversi ke detik
+                $timestamp = $tgllahir / 1000;
+                $tgllahir = date('Y-m-d', $timestamp);
+            }
+        $data = $data->whereDate('ps.tgllahir', '=', $tgllahir);
+    }
+
 		$data = $data->get();
 
 		$result = array(

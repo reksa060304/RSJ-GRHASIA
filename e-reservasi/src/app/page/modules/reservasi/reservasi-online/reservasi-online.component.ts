@@ -933,57 +933,145 @@ export class ReservasiOnlineComponent implements OnInit {
 
 
       }
-      if (this.isLama) {
-        if (!noCM) {
-          this.messageService.warn('Peringatan', 'No RM harus di isi !')
-          return
-        }
-        // if (!tglLahirLama) {
-        //   this.messageService.warn('Peringatan', 'Tgl Lahir harus di isi !')
-        //   return
-        // }
-        // var tgllahir = moment(tglLahirLama).format('DD/MM/YYYY')
-        this.httpService.get('medifirst2000/reservasionline/get-pasien/' + noCM + '/' + tglLahirLama).subscribe(res => {
-          if (res.data.length > 0) {
-            if (noCM.length > 6) {
-              this.formGroup.get('noCm').setValue(res.data[0].nocm)
+    //   if (this.isLama) {
+    //     if (!noCM) {
+    //       this.messageService.warn('Peringatan', 'No RM harus di isi !')
+    //       return
+    //     }
+    //     // if (!tglLahirLama) {
+    //     //   this.messageService.warn('Peringatan', 'Tgl Lahir harus di isi !')
+    //     //   return
+    //     // }
+    //     // var tgllahir = moment(tglLahirLama).format('DD/MM/YYYY')
+    //     this.httpService.get('medifirst2000/reservasionline/get-pasien/' + noCM + '/' + tglLahirLama).subscribe(res => {
+    //       if (res.data.length > 0) {
+    //         if (noCM.length > 6) {
+    //           this.formGroup.get('noCm').setValue(res.data[0].nocm)
+    //         }
+    //         this.formGroup.get('resumeNIK').setValue(res.data[0].noidentitas)
+    //         this.formGroup.get('noTelpon').setValue(res.data[0].notelepon)
+    //         this.formGroup.get('namaPasien').setValue(res.data[0].namapasien)
+    //         let tglLhia = new Date(res.data[0].tgllahir)
+    //         console.log(tglLhia)
+    //         this.formGroup.get('tglLahirLama').setValue(moment(tglLhia).format('YYYY/MM/DD'))
+    //         this.formGroup.get('jenisKelamin').setValue({ id: res.data[0].objectjeniskelaminfk, jeniskelamin: res.data[0].jeniskelamin })
+    //         let namaPasien = res.data[0].namapasien
+    //         let subStr = namaPasien.substring(0, 5)
+    //         this.messageService.success('Sukses', 'Nama Pasien ' + subStr + '********')
+    //         this.formGroup.get('agamaPasien').setValue({ id: res.data[0].objectagamafk, agama: res.data[0].agama })
+    //         this.formGroup.get('statusPerkawinan').setValue({ id: res.data[0].objectstatusperkawinanfk, statusperkawinan: res.data[0].statusperkawinan })
+    //         this.formGroup.get('golonganDarah').setValue({ id: res.data[0].objectgolongandarahfk, golongandarah: res.data[0].golongandarah })
+    //         this.formGroup.get('pendidikan').setValue({ id: res.data[0].objectpendidikanfk, pendidikan: res.data[0].pendidikan })
+    //         this.formGroup.get('pekerjaan').setValue({ id: res.data[0].objectpekerjaanfk, pekerjaan: res.data[0].pekerjaan })
+    //         this.formGroup.get('hambatanKomunikasi').setValue({ id: res.data[0].hambatankomunikasifk, hambatankomunikasi: res.data[0].hambatankomunikasi })
+    //         this.formGroup.get('nikPenanggungJawab').setValue(res.data[0].nik1)
+    //         this.formGroup.get('namaPenanggungJawab').setValue(res.data[0].penanggungjawab)
+    //         this.formGroup.get('alamatLengkapPenanggungJawab').setValue(res.data[0].alamatrmh)
+    //         this.formGroup.get('nikPenanggungJawab').setValue(res.data[0].nik1)
+
+
+    //         this.noBpjs = res.data[0].nobpjs
+    //         this.noCmfk = res.data[0].nocmfk
+    //         this.activeIndex = valueIndex
+    //       }
+
+    //       else
+    //         this.messageService.error('Info', 'Data tidak ditemukan')
+
+    //     }, error => {
+    //       this.messageService.error('Info', 'Data tidak ditemukan')
+    //     })
+
+
+    //   }
+
+        if (this.isLama) {
+            const noCM = this.formGroup.get('noCm').value;
+            const tglLahirLama = this.formGroup.get('tglLahirLama').value;
+
+            if (!noCM) {
+            this.messageService.warn('Peringatan', 'No RM harus di isi !');
+            return;
             }
-            this.formGroup.get('resumeNIK').setValue(res.data[0].noidentitas)
-            this.formGroup.get('noTelpon').setValue(res.data[0].notelepon)
-            this.formGroup.get('namaPasien').setValue(res.data[0].namapasien)
-            let tglLhia = new Date(res.data[0].tgllahir)
-            console.log(tglLhia)
-            this.formGroup.get('tglLahirLama').setValue(moment(tglLhia).format('YYYY/MM/DD'))
-            this.formGroup.get('jenisKelamin').setValue({ id: res.data[0].objectjeniskelaminfk, jeniskelamin: res.data[0].jeniskelamin })
-            let namaPasien = res.data[0].namapasien
-            let subStr = namaPasien.substring(0, 5)
-            this.messageService.success('Sukses', 'Nama Pasien ' + subStr + '********')
-            this.formGroup.get('agamaPasien').setValue({ id: res.data[0].objectagamafk, agama: res.data[0].agama })
-            this.formGroup.get('statusPerkawinan').setValue({ id: res.data[0].objectstatusperkawinanfk, statusperkawinan: res.data[0].statusperkawinan })
-            this.formGroup.get('golonganDarah').setValue({ id: res.data[0].objectgolongandarahfk, golongandarah: res.data[0].golongandarah })
-            this.formGroup.get('pendidikan').setValue({ id: res.data[0].objectpendidikanfk, pendidikan: res.data[0].pendidikan })
-            this.formGroup.get('pekerjaan').setValue({ id: res.data[0].objectpekerjaanfk, pekerjaan: res.data[0].pekerjaan })
-            this.formGroup.get('hambatanKomunikasi').setValue({ id: res.data[0].hambatankomunikasifk, hambatankomunikasi: res.data[0].hambatankomunikasi })
-            this.formGroup.get('nikPenanggungJawab').setValue(res.data[0].nik1)
-            this.formGroup.get('namaPenanggungJawab').setValue(res.data[0].penanggungjawab)
-            this.formGroup.get('alamatLengkapPenanggungJawab').setValue(res.data[0].alamatrmh)
-            this.formGroup.get('nikPenanggungJawab').setValue(res.data[0].nik1)
+            
+            if (!tglLahirLama) {
+            this.messageService.warn('Peringatan', 'Tgl Lahir harus di isi !');
+            return;
+            }
 
+            const tgllahir = moment(tglLahirLama).format('DD/MM/YYYY');
+            
+            const tglLahirFormatted = moment(tglLahirLama).format('YYYY-MM-DD');
+            
+            this.httpService.get('medifirst2000/reservasionline/get-pasien/' + noCM + '/' + tglLahirFormatted).subscribe({
+            next: (res) => {
+                if (res.data.length > 0) {
+                const pasienData = res.data[0];
+                
+                if (noCM.length > 6) {
+                    this.formGroup.get('noCm').setValue(pasienData.nocm);
+                }
+                
+                this.formGroup.get('resumeNIK').setValue(pasienData.noidentitas);
+                this.formGroup.get('noTelpon').setValue(pasienData.notelepon);
+                this.formGroup.get('namaPasien').setValue(pasienData.namapasien);
+                
+                const tglLhia = new Date(pasienData.tgllahir);
+                console.log(tglLhia);
+                this.formGroup.get('tglLahirLama').setValue(moment(tglLhia).format('YYYY/MM/DD'));
+                this.formGroup.get('jenisKelamin').setValue({ 
+                    id: pasienData.objectjeniskelaminfk, 
+                    jeniskelamin: pasienData.jeniskelamin 
+                });
+                
+                const namaPasien = pasienData.namapasien;
+                const subStr = namaPasien.substring(0, 5);
+                this.messageService.success('Sukses', 'Nama Pasien ' + subStr + '********');
+                
+                this.formGroup.get('agamaPasien').setValue({ 
+                    id: pasienData.objectagamafk, 
+                    agama: pasienData.agama 
+                });
+                this.formGroup.get('statusPerkawinan').setValue({ 
+                    id: pasienData.objectstatusperkawinanfk, 
+                    statusperkawinan: pasienData.statusperkawinan 
+                });
+                this.formGroup.get('golonganDarah').setValue({ 
+                    id: pasienData.objectgolongandarahfk, 
+                    golongandarah: pasienData.golongandarah 
+                });
+                this.formGroup.get('pendidikan').setValue({ 
+                    id: pasienData.objectpendidikanfk, 
+                    pendidikan: pasienData.pendidikan 
+                });
+                this.formGroup.get('pekerjaan').setValue({ 
+                    id: pasienData.objectpekerjaanfk, 
+                    pekerjaan: pasienData.pekerjaan 
+                });
+                this.formGroup.get('hambatanKomunikasi').setValue({ 
+                    id: pasienData.hambatankomunikasifk, 
+                    hambatankomunikasi: pasienData.hambatankomunikasi 
+                });
+                this.formGroup.get('nikPenanggungJawab').setValue(pasienData.nik1);
+                this.formGroup.get('namaPenanggungJawab').setValue(pasienData.penanggungjawab);
+                this.formGroup.get('alamatLengkapPenanggungJawab').setValue(pasienData.alamatrmh);
 
-            this.noBpjs = res.data[0].nobpjs
-            this.noCmfk = res.data[0].nocmfk
-            this.activeIndex = valueIndex
-          }
-
-          else
-            this.messageService.error('Info', 'Data tidak ditemukan')
-
-        }, error => {
-          this.messageService.error('Info', 'Data tidak ditemukan')
-        })
-
-
-      }
+                this.noBpjs = pasienData.nobpjs;
+                this.noCmfk = pasienData.nocmfk;
+                
+                if (valueIndex !== undefined) {
+                    this.activeIndex = valueIndex;
+                }
+                } else {
+                this.messageService.error('Info', 'Data tidak ditemukan untuk No RM ' + noCM + ' dan Tgl Lahir ' + tgllahir);
+                }
+            },
+            error: (error) => {
+                console.error('Error:', error);
+                this.messageService.error('Info', 'Data tidak ditemukan');
+            }
+            });
+        }
     }
     if (valueIndex == 2) {
       // this.getMaxJamReservasi()

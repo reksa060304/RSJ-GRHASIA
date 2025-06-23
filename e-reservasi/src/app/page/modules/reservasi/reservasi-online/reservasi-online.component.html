@@ -232,17 +232,17 @@
               </div>
             </div>
             <div class="ui-g-12" *ngIf="isLama">
-              <div class="ui-g-12 ui-md-12 ui-lg-12">
+              <div class="ui-g-12 ui-md-12 ui-lg-6">
                 <mat-form-field appearance="fill">
                   <mat-label>No RM atau NIK</mat-label>
-                  <input matInput placeholder="No RM / NIK" formControlName="noCm">
+                  <input matInput placeholder="No RM / NIKk" formControlName="noCm">
                   <button mat-button *ngIf="formGroup.get('noCm').value" matSuffix mat-icon-button aria-label="Clear"
                     (click)="formGroup.get('noCm').setValue('')">
                     <mat-icon>close</mat-icon>
                   </button>
                 </mat-form-field>
               </div>
-              <div class="ui-g-12 ui-md-12 ui-lg-6" *ngIf="isTglLahir">
+              <div class="ui-g-12 ui-md-12 ui-lg-6" *ngIf="isLama">
                 <mat-form-field appearance="fill">
                   <mat-label>Tgl lahir</mat-label>
                   <input matInput [matDatepicker]="picker" placeholder="Tgl lahir" formControlName="tglLahirLama">
