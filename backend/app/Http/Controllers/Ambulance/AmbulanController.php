@@ -3289,6 +3289,121 @@ public function getJenisMobil(Request $request){
     
     return $this->respond($result);
 }
+public function getPanssSec(Request $request)
+{
+    
+    try {
+        $idProfil = (int) $this->getDataKdProfile($request);
+        
+        $data = \DB::table('panssec_m as m')
+            ->leftJoin('panssec_d as d', 'm.id', '=', 'd.panssecfk')
+            ->select(
+                'm.id',
+                'm.kode',
+                'm.nama',
+                'm.deskripsi',
+                'm.dasar_penilaian',
+                'd.id as skor_id',
+                'd.skor',
+                'd.label',
+                'd.keterangan'
+            )
+            ->where('m.kdprofile', $idProfil)
+            ->where('m.statusenabled', true)
+            ->where(function($query) {
+                $query->where('d.statusenabled', true)
+                      ->orWhereNull('d.statusenabled'); 
+            })
+            // ->orderBy('m.nama')
+            ->orderBy('m.id')
+            ->orderBy('d.skor')
+            ->get();
+
+        if (empty($data)) {
+            return response()->json([
+                'code' => 404,
+                'message' => 'Data PANSS tidak ditemukan',
+                'success' => false
+            ]);
+        }
+
+        $result = [];
+        foreach ($data as $row) {
+            $komponenId = $row->id;
+            
+    
+            if (!isset($result[$komponenId])) {
+                $result[$komponenId] = [
+                    'id' => $row->id,
+                    'kode' => $row->kode,    
+                    'nama' => $row->nama,
+                    'deskripsi' => $row->deskripsi,
+                    'dasar_penilaian' => $row->dasar_penilaian,
+                    'skor' => []
+                ];
+            }
+    
+            if ($row->skor_id) {
+                $result[$komponenId]['skor'][] = [
+                    'id' => $row->skor_id,
+                    'skor' => $row->skor,
+                    'label' => $row->label,
+                    'keterangan' => $row->keterangan
+                ];
+            }
+        }
+
+        return response()->json([
+            'code' => 200,
+            'message' => 'Data PANSS berhasil dimuat',
+            'data' => array_values($result),
+            'success' => true
+        ]);
+
+    } catch (\Exception $e) {
+        return response()->json([
+            'code' => 500,
+            'message' => 'Kesalahan: ' . $e->getMessage(),
+            'success' => false
+        ]);
+    }
+}
+
+public function getSlotting(Request $request)
+{
+    try {
+        $idProfil = (int) $this->getDataKdProfile($request);
+        
+        $data = \DB::table('slottingambulance_m as sa')
+            ->leftJoin('jeniskegiatanambulan_m as jka', 'sa.objectkegiatanfk', '=', 'jka.id')
+            ->select(
+                'sa.id',
+                'sa.quota',
+                'sa.objectkegiatanfk',
+                'jka.namajeniskegiatan as namakegiatan'
+            )
+            ->where('sa.kdprofile', $idProfil)
+            ->where('sa.statusenabled', true)
+            ->orderBy('sa.id')
+            ->get();
+
+        return response()->json([
+            'code' => 200,
+            'message' => 'Data berhasil diambil',
+            'success' => true,
+            'data' => $data
+        ]);
+
+    } catch (\Exception $e) {
+        \Log::error('Error in getSlotting: ' . $e->getMessage());
+        
+        return response()->json([
+            'code' => 500,
+            'message' => 'Terjadi kesalahan dalam mengambil data',
+            'success' => false
+        ]);
+    }
+}
 
 // batas
 

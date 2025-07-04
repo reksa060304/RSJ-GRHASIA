@@ -255,6 +255,9 @@ Route::group(['middleware' => 'cors', 'prefix' => 'service'], function () {
           Route::post('ambulance/save-input-order-from-telemedicine', 'Ambulance\AmbulanController@SaveInputTagihanFromTelemedicine');
           Route::post('ambulance/simpan-data-pelayanan-ambulan-dari-telemedicine', 'Ambulance\AmbulanController@savePelayananPasienAmbulanDariTelemedicine');
           Route::post('ambulance/simpan-nomor-surat-ambulan', 'Ambulance\AmbulanController@SimpanNomorSurat');
+          Route::get('ambulance/panss-sec' , 'Ambulance\AmbulanController@getPanssSec');
+          Route::get('ambulance/slotting-ambulance', 'Ambulance\AmbulanController@getslotting');
+        
 
         // });
         Route::group(['prefix' => 'askep'], function () {
@@ -3634,6 +3637,7 @@ Route::group(['middleware' => 'cors', 'prefix' => 'service'], function () {
           Route::get('tindakan/get-laporan-tindakan-implementasi','TataRekening\TindakanController@getLaporanTindakanImplementasi');
           Route::get('sysadmin/general/get-produk-nonobat','SysAdmin\Master\MasterController@getProdukNonObat');
           Route::get('tatarekening/tindakan/get-combo', 'TataRekening\TindakanController@getCombo');
+          Route::get('tatarekening/tindakan/get-combo-telemedicine', 'TataRekening\TindakanController@getComboTelemedicine');
           Route::get('tatarekening/tindakan/get-pegawaibyjenispetugas', 'TataRekening\TindakanController@getPegawaiByJenisPetugasPe');
           Route::get('tatarekening/tindakan/get-jenispetugasbypegawai', 'TataRekening\TindakanController@getJenisPetugasPeByPegawai');
           Route::post('tatarekening/tindakan/save-tindakan', 'TataRekening\TindakanController@saveTindakan');
