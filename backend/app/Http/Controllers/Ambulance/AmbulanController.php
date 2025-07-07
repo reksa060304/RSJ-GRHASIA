@@ -2774,6 +2774,58 @@ class AmbulanController extends ApiController
                 $SPD->map_lat = $item['map_lat'];
                 $SPD->map_lng = $item['map_lng'];
                 $SPD->save();
+
+                $secret_token = \DB::table('settingdatafixed_m')
+                    ->where('kdprofile', $kdProfile)
+                    ->where('statusenabled', true)
+                    ->where('namafield', 'secret_token_telemedicine')
+                    ->value('nilaifield'); 
+
+                $id_chat = \DB::table('settingdatafixed_m')
+                    ->where('kdprofile', $kdProfile)
+                    ->where('statusenabled', true)
+                    ->where('namafield', 'id_telemedicine')
+                    ->value('nilaifield'); 
+
+                $jenisKegiatanNama = \DB::table('jeniskegiatanambulan_m')
+                    ->where('id', $req['jeniskegiatan'])
+                    ->value('namajeniskegiatan');
+
+                if ($secret_token && $id_chat) {
+                    $url = "https://api.telegram.org/bot" . $secret_token . "/sendMessage?parse_mode=html&chat_id=" . $id_chat;
+                    $url .= "&text=" . urlencode("<b>Order Baru dari Telemedicine:</b>" . "\n" .
+                        "No. Order: " . $SP->nostruk . "\n" .
+                        "Nama Pasien: " . $SP->namapasien_klien . "\n" .
+                        "No. RM: " . $SP->nocmklien . "\n" .
+                        "Jarak: " . $item['jarak'] . " KM\n" .
+                        "Alamat Tujuan: " . $item['address'] . "\n" .
+                        "Jenis Kegiatan: " . ($jenisKegiatanNama ?? 'N/A') . "\n" .
+                        "Total Biaya: Rp. " . number_format($SP->totalharusdibayar, 0, ',', '.'));
+
+                    $ch = curl_init();
+                    curl_setopt_array($ch, [
+                        CURLOPT_URL => $url,
+                        CURLOPT_RETURNTRANSFER => true
+                    ]);
+                    $response = curl_exec($ch);
+                    curl_close($ch);
+
+                    // Ambil message_id dan pin message
+                    $res = json_decode($response, true);
+                    if (isset($res['result']['message_id'])) {
+                        $messageId = $res['result']['message_id'];
+                        $pinUrl = "https://api.telegram.org/bot" . $secret_token . "/pinChatMessage";
+                        $pinUrl .= "?chat_id=" . $id_chat . "&message_id=" . $messageId;
+
+                        $chPin = curl_init();
+                        curl_setopt_array($chPin, [
+                            CURLOPT_URL => $pinUrl,
+                            CURLOPT_RETURNTRANSFER => true
+                        ]);
+                        curl_exec($chPin);
+                        curl_close($chPin);
+                    }
+                }
             }
 
             $transStatus = 'true';
