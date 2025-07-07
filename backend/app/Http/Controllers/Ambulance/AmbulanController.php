@@ -3373,6 +3373,7 @@ public function getSlotting(Request $request)
 {
     try {
         $idProfil = (int) $this->getDataKdProfile($request);
+        $tanggal = $request->input('tanggal', date('Y-m-d')); 
         
         $data = \DB::table('slottingambulance_m as sa')
             ->leftJoin('jeniskegiatanambulan_m as jka', 'sa.objectkegiatanfk', '=', 'jka.id')
@@ -3387,11 +3388,47 @@ public function getSlotting(Request $request)
             ->orderBy('sa.id')
             ->get();
 
+        $sisaquotaData = \DB::table('strukpelayanan_t as sp')
+            ->select(
+                'sp.istelemedicine',
+                \DB::raw('COUNT(sp.istelemedicine) as jumlah')
+            )
+            ->where('sp.kdprofile', $idProfil)
+            ->where('sp.statusenabled', true)
+            ->whereDate('sp.tglstruk', '=', $tanggal) 
+            ->whereNotNull('sp.istelemedicine')
+            ->groupBy('sp.istelemedicine')
+            ->get();
+
+       
+        $sisaquota = [];
+        foreach ($sisaquotaData as $item) {
+            $sisaquota[$item->istelemedicine] = $item->jumlah;
+        }
+
+        
+        $result = [];
+        foreach ($data as $item) {
+            $terpakai = isset($sisaquota[$item->objectkegiatanfk]) ? $sisaquota[$item->objectkegiatanfk] : 0;
+            $sisaQuota = $item->quota - $terpakai;
+            
+            $result[] = [
+                'id' => $item->id,
+                'quota' => $item->quota,
+                'objectkegiatanfk' => $item->objectkegiatanfk,
+                'namakegiatan' => $item->namakegiatan,
+                'terpakai' => $terpakai,
+                'sisa_quota' => max(0, $sisaQuota),
+                'is_available' => $sisaQuota > 0, // Status tersedia atau tidak
+                'tanggal' => $tanggal
+            ];
+        }
+
         return response()->json([
             'code' => 200,
             'message' => 'Data berhasil diambil',
             'success' => true,
-            'data' => $data
+            'data' => $result
         ]);
 
     } catch (\Exception $e) {
