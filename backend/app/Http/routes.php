@@ -257,6 +257,7 @@ Route::group(['middleware' => 'cors', 'prefix' => 'service'], function () {
           Route::post('ambulance/simpan-nomor-surat-ambulan', 'Ambulance\AmbulanController@SimpanNomorSurat');
           Route::get('ambulance/panss-sec' , 'Ambulance\AmbulanController@getPanssSec');
           Route::get('ambulance/slotting-ambulance', 'Ambulance\AmbulanController@getslotting');
+          Route::get('ambulance/score-panssec/{type}', 'Ambulance\AmbulanController@getscorePansSec');
         
 
         // });

@@ -3494,6 +3494,91 @@ public function getSlotting(Request $request)
     }
 }
 
+public function getscorePansSec(Request $request) 
+    {
+        try {
+            $kdprofile = $this->getDataKdProfile($request);
+            $score = $request->input('score');
+            
+            // Validasi input score
+            if (!$score || !is_numeric($score)) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Score harus berupa angka dan tidak boleh kosong'
+                ], 400);
+            }
+            
+            $score = (int) $score;
+            
+            $kriteria = \DB::table('panssec_kriteria_m as pkm')
+                ->select(
+                    'pkm.id',
+                    'pkm.nilaimin',
+                    'pkm.nilaimax',
+                    'pkm.statusenabled'
+                )
+                ->where('pkm.statusenabled', 't')
+                ->where('pkm.nilaimin', '<=', $score)
+                ->where('pkm.nilaimax', '>=', $score)
+                ->first();
+            
+            if (!$kriteria) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Kriteria tidak ditemukan untuk score: ' . $score,
+                    'score' => $score
+                ], 404);
+            }
+            
+            $protokol = \DB::table('panssec_kriteria_d as pkd')
+                ->select(
+                    'pkd.id',
+                    'pkd.text',
+                    'pkd.nourut'
+                )
+                ->where('pkd.panssec_kriteriafk', $kriteria->id)
+                ->where('pkd.statusenabled', 't')
+                ->orderBy('pkd.nourut', 'asc')
+                ->get();
+            
+        
+            $protokolArray = [];
+            if ($protokol && count($protokol) > 0) {
+                $protokolArray = collect($protokol)->map(function($item) {
+                    return [
+                        'id' => $item->id,
+                        'text' => $item->text,
+                        'order' => $item->nourut
+                    ];
+                })->toArray();
+            }
+            
+        
+            $result = [
+                'kriteria' => [
+                    'id' => $kriteria->id,
+                    'score_min' => $kriteria->nilaimin,
+                    'score_max' => $kriteria->nilaimax,
+                    'score_range' => $kriteria->nilaimin . ' - ' . $kriteria->nilaimax
+                ],
+                'protokol' => $protokolArray
+            ];
+            
+            return response()->json([
+                'success' => true,
+                'data' => $result,
+                'input_score' => $score,
+                'message' => 'Data berhasil ditemukan'
+            ]);
+            
+        } catch (\Exception $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Terjadi kesalahan: ' . $e->getMessage()
+            ], 500);
+        }
+    }
+
 // batas
 
 }
