@@ -185,25 +185,24 @@
                 <tbody>
                     <tr>
                         <td width="33%" style="text-align: center"> </td>
-                        <td width="33%">
-                        </td>
-                        <td width="33%" style="margin: 0">Sleman, {{$reportcontroller->tanggal_indonesia(date('Y-m-d', strtotime($data[0]->tglorder)))}}</td>
+                        <td width="33"></td>
+                        <td width="33%" style="text-align: center">Sleman, {{$reportcontroller->tanggal_indonesia(date('Y-m-d', strtotime($data[0]->tglorder)))}}</td>
                     </tr>
                     <tr>
                         <td width="33%">
                         </td>
                         <td width="33%">
                         </td>
-                        <td width="33%" style="text-align: center">Pengguna / Kuasa Pengguna
+                        <td width="33%" style="text-align: center">Kuasa Pengguna Barang
                         </td>
                     </tr>
-                    <tr>
+                    <!-- <tr>
                         <td width="33%" style="text-align: center"> </td>
                         <td width="33%"></td>
                         <td width="33%" style="text-align: center">
                             Pejabat Penatausahaan Barang
                         </td>
-                    </tr>
+                    </tr> -->
                     <tr>
                         <td></td>
                         <td></td>
@@ -211,12 +210,13 @@
                     </tr>
                     <tr>
                         <td style="text-align: center"></td>
-                        <td style="text-align: center">&nbsp;</td>
+                        <td style="text-align: center"></td>
                         <td style="text-align: center">
                             <br>
-                            <u>drg. RIRIN PUSPANDARI, M. Kes.</u>
+                            <u>Woro Windarini, S.Psi, M.Si.,Psi</u>
                             <br>
-                            NIP. 19670530 199403 2 003
+                            NIP. 196907171999032005
+                            
                         </td>
                     </tr>
                 </tbody>
