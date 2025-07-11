@@ -3524,6 +3524,7 @@ public function getscorePansSec(Request $request)
             
             if (!$kriteria) {
                 return response()->json([
+                    'code' => 404,
                     'success' => false,
                     'message' => 'Kriteria tidak ditemukan untuk score: ' . $score,
                     'score' => $score
@@ -3565,6 +3566,7 @@ public function getscorePansSec(Request $request)
             ];
             
             return response()->json([
+                'code' => 200,
                 'success' => true,
                 'data' => $result,
                 'input_score' => $score,
@@ -3573,6 +3575,7 @@ public function getscorePansSec(Request $request)
             
         } catch (\Exception $e) {
             return response()->json([
+                'code' => 500,
                 'success' => false,
                 'message' => 'Terjadi kesalahan: ' . $e->getMessage()
             ], 500);
