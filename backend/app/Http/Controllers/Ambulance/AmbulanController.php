@@ -2560,7 +2560,7 @@ class AmbulanController extends ApiController
         ->select('id', 'namajeniskegiatan as nama')
         ->where('kdprofile', $idProfile)
         ->where('statusenabled', true)
-        ->where('id', 1) //menjemput pasien
+        ->whereIn('id', [1, 5]) //menjemput pasien
         ->whereNotNull('namajeniskegiatan')
         ->get();
 
@@ -3569,7 +3569,7 @@ public function getscorePansSec(Request $request)
                 'data' => $result,
                 'input_score' => $score,
                 'message' => 'Data berhasil ditemukan'
-            ]);
+            ], 200);
             
         } catch (\Exception $e) {
             return response()->json([
