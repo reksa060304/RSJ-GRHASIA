@@ -14,6 +14,7 @@ use App\Http\Controllers\ApiController;
 use App\Traits\Valet;
 use App\Transaksi\AntrianPasienDiperiksa;
 use App\Transaksi\OrderPelayanan;
+use App\Transaksi\PanssecHistory;
 use App\Transaksi\PasienDaftar;
 use App\Transaksi\PelayananPasien;
 use App\Transaksi\PelayananPasienDetail;
@@ -2775,6 +2776,21 @@ class AmbulanController extends ApiController
                 $SPD->map_lng = $item['map_lng'];
                 $SPD->save();
 
+                $PANS = new PanssecHistory();
+                $PANS->norec = $PANS->generateNewId();
+                $PANS->statusenabled = true;
+                $PANS->strukpelayananfk = $SP->norec;
+                $PANS->soap = $item['soap'];               
+                $PANS->panssecd_1 = $item['panssecd_1'];
+                $PANS->panssecd_2 = $item['panssecd_2'];
+                $PANS->panssecd_3 = $item['panssecd_3'];
+                $PANS->panssecd_4 = $item['panssecd_4'];
+                $PANS->panssecd_5 = $item['panssecd_5'];
+                $PANS->panssecd_6 = $item['panssecd_6'];
+                $PANS->panssecd_7 = $item['panssecd_7'];
+                $PANS->totalskor = $item['totalskor'];
+                $PANS->save();
+
                 $secret_token = \DB::table('settingdatafixed_m')
                     ->where('kdprofile', $kdProfile)
                     ->where('statusenabled', true)
@@ -2796,6 +2812,7 @@ class AmbulanController extends ApiController
                     $url .= "&text=" . urlencode("<b>Order Baru dari Telemedicine:</b>" . "\n" .
                         "No. Order: " . $SP->nostruk . "\n" .
                         "Nama Pasien: " . $SP->namapasien_klien . "\n" .
+                        "Total Skor Panss-ec: " . $PANS->totalskor . "\n" .
                         "No. RM: " . $SP->nocmklien . "\n" .
                         "Jarak: " . $item['jarak'] . " KM\n" .
                         "Alamat Tujuan: " . $item['address'] . "\n" .
@@ -2827,7 +2844,6 @@ class AmbulanController extends ApiController
                     }
                 }
             }
-
             $transStatus = 'true';
         } catch (\Exception $e) {
             $transStatus = 'false';
