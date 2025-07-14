@@ -258,6 +258,7 @@ Route::group(['middleware' => 'cors', 'prefix' => 'service'], function () {
           Route::get('ambulance/panss-sec' , 'Ambulance\AmbulanController@getPanssSec');
           Route::get('ambulance/slotting-ambulance', 'Ambulance\AmbulanController@getslotting');
           Route::get('ambulance/score-panssec/{type}', 'Ambulance\AmbulanController@getscorePansSec');
+          Route::get('ambulance/history-telemedicine', 'Ambulance\AmbulanController@getHistoryPansSec');
         
 
         // });

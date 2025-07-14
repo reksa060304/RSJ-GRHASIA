@@ -3597,6 +3597,59 @@ public function getscorePansSec(Request $request)
             ], 500);
         }
     }
+    public function getHistoryPansSec(Request $request)
+    {
+        try {
+
+            $query = DB::table('panssec_history as ph')
+                ->join('strukpelayanan_t as sp', 'ph.strukpelayananfk', '=', 'sp.norec')
+                ->select('ph.*', 'sp.nocmklien', 'sp.tglstruk')
+                ->where('ph.statusenabled', true);
+
+            if ($request->has('nocmklien') && !empty($request->nocm)) {
+                $query->where(DB::raw('CAST(sp.nocmfk AS TEXT)'), 'like', '%' . $request->nocm . '%');
+            }
+            
+            if ($request->has('tanggal_mulai') && !empty($request->tanggal_mulai)) {
+                $query->whereDate('sp.tglstruk', '>=', $request->tanggal_mulai);
+            }
+            
+            if ($request->has('tanggal_akhir') && !empty($request->tanggal_akhir)) {
+                $query->whereDate('sp.tglstruk', '<=', $request->tanggal_akhir);
+            }
+            
+            $data = $query
+                ->orderBy('sp.tglstruk', 'desc')
+                ->orderBy('ph.norec', 'desc')
+                ->get();
+            
+            if (empty($data)) {
+                return response()->json([
+                    'code' => 200,
+                    'message' => 'Data history PansSec belum ada',
+                    'data' => [],
+                    'success' => true                
+                ]);
+            }
+            
+            return response()->json([
+                'code' => 200,
+                'message' => 'Data history PansSec berhasil diambil',
+                'data' => $data,
+                'success' => true,
+                'total' => count($data)
+            ]);
+            
+        } catch (Exception $e) {
+            
+            return response()->json([
+                'code' => 500,
+                'message' => 'Terjadi kesalahan internal server',
+                'error' => config('app.debug') ? $e->getMessage() : 'Internal server error',
+                'success' => false
+            ], 500);
+        }
+    }
 
 // batas
 
