@@ -3606,8 +3606,8 @@ public function getscorePansSec(Request $request)
                 ->select('ph.*', 'sp.nocmklien', 'sp.tglstruk')
                 ->where('ph.statusenabled', true);
 
-            if ($request->has('nocmklien') && !empty($request->nocm)) {
-                $query->where(DB::raw('CAST(sp.nocmfk AS TEXT)'), 'like', '%' . $request->nocm . '%');
+            if ($request->has('nocmklien') && !empty($request->nocmklien)) {
+                $query->where(DB::raw('CAST(sp.nocmklien AS TEXT)'), 'like', '%' . $request->nocmklien . '%');
             }
             
             if ($request->has('tanggal_mulai') && !empty($request->tanggal_mulai)) {
