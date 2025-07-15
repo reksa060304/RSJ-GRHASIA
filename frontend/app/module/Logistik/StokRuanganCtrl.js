@@ -437,6 +437,14 @@ define(['initialize'], function (initialize) {
             }
 
             $scope.SimpanAdjustment = function () {
+                if ($scope.item.QtyAdjustment == undefined) {
+                    toastr.warning("Qty Adjustment Harus Diisi!");
+                    return;
+                }
+                if ($scope.item.keterangan == undefined || $scope.item.keterangan.trim() === '') {
+                    toastr.warning("Keterangan Harus Diisi!");
+                    return;
+                }
                 $scope.popUp.center().open();
             }
 
@@ -448,6 +456,7 @@ define(['initialize'], function (initialize) {
                 $scope.item.QtyReal = undefined;
                 $scope.item.QtyAdjustment = undefined;
                 $scope.hargaSatuan = undefined;
+                $scope.item.keterangan = undefined;
                 $scope.AdjustmentShow.close();
             }
 
@@ -458,6 +467,7 @@ define(['initialize'], function (initialize) {
                 $scope.item.namaProduk = undefined;
                 $scope.item.QtyReal = undefined;
                 $scope.item.QtyAdjustment = undefined;
+                $scope.item.keterangan = undefined;
                 $scope.hargaSatuan = undefined;
                 $scope.popUp.close();
                 $scope.AdjustmentShow.close();
@@ -496,7 +506,8 @@ define(['initialize'], function (initialize) {
                     + "&passcode=" + $scope.item.kataKunciPass, true).then(function (dat) {
                         var datas = dat.data;
                         if (datas.message == "Password Salah") {
-                            toastr.error(message + " Hubungi Pihak IT / SIMRS !", "Info ");
+                            $scope.isRouteLoading = false;
+                            toastr.error("Password Salah. Hubungi Pihak IT / SIMRS!", "Info");                            
                             return;
                         } else {
                             $scope.item.kataKunciPass = undefined;
@@ -505,6 +516,8 @@ define(['initialize'], function (initialize) {
                             $scope.AdjustmentShow.close();
                             saveAdjusmentStokRuangan();
                         }
+                    }, function (error) {
+                        toastr.error("Terjadi kesalahan saat memvalidasi password. Silakan coba lagi.", "Error");
                     });
 
                 // if ($scope.item.kataKunciPass != $scope.item.passwordAd) {
@@ -526,7 +539,8 @@ define(['initialize'], function (initialize) {
                     'nostruterimafk': nostruterimafk,
                     'qtyreal': $scope.item.QtyReal,
                     'qtyad': parseFloat($scope.item.QtyAdjustment),
-                    'harga': parseFloat($scope.hargaSatuan)
+                    'harga': parseFloat($scope.hargaSatuan),
+                    'keterangan': $scope.item.keterangan
                 }
 
                 medifirstService.post('logistik/save-adjusment-stok', objSave).then(function (e) {
@@ -537,6 +551,7 @@ define(['initialize'], function (initialize) {
                     $scope.item.QtyReal = undefined;
                     $scope.item.QtyAdjustment = undefined;
                     $scope.item.kataKunciPass = undefined;
+                    $scope.item.keterangan = undefined;
                     $scope.popUp.close();
                     $scope.AdjustmentShow.close();
                     $scope.isRouteLoading = false;

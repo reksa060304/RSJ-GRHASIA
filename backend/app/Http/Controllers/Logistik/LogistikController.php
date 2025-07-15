@@ -13207,9 +13207,10 @@ class LogistikController extends ApiController{
         $kdProfile = $this->getDataKdProfile($request);
         $idProfile = (int) $kdProfile;
         $dataPegawai = \DB::table('loginuser_s as lu')
-            ->select('lu.objectpegawaifk')
-            ->where('lu.id',$request['userData']['id'])
-            ->first();
+                ->join('pegawai_m as pm', 'lu.objectpegawaifk', '=', 'pm.id')
+                ->select('pm.namalengkap', 'lu.objectpegawaifk')
+                ->where('lu.id', $request['userData']['id'])
+                ->first();
         $KelTransAddjusment = (int) $this->settingDataFixed('KelTransAddjusment', $idProfile);
         \DB::beginTransaction();
         try {
@@ -13312,7 +13313,7 @@ class LogistikController extends ApiController{
                     $newKS->kdprofile = $idProfile;
                     $newKS->statusenabled = true;
                     $newKS->jumlah = (float)$jumlahR;//$selisih;
-                    $newKS->keterangan = 'Adjusment Stok Ruangan ' . $request['namaRuangan'];
+                    $newKS->keterangan = 'Adjusment Stok Ruangan ' . $request['namaRuangan'] . ' oleh ' . $dataPegawai->namalengkap . ' - ' . $request['keterangan'];
                     $newKS->produkfk = $request['produkfk'];
                     $newKS->ruanganfk = $request['ruanganfk'];
                     $newKS->saldoawal = (float)$saldoAwalR;
@@ -13344,6 +13345,8 @@ class LogistikController extends ApiController{
                 $logUser->noreff = $dataSpdAD;
                 $logUser->referensi='norec stokprodukdetailadjustment_t';
                 $logUser->objectloginuserfk =  $request['userData']['id'];
+                $logUser->keterangan = 'Adjusment Stok Ruangan ' . $request['namaRuangan'] . ' oleh ' . $dataPegawai->namalengkap . ' - ' . 
+                                        $request['keterangan'] . ' Qty Real : ' . $request['qtyreal'] . ' Qty Adjusment : ' . $request['qtyad'];
                 $logUser->tanggal = date('Y-m-d H:i:s');
                 $logUser->save();
 
