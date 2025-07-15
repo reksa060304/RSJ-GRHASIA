@@ -3600,10 +3600,52 @@ public function getscorePansSec(Request $request)
     public function getHistoryPansSec(Request $request)
     {
         try {
-
             $query = DB::table('panssec_history as ph')
                 ->join('strukpelayanan_t as sp', 'ph.strukpelayananfk', '=', 'sp.norec')
-                ->select('ph.*', 'sp.nocmklien', 'sp.tglstruk')
+                ->leftJoin('panssec_d as pd1', function($join) {
+                    $join->on('ph.panssecd_1', '=', 'pd1.skor')
+                        ->where('pd1.panssecfk', '=', 1);
+                })
+                ->leftJoin('panssec_d as pd2', function($join) {
+                    $join->on('ph.panssecd_2', '=', 'pd2.skor')
+                        ->where('pd2.panssecfk', '=', 2);
+                })
+                ->leftJoin('panssec_d as pd3', function($join) {
+                    $join->on('ph.panssecd_3', '=', 'pd3.skor')
+                        ->where('pd3.panssecfk', '=', 3);
+                })
+                ->leftJoin('panssec_d as pd4', function($join) {
+                    $join->on('ph.panssecd_4', '=', 'pd4.skor')
+                        ->where('pd4.panssecfk', '=', 4);
+                })
+                ->leftJoin('panssec_d as pd5', function($join) {
+                    $join->on('ph.panssecd_5', '=', 'pd5.skor')
+                        ->where('pd5.panssecfk', '=', 5);
+                })
+                ->select([
+                    'ph.norec',
+                    'ph.statusenabled',
+                    'ph.strukpelayananfk',
+                    'ph.soap',
+                    'ph.panssecd_1',
+                    'pd1.label as panssecd_1_label',
+                    'pd1.keterangan as panssecd_1_text',
+                    'ph.panssecd_2',
+                    'pd2.label as panssecd_2_label',
+                    'pd2.keterangan as panssecd_2_text',
+                    'ph.panssecd_3',
+                    'pd3.label as panssecd_3_label',
+                    'pd3.keterangan as panssecd_3_text',
+                    'ph.panssecd_4',
+                    'pd4.label as panssecd_4_label',
+                    'pd4.keterangan as panssecd_4_text',
+                    'ph.panssecd_5',
+                    'pd5.label as panssecd_5_label',
+                    'pd5.keterangan as panssecd_5_text',
+                    'ph.totalskor',
+                    'sp.nocmklien',
+                    'sp.tglstruk'
+                ])
                 ->where('ph.statusenabled', true);
 
             if ($request->has('nocmklien') && !empty($request->nocmklien)) {
@@ -3623,25 +3665,29 @@ public function getscorePansSec(Request $request)
                 ->orderBy('ph.norec', 'desc')
                 ->get();
             
-            if (empty($data)) {
+            $dataCount = is_array($data) ? count($data) : $data->count();
+            
+            if ($dataCount === 0) {
                 return response()->json([
                     'code' => 200,
                     'message' => 'Data history PansSec belum ada',
                     'data' => [],
-                    'success' => true                
+                    'success' => true,
+                    'total' => 0
                 ]);
             }
+            
+            $resultData = is_array($data) ? $data : $data->toArray();
             
             return response()->json([
                 'code' => 200,
                 'message' => 'Data history PansSec berhasil diambil',
-                'data' => $data,
+                'data' => $resultData,
                 'success' => true,
-                'total' => count($data)
+                'total' => $dataCount
             ]);
             
-        } catch (Exception $e) {
-            
+        } catch (Exception $e) {         
             return response()->json([
                 'code' => 500,
                 'message' => 'Terjadi kesalahan internal server',
