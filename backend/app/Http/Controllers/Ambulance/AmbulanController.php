@@ -2739,21 +2739,22 @@ class AmbulanController extends ApiController
             $SP->istelemedicine = true;
             $SP->save();
 
-            foreach ($req['details'] as $item) {
+            $detail = $req['details']; 
+            // foreach ($req['details'] as $item) {
                 $SPD = new StrukPelayananDetail();
                 $norecKS = $SPD->generateNewId();
                 $SPD->norec = $norecKS;
                 $SPD->kdprofile = $kdProfile;
                 $SPD->statusenabled = true;
                 $SPD->nostrukfk = $SP->norec;
-                $SPD->objectprodukfk = $item['id'];
+                $SPD->objectprodukfk = $detail['id'];
                 $SPD->hargadiscount = 0;
                 $SPD->hargadiscountgive = 0;
                 $SPD->hargadiscountsave = 0;
-                $SPD->harganetto = $item['harga'];
+                $SPD->harganetto = $detail['harga'];
                 $SPD->hargapph = 0;
                 $SPD->hargappn = 0;
-                $SPD->hargasatuan = $item['harga'];
+                $SPD->hargasatuan = $detail['harga'];
                 $SPD->hargasatuandijamin = 0;
                 $SPD->hargasatuanppenjamin = 0;
                 $SPD->hargasatuanpprofile = 0;
@@ -2761,7 +2762,7 @@ class AmbulanController extends ApiController
                 $SPD->isonsiteservice = 0;
                 $SPD->kdpenjaminpasien = 0;
                 $SPD->persendiscount = 0;
-                $SPD->qtyproduk = $item['jumlah'];
+                $SPD->qtyproduk = $detail['jumlah'];
                 $SPD->qtyprodukoutext = 0;
                 $SPD->qtyprodukoutint = 0;
                 $SPD->qtyprodukretur = 0;
@@ -2770,25 +2771,52 @@ class AmbulanController extends ApiController
                 $SPD->is_terbayar = 0;
                 $SPD->linetotal = 0;
                 $SPD->jeniskegiatanambulanfk = $req['jeniskegiatan'];
-                $SPD->jarak = $item['jarak'];
-                $SPD->address = $item['address'];
-                $SPD->map_lat = $item['map_lat'];
-                $SPD->map_lng = $item['map_lng'];
+                $SPD->jarak = $detail['jarak'];
+                $SPD->address = $detail['address'];
+                $SPD->map_lat = $detail['map_lat'];
+                $SPD->map_lng = $detail['map_lng'];
+                $SPD->nama_pasien = $detail['nama_pasien'];
+                $SPD->nik = $detail['nik'];
                 $SPD->save();
 
                 $PANS = new PanssecHistory();
                 $PANS->norec = $PANS->generateNewId();
                 $PANS->statusenabled = true;
                 $PANS->strukpelayananfk = $SP->norec;
-                $PANS->soap = $item['soap'];               
-                $PANS->panssecd_1 = $item['panssecd_1'];
-                $PANS->panssecd_2 = $item['panssecd_2'];
-                $PANS->panssecd_3 = $item['panssecd_3'];
-                $PANS->panssecd_4 = $item['panssecd_4'];
-                $PANS->panssecd_5 = $item['panssecd_5'];
-                $PANS->panssecd_6 = $item['panssecd_6'];
-                $PANS->panssecd_7 = $item['panssecd_7'];
-                $PANS->totalskor = $item['totalskor'];
+                $PANS->s = $detail['s'];
+                $PANS->o = $detail['o'];
+                $PANS->a = $detail['a'];
+                $PANS->p = $detail['p'];
+                if (isset($detail['panssec']) && is_array($detail['panssec'])) {
+                
+                $panssecFields = [
+                    'panssecd_1' => 0,
+                    'panssecd_2' => 0,
+                    'panssecd_3' => 0,
+                    'panssecd_4' => 0,
+                    'panssecd_5' => 0,
+                    'panssecd_6' => 0,
+                    'panssecd_7' => 0,
+                ];
+
+            
+                foreach ($detail['panssec'] as $panssecItem) {
+                    $fieldName = 'panssecd_' . $panssecItem['id'];
+                    if (array_key_exists($fieldName, $panssecFields)) {
+                        $panssecFields[$fieldName] = $panssecItem['skor_id'];
+                    }
+                }
+
+                $PANS->panssecd_1 = $panssecFields['panssecd_1'];
+                $PANS->panssecd_2 = $panssecFields['panssecd_2'];
+                $PANS->panssecd_3 = $panssecFields['panssecd_3'];
+                $PANS->panssecd_4 = $panssecFields['panssecd_4'];
+                $PANS->panssecd_5 = $panssecFields['panssecd_5'];
+                $PANS->panssecd_6 = $panssecFields['panssecd_6'];
+                $PANS->panssecd_7 = $panssecFields['panssecd_7'];
+                }
+
+                $PANS->totalskor = $detail['totalskor'];
                 $PANS->save();
 
                 $secret_token = \DB::table('settingdatafixed_m')
@@ -2814,8 +2842,8 @@ class AmbulanController extends ApiController
                         "Nama Pasien: " . $SP->namapasien_klien . "\n" .
                         "Total Skor Panss-ec: " . $PANS->totalskor . "\n" .
                         "No. RM: " . $SP->nocmklien . "\n" .
-                        "Jarak: " . $item['jarak'] . " KM\n" .
-                        "Alamat Tujuan: " . $item['address'] . "\n" .
+                        "Jarak: " . $detail['jarak'] . " KM\n" .
+                        "Alamat Tujuan: " . $detail['address'] . "\n" .
                         "Jenis Kegiatan: " . ($jenisKegiatanNama ?? 'N/A') . "\n" .
                         "Total Biaya: Rp. " . number_format($SP->totalharusdibayar, 0, ',', '.'));
 
@@ -2843,7 +2871,7 @@ class AmbulanController extends ApiController
                         curl_close($chPin);
                     }
                 }
-            }
+            // }
             $transStatus = 'true';
         } catch (\Exception $e) {
             $transStatus = 'false';
