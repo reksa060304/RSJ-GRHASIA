@@ -3451,6 +3451,10 @@ public function getSlotting(Request $request)
             )
             ->where('sp.kdprofile', $idProfil)
             ->where('sp.statusenabled', true)
+            ->where(function($query) {
+                $query->where('sp.isapprove', true)
+                    ->orWhereNull('sp.isapprove');
+            })
             ->whereDate('sp.tglstruk', '=', $tanggal) 
             ->whereNotNull('sp.istelemedicine')
             ->groupBy('sp.istelemedicine')
