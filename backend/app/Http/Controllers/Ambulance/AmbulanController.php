@@ -2739,22 +2739,22 @@ class AmbulanController extends ApiController
             $SP->istelemedicine = true;
             $SP->save();
 
-            $detail = $req['details']; 
-            // foreach ($req['details'] as $item) {
+            // $detail = $req['details']; 
+            foreach ($req['details'] as $item) {
                 $SPD = new StrukPelayananDetail();
                 $norecKS = $SPD->generateNewId();
                 $SPD->norec = $norecKS;
                 $SPD->kdprofile = $kdProfile;
                 $SPD->statusenabled = true;
                 $SPD->nostrukfk = $SP->norec;
-                $SPD->objectprodukfk = $detail['id'];
+                $SPD->objectprodukfk = $item['id'];
                 $SPD->hargadiscount = 0;
                 $SPD->hargadiscountgive = 0;
                 $SPD->hargadiscountsave = 0;
-                $SPD->harganetto = $detail['harga'];
+                $SPD->harganetto = $item['harga'];
                 $SPD->hargapph = 0;
                 $SPD->hargappn = 0;
-                $SPD->hargasatuan = $detail['harga'];
+                $SPD->hargasatuan = $item['harga'];
                 $SPD->hargasatuandijamin = 0;
                 $SPD->hargasatuanppenjamin = 0;
                 $SPD->hargasatuanpprofile = 0;
@@ -2762,7 +2762,7 @@ class AmbulanController extends ApiController
                 $SPD->isonsiteservice = 0;
                 $SPD->kdpenjaminpasien = 0;
                 $SPD->persendiscount = 0;
-                $SPD->qtyproduk = $detail['jumlah'];
+                $SPD->qtyproduk = $item['jumlah'];
                 $SPD->qtyprodukoutext = 0;
                 $SPD->qtyprodukoutint = 0;
                 $SPD->qtyprodukretur = 0;
@@ -2771,53 +2771,13 @@ class AmbulanController extends ApiController
                 $SPD->is_terbayar = 0;
                 $SPD->linetotal = 0;
                 $SPD->jeniskegiatanambulanfk = $req['jeniskegiatan'];
-                $SPD->jarak = $detail['jarak'];
-                $SPD->address = $detail['address'];
-                $SPD->map_lat = $detail['map_lat'];
-                $SPD->map_lng = $detail['map_lng'];
-                $SPD->nama_pasien = $detail['nama_pasien'];
-                $SPD->nik = $detail['nik'];
-                $SPD->save();
-
-                $PANS = new PanssecHistory();
-                $PANS->norec = $PANS->generateNewId();
-                $PANS->statusenabled = true;
-                $PANS->strukpelayananfk = $SP->norec;
-                $PANS->s = $detail['s'];
-                $PANS->o = $detail['o'];
-                $PANS->a = $detail['a'];
-                $PANS->p = $detail['p'];
-                if (isset($detail['panssec']) && is_array($detail['panssec'])) {
-                
-                $panssecFields = [
-                    'panssecd_1' => null,
-                    'panssecd_2' => null,
-                    'panssecd_3' => null,
-                    'panssecd_4' => null,
-                    'panssecd_5' => null,
-                    'panssecd_6' => null,
-                    'panssecd_7' => null,
-                ];
-
-            
-                foreach ($detail['panssec'] as $panssecItem) {
-                    $fieldName = 'panssecd_' . $panssecItem['id'];
-                    if (array_key_exists($fieldName, $panssecFields)) {
-                        $panssecFields[$fieldName] = $panssecItem['skor_id'];
-                    }
-                }
-
-                $PANS->panssecd_1 = $panssecFields['panssecd_1'];
-                $PANS->panssecd_2 = $panssecFields['panssecd_2'];
-                $PANS->panssecd_3 = $panssecFields['panssecd_3'];
-                $PANS->panssecd_4 = $panssecFields['panssecd_4'];
-                $PANS->panssecd_5 = $panssecFields['panssecd_5'];
-                $PANS->panssecd_6 = $panssecFields['panssecd_6'];
-                $PANS->panssecd_7 = $panssecFields['panssecd_7'];
-                }
-
-                $PANS->totalskor = $detail['totalskor'];
-                $PANS->save();
+                $SPD->jarak = $item['jarak'];
+                $SPD->address = $item['address'];
+                $SPD->map_lat = $item['map_lat'];
+                $SPD->map_lng = $item['map_lng'];
+                $SPD->nama_pasien = $item['nama_pasien'] ?? '';
+                $SPD->nik = $item['nik'] ?? '';
+                $SPD->save();              
 
                 $secret_token = \DB::table('settingdatafixed_m')
                     ->where('kdprofile', $kdProfile)
@@ -2840,10 +2800,10 @@ class AmbulanController extends ApiController
                     $url .= "&text=" . urlencode("<b>Order Baru dari Telemedicine:</b>" . "\n" .
                         "No. Order: " . $SP->nostruk . "\n" .
                         "Nama Pasien: " . $SP->namapasien_klien . "\n" .
-                        "Total Skor Panss-ec: " . $PANS->totalskor . "\n" .
+                        // "Total Skor Panss-ec: " . $PANS->totalskor . "\n" .
                         "No. RM: " . $SP->nocmklien . "\n" .
-                        "Jarak: " . $detail['jarak'] . " KM\n" .
-                        "Alamat Tujuan: " . $detail['address'] . "\n" .
+                        "Jarak: " . $item['jarak'] . " KM\n" .
+                        "Alamat Tujuan: " . $item['address'] . "\n" .
                         "Jenis Kegiatan: " . ($jenisKegiatanNama ?? 'N/A') . "\n" .
                         "Total Biaya: Rp. " . number_format($SP->totalharusdibayar, 0, ',', '.'));
 
@@ -2871,7 +2831,7 @@ class AmbulanController extends ApiController
                         curl_close($chPin);
                     }
                 }
-            // }
+            }
             $transStatus = 'true';
         } catch (\Exception $e) {
             $transStatus = 'false';
@@ -3758,6 +3718,228 @@ public function getscorePansSec(Request $request)
                 'success' => false
             ], 500);
         }
+    }
+
+     public function SaveInputTagihanFromTelemedicinePsikiatri(Request $request)
+    {
+        $kdProfile = (int) $this->getDataKdProfile($request);
+        $transMessage = '';
+        $req = $request->all();
+
+        $pasien = \DB::table('pasien_m')
+            ->where('kdprofile', $kdProfile)
+            ->where('nocm', $req['nocm_klien'])
+            ->first();
+        
+        if(empty($pasien)){
+            $transMessage = "Pasien tidak terdaftar";
+            $result = array(
+                "status" => 404,
+                "message"  => $transMessage,
+                "as" => 'as@epic',
+            );
+            return $this->setStatusCode($result['status'])->respond($result, $transMessage);
+        }
+
+        \DB::beginTransaction();
+        try {
+            // if ($req['norec'] == '') {
+                $SP = new StrukPelayanan();
+                $norecSP = $SP->generateNewId();
+                $noStruk = $this->generateCode(new StrukPelayanan, 'nostruk', 10, 'NLA' . $this->getDateTime()->format('ym'), $kdProfile);
+                $SP->norec = $norecSP;
+                $SP->kdprofile = $kdProfile;
+                $SP->statusenabled = true;
+                $SP->nostruk = $noStruk;
+            // } else {
+            //     $SP = StrukPelayanan::where('norec', $req['norec'])->where('kprofile', $kdProfile)->first();
+            //     $DelSPD = StrukPelayananDetail::where('nostrukfk', $req['norec'])->where('kdprofile', $kdProfile)->delete();
+            // }
+            $SP->objectkelompoktransaksifk = 9; //pelayanan ambulance
+            if (isset($req['keterangan'])) {
+                $SP->keteranganlainnya = $req['keterangan'];
+            }else {
+                $SP->keteranganlainnya = "-";
+            }
+            $SP->nocmfk = $pasien->id;
+            $SP->namapasien_klien = $req['namapasien_klien'];
+            $SP->nocmklien = $req['nocm_klien'];
+            $SP->nostruk_intern = $req['nocm_klien'];
+            if (isset($req['notelp_klien'])) {
+                $SP->noteleponfaks = $req['notelp_klien'];
+            }
+            if (isset($req['alamat'])) {
+                $SP->namatempattujuan =  $req['alamat']; //alamat
+            }
+            if (isset($req['tglLahir'])) {
+                $SP->tglfaktur =  $req['tglLahir']; //tgllahir
+            }
+            $SP->tglstruk = $req['tglstruk'];
+            $SP->totalharusdibayar = $req['totalharusdibayar'];
+            $SP->istelemedicine = true;
+            $SP->save();
+
+            $detail = $req['details']; 
+            // foreach ($req['details'] as $item) {
+                $SPD = new StrukPelayananDetail();
+                $norecKS = $SPD->generateNewId();
+                $SPD->norec = $norecKS;
+                $SPD->kdprofile = $kdProfile;
+                $SPD->statusenabled = true;
+                $SPD->nostrukfk = $SP->norec;
+                $SPD->objectprodukfk = $detail['id'];
+                $SPD->hargadiscount = 0;
+                $SPD->hargadiscountgive = 0;
+                $SPD->hargadiscountsave = 0;
+                $SPD->harganetto = $detail['harga'];
+                $SPD->hargapph = 0;
+                $SPD->hargappn = 0;
+                $SPD->hargasatuan = $detail['harga'];
+                $SPD->hargasatuandijamin = 0;
+                $SPD->hargasatuanppenjamin = 0;
+                $SPD->hargasatuanpprofile = 0;
+                $SPD->hargatambahan = 0;
+                $SPD->isonsiteservice = 0;
+                $SPD->kdpenjaminpasien = 0;
+                $SPD->persendiscount = 0;
+                $SPD->qtyproduk = $detail['jumlah'];
+                $SPD->qtyprodukoutext = 0;
+                $SPD->qtyprodukoutint = 0;
+                $SPD->qtyprodukretur = 0;
+                $SPD->satuan = 0;
+                $SPD->tglpelayanan = $req['tglstruk'];
+                $SPD->is_terbayar = 0;
+                $SPD->linetotal = 0;
+                $SPD->jeniskegiatanambulanfk = $req['jeniskegiatan'];
+                $SPD->jarak = $detail['jarak'];
+                $SPD->address = $detail['address'];
+                $SPD->map_lat = $detail['map_lat'];
+                $SPD->map_lng = $detail['map_lng'];
+                $SPD->nama_pasien = $detail['nama_pasien'];
+                $SPD->nik = $detail['nik'];
+                $SPD->save();
+
+                $PANS = new PanssecHistory();
+                $PANS->norec = $PANS->generateNewId();
+                $PANS->statusenabled = true;
+                $PANS->strukpelayananfk = $SP->norec;
+                $PANS->s = $detail['s'];
+                $PANS->o = $detail['o'];
+                $PANS->a = $detail['a'];
+                $PANS->p = $detail['p'];
+                if (isset($detail['panssec']) && is_array($detail['panssec'])) {
+                
+                $panssecFields = [
+                    'panssecd_1' => null,
+                    'panssecd_2' => null,
+                    'panssecd_3' => null,
+                    'panssecd_4' => null,
+                    'panssecd_5' => null,
+                    'panssecd_6' => null,
+                    'panssecd_7' => null,
+                ];
+
+            
+                foreach ($detail['panssec'] as $panssecItem) {
+                    $fieldName = 'panssecd_' . $panssecItem['id'];
+                    if (array_key_exists($fieldName, $panssecFields)) {
+                        $panssecFields[$fieldName] = $panssecItem['skor_id'];
+                    }
+                }
+
+                $PANS->panssecd_1 = $panssecFields['panssecd_1'];
+                $PANS->panssecd_2 = $panssecFields['panssecd_2'];
+                $PANS->panssecd_3 = $panssecFields['panssecd_3'];
+                $PANS->panssecd_4 = $panssecFields['panssecd_4'];
+                $PANS->panssecd_5 = $panssecFields['panssecd_5'];
+                $PANS->panssecd_6 = $panssecFields['panssecd_6'];
+                $PANS->panssecd_7 = $panssecFields['panssecd_7'];
+                }
+
+                $PANS->totalskor = $detail['totalskor'];
+                $PANS->save();
+
+                $secret_token = \DB::table('settingdatafixed_m')
+                    ->where('kdprofile', $kdProfile)
+                    ->where('statusenabled', true)
+                    ->where('namafield', 'secret_token_telemedicine')
+                    ->value('nilaifield'); 
+
+                $id_chat = \DB::table('settingdatafixed_m')
+                    ->where('kdprofile', $kdProfile)
+                    ->where('statusenabled', true)
+                    ->where('namafield', 'id_telemedicine')
+                    ->value('nilaifield'); 
+
+                $jenisKegiatanNama = \DB::table('jeniskegiatanambulan_m')
+                    ->where('id', $req['jeniskegiatan'])
+                    ->value('namajeniskegiatan');
+
+                if ($secret_token && $id_chat) {
+                    $url = "https://api.telegram.org/bot" . $secret_token . "/sendMessage?parse_mode=html&chat_id=" . $id_chat;
+                    $url .= "&text=" . urlencode("<b>Order Baru dari Telemedicine Psikiatri:</b>" . "\n" .
+                        "No. Order: " . $SP->nostruk . "\n" .
+                        "Nama Pasien: " . $SP->namapasien_klien . "\n" .
+                        "Total Skor Panss-ec: " . $PANS->totalskor . "\n" .
+                        "No. RM: " . $SP->nocmklien . "\n" .
+                        "Jarak: " . $detail['jarak'] . " KM\n" .
+                        "Alamat Tujuan: " . $detail['address'] . "\n" .
+                        "Jenis Kegiatan: " . ($jenisKegiatanNama ?? 'N/A') . "\n" .
+                        "Total Biaya: Rp. " . number_format($SP->totalharusdibayar, 0, ',', '.'));
+
+                    $ch = curl_init();
+                    curl_setopt_array($ch, [
+                        CURLOPT_URL => $url,
+                        CURLOPT_RETURNTRANSFER => true
+                    ]);
+                    $response = curl_exec($ch);
+                    curl_close($ch);
+
+                    // Ambil message_id dan pin message
+                    $res = json_decode($response, true);
+                    if (isset($res['result']['message_id'])) {
+                        $messageId = $res['result']['message_id'];
+                        $pinUrl = "https://api.telegram.org/bot" . $secret_token . "/pinChatMessage";
+                        $pinUrl .= "?chat_id=" . $id_chat . "&message_id=" . $messageId;
+
+                        $chPin = curl_init();
+                        curl_setopt_array($chPin, [
+                            CURLOPT_URL => $pinUrl,
+                            CURLOPT_RETURNTRANSFER => true
+                        ]);
+                        curl_exec($chPin);
+                        curl_close($chPin);
+                    }
+                }
+            // }
+            $transStatus = 'true';
+        } catch (\Exception $e) {
+            $transStatus = 'false';
+        }
+
+        if ($transStatus == 'true') {
+            $transMessage = "Order berhasil dibuat";
+            DB::commit();
+            $result = array(
+                "status" => 201,
+                "message" => $transMessage,
+                "data" => [
+                    "order_number" => $SP->nostruk,
+                    "price" => $SP->totalharusdibayar,
+                    "status_order" => 'Menunggu',
+                ],
+                "as" => 'as@epic',
+            );
+        } else {
+            $transMessage = "Order Gagal.";
+            DB::rollBack();
+            $result = array(
+                "status" => 400,
+                "message"  => $transMessage,
+                "as" => 'as@epic',
+            );
+        }
+        return $this->setStatusCode($result['status'])->respond($result);
     }
 
 // batas
