@@ -3821,6 +3821,7 @@ public function getscorePansSec(Request $request)
                 $SPD->map_lng = $detail['map_lng'];
                 $SPD->nama_pasien = $detail['nama_pasien'];
                 $SPD->nik = $detail['nik'];
+                $SPD->tanggal_jemput = $detail['tanggal_jemput'] ?? null;
                 $SPD->save();
 
                 $PANS = new PanssecHistory();
