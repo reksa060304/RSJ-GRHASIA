@@ -3781,7 +3781,7 @@ public function getscorePansSec(Request $request)
             $SP->tglstruk = $req['tglstruk'];
             $SP->totalharusdibayar = $req['totalharusdibayar'];
             $SP->istelemedicine = true;
-            $SP->tanggal_jemput = $detail['tanggal_jemput'] ?? null;
+            $SP->tanggal_jemput = $req['tanggal_jemput'] ?? null;
 
             $SP->save();
 
