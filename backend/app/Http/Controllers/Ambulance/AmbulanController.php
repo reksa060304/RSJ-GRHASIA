@@ -3017,7 +3017,7 @@ class AmbulanController extends ApiController
             $ket_verif_telemedicine = 'verifikasi';
         }  else if($verifikasi == "ditolak") {
             $ket_verif_simrs = false;
-            $ket_verif_telemedicine = 'ditolak';
+            $ket_verif_telemedicine = 'Rejected';
         } else {
             $ket_verif_simrs = null;
             $ket_verif_telemedicine = "menunggu";
