@@ -3390,9 +3390,8 @@ Route::group(['middleware' => 'cors', 'prefix' => 'service'], function () {
                 Route::get('sysadmin/master/get-setting-combo','SysAdmin\Master\MasterController@getComboPartTable');
 
                 Route::get('sysadmin/master/get-kelompok-user','SysAdmin\Master\MasterController@getKelompokUser');
-                Route::get('sysadmin/master/get-tarif-harganettoprodukbykelas', 'SysAdmin\Master\MasterController@  ');
-                Route::get('sysadmin/master/get-tarif-harganettoprodukbykelas_d', 'SysAdmin\Master\MasterContro
-                ller@view_harganettoprodukbykelasD');
+                Route::get('sysadmin/master/get-tarif-harganettoprodukbykelas', 'SysAdmin\Master\MasterController@view_harganettoprodukbykelas');
+                Route::get('sysadmin/master/get-tarif-harganettoprodukbykelas_d', 'SysAdmin\Master\MasterController@view_harganettoprodukbykelasD');
                 Route::get('sysadmin/master/get-tarif-produk', 'SysAdmin\Master\MasterController@GetTarifProduk');
                 Route::get('sysadmin/master/get-combo-tarif', 'SysAdmin\Master\MasterController@getComboHargaNetto');
                 Route::get('sysadmin/master/get-list-komponen', 'SysAdmin\Master\MasterController@ListMaster');
