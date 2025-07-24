@@ -3597,27 +3597,27 @@ public function getscorePansSec(Request $request)
                 ->join('strukpelayanan_t as sp', 'ph.strukpelayananfk', '=', 'sp.norec')
                 ->join('strukpelayanandetail_t as spd', 'spd.nostrukfk', '=', 'sp.norec')
                 ->leftJoin('panssec_d as pd1', function ($join) {
-                    $join->on('ph.panssecd_1', '=', 'pd1.skor')->where('pd1.panssecfk', '=', 1);
+                    $join->on('ph.panssecd_1', '=', 'pd1.id')->where('pd1.panssecfk', '=', 1);
                 })
                 ->leftJoin('panssec_d as pd2', function ($join) {
-                    $join->on('ph.panssecd_2', '=', 'pd2.skor')->where('pd2.panssecfk', '=', 2);
+                    $join->on('ph.panssecd_2', '=', 'pd2.id')->where('pd2.panssecfk', '=', 2);
                 })
                 ->leftJoin('panssec_d as pd3', function ($join) {
-                    $join->on('ph.panssecd_3', '=', 'pd3.skor')->where('pd3.panssecfk', '=', 3);
+                    $join->on('ph.panssecd_3', '=', 'pd3.id')->where('pd3.panssecfk', '=', 3);
                 })
                 ->leftJoin('panssec_d as pd4', function ($join) {
-                    $join->on('ph.panssecd_4', '=', 'pd4.skor')->where('pd4.panssecfk', '=', 4);
+                    $join->on('ph.panssecd_4', '=', 'pd4.id')->where('pd4.panssecfk', '=', 4);
                 })
                 ->leftJoin('panssec_d as pd5', function ($join) {
-                    $join->on('ph.panssecd_5', '=', 'pd5.skor')->where('pd5.panssecfk', '=', 5);
+                    $join->on('ph.panssecd_5', '=', 'pd5.id')->where('pd5.panssecfk', '=', 5);
                 })
                 ->select([
                     'ph.norec', 'ph.statusenabled', 'ph.strukpelayananfk', 'ph.s', 'ph.o', 'ph.a', 'ph.p',
-                    'ph.panssecd_1', 'pd1.id as pd1_id', 'pd1.label as pd1_label', 'pd1.keterangan as pd1_ket',
-                    'ph.panssecd_2', 'pd2.id as pd2_id', 'pd2.label as pd2_label', 'pd2.keterangan as pd2_ket',
-                    'ph.panssecd_3', 'pd3.id as pd3_id', 'pd3.label as pd3_label', 'pd3.keterangan as pd3_ket',
-                    'ph.panssecd_4', 'pd4.id as pd4_id', 'pd4.label as pd4_label', 'pd4.keterangan as pd4_ket',
-                    'ph.panssecd_5', 'pd5.id as pd5_id', 'pd5.label as pd5_label', 'pd5.keterangan as pd5_ket',
+                    'ph.panssecd_1', 'pd1.id as pd1_id', 'pd1.skor as pd1_skor', 'pd1.label as pd1_label', 'pd1.keterangan as pd1_ket',
+                    'ph.panssecd_2', 'pd2.id as pd2_id', 'pd2.skor as pd2_skor', 'pd2.label as pd2_label', 'pd2.keterangan as pd2_ket',
+                    'ph.panssecd_3', 'pd3.id as pd3_id', 'pd3.skor as pd3_skor', 'pd3.label as pd3_label', 'pd3.keterangan as pd3_ket',
+                    'ph.panssecd_4', 'pd4.id as pd4_id', 'pd4.skor as pd4_skor', 'pd4.label as pd4_label', 'pd4.keterangan as pd4_ket',
+                    'ph.panssecd_5', 'pd5.id as pd5_id', 'pd5.skor as pd5_skor', 'pd5.label as pd5_label', 'pd5.keterangan as pd5_ket',
                     'ph.totalskor', 'sp.nocmklien', 'sp.tglstruk', 'spd.nama_pasien as namapasien',
                 ])
                 ->where('ph.statusenabled', true);
@@ -3635,8 +3635,8 @@ public function getscorePansSec(Request $request)
             }
 
             $records = $query->orderBy('sp.tglstruk', 'desc')->orderBy('ph.norec', 'desc')->get();
+            
             if (count($records) === 0) {
-
                 return response()->json([
                     'code' => 200,
                     'message' => 'Data history PansSec belum ada',
@@ -3646,10 +3646,6 @@ public function getscorePansSec(Request $request)
                 ]);
             }
 
-            // Ambil data panssec_m 
-            $masters = DB::table('panssec_m')->get();
-            $result = [];
-            // Ambil data master 
             $mastersRaw = DB::table('panssec_m')->get();
             $masters = [];
             foreach ($mastersRaw as $m) {
@@ -3666,9 +3662,9 @@ public function getscorePansSec(Request $request)
                         continue; 
                     }
 
-                    $master = $masters[$i];
+                    $master = $masters[$i];                  
                     $skorId = $row->{'pd' . $i . '_id'} ?? null;
-                    $skorNilai = $row->{'panssecd_' . $i} ?? null;
+                    $skorNilai = $row->{'pd' . $i . '_skor'} ?? null; 
                     $skorLabel = $row->{'pd' . $i . '_label'} ?? null;
                     $skorKeterangan = $row->{'pd' . $i . '_ket'} ?? null;
 
