@@ -193,16 +193,16 @@
                         </td>
                         <td width="33%">
                         </td>
-                        <td width="33%" style="text-align: center">Kuasa Pengguna Barang
+                        <td width="33%" style="text-align: center">Pengguna / Kuasa Pengguna
                         </td>
                     </tr>
-                    <!-- <tr>
+                    <tr>
                         <td width="33%" style="text-align: center"> </td>
                         <td width="33%"></td>
                         <td width="33%" style="text-align: center">
                             Pejabat Penatausahaan Barang
                         </td>
-                    </tr> -->
+                    </tr>
                     <tr>
                         <td></td>
                         <td></td>
