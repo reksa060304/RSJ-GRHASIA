@@ -2846,7 +2846,7 @@ class AmbulanController extends ApiController
                 "data" => [
                     "order_number" => $SP->nostruk,
                     "price" => $SP->totalharusdibayar,
-                    "status_order" => 'Menunggu verifikasi, pastikan nomer hp yang terdaftar aktif',
+                    "status_order" => 'Menunggu',
                 ],
                 "as" => 'as@epic',
             );
@@ -3929,7 +3929,7 @@ public function getscorePansSec(Request $request)
                 "data" => [
                     "order_number" => $SP->nostruk,
                     "price" => $SP->totalharusdibayar,
-                    "status_order" => 'Menunggu verifikasi, pastikan nomer hp yang terdaftar aktif',
+                    "status_order" => 'Menunggu',
                 ],
                 "as" => 'as@epic',
             );
