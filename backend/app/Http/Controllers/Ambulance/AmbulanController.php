@@ -2846,7 +2846,7 @@ class AmbulanController extends ApiController
                 "data" => [
                     "order_number" => $SP->nostruk,
                     "price" => $SP->totalharusdibayar,
-                    "status_order" => 'Menunggu',
+                    "status_order" => 'Menunggu verifikasi, pastikan nomer hp yang terdaftar aktif',
                 ],
                 "as" => 'as@epic',
             );
@@ -3042,6 +3042,7 @@ class AmbulanController extends ApiController
         try {
             $SP = StrukPelayanan::where('norec', $req['norec_sp'])->where('kdprofile', $kdProfile)->first();
             $SP->isapprove = $ket_verif_simrs;
+            $SP->keterangan= $req['messages'] ?? '-';
             $SP->save();
 
             $SPD = StrukPelayananDetail::where('nostrukfk', $req['norec_sp'])->where('kdprofile', $kdProfile)->get();
@@ -3111,7 +3112,7 @@ class AmbulanController extends ApiController
                     "uuid_officer" => $req['driver_uuid_telemedicine'],
                     "uuid_ambulance" => $req['kendaraan_uuid_telemedicine'],
                     "status_order" => $ket_verif_telemedicine,
-                    "reason" => "-"
+                    "messages" => $req['messages'] ?? '-',
                 );
     
                 $data_kirim = json_encode($dataJsonSend);
@@ -3928,7 +3929,7 @@ public function getscorePansSec(Request $request)
                 "data" => [
                     "order_number" => $SP->nostruk,
                     "price" => $SP->totalharusdibayar,
-                    "status_order" => 'Menunggu',
+                    "status_order" => 'Menunggu verifikasi, pastikan nomer hp yang terdaftar aktif',
                 ],
                 "as" => 'as@epic',
             );
