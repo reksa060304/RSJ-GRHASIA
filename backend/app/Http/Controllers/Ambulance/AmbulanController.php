@@ -2621,12 +2621,11 @@ class AmbulanController extends ApiController
         return $this->setStatusCode($result['code'])->respond($result);
     }
 
-    public function getRiwayatPelayananAmbulance(Request $request)
+   public function getRiwayatPelayananAmbulance(Request $request)
     {
         $kdProfile = (int) $this->getDataKdProfile($request);
-        $no_rm = $request['nocm'];
-        $data = DB::select(
-    DB::raw("
+        $no_rm = $request['nocm']; 
+        $query = "
             SELECT 
                 STRING_AGG(pr.namaproduk, ', ') AS activity_type_name,
                 SUM(spd.qtyproduk) AS total_qty,
@@ -2651,15 +2650,25 @@ class AmbulanController extends ApiController
             WHERE sp.nocmklien = '$no_rm' 
                 AND sp.kdprofile = $kdProfile 
                 AND sp.statusenabled = TRUE 
-                AND sp.isapprove IS NOT NULL
+                AND sp.isapprove IS NOT NULL";
+        
+        if (isset($request['tglAwal']) && $request['tglAwal'] != "" && $request['tglAwal'] != "undefined") {
+            $query .= " AND sp.tglstruk >= '{$request['tglAwal']}'";
+        }
+        
+        if (isset($request['tglAkhir']) && $request['tglAkhir'] != "" && $request['tglAkhir'] != "undefined") {
+            $query .= " AND sp.tglstruk <= '{$request['tglAkhir']}'";
+        }
+        
+        $query .= "
             GROUP BY 
                 sp.nostruk, 
                 sp.tglstruk, 
                 sp.isapprove, 
                 ra.nopolisi
-            ORDER BY sp.tglstruk DESC
-            ")
-        );
+            ORDER BY sp.tglstruk DESC";
+        
+        $data = DB::select(DB::raw($query));
 
         if(!empty($data)){
             $result = array(
@@ -3069,7 +3078,7 @@ class AmbulanController extends ApiController
                 }
             } else if($verifikasi == "ditolak") {
                 foreach ($SPD as $data) {
-                    $update_SPD = StrukPelayananDetail::where('norec', $data['norec'])->where('kdprofile', $kdProfile)->delete();
+                    $update_SPD = StrukPelayananDetail::where('norec', $data['norec'])->where('kdprofile', $kdProfile);
                 }
             }
 
@@ -3619,9 +3628,15 @@ public function getscorePansSec(Request $request)
                     'ph.panssecd_3', 'pd3.id as pd3_id', 'pd3.skor as pd3_skor', 'pd3.label as pd3_label', 'pd3.keterangan as pd3_ket',
                     'ph.panssecd_4', 'pd4.id as pd4_id', 'pd4.skor as pd4_skor', 'pd4.label as pd4_label', 'pd4.keterangan as pd4_ket',
                     'ph.panssecd_5', 'pd5.id as pd5_id', 'pd5.skor as pd5_skor', 'pd5.label as pd5_label', 'pd5.keterangan as pd5_ket',
-                    'ph.totalskor', 'sp.nocmklien', 'sp.tglstruk', 'spd.nama_pasien as namapasien',
+                    'ph.totalskor', 'sp.nocmklien', 'sp.tglstruk', 'spd.nama_pasien as namapasien', 
+                     DB::raw("CASE 
+                        WHEN sp.isapprove IS NULL THEN 'Menunggu'
+                        WHEN sp.isapprove = FALSE THEN 'Ditolak'
+                        WHEN sp.isapprove = TRUE THEN 'Diterima'
+                    END AS status")
                 ])
-                ->where('ph.statusenabled', true);
+                ->where('ph.statusenabled', true)
+                ->whereNotNull('sp.isapprove');
 
             if ($request->has('nocmklien') && !empty($request->nocmklien)) {
                 $query->where(DB::raw('CAST(sp.nocmklien AS TEXT)'), 'like', '%' . $request->nocmklien . '%');
@@ -3690,6 +3705,7 @@ public function getscorePansSec(Request $request)
 
                 $result[] = [
                     'norec' => $row->norec,
+                    'satusorder' => $row->status,
                     'statusenabled' => $row->statusenabled,
                     'strukpelayananfk' => $row->strukpelayananfk,
                     'nama_pasien' => $row->namapasien,
