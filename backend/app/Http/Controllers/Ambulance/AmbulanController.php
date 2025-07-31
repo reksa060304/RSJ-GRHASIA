@@ -3707,7 +3707,7 @@ public function getscorePansSec(Request $request)
 
                 $result[] = [
                     'norec' => $row->norec,
-                    'satusorder' => $row->status,
+                    'statusorder' => $row->status,
                     'statusenabled' => $row->statusenabled,
                     'strukpelayananfk' => $row->strukpelayananfk,
                     'nama_pasien' => $row->namapasien,
