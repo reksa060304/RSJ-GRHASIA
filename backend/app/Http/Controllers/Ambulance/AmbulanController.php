@@ -3078,7 +3078,9 @@ class AmbulanController extends ApiController
                 }
             } else if($verifikasi == "ditolak") {
                 foreach ($SPD as $data) {
-                    $update_SPD = StrukPelayananDetail::where('norec', $data['norec'])->where('kdprofile', $kdProfile);
+                    $update_SPD = StrukPelayananDetail::where('norec', $data['norec'])
+                    ->where('kdprofile', $kdProfile)
+                    ->update(['statusenabled' => false]);
                 }
             }
 
