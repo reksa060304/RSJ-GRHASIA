@@ -2883,6 +2883,7 @@ class AmbulanController extends ApiController
                 'sp.tglstruk',
                 'sp.nostruk',
                 'sp.namapasien_klien',
+                'sp.noteleponfaks',
                 'pm.nocm',
                 'pm.namapasien',
                 DB::raw("CASE 

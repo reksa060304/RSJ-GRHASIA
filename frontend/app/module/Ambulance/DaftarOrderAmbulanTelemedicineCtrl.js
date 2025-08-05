@@ -542,6 +542,16 @@ define(['initialize', 'Configuration'], function (initialize, config) {
                     },
                     {
                         "field": "namapasien",
+                        "title": "Nama Pemesan",
+                        "width": "150px"
+                    },
+                    {
+                        "field": "noteleponfaks",
+                        "title": "Nomor Telepon Pemesan",
+                        "width": "120px"
+                    },
+                    {
+                        "field": "namapasien_klien",
                         "title": "Nama Pasien",
                         "width": "150px"
                     },
