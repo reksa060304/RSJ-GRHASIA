@@ -384,6 +384,36 @@ define(['initialize', 'Configuration'], function (initialize, config) {
                         "field": "jarak",
                         "title": "Jarak (Kilometer)",
                         "width": "90px"
+                    },
+                    {
+                        "field": "address",
+                        "title": "Alamat",
+                        "width": "200px"
+                    },
+                    {
+                        "field": "s",
+                        "title": "S",
+                        "width": "100px",
+                    },
+                    {
+                        "field": "o",
+                        "title": "O",
+                        "width": "100px",
+                    },
+                    {
+                        "field": "a",
+                        "title": "A",
+                        "width": "100px",
+                    },
+                    {
+                        "field": "p",
+                        "title": "P",
+                        "width": "100px",
+                    },
+                    {
+                        "field": "totalskor",
+                        "title": "Skor Panssec",
+                        "width": "100px",
                     }
                 ]
             }

@@ -2882,6 +2882,7 @@ class AmbulanController extends ApiController
                 'sp.totalharusdibayar',
                 'sp.tglstruk',
                 'sp.nostruk',
+                'sp.namapasien_klien',
                 'pm.nocm',
                 'pm.namapasien',
                 DB::raw("CASE 
@@ -2937,11 +2938,18 @@ class AmbulanController extends ApiController
         $idProfile = (int) $kdProfile;
         $data = \DB::table('strukpelayanandetail_t as spd')
             ->join('produk_m as prd', 'prd.id', '=', 'spd.objectprodukfk')
+            ->leftjoin('panssec_history as psh', 'psh.strukpelayananfk', '=', 'spd.nostrukfk')
             ->select(
                 'spd.norec as norec_pp',
                 'spd.qtyproduk',
                 'spd.hargasatuan',
                 'spd.jarak',
+                'spd.address',
+                'psh.s',
+                'psh.o',
+                'psh.a',
+                'psh.p',
+                'psh.totalskor',
                 'prd.namaproduk',
                 DB::raw("spd.qtyproduk * spd.hargasatuan AS hargatotal"),
                 'spd.jeniskegiatanambulanfk'
@@ -3607,7 +3615,7 @@ public function getscorePansSec(Request $request)
         try {
             $query = DB::table('panssec_history as ph')
                 ->join('strukpelayanan_t as sp', 'ph.strukpelayananfk', '=', 'sp.norec')
-                ->join('strukpelayanandetail_t as spd', 'spd.nostrukfk', '=', 'sp.norec')
+                ->leftjoin('strukpelayanandetail_t as spd', 'spd.nostrukfk', '=', 'sp.norec')
                 ->leftJoin('panssec_d as pd1', function ($join) {
                     $join->on('ph.panssecd_1', '=', 'pd1.id')->where('pd1.panssecfk', '=', 1);
                 })
