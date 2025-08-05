@@ -440,7 +440,8 @@ define(['initialize', 'Configuration'], function (initialize, config) {
                     "kegiatan_id": $scope.popUp.kegiatan.id,
                     "kegiatan_nama": $scope.popUp.kegiatan.namajeniskegiatan,
                     "perawat_nama_lengkap": $scope.popUp.perawat.namalengkap,
-                    "verifikasi": $scope.popUp.verifikasiOrder.jenis
+                    "verifikasi": $scope.popUp.verifikasiOrder.jenis,
+                    "messages": $scope.popUp.messages,
                 }
 
                 $scope.btnSimpanVis = true;
