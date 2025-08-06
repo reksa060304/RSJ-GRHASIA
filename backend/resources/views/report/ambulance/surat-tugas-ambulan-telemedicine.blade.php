@@ -1,66 +1,228 @@
-<html>
+<!DOCTYPE html>
+<html lang="id">
 
 <head>
-    <title>
-        Report
-    </title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Surat Perintah Tugas</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet"
         integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
-</head>
 
-<style>
-    body {
-        margin: 0;
-        padding: 0;
-        background-color: #CCCCCC;
-    }
+    <style>
+        /* Reset dan Base Styles */
+        * {
+            box-sizing: border-box;
+        }
 
-    .print-container {
-        width: 100%;
-        max-width: 210mm;
-        background-color: #ffffff;
-        margin: 0 auto;
-        padding: 30px;
-    }
-
-    .paragraph-header {
-        font-size: 9px;
-        margin-bottom: 0px;
-    }
-
-    .h5 {
-        margin-bottom: -2px;
-    }
-
-    .paragraph-body {
-        font-size: 12px;
-        margin-bottom: 0px;
-    }
-
-    .paragraph-footer {
-        font-size: 10px;
-        margin-bottom: 0px;
-    }
-
-    .ttd {
-        font-size: 9.5px;
-        margin-bottom: 0px;
-    }
-
-    @media print {
-        @page {
-            size: A4;
+        body {
             margin: 0;
+            padding: 0;
+            background-color: #CCCCCC;
+            font-family: 'Times New Roman', Times, serif;
+            line-height: 1.4;
         }
 
-        .container {
-            width: 97% !important;
-            max-width: 100% !important;
-            padding: 0 !important;
-            margin: 0 auto !important;
+        /* Container */
+        .print-container {
+            width: 100%;
+            max-width: 210mm;
+            background-color: #ffffff;
+            margin: 0 auto;
+            padding: 30px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
         }
-    }
-</style>
+
+        /* Typography */
+        .header-title {
+            font-size: 15px;
+            font-weight: normal;
+            margin-bottom: 0;
+        }
+
+        .header-subtitle {
+            font-size: 15px;
+            font-weight: bold;
+            margin-bottom: 0;
+        }
+
+        .header-contact {
+            font-size: 12px;
+            margin-bottom: 0;
+        }
+
+        .document-title {
+            font-size: 14px;
+            font-weight: bold;
+            margin-bottom: 5px;
+        }
+
+        .document-number {
+            font-size: 12px;
+            margin-bottom: 0;
+        }
+
+        .section-title {
+            font-size: 12px;
+            font-weight: bold;
+        }
+
+        .content-text {
+            font-size: 12px;
+            margin-bottom: 0;
+        }
+
+        .command-title {
+            font-size: 12px;
+            font-weight: bold;
+            text-align: center;
+            margin-bottom: 15px;
+        }
+
+        /* Layout Components */
+        .header-section {
+            margin-bottom: 20px;
+        }
+
+
+        .content-row {
+            margin-bottom: 5px;
+            display: flex;
+            align-items: flex-start;
+        }
+
+        .content-row-spaced {
+            margin-bottom: 15px;
+        }
+
+        .label-col {
+            flex: 0 0 15%;
+            padding-right: 10px;
+        }
+
+        .content-col {
+            flex: 1;
+        }
+
+        /* Person Details */
+        .person-item {
+            margin-bottom: 15px;
+        }
+
+        .person-number {
+            flex: 0 0 8%;
+            font-weight: bold;
+        }
+
+        .person-details {
+            flex: 1;
+        }
+
+        .detail-row {
+            display: flex;
+            margin-bottom: 2px;
+        }
+
+        .detail-label {
+            flex: 0 0 25%;
+            font-size: 12px;
+        }
+
+        .detail-separator {
+            flex: 0 0 3%;
+            font-size: 12px;
+        }
+
+        .detail-value {
+            flex: 1;
+            font-size: 12px;
+        }
+
+        /* Task Details */
+        .task-details .detail-label {
+            flex: 0 0 30%;
+        }
+
+        /* Signature Section */
+        .signature-section {
+            margin-top: 30px;
+        }
+
+        .signature-content {
+            text-align: center;
+        }
+
+        .signature-space {
+            height: 60px;
+        }
+
+        .signature-name {
+            text-decoration: underline;
+            font-weight: bold;
+        }
+
+        /* Logo Styling */
+        .logo-container {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .logo-img {
+            max-width: 100%;
+            height: auto;
+            /* Set a fixed height for logos */
+        }
+
+        .aksara-img {
+            width: 30%;
+            margin: 2px 0;
+        }
+
+        /* Print Styles */
+        @media print {
+            @page {
+                size: A4;
+                margin: 15mm;
+            }
+
+            body {
+                background-color: white;
+            }
+
+            .print-container {
+                width: 100%;
+                max-width: none;
+                padding: 0;
+                box-shadow: none;
+                margin: 0;
+            }
+
+            .no-print {
+                display: none;
+            }
+        }
+
+        /* Responsive Adjustments */
+        @media (max-width: 768px) {
+            .print-container {
+                padding: 20px;
+                margin: 10px;
+            }
+
+            .header-title {
+                font-size: 13px;
+            }
+
+            .header-subtitle {
+                font-size: 12px;
+            }
+
+            .detail-label {
+                flex: 0 0 35%;
+            }
+        }
+    </style>
+</head>
 
 @php
     $tanggal = \Carbon\Carbon::now();
@@ -76,218 +238,183 @@
         'September' => 'September',
         'October' => 'Oktober',
         'November' => 'November',
-        'December' => 'Desember',
+        'December' => 'Desember'
     ];
+    $hari = [
+        'Monday' => 'Senin',
+        'Tuesday' => 'Selasa',
+        'Wednesday' => 'Rabu',
+        'Thursday' => 'Kamis',
+        'Friday' => 'Jumat',
+        'Saturday' => 'Sabtu',
+        'Sunday' => 'Minggu'
+    ];
+
+    function formatTanggalIndonesia($date, $hari, $bulan)
+    {
+        if (!$date)
+            return '-';
+        $carbonDate = \Carbon\Carbon::parse($date);
+        return $hari[$carbonDate->format('l')] . ', ' .
+            $carbonDate->format('d') . ' ' .
+            $bulan[$carbonDate->format('F')] . ' ' .
+            $carbonDate->format('Y');
+    }
+
+    function getImagePath($imageName)
+    {
+        return stripos(\Request::url(), 'localhost') !== FALSE
+            ? asset('img/' . $imageName)
+            : asset('service/img/' . $imageName);
+    }
 @endphp
 
 <body>
     <div class="print-container">
-        <div class="row" style="margin-bottom: 20px;">
-            <div class="col-12">
-                <div class="row">
-                    <div class="col-2 d-flex justify-content-center align-items-center">
-                        @if(stripos(\Request::url(), 'localhost') !== FALSE)
-                        <img src="{{ asset('img/logo-diy.jpeg') }}" style="width: 100%;" border="0" />
-                        @else
-                        <img src="{{ asset('service/img/logo-diy.jpeg') }}" style="width: 100%;" border="0" />
-                        @endif
-                    </div>
-                    <div class="col-8 d-flex flex-column justify-content-center align-items-center text-center">
-                        <p style="font-size: 15px; margin-bottom: 0;">PEMERINTAH DAERAH DAERAH ISTIMEWA YOGYAKARTA</p>
-                        <h5 class="h5">DINAS KESEHATAN</h5>
-                        <h5 class="h5">RUMAH SAKIT JIWA GRHASIA</h5>
-                        @if(stripos(\Request::url(), 'localhost') !== FALSE)
-                        <img src="{{ asset('img/Aksara Jawa_Surat.png') }}"
-                            style="width: 30%; margin-top: 2px; margin-bottom: 2px;" border="0" />
-                        @else
-                        <img src="{{ asset('service/img/Aksara Jawa_Surat.png') }}"
-                            style="width: 30%; margin-top: 2px; margin-bottom: 2px;" border="0" />
-                        @endif
-                        <p class="paragraph-header">Jalan Kaliurang Km 17 Sleman, Telepon: (0274) 895143, 895297,
-                            Faksimile: (0274) 895142</p>
-                        <p class="paragraph-header">Laman: grhasia.jogjaprov.go.id, Surel:
-                            grhasiamentalhospital@jogjaprov.go.id</p>
-                        <p class="paragraph-header">Kode Pos 55582</p>
-                    </div>
-                    <div class="col-2"></div>
+        <div class="header-section">
+            <div class="row align-items-center">
+                <div class="col-2 text-center">
+                    <img src="{{ getImagePath('logo-diy.jpeg') }}" alt="Logo DIY"
+                        style="max-height: 100px; max-width: 100%; object-fit: contain;" />
                 </div>
+                <div class="col-8 text-center">
+                    <p class="header-title mb-0">PEMERINTAH DAERAH DAERAH ISTIMEWA YOGYAKARTA</p>
+                    <h5 class="header-subtitle mb-0">DINAS KESEHATAN</h5>
+                    <h5 class="header-subtitle mb-1">RUMAH SAKIT JIWA GRHASIA</h5>
+
+                    <img src="{{ getImagePath('Aksara Jawa_Surat.png') }}" class="aksara-img" alt="Aksara Jawa"
+                        style="width: 30%; margin: 4px 0;" />
+
+                    <div class="mt-2">
+                        <p class="header-contact">Jalan Kaliurang Km 17 Sleman, Telepon: (0274) 895143, (0274) 895297
+                        </p>
+                        <p class="header-contact">Faksimile: (0274) 895142, Pos-el:
+                            grhasia.mentalhospital@jogjaprov.go.id</p>
+                        <p class="header-contact">Laman: grhasia.jogjaprov.go.id</p>
+                    </div>
+                </div>
+                <div class="col-2 text-center">
+                    <img src="{{ getImagePath('logo_grhasiafull.png') }}" alt="Logo Grhasia"
+                        style="max-height: 170px; max-width: 100%; object-fit: contain;" />
+                </div>
+            </div>
+            <hr style="border-top: 2px solid black; margin: 20px 0;">
+        </div>
+
+        <div class="text-center mb-4">
+            <p class="document-title">SURAT PERINTAH TUGAS</p>
+            <p class="document-number">Nomor : {{ $data[0]->nomorsurat ?? '-' }}</p>
+        </div>
+
+        <div class="content-row content-row-spaced">
+            <div class="label-col">
+                <span class="section-title">Dasar :</span>
+            </div>
+            <div class="content-col">
+                <p class="content-text">{{ $data[0]->dasar_surat ?? '-' }}</p>
             </div>
         </div>
 
-        <div class="row" style="margin-bottom: 20px;">
-            <div class="col-12">
-                <div style="height: 2px; background-color: black; margin: 0;"></div>
-            </div>
-        </div>
+        <div class="command-title">MEMERINTAHKAN :</div>
 
-        <div class="row" style="margin-bottom: 20px;">
-            <div class="col-12 text-center">
-                <p class="paragraph-body" style="font-weight: bold; margin-bottom: -2px">SURAT TUGAS AMBULAN</p>
-                <p class="paragraph-body">Nomor :
-                        {{$data[0]->nomorsurat}}
-                </p>
-            </div>
-        </div>
-        <div class="row" style="margin-bottom: 10px;">
-            <div class="col-12 text-center">
-                <p class="paragraph-body" style="font-weight: bold;">MEMERINTAHKAN :</p>
-            </div>
-        </div>
-
-        <table class="table table-bordered border-dark" style="font-size: 11px; margin-bottom: 20px;">
-            <thead>
-                <tr>
-                    <th scope="col">No</th>
-                    <th scope="col">Nama</th>
-                    <th scope="col">NIP/NIKRS</th>
-                    <th scope="col">Jabatan</th>
-                </tr>
-            </thead>
-            <tbody>
-                @php $no = 1; @endphp
-                @php $sopirDitampilkan = false; @endphp
-                @foreach ($data as $item)
-                    @if ($item->id === 48 && !$sopirDitampilkan)
-                        <tr>
-                            <th scope="row">{{ $no++ }}</th>
-                            <td>{{ $item->namalengkap }}</td>
-                            <td>{{ $item->nip }}</td>
-                            <td>{{ $item->jabatan }}</td>
-                        </tr>
-                        @php $sopirDitampilkan = true; @endphp
-                    @endif
-                @endforeach
-                @if(isset($data[0]->namadokter) && !empty($data[0]->namadokter))
-                    <tr>
-                        <th scope="row">{{ $no++ }}</th>
-                        <td>{{ $data[0]->namadokter }}</td>
-                        <td>{{ $data[0]->nipdokter ?? '-' }}</td>
-                        <td>Dokter</td>
-                    </tr>
-                @endif
-        
-              
-                @if(isset($data[0]->namaperawat) && !empty($data[0]->namaperawat))
-                    <tr>
-                        <th scope="row">{{ $no++ }}</th>
-                        <td>{{ $data[0]->namaperawat }}</td>
-                        <td>{{ $data[0]->nipperawat ?? '-' }}</td>
-                        <td>Perawat</td>
-                    </tr>
-                @endif
-            </tbody>
-        </table>
-
-        <div class="row" style="margin-bottom: 20px; padding: 0px 20px">
-            <div class="col-2 text-end">
-                <p class="paragraph-body">Untuk : </p>
-            </div>
-            <div class="col-10">
-                <p class="paragraph-body">
-                    1. {{$data[0]->namajeniskegiatan}}
-                </p>
-                <p class="paragraph-body">
-                    2. Berangkat tanggal : {{ \Carbon\Carbon::parse($data[0]->tglpelayanan)->format('d-m-Y') }}, jam :
-                    {{ \Carbon\Carbon::parse($data[0]->tglpelayanan)->format('H:i') }}
-                </p>
-                <p class="paragraph-body">
-                    3. Selesai melaksanakan tugas segera melaporkan ke Kepala Seksie / Subbagian terkait pelayanan
-                    ambulans
-                </p>
-                <p class="paragraph-body" style="margin-top: 20px">
-                    Demikian surat tugas ini dibuat untuk dapat dilaksanakan dengan baik sesuai dengan peraturan dan
-                    ketentuan yang berlaku
-                </p>
-
-            </div>
-        </div>
-
-        <div class="row" style="margin-bottom: 20px">
-            <div class="row justify-content-end">
-                <div class="col-auto text-end" style="font-size: 11px;">
-                    <div class="text-center">
-                        <span>
-                            Sleman, {{ $tanggal->format('d') }} {{ $bulan[$tanggal->format('F')] }}
-                            {{ $tanggal->format('Y') }}
-                        </span>
-                    </div>
-                    <div class="mb-5 text-center">
-                        <span>DIREKTUR</span>
-                    </div>
-                    <div class="text-center">
-                        <span style="text-decoration: underline;">dr. Akhmad Akhadi S, MPH</span>
-                    </div>
-                    <div>
-                        <span>NIP. 19680714 200012 1 002</span>
-                    </div>
+        <div class="content-row-spaced">
+            <div class="content-row">
+                <div class="label-col">
+                    <span class="section-title">Kepada :</span>
                 </div>
-            </div>
-        </div>
+                <div class="content-col">
+                    @php $no = 1; @endphp
 
-        <div class="container text-center border border-0 border-dark" style="font-size: 11px; margin-bottom: 10px">
-            <div class="row row-cols-4 border border-1 border-dark">
-                <div class="col border border-top-0 border-bottom-0 border-left-0 border-right-1 border-dark">
-                    <span>Dokter</span>
-                </div>
-                <div class="col border border-top-0 border-bottom-0 border-left-0 border-right-1 border-dark">
-                    <span>Perawat</span>
-                </div>
-                <div class="col border border-top-0 border-bottom-0 border-left-0 border-right-1 border-dark">
-                    <span>Sopir Ambulan</span>
-                </div>
-                <div class="col border border-top-0 border-bottom-0 border-left-0 border-right-1 border-dark">
-                    <span>Yang Menerima</span>
-                </div>
-            </div>
-            <div class="row row-cols-4 border border-1 border-top-0 border-dark" style="height: 70px;">
-                <div
-                    class="col border border-top-0 border-bottom-0 border-left-0 border-right-1 border-dark  d-flex align-items-end justify-content-center">
-                    @foreach ($data as $item)
-                        @if ($item->id === 1)
-                            <span class="ttd">{{ $item->namalengkap }}</span>
-                        @else
-                            &nbsp;
+                    {{-- Petugas 1, 2, 3 --}}
+                    @foreach(['petugas1', 'petugas2', 'petugas3'] as $petugas)
+                        @if(!empty($data[0]->{'nama' . $petugas}))
+                            <div class="person-item">
+                                <div class="content-row">
+                                    <div class="person-number">{{ $no++ }}.</div>
+                                    <div class="person-details">
+                                        <div class="detail-row">
+                                            <span class="detail-label">Nama</span>
+                                            <span class="detail-separator">:</span>
+                                            <span class="detail-value">{{ $data[0]->{'nama' . $petugas} }}</span>
+                                        </div>
+                                        <div class="detail-row">
+                                            <span class="detail-label">Pangkat/Gol</span>
+                                            <span class="detail-separator">:</span>
+                                            <span class="detail-value">{{ $data[0]->{'pangkat_' . $petugas} ?? '-' }}</span>
+                                        </div>
+                                        <div class="detail-row">
+                                            <span class="detail-label">NIP</span>
+                                            <span class="detail-separator">:</span>
+                                            <span class="detail-value">{{ $data[0]->{'nip_' . $petugas} ?? '-' }}</span>
+                                        </div>
+                                        <div class="detail-row">
+                                            <span class="detail-label">Jabatan</span>
+                                            <span class="detail-separator">:</span>
+                                            <span class="detail-value">{{ $data[0]->{'jabatan_' . $petugas} ?? '-' }}</span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
                         @endif
                     @endforeach
                 </div>
-                <div
-                    class="col border border-top-0 border-bottom-0 border-left-0 border-right-1 border-dark  d-flex align-items-end justify-content-center">
-                    @foreach ($data as $item)
-                        @if ($item->id === 2)
-                            <span class="ttd">{{ $item->namalengkap }}</span>
-                        @else
-                            &nbsp;
-                        @endif
-                    @endforeach
+            </div>
+        </div>
+
+        <div class="content-row-spaced">
+            <div class="content-row">
+                <div class="label-col">
+                    <span class="section-title">Untuk :</span>
                 </div>
-                <div
-                    class="col border border-top-0 border-bottom-0 border-left-0 border-right-1 border-dark  d-flex align-items-end justify-content-center">
-                    @foreach ($data as $item)
-                        @if ($item->id === 48)
-                            <span class="ttd">{{ $item->namalengkap }}</span>
-                        @else
-                            &nbsp;
-                        @endif
-                    @endforeach
-                </div>
-                <div
-                    class="col border border-top-0 border-bottom-0 border-left-0 border-right-1 border-dark  d-flex align-items-end justify-content-center">
-                    <span></span>
+                <div class="content-col task-details">
+                    <div class="detail-row">
+                        <span class="detail-label">Tujuan Tugas</span>
+                        <span class="detail-separator">:</span>
+                        <span
+                            class="detail-value">{{ preg_replace('/^[A-Z0-9]{4}\+[A-Z0-9]{2,3},\s*/', '', $data[0]->address ?? '-') }}</span>
+                    </div>
+                    <div class="detail-row">
+                        <span class="detail-label">Lama Tugas</span>
+                        <span class="detail-separator">:</span>
+                        <span class="detail-value">1 (satu) hari</span>
+                    </div>
+                    <div class="detail-row">
+                        <span class="detail-label">Hari/Tanggal</span>
+                        <span class="detail-separator">:</span>
+                        <span
+                            class="detail-value">{{ formatTanggalIndonesia($data[0]->tglpelayanan ?? null, $hari, $bulan) }}</span>
+                    </div>
+                    <div class="detail-row">
+                        <span class="detail-label">Keperluan</span>
+                        <span class="detail-separator">:</span>
+                        <span
+                            class="detail-value">{{ $data[0]->namajeniskegiatan ?? 'Penjemputan Pasien a.n ' . ($data[0]->namapasien_klien ?? '-') }}</span>
+                    </div>
                 </div>
             </div>
         </div>
 
-        <div class="row">
-            <div class="col">
-                <p class="paragraph-footer" style="font-style: italic;">
-                    Catatan : SPT dibuat rangkap 2 (dua) dan wajib melampirkan
-                </p>
-                <p class="paragraph-footer" style="font-style: italic;">
-                    1. Nota pembelian BBM yang sah
-                </p>
-                <p class="paragraph-footer" style="font-style: italic;">
-                    2. FC identitas pasien (KTP/SIM/Kartu BPJS/Lain-lain)
-                </p>
+
+        <div class="mb-4">
+            <p class="content-text">Demikian Surat Perintah Tugas ini untuk dapat dilaksanakan dengan penuh tanggung
+                jawab.</p>
+        </div>
+        <div class="signature-section">
+            <div class="row">
+                <div class="col-6"></div>
+                <div class="col-6">
+                    <div class="signature-content">
+                        <p class="content-text">Dikeluarkan di Sleman</p>
+                        <p class="content-text">Pada tanggal {{ $tanggal->format('d') }}
+                            {{ $bulan[$tanggal->format('F')] }} {{ $tanggal->format('Y') }}</p>
+                        <p class="content-text"><strong>DIREKTUR</strong></p>
+
+                        <div class="signature-space"></div>
+
+                        <p class="content-text signature-name">dr. AKHMAD AKHADI S., MPH</p>
+                        <p class="content-text">NIP. 19680714 200012 1 002</p>
+                    </div>
+                </div>
             </div>
         </div>
     </div>

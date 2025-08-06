@@ -30668,32 +30668,52 @@ public function suratBuktiPengembalian(Request $request)
             'tanggalcetak' => $request['tglcetak']
         ]);
     }
-    public function suratTugasAmbulanTelemedicine(Request $request)
+   public function suratTugasAmbulanTelemedicine(Request $request)
     {
         $profile = (int)$request['kdprofile'];
         $nostrukfk = $request['norec'];
 
-        // Menggunakan parameter binding untuk keamanan
         $data = collect(DB::select(
             "SELECT
                 spd.norec,
-                pg.namalengkap,
                 spd.nomorsurat,
-                pg.nip,
-                jp.id,
-                jp.jenispegawai AS jabatan,
                 spd.tglpelayanan,
                 jka.namajeniskegiatan,
-                pgdok.namalengkap as namadokter,
-                pgper.namalengkap as namaperawat
+                spd.address,
+                spd.dasar_surat,
+
+                -- Data Petugas 1
+                pg1.namalengkap as namapetugas1,
+                pg1.nip as nip_petugas1,
+                jp1.jenispegawai as jabatan_petugas1,
+                
+                -- Data Petugas 2
+                pg2.namalengkap as namapetugas2,
+                pg2.nip as nip_petugas2,
+                jp2.jenispegawai as jabatan_petugas2,
+                
+                -- Data Petugas 3
+                pg3.namalengkap as namapetugas3,
+                pg3.nip as nip_petugas3,
+                jp3.jenispegawai as jabatan_petugas3
+                
             FROM
                 strukpelayanandetail_t AS spd
                 LEFT JOIN petugaspelayananambulan_t AS ppa ON ppa.nostrukdetailfk = spd.norec
-                LEFT JOIN pegawai_m AS pg ON pg.id = ppa.objectpegawaifk
-                LEFT JOIN pegawai_m AS pgdok ON pgdok.id = ppa.objectdokterfk
-                LEFT JOIN pegawai_m AS pgper ON pgper.id = ppa.objectperawatfk
-                LEFT JOIN jenispegawai_m AS jp ON jp.id = pg.objectjenispegawaifk
                 LEFT JOIN jeniskegiatanambulan_m AS jka ON jka.id = spd.jeniskegiatanambulanfk::bigint
+            
+                -- JOIN untuk Petugas 1
+                LEFT JOIN pegawai_m AS pg1 ON pg1.id = ppa.objectpegawaifk1
+                LEFT JOIN jenispegawai_m AS jp1 ON jp1.id = pg1.objectjenispegawaifk
+                
+                -- JOIN untuk Petugas 2
+                LEFT JOIN pegawai_m AS pg2 ON pg2.id = ppa.objectpegawaifk2
+                LEFT JOIN jenispegawai_m AS jp2 ON jp2.id = pg2.objectjenispegawaifk
+                
+                -- JOIN untuk Petugas 3
+                LEFT JOIN pegawai_m AS pg3 ON pg3.id = ppa.objectpegawaifk3
+                LEFT JOIN jenispegawai_m AS jp3 ON jp3.id = pg3.objectjenispegawaifk
+                
             WHERE
                 spd.kdprofile = :profile
                 AND spd.statusenabled = TRUE
@@ -30701,17 +30721,9 @@ public function suratBuktiPengembalian(Request $request)
             ['profile' => $profile, 'nostrukfk' => $nostrukfk]
         ));
 
-        // dd($data);
-
-        // Pastikan data ditemukan
-        // if ($data->isEmpty()) {
-        //     return response()->json(['message' => 'Data tidak ditemukan'], 404);
-        // }
-
         $height = 600;
         $pageWidth = 950;
 
-        // Mengembalikan view dengan data yang ditemukan
         return view('report.ambulance.surat-tugas-ambulan-telemedicine', compact('data', 'request', 'pageWidth'));
     }
 }
