@@ -434,25 +434,86 @@ define(['initialize', 'Configuration'], function (initialize, config) {
                     return
                 }
 
-                if ($scope.popUp.driver == undefined || $scope.popUp.driver == '' || $scope.popUp.driver == null) {
-                    toastr.error('Driver Harus Di isi')
-                    return
-                }
-
-                if (!$scope.popUp.kegiatan || !$scope.popUp.kegiatan.id) {
-                    toastr.error('Jenis Kegiatan harus dipilih');
-                    return;
-                }
-
-
-
                 if ($scope.popUp.verifikasiOrder == undefined || $scope.popUp.verifikasiOrder == '' || $scope.popUp.verifikasiOrder == null) {
                     toastr.error('Harus Diverifikasi')
                     return
                 }
 
-                var dataPost = $scope.sourceVerif._data;
+                if (!$scope.selectedPegawai || !$scope.selectedPegawai.length || !$scope.item.jenisPelaksana) {
+                    toastr.error('Petugas 1 (Jenis dan Pegawai) harus diisi');
+                    return;
+                }
 
+                // Valiadai agar tidak duplikat data pegawai
+                $scope.validateStaffRoles = function() {
+                    var roles = [];
+                    
+                    if ($scope.item.jenisPelaksana) {
+                        roles.push($scope.item.jenisPelaksana.id);
+                    }
+                    
+                    if ($scope.item.jenisPelaksana2) {
+                        if (roles.includes($scope.item.jenisPelaksana2.id)) {
+                            toastr.error('Jenis petugas tidak boleh sama!');
+                            $scope.item.jenisPelaksana2 = null;
+                            return false;
+                        }
+                        roles.push($scope.item.jenisPelaksana2.id);
+                    }
+                    
+                    if ($scope.item.jenisPelaksana3) {
+                        if (roles.includes($scope.item.jenisPelaksana3.id)) {
+                            toastr.error('Jenis petugas tidak boleh sama!');
+                            $scope.item.jenisPelaksana3 = null;
+                            return false;
+                        }
+                        roles.push($scope.item.jenisPelaksana3.id);
+                    }
+                    
+                    return true;
+                };
+
+                var petugas1 = null, petugas2 = null, petugas3 = null;
+
+                // Petugas 1 (wajib)
+                petugas1 = {
+                    objectjenispetugaspefk: $scope.item.jenisPelaksana.id,
+                    objectpegawaifk: $scope.selectedPegawai[0].id,
+                    jenis: $scope.item.jenisPelaksana.jenispetugaspe,
+                    pegawai: $scope.selectedPegawai[0],
+                    uuid_telemedicine: $scope.selectedPegawai[0].uuid || $scope.selectedPegawai[0].uuid_telemedicine || null
+                };
+                
+                // Petugas 2 (opsional)
+                if ($scope.item.jenisPelaksana2 && $scope.selectedPegawai2 && $scope.selectedPegawai2.length > 0) {
+                    petugas2 = {
+                        objectjenispetugaspefk: $scope.item.jenisPelaksana2.id, 
+                        objectpegawaifk: $scope.selectedPegawai2[0].id,
+                        jenis: $scope.item.jenisPelaksana2.jenispetugaspe,
+                        pegawai: $scope.selectedPegawai2[0],
+                        uuid_telemedicine: $scope.selectedPegawai2[0].uuid || $scope.selectedPegawai2[0].uuid_telemedicine || null
+                    };
+                }
+                
+                // Petugas 3 (opsional)
+                if ($scope.item.jenisPelaksana3 && $scope.selectedPegawai3 && $scope.selectedPegawai3.length > 0) {
+                    petugas3 = {
+                        objectjenispetugaspefk: $scope.item.jenisPelaksana3.id,
+                        objectpegawaifk: $scope.selectedPegawai3[0].id, 
+                        jenis: $scope.item.jenisPelaksana3.jenispetugaspe,
+                        pegawai: $scope.selectedPegawai3[0],
+                        uuid_telemedicine: $scope.selectedPegawai3[0].uuid || $scope.selectedPegawai3[0].uuid_telemedicine || null
+                    };
+                }
+
+                var dataPost = $scope.sourceVerif._data;                
+                var petugas = [];
+                if (petugas1) petugas.push(petugas1);
+                if (petugas2) petugas.push(petugas2);
+                if (petugas3) petugas.push(petugas3);
+
+                var driverData = petugas1.pegawai; // Ambil dari petugas pertama sebagai driver
+                
                 var itemsave = {
                     "bridging_data": dataPost,
                     "nomor_order": $scope.dataSelected.nostruk,
@@ -461,26 +522,41 @@ define(['initialize', 'Configuration'], function (initialize, config) {
                     "kendaraan": $scope.popUp.noPolisi.norec,
                     "kendaraan_nopolisi": $scope.popUp.noPolisi.nopolisi,
                     "kendaraan_uuid_telemedicine": $scope.popUp.noPolisi.uuid_telemedicine,
-                    "driver_id": $scope.popUp.driver.id,
-                    "driver_nama_lengkap": $scope.popUp.driver.namalengkap,
-                    "driver_uuid_telemedicine": $scope.popUp.driver.uuid_telemedicine,
-                    "dokter_id": $scope.popUp.dokter.id,
-                    "dokter_nama_lengkap": $scope.popUp.dokter.namalengkap,
-                    "perawat_id": $scope.popUp.perawat.id,
-                    "kegiatan_id": $scope.popUp.kegiatan.id,
-                    "kegiatan_nama": $scope.popUp.kegiatan.namajeniskegiatan,
-                    "perawat_nama_lengkap": $scope.popUp.perawat.namalengkap,
+
+                    "driver_id": driverData.id,
+                    "driver_nama_lengkap": driverData.namalengkap || driverData.nama,
+                    "driver_uuid_telemedicine": driverData.uuid || driverData.uuid_telemedicine,
+                    "kegiatan_id": $scope.popUp.kegiatan ? $scope.popUp.kegiatan.id : null,
+                    "kegiatan_nama": $scope.popUp.kegiatan ? $scope.popUp.kegiatan.namajeniskegiatan : null,
                     "verifikasi": $scope.popUp.verifikasiOrder.jenis,
-                    "messages": $scope.popUp.messages,
+                    "petugaspelayananambulan": petugas.map(p => ({
+                        objectjenispetugaspefk: p.objectjenispetugaspefk,
+                        objectpegawaifk: p.objectpegawaifk,
+                        uuid_telemedicine: p.pegawai.uuid || p.pegawai.uuid_telemedicine || p.uuid_telemedicine
+                    })),
+                    "messages": $scope.popUp.messages || ""
                 }
 
+                console.log('Data yang akan dikirim:', itemsave);
+                console.log('Petugas data:', petugas);
+                console.log('Driver data:', driverData);
+
                 $scope.btnSimpanVis = true;
-                    medifirstService.post('ambulance/simpan-data-pelayanan-ambulan-dari-telemedicine', itemsave)
-                        .then(function (e) {
-                            $scope.popUpVerif.close();
-                            init()
-                            ClearIsian()
-                        });
+                medifirstService.post('ambulance/simpan-data-pelayanan-ambulan-dari-telemedicine', itemsave)
+                    .then(function (response) {
+                        console.log('Response berhasil:', response);
+                        toastr.success('Verifikasi berhasil disimpan');
+                        $scope.popUpVerif.close();
+                        init();
+                        ClearIsian();
+                    })
+                    .catch(function (error) {
+                        console.error('Error:', error);
+                        toastr.error('Gagal menyimpan verifikasi: ' + (error.data ? error.data.message : error.message));
+                    })
+                    .finally(function() {
+                        $scope.btnSimpanVis = false;
+                    });
             }
             var HttpClient = function () {
                 this.get = function (aUrl, aCallback) {
@@ -576,7 +652,10 @@ define(['initialize', 'Configuration'], function (initialize, config) {
                 $scope.popUp = undefined
                 $scope.headerVerif = undefined;
                 $scope.item.noOrder = undefined
-                $scope.item.namaPasiens = undefined
+                $scope.item.namaPasiens = undefined;
+                $scope.item.jenisPelaksana = undefined;
+                $scope.item.jenisPelaksana2 = undefined;
+                $scope.item.jenisPelaksana3 = undefined;
             }
             //********************************  $scope.cekBelumVerifs=true;***
 
@@ -622,7 +701,8 @@ define(['initialize', 'Configuration'], function (initialize, config) {
             
                 var dataSimpan = {
                     norec: $scope.dataSelected.norec,
-                    nomorsurat: $scope.item.nomorSurat
+                    nomorsurat: $scope.item.nomorSurat,
+                    dasarsurat: $scope.item.dasarSurat
                 };
             
                 medifirstService.post('ambulance/simpan-nomor-surat-ambulan', dataSimpan)
@@ -643,6 +723,141 @@ define(['initialize', 'Configuration'], function (initialize, config) {
             $scope.batalNomorSurat = function () {
                 $scope.popUpNomorSurat.close();
             }
+
+             $scope.selectOptions = {
+				placeholder: "Pilih Pegawai...",
+				dataTextField: "namaLengkap",
+				dataValueField: "id",
+				filter: "contains"
+			};
+
+			$scope.tambah1 = function () {
+				$scope.pelaksanaAmbulan2 = true;
+				$scope.show = false;
+				$scope.show2 = true;
+			};
+
+			$scope.show = true;
+			$scope.tambah2 = function () {
+				$scope.pelaksanaAmbulan3 = true;
+				$scope.show = false;
+				$scope.show2 = false;
+				$scope.show3 = true;
+			};
+			$scope.hapusPelaksanaAmbulan2 = function () {
+				$scope.show = true;
+				$scope.show2 = false;
+				$scope.pelaksanaAmbulan2 = false;
+				$scope.item.jenisPelaksana2 = "";
+				$scope.selectedPegawai2 = [];
+			};
+			$scope.hapusPelaksanaAmbulan3 = function () {
+				$scope.show = false;
+				$scope.show2 = true;
+				$scope.pelaksanaAmbulan3 = false;
+				$scope.item.jenisPelaksana3 = "";
+				$scope.selectedPegawai3 = [];
+			};
+            $scope.isInArray = function (value, array) {
+				return array.indexOf(value) > -1;
+			}
+
+			$scope.listIdPetugas = [13827, 176873]
+			$scope.selectedPegawai = [];
+			$scope.init1 = function () {
+				var id = $scope.item.jenisPelaksana.id;
+				var model = 'dataSource';
+				var listArray = 'selectedPegawai';
+				var isInList = $scope.isInArray(id, $scope.listIdPetugas);
+				if (isInList) {
+					getGenericPegawai(model, listArray);
+				} else {
+					getPegawaiById(id, model, listArray);
+				}
+			};
+			$scope.selectedPegawai2 = [];
+			$scope.init2 = function () {
+				var id = $scope.item.jenisPelaksana2.id;
+				var model = 'dataSource2';
+				var listArray = 'selectedPegawai2';
+				var isInList = $scope.isInArray(id, $scope.listIdPetugas);
+				if (isInList) {
+					getGenericPegawai(model, listArray);
+				} else {
+					getPegawaiById(id, model, listArray);
+				}
+			};
+			$scope.selectedPegawai3 = [];
+			$scope.init3 = function () {
+				var id = $scope.item.jenisPelaksana3.id;
+				var model = 'dataSource3';
+				var listArray = 'selectedPegawai3';
+				var isInList = $scope.isInArray(id, $scope.listIdPetugas);
+				if (isInList) {
+					getGenericPegawai(model, listArray);
+				} else {
+					getPegawaiById(id, model, listArray);
+				}
+			};
+
+            medifirstService.get("tatarekening/tindakan/get-combo-telemedicine", true)
+				.then(function (da) {
+					$scope.listJenisPelaksana = da.data.jenispelaksana;
+					$scope.item.nilaiStatusCito = parseFloat(da.data.tarifcito.nilaifield);
+					// $scope.pegawaiLogin = medifirstService.getPegawaiLogin();
+					if ($scope.pegawaiLogin.jenisPetugas != undefined) {
+						if ($scope.pegawaiLogin.jenisPetugas.length > 0) {
+							$scope.item.jenisPelaksana = { id: $scope.pegawaiLogin.jenisPetugas[0].id, jenispetugaspe: $scope.pegawaiLogin.jenisPetugas[0].jenispetugaspe };
+							var id = $scope.pegawaiLogin.jenisPetugas[0].id;
+							var model = 'dataSource';
+							var listArray = 'selectedPegawai';
+							var isInList = $scope.isInArray(id, $scope.listIdPetugas);
+							if (isInList) {
+								getGenericPegawai(model, listArray);
+							} else {
+								getPegawaiById(id, model, listArray);
+							}
+						}
+					} else {
+						// medifirstService.get("tatarekening/tindakan/get-jenispetugasbypegawai?idPegawai=" + $scope.pegawaiLogin.id, true).then(function (dat) {
+						// 	//var id = $scope.item.jenisPelaksana.id;dat.data.jenispelaksana
+						// 	$scope.item.jenisPelaksana = { id: dat.data.jenispelaksana[0].id, jenispetugaspe: dat.data.jenispelaksana[0].jenispetugaspe };
+						// 	var id = dat.data.jenispelaksana[0].id;
+						// 	var model = 'dataSource';
+						// 	var listArray = 'selectedPegawai';
+						// 	var isInList = $scope.isInArray(id, $scope.listIdPetugas);
+						// 	if (isInList) {
+						// 		getGenericPegawai(model, listArray);
+						// 	} else {
+						// 		getPegawaiById(id, model, listArray);
+						// 	}
+						// });
+
+					}
+
+				})
+
+
+            function getPegawaiById(id, input, output) {
+				//console.log($scope.selectedPegawai);
+				var selectedData = $parse(output);
+				selectedData.assign($scope, []);
+				var model = $parse(input);
+				medifirstService.get("tatarekening/tindakan/get-pegawaibyjenispetugas?idJenisPetugas=" + id, true).then(function (dat) {
+					$scope.listPegawai = new kendo.data.DataSource({
+						data: dat.data.jenispelaksana
+					});
+					// $scope.pegawaiLogin = medifirstService.getPegawaiLogin();
+					model.assign($scope, $scope.listPegawai);
+
+					var cookie = document.cookie.split(';');
+					cookie = cookie[0].split('=');
+					// if (cookie[1] == 'dokter')
+					// $scope.selectedPegawai = [({ id: $scope.pegawaiLogin.id, namalengkap: $scope.pegawaiLogin.namaLengkap })]
+					console.log($scope.pegawaiLogin)
+					
+				});
+			}
             
             // batas
 

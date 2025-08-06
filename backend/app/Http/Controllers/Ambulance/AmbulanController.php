@@ -3033,7 +3033,7 @@ class AmbulanController extends ApiController
         if($verifikasi == "diterima"){
             $ket_verif_simrs = true;
             $ket_verif_telemedicine = 'verifikasi';
-        }  else if($verifikasi == "ditolak") {
+        } else if($verifikasi == "ditolak") {
             $ket_verif_simrs = false;
             $ket_verif_telemedicine = 'rejected';
         } else {
@@ -3050,7 +3050,7 @@ class AmbulanController extends ApiController
             $transMessage = "Pasien tidak terdaftar";
             $result = array(
                 "status" => 404,
-                "message"  => $transMessage,
+                "message" => $transMessage,
                 "as" => 'as@epic',
             );
             return $this->setStatusCode($result['status'])->respond($result, $transMessage);
@@ -3060,10 +3060,11 @@ class AmbulanController extends ApiController
         try {
             $SP = StrukPelayanan::where('norec', $req['norec_sp'])->where('kdprofile', $kdProfile)->first();
             $SP->isapprove = $ket_verif_simrs;
-            $SP->keterangan= $req['messages'] ?? '-';
+            $SP->keterangan = $req['messages'] ?? '-';
             $SP->save();
 
             $SPD = StrukPelayananDetail::where('nostrukfk', $req['norec_sp'])->where('kdprofile', $kdProfile)->get();
+            $petugasData = $req['petugaspelayananambulan'] ?? [];
 
             if($verifikasi == "diterima"){
                 foreach ($SPD as $data) {
@@ -3078,28 +3079,36 @@ class AmbulanController extends ApiController
                     $PetugasPelAmbulan->norec = $PetugasPelAmbulan->generateNewId();
                     $PetugasPelAmbulan->kdprofile = $kdProfile;
                     $PetugasPelAmbulan->statusenabled = true;
-                    $PetugasPelAmbulan->objectpegawaifk = $req['driver_id'];
-                    $PetugasPelAmbulan->objectdokterfk =  $req['dokter_id'];
-                    $PetugasPelAmbulan->objectperawatfk = $req['perawat_id'];
+
+                    if (isset($petugasData[0]['objectpegawaifk'])) {
+                        $PetugasPelAmbulan->objectpegawaifk1 = $petugasData[0]['objectpegawaifk'];
+                    }
+                    if (isset($petugasData[1]['objectpegawaifk'])) {
+                        $PetugasPelAmbulan->objectpegawaifk2 = $petugasData[1]['objectpegawaifk'];
+                    }
+                    if (isset($petugasData[2]['objectpegawaifk'])) {
+                        $PetugasPelAmbulan->objectpegawaifk3 = $petugasData[2]['objectpegawaifk'];
+                    }
+
                     $PetugasPelAmbulan->nostrukdetailfk = $item['norec_pp'];
                     $PetugasPelAmbulan->tglpelayanan = Carbon::now()->format('Y-m-d H:i:s');
                     $PetugasPelAmbulan->save();
                 }
             } else if($verifikasi == "ditolak") {
                 foreach ($SPD as $data) {
-                    $update_SPD = StrukPelayananDetail::where('norec', $data['norec'])
+                    StrukPelayananDetail::where('norec', $data['norec'])
                     ->where('kdprofile', $kdProfile)
                     ->update(['statusenabled' => false]);
                 }
             }
 
+            // Ambil settingan telemd
             $baseUrlTelemedicine = $this->settingDataFixed('UrlBridgingTelemedicine', $kdProfile);
             $username = $this->settingDataFixed('UsernameBridgingTelemedicine', $kdProfile);
             $password = $this->settingDataFixed('PwBridgingTelemedicine', $kdProfile);
-            // $token = $this->settingDataFixed('BearerBridgingTelemedicine', $kdProfile);
             $token = "";
 
-            //get token
+            // Get token dari telemedicine
             $header_auth = array(
                 "Content-Type: application/json",
                 "Accept: application/json",
@@ -3126,36 +3135,40 @@ class AmbulanController extends ApiController
     
                 $methods = 'PUT';
                 $urlTelemedicine = $baseUrlTelemedicine . "verification-ambulance-orders";
-    
+                
+                $uuid_officer = $req['driver_uuid_telemedicine'] ?? '';
+                if (empty($uuid_officer) && isset($petugasData[0]['uuid_telemedicine'])) {
+                    $uuid_officer = $petugasData[0]['uuid_telemedicine'];
+                }
+
                 $dataJsonSend = array(
                     "order_number" => $req['nomor_order'],
-                    "uuid_officer" => $req['driver_uuid_telemedicine'],
+                    "uuid_officer" => $uuid_officer,
                     "uuid_ambulance" => $req['kendaraan_uuid_telemedicine'],
                     "status_order" => $ket_verif_telemedicine,
                     "messages" => $req['messages'] ?? '-',
                 );
-    
+
                 $data_kirim = json_encode($dataJsonSend);
-                $send_data_telemedicine = $this->sendBridgingCurl($headers, $data_kirim, $urlTelemedicine, $methods);
-                
+                $send_data_telemedicine = $this->sendBridgingCurl($headers, $data_kirim, $urlTelemedicine, $methods);      
                 if ($send_data_telemedicine->code != 200){
                     $transMessage = "Verifikasi Gagal.";
-                    DB::rollBack();
+                    \DB::rollBack();
                     $result = array(
                         "status" => 400,
-                        "message"  => $transMessage,
-                        "error" => $send_data_telemedicine->messages,
+                        "message" => $transMessage,
+                        "error" => $send_data_telemedicine->messages ?? 'Response error dari telemedicine',
                         "as" => 'ea@epic',
                     );
                     return $this->setStatusCode($result['status'])->respond($result, $transMessage);
                 }
             } else {
-                $transMessage = "Verifikasi Gagal.";
-                DB::rollBack();
+                $transMessage = "Verifikasi Gagal - Token tidak valid.";
+                \DB::rollBack();
                 $result = array(
                     "status" => 400,
-                    "message"  => $transMessage,
-                    "error" => $send_auth_telemedicine->messages,
+                    "message" => $transMessage,
+                    "error" => $send_auth_telemedicine->messages ?? 'Gagal mendapatkan token',
                     "as" => 'ea@epic',
                 );
                 return $this->setStatusCode($result['status'])->respond($result, $transMessage);
@@ -3168,7 +3181,7 @@ class AmbulanController extends ApiController
 
         if ($transStatus == 'true') {
             $transMessage = "Verifikasi Berhasil.";
-            DB::commit();
+            \DB::commit();
             $result = array(
                 "status" => 201,
                 "message" => $transMessage,
@@ -3176,17 +3189,18 @@ class AmbulanController extends ApiController
             );
         } else {
             $transMessage = "Verifikasi Gagal.";
-            DB::rollBack();
+            \DB::rollBack();
             $result = array(
                 "status" => 400,
-                "message"  => $transMessage,
-                "error" => $e->getMessage().' '.$e->getLine(),
+                "message" => $transMessage,
+                "error" => isset($e) ? $e->getMessage().' Line: '.$e->getLine() : 'Unknown error',
                 "as" => 'as@epic',
             );
         }
+        
+        \Log::info('Final response:', $result);
         return $this->setStatusCode($result['status'])->respond($result);
-    }
-
+    }  
     public function simpanNomorSurat(Request $request)
     {
         $kdProfile = $this->getDataKdProfile($request);
@@ -3217,6 +3231,7 @@ class AmbulanController extends ApiController
             
             foreach ($dataSO as $detail) {
                 $detail->nomorsurat = $req['nomorsurat'];
+                $detail->dasar_surat = $req['dasarsurat'] ?? null;
                 $detail->save();
             }
 

@@ -83,6 +83,56 @@ class TindakanController extends ApiController
         );
         return $this->respond($result);
     }
+     public function getComboTelemedicine(Request $request){
+        $kdProfile = $this->getDataKdProfile($request);
+        $idProfile =(int) $kdProfile;
+        $detailLog = $request->all();
+        $jenisPelaksana = \DB::table('jenispetugaspelaksana_m as jpp')
+            ->where('jpp.statusenabled', true)
+            ->whereIn('jpp.id', [9, 20]) 
+            ->orderBy('jpp.jenispetugaspe')
+            ->get();
+        $pegawai = \DB::table('pegawai_m as pg')
+            ->select('id', 'namalengkap', 'uuid_telemedicine')
+            ->where('pg.statusenabled', true)
+            ->where('pg.kdprofile', $idProfile)
+            ->orderBy('pg.namalengkap')
+            ->get();
+
+        $dataTarifAdminCito = \DB::table('settingdatafixed_m as rt')
+            ->select('rt.namafield','rt.nilaifield')
+            ->where('rt.statusenabled',true)
+            ->where('rt.namafield','tarifadmincito')
+            ->orderBy('rt.id')
+            ->first();
+
+        $nopol = \DB::table('registrasiaset_t')
+        ->select('norec', 'nopolisi')
+        ->where('kdprofile', $kdProfile)
+        ->where('statusenabled', true)
+        ->whereNotNull('nopolisi')
+        ->where('keteranganlainnya', 'ilike', '%ambulan%')
+        ->get();
+
+        $jenisKegiatan = \DB::table('jeniskegiatanambulan_m')
+        ->select('id', 'namajeniskegiatan')
+        ->where('kdprofile', $kdProfile)
+        ->where('statusenabled', true)
+        ->whereNotNull('namajeniskegiatan')
+        ->get();
+
+        $result = array(
+            'detaillogin' =>$detailLog,
+            'jenispelaksana' => $jenisPelaksana,
+            'pegawai' => $pegawai,
+            'tarifcito' => $dataTarifAdminCito,
+            'nopol' => $nopol,
+            'jeniskegiatan' => $jenisKegiatan,
+            'message' => 'ramdanegie',
+        );
+
+        return $this->respond($result);
+    }
     public function getCombo(Request $request){
         $kdProfile = $this->getDataKdProfile($request);
         $idProfile =(int) $kdProfile;
@@ -141,7 +191,7 @@ class TindakanController extends ApiController
                 ->join('jenispetugaspelaksana_m as jpp', 'jpp.id', '=', 'mpp.objectjenispetugaspefk')
                 ->leftJoin('loginuser_s as lg', 'lg.objectpegawaifk', '=', 'pg.id')
                 ->select('mpp.objectjenispegawaifk', 'jp.jenispegawai', 'mpp.objectjenispetugaspefk', 'jpp.jenispetugaspe',
-                    'pg.namalengkap', 'pg.id'
+                    'pg.namalengkap', 'pg.id', 'pg.uuid_telemedicine'
 //                    ,'lg.id as idloginuser','lg.namauser'
                 )
                 ->groupBy('mpp.objectjenispegawaifk', 'jp.jenispegawai', 'mpp.objectjenispetugaspefk', 'jpp.jenispetugaspe',
