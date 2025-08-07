@@ -26188,7 +26188,17 @@ public function suratBuktiPengembalian(Request $request)
                 SUM(case when extract(year from bku.tglbku) = extract(year from timestamp '".$request['tglbku']."')
                     and extract(month from bku.tglbku) = extract(month from timestamp '".$request['tglbku']."')
                 then rd.subtotal else 0 end) as total_belanja_bulan_ini,
-                SUM(rd.subtotal) as total_belanja,
+                SUM(
+                    CASE 
+                        WHEN extract(year from bku.tglbku) = extract(year from timestamp '".$request['tglbku']."')
+                        AND (
+                            bku.tglbku <= DATE_TRUNC('MONTH', timestamp '".$request['tglbku']."')
+                        OR extract(month from bku.tglbku) = extract(month from timestamp '".$request['tglbku']."')
+                        )
+                    THEN rd.subtotal
+                    ELSE 0
+                    END
+                ) as total_belanja,
                 SUM(case when extract(year from pb.tglpengembalian) = extract(year from timestamp '".$request['tglbku']."')
                     and pb.tglpengembalian <= DATE_TRUNC('MONTH', timestamp '".$request['tglbku']."')
                 then pb.totalpengembalian else 0 end) as pengembalianbelanja_bulan_lalu,
