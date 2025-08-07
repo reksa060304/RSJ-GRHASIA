@@ -30695,13 +30695,18 @@ public function suratBuktiPengembalian(Request $request)
                 -- Data Petugas 3
                 pg3.namalengkap as namapetugas3,
                 pg3.nip as nip_petugas3,
-                jp3.jenispegawai as jabatan_petugas3
+                jp3.jenispegawai as jabatan_petugas3,
+
+                --Data supir
+                pg4.namalengkap as namapetugas4,
+                pg4.nip as nip_petugas4,
+                jp4.jenispegawai as jabatan_petugas4
                 
             FROM
                 strukpelayanandetail_t AS spd
                 LEFT JOIN petugaspelayananambulan_t AS ppa ON ppa.nostrukdetailfk = spd.norec
                 LEFT JOIN jeniskegiatanambulan_m AS jka ON jka.id = spd.jeniskegiatanambulanfk::bigint
-            
+                
                 -- JOIN untuk Petugas 1
                 LEFT JOIN pegawai_m AS pg1 ON pg1.id = ppa.objectpegawaifk1
                 LEFT JOIN jenispegawai_m AS jp1 ON jp1.id = pg1.objectjenispegawaifk
@@ -30714,6 +30719,10 @@ public function suratBuktiPengembalian(Request $request)
                 LEFT JOIN pegawai_m AS pg3 ON pg3.id = ppa.objectpegawaifk3
                 LEFT JOIN jenispegawai_m AS jp3 ON jp3.id = pg3.objectjenispegawaifk
                 
+                --Join SUpir
+                LEFT JOIN pegawai_m AS pg4 ON pg4.id = ppa.objectpegawaifk
+                LEFT JOIN jenispegawai_m AS jp4 ON jp4.id = pg4.objectjenispegawaifk
+
             WHERE
                 spd.kdprofile = :profile
                 AND spd.statusenabled = TRUE

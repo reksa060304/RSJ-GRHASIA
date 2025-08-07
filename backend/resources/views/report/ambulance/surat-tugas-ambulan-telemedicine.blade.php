@@ -326,7 +326,7 @@
                     @php $no = 1; @endphp
 
                     {{-- Petugas 1, 2, 3 --}}
-                    @foreach(['petugas1', 'petugas2', 'petugas3'] as $petugas)
+                    @foreach(['petugas4', 'petugas1', 'petugas2', 'petugas3'] as $petugas)
                         @if(!empty($data[0]->{'nama' . $petugas}))
                             <div class="person-item">
                                 <div class="content-row">

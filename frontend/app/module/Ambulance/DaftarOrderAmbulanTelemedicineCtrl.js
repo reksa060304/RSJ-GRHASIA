@@ -414,7 +414,12 @@ define(['initialize', 'Configuration'], function (initialize, config) {
                         "field": "totalskor",
                         "title": "Skor Panssec",
                         "width": "100px",
-                    }
+                    },
+                    {
+                        "field": "keterangan",
+                        "title": "Keterangan",
+                        "width": "200px",
+                    }                    
                 ]
             }
 
@@ -431,6 +436,11 @@ define(['initialize', 'Configuration'], function (initialize, config) {
 
                 if ($scope.popUp.noPolisi == undefined || $scope.popUp.noPolisi == '' || $scope.popUp.noPolisi == null) {
                     toastr.error('Kendaraan Harus Di isi')
+                    return
+                }
+
+                if ($scope.popUp.driver == undefined || $scope.popUp.driver == '' || $scope.popUp.driver == null) {
+                    toastr.error('Driver Harus Di isi')
                     return
                 }
 
@@ -523,9 +533,9 @@ define(['initialize', 'Configuration'], function (initialize, config) {
                     "kendaraan_nopolisi": $scope.popUp.noPolisi.nopolisi,
                     "kendaraan_uuid_telemedicine": $scope.popUp.noPolisi.uuid_telemedicine,
 
-                    "driver_id": driverData.id,
-                    "driver_nama_lengkap": driverData.namalengkap || driverData.nama,
-                    "driver_uuid_telemedicine": driverData.uuid || driverData.uuid_telemedicine,
+                    "driver_id": $scope.popUp.driver.id,
+                    "driver_nama_lengkap": $scope.popUp.driver.namalengkap,
+                    "driver_uuid_telemedicine": $scope.popUp.driver.uuid_telemedicine,
                     "kegiatan_id": $scope.popUp.kegiatan ? $scope.popUp.kegiatan.id : null,
                     "kegiatan_nama": $scope.popUp.kegiatan ? $scope.popUp.kegiatan.namajeniskegiatan : null,
                     "verifikasi": $scope.popUp.verifikasiOrder.jenis,
@@ -617,7 +627,7 @@ define(['initialize', 'Configuration'], function (initialize, config) {
                         "width": "70px"
                     },
                     {
-                        "field": "namapasien",
+                        "field": "namapasien_klien",
                         "title": "Nama Pemesan",
                         "width": "150px"
                     },
@@ -627,7 +637,7 @@ define(['initialize', 'Configuration'], function (initialize, config) {
                         "width": "120px"
                     },
                     {
-                        "field": "namapasien_klien",
+                        "field": "nama_pasien",
                         "title": "Nama Pasien",
                         "width": "150px"
                     },

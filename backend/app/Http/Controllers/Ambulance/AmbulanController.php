@@ -2877,12 +2877,14 @@ class AmbulanController extends ApiController
         $idProfile = (int) $kdProfile;
         $data = \DB::table('strukpelayanan_t as sp')
             ->join('pasien_m as pm', 'pm.id', '=', 'sp.nocmfk')
+            ->join('strukpelayanandetail_t as spd', 'spd.nostrukfk', '=', 'sp.norec')
             ->select(
                 'sp.norec',
                 'sp.totalharusdibayar',
                 'sp.tglstruk',
                 'sp.nostruk',
                 'sp.namapasien_klien',
+                'spd.nama_pasien',
                 'sp.noteleponfaks',
                 'pm.nocm',
                 'pm.namapasien',
@@ -3079,6 +3081,7 @@ class AmbulanController extends ApiController
                     $PetugasPelAmbulan->norec = $PetugasPelAmbulan->generateNewId();
                     $PetugasPelAmbulan->kdprofile = $kdProfile;
                     $PetugasPelAmbulan->statusenabled = true;
+                    $PetugasPelAmbulan->objectpegawaifk = $req['driver_id'];
 
                     if (isset($petugasData[0]['objectpegawaifk'])) {
                         $PetugasPelAmbulan->objectpegawaifk1 = $petugasData[0]['objectpegawaifk'];
@@ -3143,7 +3146,7 @@ class AmbulanController extends ApiController
 
                 $dataJsonSend = array(
                     "order_number" => $req['nomor_order'],
-                    "uuid_officer" => $uuid_officer,
+                    "uuid_officer" => $req['driver_uuid_telemedicine'],
                     "uuid_ambulance" => $req['kendaraan_uuid_telemedicine'],
                     "status_order" => $ket_verif_telemedicine,
                     "messages" => $req['messages'] ?? '-',
