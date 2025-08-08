@@ -2561,7 +2561,7 @@ class AmbulanController extends ApiController
         ->select('id', 'namajeniskegiatan as nama')
         ->where('kdprofile', $idProfile)
         ->where('statusenabled', true)
-        ->whereIn('id', [1, 5]) //menjemput pasien
+        ->whereIn('id', [1, 5, 6]) //menjemput pasien
         ->whereNotNull('namajeniskegiatan')
         ->get();
 
