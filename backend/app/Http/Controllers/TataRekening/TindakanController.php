@@ -89,7 +89,7 @@ class TindakanController extends ApiController
         $detailLog = $request->all();
         $jenisPelaksana = \DB::table('jenispetugaspelaksana_m as jpp')
             ->where('jpp.statusenabled', true)
-            ->whereIn('jpp.id', [9, 20]) 
+            ->whereIn('jpp.id', [9, 21])
             ->orderBy('jpp.jenispetugaspe')
             ->get();
         $pegawai = \DB::table('pegawai_m as pg')
