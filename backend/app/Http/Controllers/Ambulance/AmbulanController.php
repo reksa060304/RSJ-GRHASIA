@@ -2934,14 +2934,14 @@ class AmbulanController extends ApiController
         );
         return $this->respond($dataResult);
     }
-
-    public function getDaftarDetailOrderAmbulanDariTelemedicine(Request $request)
+   public function getDaftarDetailOrderAmbulanDariTelemedicine(Request $request)
     {
         $kdProfile = $this->getDataKdProfile($request);
         $idProfile = (int) $kdProfile;
+
         $data = \DB::table('strukpelayanandetail_t as spd')
             ->join('produk_m as prd', 'prd.id', '=', 'spd.objectprodukfk')
-            ->leftjoin('panssec_history as psh', 'psh.strukpelayananfk', '=', 'spd.nostrukfk')
+            ->leftJoin('panssec_history as psh', 'psh.strukpelayananfk', '=', 'spd.nostrukfk')
             ->select(
                 'spd.norec as norec_pp',
                 'spd.qtyproduk',
@@ -2961,11 +2961,84 @@ class AmbulanController extends ApiController
             ->where('spd.statusenabled', true)
             ->where('spd.nostrukfk', $request['norec'])
             ->get();
-        $dataResult = array(
-            'message' =>  'inhuman',
-            'data' =>  $data,
-        );
+
+        $collectdata = [];
+        foreach ($data as $item) {
+            $keterangan = $this->getPansSecKeterangan($item->totalskor, 'numbered');
+            $item->keterangan = $keterangan;
+            $collectdata[] = $item;
+        }
+
+        $dataResult = [
+            'message' => 'success',
+            'data' => $collectdata,
+        ];
+
         return $this->respond($dataResult);
+    }
+
+    // Method helper untuk mendapatkan keterangan 
+    public function getPansSecKeterangan($totalSkor, $format = 'numbered')
+    {
+        if (empty($totalSkor) || !is_numeric($totalSkor)) {
+            return '';
+        }
+
+        try {
+            $kriteria = \DB::table('panssec_kriteria_m')
+                ->select('id', 'nilaimin', 'nilaimax')
+                ->where('statusenabled', true)
+                ->where('nilaimin', '<=', $totalSkor)
+                ->where('nilaimax', '>=', $totalSkor)
+                ->first();
+
+            if (!$kriteria) {
+                return '';
+            }
+            $protokol = \DB::table('panssec_kriteria_d')
+                ->select('text', 'nourut')
+                ->where('panssec_kriteriafk', $kriteria->id)
+                ->where('statusenabled', true)
+                ->orderBy('nourut', 'asc')
+                ->get();
+
+            if (empty($protokol)) {
+                return '';
+            }
+
+            $protokolTexts = array_map(function ($item) {
+                return $item->text;
+            }, $protokol);
+
+            switch ($format) {
+                case 'numbered':
+                    $numbered = array_map(function ($text, $index) {
+                        return ($index + 1) . '. ' . $text;
+                    }, $protokolTexts, array_keys($protokolTexts));
+                    return implode('<br>', $numbered);
+
+                case 'simple':
+                default:
+                    return implode(' | ', $protokolTexts);
+            }
+        } catch (\Exception $e) {   
+            return 'Gagal Mendapatkan Keterangan: ' . $e->getMessage();
+        }
+    }
+
+    // Method alternatif untuk customize format keterangan
+    public function formatKeteranganPanssec($protokolArray, $scoreRange = '')
+    {
+        if (empty($protokolArray)) {
+            return '';
+        }
+
+        $header = $scoreRange ? "Skor PANSS-EC: {$scoreRange}\n" : '';
+        $protokolFormatted = array_map(function ($text, $index) {
+            return ($index + 1) . '. ' . trim($text);
+        }, $protokolArray, array_keys($protokolArray));
+
+        return $header . implode("\n", $protokolFormatted);
     }
 
     public function getComboTelemedicine(Request $request){

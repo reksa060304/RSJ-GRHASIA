@@ -297,7 +297,7 @@ define(['initialize', 'Configuration'], function (initialize, config) {
                 $scope.btnSimpanVis = false
                 $scope.headerVerif = $scope.dataSelected;
                 $scope.item.noOrder = $scope.dataSelected.nostruk
-                $scope.item.namaPasiens = $scope.dataSelected.namapasien
+                $scope.item.namaPasiens = $scope.dataSelected.namapasien_klien
 
                 $scope.popUpVerif.center().open();
                 loadDataVerif();
@@ -418,7 +418,8 @@ define(['initialize', 'Configuration'], function (initialize, config) {
                     {
                         "field": "keterangan",
                         "title": "Keterangan",
-                        "width": "200px",
+                        "width": "900px",
+                        "encoded": false,
                     }                    
                 ]
             }
