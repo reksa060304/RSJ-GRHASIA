@@ -651,8 +651,13 @@ define(['initialize', 'Configuration'], function (initialize, config) {
                     {
                         "field": "status",
                         "title": "Status",
-                        "width": "150px"
+                        "width": "100px"
                     },
+                    {
+                        "field": "jenis_kegiatan",
+                        "title": "Jenis Order",
+                        "width": "200px"
+                    }
                 ]
             }
 

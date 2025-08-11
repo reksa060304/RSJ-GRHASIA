@@ -2888,11 +2888,20 @@ class AmbulanController extends ApiController
                 'sp.noteleponfaks',
                 'pm.nocm',
                 'pm.namapasien',
-                DB::raw("CASE 
-                    WHEN sp.isapprove IS NULL THEN 'MENUNGGU' 
-                    WHEN sp.isapprove = true THEN 'DITERIMA' 
-                    ELSE 'DITOLAK' 
-                END AS status")
+                DB::raw("
+                    CASE 
+                        WHEN sp.isapprove IS NULL THEN 'MENUNGGU' 
+                        WHEN sp.isapprove = true THEN 'DITERIMA' 
+                        ELSE 'DITOLAK' 
+                    END AS status
+                "),
+                DB::raw("
+                    CASE
+                        WHEN spd.jeniskegiatanambulanfk::integer = 1 THEN 'MENJEMPUT PASIEN'
+                        WHEN spd.jeniskegiatanambulanfk::integer = 5 THEN 'MENJEMPUT PASIEN PSIKIATRI'
+                        ELSE 'MENJEMPUT PASIEN EMERGENCY'
+                    END AS jenis_kegiatan
+                ")
             )
             ->where('sp.kdprofile', $idProfile)
             ->where('sp.statusenabled', true)
