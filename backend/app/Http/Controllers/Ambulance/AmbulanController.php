@@ -2746,6 +2746,12 @@ class AmbulanController extends ApiController
             $SP->tglstruk = $req['tglstruk'];
             $SP->totalharusdibayar = $req['totalharusdibayar'];
             $SP->istelemedicine = true;
+            //auto appprove emergency
+            if ($req['jeniskegiatan'] == 6) {
+                $SP->isapprove = true;       
+            } else {
+                $SP->isapprove = null; 
+            }
             $SP->save();
 
             // $detail = $req['details']; 
