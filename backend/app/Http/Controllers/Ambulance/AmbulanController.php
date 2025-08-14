@@ -2855,13 +2855,17 @@ class AmbulanController extends ApiController
         if ($transStatus == 'true') {
             $transMessage = "Order berhasil dibuat";
             DB::commit();
+            
+            // Set status order emergency langsung terverifikasi
+            $statusOrder = ($req['jeniskegiatan'] == 6) ? 'Diverifikasi' : 'Menunggu';
+
             $result = array(
                 "status" => 201,
                 "message" => $transMessage,
                 "data" => [
                     "order_number" => $SP->nostruk,
                     "price" => $SP->totalharusdibayar,
-                    "status_order" => 'Menunggu',
+                    "status_order" => $statusOrder,
                 ],
                 "as" => 'as@epic',
             );
