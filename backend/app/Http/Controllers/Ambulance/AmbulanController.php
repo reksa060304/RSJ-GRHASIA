@@ -2857,7 +2857,7 @@ class AmbulanController extends ApiController
             DB::commit();
             
             // Set status order emergency langsung terverifikasi
-            $statusOrder = ($req['jeniskegiatan'] == 6) ? 'Diverifikasi' : 'Menunggu';
+            $statusOrder = ($req['jeniskegiatan'] == 6) ? 'Verifikasi' : 'Menunggu';
 
             $result = array(
                 "status" => 201,
