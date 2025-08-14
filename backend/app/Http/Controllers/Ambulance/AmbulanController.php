@@ -2885,9 +2885,9 @@ class AmbulanController extends ApiController
     {
         $kdProfile = $this->getDataKdProfile($request);
         $idProfile = (int) $kdProfile;
-        $data = \DB::table('strukpelayanan_t as sp')
+       $data = \DB::table('strukpelayanan_t as sp')
             ->join('pasien_m as pm', 'pm.id', '=', 'sp.nocmfk')
-            ->join('strukpelayanandetail_t as spd', 'spd.nostrukfk', '=', 'sp.norec')
+            ->leftJoin('strukpelayanandetail_t as spd', 'spd.nostrukfk', '=', 'sp.norec')
             ->select(
                 'sp.norec',
                 'sp.totalharusdibayar',
@@ -2915,8 +2915,22 @@ class AmbulanController extends ApiController
             )
             ->where('sp.kdprofile', $idProfile)
             ->where('sp.statusenabled', true)
-            ->where('sp.objectkelompoktransaksifk', 9) //pelayanan ambulance
-            ->where('sp.istelemedicine', true);
+            ->where('sp.objectkelompoktransaksifk', 9)
+            ->where('sp.istelemedicine', true)
+            ->groupBy(
+                'sp.norec',
+                'sp.totalharusdibayar',
+                'sp.tglstruk',
+                'sp.nostruk',
+                'sp.namapasien_klien',
+                'spd.nama_pasien',
+                'sp.noteleponfaks',
+                'pm.nocm',
+                'pm.namapasien',
+                'sp.isapprove',
+                'spd.jeniskegiatanambulanfk'
+            );
+
 
         if (isset($request['isNotVerif']) && $request['isNotVerif'] != "" && $request['isNotVerif'] != "undefined") {
             if ($request['isNotVerif'] == true) {
