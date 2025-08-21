@@ -2580,9 +2580,7 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
                             
                 if (newValue.namaruangan === "Laboratorium Umum (Penelitian)") {
                     $scope.item.asalRujukan = $scope.sourceAsalRujukan[0]; //asal datang sendiri
-                    $scope.item.kelompokPasien = $scope.sourceKelompokPasien.find(
-                        x => x.id_kelompokpasien === 1
-                    ); // kelompok umum                
+                    $scope.item.kelompokPasien = $scope.sourceKelompokPasien[16]; //umum           
                     $scope.item.jenisPasien = {
                         id: $scope.listJenisPelayanan[1].id,
                         jenispelayanan: $scope.listJenisPelayanan[1].jenispelayanan //reguler
