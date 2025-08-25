@@ -297,7 +297,7 @@ define(['initialize', 'Configuration'], function (initialize, config) {
                 $scope.btnSimpanVis = false
                 $scope.headerVerif = $scope.dataSelected;
                 $scope.item.noOrder = $scope.dataSelected.nostruk
-                $scope.item.namaPasiens = $scope.dataSelected.namapasien_klien
+                $scope.item.namaPasiens = $scope.dataSelected.namapasien
 
                 $scope.popUpVerif.center().open();
                 loadDataVerif();
@@ -491,8 +491,7 @@ define(['initialize', 'Configuration'], function (initialize, config) {
                     objectjenispetugaspefk: $scope.item.jenisPelaksana.id,
                     objectpegawaifk: $scope.selectedPegawai[0].id,
                     jenis: $scope.item.jenisPelaksana.jenispetugaspe,
-                    pegawai: $scope.selectedPegawai[0],
-                    uuid_telemedicine: $scope.selectedPegawai[0].uuid || $scope.selectedPegawai[0].uuid_telemedicine || null
+                    pegawai: $scope.selectedPegawai[0]
                 };
                 
                 // Petugas 2 (opsional)
@@ -501,8 +500,7 @@ define(['initialize', 'Configuration'], function (initialize, config) {
                         objectjenispetugaspefk: $scope.item.jenisPelaksana2.id, 
                         objectpegawaifk: $scope.selectedPegawai2[0].id,
                         jenis: $scope.item.jenisPelaksana2.jenispetugaspe,
-                        pegawai: $scope.selectedPegawai2[0],
-                        uuid_telemedicine: $scope.selectedPegawai2[0].uuid || $scope.selectedPegawai2[0].uuid_telemedicine || null
+                        pegawai: $scope.selectedPegawai2[0]
                     };
                 }
                 
@@ -512,8 +510,7 @@ define(['initialize', 'Configuration'], function (initialize, config) {
                         objectjenispetugaspefk: $scope.item.jenisPelaksana3.id,
                         objectpegawaifk: $scope.selectedPegawai3[0].id, 
                         jenis: $scope.item.jenisPelaksana3.jenispetugaspe,
-                        pegawai: $scope.selectedPegawai3[0],
-                        uuid_telemedicine: $scope.selectedPegawai3[0].uuid || $scope.selectedPegawai3[0].uuid_telemedicine || null
+                        pegawai: $scope.selectedPegawai3[0]
                     };
                 }
 
@@ -621,6 +618,12 @@ define(['initialize', 'Configuration'], function (initialize, config) {
                         "title": "Tgl Order",
                         "template": "#= new moment(new Date(tglstruk)).format('DD-MM-YYYY HH:mm') #",
                         "width": "100px"
+                    },                    
+                    {
+                        "field": "tanggal_jemput",
+                        "title": "Tgl Jemput",
+                        "template": "#= tanggal_jemput ? new moment(new Date(tanggal_jemput)).format('DD-MM-YYYY HH:mm') : '' #",
+                        "width": "100px"
                     },
                     {
                         "field": "nocm",
@@ -631,12 +634,6 @@ define(['initialize', 'Configuration'], function (initialize, config) {
                         "field": "namapasien_klien",
                         "title": "Nama Pemesan",
                         "width": "150px"
-                    },
-                    {
-                        "field": "tanggal_jemput",
-                        "title": "Tgl Jemput",
-                        "template": "#= tanggal_jemput ? new moment(new Date(tanggal_jemput)).format('DD-MM-YYYY HH:mm') : '' #",
-                        "width": "100px"
                     },
                     {
                         "field": "noteleponfaks",
@@ -724,7 +721,7 @@ define(['initialize', 'Configuration'], function (initialize, config) {
                 var dataSimpan = {
                     norec: $scope.dataSelected.norec,
                     nomorsurat: $scope.item.nomorSurat,
-                    dasarsurat: $scope.item.dasarSurat
+                    dasarsurat: $scope.item.dasarSurat,
                 };
             
                 medifirstService.post('ambulance/simpan-nomor-surat-ambulan', dataSimpan)
@@ -746,7 +743,7 @@ define(['initialize', 'Configuration'], function (initialize, config) {
                 $scope.popUpNomorSurat.close();
             }
 
-             $scope.selectOptions = {
+            $scope.selectOptions = {
 				placeholder: "Pilih Pegawai...",
 				dataTextField: "namaLengkap",
 				dataValueField: "id",
