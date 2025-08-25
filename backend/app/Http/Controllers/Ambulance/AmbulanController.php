@@ -3368,45 +3368,75 @@ class AmbulanController extends ApiController
     $filter = $request->all();
 
     // Query untuk mendapatkan data
-    $data = \DB::table('strukpelayanan_t as sp')
-        ->leftJoin('strukpelayanandetail_t as spd', 'spd.nostrukfk', '=', 'sp.norec')
-        ->leftJoin('petugaspelayananambulan_t as ppa', 'ppa.nostrukdetailfk', '=', 'spd.norec')
-        ->leftJoin('pegawai_m as pg', 'pg.id', '=', 'ppa.objectpegawaifk')
-        ->leftJoin('jenispegawai_m as jp', 'jp.id', '=', 'pg.objectjenispegawaifk')
-        ->leftJoin('jeniskegiatanambulan_m as jka', function ($join) {
-            $join->on('jka.id', '=', \DB::raw('CAST(spd.jeniskegiatanambulanfk AS BIGINT)'));
-        })
-        ->leftJoin('alamatnonlayanan_m as anl', 'anl.strukpelayanandetail', '=', 'spd.norec')
-        ->leftJoin('registrasiaset_t as ra', 'ra.norec', '=', 'spd.nopolisifk')
-        ->select(
-            'sp.nostruk',
-            'sp.tglstruk',
-            'pg.namalengkap AS namapersonel',
-            \DB::raw('SUM(spd.hargasatuan) as total_harga'),
-            'sp.namapasien_klien',
-            'ra.nopolisi',
-            'ra.keteranganlainnya',
-            'jka.namajeniskegiatan',
-            'spd.jarak',
-            'anl.alamatlengkap as lokasitujuan',
-            'sp.istelemedicine',
-        )
-        ->where('sp.statusenabled', true)
-        // ->where('sp.istelemedicine', true)
-        ->where('sp.kdprofile', (int)$kdProfile)
-        ->where('jp.id', 48)
-        ->groupBy(
-            'sp.nostruk',
-            'sp.tglstruk',
-            'pg.namalengkap',
-            'sp.namapasien_klien',
-            'ra.nopolisi',
-            'ra.keteranganlainnya',
-            'jka.namajeniskegiatan',
-            'spd.jarak',
-            'anl.alamatlengkap',
-            'sp.istelemedicine',
-        );
+    $data = DB::table('strukpelayanan_t as sp')
+    ->leftJoin('strukpelayanandetail_t as spd', 'spd.nostrukfk', '=', 'sp.norec')
+    ->leftJoin(DB::raw("
+        (
+            SELECT DISTINCT ppa.nostrukdetailfk, pg.namalengkap
+            FROM petugaspelayananambulan_t ppa
+            JOIN pegawai_m pg ON pg.id = ppa.objectpegawaifk
+            WHERE ppa.objectpegawaifk IS NOT NULL
+            UNION
+            SELECT DISTINCT ppa.nostrukdetailfk, pg.namalengkap
+            FROM petugaspelayananambulan_t ppa
+            JOIN pegawai_m pg ON pg.id = ppa.objectpegawaifk1
+            WHERE ppa.objectpegawaifk1 IS NOT NULL
+            UNION
+            SELECT DISTINCT ppa.nostrukdetailfk, pg.namalengkap
+            FROM petugaspelayananambulan_t ppa
+            JOIN pegawai_m pg ON pg.id = ppa.objectpegawaifk2
+            WHERE ppa.objectpegawaifk2 IS NOT NULL
+            UNION
+            SELECT DISTINCT ppa.nostrukdetailfk, pg.namalengkap
+            FROM petugaspelayananambulan_t ppa
+            JOIN pegawai_m pg ON pg.id = ppa.objectpegawaifk3
+            WHERE ppa.objectpegawaifk3 IS NOT NULL
+        ) AS pg_all
+    "), 'pg_all.nostrukdetailfk', '=', 'spd.norec')
+    ->leftJoin('jenispegawai_m as jp', 'jp.id', '=', DB::raw("
+        (SELECT objectjenispegawaifk 
+         FROM pegawai_m 
+         WHERE pegawai_m.namalengkap = pg_all.namalengkap 
+         LIMIT 1)
+    "))
+    ->leftJoin('jeniskegiatanambulan_m as jka', function ($join) {
+        $join->on('jka.id', '=', DB::raw("CAST(NULLIF(spd.jeniskegiatanambulanfk, '') AS BIGINT)"));
+    })
+    ->leftJoin('alamatnonlayanan_m as anl', 'anl.strukpelayanandetail', '=', 'spd.norec')
+    ->leftJoin('registrasiaset_t as ra', 'ra.norec', '=', 'spd.nopolisifk')
+    ->select(
+        'sp.nostruk',
+        'sp.tglstruk',
+        DB::raw('STRING_AGG(DISTINCT pg_all.namalengkap, \', \' ORDER BY pg_all.namalengkap) as petugas'),
+        DB::raw('SUM(DISTINCT spd.hargasatuan) as total_harga'),
+        'sp.namapasien_klien',
+        DB::raw('MAX(ra.nopolisi) as nopolisi'),
+        DB::raw('MAX(ra.keteranganlainnya) as keteranganlainnya'),
+        DB::raw('MAX(jka.namajeniskegiatan) as namajeniskegiatan'),
+        DB::raw('MAX(spd.jarak) as jarak'),
+        DB::raw('MAX(spd.address) as address'),
+        DB::raw('MAX(spd.nama_pasien) as nama_pasien'),
+        DB::raw('MAX(spd.nik) as nik'),
+        DB::raw('MAX(anl.alamatlengkap) as lokasitujuan'),
+        'sp.istelemedicine',
+        DB::raw("
+            CASE 
+                WHEN sp.isapprove = TRUE THEN 'diterima'
+                WHEN sp.isapprove = FALSE THEN 'ditolak'
+                ELSE 'menunggu'
+            END AS status_verifikasi
+        ")
+    )
+    ->where('sp.kdprofile', (int)$kdProfile)
+    ->where('sp.objectkelompoktransaksifk', 9)
+    ->whereNotNull('sp.isapprove')
+    ->groupBy(
+        'sp.nostruk',
+        'sp.tglstruk',
+        'sp.namapasien_klien',
+        'sp.istelemedicine',
+        'sp.isapprove'
+    );
 
     // Filter berdasarkan tanggal awal
     if (!empty($filter['tglAwal']) && strtotime($filter['tglAwal'])) {

@@ -221,12 +221,12 @@ define(['initialize', 'Configuration'], function (initialize, config) {
                         "width": "100px",
                     },
                     {
-                        "field": "namapersonel",
-                        "title": "Nama Personel",
+                        "field": "petugas",
+                        "title": "Nama Petugas",
                         "width": "150px",
                     },
                     {
-                        "field": "lokasitujuan",
+                        "field": "address",
                         "title": "Lokasi Tujuan",
                         "width": "200px",
                     },
@@ -234,6 +234,28 @@ define(['initialize', 'Configuration'], function (initialize, config) {
                         "field": "jarak",
                         "title": "Jarak Tempuh (Kilometer)",
                         "width": "100px",
+                    },                    
+                    {
+                        "field": "namapasien_klien",
+                        "title": "Nama Pemesan",
+                        "width": "120px",
+                    },
+                    {
+                        "field": "nama_pasien",
+                        "title": "Nama Pasien",
+                        "width": "120px",
+                    },
+
+                    {
+                        "field": "istelemedicine",
+                        "title": "Jenis Order",
+                        "width": "100px",
+                        "template": "#= istelemedicine ? 'Telemedicine' : 'Manual' #"
+                    },
+                    {
+                        "field": "status_verifikasi",
+                        "title": "Verifikasi",
+                        "width": "120px",
                     },
                     {
                         "field": "total_harga",
@@ -241,17 +263,6 @@ define(['initialize', 'Configuration'], function (initialize, config) {
                         "width": "100px",
                         "template": "#= 'Rp ' + kendo.toString(total_harga, 'n0').replace(/,/g, '.') #"
                     },
-                    {
-                        "field": "namapasien_klien",
-                        "title": "Nama Pelanggan",
-                        "width": "120px",
-                    },
-                    {
-                        "field": "istelemedicine",
-                        "title": "Jenis Order",
-                        "width": "100px",
-                        "template": "#= istelemedicine ? 'Telemedicine' : 'Manual' #"
-                    }
                     // {
                     //     "field": "",
                     //     "title": "Jenis Pasien",

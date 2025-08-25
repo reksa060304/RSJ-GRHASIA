@@ -76,7 +76,7 @@
 <div ng-show="dataVOloaded">
 
     <center>
-        <c-panel item="item" header="'Laporan Kegiatan Ambulan Telemedicine'" disabled>
+        <c-panel item="item" header="'Laporan Kegiatan Ambulan'" disabled>
     </center>
     <!-- <br/> -->
 
@@ -249,14 +249,14 @@
         <!-- Nama -->
         <div class="grid_2">
             <div class="grid_12">
-                <label c-label item="item">Nama Pengorder</label>
+                <label c-label item="item">Nama Pelanggan</label>
             </div>
             <div class="clear"></div>
 
             <div class="grid_12">
                 <input c-text-box type="input" filter="" class="k-textbox" ng-model="item.nama"
                     ng-keypress="($event.which == 13)? SearchData():item.noRm" />
-            </div>
+            </div>  
         </div>
     </div>
 
