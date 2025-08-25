@@ -2892,6 +2892,7 @@ class AmbulanController extends ApiController
                 'sp.norec',
                 'sp.totalharusdibayar',
                 'sp.tglstruk',
+                'sp.tanggal_jemput',
                 'sp.nostruk',
                 'sp.namapasien_klien',
                 'spd.nama_pasien',

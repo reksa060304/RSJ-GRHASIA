@@ -633,6 +633,12 @@ define(['initialize', 'Configuration'], function (initialize, config) {
                         "width": "150px"
                     },
                     {
+                        "field": "tanggal_jemput",
+                        "title": "Tgl Jemput",
+                        "template": "#= tanggal_jemput ? new moment(new Date(tanggal_jemput)).format('DD-MM-YYYY HH:mm') : '' #",
+                        "width": "100px"
+                    },
+                    {
                         "field": "noteleponfaks",
                         "title": "Nomor Telepon Pemesan",
                         "width": "120px"
