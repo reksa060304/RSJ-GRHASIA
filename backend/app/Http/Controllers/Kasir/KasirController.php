@@ -443,6 +443,7 @@ class KasirController extends ApiController
             $noStruk = $this->generateCode(new StrukPelayanan, 'nostruk', 10, 'NL' . $this->getDateTime()->format('ym'), $kdProfile);
             $SP->norec = $norecSP;
             $SP->kdprofile = $kdProfile;
+            $SP->isapprove = true;
             $SP->statusenabled = true;
             $SP->nostruk = $noStruk;
         } else {
@@ -465,6 +466,25 @@ class KasirController extends ApiController
             $SP->nocmklien = $req['nocm_klien'];
         }
         $SP->save();
+
+        if (!empty($req['desaKelurahan'])) {
+        $alamatData = \DB::table('desakelurahan_m as ds')
+        ->join('kecamatan_m as kc', 'ds.objectkecamatanfk', '=', 'kc.id')
+        ->join('kotakabupaten_m as kk', 'ds.objectkotakabupatenfk', '=', 'kk.id')
+        ->join('propinsi_m as pp', 'ds.objectpropinsifk', '=', 'pp.id')
+        ->select(DB::raw("ds.id,UPPER(ds.namadesakelurahan) as namadesakelurahan,ds.kodepos,
+                        ds.objectkecamatanfk,ds.objectkotakabupatenfk,ds.objectpropinsifk,
+                        kc.namakecamatan,kk.namakotakabupaten,pp.namapropinsi"))
+        ->where('ds.statusenabled', true)
+        ->where('ds.id', $req['desaKelurahan'])
+        ->first();
+        }
+
+        // Set default values jika data tidak ditemukan
+        $desaKelurahanText = $alamatData->namadesakelurahan ?? '';
+        $kecamatanText = $alamatData->namakecamatan ?? '';
+        $kotaKabupatenText = $alamatData->namakotakabupaten ?? '';
+        $provinsiText = $alamatData->namapropinsi ?? '';
 
         foreach ($req['details'] as $item) {
             $SPD = new StrukPelayananDetail();
@@ -500,28 +520,68 @@ class KasirController extends ApiController
             $SPD->keteranganlainnya = $item['keterangan'];         
             $SPD->nopolisifk = $req['nopolisi'] ?? null;
             $SPD->jeniskegiatanambulanfk = $req['jeniskegiatan'] ?? null;
+            $SPD->jarak = $item['jarak'];
+            $SPD->address = trim(
+        ($req['alamatLengkap'] ?? '') . ', ' .
+                ($req['rtRw'] ?? '') . ', ' .
+                $desaKelurahanText . ', ' .
+                $kecamatanText . ', ' .
+                $kotaKabupatenText . ', ' .
+                $provinsiText,
+                ', '
+            );
+    
             $SPD->save();
         }
 
         $PPnorec = $SPD->norec;
         $PPtglpelayanan = $SPD->tglpelayanan;
 
-        if (isset($req['petugaspelayananambulan']) && count($req['petugaspelayananambulan']) > 0) {
-            foreach ($req['petugaspelayananambulan'] as $itemPPA) {
-                if (isset($itemPPA['listpegawai']) && count($itemPPA['listpegawai']) > 0) {
-                    foreach ($itemPPA['listpegawai'] as $detailItemPPAz) {
-                        $PetugasPelAmbulan = new PetugasPelayananAmbulan();
-                        $PetugasPelAmbulan->norec = $PetugasPelAmbulan->generateNewId();
-                        $PetugasPelAmbulan->kdprofile = $idProfile;
-                        $PetugasPelAmbulan->statusenabled = true;
-                        $PetugasPelAmbulan->objectpegawaifk = $detailItemPPAz['id'] ?? null;
-                        $PetugasPelAmbulan->nostrukdetailfk = $PPnorec;
-                        $PetugasPelAmbulan->tglpelayanan = $PPtglpelayanan;
-                        $PetugasPelAmbulan->save();
-                    }
-                }
+        // if (isset($req['petugaspelayananambulan']) && count($req['petugaspelayananambulan']) > 0) {
+        //     foreach ($req['petugaspelayananambulan'] as $itemPPA) {
+        //         if (isset($itemPPA['listpegawai']) && count($itemPPA['listpegawai']) > 0) {
+        //             foreach ($itemPPA['listpegawai'] as $detailItemPPAz) {
+        //                 $PetugasPelAmbulan = new PetugasPelayananAmbulan();
+        //                 $PetugasPelAmbulan->norec = $PetugasPelAmbulan->generateNewId();
+        //                 $PetugasPelAmbulan->kdprofile = $idProfile;
+        //                 $PetugasPelAmbulan->statusenabled = true;
+        //                 $PetugasPelAmbulan->objectpegawaifk = $detailItemPPAz['id'] ?? null;
+        //                 $PetugasPelAmbulan->nostrukdetailfk = $PPnorec;
+        //                 $PetugasPelAmbulan->tglpelayanan = $PPtglpelayanan;
+        //                 $PetugasPelAmbulan->save();
+        //             }
+        //         }
+        //     }
+        // }
+
+        
+            $PetugasPelAmbulan = new PetugasPelayananAmbulan();
+            $PetugasPelAmbulan->norec = $PetugasPelAmbulan->generateNewId();
+            $PetugasPelAmbulan->kdprofile = $idProfile;
+            $PetugasPelAmbulan->statusenabled = true;
+            $PetugasPelAmbulan->nostrukdetailfk = $PPnorec;
+            $PetugasPelAmbulan->tglpelayanan = $PPtglpelayanan;           
+
+
+            // Set objectpegawaifk1 - ambil pegawai pertama dari array
+            if (!empty($req['petugaspelaksana1'][0])) {
+                $pegawai1 = is_array($req['petugaspelaksana1'][0]) ? $req['petugaspelaksana1'][0]['id'] : $req['petugaspelaksana1'][0];
+                $PetugasPelAmbulan->objectpegawaifk1 = $pegawai1;
             }
-        }
+
+            // Set objectpegawaifk2 - ambil pegawai kedua dari array
+            if (!empty($req['petugaspelaksana2'][0])) {
+                $pegawai2 = is_array($req['petugaspelaksana2'][0]) ? $req['petugaspelaksana2'][0]['id'] : $req['petugaspelaksana2'][0];
+                $PetugasPelAmbulan->objectpegawaifk2 = $pegawai2;
+            }
+
+            // Set objectpegawaifk3 - ambil pegawai ketiga dari array
+            if (!empty($req['petugaspelaksana3'][0])) {
+                $pegawai3 = is_array($req['petugaspelaksana3'][0]) ? $req['petugaspelaksana3'][0]['id'] : $req['petugaspelaksana3'][0];
+                $PetugasPelAmbulan->objectpegawaifk3 = $pegawai3;
+            }
+
+        $PetugasPelAmbulan->save();
 
         $alamatPemesan = new AlamatNonLayanan();
         $alamatPemesan->norec = $alamatPemesan->generateNewId();
