@@ -2210,6 +2210,7 @@ class AmbulanController extends ApiController
                         \DB::raw("CAST(sp.totalharusdibayar AS FLOAT) AS totalharusdibayar")
                     )
                     ->where('sp.kdprofile', $kdProfile)
+                    ->where('sp.statusenabled', true) 
                     ->whereNotNull('sp.totalharusdibayar')
                     ->whereIn('sp.objectkelompoktransaksifk', $KdList)
                     ->where(function($query) {
@@ -2886,7 +2887,7 @@ class AmbulanController extends ApiController
         $kdProfile = $this->getDataKdProfile($request);
         $idProfile = (int) $kdProfile;
        $data = \DB::table('strukpelayanan_t as sp')
-            ->join('pasien_m as pm', 'pm.id', '=', 'sp.nocmfk')
+            ->leftJoin('pasien_m as pm', 'pm.id', '=', 'sp.nocmfk')
             ->leftJoin('strukpelayanandetail_t as spd', 'spd.nostrukfk', '=', 'sp.norec')
             ->select(
                 'sp.norec',
@@ -2909,6 +2910,7 @@ class AmbulanController extends ApiController
                 DB::raw("
                     CASE
                         WHEN spd.jeniskegiatanambulanfk::integer = 1 THEN 'MENJEMPUT PASIEN'
+                        WHEN spd.jeniskegiatanambulanfk::integer = 2 THEN 'Merujuk PASIEN'
                         WHEN spd.jeniskegiatanambulanfk::integer = 5 THEN 'MENJEMPUT PASIEN PSIKIATRI'
                         ELSE 'MENJEMPUT PASIEN EMERGENCY'
                     END AS jenis_kegiatan
@@ -2917,7 +2919,7 @@ class AmbulanController extends ApiController
             ->where('sp.kdprofile', $idProfile)
             ->where('sp.statusenabled', true)
             ->where('sp.objectkelompoktransaksifk', 9)
-            ->where('sp.istelemedicine', true)
+            // ->where('sp.istelemedicine', true)
             ->groupBy(
                 'sp.norec',
                 'sp.totalharusdibayar',
