@@ -877,6 +877,10 @@ define(['initialize', 'Configuration'], function (initialize, config) {
 					
 				});
 			}
+
+             $scope.InputTagihan = function () {
+                $state.go('InputTagihanNonLayananAmbulan')
+            }
             
             // batas
 

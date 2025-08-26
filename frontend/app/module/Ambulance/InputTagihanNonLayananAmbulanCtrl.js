@@ -17,7 +17,7 @@ define(['initialize'], function (initialize) {
 			$scope.hargabahanbakar = true;
 			// $scope.listJenisPelaksana = [];
 			$scope.show = true;
-			$scope.pelaksanaAmbulan1 = true;
+			$scope.pelaksanaAmbulan1 = false;
 			$scope.pelaksanaAmbulan2 = false;
 			$scope.pelaksanaAmbulan3 = false;
 			$scope.isLoadingNoCM = false;
@@ -42,43 +42,62 @@ define(['initialize'], function (initialize) {
 			loadCombo();
 
 			function loadCombo() {
-                // var datauserlogin = JSON.parse(window.localStorage.getItem("datauserlogin"));
-				// console.log(datauserlogin)
-				// $scope.KelompokUser = medifirstService.getKelompokUser();
-				// medifirstService.get("kasir/get-data-combo-kasir").then(function (data) {
-				// 	$scope.listKelompokTransaksi = data.data.kelnon;
-				// 	$scope.KelompokUserDiklit = data.data.diklit;
-				// 	console.log('diklit',$scope.KelompokUserDiklit)
-				// 	$scope.listAmbulan = data.data.nopol;
-				// 	$scope.listJenisKegiatanAmbulan = data.data.jeniskegiatanambulan;
-				// 	LoadCache();
-				// })
+            // var datauserlogin = JSON.parse(window.localStorage.getItem("datauserlogin"));
+            // console.log(datauserlogin)
+            // $scope.KelompokUser = medifirstService.getKelompokUser();
+            // medifirstService.get("kasir/get-data-combo-kasir").then(function (data) {
+            // 	$scope.listKelompokTransaksi = data.data.kelnon;
+            // 	$scope.KelompokUserDiklit = data.data.diklit;
+            // 	console.log('diklit',$scope.KelompokUserDiklit)
+            // 	$scope.listAmbulan = data.data.nopol;
+            // 	$scope.listJenisKegiatanAmbulan = data.data.jeniskegiatanambulan;
+            // 	LoadCache();
+            // })
 
-				$q.all([
-                    medifirstService.get("kasir/get-data-combo-kasir"),
-                    medifirstService.get("registrasi/get-combo-address"),
-                ]).then(function (result) {
-					if (result[0].statResponse) {
-						$scope.KelompokUser = medifirstService.getKelompokUser();
-						$scope.listKelompokTransaksi = result[0].data.kelnon;
-						$scope.KelompokUserDiklit = result[0].data.diklit;
-						console.log('diklit',$scope.KelompokUserDiklit)
-						$scope.listAmbulan = result[0].data.nopol;
-						$scope.listJenisKegiatanAmbulan = result[0].data.jeniskegiatanambulan;
-						LoadCache();
-					}
+            $q.all([
+                medifirstService.get("kasir/get-data-combo-kasir"),
+                medifirstService.get("registrasi/get-combo-address"),
+            ]).then(function (result) {
+                if (result[0].statResponse) {
+                    $scope.KelompokUser = medifirstService.getKelompokUser();
+                    $scope.listKelompokTransaksi = result[0].data.kelnon;
+                    $scope.KelompokUserDiklit = result[0].data.diklit;
+                    console.log('diklit',$scope.KelompokUserDiklit);
+                    $scope.listAmbulan = result[0].data.nopol;
+                    $scope.listJenisKegiatanAmbulan = result[0].data.jeniskegiatanambulan;
+                    
+                    LoadCache();
+                    
+                    // Auto select kelompok transaksi dengan ID 9 (pelayanan ambulan) - SETELAH LoadCache
+                    if ($scope.listKelompokTransaksi && $scope.listKelompokTransaksi.length > 0) {
+                        $scope.item.kelompokTransaksi = 9;
+                        
+                        // Refresh combo box untuk menampilkan nilai yang dipilih
+                        $scope.$evalAsync(function() {
+                            // Cari combo box element dan refresh
+                            var comboBox = $("[kendo-combo-box]").data("kendoComboBox");
+                            if (comboBox) {
+                                comboBox.value(9);
+                                comboBox.trigger('change');
+                            }
+                            
+                            if (typeof $scope.kelompokTransaksiSelected === 'function') {
+                                $scope.kelompokTransaksiSelected(9);
+                            }
+                        });
+                    }
+                }
 
-					if (result[1].statResponse) {
-						$scope.listDataKecamatan = result[1].data.kecamatan
-                        $scope.listDataKotaKabupaten = result[1].data.kotakabupaten
-                        $scope.listDataPropinsi = result[1].data.propinsi
-                        $scope.listKebangsaan = result[1].data.kebangsaan
-                        $scope.listNegara = result[1].data.negara
-                        $scope.item.kebangsaan = $scope.listKebangsaan[0]
-					}
-
-				})
-			}
+                if (result[1].statResponse) {
+                    $scope.listDataKecamatan = result[1].data.kecamatan;
+                    $scope.listDataKotaKabupaten = result[1].data.kotakabupaten;
+                    $scope.listDataPropinsi = result[1].data.propinsi;
+                    $scope.listKebangsaan = result[1].data.kebangsaan;
+                    $scope.listNegara = result[1].data.negara;
+                    $scope.item.kebangsaan = $scope.listKebangsaan[0];
+                }
+            });
+        }
 
 			function LoadCache() {
 				var chacePeriode = cacheHelper.get('InputTagihanNonLayananAmbulanCtrl');
@@ -353,6 +372,7 @@ define(['initialize'], function (initialize) {
 					nopolisi: $scope.item.noPolisi.norec,
 					jeniskegiatan: $scope.item.jenisKegiatan.id,
 					petugaspelayananambulan: petugasLayanan,
+                    jarak: $scope.item.jarak,
 					nocm_klien: $scope.item.nocm_pasien != undefined && $scope.item.nocm_pasien != null && $scope.item.nocm_pasien != '' ? $scope.item.nocm_pasien : '-'
 				}
 				
@@ -423,6 +443,7 @@ define(['initialize'], function (initialize) {
 					nopolisi: $scope.item.noPolisi.norec,
 					jeniskegiatan: $scope.item.jenisKegiatan.id,
 					petugaspelayananambulan: petugasLayanan,
+                    jarak: $scope.item.jarak,
 
 					alamatLengkap: $scope.item.alamatLengkap,
 					desaKelurahan: $scope.item.desaKelurahan != undefined ? $scope.item.desaKelurahan.id : null,
@@ -431,6 +452,39 @@ define(['initialize'], function (initialize) {
 					provinsi: $scope.item.propinsi != undefined ? $scope.item.propinsi.id : null,
 					rtRw: $scope.item.rtrw != undefined ? $scope.item.rtrw : null
 				}
+
+                var objSaveSimple = {
+                norec: norec || '',
+                kelompoktransaksifk: $scope.item.kelompokTransaksi.id,
+                keteranganlainnya: $scope.item.keterangan,
+                namapasien_klien: $scope.item.namaPasien_klien,
+                notelp_klien: $scope.item.noTelp_klien,
+                tglstruk: moment($scope.item.tglStruk).format('YYYY-MM-DD hh:mm:ss'),
+                totalharusdibayar: parseFloat(subTotal),
+                details: dataProduk,
+                nopolisi: $scope.item.noPolisi.norec,
+                jeniskegiatan: $scope.item.jenisKegiatan.id,
+                
+                // Personnel 1
+                jenispelaksana1: $scope.item.jenisPelaksana?.id || null,
+                petugaspelaksana1: $scope.selectedPegawai || [],
+                
+                // Personnel 2 (conditional)
+                jenispelaksana2: $scope.pelaksanaAmbulan2 ? ($scope.item.jenisPelaksana2?.id || null) : null,
+                petugaspelaksana2: $scope.pelaksanaAmbulan2 ? ($scope.selectedPegawai2 || []) : [],
+                
+                // Personnel 3 (conditional)
+                jenispelaksana3: $scope.pelaksanaAmbulan3 ? ($scope.item.jenisPelaksana3?.id || null) : null,
+                petugaspelaksana3: $scope.pelaksanaAmbulan3 ? ($scope.selectedPegawai3 || []) : [],
+                
+                jarak: $scope.item.jarak,
+                alamatLengkap: $scope.item.alamatLengkap,
+                desaKelurahan: $scope.item.desaKelurahan?.id || null,
+                kecamatan: $scope.item.kecamatan?.id || null,
+                kotaKabupaten: $scope.item.kotaKabupaten?.id || null,
+                provinsi: $scope.item.propinsi?.id || null,
+                rtRw: $scope.item.rtrw || null
+            }
 				
 				// const alamat = {
 				// 	alamatLengkap: $scope.item.alamatLengkap,
@@ -448,7 +502,7 @@ define(['initialize'], function (initialize) {
 
 				// console.log('data yg dikirim',payload)
 
-				medifirstService.post('kasir/save-input-non-layanan', objSave).then(function (data) {
+				medifirstService.post('kasir/save-input-non-layanan', objSaveSimple).then(function (data) {
 					console.log("Data berhasil disimpan:", data);
 				}).catch(function (error) {
 					console.error("Terjadi kesalahan saat menyimpan data:", error);
@@ -567,6 +621,7 @@ define(['initialize'], function (initialize) {
 							data.keterangan = $scope.item.KeteranganProduk
 							data.nopolisi = $scope.item.noPolisi.nopolisi
 							data.jeniskegiatan = $scope.item.jenisKegiatan.namajeniskegiatan
+                            data.jarak = $scope.item.jarak != undefined ? $scope.item.jarak : 0;
 							dataProduk[i] = data;
 							$scope.dataDaftarTagihan = new kendo.data.DataSource({
 								data: dataProduk
@@ -628,6 +683,7 @@ define(['initialize'], function (initialize) {
 						harga: parseFloat($scope.item.Harga),
 						keterangan: $scope.item.KeteranganProduk,
 						nopolisi: $scope.item.noPolisi.nopolisi,
+                        jarak : $scope.item.jarak,
 						jeniskegiatan: $scope.item.jenisKegiatan.namajeniskegiatan,
 						totalK: $scope.item.Total //parseFloat($scope.item.jumlah) * parseFloat($scope.item.Harga)
 					}

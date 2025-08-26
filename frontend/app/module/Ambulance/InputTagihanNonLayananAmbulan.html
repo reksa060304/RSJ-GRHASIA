@@ -1,5 +1,5 @@
 <div class="grid_12 headerBox">
-	<h1 style="color: white;"><b>Input Tagihan</b></h1>
+	<h1 style="color: white;"><b>Input Ambulan</b></h1>
 </div>
 <!-- Kriteria -->
 <div class="grid_12">
@@ -65,12 +65,12 @@
 			<div class="grid_12">
 				<input style="width: 100%;" kendo-combo-box k-ng-model="item.kelompokTransaksi"
 					k-data-text-field="'kelompoktransaksi'" k-data-value-field="'id'" k-filter="'contains'"
-					k-auto-bind="false" k-data-source="listKelompokTransaksi"
+					k-auto-bind="true" k-data-source="listKelompokTransaksi" k-value="9"
 					k-on-change="kelompokTransaksiSelected(item.kelompokTransaksi)" />
 			</div>
 		</div>
 
-		<div class="grid_1" ng-hide="noPolAmbulan">
+		<div class="grid_1">
 			<div class="grid_12">
 				<label c-label item="item" c-label-text="NomorPolisi"></label>
 			</div>
@@ -82,7 +82,7 @@
 					k-data-source="listAmbulan">
 			</div>
 		</div>
-		<div class="grid_2" ng-hide="noPolAmbulan">
+		<div class="grid_2">
 			<div class="grid_12">
 				<label c-label item="item" c-label-text="JenisKegiatan"></label>
 			</div>
@@ -96,7 +96,7 @@
 	</div>
 
 	<!-- tanda1 -->
-	<div class="grid_12 borderBox containerBorderBox" ng-hide="noPolAmbulan">
+	<div class="grid_12 borderBox containerBorderBox" >
 		<div class="panel panel-default panel-white">
 			<!-- <div class="panel-heading-white"><span class="title" c-translate>Alamat Lengkap</span></div> -->
 			<div class="panel-body">
@@ -141,6 +141,17 @@
 						k-data-value-field="'id'" k-data-source="listDataPropinsi"
 						k-auto-bind="'false'" />
 				</div>
+               
+			</div>
+             <div class="grid_2">
+                    <div class="grid_12">
+                        <label c-label item="item" c-label-text="Estimasi Jarak"></label>
+                    </div>
+                    <div class="grid_12">
+                        <input c-text-box type="input" filter="" class="k-textbox" ng-model="item.jarak" />
+                    </div>
+                </div>
+
 			</div>
 		</div>
 		<div class="panel panel-default panel-white" ng-show="isDomisili">
