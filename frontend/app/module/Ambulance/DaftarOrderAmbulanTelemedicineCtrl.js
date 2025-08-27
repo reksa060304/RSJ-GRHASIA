@@ -542,7 +542,7 @@ define(['initialize', 'Configuration'], function (initialize, config) {
                         objectpegawaifk: p.objectpegawaifk,
                         uuid_telemedicine: p.pegawai.uuid || p.pegawai.uuid_telemedicine || p.uuid_telemedicine
                     })),
-                    "messages": $scope.popUp.messages || ""
+                    "messages": $scope.popUp.messages,
                 }
 
                 console.log('Data yang akan dikirim:', itemsave);
@@ -879,7 +879,7 @@ define(['initialize', 'Configuration'], function (initialize, config) {
 			}
 
              $scope.InputTagihan = function () {
-                $state.go('InputTagihanNonLayananAmbulan')
+                $state.go('InputTagihanNonlayananAmbulan')
             }
             
             // batas
