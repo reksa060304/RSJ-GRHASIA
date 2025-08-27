@@ -1,7 +1,7 @@
 define(['initialize'], function (initialize) {
 	'use strict';
-	initialize.controller('InputTagihanNonLayananAmbulanCtrl', ['$state', '$q', '$rootScope', '$scope', 'CacheHelper', 'DateHelper', 'MedifirstService', '$parse',
-		function ($state, $q, $rootScope, $scope, cacheHelper, dateHelper, medifirstService, $parse) {
+	initialize.controller('InputTagihanNonLayananAmbulanCtrl', ['$state', '$q', '$rootScope', '$scope', 'CacheHelper', 'DateHelper', 'MedifirstService', '$parse', '$timeout',
+		function ($state, $q, $rootScope, $scope, cacheHelper, dateHelper, medifirstService, $parse, $timeout) {
 			$scope.item = {};
 			$scope.now = new Date();
 			$scope.item.tglStruk = new Date();
@@ -503,10 +503,17 @@ define(['initialize'], function (initialize) {
 				// console.log('data yg dikirim',payload)
 
 				medifirstService.post('kasir/save-input-non-layanan', objSaveSimple).then(function (data) {
-					console.log("Data berhasil disimpan:", data);
-				}).catch(function (error) {
-					console.error("Terjadi kesalahan saat menyimpan data:", error);
-				});		
+                    console.log("Data berhasil disimpan:", data);
+
+                    // jeda 3 detik sebelum pindah state
+                    $timeout(function () {
+                        $state.go('DaftarOrderAmbulanTelemedicine');
+                    }, 5000);
+
+                }).catch(function (error) {
+                    console.error("Terjadi kesalahan saat menyimpan data:", error);
+                });
+	
 			}
 
 			$scope.$watch('item.jumlah', function (newValue, oldValue) {

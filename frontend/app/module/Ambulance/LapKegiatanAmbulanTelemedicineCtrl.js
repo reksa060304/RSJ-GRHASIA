@@ -247,10 +247,10 @@ define(['initialize', 'Configuration'], function (initialize, config) {
                     },
 
                     {
-                        "field": "istelemedicine",
+                        "field": "jenisorder",
                         "title": "Jenis Order",
                         "width": "100px",
-                        "template": "#= istelemedicine ? 'Telemedicine' : 'Manual' #"
+                        //"template": "#= istelemedicine ? 'Telemedicine' : 'Manual' #"
                     },
                     {
                         "field": "status_verifikasi",
