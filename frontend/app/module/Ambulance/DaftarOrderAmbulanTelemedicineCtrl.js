@@ -879,7 +879,7 @@ define(['initialize', 'Configuration'], function (initialize, config) {
 			}
 
              $scope.InputTagihan = function () {
-                $state.go('InputTagihanNonlayananAmbulan')
+                $state.go('InputTagihanNonLayananAmbulan')
             }
             
             // batas
