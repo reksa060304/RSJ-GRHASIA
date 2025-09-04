@@ -520,7 +520,7 @@ class KasirController extends ApiController
             $SPD->keteranganlainnya = $item['keterangan'];         
             $SPD->nopolisifk = $req['nopolisi'] ?? null;
             $SPD->jeniskegiatanambulanfk = $req['jeniskegiatan'] ?? null;
-            $SPD->jarak = $item['jarak'];
+            $SPD->jarak = $item['jarak'] ?? null;
             $SPD->address = trim(
         ($req['alamatLengkap'] ?? '') . ', ' .
                 ($req['rtRw'] ?? '') . ', ' .
