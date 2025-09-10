@@ -2889,6 +2889,7 @@ class AmbulanController extends ApiController
        $data = \DB::table('strukpelayanan_t as sp')
             ->leftJoin('pasien_m as pm', 'pm.id', '=', 'sp.nocmfk')
             ->leftJoin('strukpelayanandetail_t as spd', 'spd.nostrukfk', '=', 'sp.norec')
+            ->leftJoin('panssec_history as psh', 'psh.strukpelayananfk', '=', 'spd.nostrukfk')
             ->select(
                 'sp.norec',
                 'sp.totalharusdibayar',
@@ -2897,6 +2898,10 @@ class AmbulanController extends ApiController
                 'sp.nostruk',
                 'sp.namapasien_klien',
                 'spd.nama_pasien',
+                'psh.s',
+                'psh.o',
+                'psh.a',
+                'psh.p',
                 'sp.noteleponfaks',
                 'pm.nocm',
                 'pm.namapasien',
@@ -2931,7 +2936,11 @@ class AmbulanController extends ApiController
                 'pm.nocm',
                 'pm.namapasien',
                 'sp.isapprove',
-                'spd.jeniskegiatanambulanfk'
+                'spd.jeniskegiatanambulanfk',
+                'psh.s',
+                'psh.o',
+                'psh.a',
+                'psh.p'
             );
 
 

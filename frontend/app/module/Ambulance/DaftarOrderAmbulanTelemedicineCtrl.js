@@ -646,6 +646,26 @@ define(['initialize', 'Configuration'], function (initialize, config) {
                         "width": "150px"
                     },
                     {
+                        "field": "s",
+                        "title": "S",
+                        "width": "100px",
+                    },
+                    {
+                        "field": "o",
+                        "title": "O",
+                        "width": "100px",
+                    },
+                    {
+                        "field": "a",
+                        "title": "A",
+                        "width": "100px",
+                    },
+                    {
+                        "field": "p",
+                        "title": "P",
+                        "width": "100px",
+                    },
+                    {
                         "field": "totalharusdibayar",
                         "title": "Total",
                         "width": "150px",
