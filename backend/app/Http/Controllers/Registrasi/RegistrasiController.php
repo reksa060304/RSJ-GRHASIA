@@ -7355,9 +7355,10 @@ class RegistrasiController extends ApiController
             $req['filter']['filters'][0]['value'] != "" &&
             $req['filter']['filters'][0]['value'] != "undefined"
         ) {
-            $icdIX = $icdIX
-                ->where('dg.namadiagnosa', 'ilike', '%' . $req['filter']['filters'][0]['value'] . '%')
+            $icdIX = $icdIX->where(function ($q) use ($req) {
+                $q->where('dg.namadiagnosa', 'ilike', '%' . $req['filter']['filters'][0]['value'] . '%')
                 ->orWhere('dg.kddiagnosa', 'ilike', $req['filter']['filters'][0]['value'] . '%');
+            });
         }
 
         $icdIX = $icdIX->take(10);
@@ -8838,10 +8839,12 @@ class RegistrasiController extends ApiController
             isset($req['filter']['filters'][0]['value']) &&
             $req['filter']['filters'][0]['value'] != "" &&
             $req['filter']['filters'][0]['value'] != "undefined"
-        ) {
-            $icdIX = $icdIX
-                ->where('dg.namadiagnosatindakan', 'ilike', '%' . $req['filter']['filters'][0]['value'] . '%')
+        )  
+        {
+            $icdIX = $icdIX->where(function ($q) use ($req) {
+                $q->where('dg.namadiagnosatindakan', 'ilike', '%' . $req['filter']['filters'][0]['value'] . '%')
                 ->orWhere('dg.kddiagnosatindakan', 'ilike', $req['filter']['filters'][0]['value'] . '%');
+            });
         }
 
 
