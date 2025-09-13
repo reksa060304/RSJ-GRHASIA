@@ -52,7 +52,7 @@
 <table cellpadding="0" cellspacing="0"  border="0" class="tabel" width="100%">
         <tbody >
         <tr >
-            <td align="center" rowspan="2" width="15%"  style="padding: 30px 30px 30px 40px; border-right: 1px solid black;" align="center">
+            <td align="center" rowspan="2" width="15%" style="padding: 10px; width: 100px;" align="center">
                     <p align="center">
                             @if(stripos(\Request::url(), 'localhost') !== FALSE)
                             <img src="{{ asset('img/LOGO GRHASIA.png') }}" style="width: 120px" >
@@ -62,13 +62,20 @@
                       
                     </p>
             </td>
-            <td align="center" width="100%">
+            <td align="center" width="300px">
                 <b style="font-size: 25px;">
                 ANGGARAN KAS {{ $tahap[0]->tahap }}
                 </b><br>
                 <b style="font-size: 23px;">
                 RS Jiwa GRHASIA DINKES DIY
                 </b>
+            </td>
+            <td rowspan="2"  align="center" style="width: 100px;">
+                <b style="font-size: 14pt;">
+                    ANGKAS
+                </b>
+                <br>
+                {{ $tahap[0]->tahap }}
             </td>
         </tr>
         <tr align="center">
