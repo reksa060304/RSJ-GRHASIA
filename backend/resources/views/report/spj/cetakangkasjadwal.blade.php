@@ -71,13 +71,20 @@
                       
                     </p>
             </td>
-            <td align="center" width="100%">
+            <td align="center" width="400px">
                 <b style="font-size: 25px;">
                 ANGGARAN KAS DAN RENCANA JADWAL TIAP SUB SUB KEGIATAN
                 </b><br>
                 <b style="font-size: 23px;">
                 RUMAH SAKIT JIWA GRHASIA
                 </b>
+            </td>
+             <td rowspan="2"  align="center" style="width: 100px;">
+                <b style="font-size: 14pt;">
+                    ANGKAS
+                </b>
+                <br>
+                {{ $tahap[0]->tahap }}
             </td>
         </tr>
         <tr align="center">
