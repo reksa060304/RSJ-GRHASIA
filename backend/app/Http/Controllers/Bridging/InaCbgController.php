@@ -20,6 +20,7 @@ use App\Transaksi\HasilGrouping;
 use App\Transaksi\PemakaianAsuransi;
 use App\Transaksi\StrukPelayanan;
 use App\Transaksi\StrukPelayananPenjamin;
+use App\Transaksi\ResponseDataEklaim;
 use DB;
 use Illuminate\Http\Request;
 use App\Traits\Valet;
@@ -2442,6 +2443,51 @@ class InaCbgController   extends ApiController
             DB::rollBack();
         }
         return $this->respond([], $transMsg);
+    }
+
+     public function saveResponseFromINACBG(Request $request) {
+        $kdProfile = (int) $this->getDataKdProfile($request);
+
+        DB::beginTransaction();
+        try {
+            $dataResponse = ResponseDataEklaim::where('pasiendaftarfk', $request['norec_pd'])->where('method', $request['method'])->where('nosep', $request['nosep'])->first();
+            
+            if(empty($dataResponse)){
+                $dataResponse = new ResponseDataEklaim();
+                $dataResponse->norec = $dataResponse->generateNewId();
+                $dataResponse->kdprofile = $kdProfile;
+                $dataResponse->statusenabled = true;
+                $dataResponse->pasiendaftarfk = $request['norec_pd'];
+                $dataResponse->method = $request['method'];
+                $dataResponse->nosep = $request['nosep'];
+            }
+            
+            $dataResponse->code = $request['code'];
+            $dataResponse->response = $request['response'];
+            $dataResponse->save();
+
+            $transStatus = 'true';
+            $transMessage = "Code ". $request['response'];
+        } catch (\Exception $e) {
+            $transStatus = 'false';
+            $transMessage = "Gagal Response E-Klaim";
+        }
+
+        if ($transStatus != 'false') {
+            DB::commit();
+            $result = array(
+                "status" => 201,
+                "message" => $transMessage,
+            );
+        } else {
+            DB::rollBack();
+            $result = array(
+                "status" => 400,
+                "message" => $transMessage,
+            );
+        }
+
+        return $this->setStatusCode($result['status'])->respond($result, $transMessage);
     }
 
 }

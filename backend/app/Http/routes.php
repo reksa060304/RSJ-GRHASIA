@@ -538,6 +538,7 @@ Route::group(['middleware' => 'cors', 'prefix' => 'service'], function () {
               Route::post('bridging/inacbg/save-berkas','Bridging\InaCbgController@uploadBerkas');
               Route::post('bridging/inacbg/save-pengajuan-klaim','Bridging\InaCbgController@savePengajuanKlaim');
               Route::post('tatarekening/simpan-verifikasi-tagihan-inacbg/{noRegister}','Bridging\InaCbgController@simpanVerifikasiTagihanInacbg');
+              Route::post('bridging/inacbg/save-response-from-inacbg','Bridging\InaCbgController@saveResponseFromINACBG');
 
               //** BPJS DATA PENUNJANG */
               Route::post('bridging/bpjs/save-data-mappingdkoterbpjs','Bridging\BridgingBPJSV2Controller@saveMappingDokterBpjsDokterRs');
