@@ -670,8 +670,8 @@ export class ReservasiOnlineComponent implements OnInit {
 
   }
   hapusHistory(selected) {
-    if(selected.isconfirm ==true ){
-      this.messageService.warn('Info', 'Reservasi yg sudah confirm tidak bisa dibatalkan')
+    if(selected.ischeckin == true ){
+      this.messageService.warn('Info', 'Reservasi yg sudah check-in tidak bisa dibatalkan')
       return
     }
     let data = {
