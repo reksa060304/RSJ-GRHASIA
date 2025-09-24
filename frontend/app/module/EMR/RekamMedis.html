@@ -167,6 +167,32 @@
                                     <i class="fa fa-heartbeat"></i> &nbsp; I-Care</button>
                             </div>
 
+                            <div class="grid_2" ng-show="diaDokter" style="margin-left: 5px;">
+                                <div class="grid_12">
+                                    <label c-label item="item">Total Billing</label>
+                                </div>
+
+                                <div class="grid_12">
+                                    <input c-text-box type="input" filter="" class="k-textbox" ng-model="header.totalBilling"
+                                        ng-disabled="true" />
+                                
+                                </div>
+                            </div>
+                            <div class="grid_2" ng-show="diaDokter">
+                                <div class="grid_12">
+                                    <label c-label item="item">Plafon BPJS</label>
+                                </div>
+
+                                <div class="grid_12">
+                                    <input c-text-box type="input" filter="" class="k-textbox" ng-model="header.plafonBPJS"
+                                    ng-style="{
+                                        'border-color': header.totalBillingNominal > header.plafonBPJSNominal ? 'red' : 'green',
+                                        'color': header.totalBillingNominal > header.plafonBPJSNominal ? 'red' : 'green'}"
+                                        ng-disabled="true" />
+                                
+                                </div>
+                            </div>
+
                             <!-- <div class="grid_2">
                                 <div class="grid_12">
                                     <label c-label item="item">Golongan Darah</label>

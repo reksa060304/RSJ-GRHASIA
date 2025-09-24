@@ -33,8 +33,28 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
                 $rootScope.isShowNavEMR = !$rootScope.isShowNavEMR
             }
 
+            var userlogin = medifirstService.getPegawaiLogin();
+            $scope.diaDokter = false;
+            if (userlogin.jenisPegawai.id == '1') {
+                $scope.diaDokter = true;
+            }
+
+            $scope.formatRupiah = function (value, currency) {
+                return currency + " " + parseFloat(value).toFixed(2).replace(/(\d)(?=(\d{3})+\.)/g, "$1,");
+            }
+
+            function hitungBilling(noregistrasi) {
+                medifirstService.get('emr/get-total-billing?noregistrasi=' + noregistrasi).then(function (e) {
+                    $scope.header.totalBilling = $scope.formatRupiah(e.data.billing, 'Rp. ')
+                    $scope.header.totalBillingNominal = parseFloat(e.data.billing)
+                    $scope.header.plafonBPJS = $scope.formatRupiah(e.data.plafon, 'Rp. ')
+                    $scope.header.plafonBPJSNominal = parseFloat(e.data.plafon)
+                })
+            }
+
             // norec Antrian Etateh
             medifirstService.get('emr/get-antrian-pasien-norec/' + $state.params.noRec).then(function (e) {
+                hitungBilling(e.data.result.noregistrasi)
                 var result = e.data.result
                 result.umur = dateHelper.CountAge(new Date(result.tgllahir), new Date(result.tglregistrasi));
                 var bln = result.umur.month,

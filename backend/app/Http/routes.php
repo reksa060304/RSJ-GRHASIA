@@ -939,6 +939,7 @@ Route::group(['middleware' => 'cors', 'prefix' => 'service'], function () {
           Route::get('report/get-cetak-surat-tugas-ambulan-verifikasi','Report\ReportController@suratTugasAmbulanVerifikasi');
           Route::get('report/get-cetak-biaya-ambulan','Report\ReportController@cetakBiayaAmbulan');
           Route::get('emr/get-antrian-pasien-norec/{norec}','EMR\EMRController@getAntrianPasienDiperiksa');
+          Route::get('emr/get-total-billing','EMR\EMRController@getTotalBilling');
           Route::post('emr/post-anamnesis/{method}','EMR\EMRController@postAnamnesis');
           Route::get('emr/get-anamnesis','EMR\EMRController@getAnamnesis');
           Route::post('emr/post-riwayat/{method}','EMR\EMRController@postRiwayatPengobatan');

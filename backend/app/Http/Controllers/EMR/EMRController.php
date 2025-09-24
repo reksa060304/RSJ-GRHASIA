@@ -24,6 +24,7 @@ use App\Master\Pegawai;
 use App\Master\Ruangan;
 use App\Transaksi\EMRPasienD_Temp;
 use App\Master\SettingDataFixed;
+use App\Traits\PelayananPasienTrait;
 use App\Transaksi\Anamnesis;
 use App\Transaksi\AntrianPasienDiperiksa;
 use App\Transaksi\AntrianPasienRegistrasi;
@@ -88,7 +89,7 @@ use App\Transaksi\BundleHaiDetail;
 
 class EMRController  extends ApiController
 {
-    use Valet;
+    use Valet, PelayananPasienTrait;
 
     public function __construct()
     {
@@ -15492,5 +15493,39 @@ class EMRController  extends ApiController
         // dd($group[0]->detail);
 
         return $this->respond($data);
+    }
+
+    public function getTotalBilling(Request $request)
+    {
+        $kdProfile = $this->getDataKdProfile($request);
+        $idProfile = (int) $kdProfile;
+
+        $pasienDaftar = PasienDaftar::where('noregistrasi', $request['noregistrasi'])->where('kdprofile', $idProfile)->first();
+        $pelayanan = $this->getPelayananPasienByNoRegistrasiV2($request['noregistrasi']);
+        $billing = $this->getBillingFromPelayananPasien($pelayanan);
+        $totalBilling = $billing->totalBilling;
+
+        // totaldijamin
+        $informasitanggungan = DB::table('informasitanggungansementara_t')
+        ->where("noregistrasifk" ,$pasienDaftar->norec)
+        ->first();
+        
+        $result = array(
+            'billing' => $totalBilling,
+            'plafon' => empty($informasitanggungan) ? 0 : $informasitanggungan->totalpiutangpenjamin,
+            'message' => 'Inhuman',
+        );
+        return $this->respond($result);
+    }
+
+    public function getPelayananPasienByNoRegistrasiV2($noRegistrasi){
+        $pelayanan  = array();
+        $pasienDaftar = PasienDaftar::where('noregistrasi', $noRegistrasi)->first();
+        if(!$pasienDaftar){
+            return $pelayanan;
+        }else {
+            $pelayanan = $pasienDaftar->pelayanan_pasien()->get();
+        }
+        return $pelayanan;
     }
 }
