@@ -4702,10 +4702,29 @@ class TagihanController  extends ApiController
 // //            $data =$data->get();
 //         }
         $data =$data->get();
-
+        $norecList = array_column($data, 'norec_pd');
+        $norecStr = "'" . implode("','", $norecList) . "'";
+        $dataDiagnosa = DB::select(DB::raw("SELECT
+                apd.noregistrasifk,
+                dg.kddiagnosa,
+                dg.namadiagnosa
+                FROM antrianpasiendiperiksa_t apd
+                INNER JOIN diagnosapasien_t dp ON dp.noregistrasifk = apd.norec
+                INNER JOIN detaildiagnosapasien_t as ddp ON ddp.objectdiagnosapasienfk = dp.norec
+                INNER JOIN diagnosa_m as dg ON dg.id = ddp.objectdiagnosafk
+                INNER JOIN jenisdiagnosa_m as jd ON jd.id = ddp.objectjenisdiagnosafk
+                WHERE apd.noregistrasifk IN($norecStr)
+                AND ddp.objectjenisdiagnosafk = 1")
+            );
 
         $result = array();
         foreach ($data as $pasienD){
+            $diagnosa = '';
+            foreach ($dataDiagnosa as $key => $value) {
+                if ($value->noregistrasifk == $pasienD->norec_pd) {
+                    $diagnosa = $value->kddiagnosa;
+                }
+            }
 //            $pd=PasienDaftar::find($pasienD->norec);
 //            $totalHrsDibayar = StrukPelayanan::where('noregistrasifk',$pasienD->norec)
 //                ->where('statusenabled',true)
@@ -4754,6 +4773,7 @@ class TagihanController  extends ApiController
                 'kelasid' => $pasienD->objectkelasfk,
                 'ruanganid' => $pasienD->objectruanganlastfk,
                 'totaltagihan' => $pasienD->totaltagihan,
+                'kodediagnosa' => $diagnosa,
 //                'isPaid' => $pd->isBayar,
 //                'isLunas' => $pd->isBayar,
             );

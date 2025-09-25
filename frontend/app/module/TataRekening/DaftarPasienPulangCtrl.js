@@ -204,6 +204,12 @@ define(['initialize'], function (initialize) {
           "template": '# if( tglmeninggal==null) {# <span class="label label-primary text-center">Hidup</span> # } else {# <span class="label label-danger text-center">Meninggal</span> #} #'
         },
         {
+          "field": "kodediagnosa",
+          "title": "Diagnosa ICD 10",
+          "width": "20px",
+          "template": "<span class='style-center'>#: kodediagnosa #</span>"
+        },
+        {
           "field": "totaltagihan",
           "title": "Total Tagihan",
           "width": "40px",
