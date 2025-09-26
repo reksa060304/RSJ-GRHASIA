@@ -275,29 +275,62 @@ define(['initialize', 'Configuration'], function (initialize, config) {
                 scrollable: true,
                 resizable:true,
                 columns: [
-                    { field: "nippns", title: "NIP", width: "10%" },
-                    { field: "noidentitas", title: "NIK", width: "10%" },
-                    { field: "namalengkap", title: "Nama Lengkap", width: "25%" },
-                    { field: "jeniskelamin", title: "Jenis Kelamin", width: "10%" },
-                    { field: "golongan", title: "Pangkat Golongan", width: "10%" },
-                    { field: "agama", title: "Agama", width: "10%" },
-                    { field: "jbfungsional", title: "Jabatan", width: "25%" },
-                    { field: "pendidikan", title: "Pendidikan", width: "10%" },
-                    { field: "kedudukan", title: "Status Pegawai", width: "10%" },
+                    { field: "nippns", title: "NIP", width: "auto" },
+                    { field: "noidentitas", title: "NIK", width: "auto" },
+                    { field: "namalengkap", title: "Nama Lengkap", width: "auto" },
+                    { field: "jeniskelamin", title: "Jenis Kelamin", width: "auto" },
+                    { 
+                        field: "tgllahir", 
+                        title: "Tanggal Lahir", 
+                        width: "auto", 
+                        template: "<span class='style-left'>{{formatTanggal('#: tgllahir #')}}</span>" 
+                    },      
+                    { field: "namakategorypegawai", title: "Jenis Pegawai", width: "auto" },
+                    { field: "golongan", title: "Pangkat Golongan", width: "auto" },
+                    { field: "agama", title: "Agama", width: "auto" },
+                    { field: "jbfungsional", title: "Jabatan", width: "auto" },
+                    { field: "pendidikan", title: "Pendidikan", width: "auto" },
+                    { field: "kedudukan", title: "Status Pegawai", width: "auto" },
+                    {
+                        title: "Umur",
+                        template: function(dataItem) {
+                        if (!dataItem.tgllahir) return "";
+                        var birthDate = kendo.parseDate(dataItem.tgllahir, ["yyyy-MM-dd HH:mm:ss","yyyy-MM-ddTHH:mm:ss"]);
+                        var today = new Date();
+
+                        var age = today.getFullYear() - birthDate.getFullYear();
+                        var m = today.getMonth() - birthDate.getMonth();
+                        if (m < 0 || (m === 0 && today.getDate() < birthDate.getDate())) {
+                            age--;
+                        }
+                        return age + " tahun";
+                        },
+                        width: "100px"
+                    },
                     // { field: "agama", title: "STR SIP", width: "10%" },
-                    // { field: "unitkerja", title: "Unit Kerja", width: "25%" },
+                    // { field: "unitkerja", title: "Unit Kerja", width: "auto" },
                     // { field: "jenispegawai", title: "Jenis Pegawai", width: "20%" },
                     // { field: "jbstruktural", title: "Jabatan Internal", width: "20%", hidden: "true" },
                     // { field: "statuspegawai", title: "Kedudukan pegawai", width: "10%" },
                     // { field: "namakategorypegawai", title: "Status Pegawai", width: "10%" },
-                    { field: "tglmasuk", title: "Tanggal Masuk", width: "10%", 
+                    { field: "tglmasuk", title: "Tanggal Masuk", width: "auto", 
                     template: "<span class='style-left'>{{formatTanggal('#: tglmasuk #')}}</span>" },
-                    { field: "nostr", title: "No STR", width: "15%" },
-                    { field: "berakhirsip", title: "Tanggal Berakhir", width: "15%" },
-                    { field: "nosip", title: "No SIP", width: "15%" },    
-                    { field: "berakhirstr", title: "Tanggal Berakhir", width: "15%" },
-                    { field: "id", title: "ID Pegawai", width: "10%" },
-                    { field: "responsebsre", title: "Response Register", width: "10%" },
+                    { field: "nostr", title: "No STR", width: "auto" },
+                    {
+                         field: "berakhirsip",
+                         title: "Tanggal Berakhir", 
+                         width: "auto",
+                         template: "<span class='style-left'>{{formatTanggal('#: berakhirsip #')}}</span>" 
+                    },
+                    { field: "nosip", title: "No SIP", width: "auto" },    
+                    { 
+                        field: "berakhirstr", 
+                        title: "Tanggal Berakhir", 
+                        width: "auto", 
+                        template: "<span class='style-left'>{{formatTanggal('#: berakhirstr #')}}</span>"
+                    },
+                    { field: "id", title: "ID Pegawai", width: "auto" },
+                    { field: "responsebsre", title: "Response Register", width: "auto" },
                     {
                         "command": [
                             {
