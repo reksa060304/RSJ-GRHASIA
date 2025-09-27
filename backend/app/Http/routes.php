@@ -852,6 +852,7 @@ Route::group(['middleware' => 'cors', 'prefix' => 'service'], function () {
           Route::get('emr/get-rekam-medis-dynamic', 'EMR\EMRController@getRekamMedisAtuh');
           Route::get('emr/get-menu-rekam-medis-dynamic', 'EMR\EMRController@getMenuRekamMedisAtuh');
           Route::post('emr/save-emr-dinamis', 'EMR\EMRController@SaveTransaksiEMRBackup');
+          Route::post('emr/save-emr-dinamis-cppt-rajal', 'EMR\EMRController@SaveTransaksiEMRBackupRajal');
           Route::get('emr/get-soap', 'Bridging\DokterKeluargaController@getSOAP');
           Route::post('emr/simpan-cppt', 'EMR\EMRController@SaveTransaksiEMRBackup');
           Route::post('emr/save-emr-cakem', 'EMR\EMRController@saveCakem');
@@ -866,6 +867,7 @@ Route::group(['middleware' => 'cors', 'prefix' => 'service'], function () {
           Route::get('report/cetak-monitoringjamkes-perawat','Report\ReportController@cetakmonitoringJamkesPerawat');
           Route::get('emr/get-emr-transaksi', 'EMR\EMRController@getEMRTransaksiRiwayat');
           Route::get('emr/get-emr-transaksi-detail', 'EMR\EMRController@getEMRTransaksiDetail');
+          Route::get('emr/get-emr-transaksi-detail-edit', 'EMR\EMRController@getEMRTransaksiDetailEdit');
           Route::post('emr/get-emr-transaksi-details', 'EMR\EMRController@getEMRTransaksiDetails');
           Route::get('emr/get-emr-transaksi-detail2', 'EMR\EMRController@getEMRTransaksiDetail2');
           Route::get('report/cetak-cppt-ranap-rev','Report\ReportController@cetakCPPTRanapRev');
