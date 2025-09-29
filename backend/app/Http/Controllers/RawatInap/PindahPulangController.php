@@ -22,6 +22,7 @@ use App\Transaksi\PasienDaftar;
 use App\Transaksi\TempatTidur;
 use App\Transaksi\StrukOrder;
 use App\Transaksi\RegistrasiPelayananPasien;
+use App\Transaksi\EMRPasienD;
 use Illuminate\Http\Request;
 use App\Http\Requests;
 
@@ -191,6 +192,7 @@ class PindahPulangController extends ApiController
 
     public function savePulangPasien(Request $request) {
         $detLogin =$request->all();
+        $kdProfile = $this->getDataKdProfile($request);
         $tglAyeuna = date('Y-m-d H:i:s');
         $r_NewPD=$request['pasiendaftar'];
         $r_NewAPD=$request['antrianpasiendiperiksa'];
@@ -310,6 +312,129 @@ class PindahPulangController extends ApiController
                 ]);
             }
             $transStatus = 'true';
+
+            // hanya update ketika pulang saja
+            if ($r_NewPD['objectstatuskeluarfk'] == 1) {
+                if ($r_NewPD['noregistrasi']) {
+                    $noregis = $r_NewPD['noregistrasi'];
+                    
+                    $emr_rm11 =DB::select(DB::raw("SELECT 
+                        emrdp.*
+                    FROM
+                        emrpasiend_t AS emrdp
+                    INNER JOIN emrpasien_t AS emrp ON emrp.noemr = emrdp.emrpasienfk
+                    INNER JOIN emr_t AS emr ON emr.id = emrdp.emrfk
+                    WHERE 
+                            emrdp.kdprofile = $kdProfile and
+                            emrdp.statusenabled = true and
+                            emr.id = 3000434 and
+                            emrp.noregistrasifk = '$noregis' "));
+
+                    if (count($emr_rm11) > 0) {
+                        if($emr_rm11[0]->emrpasienfk){
+                            // update tgl keluar
+                            $dataRm11 = new EMRPasienD();
+                            $dataRm11->norec = $dataRm11->generateNewId();;
+                            $dataRm11->kdprofile = $kdProfile;
+                            $dataRm11->statusenabled = true;
+                            $dataRm11->emrpasienfk = $emr_rm11[0]->emrpasienfk;
+                            $dataRm11->value = Carbon::parse($r_NewPD['tglpulang'])->format('Y-m-d H:i');
+                            $dataRm11->emrdfk = 3004566;
+                            $dataRm11->emrfk = 3000434;
+                            $dataRm11->pegawaifk = $emr_rm11[0]->pegawaifk;
+                            $dataRm11->tgl = Carbon::now()->format('Y-m-d H:i:s.v');
+                            $dataRm11->norec_apd = $emr_rm11[0]->norec_apd ;
+                            $dataRm11->save();
+
+                            // status pulang
+                            $dataRm11 = new EMRPasienD();
+                            $dataRm11->norec = $dataRm11->generateNewId();;
+                            $dataRm11->kdprofile = $kdProfile;
+                            $dataRm11->statusenabled = true;
+                            $dataRm11->emrpasienfk = $emr_rm11[0]->emrpasienfk;
+                            $dataRm11->value = '1';
+                            if ($r_NewPD['objectstatuspulangfk'] == 1){ 
+                                $dataRm11->emrdfk = 3004587;
+                            }else if ($r_NewPD['objectstatuspulangfk'] == 2){ 
+                                $dataRm11->emrdfk = 3004588;
+                            }else if ($r_NewPD['objectstatuspulangfk'] == 4){ 
+                                $dataRm11->emrdfk = 3004589;
+                            }else if ($r_NewPD['objectstatuspulangfk'] == 3){ 
+                                $dataRm11->emrdfk = 3004590;
+                            }else if ($r_NewPD['objectstatuspulangfk'] == 12){ 
+                                $dataRm11->emrdfk = 3004591;
+                            }else { 
+                                $dataRm11->emrdfk = 3004592;
+
+                                $status = \DB::table('statuspulang_m')->select('statuspulang')
+                                ->where('id', $r_NewPD['objectstatuspulangfk'])
+                                ->first();
+
+                                if ($status) {
+                                    $dataSub = new EMRPasienD();
+                                    $dataSub->norec = $dataSub->generateNewId();;
+                                    $dataSub->kdprofile = $kdProfile;
+                                    $dataSub->statusenabled = true;
+                                    $dataSub->emrpasienfk = $emr_rm11[0]->emrpasienfk;
+                                    $dataSub->value = $status->statuspulang;
+                                    $dataSub->emrdfk = 3004593;
+                                    $dataSub->emrfk = 3000434;
+                                    $dataSub->pegawaifk = $emr_rm11[0]->pegawaifk;
+                                    $dataSub->tgl = Carbon::now()->format('Y-m-d H:i:s.v');
+                                    $dataSub->norec_apd = $emr_rm11[0]->norec_apd ;
+                                    $dataSub->save();
+                                }
+                            }
+                            $dataRm11->emrfk = 3000434;
+                            $dataRm11->pegawaifk = $emr_rm11[0]->pegawaifk;
+                            $dataRm11->tgl = Carbon::now()->format('Y-m-d H:i:s.v');
+                            $dataRm11->norec_apd = $emr_rm11[0]->norec_apd ;
+                            $dataRm11->save();
+
+                            // kondisi pulang / cara keluar
+                            $dataRm11 = new EMRPasienD();
+                            $dataRm11->norec = $dataRm11->generateNewId();;
+                            $dataRm11->kdprofile = $kdProfile;
+                            $dataRm11->statusenabled = true;
+                            $dataRm11->emrpasienfk = $emr_rm11[0]->emrpasienfk;
+                            $dataRm11->value = '1';
+                            if ($r_NewPD['objectkondisipasienfk'] == 8){ 
+                                $dataRm11->emrdfk = 3004594;
+                            }else if ($r_NewPD['objectkondisipasienfk'] == 9){ 
+                                $dataRm11->emrdfk = 3004595;
+                            }else if ($r_NewPD['objectkondisipasienfk'] == 10){ 
+                                $dataRm11->emrdfk = 3004596;
+                            }else { 
+                                $dataRm11->emrdfk = 3004597;
+
+                                $kondisi = \DB::table('kondisipasien_m')->select('kondisipasien')
+                                ->where('id', $r_NewPD['objectkondisipasienfk'])
+                                ->first();
+
+                                if ($kondisi) {
+                                    $dataSubb = new EMRPasienD();
+                                    $dataSubb->norec = $dataSubb->generateNewId();;
+                                    $dataSubb->kdprofile = $kdProfile;
+                                    $dataSubb->statusenabled = true;
+                                    $dataSubb->emrpasienfk = $emr_rm11[0]->emrpasienfk;
+                                    $dataSubb->value = $kondisi->kondisipasien;
+                                    $dataSubb->emrdfk = 3004598;
+                                    $dataSubb->emrfk = 3000434;
+                                    $dataSubb->pegawaifk = $emr_rm11[0]->pegawaifk;
+                                    $dataSubb->tgl = Carbon::now()->format('Y-m-d H:i:s.v');
+                                    $dataSubb->norec_apd = $emr_rm11[0]->norec_apd ;
+                                    $dataSubb->save();
+                                }
+                            }
+                            $dataRm11->emrfk = 3000434;
+                            $dataRm11->pegawaifk = $emr_rm11[0]->pegawaifk;
+                            $dataRm11->tgl = Carbon::now()->format('Y-m-d H:i:s.v');
+                            $dataRm11->norec_apd = $emr_rm11[0]->norec_apd ;
+                            $dataRm11->save();
+                        }
+                    }
+                }
+            }
         // } catch (\Exception $e) {
         //     $transStatus = 'false';
         // }

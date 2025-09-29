@@ -5522,6 +5522,46 @@
     ]
   },
   {
+    "name": "LaporanOrderBarang",
+    "url": "/LaporanOrderBarang",
+    "templateurl": "module/Logistik/LaporanOrderBarang.html",
+    "controller": "LaporanOrderBarangCtrl",
+    "deps": [
+      {
+        "module": "Services",
+        "define": "Service"
+      },
+      {
+        "module": "LoginServices",
+        "define": "LoginService"
+      },
+      {
+        "module": "MedifirstService",
+        "define": "MedifirstService"
+      }
+    ]
+  },
+  {
+    "name": "LaporanKirimBarang",
+    "url": "/LaporanKirimBarang",
+    "templateurl": "module/Logistik/LaporanKirimBarang.html",
+    "controller": "LaporanKirimBarangCtrl",
+    "deps": [
+      {
+        "module": "Services",
+        "define": "Service"
+      },
+      {
+        "module": "LoginServices",
+        "define": "LoginService"
+      },
+      {
+        "module": "MedifirstService",
+        "define": "MedifirstService"
+      }
+    ]
+  },
+  {
     "name": "DaftarMataAnggaran",
     "url": "/RGFmdGFyTWF0YUFuZ2dhcmFu",
     "templateurl": "module/Perencanaan/DaftarMataAnggaran.html",

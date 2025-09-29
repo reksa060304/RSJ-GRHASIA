@@ -1,0 +1,97 @@
+<style type="text/css">
+    .style-center {
+        display: inline-block;
+        text-align: center;
+        width: 100%;
+    }
+
+    .style-right {
+        display: inline-block;
+        text-align: right;
+        width: 100%;
+    }
+
+    .style-left {
+        display: inline-block;
+        text-align: left;
+        width: 100%;
+    }
+</style>
+
+<div ng-show="dataVOloaded">
+    <div class="grid_12">
+
+        <div class="grid_12 headerBox">
+            <h1 style="color: white;"><b>LAPORAN REKAP ORDER BARANG</b></h1>
+        </div>
+        <div class="grid_12">
+            <div class="grid_8">
+                
+                <div class="grid_12" style="margin-top: 50px;">
+                    <!-- AwalPeriode -->
+                    <div class="grid_3">
+                        <label c-label item="item" c-label-text="Tanggal awal"></label>
+                        <input style="width: 100%" k-ng-model="item.tglAwal" kendo-datetimepicker placeholer="yyyy-mm-dd"
+                            k-format="'yyyy-MM-dd HH:mm'" />
+                    </div>
+                    <div class="grid_3">
+                        <label c-label item="item" c-label-text="Tanggal Akhir"></label>
+                        <input style="width: 100%" k-ng-model="item.tglAkhir" kendo-datetimepicker placeholer="yyyy-mm-dd"
+                            k-format="'yyyy-MM-dd HH:mm'" />
+                    </div>
+                    <div class="grid_2">
+                        <label c-label item="item" c-label-text="No Order"></label>
+                        <input style="width: 100%;" kendo-combo-box k-ng-model="item.noorder"
+                            k-data-text-field="'noorder'" k-data-value-field="'norec'" k-filter="'contains'"
+                            k-auto-bind="false" k-data-source="listNoOrder" />
+                    </div>
+                    <div class="grid_2">
+                        <label c-label item="item" c-label-text="Ruang Pengorder"real></label>
+                        <input style="width: 100%;" kendo-combo-box k-ng-model="item.ruangorder"
+                            k-data-text-field="'namaruangan'" k-data-value-field="'id'" k-filter="'contains'"
+                            k-auto-bind="false" k-data-source="listRuangOrder" />
+                    </div>
+                    <div class="grid_2">
+                        <label c-label item="item" c-label-text="Produk" real></label>
+                        <input style="width: 100%;" kendo-combo-box k-ng-model="item.produk"
+                            k-data-text-field="'namaproduk'" k-data-value-field="'id'" k-filter="'contains'"
+                            k-auto-bind="false" k-data-source="listProduk" />
+                    </div>
+                    
+                </div>
+                
+
+
+            </div>
+            <div class="grid_4">
+                <div class="grid_12" style="margin-top: 50px;">
+                    <div class="grid_2" style="margin-top: 18px;">
+                        <button class="c-button" ng-click="cariFilter()">Cari</button>
+                    </div>
+                    <div class="grid_2" style="margin-top: 18px;">
+                        <button class="c-button" ng-click="cetakBlade()">Cetak</button>
+                    </div>
+                </div>
+                
+            </div>
+            <div class="grid_12" style="margin-top: 20px;">
+                <div class="grid_12 borderBox">
+                    <div id="kGrid" kendo-grid k-data-source="dataGrid" k-selectable="'row'" options="columnGrid"
+                        k-pageable="'true'" k-sortable="'true'" k-ng-model="dataSelected">
+                    </div>
+                </div>
+            </div>
+
+
+        </div>
+    </div>
+    <div class="clear"></div>
+</div>
+</div>
+</div>
+<!-- <div class="grid_12">
+    <div ng-include='"../app/module/EMR/TemplateButtonDinamis" '>
+        
+    </div>
+
+</div> -->

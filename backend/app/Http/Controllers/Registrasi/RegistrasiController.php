@@ -52,6 +52,7 @@ use App\Transaksi\StrukPraOrder;
 use App\Transaksi\StrukResep;
 use App\Transaksi\TempBilling;
 use App\Transaksi\SkriningAwalPasien;
+use App\Transaksi\EMRPasienD;
 use Illuminate\Http\Request;
 use App\Traits\PelayananPasienTrait;
 use DB;
@@ -8455,6 +8456,90 @@ class RegistrasiController extends ApiController
             //            $dataRPP->objectdetailkamarfk = null;
 
             $dataRPP->save();
+
+            $noregis = PasienDaftar::select('noregistrasi')
+                ->where('norec', $request['noRecPasienDaftar'])
+                ->first();
+
+            $namaRuang = Ruangan::select('namaruangan')
+                ->where('id', $request['ruangan']['id'])
+                ->first();
+
+            if ($noregis) {
+                $noregis = $noregis->noregistrasi;
+                
+                $emr_rm11 =DB::select(DB::raw("SELECT 
+                    emrdp.*
+                FROM
+                    emrpasiend_t AS emrdp
+                INNER JOIN emrpasien_t AS emrp ON emrp.noemr = emrdp.emrpasienfk
+                INNER JOIN emr_t AS emr ON emr.id = emrdp.emrfk
+                WHERE 
+                        emrdp.kdprofile = $kdProfile and
+                        emrdp.statusenabled = true and
+                        emr.id = 3000434 and
+                        emrp.noregistrasifk = '$noregis' "));
+
+                if (count($emr_rm11) > 0) {
+                    if($emr_rm11[0]->emrpasienfk){
+                        // ruang wisma
+                        $dataRm11 = new EMRPasienD();
+                        $dataRm11->norec = $dataRm11->generateNewId();;
+                        $dataRm11->kdprofile = $kdProfile;
+                        $dataRm11->statusenabled = true;
+                        $dataRm11->emrpasienfk = $emr_rm11[0]->emrpasienfk;
+                        $dataRm11->value = $namaRuang->namaruangan;
+                        $dataRm11->emrdfk = 3004560;
+                        $dataRm11->emrfk = 3000434;
+                        $dataRm11->pegawaifk = $emr_rm11[0]->pegawaifk;
+                        $dataRm11->tgl = Carbon::now()->format('Y-m-d H:i:s.v');
+                        $dataRm11->norec_apd = $emr_rm11[0]->norec_apd ;
+                        $dataRm11->save();
+
+                        // kelas dijamin
+                        $dataRm11 = new EMRPasienD();
+                        $dataRm11->norec = $dataRm11->generateNewId();;
+                        $dataRm11->kdprofile = $kdProfile;
+                        $dataRm11->statusenabled = true;
+                        $dataRm11->emrpasienfk = $emr_rm11[0]->emrpasienfk;
+                        $dataRm11->value = '1';
+                        // vip
+                        if ($request['kelas']['id'] == 4 || $request['kelas']['id'] == 5 || $request['kelas']['id'] == 7 || $request['kelas']['id'] == 8){ 
+                        $dataRm11->emrdfk = 3004561;
+                        // kelas 1
+                        }else if ($request['kelas']['id'] == 3){
+                        $dataRm11->emrdfk = 3004562;
+                        // kelas 2
+                        }else if ($request['kelas']['id'] == 2){
+                        $dataRm11->emrdfk = 3004563;
+                        // kelas 3
+                        }else if ($request['kelas']['id'] == 1){
+                        $dataRm11->emrdfk = 3004564;
+                        }
+                        $dataRm11->emrfk = 3000434;
+                        $dataRm11->pegawaifk = $emr_rm11[0]->pegawaifk;
+                        $dataRm11->tgl = Carbon::now()->format('Y-m-d H:i:s.v');
+                        $dataRm11->norec_apd = $emr_rm11[0]->norec_apd ;
+                        $dataRm11->save();
+
+
+                        // tgl masuk
+                        $dataRm11 = new EMRPasienD();
+                        $dataRm11->norec = $dataRm11->generateNewId();;
+                        $dataRm11->kdprofile = $kdProfile;
+                        $dataRm11->statusenabled = true;
+                        $dataRm11->emrpasienfk = $emr_rm11[0]->emrpasienfk;
+                        $dataRm11->value = Carbon::parse($request['tglRegistrasi'])->format('Y-m-d H:i');
+                        $dataRm11->emrdfk = 3004565;
+                        $dataRm11->emrfk = 3000434;
+                        $dataRm11->pegawaifk = $emr_rm11[0]->pegawaifk;
+                        $dataRm11->tgl = Carbon::now()->format('Y-m-d H:i:s.v');
+                        $dataRm11->norec_apd = $emr_rm11[0]->norec_apd ;
+                        $dataRm11->save();
+                    }
+                }
+            }
+
 
             $transStatus = 'true';
         } catch (\Exception $e) {

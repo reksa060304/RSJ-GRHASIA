@@ -377,6 +377,117 @@ define(['initialize'], function (initialize) {
             medifirstService.get("emr/get-emr-transaksi-detail?noemr=" + nomorEMR + "&emrfk=" + $scope.cc.emrfk, true).then(function (dat) {
                 $scope.item.obj = []
                 $scope.item.obj2 = []
+
+
+                try {
+                    var umurStr = $scope.cc.umur || '';
+                    var years = 0;
+                    var m = umurStr.match(/(\d+)\s*(thn|tahun|th)/i);
+                    if (m && m[1]) {
+                        years = parseInt(m[1], 10);
+                    } else {
+                        var mm = umurStr.match(/^(\d+)/);
+                        if (mm && mm[1]) years = parseInt(mm[1], 10);
+                    }
+                    if (isNaN(years)) years = 0;
+                    if (years <= 18) {
+                        $scope.item.obj[3004500] = true; // Anak
+                    } else if (years >= 60) {
+                        $scope.item.obj[3004502] = true; // Usia Lanjut
+                    } else {
+                        $scope.item.obj[3004501] = true; // Dewasa
+                    }
+                } catch (e) {
+                    console.error('Error parsing umur for kategori:', e);
+                }
+
+                        // pendidikan
+                        var pendidikanFromCache = (chacePeriode && chacePeriode[37]) ? chacePeriode[37] : undefined;
+                        var pendidikanStr = pendidikanFromCache;
+
+                        function setPendidikan(pStr) {
+                            if (!pStr) return false;
+                            var p = pStr.toString().trim().toUpperCase();
+                            var matched = false;
+                            if (/\bTIDAK\b.*\bSEKOLAH\b/.test(p) || p === '' ) { $scope.item.obj[3004514] = true; matched = true; }
+                            else if (/\bSD\b/.test(p)) { $scope.item.obj[3004515] = true; matched = true; }
+                            else if (p.indexOf('SLB') !== -1) { $scope.item.obj[3004480] = true; matched = true; }
+                            else if (p.indexOf('SLTP') !== -1 || p.indexOf('SMP') !== -1) { $scope.item.obj[3004516] = true; matched = true; }
+                            else if (p.indexOf('MTS') !== -1) { $scope.item.obj[3004481] = true; matched = true; }
+                            else if (p.indexOf('SLTA') !== -1 || p.indexOf('SMA') !== -1 || p.indexOf('SEDERAJAT') !== -1) { $scope.item.obj[3004517] = true; matched = true; }
+                            else if (p.indexOf('SMK') !== -1) { $scope.item.obj[3004482] = true; matched = true; }
+                            else if (p.indexOf('DIPLOMA I') !== -1 || /\bDI\b/.test(p) && p.indexOf('I')!==-1) { $scope.item.obj[3004518] = true; matched = true; }
+                            else if (p.indexOf('DIPLOMA II') !== -1 || /\bDII\b/.test(p) ) { $scope.item.obj[3004600] = true; matched = true; }
+                            else if (p.indexOf('DIPLOMA III') !== -1 || /\bDIII\b/.test(p) ) { $scope.item.obj[3004601] = true; matched = true; }
+                            else if (p.indexOf('DIPLOMA IV') !== -1 || /\bDIV\b/.test(p) ) { $scope.item.obj[3004602] = true; matched = true; }
+                            else if (/\bS1\b/.test(p)) { $scope.item.obj[3004519] = true; matched = true; }
+                            else if (/\bS2\b/.test(p)) { $scope.item.obj[3004483] = true; matched = true; }
+                            else if (/\bS3\b/.test(p)) { $scope.item.obj[3004484] = true; matched = true; }
+
+                            return matched;
+                        }
+
+                        setPendidikan(pendidikanStr);
+                        
+                        // pekerjaan
+                        var pekerjaanFromCache = (chacePeriode && chacePeriode[31]) ? chacePeriode[31] : undefined;
+                        var pekerjaanStr = pekerjaanFromCache;
+
+                        function setPekerjaan(pStr) {
+                            var p = (pStr || '').toString().trim().toUpperCase();
+                            var matched = false;
+                            if (p.indexOf('TNI') !== -1) {
+                                $scope.item.obj[3004520] = true; matched = true;
+                            } else if (p.indexOf('POLRI') !== -1 || p.indexOf('PNS ( POLRI)') !== -1) {
+                                $scope.item.obj[3004485] = true; matched = true;
+                            } else if (p.indexOf('WIRASWASTA') !== -1 || p.indexOf('WIRASWASTA/ PENGUSAHA') !== -1 || p.indexOf('WIRASWASTA/ PENGUSAHA') !== -1) {
+                                $scope.item.obj[3004521] = true; matched = true;
+                            } else if (p.indexOf('SWASTA') !== -1 || p.indexOf('PEGAWAI SWASTA') !== -1) {
+                                $scope.item.obj[3004486] = true; matched = true;
+                            } else if (p.indexOf('BURUH') !== -1) {
+                                $scope.item.obj[3004522] = true; matched = true;
+                            } else if (p.indexOf('PETANI') !== -1) {
+                                $scope.item.obj[3004487] = true; matched = true;
+                            } else if (p === 'PNS') {
+                                $scope.item.obj[3004523] = true; matched = true;
+                            } else if (p.indexOf('PENSIUN') !== -1) {
+                                $scope.item.obj[3004488] = true; matched = true;
+                            } else if (p.indexOf('PELAJAR') !== -1 && p.indexOf('MAHASISWA') === -1) {
+                                $scope.item.obj[3004524] = true; matched = true;
+                            } else if (p.indexOf('MAHASISWA') !== -1 && p.indexOf('PELAJAR') === -1) {
+                                $scope.item.obj[3004489] = true; matched = true;
+                            } else if (p.indexOf('PELAJAR/MAHASISWA') !== -1 || p.indexOf('PELAJAR') !== -1 && p.indexOf('MAHASISWA') !== -1) {
+                                $scope.item.obj[3004524] = true; matched = true;
+                            } else if (p.indexOf('TIDAK BEKERJA') !== -1 || p.indexOf('BELUM BEKERJA') !== -1 || p === 'TIDAK BEKERJA' || p === 'BELUM BEKERJA') {
+                                $scope.item.obj[3004525] = true; matched = true;
+                            }
+
+                            if (!matched) {
+                                $scope.item.obj[3004526] = true;
+                                $scope.item.obj[3004527] = pStr;
+                            }
+                        }
+
+                        setPekerjaan(pekerjaanStr);
+
+                        // melalui
+                        var melaluiFromCache = (chacePeriode && chacePeriode[12]) ? chacePeriode[12] : undefined;
+                        var melaluiStr = melaluiFromCache;
+
+                        function setmelalui(pStr) {
+                            var p = (pStr || '').toString().trim().toUpperCase();
+                            var matched = false;
+                            if (p.indexOf('IGD') !== -1) {
+                                $scope.item.obj[3004570] = true; matched = true;
+                            } 
+
+                            if (!matched) {
+                                $scope.item.obj[3004571] = true;
+                                $scope.item.obj[3004572] = pStr;
+                            }
+                        }
+
+                        setmelalui(melaluiStr);
                 
 
 

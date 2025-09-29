@@ -15563,6 +15563,7 @@ class LogistikController extends ApiController{
         $noorder = $request['noorder'];
         $searchnoorder = '';
         $searchruangorder = '';
+        $searchruangkirim = '';
         $searchproduk = '';
 
         if(isset($request['noorder']) && $request['noorder'] != '' && $request['noorder'] != null){
@@ -15570,6 +15571,9 @@ class LogistikController extends ApiController{
         }
         if(isset($request['ruangorder']) && $request['ruangorder'] != '' && $request['ruangorder'] != null){
             $searchruangorder = "and ruorder.id = '".$request['ruangorder']."'";
+        }
+        if(isset($request['ruangkirim']) && $request['ruangkirim'] != '' && $request['ruangkirim'] != null){
+            $searchruangkirim = "and rukirim.id = '".$request['ruangkirim']."'";
         }
         if(isset($request['produk']) && $request['produk'] != '' && $request['produk'] != null){
             $searchproduk = "and pr.id = '".$request['produk']."'";
@@ -15598,6 +15602,7 @@ class LogistikController extends ApiController{
         $searchnoorder
         $searchruangorder
         $searchproduk
+        $searchruangkirim
         group by ruorder.namaruangan, rukirim.namaruangan, so.tglorder, skm.tglkirim, skm.nokirim, pr.namaproduk, ss.satuanstandar, so.norec, op.qtyproduk, krp.qtyproduk
         order by skm.nokirim
         ) as x group by ruanganorder, ruangankirim, tglorder, tglkirim, nokirim, namaproduk, satuanstandar, jumlahorder

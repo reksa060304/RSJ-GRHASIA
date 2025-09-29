@@ -1058,6 +1058,14 @@
             "urlDep": "module/Logistik/LaporanOrderKirimBarangCtrl"
         },
         {
+            "nameDep": "LaporanOrderBarangCtrl",
+            "urlDep": "module/Logistik/LaporanOrderBarangCtrl"
+        },
+        {
+            "nameDep": "LaporanKirimBarangCtrl",
+            "urlDep": "module/Logistik/LaporanKirimBarangCtrl"
+        },
+        {
             "nameDep": "LaporanPerJenisAnggaranCtrl",
             "urlDep": "module/Perencanaan/LaporanPerJenisAnggaranCtrl"
         },

@@ -506,6 +506,7 @@ define(['initialize', 'Configuration'], function (initialize, config) {
                 if (newValue != oldValue) {
                     if (newValue == 'Non Racikan') {
                         $scope.showNonRacikan = true
+                        GETKONVERSI()
                     } else {
                         $scope.showNonRacikan = false
                     }

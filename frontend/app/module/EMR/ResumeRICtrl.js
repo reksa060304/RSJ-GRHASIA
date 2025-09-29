@@ -881,6 +881,7 @@ define(['initialize', 'Configuration'], function (initialize, config) {
                     "pengobatandilanjutkan": $scope.item.pengobatan != undefined ? $scope.item.pengobatan : $scope.item.pengobatanLain,
                     "noregistrasifk": $scope.norecAPD,
                     "pasien": $scope.item.pasien!= undefined ? $scope.item.pasien : '',
+                    "noregistrasi": $scope.cc.noregistrasi!= undefined ? $scope.cc.noregistrasi : '',
                     "detail": data2
                 }
 

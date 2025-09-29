@@ -86,6 +86,7 @@ use Twilio\Rest\Client;
 use App\Transaksi\SeqNumber;
 use App\Transaksi\BundleHai;
 use App\Transaksi\BundleHaiDetail;
+use Carbon\Carbon;
 
 class EMRController  extends ApiController
 {
@@ -2188,6 +2189,230 @@ class EMRController  extends ApiController
                     }
                     $det->save();
                 }
+
+
+            if ($request['noregistrasi']) {
+                $noregis = $request['noregistrasi'];
+                
+                $emr_rm11 =DB::select(DB::raw("SELECT 
+                    emrdp.*
+                FROM
+                    emrpasiend_t AS emrdp
+                INNER JOIN emrpasien_t AS emrp ON emrp.noemr = emrdp.emrpasienfk
+                INNER JOIN emr_t AS emr ON emr.id = emrdp.emrfk
+                WHERE 
+                        emrdp.kdprofile = $kdProfile and
+                        emrdp.statusenabled = true and
+                        emr.id = 3000434 and
+                        emrp.noregistrasifk = '$noregis' "));
+
+                if (count($emr_rm11) > 0) {
+                    if($emr_rm11[0]->emrpasienfk){
+                        // untuk hapus dulu data lama
+                        $emr_rm11_detail =DB::select(DB::raw("SELECT 
+                            emrdp.norec
+                        FROM
+                            emrpasiend_t AS emrdp
+                        INNER JOIN emrpasien_t AS emrp ON emrp.noemr = emrdp.emrpasienfk
+                        INNER JOIN emr_t AS emr ON emr.id = emrdp.emrfk
+                        WHERE 
+                                emrdp.kdprofile = $kdProfile and
+                                emrdp.statusenabled = true and
+                                emr.id = 3000434 and
+                                emrp.noregistrasifk = '$noregis' and
+                                emrdp.emrdfk in ('3004584','3004578','3004583','3004577','3004582','3004576','3004581','3004575','3004580','3004574','3004579','3004573')"));
+                        
+                        if (count($emr_rm11_detail) > 0) {
+                            foreach ($emr_rm11_detail as $emr_rm11_d) {
+                                EMRPasienD::where('norec', $emr_rm11_d->norec)->delete();
+                            }
+                        }
+
+                            // diagnosa masuk
+                            $dataRm11 = new EMRPasienD();
+                            $dataRm11->norec = $dataRm11->generateNewId();;
+                            $dataRm11->kdprofile = $kdProfile;
+                            $dataRm11->statusenabled = true;
+                            $dataRm11->emrpasienfk = $emr_rm11[0]->emrpasienfk;
+                            $dataRm11->value = $request['diagnosismasuk'];
+                            $dataRm11->emrdfk = 3004573;
+                            $dataRm11->emrfk = 3000434;
+                            $dataRm11->pegawaifk = $emr_rm11[0]->pegawaifk;
+                            $dataRm11->tgl = Carbon::now()->format('Y-m-d H:i:s.v');
+                            $dataRm11->norec_apd = $emr_rm11[0]->norec_apd ;
+                            $dataRm11->save();
+
+                            $dg = \DB::table('diagnosa_m')->select(DB::raw("kddiagnosa || '-' || namadiagnosa AS diagnosa"))
+                                    ->where('id', $request['kddiagnosismasuk'])
+                                    ->first();
+                            
+                            $dataRm11 = new EMRPasienD();
+                            $dataRm11->norec = $dataRm11->generateNewId();;
+                            $dataRm11->kdprofile = $kdProfile;
+                            $dataRm11->statusenabled = true;
+                            $dataRm11->emrpasienfk = $emr_rm11[0]->emrpasienfk;
+                            $dataRm11->value = $request['kddiagnosismasuk'].'~'.$dg->diagnosa;
+                            $dataRm11->emrdfk = 3004579;
+                            $dataRm11->emrfk = 3000434;
+                            $dataRm11->pegawaifk = $emr_rm11[0]->pegawaifk;
+                            $dataRm11->tgl = Carbon::now()->format('Y-m-d H:i:s.v');
+                            $dataRm11->norec_apd = $emr_rm11[0]->norec_apd ;
+                            $dataRm11->save();
+
+                            // diagnosa keluar
+                            $dataRm11 = new EMRPasienD();
+                            $dataRm11->norec = $dataRm11->generateNewId();;
+                            $dataRm11->kdprofile = $kdProfile;
+                            $dataRm11->statusenabled = true;
+                            $dataRm11->emrpasienfk = $emr_rm11[0]->emrpasienfk;
+                            $dataRm11->value = $request['diagnosisutama'];
+                            $dataRm11->emrdfk = 3004574;
+                            $dataRm11->emrfk = 3000434;
+                            $dataRm11->pegawaifk = $emr_rm11[0]->pegawaifk;
+                            $dataRm11->tgl = Carbon::now()->format('Y-m-d H:i:s.v');
+                            $dataRm11->norec_apd = $emr_rm11[0]->norec_apd ;
+                            $dataRm11->save();
+
+                            $dg2 = \DB::table('diagnosa_m')->select(DB::raw("kddiagnosa || '-' || namadiagnosa AS diagnosa"))
+                                    ->where('id', $request['kddiagnosisutama'])
+                                    ->first();
+
+                            $dataRm11 = new EMRPasienD();
+                            $dataRm11->norec = $dataRm11->generateNewId();;
+                            $dataRm11->kdprofile = $kdProfile;
+                            $dataRm11->statusenabled = true;
+                            $dataRm11->emrpasienfk = $emr_rm11[0]->emrpasienfk;
+                            $dataRm11->value = $request['kddiagnosisutama'].'~'.$dg2->diagnosa;
+                            $dataRm11->emrdfk = 3004580;
+                            $dataRm11->emrfk = 3000434;
+                            $dataRm11->pegawaifk = $emr_rm11[0]->pegawaifk;
+                            $dataRm11->tgl = Carbon::now()->format('Y-m-d H:i:s.v');
+                            $dataRm11->norec_apd = $emr_rm11[0]->norec_apd ;
+                            $dataRm11->save();
+
+                            $dataRm11 = new EMRPasienD();
+                            $dataRm11->norec = $dataRm11->generateNewId();;
+                            $dataRm11->kdprofile = $kdProfile;
+                            $dataRm11->statusenabled = true;
+                            $dataRm11->emrpasienfk = $emr_rm11[0]->emrpasienfk;
+                            $dataRm11->value = $request['axis2'];
+                            $dataRm11->emrdfk = 3004575;
+                            $dataRm11->emrfk = 3000434;
+                            $dataRm11->pegawaifk = $emr_rm11[0]->pegawaifk;
+                            $dataRm11->tgl = Carbon::now()->format('Y-m-d H:i:s.v');
+                            $dataRm11->norec_apd = $emr_rm11[0]->norec_apd ;
+                            $dataRm11->save();
+
+                            $dg3 = \DB::table('diagnosa_m')->select(DB::raw("kddiagnosa || '-' || namadiagnosa AS diagnosa"))
+                                    ->where('id', $request['kddiagnosistambahan'])
+                                    ->first();
+
+                            $dataRm11 = new EMRPasienD();
+                            $dataRm11->norec = $dataRm11->generateNewId();;
+                            $dataRm11->kdprofile = $kdProfile;
+                            $dataRm11->statusenabled = true;
+                            $dataRm11->emrpasienfk = $emr_rm11[0]->emrpasienfk;
+                            $dataRm11->value = $request['kddiagnosistambahan'].'~'.$dg3->diagnosa;
+                            $dataRm11->emrdfk = 3004581;
+                            $dataRm11->emrfk = 3000434;
+                            $dataRm11->pegawaifk = $emr_rm11[0]->pegawaifk;
+                            $dataRm11->tgl = Carbon::now()->format('Y-m-d H:i:s.v');
+                            $dataRm11->norec_apd = $emr_rm11[0]->norec_apd ;
+                            $dataRm11->save();
+
+                            $dataRm11 = new EMRPasienD();
+                            $dataRm11->norec = $dataRm11->generateNewId();;
+                            $dataRm11->kdprofile = $kdProfile;
+                            $dataRm11->statusenabled = true;
+                            $dataRm11->emrpasienfk = $emr_rm11[0]->emrpasienfk;
+                            $dataRm11->value = $request['axis3'];
+                            $dataRm11->emrdfk = 3004576;
+                            $dataRm11->emrfk = 3000434;
+                            $dataRm11->pegawaifk = $emr_rm11[0]->pegawaifk;
+                            $dataRm11->tgl = Carbon::now()->format('Y-m-d H:i:s.v');
+                            $dataRm11->norec_apd = $emr_rm11[0]->norec_apd ;
+                            $dataRm11->save();
+
+                            $dg4 = \DB::table('diagnosa_m')->select(DB::raw("kddiagnosa || '-' || namadiagnosa AS diagnosa"))
+                                    ->where('id', $request['kddiagnosistambahan2'])
+                                    ->first();
+
+                            $dataRm11 = new EMRPasienD();
+                            $dataRm11->norec = $dataRm11->generateNewId();;
+                            $dataRm11->kdprofile = $kdProfile;
+                            $dataRm11->statusenabled = true;
+                            $dataRm11->emrpasienfk = $emr_rm11[0]->emrpasienfk;
+                            $dataRm11->value = $request['kddiagnosistambahan2'].'~'.$dg4->diagnosa;
+                            $dataRm11->emrdfk = 3004582;
+                            $dataRm11->emrfk = 3000434;
+                            $dataRm11->pegawaifk = $emr_rm11[0]->pegawaifk;
+                            $dataRm11->tgl = Carbon::now()->format('Y-m-d H:i:s.v');
+                            $dataRm11->norec_apd = $emr_rm11[0]->norec_apd ;
+                            $dataRm11->save();
+
+                            $dataRm11 = new EMRPasienD();
+                            $dataRm11->norec = $dataRm11->generateNewId();;
+                            $dataRm11->kdprofile = $kdProfile;
+                            $dataRm11->statusenabled = true;
+                            $dataRm11->emrpasienfk = $emr_rm11[0]->emrpasienfk;
+                            $dataRm11->value = $request['axis4'];
+                            $dataRm11->emrdfk = 3004577;
+                            $dataRm11->emrfk = 3000434;
+                            $dataRm11->pegawaifk = $emr_rm11[0]->pegawaifk;
+                            $dataRm11->tgl = Carbon::now()->format('Y-m-d H:i:s.v');
+                            $dataRm11->norec_apd = $emr_rm11[0]->norec_apd ;
+                            $dataRm11->save();
+
+                            $dg5 = \DB::table('diagnosa_m')->select(DB::raw("kddiagnosa || '-' || namadiagnosa AS diagnosa"))
+                                    ->where('id', $request['kddiagnosistambahan3'])
+                                    ->first();
+
+                            $dataRm11 = new EMRPasienD();
+                            $dataRm11->norec = $dataRm11->generateNewId();;
+                            $dataRm11->kdprofile = $kdProfile;
+                            $dataRm11->statusenabled = true;
+                            $dataRm11->emrpasienfk = $emr_rm11[0]->emrpasienfk;
+                            $dataRm11->value = $request['kddiagnosistambahan3'].'~'.$dg5->diagnosa;
+                            $dataRm11->emrdfk = 3004583;
+                            $dataRm11->emrfk = 3000434;
+                            $dataRm11->pegawaifk = $emr_rm11[0]->pegawaifk;
+                            $dataRm11->tgl = Carbon::now()->format('Y-m-d H:i:s.v');
+                            $dataRm11->norec_apd = $emr_rm11[0]->norec_apd ;
+                            $dataRm11->save();
+
+                            $dataRm11 = new EMRPasienD();
+                            $dataRm11->norec = $dataRm11->generateNewId();;
+                            $dataRm11->kdprofile = $kdProfile;
+                            $dataRm11->statusenabled = true;
+                            $dataRm11->emrpasienfk = $emr_rm11[0]->emrpasienfk;
+                            $dataRm11->value = $request['axis5'];
+                            $dataRm11->emrdfk = 3004578;
+                            $dataRm11->emrfk = 3000434;
+                            $dataRm11->pegawaifk = $emr_rm11[0]->pegawaifk;
+                            $dataRm11->tgl = Carbon::now()->format('Y-m-d H:i:s.v');
+                            $dataRm11->norec_apd = $emr_rm11[0]->norec_apd ;
+                            $dataRm11->save();
+
+                            $dg6 = \DB::table('diagnosa_m')->select(DB::raw("kddiagnosa || '-' || namadiagnosa AS diagnosa"))
+                                    ->where('id', $request['kddiagnosistambahan4'])
+                                    ->first();
+
+                            $dataRm11 = new EMRPasienD();
+                            $dataRm11->norec = $dataRm11->generateNewId();;
+                            $dataRm11->kdprofile = $kdProfile;
+                            $dataRm11->statusenabled = true;
+                            $dataRm11->emrpasienfk = $emr_rm11[0]->emrpasienfk;
+                            $dataRm11->value = $request['kddiagnosistambahan4'].'~'.$dg6->diagnosa;
+                            $dataRm11->emrdfk = 3004584;
+                            $dataRm11->emrfk = 3000434;
+                            $dataRm11->pegawaifk = $emr_rm11[0]->pegawaifk;
+                            $dataRm11->tgl = Carbon::now()->format('Y-m-d H:i:s.v');
+                            $dataRm11->norec_apd = $emr_rm11[0]->norec_apd ;
+                            $dataRm11->save();
+                    }
+                }
+            }
+
             }
             if ($method == 'delete') {
                 //                ResumeMedisDetail::where('resumefk', $request['norec'])->delete();
