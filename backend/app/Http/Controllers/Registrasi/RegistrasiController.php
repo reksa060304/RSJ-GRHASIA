@@ -4539,7 +4539,15 @@ class RegistrasiController extends ApiController
             $dataNoCMFk = $newId;
             $nocmfk = $dataPS->id;
             $nocmss = $dataPS->nocm;
-            if (isset($request['pasien']['image'])) {
+
+            //poto pasien
+            if (!empty($request['pasien']['image'])) {
+                $dataUrl = $request['pasien']['image']; 
+                Pasien::where('id', $nocmfk)->update([
+                    'foto' => $dataUrl, 
+                ]);
+            }
+            // if (isset($request['pasien']['image'])) {
                 //agus
                 //                $img =  str_replace('data:image/jpeg;base64,', '', $request['pasien']['image']);
                 //                $img = str_replace(' ', '+', $img);
@@ -4572,7 +4580,7 @@ class RegistrasiController extends ApiController
                 //                );
                 //#egi
 
-            }
+            // }
             //endregion
 
 
