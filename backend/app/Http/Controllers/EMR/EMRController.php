@@ -10426,46 +10426,18 @@ class EMRController  extends ApiController
                     }
                 }
 
-                // if ($sama ==  2) {
-                //     $EMRPasienDUpdatekeun = EMRPasienD::where('emrpasienfk', $norec_EMR)
-                //         ->where('emrfk', $head['emrfk'])
-                //         ->where('emrdfk', $emrdfk)
-                //         ->where('index', $idx)
-                //         ->where('kdprofile', $kdProfile)
-                //         ->where('statusenabled', 1)
-                //         ->update([
-                //             'value' => $valueemr
-                //         ]);
-                //     $j++;
-                // }
-
-                if ($sama == 1) {
-                    
-                    EMRPasienD::where('emrpasienfk', $norec_EMR)
+                if ($sama ==  2) {
+                    $EMRPasienDUpdatekeun = EMRPasienD::where('emrpasienfk', $norec_EMR)
                         ->where('emrfk', $head['emrfk'])
                         ->where('emrdfk', $emrdfk)
                         ->where('index', $idx)
                         ->where('kdprofile', $kdProfile)
                         ->where('statusenabled', 1)
-                        ->update(['statusenabled' => 0]);
-
-                    $EMRD = new EMRPasienD();
-                    $EMRD->norec = $EMRD->generateNewId();
-                    $EMRD->kdprofile = $kdProfile;
-                    $EMRD->statusenabled = 1;
-                    $EMRD->emrpasienfk = $norec_EMR;
-                    $EMRD->value = $valueemr;
-                    $EMRD->norec_apd = $head['norec'];
-                    $EMRD->emrdfk = $emrdfk;
-                    $EMRD->emrfk = $head['emrfk'];
-                    $EMRD->pegawaifk = (isset($head['jenis']) && $head['jenis'] == 'pasien') ? null : $this->getCurrentUserID();
-                    $EMRD->tgl = $this->getDateTime()->format('Y-m-d H:i:s');
-                    $EMRD->index = $idx;
-                    $EMRD->save();
-
+                        ->update([
+                            'value' => $valueemr
+                        ]);
                     $j++;
                 }
-
                 $EMRD = [];
                 if ($sama ==  0) {
                     $EMRD = new EMRPasienD();
