@@ -22,7 +22,6 @@ define(['initialize', 'Configuration'], function (initialize, config) {
             LoadCache();
             FormLoad();
             var pegawaiLogin = medifirstService.getPegawaiLogin()
-            // $scope.pegawaiLogin = medifirstService.getPegawaiLogin();
             $scope.allDisabled = false
             var pegawaiInputDetail  =''
             // nomorEMR = $state.params.nomorEMR   
@@ -203,9 +202,12 @@ define(['initialize', 'Configuration'], function (initialize, config) {
                     +'&kdprofile='+ profile
                     +'&nama=' + nama + '&id=' + id_nama,
                     +  '_blank');
-                }      
-            }
+                }
+               
             
+               
+                   
+            }
             $scope.columnGridRiwayatCPPT = {
                 selectable: 'row',
                 pageable: true,
@@ -304,40 +306,6 @@ define(['initialize', 'Configuration'], function (initialize, config) {
                 // Set the new options
                 $scope.popUps.setOptions({ actions : actions });
                 $scope.popUps.center().open();
-            }
-            $scope.selectGridEdit = function(data){
-                console.log('data edit', data);
-             
-                var emrfk = data.emrid
-                var noemr = data.noemr
-                var emrdfk = data.emrdfk
-                switch(emrfk)
-                {
-                    case 94:
-                        loadRiwayatCPPTDataEdit(noemr, 6);
-                        $scope.RiwayatCPPTRJLama = true;
-                        $scope.RiwayatCPPTRJBaru = false;
-                        $scope.RiwayatCPPTRI = false;
-                        break;
-                    case 210222:
-                        loadRiwayatCPPTDataEdit(noemr, 7);
-                        $scope.RiwayatCPPTRJBaru = true;
-                        $scope.RiwayatCPPTRJLama = false;
-                        $scope.RiwayatCPPTRI = false;
-                        break;
-                    default:
-                        loadRiwayatCPPTDataEdit(noemr, 0);
-                        $scope.HtmlCppt = true;
-                        $scope.hiddennoemr = noemr;
-                        $scope.RiwayatCPPTRI = true;
-                        $scope.RiwayatCPPTRJBaru = false;
-                        $scope.RiwayatCPPTRJLama = false;
-                }
-                var actions = $scope.popUpsEdit.options.actions;
-                actions.splice(actions.indexOf("Close"), 1);
-                // Set the new options
-                $scope.popUpsEdit.setOptions({ actions : actions });
-                $scope.popUpsEdit.center().open();
             }
             $scope.onSelectionGrid = function (kendoEvent) {
                 var grid = kendoEvent.sender;
@@ -445,145 +413,6 @@ define(['initialize', 'Configuration'], function (initialize, config) {
                 })
                 $scope.isRouteLoading = false;
             }
-            // NOTE: emrcppt = [443, 444, 445, 446, 447, 448, 94, 210222]
-
-            function loadRiwayatCPPTDataEdit(noemr, iemrcppt, objectIds) {
-                $scope.isRouteLoading = true;
-
-                var emrfk = emrcppt[iemrcppt];
-                if (emrfk == null) {
-                    toastr.error('EMR form tidak dikenali');
-                    $scope.isRouteLoading = false;
-                    return;
-                }
-
-                // build URL + kirim banyak id lewat objectid=1,2,3
-                var q = "emr/get-emr-transaksi-detail-edit?noemr=" + encodeURIComponent(noemr) +
-                        "&emrfk=" + emrfk;
-
-                if (angular.isArray(objectIds) && objectIds.length) {
-                    q += "&objectid=" + objectIds.join(",");
-                }
-
-                // debug: pastikan URL benar
-                console.log('GET:', q);
-
-                medifirstService.get(q, true).then(function (res) {
-                    var rows = (res.data && res.data.data) ? res.data.data : [];
-
-                    // 1) urutkan berdasarkan waktu
-                    rows.forEach(function (r) { r.__date = new Date(r.tgl); });
-                    rows.sort(function (a, b) { return a.__date - b.__date; });
-
-                    // 2) kelompokkan per snapshot (<= 90 detik dianggap satu batch)
-                    var SNAP_WINDOW_MS = 90 * 1000;
-                    var groups = [], curr = null;
-
-                    for (var i = 0; i < rows.length; i++) {
-                    var r = rows[i];
-                    if (!curr) {
-                        curr = { start: r.__date, items: [r] };
-                        groups.push(curr);
-                    } else {
-                        var diff = r.__date - curr.start;
-                        if (diff <= SNAP_WINDOW_MS) curr.items.push(r);
-                        else {
-                        curr = { start: r.__date, items: [r] };
-                        groups.push(curr);
-                        }
-                    }
-                    }
-
-                    // 3) normalisasi value
-                    function parseValue(row) {
-                    var t = row.type;
-                    if (t === 'datetime' || t === 'datetime2' || t === 'time' || t === 'date') {
-                        var d = new Date(row.value);
-                        return isNaN(d) ? null : d;
-                    }
-                    if ((t === 'combobox' || t === 'combobox2' || t === 'combobox3') &&
-                        typeof row.value === 'string' && row.value.indexOf('~') >= 0) {
-                        return row.value.split('~')[1]; // ambil label teks
-                    }
-                    return row.value;
-                    }
-
-                    // (opsional) urut isi tiap group (mis. tetap naik di dalam satu snapshot)
-                    groups.forEach(function(g){
-                    g.items.sort(function(a,b){ return a.__date - b.__date; });
-                    });
-
-                    // === KUNCI: balik urutan grup agar terbaru -> terlama ===
-                    groups.reverse();
-                    // 4) bangun snapshot: { emrdfk: value, ... }
-                    $scope.item.rcpptEdits = groups.map(function (g) {
-                    var snap = {};
-                    g.items.forEach(function (r) {
-                        snap[r.emrdfk] = parseValue(r);
-                    });
-                    return snap;
-                    });
-
-                    $scope.isRouteLoading = false;
-                }, function () {
-                    $scope.isRouteLoading = false;
-                });
-            }
-
-            // tombol History di baris form: kumpulkan id2/id3 lalu panggil selectGridEdit
-            $scope.openHistoryFromFormEdit = function (rowId) {
-                var row = $scope.listDataCppt.find(function (r) { return r.id === rowId; });
-                if (!row) return;
-
-                var ids = [];
-                row.detail.forEach(function (col) {
-                    [col.id, col.id2, col.id3].forEach(function (x) { if (x) ids.push(x); });
-                });
-
-                // unik + urut
-                var allData = Array.from(new Set(ids)).sort(function (a, b) { return a - b; });
-
-                var emrfkNow = parseInt($scope.cc.emrfk, 10);
-                var noemrNow = (nomorEMR && nomorEMR !== '-') ? nomorEMR : null;
-
-                if (!emrfkNow) { toastr.warning('EMR aktif tidak dikenali'); return; }
-                if (!noemrNow) { toastr.warning('Belum ada EMR tersimpan…'); return; }
-
-                // teruskan ke flow selectGridEdit, bawa objectIds
-                $scope.selectGridEdit({ emrid: emrfkNow, noemr: noemrNow, objectIds: allData });
-            };
-
-            // mapping emrfk -> index emrcppt, lalu muat data edit dgn objectIds
-            $scope.selectGridEdit = function (data) {
-                var emrfk = data.emrid;
-                var noemr = data.noemr;
-                var objectIds = data.objectIds || null;
-
-                var iemrcppt = emrcppt.indexOf(emrfk);
-                if (iemrcppt < 0) {
-                    toastr.error('emrfk tidak ada di daftar emrcppt');
-                    return;
-                }
-
-                loadRiwayatCPPTDataEdit(noemr, iemrcppt, objectIds);
-
-                // tampilkan panel sesuai jenis
-                if (emrfk === 94) {
-                    $scope.RiwayatCPPTRJLama = true;  $scope.RiwayatCPPTRJBaru = false; $scope.RiwayatCPPTRI = false;
-                } else if (emrfk === 210222) {
-                    $scope.RiwayatCPPTRJBaru = true;  $scope.RiwayatCPPTRJLama = false; $scope.RiwayatCPPTRI = false;
-                } else {
-                    $scope.HtmlCppt = true; $scope.hiddennoemr = noemr;
-                    $scope.RiwayatCPPTRI = true; $scope.RiwayatCPPTRJBaru = false; $scope.RiwayatCPPTRJLama = false;
-                }
-
-                var actions = $scope.popUpsEdit.options.actions;
-                actions.splice(actions.indexOf("Close"), 1);
-                $scope.popUpsEdit.setOptions({ actions: actions });
-                $scope.popUpsEdit.center().open();
-            };
-
-
 
             $scope.Cpptnav = function (iemrcppt) {
                 var noemr = $scope.hiddennoemr
@@ -648,15 +477,6 @@ define(['initialize', 'Configuration'], function (initialize, config) {
                 $scope.HtmlCppt5 = false;
                 $scope.HtmlCppt6 = false;
                 $scope.popUps.close();
-            }
-            $scope.tutupcpptedit = function () {
-                $scope.HtmlCppt = false;
-                $scope.HtmlCppt2 = false;
-                $scope.HtmlCppt3 = false;
-                $scope.HtmlCppt4 = false;
-                $scope.HtmlCppt5 = false;
-                $scope.HtmlCppt6 = false;
-                $scope.popUpsEdit.close();
             }
 
             medifirstService.getPart('emr/get-datacombo-part-pegawai', true, true, 20).then(function (data) {
@@ -844,7 +664,7 @@ define(['initialize', 'Configuration'], function (initialize, config) {
                     head: $scope.cc,
                     data: arrSave//$scope.item.obj
                 }
-                medifirstService.post('emr/save-emr-dinamis-cppt-rajal', jsonSave).then(function (e) {
+                medifirstService.post('emr/save-emr-dinamis', jsonSave).then(function (e) {
                     var confirm = $mdDialog.confirm()
                         .title('Peringatan')
                         .textContent('CPPT SUDAH TERSIMPAN, KLIK YA UNTUK KONFIRMASI')
@@ -894,8 +714,6 @@ define(['initialize', 'Configuration'], function (initialize, config) {
 
                 }
             })
-
-            
             // $scope.$on('diagnosis', function (event, newData) {
             //     // $scope.sharedData = newData;
             //     var data = $scope.item.obj[22034963]; // data yang ingin dipecahkan

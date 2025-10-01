@@ -57,7 +57,6 @@
                 <div class="grid_12" style="margin: 20px 0px">
                     <table style="width:100%;" class="tablecppt">
                         <tr style="background-color: #363940;color: #f3f3f4;">
-                            <td>#</td>
                             <td style="text-align: center;width: 13%"><b>TANGGAL DAN PUKUL</b></td>
                             <td style="text-align: center;width: 10%"><b>PROFESIONAL<br>PEMBERI<br>ASUHAN</b></td>
                             <td style="text-align: center;width: 35%;border-bottom: none;">
@@ -76,9 +75,6 @@
                             <td style="text-align: center;width: 2%">#</td>
                         </tr>
                         <tr ng-repeat="list in listDataCppt" ng-show="show.obj[list.id]">
-                            <td>
-                                <button class="k-button k-primary" ng-click="openHistoryFromFormEdit(list.id)">History</button>
-                            </td>
                             <td ng-repeat="jawab in list.detail | orderBy:'id'">
                                 <div ng-switch on="jawab.type">
                                     <div ng-switch-when="tgl/jam">
@@ -105,7 +101,6 @@
                                 </div>
                             </td>
                             <td style="text-align: center;">
-                                <!-- <button class="btn-custom-ck" ng-if="list.pegawai_id == pegawaiLogin.id" ng-click="edit(list.id, listDataCppt[$index + 1].id)"><i class="fa fa-pencil txt-primary" aria-hidden="true"></i></button> -->
                                 <button class="btn-custom-ck" ng-if="list.id != 22035003" ng-show="showbtnadd[list.id]" ng-click="addobj(list.id, listDataCppt[$index + 1].id)"><i class="fa fa-plus-circle txt-primary" aria-hidden="true"></i></button>
                                 <button class="btn-custom-ck" ng-if="list.id != 22034963" ng-show="showbtnremove[list.id]" ng-click="removeobj(list.id, listDataCppt[$index - 1].id)"><i class="fa fa-minus-circle txt-danger" aria-hidden="true"></i></button>
                             </td>
@@ -238,134 +233,6 @@
     </div>
     <div class="k-edit-buttons  k-state-default pull-right" style="margin-top:10px">
         <button class="k-button k-button-icontext k-primary" ng-click="tutupcppt()"><span
-                class="k-icon k-cancel"></span>Kembali</button>
-    </div>
-</div>
-<div kendo-window="popUpsEdit" k-title="'Riwayat Edit CPPT'" k-width="1200" k-visible="false">
-    <div class="panel panel-default container_12">
-        <!-- Riwayat CPPT Rajal LAMA -->
-        <div ng-show="RiwayatCPPTRJLama">
-            <div ng-repeat="list in listDataCpptLama" class="grid_6" style=" padding-top: 20px;">
-                <div class="grid_12" style="margin-left: 5px;margin-bottom: -5px;margin-top: 5px"> 
-                    <p style="position: relative;z-index: 1;background-color: #41abf2;color: white;font-size:18px;padding: 10px 15px;border-bottom: 1px solid transparent;margin-left: -5px;margin-top:-10px">{{list.nama}}</p>
-                </div>
-                <div ng-repeat="jawab in list.detail" class="grid_12"> 
-                    <div ng-switch on="jawab.type" style="margin-top: -15px;">
-                        <div ng-switch-when="textbox">
-                            <div class="grid_12" style="margin-left: 5px;margin-top: 0px;margin-bottom: 0px"> 
-                                <div class="grid_12">
-                                    <p >{{jawab.nama}}</p>
-                                </div>
-                                <div class="grid_8"  style="margin-top: -15px;margin-bottom: -5px;margin-left: 20px"> 
-                                    <input class="k-textbox" ng-model="item.rcppt[jawab.id]" type="text" placeholder="{{jawab.satuan}}" ng-value="{{jawab.value}}" readonly>
-                                </div>
-                                <p >{{jawab.satuan}}</p>
-                                <div class="grid_4">
-                                </div>
-                            </div>
-                        </div>
-                        <div ng-switch-when="textarea">
-                            <div class="grid_10">
-                                <div class="grid_12">
-                                    <p >{{jawab.nama}}</p>
-                                </div>
-                                <div class="grid_12"  style="margin-top: -10px;margin-bottom: -5px;margin-left: 25px"> 
-                                    <textarea c-text-area type="input" filter="'string'" class="k-textbox" ng-model="item.rcppt[jawab.id]" readonly />
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-        <!-- END Riwayat CPPT Rajal LAMA -->
-        <!-- Riwayat CPPT Rajal BARU -->
-        <div ng-show="RiwayatCPPTRJBaru">
-            <table style="width:100%;" class="tablecppt">
-                <tr style="background-color: #363940;color: #f3f3f4;">
-                    <td style="text-align: center;width: 13%"><b>TANGGAL DAN PUKUL</b></td>
-                    <td style="text-align: center;width: 10%"><b>PROFESIONAL<br>PEMBERI<br>ASUHAN</b></td>
-                    <td style="text-align: center;width: 35%;border-bottom: none;" >
-                        <b>HASIL PEMERIKSAAN, ANALISIS, RENCANA PENATALAKSANAAN PASIEN</b><br>
-                        <span>(Dituliskan dengan format SOAP/ADIME, disertai dengan tulisan yang terukur, evaluasi hasil tatalaksana dituliskan dalam asesmen, Harap bubuhkan stempel nama dan paraf pada setiap akhir catatan)</span>
-                    </td>
-                    <td style="text-align: center;width: 25%;border-bottom: none;" >
-                        <b>INSTRUKSI PPA</b>
-                    </td>
-                    <td style="text-align: center;width: 15%"><b>REVIEW & VERIFIKASI DPJP/DOKTER</b><br>
-                        <span>(Tulis nama, beri paraf, Tgl, Jam)</span><br>
-                        <span>(DPJP harus membaca/mereview seluruh rencana asuhan)</span><br>
-                    </td>
-                </tr>
-                <!-- Loop semua snapshot -->
-                <tbody ng-repeat="snap in item.rcpptEdits track by $index">
-                <!-- Tampilkan satu set baris CPPT lengkap per snapshot -->
-                <tr ng-repeat="list in listDataCppt" ng-show="snap[list.id] != undefined">
-                    <td ng-repeat="jawab in list.detail | orderBy:'id'">
-                    <div ng-switch on="jawab.type">
-                        <div ng-switch-when="tgl/jam">
-                        <input style="width: 100%"
-                                k-ng-model="snap[jawab.id]"
-                                ng-disabled="true"
-                                kendo-datetimepicker
-                                placeholer="yyyy-MM-dd HH:mm"
-                                k-format="'yyyy-MM-dd HH:mm'"
-                                parsedate="yyyy-MM-dd HH:mm" />
-                        </div>
-
-                        <div ng-switch-when="ppa">
-                        <input style="width: 100%;"
-                                ng-model="snap[jawab.id]"
-                                ng-disabled="true"
-                                type="text"
-                                class="k-textbox" />
-                        </div>
-
-                        <div ng-switch-when="soap">
-                        <textarea cols="6" rows="10" c-text-area type="input" filter="'string'"
-                                    class="k-textbox"
-                                    ng-model="snap[jawab.id]" ng-disabled="true"></textarea>
-                        <input style="width: 100%;"
-                                ng-model="snap[jawab.id2]" ng-disabled="true"
-                                type="text" class="k-textbox" />
-                        </div>
-
-                        <div ng-switch-when="intruksi">
-                        <textarea cols="6" rows="13" c-text-area type="input" filter="'string'"
-                                    class="k-textbox" style="{{jawab.style}}"
-                                    ng-model="snap[jawab.id]" ng-disabled="true"></textarea>
-                        </div>
-
-                        <div ng-switch-when="review">
-                        <textarea rows="8" c-text-area type="input" filter="'string'"
-                                    class="k-textbox"
-                                    ng-model="snap[jawab.id]" ng-disabled="true"></textarea>
-                        <input style="width: 100%"
-                                k-ng-model="snap[jawab.id2]" ng-disabled="true"
-                                kendo-datetimepicker placeholer="yyyy-MM-dd HH:mm"
-                                k-format="'yyyy-MM-dd HH:mm'" parsedate="yyyy-MM-dd HH:mm" />
-                        <input style="width: 100%;"
-                                ng-model="snap[jawab.id3]" ng-disabled="true"
-                                type="text" class="k-textbox" />
-                        </div>
-                    </div>
-                    </td>
-                </tr>
-
-                <!-- pemisah antar snapshot (opsional) -->
-                <tr><td colspan="6" style="height:8px;background:#f6f7f9"></td></tr>
-                </tbody>
-            </table>
-        </div>
-        <!-- END Riwayat CPPT Rajal BARU -->
-        <!-- Riwayat CPPT Ranap -->
-        <div ng-show="RiwayatCPPTRI">
-            <div ng-include='"../app/module/EMR/CpptHistoryRajalMenu"' ng-if="RiwayatCPPTRI"></div>
-        </div>
-        <!-- END Riwayat CPPT Ranap -->
-    </div>
-    <div class="k-edit-buttons  k-state-default pull-right" style="margin-top:10px">
-        <button class="k-button k-button-icontext k-primary" ng-click="tutupcpptedit()"><span
                 class="k-icon k-cancel"></span>Kembali</button>
     </div>
 </div>
