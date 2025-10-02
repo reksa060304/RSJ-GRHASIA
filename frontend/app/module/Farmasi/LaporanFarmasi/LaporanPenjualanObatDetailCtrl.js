@@ -23,7 +23,7 @@ define(['initialize'], function (initialize) {
                     $scope.listDataDokter = dat.data.dokter;
                     $scope.listKelompokPasien = dat.data.kelompokpasien;
                     $scope.listNamaItem = dat.data.produkall;
-                    $scope.listJenisKemasan = dat.data.jeniskemasan;
+                    $scope.listJeniskemasan = dat.data.jeniskemasan;
                     $scope.listRajalRanap = [
                         { id: 1, names: "Rawat Jalan" },
                         { id: 2, names: "Rawat Inap"}
@@ -69,6 +69,12 @@ define(['initialize'], function (initialize) {
                   namaItem = "&namaItem=" + $scope.item.namaItem.id;
                 }
                 var namaItemText="";
+
+                var jks = "";
+                if ($scope.item.jks != undefined) {
+                  jks = "&jks=" + $scope.item.jks.id;
+                }
+                var namaItemText="";
                 
                 var namaItemText = "";
                 if ($scope.item.namaItemText != undefined) {
@@ -94,7 +100,7 @@ define(['initialize'], function (initialize) {
                     "&tglAkhir=" + tglAkhir +
                     "&rajalRanap=" + rajalRanap +
                     "&isobat=" + isobat +
-                    dok + kp + ru + namaItem + namaItemText + namaPasienText + jeniskemasan
+                    dok + kp + ru + namaItem + namaItemText + namaPasienText + jks
                     , true).then(function (dat) {
                         $scope.isRouteLoading = false;
                         $scope.totaltunai = 0;
@@ -519,6 +525,11 @@ define(['initialize'], function (initialize) {
                     //     // groupFooterTemplate: "<span class='style-right'>{{formatRupiah('#: data.tunai.sum  #', '')}}",
                     //     // footerTemplate: "<span class='style-right'>{{formatRupiah('#: data.tunai.sum  #', '')}}"
                     // },  
+                    {
+                        "field": "jeniskemasan",
+                        "title": "Jenis Kemasan",
+                        "width": "50px",
+                    },                 
                     {
                         "field": "rke",
                         "title": "R/",

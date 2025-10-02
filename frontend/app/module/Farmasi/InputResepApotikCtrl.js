@@ -1781,9 +1781,9 @@ Which will check for empty strings (""), null, undefined, false and the numbers 
                 $scope.item.jenisKemasan = { id: dataSelected.jeniskemasanfk, jeniskemasan: dataSelected.jeniskemasan }
                 $scope.item.satuanresep = { id: dataSelected.satuanresepfk, satuanresep: dataSelected.satuanresep }
                 $scope.item.aturanPakai = dataSelected.aturanpakai
-                if (noOrder != 'EditResep'){
+                // if (noOrder != 'EditResep'){
                     $scope.item.catatanDokter = dataSelected.catatandokter
-                }
+                // }
                 $scope.item.satuannya = dataSelected.satuandosis
                 $scope.item.KeteranganPakai = dataSelected.keterangan
                 $scope.item.diskonTotalPersen = dataSelected.persendiscount
