@@ -10876,7 +10876,7 @@ class EMRController  extends ApiController
 
                 // existing aktif pada BARIS (index) yang sama
                 $EMRPASIENDETAIL = EMRPasienD::where('emrpasienfk', $noemr)
-                    ->select('emrdfk','value','index')
+                    ->select('emrdfk','value','index','pegawaifk')
                     ->where('emrfk', $head['emrfk'])
                     ->where('index', $idx)
                     ->where('kdprofile', $kdProfile)
@@ -10938,8 +10938,11 @@ class EMRController  extends ApiController
 
             // peta existing aktif pada baris ini
             $existingMap = [];
+            $existingOwners = [];
+
             foreach ($EMRPASIENDETAIL as $row) {
                 $existingMap[$row->emrdfk] = $row->value;
+                $existingOwners[$row->emrdfk]= $row->pegawaifk;
             }
 
             // ====== DETEKSI PERUBAHAN BARIS ======
@@ -10964,37 +10967,59 @@ class EMRController  extends ApiController
             $insertCount = 0;
             $updateCount = 0;
 
-            foreach ($incomingMap as $emrdfk => $newVal) {
-                $oldVal = $existingMap[$emrdfk] ?? null;
+            $allKeys = array_unique(array_merge(array_keys($existingMap), array_keys($incomingMap)));
 
-                if ($oldVal !== $newVal) {
-                    // nonaktifkan field lama kalau ada
-                    if (array_key_exists($emrdfk, $existingMap)) {
-                        EMRPasienD::where('emrpasienfk', $norec_EMR)
-                            ->where('emrfk', $head['emrfk'])
-                            ->where('index', $idx)
-                            ->where('kdprofile', $kdProfile)
-                            ->where('statusenabled', 1)
-                            ->where('emrdfk', $emrdfk)
-                            ->update(['statusenabled' => 0]);
-                    }
+// deteksi apakah ada perubahan pada salah satu field
+$rowChanged = false;
+foreach ($allKeys as $k) {
+    $old = $existingMap[$k] ?? null;
+    $new = $incomingMap[$k] ?? null;
+    if ($old !== $new) {
+        $rowChanged = true;
+        break;
+    }
+}
 
-                    // insert field baru dengan owner = user login
-                    $EMRD = new EMRPasienD();
-                    $EMRD->norec         = $EMRD->generateNewId();
-                    $EMRD->kdprofile     = $kdProfile;
-                    $EMRD->statusenabled = 1;
-                    $EMRD->emrpasienfk   = $norec_EMR;
-                    $EMRD->value         = $newVal;
-                    $EMRD->norec_apd     = $head['norec'] ?? null;
-                    $EMRD->emrdfk        = $emrdfk;
-                    $EMRD->emrfk         = $head['emrfk'];
-                    $EMRD->pegawaifk     = $this->getCurrentUserID();
-                    $EMRD->tgl           = $this->getDateTime()->format('Y-m-d H:i:s');
-                    $EMRD->index         = $idx;
-                    $EMRD->save();
-                }
-            }
+if ($rowChanged) {
+    // 1) nonaktifkan semua record lama pada baris ini
+    EMRPasienD::where('emrpasienfk', $norec_EMR)
+        ->where('emrfk', $head['emrfk'])
+        ->where('index', $idx)
+        ->where('kdprofile', $kdProfile)
+        ->where('statusenabled', 1)
+        ->update(['statusenabled' => 0]);
+
+    // 2) merge field lama & baru
+    $merged = $existingMap;
+    foreach ($incomingMap as $k => $v) {
+        if ($v !== null) $merged[$k] = $v; // overwrite
+    }
+
+    // 3) insert ulang semua field
+    foreach ($merged as $emrdfk => $val) {
+        $oldVal   = $existingMap[$emrdfk] ?? null;
+        $oldOwner = $existingOwners[$emrdfk] ?? $this->getCurrentUserID();
+        $newVal   = $incomingMap[$emrdfk] ?? $oldVal;
+
+        $EMRD = new EMRPasienD();
+        $EMRD->norec     = $EMRD->generateNewId();
+        $EMRD->kdprofile = $kdProfile;
+        $EMRD->statusenabled = 1;
+        $EMRD->emrpasienfk   = $norec_EMR;
+        $EMRD->emrdfk        = $emrdfk;
+        $EMRD->emrfk         = $head['emrfk'];
+        $EMRD->value         = $newVal;
+        // kalau value berubah → owner login, kalau tidak → owner lama
+        $EMRD->pegawaifk     = ($oldVal !== $newVal)
+            ? $this->getCurrentUserID()
+            : $oldOwner;
+        $EMRD->tgl           = $this->getDateTime()->format('Y-m-d H:i:s');
+        $EMRD->index         = $idx;
+        $EMRD->save();
+    }
+}
+// kalau tidak ada perubahan → tidak insert apa pun
+
             // ELSE: tidak ada perubahan → tidak melakukan apa pun (hindari duplikasi).
 
             // ====== IMAGE (opsional – tetap pakai pola aslinya) ======
@@ -16094,6 +16119,7 @@ class EMRController  extends ApiController
                 'emrd.satuan', 'pg.namalengkap'
             )
             ->where('emrdp.kdprofile', $kdProfile)
+            ->where('emrdp.statusenabled', false)
             ->orderBy('emrd.nourut')
             ->whereNotNull('emrdp.value');
 

@@ -77,7 +77,7 @@
                         </tr>
                         <tr ng-repeat="list in listDataCppt" ng-show="show.obj[list.id]">
                             <td>
-                                <button class="k-button k-primary" ng-click="openHistoryFromFormEdit(list.id)">History</button>
+                                <button class="k-button k-primary" ng-click="openHistoryFromFormEdit(list.id)">History Edit</button>
                             </td>
                             <td ng-repeat="jawab in list.detail | orderBy:'id'">
                                 <div ng-switch on="jawab.type">
