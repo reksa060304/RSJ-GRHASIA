@@ -10830,7 +10830,6 @@ class EMRController  extends ApiController
 
         return $this->setStatusCode($result['status'])->respond($result, $transMessage);
     }
-
     public function SaveTransaksiEMRBackupRajal(Request $request)
     {
         $kdProfile = (int) $this->getDataKdProfile($request);
@@ -10965,44 +10964,35 @@ class EMRController  extends ApiController
             $insertCount = 0;
             $updateCount = 0;
 
-            if ($rowChanged) {
-                // 1) NONAKTIFKAN SEMUA RECORD AKTIF PADA BARIS (INDEX) INI (hanya jika bukan dokumen baru)
-                if ($head['norec_emr'] != '-') {
-                    EMRPasienD::where('emrpasienfk', $norec_EMR)
-                        ->where('emrfk', $head['emrfk'])
-                        ->where('index', $idx)
-                        ->where('kdprofile', $kdProfile)
-                        ->where('statusenabled', 1)
-                        ->update(['statusenabled' => 0]);
-                    $updateCount++;
-                }
+            foreach ($incomingMap as $emrdfk => $newVal) {
+                $oldVal = $existingMap[$emrdfk] ?? null;
 
-                // 2) SUSUN SNAPSHOT PENUH: nilai baru menimpa nilai lama
-                $merged = $existingMap;
-                foreach ($incomingMap as $k => $v) {
-                    $merged[$k] = $v; // overwrite dengan nilai baru
-                }
-
-                // 3) INSERT SEMUA FIELD DALAM BARIS (merged)
-                foreach ($merged as $emrdfk => $valueemr) {
-                    // skip kalau benar-benar null dan tidak pernah ada sebelumnya (opsional)
-                    if ($valueemr === null && !array_key_exists($emrdfk, $existingMap)) {
-                        continue;
+                if ($oldVal !== $newVal) {
+                    // nonaktifkan field lama kalau ada
+                    if (array_key_exists($emrdfk, $existingMap)) {
+                        EMRPasienD::where('emrpasienfk', $norec_EMR)
+                            ->where('emrfk', $head['emrfk'])
+                            ->where('index', $idx)
+                            ->where('kdprofile', $kdProfile)
+                            ->where('statusenabled', 1)
+                            ->where('emrdfk', $emrdfk)
+                            ->update(['statusenabled' => 0]);
                     }
+
+                    // insert field baru dengan owner = user login
                     $EMRD = new EMRPasienD();
                     $EMRD->norec         = $EMRD->generateNewId();
                     $EMRD->kdprofile     = $kdProfile;
                     $EMRD->statusenabled = 1;
                     $EMRD->emrpasienfk   = $norec_EMR;
-                    $EMRD->value         = $valueemr;
+                    $EMRD->value         = $newVal;
                     $EMRD->norec_apd     = $head['norec'] ?? null;
                     $EMRD->emrdfk        = $emrdfk;
                     $EMRD->emrfk         = $head['emrfk'];
-                    $EMRD->pegawaifk     = (isset($head['jenis']) && $head['jenis']=='pasien') ? null : $this->getCurrentUserID();
+                    $EMRD->pegawaifk     = $this->getCurrentUserID();
                     $EMRD->tgl           = $this->getDateTime()->format('Y-m-d H:i:s');
                     $EMRD->index         = $idx;
                     $EMRD->save();
-                    $insertCount++;
                 }
             }
             // ELSE: tidak ada perubahan → tidak melakukan apa pun (hindari duplikasi).
@@ -11098,7 +11088,6 @@ class EMRController  extends ApiController
             ], 'Saving EMR Pasien Gagal!!');
         }
     }
-
     public function saveEMRBackup($data, $head, $norec_EMR, $kdProfile)
     {
         DB::beginTransaction();
@@ -16090,5 +16079,73 @@ class EMRController  extends ApiController
             $pelayanan = $pasienDaftar->pelayanan_pasien()->get();
         }
         return $pelayanan;
+    }
+
+    public function getEMRTransaksiDetailEdit(Request $request)
+    {
+        $kdProfile = $this->getDataKdProfile($request);
+
+        $q = \DB::table('emrpasiend_t as emrdp')
+            ->leftJoin('emrd_t as emrd', 'emrd.id', '=', 'emrdp.emrdfk')
+            ->leftJoin('pegawai_m as pg', 'pg.id', '=', 'emrdp.pegawaifk')
+            ->select(
+                'emrdp.*', 'emrd.caption', 'emrd.type', 'emrd.nourut',
+                'emrdp.emrfk', 'emrd.reportdisplay', 'emrd.kodeexternal as kodeex',
+                'emrd.satuan', 'pg.namalengkap'
+            )
+            ->where('emrdp.kdprofile', $kdProfile)
+            ->orderBy('emrd.nourut')
+            ->whereNotNull('emrdp.value');
+
+        // noemr
+        if ($request->has('noemr')) {
+            $noemr = trim($request->get('noemr'));
+            if ($noemr !== '') {
+                $q->where('emrdp.emrpasienfk', $noemr);
+            }
+        }
+
+        // emrfk (cast ke int kalau kolom integer)
+        if ($request->has('emrfk')) {
+            $emrfk = trim($request->get('emrfk'));
+            if ($emrfk !== '') {
+                $q->where('emrdp.emrfk', (int)$emrfk);
+            }
+        }
+
+        // objectid: dukung array, CSV "1,2,3", atau single
+        if ($request->has('objectid')) {
+            $objectid = $request->get('objectid'); // bisa array atau string
+
+            if (is_array($objectid)) {
+                $ids = array_values(array_filter($objectid, function ($v) {
+                    return $v !== null && $v !== '' && $v !== 'null';
+                }));
+                if (!empty($ids)) {
+                    $q->whereIn('emrdp.emrdfk', $ids);
+                }
+            } else {
+                $objectid = trim($objectid);
+                if ($objectid !== '') {
+                    if (strpos($objectid, ',') !== false) {
+                        $ids = array_filter(array_map('trim', explode(',', $objectid)), function ($v) {
+                            return $v !== '' && $v !== 'null';
+                        });
+                        if (!empty($ids)) {
+                            $q->whereIn('emrdp.emrdfk', $ids);
+                        }
+                    } else {
+                        $q->where('emrdp.emrdfk', (int)$objectid);
+                    }
+                }
+            }
+        }
+
+        $rows = $q->get();
+
+        return $this->respond([
+            'data' => $rows,
+            'message' => 'as@epic',
+        ]);
     }
 }
