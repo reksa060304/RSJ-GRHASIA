@@ -371,14 +371,17 @@ class ReservasiOnlineController extends ApiController
   
             }
         
+            $statusPasien = '';
             if($request['isBaru'] == true){
                 $newptp->tipepasien = "BARU";
                 $newptp->type = "BARU";
                 $newptp->isconfirm = false; // Set isconfirm to false for new patients
+                $statusPasien = "BARU";
             }else{
                 $newptp->tipepasien = "LAMA";
                 $newptp->type = "LAMA";
                 $newptp->isconfirm = true;
+                $statusPasien = "LAMA";
             }
 //            $newptp->objectasalrujukanfk = 0;
 //            $newptp->objectstrukreturfk= 0;
@@ -445,6 +448,7 @@ class ReservasiOnlineController extends ApiController
                     'israwatinap' =>  'false',
                     'statusschedule' => $newptp->noreservasi,
                     'objectrekananfk' => $request['tipePembayaran']['id'] == 2 ? 2552 : null,
+                    'statuspasien' => $statusPasien,
                     'isjkn' => false
                 );
                 $antrianpasiendiperiksa = array(
