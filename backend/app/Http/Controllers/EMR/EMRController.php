@@ -75,6 +75,7 @@ use App\Transaksi\SeqNumberEMR;
 use App\Transaksi\CPPTEMR;
 use App\Transaksi\CABAKEMR;
 use App\Transaksi\PelayananPasien;
+use App\Transaksi\RiwayatAlergiPasien;
 //use Illuminate\Http\Response;
 use DB;
 use App\Traits\Valet;
@@ -15835,65 +15836,221 @@ if ($rowChanged) {
         return $this->setStatusCode($result['status'])->respond($result, $transMessage);
     }
 
+    // public function saveAlergiV2(Request $request)
+    // {
+    //     $kdProfile = (int) $this->getDataKdProfile($request);
+    //     $norecPd = $request['norec_pd'];
+    //     DB::beginTransaction();
+    //     // try {
+    //         $dataPD = collect(DB::select("
+    //         SELECT 
+    //             ps.*,pd.noregistrasi 
+    //         FROM
+    //             pasiendaftar_t as pd
+    //             LEFT JOIN pasien_m as ps on ps.id = pd.nocmfk
+    //         WHERE pd.norec = '$norecPd'
+    //         "));
+    //         // dd($dataPD);
+
+    //         if ($dataPD->isEmpty()) {
+    //             throw new \Exception('Data pasien tidak ditemukan');
+    //         }
+
+    //         $dataPasien = $dataPD->first();
+
+    //         pasien::where('nocm', $dataPasien->nocm)
+    //             ->where('kdprofile', $kdProfile)
+    //             ->update(
+    //                 [
+    //                     'ketalergi' => $request['keterangan'],
+    //                     'objectalergifk' => $request['objectalergifk']
+    //                 ],
+    //             );
+
+    //         $transStatus = 'true';
+    //     // } catch (\Exception $e) {
+    //     //     $transStatus = 'false';
+    //     // }
+
+    //     $objetoRequest = new \Illuminate\Http\Request();
+    //     $objetoRequest['noregistrasi'] = $dataPasien->noregistrasi ?? null;
+    //     $ihs = app('App\Http\Controllers\Bridging\IHSController')->AllergyIntolerance($objetoRequest, true);
+
+    //     if ($transStatus == 'true') {
+    //         $transMessage = 'Sukses';
+    //         DB::commit();
+    //         $result = array(
+    //             'AllergyIntolerance'=> isset($ihs)? $ihs :null,
+    //             "status" => 201,
+    //             "message" => $transMessage,
+    //             "as" => 'inhuman',
+    //         );
+    //     } else {
+    //         $transMessage = "Simpan Gagal";
+    //         DB::rollBack();
+    //         $result = array(
+    //             "status" => 400,
+    //             "message" => $transMessage,
+    //             "as" => 'inhuman',
+    //         );
+    //     }
+    //     return $this->setStatusCode($result['status'])->respond($result, $transMessage);
+    // }
+    
     public function saveAlergiV2(Request $request)
     {
         $kdProfile = (int) $this->getDataKdProfile($request);
+        $norecPd   = $request->input('norec_pd');
+
+        // Ambil data pasien
+        $dataPD = collect(DB::select("
+            SELECT ps.*, pd.noregistrasi 
+            FROM pasiendaftar_t pd
+            LEFT JOIN pasien_m ps ON ps.id = pd.nocmfk
+            WHERE pd.norec = ?
+        ", [$norecPd]));
+
+        if ($dataPD->isEmpty()) {
+            return $this->setStatusCode(404)->respond([
+                "status"  => 404,
+                "message" => "Data pasien tidak ditemukan",
+            ], "Not Found");
+        }
+
+        $pasien = $dataPD->first();
+
+        // Simpan data lama ke riwayatalergipasien_t
+        DB::table('riwayatalergipasien_t')->insert([
+            'norec' => (new \App\Transaksi\RiwayatAlergiPasien())->generateNewId(),
+            'kdprofile'                => $kdProfile,
+            'statusenabled'            => false,
+            'objectalergifk'           => $pasien->objectalergifk,
+            'ketalergi'                => $pasien->ketalergi,
+            'tglinput'                 => Carbon::now(),
+            'nocmfk'                   => $pasien->nocm,
+            'noregistrasifk'           => $norecPd,
+            'pegawaiinputfk'           => $request->input('pegawaiinputfk'),
+
+            'objectalergilingkunganfk' => $pasien->objectalergilingkunganfk,
+            'ketalergilingkungan'      => $pasien->ketalergilingkungan,
+
+            'objectalergibiologisfk'   => $pasien->objectalergibiologisfk,
+            'ketalergibiologis'        => $pasien->ketalergibiologis,
+
+            'objectalergimakananfk'    => $pasien->objectalergimakananfk,
+            'ketalergimakanan'         => $pasien->ketalergimakanan,
+        ]);
+
+        // Update field masing-masing di pasien_m
+        pasien::where('nocm', $pasien->nocm)
+            ->where('kdprofile', $kdProfile)
+            ->update([
+                'ketalergi'           => $request->input('ketalergi'),           // obat
+                'objectalergifk'      => $request->input('objectalergifk'),
+                'ketalergilingkungan' => $request->input('ketalergilingkungan'), // lingkungan
+                'objectalergilingkunganfk' => $request->input('objectalergilingkunganfk'),
+                'ketalergibiologis'   => $request->input('ketalergibiologis'),   // biologis
+                'objectalergibiologisfk' => $request->input('objectalergibiologisfk'),
+                'ketalergimakanan'    => $request->input('ketalergimakanan'),    // makanan
+                'objectalergimakananfk' => $request->input('objectalergimakananfk'),
+            ]);
+
+        // Gabungkan semua alergi jadi satu string
+        $summary = collect([
+            $request->input('ketalergi')           ? 'Obat: ' . $request->input('ketalergi') : null,
+            $request->input('ketalergilingkungan') ? 'Lingkungan: ' . $request->input('ketalergilingkungan') : null,
+            $request->input('ketalergibiologis')   ? 'Biologis: ' . $request->input('ketalergibiologis') : null,
+            $request->input('ketalergimakanan')    ? 'Makanan: ' . $request->input('ketalergimakanan') : null,
+        ])->filter()->implode(' | ');
+
+        // Update ketalergi summary untuk ditampilkan di UI
+        pasien::where('nocm', $pasien->nocm)
+            ->where('kdprofile', $kdProfile)
+            ->update([
+                'ketalergi' => $summary,
+            ]);
+
+        // Panggil IHS hanya sekali
+        $objetoRequest = new \Illuminate\Http\Request();
+        $objetoRequest['noregistrasi'] = $pasien->noregistrasi ?? null;
+
+        // AllergyIntolerance sekarang akan membaca field ketalergi (summary)
+        $ihs = app('App\Http\Controllers\Bridging\IHSController')->AllergyIntolerance($objetoRequest, true);
+
+        DB::commit();
+
+        return $this->setStatusCode(201)->respond([
+            "status"        => 201,
+            "message"       => "Sukses",
+            "summary"       => $summary,
+            "IHS_Response"  => $ihs,
+            "as"            => "inhuman",
+        ], "Created");
+    }
+
+    public function saveAlergiBatchV2(Request $request)
+    {
+        $kdProfile = (int) $this->getDataKdProfile($request);
         $norecPd = $request['norec_pd'];
+        $dataAlergi = $request['alergi'];
+
         DB::beginTransaction();
-        // try {
+        try {
             $dataPD = collect(DB::select("
-            SELECT 
-                ps.*,pd.noregistrasi 
-            FROM
-                pasiendaftar_t as pd
+                SELECT ps.*, pd.noregistrasi
+                FROM pasiendaftar_t as pd
                 LEFT JOIN pasien_m as ps on ps.id = pd.nocmfk
-            WHERE pd.norec = '$norecPd'
+                WHERE pd.norec = '$norecPd'
             "));
-            // dd($dataPD);
 
             if ($dataPD->isEmpty()) {
                 throw new \Exception('Data pasien tidak ditemukan');
             }
 
             $dataPasien = $dataPD->first();
+            $nocm = $dataPasien->nocm;
 
-            pasien::where('nocm', $dataPasien->nocm)
+            // Reset alergi sebelumnya
+            pasien::where('nocm', $nocm)
                 ->where('kdprofile', $kdProfile)
-                ->update(
-                    [
-                        'ketalergi' => $request['keterangan'],
-                        'objectalergifk' => $request['objectalergifk']
-                    ],
-                );
+                ->update([
+                    'ketalergi' => null,
+                    'objectalergifk' => null,
+                ]);
 
-            $transStatus = 'true';
-        // } catch (\Exception $e) {
-        //     $transStatus = 'false';
-        // }
+            // Simpan alergi baru satu per satu
+            $summary = [];
+            foreach ($dataAlergi as $item) {
+                $summary[] = $item['keterangan'];
+                pasien::where('nocm', $nocm)
+                    ->where('kdprofile', $kdProfile)
+                    ->update([
+                        'ketalergi' => implode(', ', $summary),
+                        'objectalergifk' => $item['kategori']
+                    ]);
+            }
 
-        $objetoRequest = new \Illuminate\Http\Request();
-        $objetoRequest['noregistrasi'] = $dataPasien->noregistrasi ?? null;
-        $ihs = app('App\Http\Controllers\Bridging\IHSController')->AllergyIntolerance($objetoRequest, true);
+            // Panggil IHS
+            $objetoRequest = new \Illuminate\Http\Request();
+            $objetoRequest['noregistrasi'] = $dataPasien->noregistrasi ?? null;
+            $ihs = app('App\Http\Controllers\Bridging\IHSController')->AllergyIntolerance($objetoRequest, true);
 
-        if ($transStatus == 'true') {
-            $transMessage = 'Sukses';
             DB::commit();
-            $result = array(
-                'AllergyIntolerance'=> isset($ihs)? $ihs :null,
-                "status" => 201,
-                "message" => $transMessage,
-                "as" => 'inhuman',
-            );
-        } else {
-            $transMessage = "Simpan Gagal";
+            return $this->respond([
+                'message' => 'Sukses',
+                'status' => 201,
+                'summary' => implode(', ', $summary),
+                'AllergyIntolerance' => $ihs ?? null,
+                'as' => 'inhuman',
+            ]);
+        } catch (\Exception $e) {
             DB::rollBack();
-            $result = array(
-                "status" => 400,
-                "message" => $transMessage,
-                "as" => 'inhuman',
-            );
+            return $this->setStatusCode(400)->respond([
+                'message' => $e->getMessage(),
+                'status' => 400,
+                'as' => 'inhuman',
+            ]);
         }
-        return $this->setStatusCode($result['status'])->respond($result, $transMessage);
     }
 
     public function getKategoriAlergi(Request $request)

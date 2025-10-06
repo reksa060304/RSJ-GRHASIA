@@ -329,9 +329,9 @@
 <div kendo-window="popUpAlergi" k-title="'Alergi Pasien'" style="width: 500px;" k-visible="false"
     k-on-open="win2visible = true" k-on-close="win2visible = false">
     <div class="grid_12" style="margin-bottom: 10px;">
-        <div class="grid_12">Kategori Alergi</div>
+        <div class="grid_12">Kategori Alergi Obat</div>
         <div class="div_12">
-            <input ng-disabled="isDisable" style="width: 100%;" kendo-combo-box k-ng-model="item.kategoriAlergi"
+            <input ng-disabled="isDisable" style="width: 100%;" kendo-combo-box k-ng-model="item.kategoriAlergiObat"
                 k-data-text-field="'namaalergi'" k-filter="'contains'" k-data-value-field="'id'" k-auto-bind="false"
                 k-data-source="listKategoriAlergi" />
         </div>
@@ -339,7 +339,49 @@
     <div class="grid_12">
         <div class="grid_12">Keterangan Alergi</div>
         <div class="grid_12">
-            <textarea class="k-textbox" style="height: 100px;" ng-model="item.alergi"></textarea>
+            <textarea class="k-textbox" style="height: 100px;" ng-model="item.alergiObat"></textarea>
+        </div>
+    </div>
+    <div class="grid_12" style="margin-bottom: 10px;">
+        <div class="grid_12">Kategori Alergi Lingkungan</div>
+        <div class="div_12">
+            <input ng-disabled="isDisable" style="width: 100%;" kendo-combo-box k-ng-model="item.kategoriAlergiLingkungan"
+                k-data-text-field="'namaalergi'" k-filter="'contains'" k-data-value-field="'id'" k-auto-bind="false"
+                k-data-source="listKategoriAlergi" />
+        </div>
+    </div>
+    <div class="grid_12">
+        <div class="grid_12">Keterangan Alergi</div>
+        <div class="grid_12">
+            <textarea class="k-textbox" style="height: 100px;" ng-model="item.alergiLingkungan"></textarea>
+        </div>
+    </div>
+    <div class="grid_12" style="margin-bottom: 10px;">
+        <div class="grid_12">Kategori Alergi Biologis</div>
+        <div class="div_12">
+            <input ng-disabled="isDisable" style="width: 100%;" kendo-combo-box k-ng-model="item.kategoriAlergiBiologis"
+                k-data-text-field="'namaalergi'" k-filter="'contains'" k-data-value-field="'id'" k-auto-bind="false"
+                k-data-source="listKategoriAlergi" />
+        </div>
+    </div>
+    <div class="grid_12">
+        <div class="grid_12">Keterangan Alergi</div>
+        <div class="grid_12">
+            <textarea class="k-textbox" style="height: 100px;" ng-model="item.alergiBiologis"></textarea>
+        </div>
+    </div>
+    <div class="grid_12" style="margin-bottom: 10px;">
+        <div class="grid_12">Kategori Alergi Makanan</div>
+        <div class="div_12">
+            <input ng-disabled="isDisable" style="width: 100%;" kendo-combo-box k-ng-model="item.kategoriAlergiMakanan"
+                k-data-text-field="'namaalergi'" k-filter="'contains'" k-data-value-field="'id'" k-auto-bind="false"
+                k-data-source="listKategoriAlergi" />
+        </div>
+    </div>
+    <div class="grid_12">
+        <div class="grid_12">Keterangan Alergi</div>
+        <div class="grid_12">
+            <textarea class="k-textbox" style="height: 100px;" ng-model="item.alergiMakanan"></textarea>
         </div>
     </div>
     <div class="dialog_buttons pull-right" style="margin-top:5%; text-align: left;">
