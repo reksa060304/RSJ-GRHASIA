@@ -18000,6 +18000,26 @@
     ]
   },
   {
+    "name": "LaporanDetailKlaimBpjs",
+    "url": "/TGFwb3JhbkRldGFpbEtsYWltQnBqcw==",
+    "templateurl": "module/TataRekening/LaporanTataRekening/LaporanDetailKlaimBpjs.html",
+    "controller": "LaporanDetailKlaimBpjsCtrl",
+    "deps": [
+      {
+        "module": "Services",
+        "define": "Service"
+      },
+      {
+        "module": "LoginServices",
+        "define": "LoginService"
+      },
+      {
+        "module": "MedifirstService",
+        "define": "MedifirstService"
+      }
+    ]
+  },
+  {
     "name": "LaporanKlaimDiagnosa",
     "url": "/TGFwb3JhbktsYWltRGlhZ25vc2E=",
     "templateurl": "module/TataRekening/LaporanTataRekening/LaporanKlaimDiagnosa.html",

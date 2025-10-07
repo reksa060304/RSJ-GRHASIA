@@ -3244,6 +3244,10 @@
             "urlDep": "module/TataRekening/LaporanTataRekening/LaporanRekapKlaimCtrl"
         },
         {
+            "nameDep": "LaporanDetailKlaimBpjsCtrl",
+            "urlDep": "module/TataRekening/LaporanTataRekening/LaporanDetailKlaimBpjsCtrl"
+        },
+        {
             "nameDep": "LaporanKlaimDiagnosaCtrl",
             "urlDep": "module/TataRekening/LaporanTataRekening/LaporanKlaimDiagnosaCtrl"
         },

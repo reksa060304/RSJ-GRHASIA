@@ -363,7 +363,7 @@ define(['initialize'], function (initialize) {
                             datas[17].kategori = 'Rekonsiliasi Obat';
                             datas[18].kategori = 'Konsultasi Online Apoteker';
                             datas[19].kategori = 'Pelayanan Perbekalan Farmasi';
-                            datas[20].kategori = 'Pelayanan Obat Unit Dose Dispending/ UDD';
+                            datas[20].kategori = 'Pelayanan Obat Unit Dose Dispensing/ UDD';
                             datas[i].no = i+1;
                             if(datas[i].jumlahtotalrkejanuary != 0){
                                 datas[0].jumlahtotalrkejanuaryfix = datas[i].jumlahtotalrkejanuary;
