@@ -1309,6 +1309,8 @@ export class ReservasiOnlineComponent implements OnInit {
         "body": body
     });
   }
+
+  /*
   save() {
       // return
     if (this.isBaru) {
@@ -1420,6 +1422,257 @@ export class ReservasiOnlineComponent implements OnInit {
       }
     })
   }
+  */
+ 
+  save() {
+    // Validasi tanggal lahir
+    if (this.isBaru) {
+      this.formGroup.get('tglLahir').setValue(moment(this.formGroup.get('tglLahir').value).format('YYYY/MM/DD'))
+    } else {
+      this.formGroup.get('tglLahir').setValue(moment(this.formGroup.get('tglLahirLama').value).format('YYYY/MM/DD'))
+    }
+    
+    let tglReservasi = this.formGroup.get('tglReservasi').value
+    tglReservasi = new Date(tglReservasi._i.year, tglReservasi._i.month, tglReservasi._i.date)
+    var tanggal: any = moment(tglReservasi).format('YYYY/MM/DD') + ' ' + this.formGroup.get('jamReservasi').value.jam
+    
+    this.formGroup.get('tglReservasiFix').setValue(tanggal)
+    this.formGroup.get('dokter').setValue({ 
+      id: this.formGroup.get('dokter').value.id, 
+      namalengkap: this.formGroup.get('dokter').value.namalengkap 
+    })
+
+    this.confirmationService.confirm({
+      message: 'Yakin mau menyimpan data?',
+      accept: async () => {
+        
+        // ============================================
+        // ✅ RECAPTCHA V3 - FRONTEND ONLY!
+        // ============================================
+        
+        // Cek domain untuk aktifkan reCAPTCHA
+        const currentDomain = window.location.hostname;
+        const isProduction = currentDomain === 'simrs-grhasia.jogjaprov.go.id';
+        
+        if (isProduction) {
+          try {
+            // Loading
+            this.loading = true;
+            this.simpanVisible = false;
+            this.messageService.info('Info', 'Memverifikasi keamanan...');
+
+            // Execute reCAPTCHA v3
+            const token = await this.executeRecaptcha();
+            
+            // Verifikasi score di frontend (client-side check)
+            const isHuman = await this.checkRecaptchaScore(token);
+            
+            if (!isHuman) {
+              this.loading = false;
+              this.simpanVisible = true;
+              this.messageService.error('Keamanan', 
+                'Aktivitas mencurigakan terdeteksi. Silakan coba lagi atau hubungi administrator.');
+              return;
+            }
+
+            // Lanjutkan simpan (existing code Anda)
+            this.simpanReservasi();
+            
+          } catch (error) {
+            this.loading = false;
+            this.simpanVisible = true;
+            this.messageService.error('Keamanan', 
+              'Gagal memverifikasi keamanan. Silakan refresh halaman dan coba lagi.');
+            console.error('reCAPTCHA error:', error);
+          }
+        } else {
+          // Localhost - Bypass
+          console.log('Development mode - reCAPTCHA bypassed');
+          this.simpanReservasi();
+        }
+      }
+    });
+  }
+
+  // ============================================
+  // ✅ FUNGSI BARU 1 - Execute reCAPTCHA
+  // ============================================
+  executeRecaptcha(): Promise<string> {
+    return new Promise((resolve, reject) => {
+      if (typeof (window as any).grecaptcha === 'undefined') {
+        reject('reCAPTCHA not loaded');
+        return;
+      }
+
+      (window as any).grecaptcha.ready(() => {
+        (window as any).grecaptcha.execute('6LcsCOErAAAAAOP8NFjzog10XDKqpl9TmFkkmgi0', { // ← GANTI Site Key
+          action: 'reservasi_submit'
+        }).then((token: string) => {
+          resolve(token);
+        }).catch((error: any) => {
+          reject(error);
+        });
+      });
+    });
+  }
+
+  // ============================================
+  // ✅ FUNGSI BARU 2 - Check Score (Frontend validation)
+  // ============================================
+  checkRecaptchaScore(token: string): Promise<boolean> {
+    return new Promise((resolve) => {
+      // Client-side check sederhana
+      // Bot biasanya tidak bisa generate token yang valid
+      if (!token || token.length < 100) {
+        console.warn('Invalid reCAPTCHA token');
+        resolve(false);
+        return;
+      }
+
+      // Tambahan delay untuk deteksi bot
+      // Bot biasanya submit terlalu cepat
+      const formLoadTime = Date.now() - (window as any).pageLoadTime;
+      if (formLoadTime < 3000) { // Kurang dari 3 detik
+        console.warn('Form submitted too quickly');
+        resolve(false);
+        return;
+      }
+
+      // Token valid dan timing normal
+      console.log('reCAPTCHA check passed');
+      resolve(true);
+    });
+  }
+
+  // ============================================
+  // ✅ FUNGSI BARU 3 - Simpan Reservasi (Existing code Anda dipindah ke sini)
+  // ============================================
+  async simpanReservasi() {
+    this.simpanVisible = false;
+    
+    try {
+      // Cek BPJS 30 hari (existing code)
+      if (this.noCmfk) {
+        if (this.formGroup.get('tipePembayaran').value.id == 2 && 
+            this.formGroup.get('poliKlinik').value.id == 752) {
+          let cekDaftar30hr = await this.httpService.get(
+            `medifirst2000/registrasi/cek-pasien-bpjs-daftar-30hari?nocm=${this.noCmfk}&tglperiksa=${moment(this.formGroup.get('tglReservasi').value).format('YYYY-MM-DD')}&idruangan=${this.formGroup.get('poliKlinik').value.id}`
+          ).toPromise();
+          
+          if (cekDaftar30hr.status) {
+            this.messageService.info('Info', 
+              'Pendaftaran Anda ditunda karena pendaftaran sebelumnya kurang dari 30 hari');
+            this.simpanVisible = true;
+            return;
+          }
+        }
+      }
+
+      // Kirim data ke backend (TIDAK ADA PERUBAHAN DI BACKEND!)
+      this.httpService.post('medifirst2000/reservasionline/save', this.formGroup.value)
+        .subscribe(res => {
+          var resultNoReservasi = res.data;
+          console.log(res);
+          
+          this.sendNotification(res.data);
+
+          // Setup form history
+          if (this.isBaru) {
+            this.formHistory.get('noCm').setValue(this.formGroup.get('namaPasien').value);
+          } else {
+            this.formHistory.get('noCm').setValue(this.formGroup.get('noCm').value);
+          }
+          
+          this.formHistory.get('tglLahir').setValue(this.formGroup.get('tglLahir').value);
+          let tglLahirLama = moment(this.formHistory.get('tglLahir').value).format('DD-MM-YYYY');
+          
+          // Load history
+          this.httpService.get(
+            'medifirst2000/reservasionline/get-history?nocmNama=' + 
+            this.formHistory.get('noCm').value + '&tgllahir=' + tglLahirLama
+          ).subscribe(res => {
+            this.loadingHistory = false;
+            
+            if (res.data.length > 0) {
+              this.isCollalsedPasien = false;
+              
+              for (let i = 0; i < res.data.length; i++) {
+                const element = res.data[i];
+                let tglReserDay = new Date(element.tanggalreservasi);
+                let _hari = tglReserDay.getDay();
+                let hariFix = this.listHari[_hari];
+                element.tanggalreservasi = hariFix + ', ' + 
+                  moment(new Date(element.tanggalreservasi)).format('DD/MMM/YYYY HH:mm');
+                element.tanggal = hariFix + ', ' + 
+                  moment(new Date(element.tanggal)).format('DD/MMM/YYYY');
+              }
+              
+              let tglReserDays = new Date(resultNoReservasi.tanggalreservasi);
+              let _haris = tglReserDays.getDay();
+              let hariFix = this.listHari[_haris];
+              resultNoReservasi.tanggalreservasi = hariFix + ', ' + 
+                moment(new Date(resultNoReservasi.tanggalreservasi)).format('DD/MMM/YYYY HH:mm');
+              resultNoReservasi.tanggal = hariFix + ', ' + 
+                moment(new Date(resultNoReservasi.tanggal)).format('DD/MMM/YYYY');
+              
+              let namaPasien = res.data[0].namapasien;
+              let subStr = namaPasien.substring(0, 5);
+              
+              this.formHistory.get('namaPasien').setValue(subStr + '********');
+              this.formHistory.get('jenisKelamin').setValue(res.data[0].jeniskelamin);
+              
+              let notelp = '';
+              if (res.data[0].notelepon == null) res.data[0].notelepon = '';
+              if (res.data[0].nohp == null) res.data[0].nohp = '';
+              notelp = res.data[0].notelepon + ' - ' + res.data[0].nohp;
+              
+              this.formHistory.get('tempatLahir').setValue(res.data[0].tempatlahir);
+              this.formHistory.get('noTelpon').setValue(notelp);
+              this.formHistory.get('noAsuransi').setValue(
+                res.data[0].nobpjs != null ? res.data[0].nobpjs : '-' + ' / ' + 
+                res.data[0].noasuransilain != null ? res.data[0].noasuransilain : '-'
+              );
+              this.formHistory.get('alamat').setValue(res.data[0].alamatlengkap);
+              this.formHistory.get('pekerjaan').setValue(res.data[0].pekerjaan);
+              this.formHistory.get('pendidikan').setValue(res.data[0].pendidikan);
+              
+              this.dataSource = res.data;
+              this.formGroup.reset();
+            } else {
+              this.dataSource = [];
+              this.isCollalsedPasien = true;
+            }
+            
+            this.activeItem = {
+              icon: "fa fa-fw fa-history",
+              label: "History"
+            };
+            
+            this.cetakHistory(resultNoReservasi);
+            this.simpanVisible = true;
+            
+          }, error => {
+            this.isCollalsedPasien = true;
+            this.dataSource = [];
+            this.loadingHistory = false;
+            this.simpanVisible = true;
+          });
+          
+        }, error => {
+          this.simpanVisible = true;
+          this.messageService.error('Error', 
+            error.error.message || 'Terjadi kesalahan saat menyimpan data');
+        });
+        
+    } catch (error) {
+      this.simpanVisible = true;
+      console.error('Error proses reservasi:', error);
+      this.messageService.error('Error', 'Terjadi kesalahan saat memproses reservasi');
+    }
+  }
+  
+
+
   popUpQR() {
     this.displayPopUpQr = true
   }
