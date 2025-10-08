@@ -9247,4 +9247,376 @@ class LaporanRekamMedisController extends   ApiController
 
         return $this->respond($result);
     }
+
+    public function getPengadaanObatRl(Request $request){
+        $kdProfile = (int) $this->getDataKdProfile($request);
+        $KdJenisLapFarmasi = (int) $this->settingDataFixed('KdJenisLapFarmasi', $kdProfile);
+        //        $dataLogin = $request->all();
+        //
+        //        $data = \DB::table('produk_m as prd')
+        //            ->join('stokprodukdetail_t as spd','spd.objectprodukfk','=','prd.id')
+        //            ->join('ruangan_m as ru','ru.id','=','spd.objectruanganfk')
+        //            ->join('departemen_m as dpm','dpm.id','=','ru.objectdepartemenfk')
+        //
+        //            ->select('prd.namaproduk', 'spd.qtyproduk','spd.objectruanganfk','ru.namaruangan','ru.objectdepartemenfk',
+        //                'prd.id as idproduk', 'prd.isgeneric', 'spd.tglpelayanan',
+        //
+        ////            case when prd.isgeneric = true then 'Obat Generik(Formularium + Non Formularium)'
+        //                DB::raw('(case when prd.objectstatusprodukfk = 1 and prd.isgeneric =\'f\' THEN \'Obat Non Generik Non Formularium\'
+        //                          when prd.objectstatusprodukfk = 2 and prd.isgeneric =\'f\' THEN \'Obat Non Generik Formularium\'
+        //                          else \'Obat Generik(Formularium + Non Formularium)\' end) as detailobat'
+        //                )
+        //            )
+        //
+        //            ->where('prd.objectdetailjenisprodukfk', 474);
+        //
+        //        if (isset($request['tglAwal']) && $request['tglAwal'] != "" && $request['tglAwal'] != "undefined") {
+        //            $data = $data->where('spd.tglpelayanan', '>=', $request['tglAwal']);
+        //        }
+        //        if (isset($request['tglAkhir']) && $request['tglAkhir'] != "" && $request['tglAkhir'] != "undefined") {
+        //            $tgl = $request['tglAkhir'];
+        //            $data = $data->where('spd.tglpelayanan', '<=', $tgl);
+        //        }
+        //        $data = $data->get();
+        //
+        //        $data10 = [];
+        //        $jml = 0;
+        //        $sama = false;
+        //
+        //        $JmlGenerik = 0;
+        //        $stokFormula = 0;
+        //        $stokObat =0;
+        //
+        //        foreach ($data as $item) {
+        //            $sama = false;
+        //            $i = 0;
+        //            foreach ($data10 as $hideung) {
+        //                if ($item->detailobat == $data10[$i]['detailobat']) {
+        //                    $sama = true;
+        //                    $jml = (float)$hideung['jumlah'] + 1;
+        //                    $data10[$i]['jumlah'] = $jml;
+        //
+        //                    if ($item->isgeneric == true)
+        //                    {
+        //                        $data10[$i]['JmlGeneric'] = (float)$hideung['JmlGeneric'] + 1;
+        //                    }
+        //                    $data10[$i]['Total'] = (float)$hideung['Total'] + 1;
+        //                    $data10[$i]['Totalitem'] = (float)$hideung['Total'] + $data10[$i]['JmlGeneric'];
+        //
+        //                }
+        //                $i = $i + 1;
+        //            }
+        //
+        //            if ($sama == false) {
+        //
+        //                if ($item->isgeneric == true)
+        //                {
+        //                    $JmlGenerik = 1;
+        //                    $stokFormula = 0;
+        //                    $stokObat =0;
+        //                }
+        //
+        //                $data10[] = array(
+        //                    'detailobat' => $item->detailobat,
+        //                    'Total' => 1,
+        //                    'JmlGeneric' => $JmlGenerik,
+        //                    'Totalitem' => 1 + $JmlGenerik,
+        //                    'jumlah' => 1,
+        //                );
+        //            }
+        //
+        //            foreach ($data10 as $key => $row) {
+        //                $count[$key] = $row['jumlah'];
+        //            }
+        //
+        //            array_multisort($count, SORT_DESC, $data10);
+        //        }
+        //
+        //        $result = array(
+        //            'data' => $data10,
+        //            'message' => 'as@cepot',
+        //        );
+        //        return $this->respond($result);
+
+
+        //    #with Mapping
+        $data = \DB::table('produk_m as prd')
+            ->join('stokprodukdetail_t as spd','spd.objectprodukfk','=','prd.id')
+            ->join('mapproduktolaporanrl_m as mprl','mprl.produkfk','=','spd.objectprodukfk')
+            ->join('jenislaporan_m as jl','jl.id','=','mprl.objectjenislaporanfk')
+            ->join('kelompoklaporan_m as kl','kl.id','=','mprl.objectkontenlaporanfk')
+            ->join('ruangan_m as ru','ru.id','=','spd.objectruanganfk')
+            ->join('departemen_m as dpm','dpm.id','=','ru.objectdepartemenfk')
+            ->select('prd.namaproduk',
+                'kl.kelompoklaporan as detailobat',
+                DB::raw('count(prd.id) as jumlahitem,sum(spd.qtyproduk) as jumlahtersedia'))
+            ->groupBy('prd.namaproduk','prd.id','kl.kelompoklaporan')
+            ->where('prd.kdprofile', $kdProfile)
+            ->where('jl.id', $KdJenisLapFarmasi);
+
+        if (isset($request['tglAwal']) && $request['tglAwal'] != "" && $request['tglAwal'] != "undefined") {
+            $data = $data->where('spd.tglpelayanan', '>=', $request['tglAwal']);
+        }
+        if (isset($request['tglAkhir']) && $request['tglAkhir'] != "" && $request['tglAkhir'] != "undefined") {
+            $tgl = $request['tglAkhir'];
+            $data = $data->where('spd.tglpelayanan', '<=', $tgl);
+        }
+        $data = $data->get();
+
+        $data10 = [];
+        foreach ($data as $item) {
+            $sama = false;
+            $i = 0;
+            foreach ($data10 as $hideung) {
+                if ($item->detailobat == $data10[$i]['detailobat']) {
+                    $sama = true;
+                    $jml = (float)$hideung['jumlah'] + 1;
+                    $data10[$i]['jumlah'] = $jml;
+                }
+                $i = $i + 1;
+            }
+
+            if ($sama == false) {
+
+                $data10[] = array(
+                    'detailobat' => $item->detailobat,
+                    'jumlahtersedia' => $item->jumlahtersedia,
+                    // 'jumlahfortersedia'=>0,
+                    //                    'Total' => 1,
+                    //                    'JmlGeneric' => $JmlGenerik,
+                    //                    'Totalitem' => 1 + $JmlGenerik,
+                    'jumlah' => 1,
+                );
+            }
+
+            foreach ($data10 as $key => $row) {
+                $count[$key] = $row['jumlah'];
+            }
+            array_multisort($count, SORT_DESC, $data10);
+        }
+        $result = array(
+            'data' => $data10,
+            'message' => 'as@lancelot',
+        );
+        return $this->respond($result);
+    }
+
+    public function getPelayananResepRl(Request $request){
+        $kdProfile = (int) $this->getDataKdProfile($request);
+        $KdJenisLapFarmasi = (int) $this->settingDataFixed('KdJenisLapFarmasi', $kdProfile);
+        //        $dataLogin = $request->all();
+        //
+        //        $data = \DB::table('pasiendaftar_t as pd')
+        //            ->join('antrianpasiendiperiksa_t as apd','apd.noregistrasifk','=','pd.norec')
+        //            ->leftJoin('pelayananpasien_t as pp','pp.noregistrasifk','=','apd.norec')
+        //            ->join('ruangan_m as ru','ru.id','=','apd.objectruanganfk')
+        //            ->join('departemen_m as dpm','dpm.id','=','ru.objectdepartemenfk')
+        //            ->join('produk_m as prd','prd.id','=','pp.produkfk')
+        //            ->select('prd.namaproduk','apd.objectruanganfk','ru.namaruangan','ru.objectdepartemenfk',
+        //                'prd.id as idproduk', 'prd.objectdetailjenisprodukfk',
+        //
+        //                DB::raw('(case when ru.objectdepartemenfk in (16, 17, 35, 26) then \'Rawat Inap\'
+        //                        when ru.objectdepartemenfk in (18, 27, 3, 28) then \'Rawat Jalan\'
+        //                        when prd.id = 24 then \'IGD\'
+        //                        else null end) as deptpelayanan,
+        //                        (case when prd.objectstatusprodukfk = 1 and prd.isgeneric =\'f\' THEN \'Obat Non Generik Non Formularium\'
+        //                        when prd.objectstatusprodukfk = 2 and prd.isgeneric =\'f\' THEN \'Obat Non Generik Formularium\'
+        //                        else \'Obat Generik(Formularium + Non Formularium)\' end) as detailobat'
+        //                )
+        //            )
+        //
+        //            ->where('prd.objectdetailjenisprodukfk', 474);
+        //
+        ////        if (isset($request['tglAwal']) && $request['tglAwal'] != "" && $request['tglAwal'] != "undefined") {
+        ////            $data = $data->where('pd.tglregistrasi', '>=', $request['tglAwal']);
+        ////        }
+        ////        if (isset($request['tglAkhir']) && $request['tglAkhir'] != "" && $request['tglAkhir'] != "undefined") {
+        ////            $tgl = $request['tglAkhir'];
+        ////            $data = $data->where('pd.tglregistrasi', '<=', $tgl);
+        ////        }
+        //        $data = $data->get();
+        //
+        //        $data10 = [];
+        //        $jml = 0;
+        //        $sama = false;
+        //
+        //        $JmlRajal = 0;
+        //        $JmlRI = 0;
+        //        $JmlIGD = 0;
+        //
+        //        foreach ($data as $item) {
+        //            $sama = false;
+        //            $i = 0;
+        //            foreach ($data10 as $hideung) {
+        //                if ($item->detailobat == $data10[$i]['detailobat']) {
+        //                    $sama = true;
+        //                    $jml = (float)$hideung['jumlah'] + 1;
+        //                    $data10[$i]['jumlah'] = $jml;
+        //
+        //                    if ($item->deptpelayanan == 'Rawat Inap')
+        //                    {
+        //                        $data10[$i]['JmlRawatInap'] = (float)$hideung['JmlRawatInap'] + 1;
+        //                    }
+        //                    elseif ($item->deptpelayanan == 'Rawat Jalan')
+        //                    {
+        //                        $data10[$i]['Jmlrj'] = (float)$hideung['Jmlrj'] + 1;
+        //                    }
+        //                    elseif ($item->deptpelayanan == 'IGD')
+        //                    {
+        //                        $data10[$i]['JmlIGD'] = (float)$hideung['JmlIGD'] + 1;
+        //                    }
+        //                }
+        //                $i = $i + 1;
+        //            }
+        //
+        //            if ($sama == false) {
+        //
+        //                if ($item->deptpelayanan == 'Rawat Inap')
+        //                {
+        //                    $JmlRajal = 0;
+        //                    $JmlRI = 1;
+        //                    $JmlIGD = 0;
+        //                }
+        //                elseif ($item->deptpelayanan == 'Rawat Jalan')
+        //                {
+        //                    $JmlRajal = 1;
+        //                    $JmlRI = 0;
+        //                    $JmlIGD = 0;
+        //                }
+        //                elseif ($item->deptpelayanan == 'IGD')
+        //                {
+        //                    $JmlRajal = 0;
+        //                    $JmlRI = 0;
+        //                    $JmlIGD = 1;
+        //                }
+        //                $data10[] = array(
+        //                    'detailobat' => $item->detailobat,
+        //                    'JmlRawatInap' => $JmlRI,
+        //                    'Jmlrj' => $JmlRajal,
+        //                    'JmlIGD' => $JmlIGD,
+        //                    'jumlah' => 1,
+        //                );
+        //            }
+        //
+        //            foreach ($data10 as $key => $row) {
+        //                $count[$key] = $row['jumlah'];
+        //            }
+        //
+        //            array_multisort($count, SORT_DESC, $data10);
+        //        }
+        //
+        //        $result = array(
+        //            'data' => $data10,
+        //            'message' => 'as@cepot',
+        //        );
+        //        return $this->respond($result);
+
+        //#WITH MAPPING
+        $data = \DB::table('pasiendaftar_t as pd')
+            ->join('antrianpasiendiperiksa_t as apd','apd.noregistrasifk','=','pd.norec')
+            ->leftJoin('pelayananpasien_t as pp','pp.noregistrasifk','=','apd.norec')
+            ->join('mapproduktolaporanrl_m as mprl','mprl.produkfk','=','pp.produkfk')
+            ->join('jenislaporan_m as jl','jl.id','=','mprl.objectjenislaporanfk')
+            ->join('kelompoklaporan_m as kl','kl.id','=','mprl.objectkontenlaporanfk')
+            ->join('ruangan_m as ru','ru.id','=','apd.objectruanganfk')
+            ->join('departemen_m as dpm','dpm.id','=','ru.objectdepartemenfk')
+            ->join('produk_m as prd','prd.id','=','pp.produkfk')
+            ->select('prd.namaproduk','apd.objectruanganfk','ru.namaruangan','kl.kelompoklaporan as detailobat',
+                'pp.tglpelayanan',
+                DB::raw('(case when ru.objectdepartemenfk in (16, 17, 35, 26) then \'Rawat Inap\'
+                        when ru.objectdepartemenfk in (18, 27, 3, 28) then \'Rawat Jalan\'
+                        when ru.objectdepartemenfk = 24 then \'IGD\'
+                        else null end) as deptpelayanan'
+                )
+            )
+            ->where('pd.kdprofile', $kdProfile)
+            ->where('jl.id', $KdJenisLapFarmasi);
+
+        if (isset($request['tglAwal']) && $request['tglAwal'] != "" && $request['tglAwal'] != "undefined") {
+            $data = $data->where('pp.tglpelayanan', '>=', $request['tglAwal']);
+        }
+        if (isset($request['tglAkhir']) && $request['tglAkhir'] != "" && $request['tglAkhir'] != "undefined") {
+            $tgl = $request['tglAkhir'];
+            $data = $data->where('pp.tglpelayanan', '<=', $tgl);
+        }
+        $data = $data->get();
+
+        $data10 = [];
+        $jml = 0;
+        $sama = false;
+
+        $JmlRajal = 0;
+        $JmlRI = 0;
+        $JmlIGD = 0;
+
+        foreach ($data as $item) {
+            $sama = false;
+            $i = 0;
+            foreach ($data10 as $hideung) {
+                if ($item->detailobat == $data10[$i]['detailobat']) {
+                    $sama = true;
+                    $jml = (float)$hideung['jumlah'] + 1;
+                    $data10[$i]['jumlah'] = $jml;
+
+                    if ($item->deptpelayanan == 'Rawat Inap')
+                    {
+                        $data10[$i]['JmlRawatInap'] = (float)$hideung['JmlRawatInap'] + 1;
+                    }
+                    elseif ($item->deptpelayanan == 'Rawat Jalan')
+                    {
+                        $data10[$i]['Jmlrj'] = (float)$hideung['Jmlrj'] + 1;
+                    }
+                    elseif ($item->deptpelayanan == 'IGD')
+                    {
+                        $data10[$i]['JmlIGD'] = (float)$hideung['JmlIGD'] + 1;
+                    }
+                }
+                $i = $i + 1;
+            }
+
+            if ($sama == false) {
+
+                if ($item->deptpelayanan == 'Rawat Inap')
+                {
+                    $JmlRajal = 0;
+                    $JmlRI = 1;
+                    $JmlIGD = 0;
+                }
+                elseif ($item->deptpelayanan == 'Rawat Jalan')
+                {
+                    $JmlRajal = 1;
+                    $JmlRI = 0;
+                    $JmlIGD = 0;
+                }
+                elseif ($item->deptpelayanan == 'IGD')
+                {
+                    $JmlRajal = 0;
+                    $JmlRI = 0;
+                    $JmlIGD = 1;
+                }
+                $data10[] = array(
+                    'detailobat' => $item->detailobat,
+        //                    'namaruangan' => $item->namaruangan,
+        //                    'namaproduk' => $item->namaproduk,
+        //                    'tglpelayanan' => $item->tglpelayanan,
+                    'JmlRawatInap' => $JmlRI,
+                    'Jmlrj' => $JmlRajal,
+                    'JmlIGD' => $JmlIGD,
+                    'jumlah' => 1,
+                );
+            }
+
+            foreach ($data10 as $key => $row) {
+                $count[$key] = $row['jumlah'];
+            }
+
+            array_multisort($count, SORT_DESC, $data10);
+        }
+
+        $result = array(
+            'data' => $data10,
+            'message' => 'as@lancelot',
+        );
+        return $this->respond($result);
+    }
 }

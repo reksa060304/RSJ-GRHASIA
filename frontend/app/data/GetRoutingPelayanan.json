@@ -20885,6 +20885,26 @@
         "define": "MedifirstService"
       }
     ]
+  },
+  {
+    "name": "RL317Farmasi",
+    "url": "/RL317Farmasi",
+    "templateurl": "module/Registrasi/Laporan/LaporanRekamMedis/RL317Farmasi.html",
+    "controller": "RL317FarmasiCtrl",
+    "deps": [
+      {
+        "module": "Services",
+        "define": "Service"
+      },
+      {
+        "module": "LoginServices",
+        "define": "LoginService"
+      },
+      {
+        "module": "MedifirstService",
+        "define": "MedifirstService"
+      }
+    ]
   }
 ]
 

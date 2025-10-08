@@ -3776,6 +3776,10 @@
         {
             "nameDep": "RL39RadiologiCtrl",
             "urlDep": "module/Registrasi/Laporan/LaporanRekamMedis/RL39RadiologiCtrl"
+        },
+        {
+            "nameDep": "RL317FarmasiCtrl",
+            "urlDep": "module/Registrasi/Laporan/LaporanRekamMedis/RL317FarmasiCtrl"
         }
     ]
 }
