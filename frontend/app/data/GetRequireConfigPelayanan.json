@@ -3764,6 +3764,10 @@
         {
             "nameDep": "RL31IndikatorPelayananRsCtrl",
             "urlDep": "module/Registrasi/Laporan/LaporanRekamMedis/RL31IndikatorPelayananRsCtrl"
+        },
+        {
+            "nameDep": "RL32KegiatanRawatInapCtrl",
+            "urlDep": "module/Registrasi/Laporan/LaporanRekamMedis/RL32KegiatanRawatInapCtrl"
         }
     ]
 }

@@ -20825,6 +20825,26 @@
         "define": "MedifirstService"
       }
     ]
+  },
+  {
+    "name": "RL32KegiatanRawatInap",
+    "url": "/RL32KegiatanRawatInap",
+    "templateurl": "module/Registrasi/Laporan/LaporanRekamMedis/RL32KegiatanRawatInap.html",
+    "controller": "RL32KegiatanRawatInapCtrl",
+    "deps": [
+      {
+        "module": "Services",
+        "define": "Service"
+      },
+      {
+        "module": "LoginServices",
+        "define": "LoginService"
+      },
+      {
+        "module": "MedifirstService",
+        "define": "MedifirstService"
+      }
+    ]
   }
 ]
 
