@@ -9113,4 +9113,138 @@ class LaporanRekamMedisController extends   ApiController
 
         return $this->respond($result);
     }
+
+    public function getRL310Rujukan(Request $request){
+        $kdProfile = (int) $this->getDataKdProfile($request);
+        $KdJenisLapRujukan = (int) $this->settingDataFixed('KdJenisLapRujukan', $kdProfile);
+        $data = \DB::table('antrianpasiendiperiksa_t as app')
+            ->join('pasiendaftar_t as pd', 'pd.norec', '=', 'app.noregistrasifk')
+            ->join('pelayananpasien_t as pp', 'pp.noregistrasifk', '=', 'app.norec')
+            ->join('produk_m as pr', 'pr.id', '=', 'pp.produkfk')
+            ->join('mapproduktolaporanrl_m as mprl', 'mprl.produkfk', '=', 'pp.produkfk')
+            ->join('jenislaporan_m as jl', 'jl.id', '=', 'mprl.objectjenislaporanfk')
+            ->join('kelompoklaporan_m as kl', 'kl.id', '=', 'mprl.objectkontenlaporanfk')
+            ->join('asalrujukan_m as ar', 'ar.id', '=', 'app.objectasalrujukanfk')
+            ->join('pasien_m as pm', 'pm.id', '=', 'pd.nocmfk')
+            ->join('ruangan_m as ru', 'ru.id', '=', 'pd.objectruanganlastfk')
+            ->join('departemen_m as dpm', 'dpm.id', '=', 'ru.objectdepartemenfk')
+            ->join('pegawai_m as pg', 'pg.id', '=', 'pd.objectpegawaifk')
+            ->join('jeniskelamin_m as jk', 'jk.id', '=', 'pm.objectjeniskelaminfk')
+            ->leftJoin('statuspulang_m as splng', 'splng.id', '=', 'pd.objectstatuspulangfk')
+            ->leftJoin('statuskeluar_m as sklr', 'sklr.id', '=', 'pd.objectstatuskeluarfk')
+            ->select(
+                'pd.tglregistrasi', 'pm.nocm', 'pd.noregistrasi', 'pm.namapasien',
+                'ar.asalrujukan', 'ru.namaruangan', 'dpm.namadepartemen', 'pg.namalengkap',
+                'splng.statuspulang', 'sklr.statuskeluar', 'kl.kelompoklaporan as jenis_spesialisasi', 'app.objectasalrujukanfk', 'pd.objectstatuspulangfk'
+            )
+            ->where('app.kdprofile', $kdProfile)
+            ->where('jl.id', $KdJenisLapRujukan);
+        
+        if (!empty($request['tglAwal'])) {
+            $data = $data->where('pd.tglregistrasi', '>=', $request['tglAwal']);
+        }
+        if (!empty($request['tglAkhir'])) {
+            $data = $data->where('pd.tglregistrasi', '<=', $request['tglAkhir']);
+        }
+        
+        $data = $data->get();
+        $dataSummary = [];
+        
+        foreach ($data as $item) {
+            $jenis = $item->jenis_spesialisasi;
+            if (!isset($dataSummary[$jenis])) {
+                $dataSummary[$jenis] = [
+                    'jenis_spesialisasi' => $jenis,
+                    'jumlah' => 0,
+                    'dtgsendiri' => 0,
+                    'puskesmas' => 0,
+                    'hospital' => 0,
+                    'klinik' => 0,
+                    'PasienRujukan' => 0,
+                    'DTrmaKembali' => 0,
+                    'DKembalikanKRs' => 0,
+                    'DKembalikanKPuskes' => 0,
+                    'DKembalikanKKlinik' => 0,
+                    'Total_masuk' => 0,
+                    'Total_dkmbalikn' => 0,
+                    'Total_drujuk' => 0
+                ];
+            }
+        
+            $dataSummary[$jenis]['jumlah']++;
+            switch ($item->objectasalrujukanfk) {
+                case 5: $dataSummary[$jenis]['dtgsendiri']++; break;
+                case 1: $dataSummary[$jenis]['puskesmas']++; break;
+                case 2: $dataSummary[$jenis]['hospital']++; break;
+                case 3: $dataSummary[$jenis]['klinik']++; break;
+                case 4: $dataSummary[$jenis]['PasienRujukan']++; break;
+                case 6: $dataSummary[$jenis]['DTrmaKembali']++; break;
+            }
+        
+            switch ($item->objectstatuspulangfk) {
+                case 5: $dataSummary[$jenis]['DKembalikanKRs']++; break;
+                case 10: $dataSummary[$jenis]['DKembalikanKPuskes']++; break;
+                case 11: $dataSummary[$jenis]['DKembalikanKKlinik']++; break;
+            }
+        
+            if (in_array($item->objectasalrujukanfk, [1, 2, 3])) {
+                $dataSummary[$jenis]['Total_masuk']++;
+            }
+            if (in_array($item->objectstatuspulangfk, [5, 10, 11])) {
+                $dataSummary[$jenis]['Total_dkmbalikn']++;
+            }
+            if (in_array($item->objectasalrujukanfk, [5, 4])) {
+                $dataSummary[$jenis]['Total_drujuk']++;
+            }
+        }
+        
+        $data = array_values($dataSummary);
+
+        $result = array(
+            'data' => $data,
+            'message' => 'maman',
+        );
+        return $this->respond($result);
+    }
+
+    public function getLaporanRL39Rad(Request $request){
+        $idProfile = (int) $this->getDataKdProfile($request);
+        $dataLogin = $request->all();
+        $KdJenisLapRadiologi = (int) $this->settingDataFixed('KdJenisLapRadiologi', $idProfile);
+
+        //////With Mapping****
+        $data = \DB::table('antrianpasiendiperiksa_t as apd')
+            ->join('ruangan_m as ru', 'ru.id', '=', 'apd.objectruanganfk')
+            ->join('departemen_m as dpm', 'dpm.id', '=', 'ru.objectdepartemenfk')
+            ->join('pelayananpasien_t as pp', 'pp.noregistrasifk', '=', 'apd.norec')
+            ->join('produk_m as pr', 'pr.id', '=', 'pp.produkfk')
+            ->join('mapproduktolaporanrl_m as mpptrl','mpptrl.produkfk','=','pr.id')
+            ->join('kelompoklaporan_m as kl','kl.id','=','mpptrl.objectkontenlaporanfk')
+            ->join('jenislaporan_m as jl','jl.id','=','mpptrl.objectjenislaporanfk')
+            ->select('jl.jenislaporan','kl.kelompoklaporan',
+                (DB::raw('COUNT(mpptrl.objectkontenlaporanfk) as jumlah')
+                )
+            )
+            ->where('apd.kdprofile', $idProfile)
+            ->where('jl.id',$KdJenisLapRadiologi)
+            ->groupBy('mpptrl.objectkontenlaporanfk','jl.jenislaporan','kl.kelompoklaporan');
+
+        if (isset($request['tglAwal']) && $request['tglAwal'] != "" && $request['tglAwal'] != "undefined") {
+            $data = $data->where('pp.tglpelayanan', '>=', $request['tglAwal']);
+        }
+        if (isset($request['tglAkhir']) && $request['tglAkhir'] != "" && $request['tglAkhir'] != "undefined") {
+            $tgl = $request['tglAkhir'];
+            $data = $data->where('pp.tglpelayanan', '<=', $tgl);
+        }
+
+        $data = $data->get();
+        $result = array(
+        //  'data' => $data10,
+            'data' => $data,
+            'message' => 'er@epic',
+
+        );
+
+        return $this->respond($result);
+    }
 }

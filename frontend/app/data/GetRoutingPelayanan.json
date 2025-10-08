@@ -20845,6 +20845,46 @@
         "define": "MedifirstService"
       }
     ]
+  },
+  {
+    "name": "RL310Rujukan",
+    "url": "/RL310Rujukan",
+    "templateurl": "module/Registrasi/Laporan/LaporanRekamMedis/RL310Rujukan.html",
+    "controller": "RL310RujukanCtrl",
+    "deps": [
+      {
+        "module": "Services",
+        "define": "Service"
+      },
+      {
+        "module": "LoginServices",
+        "define": "LoginService"
+      },
+      {
+        "module": "MedifirstService",
+        "define": "MedifirstService"
+      }
+    ]
+  },
+  {
+    "name": "RL39Radiologi",
+    "url": "/RL39Radiologi",
+    "templateurl": "module/Registrasi/Laporan/LaporanRekamMedis/RL39Radiologi.html",
+    "controller": "RL39RadiologiCtrl",
+    "deps": [
+      {
+        "module": "Services",
+        "define": "Service"
+      },
+      {
+        "module": "LoginServices",
+        "define": "LoginService"
+      },
+      {
+        "module": "MedifirstService",
+        "define": "MedifirstService"
+      }
+    ]
   }
 ]
 

@@ -3768,6 +3768,14 @@
         {
             "nameDep": "RL32KegiatanRawatInapCtrl",
             "urlDep": "module/Registrasi/Laporan/LaporanRekamMedis/RL32KegiatanRawatInapCtrl"
+        },
+        {
+            "nameDep": "RL310RujukanCtrl",
+            "urlDep": "module/Registrasi/Laporan/LaporanRekamMedis/RL310RujukanCtrl"
+        },
+        {
+            "nameDep": "RL39RadiologiCtrl",
+            "urlDep": "module/Registrasi/Laporan/LaporanRekamMedis/RL39RadiologiCtrl"
         }
     ]
 }
