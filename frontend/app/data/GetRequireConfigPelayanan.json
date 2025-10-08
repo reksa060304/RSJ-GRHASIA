@@ -3760,6 +3760,10 @@
         {
             "nameDep": "LapKegiatanAmbulanTelemedicineCtrl",
             "urlDep": "module/Ambulance/LapKegiatanAmbulanTelemedicineCtrl"
+        },
+        {
+            "nameDep": "RL31IndikatorPelayananRsCtrl",
+            "urlDep": "module/Registrasi/Laporan/LaporanRekamMedis/RL31IndikatorPelayananRsCtrl"
         }
     ]
 }
