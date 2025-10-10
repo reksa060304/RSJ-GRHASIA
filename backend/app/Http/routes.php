@@ -2593,6 +2593,9 @@ Route::group(['middleware' => 'cors', 'prefix' => 'service'], function () {
               Route::get('registrasi/laporan/get-laporan-rl310-v3', 'Registrasi\LaporanRekamMedisController@getRL310Rujukan');
               Route::get('registrasi/laporan/get-laporan-rl39-v3', 'Registrasi\LaporanRekamMedisController@getLaporanRL39Rad');
               
+              Route::get('registrasi/laporan/get-laporan-rl311-v3', 'Registrasi\LaporanRekamMedisController@getKegiatanKesehatanGigidanMulutRl');
+              Route::get('registrasi/laporan/get-laporan-rl312-v3', 'Registrasi\LaporanRekamMedisController@getLaporanRL312Pembedahan');
+
               Route::get('registrasi/laporan/get-laporan-rl317-v3', 'Registrasi\LaporanRekamMedisController@getPengadaanObatRl');
               Route::get('registrasi/laporan/get-laporan-rl318-v3', 'Registrasi\LaporanRekamMedisController@getPelayananResepRl');
 

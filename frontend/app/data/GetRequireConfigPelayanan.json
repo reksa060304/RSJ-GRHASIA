@@ -3780,6 +3780,22 @@
         {
             "nameDep": "RL317FarmasiCtrl",
             "urlDep": "module/Registrasi/Laporan/LaporanRekamMedis/RL317FarmasiCtrl"
+        },
+        {
+            "nameDep": "BridgingInaCbgIDRGCtrl",
+            "urlDep": "module/Bridging/BridgingInaCbgIDRGCtrl"
+        },
+        {
+            "nameDep": "RiwayatRegistrasiKodingIDRGCtrl",
+            "urlDep": "module/Registrasi/RiwayatRegistrasiKodingIDRGCtrl"
+        },
+        {
+            "nameDep": "RL311GigiDanMulutCtrl",
+            "urlDep": "module/Registrasi/Laporan/LaporanRekamMedis/RL311GigiDanMulutCtrl"
+        },
+        {
+            "nameDep": "RL312PembedahanCtrl",
+            "urlDep": "module/Registrasi/Laporan/LaporanRekamMedis/RL312PembedahanCtrl"
         }
     ]
 }
