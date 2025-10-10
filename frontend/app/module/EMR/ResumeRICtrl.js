@@ -90,7 +90,8 @@ define(['initialize', 'Configuration'], function (initialize, config) {
                 scrollable: true,
                 columns: [
                     { field: "no", title: "No", width: 40 },
-                    { field: "tglresume", title: "Tgl Resume", width: 150 },
+                    // { field: "tglresume", title: "Tgl Resume", width: 150 },
+                    { field: "tglpulang", title: "Tgl Pulang", width: 150 },
                     { field: "koderesume", title: "Kode Resume", width: 150 },
                     { field: "noregistrasi", title: "No Registrasi", width: 150 },
                     { field: "namaruangan", title: "Ruangan", width: 150 },
