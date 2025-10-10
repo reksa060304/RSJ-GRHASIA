@@ -364,7 +364,7 @@
                 <td width="33%" style="text-align: center"></td>
                 <td width="33%"></td>
                 <td width="33%">
-                    <b>Yogyakarta, {{date('d-m-Y H:i:s')}}</b>
+                    <b>Yogyakarta, {{date('d-m-Y')}}</b>
                 </td>
             </tr>
             <tr>
