@@ -22937,7 +22937,13 @@ public function suratBuktiPengembalian(Request $request)
     }
     public function cetakResumeV3(Request $r)
     {
-          $res['profile'] = Profile::where('id',$r['kdprofile'])->first();
+         \DB::table('resumemedis_t')
+                ->where('kdprofile', $r['kdprofile'])
+                ->where('statusenabled', true)
+                ->where('norec', $r['norec'])
+                ->update(['tglresume' => date('Y-m-d H:i:s'), 'tglpulang' => date('Y-m-d H:i:s')]);
+
+            $res['profile'] = Profile::where('id',$r['kdprofile'])->first();
             $data = \DB::table('resumemedis_t as rm')
             ->select('rm.norec', 'rm.tglresume', 'ru.namaruangan', 'pg.namalengkap as namadokter','rm.indikasi','rm.lainlain',
                 'rm.ringkasanriwayatpenyakit', 'rm.pemeriksaanfisik', 'rm.pemeriksaanpenunjang','rm.riwayatlalu',
@@ -23148,6 +23154,13 @@ public function suratBuktiPengembalian(Request $request)
             }
           
             return $bsre;
+         //     // GANTI BAGIAN INI: Mengembalikan JSON dengan flag reload
+        //     return response()->json([
+        //     'status' => $bsre['status'],
+        //     'message' => 'Proses TTE berhasil diajukan. Halaman akan dimuat ulang.',
+        //     'data' => $bsre,
+        //     'reload' => true // Tambahkan flag untuk memicu reload
+        // ]);
         }
 
         return $pdf->stream();
