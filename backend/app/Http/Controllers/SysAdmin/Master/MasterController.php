@@ -65,7 +65,7 @@ class MasterController extends ApiController{
         $filter = $request->all();
         //get data
         $data = \DB::table('produk_m as p')
-            ->select('p.id','p.kdproduk','p.kdbarcode','p.deskripsiproduk','p.namaproduk','dj.detailjenisproduk','p.statusenabled')
+            ->select('p.id','p.kdproduk','p.kdbarcode','p.deskripsiproduk','p.namaproduk','dj.detailjenisproduk','p.statusenabled','p.status_retriksi')
             ->leftJoin('rm_sediaan_m as rm','rm.id','=','p.objectsediaanfk')
             ->leftJoin('merkproduk_m as mp','mp.id','=','objectmerkprodukfk')
             ->leftJoin('rekanan_m as rk','rk.id','=','p.objectrekananfk')
@@ -143,6 +143,41 @@ class MasterController extends ApiController{
                     ->where('kdprofile',$kdProfile)
                     ->update([
                         'statusenabled' => $request['status'],
+                ]);
+
+            $transStatus = 'true';
+        }catch (\Exception $e) {
+            $transStatus = 'false';
+        }
+
+        if ($transStatus == 'true') {
+            $transMessage = "Simpan Berhasil";
+            DB::commit();
+            $result = array(
+                "status" => 201,
+                "message" => $transMessage,
+                "as" => 'ea@epic',
+            );
+        } else {
+            $transMessage = "Simpan Gagal";
+            DB::rollBack();
+            $result = array(
+                "status" => 400,
+                "message"  => $transMessage,
+                "as" => 'ea@epic',
+            );
+        }
+        return $this->setStatusCode($result['status'])->respond($result, $transMessage);
+    }
+    public function UpdateStatusRetriksiProduk(Request $request){
+        $kdProfile = (int) $this->getDataKdProfile($request);
+        DB::beginTransaction();
+        $data=$request['data'];
+        try {
+                $dataOP = Produk::where('id', $request['id'])
+                    ->where('kdprofile',$kdProfile)
+                    ->update([
+                        'status_retriksi' => $request['status'],
                 ]);
 
             $transStatus = 'true';

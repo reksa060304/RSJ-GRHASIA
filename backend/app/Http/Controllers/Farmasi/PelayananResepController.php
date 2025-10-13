@@ -949,7 +949,7 @@ class PelayananResepController extends ApiController
             ->LeftJOIN('satuanresep_m as sn','sn.id','=','pp.satuanresepfk')
             ->select('pp.norec as norecpp','pr.kekuatan','sr.noresep','pp.hargasatuan', 'pp.stock','pp.stock as jmlstok','apd.objectruanganfk','ru.namaruangan',
                 'pp.rke','pp.jeniskemasanfk','jk.id as jkid','jk.jeniskemasan','pp.aturanpakai','pp.routefk','rt.name as namaroute',
-                'pp.produkfk','pr.namaproduk','pp.nilaikonversi',
+                'pp.produkfk','pr.namaproduk','pr.status_retriksi','pp.nilaikonversi',
                 'pr.objectsatuanstandarfk','ss.satuanstandar','pp.satuanviewfk','ss2.satuanstandar as ssview',
                 'pp.jumlah','pp.hargadiscount','pp.dosis','pp.jenisobatfk','pp.jasa','pp.hargajual','pp.hargasatuan','pp.strukterimafk',
                 'pp.qtydetailresep','pp.ispagi','pp.issiang','pp.ismalam','pp.issore','pr.kekuatan','pp.keteranganpakai','pp.iskronis',
@@ -1084,6 +1084,7 @@ class PelayananResepController extends ApiController
                 'kekuatan' => $item->kekuatan,
                 'norecpp' => $item->norecpp,
                 'catatandokter' => $item->catatandokter,
+                'statusretriksi' => $item->status_retriksi,
             );
         }
 
@@ -1127,7 +1128,7 @@ class PelayananResepController extends ApiController
             ->leftJOIN('jenisracikan_m as jr','jr.id','=','op.jenisobatfk')
             ->select('op.satuandosis','jr.id as ssid', 'so.noorder','op.hargasatuan','op.qtystokcurrent','so.objectruangantujuanfk','ru.namaruangan',
                 'op.rke','op.jeniskemasanfk','jk.id as jkid','jk.jeniskemasan','op.aturanpakai','op.routefk','rt.name as namaroute',
-                'op.objectprodukfk','pr.namaproduk','op.hasilkonversi',
+                'op.objectprodukfk','pr.namaproduk','pr.status_retriksi','op.hasilkonversi',
                 'op.objectsatuanstandarfk','jr.jenisracikan as satuanstandar','op.satuanviewfk','ss2.satuanstandar as ssview',
                 'op.qtyproduk','op.hargadiscount','op.hasilkonversi','op.qtystokcurrent','op.dosis','op.jenisobatfk',
                 'op.hargasatuan','op.hargadiscount','pr.kekuatan','sdn.name as sediaan','op.ispagi','op.issiang','op.ismalam',
@@ -1311,6 +1312,7 @@ class PelayananResepController extends ApiController
                 "tglkadaluarsa"=>$item->tglkadaluarsa,
                 "isreseppulang" => $item->isreseppulang,
                 "satuandosis" => $item->satuandosis,
+                'statusretriksi' => $item->status_retriksi,
             );
         }
 

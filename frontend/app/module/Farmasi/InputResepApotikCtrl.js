@@ -1951,13 +1951,16 @@ Which will check for empty strings (""), null, undefined, false and the numbers 
                         });
                         row.removeClass('normal-row');
                         
-                        const colorClass = getRacikanColorClass(dataItem.rke, dataItem.jeniskemasan);
+                        const colorClass = getRacikanColorClass(dataItem.rke, dataItem.jeniskemasan, dataItem.statusretriksi);
                         row.addClass(colorClass);
                     }
                 });
             };
 
-            function getRacikanColorClass(rke, jeniskemasan) {
+            function getRacikanColorClass(rke, jeniskemasan, statusretriksi) {
+                if (statusretriksi) {
+                    return `status-retriksi`;
+                }
                 if (!jeniskemasan || jeniskemasan.toLowerCase() !== 'racikan') {
                     return 'normal-row';
                 }
@@ -1966,6 +1969,8 @@ Which will check for empty strings (""), null, undefined, false and the numbers 
                 const colorIndex = ((rkeNumber - 1) % 10) + 1;
                 
                 return `racikan-rke-${colorIndex}`;
+                
+                
             }
 
             $scope.columnGrid = [
