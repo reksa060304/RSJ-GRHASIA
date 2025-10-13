@@ -121,6 +121,7 @@ define(['initialize', 'Configuration'], function (initialize, config) {
                         if (dat.data.data.length > 0) {
                             $scope.item.tgllahir = dat.data.data[0].tgllahir
                             $scope.item.objectjeniskelaminfk = dat.data.data[0].objectjeniskelaminfk
+                            $scope.listNoorder = dat.data.noorderList
                         }
                         for (var i = 0; i < dat.data.data.length; i++) {
                             dat.data.data[i].no = i + 1
@@ -194,6 +195,81 @@ define(['initialize', 'Configuration'], function (initialize, config) {
 
 
             }
+
+            $scope.onSelectNoOrder = function (e) {
+                if (e.item) {
+                    var dataItem = e.sender.dataItem(e.item.index());
+                    $scope.item.noOrder = dataItem;
+                }
+
+                var value = e.sender.value();
+                if (!value && !e.item) {
+                    $scope.item.noOrder = null;
+                }
+
+                var strNoorderFilter = '';
+                if ($scope.item.noOrder) {
+                    strNoorderFilter = '&noorder=' + $scope.item.noOrder;
+                }
+                
+                $scope.isLoading = true;
+                medifirstService.get(`radiologi/get-rincian-pelayanan?noregistrasifk=${norec_apd}${strNoorderFilter}`, true).then(function (dat) {
+                    if (dat.data.data.length > 0) {
+                        $scope.item.tgllahir = dat.data.data[0].tgllahir
+                        $scope.item.objectjeniskelaminfk = dat.data.data[0].objectjeniskelaminfk
+                    }
+                    for (var i = 0; i < dat.data.data.length; i++) {
+                        dat.data.data[i].no = i + 1
+                        dat.data.data[i].statCheckbox = false;
+                        dat.data.data[i].noverifbayar =
+                            (dat.data.data[i].nostruk != null ? dat.data.data[i].nostruk : '') + ' / ' +
+                            (dat.data.data[i].nosbm != null ? dat.data.data[i].nosbm : '');
+                        if (dat.data.data[i].statusbridging == "Sudah Dikirim") {
+                            dat.data.data[i].statusbridging = "✔";
+                        } else {
+                            dat.data.data[i].statusbridging = "✘";
+                        }
+                        if (dat.data.data[i].iscito == "1") {
+                            dat.data.data[i].statuscito = "✔";
+                        } else {
+                            dat.data.data[i].statuscito = "✘";
+                        }
+                        if (dat.data.data[i].hr_norec != undefined && dat.data.data[i].hr_norec != '') {
+                            dat.data.data[i].expertise = "✔";
+                        } else {
+                            dat.data.data[i].expertise = "✘";
+                        }
+                    }
+                    if (dat.data.data.length > 0) {
+                        if (dat.data.data[0].objectdepartemenfk == 3)
+                            $scope.disableRad = true
+                        if (dat.data.data[0].objectdepartemenfk == 27)
+                            $scope.disableLab = true
+                    }
+                    $scope.isLoading = false;
+
+                    $scope.dataGrid = {
+                        data: dat.data.data,
+                        _data: dat.data.data,
+                        selectable: true,
+                        refresh: true,
+                        total: dat.data.data.length,
+                        serverPaging: false,
+                        aggregate: [
+                            { field: 'total', aggregate: 'sum' },
+                        ]
+                    };
+
+                    if (dat.data.data[0].objectdepartemenfk == 27) {
+                        $scope.showRadiologi = true;
+                    }
+                    norec_pp = dat.data.data[0].norec_pp
+                    no_cm = dat.data.data[0].nocm
+                }, function (error) {
+                    $scope.isLoading = false;
+                });
+            }
+  
 
             $scope.formatTanggal = function (tanggal) {
                 return moment(tanggal).format('DD-MMM-YYYY');

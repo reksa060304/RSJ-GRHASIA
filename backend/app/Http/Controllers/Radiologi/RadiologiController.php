@@ -269,8 +269,19 @@ class RadiologiController extends ApiController
             if (isset($request['noregistrasi']) && $request['noregistrasi'] != "" && $request['noregistrasi'] != "undefined") {
                 $pelayanan = $pelayanan->where('pd.noregistrasi', '=', $request['noregistrasi']);
             }
+            if (isset($request['noorder']) && $request['noorder'] != "" && $request['noorder'] != "undefined") {
+                $pelayanan = $pelayanan->where('so.noorder', '=', $request['noorder']);
+            }
             $pelayanan = $pelayanan->get();
+           
+            $noorderList = [];
             if (count($pelayanan) > 0) {
+                $noorderList = collect($pelayanan)
+                    ->pluck('noorder')   
+                    ->filter()           
+                    ->unique()           
+                    ->values()           
+                    ->toArray();
                 $pelayananpetugas = \DB::table('pasiendaftar_t as pd')
                     ->join('antrianpasiendiperiksa_t as apd', 'apd.noregistrasifk', '=', 'pd.norec')
                     ->join('pelayananpasienpetugas_t as ptu', 'ptu.nomasukfk', '=', 'apd.norec')
@@ -354,6 +365,7 @@ class RadiologiController extends ApiController
         $dataTea =array(
             'data' => $result,
             'detaillogin' => $dataLogin,
+            'noorderList' => $noorderList,
             'message' => 'Inhuman'
         );
         return $this->respond($dataTea);
