@@ -4625,4 +4625,209 @@ class AnggaranController extends ApiController {
 
         return $this->respond($result);
     }
+    // Start Spj LS
+     public function getSPJLS(Request $request)
+    {
+
+        $kdProfile = $this->getDataKdProfile($request);
+        $idProfile = (int) $kdProfile;
+
+        $tglAwal = $request['tglAwal'];
+        $tglAkhir = $request['tglAkhir'];
+
+        $setting = \DB::table('settinganggaran_t as st')
+            ->join('pegawai_m as pg','pg.id','=','st.objectkepalabludfk')
+            ->join('tahapanggaran_m as ta','ta.id','=','st.objecttahapaktivfk')
+            ->select('st.*','pg.namalengkap', 'ta.tahap', 'ta.id as idtahap', 'pg.id as idpegawai')
+            ->where('st.kdprofile', $idProfile)
+            ->where('st.statusenabled', true)
+            ->orderBy('st.tahunanggaran')
+            ->get();
+
+
+        $pegawai = '';
+        if(isset($request['idpegawai']) && $request['idpegawai'] != "undefined" && $request['idpegawai'] != ''){
+            $pegawai = "and ta.objectpptkfk = ".$request['idpegawai'];
+        }
+
+        $status = '';
+        if(isset($request['status']) && $request['status'] != "undefined" && $request['status'] != '' && $request['status'] == 0){
+            $status = "";
+        } else if(isset($request['status']) && $request['status'] != "undefined" && $request['status'] != '' && $request['status'] == 1){
+            $status = "and (sr.status is null or sr.status = 'Belum Diverifikasi')";
+        } else if(isset($request['status']) && $request['status'] != "undefined" && $request['status'] != '' && $request['status'] == 2){
+            $status = "and sr.status = 'Revisi'";
+        } else if(isset($request['status']) && $request['status'] != "undefined" && $request['status'] != '' && $request['status'] == 3){
+            $status = "and sr.status = 'Sudah Diverifikasi'";
+        }
+
+        $subsubkegiatan = '';
+        if(isset($request['subsubkegiatan']) && $request['subsubkegiatan'] != "undefined" && $request['subsubkegiatan'] != ''){
+            $subsubkegiatan = "and ta.objectkegiatanfk = ".$request['subsubkegiatan'];
+        }
+
+        $mataanggaran = '';
+        if(isset($request['mataanggaran']) && $request['mataanggaran'] != "undefined" && $request['mataanggaran'] != ''){
+            $mataanggaran = "and sr.objectmataanggaranfk = ".$request['mataanggaran'];
+        }
+
+        $asalproduk = '';
+        if(isset($request['asalproduk']) && $request['asalproduk'] != "undefined" && $request['asalproduk'] != ''){
+            $asalproduk = "and sr.objectasalprodukfk = ".$request['asalproduk'];
+        }
+
+        $cari = "";
+        if(isset($request['cari']) && $request['cari'] != "undefined" && $request['cari'] != ''){
+            $cari = "and( 
+                rd.uraian ILIKE '%".$request['cari']."%' OR
+                CAST(sr.totalbelanja as VARCHAR) ILIKE '%".$request['cari']."%' OR
+                rkn.namarekanan ILIKE '%".$request['cari']."%'
+            )";
+        }
+
+        // jika ada filter tahun ambil dari filter atau dari settinganggaran
+        $tahunSPJ = "";
+        if(isset($request['tahun']) && $request['tahun'] != "undefined" && $request['tahun'] != ''){
+            $tahunSPJ = "and ta.tahun = '".$request['tahun']."'";
+        }else{
+            $tahunSPJ = "and ta.tahun = '".$setting[0]->tahunanggaran."'";
+        }
+
+        $data = DB::select(DB::raw("
+
+          SELECT
+            string_agg(DISTINCT rd.uraian, ',') AS uraian,
+            sr.*,
+            cbs.carabayar,
+            ta.tahun,
+            pg1.namalengkap AS bendahara,
+            pg2.namalengkap AS penerima,
+            rkn.namarekanan AS pihakketiga,
+            ka.kode || ' - ' || ka.keterangan AS kegiatan,
+            ma.kodemataanggaran || ' - ' || ma.namamataanggaran AS mataanggaran,
+            ma.kodemataanggaran,
+            ma.namamataanggaran,
+            ka.keterangan AS subsubkegiatan,
+            ka.id AS idsubsubkegiatan,
+            ka2.id AS idsubkegiatan,
+            ka2.keterangan AS keterangansubkegiatan,
+            ap.id AS idasalproduk,
+            ap.asalproduk,
+            bku.tglbku
+        FROM
+            strukrealisasi_t sr
+            INNER JOIN realisasidetail_t rd ON rd.strukrealisasifk = sr.norec
+                AND rd.statusenabled = TRUE
+                AND rd.kdprofile = ".$idProfile."
+            JOIN keteranganbelanja_t kb ON kb.norec = rd.keteranganbelanjafk
+                AND kb.statusenabled = TRUE
+                AND kb.kdprofile = ".$idProfile."
+            JOIN transaksianggaran2024_t ta ON ta.norec = kb.objecttransaksifk
+                AND ta.statusenabled = TRUE
+                AND ta.kdprofile = ".$idProfile."
+            JOIN kegiatananggaran2024_m ka ON ka.id = ta.objectkegiatanfk
+                AND ka.statusenabled = TRUE
+                AND ka.kdprofile = ".$idProfile."
+            JOIN kegiatananggaran2024_m ka2 ON ka2.id = ka.headfk
+                AND ka2.statusenabled = TRUE
+                AND ka2.kdprofile = ".$idProfile."
+            JOIN mataanggaran_m ma ON ma.id = sr.objectmataanggaranfk
+                AND ma.statusenabled = TRUE
+                AND ma.kdprofile = ".$idProfile."
+            LEFT JOIN bukukasumum_t bku ON bku.norec = sr.objectbkufk
+                AND bku.statusenabled = TRUE
+                AND bku.kdprofile = ".$idProfile."
+            -- FIXED: ubah LEFT JOIN jadi INNER JOIN supaya hanya ambil yang ada di sppspmspj_t
+            INNER JOIN sppspmspj_t sspj ON sspj.objectspjfk = sr.norec
+                AND sspj.statusenabled = TRUE
+                AND sspj.kdprofile = ".$idProfile."
+            JOIN asalproduk_m ap ON ap.id = sr.objectasalprodukfk
+            LEFT JOIN rekanan_m rkn ON rkn.id = sr.rekananfk
+            LEFT JOIN pegawai_m AS pg1 ON pg1.id = sr.bendaharafk
+            LEFT JOIN pegawai_m AS pg2 ON pg2.id = sr.penerimafk
+            LEFT JOIN carabayarspj_m cbs ON cbs.id = sr.objectcarabayarfk
+        WHERE 
+            sr.statusenabled = TRUE
+            AND sr.status = 'Sudah Diverifikasi'
+            AND sr.kdprofile = ".$idProfile."
+            $tahunSPJ
+            AND sr.tglrealisasi BETWEEN '$tglAwal' AND '$tglAkhir'
+            $pegawai
+            $status
+            $subsubkegiatan
+            $mataanggaran
+            $asalproduk
+            $cari
+        GROUP BY
+            sr.norec,
+            cbs.carabayar,
+            pg1.namalengkap,
+            pg2.namalengkap,
+            rkn.namarekanan,
+            ta.tahun,
+            ka.id,
+            ka2.id,
+            ka2.keterangan,
+            ma.id,
+            ap.id,
+            bku.tglbku
+        ORDER BY
+            sr.norealisasi DESC;
+        "));
+
+        $dataDetail = DB::select(DB::raw("
+            select 
+                rd.*,ka.keteranganbelanja,0 as nourut
+            from strukrealisasi_t sr
+            inner join realisasidetail_t rd on rd.strukrealisasifk = sr.norec
+            INNER JOIN keteranganbelanja_t ka on ka.norec=rd.keteranganbelanjafk
+            where  rd.statusenabled = true
+                and rd.kdprofile = 30
+                and ka.statusenabled = true
+                and ka.kdprofile = 30
+                and sr.tglrealisasi between  '$tglAwal' and '$tglAkhir'
+        "));
+
+        $result = [];
+        foreach($data as $item){
+            $dataDetail1 =[];
+            
+            foreach($dataDetail as $detail){
+                if($item->norec == $detail->strukrealisasifk){
+                    $dataDetail1[]=array(
+                        'norec'=> $detail->norec,
+                        'kdprofile'	=> $detail->kdprofile,
+                        'statusenabled'	=> $detail->statusenabled,
+                        'strukrealisasifk'	=> $detail->strukrealisasifk,
+                        'uraian'	=> $detail->uraian,
+                        'jml'	=> $detail->jml,
+                        'satuan'	=> $detail->satuan,
+                        'harga'	=> $detail->harga,
+                        'subtotal'	=> $detail->subtotal,
+                        'keteranganbelanjafk'	=> $detail->keteranganbelanjafk,
+                        'keteranganbelanja'	=> $detail->keteranganbelanja,
+                        'nourut'	=> $detail->nourut
+                    );
+                }
+
+            }
+
+            $result[] = array(
+                'strukrealisasifk' => $item->norec,
+                'data' => $dataDetail1,
+            );
+
+        }
+
+        $response = [
+            'data' => $data,
+            'detail' => $result,
+            'message' => '@epic',
+        ];
+
+        return $this->respond($response);
+    }
+    // End Spj LS
+
+    // batas
 }

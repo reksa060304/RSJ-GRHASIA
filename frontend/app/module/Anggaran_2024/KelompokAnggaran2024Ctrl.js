@@ -1928,7 +1928,7 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
                     norec: $scope.norecverif,
                     pph: $scope.item.pph != undefined ? $scope.item.pph : 0,
                     ppn: $scope.item.ppn != undefined ? $scope.item.ppn : 0,
-                    sppspm: $scope.item.buatSPPSPM
+                    sppspm: $scope.item.radioPencairanVerifikasi == '3' ? true : false
                 }
 
                 if($scope.item.radioPencairanVerifikasi == '2'){
