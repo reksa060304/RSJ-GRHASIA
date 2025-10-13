@@ -21507,6 +21507,46 @@
         "define": "MedifirstService"
       }
     ]
+  },
+  {
+    "name": "RL35_V3_Kunjungan",
+    "url": "/RL35_V3_Kunjungan",
+    "templateurl": "module/Registrasi/Laporan/LaporanRekamMedis/RL35_V3_Kunjungan.html",
+    "controller": "RL35_V3_KunjunganCtrl",
+    "deps": [
+      {
+        "module": "Services",
+        "define": "Service"
+      },
+      {
+        "module": "LoginServices",
+        "define": "LoginService"
+      },
+      {
+        "module": "MedifirstService",
+        "define": "MedifirstService"
+      }
+    ]
+  },
+  {
+    "name": "RL36_V3_Kebidanan",
+    "url": "/RL36_V3_Kebidanan",
+    "templateurl": "module/Registrasi/Laporan/LaporanRekamMedis/RL36_V3_Kebidanan.html",
+    "controller": "RL36_V3_KebidananCtrl",
+    "deps": [
+      {
+        "module": "Services",
+        "define": "Service"
+      },
+      {
+        "module": "LoginServices",
+        "define": "LoginService"
+      },
+      {
+        "module": "MedifirstService",
+        "define": "MedifirstService"
+      }
+    ]
   }
 ]
 
