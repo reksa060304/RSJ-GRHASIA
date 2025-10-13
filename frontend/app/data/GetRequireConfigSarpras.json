@@ -1409,6 +1409,10 @@
         {
             "nameDep": "EntryRBA2024Ctrl",
             "urlDep": "module/Anggaran_2024/EntryRBA2024Ctrl"
+        },
+        {
+            "nameDep": "DaftarUsulanPermintaanBarangPerUnitCtrl",
+            "urlDep": "module/Logistik/DaftarUsulanPermintaanBarangPerUnitCtrl"
         }
     ]
 }

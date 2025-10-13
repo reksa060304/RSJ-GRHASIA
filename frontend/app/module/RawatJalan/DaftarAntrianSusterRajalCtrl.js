@@ -114,6 +114,7 @@ define(['initialize'], function (initialize) {
                     $scope.userID = data.data.datalogin.userData.id;
                     $scope.listPilihRuang = data.data.ruangperawat;
                 });
+                
             }
 
             function loadData() {
@@ -397,6 +398,16 @@ define(['initialize'], function (initialize) {
                         "template": '# if( iskompleks==1 ) {# ✔ # } else {#  #} #'
 
                     },
+                    {
+                        "field": "isonline",
+                        "title": "Total Billing",
+                        "width": "80px"
+                    },
+                    {
+                        "field": "isonline",
+                        "title": "Plafon BPJS",
+                        "width": "80px"
+                    },
                     // {
                     //     field: "statusAntrian",
                     //     title: "Status",
@@ -410,6 +421,15 @@ define(['initialize'], function (initialize) {
                         groupHeaderTemplate: "Ruangan #= value # (Jumlah: #= count#)"
                     }
                 ]
+            }
+
+            function hitungBilling(noregistrasi) {
+                medifirstService.get('emr/get-total-billing?noregistrasi=' + noregistrasi).then(function (e) {
+                    $scope.header.totalBilling = $scope.formatRupiah(e.data.billing, 'Rp. ')
+                    $scope.header.totalBillingNominal = parseFloat(e.data.billing)
+                    $scope.header.plafonBPJS = $scope.formatRupiah(e.data.plafon, 'Rp. ')
+                    $scope.header.plafonBPJSNominal = parseFloat(e.data.plafon)
+                })
             }
             // $scope.ColumnPasien = [
             //     {

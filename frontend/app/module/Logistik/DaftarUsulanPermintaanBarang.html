@@ -19,10 +19,10 @@
 </style>
 <div class="grid_12">
     <div class="grid_12 headerBox">
-        <h1 style="color: white;"><b>Daftar Usulan Permintaan Barang/Jasa</b></h1>
+        <h1 style="color: white;"><b>DAFTAR PURCHASE ORDER (PO)</b></h1>
     </div>
     <div class="grid_12">
-        <div class="grid_3">
+        <!-- <div class="grid_3">
             <div class="grid_12">
                 <label c-label class="label-aja" item="item" c-label-text="Kode Barang"></label>
             </div>
@@ -31,8 +31,8 @@
                     k-data-value-field="'id'" k-filter="'contains'" k-auto-bind="false"
                     k-data-source="listNamaBarang" />
             </div>
-        </div>
-        <div class="grid_3">
+        </div> -->
+         <div class="grid_3">
             <div class="grid_12">
                 <label c-label class="label-aja" item="item" c-label-text="namaBarang"></label>
             </div>
@@ -40,6 +40,16 @@
                 <input style="width: 100%;" kendo-combo-box k-ng-model="item.namaBarang"
                     k-data-text-field="'namaproduk'" k-data-value-field="'id'" k-filter="'contains'" k-auto-bind="false"
                     k-data-source="listNamaBarang" />
+            </div>
+        </div>
+        <div class="grid_3">
+            <div class="grid_12">
+                <label c-label class="label-aja" item="item" c-label-text="Nama Supplier"></label>
+            </div>
+            <div class="grid_12">
+                <input style="width: 100%;" kendo-combo-box k-ng-model="item.namasuplier"
+                    k-data-text-field="'namarekanan'" k-data-value-field="'id'" k-filter="'contains'" k-auto-bind="false"
+                    k-data-source="listrekanan" />
             </div>
         </div>
         <div class="grid_2">
@@ -74,7 +84,7 @@
         </div>
         <div class="grid_12">
             <div class="grid_12 borderBox">
-                <div id="kGrid" kendo-grid k-data-source="dataGrid" k-selectable="'row'" k-columns="columnGrid"
+                <div id="kGrid" kendo-grid k-data-source="dataGrid" k-selectable="'row'" k-options="columnGrid"
                     k-pageable="'true'" k-sortable="'true'" k-ng-model="dataSelected">
                     <div k-detail-template>
                         <kendo-tabstrip>
@@ -104,7 +114,7 @@
                 <input c-text-box type="input" filter="" class="k-textbox" ng-model="item.nousulan" />
             </div>
         </div>
-        <div class="grid_2">
+        <div class="grid_1">
             <div class="grid_12">
                 <label c-label item="item" c-label-text="Jenis Usulan"></label>
             </div>
@@ -113,19 +123,25 @@
                 <input c-text-box type="input" filter="" class="k-textbox" ng-model="item.jenisusulan" />
             </div>
         </div>
-        <div class="grid_1"></div>
         <div class="grid_2" style="margin-top: 22px">
-            <button class="c-button" ng-click="EditTerima()">Ubah Usulan</button>
+            <!-- <button class="c-button" ng-click="kirimLink()">Kirim Link</button> -->
+            <button class="c-button" ng-click="Closing()">Closing PO</button> 
         </div>
         <div class="grid_2" style="margin-top: 22px">
-            <button class="c-button" ng-click="BatalUsulan()">Batal Usulan</button>
+            <button class="c-button" ng-click="EditTerima()">Ubah PO</button>
         </div>
         <div class="grid_2" style="margin-top: 22px">
-            <button class="c-button" ng-click="Cetak()">Cetak Usulan</button>
+            <button class="c-button" ng-click="BatalUsulan()">Batal PO</button>
         </div>
         <div class="grid_2" style="margin-top: 22px">
+            <button class="c-button" ng-click="Cetak()">Cetak PO</button>
+        </div>
+        <div class="grid_2" style="margin-top: 22px">
+            <button class="c-button" ng-click="Penerimaan()">Terima Barang</button>
+        </div>
+        <!-- <div class="grid_2" style="margin-top: 22px">
             <button class="c-button" ng-click="VerifikasiAnggaran()">Verifikasi UPK</button>
-        </div>
+        </div> -->
         <!-- <div class="grid_7" ng-show="tombol1"></div>
         <div class="grid_2" style="margin-top: -8px">
             <button class="c-button" ng-click="VerifikasiAnggaran()" ng-show="tombol1">Verifikasi Anggaran</button>
@@ -139,3 +155,51 @@
         <div ng-include='"../app/template/Shared/TemplateLoading"'></div>
     </div>
 </div>
+<div kendo-window="popUpQR" k-title="' QRcode'" k-width="500" k-visible="false">
+    <div class="grid_12" style="margin-top: 10px">
+         <div class="grid_12">
+            <fieldset>
+                <legend>Link QRcode</legend>
+               
+                <div class="grid_12"  id="qr-container" >
+                    <div id="qrcode" class="qrcode"></div>
+                </div>
+            </fieldset>
+        </div>
+       <!--   <div class="grid_12">
+                <div class="k-edit-buttons  k-state-default pull-right" style="margin-top:10px">
+                    <div class="grid_6">
+                        <button class="k-button btnSimpan k-button-icontext" ng-click="openLink()"><span
+                            class="k-icon k-update"></span>Open Link</button>
+                    </div>
+                    <div class="grid_6">
+                        <button class="k-button btnHapus k-button-icontext" ng-click="tutupObat()"><span
+                            class="k-icon k-cancel"></span>Tutup</button>
+                    </div>
+                </div>
+            </div> -->
+         <div class="k-edit-buttons  k-state-default pull-right" style="margin-top:10px">
+            <button class="k-button  k-danger   k-button-icontext"
+                ng-click="openLink()"><i
+                class="fa fa-external-link"  style="padding-right:0.2rem ;"></i>Open Link</button>
+
+            <button class="k-button k-primary  k-button-icontext" ng-click="copyQR()"><i
+                class="fa fa-copy" style="padding-right:0.2rem ;"></i>Copy QRcode
+                </button>
+
+        </div>
+    </div>
+</div>
+<style>
+#qrcode-container{
+    display:none;
+}
+
+.qrcode{
+  padding: 16px;
+}
+.qrcode img{
+  margin: 0 auto;
+}
+
+    </style>

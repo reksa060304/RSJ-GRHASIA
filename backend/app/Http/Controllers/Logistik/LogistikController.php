@@ -150,6 +150,12 @@ class LogistikController extends ApiController{
             ->where('jk.kdprofile', $idProfile)
             ->where('jk.statusenabled',true)
             ->get();
+        
+        $dataKelompokBarang = \DB::table('kelompokbaranglogistik_m as jk')
+            ->select('jk.id','jk.namakelompokbarang as kelompokbarang')
+            ->where('jk.kdprofile', $idProfile)
+            ->where('jk.statusenabled',true)
+            ->get();
 
         $dataKelompokProduk2 = \DB::table('kelompokproduk_m as jk')
             ->select('jk.id','jk.kelompokproduk as kelompokProduk')
@@ -484,6 +490,7 @@ class LogistikController extends ApiController{
             'keterangan'=> $Keterangan,
             'ruanganaset'=>$RuanganAset,
             'ruanganasetasal'=>$RuanganAsetAsal,
+            'kelompokbarang' => $dataKelompokBarang,
             // 'sppb'=> $sppbnya,
             // 'SNN'=> $SNN,
             'by' => 'ea@epic',
@@ -1404,9 +1411,10 @@ class LogistikController extends ApiController{
             ->LEFTJOIN('strukkonfirmasi_t as sk1','sk1.norec','=','sp.konfirmasidkfk')
             ->select('sp.norec','sp.tglorder','sp.noorder','pg.namalengkap as penanggungjawab','pg2.namalengkap as mengetahui',
                 'sp.tglvalidasi as tglkebutuhan','sp.alamattempattujuan','sp.keteranganlainnya','sp.tglvalidasi','sp.noorderintern',
-                'sp.keterangankeperluan','sp.keteranganorder','ru.namaruangan as ruangan','ru.id as ruid',
-                'ru2.namaruangan as ruangantujuan','ru2.id as ruidtujuan','sv.tglverifikasi','sv.noverifikasi','sp.totalhargasatuan','sp.status',
-                'sr.norec as norecrealisasi','sk.nokonfirmasi','sk.tglkonfirmasi','sk1.nokonfirmasi as nokonfirmasidk','sk1.tglkonfirmasi as tglkonfirmasidk'
+                'sp.keterangankeperluan','sp.keteranganorder','ru.namaruangan as ruangan','ru.id as ruid', 'sp.namarekanansales',
+                'ru2.namaruangan as ruangantujuan','ru2.id as ruidtujuan','sv.tglverifikasi','sv.noverifikasi','sp.totalhargasatuan','sp.status', 'sp.statuspo',
+                'sr.norec as norecrealisasi','sk.nokonfirmasi','sk.tglkonfirmasi','sk1.nokonfirmasi as nokonfirmasidk','sk1.tglkonfirmasi as tglkonfirmasidk',
+                DB::raw("case when sp.statuspo=0 then 'Open' when sp.statuspo=1 then 'Waiting' else 'Close' end as statusket ")
             )
             ->where('sp.kdprofile', $idProfile);
 
@@ -1429,6 +1437,9 @@ class LogistikController extends ApiController{
         if(isset($request['produkfk']) && $request['produkfk']!="" && $request['produkfk']!="undefined"){
             $data = $data->where('op.objectprodukfk','=',$request['produkfk']);
         }
+        if(isset($request['namarekanan']) && $request['namarekanan']!="" && $request['namarekanan']!="undefined"){
+            $data = $data->where('sp.namarekanansales','ILIKE','%'. $request['namarekanan'].'%');
+        }
 
         $data = $data->distinct();
         $data = $data->where('sp.statusenabled',true);
@@ -1439,19 +1450,22 @@ class LogistikController extends ApiController{
         $results =array();
         foreach ($data as $item){
             $details = \DB::select(DB::raw("
-                     select  pr.namaproduk,
-                    ss.satuanstandar,spd.qtyproduk,spd.hargasatuan,spd.hargadiscount,spd.hargappn,(spd.qtyproduk*(spd.hargasatuan)) as total,
-                    spd.tglpelayananakhir as tglkebutuhan,spd.deskripsiprodukquo as spesifikasi,pr.id as prid
-                     from orderpelayanan_t as spd 
-                    left JOIN produk_m as pr on pr.id=spd.objectprodukfk
-                    left JOIN satuanstandar_m as ss on ss.id=spd.objectsatuanstandarfk
-                    where spd.kdprofile = $idProfile and strukorderfk=:norec"),
-                array(
-                    'norec' => $item->norec,
-                )
+                            select spd.strukorderfk as norec_op, spd.objectprodukfk , pr.namaproduk,
+                            ss.satuanstandar,spd.qtyproduk,spd.hargasatuan,spd.hargadiscount,spd.hargappn,(spd.qtyproduk*(spd.hargasatuan-spd.hargadiscount))+spd.hargappn as total,
+                            spd.tglpelayananakhir as tglkebutuhan,spd.deskripsiprodukquo as spesifikasi,pr.id as prid,(spd.hargadiscount / CASE WHEN spd.hargasatuan = 0 THEN 1 else spd.hargasatuan END) * 100 AS persendiskon,
+                            case when  (spd.qtyproduk - COALESCE(spd.qtyterimalast,0))=0 then 'Sudah di terima'  when COALESCE(spd.qtyterimalast,0)=0 then 'Belum di terima' else 'barang di terima sebagian' end as statusterima
+                            from orderpelayanan_t as spd 
+                            left JOIN produk_m as pr on pr.id=spd.objectprodukfk
+                            left JOIN satuanstandar_m as ss on ss.id=spd.objectsatuanstandarfk
+                            where spd.kdprofile = $idProfile and strukorderfk=:norec 
+                            "), 
+                        array(  
+                            'norec' => $item->norec,
+                        )
             );
             $results[] = array(
                 'tglorder' => $item->tglorder,
+                'supplier' => $item->namarekanansales,
                 'noorder' => $item->noorder,
                 'norec' => $item->norec,
                 'penanggungjawab' => $item->penanggungjawab,
@@ -1474,6 +1488,8 @@ class LogistikController extends ApiController{
                 'tglkonfirmasi' => $item->tglkonfirmasi,
                 'nokonfirmasidk' => $item->nokonfirmasidk,
                 'tglkonfirmasidk' => $item->tglkonfirmasidk,
+                'status' => $item->statuspo,
+                'statusket' => $item->statusket,
             );
         }
 
@@ -1591,7 +1607,7 @@ class LogistikController extends ApiController{
             $dataSO->noorderintern = $request['strukorder']['nousulan'];
             $dataSO->objectpegawaiperencanafk =$dataPegawai->objectpegawaifk;
             $dataSO->statusorder = 0;
-            $dataSO->totalbeamaterai = 0;
+            // $dataSO->totalbeamaterai = 0;
             $dataSO->totalbiayakirim = 0;
             $dataSO->totalbiayatambahan = 0;
             $dataSO->totaldiscount = 0;
@@ -2474,10 +2490,11 @@ class LogistikController extends ApiController{
             ->LEFTJOIN('pegawai_m as pg1','pg1.id','=','sp.objectpetugasfk')
             ->LEFTJOIN('rekanan_m as rkn','rkn.id','=','sp.objectrekananfk')
             ->LEFTJOIN('rekanan_m as rkn1','rkn1.id','=','sp.objectrekanansalesfk')
-            ->LEFTJOIN('mataanggaran_t as ma','ma.norec','=','sr.objectmataanggaranfk')
-            ->LEFTJOIN('mataanggaran_t as ma1','ma1.norec','=','sr2.objectmataanggaranfk')
+            ->LEFTJOIN('mataanggaran_m as ma',  'ma.id',  '=', 'sr.objectmataanggaranfk')
+            ->LEFTJOIN('mataanggaran_m as ma1', 'ma1.id', '=', 'sr2.objectmataanggaranfk')
             ->LEFTJOIN('ruangan_m as ru','ru.id','=','sp.objectruanganfk')
             ->LEFTJOIN('ruangan_m as ru1','ru1.id','=','sp.objectruangantujuanfk')
+            ->LEFTJOIN('rekanan_m as rek','rek.id','=','sp.objectrekananfk')
             ->select('sp.norec','sp.tglorder','sp.noorder','pg.namalengkap','pg.id as pgid','pg1.nippns',
                 'sp.alamat','sp.alamattempattujuan','sp.keteranganlainnya','sp.tglvalidasi','sp.noorderintern',
                 'sp.keterangankeperluan','sp.nokontrakspk','sp.noorderrfq','sp.keteranganorder','rkn.namarekanan','rkn.id as rknid',
@@ -2485,10 +2502,12 @@ class LogistikController extends ApiController{
                 'rkn1.namarekanan as namarekanansales','sp.objectrekanansalesfk','rkn.alamatlengkap as alamatrekanan',
                 'rkn1.alamatlengkap as alamatrekanansales','rkn.faksimile as faxrekanan','rkn.telepon as tlprekanan',
                 'rkn1.faksimile as faxrekanansales','rkn1.telepon as tlprekanansales','sr.norealisasi','sr.norec as norecrealisasi',
-                'rr.norec as norecrrusulan','sr2.norec as norecrealisasisppb','rr2.norec as norecrrsppb','sr.objectmataanggaranfk as mataanggranid','ma.mataanggaran',
-                'sr2.objectmataanggaranfk as mataanggranfk','ma1.mataanggaran as mataanggaransppb','ru.id as idunitpengusul','ru.namaruangan as unitpengusul',
-                'ru1.id as idunittujuan','ru1.namaruangan as unittujuan','sp.jenisusulanfk',
-                \DB::raw('format(sp.tglorder, \'YYYY\') as tahunusulan'))
+                'rr.norec as norecrrusulan','sr2.norec as norecrealisasisppb','rr2.norec as norecrrsppb','sr.objectmataanggaranfk as mataanggranid','ma.namamataanggaran',
+                'sr2.objectmataanggaranfk as mataanggranfk','ma1.namamataanggaran as mataanggaransppb','ru.id as idunitpengusul','ru.namaruangan as unitpengusul',
+                'ru1.id as idunittujuan','ru1.namaruangan as unittujuan','sp.jenisusulanfk', 'sp.kelompokprodukfk', 'sp.kelompokproduk',
+                'rek.namarekanan','rek.alamatlengkap as alamatrekanan', 'rek.telepon as kontakrekanan','rek.email as emailrekanan',
+                \DB::raw("to_char(sp.tglorder,'YYYY') as tahunusulan,sp.tglrencana,sp.tglrencana,sp.namarekanansales,
+                sp.objectrekananfk,sp.isverifikasi"))
             ->where('sp.kdprofile', $idProfile);
 
         if(isset($request['norecOrder']) && $request['norecOrder']!="" && $request['norecOrder']!="undefined"){
@@ -2532,14 +2551,17 @@ class LogistikController extends ApiController{
             'norecrrsppb'=>$dataStruk->norecrrsppb,
             'norecrrsppb'=>$dataStruk->norecrrsppb,
             'mataanggranid'=>$dataStruk->mataanggranid,
-            'mataanggaran'=>$dataStruk->mataanggaran,
+            'mataanggaran'=>$dataStruk->namamataanggaran,
             'mataanggranfk'=>$dataStruk->mataanggranfk,
             'mataanggaransppb'=>$dataStruk->mataanggaransppb,
             'idunitpengusul' =>$dataStruk->idunitpengusul,
             'unitpengusul' =>$dataStruk->unitpengusul,
             'idunittujuan' =>$dataStruk->idunittujuan,
             'unittujuan' =>$dataStruk->unittujuan,
-            'jenisusulanfk' =>$dataStruk->jenisusulanfk
+            'jenisusulanfk' =>$dataStruk->jenisusulanfk,
+            'tglrencana' =>$dataStruk->tglrencana,
+            'kelompokproduk' =>$dataStruk->kelompokproduk,
+            'kelompokprodukfk' =>$dataStruk->kelompokprodukfk
         );
 
         $i = 0;
@@ -2635,15 +2657,17 @@ class LogistikController extends ApiController{
         $tglAkhir = $request['tglAkhir'];
         $produkfk = $request['produkfk'];
         $ruanganfk = $request['ruanganfk'];
-        $maxHarga = \DB::select(DB::raw("select distinct spd.tglpelayanan,spd.harganetto1 as harga,spdl.harganetto,pr.id,pr.kdproduk,pr.namaproduk,ss.satuanstandar
+        $maxHarga = \DB::select(DB::raw("
+        select distinct spd.tglpelayanan,spd.harganetto1 as harga,spdl.harganetto,pr.id,pr.kdproduk,pr.namaproduk,ss.satuanstandar,spdl.persendiscount,spdl.persenppn
+        
                 from stokprodukdetail_t as spd
                 inner JOIN produk_m as pr on pr.id=spd.objectprodukfk
                 INNER JOIN satuanstandar_m as ss on ss.id=pr.objectsatuanstandarfk
                 left join detailjenisproduk_m as djp on djp.id = pr.objectdetailjenisprodukfk
                 inner join strukpelayanandetail_t as spdl on spdl.nostrukfk = spd.nostrukterimafk
                 where spd.kdprofile = $idProfile 
-                --and spd.objectprodukfk='$produkfk' 
-                -- and spd.objectruanganfk='$ruanganfk' 
+                and spd.objectprodukfk='$produkfk' 
+                and spd.objectruanganfk='$ruanganfk' 
                 and djp.objectjenisprodukfk = 97 order by spd.tglpelayanan desc;")
         );
         $dataNyawaTerakhir = [];
@@ -2683,78 +2707,112 @@ class LogistikController extends ApiController{
         return $this->respond($result);
     }
 
-    public function saveUsulanPermintaan(Request $request) {
+    public function saveUsulanPermintaan(Request $request) 
+    {
         $kdProfile = $this->getDataKdProfile($request);
         $idProfile = (int) $kdProfile;
+        $statusubah=false;
+        $tglAyeuna = date('Y-m-d H:i:s');
+        $dataLogin = $request->all();
+
         \DB::beginTransaction();
-        try{
-            if ($request['strukorder']['norec'] == '') {
-                //###1###
-                //CARI KODE USULAN BERDASARKAN RUANGAN PENG-USUL
+        $transStatus = 'false';
+        $transMessage = '';
+        $datanorecSR = null;
+        $noOrder = null; 
+
+        try {
+            // validasi detail produk
+            if (empty($request['details']) || count($request['details']) == 0) {
+                return response()->json([
+                    "status" => 422,
+                    "message" => "Detail produk kosong!",
+                    "as" => 'as@epic'
+                ], 422);
+            }
+
+            //###1### Buat / update StrukOrder
+            if (empty($request['strukorder']['norec'])) {
+                // cari kode usulan baru
                 $dataRuanganLogin = \DB::table('maploginusertoruangan_s as mlu')
-                    ->JOIN('ruangan_m as ru','ru.id','=','mlu.objectruanganfk')
+                    ->join('ruangan_m as ru', 'ru.id', '=', 'mlu.objectruanganfk')
                     ->select('ru.id','ru.namaruangan','ru.website')
-                    ->where('mlu.kdprofile',$idProfile)
-                    ->where('ru.id',$request['strukorder']['ruanganfkPengusul'])
+                    ->where('mlu.kdprofile', $idProfile)
+                    ->where('ru.id', $request['strukorder']['ruanganfkPengusul'])
                     ->first();
 
-                $prefix = '/'. $dataRuanganLogin->website . '/' . $this->KonDecRomawi($this->getDateTime()->format('m')) . '/' . $this->getDateTime()->format('y');
+                $prefix = '/' . $dataRuanganLogin->website . '/' . 
+                        $this->KonDecRomawi($this->getDateTime()->format('m')) . '/' . 
+                        $this->getDateTime()->format('y');
+
                 $resultr = StrukOrder::where('noorder', 'ILIKE', '%' . $prefix)->max('noorder');
                 $subPrefix = str_replace($prefix, '', $resultr);
-                $noOrder = (str_pad((int)$subPrefix + 1, 3, "0", STR_PAD_LEFT)) . '' . $prefix;
-                //####1####
+                $noOrder = (str_pad((int)$subPrefix + 1, 3, "0", STR_PAD_LEFT)) . $prefix;
 
                 $dataSO = new StrukOrder();
                 $dataSO->norec = $dataSO->generateNewId();
                 $dataSO->kdprofile = $idProfile;
                 $dataSO->statusenabled = true;
-                $dataSO->noorder = $request['strukorder']['noUsulan'];
-            }else {
+                $dataSO->noorder = $request['strukorder']['noUsulan'] ?? $noOrder; // pakai fallback noOrder
+            } else {
                 $dataSO = StrukOrder::where('norec', $request['strukorder']['norec'])->first();
-                $noStruk = $dataSO->nostruk;
-
-                $delSPD = OrderPelayanan::where('strukorderfk', $request['strukorder']['norec'])
-                    ->delete();
+                if (!$dataSO) {
+                    return response()->json([
+                        "status" => 404,
+                        "message" => "StrukOrder tidak ditemukan!",
+                        "as" => 'as@epic'
+                    ], 404);
+                }
+                // hapus detail lama
+                OrderPelayanan::where('strukorderfk', $request['strukorder']['norec'])->delete();
             }
+
+            // isi data StrukOrder
             $dataSO->isdelivered = 0;
             $dataSO->objectkelompoktransaksifk = 89;
-            $dataSO->keteranganorder = $request['strukorder']['keteranganorder'];
+            $dataSO->keteranganorder = $request['strukorder']['keteranganorder'] ?? null;
             $dataSO->qtyjenisproduk = $request['strukorder']['qtyjenisproduk'];
             $dataSO->qtyproduk = $request['strukorder']['qtyjenisproduk'];
             $dataSO->tglorder = $request['strukorder']['tglUsulan'];
             $dataSO->tglvalidasi = $request['strukorder']['tglDibutuhkan'];
+            $dataSO->tglrencana = $request['strukorder']['tgljatuhtempo'];
             $dataSO->keteranganlainnya = $request['strukorder']['koordinator'];
-            $dataSO->noorderintern = $request['strukorder']['nousulan'];
+            // $dataSO->noorderintern = $request['strukorder']['nousulan'];
             $dataSO->objectruanganfk = $request['strukorder']['ruanganfkPengusul'];
             $dataSO->objectruangantujuanfk = $request['strukorder']['ruanganfkTujuan'];
             $dataSO->objectpegawaiorderfk = $request['strukorder']['penanggungjawabfk'];
-            $dataSO->objectpetugasfk = $request['strukorder']['mengetahuifk'];
-            $dataSO->noorderintern = $request['strukorder']['nousulan'];
+            $dataSO->objectpetugasfk = $request['strukorder']['mengetahuifk'] ?? null;
             $dataSO->statusorder = 0;
-            $dataSO->totalbeamaterai = 0;
-            $dataSO->totalbiayakirim = 0;
-            $dataSO->totalbiayatambahan = 0;
-            $dataSO->totaldiscount = 0;
-            $dataSO->totalhargasatuan = $request['strukorder']['total'];
-            $dataSO->totalharusdibayar = 0;
-            $dataSO->totalpph = 0;
-            $dataSO->totalppn =  $request['strukorder']['ppn'];
+            $dataSO->totalbeamaterai = $request['strukorder']['totalbeamaterai'] ?? 0;
+            $dataSO->totalbiayakirim = $request['strukorder']['totalbiayakirim'] ?? 0;
+            $dataSO->totalbiayatambahan = $request['strukorder']['totalbiayatambahan'] ?? 0;
+            $dataSO->totalpph = $request['strukorder']['totalpph'] ?? 0;
+            $dataSO->totalhargasatuan = $request['strukorder']['totalharga'] ?? 0;
+            $dataSO->totaldiscount = $request['strukorder']['totaldiskon'] ?? 0;
+            $dataSO->totalppn = $request['strukorder']['totalppn'] ?? 0;
+            $dataSO->totalharusdibayar = $request['strukorder']['grandtotal'] ?? 0;
+            $dataSO->kelompokprodukfk = $request['strukorder']['kelompokbarangfk'];
+            $dataSO->kelompokproduk = $request['strukorder']['kelompokbarang'];
+            // $dataSO->objectrekananfk = $request['strukorder']['rekanan'];
+            // $dataSO->namarekanansales = $request['strukorder']['namarekanan'];
+            $dataSO->objectrekananfk   = $request['strukorder']['objectrekananfk'] ?? null;
+            $dataSO->namarekanansales  = $request['strukorder']['namarekanan'] ?? null;
 
             $dataSO->save();
-            $SO = array(
+            $SO = [
                 "norec"  => $dataSO->norec,
                 "objectkelompoktransaksifk" => $dataSO->objectkelompoktransaksifk,
+            ];
 
-            );
-
+            //###2### Simpan detail produk
             foreach ($request['details'] as $item) {
                 $dataOP = new OrderPelayanan();
                 $dataOP->norec = $dataOP->generateNewId();
                 $dataOP->kdprofile = $idProfile;
                 $dataOP->statusenabled = true;
-                $dataOP->hasilkonversi = $item['nilaikonversi'];
+                $dataOP->hasilkonversi = $item['nilaikonversi'] ?? 1;
                 $dataOP->iscito = 0;
-                $dataOP->noorderfk =$SO['norec'];
+                $dataOP->noorderfk = $SO['norec'];
                 $dataOP->objectprodukfk = $item['produkfk'];
                 $dataOP->objectasalprodukfk = $request['strukorder']['asalproduk'];
                 $dataOP->qtyproduk = $item['jumlah'];
@@ -2765,92 +2823,279 @@ class LogistikController extends ApiController{
                 $dataOP->hargasatuan = $item['hargasatuan'];
                 $dataOP->hargadiscount = $item['hargadiscount'];
                 $dataOP->hargappn = $item['ppn'];
-                $dataOP->deskripsiprodukquo = $item['spesifikasi'];//$item['spesifikasi'];
+                $dataOP->deskripsiprodukquo = $item['spesifikasi'] ?? null;
                 $dataOP->tglpelayananakhir = $item['tglkebutuhan'];
                 $dataOP->save();
             }
 
-            //***** Struk Realisasi *****
-            $datanorecSR='';
-            if ($request['strukorder']['norecrealisasi'] == '') {
-                $dataSR= new StrukRealisasi();
-                $norealisasi = $this->generateCode(new StrukRealisasi(),'norealisasi',10,'RA-'.$this->getDateTime()->format('ym'), $idProfile);
+            //###3### StrukRealisasi
+            if (empty($request['strukorder']['norecrealisasi'])) {
+                $dataSR = new StrukRealisasi();
+                $norealisasi = $this->generateCode(
+                    new StrukRealisasi(),
+                    'norealisasi', 10,
+                    'RA-'.$this->getDateTime()->format('ym'),
+                    $idProfile
+                );
                 $dataSR->norec = $dataSR->generateNewId();
                 $dataSR->kdprofile = $idProfile;
                 $dataSR->statusenabled = true;
                 $dataSR->norealisasi = $norealisasi;
                 $dataSR->tglrealisasi = $request['strukorder']['tglUsulan'];
-                $dataSR->totalbelanja = $request['strukorder']['total'];
+                $dataSR->totalbelanja = $request['strukorder']['totalharga'] ?? 0;
                 $dataSR->save();
-                if ($request['strukorder']['norecrealisasi'] == '') {
-                    $datanorecSR = $dataSR->norec;
-                }else{
-                    $datanorecSR = $request['strukorder']['norecrealisasi'];
-                }
-            }else {
+                $datanorecSR = $dataSR->norec;
+            } else {
                 $dataSR = StrukRealisasi::where('norec', $request['strukorder']['norecrealisasi'])->first();
-                $dataSR->tglrealisasi = $request['strukorder']['tglUsulan'];
-                $dataSR->objectmataanggaranfk = $request['strukorder']['objectmataanggaranfk'];
-                $dataSR->totalbelanja = $request['strukorder']['total'];
-                $dataSR->save();
-                if ($request['strukorder']['norecrealisasi'] == '') {
+                if ($dataSR) {
+                    $dataSR->tglrealisasi = $request['strukorder']['tglUsulan'];
+                    $dataSR->objectmataanggaranfk = $request['strukorder']['objectmataanggaranfk'] ?? null;
+                    $dataSR->totalbelanja = $request['strukorder']['totalharga'] ?? 0;
+                    $dataSR->save();
                     $datanorecSR = $dataSR->norec;
-                }else{
-                    $datanorecSR = $request['strukorder']['norecrealisasi'];
                 }
             }
 
-
-
-            //***** Riwayat Realisasi *****
-            if ($request['strukorder']['norecrealisasi'] == '') {
+            //###4### RiwayatRealisasi
+            if (empty($request['strukorder']['norecrealisasi'])) {
                 $dataRR= new RiwayatRealisasi();
                 $dataRR->norec = $dataRR->generateNewId();
                 $dataRR->kdprofile = $idProfile;
                 $dataRR->statusenabled = true;
-            }else {
-
+            } else {
                 $dataRR = RiwayatRealisasi::where('objectstrukrealisasifk', $request['strukorder']['norecrealisasi'])->first();
-
-            }
+            } 
+            // totalbeamaterai
             $dataRR->objectstrukrealisasifk = $datanorecSR;
             $dataRR->objectstrukfk = $SO['norec'];
             $dataRR->objectkelompoktransaksifk = $SO['objectkelompoktransaksifk'];
-            $dataRR->tglrealisasi =$request['strukorder']['tglUsulan'];
+            $dataRR->tglrealisasi = $request['strukorder']['tglUsulan'];
             $dataRR->objectpetugasfk = $request['strukorder']['penanggungjawabfk'];
-            $dataRR->noorderintern = $request['strukorder']['nousulan'];
-            $dataRR->keteranganlainnya = $request['strukorder']['keteranganorder'];
+            $dataRR->noorderintern = $noOrder;
+            if (isset($request['strukorder']['keteranganorder'])) {
+                    $dataRR->keteranganlainnya = $request['strukorder']['keteranganorder'];
+                }  
             $dataRR->save();
 
-            $transStatus = 'true';
-        } catch (\Exception $e) {
-            $transStatus = 'false';
-            $transMessage = "simpan Usulan Permintaan Barang";
-        }
+            //## Logging User
+            $newId = LoggingUser::max('id');
+            $newId = $newId +1;
+            $logUser = new LoggingUser();
+            $logUser->id = $newId;
+            $logUser->norec = $logUser->generateNewId();
+            $logUser->kdprofile= $idProfile;
+            $logUser->statusenabled=true;
+            if ($statusubah == true){
+            $logUser->jenislog = 'Ubah PO';
+            $logUser->noreff = $request['strukorder']['norec'];
+            $logUser->keterangan = 'Ubah No PO ' . $request['strukorder']['noUsulan'];
+            }else{
+            $logUser->jenislog = 'Create PO';
+            $logUser->noreff = $dataSO->norec;
+            $logUser->keterangan = 'Membuat No PO ' . $dataSO->noorder;
+            }
+        
+            $logUser->referensi='norec Struk Order';
+            $logUser->objectloginuserfk =  $dataLogin['userData']['id'];
+            $logUser->tanggal = $tglAyeuna;
+            $logUser->save();
 
-        if ($transStatus == 'true') {
+            $transStatus = 'true';
             $transMessage = "Simpan Usulan Permintaan Barang Berhasil";
-            DB::commit();
-            $result = array(
+            \DB::commit();
+
+            $result = [
                 "status" => 201,
                 "message" => $transMessage,
-                "nokirim" => $dataSO,
+                "nokirim" => ["norec" => $dataSO->norec], // hanya kirim norec
                 "data" => $datanorecSR,
                 "as" => 'as@epic',
-            );
-        } else {
-            $transMessage = "Simpan Usulan Permintaan Barang Gagal!!";
-            DB::rollBack();
-            $result = array(
+            ];
+        } catch (\Exception $e) {
+            \DB::rollBack();
+            \Log::error('Save Usulan Error: '.$e->getMessage());
+
+            $result = [
                 "status" => 400,
-                "message"  => $transMessage,
-                "nokirim" => $dataSO,
-                "data" => $datanorecSR,
+                "message" => "Simpan Usulan Permintaan Barang Gagal!!",
+                "error" => $e->getMessage(),
+                "data" => $datanorecSR, // tetap defined (null kalau gagal)
                 "as" => 'as@epic',
-            );
+            ];
         }
-        return $this->setStatusCode($result['status'])->respond($result, $transMessage);
+
+        return response()->json($result, $result['status']);
     }
+
+
+    // public function saveUsulanPermintaan(Request $request) {
+    //     $kdProfile = $this->getDataKdProfile($request);
+    //     $idProfile = (int) $kdProfile;
+    //     \DB::beginTransaction();
+    //     try{
+    //         if ($request['strukorder']['norec'] == '') {
+    //             //###1###
+    //             //CARI KODE USULAN BERDASARKAN RUANGAN PENG-USUL
+    //             $dataRuanganLogin = \DB::table('maploginusertoruangan_s as mlu')
+    //                 ->JOIN('ruangan_m as ru','ru.id','=','mlu.objectruanganfk')
+    //                 ->select('ru.id','ru.namaruangan','ru.website')
+    //                 ->where('mlu.kdprofile',$idProfile)
+    //                 ->where('ru.id',$request['strukorder']['ruanganfkPengusul'])
+    //                 ->first();
+
+    //             $prefix = '/'. $dataRuanganLogin->website . '/' . $this->KonDecRomawi($this->getDateTime()->format('m')) . '/' . $this->getDateTime()->format('y');
+    //             $resultr = StrukOrder::where('noorder', 'ILIKE', '%' . $prefix)->max('noorder');
+    //             $subPrefix = str_replace($prefix, '', $resultr);
+    //             $noOrder = (str_pad((int)$subPrefix + 1, 3, "0", STR_PAD_LEFT)) . '' . $prefix;
+    //             //####1####
+
+    //             $dataSO = new StrukOrder();
+    //             $dataSO->norec = $dataSO->generateNewId();
+    //             $dataSO->kdprofile = $idProfile;
+    //             $dataSO->statusenabled = true;
+    //             $dataSO->noorder = $request['strukorder']['noUsulan'];
+    //         }else {
+    //             $dataSO = StrukOrder::where('norec', $request['strukorder']['norec'])->first();
+    //             $noStruk = $dataSO->nostruk;
+
+    //             $delSPD = OrderPelayanan::where('strukorderfk', $request['strukorder']['norec'])
+    //                 ->delete();
+    //         }
+    //         $dataSO->isdelivered = 0;
+    //         $dataSO->objectkelompoktransaksifk = 89;
+    //         $dataSO->keteranganorder = $request['strukorder']['keteranganorder'];
+    //         $dataSO->qtyjenisproduk = $request['strukorder']['qtyjenisproduk'];
+    //         $dataSO->qtyproduk = $request['strukorder']['qtyjenisproduk'];
+    //         $dataSO->tglorder = $request['strukorder']['tglUsulan'];
+    //         $dataSO->tglvalidasi = $request['strukorder']['tglDibutuhkan'];
+    //         $dataSO->keteranganlainnya = $request['strukorder']['koordinator'];
+    //         $dataSO->noorderintern = $request['strukorder']['nousulan'];
+    //         $dataSO->objectruanganfk = $request['strukorder']['ruanganfkPengusul'];
+    //         $dataSO->objectruangantujuanfk = $request['strukorder']['ruanganfkTujuan'];
+    //         $dataSO->objectpegawaiorderfk = $request['strukorder']['penanggungjawabfk'];
+    //         $dataSO->objectpetugasfk = $request['strukorder']['mengetahuifk'];
+    //         $dataSO->noorderintern = $request['strukorder']['nousulan'];
+    //         $dataSO->statusorder = 0;
+    //         $dataSO->totalbeamaterai = 0;
+    //         $dataSO->totalbiayakirim = 0;
+    //         $dataSO->totalbiayatambahan = 0;
+    //         $dataSO->totaldiscount = 0;
+    //         $dataSO->totalhargasatuan = $request['strukorder']['total'];
+    //         $dataSO->totalharusdibayar = 0;
+    //         $dataSO->totalpph = 0;
+    //         $dataSO->totalppn =  $request['strukorder']['ppn'];
+
+    //         $dataSO->save();
+    //         $SO = array(
+    //             "norec"  => $dataSO->norec,
+    //             "objectkelompoktransaksifk" => $dataSO->objectkelompoktransaksifk,
+
+    //         );
+
+    //         foreach ($request['details'] as $item) {
+    //             $dataOP = new OrderPelayanan();
+    //             $dataOP->norec = $dataOP->generateNewId();
+    //             $dataOP->kdprofile = $idProfile;
+    //             $dataOP->statusenabled = true;
+    //             $dataOP->hasilkonversi = $item['nilaikonversi'];
+    //             $dataOP->iscito = 0;
+    //             $dataOP->noorderfk =$SO['norec'];
+    //             $dataOP->objectprodukfk = $item['produkfk'];
+    //             $dataOP->objectasalprodukfk = $request['strukorder']['asalproduk'];
+    //             $dataOP->qtyproduk = $item['jumlah'];
+    //             $dataOP->qtyprodukretur = 0;
+    //             $dataOP->objectsatuanstandarfk = $item['satuanviewfk'];
+    //             $dataOP->strukorderfk = $SO['norec'];
+    //             $dataOP->tglpelayanan = $request['strukorder']['tglUsulan'];
+    //             $dataOP->hargasatuan = $item['hargasatuan'];
+    //             $dataOP->hargadiscount = $item['hargadiscount'];
+    //             $dataOP->hargappn = $item['ppn'];
+    //             $dataOP->deskripsiprodukquo = $item['spesifikasi'];//$item['spesifikasi'];
+    //             $dataOP->tglpelayananakhir = $item['tglkebutuhan'];
+    //             $dataOP->save();
+    //         }
+
+    //         //***** Struk Realisasi *****
+    //         $datanorecSR='';
+    //         if ($request['strukorder']['norecrealisasi'] == '') {
+    //             $dataSR= new StrukRealisasi();
+    //             $norealisasi = $this->generateCode(new StrukRealisasi(),'norealisasi',10,'RA-'.$this->getDateTime()->format('ym'), $idProfile);
+    //             $dataSR->norec = $dataSR->generateNewId();
+    //             $dataSR->kdprofile = $idProfile;
+    //             $dataSR->statusenabled = true;
+    //             $dataSR->norealisasi = $norealisasi;
+    //             $dataSR->tglrealisasi = $request['strukorder']['tglUsulan'];
+    //             $dataSR->totalbelanja = $request['strukorder']['total'];
+    //             $dataSR->save();
+    //             if ($request['strukorder']['norecrealisasi'] == '') {
+    //                 $datanorecSR = $dataSR->norec;
+    //             }else{
+    //                 $datanorecSR = $request['strukorder']['norecrealisasi'];
+    //             }
+    //         }else {
+    //             $dataSR = StrukRealisasi::where('norec', $request['strukorder']['norecrealisasi'])->first();
+    //             $dataSR->tglrealisasi = $request['strukorder']['tglUsulan'];
+    //             $dataSR->objectmataanggaranfk = $request['strukorder']['objectmataanggaranfk'];
+    //             $dataSR->totalbelanja = $request['strukorder']['total'];
+    //             $dataSR->save();
+    //             if ($request['strukorder']['norecrealisasi'] == '') {
+    //                 $datanorecSR = $dataSR->norec;
+    //             }else{
+    //                 $datanorecSR = $request['strukorder']['norecrealisasi'];
+    //             }
+    //         }
+
+
+
+    //         //***** Riwayat Realisasi *****
+    //         if ($request['strukorder']['norecrealisasi'] == '') {
+    //             $dataRR= new RiwayatRealisasi();
+    //             $dataRR->norec = $dataRR->generateNewId();
+    //             $dataRR->kdprofile = $idProfile;
+    //             $dataRR->statusenabled = true;
+    //         }else {
+
+    //             $dataRR = RiwayatRealisasi::where('objectstrukrealisasifk', $request['strukorder']['norecrealisasi'])->first();
+
+    //         }
+    //         $dataRR->objectstrukrealisasifk = $datanorecSR;
+    //         $dataRR->objectstrukfk = $SO['norec'];
+    //         $dataRR->objectkelompoktransaksifk = $SO['objectkelompoktransaksifk'];
+    //         $dataRR->tglrealisasi =$request['strukorder']['tglUsulan'];
+    //         $dataRR->objectpetugasfk = $request['strukorder']['penanggungjawabfk'];
+    //         $dataRR->noorderintern = $request['strukorder']['nousulan'];
+    //         $dataRR->keteranganlainnya = $request['strukorder']['keteranganorder'];
+    //         $dataRR->save();
+
+    //         $transStatus = 'true';
+    //     } catch (\Exception $e) {
+    //         $transStatus = 'false';
+    //         $transMessage = "simpan Usulan Permintaan Barang";
+    //     }
+
+    //     if ($transStatus == 'true') {
+    //         $transMessage = "Simpan Usulan Permintaan Barang Berhasil";
+    //         DB::commit();
+    //         $result = array(
+    //             "status" => 201,
+    //             "message" => $transMessage,
+    //             "nokirim" => $dataSO,
+    //             "data" => $datanorecSR,
+    //             "as" => 'as@epic',
+    //         );
+    //     } else {
+    //         $transMessage = "Simpan Usulan Permintaan Barang Gagal!!";
+    //         DB::rollBack();
+    //         $result = array(
+    //             "status" => 400,
+    //             "message"  => $transMessage,
+    //             "nokirim" => $dataSO,
+    //             "data" => $datanorecSR,
+    //             "as" => 'as@epic',
+    //         );
+    //     }
+    //     return $this->setStatusCode($result['status'])->respond($result, $transMessage);
+    // }
 
     public function getDaftarPermintaanBarangRuangan(Request $request) {
         $kdProfile = $this->getDataKdProfile($request);
@@ -6171,7 +6416,7 @@ class LogistikController extends ApiController{
         $uid = $request['userData']['id'];
         
         $data = \DB::table('strukpelayanan_t as sp')
-            ->JOIN('strukpelayanandetail_t as spd', 'spd.nostrukfk', '=', 'sp.norec')
+            ->LEFTJOIN('strukpelayanandetail_t as spd', 'spd.nostrukfk', '=', 'sp.norec')
             ->leftJOIN('rekanan_m as rkn', 'rkn.id', '=', 'sp.objectrekananfk')
             ->LEFTJOIN('pegawai_m as pg', 'pg.id', '=', 'sp.objectpegawaipenerimafk')
             ->LEFTJOIN('ruangan_m as ru', 'ru.id', '=', 'sp.objectruanganfk')
@@ -6191,14 +6436,14 @@ class LogistikController extends ApiController{
             ->groupBy('sp.keteranganambil','sp.tglstruk', 'sp.nostruk', 'rkn.namarekanan', 'pg.namalengkap', 'sp.nokontrak', 'ru.namaruangan', 'ru.id', 'pg.id', 'sp.norec', 'sp.nofaktur',
                 'sp.tglfaktur', 'sp.totalharusdibayar', 'sbk.nosbk', 'sp.nosppb', 'sp.noorderfk', 'sp.qtyproduk');
 
-        $data->whereRaw('ru.id in(SELECT ru.id
-        FROM maploginusertoruangan_s AS mlur
-        INNER JOIN loginuser_s lu on lu.id = mlur.objectloginuserfk
-        INNER JOIN ruangan_m ru on ru.id = mlur.objectruanganfk
-        where lu.kdprofile = 30 
-        and ru.statusenabled = true 
-        and lu.id='.$uid.'
-        GROUP BY ru.id,ru.namaruangan)');
+        // $data->whereRaw('ru.id in(SELECT ru.id
+        // FROM maploginusertoruangan_s AS mlur
+        // INNER JOIN loginuser_s lu on lu.id = mlur.objectloginuserfk
+        // INNER JOIN ruangan_m ru on ru.id = mlur.objectruanganfk
+        // where lu.kdprofile = 30 
+        // and ru.statusenabled = true 
+        // and lu.id='.$uid.'
+        // GROUP BY ru.id,ru.namaruangan)');
 
         if (isset($request['tglAwal']) && $request['tglAwal'] != "" && $request['tglAwal'] != "undefined") {
             $data = $data->where('sp.tglstruk', '>=', $request['tglAwal']);
@@ -17573,5 +17818,278 @@ FROM
             );
         }
         return $this->setStatusCode($result['status'])->respond($result, $transMessage);
+    }
+
+    public function saveClosingDariPenerimaan(Request $request){
+        $kdProfile = $this->getDataKdProfile($request);
+        $idProfile = (int) $kdProfile;
+       
+        \DB::beginTransaction();
+        try{
+        $tglAyeuna = date('Y-m-d H:i:s');
+        $dataLogin = $request->all();
+        $countterima=0;
+        $dataPegawai = \DB::table('loginuser_s as lu')
+            ->select('lu.objectpegawaifk')
+            ->where('lu.id',$dataLogin['userData']['id'])
+            ->first();
+       
+            
+            $norec=$request['norec_op'];
+
+            $dataPo = collect(DB::select("
+                select count(spd.noorderfk) as norec_op,so.noorder
+                    from orderpelayanan_t as spd 	
+                    left JOIN strukorder_t as so on spd.noorderfk=so.norec 	
+                    where spd.kdprofile = $idProfile and spd.noorderfk='$norec'
+                    GROUP BY so.noorder
+                "));
+
+               
+            $dataSp1 = collect(DB::select("
+            select x.* from(
+                select count(spd.noorderfk) as norec_sp,so.noorder,(spd.qtyproduk - COALESCE(spd.qtyterimalast,0)) as jumlah
+                    from orderpelayanan_t as spd 	
+                    left JOIN strukorder_t as so on spd.noorderfk=so.norec 	
+                    where spd.kdprofile = $idProfile and spd.noorderfk='$norec'
+                    GROUP BY so.noorder,(spd.qtyproduk - COALESCE(spd.qtyterimalast,0))) as x
+                    where x.jumlah=0
+                "));
+
+        $dataSp = collect(DB::select("        
+                SELECT count(sp.noorderfk) as norec_sp from strukpelayanandetail_t as spd
+                left join strukpelayanan_t as sp on spd.nostrukfk=sp.norec
+                where sp.statusenabled=true and sp.kdprofile = $idProfile and sp.noorderfk='$norec'
+               ")); 
+                
+
+                if ($dataSp1->isEmpty()){
+                    // dd('masuk');
+                    $countterima=0;
+                }else{
+                    // dd('tidak');
+                    $countterima = $dataSp1[0]->norec_sp;
+                }
+                
+               
+            if($dataPo[0]->norec_op == $countterima ){
+                $Kel = StrukOrder::where('norec', $norec)
+                ->update([
+                    'statuspo' => 2,
+                ]);
+            }else{
+                if( $dataSp[0]->norec_sp==0){
+                    $Kel = StrukOrder::where('norec',$norec)
+                    ->update([
+                        'statuspo' => 0,
+                    ]);
+                }else{
+                    $Kel = StrukOrder::where('norec',$norec)
+                    ->update([
+                        'statuspo' => 1,
+                    ]);
+                }   
+            }
+           
+
+            // //## Logging User
+            $newId = LoggingUser::max('id');
+            $newId = $newId +1;
+            $logUser = new LoggingUser();
+            $logUser->id = $newId;
+            $logUser->norec = $logUser->generateNewId();
+            $logUser->kdprofile= $idProfile;
+            $logUser->statusenabled=true;
+            $logUser->jenislog = 'Status PO';
+            $logUser->noreff = $norec;
+            $logUser->referensi='norec Struk Order';
+            $logUser->objectloginuserfk =  $dataLogin['userData']['id'];
+            $logUser->tanggal = $tglAyeuna;
+            if ($request['batal']== 1){
+                $logUser->keterangan = 'Ubah status No PO '.  $request['noorder']  .  'dari batal penerimaan Barang No.' .  $request['struk'] ;
+            }else{
+                $logUser->keterangan = 'Ubah status No PO '.  $request['noorder']  .  'dari penerimaan Barang No.' .  $request['struk'] ;
+            }
+           
+            $logUser->save();
+
+            
+
+            $transStatus = 'true';
+        } catch (\Exception $e) {
+            $transStatus = 'false';
+            $transMessage = "Update status Usulan";
+        }
+
+        if ($transStatus == 'true') {
+            $transMessage = "Update status Usulan Sukses";
+            DB::commit();
+            $result = array(
+                'status' => 201,
+                'message' => $transMessage,
+                'as' => 'grh',
+            );
+        } else {
+            $transMessage = "Update status Usulan Gagal";
+            DB::rollBack();
+            $result = array(
+                'status' => 400,
+                'message'  => $transStatus,
+                'as' => 'grh',
+            );
+        }
+        return $this->setStatusCode($result['status'])->respond($result, $transMessage);
+    }
+
+    public function saveClosingUsulanPermintaanBarang(Request $request){
+        $kdProfile = $this->getDataKdProfile($request);
+        $idProfile = (int) $kdProfile;
+        \DB::beginTransaction();
+        $tglAyeuna = date('Y-m-d H:i:s');
+        $dataLogin = $request->all();
+        $dataPegawai = \DB::table('loginuser_s as lu')
+            ->select('lu.objectpegawaifk')
+            ->where('lu.id',$dataLogin['userData']['id'])
+            ->first();
+        try{
+
+            $Kel = StrukOrder::where('norec', $request['norec'])
+                ->update([
+                    'statuspo' => 2,
+                ]);
+
+            // //## Logging User
+            $newId = LoggingUser::max('id');
+            $newId = $newId +1;
+            $logUser = new LoggingUser();
+            $logUser->id = $newId;
+            $logUser->norec = $logUser->generateNewId();
+            $logUser->kdprofile= $idProfile;
+            $logUser->statusenabled=true;
+            $logUser->jenislog = 'Status PO';
+            $logUser->noreff = $request['norec'];
+            $logUser->referensi='norec Struk Order';
+            $logUser->objectloginuserfk =  $dataLogin['userData']['id'];
+            $logUser->tanggal = $tglAyeuna;
+            $logUser->keterangan = 'Ubah status No PO '. $request['nousulan'] .'dari daftar PO';
+            $logUser->save();
+
+            
+
+            $transStatus = 'true';
+        } catch (\Exception $e) {
+            $transStatus = 'false';
+            $transMessage = "Update status Usulan Permintaan Barang Gagal";
+        }
+
+        if ($transStatus == 'true') {
+            $transMessage = "Update status Usulan Permintaan Barang Berhasil";
+            DB::commit();
+            $result = array(
+                'status' => 201,
+                'message' => $transMessage,
+                'as' => 'grh',
+            );
+        } else {
+            $transMessage = "Update status Usulan Permintaan Barang Gagal";
+            DB::rollBack();
+            $result = array(
+                'status' => 400,
+                'message'  => $transStatus,
+                'as' => 'grh',
+            );
+        }
+        return $this->setStatusCode($result['status'])->respond($result, $transMessage);
+    }
+
+    public function getDaftarUsulanPermintaanBarangPerUnit(Request $request){
+        $kdProfile = $this->getDataKdProfile($request);
+        $idProfile = (int) $kdProfile;
+        $kdSirs1 = $request['KdSirs1'];
+        $kdSirs2= $request['KdSirs2'];
+        $dataLogin = $request->all();
+        $dataRuangan = \DB::table('maploginusertoruangan_s as mlu')
+            ->JOIN('ruangan_m as ru', 'ru.id', '=', 'mlu.objectruanganfk')
+            ->select('ru.id')
+            ->where('mlu.objectloginuserfk', $dataLogin['userData']['id'])
+            ->get();
+
+            $data = \DB::table('strukorder_t as so')
+            ->join('orderpelayanan_t as op', 'op.noorderfk', '=', 'so.norec')
+            ->leftJoin('produk_m as pr', 'pr.id', '=', 'op.objectprodukfk')
+            ->leftJoin('detailjenisproduk_m as djp', 'djp.id', '=', 'pr.objectdetailjenisprodukfk')
+            ->leftJoin('satuanstandar_m as ss', 'ss.id', '=', 'op.objectsatuanstandarfk')
+            ->leftJoin('pegawai_m as pg','pg.id','=','so.objectpegawaiorderfk')
+            ->leftJoin('ruangan_m as ru','ru.id','=','so.objectruanganfk')
+            ->leftJoin('ruangan_m as ru2','ru2.id','=','so.objectruangantujuanfk')
+            ->select(
+                'so.norec',
+                'so.tglorder',
+                'pr.id as kodeproduk',
+                'pr.namaproduk',
+                'djp.detailjenisproduk',
+                'so.noorder',
+                'ss.satuanstandar',
+                'op.qtyproduk',
+                'op.hargasatuan',
+                'op.hargadiscount',
+                'op.hargappn',
+                'so.keteranganlainnya',
+                'so.namarekanansales',
+                'ru.namaruangan as ruangan',
+                'ru2.namaruangan as ruangantujuan',
+                'pg.namalengkap as penanggungjawab',
+                \DB::raw("CAST(op.qtyproduk AS FLOAT) AS qtyproduk,CAST(op.qtyprodukretur AS FLOAT) AS qtyprodukretur,CAST (op.hargasatuan AS FLOAT) AS hargasatuan,
+                                CAST (op.qtyproduk*op.hargasatuan AS FLOAT) AS subtotal,CAST (op.hargadiscount AS FLOAT) AS hargadiscount,CAST (op.hargappn AS FLOAT) AS hargappn,
+                                -- CAST (((op.hargasatuan*op.qtyproduk) - op.hargadiscount) + op.hargappn AS FLOAT) AS total,
+                                CAST ( ( ( op.qtyproduk * op.hargasatuan ) + op.hargappn ) - (op.qtyproduk * op.hargadiscount) AS FLOAT ) AS total,CAST(op.tglkadaluarsa as varchar) as  tglkadaluarsa")
+               
+            )
+            ->where('so.kdprofile', $idProfile);
+        
+
+        if (isset($request['tglAwal']) && $request['tglAwal'] != "" && $request['tglAwal'] != "undefined") {
+            $data = $data->where('so.tglorder', '>=', $request['tglAwal']);
+        }
+        if (isset($request['tglAkhir']) && $request['tglAkhir'] != "" && $request['tglAkhir'] != "undefined") {
+            $tgl = $request['tglAkhir'];
+            $data = $data->where('so.tglorder', '<=', $tgl);
+        }
+        // if (isset($request['nostruk']) && $request['nostruk'] != "" && $request['nostruk'] != "undefined") {
+        //     $data = $data->where('so.nostruk', 'ILIKE', '%' . $request['nostruk']);
+        // }
+        // if (isset($request['namarekanan']) && $request['namarekanan'] != "" && $request['namarekanan'] != "undefined") {
+        //     $data = $data->where('rkn.namarekanan', 'ILIKE', '%' . $request['namarekanan'] . '%');
+        // }
+        // if (isset($request['nofaktur']) && $request['nofaktur'] != "" && $request['nofaktur'] != "undefined") {
+        //     $data = $data->where('so.nofaktur', 'ILIKE', '%' . $request['nofaktur'] . '%');
+        // }
+        if (isset($request['produkfk']) && $request['produkfk'] != "" && $request['produkfk'] != "undefined") {
+            $data = $data->where('op.objectprodukfk', '=', $request['produkfk']);
+        }
+        if (isset($request['jenisProduk']) && $request['jenisProduk'] != "" && $request['jenisProduk'] != "undefined") {
+            $data = $data->where('djp.id', '=', $request['jenisProduk']);
+        }
+        if(isset( $request['KdSirs1'])&&  $request['KdSirs1']!=''){
+            if($request['KdSirs2'] != null &&  $request['KdSirs2']!='' && $request['KdSirs1'] != null &&  $request['KdSirs1']!= ''){
+                $data = $data->whereRaw (" (pr.kdproduk BETWEEN '".$request['KdSirs1']."' and '".$request['KdSirs2']."') ");
+            }elseif ($request['KdSirs2'] &&  $request['KdSirs2']!= '' && $request['KdSirs1'] == '' ||  $request['KdSirs1'] == null){
+                $data = $data->whereRaw = (" pr.kdproduk ILIKE '".$request['KdSirs2']."%'");
+            }elseif ($request['KdSirs1'] &&  $request['KdSirs1']!= '' && $request['KdSirs2'] == '' ||  $request['KdSirs2'] == null){
+                $data = $data->whereRaw = (" pr.kdproduk ILIKE '".$request['KdSirs1']."%'");
+            }
+        }
+
+        $data = $data->where('so.statusenabled', true);
+        $data = $data->where('so.objectkelompoktransaksifk', 89);
+//        $data = $data->whereRaw($kdSirs1 . ' ' . $kdSirs2);
+        $data = $data->orderBy('pr.kdproduk','asc');
+        $data = $data->get();
+        $result = array(
+            'datalogin' => $dataLogin,
+            'data' => $data,
+            'message' => 'Cepot'
+        );
+        return $this->respond($result);
     }
 }

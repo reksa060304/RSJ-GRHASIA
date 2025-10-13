@@ -2222,4 +2222,58 @@ class LoggingController extends ApiController
         
         return $this->setStatusCode($result['status'])->respond($result, $transMessage);
     }
+
+    public function saveLogHapusUsulan(Request $request){
+        $kdProfile = (int) $this->getDataKdProfile($request);
+        DB::beginTransaction();
+        $transStatus = true;
+        $dataLogin = $request->all();
+
+        $po = DB::table('strukorder_t as so')
+            ->select('so.noorder','so.norec')
+            ->where('so.norec', $request['norec_order'])
+            ->where('so.kdprofile', $kdProfile)
+            ->first();
+        // return $po;    
+        $newId = LoggingUser::max('id');
+        $newId = $newId +1;
+        $logUser = new LoggingUser();
+        $logUser->id = $newId;
+        $logUser->norec = $logUser->generateNewId();
+        $logUser->kdprofile= $kdProfile;
+        $logUser->statusenabled=true;
+        $logUser->jenislog = 'Hapus PO';
+        $logUser->noreff = $request['norec_order'];
+        $logUser->referensi='norec Struk Order';
+        $logUser->objectloginuserfk =  $dataLogin['userData']['id'];
+        $logUser->tanggal = $this->getDateTime()->format('Y-m-d H:i:s');
+        //            try {
+        if(!empty($po) ){
+            $logUser->keterangan = 'Hapus PO dengan No PO '. $po->noorder;
+        }
+        $logUser->save();
+        $transMsg = "Simpan Log Sukses ";
+        //
+        //            } catch (\Exception $e) {
+        //                $transStatus = false;
+        //                $transMsg = "Simpan Log Gagal ";
+        //
+        //            }
+
+        if ($transStatus == true) {
+            DB::commit();
+            $result = array(
+                "status" => 201,
+                "message" => $transMsg
+            );
+        } else {
+            DB::rollBack();
+            $result = array(
+                "status" => 400,
+                "message" => $transMsg
+            );
+        }
+        return $this->respond($result);
+
+    }
 }
