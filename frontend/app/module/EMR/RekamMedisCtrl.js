@@ -152,6 +152,7 @@ define(['initialize', 'Configuration'], function (initialize, config) {
                     $scope.header.inacbgtotalgrouperBPJSNominal = parseFloat(0)
                 }
                 $scope.header.tgllahirs = moment($scope.header.tgllahir).format('DD-MM-YYYY')
+                $scope.item.catatanPasien = $scope.header.catatan ?? ''
                 syncItemFromHeader() 
                 $scope.buildKetalergi()
 
