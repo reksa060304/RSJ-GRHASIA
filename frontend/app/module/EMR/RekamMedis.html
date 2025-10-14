@@ -246,7 +246,7 @@
                                     <label c-label item="item">Keterangan Alergi</label>
                                 </div>
                                 <div class="grid_12">
-                                    <textarea class="k-textbox" style="height: 73px; width: 100%; resize: none;"
+                                    <textarea class="k-textbox" style="height: 73px; width: 100%; resize: vertical; overflow-y: auto;"
                                         ng-model="header.ketalergi" disabled></textarea>
                                 </div>
                             </div>
@@ -331,7 +331,7 @@
     <div class="grid_12" style="margin-bottom: 10px;">
         <div class="grid_12">Kategori Alergi Obat</div>
         <div class="div_12">
-            <input ng-disabled="isDisable" style="width: 100%;" kendo-combo-box k-ng-model="item.kategoriAlergiObat"
+            <input ng-disabled="true" style="width: 100%;" kendo-combo-box k-ng-model="item.kategoriAlergiObat"
                 k-data-text-field="'namaalergi'" k-filter="'contains'" k-data-value-field="'id'" k-auto-bind="false"
                 k-data-source="listKategoriAlergi" />
         </div>
@@ -345,7 +345,7 @@
     <div class="grid_12" style="margin-bottom: 10px;">
         <div class="grid_12">Kategori Alergi Lingkungan</div>
         <div class="div_12">
-            <input ng-disabled="isDisable" style="width: 100%;" kendo-combo-box k-ng-model="item.kategoriAlergiLingkungan"
+            <input ng-disabled="true" style="width: 100%;" kendo-combo-box k-ng-model="item.kategoriAlergiLingkungan"
                 k-data-text-field="'namaalergi'" k-filter="'contains'" k-data-value-field="'id'" k-auto-bind="false"
                 k-data-source="listKategoriAlergi" />
         </div>
@@ -359,7 +359,7 @@
     <div class="grid_12" style="margin-bottom: 10px;">
         <div class="grid_12">Kategori Alergi Biologis</div>
         <div class="div_12">
-            <input ng-disabled="isDisable" style="width: 100%;" kendo-combo-box k-ng-model="item.kategoriAlergiBiologis"
+            <input ng-disabled="true" style="width: 100%;" kendo-combo-box k-ng-model="item.kategoriAlergiBiologis"
                 k-data-text-field="'namaalergi'" k-filter="'contains'" k-data-value-field="'id'" k-auto-bind="false"
                 k-data-source="listKategoriAlergi" />
         </div>
@@ -373,7 +373,7 @@
     <div class="grid_12" style="margin-bottom: 10px;">
         <div class="grid_12">Kategori Alergi Makanan</div>
         <div class="div_12">
-            <input ng-disabled="isDisable" style="width: 100%;" kendo-combo-box k-ng-model="item.kategoriAlergiMakanan"
+            <input ng-disabled="true" style="width: 100%;" kendo-combo-box k-ng-model="item.kategoriAlergiMakanan"
                 k-data-text-field="'namaalergi'" k-filter="'contains'" k-data-value-field="'id'" k-auto-bind="false"
                 k-data-source="listKategoriAlergi" />
         </div>
