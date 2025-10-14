@@ -21,8 +21,8 @@ require(['LoginService', 'core', "kendo.angular", 'Configuration', 'Helper', 'jQ
    
                     // ===== CAPTCHA CONFIGURATION =====
                     // Mode Testing: set true untuk testing di localhost, false untuk production only
-                    // var TESTING_MODE = true; // <-- Ubah ke false saat deploy production
-                    var TESTING_MODE = false; // <-- Ubah ke false saat deploy production
+                    var TESTING_MODE = true; // <-- Ubah ke false saat deploy production
+                    // var TESTING_MODE = false; // <-- Ubah ke false saat deploy production
                     
                     $scope.captchaEnabled = TESTING_MODE || window.location.hostname === 'simrs-grhasia.jogjaprov.go.id';
                     $scope.captchaQuestion = '';
