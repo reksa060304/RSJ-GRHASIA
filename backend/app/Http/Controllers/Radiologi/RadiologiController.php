@@ -3136,4 +3136,47 @@ class RadiologiController extends ApiController
         }
         return $this->setStatusCode($result['status'])->respond($result, $transMessage);
     }
+
+    public function saveUpdateTanggalOrder(Request $request){
+        $kdProfile = $this->getDataKdProfile($request);
+        $idProfile = (int) $kdProfile;
+        $dataLogin = $request->all();
+
+        DB::beginTransaction();
+        try{
+            StrukOrder::where('norec', $request['norec_so'])
+            ->update([
+                    'tglorder' => $request['tglterbaru'],
+                    'tgl_order_sebelumnya' => $request['tgl_order_lama'],
+                ]
+            );
+            $transStatus = 'true';
+        } catch (\Exception $e) {
+            $transStatus = 'false';
+            $transMessage = "simpan Tanggal";
+            $errMessage = $e->getMessage();
+            $errLine = $e->getLine();
+        }
+
+        if ($transStatus == 'true') {
+            $transMessage = "Simpan Tanggal";
+            DB::commit();
+            $result = array(
+                "status" => 201,
+                "message" => $transMessage,
+                "datalogin" => $dataLogin,
+            );
+            
+        } else {
+            $transMessage = "Simpan Tanggal gagal!!";
+            DB::rollBack();
+            $result = array(
+                "status" => 400,
+                "message"  => $transMessage,
+                "errMsg" => $errMessage ,
+                "errLine" => $errLine,
+            );
+        }
+        return $this->setStatusCode($result['status'])->respond($result, $transMessage);
+    }
 }
