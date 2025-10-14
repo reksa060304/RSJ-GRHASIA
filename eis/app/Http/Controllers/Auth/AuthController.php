@@ -78,7 +78,10 @@ class AuthController extends ApiController
             'simrs-grhasia.jogjaprov.go.id',
             // 'localhost:8000', // untuk testing
             'localhost', // untuk testing
-            '127.0.0.1:8000'  // untuk testing
+            '127.0.0.1:8000',  // untuk testing
+            '127.0.0.1',
+            '10.10.1.111',    // Tambahkan ini
+            '10.10.1.234'     // Tambahkan ini
         ];
         return in_array($currentDomain, $allowedDomains);
     }
