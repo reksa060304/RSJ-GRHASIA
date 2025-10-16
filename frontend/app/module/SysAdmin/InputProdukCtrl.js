@@ -76,6 +76,8 @@ define(['initialize'], function (initialize) {
 						$scope.item.typeProduk = { id: e.data[0].objecttypeprodukfk, typeproduk: "" };
 						$scope.item.warnaProduk = { id: e.data[0].objectwarnaprodukfk, warnaproduk: "" };
 						$scope.item.kekuatan = e.data[0].kekuatan;
+						$scope.item.jmlretriksi = e.data[0].jmlretriksi;
+						$scope.item.stokmin = e.data[0].stokmin;
 						$scope.item.merkProduk = { id: e.data[0].objectmerkprodukfk, merkproduk: "" };
 						$scope.item.detailObat = { id: e.data[0].objectdetailobatfk, name: "" };
 						$scope.item.spesifikasi = e.data[0].spesifikasi
@@ -195,6 +197,22 @@ define(['initialize'], function (initialize) {
 							$scope.item.IsVaksinDonasi = { "id": 2, "namaExternal": "f", "namaAlias": "False" }
 						} else if(e.data[0].isvaksindonasi == null || e.data[0].isvaksindonasi == ''){
 							$scope.item.IsVaksinDonasi = { "id": 0, "namaExternal": null, "namaAlias": "NULL" }
+						}
+						
+						if(e.data[0].highalert == true || e.data[0].highalert == 't'){
+							$scope.item.highalert = { "id": 1, "namaExternal": "t", "namaAlias": "True" }
+						} else if(e.data[0].highalert == false || e.data[0].highalert == 'f'){
+							$scope.item.highalert = { "id": 2, "namaExternal": "f", "namaAlias": "False" }
+						} else if(e.data[0].highalert == null || e.data[0].highalert == ''){
+							$scope.item.highalert = { "id": 0, "namaExternal": null, "namaAlias": "NULL" }
+						}
+						
+						if(e.data[0].retriksiantibiotik == true || e.data[0].retriksiantibiotik == 't'){
+							$scope.item.retriksiantibiotik = { "id": 1, "namaExternal": "t", "namaAlias": "True" }
+						} else if(e.data[0].retriksiantibiotik == false || e.data[0].retriksiantibiotik == 'f'){
+							$scope.item.retriksiantibiotik = { "id": 2, "namaExternal": "f", "namaAlias": "False" }
+						} else if(e.data[0].retriksiantibiotik == null || e.data[0].retriksiantibiotik == ''){
+							$scope.item.retriksiantibiotik = { "id": 0, "namaExternal": null, "namaAlias": "NULL" }
 						}
 
 
@@ -466,6 +484,14 @@ define(['initialize'], function (initialize) {
 				if ($scope.item.kekuatan != undefined) {
 					kekuatan = $scope.item.kekuatan
 				}
+				var jmlretriksi = ''
+				if ($scope.item.jmlretriksi != undefined) {
+					jmlretriksi = $scope.item.jmlretriksi
+				}
+				var stokmin = ''
+				if ($scope.item.stokmin != undefined) {
+					stokmin = $scope.item.stokmin
+				}
 				var objectmerkprodukfk = null
 				if ($scope.item.merkProduk != undefined) {
 					objectmerkprodukfk = $scope.item.merkProduk.id
@@ -594,6 +620,14 @@ define(['initialize'], function (initialize) {
 				if ($scope.item.IsVaksinDonasi != undefined) {
 					isvaksindonasi = $scope.item.IsVaksinDonasi.namaExternal
 				}
+				var highalert = null
+				if ($scope.item.highalert != undefined) {
+					highalert = $scope.item.highalert.namaExternal
+				}
+				var retriksiantibiotik = null
+				if ($scope.item.retriksiantibiotik != undefined) {
+					retriksiantibiotik = $scope.item.retriksiantibiotik.namaExternal
+				}
 				var objectprodusenprodukfk = null
 				if ($scope.item.produsenProduk != undefined) {
 					objectprodusenprodukfk = $scope.item.produsenProduk.id
@@ -648,6 +682,8 @@ define(['initialize'], function (initialize) {
 					"objecttypeprodukfk": objecttypeprodukfk,//$scope.item.typeProduk.id,
 					"objectwarnaprodukfk": objectwarnaprodukfk,//$scope.item.warnaProduk.id,
 					"kekuatan": kekuatan,//$scope.item.kekuatan,
+					"jmlretriksi": jmlretriksi,//$scope.item.jmlretriksi,
+					"stokmin": stokmin,//$scope.item.stokmin,
 					"objectmerkprodukfk": objectmerkprodukfk,//$scope.item.merkProduk.id,
 					"objectdetailobatfk": objectdetailobatfk,//$scope.item.detailObat.id,
 					"spesifikasi": spesifikasi,//$scope.item.spesifikasi,
@@ -680,6 +716,8 @@ define(['initialize'], function (initialize) {
 					"isoot": isoot,//$scope.item.Oot.namaExternal,
 					"isprekusor": isprekusor,//$scope.item.IsPrekusor.namaExternal,
 					"isvaksindonasi": isvaksindonasi,//$scope.item.IsVaksinDonasi.namaExternal,
+					"highalert": highalert,//$scope.item.highalert.namaExternal,
+					"retriksiantibiotik": retriksiantibiotik,//$scope.item.retriksiantibiotik.namaExternal,
 					"objectprodusenprodukfk": objectprodusenprodukfk,//1,
 					"objectrekananfk": objectrekananfk,//$scope.item.rekanan.id,
 					"objectunitlaporanfk": 1,

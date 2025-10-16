@@ -250,6 +250,8 @@ class MasterController extends ApiController{
             $prod->kdproduk = $data['kdproduk'];
             $prod->kdproduk_intern = $data['kdproduk_intern'];
             $prod->kekuatan = $data['kekuatan'];
+            $prod->jmlretriksi = $data['jmlretriksi'];
+            $prod->stokmin = $data['stokmin'];
             $prod->namaproduk = $data['namaproduk'];
             $prod->nilainormal = $data['nilainormal'];
             $prod->qproduk = $data['qproduk'];
@@ -302,6 +304,12 @@ class MasterController extends ApiController{
             }
             if (isset($request['isvaksindonasi'])){
                 $prod->isvaksindonasi = $data['isvaksindonasi'];
+            }
+            if (isset($request['highalert'])){
+                $prod->highalert = $data['highalert'];
+            }
+            if (isset($request['retriksiantibiotik'])){
+                $prod->retriksiantibiotik = $data['retriksiantibiotik'];
             }
             if (isset($request['isfornas'])){
                 $prod->isfornas = $data['isfornas'];

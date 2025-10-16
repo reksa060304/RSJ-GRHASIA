@@ -775,10 +775,40 @@
 									<div class="grid_12">
 										<label c-label item="item" c-label-text="kekuatan"></label>
 									</div>
-
-
 									<div class="grid_12">
 										<input c-text-box type="input" filter="" class="k-textbox" ng-model="item.kekuatan" />
+									</div>
+								</div>
+								<div class="grid_2">
+									<div class="grid_12">
+										<label c-label item="item" c-label-text="Jumlah Retriksi"></label>
+									</div>
+									<div class="grid_12">
+										<input c-text-box type="input" filter="" class="k-textbox" ng-model="item.jmlretriksi" />
+									</div>
+								</div>
+								<div class="grid_2">
+									<div class="grid_12">
+										<label c-label item="item" >High Alert</label>
+									</div>
+									<div class="grid_12">
+										<input style="width: 100%;" kendo-combo-box k-ng-model="item.highalert" k-data-text-field="'namaAlias'" k-data-value-field="'id'" k-filter="'contains'" k-auto-bind="false" k-data-source="listverifikasiAnggaran" />
+									</div>
+								</div>
+								<div class="grid_2">
+									<div class="grid_12">
+										<label c-label item="item" c-label-text="Stok Minimum"></label>
+									</div>
+									<div class="grid_12">
+										<input c-text-box type="input" filter="" class="k-textbox" ng-model="item.stokmin" />
+									</div>
+								</div>
+								<div class="grid_2">
+									<div class="grid_12">
+										<label c-label item="item" >Retriksi Antibiotik</label>
+									</div>
+									<div class="grid_12">
+										<input style="width: 100%;" kendo-combo-box k-ng-model="item.retriksiantibiotik" k-data-text-field="'namaAlias'" k-data-value-field="'id'" k-filter="'contains'" k-auto-bind="false" k-data-source="listverifikasiAnggaran" />
 									</div>
 								</div>
 							</div>
