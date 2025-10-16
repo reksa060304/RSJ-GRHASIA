@@ -21569,6 +21569,26 @@
     ]
   },
   {
+    "name": "RL19_V3_RekapitulasiCaraBayar",
+    "url": "/RL19_V3_RekapitulasiCaraBayar",
+    "templateurl": "module/Registrasi/Laporan/LaporanRekamMedis/RL19_V3_RekapitulasiCaraBayar.html",
+    "controller": "RL19_V3_RekapitulasiCaraBayarCtrl",
+    "deps": [
+      {
+        "module": "Services",
+        "define": "Service"
+      },
+      {
+        "module": "LoginServices",
+        "define": "LoginService"
+      },
+      {
+        "module": "MedifirstService",
+        "define": "MedifirstService"
+      }
+    ]
+  },
+  {
     "name": "RL38_V3_RekapitulasiKegiatanPelayananLaboratorium",
     "url": "/RL38_V3_RekapitulasiKegiatanPelayananLaboratorium",
     "templateurl": "module/Registrasi/Laporan/LaporanRekamMedis/RL38_V3_RekapitulasiKegiatanPelayananLaboratorium.html",
