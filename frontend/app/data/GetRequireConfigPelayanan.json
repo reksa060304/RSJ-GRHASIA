@@ -3862,6 +3862,14 @@
             "urlDep": "module/Registrasi/Laporan/LaporanRekamMedis/RL38_V3_RekapitulasiKegiatanPelayananLaboratoriumCtrl"
         },
         {
+            "nameDep": "RL37_V3_RekapitulasiKegiatanPelayananNeonatalCtrl",
+            "urlDep": "module/Registrasi/Laporan/LaporanRekamMedis/RL37_V3_RekapitulasiKegiatanPelayananNeonatalCtrl"
+        },
+        {
+            "nameDep": "RL38_V3_RekapitulasiKegiatanPelayananLaboratoriumCtrl",
+            "urlDep": "module/Registrasi/Laporan/LaporanRekamMedis/RL38_V3_RekapitulasiKegiatanPelayananLaboratoriumCtrl"
+        },
+        {
             "nameDep": "RL313_V3_RehabilitasiMedikCtrl",
             "urlDep": "module/Registrasi/Laporan/LaporanRekamMedis/RL313_V3_RehabilitasiMedikCtrl"
         },
