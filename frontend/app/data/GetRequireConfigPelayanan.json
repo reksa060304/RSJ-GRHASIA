@@ -3866,6 +3866,10 @@
             "urlDep": "module/Registrasi/Laporan/LaporanRekamMedis/RL37_V3_RekapitulasiKegiatanPelayananNeonatalCtrl"
         },
         {
+            "nameDep": "RL13_V3_KetersediaanTempatTidurCtrl",
+            "urlDep": "module/Registrasi/Laporan/LaporanRekamMedis/RL13_V3_KetersediaanTempatTidurCtrl"
+        },
+        {
             "nameDep": "RL38_V3_RekapitulasiKegiatanPelayananLaboratoriumCtrl",
             "urlDep": "module/Registrasi/Laporan/LaporanRekamMedis/RL38_V3_RekapitulasiKegiatanPelayananLaboratoriumCtrl"
         },
