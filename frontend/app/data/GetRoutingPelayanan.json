@@ -21149,6 +21149,26 @@
     ]
   },
   {
+    "name": "RL13_V3_KetersediaanTempatTidur",
+    "url": "/RL13_V3_KetersediaanTempatTidur",
+    "templateurl": "module/Registrasi/Laporan/LaporanRekamMedis/RL13_V3_KetersediaanTempatTidur.html",
+    "controller": "RL13_V3_KetersediaanTempatTidurCtrl",
+    "deps": [
+      {
+        "module": "Services",
+        "define": "Service"
+      },
+      {
+        "module": "LoginServices",
+        "define": "LoginService"
+      },
+      {
+        "module": "MedifirstService",
+        "define": "MedifirstService"
+      }
+    ]
+  },
+  {
     "name": "RL315_V3_KesehatanJiwaCtrl",
     "url": "/RL315_V3_KesehatanJiwaCtrl",
     "templateurl": "module/Registrasi/Laporan/LaporanRekamMedis/RL315_V3_KesehatanJiwaCtrl.html",
