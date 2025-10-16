@@ -21169,6 +21169,46 @@
     ]
   },
   {
+    "name": "RL37_V3_RekapitulasiKegiatanPelayananNeonatal",
+    "url": "/RL37_V3_RekapitulasiKegiatanPelayananNeonatal",
+    "templateurl": "module/Registrasi/Laporan/LaporanRekamMedis/RL37_V3_RekapitulasiKegiatanPelayananNeonatal.html",
+    "controller": "RL37_V3_RekapitulasiKegiatanPelayananNeonatalCtrl",
+    "deps": [
+      {
+        "module": "Services",
+        "define": "Service"
+      },
+      {
+        "module": "LoginServices",
+        "define": "LoginService"
+      },
+      {
+        "module": "MedifirstService",
+        "define": "MedifirstService"
+      }
+    ]
+  },
+  {
+    "name": "RL38_V3_RekapitulasiKegiatanPelayananLaboratorium",
+    "url": "/RL38_V3_RekapitulasiKegiatanPelayananLaboratorium",
+    "templateurl": "module/Registrasi/Laporan/LaporanRekamMedis/RL38_V3_RekapitulasiKegiatanPelayananLaboratorium.html",
+    "controller": "RL38_V3_RekapitulasiKegiatanPelayananLaboratoriumCtrl",
+    "deps": [
+      {
+        "module": "Services",
+        "define": "Service"
+      },
+      {
+        "module": "LoginServices",
+        "define": "LoginService"
+      },
+      {
+        "module": "MedifirstService",
+        "define": "MedifirstService"
+      }
+    ]
+  },
+  {
     "name": "RL315_V3_KesehatanJiwaCtrl",
     "url": "/RL315_V3_KesehatanJiwaCtrl",
     "templateurl": "module/Registrasi/Laporan/LaporanRekamMedis/RL315_V3_KesehatanJiwaCtrl.html",
