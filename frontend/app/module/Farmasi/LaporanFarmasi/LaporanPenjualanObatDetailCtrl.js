@@ -584,6 +584,11 @@ define(['initialize'], function (initialize) {
                                 "width": "120px",
                                 //    footerTemplate: "<span>Total </span>"
                             },
+                            {
+                                "field": "noidentitas",
+                                "title": "NIK",
+                                "width": "100px",
+                            }
                         ]
                     },
                     {

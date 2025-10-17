@@ -463,7 +463,7 @@ define(['initialize'], function (initialize) {
                             $scope.hidebpjs = true
                         }
                     }
-                    
+                    $scope.item.noIdentitas = chacePeriode[21]
                     loadAlamat();
                 } else {
 
@@ -481,6 +481,7 @@ define(['initialize'], function (initialize) {
                     if ($scope.item.jenisPenjamin == undefined)
                         $scope.item.jenisPenjamin = e.data.kelompokpasien
                     $scope.item.alamatPasien = e.data.alamatlengkap
+                    $scope.item.noIdentitas = e.data.noidentitas
                     $scope.item.tglLahir = e.data.tgllahir;
                     $scope.item.AlergiYa = e.data.alergi;
                     $scope.item.RuangInput = e.data.ruanginput;

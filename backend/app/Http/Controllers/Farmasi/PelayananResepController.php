@@ -3519,7 +3519,8 @@ class PelayananResepController extends ApiController
                     namapasien,
                     dokter,
                     noresep,
-                    tglsbm
+                    tglsbm,
+                    noidentitas
                 FROM
                     (
             WITH lt AS (
@@ -3619,7 +3620,9 @@ class PelayananResepController extends ApiController
             ps.namapasien,
             pg.namalengkap AS dokter,
             sr.noresep,
-            sbmsdhbyr.tglsbm
+            sbmsdhbyr.tglsbm,
+            ps.noidentitas
+
         FROM
             pelayananpasien_t AS pp
         LEFT JOIN strukresep_t AS sr ON pp.strukresepfk = sr.norec
@@ -3679,7 +3682,8 @@ class PelayananResepController extends ApiController
                                sp.namapasien_klien as namapasien,
                                pg.namalengkap as dokter,
                                sp.nostruk AS noresep,
-                               sbmsdhbyr.tglsbm
+                               sbmsdhbyr.tglsbm,
+                               '' as noidentitas
                         FROM strukpelayanan_t as sp
                         INNER JOIN pelayananpasien_t AS pp ON pp.strukterimafk = sp.norec
                         INNER JOIN strukpelayanandetail_t as spd on spd.nostrukfk = sp.norec
