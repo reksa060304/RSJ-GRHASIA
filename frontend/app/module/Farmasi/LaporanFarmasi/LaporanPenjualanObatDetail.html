@@ -135,6 +135,12 @@
                                 k-data-text-field="'isobat'" k-data-value-field="'id'" k-filter="'contains'"
                                 k-auto-bind="false" k-data-source="listIsObat" />
                     </div>
+                    <div class="grid_2">
+                        <label c-label item="item">Jenis Kemasan</label>
+                        <input style="width: 100%;" kendo-combo-box k-ng-model="item.jeniskemasan"
+                               k-data-text-field="'jeniskemasan'" k-data-value-field="'id'" k-filter="'contains'"
+                               k-auto-bind="false" k-data-source="listJenisKemasan" />
+                    </div>
                     <div class="grid_1" style="margin-top: 20px;">
                         <div class="grid_12">
                             <button class="c-button" ng-click="cariFilter()">Cari</button>
