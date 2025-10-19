@@ -168,7 +168,7 @@ class ReservasiOnlineController extends ApiController
 			->leftjoin ('golongandarah_m as gd','gd.id','=','ps.objectgolongandarahfk')
 			->leftjoin ('hambatankomunikasi_m as hk','hk.id','=','ps.hambatankomunikasifk')
 			->select('ps.nocm','ps.id as nocmfk','ps.namapasien','ps.objectjeniskelaminfk','jk.jeniskelamin',
-				'alm.alamatlengkap','pdd.pendidikan','pk.pekerjaan','ps.noidentitas','ps.nohp as notelepon','ps.tempatlahir',
+				'alm.alamatlengkap','pdd.pendidikan','pk.pekerjaan','ps.nohp as notelepon','ps.tempatlahir',
                 'ps.nobpjs','ps.objectagamafk','ag.agama','ps.objectstatusperkawinanfk','sp.statusperkawinan','ps.objectgolongandarahfk','gd.golongandarah',
                 'ps.objectpendidikanfk','ps.objectpekerjaanfk','ps.hambatankomunikasifk','hk.hambatankomunikasi','ps.nik1','ps.alamatrmh', 'ps.teleponpenanggungjawab', 'ps.penanggungjawab',
 				DB::raw(" to_char ( ps.tgllahir,'yyyy-MM-dd') as tgllahir"))
@@ -180,7 +180,8 @@ class ReservasiOnlineController extends ApiController
         if(isset($nocm) &&$nocm != "" && $nocm != "undefined" && $nocm != "null") {
             $data = $data->where(function($query) use ($nocm) {
                     $query->where('ps.nocm', '=', $nocm)
-                        ->orWhere('ps.noidentitas', '=', $nocm);
+                    ->orWhere('ps.nohp', '=', $nocm);
+                       // ->orWhere('ps.noidentitas', '=', $nocm); 
                 });
         }
 
