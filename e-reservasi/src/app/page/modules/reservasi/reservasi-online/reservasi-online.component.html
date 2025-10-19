@@ -234,8 +234,8 @@
             <div class="ui-g-12" *ngIf="isLama">
                <div class="ui-g-12 ui-md-12 ui-lg-6">
                 <mat-form-field appearance="fill">
-                  <mat-label>No RM atau No Telefon</mat-label>
-                  <input matInput placeholder="No RM / No Telefon" formControlName="noCm">
+                  <mat-label>No RM atau Nomor HP</mat-label>
+                  <input matInput placeholder="No RM / Nomor HP" formControlName="noCm">
                   <button mat-button *ngIf="formGroup.get('noCm').value" matSuffix mat-icon-button aria-label="Clear"
                     (click)="formGroup.get('noCm').setValue('')">
                     <mat-icon>close</mat-icon>
@@ -464,10 +464,16 @@
       <div class="ui-g ui-fluid">
         <div class="ui-g-12">
           <p-fieldset legend="Resume" [toggleable]="true">
-            <div class="ui-g-12 ui-md-12 ui-lg-3" *ngIf="isLama">
+<!--            <div class="ui-g-12 ui-md-12 ui-lg-3" *ngIf="isLama">-->
+<!--              <mat-form-field appearance="fill">-->
+<!--                <mat-label>NIK</mat-label>-->
+<!--                <input matInput placeholder="NIK" disabled="true" formControlName="resumeNIK">-->
+<!--              </mat-form-field>-->
+<!--            </div>-->
+            <div class="ui-g-12 ui-md-12 ui-lg-3">
               <mat-form-field appearance="fill">
-                <mat-label>NIK</mat-label>
-                <input matInput placeholder="NIK" disabled="true" formControlName="resumeNIK">
+                <mat-label>Nomor Hp</mat-label>
+                <input matInput placeholder="Nomor HP" disabled="true" formControlName="resumeNoTelp">
               </mat-form-field>
             </div>
             <div class="ui-g-12 ui-md-12 ui-lg-3" *ngIf="isLama">
@@ -498,12 +504,12 @@
                 <input matInput placeholder="Jenis Kelamin" disabled="true" formControlName="resumeJK">
               </mat-form-field>
             </div>
-            <div class="ui-g-12 ui-md-12 ui-lg-3">
-              <mat-form-field appearance="fill">
-                <mat-label>No Telpon</mat-label>
-                <input matInput placeholder="No Telpon" disabled="true" formControlName="resumeNoTelp">
-              </mat-form-field>
-            </div>
+<!--            <div class="ui-g-12 ui-md-12 ui-lg-3">-->
+<!--              <mat-form-field appearance="fill">-->
+<!--                <mat-label>No Hp</mat-label>-->
+<!--                <input matInput placeholder="No Telpon" disabled="true" formControlName="resumeNoTelp">-->
+<!--              </mat-form-field>-->
+<!--            </div>-->
             <div class="ui-g-12 ui-md-12 ui-lg-3">
               <mat-form-field appearance="fill">
                 <mat-label>Tgl Reservasi</mat-label>
@@ -875,11 +881,11 @@
       <div class="ui-g-6 ui-md-6 ui-lg-6">
         <div class="ui-g-12 ui-md-12 ui-lg-12"> <label for="input">Estimasi Dilayani</label></div>
         <div class="ui-g-12 ui-md-12 ui-lg-12"> <label for="input" class="label-popup">{{Estimasi}}</label></div>
-        <!-- <div class="ui-g-12 ui-md-12 ui-lg-12"> 
+        <!-- <div class="ui-g-12 ui-md-12 ui-lg-12">
             <label for="input">Antrian ini adalah antrian reservasi, </label>
              <br>
              <label for="input"><b>Antrian periksa</b> akan dicetak ketika Anda datang ke RS dan konfirmasi ke bagian Pendaftaran/cetak di Kios-K.</label>
-            <br>  
+            <br>
             <label for="input"><b>Antrian periksa</b> poliklinik diurutkan sesuai waktu kedatangan Anda di Klinik</label>
         </div> -->
       </div>
@@ -893,27 +899,27 @@
             <br>
             <b>Antrian periksa</b> akan dicetak ketika Anda datang ke RS dan konfirmasi ke bagian Pendaftaran/cetak di Kios-K.
             <br>
-            <b>Pemanggilan Antrian periksa</b> poliklinik diurutkan sesuai waktu kedatangan Anda di Klinik</span> 
+            <b>Pemanggilan Antrian periksa</b> poliklinik diurutkan sesuai waktu kedatangan Anda di Klinik</span>
         </div>
 
       <div class="ui-g-6 ui-md-6 ui-lg-6">
         <span style="color:red;font-size:15px">* </span> <span style="font-size:15px;">Harap datang 30
-          menit sebelum jam pelayanan.</span> 
+          menit sebelum jam pelayanan.</span>
       </div>
 
       <div class="ui-g-6 ui-md-6 ui-lg-6">
         <span style="color:red;font-size:15px">* </span> <span style="font-size:15px;">Cetak antrian
-          di loket pendaftaran / mesin Kios-K. </span> 
+          di loket pendaftaran / mesin Kios-K. </span>
       </div>
 
       <div class="ui-g-6 ui-md-6 ui-lg-6">
         <span style="color:red;font-size:15px">* </span> <span style="font-size:15px;">Lebih dari 30
-          menit terlambat tanpa konfirmasi dianggap batal. </span> 
+          menit terlambat tanpa konfirmasi dianggap batal. </span>
       </div>
 
       <div class="ui-g-6 ui-md-6 ui-lg-6">
         <span style="color:red;font-size:15px">* </span> <span style="font-size:15px;">
-          Konfirmasi WA Pendaftaran 081258392929 dan WA Informasi 081388383939 </span> 
+          Konfirmasi WA Pendaftaran 081258392929 dan WA Informasi 081388383939 </span>
       </div>
 
       <div class="ui-g-6 ui-md-6 ui-lg-5">
@@ -1546,8 +1552,8 @@
 </div>
 <div *ngIf="activeItem.label == 'Datar Universitas Praktikan' && !isBuktiReservasi">
   <div class="card card-w-title" style="margin-top:10px" *ngIf="!isShowRiwayatRegis">
-    
-    
+
+
   </div>
 </div>
 <!-- <div *ngIf="activeItem.label == 'Master Kemasan'">
