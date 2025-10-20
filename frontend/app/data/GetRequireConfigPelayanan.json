@@ -3556,6 +3556,10 @@
             "urlDep": "module/EMR/PengkajianAwalKepHCUCtrl"
         },
         {
+            "nameDep": "PengkajianAwalKeperawatanRIJiwaAnakRemajaCtrl",
+            "urlDep": "module/EMR/PengkajianAwalKeperawatanRIJiwaAnakRemajaCtrl"
+        },
+        {
             "nameDep": "PengkajianAwalKepRanapUmumCtrl",
             "urlDep": "module/EMR/PengkajianAwalKepRanapUmumCtrl"
         },
