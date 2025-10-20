@@ -30759,4 +30759,296 @@ public function suratBuktiPengembalian(Request $request)
 
         return view('report.ambulance.surat-tugas-ambulan-telemedicine', compact('data', 'request', 'pageWidth'));
     }
+
+    public function printGetHasilLabManual(Request $r)
+    {
+        $jenisKelamin = $r->input('jeniskelamin');
+        $dokterr = $r->input('dokter') ?? $r->input('dokterr') ?? $r->input('doketr') ?? '-'; 
+        $umur = (int) $r->input('umur');
+        $norec = $r->input('norec');
+        $norecpp = $r->input('norecpp');
+        $catatan = $r->input('catatan');
+        $kdProfile = $r->input('kdprofile');
+
+        $data = DB::table('pelayananpasien_t as pp')
+            ->selectRaw("
+            distinct pp.tglpelayanan,
+            maps.nourutjenispemeriksaan,
+            maps.nourutdetail,
+            pg3.namalengkap as dokterpelayanan,
+            rj.namaruangan as ruanganperejuk,
+            pm.nocm,
+            pd.noregistrasi,
+            so.noorder,
+            pm.namapasien,
+            alm.alamatlengkap || ' - Kel. ' || coalesce(alm.namadesakelurahan, '') || 
+                ' - Kec. ' || coalesce(alm.namakecamatan, '') || 
+                ' - Kota/Kab. ' || coalesce(alm.namakotakabupaten, '') as alamatlengkap,
+            kp.kelompokpasien,
+            rkn.namarekanan,
+            pd.tglregistrasi,
+            to_char(pd.tglregistrasi, 'DD-MM-YYYY') as tglregiss,
+            pp.tglpelayanan as tglawal,
+            case when pg.namalengkap = '' or pg.namalengkap is null 
+                then pg2.namalengkap else pg.namalengkap end as namalengkap,
+            pg1.namalengkap as dokterperiksa,
+            pm.tgllahir,
+            to_char(pm.tgllahir, 'DD-MM-YYYY') as tgllahirs,
+            pp.noregistrasifk as norec_apd,
+            maps.jenispemeriksaan as detailjenisproduk,
+            djp.detailjenisproduk as detailjenisproduklama,
+            pp.produkfk,
+            maps.subjenispemeriksaan as namaproduk,
+            prd.namaproduk as namaproduklama,
+            maps.detailpemeriksaan,
+            coalesce(maps.memohasil, '') as memohasil,
+            maps.nourutdetail,
+            maps.satuanstandarfk,
+            ss.satuanstandar,
+            nn.nilaitext,
+            nn.nilaimin,
+            nn.nilaimax,
+            case 
+                when hh.hasil is null then ''
+                when hh.flag = 'Y' then '*   ' || hh.hasil 
+                else hh.hasil 
+            end as hasil,
+            maps.id as map_id,
+            hh.norec as norec_hasil,
+            jk.jeniskelamin,
+            apd.tglmasuk as tglverif,
+            hh.tglhasil as tglakhir,
+            ('Tgl Selesai  :  ' || hh.tglhasil ||  
+             ' (-) Tgl. Mulai :  ' || pp.tglpelayanan || 
+             ' (=) Durasi :  ' || (hh.tglhasil - pp.tglpelayanan)) as tat,
+            hh.flag,
+            dpjp.namalengkap as dokterdpjp
+        ")
+            ->join('antrianpasiendiperiksa_t as apd', 'apd.norec', '=', 'pp.noregistrasifk')
+            ->join('pasiendaftar_t as pd', 'pd.norec', '=', 'apd.noregistrasifk')
+            ->leftJoin('strukorder_t as so', 'so.norec', '=', 'apd.objectstrukorderfk')
+            ->leftJoin('ruangan_m as rj', 'pd.objectruanganlastfk', '=', 'rj.id')
+            ->join('pasien_m as pm', 'pm.id', '=', 'pd.nocmfk')
+            ->leftJoin('jeniskelamin_m as jk', 'jk.id', '=', 'pm.objectjeniskelaminfk')
+            ->leftJoin('alamat_m as alm', 'alm.nocmfk', '=', 'pm.id')
+            ->leftJoin('kelompokpasien_m as kp', 'kp.id', '=', 'pd.objectkelompokpasienlastfk')
+            ->leftJoin('rekanan_m as rkn', 'rkn.id', '=', 'pd.objectrekananfk')
+            ->leftJoin('pegawai_m as pg', 'pg.id', '=', 'so.objectpegawaiorderfk')
+            ->leftJoin('pegawai_m as pg1', 'pg1.id', '=', 'apd.objectpegawaifk')
+            ->leftJoin('pegawai_m as pg2', 'pg2.id', '=', 'apd.objectpegawaifk')
+            ->leftJoin('pegawai_m as dpjp', 'dpjp.id', '=', 'pd.objectpegawaifk')
+            ->join('produk_m as prd', 'prd.id', '=', 'pp.produkfk')
+            ->leftJoin('pelayananpasienpetugas_t as p3', 'pp.norec', '=', 'p3.pelayananpasien')
+            ->leftJoin('pegawai_m as pg3', function ($join) {
+                $join->on('pg3.id', '=', 'p3.objectpegawaifk')
+                    ->where('p3.objectpegawaifk', '=', '4');
+            })
+            ->join('detailjenisproduk_m as djp', 'djp.id', '=', 'prd.objectdetailjenisprodukfk')
+            ->join('maphasillab_m as maps', 'maps.produkfk', '=', 'prd.id')
+            ->join('maphasillabdetail_m as maps2', 'maps2.maphasilfk', '=', 'maps.id')
+            ->join('nilainormal_m as nn', 'nn.id', '=', 'maps2.nilainormalfk')
+            ->leftJoin('satuanstandar_m as ss', 'ss.id', '=', 'maps.satuanstandarfk')
+            ->leftJoin('hasillaboratorium_t as hh', function ($join) {
+                $join->on('hh.norecpelayanan', '=', 'pp.norec')
+                    ->on('pp.noregistrasifk', '=', 'hh.noregistrasifk')
+                    ->on('maps.detailpemeriksaan', '=', 'hh.detailpemeriksaan');
+            })
+            ->where('pp.noregistrasifk', $norec)
+            ->whereNotNull('hh.hasil')
+            ->where('hh.hasil', '<>', '')
+            ->when($norecpp, function ($q) use ($norecpp) {
+                $arr = explode(',', $norecpp);
+                return $q->whereIn('pp.norec', $arr);
+            })
+            ->when($jenisKelamin, function ($q) use ($jenisKelamin) {
+                return $q->where('maps2.jeniskelaminfk', $jenisKelamin);
+            })
+            ->whereRaw("? BETWEEN (select umurmin from kelompokumur_m kuu where kuu.id = maps2.kelompokumurfk limit 1)
+                    and (select umurmax from kelompokumur_m kuu where kuu.id = maps2.kelompokumurfk limit 1)", [$umur])
+            ->orderBy('maps.nourutjenispemeriksaan')
+            ->get();
+
+        $data = collect($data)->unique(fn($item) => $item->detailpemeriksaan . '-' . $item->hasil)->values();
+        $grouped = $data->groupBy('detailjenisproduk');
+        $header = $data->first();
+
+        // Cek apakah TTE sudah ada
+        $tte = (isset($r['isttd']) && $r['isttd'] == true) ? 'true' : 'false';
+
+        //Jika sudah ada file TTE sebelumnya, langsung redirect
+        if ($tte == 'true') {
+            $cekPdf = DB::table('emr_bsre_t')
+                ->where('statusenabled', true)
+                ->where('noregistrasi', trim($header->noregistrasi))
+                ->where('nocm', $header->nocm)
+                ->where('status', true)
+                ->get();
+
+            if (count($cekPdf) > 0) {
+                $link = '/service/storage_path?path=' . $cekPdf[0]->file . '&filename=' . $cekPdf[0]->namafile . '&mimetype=application/pdf';
+                return redirect($link);
+            }
+        }
+
+        $eg = DB::table('pegawai_m')
+            ->where('id', $r['pegawaittd'])
+            ->first();
+
+        // membuat file PDF
+        $pdf = \PDF::loadView('report.lab.hasil-lab', [
+            'data' => $header,
+            'grouped' => $grouped,
+            'umur' => $this->formatUmur($r->input('umur')),
+            'user' => 'Programmer Administrator',
+            'catatan' => $catatan,
+            'dokterr' => $dokterr,
+            'tte' => $tte
+        ]);
+
+        //Proses TTE (kalau aktif)
+        if ($tte == 'true') {
+            $objReq = new \Illuminate\Http\Request();
+            $objReq['pegawaittd'] = $r['pegawaittd'];
+            $objReq['nocm'] = $header->nocm;
+            $objReq['noregistrasi'] = $header->noregistrasi;
+            $objReq['norec_pd'] = $norec;
+            $objReq['tipe'] = 'hasillab';
+
+            $bsre = $this->pengajuanTTELab($objReq, true);
+
+            if ($bsre['status'] == 201) {
+                $content = $pdf->download()->getOriginalContent();
+                \Storage::disk('local')->put('TTD_BSRE/' . $bsre['dokumen']->id . '/file.pdf', $content);
+            }
+
+            return $bsre;
+        }
+
+        //Kalau bukan TTE, langsung tampilkan
+        return $pdf->stream();
+    }
+
+    private function formatUmur($umurHari)
+    {
+        $tahun = floor($umurHari / 365);
+        $bulan = floor(($umurHari % 365) / 30);
+        $hari = ($umurHari % 365) % 30;
+
+        $str = '';
+        if ($tahun > 0) $str .= $tahun . ' Thn ';
+        if ($bulan > 0) $str .= $bulan . ' Bln ';
+        if ($hari > 0) $str .= $hari . ' Hr';
+        return trim($str);
+    }
+
+    public function pengajuanTTELab(Request $request)
+    {
+        $kdProfile = 30;
+
+        DB::beginTransaction();
+
+        try {
+
+
+            $prof =  DB::table('profile_m')->where('statusenabled', true)->first();
+
+            if(isset($request['tipe']) && $request['tipe'] == 'resumemedis'){
+                $emr = ResumeMedis::where('norec', $request['norec_emr'])->first();
+                $noemr = $emr ? $emr->koderesume : null;
+            } elseif (isset($request['tipe']) && $request['tipe'] == 'hasillab') {
+          // hasil lab tidak punya tabel emr
+                $emr = null;
+                $noemr = 'HASILLAB-' . $request['noregistrasi'];
+            }else{
+                $emr = EMRPasien::where('norec', $request['norec_emr'])->first();
+                 $noemr = $emr ? $emr->noemr : null;
+
+            }
+
+            $emrM =  DB::table('emr_t')->where('id', $request['emrfk'])->first();
+           // FIXED: fallback kalau hasil lab tidak punya emrfk
+            if (!$emrM) {
+                $emrM = (object)[
+                    'caption' => 'Hasil Laboratorium',
+                    'bsre_xaxis' => 625,
+                    'bsre_yaxis' => 70,
+                    'bsre_width' => 251.46,
+                    'bsre_height' => 133.13,
+                ];
+            }
+
+            $pegawai = Pegawai::where('id', $request['pegawaittd'])->first();
+            // $cek =  EMR_BSRE::where('nomoremr', $emr->noemr)
+            //     ->where('emrfk', $request['emrfk'])->first();
+                $cek = EMR_BSRE::where('nomoremr', $noemr)
+                ->where('emrfk', $request['emrfk'])
+                ->first();
+
+
+            if (empty($cek)) {
+                $idOK = EMR_BSRE::max('id') + 1;
+
+                $filename_res = 'TTD_BSRE/' . $idOK . '/file' . '.pdf';
+                $emrDkmn = new EMR_BSRE();
+                $emrDkmn->id =  $idOK;
+                $emrDkmn->kdprofile = $kdProfile;
+                $emrDkmn->statusenabled = true;
+            } else {
+                $emrDkmn = $cek;
+                $filename_res = 'TTD_BSRE/' . $cek->id . '/file' . '.pdf';
+                $idOK =  $cek->id;
+            }
+
+            $emrDkmn->noregistrasi = $request['noregistrasi'];
+            $emrDkmn->nocm = $request['nocm'];
+            $emrDkmn->norec_pd = $request['norec_pd'];
+            $emrDkmn->tglemr = date('Y-m-d H:i:s');
+            $emrDkmn->file = 'app/' . $filename_res;
+            $emrDkmn->namafile =  $emrM->caption;
+            $emrDkmn->deskripsi = '';
+            $emrDkmn->nik_pegawai = $pegawai->noidentitas;
+            $emrDkmn->namadokumen = $emrM->caption;
+            $emrDkmn->pegawaifk = $request['pegawaittd'];
+            $emrDkmn->nomoremr = $noemr;
+            // $emrDkmn->nomoremr = $emr->noemr;
+            $emrDkmn->linkQR = 'https://simrs-grhasia.jogjaprov.go.id/service/medifirst2000/verify-doc/' . $idOK;
+            $emrDkmn->passphrase = null;
+            $emrDkmn->tampilan = 'visible';
+            $emrDkmn->page = 1;
+            $emrDkmn->xAxis = $emrM->bsre_xaxis ? $emrM->bsre_xaxis : 625;
+            $emrDkmn->yAxis = $emrM->bsre_yaxis ? $emrM->bsre_yaxis : 70;
+            $emrDkmn->width = $emrM->bsre_width ? $emrM->bsre_width : 251.46;
+            $emrDkmn->height = $emrM->bsre_height ? $emrM->bsre_height : 133.13;
+            $emrDkmn->location = $prof->namalengkap;
+            $emrDkmn->emrfk =  $request['emrfk'];
+            $emrDkmn->status = false;
+            $emrDkmn->save();
+
+
+            $transStatus = 'true';
+        } catch (\Exception $e) {
+            $transStatus = 'false';
+        }
+
+        if ($transStatus == 'true') {
+            $transMessage = 'Sukses';
+            DB::commit();
+            $result = array(
+                "status" => 201,
+                "message" => $transMessage,
+                "dokumen" => $emrDkmn,
+                "as" => 'inhuman',
+            );
+        } else {
+            $transMessage = "Terjadi kesalahan";
+            DB::rollBack();
+            $result = array(
+                "status" => 400,
+                "message" => $transMessage,
+                "e" => $e->getMessage() . ' ' . $e->getLine(),
+                "as" => 'inhuman',
+            );
+        }
+        return  $result;
+    }
 }

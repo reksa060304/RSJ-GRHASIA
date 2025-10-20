@@ -396,7 +396,10 @@ class BridgingBSREController  extends ApiController
                 $emrDkmn->yAxis = $dataJsonSend['yAxis'];
                 $emrDkmn->width = $dataJsonSend['width'];
                 $emrDkmn->height = $dataJsonSend['height'];
-                $emrDkmn->location = $dataJsonSend['location'];
+                // $emrDkmn->location = $dataJsonSend['location'];
+                $emrDkmn->location = is_bool($dataJsonSend['location'])
+                    ? ($dataJsonSend['location'] ? 'true' : 'false')
+                    : (string) $dataJsonSend['location'];
 
                 $emrDkmn->save();
             } else {
@@ -490,8 +493,8 @@ class BridgingBSREController  extends ApiController
         $paramNoreg = '';
         $data = \DB::table('emr_bsre_t as emrdk')
             ->join('pegawai_m as pg', 'pg.id', '=', 'emrdk.pegawaifk')
-            ->join('pasiendaftar_t as pd', 'pd.norec', '=', 'emrdk.norec_pd')
-            ->join('pasien_m as ps', 'ps.id', '=', 'pd.nocmfk')
+            ->leftJoin('pasiendaftar_t as pd', 'pd.norec', '=', 'emrdk.norec_pd')
+            ->leftjoin('pasien_m as ps', 'ps.id', '=', 'pd.nocmfk')
             ->select('emrdk.*', 'pg.namalengkap', 'ps.nocm', 'ps.namapasien')
             ->where('emrdk.statusenabled', true)
             ->where('emrdk.kdprofile', $idProfile);

@@ -1,4 +1,4 @@
-define(['initialize'], function (initialize) {
+define(['initialize', 'Configuration'], function (initialize, config) {
     'use strict';
     initialize.controller('HasilLaboratoriumRevCtrl', ['$scope', '$state', 'MedifirstService', 'CacheHelper',
         function ($scope, $state, medifirstService, cacheHelper) {
@@ -864,8 +864,100 @@ define(['initialize'], function (initialize) {
 
             });
 
-           
+            $scope.cetaklab = function () {
+                var dokter = "";
+                var user = medifirstService.getPegawaiLogin();
+                var stt = 'true'
+    
+                if ($scope.item.DataPegawai == undefined) {
+                    alert("Pilih terlebih dahulu dokter nya!!")
+                    return;
+                } else {
+                    dokter = $scope.item.DataPegawai
+                }
 
+                window.open(config.baseApiBackend + "report/cetak-hasil-lab-manual?&norec=" + $scope.norecAPD
+                    + '&objectjeniskelaminfk=' + $scope.item.objectjeniskelaminfk
+                    + '&umur=' + $scope.item.umurDay
+                    + '&strIdPegawai=' + user.namaLengkap
+                    + '&strNorecPP=' + $scope.item.norecPP
+                    + '&view=' + stt
+                    + '&doketr=' + dokter.namalengkap
+                    + '&catatan=' + $scope.item.catatan, '_blank');
+            }
+
+            // start tte
+            $scope.ttdElek = function () {
+                if (!$scope.ListDataPegawai || !$scope.ListDataPegawai.length) {
+                    toastr.warning('Data pegawai belum tersedia')
+                    return
+                }
+
+                // FIXED: selalu beri object kosong agar tidak null
+                $scope.item = $scope.item || {}
+                $scope.item.DataPegawai = null
+
+                $scope.winDialog.center().open()
+            }
+
+            $scope.savePengajuanTTELab = function (pegawai) {  
+                var dokter = "";
+                var local = JSON.parse(localStorage.getItem('profile'))
+                var nama = medifirstService.getPegawaiLogin().namaLengkap
+                var user = medifirstService.getPegawaiLogin()
+                var stt = $scope.view || 'view'
+
+                if ($scope.item.DataPegawai == undefined) {
+                    alert("Pilih terlebih dahulu dokter nya!!")
+                    return;
+                } else {
+                    dokter = $scope.item.DataPegawai
+                }
+
+                $scope.isRouteLoading = true
+                console.log('Item:', $scope.item);
+                medifirstService.get('report/cetak-hasil-lab-manual'
+                    + '?norec=' + $scope.norecAPD
+                    + '&objectjeniskelaminfk=' + $scope.item.objectjeniskelaminfk
+                    + '&umur=' + $scope.item.umurDay
+                    + '&strIdPegawai=' + user.namaLengkap
+                    + '&strNorecPP=' + $scope.item.norecPP
+                    + '&view=' + stt
+                    + '&doketr=' + dokter.namalengkap
+                    + '&catatan=' + encodeURIComponent($scope.item.catatan || '')
+                    + '&kdprofile=' + local.id
+                    + '&nama=' + nama
+                    + '&pegawaittd=' + pegawai.id
+                    + '&isttd=true')
+                .then(function (e) {
+                console.log(e);
+                // console.log('URL lengkap:', 'report/cetak-hasil-lab-manual'
+                // + '?norec=' + $scope.norecAPD
+                // + '&doketr=' + dokter.namalengkap);
+                $scope.isRouteLoading = false;
+                // FIXED: kalau hasilnya PDF (string diawali "%PDF"), langsung buka
+                if (typeof e.data === 'string' && e.data.startsWith('%PDF')) {
+                    var file = new Blob([e.data], { type: 'application/pdf' });
+                    var fileURL = URL.createObjectURL(file);
+                    window.open(fileURL, '_blank');
+                    toastr.success('File PDF berhasil dibuat');
+                    $scope.winDialog.close();
+                    return;
+                }
+                if (e.data && e.data.status == 201) {
+                    toastr.success(e.data.message);
+                    $scope.winDialog.close();
+                } else {
+                    toastr.error('Proses gagal atau file tidak terbaca.');
+                }
+            })
+                .catch(function (err) {
+                    console.error(err)
+                    toastr.error('Gagal koneksi ke server')
+                    $scope.isRouteLoading = false
+                })
+            }           
+    // batas
         }
     ]);
 
