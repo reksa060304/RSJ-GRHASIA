@@ -1937,6 +1937,37 @@ Which will check for empty strings (""), null, undefined, false and the numbers 
                 Kosongkan()
             }
 
+            $scope.onDataBound = function(e) {
+                const grid = e.sender;
+                const rows = grid.tbody.find('tr');
+                
+                rows.each(function() {
+                    const row = $(this);
+                    const dataItem = grid.dataItem(row);
+                    
+                    if (dataItem) {
+                        row.removeClass(function(index, className) {
+                            return (className.match(/(^|\s)racikan-rke-\S+/g) || []).join(' ');
+                        });
+                        row.removeClass('normal-row');
+                        
+                        const colorClass = getRacikanColorClass(dataItem.rke, dataItem.jeniskemasan);
+                        row.addClass(colorClass);
+                    }
+                });
+            };
+
+            function getRacikanColorClass(rke, jeniskemasan) {
+                if (!jeniskemasan || jeniskemasan.toLowerCase() !== 'racikan') {
+                    return 'normal-row';
+                }
+                
+                const rkeNumber = parseInt(rke.toString().replace(/\D/g, '')) || 1;
+                const colorIndex = ((rkeNumber - 1) % 10) + 1;
+                
+                return `racikan-rke-${colorIndex}`;
+            }
+
             $scope.columnGrid = [
                 {
                     "field": "no",
