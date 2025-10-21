@@ -3802,6 +3802,7 @@ class PelayananResepController extends ApiController
         ) * jumlah
         ) AS subtotal,
         pp.hargadiscount,
+        pp.aturanpakai,
         pd.noregistrasi,
         ps.nocm,
         ps.namapasien,   
@@ -3853,6 +3854,7 @@ class PelayananResepController extends ApiController
 					spd.harganetto AS hargajual,
 					(spd.qtyproduk*spd.harganetto) AS subtotal,
 					spd.hargadiscount,
+                    pp.aturanpakai,
 					'' as noregistrasi,
 					sp.nostruk_intern as nocm,
 					sp.namapasien_klien as namapasien,
