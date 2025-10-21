@@ -30942,13 +30942,14 @@ public function suratBuktiPengembalian(Request $request)
         "))->first();
 
         $data = collect(DB::select("
-            select sp.norec,sp.tglorder,sp.noorder,pg.namalengkap as penanggungjawab,pg.nippns,sp.objectpetugasfk,
+            select sp.norec,sp.tglorder,sp.noorder,pg.namalengkap as penanggungjawab,pg.nippns, sp.objectpetugasfk,
             sp.tglvalidasi as tglkebutuhan,sp.alamattempattujuan,sp.keteranganlainnya,sp.tglvalidasi,sp.noorderintern,
             sp.keterangankeperluan,sp.keteranganorder,ru.namaruangan as ruangan,ru.id as ruid,
             ru2.namaruangan as ruangantujuan,ru2.id as ruidtujuan, sp.kelompokproduk,
             sp.totalhargasatuan , sp.Status,pr.kdproduk,pr.namaproduk,ss.satuanstandar,op.qtyproduk,op.hargasatuan,op.hargadiscount,
             case when op.hargappn is null then 0 else op.hargappn end as hargappn,(op.qtyproduk*(op.hargasatuan)) as total,op.tglpelayananakhir as tglkebutuhan,
-            op.deskripsiprodukquo as spesifikasi,pr.id as prid,pg1.namalengkap,pg1.nippns as nippetugas, pg1.nip_pns, jb.namajabatan,rk.namarekanan, sp.namarekanansales
+            op.deskripsiprodukquo as spesifikasi,pr.id as prid,pg1.namalengkap,pg1.nippns as nippetugas, pg1.nip_pns, jb.namajabatan,rk.namarekanan, sp.namarekanansales,
+            rk.alamatlengkap, pg.nosip as sippenanggungjawab, pg.objectjenispegawaifk
             from strukorder_t sp
             left join orderpelayanan_t op on op.strukorderfk=sp.norec
             left join produk_m pr on pr.id=op.objectprodukfk
@@ -31018,10 +31019,8 @@ public function suratBuktiPengembalian(Request $request)
             // 'apoteker' => $apoteker,
         );
         // dd($dataReport);
-        return view(
-            'report.logistik.cetak-bukti-usulan-barang',
-            compact('dataReport', 'pageWidth', 'profile')
-        );
+        $pdf = \PDF::loadView('report.logistik.cetak-bukti-usulan-barang', compact('dataReport', 'pageWidth', 'profile'));
+        return $pdf->stream('bukti-usulan-barang.pdf');
     }
     public function printGetHasilLabManual(Request $r)
     {
