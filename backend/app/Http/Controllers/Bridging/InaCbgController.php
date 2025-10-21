@@ -36,6 +36,101 @@ class InaCbgController   extends ApiController
     public function __construct() {
     parent::__construct($skip_authentication=false);
 }
+    // public function saveBridgingINACBG(Request $request)
+    // {
+    //     $data = \DB::table('settingdatafixed_m')
+    //         ->select('namafield', 'nilaifield')
+    //         ->where('keteranganfungsi', 'inacbg')
+    //         ->get();
+
+    //     $codernik = $key = $url = null;
+    //     foreach ($data as $item) {
+    //         if ($item->namafield == 'codernik') $codernik = $item->nilaifield;
+    //         if ($item->namafield == 'key') $key = $item->nilaifield;
+    //         if ($item->namafield == 'url') $url = $item->nilaifield;
+    //     }
+
+    //     $dataReq = $request['data'];
+    //     $responseArr = [];
+
+    //     foreach ($dataReq as $dataLoop) {
+    //         $json_request = json_encode($dataLoop);
+    //         $payload = $this->inacbg_encrypt($json_request, $key);
+    //         $header = ["Content-Type: application/x-www-form-urlencoded"];
+
+    //         $ch = curl_init();
+    //         curl_setopt_array($ch, [
+    //             CURLOPT_URL => $url,
+    //             CURLOPT_HEADER => 0,
+    //             CURLOPT_RETURNTRANSFER => 1,
+    //             CURLOPT_HTTPHEADER => $header,
+    //             CURLOPT_POST => 1,
+    //             CURLOPT_POSTFIELDS => $payload,
+    //         ]);
+    //         $response = curl_exec($ch);
+    //         $err = curl_error($ch);
+    //         curl_close($ch);
+
+    //         if ($err) {
+    //             return $this->setStatusCode(400)->respond($err, $err);
+    //         }
+
+    //         $first = strpos($response, "\n") + 1;
+    //         $last = strrpos($response, "\n") - 1;
+    //         $response = substr($response, $first, strlen($response) - $first - $last);
+    //         $response = $this->inacbg_decrypt($response, $key);
+    //         $response = json_decode(json_encode($response), true);
+
+    //         $responseArr[] = [
+    //             'datarequest' => $dataLoop,
+    //             'dataresponse' => $response,
+    //         ];
+
+    //         $nomorSep = $dataLoop['data']['nomor_sep'] ?? null;
+    //         $mdcDescRaw = $response['response_idrg']['mdc_description'] ?? '';
+    //         $drgDescRaw = $response['response_idrg']['drg_description'] ?? '';
+    //         $drgCode = $response['response_idrg']['drg_code'] ?? null;
+
+    //         $noreg = \DB::table('pemakaianasuransi_t')
+    //             ->where('nosep', $nomorSep)
+    //             ->value('noregistrasifk');
+
+    //         if (isset($dataLoop['metadata']['method']) && $dataLoop['metadata']['method'] == 'delete_claim') {
+    //             if ($noreg) {
+    //                 \DB::table('pasiendaftar_t')
+    //                     ->where('norec', $noreg)
+    //                     ->update(['responseeklaim' => null]); 
+    //             }
+    //         } else {
+    //             if ($noreg) {
+    //                 $textParts = [];
+    //                 if (!empty($mdcDescRaw)) {
+    //                     $textParts[] = "MDC - {$mdcDescRaw}";
+    //                 }
+    //                 if (!empty($drgCode) || !empty($drgDescRaw)) {
+    //                     $drgText = trim("{$drgCode} {$drgDescRaw}");
+    //                     $textParts[] = "DRG - {$drgText}";
+    //                 }
+
+    //                 $text = implode(' | ', $textParts);
+
+    //                 if (!empty($text)) {
+    //                     \DB::table('pasiendaftar_t')
+    //                         ->where('norec', $noreg)
+    //                         ->update(['responseeklaim' => $text]);
+    //                 }
+    //             }
+    //         }
+    //     }
+
+    //     $result = [
+    //         "status" => 201,
+    //         "dataresponse" => $responseArr,
+    //         "as" => 'as@epic',
+    //     ];
+
+    //     return $this->setStatusCode($result['status'])->respond($result, "Bridging InaCBG");
+    // }
     public function saveBridgingINACBG(Request $request)
     {
         $data  = \DB::table('settingdatafixed_m')

@@ -52,6 +52,7 @@ use App\Transaksi\StrukPraOrder;
 use App\Transaksi\StrukResep;
 use App\Transaksi\TempBilling;
 use App\Transaksi\SkriningAwalPasien;
+use App\Transaksi\CatatanPasienDaftar;
 use App\Transaksi\EMRPasienD;
 use Illuminate\Http\Request;
 use App\Traits\PelayananPasienTrait;
@@ -667,6 +668,22 @@ class RegistrasiController extends ApiController
                     }
                 }
 
+                // tambah catatan
+                if(isset($r_NewPD['catatan']) && $r_NewPD['catatan']!='' ){
+                    $cp = new CatatanPasienDaftar();
+                    $norec = $cp->generateNewId();
+                    $cp->norec = $norec;
+                    $cp->kdprofile = $kdProfile;
+                    $cp->noregistrasifk = $dataPDnorec;
+                    $cp->statusenabled = true;
+                    $cp->objectpegawaifk = $this->getCurrentUserID() ;//$dataPegawai->objectpegawaifk;
+                    $cp->tglcatatan = date('Y-m-d H:i:s');
+                    $cp->ruangan = "Pendaftaran";
+                    $cp->catatan = $r_NewPD['catatan'];
+                    $cp->save();
+                }
+                // end tambah 
+
                 //endregion
                 $transStatus = 'true';
             } catch (\Exception $e) {
@@ -711,6 +728,11 @@ class RegistrasiController extends ApiController
                 $objetoRequest = new \Illuminate\Http\Request();
                 $objetoRequest['noregistrasi'] = $dataPD->noregistrasi;
                 $ihs = app('App\Http\Controllers\Bridging\IHSController')->Encounter($objetoRequest, true);
+                if ($dataPD->ismobilejkn == false && ($dataPD->statusschedule != '' || $dataPD->statusschedule != null)) {
+                    $request['norec'] = $dataPD->norec;
+                    $request['norec_apd'] = $dataAPD->norec;
+                    $this->saveAdministrasi($request);
+                }
 
                 $result = array(
                     'status' => 201,
@@ -4540,15 +4562,7 @@ class RegistrasiController extends ApiController
             $dataNoCMFk = $newId;
             $nocmfk = $dataPS->id;
             $nocmss = $dataPS->nocm;
-
-            //poto pasien
-            if (!empty($request['pasien']['image'])) {
-                $dataUrl = $request['pasien']['image']; 
-                Pasien::where('id', $nocmfk)->update([
-                    'foto' => $dataUrl, 
-                ]);
-            }
-            // if (isset($request['pasien']['image'])) {
+            if (isset($request['pasien']['image'])) {
                 //agus
                 //                $img =  str_replace('data:image/jpeg;base64,', '', $request['pasien']['image']);
                 //                $img = str_replace(' ', '+', $img);
@@ -4581,7 +4595,7 @@ class RegistrasiController extends ApiController
                 //                );
                 //#egi
 
-            // }
+            }
             //endregion
 
 
@@ -9312,14 +9326,12 @@ class RegistrasiController extends ApiController
         }
         return $this->setStatusCode($result['status'])->respond($result, $transMessage);
     }
-    public function saveDiagnosaTindakanPasien(Request $request)
-    {
+    public function saveDiagnosaTindakanPasien(Request $request) {
         $dataLogin = $request->all();
         $kdProfile = $this->getDataKdProfile($request);
         $idProfile = (int) $kdProfile;
         DB::beginTransaction();
-        $dataPegawaiUser = DB::select(
-            DB::raw("select pg.id,pg.namalengkap from loginuser_s as lu
+        $dataPegawaiUser = DB::select(DB::raw("select pg.id,pg.namalengkap from loginuser_s as lu
                 INNER JOIN pegawai_m as pg on lu.objectpegawaifk=pg.id
                 where lu.id=:idLoginUser and pg.kdprofile = $idProfile"),
             array(
@@ -9327,20 +9339,22 @@ class RegistrasiController extends ApiController
             )
         );
 
-        //        try{
-        if ($request['detaildiagnosatindakanpasien']['norec_dp'] == '') {
+//        try{
+        if ($request['detaildiagnosatindakanpasien']['norec_dp']==''){
             $dataDiagnosa = new DiagnosaTindakanPasien();
             $dataDiagnosa->norec = $dataDiagnosa->generateNewId();
             $dataDiagnosa->kdprofile = $idProfile;
             $dataDiagnosa->statusenabled = true;
-        } else {
-            $dataDiagnosa =  DiagnosaTindakanPasien::where('norec', $request['detaildiagnosatindakanpasien']['norec_dp'])->first();
+        }else{
+            $dataDiagnosa =  DiagnosaTindakanPasien::where('norec',$request['detaildiagnosatindakanpasien']['norec_dp'])->first();
         }
         $dataDiagnosa->objectpasienfk =  $request['detaildiagnosatindakanpasien']['objectpasienfk'];
         $dataDiagnosa->tglpendaftaran = $request['detaildiagnosatindakanpasien']['tglpendaftaran'];
+       
+      
 
 
-        try {
+        try{
             $dataDiagnosa->save();
             $transStatus = 'true';
         } catch (\Exception $e) {
@@ -9349,27 +9363,35 @@ class RegistrasiController extends ApiController
         }
 
 
-        if ($request['detaildiagnosatindakanpasien']['norec_dp'] == '') {
+        if ($request['detaildiagnosatindakanpasien']['norec_dp']==''){
             $dataDetailDiagnosa = new DetailDiagnosaTindakanPasien();
             $dataDetailDiagnosa->norec = $dataDetailDiagnosa->generateNewId();
             $dataDetailDiagnosa->kdprofile = $idProfile;
             $dataDetailDiagnosa->statusenabled = true;
-            $dataDetailDiagnosa->objectpegawaifk = $dataPegawaiUser[0]->id; // $this->getCurrentLoginID();
-        } else {
-            $dataDetailDiagnosa =  DetailDiagnosaTindakanPasien::where('objectdiagnosatindakanpasienfk', $request['detaildiagnosatindakanpasien']['norec_dp'])->first();
+            $dataDetailDiagnosa->objectpegawaifk = $dataPegawaiUser[0]->id;// $this->getCurrentLoginID();
+            if (isset($request['detaildiagnosatindakanpasien']['ketdiagnosa'])) {
+                $dataDetailDiagnosa->ketdiagnosa = $request['detaildiagnosatindakanpasien']['ketdiagnosa'];
+            }
+        }else{
+            $dataDetailDiagnosa =  DetailDiagnosaTindakanPasien::where('objectdiagnosatindakanpasienfk',$request['detaildiagnosatindakanpasien']['norec_dp'])->first();
         }
 
         $dataDetailDiagnosa->objectdiagnosatindakanfk = $request['detaildiagnosatindakanpasien']['objectdiagnosatindakanfk'];
         $dataDetailDiagnosa->objectdiagnosatindakanpasienfk = $dataDiagnosa->norec;
         $dataDetailDiagnosa->jumlah = null;
-        $dataDetailDiagnosa->objectpegawaifk = $dataPegawaiUser[0]->id; // $this->getCurrentLoginID()
-        if (isset($request['detaildiagnosatindakanpasien']['keterangantindakan'])) {
+        $dataDetailDiagnosa->objectpegawaifk = $dataPegawaiUser[0]->id;// $this->getCurrentLoginID()
+        
+        if(isset( $request['detaildiagnosatindakanpasien']['keterangantindakan'])){
             $dataDetailDiagnosa->keterangantindakan = $request['detaildiagnosatindakanpasien']['keterangantindakan'];
         }
 
+        if (isset($request['detaildiagnosatindakanpasien']['jumlah'])) {
+                $dataDetailDiagnosa->jumlah = $request['detaildiagnosatindakanpasien']['jumlah'];
+            }
+
         $dataDetailDiagnosa->tglinputdiagnosa = date('Y-m-d H:i:s');
 
-        try {
+        try{
             $dataDetailDiagnosa->save();
             $transStatus = 'true';
         } catch (\Exception $e) {
@@ -9377,13 +9399,27 @@ class RegistrasiController extends ApiController
             $transMessage = "simpan Pasien Baru";
         }
 
+        $pd = DB::table('pasiendaftar_t as pd')
+            ->join('antrianpasiendiperiksa_t as apd','apd.noregistrasifk','=','pd.norec')
+            ->select('pd.noregistrasi','objectruanganlastfk')
+            ->where('apd.norec',$request['detaildiagnosatindakanpasien']['objectpasienfk'])
+            ->first();
+
         if ($transStatus == 'true') {
             $transMessage = "Data Tersimpan";
             DB::commit();
+            $ihs = null;
+            if($pd->objectruanganlastfk == 819) {
+                $objetoRequest = new \Illuminate\Http\Request();
+                $objetoRequest ['noregistrasi']= $pd->noregistrasi;
+                $objetoRequest ['inacbg']=true;
+                $ihs = app('App\Http\Controllers\Bridging\IHSController')->Procedure($objetoRequest,true);
+            }
             $result = array(
                 'status' => 201,
                 'message' => $transMessage,
                 'data' => $dataDiagnosa,
+                'Procedure' =>  $ihs,
                 'as' => 'egie@ramdan',
             );
         } else {
@@ -9392,7 +9428,7 @@ class RegistrasiController extends ApiController
             $result = array(
                 'status' => 400,
                 'message'  => $transMessage,
-                'data' => $dataDiagnosa,
+                'data' =>$dataDiagnosa,
                 'as' => 'egie@ramdan',
             );
         }
