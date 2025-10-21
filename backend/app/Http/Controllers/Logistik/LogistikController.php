@@ -337,6 +337,53 @@ class LogistikController extends ApiController{
                 );
             }
         }
+
+        $ruanganTujuan = $request['ruangantujuan'] ?? null;
+        $ruanganPemesan = $request['ruanganpemesan'] ?? null;
+        $dataProdukResultAsset = [];
+
+        $ruanganList = [];
+        if ($ruanganTujuan) $ruanganList[] = (int)$ruanganTujuan;
+        if ($ruanganPemesan) $ruanganList[] = (int)$ruanganPemesan;
+
+        if (!empty($ruanganList)) {
+            $dataProduk2 = DB::select(DB::raw("
+                SELECT
+                    pr.id,
+                    pr.kdproduk AS kdsirs,
+                    pr.namaproduk,
+                    ss.id AS ssid,
+                    ss.satuanstandar,
+                    pr.namaexternal,
+                    ra.objectruanganposisicurrentfk AS ruanganid,
+                    ru.namaruangan
+                FROM registrasiaset_t AS ra
+                INNER JOIN produk_m AS pr ON pr.id = ra.objectprodukfk
+                LEFT JOIN satuanstandar_m AS ss ON ss.id = pr.objectsatuanstandarfk
+                LEFT JOIN ruangan_m AS ru ON ru.id = ra.objectruanganposisicurrentfk
+                WHERE ra.kdprofile = $idProfile
+                AND ra.statusenabled = TRUE
+                AND ra.objectruanganposisicurrentfk IN (" . implode(',', $ruanganList) . ")
+                GROUP BY pr.id, pr.kdproduk, pr.namaproduk, ss.id, ss.satuanstandar, pr.namaexternal, ra.objectruanganposisicurrentfk, ru.namaruangan
+                ORDER BY pr.namaproduk
+            "));
+
+            foreach ($dataProduk2 as $item) {
+                $dataProdukResultAsset[] = [
+                    'id' => $item->id,
+                    'namaproduk' => $item->namaproduk,
+                    'namaexternal' => $item->namaexternal,
+                    'kdsirs' => $item->kdsirs,
+                    'kdproduk' => $item->kdsirs,
+                    'ssid' => $item->ssid,
+                    'satuanstandar' => $item->satuanstandar,
+                    'namaruangan' => $item->namaruangan,
+                    'ruanganid' => $item->ruanganid,
+                ];
+            }
+        }
+
+        $result['produkasset2'] = $dataProdukResultAsset;
         
         $dataTipeProduk = \DB::table('typeproduk_m as tp')
             ->where('tp.statusenabled', true)
@@ -443,6 +490,20 @@ class LogistikController extends ApiController{
             ->where('lu.kdprofile', $idProfile)
             ->get();
 
+        $produkasset = \DB::table('registrasiaset_t as rga')
+            ->leftJoin('produk_m as pr', 'pr.id', '=', 'rga.objectprodukfk')
+            ->where('rga.statusenabled', true)
+            ->where('rga.kdprofile', $kdProfile)
+            ->groupBy('rga.objectprodukfk', 'pr.namaproduk')
+            ->orderBy('pr.namaproduk')
+            ->get(['rga.objectprodukfk', 'pr.namaproduk']);
+
+        // $produkasset = \DB::table('registrasiaset_t as rga')
+        //     ->leftJoin('produk_m as pr', 'pr.id', '=', 'rga.objectprodukfk')
+        //     ->where('rga.statusenabled', true)
+        //     ->where('rga.kdprofile', $idProfile)
+        //     ->get();
+
         $result = array(
             'pegawai' => $data,
             'ruangan' => $dataRuangan,
@@ -491,6 +552,8 @@ class LogistikController extends ApiController{
             'ruanganaset'=>$RuanganAset,
             'ruanganasetasal'=>$RuanganAsetAsal,
             'kelompokbarang' => $dataKelompokBarang,
+            'produkasset' => $produkasset,
+            'produkasset2' => $dataProdukResultAsset,
             // 'sppb'=> $sppbnya,
             // 'SNN'=> $SNN,
             'by' => 'ea@epic',
@@ -2741,9 +2804,9 @@ class LogistikController extends ApiController{
                     ->where('ru.id', $request['strukorder']['ruanganfkPengusul'])
                     ->first();
 
-                $prefix = '/' . $dataRuanganLogin->website . '/' . 
+                $prefix = '/SP/' .
                         $this->KonDecRomawi($this->getDateTime()->format('m')) . '/' . 
-                        $this->getDateTime()->format('y');
+                        $this->getDateTime()->format('Y');
 
                 $resultr = StrukOrder::where('noorder', 'ILIKE', '%' . $prefix)->max('noorder');
                 $subPrefix = str_replace($prefix, '', $resultr);
@@ -18090,6 +18153,78 @@ FROM
             'data' => $data,
             'message' => 'Cepot'
         );
+        return $this->respond($result);
+    }
+
+    public function getInformasiStokAsset(Request $request) 
+    {
+        $kdProfile = $this->getDataKdProfile($request);
+        $idProfile = (int) $kdProfile;
+
+        $produkId = $request['produkfk'] ?? null;
+        $ruanganId = $request['ruanganId'] ?? null;
+
+        $sql = "
+            SELECT
+                rga.norec,
+                rga.noregisteraset,
+                rga.objectprodukfk,
+                pr.namaproduk,
+                rga.objectruanganposisicurrentfk AS kdruangan,
+                rm.namaruangan,
+                rga.tglregisteraset
+            FROM registrasiaset_t AS rga
+            LEFT JOIN produk_m AS pr ON pr.id = rga.objectprodukfk
+            LEFT JOIN ruangan_m AS rm ON rm.id = rga.objectruanganposisicurrentfk
+            WHERE rga.kdprofile = $idProfile
+            AND rga.statusenabled = TRUE
+        ";
+
+        $params = [];
+
+        if ($ruanganId) {
+            $sql .= " AND rga.objectruanganposisicurrentfk = :ruanganId";
+            $params['ruanganId'] = $ruanganId;
+        }
+
+        if ($produkId) {
+            $sql .= " AND rga.objectprodukfk = :produkId";
+            $params['produkId'] = $produkId;
+        }
+
+        $sql .= " ORDER BY rm.namaruangan ASC";
+
+        $results = DB::select(DB::raw($sql), $params);
+
+        // Hitung jumlah per ruangan
+        $infostok = [];
+        $jmlstok = 0;
+        foreach ($results as $row) {
+            $jmlstok++;
+            $found = false;
+            foreach ($infostok as &$entry) {
+                if ($entry['kdruangan'] == $row->kdruangan) {
+                    $entry['qtyproduk'] += 1;
+                    $found = true;
+                    break;
+                }
+            }
+            if (!$found) {
+                $infostok[] = [
+                    'qtyproduk' => 1,
+                    'kdruangan' => $row->kdruangan,
+                    'namaruangan' => $row->namaruangan,
+                    'namaproduk' => $row->namaproduk,
+                ];
+            }
+        }
+
+        $result = [
+            'jmlstok' => $jmlstok,
+            'infostok' => $infostok,
+            'detail' => $results,
+            'message' => 'inhuman@epic',
+        ];
         return $this->respond($result);
     }
 }
