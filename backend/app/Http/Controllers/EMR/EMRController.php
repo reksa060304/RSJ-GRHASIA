@@ -3500,6 +3500,26 @@ class EMRController  extends ApiController
         return $this->respond($result);
     }
 
+    public function getDataComboRiwayatObat(Request $request)
+    {
+        $kdProfile = $this->getDataKdProfile($request);
+        $idProfile = (int) $kdProfile;
+        $req = $request->all();
+        $dataProduk = \DB::table('pelayananpasien_t as pp')
+            ->join('antrianpasiendiperiksa_t as apd', 'apd.norec', '=', 'pp.noregistrasifk')
+            ->join('produk_m as pd', 'pd.id', '=', 'pp.produkfk')
+            ->select('pd.id as value', 'pd.namaproduk as text')
+            ->where('pd.statusenabled', true)
+            ->where('apd.noregistrasifk', $req['norec_pd'])
+            ->where('pd.kdprofile', $idProfile)
+            ->where('pp.isobat', true)
+            ->groupby('pd.id', 'pd.namaproduk')
+            ->orderBy('pd.namaproduk');
+        $dataProduk = $dataProduk->get();
+
+        return $this->respond($dataProduk);
+    }
+
     public function getDataComboPegawaiPart(Request $request)
     {
         $kdProfile = $this->getDataKdProfile($request);
