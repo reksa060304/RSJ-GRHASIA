@@ -2490,4 +2490,224 @@ class InaCbgController   extends ApiController
         return $this->setStatusCode($result['status'])->respond($result, $transMessage);
     }
 
+    public function getDaftarPasienVen(Request $request)
+    {
+        $kdProfile = (int)$this->getDataKdProfile($request);
+        if (isset($request['nocm']) && $request['nocm'] != "" && $request['nocm'] != "undefined") {
+            $nocm =  $request['nocm'];
+        }
+
+        //  $data = DB::select(DB::raw("
+        //         SELECT x.noregistrasifk, '1' as use_ind,case when x.ventilator_hour<1 then 1 ELSE x.ventilator_hour end as ventilator_hour, x.stop_dttm,x.start_dttm FROM(SELECT ep.noregistrasifk,epd.emrpasienfk, EXTRACT(HOUR FROM (lps.stop_dttm::TIMESTAMP - epd.value::TIMESTAMP)) AS ventilator_hour, epd.value as start_dttm,lps.stop_dttm FROM emrpasiend_t as epd
+        //         INNER JOIN (SELECT emrpasienfk,
+        //          value as stop_dttm FROM emrpasiend_t 
+        //         WHERE emrfk = 291042 and emrdfk in (318182)) as lps ON lps.emrpasienfk = epd.emrpasienfk
+        //         INNER JOIN emrpasien_t as ep on ep.noemr = epd.emrpasienfk 
+        //         WHERE epd.emrfk = 291042 and epd.emrdfk in (318179)) as x where x.noregistrasifk = '$nocm' 
+        // "));
+
+            $data = DB::select(DB::raw("SELECT
+                            x.noregistrasifk,
+                            '1' AS use_ind,
+                                                            (DATE_PART('Day', x.dttm_stop::TIMESTAMP - x.dttm_start::TIMESTAMP) * 24
+                            + (DATE_PART('Hour',x.dttm_stop::TIMESTAMP) - 
+                            DATE_PART('Hour', x.dttm_start::TIMESTAMP)) )
+                                AS ventilator_hour,
+                            x.dttm_start,
+                            x.dttm_stop
+                        FROM
+                            (
+                            SELECT
+                                ep.noregistrasifk,
+                                epd.emrpasienfk,
+                                epd.VALUE AS start_dttm,
+                                lps.stop_dttm,
+                                MIN(epd.VALUE) OVER (PARTITION BY ep.noregistrasifk) AS dttm_start,
+                                MAX(lps.stop_dttm) OVER (PARTITION BY ep.noregistrasifk) AS dttm_stop
+                            FROM
+                                emrpasiend_t AS epd
+                                INNER JOIN (
+                                    SELECT emrpasienfk, VALUE AS stop_dttm
+                                    FROM emrpasiend_t
+                                    WHERE emrfk = 291042 AND emrdfk IN (318182)
+                                ) AS lps ON lps.emrpasienfk = epd.emrpasienfk
+                                INNER JOIN emrpasien_t AS ep ON ep.noemr = epd.emrpasienfk
+                            WHERE
+                                epd.emrfk = 291042
+                                AND epd.emrdfk IN (318179)
+                            ) AS x
+                        WHERE
+                            x.noregistrasifk = '$nocm'
+                        GROUP BY
+                            x.noregistrasifk, x.dttm_start, x.dttm_stop
+                            "));
+
+
+        $kdProfile = (int)$this->getDataKdProfile($request);
+        $noregistrasi = $request['noregistrasi'];
+        $dataTarif16 = DB::select(DB::raw("select pd.norec, sum(((pp.hargajual - case when pp.hargadiscount is null then 0 else pp.hargadiscount end) * pp.jumlah)+ case when pp.jasa is null then 0 else pp.jasa end) as ttl,kpb.namaexternal
+            from pasiendaftar_t as pd
+            inner join pasien_m as ps on ps.id = pd.nocmfk
+            INNER JOIN antrianpasiendiperiksa_t as apd on apd.noregistrasifk=pd.norec
+            INNER JOIN pelayananpasien_t as pp on pp.noregistrasifk=apd.norec
+            INNER JOIN produk_m as pr on pr.id=pp.produkfk
+            INNER JOIN kelompokprodukbpjs_m as kpb on kpb.id=pr.objectkelompokprodukbpjsfk
+            left join kelompokpasien_m as kp on kp.id = pd.objectkelompokpasienlastfk
+            left join batalregistrasi_t as br on br.pasiendaftarfk = pd.norec
+            where br.norec is null   
+            and pd.kdprofile=$kdProfile
+            AND pr.id <> 402611
+            and pd.noregistrasi = '$nocm'
+            group  by pd.norec,kpb.namaexternal order by pd.norec")
+        );
+        // $i = 0 ;
+        $prosedur_non_bedah ='';
+        $prosedur_bedah ='';
+        $konsultasi ='';
+        $tenaga_ahli ='';
+        $keperawatan ='';
+        $penunjang ='';
+        $radiologi ='';
+        $laboratorium ='';
+        $pelayanan_darah ='';
+        $rehabilitasi ='';
+        $kamar ='';
+        $rawat_intensif ='';
+        $obat ='';
+        $obat_kronis ='';
+        $obat_kemoterapi ='';
+        $alkes ='';
+        $bmhp ='';
+        $sewa_alat ='';
+            $datatatat = [];
+            foreach ($dataTarif16 as $itm){
+//                    $data[$i]->tarif_rs->($dataTarif16[0]->namaexternal) => (float)$dataTarif16[0]->ttl,
+                    if ($itm->namaexternal == 'prosedur_non_bedah'){
+                        $prosedur_non_bedah = (float)$itm->ttl;
+                    }
+                    if ($itm->namaexternal == 'prosedur_bedah'){
+                        $prosedur_bedah = (float)$itm->ttl;
+                    }
+                    if ($itm->namaexternal == 'konsultasi'){
+                           $konsultasi = (float)$itm->ttl;
+                    }
+                    if ($itm->namaexternal == 'tenaga_ahli'){
+                        $tenaga_ahli = (float)$itm->ttl;
+                    }
+                    if ($itm->namaexternal == 'keperawatan'){
+                        $keperawatan = (float)$itm->ttl;
+                    }
+                    if ($itm->namaexternal == 'penunjang'){
+                        $penunjang = (float)$itm->ttl;
+                    }
+                    if ($itm->namaexternal == 'radiologi'){
+                        $radiologi = (float)$itm->ttl;
+                    }
+                    if ($itm->namaexternal == 'laboratorium'){
+                        $laboratorium = (float)$itm->ttl;
+                    }
+                    if ($itm->namaexternal == 'pelayanan_darah'){
+                        $pelayanan_darah = (float)$itm->ttl;
+                    }
+                    if ($itm->namaexternal == 'rehabilitasi'){
+                        $rehabilitasi = (float)$itm->ttl;
+                    }
+                    if ($itm->namaexternal == 'kamar'){
+                        $kamar = (float)$itm->ttl;
+                    }
+                    if ($itm->namaexternal == 'rawat_intensif'){
+                        $rawat_intensif = (float)$itm->ttl;
+                    }
+                    if ($itm->namaexternal == 'obat'){
+                        $obat = (float)$itm->ttl;
+                    }
+                    if ($itm->namaexternal == 'obat_kronis'){
+                        $obat_kronis = (float)$itm->ttl;
+                    }
+                    if ($itm->namaexternal == 'obat_kemoterapi'){
+                        $obat_kemoterapi = (float)$itm->ttl;
+                    }
+                    if ($itm->namaexternal == 'alkes'){
+                        $alkes = (float)$itm->ttl;
+                    }
+                    if ($itm->namaexternal == 'bmhp'){
+                        $bmhp = (float)$itm->ttl;
+                    }
+                    if ($itm->namaexternal == 'sewa_alat'){
+                        $sewa_alat = (float)$itm->ttl;
+                    }
+
+                    $datatatat = array(
+                        'prosedur_non_bedah' => (float)$prosedur_non_bedah,
+                        'prosedur_bedah' => (float)$prosedur_bedah,
+                        'konsultasi' => (float)$konsultasi,
+                        'tenaga_ahli' => (float)$tenaga_ahli,
+                        'keperawatan' => (float)$keperawatan,
+                        'penunjang' => (float)$penunjang,
+                        'radiologi' => (float)$radiologi,
+                        'laboratorium' => (float)$laboratorium,
+                        'pelayanan_darah' => (float)$pelayanan_darah,
+                        'rehabilitasi' => (float)$rehabilitasi,
+                        'kamar' => (float)$kamar,
+                        'rawat_intensif' => (float)$rawat_intensif,
+                        'obat' => (float)$obat,
+                        'obat_kronis' => (float)$obat_kronis,
+                        'obat_kemoterapi' => (float)$obat_kemoterapi,
+                        'alkes' => (float)$alkes,
+                        'bmhp' => (float)$bmhp,
+                        'sewa_alat' => (float)$sewa_alat,
+                    );
+                    $totaltarifrs = (float)$prosedur_non_bedah + (float)$prosedur_bedah + (float)$konsultasi + (float)$tenaga_ahli + (float)$keperawatan + (float)$penunjang + (float)$radiologi + (float)$laboratorium + (float)$pelayanan_darah + (float)$rehabilitasi + (float)$kamar + (float)$rawat_intensif +  (float)$obat + (float)$obat_kronis + (float)$obat_kemoterapi + (float)$alkes + (float)$bmhp + (float)$sewa_alat;
+
+                    $totaltarifrs = ceil($totaltarifrs);
+                 
+
+        }
+
+        $result = array(
+            'data1' => $datatatat,
+            'data2' =>$data,
+            'data3' => $totaltarifrs
+        );
+     
+        return $this->respond($result);
+    }
+
+    public function getDaftarPasienIntensif(Request $request)
+    {
+        $noregistrasifk = $request['noregistrasifk'];
+        $data = DB::select(DB::raw("SELECT
+                apd.tglkeluar,
+                apd.tglmasuk 
+            FROM
+                antrianpasiendiperiksa_t AS apd 
+            WHERE
+                noregistrasifk = '$noregistrasifk' 
+                AND objectruanganfk IN ( 824, 825, 893, 907 )"));
+
+            $los = 0;
+            if ($data != []) {
+                foreach ($data as $key => $d) {
+                    $selisih = date_diff( date_create($d->tglmasuk), date_create($d->tglkeluar) );
+                    $los = $selisih->days + 1 + $los;
+                }
+            }
+
+            $icu_los = $los;
+            $result = array(
+                'data' => $icu_los,
+                'message' => 'Mantap'
+            );
+
+            return $this->respond($result);
+    }
+
+    public function getGroupingIdrg(Request $request){
+        $data = DB::table('hasilgroupingidrg_t')
+                ->where("noregistrasifk",$request['noregistrasifk'])
+                ->first();
+
+        return $this->respond($data);
+    }
+
 }

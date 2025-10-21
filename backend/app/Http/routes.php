@@ -530,7 +530,10 @@ Route::group(['middleware' => 'cors', 'prefix' => 'service'], function () {
               Route::get('bridging/inacbg/get-list-berkas','Bridging\InaCbgController@getListBerkas');
               Route::get('bridging/inacbg/get-status-berkas','Bridging\InaCbgController@getStatusUpload');
               Route::get('bridging/inacbg/get-data-combo-ina', 'Bridging\InaCbgController@getDataComboIna');
-           
+              Route::get('bridging/inacbg/get-daftar-pasien-ventilator','Bridging\InaCbgController@getDaftarPasienVen');
+              Route::get('bridging/inacbg/get-daftar-pasien-intensif','Bridging\InaCbgController@getDaftarPasienIntensif');
+              Route::get('bridging/inacbg/get-grouping-idrg','Bridging\InaCbgController@getGroupingIdrg');
+
               Route::post('bridging/inacbg/save-proposi-bridging-inacbg','Bridging\InaCbgController@saveProposiBridgingINACBG');
               Route::post('bridging/inacbg/get-daftar-pasien-statusnaikkelas','Bridging\InaCbgController@getStatusNaikKelas');
               Route::post('bridging/inacbg/save-informasi-tanggungan','Bridging\InaCbgController@saveInformasiTanggungan');
@@ -2456,6 +2459,12 @@ Route::group(['middleware' => 'cors', 'prefix' => 'service'], function () {
             Route::post('registrasi/save-diagnosa-tindakan-pasien', 'Registrasi\RegistrasiController@saveDiagnosaTindakanPasien');
             Route::get('registrasi/get-anamnesis', 'Registrasi\RegistrasiController@getAnamnesis');
             Route::get('registrasi/get-resume-medis-inap/{nocm}','Registrasi\RegistrasiController@getResumeMedisInap');
+            Route::get('registrasi/get-diagnosa-10-idrg', 'Registrasi\RegistrasiController@getDiagnosaPasienIdrg');
+            Route::get('registrasi/get-diagnosa-9-idrg','Registrasi\RegistrasiController@getDiagnosaPasienIdrgIcd9');
+            Route::get('registrasi/daftar-riwayat-registrasi-2', 'Registrasi\RegistrasiController@getDaftarRiwayatRegistrasiNew');
+            Route::get('registrasi/daftar-registrasi/get-data-diagnosa-all', 'Registrasi\RegistrasiController@getDiagnosaAll');
+            Route::get('registrasi/get-icd-9-all','Registrasi\RegistrasiController@getIcd9All');
+            Route::post('registrasi/save-diagnosa-pasiendua', 'Registrasi\RegistrasiController@saveDiagnosaPasiendua');
 
             Route::get('registrasi/get-image','Registrasi\RegistrasiController@getImage');
             Route::get('registrasi/store-image-to-folder/{nocm}','Registrasi\RegistrasiController@storeImageToFolder');
