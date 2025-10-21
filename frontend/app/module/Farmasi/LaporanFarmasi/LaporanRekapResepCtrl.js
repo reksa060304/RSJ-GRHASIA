@@ -197,6 +197,16 @@ define(['initialize'], function (initialize) {
                         "width": "100px",
                     },                 
                     {
+                        "field": "jumlah",
+                        "title": "Jumlah Obat",
+                        "width": "100px",
+                    },                 
+                    {
+                        "field": "aturanpakai",
+                        "title": "Aturan Pakai",
+                        "width": "100px",
+                    },                 
+                    {
                         "field": "keteranganpakai",
                         "title": "Keterangan Racikan",
                         "width": "120px",
