@@ -16,6 +16,49 @@
         text-align: left;
         width: 100%;
     }
+
+    /* Background colors untuk setiap RKE racikan - warna lebih tegas */
+    .racikan-rke-1 { background-color: #ffcdd2 !important; } /* Pink */
+    .racikan-rke-2 { background-color: #bbdefb !important; } /* Blue */
+    .racikan-rke-3 { background-color: #c8e6c9 !important; } /* Green */
+    .racikan-rke-4 { background-color: #ffe0b2 !important; } /* Orange */
+    .racikan-rke-5 { background-color: #e1bee7 !important; } /* Purple */
+    .racikan-rke-6 { background-color: #b2dfdb !important; } /* Teal */
+    .racikan-rke-7 { background-color: #f8bbd9 !important; } /* Pink 2 */
+    .racikan-rke-8 { background-color: #b3e5fc !important; } /* Cyan */
+    .racikan-rke-9 { background-color: #dcedc8 !important; } /* Lime */
+    .racikan-rke-10 { background-color: #ffecb3 !important; } /* Amber */
+
+    /* Hover effect untuk racikan - warna lebih gelap */
+    .racikan-rke-1:hover { background-color: #ef9a9a !important; }
+    .racikan-rke-2:hover { background-color: #90caf9 !important; }
+    .racikan-rke-3:hover { background-color: #a5d6a7 !important; }
+    .racikan-rke-4:hover { background-color: #ffcc80 !important; }
+    .racikan-rke-5:hover { background-color: #ce93d8 !important; }
+    .racikan-rke-6:hover { background-color: #80cbc4 !important; }
+    .racikan-rke-7:hover { background-color: #f48fb1 !important; }
+    .racikan-rke-8:hover { background-color: #81d4fa !important; }
+    .racikan-rke-9:hover { background-color: #c5e1a5 !important; }
+    .racikan-rke-10:hover { background-color: #ffd54f !important; }
+
+    /* Default untuk non-racikan (tetap belang putih-abu) */
+    .normal-row {
+        background-color: #ffffff !important;
+    }
+
+    .normal-row:nth-child(even) {
+        background-color: #f8f9fa !important;
+    }
+
+    .normal-row:hover {
+        background-color: #e9ecef !important;
+    }
+
+    /* Border kiri untuk racikan supaya lebih jelas */
+    [class*="racikan-rke-"] {
+        border-left: 4px solid #2196F3 !important;
+        font-weight: 500;
+    }
 </style>
 
 <!-- <div ng-controller="InputResepApotikCtrl"> -->
@@ -788,6 +831,7 @@
                                         <div class="grid_12 borderBox">
                                             <div id="kGrid" kendo-grid k-data-source="dataGrid" k-selectable="'row'"
                                                 k-columns="columnGrid" k-pageable="'true'" k-sortable="'true'"
+                                                k-data-bound="onDataBound"
                                                 k-ng-model="dataSelected" ng-click="klikGrid(dataSelected)">
                                             </div>
                                         </div>
