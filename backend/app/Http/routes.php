@@ -2463,6 +2463,8 @@ Route::group(['middleware' => 'cors', 'prefix' => 'service'], function () {
             Route::get('registrasi/get-diagnosa-9-idrg','Registrasi\RegistrasiController@getDiagnosaPasienIdrgIcd9');
             Route::get('registrasi/daftar-riwayat-registrasi-2', 'Registrasi\RegistrasiController@getDaftarRiwayatRegistrasiNew');
             Route::get('registrasi/daftar-registrasi/get-data-diagnosa-all', 'Registrasi\RegistrasiController@getDiagnosaAll');
+            Route::get('registrasi/daftar-registrasi/get-diagnosa-10-im-by-kode', 'Registrasi\RegistrasiController@getDiagnosa10Im');
+            Route::get('registrasi/daftar-registrasi/get-diagnosa-9-im-by-kode', 'Registrasi\RegistrasiController@getDiagnosa9Im');
             Route::get('registrasi/get-icd-9-all','Registrasi\RegistrasiController@getIcd9All');
             Route::post('registrasi/save-diagnosa-pasiendua', 'Registrasi\RegistrasiController@saveDiagnosaPasiendua');
 

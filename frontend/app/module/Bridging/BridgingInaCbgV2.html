@@ -2352,7 +2352,7 @@
 										<div class="grid_12">
 											<input kendo-combo-box style="width:100%" k-ng-model="item.diagnosisPrimerIdrg"
 												k-data-text-field="'kodeNama'" k-data-value-field="'id'" k-filter="'contains'"
-												k-auto-bind="false" k-data-source="sourceDiagnosisPrimerIdrg" ng-disabled="findBy=='1'" />
+												k-auto-bind="false" k-data-source="sourceDiagnosisPrimerIdrg" ng-disabled="findBy=='1'" k-on-change="checkDiagnosaIm(item.diagnosisPrimerIdrg)" />
 										</div>
 									</div>
 									
@@ -2395,7 +2395,7 @@
 										<div class="grid_12">
 											<input kendo-combo-box style="width:100%" k-ng-model="item.diagnosisIdrgTd"
 												k-data-text-field="'kdNama'" k-data-value-field="'id'" k-filter="'contains'"
-												k-auto-bind="false" k-data-source="sourceDiagnosisIdrgTd" ng-disabled="findBy1=='1'" />
+												k-auto-bind="false" k-data-source="sourceDiagnosisIdrgTd" ng-disabled="findBy1=='1'" k-on-change="checkDiagnosaTindakanIm(item.diagnosisIdrgTd)" />
 										</div>
 									</div>
 									<div class="grid_2">

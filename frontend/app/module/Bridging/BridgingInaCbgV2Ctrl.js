@@ -12799,6 +12799,65 @@ define(['initialize', 'Configuration'], function (initialize,configuration) {
 				})
 			}
 
+			$scope.checkDiagnosaIm = function(e) {
+				if (!$scope.item.jenisDiagnosisIdrg) {
+					toastr.error('Jenis diagonsa belum diisi!', 'PERINGATAN')
+					return
+				}
+
+				if ($scope.item.jenisDiagnosisIdrg.id == 15) {
+					$scope.isRouteLoading = true
+					medifirstService.get(`registrasi/daftar-registrasi/get-diagnosa-10-im-by-kode?kddiagnosa=${e.kdDiagnosa}`)
+						.then(function (resp) {
+							$scope.isRouteLoading = false
+							let data = resp.data.diagnosa
+							if (data !== null) {
+								if (data.validcode === false) {
+									toastr.warning(`Diagnosa ${data.kddiagnosa} - ${data.namadiagnosa} tidak bisa dijadikan primary`, 'Peringatan')
+									delete $scope.item.diagnosisPrimerIdrg
+									return
+								}
+
+								if (data.accpdx === 'N') {
+									toastr.warning(`Diagnosa ${data.kddiagnosa} - ${data.namadiagnosa} tidak bisa dijadikan primary`, 'Peringatan')
+									delete $scope.item.diagnosisPrimerIdrg
+									return
+								}
+							} 
+						})
+						.catch((error) => {
+								$scope.isRouteLoading = false
+						});
+				}
+			}
+
+			$scope.checkDiagnosaTindakanIm = function(e) {
+				if ($scope.listGridDiagnosaIdrgTd._data.length === 0) {
+					$scope.isRouteLoading = true
+					medifirstService.get(`registrasi/daftar-registrasi/get-diagnosa-9-im-by-kode?kddiagnosatindakan=${e.kdDiagnosaTindakan}`)
+						.then(function (resp) {
+							$scope.isRouteLoading = false
+							let data = resp.data.diagnosatindakan
+							if (data !== null) {
+								if (data.validcode === false) {
+									toastr.warning(`Diagnosa ${data.kddiagnosatindakan} - ${data.namadiagnosatindakan} tidak bisa dijadikan primary`, 'Peringatan')
+									delete $scope.item.diagnosisPrimerIdrg
+									return
+								}
+	
+								if (data.accpdx === 'N') {
+									toastr.warning(`Diagnosa ${data.kddiagnosatindakan} - ${data.namadiagnosatindakan} tidak bisa dijadikan primary`, 'Peringatan')
+									delete $scope.item.diagnosisPrimerIdrg
+									return
+								}
+							} 
+						})
+						.catch((error) => {
+								$scope.isRouteLoading = false
+						});
+				}
+			}
+
 			// END ################
 
 		}

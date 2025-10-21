@@ -17380,5 +17380,51 @@ GROUP BY y.KET
         return $this->setStatusCode($result['status'])->respond($result, $transMessage);
 
     }
+
+    public function getDiagnosa10Im(Request $request)
+    {
+        $kdProfile = $this->getDataKdProfile($request);
+
+        $data = \DB::table('diagnosaim_m as dg')
+            ->select(
+                'dg.accpdx',
+                'dg.validcode',
+                'dg.kddiagnosa',
+                'dg.namadiagnosa'
+            )
+            ->where('dg.kdprofile', '=', $kdProfile)
+            ->where('dg.statusenabled', '=', true)
+            ->where('dg.kddiagnosa', '=', $request['kddiagnosa'])
+            ->first();
+
+        $result = array(
+            'diagnosa' => $data
+        );
+
+        return $this->respond($result);
+    }
+
+    public function getDiagnosa9Im(Request $request)
+    {
+        $kdProfile = $this->getDataKdProfile($request);
+
+        $data = \DB::table('diagnosatindakanim_m as dg')
+            ->select(
+                'dg.accpdx',
+                'dg.validcode',
+                'dg.kddiagnosatindakan',
+                'dg.namadiagnosatindakan'
+            )
+            ->where('dg.kdprofile', '=', $kdProfile)
+            ->where('dg.statusenabled', '=', true)
+            ->where('dg.kddiagnosatindakan', '=', $request['kddiagnosatindakan'])
+            ->first();
+
+        $result = array(
+            'diagnosatindakan' => $data
+        );
+
+        return $this->respond($result);
+    }
     // End IDRG
 }
