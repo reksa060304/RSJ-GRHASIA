@@ -5643,17 +5643,30 @@ define(['initialize', 'Configuration'], function (initialize,configuration) {
 					responData = e.data.dataresponse;
 					if (responData[0].dataresponse.metadata.code == 200) {
 
-						const linkSource = 'data:application/pdf;base64,' + responData[0].dataresponse.data;
-						const downloadLink = document.createElement("a");
-						var tglprint = moment($scope.now).format('YYYY-MM-DD');
-						// const fileName = "claim_print_" + responData[0].datarequest.data.nomor_sep + "_" + tglprint + ".pdf";
-						var a = responData[0].datarequest.data.nomor_sep
-						var nama = a.substr(15);
-						const fileName = nama + ".pdf";
+						// const linkSource = 'data:application/pdf;base64,' + responData[0].dataresponse.data;
+						// const downloadLink = document.createElement("a");
+						// var tglprint = moment($scope.now).format('YYYY-MM-DD');
+						// // const fileName = "claim_print_" + responData[0].datarequest.data.nomor_sep + "_" + tglprint + ".pdf";
+						// var a = responData[0].datarequest.data.nomor_sep
+						// var nama = a.substr(15);
+						// const fileName = nama + ".pdf";
 
-						downloadLink.href = linkSource;
-						downloadLink.download = fileName;
-						downloadLink.click();
+						// downloadLink.href = linkSource;
+						// downloadLink.download = fileName;
+						// downloadLink.click();
+						const base64Data = responData[0].dataresponse.data
+
+						const byteCharacters = atob(base64Data)
+						const byteNumbers = new Array(byteCharacters.length)
+						for (let i = 0; i < byteCharacters.length; i++) {
+							byteNumbers[i] = byteCharacters.charCodeAt(i)
+						}
+						const byteArray = new Uint8Array(byteNumbers)
+						const blob = new Blob([byteArray], { type: 'application/pdf' })
+
+						// buat URL dan buka di tab baru
+						const fileURL = URL.createObjectURL(blob)
+						window.open(fileURL, '_blank')
 					}
 					// window.open('data:application/pdf;base64,' + responData[0].dataresponse.data);
 					toastr.info(responData[0].dataresponse.metadata.message, 'INACBG');
