@@ -2786,6 +2786,8 @@ define(['initialize', 'Configuration'], function (initialize,configuration) {
 									nosep:element.datarequest.data.nomor_sep,
 									statusklaim: element.datarequest.metadata.method 
 								})
+						} else {
+							toastr.error(element.dataresponse.metadata.message)
 						}
 					}
 					if(arrStatus.length>0){
@@ -11109,13 +11111,14 @@ define(['initialize', 'Configuration'], function (initialize,configuration) {
 					let arrStatus =[]
 					for (var i = 0; i < response.length; i++) {
 						const element = response[i]
-						if(element.datarequest.metadata.method == 'idrg_diagnosa_set'
-							 && element.dataresponse.metadata.code == 200  ){
+						if(element.datarequest.metadata.method == 'idrg_diagnosa_set' && element.dataresponse.metadata.code == 200  ){
 							arrStatus.push(
 								{
 									nosep:element.datarequest.data.nomor_sep,
 									statusklaim: element.datarequest.metadata.method 
 								})
+						} else {
+							toastr.error(element.dataresponse.metadata.message)
 						}
 					}
 					// if(arrStatus.length>0){

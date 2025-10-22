@@ -24,6 +24,7 @@ use App\Transaksi\ResponseDataEklaim;
 use DB;
 use Illuminate\Http\Request;
 use App\Traits\Valet;
+use App\Transaksi\HasilGroupingIdrg;
 use phpDocumentor\Reflection\Types\Null_;
 use Webpatser\Uuid\Uuid;
 
@@ -3372,4 +3373,167 @@ class InaCbgController   extends ApiController
         return $this->respond($data);
     }
 
+    public function saveGroupingIdrg(Request $request)
+    {
+        $kdProfile = (int)$this->getDataKdProfile($request);
+        DB::beginTransaction();
+        try {
+
+
+
+            $delete = DB::table('hasilgroupingidrg_t')
+                ->where("noregistrasifk",$request['noregistrasifk'])
+                ->delete();
+            
+            $new = new HasilGroupingIdrg();
+            $new->norec =  $new->generateNewId();
+            $new->noregistrasifk = $request['noregistrasifk'];
+            $new->kdprofile = $kdProfile;
+            $new->tglgrouping = date('Y-m-d H:i:s');
+            $new->drg_code = $request['drg_code'];
+            $new->drg_description = $request['drg_description'];
+            $new->logic_version = $request['logic_version'];
+            $new->mdc_description = $request['mdc_description'];
+            $new->mdc_number = $request['mdc_number'];
+            $new->script_version = $request['script_version'];
+            $new->save();
+
+            $transStatus = 'true';
+            $transMessage = "Simpan Grouping iDRG Berhasil! ";
+        } catch (\Exception $e) {
+            $transStatus = 'false';
+            $transMessage = "Simpan Grouping iDRG Gagal! ";
+        }
+
+        if ($transStatus != 'false') {
+            DB::commit();
+            $result = array(
+                "status" => 201,
+                "data_idrg" => $new,
+                "message" => $transMessage,
+            );
+        } else {
+            DB::rollBack();
+            $result = array(
+                "status" => 400,
+                "e" => $e->getMessage(),
+                "message" => $transMessage,
+            );
+        }
+
+        // return 'sukses';
+        return $this->setStatusCode($result['status'])->respond($result, $transMessage);
+    }
+
+    public function savePegawai(Request $request)
+    {
+        DB::beginTransaction();
+        try {
+            $data = PasienDaftar::where('norec',$request['norec'])->first();
+           
+            if ($request['param'] == 'kironline') {
+                if ($data->pegawaifinalklaim != null) {
+                    PasienDaftar::where('norec',$request['norec'])
+                    ->update([
+                        'tgledit' => date('Y-m-d H:i:s'),
+                         'pegeditklaim' => $request['namapegawai']
+                    ]);
+                } else {
+                    PasienDaftar::where('norec',$request['norec'])
+                    ->update([
+                         'pegawaikirimol' => $request['namapegawai']
+                    ]);
+                }
+               
+            }
+            if ($request['param'] == 'kirim') {
+               
+                if ($data->pegawaifinalklaim != null) {
+                    PasienDaftar::where('norec',$request['norec'])
+                    ->update([
+                        'tgledit' => date('Y-m-d H:i:s'),
+                         'pegeditklaim' => $request['namapegawai']
+                    ]);
+                } else {
+                    PasienDaftar::where('norec',$request['norec'])
+                    ->update([
+                         'pegawaikirim' => $request['namapegawai']
+                    ]);
+                }
+             
+            }
+            if ($request['param'] == 'simpan') {
+                if ($data->pegawaifinalklaim != null) {
+                    PasienDaftar::where('norec',$request['norec'])
+                    ->update([
+                        'tgledit' => date('Y-m-d H:i:s'),
+                         'pegeditklaim' => $request['namapegawai'],
+                         'dializer_use' => isset($request['dializer_use']) ? $request['dializer_use'] : null
+                    ]);
+                } else {
+                    PasienDaftar::where('norec',$request['norec'])
+                    ->update([
+                         'pegawaisimpan' => $request['namapegawai'],
+                         'dializer_use' => isset($request['dializer_use']) ? $request['dializer_use'] : null
+                    ]);
+                }
+               
+            }
+            if ($request['param'] == 'grouper') {
+                if ($data->pegawaifinalklaim != null) {
+                    PasienDaftar::where('norec',$request['norec'])
+                    ->update([
+                        'tgledit' => date('Y-m-d H:i:s'),
+                         'pegeditklaim' => $request['namapegawai']
+                    ]);
+                } else {
+                    PasienDaftar::where('norec',$request['norec'])
+               ->update([
+                    'pegawaigrouper' => $request['namapegawai']
+               ]);
+                }
+                
+            }
+            if ($request['param'] == 'final') {
+                if ($data->pegawaifinalklaim != null) {
+                    PasienDaftar::where('norec',$request['norec'])
+               ->update([
+                    'tgledit' => date('Y-m-d H:i:s'),
+                    'pegeditklaim' => $request['namapegawai']
+               ]);
+                } else {
+                    PasienDaftar::where('norec',$request['norec'])
+                    ->update([
+                        'tglklaim' => date('Y-m-d H:i:s'),
+                         'pegawaifinalklaim' => $request['namapegawai']
+                    ]);
+                }
+               
+            }
+               
+            
+
+            $transStatus = 'true';
+            $transMessage = "Sukses";
+        } catch (\Exception $e) {
+            $transStatus = 'false';
+            $transMessage = "Simpan Pegawai Klaim Gagal  ";
+        }
+
+        if ($transStatus != 'false') {
+            DB::commit();
+            $result = array(
+                "status" => 201,
+                "message" => $transMessage,
+            );
+        } else {
+            DB::rollBack();
+            $result = array(
+                "status" => 400,
+                "message" => $transMessage,
+            );
+        }
+
+        return $this->setStatusCode($result['status'])->respond($result, $transMessage);
+    }
 }
