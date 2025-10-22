@@ -11306,39 +11306,50 @@ define(['initialize', 'Configuration'], function (initialize,configuration) {
 			  
 
 			$scope.klikGridIdrg = function (dataSelectedIdrg) {
-                if (dataSelectedIdrg.kddiagnosa!= undefined) {
-                    $scope.item.jenisDiagnosisIdrg = { id: dataSelectedIdrg.objectjenisdiagnosafk, jenisDiagnosa: dataSelectedIdrg.jenisdiagnosa }
-                    $scope.item.diagnosisPrimerIdrg = {
-                        id: dataSelectedIdrg.objectdiagnosafk,
-                        kdDiagnosa: dataSelectedIdrg.kddiagnosa,
-                        namaDiagnosa: dataSelectedIdrg.namadiagnosa,
-                        kodeNama: dataSelectedIdrg.kddiagnosa + ' - ' +dataSelectedIdrg.namadiagnosa,
-                        norec_diagnosapasien: dataSelectedIdrg.norec_diagnosapasien,
-                        norec_detaildpasien: dataSelectedIdrg.norec_detaildpasien,
-                    }
-					$scope.item.norec_diagnosaidrg = dataSelectedIdrg.norec_diagnosapasien
-					$scope.item.norec_diagnosadetailidrg = dataSelectedIdrg.norec_detaildpasien
-                }
-
-            }
+				if (dataSelectedIdrg.kddiagnosa!= undefined) {
+						$scope.item.jenisDiagnosisIdrg = { id: dataSelectedIdrg.objectjenisdiagnosafk, jenisDiagnosa: dataSelectedIdrg.jenisdiagnosa }
+						$scope.sourceDiagnosisPrimerIdrg._data.push({
+							id: dataSelectedIdrg.objectdiagnosafk,
+							kdDiagnosa: dataSelectedIdrg.kddiagnosa,
+							namaDiagnosa: dataSelectedIdrg.namadiagnosa,
+							kodeNama: dataSelectedIdrg.kddiagnosa + ' - ' +dataSelectedIdrg.namadiagnosa
+						})
+						$scope.item.diagnosisPrimerIdrg = {
+							id: dataSelectedIdrg.objectdiagnosafk,
+							kdDiagnosa: dataSelectedIdrg.kddiagnosa,
+							namaDiagnosa: dataSelectedIdrg.namadiagnosa,
+							kodeNama: dataSelectedIdrg.kddiagnosa + ' - ' +dataSelectedIdrg.namadiagnosa,
+							norec_diagnosapasien: dataSelectedIdrg.norec_diagnosapasien,
+							norec_detaildpasien: dataSelectedIdrg.norec_detaildpasien,
+						}
+						$scope.item.norec_diagnosaidrg = dataSelectedIdrg.norec_diagnosapasien
+						$scope.item.norec_diagnosadetailidrg = dataSelectedIdrg.norec_detaildpasien
+					}
+				}
 
 			$scope.klikGridIdrgTd = function (dataSelectedIdrgTd) {
-                if (dataSelectedIdrgTd.kddiagnosatindakan != undefined) {
+				if (dataSelectedIdrgTd.kddiagnosatindakan != undefined) {
 
-                    $scope.item.diagnosisIdrgTd = {
-                        id: dataSelectedIdrgTd.id,
-                        kdDiagnosaTindakan: dataSelectedIdrgTd.kddiagnosatindakan,
-                        namaDiagnosaTindakan: dataSelectedIdrgTd.namadiagnosatindakan,
-                        kdNama: dataSelectedIdrgTd.kddiagnosatindakan + ' - ' + dataSelectedIdrgTd.namadiagnosatindakan,
-                        norec_diagnosapasien: dataSelectedIdrgTd.norec_diagnosapasien,
-                    }
+					$scope.sourceDiagnosisIdrgTd._data.push({
+						id: dataSelectedIdrgTd.id,
+						kdDiagnosaTindakan: dataSelectedIdrgTd.kddiagnosatindakan,
+						namaDiagnosaTindakan: dataSelectedIdrgTd.namadiagnosatindakan,
+						kdNama: dataSelectedIdrgTd.kddiagnosatindakan + ' - ' + dataSelectedIdrgTd.namadiagnosatindakan
+					})
+
+					$scope.item.diagnosisIdrgTd = {
+							id: dataSelectedIdrgTd.id,
+							kdDiagnosaTindakan: dataSelectedIdrgTd.kddiagnosatindakan,
+							namaDiagnosaTindakan: dataSelectedIdrgTd.namadiagnosatindakan,
+							kdNama: dataSelectedIdrgTd.kddiagnosatindakan + ' - ' + dataSelectedIdrgTd.namadiagnosatindakan,
+							norec_diagnosapasien: dataSelectedIdrgTd.norec_diagnosapasien,
+					}
 
 					$scope.item.norec_diagnosaidrgTd = dataSelectedIdrgTd.norec_diagnosapasien,
 					$scope.item.jumlahprocedureidrg = dataSelectedIdrgTd.jumlah,
-                    $scope.item.keteranganTindakan = "-"
-                }
-
-            }
+					$scope.item.keteranganTindakan = "-"
+				}
+			}
 
 			$scope.simpanDiagnosaIdrg = function () {
 				
