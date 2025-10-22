@@ -2041,20 +2041,11 @@ class InaCbgController   extends ApiController
         DB::beginTransaction();
         try {
             foreach ($request['data'] as $key => $value) {
-                if($value['statusklaim'] == 'new_claim'){
-                    PasienDaftar::where('norec',$value['norec'])
-                    ->update([
-                        'statusklaim' => $value['statusklaim'],
-                        'tglgrouping' => date('Y-m-d H:i:s')
-                    ]);
-                } else {
-                    PasienDaftar::where('norec',$value['norec'])
-                    ->update([
-                        'statusklaim' => $value['statusklaim'],
-                        'tglgrouping' => null
-                    ]);
-                }
-                
+               PasienDaftar::where('norec',$value['norec'])
+               ->update([
+                    'statusklaim' => $value['statusklaim']
+               ]);
+               $data = $value['statusklaim'];
             }
 
             $transStatus = 'true';
@@ -2068,6 +2059,7 @@ class InaCbgController   extends ApiController
             DB::commit();
             $result = array(
                 "status" => 201,
+                "data" => $data,
                 "message" => $transMessage,
             );
         } else {
