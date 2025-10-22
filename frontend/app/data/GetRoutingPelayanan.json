@@ -20825,6 +20825,26 @@
         "define": "MedifirstService"
       }
     ]
+  },
+  {
+    "name": "BridgingInaCbgV2",
+    "url": "/BridgingInaCbgV2",
+    "templateurl": "module/Bridging/BridgingInaCbgV2.html",
+    "controller": "BridgingInaCbgV2Ctrl",
+    "deps": [
+      {
+        "module": "Services",
+        "define": "Service"
+      },
+      {
+        "module": "LoginServices",
+        "define": "LoginService"
+      },
+      {
+        "module": "MedifirstService",
+        "define": "MedifirstService"
+      }
+    ]
   }
 ]
 
