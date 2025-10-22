@@ -147,7 +147,11 @@ define(['initialize', 'Configuration'], function (initialize,configuration) {
 					$scope.sourceDiagnosisPrimer = data;
 				});
 				medifirstService.getPart("registrasi/daftar-registrasi/get-data-diagnosa-all", true, true, 10).then(function (data) {
-					$scope.sourceDiagnosisPrimerIdrg = data;
+					if ($scope.item.diagnosisPrimerIdrg) {
+						$scope.sourceDiagnosisPrimerIdrg._data.push(data);
+					} else {
+						$scope.sourceDiagnosisPrimerIdrg = data;
+					}
 				});
 				medifirstService.getPart("registrasi/get-icd-9-all", true, true, 10).then(function (data) {
 					$scope.sourceDiagnosisIdrgTd = data;
