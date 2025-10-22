@@ -1709,6 +1709,7 @@ Route::group(['middleware' => 'cors', 'prefix' => 'service'], function () {
             Route::get('logistik/get-produkdetail', 'Logistik\LogistikController@getProdukDetail');
             Route::get('logistik/get-data-order-barang-ruangan', 'Logistik\LogistikController@getDaftarOrderBarang');
             Route::get('logistik/get-data-order-barang-ruangan-baru', 'Logistik\LogistikController@getDaftarOrderBarangBaru');
+            Route::get('logistik/get-data-order-barang-asset', 'Logistik\LogistikController@getDaftarOrderBarangAsset');
             Route::post('logistik/ganti-keterangan','Logistik\LogistikController@gantiketeranganstrukkirim');
             Route::post('logistik/update-op', 'Logistik\LogistikController@saveOP');
             Route::post('cppt/hapus-bariscppt', 'EMR\EMRController@hapusBarisCPPT');
@@ -1813,6 +1814,7 @@ Route::group(['middleware' => 'cors', 'prefix' => 'service'], function () {
             Route::post('logistik/delete-pemakaian-ruangan', 'Logistik\LogistikController@hapusPemakaianStokRuangan');
             Route::post('logistik/save-pemakaian-ruangan', 'Logistik\LogistikController@savePemakaianStokRuangan');
             Route::post('logistik/save-order-barang-ruangan', 'Logistik\LogistikController@saveOrderBarang');
+            Route::post('logistik/save-order-barang-asset', 'Logistik\LogistikController@saveOrderBarangAsset');
             Route::post('logistik/delete-order-barang-ruangan', 'Logistik\LogistikController@saveBatalOrderBarang');
             Route::post('logistik/save-kirim-barang-ruangan', 'Logistik\LogistikController@saveKirimBarangRuangan');
             Route::post('logistik/save-kirim-barang-ruangan-baru', 'Logistik\LogistikController@saveKirimBarangRuanganBaru');
