@@ -3764,6 +3764,10 @@
         {
             "nameDep": "LapKegiatanAmbulanTelemedicineCtrl",
             "urlDep": "module/Ambulance/LapKegiatanAmbulanTelemedicineCtrl"
+        },
+        {
+            "nameDep": "BridgingInaCbgV2Ctrl",
+            "urlDep": "module/Bridging/BridgingInaCbgV2Ctrl"
         }
     ]
 }
