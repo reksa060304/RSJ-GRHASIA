@@ -7366,30 +7366,51 @@ class RegistrasiController extends ApiController
         return $this->respond($result);
     }
 
-    public function getDiagnosaDaftarAntrian(Request $request)
-    {
+    public function getDiagnosaDaftarAntrian(Request $request){
         $req = $request->all();
         $icdIX = \DB::table('diagnosa_m as dg')
-            ->select('dg.id', 'dg.kddiagnosa', 'dg.namadiagnosa', 'dg.kddiagnosa as kdDiagnosa', 'dg.namadiagnosa as namaDiagnosa')
+            ->select('dg.id', 'dg.kddiagnosa', 'dg.namadiagnosa','dg.kddiagnosa as kdDiagnosa','dg.namadiagnosa as namaDiagnosa')
             ->where('dg.statusenabled', true)
+            // ->whereNull('inagrouper')
             ->orderBy('dg.kddiagnosa');
 
-        if (
-            isset($req['filter']['filters'][0]['value']) &&
+        if (isset($req['filter']['filters'][0]['value']) &&
             $req['filter']['filters'][0]['value'] != "" &&
             $req['filter']['filters'][0]['value'] != "undefined"
         ) {
-            $icdIX = $icdIX->where(function ($q) use ($req) {
-                $q->where('dg.namadiagnosa', 'ilike', '%' . $req['filter']['filters'][0]['value'] . '%')
-                ->orWhere('dg.kddiagnosa', 'ilike', $req['filter']['filters'][0]['value'] . '%');
-            });
+            $filterValue = str_replace('.', '', $req['filter']['filters'][0]['value']);
+
+            $icdIX = $icdIX->where(function ($q) use ($filterValue) {
+                $q->whereRaw("REPLACE(dg.kddiagnosa, '.', '') ILIKE ?", ["%{$filterValue}%"])
+                ->orWhereRaw("REPLACE(dg.namadiagnosa, '.', '') ILIKE ?", ["%{$filterValue}%"]);
+            })
+            // $icdIX = $icdIX
+            //     ->where(function ($q) use ($req) {
+            //         $q->where('dg.namadiagnosa', 'ilike', '%' . $req['filter']['filters'][0]['value'] . '%')
+            //         ->orWhere('dg.kddiagnosa', 'ilike', $req['filter']['filters'][0]['value'] . '%');
+            //     })
+                ->where('dg.statusenabled', true);
         }
 
         $icdIX = $icdIX->take(10);
         $icdIX = $icdIX->get();
 
-        return $this->respond($icdIX);
-    }
+        $data = [];
+        if (count($icdIX) > 0) {
+            foreach ($icdIX as $item) {
+                $data [] = array(
+                    'kodeNama' => $item->kdDiagnosa . ' - ' . $item->namaDiagnosa,
+                    'id' => $item->id,
+                    'kdDiagnosa' => $item->kdDiagnosa,
+                    'namaDiagnosa' => $item->namaDiagnosa,
+
+                );
+
+            }
+        }
+
+        return $this->respond($data);
+    } 
     public function getDataPasienMauBatal(Request $request)
     {
         $kdProfile = $this->getDataKdProfile($request);
@@ -9215,27 +9236,47 @@ class RegistrasiController extends ApiController
     {
         $req = $request->all();
         $icdIX = \DB::table('diagnosatindakan_m as dg')
-            ->select('dg.id', 'dg.kddiagnosatindakan as kdDiagnosaTindakan', 'dg.namadiagnosatindakan as namaDiagnosaTindakan')
+            ->select('dg.id','dg.kddiagnosatindakan as kdDiagnosaTindakan','dg.namadiagnosatindakan as namaDiagnosaTindakan')
             ->where('dg.statusenabled', true)
+            // ->whereNull('dg.inagrouper')
             ->orderBy('dg.kddiagnosatindakan');
 
-        if (
-            isset($req['filter']['filters'][0]['value']) &&
-            $req['filter']['filters'][0]['value'] != "" &&
-            $req['filter']['filters'][0]['value'] != "undefined"
-        )  
-        {
-            $icdIX = $icdIX->where(function ($q) use ($req) {
-                $q->where('dg.namadiagnosatindakan', 'ilike', '%' . $req['filter']['filters'][0]['value'] . '%')
-                ->orWhere('dg.kddiagnosatindakan', 'ilike', $req['filter']['filters'][0]['value'] . '%');
-            });
+        if(isset($req['filter']['filters'][0]['value']) &&
+            $req['filter']['filters'][0]['value']!="" &&
+            $req['filter']['filters'][0]['value']!="undefined"){
+                $filterValue = str_replace('.', '', $req['filter']['filters'][0]['value']);
+
+                $icdIX = $icdIX->where(function($q) use ($filterValue) {
+                    $q->whereRaw("REPLACE(dg.kddiagnosatindakan, '.', '') ILIKE ?", ["%{$filterValue}%"])
+                    ->orWhereRaw("REPLACE(dg.namadiagnosatindakan, '.', '') ILIKE ?", ["%{$filterValue}%"]);
+                })
+            // $icdIX = $icdIX
+            //     ->where(function($q) use ($req) {
+            //         $q->where('dg.namadiagnosatindakan', 'ilike', '%'.$req['filter']['filters'][0]['value'].'%')
+            //         ->orWhere('dg.kddiagnosatindakan', 'ilike', $req['filter']['filters'][0]['value'].'%');
+            //     })
+                ->where('dg.statusenabled', true);
         }
 
 
-        $icdIX = $icdIX->take(10);
-        $icdIX = $icdIX->get();
+        $icdIX=$icdIX->take(10);
+        $icdIX=$icdIX->get();
 
-        return $this->respond($icdIX);
+        $data = [];
+        if (count($icdIX) > 0) {
+            foreach ($icdIX as $item) {
+                $data [] = array(
+                    'kdNama' => $item->kdDiagnosaTindakan . ' - ' . $item->namaDiagnosaTindakan,
+                    'id' => $item->id,
+                    'kdDiagnosaTindakan' => $item->kdDiagnosaTindakan,
+                    'namaDiagnosaTindakan' => $item->namaDiagnosaTindakan,
+
+                );
+
+            }
+        }
+
+        return $this->respond($data);
     }
 
     public function getDiagnosaPasienByNoregICD9 ( Request $request) {
