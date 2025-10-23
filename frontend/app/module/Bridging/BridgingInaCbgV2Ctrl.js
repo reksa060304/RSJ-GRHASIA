@@ -133,12 +133,12 @@ define(['initialize', 'Configuration'], function (initialize,configuration) {
 					});
 					
 					$scope.sourceJenisDiagnosisPrimer1 = [
-						{id:'7',jenisDiagnosa:'Primary / utama UNU Grouper'},
-						{id:'8',jenisDiagnosa:'Secondary UNU Grouper'},
+						{id:'17',jenisDiagnosa:'Primary / utama UNU Grouper'},
+						{id:'18',jenisDiagnosa:'Secondary UNU Grouper'},
 					];
 					$scope.sourceJenisDiagnosisPrimer2 = [
-						{id:'10',jenisDiagnosa:'Primary / utama INA Grouper'},
-						{id:'11',jenisDiagnosa:'Secondary INA Grouper'},
+						{id:'19',jenisDiagnosa:'Primary / utama INA Grouper'},
+						{id:'20',jenisDiagnosa:'Secondary INA Grouper'},
 					];
 					$scope.item.jenisDiagnosis = {id: 7, jenisDiagnosa: "Primary / utama UNU Grouper"}
 					// $scope.sourceJenisDiagnosisPrimer1 = data.data.jenisdiagnosa;
@@ -7228,12 +7228,12 @@ define(['initialize', 'Configuration'], function (initialize,configuration) {
                 ).then(function (data) {
 					$scope.isRouteLoading = false;
 					if (data.data.inacbg.length > 0) {
-                        $scope.item.jenisDiagnosis = {id: 8, jenisDiagnosa: "Secondary UNU Grouper"}
+                        $scope.item.jenisDiagnosis = {id: 18, jenisDiagnosa: "Secondary UNU Grouper"}
 						$scope.itemPopUp.icd10 = data.data.icd10;
 						// console.log($scope.itemPopUp.icd10);
                     } else {
 						$scope.itemPopUp.icd10 = "#"
-						$scope.item.jenisDiagnosis = {id: 7, jenisDiagnosa: "Primary / utama UNU Grouper"}
+						$scope.item.jenisDiagnosis = {id: 17, jenisDiagnosa: "Primary / utama UNU Grouper"}
 					}
 
 					if (['Grouping iDRG Final','Grouping INACBG Reedit','Grouping'].includes($scope.itemPopUp.statusklaim) && $scope.isimportidrg == false) {
@@ -7299,10 +7299,10 @@ define(['initialize', 'Configuration'], function (initialize,configuration) {
 				).then(function (data) {
 					$scope.isRouteLoading = false;
 				if (data.data.dataunu.length > 0) {  
-					$scope.item.jenisDiagnosisUnu = {id: 11, jenisDiagnosa: "Secondary INA Grouper"}
+					$scope.item.jenisDiagnosisUnu = {id: 20, jenisDiagnosa: "Secondary INA Grouper"}
 					$scope.itemPopUp.diagnosa_inagrouper = data.data.icd10unu;
 				} else {
-					$scope.item.jenisDiagnosisUnu = {id: 10, jenisDiagnosa: "Primary / utama INA Grouper"}
+					$scope.item.jenisDiagnosisUnu = {id: 19, jenisDiagnosa: "Primary / utama INA Grouper"}
 					$scope.itemPopUp.diagnosa_inagrouper = $scope.itemPopUp.icd10;
 					// console.log($scope.itemPopUp.diagnosa_inagrouper)
 				}
