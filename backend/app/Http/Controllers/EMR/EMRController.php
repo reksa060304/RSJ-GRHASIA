@@ -11727,6 +11727,7 @@ if ($rowChanged) {
             $result = array(
                 "status" => 400,
                 "message" => $transMessage,
+                "erro" => $e->getMessage() . ' - ' . $e->getLine(),
                 "as" => 'inhuman',
             );
         }
@@ -16263,72 +16264,72 @@ if ($rowChanged) {
         return $pelayanan;
     }
 
-    public function getEMRTransaksiDetailEdit(Request $request)
-    {
-        $kdProfile = $this->getDataKdProfile($request);
+    // public function getEMRTransaksiDetailEdit(Request $request)
+    // {
+    //     $kdProfile = $this->getDataKdProfile($request);
 
-        $q = \DB::table('emrpasiend_t as emrdp')
-            ->leftJoin('emrd_t as emrd', 'emrd.id', '=', 'emrdp.emrdfk')
-            ->leftJoin('pegawai_m as pg', 'pg.id', '=', 'emrdp.pegawaifk')
-            ->select(
-                'emrdp.*', 'emrd.caption', 'emrd.type', 'emrd.nourut',
-                'emrdp.emrfk', 'emrd.reportdisplay', 'emrd.kodeexternal as kodeex',
-                'emrd.satuan', 'pg.namalengkap'
-            )
-            ->where('emrdp.kdprofile', $kdProfile)
-            ->where('emrdp.statusenabled', false)
-            ->orderBy('emrd.nourut')
-            ->whereNotNull('emrdp.value');
+    //     $q = \DB::table('emrpasiend_t as emrdp')
+    //         ->leftJoin('emrd_t as emrd', 'emrd.id', '=', 'emrdp.emrdfk')
+    //         ->leftJoin('pegawai_m as pg', 'pg.id', '=', 'emrdp.pegawaifk')
+    //         ->select(
+    //             'emrdp.*', 'emrd.caption', 'emrd.type', 'emrd.nourut',
+    //             'emrdp.emrfk', 'emrd.reportdisplay', 'emrd.kodeexternal as kodeex',
+    //             'emrd.satuan', 'pg.namalengkap'
+    //         )
+    //         ->where('emrdp.kdprofile', $kdProfile)
+    //         ->where('emrdp.statusenabled', false)
+    //         ->orderBy('emrd.nourut')
+    //         ->whereNotNull('emrdp.value');
 
-        // noemr
-        if ($request->has('noemr')) {
-            $noemr = trim($request->get('noemr'));
-            if ($noemr !== '') {
-                $q->where('emrdp.emrpasienfk', $noemr);
-            }
-        }
+    //     // noemr
+    //     if ($request->has('noemr')) {
+    //         $noemr = trim($request->get('noemr'));
+    //         if ($noemr !== '') {
+    //             $q->where('emrdp.emrpasienfk', $noemr);
+    //         }
+    //     }
 
-        // emrfk (cast ke int kalau kolom integer)
-        if ($request->has('emrfk')) {
-            $emrfk = trim($request->get('emrfk'));
-            if ($emrfk !== '') {
-                $q->where('emrdp.emrfk', (int)$emrfk);
-            }
-        }
+    //     // emrfk (cast ke int kalau kolom integer)
+    //     if ($request->has('emrfk')) {
+    //         $emrfk = trim($request->get('emrfk'));
+    //         if ($emrfk !== '') {
+    //             $q->where('emrdp.emrfk', (int)$emrfk);
+    //         }
+    //     }
 
-        // objectid: dukung array, CSV "1,2,3", atau single
-        if ($request->has('objectid')) {
-            $objectid = $request->get('objectid'); // bisa array atau string
+    //     // objectid: dukung array, CSV "1,2,3", atau single
+    //     if ($request->has('objectid')) {
+    //         $objectid = $request->get('objectid'); // bisa array atau string
 
-            if (is_array($objectid)) {
-                $ids = array_values(array_filter($objectid, function ($v) {
-                    return $v !== null && $v !== '' && $v !== 'null';
-                }));
-                if (!empty($ids)) {
-                    $q->whereIn('emrdp.emrdfk', $ids);
-                }
-            } else {
-                $objectid = trim($objectid);
-                if ($objectid !== '') {
-                    if (strpos($objectid, ',') !== false) {
-                        $ids = array_filter(array_map('trim', explode(',', $objectid)), function ($v) {
-                            return $v !== '' && $v !== 'null';
-                        });
-                        if (!empty($ids)) {
-                            $q->whereIn('emrdp.emrdfk', $ids);
-                        }
-                    } else {
-                        $q->where('emrdp.emrdfk', (int)$objectid);
-                    }
-                }
-            }
-        }
+    //         if (is_array($objectid)) {
+    //             $ids = array_values(array_filter($objectid, function ($v) {
+    //                 return $v !== null && $v !== '' && $v !== 'null';
+    //             }));
+    //             if (!empty($ids)) {
+    //                 $q->whereIn('emrdp.emrdfk', $ids);
+    //             }
+    //         } else {
+    //             $objectid = trim($objectid);
+    //             if ($objectid !== '') {
+    //                 if (strpos($objectid, ',') !== false) {
+    //                     $ids = array_filter(array_map('trim', explode(',', $objectid)), function ($v) {
+    //                         return $v !== '' && $v !== 'null';
+    //                     });
+    //                     if (!empty($ids)) {
+    //                         $q->whereIn('emrdp.emrdfk', $ids);
+    //                     }
+    //                 } else {
+    //                     $q->where('emrdp.emrdfk', (int)$objectid);
+    //                 }
+    //             }
+    //         }
+    //     }
 
-        $rows = $q->get();
+    //     $rows = $q->get();
 
-        return $this->respond([
-            'data' => $rows,
-            'message' => 'as@epic',
-        ]);
-    }
+    //     return $this->respond([
+    //         'data' => $rows,
+    //         'message' => 'as@epic',
+    //     ]);
+    // }
 }
