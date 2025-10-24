@@ -64,6 +64,34 @@
     .status-retriksi {
         background-color: #fffb00 !important;
     }
+
+    /* Ensure text remains readable when Kendo Grid rows are selected/focused */
+    /* Kendo typically applies .k-state-selected or .k-state-focused with its own styles */
+    .k-grid .k-state-selected,
+    .k-grid .k-state-focused,
+    .k-grid .k-state-selected td,
+    .k-grid .k-state-focused td {
+        color: #001540 !important; /* dark text for good contrast */
+        background-color: inherit !important; /* don't let kendo override our background */
+    }
+
+    /* If Kendo applies its own background-color on selection, force text color to be readable */
+    .k-grid .k-state-selected .style-right,
+    .k-grid .k-state-focused .style-right {
+        color: #212529 !important;
+    }
+
+    /* Ensure racikan rows keep readable text even with colored backgrounds */
+    [class*="racikan-rke-"] td,
+    .status-retriksi td {
+        color: #212529 !important;
+    }
+
+    /* For darker racikan background choices, increase contrast by forcing bold and white text where needed */
+    .racikan-rke-2 td,
+    .racikan-rke-8 td {
+        color: #000 !important;
+    }
 </style>
 
 <!-- <div ng-controller="InputResepApotikCtrl"> -->
