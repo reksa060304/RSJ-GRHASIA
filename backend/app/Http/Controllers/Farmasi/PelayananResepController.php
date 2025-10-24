@@ -3500,11 +3500,7 @@ class PelayananResepController extends ApiController
         FROM
         (
             SELECT
-                *, ROW_NUMBER () OVER (PARTITION BY noresep, namaproduk, rke, jumlah, norec
-                  ORDER BY
-                    CASE WHEN jeniskemasan IS NULL OR jeniskemasan = '' THEN 1 ELSE 0 END,
-                    tglresep DESC
-                ) NUMBER
+                *, ROW_NUMBER () OVER (PARTITION BY noresep, namaproduk, rke, jumlah, norec) NUMBER
             FROM
                 (
                     SELECT
@@ -3642,9 +3638,7 @@ class PelayananResepController extends ApiController
             pg.namalengkap AS dokter,
             sr.noresep,
             sbmsdhbyr.tglsbm,
-            ps.noidentitas,
-            jkm.jeniskemasan
-
+            ps.noidentitas
         FROM
             pelayananpasien_t AS pp
         LEFT JOIN strukresep_t AS sr ON pp.strukresepfk = sr.norec
@@ -3708,8 +3702,7 @@ class PelayananResepController extends ApiController
                                pg.namalengkap as dokter,
                                sp.nostruk AS noresep,
                                sbmsdhbyr.tglsbm,
-                               '' as noidentitas,
-                               jkm.jeniskemasan
+                               '' as noidentitas
 
 
                         FROM strukpelayanan_t as sp
