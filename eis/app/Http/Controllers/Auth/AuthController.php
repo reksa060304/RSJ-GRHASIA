@@ -75,13 +75,13 @@ class AuthController extends ApiController
     {
         $currentDomain = request()->getHost();
         $allowedDomains = [
-            'simrs-grhasia.jogjaprov.go.id',
+            'simrs-grhasia.jogjaprov.go.id', // (live)
             // 'localhost:8000', // untuk testing
             'localhost', // untuk testing
             '127.0.0.1:8000',  // untuk testing
-            '127.0.0.1',
-            '10.10.1.111',    // Tambahkan ini
-            '10.10.1.234'     // Tambahkan ini
+            '127.0.0.1', //localhost
+            // '10.10.1.111',    // Tambahkan ini  (dev)
+            '10.10.1.234'     // Tambahkan ini (live)
         ];
         return in_array($currentDomain, $allowedDomains);
     }
