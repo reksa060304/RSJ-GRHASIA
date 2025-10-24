@@ -463,7 +463,7 @@ define(['initialize'], function (initialize) {
                             $scope.hidebpjs = true
                         }
                     }
-                    
+                    $scope.item.noIdentitas = chacePeriode[21]
                     loadAlamat();
                 } else {
 
@@ -481,6 +481,7 @@ define(['initialize'], function (initialize) {
                     if ($scope.item.jenisPenjamin == undefined)
                         $scope.item.jenisPenjamin = e.data.kelompokpasien
                     $scope.item.alamatPasien = e.data.alamatlengkap
+                    $scope.item.noIdentitas = e.data.noidentitas
                     $scope.item.tglLahir = e.data.tgllahir;
                     $scope.item.AlergiYa = e.data.alergi;
                     $scope.item.RuangInput = e.data.ruanginput;
@@ -1780,9 +1781,9 @@ Which will check for empty strings (""), null, undefined, false and the numbers 
                 $scope.item.jenisKemasan = { id: dataSelected.jeniskemasanfk, jeniskemasan: dataSelected.jeniskemasan }
                 $scope.item.satuanresep = { id: dataSelected.satuanresepfk, satuanresep: dataSelected.satuanresep }
                 $scope.item.aturanPakai = dataSelected.aturanpakai
-                if (noOrder != 'EditResep'){
+                // if (noOrder != 'EditResep'){
                     $scope.item.catatanDokter = dataSelected.catatandokter
-                }
+                // }
                 $scope.item.satuannya = dataSelected.satuandosis
                 $scope.item.KeteranganPakai = dataSelected.keterangan
                 $scope.item.diskonTotalPersen = dataSelected.persendiscount
@@ -1934,6 +1935,42 @@ Which will check for empty strings (""), null, undefined, false and the numbers 
                 }
                 cacheHelper.set('cacheanuaing', chacePeriode);
                 Kosongkan()
+            }
+
+            $scope.onDataBound = function(e) {
+                const grid = e.sender;
+                const rows = grid.tbody.find('tr');
+                
+                rows.each(function() {
+                    const row = $(this);
+                    const dataItem = grid.dataItem(row);
+                    
+                    if (dataItem) {
+                        row.removeClass(function(index, className) {
+                            return (className.match(/(^|\s)racikan-rke-\S+/g) || []).join(' ');
+                        });
+                        row.removeClass('normal-row');
+                        
+                        const colorClass = getRacikanColorClass(dataItem.rke, dataItem.jeniskemasan, dataItem.statusretriksi);
+                        row.addClass(colorClass);
+                    }
+                });
+            };
+
+            function getRacikanColorClass(rke, jeniskemasan, statusretriksi) {
+                if (statusretriksi) {
+                    return `status-retriksi`;
+                }
+                if (!jeniskemasan || jeniskemasan.toLowerCase() !== 'racikan') {
+                    return 'normal-row';
+                }
+                
+                const rkeNumber = parseInt(rke.toString().replace(/\D/g, '')) || 1;
+                const colorIndex = ((rkeNumber - 1) % 10) + 1;
+                
+                return `racikan-rke-${colorIndex}`;
+                
+                
             }
 
             $scope.columnGrid = [

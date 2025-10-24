@@ -469,11 +469,13 @@
                                                             <tr>
                                                                 <th style="color:#448cff;white-space: pre-wrap;">Jumlah Kasus</th>
                                                                 <th style="color:#448cff;white-space: pre-wrap">Jumlah Kasus Pending</th>
+                                                                <th style="color:#448cff;white-space: pre-wrap; text-align: center">Tarif RS</th>
                                                                 <th style="color:#448cff;white-space: pre-wrap">Pengajuan Klaim</th>
                                                                 <th style="color:#448cff;white-space: pre-wrap">Pending / Tidak Layak</th>
                                                                 <th style="color:#448cff;white-space: pre-wrap">Realisasi Klaim</th>
                                                                 <th style="color:red;white-space: pre-wrap">Jumlah Kasus</th>
                                                                 <th style="color:red;white-space: pre-wrap">Jumlah Kasus Pending</th>
+                                                                <th style="color:red;white-space: pre-wrap; text-align: center">Tarif RS</th>
                                                                 <th style="color:red;white-space: pre-wrap">Pengajuan Klaim</th>
                                                                 <th style="color:red;white-space: pre-wrap">Pending / Tidak Layak</th>
                                                                 <th style="color:red;white-space: pre-wrap">Realisasi Klaim</th>
@@ -486,11 +488,13 @@
                                                                     <td>{{ $items['bulan'] }}</td>
                                                                     <td style="color:#448cff;text-align: right;white-space: pre-wrap">{{ $items['jmlkasus_rj'] }}</td>
                                                                     <td style="color:#448cff;text-align: right;white-space: pre-wrap">{{ $items['jmlkasuspending_rj'] }}</td>
+                                                                    <td style="color:#448cff;text-align: right;white-space: pre-wrap">{{ $items['totaltarifrs_rj'] }}</td>
                                                                     <td style="color:#448cff;text-align: right;white-space: pre-wrap">{{ $items['pengajuan_rj'] }}</td>
                                                                     <td style="color:#448cff;text-align: right;white-space: pre-wrap">{{ $items['pending_rj'] }}</td>
                                                                     <td style="color:#448cff;text-align: right;white-space: pre-wrap">{{ $items['klaim_rj'] }}</td>
                                                                     <td style="color:red;text-align: right;white-space: pre-wrap">{{ $items['jmlkasus_ri'] }}</td>
                                                                     <td style="color:red;text-align: right;white-space: pre-wrap">{{ $items['jmlkasuspending_ri'] }}</td>
+                                                                    <td style="color:red;text-align: right;white-space: pre-wrap">{{ $items['totaltarifrs_ri'] }}</td>
                                                                     <td style="color:red;text-align: right;white-space: pre-wrap">{{ $items['pengajuan_ri'] }}</td>
                                                                     <td style="color:red;text-align: right;white-space: pre-wrap">{{ $items['pending_ri'] }}</td>
                                                                     <td style="color:red;text-align: right;white-space: pre-wrap">{{ $items['klaim_ri'] }}</td>

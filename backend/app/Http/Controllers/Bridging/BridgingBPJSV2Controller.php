@@ -76,6 +76,8 @@ class BridgingBPJSV2Controller extends ApiController
     public function getNoPeserta(Request $request)
     {
         $kdProfile = $this->getDataKdProfile($request);
+        $ipCheck = $this->checkValidIP($request);
+        if ($ipCheck) return $ipCheck;
         $headers = $this->getHeaderBPJSV2();
         $dataJsonSend = null;
         $methods = 'GET';
@@ -88,6 +90,8 @@ class BridgingBPJSV2Controller extends ApiController
     public function getNIK(Request $request)
     {
         $kdProfile = $this->getDataKdProfile($request);
+        $ipCheck = $this->checkValidIP($request);
+        if ($ipCheck) return $ipCheck;
         $headers = $this->getHeaderBPJSV2();
         $dataJsonSend = null;
         $methods = 'GET';
@@ -1412,6 +1416,8 @@ class BridgingBPJSV2Controller extends ApiController
     public function getNoPesertaV1(Request $request)
     {
         $kdProfile = $this->getDataKdProfile($request);
+        $ipCheck = $this->checkValidIP($request);
+        if ($ipCheck) return $ipCheck;
         $headers = $this->getHeaderBPJSV2();
         $dataJsonSend = null;
         $methods = 'GET';
@@ -3187,6 +3193,10 @@ class BridgingBPJSV2Controller extends ApiController
     }
     public function bpjsTools(Request $request)
     {
+        if (substr($request['url'], 0, 12) == 'Peserta/nik/' || substr($request['url'], 0, 16) == 'Peserta/nokartu/') {
+            $ipCheck = $this->checkValidIP($request);
+            if ($ipCheck) return $ipCheck;
+        }
         try {
 
             // $kdProfile = $this->getDataKdProfile($request);
@@ -4301,4 +4311,73 @@ class BridgingBPJSV2Controller extends ApiController
             'message' => 'Inhuman'
         ]);
     }
+
+    protected function checkValidIP(Request $request)
+    {
+        $allowedIPs = config('bpjs.allowed_ips');
+        if (empty($allowedIPs) || !is_array($allowedIPs)) {
+            return null;
+        }
+
+        $clientIP = $request->ip();
+        $isAllowed = false;
+
+        foreach ($allowedIPs as $rule) {
+            $rule = trim($rule);
+
+            // 1️⃣ Jika rule adalah CIDR (ada '/')
+            if (strpos($rule, '/') !== false) {
+                if ($this->ipInRange($clientIP, $rule)) {
+                    $isAllowed = true;
+                    break;
+                }
+            }
+
+            // 2️⃣ Jika rule prefix, contoh: "192.168.1."
+            elseif (substr($rule, -1) === '.') {
+                if (strpos($clientIP, $rule) === 0) {
+                    $isAllowed = true;
+                    break;
+                }
+            }
+
+            // 3️⃣ Jika exact match
+            elseif ($clientIP === $rule) {
+                $isAllowed = true;
+                break;
+            }
+        }
+
+        if (!$isAllowed) {
+            \Log::warning('Unauthorized BPJS access attempt', [
+                'ip' => $clientIP,
+                'url' => $request->url(),
+                'path' => $request['url'] ?? null,
+            ]);
+
+            return response()->json([
+                'metaData' => [
+                    'code' => 403,
+                    'message' => 'Forbidden: IP tidak diizinkan.',
+                ],
+                'response' => null,
+            ], 403);
+        }
+
+        // lanjut kalau valid
+        return null;
+    }
+
+    /**
+     * Cek apakah $ip termasuk dalam range CIDR, contoh 192.168.1.0/24
+     */
+    private function ipInRange($ip, $cidr)
+    {
+        list($subnet, $mask) = explode('/', $cidr);
+        $ipLong = ip2long($ip);
+        $subnetLong = ip2long($subnet);
+        $maskLong = ~((1 << (32 - (int)$mask)) - 1);
+        return ($ipLong & $maskLong) === ($subnetLong & $maskLong);
+    }  
+
 }

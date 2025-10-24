@@ -7,8 +7,8 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
             $scope.dataVOloaded = true;
             $scope.now = new Date();
             $scope.isRouteLoading = false;
-            $scope.item.tglAwal = moment($scope.now).format('YYYY-MM-DD HH:mm');
-            $scope.item.tglAkhir = moment($scope.now).format('YYYY-MM-DD HH:mm');
+            $scope.item.tglAwal = moment($scope.now).format('YYYY-MM-DD 00:00');
+            $scope.item.tglAkhir = moment($scope.now).format('YYYY-MM-DD 23:59');
             LoadCombo()
 
             function LoadCombo(){

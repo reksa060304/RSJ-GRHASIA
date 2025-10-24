@@ -23,6 +23,7 @@ define(['initialize'], function (initialize) {
                     $scope.listDataDokter = dat.data.dokter;
                     $scope.listKelompokPasien = dat.data.kelompokpasien;
                     $scope.listNamaItem = dat.data.produkall;
+                    $scope.listJeniskemasan = dat.data.jeniskemasan;
                     $scope.listRajalRanap = [
                         { id: 1, names: "Rawat Jalan" },
                         { id: 2, names: "Rawat Inap"}
@@ -41,6 +42,11 @@ define(['initialize'], function (initialize) {
                 var dok = ""
                 if ($scope.item.dokter != undefined) {
                     dok = "&dokid=" + $scope.item.dokter.id
+                }
+
+                var jeniskemasan = ""
+                if ($scope.item.jeniskemasan != undefined && $scope.item.jeniskemasan != null) {
+                    jeniskemasan = "&jeniskemasan=" + $scope.item.jeniskemasan.id
                 }
                 var kp = ""
                 if ($scope.item.kelompokPasien != undefined) {
@@ -61,6 +67,12 @@ define(['initialize'], function (initialize) {
                 var namaItem = "";
                 if ($scope.item.namaItem != undefined) {
                   namaItem = "&namaItem=" + $scope.item.namaItem.id;
+                }
+                var namaItemText="";
+
+                var jks = "";
+                if ($scope.item.jks != undefined) {
+                  jks = "&jks=" + $scope.item.jks.id;
                 }
                 var namaItemText="";
                 
@@ -88,7 +100,7 @@ define(['initialize'], function (initialize) {
                     "&tglAkhir=" + tglAkhir +
                     "&rajalRanap=" + rajalRanap +
                     "&isobat=" + isobat +
-                    dok + kp + ru + namaItem + namaItemText + namaPasienText
+                    dok + kp + ru + namaItem + namaItemText + namaPasienText + jks
                     , true).then(function (dat) {
                         $scope.isRouteLoading = false;
                         $scope.totaltunai = 0;
@@ -514,6 +526,11 @@ define(['initialize'], function (initialize) {
                     //     // footerTemplate: "<span class='style-right'>{{formatRupiah('#: data.tunai.sum  #', '')}}"
                     // },  
                     {
+                        "field": "jeniskemasan",
+                        "title": "Jenis Kemasan",
+                        "width": "50px",
+                    },                 
+                    {
                         "field": "rke",
                         "title": "R/",
                         "width": "50px",
@@ -530,6 +547,11 @@ define(['initialize'], function (initialize) {
                         "title": "Satuan",
                         "width": "120px",
                         footerTemplate: "Total",
+                    },
+                    {
+                        "field": "jeniskemasan",
+                        "title": "Jenis Kemasan",
+                        "width": "100px",
                     },
                     {
                         "field": "jumlah",
@@ -584,6 +606,11 @@ define(['initialize'], function (initialize) {
                                 "width": "120px",
                                 //    footerTemplate: "<span>Total </span>"
                             },
+                            {
+                                "field": "noidentitas",
+                                "title": "NIK",
+                                "width": "100px",
+                            }
                         ]
                     },
                     {

@@ -5,6 +5,65 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
             $scope.now = new Date();
             $scope.item = {};
             $scope.header = {};
+            $scope.item = $scope.item || {}
+
+            var ALERGI_DEF = [
+                { id: 1, label: 'Makanan', ketKey: 'alergiMakanan', katKey: 'kategoriAlergiMakanan' },
+                { id: 2, label: 'Obat', ketKey: 'alergiObat', katKey: 'kategoriAlergiObat' },
+                { id: 3, label: 'Lingkungan', ketKey: 'alergiLingkungan', katKey: 'kategoriAlergiLingkungan' },
+                { id: 4, label: 'Biologis', ketKey: 'alergiBiologis', katKey: 'kategoriAlergiBiologis' }
+            
+            ]
+
+            function pickByIdOrName(list, id, name){
+            if (!Array.isArray(list) || !list.length) return null
+            var found = list.find(function(v){ return v.id === id })
+            if (found) return found
+            if (name){
+                var low = String(name).toLowerCase()
+                return list.find(function(v){ return String(v.namaalergi||'').toLowerCase() === low }) || null
+            }
+            return null
+            }
+
+            function ensureAlergiDefaults(){
+            if (!$scope.listKategoriAlergi || !$scope.listKategoriAlergi.length) return
+            ALERGI_DEF.forEach(function(d){
+                if (!$scope.item[d.katKey]) {
+                var pre = pickByIdOrName($scope.listKategoriAlergi, d.id, d.label)
+                if (pre) $scope.item[d.katKey] = pre
+                }
+            })
+            }
+
+            function collectAlergi(){
+            var out = []
+            ALERGI_DEF.forEach(function(d){
+                var ket = ($scope.item[d.ketKey] || '').trim()
+                if (!ket) return
+                var katSel = $scope.item[d.katKey]
+                var kategori = katSel && katSel.id ? katSel.id : d.id
+                out.push({ kategori: kategori, keterangan: ket, label: d.label })
+            })
+            return out
+            }
+
+            // $scope.buildKetalergi = function(){
+            //     var list = collectAlergi()
+            //     $scope.header.ketalergi = list.map(function(x){ return x.label + ': ' + x.keterangan }).join(' | ')
+            // }
+
+            $scope.buildKetalergi = () => {
+                const parts = []
+
+                if ($scope.item.alergiObat) parts.push('Alergi Obat: ' + $scope.item.alergiObat)
+                if ($scope.item.alergiLingkungan) parts.push('Alergi Lingkungan: ' + $scope.item.alergiLingkungan)
+                if ($scope.item.alergiBiologis) parts.push('Alergi Biologis: ' + $scope.item.alergiBiologis)
+                if ($scope.item.alergiMakanan) parts.push('Alergi Makanan: ' + $scope.item.alergiMakanan)
+
+                $scope.header.ketalergi = parts.join('\n')
+            }
+
             var usrDokter = medifirstService.getPegawaiLogin().jenisPegawai.id;
             $scope.checkNoregis = true;
             // $scope.checkNoregis = (usrDokter == 1) ? false : true;
@@ -75,6 +134,8 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
                 $scope.header.generate = true;
                 $scope.header = result
                 $scope.header.tgllahirs = moment($scope.header.tgllahir).format('DD-MM-YYYY')
+                syncItemFromHeader() 
+                $scope.buildKetalergi()
 
                 if (result.foto == null)
                     $scope.header.image = "../app/images/avatar.jpg"
@@ -250,9 +311,25 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
                     $scope.isLoadingNav = false
                 })
 
+                // medifirstService.get("emr/get-kategori-alergi").then(function (dat) {
+                //     $scope.listKategoriAlergi = dat.data.kategorialergi
+                // })
                 medifirstService.get("emr/get-kategori-alergi").then(function (dat) {
-                    $scope.listKategoriAlergi = dat.data.kategorialergi
+                    $scope.listKategoriAlergi = dat.data.kategorialergi || []
+                    ensureAlergiDefaults()
+
+                    $scope.$watchGroup([
+                    'item.alergiObat',
+                    'item.alergiLingkungan',
+                    'item.alergiBiologis',
+                    'item.alergiMakanan',
+                    'item.kategoriAlergiObat.id',
+                    'item.kategoriAlergiLingkungan.id',
+                    'item.kategoriAlergiBiologis.id',
+                    'item.kategoriAlergiMakanan.id'
+                    ], function(){ $scope.buildKetalergi() })
                 })
+
 
             }
             function onSelect(e) {
@@ -478,21 +555,54 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
             //     scrollMarker.style.top = scrollTop + "px";
             // });
 
-            $scope.alergi = function () {
-                // $scope.item.alergi = $scope.header.ketalergi
-                $scope.popUpAlergi.open().center()
+            function syncItemFromHeader() {
+                $scope.item.alergiObat        = $scope.header.ketalergi || ''
+                $scope.item.alergiLingkungan  = $scope.header.ketalergilingkungan || ''
+                $scope.item.alergiBiologis    = $scope.header.ketalergibiologis || ''
+                $scope.item.alergiMakanan     = $scope.header.ketalergimakanan || ''
             }
 
+            $scope.alergi = function () {
+                // $scope.item.alergi = $scope.header.ketalergi
+                // syncItemFromHeader()
+                $scope.popUpAlergi.open().center()
+                $scope.buildKetalergi()
+            }
+
+            // $scope.simpanAlergi = function () {
+            //     var objSave = {
+            //         norec_pd: $scope.header.norec_pd,
+            //         keterangan: $scope.item.alergi,
+            //         objectalergifk: $scope.item.kategoriAlergi.id
+            //     }
+            //     medifirstService.post('emr/post-riwayatalergi-v2', objSave).then(function (e) {
+            //         $scope.header.ketalergi = e.data.data.ketalergi
+            //         $scope.popUpAlergi.close();
+            //     });
+            // }
+
             $scope.simpanAlergi = function () {
-                var objSave = {
+                const payload = {
                     norec_pd: $scope.header.norec_pd,
-                    keterangan: $scope.item.alergi,
-                    objectalergifk: $scope.item.kategoriAlergi.id
+
+                    ketalergi: $scope.item.alergiObat || null,
+                    objectalergifk: $scope.item.kategoriAlergiObat?.id || null,
+
+                    ketalergilingkungan: $scope.item.alergiLingkungan || null,
+                    objectalergilingkunganfk: $scope.item.kategoriAlergiLingkungan?.id || null,
+
+                    ketalergibiologis: $scope.item.alergiBiologis || null,
+                    objectalergibiologisfk: $scope.item.kategoriAlergiBiologis?.id || null,
+                    
+                    ketalergimakanan: $scope.item.alergiMakanan || null,
+                    objectalergimakananfk: $scope.item.kategoriAlergiMakanan?.id || null,
                 }
-                medifirstService.post('emr/post-riwayatalergi-v2', objSave).then(function (e) {
-                    $scope.header.ketalergi = e.data.data.ketalergi
-                    $scope.popUpAlergi.close();
-                });
+
+                medifirstService.post('emr/post-riwayatalergi-v2', payload).then(function (res) {
+                    $scope.header.ketalergi = payload.ketalergi
+                    $scope.buildKetalergi()
+                    $scope.popUpAlergi.close()
+                })
             }
 
             $scope.tutupAlergi = function () {

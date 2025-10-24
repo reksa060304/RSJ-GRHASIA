@@ -264,6 +264,41 @@ define(['initialize'], function (initialize) {
 					init();
 				})
 			};
+			function disableRetriksi(e) {
+				e.preventDefault();
+				var dataItem = this.dataItem($(e.currentTarget).closest("tr"))
+
+				if (dataItem == undefined) {
+					alert("Data Belum Dipilih!")
+					return;
+				};
+
+				var objSave = {
+					"id": dataItem.id,
+					"status": 0//'f'
+				}
+				medifirstService.post('sysadmin/master/save-status-retriksi-produk', objSave).then(function (e) {
+					init();
+				})
+			};
+
+			function enableRetriksi(e) {
+				e.preventDefault();
+				var dataItem = this.dataItem($(e.currentTarget).closest("tr"))
+
+				if (dataItem == undefined) {
+					alert("Data Belum Dipilih!")
+					return;
+				};
+
+				var objSave = {
+					"id": dataItem.id,
+					"status": 1//'t'
+				}
+				medifirstService.post('sysadmin/master/save-status-retriksi-produk', objSave).then(function (e) {
+					init();
+				})
+			};
 
 			// function removeDuplicates(items, field) {
 			// 	if(field.indexOf(".") > 0){
@@ -375,12 +410,25 @@ define(['initialize'], function (initialize) {
 					filterable: { multi: true, search: true, required: true, dataSource: $scope.dataSource },					
 				},
 				{
+					"field": "status_retriksi",
+					"title": "<h3 align=center>Status Retriksi<h3>",
+					"width": "150px",
+					"filterable": false,
+					attributes: {
+						"class": "table-cell",
+						// style: "text-align: center;"
+					},
+					filterable: { multi: true, search: true, required: true, dataSource: $scope.dataSource },					
+				},			
+				{
 					"command": [
 						{ text: "Enable", click: enableData, imageClass: "k-icon k-i-pencil", className: "btn-enabled", },
 						{ text: "Disable", click: disableData, imageClass: "k-icon k-delete", className: "btn-disabled", },
+						{ text: "Enable Retriksi", click: enableRetriksi, imageClass: "k-icon k-i-pencil", className: "btn-enabled", },
+						{ text: "Disable Retriksi", click: disableRetriksi, imageClass: "k-icon k-delete", className: "btn-disabled", },
 					],
 					title: "<h3 align=center>Command<h3>",
-					width: "180px",
+					width: "280px",
 				}				
 			];
 			$scope.mainGridOptions = {

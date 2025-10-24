@@ -19,6 +19,7 @@ use App\Master\Pegawai;
 use Barryvdh\DomPDF\Facade as PDF;
 use JasperPHP\JasperPHP;
 use PHPJasper\PHPJasper;
+use Illuminate\Support\Str;
 
 
 class ReportController extends ApiController{
@@ -19230,9 +19231,22 @@ public function suratBuktiPengembalian(Request $request)
             }
         }
         $pageWidth = 950;
-        // dd($profile);
-        return view('report.kgb'
-        , compact('data','pageWidth', 'profile'));
+
+        if($request['word'] != "" && $request['word'] != "undefined"){
+            $content = view('report.kgb-word', compact('data','pageWidth', 'profile'))->render();
+
+            return response($content)
+                ->header('Content-Type', 'application/msword')
+                // ->header('Content-Disposition', 'attachment; filename="laporan_kgb.doc"');
+                ->header(
+                    'Content-Disposition',
+                    'attachment; filename="surat_kgb_' . Str::slug($data[0]->namalengkap, '_') . '.doc"'
+                );
+        } else {
+            return view('report.kgb', compact('data','pageWidth', 'profile'));
+        }
+
+        
     }
 
     public function cetakKGBlama(Request $request)

@@ -75,6 +75,7 @@ use App\Transaksi\SeqNumberEMR;
 use App\Transaksi\CPPTEMR;
 use App\Transaksi\CABAKEMR;
 use App\Transaksi\PelayananPasien;
+use App\Transaksi\RiwayatAlergiPasien;
 //use Illuminate\Http\Response;
 use DB;
 use App\Traits\Valet;
@@ -10830,7 +10831,6 @@ class EMRController  extends ApiController
 
         return $this->setStatusCode($result['status'])->respond($result, $transMessage);
     }
-
     public function SaveTransaksiEMRBackupRajal(Request $request)
     {
         $kdProfile = (int) $this->getDataKdProfile($request);
@@ -10877,7 +10877,7 @@ class EMRController  extends ApiController
 
                 // existing aktif pada BARIS (index) yang sama
                 $EMRPASIENDETAIL = EMRPasienD::where('emrpasienfk', $noemr)
-                    ->select('emrdfk','value','index')
+                    ->select('emrdfk','value','index','pegawaifk')
                     ->where('emrfk', $head['emrfk'])
                     ->where('index', $idx)
                     ->where('kdprofile', $kdProfile)
@@ -10939,8 +10939,11 @@ class EMRController  extends ApiController
 
             // peta existing aktif pada baris ini
             $existingMap = [];
+            $existingOwners = [];
+
             foreach ($EMRPASIENDETAIL as $row) {
                 $existingMap[$row->emrdfk] = $row->value;
+                $existingOwners[$row->emrdfk]= $row->pegawaifk;
             }
 
             // ====== DETEKSI PERUBAHAN BARIS ======
@@ -10965,46 +10968,59 @@ class EMRController  extends ApiController
             $insertCount = 0;
             $updateCount = 0;
 
-            if ($rowChanged) {
-                // 1) NONAKTIFKAN SEMUA RECORD AKTIF PADA BARIS (INDEX) INI (hanya jika bukan dokumen baru)
-                if ($head['norec_emr'] != '-') {
-                    EMRPasienD::where('emrpasienfk', $norec_EMR)
-                        ->where('emrfk', $head['emrfk'])
-                        ->where('index', $idx)
-                        ->where('kdprofile', $kdProfile)
-                        ->where('statusenabled', 1)
-                        ->update(['statusenabled' => 0]);
-                    $updateCount++;
-                }
+            $allKeys = array_unique(array_merge(array_keys($existingMap), array_keys($incomingMap)));
 
-                // 2) SUSUN SNAPSHOT PENUH: nilai baru menimpa nilai lama
-                $merged = $existingMap;
-                foreach ($incomingMap as $k => $v) {
-                    $merged[$k] = $v; // overwrite dengan nilai baru
-                }
+// deteksi apakah ada perubahan pada salah satu field
+$rowChanged = false;
+foreach ($allKeys as $k) {
+    $old = $existingMap[$k] ?? null;
+    $new = $incomingMap[$k] ?? null;
+    if ($old !== $new) {
+        $rowChanged = true;
+        break;
+    }
+}
 
-                // 3) INSERT SEMUA FIELD DALAM BARIS (merged)
-                foreach ($merged as $emrdfk => $valueemr) {
-                    // skip kalau benar-benar null dan tidak pernah ada sebelumnya (opsional)
-                    if ($valueemr === null && !array_key_exists($emrdfk, $existingMap)) {
-                        continue;
-                    }
-                    $EMRD = new EMRPasienD();
-                    $EMRD->norec         = $EMRD->generateNewId();
-                    $EMRD->kdprofile     = $kdProfile;
-                    $EMRD->statusenabled = 1;
-                    $EMRD->emrpasienfk   = $norec_EMR;
-                    $EMRD->value         = $valueemr;
-                    $EMRD->norec_apd     = $head['norec'] ?? null;
-                    $EMRD->emrdfk        = $emrdfk;
-                    $EMRD->emrfk         = $head['emrfk'];
-                    $EMRD->pegawaifk     = (isset($head['jenis']) && $head['jenis']=='pasien') ? null : $this->getCurrentUserID();
-                    $EMRD->tgl           = $this->getDateTime()->format('Y-m-d H:i:s');
-                    $EMRD->index         = $idx;
-                    $EMRD->save();
-                    $insertCount++;
-                }
-            }
+if ($rowChanged) {
+    // 1) nonaktifkan semua record lama pada baris ini
+    EMRPasienD::where('emrpasienfk', $norec_EMR)
+        ->where('emrfk', $head['emrfk'])
+        ->where('index', $idx)
+        ->where('kdprofile', $kdProfile)
+        ->where('statusenabled', 1)
+        ->update(['statusenabled' => 0]);
+
+    // 2) merge field lama & baru
+    $merged = $existingMap;
+    foreach ($incomingMap as $k => $v) {
+        if ($v !== null) $merged[$k] = $v; // overwrite
+    }
+
+    // 3) insert ulang semua field
+    foreach ($merged as $emrdfk => $val) {
+        $oldVal   = $existingMap[$emrdfk] ?? null;
+        $oldOwner = $existingOwners[$emrdfk] ?? $this->getCurrentUserID();
+        $newVal   = $incomingMap[$emrdfk] ?? $oldVal;
+
+        $EMRD = new EMRPasienD();
+        $EMRD->norec     = $EMRD->generateNewId();
+        $EMRD->kdprofile = $kdProfile;
+        $EMRD->statusenabled = 1;
+        $EMRD->emrpasienfk   = $norec_EMR;
+        $EMRD->emrdfk        = $emrdfk;
+        $EMRD->emrfk         = $head['emrfk'];
+        $EMRD->value         = $newVal;
+        // kalau value berubah → owner login, kalau tidak → owner lama
+        $EMRD->pegawaifk     = ($oldVal !== $newVal)
+            ? $this->getCurrentUserID()
+            : $oldOwner;
+        $EMRD->tgl           = $this->getDateTime()->format('Y-m-d H:i:s');
+        $EMRD->index         = $idx;
+        $EMRD->save();
+    }
+}
+// kalau tidak ada perubahan → tidak insert apa pun
+
             // ELSE: tidak ada perubahan → tidak melakukan apa pun (hindari duplikasi).
 
             // ====== IMAGE (opsional – tetap pakai pola aslinya) ======
@@ -11098,7 +11114,6 @@ class EMRController  extends ApiController
             ], 'Saving EMR Pasien Gagal!!');
         }
     }
-
     public function saveEMRBackup($data, $head, $norec_EMR, $kdProfile)
     {
         DB::beginTransaction();
@@ -11712,6 +11727,7 @@ class EMRController  extends ApiController
             $result = array(
                 "status" => 400,
                 "message" => $transMessage,
+                "erro" => $e->getMessage() . ' - ' . $e->getLine(),
                 "as" => 'inhuman',
             );
         }
@@ -15821,65 +15837,221 @@ class EMRController  extends ApiController
         return $this->setStatusCode($result['status'])->respond($result, $transMessage);
     }
 
+    // public function saveAlergiV2(Request $request)
+    // {
+    //     $kdProfile = (int) $this->getDataKdProfile($request);
+    //     $norecPd = $request['norec_pd'];
+    //     DB::beginTransaction();
+    //     // try {
+    //         $dataPD = collect(DB::select("
+    //         SELECT 
+    //             ps.*,pd.noregistrasi 
+    //         FROM
+    //             pasiendaftar_t as pd
+    //             LEFT JOIN pasien_m as ps on ps.id = pd.nocmfk
+    //         WHERE pd.norec = '$norecPd'
+    //         "));
+    //         // dd($dataPD);
+
+    //         if ($dataPD->isEmpty()) {
+    //             throw new \Exception('Data pasien tidak ditemukan');
+    //         }
+
+    //         $dataPasien = $dataPD->first();
+
+    //         pasien::where('nocm', $dataPasien->nocm)
+    //             ->where('kdprofile', $kdProfile)
+    //             ->update(
+    //                 [
+    //                     'ketalergi' => $request['keterangan'],
+    //                     'objectalergifk' => $request['objectalergifk']
+    //                 ],
+    //             );
+
+    //         $transStatus = 'true';
+    //     // } catch (\Exception $e) {
+    //     //     $transStatus = 'false';
+    //     // }
+
+    //     $objetoRequest = new \Illuminate\Http\Request();
+    //     $objetoRequest['noregistrasi'] = $dataPasien->noregistrasi ?? null;
+    //     $ihs = app('App\Http\Controllers\Bridging\IHSController')->AllergyIntolerance($objetoRequest, true);
+
+    //     if ($transStatus == 'true') {
+    //         $transMessage = 'Sukses';
+    //         DB::commit();
+    //         $result = array(
+    //             'AllergyIntolerance'=> isset($ihs)? $ihs :null,
+    //             "status" => 201,
+    //             "message" => $transMessage,
+    //             "as" => 'inhuman',
+    //         );
+    //     } else {
+    //         $transMessage = "Simpan Gagal";
+    //         DB::rollBack();
+    //         $result = array(
+    //             "status" => 400,
+    //             "message" => $transMessage,
+    //             "as" => 'inhuman',
+    //         );
+    //     }
+    //     return $this->setStatusCode($result['status'])->respond($result, $transMessage);
+    // }
+    
     public function saveAlergiV2(Request $request)
     {
         $kdProfile = (int) $this->getDataKdProfile($request);
+        $norecPd   = $request->input('norec_pd');
+
+        // Ambil data pasien
+        $dataPD = collect(DB::select("
+            SELECT ps.*, pd.noregistrasi 
+            FROM pasiendaftar_t pd
+            LEFT JOIN pasien_m ps ON ps.id = pd.nocmfk
+            WHERE pd.norec = ?
+        ", [$norecPd]));
+
+        if ($dataPD->isEmpty()) {
+            return $this->setStatusCode(404)->respond([
+                "status"  => 404,
+                "message" => "Data pasien tidak ditemukan",
+            ], "Not Found");
+        }
+
+        $pasien = $dataPD->first();
+
+        // Simpan data lama ke riwayatalergipasien_t
+        DB::table('riwayatalergipasien_t')->insert([
+            'norec' => (new \App\Transaksi\RiwayatAlergiPasien())->generateNewId(),
+            'kdprofile'                => $kdProfile,
+            'statusenabled'            => false,
+            'objectalergifk'           => $pasien->objectalergifk,
+            'ketalergi'                => $pasien->ketalergi,
+            'tglinput'                 => Carbon::now(),
+            'nocmfk'                   => $pasien->nocm,
+            'noregistrasifk'           => $norecPd,
+            'pegawaiinputfk'           => $request->input('pegawaiinputfk'),
+
+            'objectalergilingkunganfk' => $pasien->objectalergilingkunganfk,
+            'ketalergilingkungan'      => $pasien->ketalergilingkungan,
+
+            'objectalergibiologisfk'   => $pasien->objectalergibiologisfk,
+            'ketalergibiologis'        => $pasien->ketalergibiologis,
+
+            'objectalergimakananfk'    => $pasien->objectalergimakananfk,
+            'ketalergimakanan'         => $pasien->ketalergimakanan,
+        ]);
+
+        // Update field masing-masing di pasien_m
+        pasien::where('nocm', $pasien->nocm)
+            ->where('kdprofile', $kdProfile)
+            ->update([
+                'ketalergi'           => $request->input('ketalergi'),           // obat
+                'objectalergifk'      => $request->input('objectalergifk'),
+                'ketalergilingkungan' => $request->input('ketalergilingkungan'), // lingkungan
+                'objectalergilingkunganfk' => $request->input('objectalergilingkunganfk'),
+                'ketalergibiologis'   => $request->input('ketalergibiologis'),   // biologis
+                'objectalergibiologisfk' => $request->input('objectalergibiologisfk'),
+                'ketalergimakanan'    => $request->input('ketalergimakanan'),    // makanan
+                'objectalergimakananfk' => $request->input('objectalergimakananfk'),
+            ]);
+
+        // Gabungkan semua alergi jadi satu string
+        $summary = collect([
+            $request->input('ketalergi')           ? 'Obat: ' . $request->input('ketalergi') : null,
+            $request->input('ketalergilingkungan') ? 'Lingkungan: ' . $request->input('ketalergilingkungan') : null,
+            $request->input('ketalergibiologis')   ? 'Biologis: ' . $request->input('ketalergibiologis') : null,
+            $request->input('ketalergimakanan')    ? 'Makanan: ' . $request->input('ketalergimakanan') : null,
+        ])->filter()->implode(' | ');
+
+        // Update ketalergi summary untuk ditampilkan di UI
+        pasien::where('nocm', $pasien->nocm)
+            ->where('kdprofile', $kdProfile)
+            ->update([
+                'ketalergi' => $summary,
+            ]);
+
+        // Panggil IHS hanya sekali
+        $objetoRequest = new \Illuminate\Http\Request();
+        $objetoRequest['noregistrasi'] = $pasien->noregistrasi ?? null;
+
+        // AllergyIntolerance sekarang akan membaca field ketalergi (summary)
+        $ihs = app('App\Http\Controllers\Bridging\IHSController')->AllergyIntolerance($objetoRequest, true);
+
+        DB::commit();
+
+        return $this->setStatusCode(201)->respond([
+            "status"        => 201,
+            "message"       => "Sukses",
+            "summary"       => $summary,
+            "IHS_Response"  => $ihs,
+            "as"            => "inhuman",
+        ], "Created");
+    }
+
+    public function saveAlergiBatchV2(Request $request)
+    {
+        $kdProfile = (int) $this->getDataKdProfile($request);
         $norecPd = $request['norec_pd'];
+        $dataAlergi = $request['alergi'];
+
         DB::beginTransaction();
-        // try {
+        try {
             $dataPD = collect(DB::select("
-            SELECT 
-                ps.*,pd.noregistrasi 
-            FROM
-                pasiendaftar_t as pd
+                SELECT ps.*, pd.noregistrasi
+                FROM pasiendaftar_t as pd
                 LEFT JOIN pasien_m as ps on ps.id = pd.nocmfk
-            WHERE pd.norec = '$norecPd'
+                WHERE pd.norec = '$norecPd'
             "));
-            // dd($dataPD);
 
             if ($dataPD->isEmpty()) {
                 throw new \Exception('Data pasien tidak ditemukan');
             }
 
             $dataPasien = $dataPD->first();
+            $nocm = $dataPasien->nocm;
 
-            pasien::where('nocm', $dataPasien->nocm)
+            // Reset alergi sebelumnya
+            pasien::where('nocm', $nocm)
                 ->where('kdprofile', $kdProfile)
-                ->update(
-                    [
-                        'ketalergi' => $request['keterangan'],
-                        'objectalergifk' => $request['objectalergifk']
-                    ],
-                );
+                ->update([
+                    'ketalergi' => null,
+                    'objectalergifk' => null,
+                ]);
 
-            $transStatus = 'true';
-        // } catch (\Exception $e) {
-        //     $transStatus = 'false';
-        // }
+            // Simpan alergi baru satu per satu
+            $summary = [];
+            foreach ($dataAlergi as $item) {
+                $summary[] = $item['keterangan'];
+                pasien::where('nocm', $nocm)
+                    ->where('kdprofile', $kdProfile)
+                    ->update([
+                        'ketalergi' => implode(', ', $summary),
+                        'objectalergifk' => $item['kategori']
+                    ]);
+            }
 
-        $objetoRequest = new \Illuminate\Http\Request();
-        $objetoRequest['noregistrasi'] = $dataPasien->noregistrasi ?? null;
-        $ihs = app('App\Http\Controllers\Bridging\IHSController')->AllergyIntolerance($objetoRequest, true);
+            // Panggil IHS
+            $objetoRequest = new \Illuminate\Http\Request();
+            $objetoRequest['noregistrasi'] = $dataPasien->noregistrasi ?? null;
+            $ihs = app('App\Http\Controllers\Bridging\IHSController')->AllergyIntolerance($objetoRequest, true);
 
-        if ($transStatus == 'true') {
-            $transMessage = 'Sukses';
             DB::commit();
-            $result = array(
-                'AllergyIntolerance'=> isset($ihs)? $ihs :null,
-                "status" => 201,
-                "message" => $transMessage,
-                "as" => 'inhuman',
-            );
-        } else {
-            $transMessage = "Simpan Gagal";
+            return $this->respond([
+                'message' => 'Sukses',
+                'status' => 201,
+                'summary' => implode(', ', $summary),
+                'AllergyIntolerance' => $ihs ?? null,
+                'as' => 'inhuman',
+            ]);
+        } catch (\Exception $e) {
             DB::rollBack();
-            $result = array(
-                "status" => 400,
-                "message" => $transMessage,
-                "as" => 'inhuman',
-            );
+            return $this->setStatusCode(400)->respond([
+                'message' => $e->getMessage(),
+                'status' => 400,
+                'as' => 'inhuman',
+            ]);
         }
-        return $this->setStatusCode($result['status'])->respond($result, $transMessage);
     }
 
     public function getKategoriAlergi(Request $request)
@@ -16091,4 +16263,73 @@ class EMRController  extends ApiController
         }
         return $pelayanan;
     }
+
+    // public function getEMRTransaksiDetailEdit(Request $request)
+    // {
+    //     $kdProfile = $this->getDataKdProfile($request);
+
+    //     $q = \DB::table('emrpasiend_t as emrdp')
+    //         ->leftJoin('emrd_t as emrd', 'emrd.id', '=', 'emrdp.emrdfk')
+    //         ->leftJoin('pegawai_m as pg', 'pg.id', '=', 'emrdp.pegawaifk')
+    //         ->select(
+    //             'emrdp.*', 'emrd.caption', 'emrd.type', 'emrd.nourut',
+    //             'emrdp.emrfk', 'emrd.reportdisplay', 'emrd.kodeexternal as kodeex',
+    //             'emrd.satuan', 'pg.namalengkap'
+    //         )
+    //         ->where('emrdp.kdprofile', $kdProfile)
+    //         ->where('emrdp.statusenabled', false)
+    //         ->orderBy('emrd.nourut')
+    //         ->whereNotNull('emrdp.value');
+
+    //     // noemr
+    //     if ($request->has('noemr')) {
+    //         $noemr = trim($request->get('noemr'));
+    //         if ($noemr !== '') {
+    //             $q->where('emrdp.emrpasienfk', $noemr);
+    //         }
+    //     }
+
+    //     // emrfk (cast ke int kalau kolom integer)
+    //     if ($request->has('emrfk')) {
+    //         $emrfk = trim($request->get('emrfk'));
+    //         if ($emrfk !== '') {
+    //             $q->where('emrdp.emrfk', (int)$emrfk);
+    //         }
+    //     }
+
+    //     // objectid: dukung array, CSV "1,2,3", atau single
+    //     if ($request->has('objectid')) {
+    //         $objectid = $request->get('objectid'); // bisa array atau string
+
+    //         if (is_array($objectid)) {
+    //             $ids = array_values(array_filter($objectid, function ($v) {
+    //                 return $v !== null && $v !== '' && $v !== 'null';
+    //             }));
+    //             if (!empty($ids)) {
+    //                 $q->whereIn('emrdp.emrdfk', $ids);
+    //             }
+    //         } else {
+    //             $objectid = trim($objectid);
+    //             if ($objectid !== '') {
+    //                 if (strpos($objectid, ',') !== false) {
+    //                     $ids = array_filter(array_map('trim', explode(',', $objectid)), function ($v) {
+    //                         return $v !== '' && $v !== 'null';
+    //                     });
+    //                     if (!empty($ids)) {
+    //                         $q->whereIn('emrdp.emrdfk', $ids);
+    //                     }
+    //                 } else {
+    //                     $q->where('emrdp.emrdfk', (int)$objectid);
+    //                 }
+    //             }
+    //         }
+    //     }
+
+    //     $rows = $q->get();
+
+    //     return $this->respond([
+    //         'data' => $rows,
+    //         'message' => 'as@epic',
+    //     ]);
+    // }
 }

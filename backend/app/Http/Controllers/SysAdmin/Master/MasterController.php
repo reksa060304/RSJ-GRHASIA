@@ -65,7 +65,7 @@ class MasterController extends ApiController{
         $filter = $request->all();
         //get data
         $data = \DB::table('produk_m as p')
-            ->select('p.id','p.kdproduk','p.kdbarcode','p.deskripsiproduk','p.namaproduk','dj.detailjenisproduk','p.statusenabled')
+            ->select('p.id','p.kdproduk','p.kdbarcode','p.deskripsiproduk','p.namaproduk','dj.detailjenisproduk','p.statusenabled','p.status_retriksi')
             ->leftJoin('rm_sediaan_m as rm','rm.id','=','p.objectsediaanfk')
             ->leftJoin('merkproduk_m as mp','mp.id','=','objectmerkprodukfk')
             ->leftJoin('rekanan_m as rk','rk.id','=','p.objectrekananfk')
@@ -169,6 +169,41 @@ class MasterController extends ApiController{
         }
         return $this->setStatusCode($result['status'])->respond($result, $transMessage);
     }
+    public function UpdateStatusRetriksiProduk(Request $request){
+        $kdProfile = (int) $this->getDataKdProfile($request);
+        DB::beginTransaction();
+        $data=$request['data'];
+        try {
+                $dataOP = Produk::where('id', $request['id'])
+                    ->where('kdprofile',$kdProfile)
+                    ->update([
+                        'status_retriksi' => $request['status'],
+                ]);
+
+            $transStatus = 'true';
+        }catch (\Exception $e) {
+            $transStatus = 'false';
+        }
+
+        if ($transStatus == 'true') {
+            $transMessage = "Simpan Berhasil";
+            DB::commit();
+            $result = array(
+                "status" => 201,
+                "message" => $transMessage,
+                "as" => 'ea@epic',
+            );
+        } else {
+            $transMessage = "Simpan Gagal";
+            DB::rollBack();
+            $result = array(
+                "status" => 400,
+                "message"  => $transMessage,
+                "as" => 'ea@epic',
+            );
+        }
+        return $this->setStatusCode($result['status'])->respond($result, $transMessage);
+    }
 
     public function saveDataProduk(Request $request){
         DB::beginTransaction();
@@ -215,6 +250,8 @@ class MasterController extends ApiController{
             $prod->kdproduk = $data['kdproduk'];
             $prod->kdproduk_intern = $data['kdproduk_intern'];
             $prod->kekuatan = $data['kekuatan'];
+            $prod->jmlretriksi = $data['jmlretriksi'];
+            $prod->stokmin = $data['stokmin'];
             $prod->namaproduk = $data['namaproduk'];
             $prod->nilainormal = $data['nilainormal'];
             $prod->qproduk = $data['qproduk'];
@@ -267,6 +304,12 @@ class MasterController extends ApiController{
             }
             if (isset($request['isvaksindonasi'])){
                 $prod->isvaksindonasi = $data['isvaksindonasi'];
+            }
+            if (isset($request['highalert'])){
+                $prod->highalert = $data['highalert'];
+            }
+            if (isset($request['retriksiantibiotik'])){
+                $prod->retriksiantibiotik = $data['retriksiantibiotik'];
             }
             if (isset($request['isfornas'])){
                 $prod->isfornas = $data['isfornas'];

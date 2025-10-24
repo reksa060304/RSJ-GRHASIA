@@ -885,6 +885,10 @@ class PelayananResepController extends ApiController
             ->orderBy('ru.namaruangan')
             ->get();
 
+         $jeniskemasan = \DB::table('jeniskemasan_m as jkm')
+         ->where('jkm.statusenabled', true)
+         ->get();
+
         $result = array(
             'produk' => $dataProdukResult,
             'produk1' => $dataProdukResult1,
@@ -905,6 +909,7 @@ class PelayananResepController extends ApiController
             'satuanresep'=>$dataSatuanResep,
             'ruanganall'=>$dataRuanganAll,
             'penyekrining'=>$dataPenyekrining,
+            'jeniskemasan' => $jeniskemasan,
             'message' => 'as@epic',
 //            'asdas' => $ruFilter,
         );
@@ -937,17 +942,18 @@ class PelayananResepController extends ApiController
             ->JOIN('ruangan_m as ru','ru.id','=','apd.objectruanganfk')
             ->JOIN('jeniskemasan_m as jk','jk.id','=','pp.jeniskemasanfk')
             ->LeftJOIN('routefarmasi as rt','rt.id','=','pp.routefk')
+            ->LeftJOIN('orderpelayanan_t as op','op.strukorderfk','=','sr.orderfk')
             ->JOIN('produk_m as pr','pr.id','=','pp.produkfk')
             ->JOIN('satuanstandar_m as ss','ss.id','=','pr.objectsatuanstandarfk')
             ->JOIN('satuanstandar_m as ss2','ss2.id','=','pp.satuanviewfk')
             ->LeftJOIN('satuanresep_m as sn','sn.id','=','pp.satuanresepfk')
             ->select('pp.norec as norecpp','pr.kekuatan','sr.noresep','pp.hargasatuan', 'pp.stock','pp.stock as jmlstok','apd.objectruanganfk','ru.namaruangan',
                 'pp.rke','pp.jeniskemasanfk','jk.id as jkid','jk.jeniskemasan','pp.aturanpakai','pp.routefk','rt.name as namaroute',
-                'pp.produkfk','pr.namaproduk','pp.nilaikonversi',
+                'pp.produkfk','pr.namaproduk','pr.status_retriksi','pp.nilaikonversi',
                 'pr.objectsatuanstandarfk','ss.satuanstandar','pp.satuanviewfk','ss2.satuanstandar as ssview',
                 'pp.jumlah','pp.hargadiscount','pp.dosis','pp.jenisobatfk','pp.jasa','pp.hargajual','pp.hargasatuan','pp.strukterimafk',
                 'pp.qtydetailresep','pp.ispagi','pp.issiang','pp.ismalam','pp.issore','pr.kekuatan','pp.keteranganpakai','pp.iskronis',
-                'pp.satuanresepfk','sn.satuanresep','pp.tglkadaluarsa', 'pp.harganetto')
+                'pp.satuanresepfk','sn.satuanresep','pp.tglkadaluarsa', 'pp.harganetto', 'op.keteranganpakai as catatandokter')
             ->where('sr.kdprofile', $idProfile);
 
         if(isset($request['norecResep']) && $request['norecResep']!="" && $request['norecResep']!="undefined"){
@@ -1077,6 +1083,8 @@ class PelayananResepController extends ApiController
                 'tglkadaluarsa' => $item->tglkadaluarsa,
                 'kekuatan' => $item->kekuatan,
                 'norecpp' => $item->norecpp,
+                'catatandokter' => $item->catatandokter,
+                'statusretriksi' => $item->status_retriksi,
             );
         }
 
@@ -1120,7 +1128,7 @@ class PelayananResepController extends ApiController
             ->leftJOIN('jenisracikan_m as jr','jr.id','=','op.jenisobatfk')
             ->select('op.satuandosis','jr.id as ssid', 'so.noorder','op.hargasatuan','op.qtystokcurrent','so.objectruangantujuanfk','ru.namaruangan',
                 'op.rke','op.jeniskemasanfk','jk.id as jkid','jk.jeniskemasan','op.aturanpakai','op.routefk','rt.name as namaroute',
-                'op.objectprodukfk','pr.namaproduk','op.hasilkonversi',
+                'op.objectprodukfk','pr.namaproduk','pr.status_retriksi','op.hasilkonversi',
                 'op.objectsatuanstandarfk','jr.jenisracikan as satuanstandar','op.satuanviewfk','ss2.satuanstandar as ssview',
                 'op.qtyproduk','op.hargadiscount','op.hasilkonversi','op.qtystokcurrent','op.dosis','op.jenisobatfk',
                 'op.hargasatuan','op.hargadiscount','pr.kekuatan','sdn.name as sediaan','op.ispagi','op.issiang','op.ismalam',
@@ -1304,6 +1312,7 @@ class PelayananResepController extends ApiController
                 "tglkadaluarsa"=>$item->tglkadaluarsa,
                 "isreseppulang" => $item->isreseppulang,
                 "satuandosis" => $item->satuandosis,
+                'statusretriksi' => $item->status_retriksi,
             );
         }
 
@@ -3431,6 +3440,7 @@ class PelayananResepController extends ApiController
         $tglAwal= $request['tglAwal'];
         $tglAkhir= $request['tglAkhir'];
         $dokid= '';
+        $jkid= '';
         $kpid='';
         $ruid='';
         $rupasien='';
@@ -3441,6 +3451,7 @@ class PelayananResepController extends ApiController
         $rajalRanapObatBebas= '';
         $namaItem = '';
         $namaPasienText = '';
+        $jeniskemasan = '';
         if(isset($request['namaItem']) && $request['namaItem']!="" && $request['namaItem']!="undefined"){
             $namaItem = ' and pro.id='.$request['namaItem'];
         }
@@ -3457,6 +3468,9 @@ class PelayananResepController extends ApiController
         }
         
 
+        if(isset($request['jks']) && $request['jks']!="" && $request['jks']!="undefined"){
+            $jkid = ' and jks.id='.$request['jks'];
+        }
         if(isset($request['dokid']) && $request['dokid']!="" && $request['dokid']!="undefined"){
             $dokid = ' and pg.id='.$request['dokid'];
         }
@@ -3517,9 +3531,12 @@ class PelayananResepController extends ApiController
                     noregistrasi,
                     nocm,
                     namapasien,
+                    jeniskemasan,
                     dokter,
                     noresep,
-                    tglsbm
+                    tglsbm,
+                    noidentitas,
+                    jeniskemasan
                 FROM
                     (
             WITH lt AS (
@@ -3617,9 +3634,11 @@ class PelayananResepController extends ApiController
             pd.noregistrasi,
             ps.nocm,
             ps.namapasien,
+            jks.jeniskemasan,
             pg.namalengkap AS dokter,
             sr.noresep,
-            sbmsdhbyr.tglsbm
+            sbmsdhbyr.tglsbm,
+            ps.noidentitas
         FROM
             pelayananpasien_t AS pp
         LEFT JOIN strukresep_t AS sr ON pp.strukresepfk = sr.norec
@@ -3645,6 +3664,7 @@ class PelayananResepController extends ApiController
         LEFT JOIN satuanstandar_m AS ss ON ss.id = pp.satuanviewfk
         LEFT JOIN cte ON cte.noreff = pp.norec
         LEFT JOIN cter ON cter.noreff = sr.norec
+        LEFT JOIN jeniskemasan_m AS jks ON jks.id = pp.jeniskemasanfk
         WHERE
             pp.tglpelayanan BETWEEN '$tglAwal'
         AND '$tglAkhir'
@@ -3660,6 +3680,7 @@ class PelayananResepController extends ApiController
                         $namaItemText
                         $namaPasienText
                         $isobat
+                        $jkid
 
                         UNION ALL
                         
@@ -3677,9 +3698,13 @@ class PelayananResepController extends ApiController
                                '' as noregistrasi,
                                sp.nostruk_intern as nocm,
                                sp.namapasien_klien as namapasien,
+                               jks.jeniskemasan,
                                pg.namalengkap as dokter,
                                sp.nostruk AS noresep,
-                               sbmsdhbyr.tglsbm
+                               sbmsdhbyr.tglsbm,
+                               '' as noidentitas
+
+
                         FROM strukpelayanan_t as sp
                         INNER JOIN pelayananpasien_t AS pp ON pp.strukterimafk = sp.norec
                         INNER JOIN strukpelayanandetail_t as spd on spd.nostrukfk = sp.norec
@@ -3695,7 +3720,9 @@ class PelayananResepController extends ApiController
                         --LEFT JOIN loginuser_s AS lu1 ON lu1.id = lg.objectloginuserfk
                         --LEFT JOIN pegawai_m AS pg1 ON pg1.id = lu.objectpegawaifk
                         LEFT JOIN produk_m AS pro ON pro.id = spd.objectprodukfk
+                        LEFT JOIN jeniskemasan_m AS jks ON jks.id = pp.jeniskemasanfk
                         LEFT JOIN satuanstandar_m AS ss ON ss.id = spd.objectsatuanstandarfk
+                        LEFT JOIN jeniskemasan_m AS jkm ON jkm.id = pp.jeniskemasanfk
                                         left join  cte on cte.noreff = pp.norec
                         WHERE sp.statusenabled = true AND sp.kdprofile = 30 and sp.tglstruk BETWEEN '$tglAwal' and '$tglAkhir'
                         AND substring(sp.nostruk,1,2)='OB'
@@ -3707,6 +3734,7 @@ class PelayananResepController extends ApiController
                         $namaItemText
                         $namaPasienTextSP
                         $isobat
+                        $jkid
                  ) AS x
 			) AS C
 	    ) AS e
@@ -3777,6 +3805,7 @@ class PelayananResepController extends ApiController
         ) * jumlah
         ) AS subtotal,
         pp.hargadiscount,
+        pp.aturanpakai,
         pd.noregistrasi,
         ps.nocm,
         ps.namapasien,   
@@ -3828,6 +3857,7 @@ class PelayananResepController extends ApiController
 					spd.harganetto AS hargajual,
 					(spd.qtyproduk*spd.harganetto) AS subtotal,
 					spd.hargadiscount,
+                    pp.aturanpakai,
 					'' as noregistrasi,
 					sp.nostruk_intern as nocm,
 					sp.namapasien_klien as namapasien,

@@ -3788,11 +3788,13 @@ AND sp.statusenabled <> false
                 'jmlkasus_ri' => 0,
                 'jmlkasuspending_ri' => 0,
                 'pengajuan_ri' =>  static::formatRp(0),
+                'totaltarifrs_ri' =>  static::formatRp(0),
                 'pending_ri' => static::formatRp(0),
                 'klaim_ri' => static::formatRp(0),
                 'jmlkasus_rj' => 0,
                 'jmlkasuspending_rj' => 0,
                 'pengajuan_rj' =>static::formatRp(0),
+                'totaltarifrs_rj' =>static::formatRp(0),
                 'pending_rj' => static::formatRp(0),
                 'klaim_rj' =>static::formatRp(0),
             );
@@ -3808,11 +3810,13 @@ AND sp.statusenabled <> false
             sum(x.pengajuan_ri) as pengajuan_ri ,
             sum(x.pending_ri) as pending_ri ,
             sum(x.klaim_ri) as klaim_ri ,
+            sum(x.totaltarifrs_ri) as totaltarifrs_ri,
 
             sum(x.jmlkasus_rj) as jmlkasus_rj ,sum(x.jmlkasuspending_rj) as jmlkasuspending_rj,
             sum(x.pengajuan_rj) as pengajuan_rj,
             sum(x.pending_rj) as pending_rj ,
             sum(x.klaim_rj) as klaim_rj,
+            sum(x.totaltarifrs_rj) as totaltarifrs_rj,
             x.blntahun
              from (
 
@@ -3827,7 +3831,9 @@ AND sp.statusenabled <> false
             case when jenispelayanan ='1' and  statusklaimfk='2' then sum(totalpengajuan) else 0 end as pending_ri,
             case when jenispelayanan ='2' and  statusklaimfk='2' then sum(totalpengajuan) else 0 end as pending_rj,
             case when jenispelayanan ='1' and statusklaimfk='3' then sum(totalpengajuan) else 0 end as klaim_ri,
-            case when jenispelayanan ='2' and statusklaimfk='3' then sum(totalpengajuan) else 0 end as klaim_rj
+            case when jenispelayanan ='2' and statusklaimfk='3' then sum(totalpengajuan) else 0 end as klaim_rj,
+            case when jenispelayanan ='1' then   sum(totaltarifrs) else 0 end as totaltarifrs_ri,
+            case when jenispelayanan ='2' then   sum(totaltarifrs) else 0 end as totaltarifrs_rj
 
             FROM monitoringklaim_t
             where kdprofile=$kdProfile
@@ -3847,11 +3853,13 @@ AND sp.statusenabled <> false
                     $arrM[$i]['jmlkasus_ri'] =  $k->jmlkasus_ri;
                     $arrM[$i]['jmlkasuspending_ri'] =  $k->jmlkasuspending_ri;
                     $arrM[$i]['pengajuan_ri'] =  static::formatRp( $k->pengajuan_ri);
+                    $arrM[$i]['totaltarifrs_ri'] =  static::formatRp( $k->totaltarifrs_ri);
                     $arrM[$i]['pending_ri'] = static::formatRp( $k->pending_ri);
                     $arrM[$i]['klaim_ri'] = static::formatRp( $k->klaim_ri);
                     $arrM[$i]['jmlkasus_rj'] =  $k->jmlkasus_rj;
                     $arrM[$i]['jmlkasuspending_rj'] = $k->jmlkasuspending_rj;
                     $arrM[$i]['pengajuan_rj'] =static::formatRp( $k->pengajuan_rj);
+                    $arrM[$i]['totaltarifrs_rj'] =static::formatRp( $k->totaltarifrs_rj);
                     $arrM[$i]['pending_rj'] = static::formatRp( $k->pending_rj);
                     $arrM[$i]['klaim_rj'] =static::formatRp( $k->klaim_rj);
 

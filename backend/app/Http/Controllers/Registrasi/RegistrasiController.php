@@ -52,11 +52,13 @@ use App\Transaksi\StrukPraOrder;
 use App\Transaksi\StrukResep;
 use App\Transaksi\TempBilling;
 use App\Transaksi\SkriningAwalPasien;
+use App\Transaksi\CatatanPasienDaftar;
 use App\Transaksi\EMRPasienD;
 use Illuminate\Http\Request;
 use App\Traits\PelayananPasienTrait;
 use DB;
 use App\Traits\Valet;
+use App\Transaksi\LoggingUserRev;
 use Carbon\Carbon;
 use phpDocumentor\Reflection\Types\This;
 use Webpatser\Uuid\Uuid;
@@ -667,6 +669,22 @@ class RegistrasiController extends ApiController
                     }
                 }
 
+                // tambah catatan
+                if(isset($r_NewPD['catatan']) && $r_NewPD['catatan']!='' ){
+                    $cp = new CatatanPasienDaftar();
+                    $norec = $cp->generateNewId();
+                    $cp->norec = $norec;
+                    $cp->kdprofile = $kdProfile;
+                    $cp->noregistrasifk = $dataPDnorec;
+                    $cp->statusenabled = true;
+                    $cp->objectpegawaifk = $this->getCurrentUserID() ;//$dataPegawai->objectpegawaifk;
+                    $cp->tglcatatan = date('Y-m-d H:i:s');
+                    $cp->ruangan = "Pendaftaran";
+                    $cp->catatan = $r_NewPD['catatan'];
+                    $cp->save();
+                }
+                // end tambah 
+
                 //endregion
                 $transStatus = 'true';
             } catch (\Exception $e) {
@@ -711,6 +729,11 @@ class RegistrasiController extends ApiController
                 $objetoRequest = new \Illuminate\Http\Request();
                 $objetoRequest['noregistrasi'] = $dataPD->noregistrasi;
                 $ihs = app('App\Http\Controllers\Bridging\IHSController')->Encounter($objetoRequest, true);
+                if ($dataPD->ismobilejkn == false && ($dataPD->statusschedule != '' || $dataPD->statusschedule != null)) {
+                    $request['norec'] = $dataPD->norec;
+                    $request['norec_apd'] = $dataAPD->norec;
+                    $this->saveAdministrasi($request);
+                }
 
                 $result = array(
                     'status' => 201,
@@ -4540,15 +4563,7 @@ class RegistrasiController extends ApiController
             $dataNoCMFk = $newId;
             $nocmfk = $dataPS->id;
             $nocmss = $dataPS->nocm;
-
-            //poto pasien
-            if (!empty($request['pasien']['image'])) {
-                $dataUrl = $request['pasien']['image']; 
-                Pasien::where('id', $nocmfk)->update([
-                    'foto' => $dataUrl, 
-                ]);
-            }
-            // if (isset($request['pasien']['image'])) {
+            if (isset($request['pasien']['image'])) {
                 //agus
                 //                $img =  str_replace('data:image/jpeg;base64,', '', $request['pasien']['image']);
                 //                $img = str_replace(' ', '+', $img);
@@ -4581,7 +4596,7 @@ class RegistrasiController extends ApiController
                 //                );
                 //#egi
 
-            // }
+            }
             //endregion
 
 
@@ -7351,30 +7366,51 @@ class RegistrasiController extends ApiController
         return $this->respond($result);
     }
 
-    public function getDiagnosaDaftarAntrian(Request $request)
-    {
+    public function getDiagnosaDaftarAntrian(Request $request){
         $req = $request->all();
         $icdIX = \DB::table('diagnosa_m as dg')
-            ->select('dg.id', 'dg.kddiagnosa', 'dg.namadiagnosa', 'dg.kddiagnosa as kdDiagnosa', 'dg.namadiagnosa as namaDiagnosa')
+            ->select('dg.id', 'dg.kddiagnosa', 'dg.namadiagnosa','dg.kddiagnosa as kdDiagnosa','dg.namadiagnosa as namaDiagnosa')
             ->where('dg.statusenabled', true)
+            // ->whereNull('inagrouper')
             ->orderBy('dg.kddiagnosa');
 
-        if (
-            isset($req['filter']['filters'][0]['value']) &&
+        if (isset($req['filter']['filters'][0]['value']) &&
             $req['filter']['filters'][0]['value'] != "" &&
             $req['filter']['filters'][0]['value'] != "undefined"
         ) {
-            $icdIX = $icdIX->where(function ($q) use ($req) {
-                $q->where('dg.namadiagnosa', 'ilike', '%' . $req['filter']['filters'][0]['value'] . '%')
-                ->orWhere('dg.kddiagnosa', 'ilike', $req['filter']['filters'][0]['value'] . '%');
-            });
+            $filterValue = str_replace('.', '', $req['filter']['filters'][0]['value']);
+
+            $icdIX = $icdIX->where(function ($q) use ($filterValue) {
+                $q->whereRaw("REPLACE(dg.kddiagnosa, '.', '') ILIKE ?", ["%{$filterValue}%"])
+                ->orWhereRaw("REPLACE(dg.namadiagnosa, '.', '') ILIKE ?", ["%{$filterValue}%"]);
+            })
+            // $icdIX = $icdIX
+            //     ->where(function ($q) use ($req) {
+            //         $q->where('dg.namadiagnosa', 'ilike', '%' . $req['filter']['filters'][0]['value'] . '%')
+            //         ->orWhere('dg.kddiagnosa', 'ilike', $req['filter']['filters'][0]['value'] . '%');
+            //     })
+                ->where('dg.statusenabled', true);
         }
 
         $icdIX = $icdIX->take(10);
         $icdIX = $icdIX->get();
 
-        return $this->respond($icdIX);
-    }
+        $data = [];
+        if (count($icdIX) > 0) {
+            foreach ($icdIX as $item) {
+                $data [] = array(
+                    'kodeNama' => $item->kdDiagnosa . ' - ' . $item->namaDiagnosa,
+                    'id' => $item->id,
+                    'kdDiagnosa' => $item->kdDiagnosa,
+                    'namaDiagnosa' => $item->namaDiagnosa,
+
+                );
+
+            }
+        }
+
+        return $this->respond($data);
+    } 
     public function getDataPasienMauBatal(Request $request)
     {
         $kdProfile = $this->getDataKdProfile($request);
@@ -7549,29 +7585,179 @@ class RegistrasiController extends ApiController
         return $this->setStatusCode($result['status'])->respond($result, $transMessage);
     }
 
-    public function deleteDiagnosaPasien(Request $request)
-    {
+    public function deleteDiagnosaPasien(Request $request) {
         $dataLogin = $request->all();
         $kdProfile = $this->getDataKdProfile($request);
+        $data1 = null;
+        $transStatus = 'false';
         DB::beginTransaction();
-        if ($request['diagnosa']['norec_dp'] != '') {
+        if (isset($request['diagnosa']['norec_ddp']) && $request['diagnosa']['norec_ddp']  != '')  {
+            $data1 =  DetailDiagnosaPasien::where('norec', $request['diagnosa']['norec_ddp'])->where('kdprofile', (int)$kdProfile)->first();
+            $norecdp = $data1->objectdiagnosapasienfk;
+            // dd($norecdp);
             try {
-                $data1 = DetailDiagnosaPasien::where('objectdiagnosapasienfk', $request['diagnosa']['norec_dp'])->where('kdprofile', (int)$kdProfile)->delete();
+                $data2 = DetailDiagnosaPasien::where('norec', $request['diagnosa']['norec_ddp'])->where('kdprofile', (int)$kdProfile)->delete();
+                $data2 = db::table("detaildiagnosapasien_t_copy1")->where('norec', $request['diagnosa']['norec_ddp'])->where('kdprofile', (int)$kdProfile)->delete();
                 $transStatus = 'true';
             } catch (\Exception $e) {
                 $transStatus = false;
+
             }
             try {
-                $data2 = DiagnosaPasien::where('norec', $request['diagnosa']['norec_dp'])->where('kdprofile', (int)$kdProfile)->delete();
+                $data3 = DiagnosaPasien::where('norec','=',$norecdp)->where('kdprofile', $kdProfile)->delete();
+                
                 $transStatus = 'true';
             } catch (\Exception $e) {
                 $transStatus = false;
+            
             }
         }
-        if ($transStatus = 'true') {
-            DB::commit();
+        if (isset($request['diagnosa']['norec_dp']) && $request['diagnosa']['norec_dp'] != '') {
+            try {
+                $data1 = DetailDiagnosaPasien::where('objectdiagnosapasienfk', $request['diagnosa']['norec_dp'])->where('kdprofile', $kdProfile)->delete();
+                $transStatus = 'true';
+            } catch (\Exception $e) {
+                $transStatus = false;
+            }
+            try {
+                $data2 = DiagnosaPasien::where('norec', $request['diagnosa']['norec_dp'])->where('kdprofile', $kdProfile)->delete();
+                $transStatus = 'true';
+            } catch (\Exception $e) {
+                $transStatus = false;
+            }
+
+        }
+        if($transStatus == 'true'){
+
+            if (isset($request['noreg']) && isset($request['eklaim'])) {
+                if (isset($request['idrg']) && $request['idrg'] == true) {
+                    $diagnosapasien = \DB::table('pasiendaftar_t as pd')
+                        ->select('ddp.norec','ddp.objectjenisdiagnosafk')
+                        ->join('antrianpasiendiperiksa_t as apd', 'apd.noregistrasifk', '=', 'pd.norec')
+                        ->join('detaildiagnosapasien_t as ddp', 'ddp.noregistrasifk', '=', 'apd.norec')
+                        ->where('pd.kdprofile', (int)$kdProfile)
+                        ->where('pd.noregistrasi', '=', $request['noreg'])
+                        ->whereIn('ddp.objectjenisdiagnosafk', [15,16])
+                        ->orderBy('ddp.tglinputdiagnosa', 'asc')
+                        ->get();
+
+                    $ada15 = false;
+                    $norecinput_awal = null;
+
+                    foreach ($diagnosapasien as $item) {
+                        if ($item->objectjenisdiagnosafk == 15) {
+                            $ada15 = true;
+                            break;
+                        }
+
+                        // simpan yang tglinput paling awal
+                        if ($item->objectjenisdiagnosafk == 16 && $norecinput_awal == null) {
+                            $norecinput_awal = $item->norec;
+                        }
+                    }
+
+                    if (!$ada15 && $norecinput_awal != null) {
+                        try {
+                            \DB::table('detaildiagnosapasien_t')
+                                ->where('norec', $norecinput_awal)
+                                ->update(['objectjenisdiagnosafk' => 15]);
+                            $transStatus = true;
+                        } catch (\Exception $e) {
+                            $transStatus = false;
+                            $transMessage = $e->getMessage();
+                        }
+                    }
+                }
+
+                if (isset($request['inacbg']) && $request['inacbg'] == true) {
+                    $diagnosapasien = \DB::table('pasiendaftar_t as pd')
+                        ->select('ddp.norec','ddp.objectjenisdiagnosafk')
+                        ->join('antrianpasiendiperiksa_t as apd', 'apd.noregistrasifk', '=', 'pd.norec')
+                        ->join('detaildiagnosapasien_t as ddp', 'ddp.noregistrasifk', '=', 'apd.norec')
+                        ->where('pd.kdprofile', (int)$kdProfile)
+                        ->where('pd.noregistrasi', '=', $request['noreg'])
+                        ->whereIn('ddp.objectjenisdiagnosafk', [7,8])
+                        ->orderBy('ddp.tglinputdiagnosa', 'asc')
+                        ->get();
+
+                    $ada7 = false;
+                    $norecinput_awal = null;
+
+                    foreach ($diagnosapasien as $item) {
+                        if ($item->objectjenisdiagnosafk == 7) {
+                            $ada7 = true;
+                            break;
+                        }
+
+                        // simpan yang tglinput paling awal
+                        if ($item->objectjenisdiagnosafk == 8 && $norecinput_awal == null) {
+                            $norecinput_awal = $item->norec;
+                        }
+                    }
+
+                    if (!$ada7 && $norecinput_awal != null) {
+                        try {
+                            \DB::table('detaildiagnosapasien_t')
+                                ->where('norec', $norecinput_awal)
+                                ->update(['objectjenisdiagnosafk' => 7]);
+                            $transStatus = true;
+                        } catch (\Exception $e) {
+                            $transStatus = false;
+                            $transMessage = $e->getMessage();
+                        }
+                    }
+                }
+                
+
+                
+                
+            }
+
+            if(isset($request['diagnosa']['norec_ddp']) && $request['diagnosa']['norec_ddp']  != ''){
+                $pd = DB::table('pasiendaftar_t as pd')
+                ->join('antrianpasiendiperiksa_t as apd','apd.noregistrasifk','=','pd.norec')
+                ->select('pd.noregistrasi')
+                ->where('apd.norec',$data1->noregistrasifk)
+                ->first();
+    
+                $dataDiagnosa = \DB::table('detaildiagnosapasien_t as dp')
+                ->join('diagnosa_m as dg', 'dg.id', '=', 'dp.objectdiagnosafk')
+                ->join('antrianpasiendiperiksa_t as apd', 'apd.norec', '=', 'dp.noregistrasifk')
+                ->join('pasiendaftar_t as pd', 'pd.norec', '=', 'apd.noregistrasifk')
+                ->join('pasien_m as ps', 'ps.id', '=', 'pd.nocmfk')
+                ->select('dg.kddiagnosa','pd.norec')
+    //            ->where('apd.noregistrasifk',$data[$i]->norec)
+                ->wherein('dp.objectjenisdiagnosafk',array(7,8))
+                // ->where('pd.tglregistrasi', '>=', $filter['tglAwal'])
+                // ->where('pd.tglregistrasi', '<=', $filter['tglAkhir'])
+                ->where('pd.kdprofile',$kdProfile)
+                ->where('pd.noregistrasi',$pd->noregistrasi)
+                ->orderBy('dp.objectjenisdiagnosafk', 'asc')->get();
+                
+                $dtdt1 = '';
+                foreach ($dataDiagnosa as $item2){
+                    $dtdt1 = $dtdt1 . '#' .  $item2->kddiagnosa;
+                }
+               
+                try{
+                    $updatePd =  PasienDaftar::where('noregistrasi', $pd->noregistrasi)
+                    ->update([
+                            'icd10' => $dtdt1 == '' ? null : $dtdt1,
+                        ]
+                    );
+                    $transStatus = 'true';
+                } catch (\Exception $e) {
+                    $transStatus = 'false';
+                    $transMessage = "-";
+                }
+            }
+          
+        }
+        if ($transStatus=='true')
+        {    DB::commit();
             $transMessage = "Data Terhapus";
-        } else {
+        }
+        else{
             DB::rollBack();
             $transMessage = "Data Gagal Dihapus";
         }
@@ -7580,47 +7766,173 @@ class RegistrasiController extends ApiController
     }
 
 
-    public function getDiagnosaPasienByNoreg(Request $request)
-    {
+    public function getDiagnosaPasienByNoreg(Request $request){
         $kdProfile = $this->getDataKdProfile($request);
+        $inacbg = [];
+        $emr = [];
+        $dtdt = '';
+        $jd_id = '';
+        $diagnosaawal='';
         $data = \DB::table('pasiendaftar_t as pd')
-            ->select(
-                'ddp.objectpegawaifk',
-                'pg.namalengkap',
-                'dg.id',
-                'pd.noregistrasi',
-                'pd.tglregistrasi',
-                'apd.objectruanganfk',
-                'ru.namaruangan',
-                'apd.norec as norec_apd',
-                'ddp.objectdiagnosafk',
-                'dg.kddiagnosa',
-                'dg.namadiagnosa',
-                'ddp.objectjenisdiagnosafk',
-                'jd.jenisdiagnosa',
-                'dp.norec as norec_diagnosapasien',
-                'ddp.norec as norec_detaildpasien',
-                'dp.ketdiagnosis',
-                'ddp.keterangan',
-                'ddp.tglinputdiagnosa'
-            )
+            ->select('dg.id', 'pd.noregistrasi', 'pd.tglregistrasi', 'apd.objectruanganfk', 'ru.namaruangan', 'apd.norec as norec_apd',
+                'ddp.objectdiagnosafk', 'dg.kddiagnosa', 'dg.namadiagnosa', 'ddp.objectjenisdiagnosafk', 'jd.id as jd_id',
+                'jd.jenisdiagnosa', 'dp.norec as norec_diagnosapasien', 'ddp.norec as norec_detaildpasien',
+                'dp.ketdiagnosis', 'ddp.keterangan','ddp.tglinputdiagnosa','pg.namalengkap')
             ->join('antrianpasiendiperiksa_t as apd', 'apd.noregistrasifk', '=', 'pd.norec')
             ->join('ruangan_m as ru', 'ru.id', '=', 'apd.objectruanganfk')
             ->join('diagnosapasien_t as dp', 'dp.noregistrasifk', '=', 'apd.norec')
             ->join('detaildiagnosapasien_t as ddp', 'ddp.objectdiagnosapasienfk', '=', 'dp.norec')
             ->leftJoin('diagnosa_m as dg', 'dg.id', '=', 'ddp.objectdiagnosafk')
-            ->leftJoin('pegawai_m as pg', 'pg.id', '=', 'ddp.objectpegawaifk')
             ->leftJoin('jenisdiagnosa_m as jd', 'jd.id', '=', 'ddp.objectjenisdiagnosafk')
+            ->leftjoin('pegawai_m as pg','pg.id','=','ddp.objectpegawaifk')
             ->where('pd.kdprofile', (int)$kdProfile);
 
         if (isset($request['noReg']) && $request['noReg'] != "" && $request['noReg'] != "undefined") {
             $data = $data->where('pd.noregistrasi', '=', $request['noReg']);
         };
+        $data = $data->whereIn('jd.id', [1,2,5,12,13])->orderBy('jd.id', 'asc')->get();
 
-        $data = $data->get();
+        if (isset($request['inacbg']) && $request['inacbg'] == 'true') {
+            $inacbg = \DB::table('pasiendaftar_t as pd')
+            ->select('dg.id', 'pd.noregistrasi', 'pd.tglregistrasi', 'apd.objectruanganfk', 'ru.namaruangan', 'apd.norec as norec_apd',
+                'ddp.objectdiagnosafk', 'dg.kddiagnosa', 'dg.namadiagnosa', 'ddp.objectjenisdiagnosafk', 'jd.id as jd_id',
+                'jd.jenisdiagnosa' ,'ddp.norec as norec_detaildpasien',
+                'ddp.keterangan','ddp.tglinputdiagnosa','pg.namalengkap','dg2.im as is_im')
+            ->join('antrianpasiendiperiksa_t as apd', 'apd.noregistrasifk', '=', 'pd.norec')
+            ->join('ruangan_m as ru', 'ru.id', '=', 'apd.objectruanganfk')
+            // ->join('diagnosapasien_t as dp', 'dp.noregistrasifk', '=', 'apd.norec')
+            ->join('detaildiagnosapasien_t as ddp', 'ddp.noregistrasifk', '=', 'apd.norec')
+            ->leftJoin('diagnosa_m as dg', 'dg.id', '=', 'ddp.objectdiagnosafk')
+            ->leftJoin('diagnosaim_m as dg2', 'dg2.kddiagnosa', '=', 'dg.kddiagnosa')
+            ->leftJoin('jenisdiagnosa_m as jd', 'jd.id', '=', 'ddp.objectjenisdiagnosafk')
+            ->leftjoin('pegawai_m as pg','pg.id','=','ddp.objectpegawaifk')
+            ->where('pd.kdprofile', (int)$kdProfile)
+            ->where('pd.noregistrasi', '=', $request['noReg'])
+            ->whereIn('jd.id', [17,18])
+            ->orderBy('jd.id', 'asc')->get();
+            foreach ($inacbg as $ina) {
+                $dtdt = $dtdt . '#' .  $ina->kddiagnosa;
+            }
+
+        }
+        if (isset($request['emr']) && $request['emr'] == 'true') {
+            if (isset($request['jd_id'])) {
+                $jd_id = (int)$request['jd_id'];
+                $emr = \DB::table('pasiendaftar_t as pd')
+                ->select('dg.id', 'pd.noregistrasi', 'pd.tglregistrasi', 'apd.objectruanganfk', 'ru.namaruangan', 'apd.norec as norec_apd',
+                    'ddp.objectdiagnosafk', 'dg.kddiagnosa', 'dg.namadiagnosa', 'ddp.objectjenisdiagnosafk', 'jd.id as jd_id',
+                    'jd.jenisdiagnosa', 'dp.norec as norec_diagnosapasien', 'ddp.norec as norec_detaildpasien',
+                    'dp.ketdiagnosis', 'ddp.keterangan','ddp.tglinputdiagnosa','pg.namalengkap')
+                ->join('antrianpasiendiperiksa_t as apd', 'apd.noregistrasifk', '=', 'pd.norec')
+                ->join('ruangan_m as ru', 'ru.id', '=', 'apd.objectruanganfk')
+                ->join('diagnosapasien_t as dp', 'dp.noregistrasifk', '=', 'apd.norec')
+                ->join('detaildiagnosapasien_t as ddp', 'ddp.objectdiagnosapasienfk', '=', 'dp.norec')
+                ->leftJoin('diagnosa_m as dg', 'dg.id', '=', 'ddp.objectdiagnosafk')
+                ->leftJoin('jenisdiagnosa_m as jd', 'jd.id', '=', 'ddp.objectjenisdiagnosafk')
+                ->leftjoin('pegawai_m as pg','pg.id','=','ddp.objectpegawaifk')
+                ->where('pd.kdprofile', (int)$kdProfile)
+                ->where('pd.noregistrasi', '=', $request['noReg'])
+                ->where('ru.objectdepartemenfk',$request['depid'])
+                ->whereIn('jd.id', [$jd_id])
+                ->orderBy('jd.id', 'asc')->get();
+                
+            } else {
+               
+                    $emr = \DB::table('pasiendaftar_t as pd')
+               ->select('dg.id', 'pd.noregistrasi', 'pd.tglregistrasi', 'apd.objectruanganfk', 'ru.namaruangan', 'apd.norec as norec_apd',
+                   'ddp.objectdiagnosafk', 'dg.kddiagnosa', 'dg.namadiagnosa', 'ddp.objectjenisdiagnosafk', 'jd.id as jd_id',
+                   'jd.jenisdiagnosa', 'dp.norec as norec_diagnosapasien', 'ddp.norec as norec_detaildpasien',
+                   'dp.ketdiagnosis', 'ddp.keterangan','ddp.tglinputdiagnosa','pg.namalengkap')
+               ->join('antrianpasiendiperiksa_t as apd', 'apd.noregistrasifk', '=', 'pd.norec')
+               ->join('ruangan_m as ru', 'ru.id', '=', 'apd.objectruanganfk')
+               ->join('diagnosapasien_t as dp', 'dp.noregistrasifk', '=', 'apd.norec')
+               ->join('detaildiagnosapasien_t as ddp', 'ddp.objectdiagnosapasienfk', '=', 'dp.norec')
+               ->leftJoin('diagnosa_m as dg', 'dg.id', '=', 'ddp.objectdiagnosafk')
+               ->leftJoin('jenisdiagnosa_m as jd', 'jd.id', '=', 'ddp.objectjenisdiagnosafk')
+               ->leftjoin('pegawai_m as pg','pg.id','=','ddp.objectpegawaifk')
+               ->where('pd.kdprofile', (int)$kdProfile)
+               ->where('pd.noregistrasi', '=', $request['noReg'])
+               ->whereIn('jd.id', [5])
+               ->orderBy('jd.id', 'asc')->get();
+               
+            }
+
+            foreach ($emr as $kode) {
+                $diagnosaawal = $diagnosaawal.$kode->kddiagnosa. '-' .$kode->namadiagnosa.', ';
+            }
+
+            $jd_id = $emr[0]->jd_id;
+           
+        }
+
+         
+           
+        
+        $d = [];
+        $i = 0;
+       
+        foreach ($data as $item){
+            // if ($item->jd_id == 7 || $item->jd_id == 8 ){
+            //     $dtdt = $dtdt . '#' .  $item->kddiagnosa;
+            // }
+            if ($item->jd_id == 1 || $item->jd_id == 2) {
+               $d[$i]['id_diagnosa'] =   $item->id;
+               $d[$i]['jd_id'] =   $item->jd_id;
+               $d[$i]['kdNama'] =  $item->kddiagnosa . ' - ' .$item->namadiagnosa;
+            }
+            $i++;
+        }
+      
+        $icd10 =  substr($dtdt,1,strlen($dtdt)-1);
+    
+        $icd10unu = '';
+       $dataunu = [];
+        if ($request['unu']== "true") {
+            $dataunu = \DB::table('pasiendaftar_t as pd')
+            ->select('dg.id', 'pd.noregistrasi', 'pd.tglregistrasi', 'apd.objectruanganfk', 'ru.namaruangan', 'apd.norec as norec_apd',
+                'ddp.objectdiagnosafk', 'dg.kddiagnosa', 'dg.namadiagnosa', 'ddp.objectjenisdiagnosafk',
+                'jd.jenisdiagnosa', 'dp.norec as norec_diagnosapasien', 'ddp.norec as norec_detaildpasien',
+                'dp.ketdiagnosis', 'ddp.keterangan','ddp.tglinputdiagnosa','pg.namalengkap')
+            ->join('antrianpasiendiperiksa_t as apd', 'apd.noregistrasifk', '=', 'pd.norec')
+            ->join('ruangan_m as ru', 'ru.id', '=', 'apd.objectruanganfk')
+            ->join('diagnosapasien_t as dp', 'dp.noregistrasifk', '=', 'apd.norec')
+            ->join('detaildiagnosapasien_t as ddp', 'ddp.objectdiagnosapasienfk', '=', 'dp.norec')
+            ->leftJoin('diagnosa_m as dg', 'dg.id', '=', 'ddp.objectdiagnosafk')
+            ->leftJoin('jenisdiagnosa_m as jd', 'jd.id', '=', 'ddp.objectjenisdiagnosafk')
+            ->leftjoin('pegawai_m as pg','pg.id','=','ddp.objectpegawaifk')
+            ->where('pd.kdprofile', (int)$kdProfile)
+            ->whereIn('jd.id', [10,11]);
+
+            if (isset($request['noReg']) && $request['noReg'] != "" && $request['noReg'] != "undefined") {
+                $dataunu = $dataunu->where('pd.noregistrasi', '=', $request['noReg']);
+            };
+            $dataunu = $dataunu->get();
+
+            $dt = '';
+            foreach ($dataunu as $item){
+               
+                $dt = $dt . '#' .  $item->kddiagnosa;
+                
+            }
+            $icd10unu =  substr($dt,1,strlen($dt)-1);
+            if ($dt == null) {
+                $icd10unu = $icd10 ;
+            } else{
+                $icd10unu;
+            }
+        }
+       
 
         $result = array(
             'datas' => $data,
+            'icd10' => $icd10,
+            'd' => $d,
+            'inacbg' => $inacbg,
+            'icd10unu' => $icd10unu,
+            'dataunu' => $dataunu,
+            'dgemr' => $emr,
+            'semptenan' => $diagnosaawal,
+            'jd_id' => $jd_id,
             'message' => 'Cepot',
         );
         return $this->respond($result);
@@ -8924,71 +9236,170 @@ class RegistrasiController extends ApiController
     {
         $req = $request->all();
         $icdIX = \DB::table('diagnosatindakan_m as dg')
-            ->select('dg.id', 'dg.kddiagnosatindakan as kdDiagnosaTindakan', 'dg.namadiagnosatindakan as namaDiagnosaTindakan')
+            ->select('dg.id','dg.kddiagnosatindakan as kdDiagnosaTindakan','dg.namadiagnosatindakan as namaDiagnosaTindakan')
             ->where('dg.statusenabled', true)
+            // ->whereNull('dg.inagrouper')
             ->orderBy('dg.kddiagnosatindakan');
 
-        if (
-            isset($req['filter']['filters'][0]['value']) &&
-            $req['filter']['filters'][0]['value'] != "" &&
-            $req['filter']['filters'][0]['value'] != "undefined"
-        )  
-        {
-            $icdIX = $icdIX->where(function ($q) use ($req) {
-                $q->where('dg.namadiagnosatindakan', 'ilike', '%' . $req['filter']['filters'][0]['value'] . '%')
-                ->orWhere('dg.kddiagnosatindakan', 'ilike', $req['filter']['filters'][0]['value'] . '%');
-            });
+        if(isset($req['filter']['filters'][0]['value']) &&
+            $req['filter']['filters'][0]['value']!="" &&
+            $req['filter']['filters'][0]['value']!="undefined"){
+                $filterValue = str_replace('.', '', $req['filter']['filters'][0]['value']);
+
+                $icdIX = $icdIX->where(function($q) use ($filterValue) {
+                    $q->whereRaw("REPLACE(dg.kddiagnosatindakan, '.', '') ILIKE ?", ["%{$filterValue}%"])
+                    ->orWhereRaw("REPLACE(dg.namadiagnosatindakan, '.', '') ILIKE ?", ["%{$filterValue}%"]);
+                })
+            // $icdIX = $icdIX
+            //     ->where(function($q) use ($req) {
+            //         $q->where('dg.namadiagnosatindakan', 'ilike', '%'.$req['filter']['filters'][0]['value'].'%')
+            //         ->orWhere('dg.kddiagnosatindakan', 'ilike', $req['filter']['filters'][0]['value'].'%');
+            //     })
+                ->where('dg.statusenabled', true);
         }
 
 
-        $icdIX = $icdIX->take(10);
-        $icdIX = $icdIX->get();
+        $icdIX=$icdIX->take(10);
+        $icdIX=$icdIX->get();
 
-        return $this->respond($icdIX);
+        $data = [];
+        if (count($icdIX) > 0) {
+            foreach ($icdIX as $item) {
+                $data [] = array(
+                    'kdNama' => $item->kdDiagnosaTindakan . ' - ' . $item->namaDiagnosaTindakan,
+                    'id' => $item->id,
+                    'kdDiagnosaTindakan' => $item->kdDiagnosaTindakan,
+                    'namaDiagnosaTindakan' => $item->namaDiagnosaTindakan,
+
+                );
+
+            }
+        }
+
+        return $this->respond($data);
     }
 
-    public function getDiagnosaPasienByNoregICD9(Request $request)
-    {
+    public function getDiagnosaPasienByNoregICD9 ( Request $request) {
+        $inacbg = [];
+        $dtdt = '';
         $data = \DB::table('pasiendaftar_t as pd')
-            ->select(
-                'pd.noregistrasi',
-                'pd.tglregistrasi',
-                'apd.objectruanganfk',
-                'ru.namaruangan',
-                'apd.norec as norec_apd',
-                'ddt.objectdiagnosatindakanfk',
-                'dt.kddiagnosatindakan',
-                'dt.namadiagnosatindakan',
-                'dtp.norec as norec_diagnosapasien',
-                'ddt.norec as norec_detaildpasien',
-                'dt.*',
-                'ddt.keterangantindakan',
-                'pg.namalengkap',
-                'ddt.tglinputdiagnosa'
-            )
-            ->join('antrianpasiendiperiksa_t as apd', 'apd.noregistrasifk', '=', 'pd.norec')
-            ->join('ruangan_m as ru', 'ru.id', '=', 'apd.objectruanganfk')
-            ->join('diagnosatindakanpasien_t as dtp', 'dtp.objectpasienfk', '=', 'apd.norec')
-            ->join('detaildiagnosatindakanpasien_t as ddt', 'ddt.objectdiagnosatindakanpasienfk', '=', 'dtp.norec')
-            ->join('diagnosatindakan_m as dt', 'dt.id', '=', 'ddt.objectdiagnosatindakanfk')
-            ->leftjoin('pegawai_m as pg', 'pg.id', '=', 'ddt.objectpegawaifk');
-        //            ->join ('jenisdiagnosa_m as jd','jd.id','=','ddp.objectjenisdiagnosafk');
-        if (isset($request['noCm']) && $request['noCm'] != "" && $request['noCm'] != "undefined") {
-            $data = $data->where('ps.nocm', '=', $request['noReg']);
+            ->select('pd.noregistrasi', 'pd.tglregistrasi', 'apd.objectruanganfk', 'ru.namaruangan',
+                'apd.norec as norec_apd', 'ddt.objectdiagnosatindakanfk', 'dt.kddiagnosatindakan', 'dt.namadiagnosatindakan',
+                'dtp.norec as norec_diagnosapasien', 'ddt.ketdiagnosa','dt.id',
+                'ddt.norec as norec_detaildpasien', 'dt.*','ddt.keterangantindakan','pg.namalengkap','ddt.tglinputdiagnosa' )
+            ->join('antrianpasiendiperiksa_t as apd','apd.noregistrasifk','=','pd.norec')
+            ->join('ruangan_m as ru','ru.id','=','apd.objectruanganfk')
+            ->join ('diagnosatindakanpasien_t as dtp','dtp.objectpasienfk','=','apd.norec')
+            ->join ('detaildiagnosatindakanpasien_t as ddt','ddt.objectdiagnosatindakanpasienfk','=','dtp.norec')
+            ->join ('diagnosatindakan_m as dt','dt.id','=','ddt.objectdiagnosatindakanfk')
+            ->leftjoin('pegawai_m as pg','pg.id','=','ddt.objectpegawaifk')
+            ->whereNull('ddt.ketdiagnosa');
+           
+          
+//            ->join ('jenisdiagnosa_m as jd','jd.id','=','ddp.objectjenisdiagnosafk');
+        if(isset($request['noCm']) && $request['noCm']!="" && $request['noCm']!="undefined"){
+            $data = $data->where('ps.nocm','=', $request['noReg']);
         };
-        if (isset($request['noReg']) && $request['noReg'] != "" && $request['noReg'] != "undefined") {
-            $data = $data->where('pd.noregistrasi', '=', $request['noReg']);
+        if(isset($request['noReg']) && $request['noReg']!="" && $request['noReg']!="undefined"){
+            $data = $data->where('pd.noregistrasi','=', $request['noReg']);
         };
+        // if(isset($request['ketdiagnosa']) && $request['ketdiagnosa'] == 0){
+        //     $data = $data->where(DB::raw(" ddt.ketdiagnosa In ('unugrouper',null)"));
+        // } 
+        // else {
+        //     $data = $data->whereNull('ddt.ketdiagnosa');
+        // }
+
         if (isset($request['idDept']) && $request['idDept'] != "" && $request['idDept'] != "undefined") {
             $data = $data->where('apd.objectruanganfk', '=', $request['idDept']);
         };
         if (isset($request['kddiagnosatindakan']) && $request['kddiagnosatindakan'] != "" && $request['kddiagnosatindakan'] != "undefined") {
             $data = $data->where('dt.kddiagnosatindakan', '=', $request['kddiagnosatindakan']);
         }
-        $data = $data->get();
+        $data=$data->orderBy(DB::raw("ketdiagnosa,kddiagnosatindakan"))->get();
+
+        if (isset($request['inacbg']) && [$request['inacbg'] == 'true']) {
+            $inacbg = \DB::table('pasiendaftar_t as pd')
+            ->select('pd.noregistrasi', 'pd.tglregistrasi', 'apd.objectruanganfk', 'ru.namaruangan',
+                'apd.norec as norec_apd', 'ddt.objectdiagnosatindakanfk', 'dt.kddiagnosatindakan', 'dt.namadiagnosatindakan',
+                'dtp.norec as norec_diagnosapasien', 'ddt.ketdiagnosa','dt.id',
+                'ddt.norec as norec_detaildpasien', 'dt.*','ddt.keterangantindakan','pg.namalengkap','ddt.tglinputdiagnosa','dt2.im as is_im' )
+            ->join('antrianpasiendiperiksa_t as apd','apd.noregistrasifk','=','pd.norec')
+            ->join('ruangan_m as ru','ru.id','=','apd.objectruanganfk')
+            ->join ('diagnosatindakanpasien_t as dtp','dtp.objectpasienfk','=','apd.norec')
+            ->join ('detaildiagnosatindakanpasien_t as ddt','ddt.objectdiagnosatindakanpasienfk','=','dtp.norec')
+            ->join ('diagnosatindakan_m as dt','dt.id','=','ddt.objectdiagnosatindakanfk')
+            ->join ('diagnosatindakanim_m as dt2','dt2.kddiagnosatindakan','=','dt.kddiagnosatindakan')
+            ->leftjoin('pegawai_m as pg','pg.id','=','ddt.objectpegawaifk')
+            ->where('ddt.ketdiagnosa','=','INAcbg')
+            ->where('pd.noregistrasi','=', $request['noReg'])
+            ->orderBy(DB::raw("ddt.tglinputdiagnosa"))->get();
+            foreach ($inacbg as $ina) {
+                $dtdt = $dtdt . '#' .  $ina->kddiagnosatindakan;
+            }
+        }
+        
+        // $dtdt = '';
+        $d = [];
+        $i = 0;
+        
+        foreach ($data as $item){
+        //    if ($item->ketdiagnosa == 'INAcbg') {
+        //      $dtdt = $dtdt . '#' .  $item->kddiagnosatindakan;
+        //    }
+            if ($item->ketdiagnosa == null) {
+               $d[$i]['id_diagnosa'] =  $item->id;
+               $d[$i]['ketdiagnosa'] = 'INAcbg';
+               $d[$i]['kdNama'] =  $item->kddiagnosatindakan . ' - ' .$item->namadiagnosatindakan;
+            }
+            $i++;
+        }
+        $icd9 =  substr($dtdt,1,strlen($dtdt)-1);
+
+        $icd9unu = '';
+        $dataunu = [];
+        if ($request['unu'] == "true") {
+            $dataunu = \DB::table('pasiendaftar_t as pd')
+            ->select('pd.noregistrasi', 'pd.tglregistrasi', 'apd.objectruanganfk', 'ru.namaruangan',
+                'apd.norec as norec_apd', 'ddt.objectdiagnosatindakanfk', 'dt.kddiagnosatindakan', 'dt.namadiagnosatindakan',
+                'dtp.norec as norec_diagnosapasien', 
+                'ddt.norec as norec_detaildpasien', 'dt.*','ddt.keterangantindakan','pg.namalengkap','ddt.tglinputdiagnosa' )
+            ->join('antrianpasiendiperiksa_t as apd','apd.noregistrasifk','=','pd.norec')
+            ->join('ruangan_m as ru','ru.id','=','apd.objectruanganfk')
+            ->join ('diagnosatindakanpasien_t as dtp','dtp.objectpasienfk','=','apd.norec')
+            ->join ('detaildiagnosatindakanpasien_t as ddt','ddt.objectdiagnosatindakanpasienfk','=','dtp.norec')
+            ->join ('diagnosatindakan_m as dt','dt.id','=','ddt.objectdiagnosatindakanfk')
+            ->leftjoin('pegawai_m as pg','pg.id','=','ddt.objectpegawaifk')
+            ->where('pd.noregistrasi','=', $request['noReg'])
+            ->where('ddt.ketdiagnosa','=','unugrouper')
+            ->orderBy('kddiagnosatindakan','asc')
+            ->get();
+
+            
+            $dt = '';
+            foreach ($dataunu as $item){
+            
+                $dt = $dt . '#' .  $item->kddiagnosatindakan;
+            
+            }
+            if ($dt == null) {
+               $icd9unu = $icd9;
+            } else {
+                $icd9unu =  substr($dt,1,strlen($dt)-1);
+            }
+
+          
+        };
+        
+       
 
         $result = array(
             'datas' => $data,
+            'inacbg' => $inacbg,
+            'icd9' => $icd9,
+            'icd9unu' => $icd9unu,
+            'dataunu' => $dataunu,
+            'd' => $d,
             'message' => 'giw@cepot',
         );
         return $this->respond($result);
@@ -9162,14 +9573,12 @@ class RegistrasiController extends ApiController
         }
         return $this->setStatusCode($result['status'])->respond($result, $transMessage);
     }
-    public function saveDiagnosaTindakanPasien(Request $request)
-    {
+    public function saveDiagnosaTindakanPasien(Request $request) {
         $dataLogin = $request->all();
         $kdProfile = $this->getDataKdProfile($request);
         $idProfile = (int) $kdProfile;
         DB::beginTransaction();
-        $dataPegawaiUser = DB::select(
-            DB::raw("select pg.id,pg.namalengkap from loginuser_s as lu
+        $dataPegawaiUser = DB::select(DB::raw("select pg.id,pg.namalengkap from loginuser_s as lu
                 INNER JOIN pegawai_m as pg on lu.objectpegawaifk=pg.id
                 where lu.id=:idLoginUser and pg.kdprofile = $idProfile"),
             array(
@@ -9177,20 +9586,22 @@ class RegistrasiController extends ApiController
             )
         );
 
-        //        try{
-        if ($request['detaildiagnosatindakanpasien']['norec_dp'] == '') {
+//        try{
+        if ($request['detaildiagnosatindakanpasien']['norec_dp']==''){
             $dataDiagnosa = new DiagnosaTindakanPasien();
             $dataDiagnosa->norec = $dataDiagnosa->generateNewId();
             $dataDiagnosa->kdprofile = $idProfile;
             $dataDiagnosa->statusenabled = true;
-        } else {
-            $dataDiagnosa =  DiagnosaTindakanPasien::where('norec', $request['detaildiagnosatindakanpasien']['norec_dp'])->first();
+        }else{
+            $dataDiagnosa =  DiagnosaTindakanPasien::where('norec',$request['detaildiagnosatindakanpasien']['norec_dp'])->first();
         }
         $dataDiagnosa->objectpasienfk =  $request['detaildiagnosatindakanpasien']['objectpasienfk'];
         $dataDiagnosa->tglpendaftaran = $request['detaildiagnosatindakanpasien']['tglpendaftaran'];
+       
+      
 
 
-        try {
+        try{
             $dataDiagnosa->save();
             $transStatus = 'true';
         } catch (\Exception $e) {
@@ -9199,27 +9610,35 @@ class RegistrasiController extends ApiController
         }
 
 
-        if ($request['detaildiagnosatindakanpasien']['norec_dp'] == '') {
+        if ($request['detaildiagnosatindakanpasien']['norec_dp']==''){
             $dataDetailDiagnosa = new DetailDiagnosaTindakanPasien();
             $dataDetailDiagnosa->norec = $dataDetailDiagnosa->generateNewId();
             $dataDetailDiagnosa->kdprofile = $idProfile;
             $dataDetailDiagnosa->statusenabled = true;
-            $dataDetailDiagnosa->objectpegawaifk = $dataPegawaiUser[0]->id; // $this->getCurrentLoginID();
-        } else {
-            $dataDetailDiagnosa =  DetailDiagnosaTindakanPasien::where('objectdiagnosatindakanpasienfk', $request['detaildiagnosatindakanpasien']['norec_dp'])->first();
+            $dataDetailDiagnosa->objectpegawaifk = $dataPegawaiUser[0]->id;// $this->getCurrentLoginID();
+            if (isset($request['detaildiagnosatindakanpasien']['ketdiagnosa'])) {
+                $dataDetailDiagnosa->ketdiagnosa = $request['detaildiagnosatindakanpasien']['ketdiagnosa'];
+            }
+        }else{
+            $dataDetailDiagnosa =  DetailDiagnosaTindakanPasien::where('objectdiagnosatindakanpasienfk',$request['detaildiagnosatindakanpasien']['norec_dp'])->first();
         }
 
         $dataDetailDiagnosa->objectdiagnosatindakanfk = $request['detaildiagnosatindakanpasien']['objectdiagnosatindakanfk'];
         $dataDetailDiagnosa->objectdiagnosatindakanpasienfk = $dataDiagnosa->norec;
         $dataDetailDiagnosa->jumlah = null;
-        $dataDetailDiagnosa->objectpegawaifk = $dataPegawaiUser[0]->id; // $this->getCurrentLoginID()
-        if (isset($request['detaildiagnosatindakanpasien']['keterangantindakan'])) {
+        $dataDetailDiagnosa->objectpegawaifk = $dataPegawaiUser[0]->id;// $this->getCurrentLoginID()
+        
+        if(isset( $request['detaildiagnosatindakanpasien']['keterangantindakan'])){
             $dataDetailDiagnosa->keterangantindakan = $request['detaildiagnosatindakanpasien']['keterangantindakan'];
         }
 
+        if (isset($request['detaildiagnosatindakanpasien']['jumlah'])) {
+                $dataDetailDiagnosa->jumlah = $request['detaildiagnosatindakanpasien']['jumlah'];
+            }
+
         $dataDetailDiagnosa->tglinputdiagnosa = date('Y-m-d H:i:s');
 
-        try {
+        try{
             $dataDetailDiagnosa->save();
             $transStatus = 'true';
         } catch (\Exception $e) {
@@ -9227,13 +9646,27 @@ class RegistrasiController extends ApiController
             $transMessage = "simpan Pasien Baru";
         }
 
+        $pd = DB::table('pasiendaftar_t as pd')
+            ->join('antrianpasiendiperiksa_t as apd','apd.noregistrasifk','=','pd.norec')
+            ->select('pd.noregistrasi','objectruanganlastfk')
+            ->where('apd.norec',$request['detaildiagnosatindakanpasien']['objectpasienfk'])
+            ->first();
+
         if ($transStatus == 'true') {
             $transMessage = "Data Tersimpan";
             DB::commit();
+            $ihs = null;
+            if($pd->objectruanganlastfk == 819) {
+                $objetoRequest = new \Illuminate\Http\Request();
+                $objetoRequest ['noregistrasi']= $pd->noregistrasi;
+                $objetoRequest ['inacbg']=true;
+                $ihs = app('App\Http\Controllers\Bridging\IHSController')->Procedure($objetoRequest,true);
+            }
             $result = array(
                 'status' => 201,
                 'message' => $transMessage,
                 'data' => $dataDiagnosa,
+                'Procedure' =>  $ihs,
                 'as' => 'egie@ramdan',
             );
         } else {
@@ -9242,7 +9675,7 @@ class RegistrasiController extends ApiController
             $result = array(
                 'status' => 400,
                 'message'  => $transMessage,
-                'data' => $dataDiagnosa,
+                'data' =>$dataDiagnosa,
                 'as' => 'egie@ramdan',
             );
         }
@@ -16571,4 +17004,910 @@ GROUP BY y.KET
         );
         return $this->respond($result);
     }
+
+    // Start IDRG
+    // ICD10 IDRG
+    public function getIcd10Idrg(Request $request)
+        {
+            $req = $request->all();
+            $icdIX = \DB::table('diagnosaim_m as dg')
+                ->select(
+                    'dg.id',
+                    'dg.kddiagnosa as kdDiagnosa',
+                    'dg.kddiagnosa2 as kdDiagnosa2',
+                    'dg.namadiagnosa as namaDiagnosa',
+                    'dg.accpdx',
+                    'dg.validcode',
+                    'dg.asterisk',
+                    'dg.im'
+                )
+                ->where('dg.statusenabled', true)
+                ->where('dg.kodeexternal', 'ILIKE', '%IDRG%')
+                ->orderBy('dg.kddiagnosa');
+
+            if (
+                isset($req['filter']['filters'][0]['value']) &&
+                $req['filter']['filters'][0]['value'] != "" &&
+                $req['filter']['filters'][0]['value'] != "undefined"
+            ) {
+                $icdIX = $icdIX->where(function ($q) use ($req) {
+                    $val = $req['filter']['filters'][0]['value'];
+                    $q->where('dg.namadiagnosa', 'ilike', '%' . $val . '%')
+                        ->orWhere('dg.kddiagnosa2', 'ilike', '%' . $val . '%')
+                        ->orWhere('dg.kddiagnosa', 'ilike', '%' . $val . '%');
+                });
+            }
+
+            $icdIX = $icdIX->take(10)->get();
+
+            $data = [];
+            foreach ($icdIX as $item) {
+
+                $nama = $item->namaDiagnosa;
+                if ($item->asterisk == 1 || $item->asterisk === true) {
+                    $nama .= "*";
+                }
+
+                $data[] = [
+                    'id'                => $item->id,
+                    'kdDiagnosa'        => $item->kdDiagnosa,
+                    'kdDiagnosa2'       => $item->kdDiagnosa2,
+                    'namaDiagnosa'      => $nama,
+                    'kodeNamaDiagnosa'  => $item->kdDiagnosa . ' - ' . $nama . ' (accpdx ' . trim($item->accpdx) . ')',
+                    'validcode'         => $item->validcode,
+                    'accpdx'            => trim($item->accpdx),
+                    'asterisk'          => $item->asterisk,
+                    'im'                => $item->im
+                ];
+            }
+
+            return $this->respond($data);
+        }
+
+    // Icd9 IDRG
+    public function getIcd9IDRG(Request $request)
+        {
+        $req = $request->all();
+            $icdIX = \DB::table('diagnosatindakanim_m as dg')
+                ->select(
+                    'dg.id',
+                    'dg.kddiagnosatindakan as kdDiagnosaTindakan',
+                    'dg.kddiagnosatindakan2 as kdDiagnosaTindakan2',
+                    'dg.namadiagnosatindakan as namaDiagnosaTindakan',
+                    'dg.validcode',
+                    'dg.accpdx',
+                    'asterisk',
+                    'dg.im'                
+                )
+                ->where('dg.statusenabled', true)
+                ->where('dg.kodeexternal', 'ilike','%IDRG%')
+                ->orderBy('dg.kddiagnosatindakan');
+
+            if (
+                isset($req['filter']['filters'][0]['value']) &&
+                $req['filter']['filters'][0]['value'] != "" &&
+                $req['filter']['filters'][0]['value'] != "undefined"
+            ) {
+                $val = $req['filter']['filters'][0]['value'];
+                $icdIX = $icdIX->where(function ($q) use ($val) {
+                    $q->where('dg.namadiagnosatindakan', 'ilike', '%' . $val . '%')
+                    ->orWhere('dg.kddiagnosatindakan', 'ilike', '%' . $val . '%')
+                    ->orWhere('dg.kddiagnosatindakan2', 'ilike', '%' . $val . '%');
+                });
+            }
+
+            $icdIX = $icdIX->take(10)->get();
+
+
+            $data = [];
+            foreach ($icdIX as $item) {
+                $data[] = [
+                    'id'                  => $item->id,
+                    'kdDiagnosaTindakan'  => $item->kdDiagnosaTindakan,
+                    'kdDiagnosaTindakan2' => $item->kdDiagnosaTindakan2,
+                    'namaDiagnosaTindakan'=> $item->namaDiagnosaTindakan,
+                    'kodeNamaDiagnosaTindakan' => $item->kdDiagnosaTindakan . ' - ' . $item->namaDiagnosaTindakan . ' (accpdx ' .$item->accpdx .')',
+                    'validcode'           => $item->validcode,
+                    'accpdx'              => $item->accpdx,
+                    'asterisk'            => $item->asterisk,
+                    'im'                  => $item->im
+                ];
+            }
+
+            return $this->respond($data);
+        }
+    
+    // Get diagnosa icd 10
+ public function getIcd10PasienByNoreg(Request $request)
+ {
+    $kdProfile = $this->getDataKdProfile($request);
+    $data = \DB::table('pasiendaftar_t as pd')
+        ->select(
+            'ddp.objectpegawaifk',
+            'pg.namalengkap',
+            'dg.id',
+            'pd.noregistrasi',
+            'pd.tglregistrasi',
+            'apd.objectruanganfk',
+            'ru.namaruangan',
+            'apd.norec as norec_apd',
+            'ddp.objectdiagnosafk',
+            'dg.kddiagnosa',
+            'dg.namadiagnosa',
+            'ddp.objectjenisdiagnosafk',
+            'jd.jenisdiagnosa',
+            'dp.norec as norec_diagnosapasien',
+            'ddp.norec as norec_detaildpasien',
+            'dp.ketdiagnosis',
+            'ddp.keterangan',
+            'ddp.tglinputdiagnosa'
+        )
+        ->join('antrianpasiendiperiksa_t as apd', 'apd.noregistrasifk', '=', 'pd.norec')
+        ->join('ruangan_m as ru', 'ru.id', '=', 'apd.objectruanganfk')
+        ->join('diagnosapasien_t as dp', 'dp.noregistrasifk', '=', 'apd.norec')
+        ->join('detaildiagnosapasien_t as ddp', 'ddp.objectdiagnosapasienfk', '=', 'dp.norec')
+        ->leftJoin('diagnosaim_m as dg', 'dg.id', '=', 'ddp.objectdiagnosafk')
+        ->leftJoin('pegawai_m as pg', 'pg.id', '=', 'ddp.objectpegawaifk')
+        ->leftJoin('jenisdiagnosa_m as jd', 'jd.id', '=', 'ddp.objectjenisdiagnosafk')
+        ->where('pd.kdprofile', (int)$kdProfile);
+
+        if (isset($request['noReg']) && $request['noReg'] != "" && $request['noReg'] != "undefined") {
+            $data = $data->where('pd.noregistrasi', '=', $request['noReg']);
+        };
+
+        $data = $data->get();
+
+        $result = array(
+            'datas' => $data,
+            'message' => 'Cepot',
+        );
+        return $this->respond($result);
+    }
+
+    // Get diagnosa icd 9
+    public function getIcd9PasienByNoreg(Request $request)
+    {
+        $data = \DB::table('pasiendaftar_t as pd')
+            ->select(
+                'pd.noregistrasi',
+                'pd.tglregistrasi',
+                'apd.objectruanganfk',
+                'ru.namaruangan',
+                'apd.norec as norec_apd',
+                'ddt.objectdiagnosatindakanfk',
+                'ddt.multiplicity',
+                'jd.jenisdiagnosa',
+                'dt.kddiagnosatindakan',
+                'dt.namadiagnosatindakan',
+                'dtp.norec as norec_diagnosapasien',
+                'ddt.norec as norec_detaildpasien',
+                'dt.*',
+                'ddt.keterangantindakan',
+                'pg.namalengkap',
+                'ddt.tglinputdiagnosa'
+            )
+            ->join('antrianpasiendiperiksa_t as apd', 'apd.noregistrasifk', '=', 'pd.norec')
+            ->join('ruangan_m as ru', 'ru.id', '=', 'apd.objectruanganfk')
+            ->join('diagnosatindakanpasien_t as dtp', 'dtp.objectpasienfk', '=', 'apd.norec')
+            ->join('detaildiagnosatindakanpasien_t as ddt', 'ddt.objectdiagnosatindakanpasienfk', '=', 'dtp.norec')
+            ->join('diagnosatindakanim_m as dt', 'dt.id', '=', 'ddt.objectdiagnosatindakanfk')
+            ->leftJoin('jenisdiagnosa_m as jd', 'jd.id', '=', 'ddt.objectjenisdiagnosafk')
+            ->leftjoin('pegawai_m as pg', 'pg.id', '=', 'ddt.objectpegawaifk');
+            
+        if (isset($request['noCm']) && $request['noCm'] != "" && $request['noCm'] != "undefined") {
+            $data = $data->where('ps.nocm', '=', $request['noReg']);
+        };
+        if (isset($request['noReg']) && $request['noReg'] != "" && $request['noReg'] != "undefined") {
+            $data = $data->where('pd.noregistrasi', '=', $request['noReg']);
+        };
+        if (isset($request['idDept']) && $request['idDept'] != "" && $request['idDept'] != "undefined") {
+            $data = $data->where('apd.objectruanganfk', '=', $request['idDept']);
+        };
+        if (isset($request['kddiagnosatindakan']) && $request['kddiagnosatindakan'] != "" && $request['kddiagnosatindakan'] != "undefined") {
+            $data = $data->where('dt.kddiagnosatindakan', '=', $request['kddiagnosatindakan']);
+        }
+        $data = $data->get();
+
+        $result = array(
+            'datas' => $data,
+            'message' => 'giw@cepot',
+        );
+        return $this->respond($result);
+    }
+
+    public function getDiagnosaPasienIdrg(Request $request){
+        $kdProfile = $this->getDataKdProfile($request);
+        $idrg = [];
+        $dtdt = '';
+
+        $idrg = \DB::table('pasiendaftar_t as pd')
+            ->select('dg.id', 'pd.noregistrasi', 'pd.tglregistrasi', 'apd.objectruanganfk', 'ru.namaruangan', 'apd.norec as norec_apd',
+                'ddp.objectdiagnosafk', 'dg.kddiagnosa', 'dg.namadiagnosa', 'ddp.objectjenisdiagnosafk', 'jd.id as jd_id',
+                'jd.jenisdiagnosa' ,'ddp.norec as norec_detaildpasien',
+                'ddp.keterangan','ddp.tglinputdiagnosa','pg.namalengkap')
+            ->join('antrianpasiendiperiksa_t as apd', 'apd.noregistrasifk', '=', 'pd.norec')
+            ->join('ruangan_m as ru', 'ru.id', '=', 'apd.objectruanganfk')
+            // ->join('diagnosapasien_t as dp', 'dp.noregistrasifk', '=', 'apd.norec')
+            ->join('detaildiagnosapasien_t as ddp', 'ddp.noregistrasifk', '=', 'apd.norec')
+            ->leftJoin('diagnosa_m as dg', 'dg.id', '=', 'ddp.objectdiagnosafk')
+            ->leftJoin('jenisdiagnosa_m as jd', 'jd.id', '=', 'ddp.objectjenisdiagnosafk')
+            ->leftjoin('pegawai_m as pg','pg.id','=','ddp.objectpegawaifk')
+            ->where('pd.kdprofile', (int)$kdProfile)
+            ->where('pd.noregistrasi', '=', $request['noReg'])
+            ->whereIn('jd.id', [15,16])
+            ->orderBy('jd.id', 'asc')
+            ->orderBy('ddp.tglinputdiagnosa', 'asc')->get();
+
+        foreach ($idrg as $ina) {
+            $dtdt = $dtdt . '#' .  $ina->kddiagnosa;
+        }
+
+        $icd10idrg =  substr($dtdt,1,strlen($dtdt)-1);
+
+        $result = array(
+            'idrg' => $idrg,
+            'icd10idrg' => $icd10idrg,
+            'message' => 'advt',
+        );
+        return $this->respond($result);
+    }
+
+    public function getDiagnosaPasienIdrgIcd9 ( Request $request) {
+        $idrg = [];
+        $dtdt = '';
+        
+        $idrg = \DB::table('pasiendaftar_t as pd')
+            ->select('pd.noregistrasi', 'pd.tglregistrasi', 'apd.objectruanganfk', 'ru.namaruangan',
+                'apd.norec as norec_apd', 'ddt.objectdiagnosatindakanfk', 'dt.kddiagnosatindakan', 'dt.namadiagnosatindakan',
+                'dtp.norec as norec_diagnosapasien', 'ddt.ketdiagnosa','dt.id',
+                'ddt.norec as norec_detaildpasien', 'dt.*','ddt.keterangantindakan','pg.namalengkap','ddt.tglinputdiagnosa','ddt.jumlah' )
+            ->join('antrianpasiendiperiksa_t as apd','apd.noregistrasifk','=','pd.norec')
+            ->join('ruangan_m as ru','ru.id','=','apd.objectruanganfk')
+            ->join ('diagnosatindakanpasien_t as dtp','dtp.objectpasienfk','=','apd.norec')
+            ->join ('detaildiagnosatindakanpasien_t as ddt','ddt.objectdiagnosatindakanpasienfk','=','dtp.norec')
+            ->join ('diagnosatindakan_m as dt','dt.id','=','ddt.objectdiagnosatindakanfk')
+            ->leftjoin('pegawai_m as pg','pg.id','=','ddt.objectpegawaifk')
+            ->where('ddt.ketdiagnosa','=','iDRG')
+            ->where('pd.noregistrasi','=', $request['noReg'])
+            ->orderBy(DB::raw("ddt.tglinputdiagnosa"))->get();
+
+        $dtdt = '';
+        foreach ($idrg as $ina) {
+            if ($ina->jumlah > 1) {
+                $dtdt .= '#' . $ina->kddiagnosatindakan . '+' . $ina->jumlah;
+            } else {
+                $dtdt .= '#' . $ina->kddiagnosatindakan;
+            }
+        }
+        
+        
+        $icd9idrg =  substr($dtdt,1,strlen($dtdt)-1);
+
+        $result = array(
+            'idrg' => $idrg,
+            'icd9idrg' => $icd9idrg,
+            'message' => 'advt',
+        );
+        return $this->respond($result);
+    }
+
+    public function getDaftarRiwayatRegistrasiNew(Request $request) {
+        $kdProfile = $this->getDataKdProfile($request);
+        $data = \DB::table('pasien_m as ps')
+            ->join('pasiendaftar_t as pd','pd.nocmfk','=','ps.id')
+            ->join('ruangan_m as ru','ru.id','=','pd.objectruanganlastfk')
+            ->join('kelompokpasien_m as kp','kp.id','=','pd.objectkelompokpasienlastfk')
+            // ->join('antrianpasiendiperiksa_t as apd', function($j){
+            //     $j->on('apd.noregistrasifk','=','pd.norec')
+            //     ->on('apd.objectruanganfk', '=','pd.objectruanganlastfk');
+            // })
+            ->leftjoin('pegawai_m as pg','pg.id','=','pd.objectpegawaifk')
+            // ->leftjoin('detaildiagnosapasien_t AS ddp', function($join){
+            //     $join->on('ddp.noregistrasifk','=','apd.norec')
+            //         ->where('ddp.objectjenisdiagnosafk', '=', 1);
+            // })
+            // ->leftjoin('diagnosa_m As dg','dg.id','=','ddp.objectdiagnosafk')
+            // ->leftJoin('batalregistrasi_t as br','br.pasiendaftarfk','=','pd.norec')
+            // ->leftjoin('antrianpasiendiperiksa_t as apd','apd.noregistrasifk','=','pd.norec')
+            ->select(DB::raw("pd.norec,pd.tglregistrasi,ps.nocm,pd.noregistrasi,ps.namapasien,pd.objectruanganlastfk,kp.kelompokpasien,ru.namaruangan,
+                              pd.objectpegawaifk,pg.namalengkap as namadokter,pd.tglpulang,ru.objectdepartemenfk, null as diagnosa
+			                  "))
+            ->where('pd.statusenabled',true)
+            ->where('ps.kdprofile', (int)$kdProfile)
+            ->where('ps.nocm','=',$request['nocm'])
+            ->where('ps.statusenabled',true)
+            ->orderBy('pd.tglregistrasi','desc')
+            ->distinct()
+            ->get();
+
+            // foreach ($data as $key => $d) {
+            //     $d->namadiagnosa = $d->kddiagnosa .' - ' . $d->namadiagnosa;
+            // }
+
+            // $norec_pd = [];
+            // foreach ($data as $d){
+            //     $norec_pd[] = $d->norec;
+            // }
+
+            // $diagnosa = \DB::table('antrianpasiendiperiksa_t as apd')
+            // ->leftjoin('detaildiagnosapasien_t AS ddp', function($join){
+            //         $join->on('ddp.noregistrasifk','=','apd.norec')
+            //             ->whereIn('ddp.objectjenisdiagnosafk',[1,2]);
+            //     })
+            // ->leftjoin('jenisdiagnosa_m as jd','jd.id','=','ddp.objectjenisdiagnosafk')
+            // ->join('diagnosa_m as dg','dg.id','=', 'ddp.objectdiagnosafk')
+            // ->select(DB::raw("dg.namadiagnosa, dg.kddiagnosa, jd.jenisdiagnosa, apd.noregistrasifk
+            // "))
+            // ->whereIn('apd.noregistrasifk',$norec_pd)
+            // ->orderBy('ddp.objectjenisdiagnosafk','asc')
+            // ->get();
+            // // dd($diagnosa);
+           
+            
+            // foreach ($data as $d){
+            //     foreach ($diagnosa as $key => $dg) {
+            //         if($dg->noregistrasifk == $d->norec){
+
+            //             $d->diagnosa .= $dg->kddiagnosa. ' - '. $dg->namadiagnosa. ' (#'. $dg->jenisdiagnosa. '#) '. ', ';
+            //             unset($diagnosa[$key]);
+            //         }
+            //     }
+            // }
+
+        $norec_pd = collect($data)->pluck('norec')->all();
+
+        $diagnosa = \DB::table('antrianpasiendiperiksa_t as apd')
+            ->leftJoin('detaildiagnosapasien_t AS ddp', function($join) {
+                $join->on('ddp.noregistrasifk', '=', 'apd.norec')
+                    ->whereIn('ddp.objectjenisdiagnosafk', [1, 2]);
+            })
+            ->leftJoin('jenisdiagnosa_m as jd', 'jd.id', '=', 'ddp.objectjenisdiagnosafk')
+            ->join('diagnosa_m as dg', 'dg.id', '=', 'ddp.objectdiagnosafk')
+            ->select('dg.namadiagnosa', 'dg.kddiagnosa', 'jd.jenisdiagnosa', 'apd.noregistrasifk')
+            ->whereIn('apd.noregistrasifk', $norec_pd)
+            ->orderBy('ddp.objectjenisdiagnosafk', 'asc')
+            ->get();
+
+            $diagnosaGrouped = collect($diagnosa)->groupBy('noregistrasifk');
+
+        foreach ($data as $d) {
+            if (isset($diagnosaGrouped[$d->norec])) {
+                $diagnosaList = $diagnosaGrouped[$d->norec]->map(function($dg) {
+                    return $dg->kddiagnosa . ' - ' . $dg->namadiagnosa . ' (#' . $dg->jenisdiagnosa . '#)';
+                })->implode(', ');
+
+                $d->diagnosa = $diagnosaList;
+            }
+        }
+
+
+        $result = array(
+            'data' => $data,//array_merge($data,$data2),
+            // 'data2' =>$data2,
+            'message' => 'ea@epic',
+        );
+        return $this->respond($result);
+    }
+
+    public function getDiagnosaAll(Request $request){
+        $req = $request->all();
+        $icdIX = \DB::table('diagnosa_m as dg')
+            ->select('dg.id', 'dg.kddiagnosa', 'dg.namadiagnosa','dg.kddiagnosa as kdDiagnosa','dg.namadiagnosa as namaDiagnosa')
+            ->where('dg.statusenabled', true)
+            // ->whereNull('inagrouper')
+            ->orderBy('dg.kddiagnosa');
+
+        if (isset($req['filter']['filters'][0]['value']) &&
+            $req['filter']['filters'][0]['value'] != "" &&
+            $req['filter']['filters'][0]['value'] != "undefined"
+        ) {
+            $filterValue = str_replace('.', '', $req['filter']['filters'][0]['value']);
+
+            $icdIX = $icdIX->where(function ($q) use ($filterValue) {
+                $q->whereRaw("REPLACE(dg.kddiagnosa, '.', '') ILIKE ?", ["%{$filterValue}%"])
+                ->orWhereRaw("REPLACE(dg.namadiagnosa, '.', '') ILIKE ?", ["%{$filterValue}%"]);
+            })
+            // $icdIX = $icdIX
+            //     ->where(function ($q) use ($req) {
+            //         $q->where('dg.namadiagnosa', 'ilike', '%' . $req['filter']['filters'][0]['value'] . '%')
+            //         ->orWhere('dg.kddiagnosa', 'ilike', $req['filter']['filters'][0]['value'] . '%');
+            //     })
+                ->where('dg.statusenabled', true);
+        }
+
+        $icdIX = $icdIX->take(10);
+        $icdIX = $icdIX->get();
+
+        $data = [];
+        if (count($icdIX) > 0) {
+            foreach ($icdIX as $item) {
+                $data [] = array(
+                    'kodeNama' => $item->kdDiagnosa . ' - ' . $item->namaDiagnosa,
+                    'id' => $item->id,
+                    'kdDiagnosa' => $item->kdDiagnosa,
+                    'namaDiagnosa' => $item->namaDiagnosa,
+
+                );
+
+            }
+        }
+
+        return $this->respond($data);
+    } 
+
+    public function getIcd9All(Request $request)
+    {
+        $req = $request->all();
+        $icdIX = \DB::table('diagnosatindakan_m as dg')
+            ->select('dg.id','dg.kddiagnosatindakan as kdDiagnosaTindakan','dg.namadiagnosatindakan as namaDiagnosaTindakan')
+            ->where('dg.statusenabled', true)
+            // ->whereNull('dg.inagrouper')
+            ->orderBy('dg.kddiagnosatindakan');
+
+        if(isset($req['filter']['filters'][0]['value']) &&
+            $req['filter']['filters'][0]['value']!="" &&
+            $req['filter']['filters'][0]['value']!="undefined"){
+                $filterValue = str_replace('.', '', $req['filter']['filters'][0]['value']);
+                $icdIX = $icdIX->where(function($q) use ($filterValue) {
+                        $q->whereRaw("REPLACE(dg.kddiagnosatindakan, '.', '') ILIKE ?", ["%{$filterValue}%"])
+                        ->orWhereRaw("REPLACE(dg.namadiagnosatindakan, '.', '') ILIKE ?", ["%{$filterValue}%"]);
+                })
+            // $icdIX = $icdIX
+            //     ->where(function($q) use ($req) {
+            //         $q->where('dg.namadiagnosatindakan', 'ilike', '%'.$req['filter']['filters'][0]['value'].'%')
+            //         ->orWhere('dg.kddiagnosatindakan', 'ilike', $req['filter']['filters'][0]['value'].'%');
+            //     })
+                ->where('dg.statusenabled', true);
+        }
+
+
+        $icdIX=$icdIX->take(10);
+        $icdIX=$icdIX->get();
+
+        $data = [];
+        if (count($icdIX) > 0) {
+            foreach ($icdIX as $item) {
+                $data [] = array(
+                    'kdNama' => $item->kdDiagnosaTindakan . ' - ' . $item->namaDiagnosaTindakan,
+                    'id' => $item->id,
+                    'kdDiagnosaTindakan' => $item->kdDiagnosaTindakan,
+                    'namaDiagnosaTindakan' => $item->namaDiagnosaTindakan,
+
+                );
+
+            }
+        }
+
+        return $this->respond($data);
+    }
+
+    public function saveDiagnosaPasiendua(Request $request) {
+        $dataLogin = $request->all();
+        $kdProfile = $this->getDataKdProfile($request);
+        $idProfile = (int) $kdProfile;
+        DB::beginTransaction();
+//        try{
+        $dataPegawaiUser = DB::select(DB::raw("select pg.id,pg.namalengkap from loginuser_s as lu
+                INNER JOIN pegawai_m as pg on lu.objectpegawaifk=pg.id
+                where pg.kdprofile = $idProfile and lu.id=:idLoginUser"),
+            array(
+                'idLoginUser' => $dataLogin['userData']['id'],
+            )
+        );
+        if ($request['detaildiagnosapasien']['norec_dp']=='' && $request['detaildiagnosapasien']['norec_ddp'] ==''){
+            $dataDiagnosa = new DiagnosaPasien();
+            $dataDiagnosa->norec = $dataDiagnosa->generateNewId();
+            $dataDiagnosa->kdprofile = $idProfile;
+            $dataDiagnosa->statusenabled = true;
+
+        }else{
+            $datadd =  DetailDiagnosaPasien::where('norec',$request['detaildiagnosapasien']['norec_ddp'])->first();
+            $dataDiagnosa =  DiagnosaPasien::where('norec',$datadd->objectdiagnosapasienfk)->first();
+        }
+
+        $dataDiagnosa->noregistrasifk =  $request['detaildiagnosapasien']['noregistrasifk'];
+        $dataDiagnosa->ketdiagnosis =  'Diagnosa Pasien';
+        $dataDiagnosa->tglregistrasi = null;
+        $dataDiagnosa->tglpendaftaran = $request['detaildiagnosapasien']['tglregistrasi'];
+        if(isset($request['detaildiagnosapasien']['kasusbaru'])){
+            $dataDiagnosa->iskasusbaru = $request['detaildiagnosapasien']['kasusbaru'];
+        }
+        if(isset($request['detaildiagnosapasien']['kasuslama'])){
+            $dataDiagnosa->iskasuslama = $request['detaildiagnosapasien']['kasuslama'];
+        }
+        try{
+            $dataDiagnosa->save();
+            $transStatus = 'true';
+        } catch (\Exception $e) {
+            $transStatus = 'false';
+            $transMessage = "simpan Diagnosa Baru";
+        }
+
+
+        if ($request['detaildiagnosapasien']['norec_dp']=='' && $request['detaildiagnosapasien']['norec_ddp'] =='')
+        {
+            $dataDetailDiagnosa = new DetailDiagnosaPasien();
+            $dataDetailDiagnosa->norec = $dataDetailDiagnosa->generateNewId();
+            $dataDetailDiagnosa->kdprofile = $idProfile;
+            $dataDetailDiagnosa->statusenabled = true;
+//               $dataDetailDiagnosa->keterangan = '-';
+            $dataDetailDiagnosa->objectpegawaifk = $dataPegawaiUser[0]->id;// $this->getCurrentLoginID();
+
+        }else{
+            $dataDetailDiagnosa =  DetailDiagnosaPasien::where('norec',$request['detaildiagnosapasien']['norec_ddp'])->first();
+        }
+
+        $dataDetailDiagnosa->noregistrasifk =  $request['detaildiagnosapasien']['noregistrasifk'];
+        $dataDetailDiagnosa->tglregistrasi = $request['detaildiagnosapasien']['tglregistrasi'];
+        $dataDetailDiagnosa->norec = $dataDetailDiagnosa->generateNewId();
+        $dataDetailDiagnosa->objectdiagnosafk = $request['detaildiagnosapasien']['objectdiagnosafk'];
+        $dataDetailDiagnosa->objectdiagnosapasienfk = $dataDiagnosa->norec;
+        $dataDetailDiagnosa->objectjenisdiagnosafk = $request['detaildiagnosapasien']['objectjenisdiagnosafk'];
+        $dataDetailDiagnosa->tglinputdiagnosa = date('Y-m-d H:i:s');//$request['detaildiagnosapasien']['tglinputdiagnosa'];
+        $dataDetailDiagnosa->keterangan = $request['detaildiagnosapasien']['keterangan'];
+        $dataDetailDiagnosa->objectpegawaifk = $dataPegawaiUser[0]->id;// $this->getCurrentLoginID();
+
+
+        try{
+            $dataDetailDiagnosa->save();
+            $transStatus = 'true';
+        } catch (\Exception $e) {
+            $transStatus = 'false';
+            $transMessage = "simpan Pasien Baru";
+        }
+
+        if ($transStatus == 'true'){
+            $pd = DB::table('pasiendaftar_t as pd')
+            ->join('antrianpasiendiperiksa_t as apd','apd.noregistrasifk','=','pd.norec')
+            ->select('pd.noregistrasi','objectruanganlastfk')
+            ->where('apd.norec',$request['detaildiagnosapasien']['noregistrasifk'])
+            ->first();
+
+            $dataDiagnosa = \DB::table('detaildiagnosapasien_t as dp')
+            ->join('diagnosa_m as dg', 'dg.id', '=', 'dp.objectdiagnosafk')
+            ->join('antrianpasiendiperiksa_t as apd', 'apd.norec', '=', 'dp.noregistrasifk')
+            ->join('pasiendaftar_t as pd', 'pd.norec', '=', 'apd.noregistrasifk')
+            ->join('pasien_m as ps', 'ps.id', '=', 'pd.nocmfk')
+            ->select('dg.kddiagnosa','pd.norec')
+//            ->where('apd.noregistrasifk',$data[$i]->norec)
+            ->wherein('dp.objectjenisdiagnosafk',array(7,8))
+            // ->where('pd.tglregistrasi', '>=', $filter['tglAwal'])
+            // ->where('pd.tglregistrasi', '<=', $filter['tglAkhir'])
+            ->where('pd.kdprofile',$kdProfile)
+            ->where('pd.noregistrasi',$pd->noregistrasi)
+            ->orderBy('dp.objectjenisdiagnosafk', 'asc')
+            ->orderBy('dp.tglinputdiagnosa')->get();
+            
+            $dtdt1 = '';
+            foreach ($dataDiagnosa as $item2){
+                    $dtdt1 = $dtdt1 . '#' .  $item2->kddiagnosa;
+            }
+           
+            try{
+                $updatePd =  PasienDaftar::where('noregistrasi', $pd->noregistrasi)
+                ->update([
+                        'icd10' => $dtdt1,
+                    ]
+                );
+                $transStatus = 'true';
+            } catch (\Exception $e) {
+                $transStatus = 'false';
+                $transMessage = "-";
+            }
+        }
+        if ($transStatus == 'true') {
+            $transMessage = "Data Tersimpan";
+            DB::commit();
+            $ihs = null;
+            if($pd->objectruanganlastfk == 819) {
+                $objetoRequest = new \Illuminate\Http\Request();
+                $objetoRequest ['noregistrasi']= $pd->noregistrasi;
+                $objetoRequest ['inacbg']=true;
+                $ihs = app('App\Http\Controllers\Bridging\IHSController')->Condition($objetoRequest,true);
+            }
+          
+            $result = array(
+                'status' => 201,
+                'message' => $transMessage,
+                'data' => $dataDiagnosa,
+                'Condition'=> isset($ihs)? $ihs :null,
+                'as' => 'egie@ramdan',
+            );
+        } else {
+            $transMessage = "Data Gagal Disimpan";
+            DB::rollBack();
+            $result = array(
+                'status' => 400,
+                'message'  => $transMessage,
+                'data' =>$dataDiagnosa,
+                'error' => $e,
+                'as' => 'egie@ramdan',
+            );
+        }
+        return $this->setStatusCode($result['status'])->respond($result, $transMessage);
+
+    }
+
+    public function getDiagnosa10Im(Request $request)
+    {
+        $kdProfile = $this->getDataKdProfile($request);
+
+        $data = \DB::table('diagnosaim_m as dg')
+            ->select(
+                'dg.accpdx',
+                'dg.validcode',
+                'dg.kddiagnosa',
+                'dg.namadiagnosa'
+            )
+            ->where('dg.kdprofile', '=', $kdProfile)
+            ->where('dg.statusenabled', '=', true)
+            ->where('dg.kddiagnosa', '=', $request['kddiagnosa'])
+            ->first();
+
+        $result = array(
+            'diagnosa' => $data
+        );
+
+        return $this->respond($result);
+    }
+
+    public function getDiagnosa9Im(Request $request)
+    {
+        $kdProfile = $this->getDataKdProfile($request);
+
+        $data = \DB::table('diagnosatindakanim_m as dg')
+            ->select(
+                'dg.accpdx',
+                'dg.validcode',
+                'dg.kddiagnosatindakan',
+                'dg.namadiagnosatindakan'
+            )
+            ->where('dg.kdprofile', '=', $kdProfile)
+            ->where('dg.statusenabled', '=', true)
+            ->where('dg.kddiagnosatindakan', '=', $request['kddiagnosatindakan'])
+            ->first();
+
+        $result = array(
+            'diagnosatindakan' => $data
+        );
+
+        return $this->respond($result);
+    }
+
+    public function saveImportIdrg(Request $request){
+        $kdProfile = $this->getDataKdProfile($request);
+        $idProfile = (int) $kdProfile;
+        $dataLogin = $request->all();
+        DB::beginTransaction();
+        $data = \DB::table('pasiendaftar_t as pd')
+            ->select('dg.id as id_diagnosa', 'pd.noregistrasi','ddp.norec as norec_ddp','pd.tglregistrasi',
+                'dg.kddiagnosa', 'dg.namadiagnosa','jd.id as jd_id')
+            ->join('antrianpasiendiperiksa_t as apd', 'apd.noregistrasifk', '=', 'pd.norec')
+            ->join('diagnosapasien_t as dp', 'dp.noregistrasifk', '=', 'apd.norec')
+            ->join('detaildiagnosapasien_t as ddp', 'ddp.objectdiagnosapasienfk', '=', 'dp.norec')
+            ->leftJoin('diagnosa_m as dg', 'dg.id', '=', 'ddp.objectdiagnosafk')
+            ->leftJoin('jenisdiagnosa_m as jd', 'jd.id', '=', 'ddp.objectjenisdiagnosafk')
+            // ->leftjoin('pegawai_m as pg','pg.id','=','ddp.objectpegawaifk')
+            ->where('pd.kdprofile', (int)$kdProfile);
+
+
+            $data = $data->where('pd.norec', $request['norec_pd']);
+        
+        $data = $data->whereIn('jd.id', [15,16])->orderBy('ddp.tglinputdiagnosa', 'asc')->get();
+
+        $dataIcd9 = \DB::table('pasiendaftar_t as pd')
+            ->select('pd.noregistrasi', 'pd.tglregistrasi','ddt.norec as norec_ddt','dt.id as id_diagnosa','ddt.keterangantindakan' )
+            ->join('antrianpasiendiperiksa_t as apd','apd.noregistrasifk','=','pd.norec')
+            ->join ('diagnosatindakanpasien_t as dtp','dtp.objectpasienfk','=','apd.norec')
+            ->join ('detaildiagnosatindakanpasien_t as ddt','ddt.objectdiagnosatindakanpasienfk','=','dtp.norec')
+            ->join ('diagnosatindakan_m as dt','dt.id','=','ddt.objectdiagnosatindakanfk')
+            // ->leftjoin('pegawai_m as pg','pg.id','=','ddt.objectpegawaifk')
+            ->where('ddt.ketdiagnosa','iDRG')
+            ->where('pd.norec',$request['norec_pd'])
+            ->orderBy('ddt.tglinputdiagnosa')
+            ->get();
+
+            if (isset($request['norec_pd'])) {
+                $dataicd10inacbg = \DB::table('detaildiagnosapasien_t as ddp')
+                ->join('antrianpasiendiperiksa_t as apd','apd.norec','=','ddp.noregistrasifk')
+                ->join('pasiendaftar_t as pd','pd.norec','=','apd.noregistrasifk')
+                ->select('ddp.norec as norec_ddp','ddp.objectdiagnosapasienfk')
+                ->where('pd.kdprofile', (int)$kdProfile)
+                ->whereIn('ddp.objectjenisdiagnosafk', [17,18])->where('pd.norec', $request['norec_pd'])->get();
+
+                $dataicd9inacbg = \DB::table('detaildiagnosatindakanpasien_t as ddt')
+                ->join ('diagnosatindakanpasien_t as dtp','dtp.norec','=','ddt.objectdiagnosatindakanpasienfk')
+                ->join('antrianpasiendiperiksa_t as apd','apd.norec','=','dtp.objectpasienfk')
+                ->join('pasiendaftar_t as pd','pd.norec','=','apd.noregistrasifk')
+                ->select('ddt.norec as norec_ddt','dtp.norec as norec_dtp')
+                ->where('pd.kdprofile', (int)$kdProfile)
+                ->where('ddt.ketdiagnosa', 'INAcbg')->where('pd.norec', $request['norec_pd'])->get();
+            }
+            
+            // return $dataicd9inacbg;
+
+            $norecDdpArray = array_unique(array_map(function($item) {
+                return $item->norec_ddp;
+            }, $dataicd10inacbg));
+
+            $objectdiagnosapasienfkArray = array_unique(array_map(function($item) {
+                return $item->objectdiagnosapasienfk;
+            }, $dataicd10inacbg));
+
+            $norecDdtArray = array_unique(array_map(function($item) {
+                return $item->norec_ddt;
+            }, $dataicd9inacbg));
+
+            $norecDtpArray = array_unique(array_map(function($item) {
+                return $item->norec_dtp;
+            }, $dataicd9inacbg));
+        // return $dataIcd9;
+        try{
+
+            if(count($data) > 0){
+                if ($norecDdpArray) {
+                    DetailDiagnosaPasien::whereIn('norec', $norecDdpArray)->where('kdprofile', $idProfile)->delete();
+                }
+                
+                if ($objectdiagnosapasienfkArray) {
+                    DiagnosaPasien::whereIn('norec',$objectdiagnosapasienfkArray)->where('kdprofile', $idProfile)->delete();
+                }
+
+                if ($norecDdtArray) {
+                    DetailDiagnosaTindakanPasien::wherein('norec', $norecDdtArray)->delete();
+                }
+                if ($norecDtpArray) {
+                    DiagnosaTindakanPasien::wherein('norec', $norecDtpArray)->delete();
+                }
+
+                $tglInput = Carbon::now();
+                foreach($data as $d){
+                    $dataDiagnosa = new DiagnosaPasien();
+                    $dataDiagnosa->norec = $dataDiagnosa->generateNewId();
+                    $dataDiagnosa->kdprofile = $idProfile;
+                    $dataDiagnosa->statusenabled = true;
+                    $dataDiagnosa->noregistrasifk =  $request['noregistrasifk'];
+                    $dataDiagnosa->ketdiagnosis =  'Diagnosa Pasien';
+                    $dataDiagnosa->tglregistrasi = null;
+                    $dataDiagnosa->tglpendaftaran = $request['tglregistrasi'];
+                    $dataDiagnosa->save();
+
+                    $dataDetailDiagnosa = new DetailDiagnosaPasien();
+                    $dataDetailDiagnosa->norec = $dataDetailDiagnosa->generateNewId();
+                    $dataDetailDiagnosa->kdprofile = $idProfile;
+                    $dataDetailDiagnosa->statusenabled = true;
+                    $dataDetailDiagnosa->objectpegawaifk =  $this->getCurrentUserID();// $this->getCurrentLoginID();
+                    $dataDetailDiagnosa->noregistrasifk =  $request['noregistrasifk'];
+                    $dataDetailDiagnosa->tglregistrasi = $request['tglregistrasi'];
+                    $dataDetailDiagnosa->norec = $dataDetailDiagnosa->generateNewId();
+                    $dataDetailDiagnosa->objectdiagnosafk = $d->id_diagnosa;
+                    $dataDetailDiagnosa->objectdiagnosapasienfk = $dataDiagnosa->norec;
+                    if ($d->jd_id == 15) {
+                        $dataDetailDiagnosa->objectjenisdiagnosafk = 17;
+                    } else {
+                        $dataDetailDiagnosa->objectjenisdiagnosafk = 18;
+                    }
+                    $dataDetailDiagnosa->tglinputdiagnosa = $tglInput->format('Y-m-d H:i:s');//$request['detaildiagnosapasien']['tglinputdiagnosa'];
+                    $dataDetailDiagnosa->objectpegawaifk =  $this->getCurrentUserID();
+
+                    $dataDetailDiagnosa->save();
+
+                    $tglInput->addSeconds(3);
+                }
+
+                $dataDiagnosa = \DB::table('detaildiagnosapasien_t as dp')
+                    ->join('diagnosa_m as dg', 'dg.id', '=', 'dp.objectdiagnosafk')
+                    ->join('antrianpasiendiperiksa_t as apd', 'apd.norec', '=', 'dp.noregistrasifk')
+                    ->join('pasiendaftar_t as pd', 'pd.norec', '=', 'apd.noregistrasifk')
+                    ->join('pasien_m as ps', 'ps.id', '=', 'pd.nocmfk')
+                    ->select('dg.kddiagnosa','pd.norec')
+        //            ->where('apd.noregistrasifk',$data[$i]->norec)
+                    ->wherein('dp.objectjenisdiagnosafk',array(17,18))
+                    // ->where('pd.tglregistrasi', '>=', $filter['tglAwal'])
+                    // ->where('pd.tglregistrasi', '<=', $filter['tglAkhir'])
+                    ->where('pd.kdprofile',$kdProfile)
+                    ->where('pd.norec',$request['norec_pd'])
+                    ->orderBy('dp.objectjenisdiagnosafk', 'asc')
+                    ->orderBy('dp.tglinputdiagnosa')->get();
+                    
+                    $dtdt1 = '';
+                    foreach ($dataDiagnosa as $item2){
+                            $dtdt1 = $dtdt1 . '#' .  $item2->kddiagnosa;
+                    }
+           
+                    $updatePd =  PasienDaftar::where('norec', $request['norec_pd'])
+                    ->update([
+                            'icd10' => $dtdt1,
+                        ]
+                    );
+
+                $logUser = new LoggingUserRev();        
+                $logUser->norec = $logUser->generateNewId();
+                $logUser->kdprofile= (int)$kdProfile;
+                $logUser->statusenabled=true;
+                $logUser->jenislog = 'Import ICD 10 iDRG';
+                $logUser->noreff =$request['noregistrasi'];
+                $logUser->referensi='noregistrasi';
+                $logUser->objectloginuserfk =  $dataLogin['userData']['id'];
+                $logUser->tanggal = date('Y-m-d H:i:s');
+                $logUser->keterangan = 'Import ICD 10 iDRG ke INACBG '. $request['noregistrasi'];
+                $logUser->save();
+            }
+
+            if(count($dataIcd9) > 0){
+                $tglInput = Carbon::now();
+
+                foreach ($dataIcd9 as $row) {
+                    $dataDiagnosaIcd9 = new DiagnosaTindakanPasien();
+                    $dataDiagnosaIcd9->norec = $dataDiagnosaIcd9->generateNewId();
+                    $dataDiagnosaIcd9->kdprofile = $idProfile;
+                    $dataDiagnosaIcd9->statusenabled = true;
+                    $dataDiagnosaIcd9->objectpasienfk = $request['noregistrasifk'];
+                    $dataDiagnosaIcd9->tglpendaftaran = $request['tglregistrasi'];
+                    $dataDiagnosaIcd9->save();
+
+                    $dataDetailDiagnosaIcd9 = new DetailDiagnosaTindakanPasien();
+                    $dataDetailDiagnosaIcd9->norec = $dataDetailDiagnosaIcd9->generateNewId();
+                    $dataDetailDiagnosaIcd9->kdprofile = $idProfile;
+                    $dataDetailDiagnosaIcd9->statusenabled = true;
+                    $dataDetailDiagnosaIcd9->objectpegawaifk = $this->getCurrentUserID();
+                    $dataDetailDiagnosaIcd9->ketdiagnosa = 'INAcbg';
+                    $dataDetailDiagnosaIcd9->objectdiagnosatindakanfk = $row->id_diagnosa;
+                    $dataDetailDiagnosaIcd9->objectdiagnosatindakanpasienfk = $dataDiagnosaIcd9->norec;
+                    $dataDetailDiagnosaIcd9->jumlah = null;
+                    $dataDetailDiagnosaIcd9->keterangantindakan = '-';
+                    
+                    $dataDetailDiagnosaIcd9->tglinputdiagnosa = $tglInput->format('Y-m-d H:i:s');
+
+                    $dataDetailDiagnosaIcd9->save();
+
+                    
+                    $tglInput->addSeconds(3);
+                }
+
+                $logUser = new LoggingUserRev();        
+                $logUser->norec = $logUser->generateNewId();
+                $logUser->kdprofile= (int)$kdProfile;
+                $logUser->statusenabled=true;
+                $logUser->jenislog = 'Import ICD 9 iDRG';
+                $logUser->noreff =$request['noregistrasi'];
+                $logUser->referensi='noregistrasi';
+                $logUser->objectloginuserfk =  $dataLogin['userData']['id'];
+                $logUser->tanggal = date('Y-m-d H:i:s');
+                $logUser->keterangan = 'Import ICD 9 iDRG ke INACBG '. $request['noregistrasi'];
+                $logUser->save();
+            }
+
+            if(count($data) == 0 && count($dataIcd9) == 0){
+                $transMessage = "Tidak ada data yang di import";
+            }
+
+            
+            $transMessage = "Import Berhasil";
+            $transStatus = 'true';
+        } catch (\Exception $e) {
+            $transStatus = 'false';
+        }
+
+        if ($transStatus == 'true') {
+            // $transMessage = "Import Berhasil";
+            DB::commit();
+            $result = array(
+                'status' => 201,
+                'message' => $transMessage,
+                'as' => 'madep',
+            );
+        } else {
+            $transMessage = "Import gagal";
+            DB::rollBack();
+            $result = array(
+                'status' => 400,
+                'message'  => $transMessage,
+                'as' => 'madep',
+            );
+        }
+
+        return $this->setStatusCode($result['status'])->respond($result, $transMessage);
+    }
+    // End IDRG
 }

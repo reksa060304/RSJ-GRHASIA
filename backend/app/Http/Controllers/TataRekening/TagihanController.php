@@ -5680,6 +5680,85 @@ class TagihanController  extends ApiController
         return $this->respond($datadata);
     }
 
+    public function daftarDetailRekapPiutang(Request $request)
+    {
+        $filter = $request->all();
+        $kdProfile = $this->getDataKdProfile($request);
+        $idProfile = (int) $kdProfile;
+        $tglAwal = $request['tglAwal'];
+        $tglAkhir = $request['tglAkhir'];
+
+        // filter kelompok pasien
+        $kpFilter = '';
+        if (isset($request['kelompokpasien']) && $request['kelompokpasien'] != "") {
+            $kpFilter = "and kp.kelompokpasien ilike '%" . $request['kelompokpasien'] . "%'";
+        }
+
+        // ambil rekap per tanggal dulu (seperti sebelumnya)
+        $piutang = DB::select(DB::raw("
+            select tglbayar, sum(totalsetujui) totalsetujui, kelompokpasien, sum(totalrajal) totalrajal,
+            sum(totalranap) totalranap, sum(totalobat) totalobat
+            from(
+                select rkb.tglbayar::date, sum(rkb.totalsetujui) totalsetujui, 
+                case when kp.kelompokpasien ilike '%BPJS%' then 'BPJS' else kp.kelompokpasien end as kelompokpasien, 
+                case when ru.objectdepartemenfk <> 16 and rkb.isobat is null then sum(rkb.totalsetujui) else 0 end as totalrajal,
+                case when ru.objectdepartemenfk = 16 and rkb.isobat is null then sum(rkb.totalsetujui) else 0 end as totalranap,
+                case when rkb.isobat = true then sum(rkb.totalsetujui) else 0 end as totalobat
+                from
+                rekapklaimbpjs_t rkb 
+                left join pasiendaftar_t pd on pd.norec = rkb.norecpdfk
+                left join ruangan_m ru on ru.id = pd.objectruanganlastfk
+                left join kelompokpasien_m kp on kp.id = pd.objectkelompokpasienlastfk
+                where rkb.statusenabled = true
+                and rkb.tglbayar::date between '$tglAwal' and '$tglAkhir'
+                $kpFilter
+                group by rkb.isobat, rkb.tglbayar::date, kp.kelompokpasien, ru.objectdepartemenfk
+            ) as x
+            group by tglbayar, kelompokpasien
+            order by tglbayar
+        "));
+
+        // kumpulkan semua details jadi satu array flat
+        $allDetails = [];
+
+        foreach ($piutang as $p) {
+            $like = $p->kelompokpasien == null ? 'is null' : "='" . $p->kelompokpasien . "'";
+
+            $details = DB::select(DB::raw("
+                select tglpulang, sum(totalsetujui) totalsetujui, kelompokpasien, sum(totalrajal) totalrajal,
+                sum(totalranap) totalranap, sum(totalobat) totalobat
+                from(
+                    select rkb.norec,pd.tglpulang::date, sum(rkb.totalsetujui) totalsetujui, 
+                    case when kp.kelompokpasien ilike '%BPJS%' then 'BPJS' else kp.kelompokpasien end as kelompokpasien, 
+                    case when ru.objectdepartemenfk <> 16 and rkb.isobat is null then sum(rkb.totalsetujui) else 0 end as totalrajal,
+                    case when ru.objectdepartemenfk = 16 and rkb.isobat is null then sum(rkb.totalsetujui) else 0 end as totalranap,
+                    case when rkb.isobat = true then sum(rkb.totalsetujui) else 0 end as totalobat
+                    from
+                    rekapklaimbpjs_t rkb 
+                    left join pasiendaftar_t pd on pd.norec = rkb.norecpdfk
+                    left join ruangan_m ru on ru.id = pd.objectruanganlastfk
+                    left join kelompokpasien_m kp on kp.id = pd.objectkelompokpasienlastfk
+                    where rkb.statusenabled = true
+                    and rkb.tglbayar::date = '$p->tglbayar' 
+                    group by rkb.norec, rkb.isobat, pd.tglpulang::date, kp.kelompokpasien, ru.objectdepartemenfk
+                ) as x
+                where x.kelompokpasien $like
+                group by tglpulang, kelompokpasien
+                order by tglpulang
+            "));
+
+            // tambahkan detail ke array global
+            foreach ($details as $d) {
+                $allDetails[] = $d;
+            }
+        }
+
+        // return flat data details
+        return $this->respond([
+            'data' => $allDetails
+        ]);
+    }
+
     public function daftarKlaimDiagnosa(Request $request){
         $filter=$request->all();
         $kdProfile = $this->getDataKdProfile($request);

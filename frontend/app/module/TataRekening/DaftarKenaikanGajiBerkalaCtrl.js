@@ -554,14 +554,15 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
                 }
                 $scope.popUpRiwayatGajiBerkala.center().open()
             }
-            $scope.cetakGajiBerkala = function() {
+            $scope.cetakGajiBerkala = function(word) {
                 
                 if ($scope.dataSelected.id_pegawai == undefined) {
                     toastr.error("Data Belum Dipilih!")
                     return;
                 }
                 console.log($scope.dataSelected);
-                window.open(configuration.baseApiBackend + 'report/get-cetak-suratkgb?id_pegawai='+$scope.dataSelected.norec_kgb, '_blank');
+                debugger
+                window.open(configuration.baseApiBackend + 'report/get-cetak-suratkgb?id_pegawai='+$scope.dataSelected.norec_kgb+'&word='+word, '_blank');
             }
             $scope.tambahRiwayatGajiBerkala = function () {
                 var listRawRequired = [
