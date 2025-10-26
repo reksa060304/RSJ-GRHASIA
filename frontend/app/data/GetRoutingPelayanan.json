@@ -21149,6 +21149,26 @@
     ]
   },
   {
+    "name": "RL316_V3_KeluargaBerencana",
+    "url": "/RL316_V3_KeluargaBerencana",
+    "templateurl": "module/Registrasi/Laporan/LaporanRekamMedis/RL316_V3_KeluargaBerencana.html",
+    "controller": "RL316_V3_KeluargaBerencanaCtrl",
+    "deps": [
+      {
+        "module": "Services",
+        "define": "Service"
+      },
+      {
+        "module": "LoginServices",
+        "define": "LoginService"
+      },
+      {
+        "module": "MedifirstService",
+        "define": "MedifirstService"
+      }
+    ]
+  },
+  {
     "name": "RL4210BesarPenyakitRanap",
     "url": "/RL4210BesarPenyakitRanap",
     "templateurl": "module/Registrasi/Laporan/LaporanRekamMedis/RL4210BesarPenyakitRanap.html",

@@ -3834,6 +3834,10 @@
             "urlDep": "module/Registrasi/Laporan/LaporanRekamMedis/RL19_V3_RekapitulasiCaraBayarCtrl"
         },
         {
+            "nameDep": "RL316_V3_KeluargaBerencanaCtrl",
+            "urlDep": "module/Registrasi/Laporan/LaporanRekamMedis/RL316_V3_KeluargaBerencanaCtrl"
+        },
+        {
             "nameDep": "RL38_V3_RekapitulasiKegiatanPelayananLaboratoriumCtrl",
             "urlDep": "module/Registrasi/Laporan/LaporanRekamMedis/RL38_V3_RekapitulasiKegiatanPelayananLaboratoriumCtrl"
         },
