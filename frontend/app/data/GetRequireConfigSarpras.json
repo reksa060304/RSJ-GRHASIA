@@ -958,6 +958,14 @@
             "urlDep": "module/SysAdmin/MapRuanganToEMRCtrl"
         },
         {
+            "nameDep": "MapRetriksiDiagnosaCtrl",
+            "urlDep": "module/SysAdmin/MapRetriksiDiagnosaCtrl"
+        },
+        {
+            "nameDep": "MapRetriksiObatCtrl",
+            "urlDep": "module/SysAdmin/MapRetriksiObatCtrl"
+        },
+        {
             "nameDep": "DaftarDisposisiEksternalCtrl",
             "urlDep": "module/EOffice/DaftarDisposisiEksternalCtrl"
         },

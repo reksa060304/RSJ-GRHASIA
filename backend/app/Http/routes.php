@@ -3185,6 +3185,16 @@ Route::group(['middleware' => 'cors', 'prefix' => 'service'], function () {
           Route::get('sysadmin/general/get-ruangan-part2', 'SysAdmin\GeneralController@getRuanganPart2');
           Route::get('sysadmin/general/get-ruangan-part3', 'SysAdmin\GeneralController@getRuanganPart3');
 
+          Route::get('sysadmin/get-combo-retriksi', 'SysAdmin\SysAdminController@getlistComboRetriksi');
+          Route::get('sysadmin/get-combo-retriksi-diagnosa', 'SysAdmin\SysAdminController@getComboRetriksiDiagnosa');
+          Route::post('sysadmin/save-retriksi-diagnosa', 'SysAdmin\SysAdminController@saveRetriksiDiagnosa');
+          Route::get('sysadmin/get-retriksi-diagnosa', 'SysAdmin\SysAdminController@getRetriksiDiagnosa');
+          Route::post('sysadmin/delete-retriksi-diagnosa', 'SysAdmin\SysAdminController@deleteRetriksiDiagnosa');
+          
+          Route::post('sysadmin/save-retriksi-obat', 'SysAdmin\SysAdminController@saveRetriksiObat');
+          Route::get('sysadmin/get-retriksi-obat', 'SysAdmin\SysAdminController@getRetriksiObat');
+          Route::post('sysadmin/delete-retriksi-obat', 'SysAdmin\SysAdminController@deleteRetriksiObat');
+
           Route::get('sysadmin/get-combo-mapemr', 'SysAdmin\SysAdminController@getComboMappingEMR');
           Route::get('sysadmin/get-mapping-emr', 'SysAdmin\SysAdminController@getMappingEMR');
           Route::post('sysadmin/save-map-ruangan-to-emr', 'SysAdmin\SysAdminController@saveMapRuanganToEMR');
