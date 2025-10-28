@@ -1652,6 +1652,10 @@ class ReportController extends ApiController{
             ->first();
             
         $pageWidth = 50;
+
+        if(empty($data)){
+            return "Resep tidak ditemukan";
+        }
         
         $dataReport = array(
             'namaprofile' => $profile->namalengkap,
