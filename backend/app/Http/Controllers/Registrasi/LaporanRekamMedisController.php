@@ -9910,4 +9910,1576 @@ class LaporanRekamMedisController extends   ApiController
         return $this->respond($result);
     }
 
+    
+        public function getLaporanRL33IGDnew(Request $request){
+            $kdProfile = (int)$this->getDataKdProfile($request);
+            $tglAwal = isset($request['tglAwal']) && $request['tglAwal'] !== "" && $request['tglAwal'] !== "undefined" 
+                ? $request['tglAwal'] 
+                : null;
+        
+            $tglAkhir = isset($request['tglAkhir']) && $request['tglAkhir'] !== "" && $request['tglAkhir'] !== "undefined" 
+                ? $request['tglAkhir'] 
+                : null;
+    
+            $mapping_icd = [
+                'Bedah di Instalasi Gawat Darurat' => [],
+                'Kecelakaan lalu lintas darat' => ["V0", "V1", "V2", "V3", "V4", "V5", "V6", "V7", "V8"],
+                'Kecelakaan lalu lintas perairan' => ["V90", "V91", "V92", "V93", "V94"],
+                'Kecelakaan lalu lintas udara' => ["V95", "V96", "V97"],
+                'Bedah lainnya (non kecelakaan)' => ["T", "S", "D", "C", "X"], 
+                'Non Bedah' => [],
+                'Kekerasan terhadap Perempuan (≥18 tahun)' => ["X85", "Y0"],
+                'Kekerasan terhadap Anak (<18 tahun)' => ["X85", "Y0"],
+                'Kekerasan lainnya' => ["Y1", "Y2", "Y3"],
+                'Non bedah lainnya' => [],
+                'Kebidanan' => ["O"],
+                'Psikiatrik' => ["F"],
+                'Bayi' => ["P"],
+                'Anak' => ["Z00", "Z01", "Z02"], 
+                'Geriatri' => ["R54"]
+            ];
+                
+            $mapIdRujukan = [1,2,3]; //id rujuk
+    
+            $dataPasien = \DB::table('pasiendaftar_t as pd')
+                ->join('antrianpasiendiperiksa_t as apd', 'apd.noregistrasifk', '=', 'pd.norec')
+                ->join('pasien_m as ps', 'ps.id', '=', 'pd.nocmfk')
+                ->join('ruangan_m as ru', 'ru.id', '=', 'apd.objectruanganfk')
+                ->join('departemen_m as dept', 'dept.id', '=', 'ru.objectdepartemenfk')
+                // ->leftJoin('detaildiagnosapasien_t as ddp_masuk', function ($join) {
+                // $join->on('ddp_masuk.noregistrasifk', '=', 'apd.norec')
+                //         ->where('ddp_masuk.objectjenisdiagnosafk', '=', 5);
+                // })
+                // ->leftJoin('diagnosa_m as dg_masuk', 'dg_masuk.id', '=', 'ddp_masuk.objectdiagnosafk')
+
+                ->LEFTJOIN('pemakaianasuransi_t AS pa_masuk', 'pa_masuk.noregistrasifk', '=', 'pd.norec')
+	            ->LEFTJOIN('diagnosa_m AS dg_masuk', 'dg_masuk.id', '=', 'pa_masuk.objectdiagnosafk')
+                ->leftJoin('detaildiagnosapasien_t as ddp_keluar', function ($join) {
+                    $join->on('ddp_keluar.noregistrasifk', '=', 'apd.norec')
+                        ->where('ddp_keluar.objectjenisdiagnosafk', '=', 1);
+                })
+                ->leftJoin('diagnosa_m as dg_keluar', 'dg_keluar.id', '=', 'ddp_keluar.objectdiagnosafk')
+                ->select(
+                    'pd.norec', 
+                    'pd.tglregistrasi', 
+                    'dg_masuk.kddiagnosa as kddiagnosa_masuk', 
+                    'dg_keluar.kddiagnosa as kddiagnosa_keluar', 
+                    'apd.objectasalrujukanfk',
+                    'ps.objectjeniskelaminfk', //1 laki 2 pr
+                    'apd.tglkeluar',
+                    'pd.tglmeninggal',
+                    'pd.objectstatuskeluarfk',
+                    'pd.objectstatuspulangfk',
+                    'pd.objectruanganlastfk',
+                    'pd.objectruanganasalfk',
+                    \DB::raw("EXTRACT(YEAR FROM AGE(apd.tglregistrasi, ps.tgllahir)) as umur")
+                )
+                ->whereBetween('pd.tglregistrasi', [$tglAwal, $tglAkhir])
+                ->where('pd.kdprofile', $kdProfile)
+                ->where('pd.statusenabled', true)
+                ->where('ps.statusenabled', true)
+                ->where('apd.statusenabled', true)
+                ->where('ru.statusenabled', true)
+                ->where('dept.statusenabled', true)
+                ->where('dept.id', 24)
+                ->where(function ($query) {
+                    $query->whereNotNull('dg_masuk.kddiagnosa')
+                        ->orWhereNotNull('dg_keluar.kddiagnosa');
+                })    
+                ->get();
+    
+            // return $dataPasien;
+    
+    
+    
+            $dataResult = [
+                'Bedah di Instalasi Gawat Darurat' => [
+                    'no' => '1'
+                ],
+                'Kecelakaan lalu lintas darat' => [
+                    'no' => '1.1'
+    
+                ],
+                'Kecelakaan lalu lintas perairan' => [
+                    'no' => '1.2'
+    
+                ],
+                'Kecelakaan lalu lintas udara' => [
+                    'no' => '1.3'
+    
+                ],
+                'Bedah lainnya (non kecelakaan)' => [
+                    'no' => '1.4'
+    
+                ], 
+                'Non Bedah' => [
+                    'no' => '2'
+                ],
+                'Kekerasan terhadap Perempuan (≥18 tahun)' => [
+                    'no' => '2.1'
+                ],
+                'Kekerasan terhadap Anak (<18 tahun)' => [
+                    'no' => '2.2'
+                ],
+                'Kekerasan lainnya' => [
+                    'no' => '2.3'
+                ],
+                'Non bedah lainnya' => [
+                    'no' => '2.4'
+                ],
+                'Kebidanan' => [
+                    'no' => '3'
+                ],
+                'Psikiatrik' => [
+                    'no' => '4'
+    
+                ],
+                'Bayi' => [
+                    'no' => '5'
+                ],
+                'Anak' => [
+                    'no' => '6'
+                ], 
+                'Geriatri' => [
+                    'no' => '7'
+                ]
+            ];
+    
+    
+            foreach ($dataPasien as $dp) {
+                $jenisPelayanan = 'Non bedah lainnya';
+                foreach ($mapping_icd as $key => $icd) {
+                    foreach ($icd as $code) {
+                        if (strpos($dp->kddiagnosa_masuk, $code) === 0 || strpos($dp->kddiagnosa_keluar, $code) === 0) {
+                            $jenisPelayanan = $key;
+                            break 2; 
+                        }
+                    }
+                }
+    
+                if ($jenisPelayanan === 'Kekerasan terhadap Perempuan (≥18 tahun)') {
+                    if ($dp->umur < 18 || $dp->objectjeniskelaminfk != 2) { 
+                        $jenisPelayanan = 'Kekerasan terhadap Anak (<18 tahun)';
+                    }
+                }
+        
+                if ($jenisPelayanan === 'Kekerasan terhadap Anak (<18 tahun)') {
+                    if ($dp->umur >= 18) { 
+                        $jenisPelayanan = 'Kekerasan lainnya';
+                    } elseif ($dp->objectjeniskelaminfk == 1) { 
+                        $jenisPelayanan = 'Non bedah lainnya';
+                    }
+                }
+    
+                if(in_array($dp->objectasalrujukanfk, $mapIdRujukan)){
+                    if(!isset($dataResult[$jenisPelayanan]['pasien_rujukan'])){
+                        $dataResult[$jenisPelayanan]['pasien_rujukan'] = 0;
+                    }
+                    $dataResult[$jenisPelayanan]['pasien_rujukan']++;
+                }else{
+                    if(!isset($dataResult[$jenisPelayanan]['pasien_non_rujukan'])){
+                        $dataResult[$jenisPelayanan]['pasien_non_rujukan'] = 0;
+                    }
+                    $dataResult[$jenisPelayanan]['pasien_non_rujukan']++;
+                }
+    
+    
+                if($dp->tglmeninggal == null && $dp->objectstatuskeluarfk != 5 && $dp->objectstatuspulangfk != 9){
+                   // Dirawat
+                    if ($dp->objectruanganasalfk != $dp->objectruanganlastfk) {
+                        if (!isset($dataResult[$jenisPelayanan]['pasien_dirawat'])) {
+                            $dataResult[$jenisPelayanan]['pasien_dirawat'] = 0;
+                        }
+                        $dataResult[$jenisPelayanan]['pasien_dirawat']++;
+                    }
+    
+                    // Dirujuk (gunakan `==` untuk perbandingan)
+                    else if ($dp->objectruanganasalfk == $dp->objectruanganlastfk && $dp->objectstatuskeluarfk == 4) {
+                        if (!isset($dataResult[$jenisPelayanan]['pasien_dirujuk'])) {
+                            $dataResult[$jenisPelayanan]['pasien_dirujuk'] = 0;
+                        }
+                        $dataResult[$jenisPelayanan]['pasien_dirujuk']++;
+                    }
+    
+                    // Pulang (gunakan `==` untuk perbandingan)
+                    else if ($dp->objectruanganasalfk == $dp->objectruanganlastfk && $dp->objectstatuskeluarfk == 1) {
+                        if (!isset($dataResult[$jenisPelayanan]['pasien_pulang'])) {
+                            $dataResult[$jenisPelayanan]['pasien_pulang'] = 0;
+                        }
+                        $dataResult[$jenisPelayanan]['pasien_pulang']++;
+                    }
+    
+                }else{
+                    // Meninggal di igd
+                    if ($dp->objectruanganasalfk != $dp->objectruanganlastfk){
+                        if($dp->objectjeniskelaminfk == 1){
+                            if (!isset($dataResult[$jenisPelayanan]['pasien_meninggal_laki'])) {
+                                $dataResult[$jenisPelayanan]['pasien_meninggal_laki'] = 0;
+                            }
+                            $dataResult[$jenisPelayanan]['pasien_meninggal_laki']++;
+                        }else{
+                            if (!isset($dataResult[$jenisPelayanan]['pasien_meninggal_perempuan'])) {
+                                $dataResult[$jenisPelayanan]['pasien_meninggal_perempuan'] = 0;
+                            }
+                            $dataResult[$jenisPelayanan]['pasien_meninggal_perempuan']++;
+                        }
+                    }
+                    
+                }
+    
+                if($dp->objectstatuspulangfk == 17){ //Death on Arrival (doa)
+                    if($dp->objectjeniskelaminfk == 1){
+                        if (!isset($dataResult[$jenisPelayanan]['pasien_doa_laki'])) {
+                            $dataResult[$jenisPelayanan]['pasien_doa_laki'] = 0;
+                        }
+                        $dataResult[$jenisPelayanan]['pasien_doa_laki']++;
+                    }else{
+                        if (!isset($dataResult[$jenisPelayanan]['pasien_doa_perempuan'])) {
+                            $dataResult[$jenisPelayanan]['pasien_doa_perempuan'] = 0;
+                        }
+                        $dataResult[$jenisPelayanan]['pasien_doa_perempuan']++;
+                    }
+                } 
+    
+            }
+    
+            return response()->json([
+                'data' => $dataResult
+            ]);
+    
+            
+    
+        }
+
+        public function getLaporanRL34RekapitulasiPengunjungnew(Request $request){
+            $kdProfile = $this->getDataKdProfile($request);
+            $idProfile = (int) $kdProfile;
+            $data = \DB::table('pasiendaftar_t as pd')
+                ->join('pasien_m as pm', 'pm.id', '=', 'pd.nocmfk')
+                ->select( 'pd.noregistrasi', 'pm.nocm', 'pm.namapasien','pd.statuspasien')
+                ->where('pd.kdprofile', $idProfile)
+                ->where('pd.statusenabled', true);
+    
+            if (isset($request['tglAwal']) && $request['tglAwal'] != "" && $request['tglAwal'] != "undefined") {
+                $data = $data->where('pd.tglregistrasi', '>=', $request['tglAwal']);
+            }
+            if (isset($request['tglAkhir']) && $request['tglAkhir'] != "" && $request['tglAkhir'] != "undefined") {
+                $data = $data->where('pd.tglregistrasi', '<=', $request['tglAkhir']);
+            }
+    
+            $data = $data->get();
+    
+            $data10 = [];
+            $jumlah_pengunjung_baru = 0;
+            $jumlah_pengunjung_lama = 0;
+            $jumlah_total = 0;
+    
+            foreach ($data as $item){
+                if($item->statuspasien == 'BARU'){
+                    $jumlah_pengunjung_baru += 1;
+                }else{
+                    $jumlah_pengunjung_lama += 1;
+                }
+                $jumlah_total += 1;
+            }
+    
+            $data10 = [
+                [
+                    "no" => 1,
+                    "jenispengunjung" => "Pengunjung Baru",
+                    "jumlah" => $jumlah_pengunjung_baru
+                ],
+                [
+                    "no" => 2,
+                    "jenispengunjung" => "Pengunjung Lama",
+                    "jumlah" => $jumlah_pengunjung_lama
+                ],
+                [
+                    "no" => 99,
+                    "jenispengunjung" => "Total",
+                    "jumlah" => $jumlah_total
+                ]
+            ];
+            $result = array(
+                'data' => $data10,
+                'message' => 'er@epic',
+    
+            );
+    
+            return $this->respond($result);
+        }
+
+        public function getDataLaporanRL35Kunjungan(Request $request)
+    {
+        $kdProfile = (int) $this->getDataKdProfile($request);
+        $tglAwal = $request['tglAwal'];
+        $tglAkhir = $request['tglAkhir'];
+
+        $data = \DB::table('pasiendaftar_t as pd')
+        ->join('pasien_m as ps', 'ps.id', '=', 'pd.nocmfk')
+        ->join('ruangan_m as ru', 'ru.id', '=', 'pd.objectruanganlastfk')
+        ->leftjoin('pegawai_m as pg', 'pg.id', '=', 'pd.objectpegawaifk')
+        ->leftjoin('alamat_m as am', 'am.nocmfk', '=', 'ps.id')
+        ->leftjoin('batalregistrasi_t as br', 'br.pasiendaftarfk', '=', 'pd.norec')
+        ->leftJoin('antrianpasiendiperiksa_t as apd', function ($join) {
+            $join->on('apd.noregistrasifk', '=', 'pd.norec');
+            $join->on('apd.objectruanganfk', '=', 'pd.objectruanganlastfk');
+            $join->whereNull('apd.objectruanganasalfk');
+        })
+        ->leftJoin('pelayananpasien_t as pp', 'pp.noregistrasifk', '=', 'apd.norec')
+        // ->leftJoin('emrpasien_t as ept', 'ept.noregistrasifk', '=', 'pd.noregistrasi')
+        // ->leftJoin('diagnosapasien_t as dp', 'dp.noregistrasifk', operator: '=', 'apd.norec')
+        // ->leftJoin('detaildiagnosapasien_t as ddp', 'ddp.objectdiagnosapasienfk', '=', 'dp.norec')
+        // ->leftJoin('diagnosa_m as dm', 'dm.id', '=', 'ddp.objectdiagnosaperawatfk')
+        ->distinct()
+        ->select(
+            'pd.norec',
+            'ps.namapasien',
+            'ps.objectjeniskelaminfk',
+            'pg.namalengkap',
+            // 'dm.kddiagnosa',
+            'am.kotakabupaten',
+            DB::raw('EXTRACT(YEAR FROM AGE(CURRENT_DATE, ps.tgllahir)) as umur'),
+            DB::raw("
+                CASE 
+                        WHEN ru.id IN (756) THEN 'Penyakit Dalam'
+                        WHEN ru.id IN (753,775,573) THEN 'Kesehatan Anak (Lainnya)'
+                        WHEN ru.id IN (752,785,890,782,987,2051,765) THEN 'Jiwa'
+                        WHEN ru.id IN (768,776,789) THEN 'Napza'
+                        WHEN ru.id IN (767,791,807) THEN 'Psikologi'
+                        WHEN ru.id IN (754) THEN 'Kulit dan Kelamin'
+                        WHEN ru.id IN (759) THEN 'Gigi & Mulut'
+                        WHEN ru.id IN (890) THEN 'Geriatri'
+                        WHEN ru.id IN (773) THEN 'Kardiologi'
+                        WHEN ru.id IN (769) THEN 'Radiologi'
+                        WHEN ru.id IN (758,750,783,788,770,771,764,790,927) THEN 'Umum'
+                        WHEN ru.id IN (29,765) THEN 'Rawat Darurat'
+                        WHEN ru.id IN (762,774,777,786) THEN 'Rehabilitasi Medik'
+                        WHEN ru.id IN (784) THEN 'Konsultasi Gizi'
+                        WHEN ru.id IN (930) THEN 'Day Care'
+                        WHEN ru.id IN (770,771,764,788) THEN 'Medical Check Up'
+                        WHEN ru.id IN (755) THEN 'Saraf (Lainnya)'
+                        WHEN ru.id IN (931,787,548) THEN 'Lain - Lain'
+
+                    ELSE ru.namaruangan 
+                END AS ruang
+            "),
+        )
+        ->whereNull('br.norec')
+        ->where('pd.statusenabled', true)
+        ->where('pd.kdprofile', (int) $kdProfile)
+        ->whereIn('ru.objectdepartemenfk', [18, 27, 24])
+        ->whereBetween('pd.tglregistrasi', [$tglAwal, $tglAkhir])
+        ->get();
+
+        $jumlahPasien = [];
+        foreach ($data as $pasien) {
+            if ($pasien->ruang) {
+                $jumlahPasien[$pasien->ruang] = (object)[
+                    'ruang' => $pasien->ruang,
+                    'jumlah' => 0,
+                    'jumlah_dlm_l' => 0,
+                    'jumlah_dlm_p' => 0,
+                    'jumlah_luar_l' => 0,
+                    'jumlah_luar_p' => 0 
+                ];
+            }
+        }
+
+        foreach ($data as $pasien) {
+            if (isset($jumlahPasien[$pasien->ruang])) {
+                if ($pasien->objectjeniskelaminfk == 1 || $pasien->objectjeniskelaminfk == 2) {
+                    $jumlahPasien[$pasien->ruang]->jumlah += 1;
+                }
+                if ($pasien->objectjeniskelaminfk == 1 && $pasien->kotakabupaten == 'Kota Yogyakarta') {
+                    $jumlahPasien[$pasien->ruang]->jumlah_dlm_l += 1;
+                }
+                if ($pasien->objectjeniskelaminfk == 2 && $pasien->kotakabupaten == 'Kota Yogyakarta') {
+                    $jumlahPasien[$pasien->ruang]->jumlah_dlm_p += 1;
+                }
+                if ($pasien->objectjeniskelaminfk == 1 && $pasien->kotakabupaten != 'Kota Yogyakarta') {
+                    $jumlahPasien[$pasien->ruang]->jumlah_luar_l += 1;
+                }
+                if ($pasien->objectjeniskelaminfk == 2 && $pasien->kotakabupaten != 'Kota Yogyakarta') {
+                    $jumlahPasien[$pasien->ruang]->jumlah_luar_p += 1;
+                }
+            }
+        }
+
+        $data = array_values($jumlahPasien);
+
+        $result = array(
+            'data' => $data,
+            'message' => 'maman',
+        );
+
+        return $this->respond($result);
+    }
+
+    public function getLaporanRL314Khusus(Request $request){
+        $kdProfile = (int) $this->getDataKdProfile($request);
+        $KdJenisLapPelKhusus = (int) $this->settingDataFixed('KdJenisLapPelKhusus', $kdProfile);
+        //#WIth Mapp
+        $data = \DB::table('pasiendaftar_t as pd')
+            ->JOIN('antrianpasiendiperiksa_t as apd', 'apd.noregistrasifk', '=', 'pd.norec')
+            ->leftjoin('pelayananpasien_t as pp', 'pp.noregistrasifk', '= ', 'apd.norec')
+            ->join('ruangan_m as ru', 'ru.id', '=', 'apd.objectruanganfk')
+            ->join('departemen_m as dpm', 'dpm.id', '=', 'ru.objectdepartemenfk')
+            ->join('produk_m as prd', 'prd.id', '=', 'pp.produkfk')
+            ->join('mapproduktolaporanrl_m as mprl','mprl.produkfk','=','pp.produkfk')
+            ->join('jenislaporan_m as jl','jl.id','=','mprl.objectjenislaporanfk')
+            ->join('kelompoklaporan_m as kl','kl.id','=','mprl.objectkontenlaporanfk')
+            ->select(
+//                'prd.namaproduk',
+                'kl.kelompoklaporan as namaproduk',
+                DB::raw('
+             COUNT(prd.namaproduk) as JmlTindakan')
+            )
+            ->groupBy('kl.kelompoklaporan')
+            //            ->where('ru.objectdepartemenfk', '=', '28')
+            ->where('pd.kdprofile', $kdProfile)
+            ->where('jl.id',$KdJenisLapPelKhusus);
+
+
+        if (isset($request['tglAwal']) && $request['tglAwal'] != "" && $request['tglAwal'] != "undefined") {
+            $data = $data->where('pp.tglpelayanan', '>=', $request['tglAwal']);
+        }
+        if (isset($request['tglAkhir']) && $request['tglAkhir'] != "" && $request['tglAkhir'] != "undefined") {
+            $tgl = $request['tglAkhir'];
+            $data = $data->where('pp.tglpelayanan', '<=', $tgl);
+        }
+
+        $data = $data->get();
+
+        $result = array(
+            'data' => $data,
+            'message' => 'as@cepot',
+        );
+        return $this->respond($result);
+    }
+
+    public function getLaporanRL43(Request $request)
+    {
+        $kdProfile = (int) $this->getDataKdProfile($request);
+        $tglAwal = $request['tglAwal'];
+        $tglAkhir = $request['tglAkhir'];
+        //#WIth Mapp
+        
+        $data = DB::select(DB::raw("SELECT 
+                    kddiagnosa, 
+                    namadiagnosa,
+                    SUM(hiduplaki) AS hiduplaki,
+                    SUM(hidupperempuan) AS hidupperempuan,
+                    COUNT(norec) AS jumlahhiduppl,
+                    SUM(matilaki) as matilaki,
+                    SUM(matiperempuan) as matiperempuan,
+                    SUM(matiperempuan + matilaki) as matipl
+                FROM (
+                    SELECT 
+                    d.kddiagnosa, 
+                    d.namadiagnosa, 
+                    pd.norec,
+                    CASE WHEN ps.objectjeniskelaminfk = 1 THEN 1 ELSE 0 END AS hiduplaki,
+                    CASE WHEN ps.objectjeniskelaminfk = 2 THEN 1 ELSE 0 END AS hidupperempuan,
+                    CASE WHEN ps.objectjeniskelaminfk = 1 and pd.tglmeninggal is not null THEN 1 ELSE 0 END AS matilaki,
+                    CASE WHEN ps.objectjeniskelaminfk = 2 and pd.tglmeninggal is not null THEN 1 ELSE 0 END AS matiperempuan
+                    FROM pasiendaftar_t AS pd
+                    INNER JOIN pasien_m AS ps ON ps.id = pd.nocmfk
+                    INNER JOIN antrianpasiendiperiksa_t AS apd ON apd.noregistrasifk = pd.norec
+                    INNER JOIN ruangan_m AS ru ON ru.id = apd.objectruanganfk
+                    INNER JOIN diagnosapasien_t AS dp ON dp.noregistrasifk = apd.norec
+                    INNER JOIN detaildiagnosapasien_t AS ddp ON ddp.objectdiagnosapasienfk = dp.norec
+                    INNER JOIN diagnosa_m AS d ON d.id = ddp.objectdiagnosafk
+                    LEFT JOIN pegawai_m AS pg ON pg.id = pd.objectpegawaifk
+                    WHERE 
+                    pd.statusenabled = true
+                    and pd.kdprofile = $kdProfile
+                    AND ru.objectdepartemenfk = 16
+                    and pd.tglregistrasi between '$tglAwal' and '$tglAkhir'
+                ) AS x
+                GROUP BY kddiagnosa, namadiagnosa
+                ORDER BY matipl DESC
+                -- LIMIT 10
+                ;
+                    "));
+
+        $result = array(
+            'detail' => $data,
+            'message' => 'as@maman',
+        );
+        return $this->respond($result);
+    }
+
+    public function getLaporanRL51RawatJalanNew(Request $request)
+    {
+        $kdProfile = (int) $this->getDataKdProfile($request);
+        $tglAwal = $request['tglAwal'];
+        $tglAkhir = $request['tglAkhir'];
+        //#WIth Mapp
+        $data = DB::select(DB::raw("SELECT 
+                        kddiagnosa, 
+                        namadiagnosa,
+                        SUM(hiduplaki) AS hiduplaki,
+                        SUM(hidupperempuan) AS hidupperempuan,
+                        SUM(norec) AS jumlahhiduppl,
+                        SUM(matilaki) as matilaki,
+                        SUM(matiperempuan) as matiperempuan,
+                        SUM(matiperempuan + matilaki) as matipl,
+                        jumlahkurang1jaml,
+                        jumlahkurang1jamp,
+                        jumlahkurang23jaml,
+                        jumlahkurang23jamp,
+                        jumlah17hl,
+                        jumlah17hp,
+                        jumlah828hl,
+                        jumlah828hp,
+                        jumlah293l,
+                        jumlah293p,
+                        jumlah36l,
+                        jumlah36p,
+                        jumlah611l,
+                        jumlah611p,
+                        jumlah14l,
+                        jumlah14p,
+                        jumlah59l,
+                        jumlah59p,
+                        jumlah1014l,
+                        jumlah1014p,
+                        jumlah1519l,
+                        jumlah1519p,
+                        jumlah2024l,
+                        jumlah2024p,
+                        jumlah2529l,
+                        jumlah2529p,
+                        jumlah3034l,
+                        jumlah3034p,
+                        jumlah3539l,
+                        jumlah3539p,
+                        jumlah4044l,
+                        jumlah4044p,
+                        jumlah4549l,
+                        jumlah4549p,
+                        jumlah5054l,
+                        jumlah5054p,
+                        jumlah5559l,
+                        jumlah5559p,
+                        jumlah6064l,
+                        jumlah6064p,
+                        jumlah6569l,
+                        jumlah6569p,
+                        jumlah7074l,
+                        jumlah7074p,
+                        jumlah7579l,
+                        jumlah7579p,
+                        jumlah8084l,
+                        jumlah8084p,
+                        jumlah85l,
+                        jumlah85p
+                        FROM (
+                        SELECT 
+                            d.kddiagnosa, 
+                            d.namadiagnosa, 
+                            COUNT(pd.norec) as norec,
+                            SUM(CASE WHEN ps.objectjeniskelaminfk = 1 THEN 1 ELSE 0 END) AS hiduplaki,
+                            SUM(CASE WHEN ps.objectjeniskelaminfk = 2 THEN 1 ELSE 0 END) AS hidupperempuan,
+                            SUM(CASE WHEN ps.objectjeniskelaminfk = 1 and pd.objectstatuskeluarfk = 5 THEN 1 ELSE 0 END) AS matilaki,
+                            SUM(CASE WHEN ps.objectjeniskelaminfk = 2 and pd.objectstatuskeluarfk = 5 THEN 1 ELSE 0 END) AS matiperempuan,
+                            SUM(case when TO_CHAR(age(ps.tgllahir), 'HH')::int4 < 1 and ps.objectjeniskelaminfk = 1 then 1 else 0 end) as jumlahkurang1jaml,
+                            SUM(case when TO_CHAR(age(ps.tgllahir), 'HH')::int4 < 1 and ps.objectjeniskelaminfk = 2 then 1 else 0 end) as jumlahkurang1jamp,
+                            SUM(case when TO_CHAR(age(ps.tgllahir), 'YY')::int4 < 1 and TO_CHAR(age(ps.tgllahir), 'MM')::int4 <= 0 and TO_CHAR(age(ps.tgllahir), 'DD')::int4 <= 1 and TO_CHAR(age(ps.tgllahir), 'HH')::int4 >= 1 and TO_CHAR(age(ps.tgllahir), 'HH')::int4 < 23 and ps.objectjeniskelaminfk = 1 then 1 else 0 end) as jumlahkurang23jaml,
+                            SUM(case when TO_CHAR(age(ps.tgllahir), 'YY')::int4 < 1 and TO_CHAR(age(ps.tgllahir), 'MM')::int4 <= 0 and TO_CHAR(age(ps.tgllahir), 'DD')::int4 <= 1 and TO_CHAR(age(ps.tgllahir), 'HH')::int4 >= 1 and TO_CHAR(age(ps.tgllahir), 'HH')::int4 < 23 and ps.objectjeniskelaminfk = 2 then 1 else 0 end) as jumlahkurang23jamp,
+                            SUM(case when TO_CHAR(age(ps.tgllahir), 'YY')::int4 < 1 and TO_CHAR(age(ps.tgllahir), 'MM')::int4 <= 1 and TO_CHAR(age(ps.tgllahir), 'DD')::int4 >= 1 and TO_CHAR(age(ps.tgllahir), 'DD')::int4 < 7 and ps.objectjeniskelaminfk = 1 then 1 else 0 end) as jumlah17hl,
+                            SUM(case when TO_CHAR(age(ps.tgllahir), 'YY')::int4 < 1 and TO_CHAR(age(ps.tgllahir), 'MM')::int4 <= 1 and TO_CHAR(age(ps.tgllahir), 'DD')::int4 >= 1 and TO_CHAR(age(ps.tgllahir), 'DD')::int4 < 7 and ps.objectjeniskelaminfk = 2 then 1 else 0 end) as jumlah17hp,
+                            SUM(case when TO_CHAR(age(ps.tgllahir), 'YY')::int4 < 1 and TO_CHAR(age(ps.tgllahir), 'MM')::int4 <= 1 and TO_CHAR(age(ps.tgllahir), 'DD')::int4 >= 8 and TO_CHAR(age(ps.tgllahir), 'DD')::int4 < 28 and ps.objectjeniskelaminfk = 1 then 1 else 0 end) as jumlah828hl,
+                            SUM(case when TO_CHAR(age(ps.tgllahir), 'YY')::int4 < 1 and TO_CHAR(age(ps.tgllahir), 'MM')::int4 <= 1 and TO_CHAR(age(ps.tgllahir), 'DD')::int4 >= 8 and TO_CHAR(age(ps.tgllahir), 'DD')::int4 < 28 and ps.objectjeniskelaminfk = 2 then 1 else 0 end) as jumlah828hp,
+                            SUM(case when TO_CHAR(age(ps.tgllahir), 'YY')::int4 < 1 and TO_CHAR(age(ps.tgllahir), 'MM')::int4 >= 0 and TO_CHAR(age(ps.tgllahir), 'DD')::int4 >= 29 and TO_CHAR(age(ps.tgllahir), 'MM')::int4 < 3 and ps.objectjeniskelaminfk = 1 then 1 else 0 end) as jumlah293l,
+                            SUM(case when TO_CHAR(age(ps.tgllahir), 'YY')::int4 < 1 and TO_CHAR(age(ps.tgllahir), 'MM')::int4 >= 0 and TO_CHAR(age(ps.tgllahir), 'DD')::int4 >= 29 and TO_CHAR(age(ps.tgllahir), 'MM')::int4 < 3 and ps.objectjeniskelaminfk = 2 then 1 else 0 end) as jumlah293p,
+                            SUM(case when TO_CHAR(age(ps.tgllahir), 'YY')::int4 < 1 and TO_CHAR(age(ps.tgllahir), 'MM')::int4 >= 3 and TO_CHAR(age(ps.tgllahir), 'MM')::int4 < 6 and ps.objectjeniskelaminfk = 1 then 1 else 0 end) as jumlah36l,
+                            SUM(case when TO_CHAR(age(ps.tgllahir), 'YY')::int4 < 1 and TO_CHAR(age(ps.tgllahir), 'MM')::int4 >= 3 and TO_CHAR(age(ps.tgllahir), 'MM')::int4 < 6 and ps.objectjeniskelaminfk = 2 then 1 else 0 end) as jumlah36p,
+                            SUM(case when TO_CHAR(age(ps.tgllahir), 'YY')::int4 < 1 and TO_CHAR(age(ps.tgllahir), 'MM')::int4 >= 6 and TO_CHAR(age(ps.tgllahir), 'MM')::int4 <= 11 and ps.objectjeniskelaminfk = 1 then 1 else 0 end) as jumlah611l,
+                            SUM(case when TO_CHAR(age(ps.tgllahir), 'YY')::int4 < 1 and TO_CHAR(age(ps.tgllahir), 'MM')::int4 >= 6 and TO_CHAR(age(ps.tgllahir), 'MM')::int4 <= 11 and ps.objectjeniskelaminfk = 2 then 1 else 0 end) as jumlah611p,
+                            SUM(case when TO_CHAR(age(ps.tgllahir), 'YY')::int4 >= 1 and TO_CHAR(age(ps.tgllahir), 'YY')::int4 <= 4 and ps.objectjeniskelaminfk = 1 then 1 else 0 end) as jumlah14l,
+                            SUM(case when TO_CHAR(age(ps.tgllahir), 'YY')::int4 >= 1 and TO_CHAR(age(ps.tgllahir), 'YY')::int4 <= 4 and ps.objectjeniskelaminfk = 2 then 1 else 0 end) as jumlah14p,
+                            SUM(case when TO_CHAR(age(ps.tgllahir), 'YY')::int4 >= 5 and TO_CHAR(age(ps.tgllahir), 'YY')::int4 <= 9 and ps.objectjeniskelaminfk = 1 then 1 else 0 end) as jumlah59l,
+                            SUM(case when TO_CHAR(age(ps.tgllahir), 'YY')::int4 >= 5 and TO_CHAR(age(ps.tgllahir), 'YY')::int4 <= 9 and ps.objectjeniskelaminfk = 2 then 1 else 0 end) as jumlah59p,
+                            SUM(case when TO_CHAR(age(ps.tgllahir), 'YY')::int4 >= 10 and TO_CHAR(age(ps.tgllahir), 'YY')::int4 <= 14 and ps.objectjeniskelaminfk = 1 then 1 else 0 end) as jumlah1014l,
+                            SUM(case when TO_CHAR(age(ps.tgllahir), 'YY')::int4 >= 10 and TO_CHAR(age(ps.tgllahir), 'YY')::int4 <= 14 and ps.objectjeniskelaminfk = 2 then 1 else 0 end) as jumlah1014p,
+                            SUM(case when TO_CHAR(age(ps.tgllahir), 'YY')::int4 >= 15 and TO_CHAR(age(ps.tgllahir), 'YY')::int4 <= 19 and ps.objectjeniskelaminfk = 1 then 1 else 0 end) as jumlah1519l,
+                            SUM(case when TO_CHAR(age(ps.tgllahir), 'YY')::int4 >= 15 and TO_CHAR(age(ps.tgllahir), 'YY')::int4 <= 19 and ps.objectjeniskelaminfk = 2 then 1 else 0 end) as jumlah1519p,
+                            SUM(case when TO_CHAR(age(ps.tgllahir), 'YY')::int4 >= 20 and TO_CHAR(age(ps.tgllahir), 'YY')::int4 <= 24 and ps.objectjeniskelaminfk = 1 then 1 else 0 end) as jumlah2024l,
+                            SUM(case when TO_CHAR(age(ps.tgllahir), 'YY')::int4 >= 20 and TO_CHAR(age(ps.tgllahir), 'YY')::int4 <= 24 and ps.objectjeniskelaminfk = 2 then 1 else 0 end) as jumlah2024p,
+                            SUM(case when TO_CHAR(age(ps.tgllahir), 'YY')::int4 >= 25 and TO_CHAR(age(ps.tgllahir), 'YY')::int4 <= 29 and ps.objectjeniskelaminfk = 1 then 1 else 0 end) as jumlah2529l,
+                            SUM(case when TO_CHAR(age(ps.tgllahir), 'YY')::int4 >= 25 and TO_CHAR(age(ps.tgllahir), 'YY')::int4 <= 29 and ps.objectjeniskelaminfk = 2 then 1 else 0 end) as jumlah2529p,
+                            SUM(case when TO_CHAR(age(ps.tgllahir), 'YY')::int4 >= 30 and TO_CHAR(age(ps.tgllahir), 'YY')::int4 <= 34 and ps.objectjeniskelaminfk = 1 then 1 else 0 end) as jumlah3034l,
+                            SUM(case when TO_CHAR(age(ps.tgllahir), 'YY')::int4 >= 30 and TO_CHAR(age(ps.tgllahir), 'YY')::int4 <= 34 and ps.objectjeniskelaminfk = 2 then 1 else 0 end) as jumlah3034p,
+                            SUM(case when TO_CHAR(age(ps.tgllahir), 'YY')::int4 >= 35 and TO_CHAR(age(ps.tgllahir), 'YY')::int4 <= 39 and ps.objectjeniskelaminfk = 1 then 1 else 0 end) as jumlah3539l,
+                            SUM(case when TO_CHAR(age(ps.tgllahir), 'YY')::int4 >= 35 and TO_CHAR(age(ps.tgllahir), 'YY')::int4 <= 39 and ps.objectjeniskelaminfk = 2 then 1 else 0 end) as jumlah3539p,
+                            SUM(case when TO_CHAR(age(ps.tgllahir), 'YY')::int4 >= 40 and TO_CHAR(age(ps.tgllahir), 'YY')::int4 <= 44 and ps.objectjeniskelaminfk = 1 then 1 else 0 end) as jumlah4044l,
+                            SUM(case when TO_CHAR(age(ps.tgllahir), 'YY')::int4 >= 40 and TO_CHAR(age(ps.tgllahir), 'YY')::int4 <= 44 and ps.objectjeniskelaminfk = 2 then 1 else 0 end) as jumlah4044p,
+                            SUM(case when TO_CHAR(age(ps.tgllahir), 'YY')::int4 >= 45 and TO_CHAR(age(ps.tgllahir), 'YY')::int4 <= 49 and ps.objectjeniskelaminfk = 1 then 1 else 0 end) as jumlah4549l,
+                            SUM(case when TO_CHAR(age(ps.tgllahir), 'YY')::int4 >= 45 and TO_CHAR(age(ps.tgllahir), 'YY')::int4 <= 49 and ps.objectjeniskelaminfk = 2 then 1 else 0 end) as jumlah4549p,
+                            SUM(case when TO_CHAR(age(ps.tgllahir), 'YY')::int4 >= 50 and TO_CHAR(age(ps.tgllahir), 'YY')::int4 <= 50 and ps.objectjeniskelaminfk = 1 then 1 else 0 end) as jumlah5054l,
+                            SUM(case when TO_CHAR(age(ps.tgllahir), 'YY')::int4 >= 50 and TO_CHAR(age(ps.tgllahir), 'YY')::int4 <= 54 and ps.objectjeniskelaminfk = 2 then 1 else 0 end) as jumlah5054p,
+                            SUM(case when TO_CHAR(age(ps.tgllahir), 'YY')::int4 >= 55 and TO_CHAR(age(ps.tgllahir), 'YY')::int4 <= 59 and ps.objectjeniskelaminfk = 1 then 1 else 0 end) as jumlah5559l,
+                            SUM(case when TO_CHAR(age(ps.tgllahir), 'YY')::int4 >= 55 and TO_CHAR(age(ps.tgllahir), 'YY')::int4 <= 59 and ps.objectjeniskelaminfk = 2 then 1 else 0 end) as jumlah5559p,
+                            SUM(case when TO_CHAR(age(ps.tgllahir), 'YY')::int4 >= 60 and TO_CHAR(age(ps.tgllahir), 'YY')::int4 <= 64 and ps.objectjeniskelaminfk = 1 then 1 else 0 end) as jumlah6064l,
+                            SUM(case when TO_CHAR(age(ps.tgllahir), 'YY')::int4 >= 60 and TO_CHAR(age(ps.tgllahir), 'YY')::int4 <= 64 and ps.objectjeniskelaminfk = 2 then 1 else 0 end) as jumlah6064p,
+                            SUM(case when TO_CHAR(age(ps.tgllahir), 'YY')::int4 >= 65 and TO_CHAR(age(ps.tgllahir), 'YY')::int4 <= 69 and ps.objectjeniskelaminfk = 1 then 1 else 0 end) as jumlah6569l,
+                            SUM(case when TO_CHAR(age(ps.tgllahir), 'YY')::int4 >= 65 and TO_CHAR(age(ps.tgllahir), 'YY')::int4 <= 69 and ps.objectjeniskelaminfk = 2 then 1 else 0 end) as jumlah6569p,
+                            SUM(case when TO_CHAR(age(ps.tgllahir), 'YY')::int4 >= 70 and TO_CHAR(age(ps.tgllahir), 'YY')::int4 <= 74 and ps.objectjeniskelaminfk = 1 then 1 else 0 end) as jumlah7074l,
+                            SUM(case when TO_CHAR(age(ps.tgllahir), 'YY')::int4 >= 70 and TO_CHAR(age(ps.tgllahir), 'YY')::int4 <= 74 and ps.objectjeniskelaminfk = 2 then 1 else 0 end) as jumlah7074p,
+                            SUM(case when TO_CHAR(age(ps.tgllahir), 'YY')::int4 >= 75 and TO_CHAR(age(ps.tgllahir), 'YY')::int4 <= 79 and ps.objectjeniskelaminfk = 1 then 1 else 0 end) as jumlah7579l,
+                            SUM(case when TO_CHAR(age(ps.tgllahir), 'YY')::int4 >= 75 and TO_CHAR(age(ps.tgllahir), 'YY')::int4 <= 79 and ps.objectjeniskelaminfk = 2 then 1 else 0 end) as jumlah7579p,
+                            SUM(case when TO_CHAR(age(ps.tgllahir), 'YY')::int4 >= 80 and TO_CHAR(age(ps.tgllahir), 'YY')::int4 <= 84 and ps.objectjeniskelaminfk = 1 then 1 else 0 end) as jumlah8084l,
+                            SUM(case when TO_CHAR(age(ps.tgllahir), 'YY')::int4 >= 80 and TO_CHAR(age(ps.tgllahir), 'YY')::int4 <= 84 and ps.objectjeniskelaminfk = 2 then 1 else 0 end) as jumlah8084p,
+                            SUM(case when TO_CHAR(age(ps.tgllahir), 'YY')::int4 >= 85 and ps.objectjeniskelaminfk = 1 then 1 else 0 end) as jumlah85l,
+                            SUM(case when TO_CHAR(age(ps.tgllahir), 'YY')::int4 >= 85 and ps.objectjeniskelaminfk = 2 then 1 else 0 end) as jumlah85p
+                            FROM pasiendaftar_t AS pd
+                            INNER JOIN pasien_m AS ps ON ps.id = pd.nocmfk
+                            INNER JOIN antrianpasiendiperiksa_t AS apd ON apd.noregistrasifk = pd.norec
+                            INNER JOIN ruangan_m AS ru ON ru.id = apd.objectruanganfk
+                            INNER JOIN diagnosapasien_t AS dp ON dp.noregistrasifk = apd.norec
+                            INNER JOIN detaildiagnosapasien_t AS ddp ON ddp.objectdiagnosapasienfk = dp.norec
+                            INNER JOIN diagnosa_m AS d ON d.id = ddp.objectdiagnosafk
+                            LEFT JOIN pegawai_m AS pg ON pg.id = pd.objectpegawaifk
+                            WHERE 
+                                    pd.statusenabled = true
+                                    and pd.kdprofile = $kdProfile
+                                    AND ru.objectdepartemenfk = 18
+                                    and pd.tglregistrasi between '$tglAwal' and '$tglAkhir'
+                            GROUP BY d.kddiagnosa, d.namadiagnosa
+                            ) AS x
+                            GROUP BY kddiagnosa, namadiagnosa,
+                        jumlahkurang1jaml,
+                        jumlahkurang1jamp,
+                        jumlahkurang23jaml,
+                        jumlahkurang23jamp,
+                        jumlah17hl,
+                        jumlah17hp,
+                        jumlah828hl,
+                        jumlah828hp,
+                        jumlah293l,
+                        jumlah293p,
+                        jumlah36l,
+                        jumlah36p,
+                        jumlah611l,
+                        jumlah611p,
+                        jumlah14l,
+                        jumlah14p,
+                        jumlah59l,
+                        jumlah59p,
+                        jumlah1014l,
+                        jumlah1014p,
+                        jumlah1519l,
+                        jumlah1519p,
+                        jumlah2024l,
+                        jumlah2024p,
+                        jumlah2529l,
+                        jumlah2529p,
+                        jumlah2529l,
+                        jumlah2529p,
+                        jumlah2529l,
+                        jumlah2529p,
+                        jumlah3034l,
+                        jumlah3034p,
+                        jumlah3539l,
+                        jumlah3539p,
+                        jumlah4044l,
+                        jumlah4044p,
+                        jumlah4549l,
+                        jumlah4549p,
+                        jumlah5054l,
+                        jumlah5054p,
+                        jumlah5559l,
+                        jumlah5559p,
+                        jumlah6064l,
+                        jumlah6064p,
+                        jumlah6569l,
+                        jumlah6569p,
+                        jumlah7074l,
+                        jumlah7074p,
+                        jumlah7579l,
+                        jumlah7579p,
+                        jumlah8084l,
+                        jumlah8084p,
+                        jumlah85l,
+                        jumlah85p
+                        "));
+
+        $result = array(
+            'detail' => $data,
+            'message' => 'as@maman',
+        );
+        return $this->respond($result);
+    }
+    public function getPelayananRehabV3(Request $request){
+        $kdProfile = (int) $this->getDataKdProfile($request);
+        $KdJenisLapRehab = (int) $this->settingDataFixed('KdJenisLapRehab', $kdProfile);
+        $KdDepartemenInstalasiRehabilitasiMedik = (int) $this->settingDataFixed('KdDepartemenInstalasiRehabilitasiMedik', $kdProfile);
+//        $dataLogin = $request->all();
+//        $data = \DB::table('pasiendaftar_t as pd')
+//            ->JOIN('antrianpasiendiperiksa_t as apd', 'apd.noregistrasifk', '=', 'pd.norec')
+//            ->leftjoin('pelayananpasien_t as pp', 'pp.noregistrasifk', '= ', 'apd.norec')
+//            ->join('ruangan_m as ru', 'ru.id', '=', 'apd.objectruanganfk')
+//            ->join('departemen_m as dpm', 'dpm.id', '=', 'ru.objectdepartemenfk')
+//            ->join('produk_m as prd', 'prd.id', '=', 'pp.produkfk')
+//            ->select('ru.objectdepartemenfk', 'dpm.namadepartemen', 'apd.objectruanganfk', 'ru.namaruangan',
+//                'pp.produkfk', 'prd.id as idproduk', 'prd.namaproduk',
+//                DB::raw('
+//               (case when prd.id = 401322 then \'Inh (Nebulizer)\'
+//                    when prd.id in (401258,401256,401307,401260,401262,401263,401255) then \'Lat. Gerak (Exercise)\'
+//                    when prd.id in (401262,401261) then \'US\'
+//                    when prd.id in (402940,402435) then \'Pijat Bayi\'
+//                    when prd.id = 401270 then \'Senam Hamil\'
+//                    when prd.id = 401274 then \'Terapi Musik\'
+//                    when prd.id in (401275,401329) then \'Deteksi dini Program Psikologi\'
+//                    when prd.id in (401301,401300) then \'Tindakan Sensori Integrasi (SI)\'
+//                    when prd.id in (863,879,401302) then \'Tindakan Okupasi Terapi (OT)\'
+//                    when prd.id in (401305,401304,864) then \'Tindakan Terapi Wicara (TW)\'
+//                    when prd.id = 925 then \'Seleksi\'
+//                    when prd.id = 402867 then \'Follow Up\' else null
+//                    end) as jenislayanan,COUNT(prd.namaproduk) as JmlTindakan')
+//            )
+//            ->groupBy('ru.objectdepartemenfk', 'dpm.namadepartemen', 'apd.objectruanganfk', 'ru.namaruangan', 'pp.produkfk',
+//                'prd.id', 'prd.namaproduk')
+//            ->where('ru.objectdepartemenfk', '=', '28')
+//            ->whereIn('prd.id', [401322, 401258, 401256, 401307, 401260, 401262, 401263, 401255, 401262,
+//                401261, 402940, 402435, 401270, 401274, 401270, 401275, 401329, 401301,
+//                401300, 863, 879, 401302, 401305, 401304, 864, 925, 402867]);
+//
+//        if (isset($request['tglAwal']) && $request['tglAwal'] != "" && $request['tglAwal'] != "undefined") {
+//            $data = $data->where('pd.tglregistrasi', '>=', $request['tglAwal']);
+//        }
+//        if (isset($request['tglAkhir']) && $request['tglAkhir'] != "" && $request['tglAkhir'] != "undefined") {
+//            $tgl = $request['tglAkhir'];
+//            $data = $data->where('pd.tglregistrasi', '<=', $tgl);
+//        }
+//
+//        $data = $data->get();
+//
+//        $result = array(
+//            'data' => $data,
+//            'message' => 'as@cepot',
+//        );
+//        return $this->respond($result);
+
+        //#WIth Mapp
+        $data = \DB::table('pasiendaftar_t as pd')
+            ->JOIN('antrianpasiendiperiksa_t as apd', 'apd.noregistrasifk', '=', 'pd.norec')
+            ->leftjoin('pelayananpasien_t as pp', 'pp.noregistrasifk', '= ', 'apd.norec')
+            ->join('ruangan_m as ru', 'ru.id', '=', 'apd.objectruanganfk')
+            ->join('departemen_m as dpm', 'dpm.id', '=', 'ru.objectdepartemenfk')
+            ->join('produk_m as prd', 'prd.id', '=', 'pp.produkfk')
+            ->join('mapproduktolaporanrl_m as mprl','mprl.produkfk','=','pp.produkfk')
+            ->join('jenislaporan_m as jl','jl.id','=','mprl.objectjenislaporanfk')
+            ->join('kelompoklaporan_m as kl','kl.id','=','mprl.objectkontenlaporanfk')
+            ->select(
+//                'prd.namaproduk',
+                'kl.kelompoklaporan as namaproduk',
+                DB::raw('
+             COUNT(prd.namaproduk) as JmlTindakan')
+            )
+            ->groupBy('kl.kelompoklaporan')
+            ->where('ru.objectdepartemenfk', '=', $KdDepartemenInstalasiRehabilitasiMedik)
+            ->where('jl.id',$KdJenisLapRehab);
+
+
+        if (isset($request['tglAwal']) && $request['tglAwal'] != "" && $request['tglAwal'] != "undefined") {
+            $data = $data->where('pp.tglpelayanan', '>=', $request['tglAwal']);
+        }
+        if (isset($request['tglAkhir']) && $request['tglAkhir'] != "" && $request['tglAkhir'] != "undefined") {
+            $tgl = $request['tglAkhir'];
+            $data = $data->where('pp.tglpelayanan', '<=', $tgl);
+        }
+
+        $data = $data->get();
+
+        $result = array(
+            'data' => $data,
+            'message' => 'as@cepot',
+        );
+        return $this->respond($result);
+    }
+    public function getLaporanRL36Kebidanan(Request $request){
+        $kdProfile = $this->getDataKdProfile($request);
+        $idProfile = (int) $kdProfile;
+        $KdJenisLapKebidanan = (int) $this->settingDataFixed('KdJenisLapKebidanan', $idProfile);
+        $KdRuangKebidanan = explode(',', $this->settingDataFixed('KdRuangKebidanan', $idProfile));
+        $dataLogin = $request->all();
+        $kdListRuanganKebidanan = [];
+        foreach ($KdRuangKebidanan as $item){
+            $kdListRuanganKebidanan [] = (int) $item;
+        }
+        $data = \DB::table('pasiendaftar_t as pd')
+            ->join('antrianpasiendiperiksa_t as apd', 'apd.noregistrasifk', '=', 'pd.norec')
+            ->join('ruangan_m as ru', 'ru.id', '=', 'apd.objectruanganfk')
+            ->join('departemen_m as dpm', 'dpm.id', '=', 'ru.objectdepartemenfk')
+            ->join('pelayananpasien_t as pp', 'pp.noregistrasifk', '=', 'apd.norec')
+            ->join('produk_m as pr', 'pr.id', '=', 'pp.produkfk')
+            ->join('mapproduktolaporanrl_m as mprl','mprl.produkfk','=','pp.produkfk')
+            ->join('jenislaporan_m as jl','jl.id','=','mprl.objectjenislaporanfk')
+            ->join('kelompoklaporan_m as kl','kl.id','=','mprl.objectkontenlaporanfk')
+            ->join('detailjenisproduk_m as djp', 'djp.id', '=', 'pr.objectdetailjenisprodukfk')
+            ->join('jenisproduk_m as jp', 'jp.id', '=', 'djp.objectjenisprodukfk')
+            ->join('asalrujukan_m as ar', 'ar.id', '=', 'apd.objectasalrujukanfk')
+            ->leftjoin ('statuskeluar_m as stk','stk.id','=','pd.objectstatuskeluarfk')
+            ->leftJoin('kelompokproduk_m as kp', 'kp.id', '=', 'jp.objectkelompokprodukfk')
+            ->select( 'pp.tglpelayanan', 'pp.produkfk', 'pr.namaproduk',
+                'apd.objectasalrujukanfk', 'ar.asalrujukan','pd.objectstatuskeluarfk','apd.objectruanganfk',
+                'kl.kelompoklaporan as jenispelayanan'
+            //                DB::raw('(case when pr.id =402494 then \'Persalinan Normal\'
+            //                        when pr.id in (15375,15386,15387,15388,15477) then \'Sectio Caesaria\'
+            //                        else \'-\'
+            //                         end) as jenispelayanan ')
+            )
+            ->where('pd.kdprofile', $idProfile)
+            ->where('jl.id', $KdJenisLapKebidanan)//laporan RL 34
+            ->whereIn('apd.objectruanganfk', $kdListRuanganKebidanan);
+
+
+        if (isset($request['tglAwal']) && $request['tglAwal'] != "" && $request['tglAwal'] != "undefined") {
+            $data = $data->where('pp.tglpelayanan', '>=', $request['tglAwal']);
+        }
+        if (isset($request['tglAkhir']) && $request['tglAkhir'] != "" && $request['tglAkhir'] != "undefined") {
+            $tgl = $request['tglAkhir'];
+            $data = $data->where('pp.tglpelayanan', '<=', $tgl);
+        }
+
+        $data = $data->get();
+
+        $data10 = [];
+        $jml = 0;
+        $rujukanRS = 0;
+        $rujukanBidan = 0;
+        $rujukanPuskes = 0;
+        $rujukanFaskesLain = 0;
+        $jmlMedisHidup = 0;
+        $jmlMedisMati = 0;
+        $jmlTotalMedis = 0;
+        $jmlNonMedisHidup = 0;
+        $jmlNonMedisMati = 0;
+        $jmlTotalNonMedis = 0;
+        $nonRujukanHidup=0;
+        $nonRujukanMati=0;
+        $totalNonRujukan=0;
+        $dirujuk=0;
+        $sama = false;
+
+
+        foreach ($data as $item) {
+            $sama = false;
+            $i = 0;
+            $o = 0;
+            foreach ($data10 as $hideung) {
+                if ($item->jenispelayanan == $data10[$i]['jenispelayanan']) {
+                    $sama = true;
+                    $jml = (float)$hideung['jumlah'] + 1;
+                    $data10[$i]['jumlah'] = $jml;
+
+                    //RS=2, puskes=1, faskeslan=3, non rujikan =5, klinik=3
+                    //statuskeluar --->1 pulang , 2 pindah,3 rajal, 4 rujuk, 5 meningggal
+
+                    if ($item->objectasalrujukanfk == 2) {
+                        $data10[$i]['rujukanRS'] = (float)$hideung['rujukanRS'] + 1;
+                    } else if ($item->objectasalrujukanfk == 1) {
+                        $data10[$i]['rujukanPuskes'] = (float)$hideung['rujukanPuskes'] + 1;
+                    } else if ($item->objectasalrujukanfk == 3 || $item->objectasalrujukanfk ==4) {
+                        $data10[$i]['rujukanFaskesLain'] = (float)$hideung['rujukanFaskesLain'] + 1;
+                    }
+                    if (($item->objectasalrujukanfk == 2 || $item->objectasalrujukanfk == 1 ||$item->objectasalrujukanfk == 3)&& $item->objectstatuskeluarfk==1 ) {
+                        $data10[$i]['jmlMedisHidup'] = (float)$hideung['jmlMedisHidup'] + 1;
+                    } else if (($item->objectasalrujukanfk == 2 || $item->objectasalrujukanfk == 1 ||$item->objectasalrujukanfk == 3)&& $item->objectstatuskeluarfk==5 ) {
+                        $data10[$i]['jmlMedisMati'] = (float)$hideung['jmlMedisMati'] + 1;
+                    }
+                    if (($item->objectasalrujukanfk == 5 ||$item->objectasalrujukanfk == 4) && $item->objectstatuskeluarfk==1) {
+                        $data10[$i]['jmlNonMedisHidup'] = (float)$hideung['jmlNonMedisHidup'] + 1;
+                    } else if (($item->objectasalrujukanfk == 5 ||$item->objectasalrujukanfk == 4) && $item->objectstatuskeluarfk==5) {
+                        $data10[$i]['jmlNonMedisMati'] = (float)$hideung['jmlNonMedisMati'] + 1;
+                    }  if ($item->objectstatuskeluarfk == 4) {
+                        $data10[$i]['dirujuk'] = (float)$hideung['dirujuk'] + 1;
+                    }
+
+                    $data10[$i]['jmlTotalMedis'] = $data10[$i]['rujukanRS'] + $data10[$i]['rujukanPuskes']+$data10[$i]['rujukanFaskesLain'] + $data10[$i]['jmlMedisHidup']+ $data10[$i]['jmlMedisMati'];
+                    $data10[$i]['jmlTotalNonMedis'] = $data10[$i]['jmlNonMedisHidup'] + $data10[$i]['jmlNonMedisMati'];
+
+                }
+                $i = $i + 1;
+            }
+
+            if ($sama == false) {
+                if ($item->objectasalrujukanfk == 2) {
+                    $rujukanRS = 1;$rujukanBidan = 0;$rujukanPuskes = 0;$rujukanFaskesLain = 0;$jmlMedisHidup = 0;$jmlMedisMati = 0;
+                    $jmlTotalMedis = 0;$jmlNonMedisHidup = 0;$jmlNonMedisMati = 0;$jmlTotalNonMedis = 0;$nonRujukanHidup=0;$nonRujukanMati=0;
+                    $totalNonRujukan=0;$dirujuk=0;
+                } else if ($item->objectasalrujukanfk == 1) {
+                    $rujukanRS = 0;$rujukanBidan = 0;$rujukanPuskes = 1;$rujukanFaskesLain = 0;$jmlMedisHidup = 0;$jmlMedisMati = 0;
+                    $jmlTotalMedis = 0;$jmlNonMedisHidup = 0;$jmlNonMedisMati = 0;$jmlTotalNonMedis = 0;$nonRujukanHidup=0;$nonRujukanMati=0;
+                    $totalNonRujukan=0;$dirujuk=0;
+                } else if ($item->objectasalrujukanfk == 3 || $item->objectasalrujukanfk ==4) {
+                    $rujukanRS = 0;$rujukanBidan = 0;$rujukanPuskes = 0;$rujukanFaskesLain = 1;$jmlMedisHidup = 0;$jmlMedisMati = 0;
+                    $jmlTotalMedis = 0;$jmlNonMedisHidup = 0;$jmlNonMedisMati = 0;$jmlTotalNonMedis = 0;$nonRujukanHidup=0;$nonRujukanMati=0;
+                    $totalNonRujukan=0;$dirujuk=0;
+                }  if (($item->objectasalrujukanfk == 2 || $item->objectasalrujukanfk == 1 ||$item->objectasalrujukanfk == 3)&& $item->objectstatuskeluarfk==1 ) {
+                    $rujukanRS = 0;$rujukanBidan = 0;$rujukanPuskes = 0;$rujukanFaskesLain = 0;$jmlMedisHidup = 1;$jmlMedisMati = 0;
+                    $jmlTotalMedis = 0;$jmlNonMedisHidup = 0;$jmlNonMedisMati = 0;$jmlTotalNonMedis = 0;$nonRujukanHidup=0;$nonRujukanMati=0;
+                    $totalNonRujukan=0;$dirujuk=0;
+                } else if (($item->objectasalrujukanfk == 2 || $item->objectasalrujukanfk == 1 ||$item->objectasalrujukanfk == 3)&& $item->objectstatuskeluarfk==5 ) {
+                    $rujukanRS = 0;$rujukanBidan = 0;$rujukanPuskes = 0;$rujukanFaskesLain = 0;$jmlMedisHidup = 0;$jmlMedisMati = 1;
+                    $jmlTotalMedis = 0;$jmlNonMedisHidup = 0;$jmlNonMedisMati = 0;$jmlTotalNonMedis = 0;$nonRujukanHidup=0;$nonRujukanMati=0;
+                    $totalNonRujukan=0;$dirujuk=0;
+                }
+                if (($item->objectasalrujukanfk == 5 ||$item->objectasalrujukanfk == 4)&& $item->objectstatuskeluarfk==1) {
+                    $rujukanRS = 0;$rujukanBidan = 0;$rujukanPuskes = 0;$rujukanFaskesLain = 0;$jmlMedisHidup = 0;$jmlMedisMati = 0;
+                    $jmlTotalMedis = 0;$jmlNonMedisHidup = 1;$jmlNonMedisMati = 0;$jmlTotalNonMedis = 0;$nonRujukanHidup=0;$nonRujukanMati=0;
+                    $totalNonRujukan=0;$dirujuk=0;
+                } else if (($item->objectasalrujukanfk == 5 ||$item->objectasalrujukanfk == 4) && $item->objectstatuskeluarfk==5) {
+                    $rujukanRS = 0;$rujukanBidan = 0;$rujukanPuskes = 0;$rujukanFaskesLain = 0;$jmlMedisHidup = 0;$jmlMedisMati = 0;
+                    $jmlTotalMedis = 0;$jmlNonMedisHidup = 0;$jmlNonMedisMati = 1;$jmlTotalNonMedis = 0;$nonRujukanHidup=0;$nonRujukanMati=0;
+                    $totalNonRujukan=0;$dirujuk=0;
+                }  if ($item->objectstatuskeluarfk == 4) {
+                    $rujukanRS = 0;$rujukanBidan = 0;$rujukanPuskes = 0;$rujukanFaskesLain = 0;$jmlMedisHidup = 0;$jmlMedisMati = 0;
+                    $jmlTotalMedis = 0;$jmlNonMedisHidup = 0;$jmlNonMedisMati = 0;$jmlTotalNonMedis = 0;$nonRujukanHidup=0;$nonRujukanMati=0;
+                    $totalNonRujukan=0;$dirujuk=1;
+                }
+
+                $data10[] = array(
+            //                    'produkfk' => $item->produkfk,
+                    'jenispelayanan' => $item->jenispelayanan,
+                    'jumlah' => 1,
+
+                    'rujukanRS'=> $rujukanRS,
+                    'rujukanFaskesLain'=> $rujukanFaskesLain ,
+                    'rujukanPuskes'=> $rujukanPuskes ,
+                    'rujukanBidan'=> 0 ,
+                    'jmlMedisHidup'=> $jmlMedisHidup,
+                    'jmlMedisMati'=> $jmlMedisMati,
+                    'jmlTotalMedis'=>$jmlTotalMedis ,
+                    'jmlNonMedisHidup'=> $jmlNonMedisHidup ,
+                    'jmlNonMedisMati'=> $jmlNonMedisMati,
+                    'jmlTotalNonMedis'=> $jmlTotalNonMedis,
+                    'nonRujukanHidup'=> $nonRujukanHidup,
+                    'nonRujukanMati'=> $nonRujukanMati,
+                    'totalNonRujukan'=> $totalNonRujukan,
+                    'dirujuk'=> $dirujuk,
+                    'jmlTotalMedis'=>$jmlTotalMedis,
+                    'jmlTotalNonMedis'=>$jmlTotalNonMedis,
+                );
+            }
+
+            foreach ($data10 as $key => $row) {
+                $count[$key] = $row['jumlah'];
+            }
+
+            array_multisort($count, SORT_DESC, $data10);
+        }
+        $result = array(
+            'data' => $data10,
+            'message' => 'er@epic',
+
+        );
+
+        return $this->respond($result);
+    }
+
+    public function getLaporanRL37Neonatal(Request $request){
+        $kdProfile = $this->getDataKdProfile($request);
+        $idProfile = (int) $kdProfile;
+        $KdJenisLapPerinatologi = (int)$this->settingDataFixed('KdJenisLapPerinatologi', $idProfile);
+        $KdRuangKebidanan = explode(',', $this->settingDataFixed('KdRuangKebidanan', $idProfile));
+        $kdListRuanganKebidanan = [];
+        foreach ($KdRuangKebidanan as $item){
+            $kdListRuanganKebidanan [] = (int) $item;
+        }
+        $dataLogin = $request->all();
+        $data = \DB::table('pasiendaftar_t as pd')
+            ->join('antrianpasiendiperiksa_t as apd', 'apd.noregistrasifk', '=', 'pd.norec')
+            ->join('ruangan_m as ru', 'ru.id', '=', 'apd.objectruanganfk')
+            ->join('departemen_m as dpm', 'dpm.id', '=', 'ru.objectdepartemenfk')
+            ->join('pelayananpasien_t as pp', 'pp.noregistrasifk', '=', 'apd.norec')
+            ->join('produk_m as pr', 'pr.id', '=', 'pp.produkfk')
+            ->join('mapproduktolaporanrl_m as mprl','mprl.produkfk','=','pp.produkfk')
+            ->join('jenislaporan_m as jl','jl.id','=','mprl.objectjenislaporanfk')
+            ->join('kelompoklaporan_m as kl','kl.id','=','mprl.objectkontenlaporanfk')
+            ->join('detailjenisproduk_m as djp', 'djp.id', '=', 'pr.objectdetailjenisprodukfk')
+            ->join('jenisproduk_m as jp', 'jp.id', '=', 'djp.objectjenisprodukfk')
+            ->join('asalrujukan_m as ar', 'ar.id', '=', 'apd.objectasalrujukanfk')
+            ->leftjoin ('statuskeluar_m as stk','stk.id','=','pd.objectstatuskeluarfk')
+            ->leftJoin('kelompokproduk_m as kp', 'kp.id', '=', 'jp.objectkelompokprodukfk')
+            ->select( 'pp.tglpelayanan', 'pp.produkfk', 'pr.namaproduk',
+                'apd.objectasalrujukanfk', 'ar.asalrujukan','pd.objectstatuskeluarfk','apd.objectruanganfk',
+                'kl.kelompoklaporan as jenispelayanan'
+                //                DB::raw('(case when pr.id =402494 then \'Persalinan Normal\'
+                //                        when pr.id in (15375,15386,15387,15388,15477) then \'Sectio Caesaria\'
+                //                        else \'-\'
+                //                         end) as jenispelayanan ')
+            )
+                //            ->where('dpm.id', 24)
+            ->where('pd.kdprofile', $idProfile)
+            ->where('jl.id', $KdJenisLapPerinatologi)//laporan RL 35
+            ->whereIn('apd.objectruanganfk', $kdListRuanganKebidanan);
+
+
+        if (isset($request['tglAwal']) && $request['tglAwal'] != "" && $request['tglAwal'] != "undefined") {
+            $data = $data->where('pp.tglpelayanan', '>=', $request['tglAwal']);
+        }
+        if (isset($request['tglAkhir']) && $request['tglAkhir'] != "" && $request['tglAkhir'] != "undefined") {
+            $tgl = $request['tglAkhir'];
+            $data = $data->where('pp.tglpelayanan', '<=', $tgl);
+        }
+
+        $data = $data->get();
+
+        $data10 = [];
+        $jml = 0;
+        $rujukanRS = 0;
+        $rujukanBidan = 0;
+        $rujukanPuskes = 0;
+        $rujukanFaskesLain = 0;
+        $jmlMedisHidup = 0;
+        $jmlMedisMati = 0;
+        $jmlTotalMedis = 0;
+        $jmlNonMedisHidup = 0;
+        $jmlNonMedisMati = 0;
+        $jmlTotalNonMedis = 0;
+        $nonRujukanHidup=0;
+        $nonRujukanMati=0;
+        $totalNonRujukan=0;
+        $dirujuk=0;
+        $sama = false;
+
+
+        foreach ($data as $item) {
+            $sama = false;
+            $i = 0;
+            $o = 0;
+            foreach ($data10 as $hideung) {
+                if ($item->jenispelayanan == $data10[$i]['jenispelayanan']) {
+                    $sama = true;
+                    $jml = (float)$hideung['jumlah'] + 1;
+                    $data10[$i]['jumlah'] = $jml;
+
+                    //RS=2, puskes=1, faskeslan=3, non rujikan =5, klinik=3
+                    //statuskeluar --->1 pulang , 2 pindah,3 rajal, 4 rujuk, 5 meningggal
+
+                    if ($item->objectasalrujukanfk == 2) {
+                        $data10[$i]['rujukanRS'] = (float)$hideung['rujukanRS'] + 1;
+                    } else if ($item->objectasalrujukanfk == 1) {
+                        $data10[$i]['rujukanPuskes'] = (float)$hideung['rujukanPuskes'] + 1;
+                    } else if ($item->objectasalrujukanfk == 3 || $item->objectasalrujukanfk ==4) {
+                        $data10[$i]['rujukanFaskesLain'] = (float)$hideung['rujukanFaskesLain'] + 1;
+                    }
+                    if (($item->objectasalrujukanfk == 2 || $item->objectasalrujukanfk == 1 ||$item->objectasalrujukanfk == 3)&& $item->objectstatuskeluarfk==1 ) {
+                        $data10[$i]['jmlMedisHidup'] = (float)$hideung['jmlMedisHidup'] + 1;
+                    } else if (($item->objectasalrujukanfk == 2 || $item->objectasalrujukanfk == 1 ||$item->objectasalrujukanfk == 3)&& $item->objectstatuskeluarfk==5 ) {
+                        $data10[$i]['jmlMedisMati'] = (float)$hideung['jmlMedisMati'] + 1;
+                    }
+                    if (($item->objectasalrujukanfk == 5 ||$item->objectasalrujukanfk == 4) && $item->objectstatuskeluarfk==1) {
+                        $data10[$i]['jmlNonMedisHidup'] = (float)$hideung['jmlNonMedisHidup'] + 1;
+                    } else if (($item->objectasalrujukanfk == 5 ||$item->objectasalrujukanfk == 4) && $item->objectstatuskeluarfk==5) {
+                        $data10[$i]['jmlNonMedisMati'] = (float)$hideung['jmlNonMedisMati'] + 1;
+                    }  if ($item->objectstatuskeluarfk == 4) {
+                        $data10[$i]['dirujuk'] = (float)$hideung['dirujuk'] + 1;
+                    }
+
+                    $data10[$i]['jmlTotalMedis'] = $data10[$i]['rujukanRS'] + $data10[$i]['rujukanPuskes']+$data10[$i]['rujukanFaskesLain'] + $data10[$i]['jmlMedisHidup']+ $data10[$i]['jmlMedisMati'];
+                    $data10[$i]['jmlTotalNonMedis'] = $data10[$i]['jmlNonMedisHidup'] + $data10[$i]['jmlNonMedisMati'];
+
+                }
+                $i = $i + 1;
+            }
+
+            if ($sama == false) {
+                if ($item->objectasalrujukanfk == 2) {
+                    $rujukanRS = 1;$rujukanBidan = 0;$rujukanPuskes = 0;$rujukanFaskesLain = 0;$jmlMedisHidup = 0;$jmlMedisMati = 0;
+                    $jmlTotalMedis = 0;$jmlNonMedisHidup = 0;$jmlNonMedisMati = 0;$jmlTotalNonMedis = 0;$nonRujukanHidup=0;$nonRujukanMati=0;
+                    $totalNonRujukan=0;$dirujuk=0;
+                } else if ($item->objectasalrujukanfk == 1) {
+                    $rujukanRS = 0;$rujukanBidan = 0;$rujukanPuskes = 1;$rujukanFaskesLain = 0;$jmlMedisHidup = 0;$jmlMedisMati = 0;
+                    $jmlTotalMedis = 0;$jmlNonMedisHidup = 0;$jmlNonMedisMati = 0;$jmlTotalNonMedis = 0;$nonRujukanHidup=0;$nonRujukanMati=0;
+                    $totalNonRujukan=0;$dirujuk=0;
+                } else if ($item->objectasalrujukanfk == 3 || $item->objectasalrujukanfk ==4) {
+                    $rujukanRS = 0;$rujukanBidan = 0;$rujukanPuskes = 0;$rujukanFaskesLain = 1;$jmlMedisHidup = 0;$jmlMedisMati = 0;
+                    $jmlTotalMedis = 0;$jmlNonMedisHidup = 0;$jmlNonMedisMati = 0;$jmlTotalNonMedis = 0;$nonRujukanHidup=0;$nonRujukanMati=0;
+                    $totalNonRujukan=0;$dirujuk=0;
+                }  if (($item->objectasalrujukanfk == 2 || $item->objectasalrujukanfk == 1 ||$item->objectasalrujukanfk == 3)&& $item->objectstatuskeluarfk==1 ) {
+                    $rujukanRS = 0;$rujukanBidan = 0;$rujukanPuskes = 0;$rujukanFaskesLain = 0;$jmlMedisHidup = 1;$jmlMedisMati = 0;
+                    $jmlTotalMedis = 0;$jmlNonMedisHidup = 0;$jmlNonMedisMati = 0;$jmlTotalNonMedis = 0;$nonRujukanHidup=0;$nonRujukanMati=0;
+                    $totalNonRujukan=0;$dirujuk=0;
+                } else if (($item->objectasalrujukanfk == 2 || $item->objectasalrujukanfk == 1 ||$item->objectasalrujukanfk == 3)&& $item->objectstatuskeluarfk==5 ) {
+                    $rujukanRS = 0;$rujukanBidan = 0;$rujukanPuskes = 0;$rujukanFaskesLain = 0;$jmlMedisHidup = 0;$jmlMedisMati = 1;
+                    $jmlTotalMedis = 0;$jmlNonMedisHidup = 0;$jmlNonMedisMati = 0;$jmlTotalNonMedis = 0;$nonRujukanHidup=0;$nonRujukanMati=0;
+                    $totalNonRujukan=0;$dirujuk=0;
+                }
+                if (($item->objectasalrujukanfk == 5 ||$item->objectasalrujukanfk == 4)&& $item->objectstatuskeluarfk==1) {
+                    $rujukanRS = 0;$rujukanBidan = 0;$rujukanPuskes = 0;$rujukanFaskesLain = 0;$jmlMedisHidup = 0;$jmlMedisMati = 0;
+                    $jmlTotalMedis = 0;$jmlNonMedisHidup = 1;$jmlNonMedisMati = 0;$jmlTotalNonMedis = 0;$nonRujukanHidup=0;$nonRujukanMati=0;
+                    $totalNonRujukan=0;$dirujuk=0;
+                } else if (($item->objectasalrujukanfk == 5 ||$item->objectasalrujukanfk == 4) && $item->objectstatuskeluarfk==5) {
+                    $rujukanRS = 0;$rujukanBidan = 0;$rujukanPuskes = 0;$rujukanFaskesLain = 0;$jmlMedisHidup = 0;$jmlMedisMati = 0;
+                    $jmlTotalMedis = 0;$jmlNonMedisHidup = 0;$jmlNonMedisMati = 1;$jmlTotalNonMedis = 0;$nonRujukanHidup=0;$nonRujukanMati=0;
+                    $totalNonRujukan=0;$dirujuk=0;
+                }  if ($item->objectstatuskeluarfk == 4) {
+                    $rujukanRS = 0;$rujukanBidan = 0;$rujukanPuskes = 0;$rujukanFaskesLain = 0;$jmlMedisHidup = 0;$jmlMedisMati = 0;
+                    $jmlTotalMedis = 0;$jmlNonMedisHidup = 0;$jmlNonMedisMati = 0;$jmlTotalNonMedis = 0;$nonRujukanHidup=0;$nonRujukanMati=0;
+                    $totalNonRujukan=0;$dirujuk=1;
+                }
+
+                $data10[] = array(
+                //                    'produkfk' => $item->produkfk,
+                    'jenispelayanan' => $item->jenispelayanan,
+                    'jumlah' => 1,
+
+                    'rujukanRS'=> $rujukanRS,
+                    'rujukanFaskesLain'=> $rujukanFaskesLain ,
+                    'rujukanPuskes'=> $rujukanPuskes ,
+                    'rujukanBidan'=> 0 ,
+                    'jmlMedisHidup'=> $jmlMedisHidup,
+                    'jmlMedisMati'=> $jmlMedisMati,
+                    'jmlTotalMedis'=>$jmlTotalMedis ,
+                    'jmlNonMedisHidup'=> $jmlNonMedisHidup ,
+                    'jmlNonMedisMati'=> $jmlNonMedisMati,
+                    'jmlTotalNonMedis'=> $jmlTotalNonMedis,
+                    'nonRujukanHidup'=> $nonRujukanHidup,
+                    'nonRujukanMati'=> $nonRujukanMati,
+                    'totalNonRujukan'=> $totalNonRujukan,
+                    'dirujuk'=> $dirujuk,
+
+                );
+            }
+
+            foreach ($data10 as $key => $row) {
+                $count[$key] = $row['jumlah'];
+            }
+
+            array_multisort($count, SORT_DESC, $data10);
+        }
+        $result = array(
+            'data' => $data10,
+            'message' => 'er@epic',
+
+        );
+
+        return $this->respond($result);
+    }
+
+    public function getPemeriksaanLabNew(Request $request){
+        $kdProfile = (int) $this->getDataKdProfile($request);
+        $KdJenisLapLaboratorium = (int) $this->settingDataFixed('KdJenisLapLaboratorium', $kdProfile);
+        $KdDepartemenInstalasiLaboratorium = (int) $this->settingDataFixed('KdDepartemenInstalasiLaboratorium',$kdProfile);
+        $dataLogin = $request->all();
+        $data = \DB::table('pasiendaftar_t as pd')
+            ->JOIN('antrianpasiendiperiksa_t as apd', 'apd.noregistrasifk', '=', 'pd.norec')
+            ->join('pasien_m as pm', 'pm.id', '=', 'pd.nocmfk')
+            ->leftjoin('pelayananpasien_t as pp', 'pp.noregistrasifk', '= ', 'apd.norec')
+            ->join('ruangan_m as ru', 'ru.id', '=', 'apd.objectruanganfk')
+            ->join('departemen_m as dpm', 'dpm.id', '=', 'ru.objectdepartemenfk')
+            ->join('produk_m as prd', 'prd.id', '=', 'pp.produkfk')
+            ->join('mapproduktolaporanrl_m as mprl','mprl.produkfk','=','pp.produkfk')
+            ->join('jenislaporan_m as jl','jl.id','=','mprl.objectjenislaporanfk')
+            ->join('kelompoklaporan_m as kl','kl.id','=','mprl.objectkontenlaporanfk')
+            ->select(
+            //                'prd.namaproduk',
+                'kl.kelompoklaporan as namaproduk',
+                'pm.objectjeniskelaminfk',
+                DB::raw('COUNT(DISTINCT pd.norec) as jmlpasien'),
+                DB::raw('COUNT(prd.namaproduk) as jmlproduk')
+            )
+            ->groupBy('kl.kelompoklaporan','pm.objectjeniskelaminfk')
+            ->where('ru.objectdepartemenfk', '=', $KdDepartemenInstalasiLaboratorium)
+            ->where('pd.kdprofile', $kdProfile)
+            ->where('jl.id',$KdJenisLapLaboratorium)
+            ->whereBetween('pd.tglregistrasi', [$request['tglAwal'], $request['tglAkhir']])
+            ->get();
+
+            // return $this->respond($data);
+        
+            
+        $jumlahPasien = [];
+        foreach ($data as $pasien) {
+            if (!isset($jumlahPasien[$pasien->namaproduk])) {
+                $jumlahPasien[$pasien->namaproduk] = (object)[
+                    'namaproduk' => $pasien->namaproduk,
+                    'jmlpasien' => $pasien->jmlpasien,
+                    'jmlproduk' => $pasien->jmlproduk,
+                    'jmlproduk_lk' => 0,
+                    'jmlproduk_pr' => 0,
+                    'rata_lk' => 0,
+                    'rata_pr' => 0
+                ];
+            }
+        
+            // Gender-specific counts and averages
+            if ($pasien->objectjeniskelaminfk == 1) {
+                $jumlahPasien[$pasien->namaproduk]->jmlproduk_lk += $pasien->jmlproduk;
+                $jumlahPasien[$pasien->namaproduk]->rata_lk = number_format($pasien->jmlproduk / max(1, $pasien->jmlpasien), 2, '.', '');
+            }
+        
+            if ($pasien->objectjeniskelaminfk == 2) {
+                $jumlahPasien[$pasien->namaproduk]->jmlproduk_pr += $pasien->jmlproduk;
+                $jumlahPasien[$pasien->namaproduk]->rata_pr = number_format($pasien->jmlproduk / max(1, $pasien->jmlpasien), 2, '.', '');
+            }
+
+            if ($pasien->objectjeniskelaminfk == 0) {
+                $jumlahPasien[$pasien->namaproduk]->jmlproduk_lk += $pasien->jmlproduk;
+                $jumlahPasien[$pasien->namaproduk]->rata_lk = number_format($pasien->jmlproduk / max(1, $pasien->jmlpasien), 2, '.', '');
+            }
+        }
+
+        $data = array_values($jumlahPasien);
+
+        $result = array(
+            'data' => $data,
+            'message' => 'as@cepot',
+        );
+        return $this->respond($result);
+    }
+
+    public function getKetersediaanTTRL(Request $request)
+    {
+        $kdProfile = $this->getDataKdProfile($request);
+        $paramRuangan = '';
+        if (isset($request['namaruangan']) && $request['namaruangan'] != 'undefined' && $request['namaruangan'] != '') {
+            $paramRuangan = " and ru.namaruangan ilike '%" . $request['namaruangan'] . "%'";
+        }
+        $paramKelas = '';
+        if (isset($request['kelas']) && $request['kelas'] != 'undefined' && $request['kelas'] != '') {
+            $paramKelas = " and kl.namakelas ilike '%" . $request['kelas'] . "%'";
+        }
+
+        $data = DB::select(DB::raw("
+            select x.kodekelas,
+            x.namakelas,x.koderuang,x.namaruang,sum(x.tersedia) as tersedia,sum(x.tersediapria) as tersediapria,
+            sum(x.tersediawanita) as tersediawanita,sum(x.tersediapriawanita) as tersediapriawanita,
+            sum(x.kapasitas) as kapasitas
+
+            from (SELECT
+                    CASE WHEN kmr.kodeexternal IS NOT NULL THEN kmr.kodeexternal ELSE kl.namaexternal END AS kodekelas,
+                    ru.ID AS koderuang,
+                    CASE WHEN   kmr.kodeexternal IS NOT NULL THEN  kmr.kodeexternal ELSE kl.namakelas END AS namakelas,
+                    ru.namaruangan AS namaruang,
+                    0 AS tersediapria,
+                    0 AS tersediawanita,
+                    0 AS tersediapriawanita,
+                    COUNT ( tt.ID ) AS kapasitas,
+                    SUM ( CASE WHEN sb.ID = 2 THEN 1 ELSE 0 END ) AS tersedia 
+                        FROM tempattidur_m AS tt
+                        INNER JOIN statusbed_m AS sb ON sb. ID = tt.objectstatusbedfk
+                        INNER JOIN kamar_m AS kmr ON kmr. ID = tt.objectkamarfk
+                        INNER JOIN kelas_m AS kl ON kl. ID = kmr.objectkelasfk
+                        INNER JOIN ruangan_m AS ru ON ru. ID = kmr.objectruanganfk
+                        WHERE tt.statusenabled = TRUE
+                        AND kmr.statusenabled = TRUE
+                        $paramRuangan
+                        $paramKelas
+                        GROUP BY 
+                        kl.namakelas,ru.id,kl.namaexternal,
+                        ru.namaruangan, kmr.kodeexternal
+
+            ) as x group by  x.kodekelas,
+            x.namakelas,x.koderuang,x.namaruang
+        "));
+
+        // Tambahkan kolom terpakai untuk setiap data
+        foreach ($data as $item) {
+            $item->terpakai = (int)$item->kapasitas - (int)$item->tersedia;
+        }
+
+        return $this->respond($data);
+    }
+    public function getRL319CaraBayar(Request $request){
+        $kdProfile = (int) $this->getDataKdProfile($request);
+        $KdJenisLapCaraBayar = (int) $this->settingDataFixed('KdJenisLapCaraBayar', $kdProfile);
+        $dataLogin = $request->all();
+        $data = \DB::table('pasiendaftar_t as pd ')
+            ->join('pasien_m as p', 'p.id', '=', 'pd.nocmfk')
+            ->join('antrianpasiendiperiksa_t as apd', 'pd.norec', '=', 'apd.noregistrasifk')
+            ->leftJoin('strukbuktipenerimaan_t as sbm', 'sbm.norec', '=', 'pd.nosbmlastfk')
+            ->leftJoin('strukbuktipenerimaancarabayar_t as sbmcb', 'sbmcb.nosbmfk', '=', 'sbm.norec')
+//            ->leftJoin('ruangan_m as ru', 'ru.id', '=', 'pd.objectruanganlastfk')
+            ->leftJoin('ruangan_m as ru', 'ru.id', '=', 'apd.objectruanganfk')
+            ->leftJoin('kelompokpasien_m as kp', 'kp.id', '=', 'pd.objectkelompokpasienlastfk')
+            ->leftJoin('departemen_m as dept', 'dept.id', '=', 'ru.objectdepartemenfk')
+            ->leftJoin('jeniskelamin_m as jk', 'jk.id', '=', 'p.objectjeniskelaminfk')
+            ->leftJoin('kelas_m as kel', 'kel.id', '=', 'pd.objectkelasfk')
+            ->leftJoin('carabayar_m as cb', 'cb.id', '=', 'sbmcb.objectcarabayarfk')
+            ->select('pd.tglregistrasi', 'p.nocm', 'pd.noregistrasi', 'ru.namaruangan', 'p.namapasien', 'kp.id', 'kp.kelompokpasien as kdekelompokpasien', 'pd.tglpulang as tglpulang',
+                'pd.statuspasien', 'jk.jeniskelamin', 'p.tgllahir as tglLahir', 'kel.namakelas', 'pd.nosbmlastfk', 'cb.carabayar', 'ru.objectdepartemenfk as kddepartemen',
+               DB::raw('EXTRACT(YEAR FROM current_date) - EXTRACT(YEAR FROM tgllahir) as umur,
+                        (case when kp.id in (2,4,10,19,20) then \'Asuransi JKN (BPJS Kesehatan)\'
+                         when kp.id = 8 then \'Asuransi Pemerintah Daerah (Jamkesda)\'
+                         when kp.id in (3, 5, 22) then \'Asuransi Swasta\'
+                         when kp.id = 6 then \'Perjanjian\'
+                         when kp.id = 1 then \'Membayar Sendiri\'
+                         else \'Lain-lain\' end) as golbayar,
+                         (case when kp.id in (2,4,10,19,20) then \'2.1\'
+                          when kp.id = 8 then \'2.2\'
+                          when kp.id in (3, 5) then \'2.3\'
+                          when kp.id = 6 then \'3\'
+                          when kp.id = 1 then \'1\'
+                          else \'-\' end) as idbayar')
+
+           )
+
+            //     DB::raw('YEAR(GETDATE()) - YEAR(tgllahir) as umur,
+            //              (case when kp.id in (2,4,10) then \'Asuransi BPJS\'
+            //               when kp.id = 8 then \'Jamkesda\'
+            //               when kp.id in (3, 5) then \'Asuransi Swasta\'
+            //               when kp.id = 6 then \'Perjanjian\'
+            //               when kp.id = 1 then \'Membayar Sendiri\'
+            //               else null end) as golbayar,
+            //               (case when kp.id in (2,4,10) then \'2.1\'
+            //               when kp.id = 8 then \'2.2\'
+            //                when kp.id in (3, 5) then \'2.3\'
+            //                when kp.id = 6 then \'3\'
+            //                when kp.id = 1 then \'1\'
+            //                else null end) as idbayar')
+
+            // )
+            ->groupBy('pd.tglregistrasi', 'p.nocm', 'pd.noregistrasi', 'ru.namaruangan', 'p.namapasien',
+                'kp.kelompokpasien', 'pd.tglpulang', 'pd.statuspasien', 'jk.jeniskelamin', 'p.tgllahir',
+                'pd.nosbmlastfk', 'cb.carabayar', 'kel.namakelas', 'kp.id', 'ru.objectdepartemenfk')
+            ->where('pd.kdprofile', $kdProfile)
+            ->where('kp.id','<>',6);
+
+        if (isset($request['tglAwal']) && $request['tglAwal'] != "" && $request['tglAwal'] != "undefined") {
+            $data = $data->where('pd.tglregistrasi', '>=', $request['tglAwal']);
+        }
+        if (isset($request['tglAkhir']) && $request['tglAkhir'] != "" && $request['tglAkhir'] != "undefined") {
+            $tgl = $request['tglAkhir'];
+            $data = $data->where('pd.tglregistrasi', '<=', $tgl);
+        }
+        $data = $data->get();
+
+        $data10 = [];
+        $jml = 0;
+        $sama = false;
+        $pasienKeluarRI = 0;
+        $pasienDirawatRI = 0;
+        $pasienRawatJalan=0;
+        $pasienLab = 0;
+        $pasienRad = 0;
+        $pasienLain = 0;
+
+        foreach ($data as $item) {
+            $sama = false;
+            $i = 0;
+            foreach ($data10 as $hideung) {
+                if ($item->golbayar == $data10[$i]['golbayar']) {
+                    $sama = true;
+                    $jml = (float)$hideung['jumlah'] + 1;
+                    $data10[$i]['jumlah'] = $jml;
+//                  Pasien RI Masih Dirawat
+                    if ( $item->tglpulang == null && $item->kddepartemen == 16) {
+                        $data10[$i]['pasienDirawatRI'] = (float)$hideung['pasienDirawatRI'] + 1;
+                    } else if ($item->tglpulang != null && $item->kddepartemen == 16) {
+                        $data10[$i]['pasienKeluarRI'] = (float)$hideung['pasienKeluarRI'] + 1;
+                    }
+//                    else if ( $item->kddepartemen == 18  ||$item->kddepartemen == 27||$item->kddepartemen ==3) {
+//                        $data10[$i]['pasienRawatJalan'] = (float)$hideung['pasienRawatJalan'] + 1;
+//                    }
+                    else if ( $item->kddepartemen == 27) {
+                        $data10[$i]['pasienRad'] = (float)$hideung['pasienRad'] + 1;
+                    } else if ($item->kddepartemen == 3) {
+                        $data10[$i]['pasienLab'] = (float)$hideung['pasienLab'] + 1;
+                    } else if ($item->kddepartemen != 3 && $item->kddepartemen != 27 && $item->kddepartemen!=16) {
+                        $data10[$i]['pasienLain'] = (float)$hideung['pasienLain'] + 1;
+                    }
+                    $data10[$i]['pasienRawatJalan'] = $data10[$i]['pasienLain'] + $data10[$i]['pasienRad']+ $data10[$i]['pasienLab'];
+                }
+                $i = $i + 1;
+            }
+
+            if ($sama == false) {
+//              Pasien RI Masih Dirawat
+//                if ( $item->tglpulang == null && $item->kddepartemen == 16) {
+//                    $pasienKeluarRI = 0; $pasienDirawatRI = 1; $pasienRawatJalan=0; $pasienLab = 0;
+//                    $pasienRad = 0;$pasienLain = 0;
+//                } else if ($item->tglpulang != null && $item->kddepartemen == 16) {
+//                    $pasienKeluarRI = 1; $pasienDirawatRI = 0; $pasienRawatJalan=0; $pasienLab = 0;
+//                    $pasienRad = 0;$pasienLain = 0;
+//                }
+////               else if ( $item->kddepartemen == 18 &&$item->kddepartemen == 27&&$item->kddepartemen ==3) {
+////                    $pasienKeluarRI = 0; $pasienDirawatRI = 0; $pasienRawatJalan=1; $pasienLab = 0;
+////                    $pasienRad = 0;$pasienLain = 0;
+////                }
+//                else if ( $item->kddepartemen == 27) {
+//                    $pasienKeluarRI = 0; $pasienDirawatRI = 0; $pasienRawatJalan=0; $pasienLab = 1;
+//                    $pasienRad = 0;$pasienLain = 0;
+//                } else if ($item->kddepartemen == 3) {
+//                    $pasienKeluarRI = 0; $pasienDirawatRI = 0; $pasienRawatJalan=0; $pasienLab = 1;
+//                    $pasienRad = 0;$pasienLain = 0;
+//                } else if ($item->kddepartemen != 3 && $item->kddepartemen != 27 && $item->kddepartemen!=16) {
+//                    $pasienKeluarRI = 0; $pasienDirawatRI = 0; $pasienRawatJalan=0; $pasienLab = 0;
+//                    $pasienRad = 0;$pasienLain = 1;
+//                }
+
+                $data10[] = array(
+                    'golbayar' => $item->golbayar,
+                    'idbayar' => $item->idbayar,
+                    'pasienKeluarRI' => $pasienKeluarRI,
+                    'pasienDirawatRI' => $pasienDirawatRI,
+                    'pasienRawatJalan' => $pasienRawatJalan,
+                    'pasienLab' => $pasienLab,
+                    'pasienRad' => $pasienRad,
+                    'pasienLain' => $pasienLain,
+                    'jumlah' => 1,
+                );
+            }
+
+            foreach ($data10 as $key => $row) {
+                $count[$key] = $row['idbayar'];
+            }
+
+            array_multisort($count, SORT_ASC, $data10);
+        }
+
+        $result = array(
+            'data' => $data10,
+            'message' => 'er@epic',
+        );
+        return $this->respond($result);
+    }
+
+    public function getDataLaporanRL41new(Request $request)
+    {
+        $kdProfile = (int) $this->getDataKdProfile($request);
+        $tglAwal = $request['tglAwal'];
+        $tglAkhir = $request['tglAkhir'];
+        $data = collect(DB::select("
+            SELECT
+                dm.kddiagnosa,
+                dm.namadiagnosa,
+                SUM ( CASE WHEN ps.objectjeniskelaminfk = 1 THEN 1 ELSE 0 END ) AS laki,
+                SUM ( CASE WHEN ps.objectjeniskelaminfk = 2 THEN 1 ELSE 0 END ) AS perempuan,
+                COUNT ( * ) AS total,
+                SUM ( CASE WHEN pd.tglmeninggal IS NOT NULL AND ps.objectjeniskelaminfk = 1 THEN 1 ELSE 0 END ) AS lakidie,
+                SUM ( CASE WHEN pd.tglmeninggal IS NOT NULL AND ps.objectjeniskelaminfk = 2 THEN 1 ELSE 0 END ) AS perempuandie,
+                SUM ( CASE WHEN pd.tglmeninggal IS NOT NULL THEN 1 ELSE 0 END ) AS totaldie,
+            SUM(CASE WHEN AGE(pd.tglregistrasi, ps.tgllahir) < INTERVAL '1 hour' AND ps.objectjeniskelaminfk = 1 THEN 1 ELSE 0 END) AS l1,
+            SUM(CASE WHEN AGE(pd.tglregistrasi, ps.tgllahir) < INTERVAL '1 hour' AND ps.objectjeniskelaminfk = 2 THEN 1 ELSE 0 END) AS p1,
+            SUM(CASE WHEN AGE(pd.tglregistrasi, ps.tgllahir) BETWEEN INTERVAL '1 hour' AND INTERVAL '23 hours' AND ps.objectjeniskelaminfk = 1 THEN 1 ELSE 0 END) AS l2,
+            SUM(CASE WHEN AGE(pd.tglregistrasi, ps.tgllahir) BETWEEN INTERVAL '1 hour' AND INTERVAL '23 hours' AND ps.objectjeniskelaminfk = 2 THEN 1 ELSE 0 END) AS p2,
+            SUM(CASE WHEN AGE(pd.tglregistrasi, ps.tgllahir) BETWEEN INTERVAL '1 day' AND INTERVAL '7 days' AND ps.objectjeniskelaminfk = 1 THEN 1 ELSE 0 END) AS l3,
+            SUM(CASE WHEN AGE(pd.tglregistrasi, ps.tgllahir) BETWEEN INTERVAL '1 day' AND INTERVAL '7 days' AND ps.objectjeniskelaminfk = 2 THEN 1 ELSE 0 END) AS p3,
+            SUM(CASE WHEN AGE(pd.tglregistrasi, ps.tgllahir) BETWEEN INTERVAL '8 days' AND INTERVAL '28 days' AND ps.objectjeniskelaminfk = 1 THEN 1 ELSE 0 END) AS l4,
+            SUM(CASE WHEN AGE(pd.tglregistrasi, ps.tgllahir) BETWEEN INTERVAL '8 days' AND INTERVAL '28 days' AND ps.objectjeniskelaminfk = 2 THEN 1 ELSE 0 END) AS p4,
+            SUM(CASE WHEN AGE(pd.tglregistrasi, ps.tgllahir) BETWEEN INTERVAL '29 days' AND INTERVAL '3 months' AND ps.objectjeniskelaminfk = 1 THEN 1 ELSE 0 END) AS l5,
+            SUM(CASE WHEN AGE(pd.tglregistrasi, ps.tgllahir) BETWEEN INTERVAL '29 days' AND INTERVAL '3 months' AND ps.objectjeniskelaminfk = 2 THEN 1 ELSE 0 END) AS p5,
+            SUM(CASE WHEN AGE(pd.tglregistrasi, ps.tgllahir) BETWEEN INTERVAL '3 months' AND INTERVAL '6 months' AND ps.objectjeniskelaminfk = 1 THEN 1 ELSE 0 END) AS l6,
+            SUM(CASE WHEN AGE(pd.tglregistrasi, ps.tgllahir) BETWEEN INTERVAL '3 months' AND INTERVAL '6 months' AND ps.objectjeniskelaminfk = 2 THEN 1 ELSE 0 END) AS p6,
+            SUM(CASE WHEN AGE(pd.tglregistrasi, ps.tgllahir) BETWEEN INTERVAL '6 months' AND INTERVAL '11 months' AND ps.objectjeniskelaminfk = 1 THEN 1 ELSE 0 END) AS l7,
+            SUM(CASE WHEN AGE(pd.tglregistrasi, ps.tgllahir) BETWEEN INTERVAL '6 months' AND INTERVAL '11 months' AND ps.objectjeniskelaminfk = 2 THEN 1 ELSE 0 END) AS p7,
+            SUM(CASE WHEN AGE(pd.tglregistrasi, ps.tgllahir) BETWEEN INTERVAL '1 year' AND INTERVAL '4 years' AND ps.objectjeniskelaminfk = 1 THEN 1 ELSE 0 END) AS l8,
+            SUM(CASE WHEN AGE(pd.tglregistrasi, ps.tgllahir) BETWEEN INTERVAL '1 year' AND INTERVAL '4 years' AND ps.objectjeniskelaminfk = 2 THEN 1 ELSE 0 END) AS p8,
+            SUM(CASE WHEN AGE(pd.tglregistrasi, ps.tgllahir) BETWEEN INTERVAL '5 years' AND INTERVAL '9 years' AND ps.objectjeniskelaminfk = 1 THEN 1 ELSE 0 END) AS l9,
+            SUM(CASE WHEN AGE(pd.tglregistrasi, ps.tgllahir) BETWEEN INTERVAL '5 years' AND INTERVAL '9 years' AND ps.objectjeniskelaminfk = 2 THEN 1 ELSE 0 END) AS p9,
+            SUM(CASE WHEN AGE(pd.tglregistrasi, ps.tgllahir) BETWEEN INTERVAL '10 years' AND INTERVAL '14 years' AND ps.objectjeniskelaminfk = 1 THEN 1 ELSE 0 END) AS l10,
+            SUM(CASE WHEN AGE(pd.tglregistrasi, ps.tgllahir) BETWEEN INTERVAL '10 years' AND INTERVAL '14 years' AND ps.objectjeniskelaminfk = 2 THEN 1 ELSE 0 END) AS p10,
+            SUM(CASE WHEN AGE(pd.tglregistrasi, ps.tgllahir) BETWEEN INTERVAL '15 years' AND INTERVAL '19 years' AND ps.objectjeniskelaminfk = 1 THEN 1 ELSE 0 END) AS l11,
+            SUM(CASE WHEN AGE(pd.tglregistrasi, ps.tgllahir) BETWEEN INTERVAL '10 years' AND INTERVAL '14 years' AND ps.objectjeniskelaminfk = 2 THEN 1 ELSE 0 END) AS p11,
+            SUM(CASE WHEN AGE(pd.tglregistrasi, ps.tgllahir) BETWEEN INTERVAL '20 years' AND INTERVAL '24 years' AND ps.objectjeniskelaminfk = 1 THEN 1 ELSE 0 END) AS l12,
+            SUM(CASE WHEN AGE(pd.tglregistrasi, ps.tgllahir) BETWEEN INTERVAL '20 years' AND INTERVAL '24 years' AND ps.objectjeniskelaminfk = 2 THEN 1 ELSE 0 END) AS p12,
+            SUM(CASE WHEN AGE(pd.tglregistrasi, ps.tgllahir) BETWEEN INTERVAL '25 years' AND INTERVAL '29 years' AND ps.objectjeniskelaminfk = 1 THEN 1 ELSE 0 END) AS l13,
+            SUM(CASE WHEN AGE(pd.tglregistrasi, ps.tgllahir) BETWEEN INTERVAL '25 years' AND INTERVAL '29 years' AND ps.objectjeniskelaminfk = 2 THEN 1 ELSE 0 END) AS p1,
+            SUM(CASE WHEN AGE(pd.tglregistrasi, ps.tgllahir) BETWEEN INTERVAL '30 years' AND INTERVAL '34 years' AND ps.objectjeniskelaminfk = 1 THEN 1 ELSE 0 END) AS l23,
+            SUM(CASE WHEN AGE(pd.tglregistrasi, ps.tgllahir) BETWEEN INTERVAL '30 years' AND INTERVAL '34 years' AND ps.objectjeniskelaminfk = 2 THEN 1 ELSE 0 END) AS p23,
+            SUM(CASE WHEN AGE(pd.tglregistrasi, ps.tgllahir) BETWEEN INTERVAL '35 years' AND INTERVAL '39 years' AND ps.objectjeniskelaminfk = 1 THEN 1 ELSE 0 END) AS l14,
+            SUM(CASE WHEN AGE(pd.tglregistrasi, ps.tgllahir) BETWEEN INTERVAL '35 years' AND INTERVAL '39 years' AND ps.objectjeniskelaminfk = 2 THEN 1 ELSE 0 END) AS p14,
+            SUM(CASE WHEN AGE(pd.tglregistrasi, ps.tgllahir) BETWEEN INTERVAL '40 years' AND INTERVAL '44 years' AND ps.objectjeniskelaminfk = 1 THEN 1 ELSE 0 END) AS l15,
+            SUM(CASE WHEN AGE(pd.tglregistrasi, ps.tgllahir) BETWEEN INTERVAL '40 years' AND INTERVAL '44 years' AND ps.objectjeniskelaminfk = 2 THEN 1 ELSE 0 END) AS p15,
+            SUM(CASE WHEN AGE(pd.tglregistrasi, ps.tgllahir) BETWEEN INTERVAL '45 years' AND INTERVAL '49 years' AND ps.objectjeniskelaminfk = 1 THEN 1 ELSE 0 END) AS l16,
+            SUM(CASE WHEN AGE(pd.tglregistrasi, ps.tgllahir) BETWEEN INTERVAL '45 years' AND INTERVAL '49 years' AND ps.objectjeniskelaminfk = 2 THEN 1 ELSE 0 END) AS p16,
+            SUM(CASE WHEN AGE(pd.tglregistrasi, ps.tgllahir) BETWEEN INTERVAL '50 years' AND INTERVAL '54 years' AND ps.objectjeniskelaminfk = 1 THEN 1 ELSE 0 END) AS l17,
+            SUM(CASE WHEN AGE(pd.tglregistrasi, ps.tgllahir) BETWEEN INTERVAL '50 years' AND INTERVAL '54 years' AND ps.objectjeniskelaminfk = 2 THEN 1 ELSE 0 END) AS p17,
+            SUM(CASE WHEN AGE(pd.tglregistrasi, ps.tgllahir) BETWEEN INTERVAL '55 years' AND INTERVAL '59 years' AND ps.objectjeniskelaminfk = 1 THEN 1 ELSE 0 END) AS l18,
+            SUM(CASE WHEN AGE(pd.tglregistrasi, ps.tgllahir) BETWEEN INTERVAL '55 years' AND INTERVAL '59 years' AND ps.objectjeniskelaminfk = 2 THEN 1 ELSE 0 END) AS p18,
+            SUM(CASE WHEN AGE(pd.tglregistrasi, ps.tgllahir) BETWEEN INTERVAL '60 years' AND INTERVAL '64 years' AND ps.objectjeniskelaminfk = 1 THEN 1 ELSE 0 END) AS l19,
+            SUM(CASE WHEN AGE(pd.tglregistrasi, ps.tgllahir) BETWEEN INTERVAL '60 years' AND INTERVAL '64 years' AND ps.objectjeniskelaminfk = 2 THEN 1 ELSE 0 END) AS p19,
+            SUM(CASE WHEN AGE(pd.tglregistrasi, ps.tgllahir) BETWEEN INTERVAL '65 years' AND INTERVAL '69 years' AND ps.objectjeniskelaminfk = 1 THEN 1 ELSE 0 END) AS l20,
+            SUM(CASE WHEN AGE(pd.tglregistrasi, ps.tgllahir) BETWEEN INTERVAL '65 years' AND INTERVAL '69 years' AND ps.objectjeniskelaminfk = 2 THEN 1 ELSE 0 END) AS p20,
+            SUM(CASE WHEN AGE(pd.tglregistrasi, ps.tgllahir) BETWEEN INTERVAL '70 years' AND INTERVAL '74 years' AND ps.objectjeniskelaminfk = 1 THEN 1 ELSE 0 END) AS l21,
+            SUM(CASE WHEN AGE(pd.tglregistrasi, ps.tgllahir) BETWEEN INTERVAL '70 years' AND INTERVAL '74 years' AND ps.objectjeniskelaminfk = 2 THEN 1 ELSE 0 END) AS p21,
+            SUM(CASE WHEN AGE(pd.tglregistrasi, ps.tgllahir) BETWEEN INTERVAL '75 years' AND INTERVAL '79 years' AND ps.objectjeniskelaminfk = 1 THEN 1 ELSE 0 END) AS l25,
+            SUM(CASE WHEN AGE(pd.tglregistrasi, ps.tgllahir) BETWEEN INTERVAL '75 years' AND INTERVAL '79 years' AND ps.objectjeniskelaminfk = 2 THEN 1 ELSE 0 END) AS p25,
+            SUM(CASE WHEN AGE(pd.tglregistrasi, ps.tgllahir) BETWEEN INTERVAL '80 years' AND INTERVAL '84 years' AND ps.objectjeniskelaminfk = 1 THEN 1 ELSE 0 END) AS l22,
+            SUM(CASE WHEN AGE(pd.tglregistrasi, ps.tgllahir) BETWEEN INTERVAL '80 years' AND INTERVAL '84 years' AND ps.objectjeniskelaminfk = 2 THEN 1 ELSE 0 END) AS p22,
+            SUM(CASE WHEN AGE(pd.tglregistrasi, ps.tgllahir) > INTERVAL '85 years' AND ps.objectjeniskelaminfk = 1 THEN 1 ELSE 0 END) AS l24,
+            SUM(CASE WHEN AGE(pd.tglregistrasi, ps.tgllahir) > INTERVAL '85 years' AND ps.objectjeniskelaminfk = 2 THEN 1 ELSE 0 END) AS p24,
+            COUNT(*) AS totallp,
+                SUM(CASE WHEN ps.objectjeniskelaminfk = 1 AND EXTRACT(YEAR FROM AGE(pd.tglregistrasi, ps.tgllahir)) BETWEEN 1 AND 23 THEN 1 ELSE 0 END) AS l2,
+                SUM(CASE WHEN ps.objectjeniskelaminfk = 2 AND EXTRACT(YEAR FROM AGE(pd.tglregistrasi, ps.tgllahir)) BETWEEN 1 AND 23 THEN 1 ELSE 0 END) AS p2,
+
+                SUM(CASE WHEN ps.objectjeniskelaminfk = 1 AND EXTRACT(YEAR FROM AGE(pd.tglregistrasi, ps.tgllahir)) BETWEEN 1 AND 7 THEN 1 ELSE 0 END) AS l3,
+                SUM(CASE WHEN ps.objectjeniskelaminfk = 2 AND EXTRACT(YEAR FROM AGE(pd.tglregistrasi, ps.tgllahir)) BETWEEN 1 AND 7 THEN 1 ELSE 0 END) AS p3
+            FROM
+                antrianpasiendiperiksa_t AS app
+                LEFT JOIN diagnosapasien_t AS dp ON dp.noregistrasifk = app.norec
+                LEFT JOIN detaildiagnosapasien_t AS ddp ON ddp.objectdiagnosapasienfk = dp.norec
+                INNER JOIN diagnosa_m AS dm ON ddp.objectdiagnosafk = dm.
+                ID INNER JOIN pasiendaftar_t AS pd ON pd.norec = app.noregistrasifk
+                INNER JOIN pasien_m AS ps ON ps.ID = pd.nocmfk
+                LEFT JOIN jeniskelamin_m AS jk ON ps.objectjeniskelaminfk = jk.
+                ID LEFT JOIN ruangan_m AS ru ON ru.ID = app.objectruanganfk
+                LEFT JOIN departemen_m AS dpm ON dpm.ID = ru.objectdepartemenfk 
+            WHERE
+                app.kdprofile = 30
+                AND pd.tglregistrasi BETWEEN '$tglAwal' AND '$tglAkhir'
+                AND dpm.id = 16
+            GROUP BY
+                dm.kddiagnosa,
+                dm.namadiagnosa 
+            ORDER BY
+                total DESC
+        "));
+    
+        $result = array(
+            'data'=> $data,
+            'message' => 'ea@epic',
+        );
+        return $this->respond($result);
+    }
+
+    public function getDataLaporanRL42new(Request $request)
+    {
+        $kdProfile = (int) $this->getDataKdProfile($request);
+        $tglAwal = $request['tglAwal'];
+        $tglAkhir = $request['tglAkhir'];
+        $data = collect(DB::select("
+            SELECT
+                dm.kddiagnosa,
+                dm.namadiagnosa,
+                SUM ( CASE WHEN ps.objectjeniskelaminfk = 1 THEN 1 ELSE 0 END ) AS laki,
+                SUM ( CASE WHEN ps.objectjeniskelaminfk = 2 THEN 1 ELSE 0 END ) AS perempuan,
+                COUNT ( * ) AS total,
+                SUM ( CASE WHEN pd.tglmeninggal IS NOT NULL AND ps.objectjeniskelaminfk = 1 THEN 1 ELSE 0 END ) AS lakidie,
+                SUM ( CASE WHEN pd.tglmeninggal IS NOT NULL AND ps.objectjeniskelaminfk = 2 THEN 1 ELSE 0 END ) AS perempuandie,
+                SUM ( CASE WHEN pd.tglmeninggal IS NOT NULL THEN 1 ELSE 0 END ) AS totaldie 
+            FROM
+                antrianpasiendiperiksa_t AS app
+                LEFT JOIN diagnosapasien_t AS dp ON dp.noregistrasifk = app.norec
+                LEFT JOIN detaildiagnosapasien_t AS ddp ON ddp.objectdiagnosapasienfk = dp.norec
+                INNER JOIN diagnosa_m AS dm ON ddp.objectdiagnosafk = dm.
+                ID INNER JOIN pasiendaftar_t AS pd ON pd.norec = app.noregistrasifk
+                INNER JOIN pasien_m AS ps ON ps.ID = pd.nocmfk
+                LEFT JOIN jeniskelamin_m AS jk ON ps.objectjeniskelaminfk = jk.
+                ID LEFT JOIN ruangan_m AS ru ON ru.ID = app.objectruanganfk
+                LEFT JOIN departemen_m AS dpm ON dpm.ID = ru.objectdepartemenfk 
+            WHERE
+                app.kdprofile = 30 
+                AND pd.tglregistrasi BETWEEN '$tglAwal' AND '$tglAkhir'
+                AND dpm.id = 16
+            GROUP BY
+                dm.kddiagnosa,
+                dm.namadiagnosa 
+            ORDER BY
+                total DESC
+        "));
+    
+        $result = array(
+            'data'=> $data,
+            'message' => 'ea@epic',
+        );
+        return $this->respond($result);
+    }
+
 }
