@@ -163,4 +163,63 @@ export class TouchscreenComponent implements OnInit {
     //   positionClass: 'toast-bottom-center'
     // });
   }
+
+    cekDanGoTo(name: string) {
+    // Panggil API untuk cek jam tutup hari ini
+    this.httpService.get('medifirst2000/kiosk/get-jam-tutup-hari-ini').subscribe(resps => {
+      if (!resps || !resps.jamTutupTerakhir) {
+          this._alertService.warning(resps.message || 'Jadwal belum tersedia untuk hari ini.');
+         // this.goTo(name);
+         return;
+      }
+
+      const jamServer = moment(resps.waktuServer, 'HH:mm');
+      const jamTutup = moment(resps.jamTutupTerakhir, 'HH:mm');
+
+      if (jamServer.isSameOrAfter(jamTutup)) {
+        // Jika jam sekarang sudah lewat jam tutup
+        this._alertService.warning('Pendaftaran sudah ditutup untuk hari ini.');
+        return; // tidak melakukan navigasi
+      }
+
+      // Masih dalam waktu buka → lanjut navigasi
+      this.goTo(name);
+
+    }, error => {
+      this._alertService.error('Gagal mengecek jadwal pendaftaran.');
+    });
+  }
+
+  showPopupFarm = false;
+  noRegFarm = '';
+
+  @ViewChild('scanInputFarm') scanInputFarm!: ElementRef;
+
+  openPopup() {
+    this.showPopupFarm = true;
+
+    // Fokus otomatis ke input begitu popup muncul
+    setTimeout(() => {
+      this.scanInputFarm?.nativeElement.focus();
+    }, 100);
+  }
+
+  closePopup() {
+    this.showPopupFarm = false;
+  }
+
+  submitNoRegFarm() {
+    if (this.noRegFarm) {
+    console.log('Nomor reservasi:', this.noRegFarm);
+    // this.closePopup();
+    window.open(Configuration.get().apiBackend + 'medifirst2000/report/cetak-antrian-farm?noreg='
+            + this.noRegFarm
+            + '&kdprofile=21', '_blank');
+      
+    } else {
+    alert('Masukan No Registrasi Terlebih Dahulu.');
+    }
+    // jalankan logika pencarian / validasi
+    // this.closePopup();
+  }
 }

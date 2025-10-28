@@ -135,7 +135,7 @@ class ResepElektronikController extends ApiController
                  INNER JOIN ruangan_m AS ru2 ON ru2.id = so.objectruangantujuanfk
                  LEFT JOIN pegawai_m AS pg ON pg.id = so.objectpegawaiorderfk
                  LEFT JOIN strukresep_t AS sr ON sr.orderfk = so.norec
-                 LEFT JOIN antrianapotik_t AS aa ON aa.noresep = sr.noresep
+                 LEFT JOIN antrianapotik_t AS aa ON (aa.noresep = sr.noresep OR aa.noorder = so.noorder)
                  INNER JOIN pasiendaftar_t AS pd ON pd.norec = so.noregistrasifk
                  INNER JOIN kelas_m AS kl ON kl.id = pd.objectkelasfk
                  LEFT JOIN antrianpasiendiperiksa_t AS apd ON apd.noregistrasifk = pd.norec AND apd.objectruanganfk = so.objectruanganfk

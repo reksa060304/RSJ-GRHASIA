@@ -1611,6 +1611,67 @@ class ReportController extends ApiController{
             compact('dataReport', 'pageWidth','profile'));
 //        return view('','$result');
     }
+    public function cetakAntrianFarmKiosk(Request $request) {
+        $kdProfile = (int)$request['kdprofile'];
+        $noreg = $request['noreg'];
+
+        $tglAyeuna = date('Y-m-d H:i:s');
+
+        $profile = collect(DB::select
+            ("
+                select * from profile_m where statusenabled=true limit 1
+            "))->first();
+
+        $data = DB::table('antrianapotik_t as at')
+            ->join('pasiendaftar_t as pt', 'pt.norec', '=', 'at.noregistrasifk')
+            ->join('pasien_m as pm', 'pm.id', '=', 'pt.nocmfk')
+            ->leftJoin('jeniskelamin_m as jk', 'jk.id', '=', 'pm.objectjeniskelaminfk')
+            ->join('strukorder_t as st', 'st.noorder', '=', 'at.noorder')
+            ->join('ruangan_m as rm', 'rm.id', '=', 'st.objectruanganfk')
+            // ->join('ruangan_m as rm', 'rm.id', '=', 'st.objectruangantujuanfk')
+            ->join('kelompokpasien_m as km', 'km.id', '=', 'pt.objectkelompokpasienlastfk')
+            ->leftJoin('alamat_m as alm', 'alm.nocmfk', '=', 'pm.id')
+            ->where('pt.noregistrasi', $noreg)
+            ->where('st.statusenabled', true)
+            ->where('at.statusenabled', true)
+            ->orderBy('at.tglresep', 'desc')
+            ->selectRaw("
+                at.jenis || ' - ' || at.noantri as noantri, 
+                pm.namapasien, 
+                pm.nocm, 
+                pt.noregistrasi, 
+                rm.namaruangan,
+                km.kelompokpasien,
+                pt.tglregistrasi,
+                at.tglresep,
+                at.jenis,
+                jk.jeniskelamin,
+                pm.tgllahir,
+                alm.alamatlengkap
+            ")
+            ->first();
+            
+        $pageWidth = 50;
+        
+        $dataReport = array(
+            'namaprofile' => $profile->namalengkap,
+            'alamat' => $profile->alamatlengkap,
+            'tglregistrasi' => date('d-M-Y H:i', strtotime($data->tglregistrasi)),
+            'tglresep' => date('d-M-Y   H:i:s', strtotime($data->tglresep)),
+            'noregistrasi' => $data->noregistrasi,
+            'norm' => $data->nocm,
+            'tgllahir' => $data->tgllahir,
+            'namapasien' => $data->namapasien,
+            'jeniskelamin' => $data->jeniskelamin,
+            'ruangan' => $data->namaruangan,
+            'alamat_pasien' => $data->alamatlengkap,
+            'jenis' => $data->jenis,
+            'noantrian' => $data->noantri,
+            'kelompokpasien' => $data->kelompokpasien,
+        );
+        return view('report.apotik.antrian-apotik',
+            compact('dataReport', 'pageWidth','profile'));
+    }
 
     public function cetakBuktiPendaftaran(Request $request) {
         $kdProfile = (int)$request['kdprofile'];
