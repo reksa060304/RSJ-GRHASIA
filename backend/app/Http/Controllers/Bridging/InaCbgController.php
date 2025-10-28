@@ -3528,4 +3528,79 @@ class InaCbgController   extends ApiController
 
         return $this->setStatusCode($result['status'])->respond($result, $transMessage);
     }
+
+    public function deleteGroupingInacbg(Request $request){
+        $kdProfile = (int)$this->getDataKdProfile($request);
+        DB::beginTransaction();
+        try {
+
+            if (isset($request['norec_pd'])) {
+                $delete = DB::table('hasilgrouping_t')
+                ->where("noregistrasifk",$request['norec_pd'])
+                ->delete();
+            }
+            
+
+             $transStatus = 'true';
+            $transMessage = "Delete Grouping Inacbg Berhasil! ";
+        } catch (\Exception $e) {
+            $transStatus = 'false';
+            $transMessage = "Delete Grouping Inacbg! Gagal! ";
+        }
+
+        if ($transStatus != 'false') {
+            DB::commit();
+            $result = array(
+                "status" => 201,
+                "message" => $transMessage,
+            );
+        } else {
+            DB::rollBack();
+            $result = array(
+                "status" => 400,
+                "e" => $e->getMessage(),
+                "message" => $transMessage,
+            );
+        }
+
+        // return 'sukses';
+        return $this->setStatusCode($result['status'])->respond($result, $transMessage);
+    }
+    public function deleteGroupingIdrg(Request $request){
+        $kdProfile = (int)$this->getDataKdProfile($request);
+        DB::beginTransaction();
+        try {
+
+            if (isset($request['norec_pd'])) {
+                $delete = DB::table('hasilgroupingidrg_t')
+                ->where("noregistrasifk",$request['norec_pd'])
+                ->delete();
+            }
+            
+
+             $transStatus = 'true';
+            $transMessage = "Delete Grouping Inacbg Berhasil! ";
+        } catch (\Exception $e) {
+            $transStatus = 'false';
+            $transMessage = "Delete Grouping Inacbg! Gagal! ";
+        }
+
+        if ($transStatus != 'false') {
+            DB::commit();
+            $result = array(
+                "status" => 201,
+                "message" => $transMessage,
+            );
+        } else {
+            DB::rollBack();
+            $result = array(
+                "status" => 400,
+                "e" => $e->getMessage(),
+                "message" => $transMessage,
+            );
+        }
+
+        // return 'sukses';
+        return $this->setStatusCode($result['status'])->respond($result, $transMessage);
+    }
 }
