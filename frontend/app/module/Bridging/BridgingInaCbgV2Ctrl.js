@@ -46,6 +46,7 @@ define(['initialize', 'Configuration'], function (initialize,configuration) {
 			$scope.isimportidrg = false
 			$scope.batalKlaim = {}
 			$scope.istopup = false;
+			$scope.isRanap = false;
 			var responData = "";
 			var data2 = []
 			var dataSave = []
@@ -7457,6 +7458,12 @@ define(['initialize', 'Configuration'], function (initialize,configuration) {
 				$scope.itemPopUp.diagnosa_inagrouper = null
 
 				$scope.itemPopUp = $scope.dataPasienSelected
+				if ($scope.itemPopUp.objectdepartemenfk == 16) {
+					$scope.isRanap = true
+				} else {
+					$scope.isRanap = false
+				}
+				
 				if ($scope.itemPopUp.response != null) {
 					if ($scope.itemPopUp.response.metadata.code == 200) {
 						$scope.grupingtab = true;
