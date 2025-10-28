@@ -2465,7 +2465,7 @@
 									
 							</div>
 							<div class="grid_12">
-										<span ng-if="itemPopUp.data_idrg && itemPopUp.data_idrg.mdc_description != 'Ungroupable or Unrelated'">
+										<span ng-show="itemPopUp.data_idrg && itemPopUp.data_idrg.mdc_description != 'Ungroupable or Unrelated'">
 											<button ng-if="!['Grouping iDRG Final','Grouping INACBG Reedit','Grouping','Grouping INACBG Final','Final Klaim','Terkirim','Klaim Edit','-','Klaim'].includes(itemPopUp.statusklaim)" class="k-button" ng-click="finalIdrg()" style="float:right;margin-top:2%;margin-right:1%;">Final iDRG</button>
 										</span>
 										<button ng-if="['Grouping iDRG Final','Grouping','Grouping INACBG Reedit','Grouping INACBG Final','Klaim Edit'].includes(itemPopUp.statusklaim) || (itemPopUp.data_idrg == undefined && !['Klaim','-'].includes(itemPopUp.statusklaim))" class="k-button" ng-click="editUlangIdrg()" style="float:right;margin-top:2%;margin-right:1%;">Edit Ulang iDRG</button>
@@ -2485,7 +2485,7 @@
 						<div class="grid_12" ng-if="isInu">
 							<fieldset>
 								<!-- <legend>ICD 10 UNU</legend> -->
-								<legend>ICD 10</legend>
+								<legend>Diagnosa (ICD 10)</legend>
 								<div class="grid_6">
 									<div class="grid_12">
 										<div class="grid_12" style="margin-top:10px">
@@ -2500,24 +2500,14 @@
 											</md-radio-group> -->
 										</div>
 									</div>
-									<div class="grid_4">
-										<div class="grid_12">
-											<label c-label item="item" c-label-text="Jenis Diagnosa"></label>
-										</div>
-										<div class="clear"></div>
-							
+									<div class="grid_4" ng-show="false">
 										<div class="grid_12">
 											<input kendo-combo-box style="width:100%" k-ng-model="item.jenisDiagnosis"
 												k-data-text-field="'jenisDiagnosa'" k-data-value-field="'id'" k-filter="'contains'"
 												k-auto-bind="false" k-data-source="sourceJenisDiagnosisPrimer1" />
 										</div>
 									</div>
-									<div class="grid_6">
-										<div class="grid_12">
-											<label c-label item="item" c-label-text="Kode Diagnosa"></label>
-										</div>
-										<div class="clear"></div>
-							
+									<div class="grid_10">
 										<div class="grid_12">
 											<input kendo-combo-box style="width:100%" k-ng-model="item.diagnosisPrimer"
 												k-data-text-field="'kodeNama'" k-data-value-field="'id'" k-filter="'contains'"
@@ -2586,7 +2576,7 @@
 			        <!-- ICD 9 -->
 						<div class="grid_12" style="margin-top: 10px"  ng-if="isInu">
 							<fieldset>
-								<legend>ICD 9</legend>
+								<legend>Prosedur (ICD 9)</legend>
 								<div class="grid_6">
 									<div class="grid_12">
 									<!--   <div class="grid_12" style="margin-top:10px">
@@ -2605,13 +2595,7 @@
 											</md-radio-group> -->
 										</div>
 									</div>
-									<div class="grid_6">
-										<div class="grid_12">
-											<label c-label item="item" c-label-text="Kode Diagnosa"></label>
-										</div>
-										
-										<div class="clear"></div>
-
+									<div class="grid_10">
 										<div class="grid_12">
 											<input kendo-combo-box style="width:100%" k-ng-model="item.diagnosisPrimer1"
 												k-data-text-field="'kdNama'" k-data-value-field="'id'" k-filter="'contains'"
