@@ -7034,5 +7034,125 @@
         "define": "MedifirstService"
       }
     ]
+  },
+    {
+    "name": "SpjLs",
+    "url": "/U1BKTFM=",
+    "templateurl": "module/BendaharaPenerimaan/SpjLs.html",
+    "controller": "SpjLsCtrl",
+    "deps": [
+        {
+        "module": "Services",
+        "define": "Service"
+        },
+        {
+        "module": "LoginServices",
+        "define": "LoginService"
+        },
+        {
+        "module": "MedifirstService",
+        "define": "MedifirstService"
+        }
+    ]
+  },
+   {
+      "name": "KelompokSpjLs",
+      "url": "/a2Vsb21wb2tzcGpscw==/:parameter",
+      "templateurl": "module/BendaharaPenerimaan/KelompokSpjLs.html",
+      "controller": "KelompokSpjLsCtrl",
+      "deps": [
+        {
+          "module": "Services",
+          "define": "Service"
+        },
+        {
+          "module": "LoginServices",
+          "define": "LoginService"
+        },
+        {
+          "module": "MedifirstService",
+          "define": "MedifirstService"
+        }
+      ]
+  },
+  {
+    "name": "OrderBarangAsset",
+    "url": "/OrderBarangAsset",
+    "templateurl": "module/Logistik/OrderBarangAsset.html",
+    "controller": "OrderBarangAssetCtrl",
+    "deps": [
+      {
+        "module": "Services",
+        "define": "Service"
+      },
+      {
+        "module": "LoginServices",
+        "define": "LoginService"
+      },
+      {
+        "module": "MedifirstService",
+        "define": "MedifirstService"
+      }
+    ]
+  },
+  {
+    "name": "DaftarOrderBarangAsset",
+    "url": "/DaftarOrderBarangAsset",
+    "templateurl": "module/Logistik/DaftarOrderBarangAsset.html",
+    "controller": "DaftarOrderBarangAssetCtrl",
+    "deps": [
+      {
+        "module": "Services",
+        "define": "Service"
+      },
+      {
+        "module": "LoginServices",
+        "define": "LoginService"
+      },
+      {
+        "module": "MedifirstService",
+        "define": "MedifirstService"
+      }
+    ]
+  },
+  {
+    "name": "KirimBarangAsset",
+    "url": "/KirimBarangAsset",
+    "templateurl": "module/Logistik/KirimBarangAsset.html",
+    "controller": "KirimBarangAssetCtrl",
+    "deps": [
+      {
+        "module": "Services",
+        "define": "Service"
+      },
+      {
+        "module": "LoginServices",
+        "define": "LoginService"
+      },
+      {
+        "module": "MedifirstService",
+        "define": "MedifirstService"
+      }
+    ]
+  },
+  {
+    "name": "DaftarKirimBarangAsset",
+    "url": "/DaftarKirimBarangAsset",
+    "templateurl": "module/Logistik/DaftarKirimBarangAsset.html",
+    "controller": "DaftarKirimBarangAssetCtrl",
+    "deps": [
+      {
+        "module": "Services",
+        "define": "Service"
+      },
+      {
+        "module": "LoginServices",
+        "define": "LoginService"
+      },
+      {
+        "module": "MedifirstService",
+        "define": "MedifirstService"
+      }
+    ]
   }
 ]

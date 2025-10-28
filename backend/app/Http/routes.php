@@ -1713,11 +1713,14 @@ Route::group(['middleware' => 'cors', 'prefix' => 'service'], function () {
             Route::post('logistik/update-op', 'Logistik\LogistikController@saveOP');
             Route::post('cppt/hapus-bariscppt', 'EMR\EMRController@hapusBarisCPPT');
             Route::get('logistik/get-detail-kirim-barang-ruangan', 'Logistik\LogistikController@getDetailKirimBarang');
+            Route::get('logistik/get-detail-kirim-barang-asset', 'Logistik\LogistikController@getDetailKirimBarangAsset');
             Route::get('logistik/get-detail-order-for-kirim-barang', 'Logistik\LogistikController@getDetailOrderBarangForKirim');
+            Route::get('logistik/get-detail-order-for-kirim-barang-asset', 'Logistik\LogistikController@getDetailOrderBarangForKirimAsset');
             Route::get('logistik/get-perencanaan-kebutuhan', 'Logistik\LogistikController@getPerencanaanKebutuhan');
             Route::get('logistik/get-pelayanan-obat-peserta-jkn', 'Logistik\LogistikController@getPelayananObatJKN');
             Route::get('logistik/get-rekap-order-kirim-barang', 'Logistik\LogistikController@getOrderKirimBarang');
             Route::get('logistik/get-daftar-distribusi-barang', 'Logistik\LogistikController@getDaftarDistribusiBarang');
+            Route::get('logistik/get-daftar-kirim-barang-asset', 'Logistik\LogistikController@getDaftarKirimBarangAsset');
             Route::get('logistik/get-daftar-barang-batal', 'Logistik\LogistikController@getDaftarProdukToBatal');
             Route::get('logistik/get-daftar-distribusi-barang-perunit', 'Logistik\LogistikController@getDaftarDistribusiBarangPerUnit');
             Route::get('logistik/get-daftar-bareng-per-bulan', 'Logistik\LogistikController@getDaftarBarangPerBulan');
@@ -1840,6 +1843,7 @@ Route::group(['middleware' => 'cors', 'prefix' => 'service'], function () {
             Route::get('bhp/cetak-sppb', 'Report\ReportController@cetakSPPB');
             Route::get('bhp/cetak-spb', 'Report\ReportController@cetakSPB');
             Route::post('logistik/save-data-ambulance-to-telemedicine', 'Logistik\LogistikController@saveDataAmbulanceToTelemedicine');
+            Route::post('logistik/save-kirim-barang-ruangan-asset', 'Logistik\LogistikController@saveKirimBarangRuanganAsset');
             // POST //
         // });
         // Route::group(['prefix' => 'asset'], function () {
@@ -2673,6 +2677,9 @@ Route::group(['middleware' => 'cors', 'prefix' => 'service'], function () {
 
               Route::get('registrasi/laporan/get-laporan-rl317-v3', 'Registrasi\LaporanRekamMedisController@getPengadaanObatRl');
               Route::get('registrasi/laporan/get-laporan-rl318-v3', 'Registrasi\LaporanRekamMedisController@getPelayananResepRl');
+              // RL 4 New
+              Route::get('registrasi/laporan/get-laporan-r41-new','Registrasi\LaporanRekamMedisController@getDataLaporanRL41new');
+              Route::get('registrasi/laporan/get-laporan-rl42-new','Registrasi\LaporanRekamMedisController@getDataLaporanRL42new');
 
               Route::get('registrasi/laporan/get-data-lap-pasien-masuk','Registrasi\LaporanRekamMedisController@getDataLaporanPasienMasuk');
               Route::get('registrasi/laporan/get-data-lap-pasien-keluar','Registrasi\LaporanRekamMedisController@getDataLaporanPasienKeluar');
@@ -3805,6 +3812,7 @@ Route::group(['middleware' => 'cors', 'prefix' => 'service'], function () {
         Route::get('report/get-cetak-bukti-pendaftaran','Report\ReportController@cetakBuktiPendaftaranGet');
         Route::get('report/cetak-bukti-usulan-barang','Report\ReportController@cetakBuktiUsulanBarang');
         Route::get('report/cetak-gaji-inpassing', 'Report\ReportController@cetakGajiInpassing');
+        Route::get('report/cetak-bukti-order-barang-asset','Report\ReportController@cetakBuktiOrderBarangAsset');
 
         // Cetakan Asset
         Route::get('report/cetak-daftar-barang-asset', 'Report\ReportController@cetakDaftarBarangAsset');

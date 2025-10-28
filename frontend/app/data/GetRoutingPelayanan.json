@@ -21127,6 +21127,46 @@
         "define": "MedifirstService"
       }
     ]
+  },
+  {
+    "name": "RL41KomplikasiPenyakit",
+    "url": "/RL41KomplikasiPenyakit",
+    "templateurl": "module/Registrasi/Laporan/LaporanRekamMedis/RL41KomplikasiPenyakit.html",
+    "controller": "RL41KomplikasiPenyakitCtrl",
+    "deps": [
+      {
+        "module": "Services",
+        "define": "Service"
+      },
+      {
+        "module": "LoginServices",
+        "define": "LoginService"
+      },
+      {
+        "module": "MedifirstService",
+        "define": "MedifirstService"
+      }
+    ]
+  },
+  {
+    "name": "RL4210BesarPenyakitRanap",
+    "url": "/RL4210BesarPenyakitRanap",
+    "templateurl": "module/Registrasi/Laporan/LaporanRekamMedis/RL4210BesarPenyakitRanap.html",
+    "controller": "RL4210BesarPenyakitRanapCtrl",
+    "deps": [
+      {
+        "module": "Services",
+        "define": "Service"
+      },
+      {
+        "module": "LoginServices",
+        "define": "LoginService"
+      },
+      {
+        "module": "MedifirstService",
+        "define": "MedifirstService"
+      }
+    ]
   }
 ]
 
