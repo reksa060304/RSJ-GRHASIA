@@ -3766,6 +3766,10 @@
             "urlDep": "module/Ambulance/LapKegiatanAmbulanTelemedicineCtrl"
         },
         {
+            "nameDep": "BridgingInaCbgV2Ctrl",
+            "urlDep": "module/Bridging/BridgingInaCbgV2Ctrl"
+        },
+        {
             "nameDep": "RL31IndikatorPelayananRsCtrl",
             "urlDep": "module/Registrasi/Laporan/LaporanRekamMedis/RL31IndikatorPelayananRsCtrl"
         },

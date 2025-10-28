@@ -20827,6 +20827,26 @@
     ]
   },
   {
+    "name": "BridgingInaCbgV2",
+    "url": "/BridgingInaCbgV2",
+    "templateurl": "module/Bridging/BridgingInaCbgV2.html",
+    "controller": "BridgingInaCbgV2Ctrl",
+    "deps": [
+      {
+        "module": "Services",
+        "define": "Service"
+      },
+      {
+        "module": "LoginServices",
+        "define": "LoginService"
+      },
+      {
+        "module": "MedifirstService",
+        "define": "MedifirstService"
+      }
+    ]
+  },
+  {
     "name": "RL31IndikatorPelayananRs",
     "url": "/RL31IndikatorPelayananRs",
     "templateurl": "module/Registrasi/Laporan/LaporanRekamMedis/RL31IndikatorPelayananRs.html",
