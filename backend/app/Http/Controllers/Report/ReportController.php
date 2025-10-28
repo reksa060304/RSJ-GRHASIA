@@ -31669,4 +31669,96 @@ public function suratBuktiPengembalian(Request $request)
             'message' => 'File tidak ditemukan.'
             ], 400);
         }
+
+    public function cetakBuktiOrderBarangAsset(Request $request)
+    {
+        $kdProfile = $request['kdprofile'];
+        $norec = $request['norec'];
+        $tglAyeuna = date('d/m/Y');
+        // $user = $request['user'];
+        $profile = collect(DB::select("
+            select * from profile_m where id = $kdProfile limit 1
+        "))->first();
+
+        $data = collect(DB::select("
+            select sp.norec,sp.tglorder,sp.noorder,pg.namalengkap as penanggungjawab,pg.nippns, sp.objectpetugasfk,
+            sp.tglvalidasi as tglkebutuhan,sp.alamattempattujuan,sp.keteranganlainnya,sp.tglvalidasi,sp.noorderintern,
+            sp.keterangankeperluan,sp.keteranganorder,ru.namaruangan as ruangan,ru.id as ruid,
+            ru2.namaruangan as ruangantujuan,ru2.id as ruidtujuan, sp.kelompokproduk,
+            sp.totalhargasatuan , sp.Status,pr.kdproduk,pr.namaproduk,ss.satuanstandar,op.qtyproduk,op.hargasatuan,op.hargadiscount,
+            case when op.hargappn is null then 0 else op.hargappn end as hargappn,(op.qtyproduk*(op.hargasatuan)) as total,op.tglpelayananakhir as tglkebutuhan,
+            op.deskripsiprodukquo as spesifikasi,pr.id as prid,pg1.namalengkap,pg1.nippns as nippetugas, pg1.nip_pns, jb.namajabatan,rk.namarekanan, sp.namarekanansales,
+            rk.alamatlengkap, pg.nosip as sippenanggungjawab, pg1.nosip as sipmengetahui, pg.objectjenispegawaifk
+            from strukorder_t sp
+            left join orderpelayanan_t op on op.strukorderfk=sp.norec
+            left join produk_m pr on pr.id=op.objectprodukfk
+            left join satuanstandar_m ss on ss.id=op.objectsatuanstandarfk
+            LEFT JOIN pegawai_m as pg on pg.id=sp.objectpegawaiorderfk
+            LEFT JOIN pegawai_m as pg1 on pg1.id=sp.objectpetugasfk
+            LEFT JOIN jabatan_m as jb on jb.id=pg1.objectjabatanstrukturalfk
+            LEFT JOIN ruanganasset_m as ru on ru.id=sp.objectruanganfk
+            LEFT JOIN ruanganasset_m as ru2 on ru2.id=sp.objectruangantujuanfk
+            LEFT JOIN rekanan_m as rk on rk.id = sp.objectrekananfk
+            
+            where sp.norec = '$norec'
+        "))->first();
+
+        // $apoteker = collect(DB::select("
+        // SELECT
+        //     pg.namalengkap,
+        //     pg.nippns
+        // FROM
+        //     pegawai_m as pg
+        //     INNER JOIN jabatan_m as jb on jb.id = pg.objectjabatanfungsionalfk
+        // WHERE pg.statusenabled=true and
+        //     jb.namajabatan like 'Apoteker'
+        // "))->first();
+        // $apoteker = collect(DB::select("
+        //     select case when so.objectpetugasfk <> null then pg.namalengkap else case when kelompokbarangfk in (1,2,3,4) then 'apt. Yuli Sukmawati, S. Farm' else 'dr. Margarita Dewi Lelasari, Sp.OK, MM, MH'  end  end   as namalengkap
+        //     from strukorder_t as so
+        //     left join pegawai_m as pg on so.objectpetugasfk=pg.id
+        //     where so.norec='$norec'
+        // "))->first();
+         
+
+
+        $detail = collect(DB::select("
+            select sp.norec,sp.tglorder,sp.noorder,pg.namalengkap as penanggungjawab,pg.nippns,sp.objectpetugasfk,
+                   sp.tglvalidasi as tglkebutuhan,sp.alamattempattujuan,sp.keteranganlainnya,sp.tglvalidasi,sp.noorderintern,
+                   sp.keterangankeperluan,sp.keteranganorder,ru.namaruangan as ruangan,ru.id as ruid,
+                   ru2.namaruangan as ruangantujuan,ru2.id as ruidtujuan,
+                   sp.totalhargasatuan , sp.Status,pr.id as kdproduk,pr.namaproduk,ss.satuanstandar,op.qtyproduk,op.hargasatuan,op.hargadiscount,
+                   case when op.hargappn is null then 0 else op.hargappn end as hargappn,(op.qtyproduk*(op.hargasatuan-op.hargadiscount)) as total,op.tglpelayananakhir as tglkebutuhan,
+                   op.deskripsiprodukquo as spesifikasi,pr.id as prid,pg1.namalengkap,pg1.nippns as nippetugas,jb.namajabatan,op.qtyproduk*op.hargasatuan AS subtotal,
+                   op.qtyproduk*op.hargadiscount AS totaldiskon,
+                   ROUND(
+                    CASE 
+                        WHEN op.hargasatuan = 0 OR op.hargadiscount IS NULL THEN 0 
+                        ELSE (op.hargadiscount / op.hargasatuan) * 100 
+                    END
+                    ) AS persendiskon
+            from strukorder_t sp
+            left join orderpelayanan_t op on op.strukorderfk=sp.norec
+            left join produk_m pr on pr.id=op.objectprodukfk
+            left join satuanstandar_m ss on ss.id=op.objectsatuanstandarfk
+            LEFT JOIN pegawai_m as pg on pg.id=sp.objectpegawaiorderfk
+            LEFT JOIN pegawai_m as pg1 on pg1.id=sp.objectpetugasfk
+            LEFT JOIN jabatan_m as jb on jb.id=pg1.objectjabatanstrukturalfk
+            LEFT JOIN ruangan_m as ru on ru.id=sp.objectruanganfk
+            LEFT JOIN ruangan_m as ru2 on ru2.id=sp.objectruangantujuanfk
+            where sp.norec = '$norec'
+        "));
+
+        $pageWidth = 950;
+
+        $dataReport = array(
+            'datas' => $data,
+            'detail' => $detail,
+            'tanggal' => $tglAyeuna,
+            // 'apoteker' => $apoteker,
+        );
+        // dd($dataReport);
+        $pdf = \PDF::loadView('report.asset.cetak-bukti-order-barang-asset', compact('dataReport', 'pageWidth', 'profile'));
+        return $pdf->stream('cetak-bukti-order-barang-asset.pdf');
+    }
 }

@@ -23,7 +23,7 @@
         <h1 style="color: white;"><b>Daftar Order Barang Asset</b></h1>
     </div>
     <div class="grid_12">
-        <div class="grid_3">
+        <div class="grid_1">
             <div class="grid_12">
                 <label c-label class="label-aja" item="item" c-label-text="Kode Barang"></label>
             </div>
@@ -43,8 +43,16 @@
                     k-data-source="listNamaBarang" />
             </div>
         </div>
-        <div class="grid_2">
+        <div class="grid_3">
+            <div class="grid_12">
+                <label c-label item="item" c-label-text="Nama Ruangan Pemesan"></label>
+            </div>
+
+            <div class="grid_12">
+                <input c-text-box type="input" filter="" class="k-textbox" ng-model="item.namaruanganpemesan" />
+            </div>
         </div>
+        
         <div class="grid_4">
             <div class="grid_12">
                 <label c-label item="item" c-label-text="Periode Tanggal"></label>
@@ -131,7 +139,7 @@
     <div class="grid_12" style="margin-top:60px">
         <div ng-include='"../app/template/Shared/TemplateLoading"'></div>
     </div>
-    <div kendo-window="popUp" k-title="'Tanda tangan'" k-width="600" k-visible="false" k-on-open="win2visible = true"
+    <!-- <div kendo-window="popUp" k-title="'Tanda tangan'" k-width="600" k-visible="false" k-on-open="win2visible = true"
         k-on-close="win2visible = false">
         <div class="panel panel-default container_12" style="padding: 0px 10px;">
             <div class="grid_12">
@@ -187,12 +195,26 @@
                 </div>
         </div>
         </fieldset>
+    </div> -->
+    <div kendo-window="popUp" k-title="''" k-width="600" k-visible="false" 
+     k-on-open="win2visible = true" k-on-close="win2visible = false">
+    
+    <div class="panel panel-default container_12" style="padding: 0 10px;">
+        <div class="grid_12">
+            <label style="font-size: 20px;">
+                <b>Apakah Anda ingin Cetak Bukti Order Barang?</b>
+            </label>
+        </div>
     </div>
+
     <div class="clear"></div>
-    <!-- kata kunci confirm -->
-    <div class="dialog_buttons pull-right" style="margin-top:5%">
+
+    <!-- Tombol konfirmasi -->
+    <div class="dialog_buttons pull-right" style="margin-top: 5%;">
         <input type="button" class="confirm_no k-button" value="Tidak" style="width: 70px" ng-click="BatalCetak()" />
         &nbsp;
         <input type="button" class="confirm_yes k-button" value="Ya" style="width: 70px" ng-click="CetakAh()" />
     </div>
+</div>
+
 </div>

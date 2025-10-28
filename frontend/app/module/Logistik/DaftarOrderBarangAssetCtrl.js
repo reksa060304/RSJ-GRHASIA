@@ -1,4 +1,4 @@
-define(['initialize'], function (initialize) {
+define(['initialize','Configuration'], function (initialize,configuration) {
     'use strict';
     initialize.controller('DaftarOrderBarangAssetCtrl', ['$scope', '$state', 'CacheHelper', 'DateHelper', 'MedifirstService',
         function ($scope, $state, cacheHelper, dateHelper, medifirstService) {
@@ -6,6 +6,7 @@ define(['initialize'], function (initialize) {
             $scope.dataVOloaded = true;
             $scope.now = new Date();
             $scope.isRouteLoading = false;
+            var baseTransaksi = configuration.baseApiBackend;
             var pegawaiUser = {}
             LoadCache();
             loadCombo();
@@ -85,6 +86,10 @@ define(['initialize'], function (initialize) {
                 if ($scope.item.namaruangantujuan != undefined) {
                     var rg = "&ruangantujuanfk=" + $scope.item.namaruangantujuan
                 }
+                var rg2 = ""
+                if ($scope.item.namaruanganpemesan != undefined) {
+                    var rg2 = "&ruanganpemesanfk=" + $scope.item.namaruanganpemesan
+                }
                 var produkfk = ""
                 if ($scope.item.namaBarang != undefined) {
                     var produkfk = "&produkfk=" + $scope.item.namaBarang.id
@@ -94,7 +99,7 @@ define(['initialize'], function (initialize) {
                 medifirstService.get("logistik/get-data-order-barang-asset?" +
                     "tglAwal=" + tglAwal +
                     "&tglAkhir=" + tglAkhir +
-                    "&noorder=" + $scope.item.struk + rg + produkfk
+                    "&noorder=" + $scope.item.struk + rg + rg2 + produkfk
                     , true).then(function (dat) {
                         $scope.isRouteLoading = false;
                         // for (var i = 0; i < dat.data.daftar.length; i++) {
@@ -175,15 +180,11 @@ define(['initialize'], function (initialize) {
                     5: '',
                     6: ''
                 }
-                cacheHelper.set('OrderBarangLogistikCtrl', chacePeriode);
-                $state.go('OrderBarangLogistik')
+                cacheHelper.set('OrderBarangAssetCtrl', chacePeriode);
+                $state.go('OrderBarangAsset')
             }
 
             $scope.KirimBarang = function () {
-                if ($scope.dataSelected.status != 'Terima Order Barang') {
-                    alert('Tidak bisa mengirim ke ruangan Sendiri!')
-                    return;
-                }
                 if ($scope.dataSelected.statusorder == 'Sudah Kirim') {
                     alert('Sudah Di Kirim!')
                     return;
@@ -197,8 +198,8 @@ define(['initialize'], function (initialize) {
                     5: '',
                     6: ''
                 }
-                cacheHelper.set('KirimBarangLogistikCtrl', chacePeriode);
-                $state.go('KirimBarangLogistik')
+                cacheHelper.set('KirimBarangAssetCtrl', chacePeriode);
+                $state.go('KirimBarangAsset')
             }           
            
             $scope.formatTanggal = function (tanggal) {
@@ -264,12 +265,12 @@ define(['initialize'], function (initialize) {
                 },
                 {
                     "field": "namaruanganasal",
-                    "title": "Nama Ruangan Asal",
+                    "title": "Ruangan Pemesan",
                     "width": "100px",
                 },
                 {
                     "field": "namaruangantujuan",
-                    "title": "Nama Ruangan Tujuan",
+                    "title": "Ruangan Tujuan",
                     "width": "120px",
                 },
                 {
@@ -306,11 +307,11 @@ define(['initialize'], function (initialize) {
                             "title": "Kd Produk",
                             "width": "70px",
                         },
-                        {
-                            "field": "kdsirs",
-                            "title": "Kd Sirs",
-                            "width": "70px",
-                        },
+                        // {
+                        //     "field": "kdsirs",
+                        //     "title": "Kd Sirs",
+                        //     "width": "70px",
+                        // },
                         {
                             "field": "namaproduk",
                             "title": "Nama Produk",
@@ -337,48 +338,85 @@ define(['initialize'], function (initialize) {
             $scope.formatTanggal = function (tanggal) {
                 return moment(tanggal).format('DD/MM/YYYY');
             }
-                   
-            $scope.cetak = function () {               
+
+            $scope.cetak = function () {
+                if (!$scope.dataSelected) {
+                    alert("Pilih data order terlebih dahulu!");
+                    return;
+                }
+
+                var pegawaiList = Array.isArray($scope.ListDataPegawai) ? $scope.ListDataPegawai : [];
+                var jabatanList = Array.isArray($scope.ListDataJabatan) ? $scope.ListDataJabatan : [];
+
+                // DataPegawai otomatis dari dataSelected
+                $scope.item.DataPegawai = pegawaiList.find(x => x.namalengkap === $scope.dataSelected.petugas);
+
+                // DataPegawai2 manual, tapi jika kosong, set default dari login
+                if (!$scope.item.DataPegawai2 && $scope.dataLogin) {
+                    var pegawaiLoginId = $scope.dataLogin?.pegawaiId;
+                    if (pegawaiLoginId) {
+                        $scope.item.DataPegawai2 = pegawaiList.find(x => x.id === pegawaiLoginId);
+                    }
+                }
+
+                // Set jabatan otomatis
+                if ($scope.item.DataPegawai) {
+                    $scope.item.DataJabatan = jabatanList.find(x => x.id === $scope.dataSelected.jabatanMemintaId);
+                }
+                if ($scope.item.DataPegawai2) {
+                    $scope.item.DataJabatan2 = jabatanList.find(x => x.id === $scope.dataLogin?.jabatanId);
+                }
+
                 $scope.popUp.center().open();
-            }
+            };
+
 
             $scope.CetakAh = function () {
-
                 var jabatan1 = ''
                 if ($scope.item.DataJabatan2 != undefined) {
-                    jabatan1 = $scope.item.DataJabatan2.namajabatan;
+                    jabatan1 = $scope.item.DataJabatan2.namajabatan
                 }
 
                 var pegawai1 = ''
                 if ($scope.item.DataPegawai2 != undefined) {
-                    pegawai1 = $scope.item.DataPegawai2.id;
+                    pegawai1 = $scope.item.DataPegawai2.id
                 }
 
                 var jabatan2 = ''
                 if ($scope.item.DataJabatan != undefined) {
-                    jabatan2 = $scope.item.DataJabatan.namajabatan;
+                    jabatan2 = $scope.item.DataJabatan.namajabatan
                 }
 
-                var pegawai2 = ''
-                if ($scope.item.DataPegawai != undefined) {
-                    pegawai2 = $scope.item.DataPegawai.id;
-                }
+                // Ambil langsung pegawai yang membuat order
+                var pegawai2 = $scope.dataSelected.idPegawaiMeminta || '';
+                    $scope.item.DataPegawai = {
+                    id: $scope.dataSelected.idPegawaiMeminta,
+                    namalengkap: $scope.dataSelected.petugas
+                };
 
-                var stt = 'false'
-                if (confirm('View Bukti Order? ')) {
-                    // Save it!
-                    stt = 'true';
+                var kdprofile = ''
+                if ($scope.dataLogin && $scope.dataLogin.kdProfile) {
+                    kdprofile = $scope.dataLogin.kdProfile
                 } else {
-                    // Do nothing!
-                    stt = 'false'
+                    var profileStorage = JSON.parse(localStorage.getItem('profile') || '{}')
+                    if (profileStorage.id) {
+                        kdprofile = profileStorage.id
+                    }
                 }
-                var client = new HttpClient();
-                client.get('http://127.0.0.1:1237/printvb/logistik?cetak-bukti-order=1&nores=' + $scope.dataSelected.norec + '&pegawaiMegetahui=' + pegawai1 + '&pegawaiMeminta=' + pegawai2
-                    + '&jabatanMengetahui=' + jabatan1 + '&jabatanMeminta=' + jabatan2 + '&view=' + stt + '&user=' + pegawaiUser[0].namalengkap, function (response) {
-                        //aadc=response; 
 
-                    });                
-                $scope.popUp.close();
+                var user = (window.pegawaiUser && pegawaiUser[0] && pegawaiUser[0].namalengkap) ? pegawaiUser[0].namalengkap : ''
+
+                var url = baseTransaksi + 'report/cetak-bukti-order-barang-asset'
+                    + '?norec=' + $scope.dataSelected.norec
+                    + '&kdprofile=' + kdprofile
+                    + '&pegawaiMengetahui=' + pegawai1
+                    + '&pegawaiMeminta=' + pegawai2
+                    + '&jabatanMengetahui=' + jabatan1
+                    + '&jabatanMeminta=' + jabatan2
+                    + '&user=' + user
+
+                window.open(url, '_blank')
+                $scope.popUp.close()
             }
 
             var HttpClient = function () {
