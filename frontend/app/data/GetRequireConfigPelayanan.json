@@ -3808,6 +3808,14 @@
         {
             "nameDep": "RL312PembedahanCtrl",
             "urlDep": "module/Registrasi/Laporan/LaporanRekamMedis/RL312PembedahanCtrl"
+        },
+        {
+            "nameDep": "DaftarKlaimRajalCtrl",
+            "urlDep": "module/Klaim/DaftarKlaimRajalCtrl"
+        },
+        {
+            "nameDep": "DaftarKlaimRanapCtrl",
+            "urlDep": "module/Klaim/DaftarKlaimRanapCtrl"
         }
     ]
 }

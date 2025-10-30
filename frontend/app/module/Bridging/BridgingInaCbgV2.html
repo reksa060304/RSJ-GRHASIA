@@ -2384,20 +2384,13 @@
 									</div>
 									<div class="grid_10">
 										<div class="grid_12">
-											<label c-label item="item" c-label-text="Kode Diagnosa"></label>
-										</div>
-										<div class="clear"></div>
-
-										<div class="grid_12">
 											<input kendo-combo-box style="width:100%" k-ng-model="item.diagnosisIdrgTd"
 												k-data-text-field="'kdNama'" k-data-value-field="'id'" k-filter="'contains'"
 												k-auto-bind="false" k-data-source="sourceDiagnosisIdrgTd" ng-disabled="findBy1=='1'" k-on-change="checkDiagnosaTindakanIm(item.diagnosisIdrgTd)" />
 										</div>
 									</div>
 									<div class="grid_2">
-											<label c-label item="item" c-label-text="jumlah"></label>
-											<input c-text-box type="number" class="k-textbox" ng-model="item.jumlahprocedureidrg"
-												 >
+											<input c-text-box type="number" class="k-textbox" ng-model="item.jumlahprocedureidrg" placeholder="jumlah">
 										</div>
 									<div class="grid_12" ng-if="!['Grouping iDRG Final','Grouping INACBG Reedit','Grouping','Grouping INACBG Final','Final Klaim','Terkirim','Klaim Edit'].includes(itemPopUp.statusklaim)">
 										<div class="grid_2" style="margin-right: 5px;">

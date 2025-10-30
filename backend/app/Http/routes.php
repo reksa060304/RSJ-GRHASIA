@@ -533,6 +533,10 @@ Route::group(['middleware' => 'cors', 'prefix' => 'service'], function () {
               Route::get('bridging/inacbg/get-daftar-pasien-ventilator','Bridging\InaCbgController@getDaftarPasienVen');
               Route::get('bridging/inacbg/get-daftar-pasien-intensif','Bridging\InaCbgController@getDaftarPasienIntensif');
               Route::get('bridging/inacbg/get-grouping-idrg','Bridging\InaCbgController@getGroupingIdrg');
+              Route::get('bridging/inacbg/get-list-berkas-monitoring','Bridging\InaCbgController@getListBerkasMonitoring');
+              Route::get('klaim/get-daftar-klaim','Bridging\InaCbgController@getDaftarKlaim');
+              Route::get('klaim/get-daftar-klaim-ranap','Bridging\InaCbgController@getDaftarKlaimRanap');
+              Route::get('bridging/inacbg/get-parameter','Bridging\InaCbgController@getParameterDok');
 
               Route::post('bridging/inacbg/save-proposi-bridging-inacbg','Bridging\InaCbgController@saveProposiBridgingINACBG');
               Route::post('bridging/inacbg/get-daftar-pasien-statusnaikkelas','Bridging\InaCbgController@getStatusNaikKelas');
