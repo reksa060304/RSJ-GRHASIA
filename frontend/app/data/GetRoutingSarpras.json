@@ -5023,7 +5023,7 @@
   },
   {
     "name": "MapRetriksiDiagnosa",
-    "url": "/MapRetriksiDiagnosa",
+    "url": "/TWFwUmV0cmlrc2lEaWFnbm9zYQ==",
     "templateurl": "module/SysAdmin/MapRetriksiDiagnosa.html",
     "controller": "MapRetriksiDiagnosaCtrl",
     "deps": [
@@ -5043,7 +5043,7 @@
   },
   {
     "name": "MapRetriksiObat",
-    "url": "/MapRetriksiObat",
+    "url": "/TWFwUmV0cmlrc2lPYmF0",
     "templateurl": "module/SysAdmin/MapRetriksiObat.html",
     "controller": "MapRetriksiObatCtrl",
     "deps": [
