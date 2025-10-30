@@ -21047,6 +21047,46 @@
         "define": "MedifirstService"
       }
     ]
+  },
+  {
+    "name": "DaftarKlaimRajal",
+    "url": "/TW9iaWxlSktOUmF3YXRKYWxhbg==",
+    "templateurl": "module/Klaim/DaftarKlaimRajal.html",
+    "controller": "DaftarKlaimRajalCtrl",
+    "deps": [
+      {
+        "module": "Services",
+        "define": "Service"
+      },
+      {
+        "module": "LoginServices",
+        "define": "LoginService"
+      },
+      {
+        "module": "MedifirstService",
+        "define": "MedifirstService"
+      }
+    ]
+  },
+  {
+    "name": "DaftarKlaimRanap",
+    "url": "/DaftarKlaimRanap",
+    "templateurl": "module/Klaim/DaftarKlaimRanap.html",
+    "controller": "DaftarKlaimRanapCtrl",
+    "deps": [
+      {
+        "module": "Services",
+        "define": "Service"
+      },
+      {
+        "module": "LoginServices",
+        "define": "LoginService"
+      },
+      {
+        "module": "MedifirstService",
+        "define": "MedifirstService"
+      }
+    ]
   }
 ]
 

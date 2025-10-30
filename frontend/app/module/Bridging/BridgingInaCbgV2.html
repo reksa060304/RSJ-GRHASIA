@@ -1643,9 +1643,9 @@
 						<tr>
 							<td align="right" style="padding: 10px 10px;"><label c-label item="item" >Jenis Rawat</label></td>
 							<td>
-								<input class="k-radio" type="radio" name="jalan" ng-model="itemPopUp.jenis_rawat" id="jalan" value="2">
+								<input class="k-radio" type="radio" name="jalan" ng-model="itemPopUp.jenis_rawat" id="jalan" value="2" ng-disabled="true">
 								<label class="k-radio-label" for="jalan" style="margin-right: 10px;">Jalan</label>
-								<input class="k-radio" type="radio" name="inap" ng-model="itemPopUp.jenis_rawat" id="inap"  value="1">
+								<input class="k-radio" type="radio" name="inap" ng-model="itemPopUp.jenis_rawat" id="inap"  value="1" ng-disabled="true">
 								<label class="k-radio-label" for="inap" style="margin-right: 10px;">Inap</label>
 								
 									<input type="checkbox" class="k-checkbox" id="itemPopUp.ntkelas"
@@ -1661,11 +1661,11 @@
 							<td align="right" style="padding: 0 10px;"><label c-label item="item" >Kelas Hak</label></td>
 							<td>
 								
-								<input class="k-radio" type="radio" name="3" ng-model="itemPopUp.kelas_rawat" id="kelas_3" value="3">
+								<input class="k-radio" type="radio" name="3" ng-model="itemPopUp.kelas_rawat" id="kelas_3" value="3" ng-disabled="!isRanap">
 								<label class="k-radio-label" for="kelas_3" style="margin-right: 10px;">Kelas 3</label>
-								<input class="k-radio" type="radio" name="kelas_2" ng-model="itemPopUp.kelas_rawat" id="kelas_2"  value="2">
+								<input class="k-radio" type="radio" name="kelas_2" ng-model="itemPopUp.kelas_rawat" id="kelas_2"  value="2" ng-disabled="!isRanap">
 								<label class="k-radio-label" for="kelas_2" style="margin-right: 10px;">Kelas 2</label>
-								<input class="k-radio" type="radio" name="kelas_1" ng-model="itemPopUp.kelas_rawat" id="kelas_1"  value="1">
+								<input class="k-radio" type="radio" name="kelas_1" ng-model="itemPopUp.kelas_rawat" id="kelas_1"  value="1" ng-disabled="!isRanap">
 								<label class="k-radio-label" for="kelas_1" style="margin-right: 10px;">Kelas 1</label>
 								
 							</td>
@@ -2321,34 +2321,30 @@
 							</div>
 						</div>
 					</div>
+					<div class="grid_12" style="margin-top: 10px;">
+							<!-- <div class="grid_2" style="margin: 10px " ng-if="['-'].includes(itemPopUp.statusklaim)">
+								<button class="btnTemplate1"  ng-click="new_claim3()">Kirim Klaim</button>
+							</div> -->
+							<button class="k-button" ng-click="new_claim3()" style="float:right;margin-top:2%;margin-right:1%;" ng-if="['-'].includes(itemPopUp.statusklaim)">New Klaim</button>
+					</div>
 					<div class="grid_12">
 						<fieldset>
 							<legend>iDRG</legend>
 							<fieldset>
-								<legend>ICD 10 iDRG</legend>
+								<legend>Diagnosa (ICD 10)</legend>
 								 <div class="grid_6">
 									<div class="grid_12">
 										<div class="grid_12" style="margin-top:10px">
 										</div>
 									</div>
-									<div class="grid_4">
-										<div class="grid_12">
-											<label c-label item="item" c-label-text="Jenis Diagnosa"></label>
-										</div>
-										<div class="clear"></div>
-							
+									<div class="grid_4" ng-show="false">
 										<div class="grid_12">
 											<input kendo-combo-box style="width:100%" k-ng-model="item.jenisDiagnosisIdrg"
 												k-data-text-field="'jenisDiagnosa'" k-data-value-field="'id'" k-filter="'contains'"
 												k-auto-bind="false" k-data-source="sourceJenisDiagnosisPrimerIdrg" />
 										</div>
 									</div>
-									<div class="grid_6">
-										<div class="grid_12">
-											<label c-label item="item" c-label-text="Kode Diagnosa"></label>
-										</div>
-										<div class="clear"></div>
-							
+									<div class="grid_10">
 										<div class="grid_12">
 											<input kendo-combo-box style="width:100%" k-ng-model="item.diagnosisPrimerIdrg"
 												k-data-text-field="'kodeNama'" k-data-value-field="'id'" k-filter="'contains'"
@@ -2379,7 +2375,7 @@
 								
 							</fieldset>
 							<fieldset>
-								<legend>ICD 9 iDRG</legend>
+								<legend>Prosedur (ICD 9)</legend>
 								<div class="grid_6">
 									<div class="grid_12">
 								
@@ -2388,20 +2384,13 @@
 									</div>
 									<div class="grid_10">
 										<div class="grid_12">
-											<label c-label item="item" c-label-text="Kode Diagnosa"></label>
-										</div>
-										<div class="clear"></div>
-
-										<div class="grid_12">
 											<input kendo-combo-box style="width:100%" k-ng-model="item.diagnosisIdrgTd"
 												k-data-text-field="'kdNama'" k-data-value-field="'id'" k-filter="'contains'"
 												k-auto-bind="false" k-data-source="sourceDiagnosisIdrgTd" ng-disabled="findBy1=='1'" k-on-change="checkDiagnosaTindakanIm(item.diagnosisIdrgTd)" />
 										</div>
 									</div>
 									<div class="grid_2">
-											<label c-label item="item" c-label-text="jumlah"></label>
-											<input c-text-box type="number" class="k-textbox" ng-model="item.jumlahprocedureidrg"
-												 >
+											<input c-text-box type="number" class="k-textbox" ng-model="item.jumlahprocedureidrg" placeholder="jumlah">
 										</div>
 									<div class="grid_12" ng-if="!['Grouping iDRG Final','Grouping INACBG Reedit','Grouping','Grouping INACBG Final','Final Klaim','Terkirim','Klaim Edit'].includes(itemPopUp.statusklaim)">
 										<div class="grid_2" style="margin-right: 5px;">
@@ -2425,7 +2414,7 @@
 								</div>
 								
 							</fieldset>
-							<button class="k-button" ng-click="simpangrouperidrg()" style="float:right;margin-top:2%;margin-right:1%;" ng-if="!['Grouping iDRG Final','Grouping INACBG Reedit','Grouping','Grouping INACBG Final','Final Klaim','Terkirim','Klaim Edit'].includes(itemPopUp.statusklaim)">Grouping iDRG</button>
+							<button class="k-button" ng-click="simpangrouperidrg()" style="float:right;margin-top:2%;margin-right:1%;" ng-if="!['-','Grouping iDRG Final','Grouping INACBG Reedit','Grouping','Grouping INACBG Final','Final Klaim','Terkirim','Klaim Edit'].includes(itemPopUp.statusklaim)">Grouping iDRG</button>
 							<div class="grid_12" ng-show="grouper_idrg" style="margin-top: 10px;">
 								<table align="center" style="width:98.50%;color: #4c5356;" id="customers" ng-class="{'hijau-lumayan': ['Grouping iDRG Final','Grouping INACBG Reedit','Grouping','Grouping INACBG Final','Final Klaim','Terkirim'].includes(itemPopUp.statusklaim)}">
 
@@ -2469,8 +2458,9 @@
 									
 							</div>
 							<div class="grid_12">
-										
-										<button ng-if="!['Grouping iDRG Final','Grouping INACBG Reedit','Grouping','Grouping INACBG Final','Final Klaim','Terkirim','Klaim Edit','-','Klaim'].includes(itemPopUp.statusklaim)" class="k-button" ng-click="finalIdrg()" style="float:right;margin-top:2%;margin-right:1%;">Final iDRG</button>
+										<span ng-show="itemPopUp.data_idrg && itemPopUp.data_idrg.mdc_description != 'Ungroupable or Unrelated'">
+											<button ng-if="!['Grouping iDRG Final','Grouping INACBG Reedit','Grouping','Grouping INACBG Final','Final Klaim','Terkirim','Klaim Edit','-','Klaim'].includes(itemPopUp.statusklaim)" class="k-button" ng-click="finalIdrg()" style="float:right;margin-top:2%;margin-right:1%;">Final iDRG</button>
+										</span>
 										<button ng-if="['Grouping iDRG Final','Grouping','Grouping INACBG Reedit','Grouping INACBG Final','Klaim Edit'].includes(itemPopUp.statusklaim) || (itemPopUp.data_idrg == undefined && !['Klaim','-'].includes(itemPopUp.statusklaim))" class="k-button" ng-click="editUlangIdrg()" style="float:right;margin-top:2%;margin-right:1%;">Edit Ulang iDRG</button>
 									</div>
 						</fieldset>
@@ -2488,7 +2478,7 @@
 						<div class="grid_12" ng-if="isInu">
 							<fieldset>
 								<!-- <legend>ICD 10 UNU</legend> -->
-								<legend>ICD 10</legend>
+								<legend>Diagnosa (ICD 10)</legend>
 								<div class="grid_6">
 									<div class="grid_12">
 										<div class="grid_12" style="margin-top:10px">
@@ -2503,24 +2493,14 @@
 											</md-radio-group> -->
 										</div>
 									</div>
-									<div class="grid_4">
-										<div class="grid_12">
-											<label c-label item="item" c-label-text="Jenis Diagnosa"></label>
-										</div>
-										<div class="clear"></div>
-							
+									<div class="grid_4" ng-show="false">
 										<div class="grid_12">
 											<input kendo-combo-box style="width:100%" k-ng-model="item.jenisDiagnosis"
 												k-data-text-field="'jenisDiagnosa'" k-data-value-field="'id'" k-filter="'contains'"
 												k-auto-bind="false" k-data-source="sourceJenisDiagnosisPrimer1" />
 										</div>
 									</div>
-									<div class="grid_6">
-										<div class="grid_12">
-											<label c-label item="item" c-label-text="Kode Diagnosa"></label>
-										</div>
-										<div class="clear"></div>
-							
+									<div class="grid_10">
 										<div class="grid_12">
 											<input kendo-combo-box style="width:100%" k-ng-model="item.diagnosisPrimer"
 												k-data-text-field="'kodeNama'" k-data-value-field="'id'" k-filter="'contains'"
@@ -2589,7 +2569,7 @@
 			        <!-- ICD 9 -->
 						<div class="grid_12" style="margin-top: 10px"  ng-if="isInu">
 							<fieldset>
-								<legend>ICD 9</legend>
+								<legend>Prosedur (ICD 9)</legend>
 								<div class="grid_6">
 									<div class="grid_12">
 									<!--   <div class="grid_12" style="margin-top:10px">
@@ -2608,13 +2588,7 @@
 											</md-radio-group> -->
 										</div>
 									</div>
-									<div class="grid_6">
-										<div class="grid_12">
-											<label c-label item="item" c-label-text="Kode Diagnosa"></label>
-										</div>
-										
-										<div class="clear"></div>
-
+									<div class="grid_10">
 										<div class="grid_12">
 											<input kendo-combo-box style="width:100%" k-ng-model="item.diagnosisPrimer1"
 												k-data-text-field="'kdNama'" k-data-value-field="'id'" k-filter="'contains'"
@@ -3000,10 +2974,10 @@
 			   		</div>
 			        <!-- END ICD 9 -->
 					<div class="grid_12">
-						<div class="grid_2" style="margin: 10px " ng-if="['-'].includes(itemPopUp.statusklaim)">
+						<!-- <div class="grid_2" style="margin: 10px " ng-if="['-'].includes(itemPopUp.statusklaim)">
 							<button class="btnTemplate1"  ng-click="new_claim3()">Kirim Klaim</button>
-						</div>
-						<div class="grid_2" style="margin: 10px ">
+						</div> -->
+						<div class="grid_2" style="margin: 10px " ng-if="['-'].includes(itemPopUp.statusklaim)">
 							<button class="btnTemplate1"  ng-click="setdataklaim()">Simpan</button>
 						</div>
 						<!-- <div class="grid_2" style="margin: 10px ">

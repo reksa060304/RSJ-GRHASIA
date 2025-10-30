@@ -533,6 +533,10 @@ Route::group(['middleware' => 'cors', 'prefix' => 'service'], function () {
               Route::get('bridging/inacbg/get-daftar-pasien-ventilator','Bridging\InaCbgController@getDaftarPasienVen');
               Route::get('bridging/inacbg/get-daftar-pasien-intensif','Bridging\InaCbgController@getDaftarPasienIntensif');
               Route::get('bridging/inacbg/get-grouping-idrg','Bridging\InaCbgController@getGroupingIdrg');
+              Route::get('bridging/inacbg/get-list-berkas-monitoring','Bridging\InaCbgController@getListBerkasMonitoring');
+              Route::get('klaim/get-daftar-klaim','Bridging\InaCbgController@getDaftarKlaim');
+              Route::get('klaim/get-daftar-klaim-ranap','Bridging\InaCbgController@getDaftarKlaimRanap');
+              Route::get('bridging/inacbg/get-parameter','Bridging\InaCbgController@getParameterDok');
 
               Route::post('bridging/inacbg/save-proposi-bridging-inacbg','Bridging\InaCbgController@saveProposiBridgingINACBG');
               Route::post('bridging/inacbg/get-daftar-pasien-statusnaikkelas','Bridging\InaCbgController@getStatusNaikKelas');
@@ -544,6 +548,8 @@ Route::group(['middleware' => 'cors', 'prefix' => 'service'], function () {
               Route::post('bridging/inacbg/save-response-from-inacbg','Bridging\InaCbgController@saveResponseFromINACBG');
               Route::post('bridging/inacbg/save-hasil-grouping-idrg','Bridging\InaCbgController@saveGroupingIdrg');
               Route::post('bridging/inacbg/save-pegawai','Bridging\InaCbgController@savePegawai');
+              Route::post('bridging/inacbg/delete-grouping-inacbg','Bridging\InaCbgController@deleteGroupingInacbg');
+              Route::post('bridging/inacbg/delete-grouping-idrg','Bridging\InaCbgController@deleteGroupingIdrg');
 
             // START IDRG    
             Route::get('registrasi/get-icd-9-by-noreg-idrg','Registrasi\RegistrasiController@getIcd9PasienByNoreg');

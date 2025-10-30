@@ -1,0 +1,574 @@
+<style>
+.k-window .k-header {height: 30px !important;}
+.grid-content-custom .k-grid-content {max-height: 400px !important;}
+.k-window .k-window-title {padding: 7px;font-weight: 600;}
+.k-window-titlebar .k-window-action {margin: 10px !important;}
+div.k-window {border-style: none !important;border-width: none !important;border-radius: 0px !important;box-shadow: rgba(0, 0, 0, 0.5) 0px 20px 30px -10px !important;}
+.k-input-custom {height: 2.6em !important;font-size: 14px !important;border-radius: 4px !important;width: 100%;}
+.k-select-custom {height: 2.12em !important;font-size: 14px !important;border-radius: 4px !important;width: 100%;}
+.k-select-custom .k-dropdown-wrap .k-select, .k-select-custom .k-numeric-wrap .k-select, .k-select-custom .k-picker-wrap .k-select {line-height: 2.5em;}
+.k-input-readonly-custom {height: 2.78em !important;border: none !important;font-size: 14px !important;border-radius: 2px !important;margin-top: 3px !important;}
+.k-input-readonly-custom:hover {background-color: #e4e3e3 !important;}
+.k-textarea-readonly-custom {border: none !important;font-size: 14px !important;border-radius: 2px !important;margin-top: 3px !important;background-color: #e4e3e3 !important;resize: none;padding: 7px !important}
+.k-textarea-readonly-custom:hover {background-color: #e4e3e3 !important;}
+.k-textarea-custom {font-size: 14px !important;border-radius: 4px !important;margin-top: 3px !important;resize: none;padding: 7px !important}
+.k-window .k-state-focused {box-shadow: rgba(0, 0, 0, 0.5) 0px 20px 30px -10px;}
+.panel-default > .panel-heading {font-size: 18px;}
+.panel-heading {padding: 10px 10px;}
+.green-400 {color: #000;font-weight: 800;background-color: #76FF03;text-align: center;}
+.green-200 {color: #000;font-weight: 800;background-color: #B2FF59;text-align: center;}
+.blue-200 {color: #000;font-weight: 800;background-color: #B3E5FC;text-align: center;}
+.red-400 {color: #FFF;font-weight: 800;background-color: #D50000;text-align: center;}
+.btn-custom {padding: 0px 10px;width: auto;margin: 0px;border: none;border-radius: 3px;height: 32px;}
+.btn-custom .fa {margin-right: 5px;}
+.bg-btn-info {background: #00B0FF;color: #fff;}
+.bg-btn-info:hover {background: #0091EA;}
+.bg-btn-danger {background: #E53935;color: #fff;}
+.bg-btn-danger:hover {background: #C62828;}
+.bg-btn-success {background: #64DD17;color: #fff;}
+.bg-btn-success:hover {background: #50bd0c;}
+.bg-btn-amber {background: #FF6F00;color: #fff;}
+.bg-btn-amber:hover {background: #FF8F00;}
+.pgrid_12 {padding: 5px;width: 99.3% !important;}
+.table-custom {font-family: Arial, Helvetica, sans-serif;border-collapse: collapse;width: 100%;}
+.table-custom td, .table-custom th {border: 1px solid #ddd;padding: 8px;}
+.table-custom tr:nth-child(even){background-color: #f2f2f2;}
+.table-custom tr:hover {background-color: #ddd;}
+.table-custom th {padding: 12px 8px;background-color: #37474F;color: white;}
+.mt10 {margin-top: 10px;}
+.btn-link-custom {background: none!important;border: none;padding: 0!important;color: #069;width: 100%;cursor: pointer;}
+.btn-link-custom:focus {border: none !important;outline: 0;-webkit-box-shadow: none !important;-moz-box-shadow: none !important;box-shadow: none !important;}
+.btn-custom-dropdown {background-color: #4CAF50;color: white;padding: 16px;font-size: 16px;border: none;cursor: pointer;}
+.dropdown-custom {position: relative;display: inline-block;}
+.dropdown-custom-content {display: none;position: absolute;background-color: #f9f9f9;min-width: 160px;box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);z-index: 1;}
+.dropdown-custom-content a {color: black;padding: 12px 16px;text-decoration: none;display: block;}
+.dropdown-custom-content a:hover {background-color: #f1f1f1}
+.dropdown-custom:hover .dropdown-custom-content {display: block;}
+.box-loading-custom {z-index:9999999999;background: #ffffff94;position: fixed;top:45px;left: 0;right: 0;bottom:0;overflow: hidden;}
+.content-tab-custom {overflow-y: auto;overflow-x: hidden;}
+.loading-mini-custom {width: 100%;text-align: center;}
+.notfound {width: 100%;text-align: center;font-size: 18px;font-weight: 600;padding: 100px 0px;}
+
+.k-grid-bg-custom .k-grid-header, .k-grid-bg-custom .k-header, .k-grid-bg-custom .k-pager-wrap {background-color: #37474F !important;}
+.k-datepiker-custom .k-picker-wrap .k-input {font-size: 14px !important;border-radius: 3px;}
+.k-datepiker-custom .k-picker-wrap .k-select {top: 5px !important;border: none !important;}
+.k-datepiker-custom .k-picker-wrap.k-state-default {border-radius: 3px;}
+.k-datepiker-custom .k-input {height: 30px !important;text-indent: .83em !important;}
+</style>
+<c-panel item="item" header="'Daftar Klaim Pasien Rawat Inap'" disabled></c-panel>
+<div class="panel panel-default container_12">
+	<div class="panel-body">
+		<div class="grid_12">
+			<div class="grid_3">
+				<div class="grid_12">
+					<label c-label item="item" style="padding-left: 5px;" >Tanggal</label>
+				</div>
+				<div class="clear"></div>
+		
+				<div class="grid_12">
+					<!-- AwalPeriode -->
+					<div class="grid_6 padDatePicker k-datepiker-custom">
+						<input style="width: 100%" k-ng-model="item.periodeAwal" kendo-datetimepicker k-max="now"
+							placeholer="yyyy-MM-dd HH:mm" k-format="'yyyy-MM-dd HH:mm'" parsedate="yyyy-MM-dd HH:mm" />
+					</div>
+		
+					<!-- AkhirPeriode -->
+					<div class="grid_6 padDatePicker k-datepiker-custom">
+						<input style="width: 100%" k-ng-model="item.periodeAkhir" kendo-datetimepicker
+							placeholer="yyyy-MM-dd HH:mm" k-format="'yyyy-MM-dd HH:mm'" />
+					</div>
+					<div class="clear"></div>
+				</div>
+			</div>
+			<div class="grid_1">
+				<div class="grid_12"><label c-label item="item">No. Registrasi</label></div>
+				<div class="clear"></div>
+				<div class="grid_12">
+					<input c-text-box type="input" class="k-textbox k-input-custom" ng-model="item.noregistrasi" />
+				</div>
+			</div>
+			<div class="grid_1">
+				<div class="grid_12"><label c-label item="item">No.RM</label></div>
+				<div class="clear"></div>
+				<div class="grid_12">
+					<input c-text-box type="input" class="k-textbox k-input-custom" ng-model="item.norm" />
+				</div>
+			</div>
+			<div class="grid_2">
+				<div class="grid_12"><label c-label item="item">Nama Pasien</label></div>
+				<div class="clear"></div>
+				<div class="grid_12">
+					<input c-text-box type="input" class="k-textbox k-input-custom" ng-model="item.namapasien" />
+				</div>
+			</div>
+			<div class="grid_2">
+				<div class="grid_12"><label c-label item="item">Poli / Unit</label></div>
+				<div class="clear"></div>
+				<div class="grid_12">
+					<input class="k-select-custom" kendo-combo-box k-ng-model="item.ruangan" k-data-text-field=" 'namaruangan' "
+					k-filter=" 'contains' " k-data-value-field=" 'id' " k-auto-bind="false " k-data-source="listRuangan" />
+				</div>
+			</div>
+			<div class="grid_2">
+				<div class="grid_12"><label c-label item="item">No SEP</label></div>
+				<div class="clear"></div>
+				<div class="grid_12">
+					<input c-text-box type="input" class="k-textbox k-input-custom" ng-model="item.nosep" />
+				</div>
+			</div>
+			<div class="grid_1">
+				<div class="grid_12">
+					<button class="btn-custom bg-btn-info" ng-click="cari()" style="margin-top: 22px;height: 35px;" >
+						<i class="fa fa-search"></i> Cari
+					</button>
+					<!-- <button class="btnTemplate1" style="margin-left: 0;" ng-click="cari()">
+						<i class="fa fa-search"></i> Cari
+					</button> -->
+				</div>
+			</div>
+		</div>
+	</div>
+
+	<kendo-grid id="kGrid" class="grid-content-custom" data-source="dataSourceGrid" options="columnGrid"k-pageable="'true'" k-sortable="'true'" 
+		k-resizable="'true'" k-ng-model="dataPasienSelected" ng-dblclick='showListPemeriksaan(dataPasienSelected)'>
+	</kendo-grid>
+
+</div>
+
+
+<div kendo-window="popUpListPemeriksaan" k-title="'Resume Rawat Inap'" k-width="1300" k-height="heightPopUpListPemeriksaan"  k-visible="false"
+	k-on-open="win2visible = true" k-on-close="win2visible = false">
+	<div class="box-loading-custom" id="load-popup-resumeri"><img height="100" style="position: fixed;top: 50%;left: 50%;" src="../app/stylesheets/Flat/loading-image.gif" /></div>
+	<div class="panel panel-default container_12" style="padding: 0px 10px;">
+		<div class="grid_12" id="headerListPemeriksaan" >
+			<div class="grid_1">
+				<label c-label item="item">No RM</label>
+				<input c-text-box type="input" filter="" class="k-textbox k-input-custom" ng-model="temppasien.nocm" disabled />
+			</div>
+			<div class="grid_2">
+				<label c-label item="item">No Registrasi</label>
+				<input c-text-box type="input" filter="" class="k-textbox k-input-custom" ng-model="temppasien.noregistrasi" disabled />
+			</div>
+			<div class="grid_5">
+				<label c-label item="item">Nama Pasien</label>
+				<input c-text-box type="input" filter="" class="k-textbox k-input-custom" ng-model="temppasien.namapasien" disabled />
+			</div>
+			<div class="grid_2">
+				<label c-label item="item">Tgl Registrasi</label>
+				<input c-text-box type="input" filter="" class="k-textbox k-input-custom" ng-model="temppasien.tglregistrasi" disabled />
+			</div>
+			<div class="grid_2">
+				<label c-label item="item">Tipe</label>
+				<input c-text-box type="input" filter="" class="k-textbox k-input-custom" ng-model="temppasien.kelompokpasien" disabled />
+			</div>
+			<div class="grid_2">
+				<label c-label item="item">Ruangan Terakhir</label>
+				<input c-text-box type="input" filter="" class="k-textbox k-input-custom" ng-model="temppasien.namaruangan" disabled />
+			</div>
+			<div class="grid_1">
+				<label c-label item="item">Tgl Lahir</label>
+				<input c-text-box type="input" filter="" class="k-textbox k-input-custom" ng-model="temppasien.tgllahir" disabled />
+			</div>
+			<div class="grid_1">
+				<label c-label item="item">Umur</label>
+				<input c-text-box type="input" filter="" class="k-textbox k-input-custom" ng-model="temppasien.umur" disabled />
+			</div>
+			<div class="grid_1">
+				<label c-label item="item">Kelas</label>
+				<input c-text-box type="input" filter="" class="k-textbox k-input-custom" ng-model="temppasien.namakelas" disabled />
+			</div>
+			<div class="grid_4">
+				<label c-label item="item">Alamat</label>
+				<input c-text-box type="input" filter="" class="k-textbox k-input-custom" ng-model="temppasien.alamatrmh" disabled />
+			</div>
+			<div class="grid_3">
+				<label c-label item="item">No SEP</label>
+				<input c-text-box type="input" filter="" class="k-textbox k-input-custom" ng-model="temppasien.nosep" disabled />
+			</div>
+		</div>
+
+		<div class="grid_12">
+			<div class="grid_10">
+				<button class="btn-custom bg-btn-success" ng-click="printsep()" >
+					<i class="fa fa-print"></i> SEP
+				</button>
+				<button class="btn-custom bg-btn-amber" ng-click="claim_print()" >
+					<i class="fa fa-print"></i> E-Klaim
+				</button>
+				<button class="btn-custom bg-btn-info" ng-click="cetakResumeRI()" id="btnCetakResumeRI" >
+					<i class="fa fa-print"></i> Resume Medis
+				</button>
+				<button class="btn-custom bg-btn-danger" ng-click="cetakBilling()" id="btnCetakBilling">
+					<i class="fa fa-print"></i> Billing
+				</button>				
+				<button class="btn-custom bg-btn-success" ng-click="cetakRingkasanMasukKeluarRI()" id="btnCetakRingkasanMasukKeluarRI">
+					<i class="fa fa-print"></i> Ringkasan Masuk Keluar
+				</button>
+				
+				<button class="btn-custom bg-btn-success" ng-click="cetakFormulirPindahRS()" id="btnCetakFormulirPindahRS">
+					<i class="fa fa-print"></i> Formulir Pindah RS
+				</button>
+				<div class="dropdown-custom">
+					<button class="btn-custom bg-btn-info"><i class="fa fa-caret-down"></i> Surat Pelengkap Lainnya</button>
+					<div class="dropdown-custom-content">
+						<a href="javascript:void(0)" ng-click="cetakSuratPenunjang('ket-opname')">Surat Keterangan Opname</a>
+						<a href="javascript:void(0)" ng-click="cetakSuratPenunjang('ket-igd')">Surat Keterangan Gawat Darurat</a>
+						<!-- <a href="javascript:void(0)">Surat Keterangan Kelahiran</a> -->
+						<a href="javascript:void(0)" ng-click="cetakSuratKematian()">Surat Kematian</a>
+					</div>
+				</div>
+			</div>
+			<div class="grid_2">
+				<span style="background: #e4e3e3; padding: 5px 15px; line-height: 1; position: absolute; right: 13px; border-radius: 3px; font-size: 14px; font-weight: 800; color: #000;">
+					Total Grouping Rp. {{temppasien.totalgrouping}}
+					<!-- Total Transaksi Rp. <span ng-if="temppasien.totaltransaksi">{{temppasien.totaltransaksi}}</span><span ng-if="!temppasien.totaltransaksi">0</span> -->
+				</span>
+			</div>
+		</div>
+
+		<div class="grid_12">
+			<md-content>
+				<md-tabs md-dynamic-height md-border-bottom>
+					<md-tab label="Resume Medis">
+
+						<div class="content-tab-custom">
+							<div id="load-resumeri" class="loading-mini-custom"></div>
+							<div id="content-resumeri-notfound"></div>
+							<div id="content-resumeri">
+								<div class="grid_12 pgrid_12">
+									<div class="grid_12"><label c-label item="item">Diagnosis Masuk Rumah Sakit</label></div>
+									<div class="grid_12">
+										<input c-text-box type="input" class="k-textbox k-input-custom" ng-model="tempresumeRI.diagnosisawal" disabled />
+									</div>
+								</div>
+
+								<div class="grid_12">
+									<div class="grid_10">
+										<div class="grid_12"><label c-label item="item">Diagnosis Utama</label></div>
+										<div class="grid_12">
+											<input c-text-box type="input" class="k-textbox k-input-custom" ng-model="tempresumeRI.diagnosismasuk" disabled />
+										</div>
+									</div>
+									<div class="grid_2">
+										<div class="grid_12"><label c-label item="item">ICD</label></div>
+										<div class="grid_12" style="padding: 0;">
+											<input c-text-box type="input" class="k-textbox k-input-custom" ng-model="tempresumeRI.icd" disabled />
+										</div>
+									</div>
+								</div>
+	
+								<div class="grid_12 pgrid_12" style="max-height: 215px;overflow-y: scroll;">
+									<table class="table-custom">
+										<thead>
+											<tr>
+												<th width="5%" class="text-center">No</th>
+												<th>Diagnosa Secondar</th>
+												<th width="10%" class="text-center"> ICD </th>
+											</tr>
+										</thead>
+										<tbody ng-repeat="(key, val) in tempresumeRI.resumelistDiagnosaSecondar">
+											<tr>
+												<td class="text-center">{{ key+1 }}</td>
+												<td>{{val.diagnosasecondar}}</td>
+												<td class="text-center">
+													{{val.icd}}
+												</td>
+											</tr>
+										</tbody>
+										<tbody ng-if="tempresumeRI.resumelistDiagnosaSecondar.length<=0">
+											<tr>
+												<td colspan="3">Diagnosa secondar belum ada!</td>
+											</tr>
+										</tbody>
+									</table>
+								</div>
+	
+								<div class="grid_12">
+									<div class="grid_4">
+										<div class="grid_12"><label c-label item="item">Dokter Penanggung Jawab Pelayanan</label></div>
+										<div class="grid_12">
+											<input c-text-box type="input" class="k-textbox k-input-custom" ng-model="tempresumeRI.dokterdpjp" disabled />
+										</div>
+									</div>
+									<div class="grid_4">
+										<div class="grid_12"><label c-label item="item">Ruangan Rawat Terakhir</label></div>
+										<div class="grid_12">
+											<input c-text-box type="input" class="k-textbox k-input-custom" readonly ng-model="tempresumeRI.ruanganrawatterakhir" disabled/>
+										</div>
+									</div>
+								</div>
+								
+								<div class="grid_12">
+									<div class="grid_4">
+										<div class="grid_12"><label c-label item="item">Terapi / Pengobatan</label></div>
+										<div class="grid_12">
+											<textarea class="k-textbox k-textarea-custom" rows="3" ng-model="tempresumeRI.terapi" disabled></textarea>
+										</div>
+									</div>
+				
+									<div class="grid_4">
+										<div class="grid_12"><label c-label item="item">Pemeriksaan Fisik</label></div>
+										<div class="grid_12">
+											<textarea class="k-textbox k-textarea-custom" rows="3" ng-model="tempresumeRI.pemeriksaanfisik" disabled></textarea>
+										</div>
+									</div>
+									<div class="grid_4">
+										<div class="grid_12"><label c-label item="item">Pemeriksaan Penunjang</label></div>
+										<div class="grid_12">
+											<textarea class="k-textbox k-textarea-custom" rows="3" ng-model="tempresumeRI.pemeriksaanpenunjang" disabled></textarea>
+										</div>
+									</div>
+								</div>
+	
+								<div class="grid_12 pgrid_12" style="max-height: 215px;overflow-y: scroll;">
+									<table class="table-custom">
+										<thead>
+											<tr>
+												<th width="5%" class="text-center">No</th>
+												<th>Tindakan</th>
+												<th width="10%" class="text-center">ICD</th>
+											</tr>
+										</thead>
+										<tbody ng-repeat="(key, itemtindakan) in tempresumeRI.resumelistTindakan">
+											<tr>
+												<td class="text-center">{{ key+1 }}</td>
+												<td>{{itemtindakan.tindakan}}</td>
+												<td class="text-center">
+													{{itemtindakan.icd}}
+												</td>
+											</tr>
+										</tbody>
+										<tbody ng-if="tempresumeRI.resumelistTindakan.length<=0">
+											<tr>
+												<td colspan="3">Tindakan belum ada!</td>
+											</tr>
+										</tbody>
+									</table>
+								</div>
+	
+								<div class="grid_12">
+									<div class="grid_4">
+										<div class="grid_12"><label c-label item="item">Ringkasan Riwayat Penyakit</label></div>
+										<div class="grid_12">
+											<textarea class="k-textbox k-textarea-custom" rows="3" ng-model="tempresumeRI.ringkasanriwayatpenyakit" disabled></textarea>
+										</div>
+									</div>
+					
+									<div class="grid_4">
+										<div class="grid_12"><label c-label item="item">Hasil Konsultasi</label></div>
+										<div class="grid_12">
+											<textarea class="k-textbox k-textarea-custom" rows="3" ng-model="tempresumeRI.hasilkonsultasi" disabled></textarea>
+										</div>
+									</div>
+					
+									<div class="grid_4">
+										<div class="grid_12"><label c-label item="item">Alergi (Reaksi Obat)</label></div>
+										<div class="grid_12">
+											<textarea class="k-textbox k-textarea-custom" rows="3" ng-model="tempresumeRI.alergiobat" disabled></textarea>
+										</div>
+									</div>
+								</div>
+								
+								<div class="grid_12">
+									<div class="grid_6">
+										<div class="grid_12"><label c-label item="item">Diet</label></div>
+										<div class="grid_12">
+											<textarea class="k-textbox k-textarea-custom" rows="2" ng-model="tempresumeRI.diet" disabled></textarea>
+										</div>
+									</div>
+									<div class="grid_6">
+										<div class="grid_12"><label c-label item="item">Instruksi / Anjuran dan Edukasi ( Follow Up )</label></div>
+										<div class="grid_12">
+											<textarea class="k-textbox k-textarea-custom" rows="2" ng-model="tempresumeRI.instruksianjuran" disabled></textarea>
+										</div>
+									</div>
+								</div>
+	
+								<div class="grid_12">
+									<div class="grid_3">
+										<div class="grid_12"><label c-label item="item">Tanggal Pulang</label></div>
+										<div class="grid_12">
+											<input c-text-box type="input" class="k-textbox k-input-custom" ng-model="tempresumeRI.tglpulang" disabled />
+										</div>
+									</div>
+									<div class="grid_3">
+										<div class="grid_12"><label c-label item="item">Status Keluar</label></div>
+										<div class="grid_12">
+											<input c-text-box type="input" class="k-textbox k-input-custom" ng-model="tempresumeRI.statuskeluar" disabled />
+										</div>
+									</div>
+									<div class="grid_3">
+										<div class="grid_12"><label c-label item="item">Kondisi Keluar</label></div>
+										<div class="grid_12">
+											<input c-text-box type="input" class="k-textbox k-input-custom" ng-model="tempresumeRI.kondisikeluar" disabled />
+										</div>
+									</div>
+									<div class="grid_3">
+										<div class="grid_12"><label c-label item="item">Status Pulang</label></div>
+										<div class="grid_12">
+											<input c-text-box type="input" class="k-textbox k-input-custom" ng-model="tempresumeRI.statuspulang" disabled />
+										</div>
+									</div>
+								</div>
+								<div class="grid_12">
+									<div class="grid_6">
+										<div class="grid_12"><label c-label item="item">Pengobatan Lanjutan</label></div>
+										<div class="grid_12">
+											<input c-text-box type="input" class="k-textbox k-input-custom" ng-model="tempresumeRI.pengobatandilanjutkan" disabled />
+										</div>
+									</div>
+								</div>
+							</div>
+						</div>
+						
+					</md-tab>
+					<md-tab label="Laboratorium">
+						<div class="content-tab-custom">
+							<div id="load-laboratorium" class="loading-mini-custom"></div>
+							<div id="content-laboratorium-notfound"></div>
+							<div id="content-laboratorium">
+								<table class="table-custom">
+									<thead>
+										<tr>
+											<th width="16%">Nama Pemeriksaan</th>
+											<th width="15%">Detail Pemeriksaan</th>
+											<th width="10%">Hasil</th>
+											<th width="10%">Nilai Rujukan</th>
+											<th width="10%">Satuan</th>
+											<th>Keterangan</th>
+										</tr>
+									</thead>
+									<tbody ng-repeat="(key, val) in templaboratorium">
+										<tr>
+											<td colspan="6" style="font-weight: 800;background-color: #78909C;color:#fff" >{{val.detailjenisproduk}}</td>
+										</tr>
+										<tr ng-repeat="detailhasil in val['rincian']">
+											<td>{{detailhasil.namaproduk}}</td>
+											<td>{{detailhasil.detailpemeriksaan}}</td>
+											<td>
+												<div ng-if="detailhasil.flag=='Y'" style="color:red">{{detailhasil.hasil}}</div>
+												<div ng-if="detailhasil.flag=='N'">{{detailhasil.hasil}}</div>
+											</td>
+											<td>{{detailhasil.nilaitext}}</td>
+											<td>{{detailhasil.satuanstandar}}</td>
+											<td>{{detailhasil.keterangan}}</td>
+										</tr>
+									</tbody>
+								</table>
+							</div>
+						</div>
+					</md-tab>
+					<md-tab label="Radiologi">
+						<div class="content-tab-custom">
+							<div id="load-radiologi" class="loading-mini-custom"></div>
+							<div id="content-radiologi-notfound"></div>
+							<div id="content-radiologi">
+								<table class="table-custom">
+									<thead>
+										<tr>
+											<th width="15%">Dokter Radiologi</th>
+											<th width="15%">Pemeriksaan</th>
+											<th>Expert</th>
+										</tr>
+									</thead>
+									<tbody ng-repeat="(key, val) in tempradiologi">
+										<tr>
+											<td>{{val.dokterrab}}</td>
+											<td>{{val.namaproduk}}</td>
+											<td><div ng-bind-html="val.keterangan"></div></td>
+										</tr>
+									</tbody>
+								</table>
+							</div>
+						</div>
+					</md-tab>
+					<md-tab label="Farmasi">
+						<div class="content-tab-custom">
+							<div id="load-farmasi" class="loading-mini-custom"></div>
+							<div id="content-farmasi-notfound"></div>
+							<div id="content-farmasi">
+								<table class="table-custom">
+									<thead>
+										<tr>
+											<th width="15%">Tanggal Order</th>
+											<th width="10%">No Resep</th>
+											<th>Dokter Pengorder</th>
+											<th width="10%"></th>
+										</tr>
+									</thead>
+									<tbody ng-repeat="(key, itemfar) in tempfarmasi">
+										<tr>
+											<td>{{itemfar.tglorder}}</td>
+											<td>{{itemfar.noorder}}</td>
+											<td>{{itemfar.pengorder}}</td>
+											<td>
+												<button class="btn-custom bg-btn-success" id="btnresep{{key}}" ng-click="resep_print(itemfar, 'btnresep'+key)" >
+													<i class="fa fa-print"></i> E-Resep
+												</button>
+											</td>
+										</tr>
+									</tbody>
+								</table>
+							</div>
+						</div>
+					</md-tab>
+					<md-tab label="Berkas EMR">
+						<div class="content-tab-custom">
+							<div id="load-berkas-emr" class="loading-mini-custom"></div>
+							<div id="content-berkas-emr-notfound"></div>
+							<div id="content-berkas-emr">
+								<table class="table-custom">
+									<thead>
+										<tr>
+											<th width="15%">Tanggal EMR</th>
+											<th width="10%">No EMR</th>
+											<th>Caption EMR</th>
+											<th width="10%"></th>
+										</tr>
+									</thead>
+									<tbody ng-repeat="(key, itemEmr) in tempberkasemr">
+										<tr>
+											<td>{{itemEmr.tglemr}}</td>
+											<td>{{itemEmr.noemr}}</td>
+											<td>{{itemEmr.caption}}</td>
+											<td>
+												<button class="btn-custom bg-btn-success" id="btnLembaranEmr{{key}}" ng-click="cetakBerkasEMR(itemEmr, 'btnLembaranEmr'+key)" >
+													<i class="fa fa-print"></i> Cetak
+												</button>
+											</td>
+										</tr>
+									</tbody>
+								</table>
+							</div>
+						</div>
+					</md-tab>
+					<md-tab label="Dokumen Upload">
+						<div class="content-tab-custom">
+							<div id="load-dokument" class="loading-mini-custom"></div>
+							<div id="content-dokument">
+								<kendo-grid id="Grid" class="k-grid-bg-custom" data-source="dataDocument" options="columnDocument"
+									k-selectable="'row'" k-sortable="'false'" k-resizable="'true'"
+									k-ng-model="dataSelectedDocument">
+								</kendo-grid>
+							</div>
+						</div>
+					</md-tab>
+				</md-tabs>
+			</md-content>
+		</div>
+	</div>
+</div>
+
+
+<div class="grid_12" style="margin-top:60px">
+	<div ng-include='"../app/template/Shared/TemplateLoading"'></div>
+</div>
+
+<div id="loading-mini" style="display: none;">
+	<div style='padding: 100px 0px;'>
+		<img height='50' src='../app/stylesheets/Flat/loading-image.gif' />
+		<div style='margin-top: 10px;'>Mohon Tunggu</div>
+	</div>
+</div>
+
+<div id="qr_code" style="display: none;"></div>
