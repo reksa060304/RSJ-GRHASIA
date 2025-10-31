@@ -3830,13 +3830,13 @@ class InaCbgController   extends ApiController
                 $dokklaim = $dokklaim->where('pa.nosep','ilike', '%' . $request->nosep.'%');
             }
             if (isset($request->jenispel) && $request->jenispel != "" && $request->jenispel != "undefined") {
-               if($request->jenispel == 1){
-                $data = $data->where('dep.id',16);
-                $dokklaim = $dokklaim->where('dep.id',16);
-               } else {
-                $data = $data->where('dep.id','!=',16);
-                $dokklaim = $dokklaim->where('dep.id','!=',16);
-               }
+                if($request->jenispel == 1){
+                    $data = $data->where('dep.id',16);
+                    $dokklaim = $dokklaim->where('dep.id',16);
+                } else {
+                    $data = $data->where('dep.id','!=',16);
+                    $dokklaim = $dokklaim->where('dep.id','!=',16);
+                }
             }
             
         $data = $data->get();

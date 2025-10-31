@@ -2,13 +2,19 @@
 namespace App\Http\Controllers\Registrasi;
 
 use App\Http\Controllers\ApiController;
+use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Response;
 use DB;
 use App\Traits\Valet;
+use Webpatser\Uuid\Uuid;
 use File;
 use App\Transaksi\PasienDaftar;
-use iio\libmergepdf\Merger;
+use Webklex\PDFMerger\Facades\PDFMergerFacade as PDFMerger;
+use setasign\Fpdi\Fpdi;
+use Symfony\Component\Filesystem\Filesystem;
+use Xthiago\PDFVersionConverter\Converter\GhostscriptConverterCommand;
+use Xthiago\PDFVersionConverter\Converter\GhostscriptConverter;
 
 class MonitoringDokumenKlaimController extends ApiController
 {
