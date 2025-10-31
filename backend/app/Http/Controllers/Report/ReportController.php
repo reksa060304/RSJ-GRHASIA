@@ -22,7 +22,7 @@ use Barryvdh\DomPDF\Facade as PDF;
 use JasperPHP\JasperPHP;
 use PHPJasper\PHPJasper;
 use Webpatser\Uuid\Uuid;
-use Illuminate\Support\Str;
+use SimpleSoftwareIO\QrCode\Facades\QrCode;
 
 
 class ReportController extends ApiController{
@@ -667,7 +667,8 @@ class ReportController extends ApiController{
             END AS alamatlengkap,
             pg.namalengkap as perujuk,pg2.namalengkap as dokterrad,
             pr.namaproduk,so.keterangan,pd.noregistrasi,pg2.nippns,
-            pg2.id as pgid
+            pg2.id as pgid,
+            pp.tglpelayanan
             FROM
                 hasilradiologi_t AS so
             INNER JOIN pasiendaftar_t AS pd ON pd.norec = so.noregistrasifk
@@ -698,10 +699,42 @@ class ReportController extends ApiController{
             return;
         }
 //        dd($raw);
+        $qrcode2 = base64_encode(QrCode::format('svg')->size(50)->generate($raw->dokterrad));
+        $qrcode = QrCode::format('svg')->size(50)->generate($raw->dokterrad);
         $pageWidth = 950;
 
-        return view('report.rad.expertise',
-            compact('raw', 'pageWidth','r'));
+        if(isset($r["issimpanberkas"])) {
+            $pdf = PDF::loadView('report.rad.expertise-dom', array(
+                'raw' => $raw,
+                'pageWidth' => $pageWidth,
+                'r' => $r,
+            'qrcode2' => $qrcode2,
+            'qrcode' => $qrcode,
+            ));
+            return $this->saveDokumenKlaim($pdf, $r);
+        } else if(isset($r["issimpanberkasfarmasi"])) {
+            $pdf = PDF::loadView('report.rad.expertise-dom', array(
+            'raw' => $raw,
+            'pageWidth' => $pageWidth,
+            'r' => $r,
+            'qrcode2' => $qrcode2,
+            'qrcode' => $qrcode,
+            ));
+            return $this->saveDokumenKlaimFarmasi($pdf, $r);
+        }else{
+            // $pdf = PDF::loadView('report.rad.expertise-dom', array(
+            //     'raw' => $raw,
+            //     'pageWidth' => $pageWidth,
+            //     'r' => $r,
+            //     'qrcode2' => $qrcode2,
+            //     'qrcode' => $qrcode,
+            // ));
+            return view('report.rad.expertise',compact('raw', 'pageWidth','r','qrcode','qrcode2'));
+                // return $pdf->stream();
+        }
+
+        // return view('report.rad.expertise',
+        //     compact('raw', 'pageWidth','r'));
 
     }
     public function getKegiatanRanap(Request $r){
@@ -1642,19 +1675,28 @@ class ReportController extends ApiController{
         $kdProfile = (int)$request['kdprofile'];
         $Noregistrasi = $request['noregistrasi'];
         $tglAyeuna = date('Y-m-d H:i:s');
-
-        $profile = collect(DB::select
-        ("
-                select * from profile_m where statusenabled=true limit 1
-            "))->first();
+        $ppkPelayanan = $this->settingDataFixed('namaPPKRujukan', $kdProfile);
 
         $registrasi = collect(DB::select("
              SELECT pa.nosep,to_char(pa.tanggalsep, 'DD-MM-YYYY HH:mm') AS tanggalsep,pa.nokepesertaan,pi.nocm,pd.noregistrasi,
-                    pa.norujukan,ap.namapeserta,to_char(pi.tgllahir, 'DD-MM-YYYY') AS tgllahir,jk.jeniskelamin, 
+                    pa.norujukan,pi.namapasien as namapeserta,to_char(pi.tgllahir, 'DD-MM-YYYY') AS tgllahir,jk.jeniskelamin, 
                     rp.namaruangan,rp.kodeexternal as namapoli,pa.ppkrujukan,  
                     (CASE WHEN rp.objectdepartemenfk=16 then 'Rawat Inap' else 'Rawat Jalan' END) as jenisrawat, 
                     dg.kddiagnosa, (case when dg.namadiagnosa is null then '-' else dg.namadiagnosa end) as namadiagnosa ,  
-                    ap.jenispeserta,ap.kdprovider,ap.nmprovider,kls.namakelas,pa.catatan
+                    ap.jenispeserta,ap.kdprovider,ap.nmprovider,kls.namakelas,pa.catatan,pa.tglcreate,rp.objectdepartemenfk,
+                    CASE WHEN pa.statuskunjungan = 1 THEN 'Konsultasi dokter (pertama)'
+                    WHEN pa.statuskunjungan = 2 THEN  'Kunjungan rujukan internal'
+                    WHEN pa.statuskunjungan = 3 THEN 'Kunjungan Kontrol (ulangan)'
+                    ELSE '' END AS kunjungan,pi.notelepon as notelpmobile,CASE WHEN pa.namadjpjpmelayanni is null then pg.namalengkap ELSE pa.namadjpjpmelayanni END as namadjpjpmelayanni,
+                    CASE WHEN pa.flagprocedure = '0' THEN 'Prosedur tidak berkelanjutan'
+                    WHEN pa.flagprocedure = '1' THEN 'Prosedur dan terapi berkelanjutan'
+                    END AS procedures,kls.namakelas AS haknamakelas,
+                    CASE WHEN rp.objectdepartemenfk = 18 THEN pa.polirujukannama ELSE '-' END AS polirujukannama,
+                    CASE WHEN pa.penjaminlaka = '1' THEN 'Jasa Raharja PT' 
+                    WHEN pa.penjaminlaka = '2' THEN 'BPJS Ketenagakerjaan'
+                    WHEN pa.penjaminlaka = '3' THEN 'TASPEN PT'
+                    WHEN pa.penjaminlaka = '4' THEN 'ASABRI PT'
+                    ELSE '-' END AS penjaminlakalantas
              FROM pemakaianasuransi_t pa  
              LEFT JOIN asuransipasien_m ap on pa.objectasuransipasienfk= ap.id  
              LEFT JOIN pasiendaftar_t pd on pd.norec=pa.noregistrasifk  
@@ -1663,43 +1705,95 @@ class ReportController extends ApiController{
              LEFT JOIN ruangan_m rp on rp.id=pd.objectruanganlastfk  
              LEFT JOIN diagnosa_m dg on pa.diagnosisfk=dg.id 
              LEFT JOIN kelas_m kls on kls.id=ap.objectkelasdijaminfk  
+             LEFT JOIN pegawai_m as pg on pg.id = pd.objectpegawaifk
              where pd.noregistrasi ='$Noregistrasi' 
         "))->first();
 
+        if (empty($registrasi)) {
+            http_response_code(400);
+            echo json_encode([
+                'status' => 'error',
+                'message' => 'Tidak ada data.'
+            ]);
+            die;
+        }
+
+        $request2 = new \Illuminate\Http\Request();
+        // $request2['userData'] = array('id' => 30015,'namauser' => 'his.registrasi');
+        $userData = array('id' => 30015);
+        $request2['url'] = "SEP/". $registrasi->nosep;
+        $request2['method'] = "GET";
+        $request2['cetaksep'] = true;
+        $request2['data'] = null;
+        
+        session(['userData' => $userData]);
+
+        $d = app('App\Http\Controllers\Bridging\BridgingBPJSV2Controller')->bpjsTools($request2);
+
+        if ($d['response'] == null) {
+            http_response_code(400);
+            echo json_encode([
+                'status' => 'error',
+                'message' => 'Tidak sep tidak ditemukan.'
+            ]);
+            die;
+        }
+
+        $qrcode = base64_encode(QrCode::format('svg')->size(50)->generate($registrasi->nokepesertaan));
         $pageWidth = 719;
         $dataReport = array(
-            'namaprofile' => $profile->namalengkap,
-            'alamat' => $profile->alamatlengkap,
+            'ppkPelayanan' => $ppkPelayanan,
             'nosep' => $registrasi->nosep,
-            'tanggalsep' => $registrasi->tanggalsep,
+            'tanggalsep' => $d['response']->tglSep,
             'nokepesertaan' => $registrasi->nokepesertaan,
             'norm' => $registrasi->nocm,
             'noregistrasi' => $registrasi->noregistrasi,
-            'jenispeserta' => $registrasi->jenispeserta,
+            'jenispeserta' => $d['response']->peserta->jnsPeserta,
             'namapeserta' => $registrasi->namapeserta,
             'cob' => "",
             'tgllahir' => $registrasi->tgllahir,
             'jeniskelamin' => $registrasi->jeniskelamin,
             'norujukan' => $registrasi->norujukan,
-            'namaruangan' => $registrasi->namaruangan,
+            'namaruangan' => $d['response']->jnsPelayanan == 'Rawat Inap' ? '-' : $registrasi->namaruangan,
             'namapoli' => $registrasi->namapoli,
             'ppkrujukan' => $registrasi->ppkrujukan,
-            'jenisrawat' => $registrasi->jenisrawat,
+            'jenisrawat' => $d['response']->jnsPelayanan == 'Rawat Inap'  ? 'R.Inap' : 'R.Jalan' ,
             'kddiagnosa' => $registrasi->kddiagnosa,
-            'namadiagnosa' => $registrasi->namadiagnosa,
+            'namadiagnosa' =>  $d['response']->diagnosa,
             'kdprovider' => $registrasi->kdprovider,
             'nmprovider' => $registrasi->nmprovider,
-            'namakelas' => $registrasi->namakelas,
-            'catatan' => $registrasi->catatan,
+            'namakelas' => $d['response']->jnsPelayanan == 'Rawat Inap' ? $d['response']->kelasRawat : '-',
+            'catatan' => $d['response']->catatan,
             'tanggal' => $tglAyeuna,
+            'tglcreate' => $registrasi->tglcreate,
+            'kunjungan' => $d['response']->tujuanKunj->nama,
+            'notelpmobile' => $registrasi->notelpmobile,
+            'procedures' => $registrasi->procedures,
+            'polirujukannama' => $registrasi->polirujukannama,
+            // 'namadjpjpmelayanni' => $registrasi->namadjpjpmelayanni,
+            'namadjpjpmelayanni' => is_null($d['response']->dpjp->nmDPJP) ? $d['response']->kontrol->nmDokter : $d['response']->dpjp->nmDPJP,
+            'haknamakelas' => $d['response']->peserta->hakKelas,
+            'penjaminlakalantas' => $registrasi->penjaminlakalantas,
+            'objectdepartemenfk' => $registrasi->objectdepartemenfk,
         );
-        return view('report.pendaftaran.sep',
-            compact('dataReport', 'pageWidth','profile'));
+        $pdf = PDF::loadView('report.pendaftaran.sep', array(
+            'dataReport' => $dataReport,
+            'pageWidth' => $pageWidth,
+            'qrcode' => $qrcode,
+        ));
+
+        if(isset($request["issimpanberkas"])) {
+            return $this->saveDokumenKlaim($pdf, $request);
+        }
+
+        if(isset($request["issimpanberkasfarmasi"])) {
+            return $this->saveDokumenKlaimFarmasi($pdf, $request);
+        }
+
+        return $pdf->stream();
+
 //        return view('','$result');
     }
-    
-
-  
 
     public function cetakCPPT(Request $request)
     {
@@ -20171,8 +20265,25 @@ public function suratBuktiPengembalian(Request $request)
             return $bsre;
         }
 
-        return $pdf->stream();
-        return view('report.EMR.cmrm05-dom',compact('data','pageWidth'));
+        if (isset($request["issimpanberkas"])) {
+            $pdf = PDF::loadView(
+                'report.EMR.cmrm05-dom',
+                array(
+                    'res' => $res,
+                    'pageWidth' => $pageWidth,
+                    'data' => $data,
+                    'item'=> $item,
+                    'peg'=> $peg,
+                    'r' => $request
+                )
+            );
+            return $this->saveDokumenKlaim($pdf, $request);
+        } else {
+            return $pdf->stream();
+        }
+
+        // return $pdf->stream();
+        // return view('report.EMR.cmrm05-dom',compact('data','pageWidth'));
     }
     public function cetakOkupasiTerapi(Request $request)
     {
@@ -23200,7 +23311,22 @@ public function suratBuktiPengembalian(Request $request)
             return $bsre;
         }
 
-        return $pdf->stream();
+        if (isset($request["issimpanberkas"])) {
+            $pdf = PDF::loadView(
+                'report.EMR.formulirtriaseigd',
+                array(
+                    'res' => $res,
+                    'pageWidth' => $pageWidth,
+                    'data' => $data,
+                    'item'=> $item,
+                    'peg'=> $peg,
+                    'r' => $request
+                )
+            );
+            return $this->saveDokumenKlaim($pdf, $request);
+        } else {
+            return $pdf->stream();
+        }
     }
 
     public function cetakDistribusiAlat(Request $request)
