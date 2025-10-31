@@ -3929,4 +3929,124 @@ class InaCbgController   extends ApiController
         }
         return $this->respond($data);
     }
+
+    public function postDokumenKlaim(Request $request) 
+    {
+        $kdProfile = $this->getDataKdProfile($request);
+        $idProfile = (int) $kdProfile;
+        $dataReq = $request->all();
+
+        // $request->validate([
+        //      'fileBerkas'=>'required|mimes:pdf'
+        // ]);
+
+        $uploadBerkasPasien = $request->file('fileBerkas');
+        $dataRegistrasi = PasienDaftar::where('norec', $dataReq['noregistrasifk'])->first();
+        $path = 'dokumen_klaim/'.$dataRegistrasi->noregistrasi;
+
+        DB::beginTransaction();
+        try {
+            // penamaan file 
+            $extension = $uploadBerkasPasien->getClientOriginalExtension();
+            $filename = $dataReq['namafile'].'_'.$dataRegistrasi->noregistrasi.'.'.$extension;
+
+            $dataInsert = array(
+                "norec" => substr(Uuid::generate(), 0, 32),
+                "kdprofile" => $idProfile,
+                "statusenabled" => true,
+                "filename" => $filename,
+                "filepath" => $path.'/'.$filename,
+                "nocmfk" => $dataRegistrasi->nocmfk,
+                "noregistrasifk" => $dataReq['noregistrasifk'],
+                "documentklaimfk" => $dataReq['documentklaimfk'],
+                "tglupload" => date('Y-m-d H:i:s'),
+            );
+            DB::table('dokklaim_t')->updateOrInsert(["filename" => $filename], $dataInsert);;
+            $request->file('fileBerkas')->move($path, $filename);
+
+            $transStatus = true;
+        } catch (\Exception $e) {
+            $transStatus = false;
+        }
+
+        if ($transStatus) {
+            $transMessage = 'Simpan Berhasil';
+            DB::commit();
+            $result = array(
+                "status" => 201,
+                "message" => $transMessage,
+                "dokumen" => $dataInsert,
+                "as" => 'inhuman',
+            );
+        } else {
+            $transMessage = "Simpan Gagal";
+            DB::rollBack();
+            $result = array(
+                "status" => 400,
+                "message" => $transMessage,
+                "as" => 'inhuman',
+            );
+        }
+        return $this->setStatusCode($result['status'])->respond($result, $transMessage);
+    }
+
+    
+    public function deleteDokumenKlaim(Request $request)
+    {
+        $kdProfile = $this->getDataKdProfile($request);
+        $idProfile = (int) $kdProfile;
+        DB::beginTransaction();
+        try {
+            $dok_m = DB::table("dokklaim_m")->where('id',$request['documentklaimfk'])->first();
+            $dok = DB::table("dokklaim_m")->where('namaberkas',$dok_m->namaberkas)->where('statusenabled',true)->get();
+            $dok_id = [];
+            foreach($dok AS $item){
+                $dok_id[] = $item->id;
+            }
+            $dataRegistrasi = PasienDaftar::where('noregistrasi', $request['noregistrasi'])->first();
+            $Dkmn = DB::table("dokklaim_t")
+            ->where('noregistrasifk', $dataRegistrasi->norec)
+            ->where('documentklaimfk',$request['documentklaimfk'])
+            ->where('kdprofile',$idProfile)
+            ->get();
+            foreach($Dkmn as $d){
+                // delete file
+                $path = public_path($d->filepath);
+                if (\File::exists($d->filepath)){
+                    \File::delete($path);
+                }
+            }
+            
+
+            // detele data
+            DB::table("dokklaim_t")
+            ->where('noregistrasifk', $dataRegistrasi->norec)
+            ->whereIn('documentklaimfk',$dok_id)
+            ->where('kdprofile',$idProfile)
+            ->delete();
+
+            $transStatus = true;
+        } catch (\Exception $e) {
+            $transStatus = false;
+        }
+
+        if ($transStatus) {
+            $transMessage = 'Hapus Berhasil';
+            DB::commit();
+            $result = array(
+                "status" => 201,
+                "message" => $transMessage,
+                "as" => 'inhuman',
+            );
+        } else {
+            $transMessage = "Hapus Gagal";
+            DB::rollBack();
+            $result = array(
+                "status" => 400,
+                "message" => $transMessage,
+                "as" => 'inhuman',
+            );
+        }
+        return $this->setStatusCode($result['status'])->respond($result, $transMessage);
+    }
 }

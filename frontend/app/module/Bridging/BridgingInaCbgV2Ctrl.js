@@ -9141,11 +9141,11 @@ define(['initialize', 'Configuration'], function (initialize,configuration) {
 					$scope.hideSimpan = false
 					$scope.isRouteLoading = false
 					
-					if (e.data.data.length == 0 && ![49,68].includes(id)) {
+					if (e.data.data.length == 0 && ![4,11,15].includes(id)) {
 						toastr.info("Info", "Data tidak ditemukan");
 						    return
 					} else {
-						if ([49,68].includes(id)) {
+						if ([4,11,15].includes(id)) {
 							var a = {id:id, noregistrasi: noregistrasi, nosep:$scope.popUpDokumen.nosep,length:0, namafile : namafile}
 							simpanDokumen2(a)
 						} else {
@@ -9227,7 +9227,7 @@ define(['initialize', 'Configuration'], function (initialize,configuration) {
             }
 
 			function simpanDokumen2(data) {
-				if (data.length == 0 && [49,68].includes(data.id)) {
+				if (data.length == 0 && [4,11,15].includes(data.id)) {
 					var dt1 = {};
 					var dt2 = [];
 					dt1 = {

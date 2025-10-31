@@ -15,16 +15,19 @@ use App\Transaksi\ResumeMedis;
 use App\Transaksi\EMR_BSRE;
 use Illuminate\Support\Facades\Storage;
 use App\Master\Pegawai;
+use App\Traits\PelayananPasienTrait;
+use App\Transaksi\PasienDaftar;
 
 use Barryvdh\DomPDF\Facade as PDF;
 use JasperPHP\JasperPHP;
 use PHPJasper\PHPJasper;
+use Webpatser\Uuid\Uuid;
 use Illuminate\Support\Str;
 
 
 class ReportController extends ApiController{
 
-    use Valet;
+    use Valet,PelayananPasienTrait;
 
     public function __construct(){
         parent::__construct($skip_authentication = true);
@@ -25685,7 +25688,48 @@ public function suratBuktiPengembalian(Request $request)
     }
 
     public function saveDokumenKlaim($pdf, $request) {
+        $profile = collect(DB::select("select * from profile_m where statusenabled = true"))->first();
+        if (!in_array($request['iddok'], [17, 87, 88,4,28,56,58])) {
+            $content = $pdf->download()->getOriginalContent();
+        }
+        $path = 'dokumen_klaim/'.$request['isberkasnoreg'];
 
+        try {
+            $savePath = public_path($path);
+            \File::makeDirectory($savePath, 0755, true, true);
+            $namafile = $request['namafile'].'_'.$request['isberkasnoreg'].'.pdf';
+            $public_path = $savePath."/".$namafile;
+            $pdf->save($public_path);
+            
+            $dataRegistrasi = PasienDaftar::where('noregistrasi', $request['isberkasnoreg'])->first();
+            $dataInsert = array(
+                "norec" => substr(Uuid::generate(), 0, 32),
+                "kdprofile" => $profile->id,
+                "statusenabled" => true,
+                "filename" => $namafile,
+                "filepath" => $path.'/'.$namafile,
+                "nocmfk" => $dataRegistrasi->nocmfk,
+                "noregistrasifk" => $dataRegistrasi->norec,
+                "documentklaimfk" => $request['iddok'],
+                "tglupload" => date('Y-m-d H:i:s'),
+            );
+            if(in_array($request['iddok'], [4,28,56,58])) {
+                DB::table('dokklaim_t')->updateOrInsert(["filename" => $namafile, "documentklaimfk" => $request['iddok']], $dataInsert);
+            } else {
+                DB::table('dokklaim_t')->updateOrInsert(["filename" => $namafile], $dataInsert);
+            }
+
+            return response()->json([
+                'status' => 'success',
+                'message' => 'File berhasil disimpan.'
+            ], 200);
+        } catch (\Exception $e) {
+            return response()->json([
+                'status' => 'error',
+                'message' => 'File gagal disimpan.',
+                'error' => $e->getMessage().' - '.$e->getLine()
+            ], 400);
+        }
     }
 
     public function cetakSTSV2(Request $request)
@@ -31051,4 +31095,336 @@ public function suratBuktiPengembalian(Request $request)
         }
         return  $result;
     }
+    function profile($kdprofile){
+        return DB::table('profile_m')->where('id', $kdprofile)->first();
+    }
+
+    public  function getTotalKlaim($noregistrasi,$kdProfile)
+    {
+        $pelayanan =collect(\DB::select("select sum(x.totalppenjamin) as totalklaim
+            from (select spp.norec,spp.totalppenjamin
+            from pasiendaftar_t as pd
+            join antrianpasiendiperiksa_t as apd on apd.noregistrasifk=pd.norec and apd.kdprofile = pd.kdprofile
+            join pelayananpasien_t as pp on pp.noregistrasifk =apd.norec and pp.kdprofile = apd.kdprofile
+            join strukpelayanan_t as sp on sp.norec= pp.strukfk and sp.kdprofile = pp.kdprofile
+            join strukpelayananpenjamin_t as spp on spp.nostrukfk=sp.norec and spp.kdprofile = sp.kdprofile
+            where pd.noregistrasi = ?
+        --and spp.statusenabled is null 
+        and pd.kdprofile= ?
+        GROUP BY spp.norec,spp.totalppenjamin
+
+        ) as x",[$noregistrasi,$kdProfile]))->first();
+        if(!empty($pelayanan) && $pelayanan->totalklaim!= null){
+            return (float) $pelayanan->totalklaim;
+        }else{
+            return 0;
+        }
+    }
+
+    public function getTotolBayar($noregistrasi,$kdProfile)
+    {
+        $pelayanan =collect(\DB::select("select sum(x.totaldibayar) as totaldibayar
+            from (select sbm.norec,sbm.totaldibayar
+            from pasiendaftar_t as pd
+        join antrianpasiendiperiksa_t as apd on apd.noregistrasifk=pd.norec and apd.kdprofile = pd.kdprofile
+        join pelayananpasien_t as pp on pp.noregistrasifk =apd.norec and pp.kdprofile = apd.kdprofile
+        join strukpelayanan_t as sp on sp.norec= pp.strukfk and sp.kdprofile = pp.kdprofile
+        join strukbuktipenerimaan_t as sbm on sbm.nostrukfk = sp.norec and sbm.kdprofile = sp.kdprofile
+        where pd.noregistrasi = ?
+        and sbm.statusenabled =true
+        and pd.kdprofile= ?
+        AND sbm.keteranganlainnya NOT IN ('Pengembalian Deposit Pasien','Pembayaran Cicilan Tagihan Pasien','Pembayaran Cicilan Tagihan Pasien Collecting','Pembayaran Klaim BPJS')
+        GROUP BY sbm.norec,sbm.totaldibayar
+
+        ) as x",[$noregistrasi,$kdProfile]))->first();
+        if(!empty($pelayanan) && $pelayanan->totaldibayar!= null){
+                return (float) $pelayanan->totaldibayar;
+        }else{
+            return 0;
+        }
+    }
+
+    public function cetakBillbpjs(Request $r)
+    {
+
+        $profile = $this->profile($r['kdprofile']);
+        $print = false;
+        $pageWidth = 950;
+        $res['user'] = $r['user'];
+        $res['noregistrasi'] = $r['noregistrasi'];
+        $noregistrasi = $r['noregistrasi'];
+        $res['identitas'] =  DB::table('pasiendaftar_t as pd')
+            ->join('antrianpasiendiperiksa_t AS apd',function($j){ $j->on( 'apd.noregistrasifk', '=', 'pd.norec')->on('pd.kdprofile', '=', 'apd.kdprofile');})
+            ->join('pelayananpasien_t AS pp',function($j){ $j->on( 'pp.noregistrasifk', '=', 'apd.norec')->on('apd.kdprofile', '=', 'pp.kdprofile');})
+            ->join('pasien_m as ps',function($j){ $j->on( 'ps.id', '=', 'pd.nocmfk')->on('pd.kdprofile', '=', 'ps.kdprofile');})
+            ->join('ruangan_m as ru', function($j){ $j->on('ru.id', '=', 'pd.objectruanganlastfk')->on('ru.kdprofile', '=', 'pd.kdprofile');})
+            ->join('kelas_m as kl', function($j){ $j->on('kl.id', '=', 'pd.objectkelasfk')->on('pd.kdprofile', '=', 'kl.kdprofile');})
+            ->join('departemen_m as dp', function($j){ $j->on('dp.id', '=', 'ru.objectdepartemenfk')->on('dp.kdprofile', '=', 'ru.kdprofile');})
+            ->join('kelompokpasien_m as kp',function($j){ $j->on( 'kp.id', '=', 'pd.objectkelompokpasienlastfk')->on('kp.kdprofile', '=', 'pd.kdprofile');})
+            ->leftjoin('jeniskelamin_m as jk', function($j){ $j->on('jk.id', '=', 'ps.objectjeniskelaminfk')->on('ps.kdprofile', '=', 'jk.kdprofile');})
+            ->leftjoin('pegawai_m as pg', function($j){ $j->on('pg.id', '=', 'pd.objectpegawaifk')->on('pd.kdprofile', '=', 'pg.kdprofile');})
+            ->leftjoin('rekanan_m as rk', function($j){ $j->on('rk.id', '=', 'pd.objectrekananfk')->on('rk.kdprofile', '=', 'pd.kdprofile');})
+            ->leftjoin('pemakaianasuransi_t as pa',function($j){ $j->on( 'pa.noregistrasifk', '=', 'pd.norec')->on('pa.kdprofile', '=', 'pd.kdprofile');})
+            ->leftjoin('tempattidur_m AS tt',function($j){ $j->on( 'tt.id', '=', 'apd.nobed')->on('tt.kdprofile', '=', 'apd.kdprofile');})
+            ->leftjoin('strukpelayanan_t AS sp',function($j){ $j->on( 'sp.norec', '=', 'pp.strukfk')->on('sp.kdprofile', '=', 'pp.kdprofile');})
+            ->leftjoin('strukbuktipenerimaan_t AS sbm',function($j){ $j->on( 'sp.nosbmlastfk', '=', 'sbm.norec')->on('sbm.kdprofile', '=', 'sp.kdprofile');})
+            ->leftjoin('strukverifikasi_t as sv',function($j){ $j->on( 'sv.norec', '=', 'pd.closingpemeriksaanfk')->on('sv.kdprofile', '=', 'pd.kdprofile');})
+            ->leftjoin('pegawai_m as pg2','pg2.id','=','sv.objectpegawaipjawabfk')
+            ->select(
+                'pd.noregistrasi',
+                'pd.tglregistrasi',
+                'pd.tglpulang',
+                'ps.namapasien',
+                'ps.nocm',
+                'ru.namaruangan',
+                'kl.namakelas',
+                'kp.kelompokpasien',
+                'dp.namadepartemen',
+                'jk.jeniskelamin',
+                'pg.namalengkap',
+                'rk.namarekanan',
+                'pa.nosep',
+                'ps.namaayah',
+                'ps.penanggungjawab',
+                'tt.reportdisplay AS nobed',
+                'sbm.nosbm',
+                'ps.nocm',
+                'ps.tgllahir',
+                'sv.noverifikasi',
+                'pg2.namalengkap as namaclosing'
+            )
+
+           
+             ->where('pd.statusenabled', true)
+            ->where('pd.kdprofile', $r['kdprofile'])
+            ->where('pd.noregistrasi', $r['noregistrasi'])
+            ->first();
+
+        if (empty($res['identitas'])) {
+            echo '
+                <script language="javascript">
+                    window.alert("Pasien tidak mendapatkan pelayanan.");
+                    window.close()
+                </script>
+            ';
+            die;
+        }
+
+        $res['identitas']->tgllahir = $this->getDateIndo($res['identitas']->tgllahir);
+
+        $data =  DB::table('pelayananpasien_t as pp')
+            ->join('antrianpasiendiperiksa_t as apd',function($j){ $j->on('apd.norec', '=', 'pp.noregistrasifk')->on('apd.kdprofile', '=', 'pp.kdprofile');})
+            ->join('pasiendaftar_t as pd', function($j){ $j->on('pd.norec', '=', 'apd.noregistrasifk')->on('apd.kdprofile', '=', 'pd.kdprofile');})
+            ->join('kelas_m as kls', function($j){ $j->on('kls.id', '=', 'apd.objectkelasfk')->on('apd.kdprofile', '=', 'kls.kdprofile');})
+            ->join('produk_m as prd', function($j){ $j->on('prd.id', '=', 'pp.produkfk')->on('prd.kdprofile', '=', 'pp.kdprofile');})
+            ->join('ruangan_m as ru',function($j){ $j->on( 'ru.id', '=', 'apd.objectruanganfk')->on('apd.kdprofile', '=', 'ru.kdprofile');})
+            ->join('departemen_m as dp', function($j){ $j->on('dp.id', '=', 'ru.objectdepartemenfk')->on('ru.kdprofile', '=', 'dp.kdprofile');})
+            ->leftJOIN('strukresep_t as sr', function($j){ $j->on('sr.norec', '=', 'pp.strukresepfk')->on('sr.kdprofile', '=', 'pp.kdprofile');})
+            // ->leftJOIN('pelayananpasienpetugas_t as ptu', function($j){ $j->on('ptu.pelayananpasien', '=', 'pp.norec')->on('ptu.kdprofile', '=', 'pp.kdprofile');})
+            ->leftJOIN('ruangan_m as ru2',function($j){ $j->on( 'ru2.id', '=', 'sr.ruanganfk')->on('sr.kdprofile', '=', 'ru2.kdprofile');})
+            ->leftJOIN('departemen_m as dp2',function($j){ $j->on( 'dp2.id', '=', 'ru2.objectdepartemenfk')->on('dp2.kdprofile', '=', 'ru2.kdprofile');})
+            ->leftJOIN('pegawai_m as pg',function($j){ $j->on( 'pg.id', '=', 'sr.penulisresepfk')->on('pg.kdprofile', '=', 'sr.kdprofile');})
+            // ->leftJOIN('pegawai_m as pg2',function($j){ $j->on( 'pg2.id', '=', 'ptu.objectpegawaifk')->on('pg2.kdprofile', '=', 'ptu.kdprofile');})
+            ->leftJOIN('detailjenisproduk_m as djp',function($j){ $j->on('djp.id', '=', 'prd.objectdetailjenisprodukfk')->on('djp.kdprofile', '=', 'prd.kdprofile');})
+            ->leftJOIN('jenisproduk_m as jp',function($j){ $j->on('jp.id', '=', 'djp.objectjenisprodukfk')->on('jp.kdprofile', '=', 'djp.kdprofile');})
+            ->select(
+                'pp.norec',
+                'prd.namaproduk',
+                'kls.namakelas',
+                'pp.tglpelayanan',
+                'prd.objectdetailjenisprodukfk',
+                'ru.namaruangan',
+                'ru2.namaruangan as ruanganfarmasi',
+                'pp.strukresepfk',
+                'pp.jumlah',
+                'pp.hargasatuan',
+                'pg.namalengkap as penulisresep',
+                'jp.jenisproduk',
+                'dp.namadepartemen',
+                'dp2.namadepartemen as deparemenfarmasi',
+                // 'pg2.namalengkap as dokterdua',
+                DB::raw("
+            case when pp.jasa is not null then pp.jasa else 0 end jasa,
+            COALESCE (pp.hargadiscount, 0)  as diskon,
+            case when pp.hargadiscount is not null then pp.hargadiscount else 0 end hargadiscount,
+            (
+                (pp.hargasatuan  - case when pp.hargadiscount is null then 0 else pp.hargadiscount end)
+                 * pp.jumlah) 
+            + (case when pp.jasa is not null then pp.jasa else 0 end)
+             as total,
+            to_char(pp.tglpelayanan,'yyyy-MM-dd')  as tglpelayanan_group ,
+            case when pp.strukresepfk is null then 'Layanan' else 'Resep' end as jenis,
+            case when pp.strukresepfk is null then ru.namaruangan else ru2.namaruangan end as ruang_group ,
+            case when pp.strukresepfk is null then dp.namadepartemen else dp2.namadepartemen end as departemen_group 
+           ")
+            )
+            ->where('pp.statusenabled', true)
+            ->where('pp.kdprofile', $r['kdprofile'])
+            ->where('pd.noregistrasi', $r['noregistrasi'])
+            ->whereNull('pp.pelayananpaketfk')
+            // ->whereIn('ptu.objectjenispetugaspefk', [3,4,5,6])
+            ->orderBy('pp.tglpelayanan','desc')
+            ->distinct()->get();
+
+            $dataPaket = \DB::SELECT(DB::RAW("SELECT 
+                ppk.namapaket, sum(pp.jumlah * pp.hargasatuan) as hargapaket, ppk.norec, pp.tglpelayanan::DATE AS tglpelayanan
+            FROM pelayananpasien_t as pp
+            INNER JOIN pelayananpaket_t as ppk on ppk.norec = pp.pelayananpaketfk
+            INNER JOIN antrianpasiendiperiksa_t as apd on apd.norec = pp.noregistrasifk
+            INNER JOIN pasiendaftar_t as pd on pd.norec = apd.noregistrasifk
+            Where pp.statusenabled = true
+            AND pd.noregistrasi = '$r[noregistrasi]'
+            AND pp.kdprofile = $r[kdprofile]
+            Group BY ppk.namapaket, ppk.norec, pp.tglpelayanan::DATE
+            "));
+
+        $res['paket'] = $dataPaket;
+
+        $sDokterPemeriksa = $this->settingDataFixed('jenisPetugasDokterPemeriksa', $r['kdprofile']);
+        $pelayananpetugas = \DB::table('pasiendaftar_t as pd')
+            ->join('antrianpasiendiperiksa_t as apd',function($join){ $join->on('apd.noregistrasifk', '=', 'pd.norec')->on('apd.kdprofile', '=', 'pd.kdprofile');})
+            ->join('pelayananpasienpetugas_t as ptu',function($join){
+                $join->on('ptu.nomasukfk', '=', 'apd.norec')->on('ptu.kdprofile', '=', 'apd.kdprofile');
+            })
+            ->leftjoin('pegawai_m as pg',function($join){
+                $join->on('pg.id', '=', 'ptu.objectpegawaifk')->on('pg.kdprofile', '=', 'ptu.kdprofile');
+            })
+            ->select('ptu.pelayananpasien', 'pg.namalengkap')
+            ->where('ptu.objectjenispetugaspefk', 4)
+            ->where('pd.kdprofile',$r['kdprofile'])
+            ->where('pd.noregistrasi', $r['noregistrasi'])
+            ->get();
+
+        $totalpaket = 0;
+        foreach($dataPaket as $dp){
+            $totalpaket = $totalpaket + $dp->hargapaket;
+        }
+
+        $mapPelPetugas = [];
+            foreach($pelayananpetugas as $ppt){
+                $mapPelPetugas[$ppt->pelayananpasien][] = $ppt->namalengkap;
+    
+            }
+       
+
+        $res['total'] = 0;
+        foreach ($data as $item) {
+            $item->dokter = $item->strukresepfk != null ? $item->penulisresep : '-';
+            $res['total']  = $res['total']  + (float) $item->total;
+            // foreach ($pelayananpetugas as $itemd) {
+            //     if ($itemd->pelayananpasien == $item->norec) {
+            //         $item->dokter = $itemd->namalengkap;
+            //     }
+            // }
+
+            if (isset($mapPelPetugas[$item->norec])) {
+                $listDokter = [];
+                foreach ($mapPelPetugas[$item->norec] as $ppt) {
+                    $listDokter[] = $ppt;
+                }
+                $item->dokter = implode(' / ', $listDokter);
+            }
+        }
+
+        $res['total'] = $res['total'] + $totalpaket;
+
+        $res['profile'] = Profile::where('id',$r['kdprofile'])->first();
+        $res['billing'] =  collect($data)->groupBy('namaruangan');
+        $res['ismultipenjamin']  = false;
+        $res['klaim']  = $this->getTotalKlaim($r['noregistrasi'],$r['kdprofile']);
+        $res['deposit'] = $this->getDepositPasien($r['noregistrasi']);
+        $res['dibayar'] = $this->getTotolBayar($r['noregistrasi'],$r['kdprofile']);
+        $res['sisa'] =   $res['total']  -  $res['dibayar'] - $res['deposit'] - $res['klaim'];       
+        $res['pdf']  = false;
+        $blade = 'report.kasir.billingbpjs';
+      
+        if(isset($r['rekap']) && $r['rekap'] == true ){
+            $res['billing'] =   collect($data)->groupBy('departemen_group');
+            $blade = 'report.kasir.rekap.billingbpjs';
+        }
+        
+        if(isset($r["issimpanberkas"])) {
+            $pdf = PDF::loadView('report.kasir.billingbpjs-dom', array(
+                'profile' => $profile,
+                'pageWidth' => $pageWidth,
+                'print' => $print,
+                'res' => $res,
+                'r' => $r,
+            
+            ));
+            return $this->saveDokumenKlaim($pdf, $r);
+        }else if(isset($r["issimpanberkasfarmasi"])) {
+            $pdf = PDF::loadView('report.kasir.billingbpjs-dom', array(
+                'profile' => $profile,
+                'pageWidth' => $pageWidth,
+                'print' => $print,
+                'res' => $res,
+                'r' => $r,
+            
+            ));
+            return $this->saveDokumenKlaimFarmasi($pdf, $r);
+        }else{
+            // return view(
+            //     $blade,
+            //     compact('profile', 'pageWidth', 'print', 'res','r')
+            // );
+            $pdf = PDF::loadView('report.kasir.billingbpjs-dom', array(
+                'profile' => $profile,
+                'pageWidth' => $pageWidth,
+                'print' => $print,
+                'res' => $res,
+                'r' => $r,
+            
+            ));
+            return $pdf->stream();
+        }
+        
+    }
+
+    public function saveFileLip(Request $request) {
+        $profile = collect(DB::select("select * from profile_m where statusenabled = true"))->first();
+        $pdf = $request->file('fileLip');
+
+        if ($pdf) {
+            try {
+
+                $path = 'dokumen_klaim/' . $request['isberkasnoreg'];
+        
+                $savePath = public_path($path);
+                \File::makeDirectory($savePath, 0755, true, true);
+            
+                $namafile = $request['namafile'] . '_' . $request['isberkasnoreg'] . '.pdf';
+            
+                $pdf->move($savePath, $namafile);
+                $dataRegistrasi = PasienDaftar::where('noregistrasi', $request['isberkasnoreg'])->first();
+                $dataInsert = array(
+                    "norec" => substr(Uuid::generate(), 0, 32),
+                    "kdprofile" => $profile->id,
+                    "statusenabled" => true,
+                    "filename" => $namafile,
+                    "filepath" => $path.'/'.$namafile,
+                    "nocmfk" => $dataRegistrasi->nocmfk,
+                    "noregistrasifk" => $dataRegistrasi->norec,
+                    "documentklaimfk" => $request['iddok'],
+                    "tglupload" => date('Y-m-d H:i:s'),
+                );
+                DB::table('dokklaim_t')->updateOrInsert(["filename" => $namafile], $dataInsert);
+
+                return response()->json([
+                    'status' => 'success',
+                    'message' => 'File berhasil disimpan.'
+                ], 200);
+            } catch (\Exception $e) {
+                return response()->json([
+                    'status' => 'error',
+                    'message' => 'Gagal menyimpan file: ' . $e->getMessage()
+                ], 500);
+            }
+        }
+
+            return response()->json([
+            'status' => 'error',
+            'message' => 'File tidak ditemukan.'
+            ], 400);
+        }
 }
