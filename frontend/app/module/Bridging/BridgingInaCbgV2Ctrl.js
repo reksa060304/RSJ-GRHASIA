@@ -8568,7 +8568,7 @@ define(['initialize', 'Configuration'], function (initialize,configuration) {
 					// $scope.itemPopUp.discharge_statusid = 5
 				}
 				$scope.itemPopUp.dpjp = {id:$scope.dataPasienSelected.id, namalengkap:$scope.dataPasienSelected.namadokter}
-				$scope.itemPopUp.jenis_tarif = 'TARIF RS KELAS B SWASTA'
+				$scope.itemPopUp.jenis_tarif = 'TARIF RS KELAS A PEMERINTAH'
 				$scope.itemPopUp.kode_tarif = $scope.dataPasienSelected.kodetarif
 				// $scope.listTarifRS =[
 				// 								{namatarif:'Prosedur Non Bedah' ,tarif:$scope.tarif_rs16.prosedur_non_bedah},
