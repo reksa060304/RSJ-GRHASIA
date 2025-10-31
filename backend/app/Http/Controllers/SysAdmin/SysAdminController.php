@@ -15,6 +15,8 @@ use App\Master\KelompokTransaksi;
 use App\Master\MapBkutoKelompokTransaksi;
 use App\Master\MapPaketToProduk;
 use App\Master\MapRuanganToEMR;
+use App\Master\RetriksiDiagnosa;
+use App\Master\RetriksiObat;
 use App\Master\MapRuanganToPelayananMutu;
 use App\Master\Paket;
 use App\Master\PaketObat;
@@ -68,7 +70,282 @@ class SysAdminController  extends ApiController {
         );
         return $this->respond($result);
     }
+    public function getlistComboRetriksi (Request $request){
+        $kdProfile = (int) $this->getDataKdProfile($request);
+        $dataProduk = \DB::table('produk_m as pr')
+            ->JOIN('detailjenisproduk_m as djp','djp.id','=','pr.objectdetailjenisprodukfk')
+            ->JOIN('jenisproduk_m as jp','jp.id','=','djp.objectjenisprodukfk')
+            ->leftJOIN('satuanstandar_m as ss','ss.id','=','pr.objectsatuanstandarfk')
+            ->JOIN('stokprodukdetail_t as spd','spd.objectprodukfk','=','pr.id')
+            ->select('pr.id','pr.namaproduk','ss.id as ssid','ss.satuanstandar')
+            ->where('pr.kdprofile', $kdProfile)
+            ->where('pr.statusenabled',true)
+            ->whereIn('jp.id',[97,283,210])
+//            ->whereIn('jp.id',$arrkdjenisobat)
+//            ->where('spd.qtyproduk','>',0)
+            ->groupBy('pr.id','pr.namaproduk','ss.id','ss.satuanstandar')
+            ->orderBy('pr.namaproduk')
+            ->get();
 
+        $icdIX = \DB::table('diagnosa_m as dg')
+            ->select('dg.id', DB::raw("dg.kddiagnosa || '-' || dg.namadiagnosa as namadiagnosa"))
+            ->where('dg.statusenabled', true)
+            ->orderBy('dg.kddiagnosa');
+        $icdIX = $icdIX->take(100);
+        $icdIX = $icdIX->get();
+        
+
+        $result = array(
+            'produk' => $dataProduk,
+            'diagnosa' => $icdIX,
+            'created' => 'abdulloh'
+        );
+        return $this->respond($result);
+    }
+
+    public function getComboRetriksiDiagnosa(Request $request)
+    {
+        $req = $request->all();
+        $icdIX = \DB::table('diagnosa_m as dg')
+            ->select('dg.id', 'dg.kddiagnosa', 'dg.namadiagnosa', 'dg.kddiagnosa as kdDiagnosa', 'dg.namadiagnosa as namaDiagnosa', DB::raw("dg.kddiagnosa || '-' || dg.namadiagnosa as namadiagnosa"))
+            ->where('dg.statusenabled', true)
+            ->orderBy('dg.kddiagnosa');
+
+        if (
+            isset($req['filter']['filters'][0]['value']) &&
+            $req['filter']['filters'][0]['value'] != "" &&
+            $req['filter']['filters'][0]['value'] != "undefined"
+        ) {
+            $icdIX = $icdIX
+                ->where('dg.namadiagnosa', 'ilike', '%' . $req['filter']['filters'][0]['value'] . '%')
+                ->orWhere('dg.kddiagnosa', 'ilike', $req['filter']['filters'][0]['value'] . '%');
+        }
+
+        $icdIX = $icdIX->take(10);
+        $icdIX = $icdIX->get();
+
+        return $this->respond($icdIX);
+    }
+
+    public function saveRetriksiDiagnosa(Request $request){
+        $kdProfile = (int) $this->getDataKdProfile($request);
+        DB::beginTransaction();
+        // try {
+            foreach ( $request['details'] as $item){
+                $kode[] = (double) $item['id'];
+
+            }
+            $hapus = RetriksiDiagnosa::where('statusenabled',true);
+
+            if(isset($request['diagnosaId']) && $request['diagnosaId'] !='' ){
+                $hapus = $hapus->where('diagnosafk',$request['diagnosaId']);
+            }
+            $hapus = $hapus->whereIn('produkfk',$kode);
+            $hapus->delete();
+            foreach ( $request['details'] as $item){
+                $map = new RetriksiDiagnosa();
+                $map->id = RetriksiDiagnosa::max('id') + 1;
+                $map->kdprofile = $kdProfile;
+                $map->statusenabled = true;
+                $map->norec =  substr(\Webpatser\Uuid\Uuid::generate(), 0, 32);
+                $map->kodeexternal = "RET-DIAG";
+                $map->produkfk = $item['id'];
+                $map->diagnosafk = $request['diagnosaId'];
+                $map->keteranganpakai = $request['ketpakai'];
+                $map->save();
+            }
+
+            $transStatus = 'true';
+        // } catch (\Exception $e) {
+        //     $transStatus = 'false';
+        // }
+        if ($transStatus == 'true') {
+            $transMessage = "Sukses";
+            DB::commit();
+
+            $result = array(
+                'status' => 201,
+                'data' => $map,
+                'as' => 'er@epic',
+            );
+        } else {
+            $transMessage = "Simpan Gagal";
+            DB::rollBack();
+            $result = array(
+                'status' => 400,
+                'as' => 'er@epic',
+            );
+        }
+        return $this->setStatusCode($result['status'])->respond($result, $transMessage);
+    }
+
+    public function getRetriksiDiagnosa (Request $request){
+        $kdProfile = (int) $this->getDataKdProfile($request);
+        $dataemr = DB::table('retriksidiagnosa_m as rd')
+            ->join('produk_m as pm','pm.id','=','rd.produkfk')
+            ->join('diagnosa_m as dg','dg.id','=','rd.diagnosafk')
+            ->select('rd.*','pm.namaproduk', DB::raw("dg.kddiagnosa || '-' || dg.namadiagnosa as namadiagnosa"))
+            ->where('rd.statusenabled',true)
+            ->where('rd.kdprofile',$kdProfile);
+
+        if(isset($request['produkid']) && $request['produkid'] !='' ){
+            $dataemr = $dataemr->where('rd.produkfk',$request['produkid']);
+        }
+        if(isset($request['diagnosaid']) && $request['diagnosaid'] !='' ){
+            $dataemr = $dataemr->where('rd.diagnosafk',$request['diagnosaid']);
+        }
+        if(isset($request['ketpakai']) && $request['ketpakai'] !='' ){
+            $dataemr = $dataemr->where('rd.keteranganpakai','ilike','%'.$request['ketpakai'].'%');
+        }
+        $dataemr = $dataemr->orderBy('rd.keteranganpakai');
+        $dataemr = $dataemr->get();
+        $result = array(
+            'data' => $dataemr,
+            'as' => 'inhuman'
+        );
+        return $this->respond($result);
+    }
+    public function deleteRetriksiDiagnosa(Request $request){
+        $kdProfile = (int) $this->getDataKdProfile($request);
+        DB::beginTransaction();
+        try {
+            foreach ($request['data'] as $item){
+                RetriksiDiagnosa::where('id',$item['id'])->where('kdprofile',$kdProfile)->delete();
+            }
+
+            $transStatus = 'true';
+        } catch (\Exception $e) {
+            $transStatus = 'false';
+        }
+        if ($transStatus == 'true') {
+            $transMessage = "Sukses";
+            DB::commit();
+
+            $result = array(
+                'status' => 201,
+//                'data' => $map,
+                'as' => 'er@epic',
+            );
+        } else {
+            $transMessage = "Hapus Gagal";
+            DB::rollBack();
+            $result = array(
+                'status' => 400,
+                'as' => 'er@epic',
+            );
+        }
+        return $this->setStatusCode($result['status'])->respond($result, $transMessage);
+    }
+
+    public function saveRetriksiObat(Request $request){
+        $kdProfile = (int) $this->getDataKdProfile($request);
+        DB::beginTransaction();
+        // try {
+            foreach ( $request['details'] as $item){
+                $kode[] = (double) $item['id'];
+
+            }
+            $hapus = RetriksiObat::where('statusenabled',true);
+
+            if(isset($request['produkid_1']) && $request['produkid_1'] !='' ){
+                $hapus = $hapus->where('produkfk_1',$request['produkid_1']);
+            }
+            $hapus = $hapus->whereIn('produkfk_1',$kode);
+            $hapus->delete();
+            foreach ( $request['details'] as $item){
+                $map = new RetriksiObat();
+                $map->id = RetriksiObat::max('id') + 1;
+                $map->kdprofile = $kdProfile;
+                $map->statusenabled = true;
+                $map->norec =  substr(\Webpatser\Uuid\Uuid::generate(), 0, 32);
+                $map->kodeexternal = "RET-DIAG";
+                $map->produkfk_1 = $request['produkid_1'];
+                $map->produkfk_2 = $item['id'];
+                $map->keteranganpakai = $request['ketpakai'];
+                $map->save();
+            }
+
+            $transStatus = 'true';
+        // } catch (\Exception $e) {
+        //     $transStatus = 'false';
+        // }
+        if ($transStatus == 'true') {
+            $transMessage = "Sukses";
+            DB::commit();
+
+            $result = array(
+                'status' => 201,
+                'data' => $map,
+                'as' => 'er@epic',
+            );
+        } else {
+            $transMessage = "Simpan Gagal";
+            DB::rollBack();
+            $result = array(
+                'status' => 400,
+                'as' => 'er@epic',
+            );
+        }
+        return $this->setStatusCode($result['status'])->respond($result, $transMessage);
+    }
+
+    public function getRetriksiObat (Request $request){
+        $kdProfile = (int) $this->getDataKdProfile($request);
+        $dataemr = DB::table('retriksiobat_m as rd')
+            ->join('produk_m as pm','pm.id','=','rd.produkfk_1')
+            ->join('produk_m as pm2','pm2.id','=','rd.produkfk_2')
+            ->select('rd.*','pm.namaproduk as namaproduk_1', 'pm2.namaproduk as namaproduk_2')
+            ->where('rd.statusenabled',true)
+            ->where('rd.kdprofile',$kdProfile);
+
+        if(isset($request['produkid_1']) && $request['produkid_1'] !='' ){
+            $dataemr = $dataemr->where('rd.produkfk_1',$request['produkid_1']);
+        }
+        if(isset($request['produkid_2']) && $request['produkid_2'] !='' ){
+            $dataemr = $dataemr->where('rd.produkfk_2',$request['produkid_2']);
+        }
+        if(isset($request['ketpakai']) && $request['ketpakai'] !='' ){
+            $dataemr = $dataemr->where('rd.keteranganpakai','ilike','%'.$request['ketpakai'].'%');
+        }
+        $dataemr = $dataemr->orderBy('rd.keteranganpakai');
+        $dataemr = $dataemr->get();
+        $result = array(
+            'data' => $dataemr,
+            'as' => 'inhuman'
+        );
+        return $this->respond($result);
+    }
+    public function deleteRetriksiObat(Request $request){
+        $kdProfile = (int) $this->getDataKdProfile($request);
+        DB::beginTransaction();
+        try {
+            foreach ($request['data'] as $item){
+                RetriksiObat::where('id',$item['id'])->where('kdprofile',$kdProfile)->delete();
+            }
+
+            $transStatus = 'true';
+        } catch (\Exception $e) {
+            $transStatus = 'false';
+        }
+        if ($transStatus == 'true') {
+            $transMessage = "Sukses";
+            DB::commit();
+
+            $result = array(
+                'status' => 201,
+//                'data' => $map,
+                'as' => 'er@epic',
+            );
+        } else {
+            $transMessage = "Hapus Gagal";
+            DB::rollBack();
+            $result = array(
+                'status' => 400,
+                'as' => 'er@epic',
+            );
+        }
+        return $this->setStatusCode($result['status'])->respond($result, $transMessage);
+    }
     public function getDataMapping (Request $request){
         $kdProfile = (int) $this->getDataKdProfile($request);
         $data = DB::table('mapruangantojenisruangan_m as map')
