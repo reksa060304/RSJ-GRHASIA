@@ -209,11 +209,17 @@ class ResepElektronikController extends ApiController
         $jenis = '';
         $result=[];
         foreach ($data as $item){
-            if ($item->statusorder == 0){$status='Menunggu';};
-            if ($item->statusorder == 5){$status='Verifikasi';};
+            if ($item->statusorder == 0){$status='Menunggu Verifikasi';};
+            if ($item->statusorder == 5){
+                // $status = 'Verifikasi';
+                $status = 'Proses Penyiapan Obat';
+            };
             if ($item->statusorder == 1){$status='Produksi';};
             if ($item->statusorder == 2){$status='Packaging';};
-            if ($item->statusorder == 3){$status='Selesai';};
+            if ($item->statusorder == 3) {
+                // $status = 'Selesai';
+                $status = 'Menunggu di Panggil';
+            };
             if ($item->statusorder == 4){$status='Penyerahan Obat';};
             if ($item->tglambilorder != null){$status='Sudah Di Ambil';};
 
@@ -518,11 +524,17 @@ class ResepElektronikController extends ApiController
                     'noorder' => $item->noorder,
                 )
             );
-            if ($item->statusorder == 0){$status='Menunggu';};
-            if ($item->statusorder == 5){$status='Verifikasi';};
+            if ($item->statusorder == 0){$status='Menunggu Verifikasi';};
+            if ($item->statusorder == 5){
+                // $status = 'Verifikasi';
+                $status = 'Proses Penyiapan Obat';
+            };
             if ($item->statusorder == 1){$status='Produksi';};
             if ($item->statusorder == 2){$status='Packaging';};
-            if ($item->statusorder == 3){$status='Selesai';};
+            if ($item->statusorder == 3) {
+                $status = 'Selesai';
+                $status = 'Menunggu di Panggil';
+            };
             if ($item->statusorder == 4){$status='Penyerahan Obat';};
             if ($item->tglambilorder != null){$status='Sudah Di Ambil';};
             $result[] = array(

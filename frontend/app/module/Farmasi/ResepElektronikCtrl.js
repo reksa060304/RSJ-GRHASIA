@@ -356,12 +356,14 @@ define(['initialize', 'Configuration'], function (initialize, config) {
             //     }]
             // };
             $scope.listStatus = [
-                { id: 0, status: 'Menunggu' },
+                { id: 0, status: 'Menunggu Verifikasi' },
+                { id: 5, status: 'Proses Penyiapan Obat' },
                 { id: 1, status: 'Produksi' },
                 { id: 2, status: 'Packaging' },
-                { id: 3, status: 'Selesai' },
+                // { id: 3, status: 'Selesai' },
+                { id: 3, status: 'Menunggu di Panggil' },
                 { id: 4, status: 'Penyerahan Obat' },
-                { id: 5, status: 'Verifikasi' },
+                // { id: 5, status: 'Verifikasi' },
             ]
             $scope.selectOptionStatus = {
                 placeholder: "Status...",

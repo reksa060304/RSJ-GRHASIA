@@ -6627,10 +6627,11 @@ class EMRController  extends ApiController
                 )
             );
             if ($item->statusorder == 0) {
-                $status = 'Menunggu';
+                $status = 'Menunggu Verifikasi';
             };
             if ($item->statusorder == 5) {
-                $status = 'Verifikasi';
+                // $status = 'Verifikasi';
+                $status = 'Proses Penyiapan Obat';
             };
             if ($item->statusorder == 1) {
                 $status = 'Produksi';
@@ -6639,7 +6640,8 @@ class EMRController  extends ApiController
                 $status = 'Packaging';
             };
             if ($item->statusorder == 3) {
-                $status = 'Selesai';
+                // $status = 'Selesai';
+                $status = 'Menunggu di Panggil';
             };
             if ($item->statusorder == 4) {
                 $status = 'Penyerahan Obat';
