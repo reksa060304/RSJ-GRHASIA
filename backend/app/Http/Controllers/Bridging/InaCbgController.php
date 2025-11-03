@@ -3769,7 +3769,7 @@ class InaCbgController   extends ApiController
                 'dep.id'
             )->orderBy('pd.tglpulang');
 
-            $dokklaim = \DB::table('dokklaim_t as dk')
+        $dokklaim = \DB::table('dokklaim_t as dk')
             ->join('dokklaim_m as dkm','dkm.id','=','dk.documentklaimfk')
             ->join('pasiendaftar_t as pd','pd.norec','=','dk.noregistrasifk')
             ->join('pasien_m as ps','ps.id','=','pd.nocmfk')
@@ -3784,60 +3784,74 @@ class InaCbgController   extends ApiController
             ->whereIN('pd.statusklaim', ['send_claim_individual']);
 
 
-            if (isset($request->ispulang) && $request->ispulang == true) {
-                if (isset($request->tglAwal) && $request->tglAwal != "" && $request->tglAwal != "undefined") {
-                    $data = $data->where('pd.tglpulang', '>=', $request->tglAwal);
-                    $dokklaim = $dokklaim->where('pd.tglpulang', '>=', $request->tglAwal);
-                }
-                if (isset($request->tglAkhir) && $request->tglAkhir != "" && $request->tglAkhir != "undefined") {
-                    $data = $data->where('pd.tglpulang', '<=', $request->tglAkhir);
-                    $dokklaim = $dokklaim->where('pd.tglpulang', '<=', $request->tglAkhir);
-                }
-            } else {
-                if (isset($request->tglAwal) && $request->tglAwal != "" && $request->tglAwal != "undefined") {
-                    $data = $data->where('pd.tglregistrasi', '>=', $request->tglAwal);
-                    $dokklaim = $dokklaim->where('pd.tglregistrasi', '>=', $request->tglAwal);
-                }
-                if (isset($request->tglAkhir) && $request->tglAkhir != "" && $request->tglAkhir != "undefined") {
-                    $data = $data->where('pd.tglregistrasi', '<=', $request->tglAkhir);
-                    $dokklaim = $dokklaim->where('pd.tglregistrasi', '<=', $request->tglAkhir);
-                }
+        if (isset($request->ispulang) && $request->ispulang == true) {
+            if (isset($request->tglAwal) && $request->tglAwal != "" && $request->tglAwal != "undefined") {
+                $data = $data->where('pd.tglpulang', '>=', $request->tglAwal);
+                $dokklaim = $dokklaim->where('pd.tglpulang', '>=', $request->tglAwal);
             }
+            if (isset($request->tglAkhir) && $request->tglAkhir != "" && $request->tglAkhir != "undefined") {
+                $data = $data->where('pd.tglpulang', '<=', $request->tglAkhir);
+                $dokklaim = $dokklaim->where('pd.tglpulang', '<=', $request->tglAkhir);
+            }
+        } else {
+            if (isset($request->tglAwal) && $request->tglAwal != "" && $request->tglAwal != "undefined") {
+                $data = $data->where('pd.tglregistrasi', '>=', $request->tglAwal);
+                $dokklaim = $dokklaim->where('pd.tglregistrasi', '>=', $request->tglAwal);
+            }
+            if (isset($request->tglAkhir) && $request->tglAkhir != "" && $request->tglAkhir != "undefined") {
+                $data = $data->where('pd.tglregistrasi', '<=', $request->tglAkhir);
+                $dokklaim = $dokklaim->where('pd.tglregistrasi', '<=', $request->tglAkhir);
+            }
+        }
 
           
-            if (isset($request->noregistrasi) && $request->noregistrasi != "" && $request->noregistrasi != "undefined") {
-                $data = $data->where('pd.noregistrasi', '=', $request->noregistrasi);
-                $dokklaim = $dokklaim->where('pd.noregistrasi', '=', $request->noregistrasi);
+        if (isset($request->noregistrasi) && $request->noregistrasi != "" && $request->noregistrasi != "undefined") {
+            $data = $data->where('pd.noregistrasi', '=', $request->noregistrasi);
+            $dokklaim = $dokklaim->where('pd.noregistrasi', '=', $request->noregistrasi);
+        }
+        if (isset($request->norm) && $request->norm != "" && $request->norm != "undefined") {
+            $data = $data->where('ps.nocm', '=', $request->norm);
+            $dokklaim = $dokklaim->where('ps.nocm', '=', $request->norm);
+        }
+        if (isset($request->namapasien) && $request->namapasien != "" && $request->namapasien != "undefined") {
+            $data = $data->where('ps.namapasien', 'ilike', '%' . $request->namapasien . '%');
+            $dokklaim = $dokklaim->where('ps.namapasien', 'ilike', '%' . $request->namapasien . '%');
+        }
+        if (isset($request->ruanganid) && $request->ruanganid != "" && $request->ruanganid != "undefined") {
+            $data = $data->where('pd.objectruanganlastfk', '=', $request->ruanganid);
+            $dokklaim = $dokklaim->where('pd.objectruanganlastfk', '=', $request->ruanganid);
+        }
+        if (isset($request->depid) && $request->depid != "" && $request->depid != "undefined") {
+            $data = $data->where('dep.id', '=', $request->depid);
+            $dokklaim = $dokklaim->where('dep.id', '=', $request->depid);
+        }
+        if (isset($request->nosep) && $request->nosep != "" && $request->nosep != "undefined") {
+            $data = $data->where('pa.nosep','ilike', '%' . $request->nosep.'%');
+            $dokklaim = $dokklaim->where('pa.nosep','ilike', '%' . $request->nosep.'%');
+        }
+        if (isset($request->jenispel) && $request->jenispel != "" && $request->jenispel != "undefined") {
+            if($request->jenispel == 1){
+                $data = $data->where('dep.id',16);
+                $dokklaim = $dokklaim->where('dep.id',16);
+            } else {
+                $data = $data->where('dep.id','!=',16);
+                $dokklaim = $dokklaim->where('dep.id','!=',16);
             }
-            if (isset($request->norm) && $request->norm != "" && $request->norm != "undefined") {
-                $data = $data->where('ps.nocm', '=', $request->norm);
-                $dokklaim = $dokklaim->where('ps.nocm', '=', $request->norm);
-            }
-            if (isset($request->namapasien) && $request->namapasien != "" && $request->namapasien != "undefined") {
-                $data = $data->where('ps.namapasien', 'ilike', '%' . $request->namapasien . '%');
-                $dokklaim = $dokklaim->where('ps.namapasien', 'ilike', '%' . $request->namapasien . '%');
-            }
-            if (isset($request->ruanganid) && $request->ruanganid != "" && $request->ruanganid != "undefined") {
-                $data = $data->where('pd.objectruanganlastfk', '=', $request->ruanganid);
-                $dokklaim = $dokklaim->where('pd.objectruanganlastfk', '=', $request->ruanganid);
-            }
-            if (isset($request->depid) && $request->depid != "" && $request->depid != "undefined") {
-                $data = $data->where('dep.id', '=', $request->depid);
-                $dokklaim = $dokklaim->where('dep.id', '=', $request->depid);
-            }
-            if (isset($request->nosep) && $request->nosep != "" && $request->nosep != "undefined") {
-                $data = $data->where('pa.nosep','ilike', '%' . $request->nosep.'%');
-                $dokklaim = $dokklaim->where('pa.nosep','ilike', '%' . $request->nosep.'%');
-            }
-            if (isset($request->jenispel) && $request->jenispel != "" && $request->jenispel != "undefined") {
-                if($request->jenispel == 1){
-                    $data = $data->where('dep.id',16);
-                    $dokklaim = $dokklaim->where('dep.id',16);
-                } else {
-                    $data = $data->where('dep.id','!=',16);
-                    $dokklaim = $dokklaim->where('dep.id','!=',16);
-                }
-            }
+        }
+
+        if (isset($request['jenisdiagnosa']) && $request['jenisdiagnosa'] != '' && $request['jenisdiagnosa'] != 'undefined') {
+            $data = $data
+                ->join('antrianpasiendiperiksa_t as apd', function ($join) {
+                    $join->on('apd.noregistrasifk', '=', 'pd.norec')
+                        ->on('apd.objectruanganfk', '=', DB::raw('pd.objectruanganlastfk'));
+                })
+                ->join('diagnosapasien_t as dp', 'dp.noregistrasifk', '=', 'apd.norec')
+                ->join('detaildiagnosapasien_t as ddp', function ($join) use ($request) {
+                    $join->on('ddp.objectdiagnosapasienfk', '=', 'dp.norec')
+                        ->where('ddp.objectjenisdiagnosafk', '=', $request['jenisdiagnosa'])
+                        ->where('ddp.objectdiagnosafk', '=', $request['diagnosa']);
+                });
+        }
             
         $data = $data->get();
 
