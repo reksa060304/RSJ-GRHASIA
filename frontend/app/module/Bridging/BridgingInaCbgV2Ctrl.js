@@ -8758,9 +8758,9 @@ define(['initialize', 'Configuration'], function (initialize,configuration) {
 					return
 				}
 				var dpid = $scope.dataPasienSelected.objectdepartemenfk
-				if(dpid != 16) {
-					dpid = 18
-				}
+				// if(dpid != 16) {
+				// 	dpid = 18
+				// }
 				$scope.popUpDokumen = $scope.dataPasienSelected
 				$scope.listBerkasMonitoring =[]
 				$scope.isRouteLoading = true
@@ -9141,11 +9141,11 @@ define(['initialize', 'Configuration'], function (initialize,configuration) {
 					$scope.hideSimpan = false
 					$scope.isRouteLoading = false
 					
-					if (e.data.data.length == 0 && ![49,68].includes(id)) {
+					if (e.data.data.length == 0 && ![4,11,15].includes(id)) {
 						toastr.info("Info", "Data tidak ditemukan");
 						    return
 					} else {
-						if ([49,68].includes(id)) {
+						if ([4,11,15].includes(id)) {
 							var a = {id:id, noregistrasi: noregistrasi, nosep:$scope.popUpDokumen.nosep,length:0, namafile : namafile}
 							simpanDokumen2(a)
 						} else {
@@ -9227,7 +9227,7 @@ define(['initialize', 'Configuration'], function (initialize,configuration) {
             }
 
 			function simpanDokumen2(data) {
-				if (data.length == 0 && [49,68].includes(data.id)) {
+				if (data.length == 0 && [4,11,15].includes(data.id)) {
 					var dt1 = {};
 					var dt2 = [];
 					dt1 = {
@@ -10889,11 +10889,11 @@ define(['initialize', 'Configuration'], function (initialize,configuration) {
 							medifirstService.get(`bridging/inacbg/get-parameter?id=${element.id}&noregistrasi=${element.noregistrasi}&user=${$scope.user.namaLengkap}`).then(function (e) {
 								$scope.isRouteLoading = false
 								
-								if (e.data.data.length == 0 && ![49,68].includes(element.id)) {
+								if (e.data.data.length == 0 && ![4,11,15].includes(element.id)) {
 									toastr.info("Info", "Data tidak ditemukan");
 										return
 								} else {
-									if ([49,68].includes(element.id)) {
+									if ([4,11,15].includes(element.id)) {
 										var a = {id:element.id, noregistrasi: element.noregistrasi, nosep:$scope.popUpDokumen.nosep,length:0}
 										simpanDokumen2(a)
 									} else {
@@ -10966,9 +10966,9 @@ define(['initialize', 'Configuration'], function (initialize,configuration) {
 					return
 				}
 				var dpid = $scope.popUpDokumen.objectdepartemenfk
-				if(dpid != 16) {
-					dpid = 18
-				}
+				// if(dpid != 16) {
+				// 	dpid = 18
+				// }
 				$scope.listBerkasMonitoring =[]
 				medifirstService.get('bridging/inacbg/get-list-berkas-monitoring?dpid=' + dpid + '&noregistrasifk='+$scope.popUpDokumen.norec ).then(function(e){
 					$scope.isRouteLoading = false

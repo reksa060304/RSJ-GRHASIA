@@ -23,6 +23,8 @@ define(['initialize', 'Configuration'], function (initialize, config) {
 			$scope.item.terpilih=0;
 			$scope.disabledtombol = false
 			$scope.idpegawai = medifirstService.getPegawaiLogin().id;
+			$scope.sourceJenisDiagnosa = []
+			$scope.sourceDiagnosis = []
 
 			$scope.dataTransaksi = []
 			var isianColor = "white"
@@ -34,65 +36,90 @@ define(['initialize', 'Configuration'], function (initialize, config) {
 			var typeIsian = ""
 			var data2 = [];
 
-            loadFirst()
-            function loadFirst() {
-                var chacePeriode = cacheHelper.get('KlaimPasienRajalCtrl');
+			loadFirst()
+			function loadFirst() {
+				var chacePeriode = cacheHelper.get('KlaimPasienRajalCtrl');
 				if (chacePeriode != undefined) {
-                    var arrPeriode = chacePeriode;
+					var arrPeriode = chacePeriode;
 					$scope.item.periodeAwal = new Date(arrPeriode[0]);
 					$scope.item.periodeAkhir = new Date(arrPeriode[1]);
-                } else {
-                    $scope.item.periodeAwal = moment($scope.now).format('YYYY-MM-DD 00:00');
-                    $scope.item.periodeAkhir = moment($scope.now).format('YYYY-MM-DD 23:59');
-                }
+				} else {
+						$scope.item.periodeAwal = moment($scope.now).format('YYYY-MM-DD 00:00');
+						$scope.item.periodeAkhir = moment($scope.now).format('YYYY-MM-DD 23:59');
+				}
 
 				medifirstService.get("bridging/inacbg/get-data-combo-ina", false).then(function (data) {
 					$scope.listDepartemen = data.data.departemen;
 					$scope.listjenispelayanan = [{ id: 1, name: 'RI' }, { id: 2, name: 'RJ' }];
 				})
-            }
+				medifirstService.get("registrasi/get-combo-riwayat-regis", false).then(function (data) {
+					$scope.sourceJenisDiagnosa = data.data.jenisdiagnosa
+				})
+			}
+
+			medifirstService.getPart("registrasi/daftar-registrasi/get-data-diagnosa-all", true, true, 10).then(function (data) {
+				$scope.sourceDiagnosis = data;
+			});
 
 			$scope.getIsiComboRuangan = function () {
 				$scope.listRuangan = $scope.item.instalasi.ruangan
-				
 			}
 
-            $scope.cari = function () {
-                loadData();
-            }
+			$scope.cari = function () {
+					loadData();
+			}
 
-            loadData();
-            function loadData() {
-				
-                $scope.isRouteLoading = true;
+			loadData();
+			function loadData() {
+				$scope.isRouteLoading = true;
 				$scope.item.terpilih = 0;
-                var tglAwal = moment($scope.item.periodeAwal).format('YYYY-MM-DD HH:mm');
-                var tglAkhir = moment($scope.item.periodeAkhir).format('YYYY-MM-DD HH:mm');
+				var tglAwal = moment($scope.item.periodeAwal).format('YYYY-MM-DD HH:mm');
+				var tglAkhir = moment($scope.item.periodeAkhir).format('YYYY-MM-DD HH:mm');
 
-                var noregistrasi = ""
-                if ($scope.item.noregistrasi != undefined) {
-                    noregistrasi = "&noregistrasi=" + $scope.item.noregistrasi
-                }
-                var norm = ""
-                if ($scope.item.norm != undefined) {
-                    norm = "&norm=" + $scope.item.norm
-                }
-                var namapasien = ""
-                if ($scope.item.namapasien != undefined) {
-                    namapasien = "&namapasien=" + $scope.item.namapasien
-                }
-                var ruangan = ""
-                if ($scope.item.ruangan != undefined) {
-                    ruangan = "&ruanganid=" + $scope.item.ruangan.id
-                }
-                var dep = ""
-                if ($scope.item.instalasi != undefined) {
-                    dep = "&depid=" + $scope.item.instalasi.id
-                }
-                var nosep = ""
-                if ($scope.item.nosep != undefined) {
-                    nosep = "&nosep=" + $scope.item.nosep
-                }
+				var noregistrasi = ""
+				if ($scope.item.noregistrasi != undefined) {
+						noregistrasi = "&noregistrasi=" + $scope.item.noregistrasi
+				}
+				var norm = ""
+				if ($scope.item.norm != undefined) {
+						norm = "&norm=" + $scope.item.norm
+				}
+				var namapasien = ""
+				if ($scope.item.namapasien != undefined) {
+						namapasien = "&namapasien=" + $scope.item.namapasien
+				}
+				var ruangan = ""
+				if ($scope.item.ruangan != undefined) {
+						ruangan = "&ruanganid=" + $scope.item.ruangan.id
+				}
+				var dep = ""
+				if ($scope.item.instalasi != undefined) {
+						dep = "&depid=" + $scope.item.instalasi.id
+				}
+				var nosep = ""
+				if ($scope.item.nosep != undefined) {
+						nosep = "&nosep=" + $scope.item.nosep
+				}
+				var jenisDiagnosa = ''
+				if ($scope.item.jenisDiagnosa != undefined) {
+					jenisDiagnosa = '&jenisdiagnosa=' + $scope.item.jenisDiagnosa.id
+				}
+				var diagnosa = ''
+				if ($scope.item.diagnosis != undefined) {
+					diagnosa = '&diagnosa=' + $scope.item.diagnosis.id
+				}
+
+				if (jenisDiagnosa != '' && diagnosa == '') {
+					$scope.isRouteLoading = false
+					toastr.warning('Diagnosa wajib diisi!')
+					return
+				}
+
+				if (jenisDiagnosa == '' && diagnosa != '') {
+					$scope.isRouteLoading = false
+					toastr.warning('Jenis diagnosa wajib diisi!')
+					return 
+				}
 
 				var isPulang = ""
 				if ($scope.item.isPulang == true) {
@@ -100,62 +127,64 @@ define(['initialize', 'Configuration'], function (initialize, config) {
 				}
 
 				var jenispelayanan = ""
-                if ($scope.item.jenispel != undefined) {
-                    jenispelayanan = "&jenispel=" + $scope.item.jenispel.id
-                }
-                medifirstService.get("klaim/get-daftar-klaim?tglAwal=" + tglAwal + "&tglAkhir=" + tglAkhir + 
-                        noregistrasi + 
-                        norm + 
-                        namapasien + 
-                        ruangan + 
-						dep +
-						isPulang +
-                        nosep +
-						jenispelayanan
-                    , true).then(function (e) {    
-                        console.log(e);     
-                    $scope.isRouteLoading = false;
-                    for(var i = 0;i<e.data.length; i++) {
-                        var status = '';
-                        if(e.data[i].statusklaim == "send_claim_individual") {
-                            status = "Terkirim";
-                        } 
-						e.data[i].statCheckbox = false;
-                        // else if(e.data[i].statusklaim == "grouper") {
-                        //     status = "Grouping";
-                        // } else if(e.data[i].statusklaim == "claim_final") {
-                        //     status = "Final Klaim";
-                        // }
-                        e.data[i].statusklaim = status;
-                        e.data[i].ketKlaim = e.data[i].ketKlaim!=" "?e.data[i].ketKlaim:"-";
-                    }
+				if ($scope.item.jenispel != undefined) {
+						jenispelayanan = "&jenispel=" + $scope.item.jenispel.id
+				}
+				medifirstService.get("klaim/get-daftar-klaim?tglAwal=" + tglAwal + "&tglAkhir=" + tglAkhir + 
+					noregistrasi + 
+					norm + 
+					namapasien + 
+					ruangan + 
+					dep +
+					isPulang +
+					nosep +
+					jenispelayanan +
+					jenisDiagnosa +
+					diagnosa
+					, true).then(function (e) {    
+							console.log(e);     
+					$scope.isRouteLoading = false;
+					for(var i = 0;i<e.data.length; i++) {
+						var status = '';
+						if(e.data[i].statusklaim == "send_claim_individual") {
+							status = "Terkirim";
+						} 
+					e.data[i].statCheckbox = false;
+						// else if(e.data[i].statusklaim == "grouper") {
+						//     status = "Grouping";
+						// } else if(e.data[i].statusklaim == "claim_final") {
+						//     status = "Final Klaim";
+						// }
+						e.data[i].statusklaim = status;
+						e.data[i].ketKlaim = e.data[i].ketKlaim!=" "?e.data[i].ketKlaim:"-";
+					}
 
-                    $scope.dataSourceGrid = new kendo.data.DataSource({
-                        data: e.data,
-                        pageSize: 100,
-                        total: e.data.length,
-                        serverPaging: false,
-                        schema: {
-                            model: {
-                                fields: {
-                                }
-                            }
-                        }
-                    });
+					$scope.dataSourceGrid = new kendo.data.DataSource({
+							data: e.data,
+							pageSize: 100,
+							total: e.data.length,
+							serverPaging: false,
+							schema: {
+									model: {
+											fields: {
+											}
+									}
+							}
+					});
 
 					if (e.data.length < 1) {
 						toastr.warning('Data tidak ditemukan)');
 					}
 
-                });
+				});
 
-                var chacePeriode = {
-                    0 :	$scope.item.periodeAwal,
-                    1 : $scope.item.periodeAkhir,
-                }
-                cacheHelper.set('KlaimPasienRajalCtrl', chacePeriode);
+				var chacePeriode = {
+						0 :	$scope.item.periodeAwal,
+						1 : $scope.item.periodeAkhir,
+				}
+				cacheHelper.set('KlaimPasienRajalCtrl', chacePeriode);
 
-            }
+			}
 
             var onDataBound = function () {
 				$('td').each(function () {

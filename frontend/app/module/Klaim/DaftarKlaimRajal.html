@@ -163,6 +163,22 @@
                 <input c-text-box type="input" class="k-textbox k-input-custom" ng-model="item.namapasien" />
             </div>
         </div>
+        <div class="grid_2">
+            <div class="grid_12"><label c-label item="item">Jenis Diagnosa</label></div>
+            <div class="clear"></div>
+            <div class="grid_12">
+                <input class="k-select-custom" kendo-combo-box k-ng-model="item.jenisDiagnosa" k-data-text-field=" 'jenisDiagnosa' "
+                k-filter=" 'contains' " k-data-value-field=" 'id' " k-auto-bind="false " k-data-source="sourceJenisDiagnosa" />
+            </div>
+        </div>
+        <div class="grid_2">
+            <div class="grid_12"><label c-label item="item">Diagnosa</label></div>
+            <div class="clear"></div>
+            <div class="grid_12">
+                <input class="k-select-custom" kendo-combo-box k-ng-model="item.diagnosis" k-data-text-field=" 'kodeNama' "
+                k-filter=" 'contains' " k-data-value-field=" 'id' " k-auto-bind="false " k-data-source="sourceDiagnosis" />
+            </div>
+        </div>
         <!-- <div class="grid_1"></div> -->
         <div class="grid_2" style="margin-top: 10px;">
             <div class="grid_12 borderBox containerBorderBox">

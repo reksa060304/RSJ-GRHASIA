@@ -550,6 +550,8 @@ Route::group(['middleware' => 'cors', 'prefix' => 'service'], function () {
               Route::post('bridging/inacbg/save-pegawai','Bridging\InaCbgController@savePegawai');
               Route::post('bridging/inacbg/delete-grouping-inacbg','Bridging\InaCbgController@deleteGroupingInacbg');
               Route::post('bridging/inacbg/delete-grouping-idrg','Bridging\InaCbgController@deleteGroupingIdrg');
+              Route::post('bridging/inacbg/post-dokumen-klaim','Bridging\InaCbgController@postDokumenKlaim');
+              Route::post('bridging/inacbg/delete-dokumen-klaim','Bridging\InaCbgController@deleteDokumenKlaim');
 
             // START IDRG    
             Route::get('registrasi/get-icd-9-by-noreg-idrg','Registrasi\RegistrasiController@getIcd9PasienByNoreg');
@@ -1545,7 +1547,9 @@ Route::group(['middleware' => 'cors', 'prefix' => 'service'], function () {
           Route::get('report/cetak-skdpspri','Report\ReportController@cetakSKDPSPRI');
           Route::get('report/cetak-sep-v3','Report\ReportController@cetakSEPV3');
           Route::get('report/cetak-hasil-lab-manual', 'Report\ReportController@printGetHasilLabManual');
+          Route::get('report/billingbpjs','Report\ReportController@cetakBillbpjs');
           
+          Route::post('report/save-file-lip','Report\ReportController@saveFileLip');
           
           Route::get('report/get-cetak-per-jenis-anggaran','Report\ReportController@CetakPerJenisAnggaran');
           Route::get('report/get-cetak-per-jenis-anggaran-sebelum-sesudah','Report\ReportController@CetakPerJenisAnggaranSebelumSesudah');
@@ -3916,6 +3920,11 @@ Route::group(['middleware' => 'cors', 'prefix' => 'service'], function () {
     Route::post('api/grab/delivery/quotes', 'Bridging\GrabExpressController@tarifDelivery');
     Route::get('api/grab/delivery/{deliveryID}', 'Bridging\GrabExpressController@getInfoDelivery');
     Route::get('api/grab/delivery-cancel/{deliveryID}', 'Bridging\GrabExpressController@cancelDelivery');
+
+    Route::get('storage/dokumenklaim', 'Registrasi\MonitoringDokumenKlaimController@lihatDokumen');
+    Route::get('storage/dokumenklaimfarmasi', 'Registrasi\MonitoringDokumenKlaimController@lihatDokumenFarmasi');
+    Route::get('storage/bundledokumenklaim', 'Registrasi\MonitoringDokumenKlaimController@bundleDokumen');
+    Route::get('storage/bundledokumenklaimfarmasi', 'Registrasi\MonitoringDokumenKlaimController@bundleDokumenFarmasi');
 
     Route::get('storage_path', function (Illuminate\Http\Request $request)
     {

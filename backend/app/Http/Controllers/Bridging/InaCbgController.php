@@ -25,6 +25,8 @@ use DB;
 use Illuminate\Http\Request;
 use App\Traits\Valet;
 use App\Transaksi\HasilGroupingIdrg;
+use App\Transaksi\HasilLaboratorium;
+use Auth;
 use phpDocumentor\Reflection\Types\Null_;
 use Webpatser\Uuid\Uuid;
 
@@ -3618,6 +3620,8 @@ class InaCbgController   extends ApiController
     }
 
     public function getParameterDok(Request $request) {
+        $kdProfile = $this->getDataKdProfile($request);
+        $idProfile = (int) $kdProfile;
         $noregistrasi = $request['noregistrasi'];
         $user = $request['user'];
         $pd = PasienDaftar::where('noregistrasi',$request['noregistrasi'])->first();
@@ -3687,7 +3691,57 @@ class InaCbgController   extends ApiController
                     }
                 }
             }
-           
+            
+            if (in_array($request['id'], [5,12,19])) {
+                $kdDepartemen = $this->settingDataFixed('KdDepartemenInstalasiLaboratorium', $idProfile);
+                $config = collect(DB::select("
+                    SELECT DISTINCT
+                        pp.norec,
+                        apd.norec AS norec_apd,
+                        ps.objectjeniskelaminfk,
+                        pg.namalengkap,
+                        ps.tgllahir
+                    FROM pelayananpasien_t AS pp
+                    INNER JOIN antrianpasiendiperiksa_t AS apd ON apd.norec = pp.noregistrasifk
+                    INNER JOIN pasiendaftar_t AS pd ON pd.norec = apd.noregistrasifk
+                    INNER JOIN pasien_m AS ps ON ps.id = pd.nocmfk
+                    INNER JOIN pegawai_m AS pg ON pg.id = apd.objectpegawaifk
+                    INNER JOIN ruangan_m AS ru ON ru.id = apd.objectruanganfk
+                    WHERE pp.kdprofile = 30
+                    AND pp.statusenabled = TRUE
+                    AND ru.objectdepartemenfk = $kdDepartemen
+                    AND pd.noregistrasi = '$noregistrasi'
+                "));
+                if (empty($config)) {
+                    return $result = array(
+                        'data' => $result,
+                    );
+                }
+                $arrayNorecPp = $config->pluck('norec')->toArray();
+                $stringNorecPp = implode(',', $arrayNorecPp);
+                $hasilLab = HasilLaboratorium::where('statusenabled', true)->whereIn('norecpelayanan', $arrayNorecPp)->whereNotNull('keterangan')->first();
+                $keterangan = '';
+                if (!empty($hasilLab)) {
+                    $keterangan = $hasilLab->keterangan;
+                }
+                $umurDay = round(abs(strtotime($config[0]->tgllahir) - strtotime(date('Y-m-d H:i'))) / (60 * 60 * 24));
+                $parameter = "?q=q&norec=" . 
+                    $config[0]->norec_apd . "&objectjeniskelaminfk=" .
+                    $config[0]->objectjeniskelaminfk . "&umur=" . 
+                    $umurDay . "&strIdPegawai=" . 
+                    $config[0]->namalengkap . "&strNorecPP=" . 
+                    $stringNorecPp . "&view=true" . "&doketr=" . 
+                    $config[0]->namalengkap . "&catatan=" . 
+                    $keterangan;
+                $result = [];
+                $result[] = array(
+                    "id" => $dataDokasuransi->id,
+                    "param" => $parameter,
+                    "namafile" => $dataDokasuransi->namaberkas,
+                    "url" => $dataDokasuransi->url,
+                    "noregistrasi" => $noregistrasi,
+                );
+            }
 
             $result = array(
                 'data' => $result,
@@ -3769,7 +3823,7 @@ class InaCbgController   extends ApiController
                 'dep.id'
             )->orderBy('pd.tglpulang');
 
-            $dokklaim = \DB::table('dokklaim_t as dk')
+        $dokklaim = \DB::table('dokklaim_t as dk')
             ->join('dokklaim_m as dkm','dkm.id','=','dk.documentklaimfk')
             ->join('pasiendaftar_t as pd','pd.norec','=','dk.noregistrasifk')
             ->join('pasien_m as ps','ps.id','=','pd.nocmfk')
@@ -3784,60 +3838,74 @@ class InaCbgController   extends ApiController
             ->whereIN('pd.statusklaim', ['send_claim_individual']);
 
 
-            if (isset($request->ispulang) && $request->ispulang == true) {
-                if (isset($request->tglAwal) && $request->tglAwal != "" && $request->tglAwal != "undefined") {
-                    $data = $data->where('pd.tglpulang', '>=', $request->tglAwal);
-                    $dokklaim = $dokklaim->where('pd.tglpulang', '>=', $request->tglAwal);
-                }
-                if (isset($request->tglAkhir) && $request->tglAkhir != "" && $request->tglAkhir != "undefined") {
-                    $data = $data->where('pd.tglpulang', '<=', $request->tglAkhir);
-                    $dokklaim = $dokklaim->where('pd.tglpulang', '<=', $request->tglAkhir);
-                }
-            } else {
-                if (isset($request->tglAwal) && $request->tglAwal != "" && $request->tglAwal != "undefined") {
-                    $data = $data->where('pd.tglregistrasi', '>=', $request->tglAwal);
-                    $dokklaim = $dokklaim->where('pd.tglregistrasi', '>=', $request->tglAwal);
-                }
-                if (isset($request->tglAkhir) && $request->tglAkhir != "" && $request->tglAkhir != "undefined") {
-                    $data = $data->where('pd.tglregistrasi', '<=', $request->tglAkhir);
-                    $dokklaim = $dokklaim->where('pd.tglregistrasi', '<=', $request->tglAkhir);
-                }
+        if (isset($request->ispulang) && $request->ispulang == true) {
+            if (isset($request->tglAwal) && $request->tglAwal != "" && $request->tglAwal != "undefined") {
+                $data = $data->where('pd.tglpulang', '>=', $request->tglAwal);
+                $dokklaim = $dokklaim->where('pd.tglpulang', '>=', $request->tglAwal);
             }
+            if (isset($request->tglAkhir) && $request->tglAkhir != "" && $request->tglAkhir != "undefined") {
+                $data = $data->where('pd.tglpulang', '<=', $request->tglAkhir);
+                $dokklaim = $dokklaim->where('pd.tglpulang', '<=', $request->tglAkhir);
+            }
+        } else {
+            if (isset($request->tglAwal) && $request->tglAwal != "" && $request->tglAwal != "undefined") {
+                $data = $data->where('pd.tglregistrasi', '>=', $request->tglAwal);
+                $dokklaim = $dokklaim->where('pd.tglregistrasi', '>=', $request->tglAwal);
+            }
+            if (isset($request->tglAkhir) && $request->tglAkhir != "" && $request->tglAkhir != "undefined") {
+                $data = $data->where('pd.tglregistrasi', '<=', $request->tglAkhir);
+                $dokklaim = $dokklaim->where('pd.tglregistrasi', '<=', $request->tglAkhir);
+            }
+        }
 
           
-            if (isset($request->noregistrasi) && $request->noregistrasi != "" && $request->noregistrasi != "undefined") {
-                $data = $data->where('pd.noregistrasi', '=', $request->noregistrasi);
-                $dokklaim = $dokklaim->where('pd.noregistrasi', '=', $request->noregistrasi);
-            }
-            if (isset($request->norm) && $request->norm != "" && $request->norm != "undefined") {
-                $data = $data->where('ps.nocm', '=', $request->norm);
-                $dokklaim = $dokklaim->where('ps.nocm', '=', $request->norm);
-            }
-            if (isset($request->namapasien) && $request->namapasien != "" && $request->namapasien != "undefined") {
-                $data = $data->where('ps.namapasien', 'ilike', '%' . $request->namapasien . '%');
-                $dokklaim = $dokklaim->where('ps.namapasien', 'ilike', '%' . $request->namapasien . '%');
-            }
-            if (isset($request->ruanganid) && $request->ruanganid != "" && $request->ruanganid != "undefined") {
-                $data = $data->where('pd.objectruanganlastfk', '=', $request->ruanganid);
-                $dokklaim = $dokklaim->where('pd.objectruanganlastfk', '=', $request->ruanganid);
-            }
-            if (isset($request->depid) && $request->depid != "" && $request->depid != "undefined") {
-                $data = $data->where('dep.id', '=', $request->depid);
-                $dokklaim = $dokklaim->where('dep.id', '=', $request->depid);
-            }
-            if (isset($request->nosep) && $request->nosep != "" && $request->nosep != "undefined") {
-                $data = $data->where('pa.nosep','ilike', '%' . $request->nosep.'%');
-                $dokklaim = $dokklaim->where('pa.nosep','ilike', '%' . $request->nosep.'%');
-            }
-            if (isset($request->jenispel) && $request->jenispel != "" && $request->jenispel != "undefined") {
-               if($request->jenispel == 1){
+        if (isset($request->noregistrasi) && $request->noregistrasi != "" && $request->noregistrasi != "undefined") {
+            $data = $data->where('pd.noregistrasi', '=', $request->noregistrasi);
+            $dokklaim = $dokklaim->where('pd.noregistrasi', '=', $request->noregistrasi);
+        }
+        if (isset($request->norm) && $request->norm != "" && $request->norm != "undefined") {
+            $data = $data->where('ps.nocm', '=', $request->norm);
+            $dokklaim = $dokklaim->where('ps.nocm', '=', $request->norm);
+        }
+        if (isset($request->namapasien) && $request->namapasien != "" && $request->namapasien != "undefined") {
+            $data = $data->where('ps.namapasien', 'ilike', '%' . $request->namapasien . '%');
+            $dokklaim = $dokklaim->where('ps.namapasien', 'ilike', '%' . $request->namapasien . '%');
+        }
+        if (isset($request->ruanganid) && $request->ruanganid != "" && $request->ruanganid != "undefined") {
+            $data = $data->where('pd.objectruanganlastfk', '=', $request->ruanganid);
+            $dokklaim = $dokklaim->where('pd.objectruanganlastfk', '=', $request->ruanganid);
+        }
+        if (isset($request->depid) && $request->depid != "" && $request->depid != "undefined") {
+            $data = $data->where('dep.id', '=', $request->depid);
+            $dokklaim = $dokklaim->where('dep.id', '=', $request->depid);
+        }
+        if (isset($request->nosep) && $request->nosep != "" && $request->nosep != "undefined") {
+            $data = $data->where('pa.nosep','ilike', '%' . $request->nosep.'%');
+            $dokklaim = $dokklaim->where('pa.nosep','ilike', '%' . $request->nosep.'%');
+        }
+        if (isset($request->jenispel) && $request->jenispel != "" && $request->jenispel != "undefined") {
+            if($request->jenispel == 1){
                 $data = $data->where('dep.id',16);
                 $dokklaim = $dokklaim->where('dep.id',16);
-               } else {
+            } else {
                 $data = $data->where('dep.id','!=',16);
                 $dokklaim = $dokklaim->where('dep.id','!=',16);
-               }
             }
+        }
+
+        if (isset($request['jenisdiagnosa']) && $request['jenisdiagnosa'] != '' && $request['jenisdiagnosa'] != 'undefined') {
+            $data = $data
+                ->join('antrianpasiendiperiksa_t as apd', function ($join) {
+                    $join->on('apd.noregistrasifk', '=', 'pd.norec')
+                        ->on('apd.objectruanganfk', '=', DB::raw('pd.objectruanganlastfk'));
+                })
+                ->join('diagnosapasien_t as dp', 'dp.noregistrasifk', '=', 'apd.norec')
+                ->join('detaildiagnosapasien_t as ddp', function ($join) use ($request) {
+                    $join->on('ddp.objectdiagnosapasienfk', '=', 'dp.norec')
+                        ->where('ddp.objectjenisdiagnosafk', '=', $request['jenisdiagnosa'])
+                        ->where('ddp.objectdiagnosafk', '=', $request['diagnosa']);
+                });
+        }
             
         $data = $data->get();
 
@@ -3928,5 +3996,125 @@ class InaCbgController   extends ApiController
             $i++;
         }
         return $this->respond($data);
+    }
+
+    public function postDokumenKlaim(Request $request) 
+    {
+        $kdProfile = $this->getDataKdProfile($request);
+        $idProfile = (int) $kdProfile;
+        $dataReq = $request->all();
+
+        // $request->validate([
+        //      'fileBerkas'=>'required|mimes:pdf'
+        // ]);
+
+        $uploadBerkasPasien = $request->file('fileBerkas');
+        $dataRegistrasi = PasienDaftar::where('norec', $dataReq['noregistrasifk'])->first();
+        $path = 'dokumen_klaim/'.$dataRegistrasi->noregistrasi;
+
+        DB::beginTransaction();
+        try {
+            // penamaan file 
+            $extension = $uploadBerkasPasien->getClientOriginalExtension();
+            $filename = $dataReq['namafile'].'_'.$dataRegistrasi->noregistrasi.'.'.$extension;
+
+            $dataInsert = array(
+                "norec" => substr(Uuid::generate(), 0, 32),
+                "kdprofile" => $idProfile,
+                "statusenabled" => true,
+                "filename" => $filename,
+                "filepath" => $path.'/'.$filename,
+                "nocmfk" => $dataRegistrasi->nocmfk,
+                "noregistrasifk" => $dataReq['noregistrasifk'],
+                "documentklaimfk" => $dataReq['documentklaimfk'],
+                "tglupload" => date('Y-m-d H:i:s'),
+            );
+            DB::table('dokklaim_t')->updateOrInsert(["filename" => $filename], $dataInsert);;
+            $request->file('fileBerkas')->move($path, $filename);
+
+            $transStatus = true;
+        } catch (\Exception $e) {
+            $transStatus = false;
+        }
+
+        if ($transStatus) {
+            $transMessage = 'Simpan Berhasil';
+            DB::commit();
+            $result = array(
+                "status" => 201,
+                "message" => $transMessage,
+                "dokumen" => $dataInsert,
+                "as" => 'inhuman',
+            );
+        } else {
+            $transMessage = "Simpan Gagal";
+            DB::rollBack();
+            $result = array(
+                "status" => 400,
+                "message" => $transMessage,
+                "as" => 'inhuman',
+            );
+        }
+        return $this->setStatusCode($result['status'])->respond($result, $transMessage);
+    }
+
+    
+    public function deleteDokumenKlaim(Request $request)
+    {
+        $kdProfile = $this->getDataKdProfile($request);
+        $idProfile = (int) $kdProfile;
+        DB::beginTransaction();
+        try {
+            $dok_m = DB::table("dokklaim_m")->where('id',$request['documentklaimfk'])->first();
+            $dok = DB::table("dokklaim_m")->where('namaberkas',$dok_m->namaberkas)->where('statusenabled',true)->get();
+            $dok_id = [];
+            foreach($dok AS $item){
+                $dok_id[] = $item->id;
+            }
+            $dataRegistrasi = PasienDaftar::where('noregistrasi', $request['noregistrasi'])->first();
+            $Dkmn = DB::table("dokklaim_t")
+            ->where('noregistrasifk', $dataRegistrasi->norec)
+            ->where('documentklaimfk',$request['documentklaimfk'])
+            ->where('kdprofile',$idProfile)
+            ->get();
+            foreach($Dkmn as $d){
+                // delete file
+                $path = public_path($d->filepath);
+                if (\File::exists($d->filepath)){
+                    \File::delete($path);
+                }
+            }
+            
+
+            // detele data
+            DB::table("dokklaim_t")
+            ->where('noregistrasifk', $dataRegistrasi->norec)
+            ->whereIn('documentklaimfk',$dok_id)
+            ->where('kdprofile',$idProfile)
+            ->delete();
+
+            $transStatus = true;
+        } catch (\Exception $e) {
+            $transStatus = false;
+        }
+
+        if ($transStatus) {
+            $transMessage = 'Hapus Berhasil';
+            DB::commit();
+            $result = array(
+                "status" => 201,
+                "message" => $transMessage,
+                "as" => 'inhuman',
+            );
+        } else {
+            $transMessage = "Hapus Gagal";
+            DB::rollBack();
+            $result = array(
+                "status" => 400,
+                "message" => $transMessage,
+                "as" => 'inhuman',
+            );
+        }
+        return $this->setStatusCode($result['status'])->respond($result, $transMessage);
     }
 }

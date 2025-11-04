@@ -3816,6 +3816,14 @@
         {
             "nameDep": "DaftarKlaimRanapCtrl",
             "urlDep": "module/Klaim/DaftarKlaimRanapCtrl"
+        },
+        {
+            "nameDep": "DaftarKlaimRajalCtrl",
+            "urlDep": "module/Klaim/DaftarKlaimRajalCtrl"
+        },
+        {
+            "nameDep": "DaftarKlaimRanapCtrl",
+            "urlDep": "module/Klaim/DaftarKlaimRanapCtrl"
         }
     ]
 }
