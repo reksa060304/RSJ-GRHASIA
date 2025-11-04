@@ -31094,6 +31094,30 @@ public function suratBuktiPengembalian(Request $request)
             return $bsre;
         }
 
+        if(isset($r["issimpanberkas"])) {
+            $pdf = \PDF::loadView('report.lab.hasil-lab', [
+                'data' => $header,
+                'grouped' => $grouped,
+                'umur' => $this->formatUmur($r->input('umur')),
+                'user' => 'Programmer Administrator',
+                'catatan' => $catatan,
+                'dokterr' => $dokterr,
+                'tte' => $tte
+            ]);
+            return $this->saveDokumenKlaim($pdf, $r);
+        }else if(isset($r["issimpanberkasfarmasi"])) {
+            $pdf = \PDF::loadView('report.lab.hasil-lab', [
+                'data' => $header,
+                'grouped' => $grouped,
+                'umur' => $this->formatUmur($r->input('umur')),
+                'user' => 'Programmer Administrator',
+                'catatan' => $catatan,
+                'dokterr' => $dokterr,
+                'tte' => $tte
+            ]);
+            return $this->saveDokumenKlaimFarmasi($pdf, $r);
+        }
+
         //Kalau bukan TTE, langsung tampilkan
         return $pdf->stream();
     }

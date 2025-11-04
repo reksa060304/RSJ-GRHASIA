@@ -25,6 +25,8 @@ use DB;
 use Illuminate\Http\Request;
 use App\Traits\Valet;
 use App\Transaksi\HasilGroupingIdrg;
+use App\Transaksi\HasilLaboratorium;
+use Auth;
 use phpDocumentor\Reflection\Types\Null_;
 use Webpatser\Uuid\Uuid;
 
@@ -3618,6 +3620,8 @@ class InaCbgController   extends ApiController
     }
 
     public function getParameterDok(Request $request) {
+        $kdProfile = $this->getDataKdProfile($request);
+        $idProfile = (int) $kdProfile;
         $noregistrasi = $request['noregistrasi'];
         $user = $request['user'];
         $pd = PasienDaftar::where('noregistrasi',$request['noregistrasi'])->first();
@@ -3687,7 +3691,57 @@ class InaCbgController   extends ApiController
                     }
                 }
             }
-           
+            
+            if (in_array($request['id'], [5,12,19])) {
+                $kdDepartemen = $this->settingDataFixed('KdDepartemenInstalasiLaboratorium', $idProfile);
+                $config = collect(DB::select("
+                    SELECT DISTINCT
+                        pp.norec,
+                        apd.norec AS norec_apd,
+                        ps.objectjeniskelaminfk,
+                        pg.namalengkap,
+                        ps.tgllahir
+                    FROM pelayananpasien_t AS pp
+                    INNER JOIN antrianpasiendiperiksa_t AS apd ON apd.norec = pp.noregistrasifk
+                    INNER JOIN pasiendaftar_t AS pd ON pd.norec = apd.noregistrasifk
+                    INNER JOIN pasien_m AS ps ON ps.id = pd.nocmfk
+                    INNER JOIN pegawai_m AS pg ON pg.id = apd.objectpegawaifk
+                    INNER JOIN ruangan_m AS ru ON ru.id = apd.objectruanganfk
+                    WHERE pp.kdprofile = 30
+                    AND pp.statusenabled = TRUE
+                    AND ru.objectdepartemenfk = $kdDepartemen
+                    AND pd.noregistrasi = '$noregistrasi'
+                "));
+                if (empty($config)) {
+                    return $result = array(
+                        'data' => $result,
+                    );
+                }
+                $arrayNorecPp = $config->pluck('norec')->toArray();
+                $stringNorecPp = implode(',', $arrayNorecPp);
+                $hasilLab = HasilLaboratorium::where('statusenabled', true)->whereIn('norecpelayanan', $arrayNorecPp)->whereNotNull('keterangan')->first();
+                $keterangan = '';
+                if (!empty($hasilLab)) {
+                    $keterangan = $hasilLab->keterangan;
+                }
+                $umurDay = round(abs(strtotime($config[0]->tgllahir) - strtotime(date('Y-m-d H:i'))) / (60 * 60 * 24));
+                $parameter = "?q=q&norec=" . 
+                    $config[0]->norec_apd . "&objectjeniskelaminfk=" .
+                    $config[0]->objectjeniskelaminfk . "&umur=" . 
+                    $umurDay . "&strIdPegawai=" . 
+                    $config[0]->namalengkap . "&strNorecPP=" . 
+                    $stringNorecPp . "&view=true" . "&doketr=" . 
+                    $config[0]->namalengkap . "&catatan=" . 
+                    $keterangan;
+                $result = [];
+                $result[] = array(
+                    "id" => $dataDokasuransi->id,
+                    "param" => $parameter,
+                    "namafile" => $dataDokasuransi->namaberkas,
+                    "url" => $dataDokasuransi->url,
+                    "noregistrasi" => $noregistrasi,
+                );
+            }
 
             $result = array(
                 'data' => $result,
