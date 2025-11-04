@@ -4183,7 +4183,21 @@ class LogistikController extends ApiController{
                 'persendiscount' => $item->persendiscount,
                 'ppn' => $item->hargappn,
                 'persenppn' => $item->persenppn,
-                'total' =>  ((float)$item->hargasatuan *  (float) $item->jumlah )- (float)$item->hargadiscount + (float)$item->hargappn,
+                // 'total' =>  ((float)$item->hargasatuan *  (float) $item->jumlah )- (float)$item->hargadiscount + (float)$item->hargappn,
+                'total' =>  (float)(
+                                (
+                                    // subtotal dikurangi diskon
+                                    (($item->jumlah * $item->hargasatuan) 
+                                    - ((($item->persendiscount * $item->hargasatuan) / 100) * $item->jumlah))
+                                    // lalu ditambah PPN dari hasil tersebut
+                                    + (
+                                        $item->persenppn * (
+                                            ($item->jumlah * $item->hargasatuan) 
+                                            - ((($item->persendiscount * $item->hargasatuan) / 100) * $item->jumlah)
+                                        ) / 100
+                                    )
+                                )
+                            ),
                 'keterangan' => $item->keteranganlainnya,
                 'nobatch' => $item->nobatch,
                 'tglkadaluarsa' => $item->tglkadaluarsa,
@@ -11742,6 +11756,12 @@ class LogistikController extends ApiController{
                         ->where('objectprodukfk', $item['produkfk'])
                         ->first();
 
+                    // if ($tambah->qtyproduk != $item['jumlah']){
+                    //         $transStatus = 'false';
+                    //         $transMessage = "Stok Telah Terpakai, Tidak Bisa Di Retur!!!";
+                    //         return $this->setStatusCode(400)->respond(['status' => 400, 'message' => $transMessage], $transMessage);
+                    // }
+
                     //## StrukReturDetail
                     $StokPD = new StrukReturDetail();
                     $norecStokPD = $StokPD->generateNewId();
@@ -11849,7 +11869,7 @@ class LogistikController extends ApiController{
                 "message" => $transMessage,
             );
         } else {
-            $transMessage = "Simpan Gagal!!";
+            $transMessage = $transMessage ?? "Simpan Gagal";
             DB::rollBack();
             $result = array(
                 "status" => 400,

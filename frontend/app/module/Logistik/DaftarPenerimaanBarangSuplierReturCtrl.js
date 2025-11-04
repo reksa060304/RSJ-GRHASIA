@@ -21,8 +21,8 @@ define(['initialize'], function (initialize) {
                     init();
                 }
                 else {
-                    $scope.item.tglAwal = new Date(moment($scope.now).format('YYYY-MM-DD 00:00:00'));
-                    $scope.item.tglAkhir = $scope.now;
+                    $scope.item.tglAwal = moment($scope.now).format('YYYY-MM-DD 00:00');
+                    $scope.item.tglAkhir = moment($scope.now).format('YYYY-MM-DD 23:59');
                     init();
                 }
             }
