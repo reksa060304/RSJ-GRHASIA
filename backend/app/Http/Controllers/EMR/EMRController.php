@@ -7068,7 +7068,7 @@ class EMRController  extends ApiController
 
             $objetoRequest = new \Illuminate\Http\Request();
             $objetoRequest['noorder'] = $newSO->noorder;
-            $ihs = app('App\Http\Controllers\Bridging\IHSController')->MedicationRequest($objetoRequest, true);
+            // $ihs = app('App\Http\Controllers\Bridging\IHSController')->MedicationRequest($objetoRequest, true);
 
             $result = array(
                 "status" => 201,
