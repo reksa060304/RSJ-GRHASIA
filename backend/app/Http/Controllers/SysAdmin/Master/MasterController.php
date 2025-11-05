@@ -144,6 +144,11 @@ class MasterController extends ApiController{
                     ->update([
                         'statusenabled' => $request['status'],
                 ]);
+                DB::table('harganettoprodukbykelas_m')
+                    ->where('objectprodukfk', $request['id'])
+                    ->update(['statusenabled' => $request['status'],
+            ]);
+
 
             $transStatus = 'true';
         }catch (\Exception $e) {
