@@ -93,6 +93,8 @@ const appRoutes: Routes = [
   { path: 'touchscreen/self-regis/verif-pasien-bpjs-old', loadChildren: () => import('./main/module/verif-pasien-bpjs/verif-pasien-bpjs.module').then(m => m.VerifPasienBpjsModule),canActivate: [RedirectGuard] },
   { path: 'touchscreen/self-regis/verif-pasien-bpjs-old-2', loadChildren: () => import('./main/module/verif-pasien-bpjs-old/verif-pasien-bpjs-old.module').then(m => m.VerifPasienBpjsOldModule),canActivate: [RedirectGuard] },
   { path: 'touchscreen/self-regis/verif-pasien-bpjs', loadChildren: () => import('./main/module/verif-pasien-bpjs-new/verif-pasien-bpjs-new.module').then(m => m.VerifPasienBpjsNewModule),canActivate: [RedirectGuard] },
+  { path: 'touchscreen/checkin-v2', loadChildren: () => import('./main/module/checkin-v2/checkin-v2.module').then(m => m.CheckinV2Module), },
+  { path: 'touchscreen/self-regis/verif-pasien-bpjs-v2', loadChildren: () => import('./main/module/verif-pasien-bpjs-v2/verif-pasien-bpjs-v2.module').then(m => m.VerifPasienBpjsV2Module), },
   
   { path: 'informasi-profil', loadChildren: () => import('./main/module/informasi-profil/informasi-profil.module').then(m => m.InformasiProfilModule),canActivate: [RedirectGuard] },
   { path: 'gallery', loadChildren: () => import('./main/module/gallery/gallery.module').then(m => m.GalleryModule),canActivate: [RedirectGuard] },

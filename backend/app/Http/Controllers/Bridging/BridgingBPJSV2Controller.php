@@ -32,6 +32,8 @@ use App\Master\Ruangan;
 use App\Master\Alamat;
 use App\Transaksi\AntrianPasienRegistrasi;
 use App\Transaksi\BpjsRencanaKontrol;
+use App\Transaksi\LoggingUserRev;
+use App\Transaksi\SuratKeterangan;
 
 class BridgingBPJSV2Controller extends ApiController
 {
@@ -3386,13 +3388,89 @@ class BridgingBPJSV2Controller extends ApiController
     }
     public function simpanLokalSPRI(Request $request)
     {
-
         $kdProfile = $this->getDataKdProfile($request);
+        $tglAyeuna = date('Y-m-d H:i:s');
+        $dataLogin = $request->all();
+
+        $kdJenisSurat = (int) $this->settingDataFixed('SuratKeteranganKontrol', $kdProfile);
+
+        $jenisSurat = DB::table('jenissurat_m')
+            ->select('*')
+            ->where('id', $kdJenisSurat)
+            ->first();
+        $kodeSurat = '';
+        if (!empty($jenisSurat)) {
+            $kodeSurat = $jenisSurat->kodeexternal;
+        }
+        $PD = PasienDaftar::where('norec',$request['norec_pd'])->first();
+
         DB::beginTransaction();
         try {
             if ($request['tipe'] == 'delete') {
                 $transMessage = "Sukses ";
+                $brk2 = BpjsRencanaKontrol::where('nosuratkontrol', $request['nosuratkontrol'])->first();
+                SuratKeterangan::where('pasiendaftarfk', $brk2->norec_pd)->where('jenissuratfk',$kdJenisSurat)->where('noskdp',$request['nosuratkontrol'])->delete();
+                $brk = BpjsRencanaKontrol::where('nosuratkontrol', $request['nosuratkontrol'])->delete();
+
                 BpjsRencanaKontrol::where('nosuratkontrol', $request['nosuratkontrol'])->delete();
+                $logUser = new LoggingUserRev();        
+                $logUser->norec = $logUser->generateNewId();
+                $logUser->kdprofile= $kdProfile;
+                $logUser->statusenabled=true;
+                $logUser->jenislog = 'Delete Surat Rencana Kontrol / SPRI ';
+                $logUser->noreff = $request['nosuratkontrol'];
+                $logUser->referensi = 'nosurat';
+                $logUser->objectloginuserfk = $dataLogin['userData']['id'];
+                $logUser->tanggal = $tglAyeuna;
+                $logUser->keterangan = 'Delete Surat Rencana Kontrol / SPRI ' . 'dan no Surkon / SPRI ' . $request['nosuratkontrol'];
+                $logUser->save();
+            } else if($request['tipe'] == 'buatsurat'){
+                $transMessage = "Sukses";
+                $SK = SuratKeterangan::where('pasiendaftarfk', $request['norec_pd'])->where('jenissuratfk',$kdJenisSurat)->where('statusenabled',true)->first();
+                
+                if(is_null($SK)){
+                    $genSurat = $this->genSurat(new SuratKeterangan(), 'nosint', $kodeSurat, 4);
+                    $SK = new SuratKeterangan();
+                    $SK->norec = $SK->generateNewId();
+                    $SK->kdprofile = $kdProfile;
+                    $SK->nosurat = $genSurat['nosurat'];
+                    $SK->nosint = $genSurat['noint'];
+                    $SK->statusenabled = true;
+                    $SK->jenissuratfk = $kdJenisSurat;
+                    $SK->tglsurat = date('Y-m-d H:i:s');
+                    $SK->pasiendaftarfk = $request['norec_pd'];
+                }
+
+                $idDokter = Pegawai::where('kddokterbpjs',$request['kodedokter'])->first();
+                $SK->dokterfk =$idDokter->id;
+                if(isset($request['diagnosa']) && $request['diagnosa'] != null && $request['diagnosa'] != 'undefined' ){
+                    if($request['jnspelsepasal'] == 'Rawat Jalan'){
+                        $SK->indikasi = 'Kontrol';
+                    } else if($request['jnspelsepasal'] == 'Rawat Inap'){
+                        $SK->indikasi = 'Kontrol Post Rawat Inap';
+                    }
+                
+                    $SK->diagnosa = $request['diagnosa'];
+                }
+                $SK->noskdp = 'Rujukan Habis, Maksimal 3(tiga) bulan dari tanggal rujukan';
+                $SK->tglkontrol = $request['tglrencanakontrol'] . ' 00:00:00';
+                if(isset($request['keterangan'])){
+                    $SK->keterangan = $request['keterangan'];
+                }
+                $SK->pegawaifk = $dataLogin['userData']['id'];
+                $SK->save();
+                
+                $logUser = new LoggingUserRev();        
+                $logUser->norec = $logUser->generateNewId();
+                $logUser->kdprofile= $kdProfile;
+                $logUser->statusenabled=true;
+                $logUser->jenislog = 'Insert / Update Surat Rencana Kontrol ';
+                $logUser->noreff = $request['nokartu'];
+                $logUser->referensi = 'nokartu';
+                $logUser->objectloginuserfk = $dataLogin['userData']['id'];
+                $logUser->tanggal = $tglAyeuna;
+                $logUser->keterangan = 'Insert / Update Surat Rencana Kontrol (Rujukan Habis)' .$request['nokartu'] . ' dengan no Sep asal ' .$request['nosepasalkontrol'] .' dan no Registrasi ' . $PD->noregistrasi;
+                $logUser->save();
             } else {
                 $transMessage = "Sukses";
                 if ($request['tipe'] == 'insert') {
@@ -3400,17 +3478,64 @@ class BridgingBPJSV2Controller extends ApiController
                     $data1->norec = $data1->generateNewId();
                     $data1->kdprofile = $kdProfile;
                     $data1->statusenabled = true;
+                    $data1->tglterbitkontrol = $request['tglterbitkontrol'];
+                    $data1->norec_pd = $request['norec_pd'];
+
+                    // buat surat kontrol
+                    if($request['jnskontrol'] == 2){
+                        $genSurat = $this->genSurat(new SuratKeterangan(), 'nosint', $kodeSurat, 4);
+                        $SK = new SuratKeterangan();
+                        $SK->norec = $SK->generateNewId();
+                        $SK->kdprofile = $kdProfile;
+                        $SK->nosurat = $genSurat['nosurat'];
+                        $SK->nosint = $genSurat['noint'];
+                        $SK->statusenabled = true;
+                        $SK->jenissuratfk = $kdJenisSurat;
+                        $SK->tglsurat = date('Y-m-d H:i:s');
+                        $SK->pasiendaftarfk = $request['norec_pd'];
+                    }
+                    
+
                 } else {
                     $data1 =  BpjsRencanaKontrol::where('nosuratkontrol', $request['nosuratkontrol'])->first();
+                    if(is_null($data1)){
+                        $data1 = new BpjsRencanaKontrol();
+                        $data1->norec = $data1->generateNewId();
+                        $data1->kdprofile = $kdProfile;
+                        $data1->statusenabled = true;
+                        $data1->tglterbitkontrol = $request['tglterbitkontrol'];
+                        $data1->norec_pd = $request['norec_pd'];
+
+                        // buat surat kontrol
+                        if($request['jnskontrol'] == 2){
+                            $genSurat = $this->genSurat(new SuratKeterangan(), 'nosint', $kodeSurat, 4);
+                            $SK = new SuratKeterangan();
+                            $SK->norec = $SK->generateNewId();
+                            $SK->kdprofile = $kdProfile;
+                            $SK->nosurat = $genSurat['nosurat'];
+                            $SK->nosint = $genSurat['noint'];
+                            $SK->statusenabled = true;
+                            $SK->jenissuratfk = $kdJenisSurat;
+                            $SK->tglsurat = date('Y-m-d H:i:s');
+                            $SK->pasiendaftarfk = $request['norec_pd'];
+                        }
+                    } else {
+                        $SK = SuratKeterangan::where('pasiendaftarfk', $data1->norec_pd)->where('jenissuratfk',$kdJenisSurat)->where('statusenabled',true)->first();
+                    }
                 }
                 $data1->nosuratkontrol = $request['nosuratkontrol'];
                 $data1->jnspelayanan = $request['jnspelayanan'];
                 $data1->jnskontrol = $request['jnskontrol'];
                 $data1->namajnskontrol = $request['namajnskontrol'];
                 $data1->tglrencanakontrol = $request['tglrencanakontrol'];
-                $data1->tglterbitkontrol = $request['tglterbitkontrol'];
                 $data1->nosepasalkontrol = $request['nosepasalkontrol'];
-                $data1->poliasal = $request['poliasal'];
+                $ruangan = Ruangan::where('kdinternal',$request['poliasal'])->where('statusenabled',true)->first();
+                if (is_null($ruangan)) {
+                    $data1->poliasal = $request['poliasal'];
+                } else {
+                    $data1->poliasal = $ruangan->namaruangan;
+                }
+               
                 $data1->politujuan = $request['politujuan'];
                 $data1->namapolitujuan = $request['namapolitujuan'];
                 $data1->tglsep = $request['tglsep'];
@@ -3418,8 +3543,51 @@ class BridgingBPJSV2Controller extends ApiController
                 $data1->namadokter = $request['namadokter'];
                 $data1->nokartu = $request['nokartu'];
                 $data1->nama = $request['nama'];
-                $data1->norec_pd = $request['norec_pd'];
+                if(isset($request['diagnosa']) && $request['diagnosa'] != null && $request['diagnosa'] != 'undefined' ){
+                    $data1->diagnosa = $request['diagnosa'];
+                    $data1->kdprovperujuk = $request['kdprovperujuk'];
+                    $data1->namaprovperujuk = $request['namaprovperujuk'];
+                    $data1->norujukan = $request['norujukan'];
+                    $data1->asalrujukan = $request['asalrujukan'];
+                    $data1->jnspelsepasal = $request['jnspelsepasal'];
+                    $data1->tglrujukan = $request['tglrujukan'];
+                }
                 $data1->save();
+
+                if($request['jnskontrol'] == 2){
+                    $idDokter = Pegawai::where('kddokterbpjs',$request['kodedokter'])->first();
+                    $SK->dokterfk =$idDokter->id;
+                    if(isset($request['diagnosa']) && $request['diagnosa'] != null && $request['diagnosa'] != 'undefined' ){
+                        if($request['jnspelsepasal'] == 'Rawat Jalan'){
+                            $SK->indikasi = 'Kontrol';
+                        } else if($request['jnspelsepasal'] == 'Rawat Inap'){
+                            $SK->indikasi = 'Kontrol Post Rawat Inap';
+                        }
+                    
+                        $SK->diagnosa = $request['diagnosa'];
+                    }
+                    $SK->noskdp = $request['nosuratkontrol'];
+                    $SK->tglkontrol = $request['tglrencanakontrol'] . ' 00:00:00';
+                    if(isset($request['keterangan'])){
+                        $SK->keterangan = $request['keterangan'];
+                    }
+
+                    $SK->pegawaifk = $dataLogin['userData']['id'];
+                    $SK->save();
+                }
+                
+
+                $logUser = new LoggingUserRev();        
+                $logUser->norec = $logUser->generateNewId();
+                $logUser->kdprofile= $kdProfile;
+                $logUser->statusenabled=true;
+                $logUser->jenislog = 'Insert / Update Surat Rencana Kontrol ';
+                $logUser->noreff = $request['nokartu'];
+                $logUser->referensi = 'nokartu';
+                $logUser->objectloginuserfk = $dataLogin['userData']['id'];
+                $logUser->tanggal = $tglAyeuna;
+                $logUser->keterangan = 'Insert / Update Surat Rencana Kontrol ' .$request['nokartu'] . ' dengan no Sep asal ' .$request['nosepasalkontrol'] .' dan no Surkon ' . $request['nosuratkontrol'];
+                $logUser->save();
             }
 
             $transStatus = 'true';

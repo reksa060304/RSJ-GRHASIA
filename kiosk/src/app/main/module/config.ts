@@ -13,7 +13,7 @@ export class Configuration {
       }
     } else if (window.location.hostname.indexOf('localhost') > -1) {
       return {
-        apiBackend: 'http://localhost:3331/service/',
+        apiBackend: 'http://localhost:8009/service/',
         headerToken: 'X-AUTH-TOKEN',
       }
     } else {
@@ -28,6 +28,10 @@ export class Configuration {
         nama:'RSJ. GRHASIA',
         alamat: 'Jl. Kaliurang KM.17, Duwetsari, Pakembinangun, Kec. Pakem, Kabupaten Sleman, Daerah Istimewa Yogyakarta',
         link: 'https://drive.google.com/file/d/1GCx6WDTTykrGWSFIa6S6guVGRqZR9uQ1/view?usp=sharing',
+        kdRekananBPJS:2552,
+        kdKelompokBPJS:2,
+        consid: '11282',
+        secretkey: '8gQ50779E4'
       }
     
   }

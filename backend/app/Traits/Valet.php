@@ -789,4 +789,31 @@ Trait Valet {
 
         return $this->setStatusCode($result['status'])->respond($result, $transMessage);
     }
+
+    protected function genSurat($objectModel, $atrribute, $kodesurat, $length=4, $prefix=''){
+        $result = $objectModel->where($atrribute, 'LIKE', '%'.'/REMED/'.$kodesurat.'%')->max($atrribute);
+        $thn = date('Y');
+        $bln = date('m');
+        $romawi = $this->KonDecRomawi($bln);
+        $bln2 = Carbon::now()->format('Y/m');
+        $a=substr(trim($result),0,7);
+
+        if($a!=$bln2){
+            $subPrefix = '0000';
+        }else{
+            $subPrefix = substr(trim($result),8,4);
+        }
+        $prefixLen = strlen($prefix);
+        $number = $prefix.(str_pad((int)$subPrefix+1, $length-$prefixLen, "0", STR_PAD_LEFT));
+
+        $nosurat = sprintf('%s/%s/REMED/%s/%s', $number, $kodesurat, $romawi, $thn);
+        $noint = sprintf('%s/%s/%s/REMED/%s', $thn, $bln, $number, $kodesurat);
+
+        $result = array(
+            'noint' => $noint,
+            'nosurat' => $nosurat,
+        );
+
+        return $result;
+    }
 }
