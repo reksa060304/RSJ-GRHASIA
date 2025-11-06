@@ -1,0 +1,267 @@
+<style>
+    .k-grid .k-grid-header .k-header .k-link {
+        height: auto;
+    }
+
+    .k-grid .k-grid-header .k-header {
+        white-space: normal;
+    }
+
+    .k-grid .k-grid-header .k-header {
+        text-align: center;
+    }
+</style>
+<div ng-show="dataVOloaded">
+    <div class="grid_12 headerBox">
+        <h2 style="color: white;">
+            <p>Formulir RL 1.1</p>
+            <p>Profil Rumah Sakit</p>
+        </h2>
+    </div>
+
+    <div class="grid_12">
+        <div class="grid_1">
+            <div class="grid_12">
+                <label>&nbsp;</label>
+            </div>
+
+            <div class="grid_12">
+                <button class="primary c-button" style="margin-top: 6px" ng-click="CariData()">Refresh</button>
+            </div>
+        </div>
+
+        <div class="grid_1">
+            <div class="grid_12">
+                <label>&nbsp;</label>
+            </div>
+            <div class="clear"></div>
+
+            <div class="grid_12">
+                <button class="success c-button" style="margin-top: 6px" ng-click="ubahData()">Ubah Data</button>
+            </div>
+        </div>
+    </div>
+    <div class="grid_12" style="margin-top:10px">
+        <div class="grid_12 headerBox">
+            <p>Profil</p>
+        </div>
+        <div class="clear"></div>
+        <div class="grid_12 borderBox">
+            <div id="kGrid" kendo-grid k-groupable="'true'" k-aggregate='aggregate' k-data-source="sourceLaporan"
+                k-selectable="'row'" k-columns="columnLaporan" k-pageable="'true'" k-sortable="'true'"
+                k-ng-model="dataPasienSelected" ng-click="click(dataPasienSelected)">
+            </div>
+        </div>
+    </div>
+    <div class="grid_12">
+        <div class="grid_12" style="float:right">
+            <div class="grid_10"></div>
+        </div>
+    </div>
+    <br />
+</div>
+<br />
+</div>
+<div class="grid_12" style="margin-top:60px">
+    <div ng-include='"../app/template/Shared/TemplateLoading"'></div>
+</div>
+
+<div kendo-window="popupDetail" k-title="'Ubah Data'" k-visible="false" k-width="720" k-height="500">
+    <div class="panel panel-default">
+        <fieldset class="grid_12" style="margin-top: 10px;">
+            <legend><b>A. Profile</b></legend>
+            <div style="margin-top:10px" class="grid_12" ng-repeat="data in listData1" ng-switch on="data.typedetail">
+                <div ng-switch-when="textbox">
+                    <div class="grid_12">
+                        <label>{{data.deskripsi}}</label>
+                    </div>
+                    <div class="grid_12">
+                        <input class="k-textbox" ng-model="item.obj[data.detailid]" type="text">
+                    </div>
+                </div>
+            </div>
+        </fieldset>
+
+        <fieldset class="grid_12" style="margin-top: 10px;">
+            <legend><b>B. Perizinan dan Akreditasi</b></legend>
+            <div style="margin-top:10px" class="grid_12" ng-repeat="data2 in listData2" ng-switch on="data2.typedetail">
+                <div ng-switch-when="textbox">
+                    <div class="grid_12">
+                        <label>{{data2.deskripsi}}</label>
+                    </div>
+                    <div class="grid_12">
+                        <input class="k-textbox" ng-model="item.obj[data2.detailid]" type="text">
+                    </div>
+                </div>
+            </div>
+        </fieldset>
+
+        <fieldset class="grid_12" style="margin-top: 10px;">
+            <legend><b>C. Lainnya</b></legend>
+            <div style="margin-top:10px" class="grid_12" ng-repeat="data3 in listData3" ng-switch on="data3.typedetail">
+                <div ng-switch-when="textbox">
+                    <div class="grid_12">
+                        <label>{{data3.deskripsi}}</label>
+                    </div>
+                    <div class="grid_12">
+                        <input class="k-textbox" ng-model="item.obj[data3.detailid]" type="text">
+                    </div>
+                </div>
+            </div>
+        </fieldset>
+
+        <fieldset class="grid_12" style="margin-top: 10px;">
+            <legend><b>D. Photo</b></legend>
+            <!-- <div style="margin-top:10px" class="grid_12" ng-repeat="data4 in listData4" ng-switch on="data4.typedetail">
+                <div ng-switch-when="textbox">
+                    <div class="grid_12">
+                        <label>{{data4.deskripsi}}</label>
+                    </div>
+                    <div class="grid_12">
+                        <input class="k-textbox" ng-model="item.obj[data4.detailid]" type="text">
+                    </div>
+                </div>
+            </div> -->
+            <div class="grid_12" style="margin-top: 10px;">
+                <div class="grid_12">
+                    <label c-label item="item">Foto Tampak Depan RS</label>
+                </div>
+                <div class="grid_12">
+                    <div class="grid_12" style="margin-top: 10px">
+                        <input id="files"
+                               type="file"
+                               kendo-upload
+                               k-async="{ saveUrl: 'save', removeUrl: 'remove', autoUpload: true }"
+                               k-multiple="false"
+                               k-select="onSelect1"
+                               accept="image/*"/>
+                    </div>
+                    <div class="grid_12" style="margin-top: 10px">
+                        <div  id="preview1" class="text-center">
+                            <img class="gambarAset " src="{{fileUpload}}" width="300"/>
+                        </div>
+                     </div>
+                </div>
+            </div>
+            <div class="grid_12" style="margin-top: 10px;">
+                <div class="grid_12">
+                    <label c-label item="item">Foto Ruang Pelayanan Rawat Jalan RS</label>
+                </div>
+                <div class="grid_12">
+                    <div class="grid_12" style="margin-top: 10px">
+                        <input id="files"
+                               type="file"
+                               kendo-upload
+                               k-async="{ saveUrl: 'save', removeUrl: 'remove', autoUpload: true }"
+                               k-multiple="false"
+                               k-select="onSelect2"
+                               accept="image/*"/>
+                    </div>
+                    <div class="grid_12" style="margin-top: 10px">
+                        <div  id="preview2" class="text-center">
+                            <img class="gambarAset " src="{{fileUpload2}}" width="300"/>
+                        </div>
+                     </div>
+                </div>
+            </div>
+            <div class="grid_12" style="margin-top: 10px;">
+                <div class="grid_12">
+                    <label c-label item="item">Foto Ruang Ranap RS</label>
+                </div>
+                <div class="grid_12">
+                    <div class="grid_12" style="margin-top: 10px">
+                        <input id="files"
+                               type="file"
+                               kendo-upload
+                               k-async="{ saveUrl: 'save', removeUrl: 'remove', autoUpload: true }"
+                               k-multiple="false"
+                               k-select="onSelect3"
+                               accept="image/*"/>
+                    </div>
+                    <div class="grid_12" style="margin-top: 10px">
+                        <div  id="preview3" class="text-center">
+                            <img class="gambarAset " src="{{fileUpload3}}" width="300"/>
+                        </div>
+                     </div>
+                </div>
+            </div>
+            <div class="grid_12" style="margin-top: 10px;">
+                <div class="grid_12">
+                    <label c-label item="item">Foto Ruang IGD RS</label>
+                </div>
+                <div class="grid_12">
+                    <div class="grid_12" style="margin-top: 10px">
+                        <input id="files"
+                               type="file"
+                               kendo-upload
+                               k-async="{ saveUrl: 'save', removeUrl: 'remove', autoUpload: true }"
+                               k-multiple="false"
+                               k-select="onSelect4"
+                               accept="image/*"/>
+                    </div>
+                    <div class="grid_12" style="margin-top: 10px">
+                        <div  id="preview4" class="text-center">
+                            <img class="gambarAset " src="{{fileUpload4}}" width="300"/>
+                        </div>
+                     </div>
+                </div>
+            </div>
+            <div class="grid_12" style="margin-top: 10px;">
+                <div class="grid_12">
+                    <label c-label item="item">Foto Alat Kesehatan RS</label>
+                </div>
+                <div class="grid_12">
+                    <div class="grid_12" style="margin-top: 10px">
+                        <input id="files"
+                               type="file"
+                               kendo-upload
+                               k-async="{ saveUrl: 'save', removeUrl: 'remove', autoUpload: true }"
+                               k-multiple="false"
+                               k-select="onSelect5"
+                               accept="image/*"/>
+                    </div>
+                    <div class="grid_12" style="margin-top: 10px">
+                        <div  id="preview5" class="text-center">
+                            <img class="gambarAset " src="{{fileUpload5}}" width="300"/>
+                        </div>
+                     </div>
+                </div>
+            </div>
+        </fieldset>
+
+        <fieldset class="grid_12" style="margin-top: 10px;">
+            <legend><b>E. Kerja Sama Luar Negeri</b></legend>
+            <div style="margin-top:10px" class="grid_12" ng-repeat="data5 in listData5" ng-switch on="data5.typedetail">
+                <div ng-switch-when="textbox">
+                    <div class="grid_12">
+                        <label>{{data5.deskripsi}}</label>
+                    </div>
+                    <div class="grid_12">
+                        <input class="k-textbox" ng-model="item.obj[data5.detailid]" type="text">
+                    </div>
+                </div>
+            </div>
+        </fieldset>
+
+        <fieldset class="grid_12" style="margin-top: 10px;">
+            <legend><b>F. Profil SIMRS</b></legend>
+            <div style="margin-top:10px" class="grid_12" ng-repeat="data6 in listData6" ng-switch on="data6.typedetail">
+                <div ng-switch-when="textbox">
+                    <div class="grid_12">
+                        <label>{{data6.deskripsi}}</label>
+                    </div>
+                    <div class="grid_12">
+                        <input class="k-textbox" ng-model="item.obj[data6.detailid]" type="text">
+                    </div>
+                </div>
+            </div>
+        </fieldset>
+    </div>
+    
+    <div class="grid_12" style="margin-bottom: 10px;">
+        <div class="pull-right" style="margin-top:4%">
+            <button class="k-button" ng-click="simpan()">Simpan</button>
+            <button class="k-button" ng-click="tutup()">Tutup</button>
+        </div>
+    </div>
+</div>

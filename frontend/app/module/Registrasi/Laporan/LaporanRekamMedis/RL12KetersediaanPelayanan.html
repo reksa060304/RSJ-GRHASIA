@@ -1,0 +1,394 @@
+<style>
+    .k-grid .k-grid-header .k-header .k-link {
+        height: auto;
+    }
+
+    .k-grid .k-grid-header .k-header {
+        white-space: normal;
+    }
+
+    .k-grid .k-grid-header .k-header {
+        text-align: center;
+    }
+</style>
+<div ng-show="dataVOloaded">
+    <div class="grid_12 headerBox">
+        <h2 style="color: white;">
+            <p>Formulir RL 1.2</p>
+            <p>Ketersediaan Pelayanan</p>
+        </h2>
+    </div>
+
+    <div class="grid_12">
+        <div class="grid_1">
+            <div class="grid_12">
+                <label>&nbsp;</label>
+            </div>
+
+            <div class="grid_12">
+                <button class="primary c-button" style="margin-top: 6px" ng-click="CariData()">Refresh</button>
+            </div>
+        </div>
+
+        <div class="grid_1">
+            <div class="grid_12">
+                <label>&nbsp;</label>
+            </div>
+            <div class="clear"></div>
+
+            <div class="grid_12">
+                <button class="success c-button" style="margin-top: 6px" ng-click="ubahData()">Ubah Data</button>
+            </div>
+        </div>
+    </div>
+    <div class="grid_12" style="margin-top:10px">
+        <div class="grid_12 headerBox">
+            <p>Profil</p>
+        </div>
+        <div class="clear"></div>
+        <div class="grid_12 borderBox">
+            <div id="kGrid" kendo-grid k-groupable="'true'" k-aggregate='aggregate' k-data-source="sourceLaporan"
+                k-selectable="'row'" k-columns="columnLaporan" k-pageable="'true'" k-sortable="'true'"
+                k-ng-model="dataPasienSelected" ng-click="click(dataPasienSelected)">
+            </div>
+        </div>
+    </div>
+    <div class="grid_12">
+        <div class="grid_12" style="float:right">
+            <div class="grid_10"></div>
+        </div>
+    </div>
+    <br />
+</div>
+<br />
+</div>
+<div class="grid_12" style="margin-top:60px">
+    <div ng-include='"../app/template/Shared/TemplateLoading"'></div>
+</div>
+
+<div kendo-window="popupDetail" k-title="'Ubah Data'" k-visible="false" k-width="720" k-height="500">
+    <div class="panel panel-default">
+        <fieldset class="grid_12" style="margin-top: 10px;">
+            <legend><b>1. Pelayanan Medik Umum</b></legend>
+            <div style="margin-top:10px" class="grid_12" ng-repeat="data in listData1" ng-switch on="data.typedetail">
+                <div class="grid_12 mt-1" ng-switch-when="checkbox">
+                    <input type="checkbox" class="k-checkbox" id="item.obj{{data.id}}" ng-model="item.obj[data.id]">
+                    <label class="k-checkbox-label" for="item.obj{{data.id}}">&nbsp;{{data.deskripsi}}</label>
+                </div>
+            </div>
+        </fieldset>
+        <fieldset class="grid_12" style="margin-top: 10px;">
+            <legend><b>2. Pelayanan Gawat Darurat</b></legend>
+            <div style="margin-top:10px" class="grid_12" ng-repeat="data2 in listData2" ng-switch on="data2.typedetail">
+                <div class="grid_12 mt-1" ng-switch-when="checkbox">
+                    <input type="checkbox" class="k-checkbox" id="item.obj{{data2.id}}" ng-model="item.obj[data2.id]">
+                    <label class="k-checkbox-label" for="item.obj{{data2.id}}">&nbsp;{{data2.deskripsi}}</label>
+                </div>
+            </div>
+        </fieldset>
+        <fieldset class="grid_12" style="margin-top: 10px;">
+            <legend><b>3. Pelayanan Medik Spesialis Dasar</b></legend>
+            <div style="margin-top:10px" class="grid_12" ng-repeat="data in listData3" ng-switch on="data.typedetail">
+                <div class="grid_12 mt-1" ng-switch-when="checkbox">
+                    <input type="checkbox" class="k-checkbox" id="item.obj{{data.id}}" ng-model="item.obj[data.id]">
+                    <label class="k-checkbox-label" for="item.obj{{data.id}}">&nbsp;{{data.deskripsi}}</label>
+                </div>
+            </div>
+        </fieldset>
+        <fieldset class="grid_12" style="margin-top: 10px;">
+            <legend><b>4. Pelayanan Spesialis Penunjang Medik</b></legend>
+            <div style="margin-top:10px" class="grid_12" ng-repeat="data in listData4" ng-switch on="data.typedetail">
+                <div class="grid_12 mt-1" ng-switch-when="checkbox">
+                    <input type="checkbox" class="k-checkbox" id="item.obj{{data.id}}" ng-model="item.obj[data.id]">
+                    <label class="k-checkbox-label" for="item.obj{{data.id}}">&nbsp;{{data.deskripsi}}</label>
+                </div>
+            </div>
+        </fieldset>
+        <fieldset class="grid_12" style="margin-top: 10px;">
+            <legend><b>5. Pelayanan Medik Spesialis Lain</b></legend>
+            <div style="margin-top:10px" class="grid_12" ng-repeat="data in listData5" ng-switch on="data.typedetail">
+                <div class="grid_12 mt-1" ng-switch-when="checkbox">
+                    <input type="checkbox" class="k-checkbox" id="item.obj{{data.id}}" ng-model="item.obj[data.id]">
+                    <label class="k-checkbox-label" for="item.obj{{data.id}}">&nbsp;{{data.deskripsi}}</label>
+                </div>
+            </div>
+        </fieldset>
+        <fieldset class="grid_12" style="margin-top: 10px;">
+            <legend><b>6. Pelayanan Medik Spesialis Lain berupa Pelayanan Spesialistik Mata di RS Mata</b></legend>
+            <div style="margin-top:10px" class="grid_12" ng-repeat="data in listData6" ng-switch on="data.typedetail">
+                <div class="grid_12 mt-1" ng-switch-when="checkbox">
+                    <input type="checkbox" class="k-checkbox" id="item.obj{{data.id}}" ng-model="item.obj[data.id]">
+                    <label class="k-checkbox-label" for="item.obj{{data.id}}">&nbsp;{{data.deskripsi}}</label>
+                </div>
+            </div>
+        </fieldset>
+        <fieldset class="grid_12" style="margin-top: 10px;">
+            <legend><b>7. Pelayanan Medik Spesialis Lain berupa Pelayanan Spesialistik Jantung dan Pembuluh Darah di RS Jantung</b></legend>
+            <div style="margin-top:10px" class="grid_12" ng-repeat="data in listData7" ng-switch on="data.typedetail">
+                <div class="grid_12 mt-1" ng-switch-when="checkbox">
+                    <input type="checkbox" class="k-checkbox" id="item.obj{{data.id}}" ng-model="item.obj[data.id]">
+                    <label class="k-checkbox-label" for="item.obj{{data.id}}">&nbsp;{{data.deskripsi}}</label>
+                </div>
+            </div>
+        </fieldset>
+        <fieldset class="grid_12" style="margin-top: 10px;">
+            <legend><b>8. Pelayanan Medik Spesialis Lain berupa Pelayanan Spesialistik Jiwa dan KO</b></legend>
+            <div style="margin-top:10px" class="grid_12" ng-repeat="data in listData8" ng-switch on="data.typedetail">
+                <div class="grid_12 mt-1" ng-switch-when="checkbox">
+                    <input type="checkbox" class="k-checkbox" id="item.obj{{data.id}}" ng-model="item.obj[data.id]">
+                    <label class="k-checkbox-label" for="item.obj{{data.id}}">&nbsp;{{data.deskripsi}}</label>
+                </div>
+            </div>
+        </fieldset>
+        <fieldset class="grid_12" style="margin-top: 10px;">
+            <legend><b>9. Pelayanan Medik Spesialis Lain berupa Pelayanan Spesialistik Paru di RS Paru</b></legend>
+            <div style="margin-top:10px" class="grid_12" ng-repeat="data in listData9" ng-switch on="data.typedetail">
+                <div class="grid_12 mt-1" ng-switch-when="checkbox">
+                    <input type="checkbox" class="k-checkbox" id="item.obj{{data.id}}" ng-model="item.obj[data.id]">
+                    <label class="k-checkbox-label" for="item.obj{{data.id}}">&nbsp;{{data.deskripsi}}</label>
+                </div>
+            </div>
+        </fieldset>
+        <fieldset class="grid_12" style="margin-top: 10px;">
+            <legend><b>10. Pelayanan Medik Spesialis Lain berupa Pelayanan Spesialistik Orthopedi di RS Orthopedi</b></legend>
+            <div style="margin-top:10px" class="grid_12" ng-repeat="data in listData10" ng-switch on="data.typedetail">
+                <div class="grid_12 mt-1" ng-switch-when="checkbox">
+                    <input type="checkbox" class="k-checkbox" id="item.obj{{data.id}}" ng-model="item.obj[data.id]">
+                    <label class="k-checkbox-label" for="item.obj{{data.id}}">&nbsp;{{data.deskripsi}}</label>
+                </div>
+            </div>
+        </fieldset>
+        <fieldset class="grid_12" style="margin-top: 10px;">
+            <legend><b>11. Pelayanan Medik Spesialis Gigi dan Mulut</b></legend>
+            <div style="margin-top:10px" class="grid_12" ng-repeat="data in listData11" ng-switch on="data.typedetail">
+                <div class="grid_12 mt-1" ng-switch-when="checkbox">
+                    <input type="checkbox" class="k-checkbox" id="item.obj{{data.id}}" ng-model="item.obj[data.id]">
+                    <label class="k-checkbox-label" for="item.obj{{data.id}}">&nbsp;{{data.deskripsi}}</label>
+                </div>
+            </div>
+        </fieldset>
+        <fieldset class="grid_12" style="margin-top: 10px;">
+            <legend><b>12. Pelayanan Rumah Sakit KO</b></legend>
+            <div style="margin-top:10px" class="grid_12" ng-repeat="data in listData12" ng-switch on="data.typedetail">
+                <div class="grid_12 mt-1" ng-switch-when="checkbox">
+                    <input type="checkbox" class="k-checkbox" id="item.obj{{data.id}}" ng-model="item.obj[data.id]">
+                    <label class="k-checkbox-label" for="item.obj{{data.id}}">&nbsp;{{data.deskripsi}}</label>
+                </div>
+            </div>
+        </fieldset>
+        <fieldset class="grid_12" style="margin-top: 10px;">
+            <legend><b>13. Pelayanan Mata di RS Mata</b></legend>
+            <div style="margin-top:10px" class="grid_12" ng-repeat="data in listData13" ng-switch on="data.typedetail">
+                <div class="grid_12 mt-1" ng-switch-when="checkbox">
+                    <input type="checkbox" class="k-checkbox" id="item.obj{{data.id}}" ng-model="item.obj[data.id]">
+                    <label class="k-checkbox-label" for="item.obj{{data.id}}">&nbsp;{{data.deskripsi}}</label>
+                </div>
+            </div>
+        </fieldset>
+        <fieldset class="grid_12" style="margin-top: 10px;">
+            <legend><b>14. Pelayanan Fasilitas Penunjang di RS Stroke</b></legend>
+            <div style="margin-top:10px" class="grid_12" ng-repeat="data in listData14" ng-switch on="data.typedetail">
+                <div class="grid_12 mt-1" ng-switch-when="checkbox">
+                    <input type="checkbox" class="k-checkbox" id="item.obj{{data.id}}" ng-model="item.obj[data.id]">
+                    <label class="k-checkbox-label" for="item.obj{{data.id}}">&nbsp;{{data.deskripsi}}</label>
+                </div>
+            </div>
+        </fieldset>
+        <fieldset class="grid_12" style="margin-top: 10px;">
+            <legend><b>15. Pelayanan Medik Subspesialis Bedah</b></legend>
+            <div style="margin-top:10px" class="grid_12" ng-repeat="data in listData15" ng-switch on="data.typedetail">
+                <div class="grid_12 mt-1" ng-switch-when="checkbox">
+                    <input type="checkbox" class="k-checkbox" id="item.obj{{data.id}}" ng-model="item.obj[data.id]">
+                    <label class="k-checkbox-label" for="item.obj{{data.id}}">&nbsp;{{data.deskripsi}}</label>
+                </div>
+            </div>
+        </fieldset>
+        <fieldset class="grid_12" style="margin-top: 10px;">
+            <legend><b>16. Pelayanan Medik Subspesialistik Anak</b></legend>
+            <div style="margin-top:10px" class="grid_12" ng-repeat="data in listData16" ng-switch on="data.typedetail">
+                <div class="grid_12 mt-1" ng-switch-when="checkbox">
+                    <input type="checkbox" class="k-checkbox" id="item.obj{{data.id}}" ng-model="item.obj[data.id]">
+                    <label class="k-checkbox-label" for="item.obj{{data.id}}">&nbsp;{{data.deskripsi}}</label>
+                </div>
+            </div>
+        </fieldset>
+        <fieldset class="grid_12" style="margin-top: 10px;">
+            <legend><b>17. Pelayanan Medik Subspesialistik Kebidanan dan Kandungan</b></legend>
+            <div style="margin-top:10px" class="grid_12" ng-repeat="data in listData17" ng-switch on="data.typedetail">
+                <div class="grid_12 mt-1" ng-switch-when="checkbox">
+                    <input type="checkbox" class="k-checkbox" id="item.obj{{data.id}}" ng-model="item.obj[data.id]">
+                    <label class="k-checkbox-label" for="item.obj{{data.id}}">&nbsp;{{data.deskripsi}}</label>
+                </div>
+            </div>
+        </fieldset>
+        <fieldset class="grid_12" style="margin-top: 10px;">
+            <legend><b>18. Pelayanan Medik Subspesialistik Mata</b></legend>
+            <div style="margin-top:10px" class="grid_12" ng-repeat="data in listData18" ng-switch on="data.typedetail">
+                <div class="grid_12 mt-1" ng-switch-when="checkbox">
+                    <input type="checkbox" class="k-checkbox" id="item.obj{{data.id}}" ng-model="item.obj[data.id]">
+                    <label class="k-checkbox-label" for="item.obj{{data.id}}">&nbsp;{{data.deskripsi}}</label>
+                </div>
+            </div>
+        </fieldset>
+        <fieldset class="grid_12" style="margin-top: 10px;">
+            <legend><b>19. Pelayanan Medik Subspesialis THT</b></legend>
+            <div style="margin-top:10px" class="grid_12" ng-repeat="data in listData19" ng-switch on="data.typedetail">
+                <div class="grid_12 mt-1" ng-switch-when="checkbox">
+                    <input type="checkbox" class="k-checkbox" id="item.obj{{data.id}}" ng-model="item.obj[data.id]">
+                    <label class="k-checkbox-label" for="item.obj{{data.id}}">&nbsp;{{data.deskripsi}}</label>
+                </div>
+            </div>
+        </fieldset>
+        <fieldset class="grid_12" style="margin-top: 10px;">
+            <legend><b>20. Pelayanan Medik Subspesialis Syaraf</b></legend>
+            <div style="margin-top:10px" class="grid_12" ng-repeat="data in listData20" ng-switch on="data.typedetail">
+                <div class="grid_12 mt-1" ng-switch-when="checkbox">
+                    <input type="checkbox" class="k-checkbox" id="item.obj{{data.id}}" ng-model="item.obj[data.id]">
+                    <label class="k-checkbox-label" for="item.obj{{data.id}}">&nbsp;{{data.deskripsi}}</label>
+                </div>
+            </div>
+        </fieldset>
+        <fieldset class="grid_12" style="margin-top: 10px;">
+            <legend><b>21. Pelayanan Medik Subspesialis Penyakit Dalam</b></legend>
+            <div style="margin-top:10px" class="grid_12" ng-repeat="data in listData21" ng-switch on="data.typedetail">
+                <div class="grid_12 mt-1" ng-switch-when="checkbox">
+                    <input type="checkbox" class="k-checkbox" id="item.obj{{data.id}}" ng-model="item.obj[data.id]">
+                    <label class="k-checkbox-label" for="item.obj{{data.id}}">&nbsp;{{data.deskripsi}}</label>
+                </div>
+            </div>
+        </fieldset>
+        <fieldset class="grid_12" style="margin-top: 10px;">
+            <legend><b>22. Pelayanan Medik Subspesialis Anestesi dan Terapi Intensif</b></legend>
+            <div style="margin-top:10px" class="grid_12" ng-repeat="data in listData22" ng-switch on="data.typedetail">
+                <div class="grid_12 mt-1" ng-switch-when="checkbox">
+                    <input type="checkbox" class="k-checkbox" id="item.obj{{data.id}}" ng-model="item.obj[data.id]">
+                    <label class="k-checkbox-label" for="item.obj{{data.id}}">&nbsp;{{data.deskripsi}}</label>
+                </div>
+            </div>
+        </fieldset>
+        <fieldset class="grid_12" style="margin-top: 10px;">
+            <legend><b>23. Pelayanan Medik Subspesialis Bedah Anak</b></legend>
+            <div style="margin-top:10px" class="grid_12" ng-repeat="data in listData23" ng-switch on="data.typedetail">
+                <div class="grid_12 mt-1" ng-switch-when="checkbox">
+                    <input type="checkbox" class="k-checkbox" id="item.obj{{data.id}}" ng-model="item.obj[data.id]">
+                    <label class="k-checkbox-label" for="item.obj{{data.id}}">&nbsp;{{data.deskripsi}}</label>
+                </div>
+            </div>
+        </fieldset>
+        <fieldset class="grid_12" style="margin-top: 10px;">
+            <legend><b>24. Pelayanan Medik Subspesialis Bedah Plastik</b></legend>
+            <div style="margin-top:10px" class="grid_12" ng-repeat="data in listData24" ng-switch on="data.typedetail">
+                <div class="grid_12 mt-1" ng-switch-when="checkbox">
+                    <input type="checkbox" class="k-checkbox" id="item.obj{{data.id}}" ng-model="item.obj[data.id]">
+                    <label class="k-checkbox-label" for="item.obj{{data.id}}">&nbsp;{{data.deskripsi}}</label>
+                </div>
+            </div>
+        </fieldset>
+        <fieldset class="grid_12" style="margin-top: 10px;">
+            <legend><b>25. Pelayanan Medik Subspesialis Kedokteran Fisik dan Rehabilitasi</b></legend>
+            <div style="margin-top:10px" class="grid_12" ng-repeat="data in listData25" ng-switch on="data.typedetail">
+                <div class="grid_12 mt-1" ng-switch-when="checkbox">
+                    <input type="checkbox" class="k-checkbox" id="item.obj{{data.id}}" ng-model="item.obj[data.id]">
+                    <label class="k-checkbox-label" for="item.obj{{data.id}}">&nbsp;{{data.deskripsi}}</label>
+                </div>
+            </div>
+        </fieldset>
+        <fieldset class="grid_12" style="margin-top: 10px;">
+            <legend><b>26. Pelayanan Medik Subspesialis Kedokteran Nuklir</b></legend>
+            <div style="margin-top:10px" class="grid_12" ng-repeat="data in listData26" ng-switch on="data.typedetail">
+                <div class="grid_12 mt-1" ng-switch-when="checkbox">
+                    <input type="checkbox" class="k-checkbox" id="item.obj{{data.id}}" ng-model="item.obj[data.id]">
+                    <label class="k-checkbox-label" for="item.obj{{data.id}}">&nbsp;{{data.deskripsi}}</label>
+                </div>
+            </div>
+        </fieldset>
+        <fieldset class="grid_12" style="margin-top: 10px;">
+            <legend><b>27. Pelayanan Medik Subspesialis Kulit dan Kelamin</b></legend>
+            <div style="margin-top:10px" class="grid_12" ng-repeat="data in listData27" ng-switch on="data.typedetail">
+                <div class="grid_12 mt-1" ng-switch-when="checkbox">
+                    <input type="checkbox" class="k-checkbox" id="item.obj{{data.id}}" ng-model="item.obj[data.id]">
+                    <label class="k-checkbox-label" for="item.obj{{data.id}}">&nbsp;{{data.deskripsi}}</label>
+                </div>
+            </div>
+        </fieldset>
+        <fieldset class="grid_12" style="margin-top: 10px;">
+            <legend><b>28. Pelayanan Medik Subspesialis Patologi Klinik</b></legend>
+            <div style="margin-top:10px" class="grid_12" ng-repeat="data in listData28" ng-switch on="data.typedetail">
+                <div class="grid_12 mt-1" ng-switch-when="checkbox">
+                    <input type="checkbox" class="k-checkbox" id="item.obj{{data.id}}" ng-model="item.obj[data.id]">
+                    <label class="k-checkbox-label" for="item.obj{{data.id}}">&nbsp;{{data.deskripsi}}</label>
+                </div>
+            </div>
+        </fieldset>
+        <fieldset class="grid_12" style="margin-top: 10px;">
+            <legend><b>29. Pelayanan Medik Subspesialis Radiologi</b></legend>
+            <div style="margin-top:10px" class="grid_12" ng-repeat="data in listData29" ng-switch on="data.typedetail">
+                <div class="grid_12 mt-1" ng-switch-when="checkbox">
+                    <input type="checkbox" class="k-checkbox" id="item.obj{{data.id}}" ng-model="item.obj[data.id]">
+                    <label class="k-checkbox-label" for="item.obj{{data.id}}">&nbsp;{{data.deskripsi}}</label>
+                </div>
+            </div>
+        </fieldset>
+        <fieldset class="grid_12" style="margin-top: 10px;">
+            <legend><b>30. Pelayanan Medik Subspesialis Urologi</b></legend>
+            <div style="margin-top:10px" class="grid_12" ng-repeat="data in listData30" ng-switch on="data.typedetail">
+                <div class="grid_12 mt-1" ng-switch-when="checkbox">
+                    <input type="checkbox" class="k-checkbox" id="item.obj{{data.id}}" ng-model="item.obj[data.id]">
+                    <label class="k-checkbox-label" for="item.obj{{data.id}}">&nbsp;{{data.deskripsi}}</label>
+                </div>
+            </div>
+        </fieldset>
+        <fieldset class="grid_12" style="margin-top: 10px;">
+            <legend><b>31. Pelayanan Keperawatan dan Kebidanan</b></legend>
+            <div style="margin-top:10px" class="grid_12" ng-repeat="data in listData31" ng-switch on="data.typedetail">
+                <div class="grid_12 mt-1" ng-switch-when="checkbox">
+                    <input type="checkbox" class="k-checkbox" id="item.obj{{data.id}}" ng-model="item.obj[data.id]">
+                    <label class="k-checkbox-label" for="item.obj{{data.id}}">&nbsp;{{data.deskripsi}}</label>
+                </div>
+            </div>
+        </fieldset>
+        <fieldset class="grid_12" style="margin-top: 10px;">
+            <legend><b>32. Pelayanan Kefarmasian</b></legend>
+            <div style="margin-top:10px" class="grid_12" ng-repeat="data in listData32" ng-switch on="data.typedetail">
+                <div class="grid_12 mt-1" ng-switch-when="checkbox">
+                    <input type="checkbox" class="k-checkbox" id="item.obj{{data.id}}" ng-model="item.obj[data.id]">
+                    <label class="k-checkbox-label" for="item.obj{{data.id}}">&nbsp;{{data.deskripsi}}</label>
+                </div>
+            </div>
+        </fieldset>
+        <fieldset class="grid_12" style="margin-top: 10px;">
+            <legend><b>33. Pelayanan Penunjang Klinik</b></legend>
+            <div style="margin-top:10px" class="grid_12" ng-repeat="data in listData33" ng-switch on="data.typedetail">
+                <div class="grid_12 mt-1" ng-switch-when="checkbox">
+                    <input type="checkbox" class="k-checkbox" id="item.obj{{data.id}}" ng-model="item.obj[data.id]">
+                    <label class="k-checkbox-label" for="item.obj{{data.id}}">&nbsp;{{data.deskripsi}}</label>
+                </div>
+            </div>
+        </fieldset>
+        <fieldset class="grid_12" style="margin-top: 10px;">
+            <legend><b>34. Pelayanan Penunjang Non Klinik</b></legend>
+            <div style="margin-top:10px" class="grid_12" ng-repeat="data in listData34" ng-switch on="data.typedetail">
+                <div class="grid_12 mt-1" ng-switch-when="checkbox">
+                    <input type="checkbox" class="k-checkbox" id="item.obj{{data.id}}" ng-model="item.obj[data.id]">
+                    <label class="k-checkbox-label" for="item.obj{{data.id}}">&nbsp;{{data.deskripsi}}</label>
+                </div>
+            </div>
+        </fieldset>
+        <fieldset class="grid_12" style="margin-top: 10px;">
+            <legend><b>35. Apakah terdapat pelayanan berikut</b></legend>
+            <div style="margin-top:10px" class="grid_12" ng-repeat="data in listData35" ng-switch on="data.typedetail">
+                <div class="grid_12 mt-1" ng-switch-when="checkbox">
+                    <input type="checkbox" class="k-checkbox" id="item.obj{{data.id}}" ng-model="item.obj[data.id]">
+                    <label class="k-checkbox-label" for="item.obj{{data.id}}">&nbsp;{{data.deskripsi}}</label>
+                </div>
+            </div>
+        </fieldset>
+    </div>
+    
+    <div class="grid_12" style="margin-bottom: 10px;">
+        <div class="pull-right" style="margin-top:4%">
+            <button class="k-button" ng-click="simpan()">Simpan</button>
+            <button class="k-button" ng-click="tutup()">Tutup</button>
+        </div>
+    </div>
+</div>

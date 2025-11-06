@@ -18,6 +18,8 @@ use App\Master\CaraBayar;
 use App\Master\JenisLaporan;
 use App\Master\KelompokLaporan;
 use App\Master\MapProdukToLaporanRl;
+use App\Master\DetailProfile;
+use App\Master\DetailDaftarDuabelas;
 use App\Master\MapSTSToRuangan;
 use App\Master\Ruangan;
 use App\Master\Pegawai;
@@ -12094,87 +12096,203 @@ class LaporanRekamMedisController extends   ApiController
         }
     }
 
-    public function getDataLaporanRL53new(Request $request)
-    {
-        try {
-            $kdProfile = (int) $this->getDataKdProfile($request);
-
-            $datadiagnosa = \DB::table('antrianpasiendiperiksa_t as app')
-                ->LEFTJOIN('diagnosapasien_t as dp', 'dp.noregistrasifk', '=', 'app.norec')
-                ->LEFTJOIN('detaildiagnosapasien_t as ddp', 'ddp.objectdiagnosapasienfk', '=', 'dp.norec')
-                ->JOIN('ruangan_m as rm', 'app.objectruanganfk', '=', 'rm.id')
-                ->JOIN('diagnosa_m as dm', 'ddp.objectdiagnosafk', '=', 'dm.id')
-                ->JOIN('pasiendaftar_t as pd', 'pd.norec', '=', 'app.noregistrasifk')
-                ->JOIN('pasien_m as ps', 'ps.id', '=', 'pd.nocmfk')
-                ->LeftJOIN('jeniskelamin_m as jk', 'ps.objectjeniskelaminfk', '=', 'jk.id')
-                ->select(
-                    \DB::raw("LEFT(dm.kddiagnosa, 3) as kelompok_icd10"),
-                    'dm.namadiagnosa',
-                    'ps.objectjeniskelaminfk',
-                    \DB::raw('COUNT(*) as jumlah_kasus_baru'),
-                    \DB::raw('COUNT(DISTINCT (app.noregistrasifk || \'-\' || app.objectruanganfk)) as jumlah_kunjungan')
-                )
-                ->where('app.kdprofile', $kdProfile)
-                // ->whereRaw("LEFT(dm.kddiagnosa, 1) NOT IN ('O80','O82', 'R', 'V', 'W', 'X', 'Y', 'Z')")
-                // ->whereRaw("LEFT(dm.kddiagnosa, 1) ")
-                ->where("dp.iskasusbaru", true);
-
-            if (!empty($request['tglAwal'])) {
-                $datadiagnosa = $datadiagnosa->where('pd.tglpulang', '>=', $request['tglAwal']);
+        public function getDataLaporanRL53new(Request $request) {
+            try {
+                $kdProfile = (int) $this->getDataKdProfile($request);
+        
+                $datadiagnosa = \DB::table('antrianpasiendiperiksa_t as app')
+                    ->LEFTJOIN('diagnosapasien_t as dp', 'dp.noregistrasifk', '=', 'app.norec')
+                    ->LEFTJOIN('detaildiagnosapasien_t as ddp', 'ddp.objectdiagnosapasienfk', '=', 'dp.norec')
+                    ->JOIN('ruangan_m as rm', 'app.objectruanganfk', '=', 'rm.id')
+                    ->JOIN('diagnosa_m as dm', 'ddp.objectdiagnosafk', '=', 'dm.id')
+                    ->JOIN('pasiendaftar_t as pd', 'pd.norec', '=', 'app.noregistrasifk')
+                    ->JOIN('pasien_m as ps', 'ps.id', '=', 'pd.nocmfk')
+                    ->LeftJOIN('jeniskelamin_m as jk', 'ps.objectjeniskelaminfk', '=', 'jk.id')
+                    ->select(
+                        \DB::raw("LEFT(dm.kddiagnosa, 3) as kelompok_icd10"),
+                        'dm.namadiagnosa',
+                        'ps.objectjeniskelaminfk',
+                        \DB::raw('COUNT(*) as jumlah_kasus_baru'),
+                        \DB::raw('COUNT(DISTINCT (app.noregistrasifk || \'-\' || app.objectruanganfk)) as jumlah_kunjungan')
+                    )
+                    ->where('app.kdprofile', $kdProfile)
+                    // ->whereRaw("LEFT(dm.kddiagnosa, 1) NOT IN ('O80','O82', 'R', 'V', 'W', 'X', 'Y', 'Z')")
+                    // ->whereRaw("LEFT(dm.kddiagnosa, 1) ")
+                    ->where("dp.iskasusbaru", true);
+        
+                if (!empty($request['tglAwal'])) {
+                    $datadiagnosa = $datadiagnosa->where('pd.tglpulang', '>=', $request['tglAwal']);
+                }
+        
+                if (!empty($request['tglAkhir'])) {
+                    $datadiagnosa = $datadiagnosa->where('pd.tglpulang', '<=', $request['tglAkhir']);
+                }
+        
+                $datadiagnosa = $datadiagnosa->groupBy('kelompok_icd10', 'dm.namadiagnosa', 'ps.objectjeniskelaminfk')
+                    ->get();
+        
+                $data10 = [];
+        
+                foreach ($datadiagnosa as $item) {
+                    $kelompokICD = $item->kelompok_icd10;
+        
+                    if (!isset($data10[$kelompokICD])) {
+                        $data10[$kelompokICD] = [
+                            'kelompok_icd10' => $kelompokICD,
+                            'namadiagnosa' => $item->namadiagnosa,
+                            'jumlahL' => 0,
+                            'jumlahP' => 0,
+                            'total_kasus_baru' => 0,
+                            'jumlah_kunjunganL' => 0,
+                            'jumlah_kunjunganP' => 0,
+                            'total_kunjungan' => 0
+                        ];
+                    }
+        
+                    if ($item->objectjeniskelaminfk == 1) { // Laki-laki
+                        $data10[$kelompokICD]['jumlahL'] += $item->jumlah_kasus_baru;
+                        $data10[$kelompokICD]['jumlah_kunjunganL'] += $item->jumlah_kunjungan;
+                    } else if ($item->objectjeniskelaminfk == 2) { // Perempuan
+                        $data10[$kelompokICD]['jumlahP'] += $item->jumlah_kasus_baru;
+                        $data10[$kelompokICD]['jumlah_kunjunganP'] += $item->jumlah_kunjungan;
+                    }
+        
+                    $data10[$kelompokICD]['total_kasus_baru'] = $data10[$kelompokICD]['jumlahL'] + $data10[$kelompokICD]['jumlahP'];
+                    $data10[$kelompokICD]['total_kunjungan'] = $data10[$kelompokICD]['jumlah_kunjunganL'] + $data10[$kelompokICD]['jumlah_kunjunganP'];
+                }
+        
+    
+                usort($data10, function ($a, $b) {
+                    return $b['total_kunjungan'] <=> $a['total_kunjungan'];
+                });
+                
+        
+        
+                $result = [
+                    'data' => array_values($data10), 
+                    'message' => 'Data laporan berhasil diambil',
+                ];
+        
+                return $this->respond($result);
+            } catch (\Throwable $th) {
+                return response()->json(['error' => $th->getMessage()], 500);
             }
-
-            if (!empty($request['tglAkhir'])) {
-                $datadiagnosa = $datadiagnosa->where('pd.tglpulang', '<=', $request['tglAkhir']);
-            }
-
-            $datadiagnosa = $datadiagnosa->groupBy('kelompok_icd10', 'dm.namadiagnosa', 'ps.objectjeniskelaminfk')
+        }
+        public function getLaporanRL11ProfilRumahSakit(Request $request){
+            $kdProfile = $this->getDataKdProfile($request);
+            $idProfile = (int) $kdProfile;
+            $data = \DB::table('profile_m as pm')
+                ->join('detailprofile_m as dpm', 'dpm.profilefk', '=', 'pm.id')
+                ->join('groupprofile_m as gp', 'gp.id', '=', 'dpm.groupfk')
+                ->select('pm.*', 'dpm.deskripsi', 'dpm.value', 'dpm.image', 'gp.deskripsi as jenis', 'dpm.id as detailid', 'dpm.type as typedetail')
+                ->where('pm.kdprofile', $idProfile)
+                ->orderBy('dpm.id', 'asc')
                 ->get();
 
-            $data10 = [];
-
-            foreach ($datadiagnosa as $item) {
-                $kelompokICD = $item->kelompok_icd10;
-
-                if (!isset($data10[$kelompokICD])) {
-                    $data10[$kelompokICD] = [
-                        'kelompok_icd10' => $kelompokICD,
-                        'namadiagnosa' => $item->namadiagnosa,
-                        'jumlahL' => 0,
-                        'jumlahP' => 0,
-                        'total_kasus_baru' => 0,
-                        'jumlah_kunjunganL' => 0,
-                        'jumlah_kunjunganP' => 0,
-                        'total_kunjungan' => 0
-                    ];
-                }
-
-                if ($item->objectjeniskelaminfk == 1) { // Laki-laki
-                    $data10[$kelompokICD]['jumlahL'] += $item->jumlah_kasus_baru;
-                    $data10[$kelompokICD]['jumlah_kunjunganL'] += $item->jumlah_kunjungan;
-                } else if ($item->objectjeniskelaminfk == 2) { // Perempuan
-                    $data10[$kelompokICD]['jumlahP'] += $item->jumlah_kasus_baru;
-                    $data10[$kelompokICD]['jumlah_kunjunganP'] += $item->jumlah_kunjungan;
-                }
-
-                $data10[$kelompokICD]['total_kasus_baru'] = $data10[$kelompokICD]['jumlahL'] + $data10[$kelompokICD]['jumlahP'];
-                $data10[$kelompokICD]['total_kunjungan'] = $data10[$kelompokICD]['jumlah_kunjunganL'] + $data10[$kelompokICD]['jumlah_kunjunganP'];
-            }
-
-
-            usort($data10, function ($a, $b) {
-                return $b['total_kunjungan'] <=> $a['total_kunjungan'];
-            });
-
-
-
-            $result = [
-                'data' => array_values($data10),
-                'message' => 'Data laporan berhasil diambil',
-            ];
+            $result = array(
+                'data' => $data,
+                'message' => 'ujangBedil@epic',
+            );
 
             return $this->respond($result);
-        } catch (\Throwable $th) {
-            return response()->json(['error' => $th->getMessage()], 500);
         }
-    }
+
+        public function saveDataRL11(Request $request) {
+            DB::beginTransaction();
+            $kdProfile = $this->getDataKdProfile($request);
+            $idProfile = (int) $kdProfile;
+            $req = $request['data'];
+            $kata = "data:image";
+            try {
+                foreach($req as $dt){
+                    if (preg_match("/\b$kata\b/", $dt['values'])) {
+                        DetailProfile::where('id', $dt['id'])
+                                        ->where('kdprofile', $idProfile)
+                                        ->update(['image' => $dt['values']]);
+                    } else {
+                        DetailProfile::where('id', $dt['id'])
+                                        ->where('kdprofile', $idProfile)
+                                        ->update(['value' => $dt['values']]);
+                    }
+                }
+                $transStatus = 'true';
+            } catch (\Exception $e) {
+                $transStatus = 'false';
+            }
+            if ($transStatus == 'true') {
+                $transMessage = "Update Data Berhasil";
+                DB::commit();
+                $result = array(
+                    "status" => 201,
+                    "message" => $transMessage,
+                    "as" => 'ujangBedil@epic',
+                );
+            } else {
+                $transMessage = "Update Data Gagal!!";
+                DB::rollBack();
+                $result = array(
+                    "status" => 400,
+                    "message"  => $transMessage,
+                    "as" => 'ujangBedil@epic',
+                );
+            }
+            return $this->setStatusCode($result['status'])->respond($result, $transMessage);
+        }
+
+        public function getLaporanRL12KetersediaanPelayanan(Request $request){
+            $kdProfile = $this->getDataKdProfile($request);
+            $idProfile = (int) $kdProfile;
+            $data = \DB::table('detaildaftarl12_m as dd')
+                ->join('jenisdaftarl12_m as jd', 'jd.id', '=', 'dd.jenisfk')
+                ->select('dd.deskripsi', 'dd.status', 'dd.id', 'jd.deskripsi as jenis', 'jd.id as jenisid')
+                ->where('dd.kdprofile', $idProfile)
+                ->orderBy('dd.id', 'asc')
+                ->get();
+
+            $result = array(
+                'data' => $data,
+                'message' => 'ujangBedil@epic',
+            );
+
+            return $this->respond($result);
+        }
+
+        public function saveDataRL12KetersediaanPelayanan(Request $request) {
+            DB::beginTransaction();
+            $kdProfile = $this->getDataKdProfile($request);
+            $idProfile = (int) $kdProfile;
+            $req = $request['data'];
+            try {
+                foreach($req as $dt){
+                    if($dt['values'] != null) {
+                        DetailDaftarDuabelas::where('id', $dt['id'])
+                                        ->where('kdprofile', $idProfile)
+                                        ->update(['status' => $dt['values']]);
+                    }
+                    
+                }
+                $transStatus = 'true';
+            } catch (\Exception $e) {
+                $transStatus = 'false';
+            }
+            if ($transStatus == 'true') {
+                $transMessage = "Update Data Berhasil";
+                DB::commit();
+                $result = array(
+                    "status" => 201,
+                    "message" => $transMessage,
+                    "as" => 'ujangBedil@epic',
+                );
+            } else {
+                $transMessage = "Update Data Gagal!!";
+                DB::rollBack();
+                $result = array(
+                    "status" => 400,
+                    "message"  => $transMessage,
+                    "as" => 'ujangBedil@epic',
+                );
+            }
+            return $this->setStatusCode($result['status'])->respond($result, $transMessage);
+        }
+
 }
