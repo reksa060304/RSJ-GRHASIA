@@ -54,6 +54,7 @@ use App\Transaksi\TempBilling;
 use App\Transaksi\SkriningAwalPasien;
 use App\Transaksi\CatatanPasienDaftar;
 use App\Transaksi\EMRPasienD;
+use App\Transaksi\DokumenPasien;
 use Illuminate\Http\Request;
 use App\Traits\PelayananPasienTrait;
 use DB;

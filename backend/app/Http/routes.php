@@ -2846,6 +2846,9 @@ Route::group(['middleware' => 'cors', 'prefix' => 'service'], function () {
               Route::get('registrasi/cek-sep-by-regis', 'Registrasi\RegistrasiController@getSEPByNoreg');
 
               Route::post('registrasi/save-registrasipasien-online', 'Registrasi\RegistrasiController@saveRegistrasiPasienOnline');
+              Route::get('registrasi/get-berkas-pasien', 'Registrasi\RegistrasiController@getDokumenPasien');
+              Route::post('registrasi/simpan-dokumen-pasien','Registrasi\RegistrasiController@simpanDokumenPasien');
+              Route::post('registrasi/hapus-dokumen-pasien', 'Registrasi\RegistrasiController@hapusDokumenPasien');  
         // });
         // Route::group(['prefix' => 'remunerasi'], function () {
         Route::get('remunerasi/get-combo','Remunerasi\RemunerasiController@getCombo');
@@ -4127,6 +4130,31 @@ Route::group(['middleware' => 'cors', 'prefix' => 'service'], function () {
         return Response::download($path,  $request['filename'], $headers);
         Route::get('storage/dokumenklaim', 'Registrasi\MonitoringDokumenKlaimController@lihatDokumen');
         Route::get('storage/bundledokumenklaim', 'Registrasi\MonitoringDokumenKlaimController@bundleDokumen');
+    });
+
+    Route::get('storage/dokumenpasienm', function (Illuminate\Http\Request $request){
+        $path = public_path('DokumenPasienM/'.$request['nocm'].'/' . $request['filename']);
+
+        if (!File::exists($path)) {
+          echo 'Data tidak ada ';
+          die;
+        }
+
+        $file = File::get($path);
+        $type = File::mimeType($path);
+
+        $response = Response::make($file, 200);
+        $response->header("Content-Type", $type);
+
+        return $response;
+    });
+    Route::get('storage/dokumenpasienm/download', function(Illuminate\Http\Request $request){
+        $path = public_path('DokumenPasienM/'.$request['nocm'].'/' . $request['filename']);
+        $type = File::mimeType($path);
+        $headers = array(
+                'Content-Type: '. $type,
+                );
+        return Response::download($path,  $request['filename'], $headers);
     });
 
     

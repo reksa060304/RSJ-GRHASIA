@@ -1,4 +1,4 @@
-define(['initialize'], function (initialize) {
+define(['initialize', 'Configuration'], function (initialize, config) {
     'use strict';
     initialize.controller('RegistrasiPasienLamaCtrl', ['MedifirstService', 'CacheHelper', '$scope', 'DateHelper', '$state', 'ModelItem', '$mdDialog','$rootScope',
         function (medifirstService, cacheHelper, $scope, DateHelper, $state, ModelItem, $mdDialog, $rootScope) {
@@ -15,6 +15,9 @@ define(['initialize'], function (initialize) {
             $scope.tglMeninggal = '';
             $scope.BtnInaktif = true
             $scope.BtnBatalInaktif = false
+            $scope.disabledSimpan = false;
+            $scope.disabledBatal = false;
+            var baseTransaksi = config.baseApiBackend;
             $scope.item.Rows = 100;
             $scope.Page = {
                 refresh: true,
@@ -64,6 +67,9 @@ define(['initialize'], function (initialize) {
                 //         })
                 //     }
                 // });
+                medifirstService.get("emr/combo-jenis-berkas", true).then(function (dat) {
+                    $scope.listJenisBerkas = dat.data;
+                });
             }
             loadData()
             $scope.SearchData = function () {
@@ -311,6 +317,22 @@ define(['initialize'], function (initialize) {
             };
 
             $scope.klikGrid = function (dataPasienSelected) {
+                if (dataPasienSelected != undefined) {
+                    $scope.nocm = dataPasienSelected.nocm;
+                    $scope.idPasien = dataPasienSelected.nocmfk;
+                    $scope.tglMeninggal = dataPasienSelected.tglmeninggal;
+                    $scope.dataPasienSelected = dataPasienSelected;
+                    if(dataPasienSelected.isinaktif){
+                        $scope.BtnBatalInaktif = true
+                        $scope.BtnInaktif = false
+                    }else{
+                        $scope.BtnBatalInaktif = false
+                        $scope.BtnInaktif = true
+                    }
+                }
+            }
+
+            $scope.klikGridBerkas = function (dataPasienSelected) {
                 if (dataPasienSelected != undefined) {
                     $scope.nocm = dataPasienSelected.nocm;
                     $scope.idPasien = dataPasienSelected.nocmfk;
@@ -1453,6 +1475,237 @@ define(['initialize'], function (initialize) {
                 medifirstService.post('emr/save-rmhilang', objSave).then(function () {
                     loadData()
                 })
+            }
+
+            function initBerkasPasien() {
+                $scope.isRouteLoading = true
+
+                medifirstService.get("registrasi/get-berkas-pasien?nocm=" + $scope.dataPasienSelected.nocm, true).then(function (dat) {
+                    $scope.isRouteLoading = false
+                    $scope.dataDaftar = new kendo.data.DataSource({
+                        data: dat.data.data,
+                        pageSize: 10,
+                        serverPaging: false,
+                        schema: {
+                            model: {
+                                fields: {
+                                }
+                            }
+                        }
+                    });
+                });
+            }
+
+            $scope.columnDaftar = {
+                selectable: 'row',
+                pageable: true,
+                columns:
+                    [ 
+                        {
+                            "field": "nocm",
+                            "title": "No RM",
+                            "width": "10%",
+                        },
+                        {
+                            "field": "tglberkas",
+                            "title": "Tgl Upload",
+                            "width": "10%",
+                            "template": "<span class='style-left'>{{formatTanggal('#: tglberkas #')}}</span>"
+                        },
+                        {
+                            "field": "namafile",
+                            "title": "Nama File",
+                            "width": "25%",
+                        },
+                        {
+                            "field": "deskripsi",
+                            "title": "Deskripsi",
+                            "width": "45%",
+                        },
+                        {
+                            "command": [
+                                { text: "Lihat", click: LihatBerkas },
+                                { text: "Download", click: DownloadBerkas }
+                            ],
+                            title: "",
+                            width: "15%",
+                        }
+                    ]
+            }
+
+            $scope.inputBaru = function () {
+                if ($scope.dataPasienSelected == undefined) {
+                    toastr.error("Pilih data dulu!")
+                    return
+                }
+                initBerkasPasien()
+                clearDokumen()
+                $scope.popUpFile.center().open()
+            }
+
+            $scope.batalDokumen = function () {
+                $scope.dataPasienSelected = undefined
+                $scope.dataSelectedBerkas = undefined
+                $scope.popUpFile.close()
+            }
+
+            function clearDokumen() {
+                document.getElementById("formFile").reset();
+                delete $scope.item.namafile
+                delete $scope.item.keterangan
+            }
+
+            $scope.SaveDokumenPasien = function (data) {
+                if ($scope.item.namafile == undefined) {
+                    toastr.error("Isi nama file terlebih dahulu !")
+                    return
+                }
+
+                var objSave = {
+                    norec: $scope.dataSelectedBerkas != undefined ? $scope.dataSelectedBerkas.norec : '',
+                    nocm: $scope.dataPasienSelected.nocm,
+                    namafile: $scope.item.namafile != undefined ? $scope.item.namafile.nama : '',
+                    keterangan: $scope.item.keterangan != undefined ? $scope.item.keterangan : '',
+                    objectberkaspasien: $scope.item.namafile != undefined ? $scope.item.namafile.id : '',
+                }
+
+                const url = baseTransaksi + 'registrasi/simpan-dokumen-pasien'
+				const formData = new FormData()
+				const file = document.getElementById("filePasien").files[0];
+                
+                if ($scope.dataPasienSelected == undefined && file == undefined) 
+                {
+                    toastr.error('Silahkan Upload File Berkas')
+                    return;
+                }
+
+                if (file != undefined) {
+                    if(file.size > 10485760) {
+                        toastr.error('Maksumum Ukuran File adalah 10 MB.')
+                        return;
+                    }
+                    if(file.type != "application/pdf") 
+                    {
+                        toastr.error('File yang diizinkan dalam bentuk format PDF.')
+                        return;
+                    }
+                }
+
+                formData.append('filePasien', file)
+				formData.append('norec', objSave.norec)
+				formData.append('nocm', objSave.nocm)
+				formData.append('namafile', objSave.namafile)
+				formData.append('keterangan', objSave.keterangan)
+				formData.append('objectberkaspasien', objSave.objectberkaspasien)
+				var arr = document.cookie.split(';')
+                var authorization;
+                for (var i = 0; i < arr.length; i++) {
+                    var element = arr[i].split('=');
+                    if (element[0].indexOf('authorization') > 0) {
+                        authorization = element[1];
+                    }
+                }
+
+                var btnSimpan = angular.element(document.getElementById("btnSimpan"));
+                var btnBatal = angular.element(document.getElementById("btnBatal"));
+                var spinElementSimpan = angular.element('<span class="fa fa-spinner fa-spin"></span>&nbsp;<span> Sedang menyimpan</span>');
+                var textElementSimpan = angular.element('<span class="k-icon k-update"></span><span>Simpan</span>');
+                
+                btnSimpan.empty();
+                btnSimpan.append(spinElementSimpan);
+                $scope.disabledSimpan = true;
+                $scope.disabledBatal = true;
+                fetch(url, {
+                    method: 'POST',
+                    body: formData,
+                    headers: {
+                        'X-AUTH-TOKEN': authorization
+                    }
+				})
+                .then(response => response.json())
+                .then(result => {
+                    clearDokumen();
+                    loadData();
+
+                    var pesan = $scope.dataSelectedBerkas == undefined ? "Simpan" : "Edit";
+                    medifirstService.postLogging(pesan + ' Berkas Pasien', 'Norec dokumen_pasien_t', result.dokumen.norec, 
+                    pesan + ' Berkas Pasien pada No Rekam Medis ' +  $scope.dataPasienSelected.nocm  + ' - Pasien : ' + $scope.dataPasienSelected.namapasien).then(function (res) {
+                    })
+
+                    toastr.success(pesan + " Berkas berhasil.");
+
+                    btnSimpan.empty();
+                    btnSimpan.append(textElementSimpan);
+                    $scope.disabledSimpan = false;
+                    $scope.disabledBatal = false;
+
+                    if($scope.dataPasienSelected != undefined)
+                    {
+                        $scope.popUpFile.close()
+                        $scope.dataPasienSelected = undefined
+                    }
+                })
+                .catch((error) => {
+                    toastr.error("Simpan Berkas gagal.");
+
+                    btnSimpan.empty();
+                    btnSimpan.append(textElementSimpan);
+                    $scope.disabledSimpan = false;
+                    $scope.disabledBatal = false;
+                    $scope.popUpFile.close()
+                });
+            }
+
+            $scope.editDokumenPasien = function () {
+                if ($scope.dataSelectedBerkas == undefined) {
+                    toastr.error('Pilih data dulu')
+                    return
+                }
+                $scope.item.namafile = { id: $scope.dataSelectedBerkas.objectberkaspasien, nama: $scope.dataSelectedBerkas.namafile.split('_')[0] }
+                $scope.item.keterangan = $scope.dataSelectedBerkas.deskripsi
+                $scope.popUpFile.center().open()
+            }
+
+            $scope.hapusDokumenPasien = function(){
+                if($scope.dataSelectedBerkas == undefined){
+                    toastr.error('pilih data dulu')
+                    return
+                }
+
+                var confirm = $mdDialog.confirm()
+                    .title('Peringatan')
+                    .textContent('Yakin mau menghapus data?')
+                    .ariaLabel('Lucky day')
+                    .cancel('Tidak')
+                    .ok('Ya')
+                $mdDialog.show(confirm).then(function () {
+                    medifirstService.post('registrasi/hapus-dokumen-pasien',{norec:$scope.dataSelectedBerkas.norec}).then(function(e){
+                        initBerkasPasien()
+                        medifirstService.postLogging('Hapus Berkas Pasien', 'Norec dokumen_pasien_t', $scope.dataSelectedBerkas.norec, 
+                        'Hapus Berkas Pasien '+ $scope.dataSelectedBerkas.namafile +' pada No Rekam Medis '
+                        +  $scope.dataSelectedBerkas.nocm  + ' - Pasien : ' + $scope.dataSelectedBerkas.namapasien).then(function (res) {
+                        })
+                        $scope.dataSelectedBerkas = undefined
+                    })
+                })
+            }
+
+            function LihatBerkas(e) 
+            {
+                e.preventDefault();
+				var dataItem = this.dataItem($(e.currentTarget).closest("tr"));
+
+                var strBACKEND = baseTransaksi.replace('service/medifirst2000/', '')
+                window.open(strBACKEND + "service/storage/dokumenpasienm?nocm="+ dataItem.nocm + "&filename=" + dataItem.namafile);
+            }
+
+            function DownloadBerkas(e) 
+            {
+                e.preventDefault();
+				var dataItem = this.dataItem($(e.currentTarget).closest("tr"));
+
+                var strBACKEND = baseTransaksi.replace('service/medifirst2000/', '')
+                window.open(strBACKEND + "service/storage/dokumenpasienm/download?nocm="+ dataItem.nocm + "&filename=" + dataItem.namafile);
             }
             //** BATAS */
         }

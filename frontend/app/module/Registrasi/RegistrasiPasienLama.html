@@ -276,6 +276,9 @@
                 <span class="title">Hapus Data</span>
             </c-button>  -->
     </div>
+    <div class="grid_1" style="float:left;">
+        <button kendo-button style="width: 100%" class="primary" ng-click="inputBaru()"><i class="fa fa-file"></i>Berkas</button>
+    </div>
     <!-- </c-panel>         -->
     <div class="grid_12">
         <div kendo-window="popUpRiwayatRegistrasi" k-title="'Data Riwayat Registrasi'" k-width="1300" k-visible="false"
@@ -506,5 +509,86 @@
     <div class="clear" ng-hide="isSaves">
         <button class="k-button" ng-click="saveRM()" style="float:right;margin-top:4%;background-color: #e0360b;
                 border-color: #e0360b;">Simpan</button>
+    </div>
+</div>
+
+<div kendo-window="popUpFile" k-title="'Dokumen Pasien'" k-width="900" k-height="500" k-visible="false"
+    k-on-open="win2visible = true" k-on-close="win2visible = false">
+    <div class="panel panel-default container_12" style="padding: 0px 10px;">
+        <md-content>
+            <md-tabs md-dynamic-height md-border-bottom md-selected="myVar">
+                <md-tab label="Upload File">
+                    <md-content class="md-padding">
+                        <fieldset>
+                            <legend><label c-label item="item">Buat Dokumen Pasien</label></legend>
+                            <div class="grid_12">
+                                <div class="grid_3">
+                                    <label c-label item="item">Nama File</label>
+                                </div>
+                                <div class="grid_9">
+                                    <input style="width: 100%;" kendo-combo-box k-ng-model="item.namafile"
+                                            k-data-text-field="'nama'" k-data-value-field="'id'" k-filter="'contains'"
+                                            k-auto-bind="false" k-data-source="listJenisBerkas" />
+                                </div>
+                            </div>
+                            <div class="grid_12">
+                                <div class="grid_3">
+                                    <label c-label item="item">Keterangan</label>
+                                </div>
+                                <div class="grid_9">
+                                    <textarea class="k-textbox" style="height: 76px; width: 100%; resize: none;"
+                                        ng-model="item.keterangan"></textarea>
+                                </div>
+                            </div>
+                            <div class="grid_12">
+                                <div class="grid_3">
+                                    <label c-label item="item">Unggah File</label>
+                                </div>
+                                <div class="grid_9">
+                                    <form method="post" enctype="multipart/form-data" id="formFile">
+                                        <input type="file" id="filePasien" accept="application/pdf" />
+                                    </form>
+                                </div>
+                            </div>
+                        </fieldset>
+
+                        <div class="k-edit-buttons  k-state-default pull-right" style="margin-top:10px">
+                            <button class="k-button k-button-icontext k-primary k-grid-update" ng-disabled="disabledSimpan" ng-click="SaveDokumenPasien()" id="btnSimpan"><span
+                                    class="k-icon k-update"></span>Simpan</button>
+                            <button class="k-button  k-button-icontext"  ng-disabled="disabledBatal" ng-click="batalDokumen()" id="btnBatal"><span
+                                    class="k-icon k-cancel"></span>Batal</button>
+                        </div>
+                    </md-content>
+                </md-tab>
+                <md-tab label="Daftar Berkas Pasien">
+                    <md-content class="md-padding">
+                        <div class="grid_12">
+                            <div class="grid_12 borderBox">
+                                <kendo-grid id="Grid" data-source="dataDaftar" options="columnDaftar"
+                                    k-selectable="'row'" k-sortable="'true'" k-resizable="'true'"
+                                    k-ng-model="dataSelectedBerkas" ng-click="klikGridBerkas(dataSelectedBerkas)">
+                                </kendo-grid>
+
+                            </div>
+                            <div class="grid_12">
+                                <div class="grid_6"></div>
+                                <div class="grid_2">
+                                    <button class="btnTemplate1" style="margin-left: 0;"
+                                        ng-click="editDokumenPasien()"><i class="fa fa-edit"></i>Edit</button>
+                                    
+                                </div>
+                                <div class="grid_2">
+                                    <button class="btnTemplate1 error" style="margin-left: 3;"
+                                        ng-click="hapusDokumenPasien()"><i class="fa fa-trash"></i>Hapus
+                                        </button>
+                                </div>
+                            </div>
+                        </div>
+                    </md-content>
+                </md-tab>
+            </md-tabs>
+        </md-content>
+        
+
     </div>
 </div>
