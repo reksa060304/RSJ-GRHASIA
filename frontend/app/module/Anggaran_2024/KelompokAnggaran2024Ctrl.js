@@ -194,8 +194,11 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
                         // ambil tahun sesuai setting
                         $scope.item.tahun = moment(dataCombo.setting[0].tahunanggaran).format('YYYY'),
 
-                        loadDataGrid();
+                            medifirstService.get("anggaran/get-subsubkegiatan", true).then(function (res) {
+                                $scope.listSubSubKegiatanspj = res.data
 
+                                loadDataGrid();
+                            });
                     });
                 })
                 
@@ -776,6 +779,11 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
                     stat = $scope.item.statusspj.id
                 }
 
+                var sub = ''
+                if ($scope.item.kegiatansubsubspj != undefined) {
+                    sub = $scope.item.kegiatansubsubspj.id
+                }
+
                 var cari = ''
                 if($scope.item.carispj !== undefined && $scope.item.carispj !== null){
                     cari = "&cari=" + $scope.item.carispj
@@ -784,6 +792,7 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
                 medifirstService.get("anggaran/get-spj" 
                     +"?tglAwal="+tglawal
                     +"&tglAkhir="+tglakhir
+                    + "&subsubkegiatan=" + sub
                     +"&idpegawai="+$scope.idpegawailogin
                     +"&status="+stat
                     +cari).then(function (e) {
