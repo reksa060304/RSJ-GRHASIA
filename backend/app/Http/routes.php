@@ -1035,6 +1035,9 @@ Route::group(['middleware' => 'cors', 'prefix' => 'service'], function () {
           Route::get('emr/get-master-obat', 'EMR\EMRController@getProdukDokPol');
           Route::get('emr/get-master-dokter', 'EMR\EMRController@getDokterPol');
           Route::get('emr/get-kode-ruangan-depo-telemedicine', 'EMR\EMRController@getRuanganDepoTelemedicine');
+          Route::get('emr/get-restriksi-diagnosa', 'EMR\EMRController@getRestriksiDiagnosa');
+          Route::get('emr/get-restriksi-obat', 'EMR\EMRController@getRestriksiObat');
+
 
           Route::get('emr/get-data-combo-surveilans', 'EMR\EMRController@getComboSurveilans');
           Route::get('emr/get-data-history-surveilans', 'EMR\EMRController@getHistorySurveilans');

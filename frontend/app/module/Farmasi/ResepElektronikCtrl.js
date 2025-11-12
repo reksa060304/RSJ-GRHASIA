@@ -682,7 +682,7 @@ define(['initialize', 'Configuration'], function (initialize, config) {
                             })
                     });
                 } else {
-                    if ($scope.item.statusorder == 'Menunggu') {
+                    if ($scope.item.statusorder == 'Menunggu Verifikasi') {
                         toastr.error("Status Data Belum Diverifikasi !!")
                         return;
                     } else {
@@ -746,7 +746,7 @@ define(['initialize', 'Configuration'], function (initialize, config) {
                     saveAntrol(params, 7, $scope.item.norec)
 
                 } else {
-                    if ($scope.item.statusorder == 'Menunggu') {
+                    if ($scope.item.statusorder == 'Menunggu Verifikasi') {
                         toastr.error("Status Data Belum Diverifikasi !!")
                         return;
                     } else {
@@ -1020,7 +1020,7 @@ define(['initialize', 'Configuration'], function (initialize, config) {
 
             // $scope.verifikasi = function () {
             //     // debugger;
-            //     if ($scope.item.statusorder == 'Menunggu') {
+            //     if ($scope.item.statusorder == 'Menunggu Verifikasi') {
             //         var notf = {
             //             data: $scope.item.noorder
             //         }
@@ -1070,7 +1070,7 @@ define(['initialize', 'Configuration'], function (initialize, config) {
             // }
 
             $scope.verifikasi = function () {
-                if ($scope.item.statusorder == 'Menunggu') {
+                if ($scope.item.statusorder == 'Menunggu Verifikasi') {
                     var notf = {
                         data: $scope.item.noorder
                     };
@@ -1143,7 +1143,7 @@ define(['initialize', 'Configuration'], function (initialize, config) {
             };
 
             $scope.unlock = function () {
-                if ($scope.item.statusorder == 'Menunggu') {
+                if ($scope.item.statusorder == 'Menunggu Verifikasi') {
                     var notf = {
                         data: $scope.item.noorder
                     }
@@ -2572,7 +2572,7 @@ define(['initialize', 'Configuration'], function (initialize, config) {
                     toastr.error('Pilih data dulu!')
                     return
                 }
-                if ($scope.item.statusorder == 'Menunggu') {
+                if ($scope.item.statusorder == 'Menunggu Verifikasi') {
                     toastr.error('Resep belum di verifikasi')
                     return
                 }
