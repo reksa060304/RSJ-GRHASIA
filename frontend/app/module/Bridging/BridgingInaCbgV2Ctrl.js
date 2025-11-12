@@ -2838,7 +2838,7 @@ define(['initialize', 'Configuration'], function (initialize,configuration) {
 			$scope.setdataklaim = async function () {
 				if ($scope.itemPopUp.totalbiayars != $scope.totaltarif_rs16) {
 					toastr.warning("Data Tarif yang akan dikirim belum sesuai dengan total tarif rs !");
-					return;
+					// return;
 				}
 				// $scope.isRouteLoading = true;
 				var dt1 = {}
@@ -9916,7 +9916,7 @@ define(['initialize', 'Configuration'], function (initialize,configuration) {
 
 				if ($scope.itemPopUp.totalbiayars != $scope.totaltarif_rs16) {
 					toastr.warning("Data Tarif yang akan dikirim belum sesuai dengan total tarif rs !");
-					return;
+					// return;
 				}
 				var dt1 = {}
 				var dt2 = []
