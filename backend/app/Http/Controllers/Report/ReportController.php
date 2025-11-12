@@ -23,6 +23,7 @@ use JasperPHP\JasperPHP;
 use PHPJasper\PHPJasper;
 use Webpatser\Uuid\Uuid;
 use SimpleSoftwareIO\QrCode\Facades\QrCode;
+use Illuminate\Support\Str;
 
 
 class ReportController extends ApiController{
