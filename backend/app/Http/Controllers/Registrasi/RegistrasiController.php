@@ -17401,7 +17401,7 @@ GROUP BY y.KET
         $icdIX = \DB::table('diagnosa_m as dg')
             ->select('dg.id', 'dg.kddiagnosa', 'dg.namadiagnosa','dg.kddiagnosa as kdDiagnosa','dg.namadiagnosa as namaDiagnosa')
             ->where('dg.statusenabled', true)
-            // ->whereNull('inagrouper')
+            ->where('dg.kodeexternal', 'IDRG')
             ->orderBy('dg.kddiagnosa');
 
         if (isset($req['filter']['filters'][0]['value']) &&
@@ -17448,7 +17448,7 @@ GROUP BY y.KET
         $icdIX = \DB::table('diagnosatindakan_m as dg')
             ->select('dg.id','dg.kddiagnosatindakan as kdDiagnosaTindakan','dg.namadiagnosatindakan as namaDiagnosaTindakan')
             ->where('dg.statusenabled', true)
-            // ->whereNull('dg.inagrouper')
+            ->where('dg.kodeexternal', 'IDRG')
             ->orderBy('dg.kddiagnosatindakan');
 
         if(isset($req['filter']['filters'][0]['value']) &&

@@ -537,6 +537,7 @@ Route::group(['middleware' => 'cors', 'prefix' => 'service'], function () {
               Route::get('klaim/get-daftar-klaim','Bridging\InaCbgController@getDaftarKlaim');
               Route::get('klaim/get-daftar-klaim-ranap','Bridging\InaCbgController@getDaftarKlaimRanap');
               Route::get('bridging/inacbg/get-parameter','Bridging\InaCbgController@getParameterDok');
+              Route::get('bridging/inacbg/get-grouping-inacbg','Bridging\InaCbgController@getGroupingInacbg');
 
               Route::post('bridging/inacbg/save-proposi-bridging-inacbg','Bridging\InaCbgController@saveProposiBridgingINACBG');
               Route::post('bridging/inacbg/get-daftar-pasien-statusnaikkelas','Bridging\InaCbgController@getStatusNaikKelas');
@@ -552,6 +553,7 @@ Route::group(['middleware' => 'cors', 'prefix' => 'service'], function () {
               Route::post('bridging/inacbg/delete-grouping-idrg','Bridging\InaCbgController@deleteGroupingIdrg');
               Route::post('bridging/inacbg/post-dokumen-klaim','Bridging\InaCbgController@postDokumenKlaim');
               Route::post('bridging/inacbg/delete-dokumen-klaim','Bridging\InaCbgController@deleteDokumenKlaim');
+              Route::post('bridging/inacbg/save-hasil-grouping-inacbg','Bridging\InaCbgController@saveGroupingInacbg');
 
             // START IDRG    
             Route::get('registrasi/get-icd-9-by-noreg-idrg','Registrasi\RegistrasiController@getIcd9PasienByNoreg');
