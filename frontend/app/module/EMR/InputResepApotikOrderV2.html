@@ -16,6 +16,74 @@
         text-align: left;
         width: 100%;
     }
+
+
+    /* popup retriksi */
+    .alert-box {
+        background-color: #fff8e1;
+        border-left: 4px solid #ff9800;
+        padding: 10px 15px;
+        margin-bottom: 10px;
+        border-radius: 4px;
+    }
+    .alert-box-2 {
+        background-color: #fff8e1;
+        border-left: 4px solid #029aff;
+        padding: 10px 15px;
+        margin-bottom: 10px;
+        border-radius: 4px;
+    }
+    .alert-box-3 {
+        background-color: #fff8e1;
+        border-left: 4px solid #88ff00;
+        padding: 10px 15px;
+        margin-bottom: 10px;
+        border-radius: 4px;
+    }
+
+    .alert-text {
+        font-size: 15px;
+        color: #000000;
+        line-height: 1.5;
+    }
+
+    .form-section {
+        margin-top: 15px;
+    }
+
+    .form-label {
+        display: block;
+        font-weight: 600;
+        margin-bottom: 5px;
+        font-size: 14px;
+        color: #333;
+    }
+
+    .form-input {
+        width: 100%;
+        padding: 6px 10px;
+        font-size: 14px;
+    }
+
+    .button-section {
+        margin-top: 20px;
+        text-align: right;
+    }
+
+    .k-button.k-primary {
+        background-color: #1976d2;
+        border-color: #1565c0;
+        color: white;
+        font-weight: 600;
+        padding: 6px 16px;
+        border-radius: 4px;
+    }
+
+    .k-button.k-primary:hover {
+        background-color: #1565c0;
+    }
+    /* end popup retriksi */
+
 </style>
 
 <!-- <div ng-controller="InputResepApotikOrderNewCtrl"> -->
@@ -427,6 +495,15 @@
                                     ng-model="item.alergi" />
                             </div>
                         </div>
+                        <div class="grid_3" ng-show="item.KeteranganRetriksi">
+                            <div class="grid_12">
+                                <label c-label item="item" c-label-text="Keterangan Retriksi" real></label>
+                            </div>                  
+                            <div class="grid_12">
+                                <input c-text-box type="input" filter="" class="k-textbox"
+                                    ng-model="item.KeteranganRetriksi" />
+                            </div>
+                        </div>
                     </div>
                     <div class="grid_12">
                         <div class="grid_6" ng-hide="true">
@@ -448,7 +525,15 @@
                                     <button class="btnTemplate1" ng-click="PaketObat()"><i class="fa fa-plus"></i>Paket
                                         Obat</button>
                                 </div>
-                                <div class="grid_3">
+                                <div class="grid_3" ng-show="item.cekRetriksi == false">
+                                    <label 
+                                        c-label 
+                                        item="item" 
+                                        style="font-size: 16px; color: red;" 
+                                        c-label-text="Mengecek retriksi!">
+                                    </label>
+                                </div>
+                                <div class="grid_3" ng-show="item.cekRetriksi == true">
                                     <button class="btnTemplate1" ng-click="tambah()"><i
                                             class="fa fa-plus"></i>Tambah</button>
 
@@ -785,4 +870,58 @@
         <input type="button" class="confirm_yes k-button" value="Simpan" style="width: 70px" ng-click="tambahPaket()"
             ng-show="butPaket" />
     </div>
+</div>
+<div 
+    kendo-window="popUpRetriksi"
+    k-title="'Retriksi Obat'"
+    k-width="800"
+    k-visible="false"
+    k-on-open="win2visible = true"
+    style="padding: 20px; font-family: 'Segoe UI', sans-serif;"
+>
+
+    <!-- Alert jumlah retriksi -->
+    <div ng-show="item.jmlretriksi_alert" class="alert-box">
+        <label class="alert-text">
+            Jumlah obat yang diijinkan : {{ item.jmlretriksi_alert }}
+        </label>
+    </div>
+
+    <!-- Alert retriksi diagnosa -->
+    <div ng-show="item.dgretriksi_alert" class="alert-box-2">
+        <label class="alert-text">
+            {{ item.dgretriksi_alert }}
+        </label>
+    </div>
+
+    <!-- Alert retriksi obat -->
+    <div ng-show="item.obretriksi_alert" class="alert-box-3">
+        <label class="alert-text">
+            {{ item.obretriksi_alert }}
+        </label>
+    </div>
+
+    <!-- Input keterangan -->
+    <div class="form-section">
+        <label class="form-label">Catatan Retriksi Untuk Melanjutkan</label>
+        <input 
+            c-text-box 
+            type="text" 
+            class="k-textbox form-input"
+            ng-model="item.KeteranganRetriksi" 
+            placeholder="Tuliskan keterangan tambahan retriksi di sini..."
+        />
+    </div>
+
+    <!-- Tombol simpan -->
+    <div class="button-section">
+        <button 
+            type="button"
+            class="k-button k-primary"
+            ng-click="saveRetriksi()"
+        >
+            Simpan
+        </button>
+    </div>
+
 </div>

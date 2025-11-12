@@ -953,7 +953,7 @@ class PelayananResepController extends ApiController
                 'pr.objectsatuanstandarfk','ss.satuanstandar','pp.satuanviewfk','ss2.satuanstandar as ssview',
                 'pp.jumlah','pp.hargadiscount','pp.dosis','pp.jenisobatfk','pp.jasa','pp.hargajual','pp.hargasatuan','pp.strukterimafk',
                 'pp.qtydetailresep','pp.ispagi','pp.issiang','pp.ismalam','pp.issore','pr.kekuatan','pp.keteranganpakai','pp.iskronis',
-                'pp.satuanresepfk','sn.satuanresep','pp.tglkadaluarsa', 'pp.harganetto','sr.orderfk')
+                'pp.satuanresepfk','sn.satuanresep','pp.tglkadaluarsa', 'pp.harganetto', 'op.keteranganpakai as catatandokter', 'op.keteranganretriksi','sr.orderfk')
             ->where('sr.kdprofile', $idProfile);
 
         if(isset($request['norecResep']) && $request['norecResep']!="" && $request['norecResep']!="undefined"){
@@ -1101,6 +1101,8 @@ class PelayananResepController extends ApiController
                 'tglkadaluarsa' => $item->tglkadaluarsa,
                 'kekuatan' => $item->kekuatan,
                 'norecpp' => $item->norecpp,
+                'catatandokter' => $item->catatandokter,
+                'ket_ret' => $item->keteranganretriksi,
                 'catatandokter' => $item->catatandokter ?? '-',
                 'statusretriksi' => $item->status_retriksi,
             );
@@ -1150,7 +1152,7 @@ class PelayananResepController extends ApiController
                 'op.objectsatuanstandarfk','jr.jenisracikan as satuanstandar','op.satuanviewfk','ss2.satuanstandar as ssview',
                 'op.qtyproduk','op.hargadiscount','op.hasilkonversi','op.qtystokcurrent','op.dosis','op.jenisobatfk',
                 'op.hargasatuan','op.hargadiscount','pr.kekuatan','sdn.name as sediaan','op.ispagi','op.issiang','op.ismalam',
-                'op.issore','op.keteranganpakai','op.keteranganpakai as catatandokter','op.satuanresepfk','sn.satuanresep','op.tglkadaluarsa','so.isreseppulang',
+                'op.issore','op.keteranganpakai','op.keteranganretriksi','op.keteranganpakai as catatandokter','op.satuanresepfk','sn.satuanresep','op.tglkadaluarsa','so.isreseppulang',
                 'op.jumlah', 
                 DB::raw("
                 CASE
@@ -1324,7 +1326,8 @@ class PelayananResepController extends ApiController
                 'ismalam' =>  $item->ismalam,
                 'issore' =>  $item->issore,
                 "catatandokter"=>$item->catatandokter,
-                "keterangan"=>null,
+                "ket_ret" => $item->keteranganretriksi,
+                "keterangan"=>$item->catatandokter,
                 'satuanresepfk' =>  $item->satuanresepfk,
                 "satuanresep"=>$item->satuanresep,
                 "tglkadaluarsa"=>$item->tglkadaluarsa,

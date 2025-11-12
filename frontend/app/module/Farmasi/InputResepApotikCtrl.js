@@ -1494,6 +1494,7 @@ Which will check for empty strings (""), null, undefined, false and the numbers 
                                 datas.jmldosis = String($scope.item.jumlahxmakan) + '/' + String(dosis) + '/' + String($scope.item.kekuatan)
                                 datas.jasa = tarifJasa
                                 datas.keterangan = KetPakai
+                                datas.ket_ret = $scope.item.ket_ret
                                 datas.satuandosis = satuannya
 
                                 dataOK[i] = datas;
@@ -1548,6 +1549,7 @@ Which will check for empty strings (""), null, undefined, false and the numbers 
                             jmldosis: String($scope.item.jumlahxmakan) + '/' + String(dosis) + '/' + String($scope.item.kekuatan),
                             jasa: tarifJasa,
                             keterangan: KetPakai,
+                            ket_ret : $scope.item.ket_ret,
                             satuandosis: satuannya
                         }
                         dataOK.push(datas)
@@ -1611,6 +1613,7 @@ Which will check for empty strings (""), null, undefined, false and the numbers 
                             data.jmldosis = String($scope.item.jumlahxmakan) + '/' + String(dosis) + '/' + String($scope.item.kekuatan)
                             data.jasa = tarifJasa
                             data.keterangan = KetPakai
+                            data.ket_ret = $scope.item.ket_ret
                             data.satuanresepfk = $scope.item.satuanresep != undefined ? $scope.item.satuanresep.id : null
                             data.satuanresep = $scope.item.satuanresep != undefined ? $scope.item.satuanresep.satuanresep : null
                             data.tglkadaluarsa = $scope.tglkadaluarsa != undefined ? $scope.tglkadaluarsa : null
@@ -1692,6 +1695,7 @@ Which will check for empty strings (""), null, undefined, false and the numbers 
                         jmldosis: String($scope.item.jumlahxmakan) + '/' + String(dosis) + '/' + String($scope.item.kekuatan),
                         jasa: tarifJasa,
                         keterangan: KetPakai,
+                        ket_ret: $scope.item.ket_ret,
                         satuanresepfk: $scope.item.satuanresep != undefined ? $scope.item.satuanresep.id : null,
                         satuanresep: $scope.item.satuanresep != undefined ? $scope.item.satuanresep.satuanresep : null,
                         tglkadaluarsa: $scope.tglkadaluarsa != undefined ? $scope.tglkadaluarsa : null,
@@ -1786,6 +1790,7 @@ Which will check for empty strings (""), null, undefined, false and the numbers 
                 // }
                 $scope.item.satuannya = dataSelected.satuandosis
                 $scope.item.KeteranganPakai = dataSelected.keterangan
+                $scope.item.ket_ret = dataSelected.ket_ret
                 $scope.item.diskonTotalPersen = dataSelected.persendiscount
                 $scope.currentAturanPakai = []
                 $scope.item.chkp = 0
@@ -2071,7 +2076,12 @@ Which will check for empty strings (""), null, undefined, false and the numbers 
                     "field": "tglkadaluarsa",
                     "title": "Tgl Exp",
                     "width": "100px"
-                }
+                },
+                {
+                    "field": "ket_ret",
+                    "title": "Keterangan Retriksi",
+                    "width": "100px",
+                },
             ];
             // $scope.columnGridR = [
             // {
