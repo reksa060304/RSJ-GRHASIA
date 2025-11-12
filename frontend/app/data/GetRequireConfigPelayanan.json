@@ -3908,6 +3908,10 @@
         {
             "nameDep": "LapKegiatanAmbulanPerWilayahCtrl",
             "urlDep": "module/Ambulance/LapKegiatanAmbulanPerWilayahCtrl"
+        },
+        {
+            "nameDep": "LapKegiatanAmbulanPerPetugasCtrl",
+            "urlDep": "module/Ambulance/LapKegiatanAmbulanPerPetugasCtrl"
         }
     ]
 }

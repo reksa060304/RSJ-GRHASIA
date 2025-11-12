@@ -4228,22 +4228,22 @@ public function getscorePansSec(Request $request)
             ->leftJoin('strukpelayanandetail_t as spd', 'spd.nostrukfk', '=', 'sp.norec')
             ->leftJoin(DB::raw("
                 (
-                    SELECT DISTINCT ppa.nostrukdetailfk, pg.namalengkap
+                    SELECT DISTINCT ppa.nostrukdetailfk, pg.namalengkap, pg.id
                     FROM petugaspelayananambulan_t ppa
                     JOIN pegawai_m pg ON pg.id = ppa.objectpegawaifk
                     WHERE ppa.objectpegawaifk IS NOT NULL
                     UNION
-                    SELECT DISTINCT ppa.nostrukdetailfk, pg.namalengkap
+                    SELECT DISTINCT ppa.nostrukdetailfk, pg.namalengkap, pg.id
                     FROM petugaspelayananambulan_t ppa
                     JOIN pegawai_m pg ON pg.id = ppa.objectpegawaifk1
                     WHERE ppa.objectpegawaifk1 IS NOT NULL
                     UNION
-                    SELECT DISTINCT ppa.nostrukdetailfk, pg.namalengkap
+                    SELECT DISTINCT ppa.nostrukdetailfk, pg.namalengkap, pg.id
                     FROM petugaspelayananambulan_t ppa
                     JOIN pegawai_m pg ON pg.id = ppa.objectpegawaifk2
                     WHERE ppa.objectpegawaifk2 IS NOT NULL
                     UNION
-                    SELECT DISTINCT ppa.nostrukdetailfk, pg.namalengkap
+                    SELECT DISTINCT ppa.nostrukdetailfk, pg.namalengkap, pg.id
                     FROM petugaspelayananambulan_t ppa
                     JOIN pegawai_m pg ON pg.id = ppa.objectpegawaifk3
                     WHERE ppa.objectpegawaifk3 IS NOT NULL
@@ -4353,6 +4353,11 @@ public function getscorePansSec(Request $request)
             if ($filter['isNotVerif'] == true) {
                 $dataRuangan = $dataRuangan->whereNull('pp.strukorderfk');
             }
+        }
+
+        if(isset($filter['petugasArr']) && $filter['petugasArr'] != "" && $filter['petugasArr'] != "undefined") {
+            $dataTelemedicine = $dataTelemedicine->whereIn('pg_all.id', [$filter['petugasArr']]);
+            $dataRuangan = $dataRuangan->whereIn('pg.id', [$filter['petugasArr']]);
         }
 
         $includeTelemedicine = !isset($filter['sumberData']) || $filter['sumberData'] == 'ALL' || $filter['sumberData'] == 'TELEMEDICINE';
