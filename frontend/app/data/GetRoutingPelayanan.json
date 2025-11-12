@@ -21207,6 +21207,146 @@
         "define": "MedifirstService"
       }
     ]
+  },
+  {
+    "name": "DaftarKlaimRajal",
+    "url": "/TW9iaWxlSktOUmF3YXRKYWxhbg==",
+    "templateurl": "module/Klaim/DaftarKlaimRajal.html",
+    "controller": "DaftarKlaimRajalCtrl",
+    "deps": [
+      {
+        "module": "Services",
+        "define": "Service"
+      },
+      {
+        "module": "LoginServices",
+        "define": "LoginService"
+      },
+      {
+        "module": "MedifirstService",
+        "define": "MedifirstService"
+      }
+    ]
+  },
+  {
+    "name": "DaftarKlaimRanap",
+    "url": "/DaftarKlaimRanap",
+    "templateurl": "module/Klaim/DaftarKlaimRanap.html",
+    "controller": "DaftarKlaimRanapCtrl",
+    "deps": [
+      {
+        "module": "Services",
+        "define": "Service"
+      },
+      {
+        "module": "LoginServices",
+        "define": "LoginService"
+      },
+      {
+        "module": "MedifirstService",
+        "define": "MedifirstService"
+      }
+    ]
+  },
+  {
+    "name": "RL11ProfilRumahSakit",
+    "url": "/RL11ProfilRumahSakit",
+    "templateurl": "module/Registrasi/Laporan/LaporanRekamMedis/RL11ProfilRumahSakit.html",
+    "controller": "RL11ProfilRumahSakitCtrl",
+    "deps": [
+      {
+        "module": "Services",
+        "define": "Service"
+      },
+      {
+        "module": "LoginServices",
+        "define": "LoginService"
+      },
+      {
+        "module": "MedifirstService",
+        "define": "MedifirstService"
+      }
+    ]
+  },
+  {
+    "name": "RL12KetersediaanPelayanan",
+    "url": "/RL12KetersediaanPelayanan",
+    "templateurl": "module/Registrasi/Laporan/LaporanRekamMedis/RL12KetersediaanPelayanan.html",
+    "controller": "RL12KetersediaanPelayananCtrl",
+    "deps": [
+      {
+        "module": "Services",
+        "define": "Service"
+      },
+      {
+        "module": "LoginServices",
+        "define": "LoginService"
+      },
+      {
+        "module": "MedifirstService",
+        "define": "MedifirstService"
+      }
+    ]
+  },
+  {
+    "name": "DaftarEMRPasienClose",
+    "url": "/RGFmdGFyRU1SUGFzaWVuQ2xvc2U=",
+    "templateurl": "module/Registrasi/DaftarEMRPasienClose.html",
+    "controller": "DaftarEMRPasienCloseCtrl",
+    "deps": [
+      {
+        "module": "Services",
+        "define": "Service"
+      },
+      {
+        "module": "LoginServices",
+        "define": "LoginService"
+      },
+      {
+        "module": "MedifirstService",
+        "define": "MedifirstService"
+      }
+    ]
+  },
+  {
+    "name": "DaftarEMRRequest",
+    "url": "/DaftarEMRRequest===",
+    "templateurl": "module/Registrasi/DaftarEMRRequest.html",
+    "controller": "DaftarEMRRequestCtrl",
+    "deps": [
+      {
+        "module": "Services",
+        "define": "Service"
+      },
+      {
+        "module": "LoginServices",
+        "define": "LoginService"
+      },
+      {
+        "module": "MedifirstService",
+        "define": "MedifirstService"
+      }
+    ]
+  },
+  {
+    "name": "LapKegiatanAmbulanPerWilayah",
+    "url": "/TGFwS2VnaWF0YW5BbWJ1bGFuUGVyV2lsYXlhaA==",
+    "templateurl": "module/Ambulance/LapKegiatanAmbulanPerWilayah.html",
+    "controller": "LapKegiatanAmbulanPerWilayahCtrl",
+    "deps": [
+      {
+        "module": "Services",
+        "define": "Service"
+      },
+      {
+        "module": "LoginServices",
+        "define": "LoginService"
+      },
+      {
+        "module": "MedifirstService",
+        "define": "MedifirstService"
+      }
+    ]
   }
 ]
 

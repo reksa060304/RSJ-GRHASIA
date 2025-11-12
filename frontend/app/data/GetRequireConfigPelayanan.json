@@ -3880,6 +3880,34 @@
         {
             "nameDep": "RL5310BesarKunjunganPenyakitRawatJalanCtrl",
             "urlDep": "module/Registrasi/Laporan/LaporanRekamMedis/RL5310BesarKunjunganPenyakitRawatJalanCtrl"
+        },
+        {
+            "nameDep": "DaftarKlaimRajalCtrl",
+            "urlDep": "module/Klaim/DaftarKlaimRajalCtrl"
+        },
+        {
+            "nameDep": "DaftarKlaimRanapCtrl",
+            "urlDep": "module/Klaim/DaftarKlaimRanapCtrl"
+        },
+        {
+            "nameDep": "RL11ProfilRumahSakitCtrl",
+            "urlDep": "module/Registrasi/Laporan/LaporanRekamMedis/RL11ProfilRumahSakitCtrl"
+        },
+        {
+            "nameDep": "RL12KetersediaanPelayananCtrl",
+            "urlDep": "module/Registrasi/Laporan/LaporanRekamMedis/RL12KetersediaanPelayananCtrl"
+        },
+        {
+            "nameDep": "DaftarEMRPasienCloseCtrl",
+            "urlDep": "module/Registrasi/DaftarEMRPasienCloseCtrl"
+        },
+        {
+            "nameDep": "DaftarEMRRequestCtrl",
+            "urlDep": "module/Registrasi/DaftarEMRRequestCtrl"
+        },
+        {
+            "nameDep": "LapKegiatanAmbulanPerWilayahCtrl",
+            "urlDep": "module/Ambulance/LapKegiatanAmbulanPerWilayahCtrl"
         }
     ]
 }

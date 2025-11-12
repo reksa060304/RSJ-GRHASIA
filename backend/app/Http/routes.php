@@ -244,6 +244,7 @@ Route::group(['middleware' => 'cors', 'prefix' => 'service'], function () {
           Route::get('ambulance/laporan-kegiatan-ambulan-telemedicine','Ambulance\AmbulanController@lapKegiatanAmbulanTelemedicine');          
           Route::get('ambulance/get-jenis-kegiatan-ambulan','Ambulance\AmbulanController@getJenisKegiatan');
           Route::get('ambulance/get-jenis-mobil-ambulan','Ambulance\AmbulanController@getJenisMobil');
+          Route::get('ambulance/laporan-kegiatan-ambulan-per-wilayah','Ambulance\AmbulanController@lapKegiatanAmbulanPerWilayah');
 
           // bridging ambulan telemedicine
           Route::get('ambulance/get-jenis-kegiatan','Ambulance\AmbulanController@getJenisKegiatanAmbulan');

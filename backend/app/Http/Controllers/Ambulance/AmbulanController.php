@@ -4218,6 +4218,172 @@ public function getscorePansSec(Request $request)
         return $this->setStatusCode($result['status'])->respond($result);
     }
 
+    public function lapKegiatanAmbulanPerWilayah(Request $request)
+    {
+        $kdProfile = $this->getDataKdProfile($request);
+        $idProfile = (int) $kdProfile;
+        $filter = $request->all();
+        //order telemedicine
+        $dataTelemedicine = DB::table('strukpelayanan_t as sp')
+            ->leftJoin('strukpelayanandetail_t as spd', 'spd.nostrukfk', '=', 'sp.norec')
+            ->leftJoin(DB::raw("
+                (
+                    SELECT DISTINCT ppa.nostrukdetailfk, pg.namalengkap
+                    FROM petugaspelayananambulan_t ppa
+                    JOIN pegawai_m pg ON pg.id = ppa.objectpegawaifk
+                    WHERE ppa.objectpegawaifk IS NOT NULL
+                    UNION
+                    SELECT DISTINCT ppa.nostrukdetailfk, pg.namalengkap
+                    FROM petugaspelayananambulan_t ppa
+                    JOIN pegawai_m pg ON pg.id = ppa.objectpegawaifk1
+                    WHERE ppa.objectpegawaifk1 IS NOT NULL
+                    UNION
+                    SELECT DISTINCT ppa.nostrukdetailfk, pg.namalengkap
+                    FROM petugaspelayananambulan_t ppa
+                    JOIN pegawai_m pg ON pg.id = ppa.objectpegawaifk2
+                    WHERE ppa.objectpegawaifk2 IS NOT NULL
+                    UNION
+                    SELECT DISTINCT ppa.nostrukdetailfk, pg.namalengkap
+                    FROM petugaspelayananambulan_t ppa
+                    JOIN pegawai_m pg ON pg.id = ppa.objectpegawaifk3
+                    WHERE ppa.objectpegawaifk3 IS NOT NULL
+                ) AS pg_all
+            "), 'pg_all.nostrukdetailfk', '=', 'spd.norec')
+            ->leftJoin('jeniskegiatanambulan_m as jka', function ($join) {
+                $join->on('jka.id', '=', DB::raw("CAST(NULLIF(spd.jeniskegiatanambulanfk, '') AS BIGINT)"));
+            })
+            ->leftJoin('alamatnonlayanan_m as anl', 'anl.strukpelayanandetail', '=', 'spd.norec')
+            ->leftJoin('registrasiaset_t as ra', 'ra.norec', '=', 'spd.nopolisifk')
+            ->select(
+            'sp.nostruk',
+            'sp.tglstruk',
+            DB::raw('STRING_AGG(DISTINCT pg_all.namalengkap, \', \' ORDER BY pg_all.namalengkap) as petugas'),
+            DB::raw('SUM(DISTINCT spd.hargasatuan) as total_harga'),
+            'sp.namapasien_klien',
+            DB::raw('MAX(ra.nopolisi) as nopolisi'),
+            DB::raw('MAX(ra.keteranganlainnya) as keteranganlainnya'),
+            DB::raw('MAX(jka.namajeniskegiatan) as namajeniskegiatan'),
+            DB::raw('MAX(spd.jarak) as jarak'),
+            DB::raw('MAX(spd.address) as address'),
+            DB::raw('MAX(spd.nama_pasien) as nama_pasien'),
+            DB::raw('MAX(spd.nik) as nik'),
+            DB::raw('MAX(anl.alamatlengkap) as lokasitujuan'),
+            DB::raw("
+                CASE 
+                    WHEN sp.istelemedicine = TRUE THEN 'Telemedicine'
+                    ELSE 'Manual'
+                END as jenisorder
+            "),
+            DB::raw("
+                CASE 
+                    WHEN sp.isapprove = TRUE THEN 'diterima'
+                    WHEN sp.isapprove = FALSE THEN 'ditolak'
+                    ELSE 'menunggu'
+                END AS status_verifikasi
+            "),
+            DB::raw("'TELEMEDICINE' as sumber_data")
+            )
+
+            ->where('sp.kdprofile', $idProfile)
+            ->where('sp.objectkelompoktransaksifk', 9)
+            ->where('sp.statusenabled', true)
+            ->whereNotNull('sp.isapprove')
+            ->groupBy(
+                'sp.nostruk',
+                'sp.tglstruk',
+                'sp.namapasien_klien',
+                'sp.istelemedicine',
+                'sp.isapprove'
+            );
+
+            // Order Ambulan dari Ruangan 
+        $dataRuangan = DB::table('strukorder_t as so')
+            ->join('pasiendaftar_t as pd', 'pd.norec', '=', 'so.noregistrasifk')
+            ->join('pasien_m as ps', 'ps.id', '=', 'pd.nocmfk')
+            ->leftJoin('alamat_m as alm', 'alm.nocmfk', '=', 'ps.id') // <-- ambil alamat pasien
+            ->leftJoin('jeniskelamin_m as klm', 'klm.id', '=', 'ps.objectjeniskelaminfk')
+            ->leftJoin('ruangan_m as ru', 'ru.id', '=', 'so.objectruanganfk')
+            ->leftJoin('ruangan_m as ru2', 'ru2.id', '=', 'so.objectruangantujuanfk')
+            ->leftJoin('departemen_m as dp', 'dp.id', '=', 'ru.objectdepartemenfk')
+            ->leftJoin('departemen_m as dp2', 'dp2.id', '=', 'ru2.objectdepartemenfk')
+            ->leftJoin('kelompokpasien_m as kps', 'kps.id', '=', 'pd.objectkelompokpasienlastfk')
+            ->leftJoin('kelas_m as kls', 'kls.id', '=', 'pd.objectkelasfk')
+            ->leftJoin('pegawai_m as pg', 'pg.id', '=', 'so.objectpegawaiorderfk')
+            ->leftJoin('pegawai_m as pg2', 'pg2.id', '=', 'pd.objectpegawaifk')
+            ->leftJoin('pelayananpasien_t as pp', 'pp.strukorderfk', '=', 'so.norec')
+            ->leftJoin('jenispelayanan_m as jp', 'jp.kodeinternal', '=', 'pd.jenispelayanan')
+            ->select(
+                'so.noorder as nostruk',
+                'so.tglorder as tglstruk',
+                'pg.namalengkap as petugas',
+                DB::raw('0 as total_harga'),
+                'ps.namapasien as namapasien_klien',
+                DB::raw('NULL as nopolisi'),
+                DB::raw('NULL as keteranganlainnya'),
+                DB::raw("'PELAYANAN AMBULAN RUANGAN' as namajeniskegiatan"),
+                DB::raw('NULL as jarak'),
+                DB::raw("CONCAT(ru.namaruangan, ' -> ', ru2.namaruangan) as address"),
+                'ps.namapasien as nama_pasien',
+                DB::raw('NULL as nik'),
+                DB::raw('alm.alamatlengkap as address'), // <-- ambil alamat pasien
+                DB::raw("'Order Ruangan' as jenisorder"),
+                DB::raw("
+                    CASE 
+                        WHEN pp.strukorderfk IS NULL THEN 'menunggu'
+                        ELSE 'diterima'
+                    END AS status_verifikasi
+                "),
+                DB::raw("'RUANGAN' as sumber_data")
+            )
+            ->where('so.kdprofile', $idProfile)
+            ->where('ru2.objectdepartemenfk', $this->settingDataFixed('KdInstalasiAmbulan', $idProfile))
+            ->where('so.statusenabled', true);
+
+        if (!empty($filter['tglAwal']) && strtotime($filter['tglAwal'])) {
+            $dataTelemedicine = $dataTelemedicine->where('sp.tglstruk', '>=', $filter['tglAwal']);
+            $dataRuangan = $dataRuangan->where('so.tglorder', '>=', $filter['tglAwal']);
+        }
+
+        if (!empty($filter['tglAkhir']) && strtotime($filter['tglAkhir'])) {
+            $dataTelemedicine = $dataTelemedicine->where('sp.tglstruk', '<=', $filter['tglAkhir']);
+            $dataRuangan = $dataRuangan->where('so.tglorder', '<=', $filter['tglAkhir']);
+        }
+
+        if (isset($filter['isNotVerif']) && $filter['isNotVerif'] != "" && $filter['isNotVerif'] != "undefined") {
+            if ($filter['isNotVerif'] == true) {
+                $dataRuangan = $dataRuangan->whereNull('pp.strukorderfk');
+            }
+        }
+
+        $includeTelemedicine = !isset($filter['sumberData']) || $filter['sumberData'] == 'ALL' || $filter['sumberData'] == 'TELEMEDICINE';
+        $includeRuangan = !isset($filter['sumberData']) || $filter['sumberData'] == 'ALL' || $filter['sumberData'] == 'RUANGAN';
+
+        $resultTelemedicine = $includeTelemedicine
+            ? $dataTelemedicine->orderBy('sp.tglstruk')->get()
+            : collect([]);
+
+        $resultRuangan = $includeRuangan
+            ? $dataRuangan->orderBy('so.tglorder', 'desc')->distinct()->get()
+            : collect([]);
+
+        $resultTelemedicine = collect($resultTelemedicine);
+        $resultRuangan = collect($resultRuangan);
+
+        $combinedData = $resultTelemedicine->merge($resultRuangan);
+
+        $combinedData = $combinedData->sortBy('tglstruk')->values();
+
+        if (isset($filter['jmlRow']) && $filter['jmlRow'] != "" && $filter['jmlRow'] != "undefined") {
+            $combinedData = $combinedData->take((int)$filter['jmlRow']);
+        }
+        $data = $combinedData->map(function ($item, $index) {
+            $item->no = $index + 1;
+            return $item;
+        });
+
+        return $this->respond($data);
+    }
+
 // batas
 
 }
