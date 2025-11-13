@@ -21367,6 +21367,26 @@
         "define": "MedifirstService"
       }
     ]
+  },
+  {
+    "name": "LapPendapatanKegiatanAmbulan",
+    "url": "/TGFwUGVuZGFwYXRhbktlZ2lhdGFuQW1idWxhbg==",
+    "templateurl": "module/Ambulance/LapPendapatanKegiatanAmbulan.html",
+    "controller": "LapPendapatanKegiatanAmbulanCtrl",
+    "deps": [
+      {
+        "module": "Services",
+        "define": "Service"
+      },
+      {
+        "module": "LoginServices",
+        "define": "LoginService"
+      },
+      {
+        "module": "MedifirstService",
+        "define": "MedifirstService"
+      }
+    ]
   }
 ]
 

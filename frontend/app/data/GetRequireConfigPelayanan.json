@@ -3912,6 +3912,10 @@
         {
             "nameDep": "LapKegiatanAmbulanPerPetugasCtrl",
             "urlDep": "module/Ambulance/LapKegiatanAmbulanPerPetugasCtrl"
+        },
+        {
+            "nameDep": "LapPendapatanKegiatanAmbulanCtrl",
+            "urlDep": "module/Ambulance/LapPendapatanKegiatanAmbulanCtrl"
         }
     ]
 }
