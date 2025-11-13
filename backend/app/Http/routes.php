@@ -533,6 +533,10 @@ Route::group(['middleware' => 'cors', 'prefix' => 'service'], function () {
               Route::get('bridging/inacbg/get-daftar-pasien-ventilator','Bridging\InaCbgController@getDaftarPasienVen');
               Route::get('bridging/inacbg/get-daftar-pasien-intensif','Bridging\InaCbgController@getDaftarPasienIntensif');
               Route::get('bridging/inacbg/get-grouping-idrg','Bridging\InaCbgController@getGroupingIdrg');
+              Route::get('bridging/inacbg/get-list-berkas-monitoring','Bridging\InaCbgController@getListBerkasMonitoring');
+              Route::get('klaim/get-daftar-klaim','Bridging\InaCbgController@getDaftarKlaim');
+              Route::get('klaim/get-daftar-klaim-ranap','Bridging\InaCbgController@getDaftarKlaimRanap');
+              Route::get('bridging/inacbg/get-parameter','Bridging\InaCbgController@getParameterDok');
 
               Route::post('bridging/inacbg/save-proposi-bridging-inacbg','Bridging\InaCbgController@saveProposiBridgingINACBG');
               Route::post('bridging/inacbg/get-daftar-pasien-statusnaikkelas','Bridging\InaCbgController@getStatusNaikKelas');
@@ -544,6 +548,10 @@ Route::group(['middleware' => 'cors', 'prefix' => 'service'], function () {
               Route::post('bridging/inacbg/save-response-from-inacbg','Bridging\InaCbgController@saveResponseFromINACBG');
               Route::post('bridging/inacbg/save-hasil-grouping-idrg','Bridging\InaCbgController@saveGroupingIdrg');
               Route::post('bridging/inacbg/save-pegawai','Bridging\InaCbgController@savePegawai');
+              Route::post('bridging/inacbg/delete-grouping-inacbg','Bridging\InaCbgController@deleteGroupingInacbg');
+              Route::post('bridging/inacbg/delete-grouping-idrg','Bridging\InaCbgController@deleteGroupingIdrg');
+              Route::post('bridging/inacbg/post-dokumen-klaim','Bridging\InaCbgController@postDokumenKlaim');
+              Route::post('bridging/inacbg/delete-dokumen-klaim','Bridging\InaCbgController@deleteDokumenKlaim');
 
             // START IDRG    
             Route::get('registrasi/get-icd-9-by-noreg-idrg','Registrasi\RegistrasiController@getIcd9PasienByNoreg');
@@ -1539,7 +1547,9 @@ Route::group(['middleware' => 'cors', 'prefix' => 'service'], function () {
           Route::get('report/cetak-skdpspri','Report\ReportController@cetakSKDPSPRI');
           Route::get('report/cetak-sep-v3','Report\ReportController@cetakSEPV3');
           Route::get('report/cetak-hasil-lab-manual', 'Report\ReportController@printGetHasilLabManual');
+          Route::get('report/billingbpjs','Report\ReportController@cetakBillbpjs');
           
+          Route::post('report/save-file-lip','Report\ReportController@saveFileLip');
           
           Route::get('report/get-cetak-per-jenis-anggaran','Report\ReportController@CetakPerJenisAnggaran');
           Route::get('report/get-cetak-per-jenis-anggaran-sebelum-sesudah','Report\ReportController@CetakPerJenisAnggaranSebelumSesudah');
@@ -2653,6 +2663,17 @@ Route::group(['middleware' => 'cors', 'prefix' => 'service'], function () {
               Route::get('registrasi/laporan/get-laporan-rl33-igd-new','Registrasi\LaporanRekamMedisController@getLaporanRL33IGDnew');
               Route::get('registrasi/laporan/get-laporan-rl34-new','Registrasi\LaporanRekamMedisController@getLaporanRL34RekapitulasiPengunjungnew');
 
+              Route::get('registrasi/laporan/get-laporan-rl31-v3', 'Registrasi\LaporanRekamMedisController@getDataRL31IndikatorPel');
+              Route::get('registrasi/laporan/get-laporan-rl32-v3', 'Registrasi\LaporanRekamMedisController@getDataRL32RawatInap');
+              Route::get('registrasi/laporan/get-laporan-rl310-v3', 'Registrasi\LaporanRekamMedisController@getRL310Rujukan');
+              Route::get('registrasi/laporan/get-laporan-rl39-v3', 'Registrasi\LaporanRekamMedisController@getLaporanRL39Rad');
+              
+              Route::get('registrasi/laporan/get-laporan-rl311-v3', 'Registrasi\LaporanRekamMedisController@getKegiatanKesehatanGigidanMulutRl');
+              Route::get('registrasi/laporan/get-laporan-rl312-v3', 'Registrasi\LaporanRekamMedisController@getLaporanRL312Pembedahan');
+
+              Route::get('registrasi/laporan/get-laporan-rl317-v3', 'Registrasi\LaporanRekamMedisController@getPengadaanObatRl');
+              Route::get('registrasi/laporan/get-laporan-rl318-v3', 'Registrasi\LaporanRekamMedisController@getPelayananResepRl');
+
               Route::get('registrasi/laporan/get-data-lap-pasien-masuk','Registrasi\LaporanRekamMedisController@getDataLaporanPasienMasuk');
               Route::get('registrasi/laporan/get-data-lap-pasien-keluar','Registrasi\LaporanRekamMedisController@getDataLaporanPasienKeluar');
               Route::get('registrasi/laporan/get-data-lap-pasien-pindahan','Registrasi\LaporanRekamMedisController@getLaporanPasienPindahan');
@@ -3173,6 +3194,16 @@ Route::group(['middleware' => 'cors', 'prefix' => 'service'], function () {
           Route::post('sysadmin/delete-map-ruangan-to-pelayananmutu', 'SysAdmin\SysAdminController@DeleteMapRuanganToPelayananMutu');
           Route::get('sysadmin/general/get-ruangan-part2', 'SysAdmin\GeneralController@getRuanganPart2');
           Route::get('sysadmin/general/get-ruangan-part3', 'SysAdmin\GeneralController@getRuanganPart3');
+
+          Route::get('sysadmin/get-combo-retriksi', 'SysAdmin\SysAdminController@getlistComboRetriksi');
+          Route::get('sysadmin/get-combo-retriksi-diagnosa', 'SysAdmin\SysAdminController@getComboRetriksiDiagnosa');
+          Route::post('sysadmin/save-retriksi-diagnosa', 'SysAdmin\SysAdminController@saveRetriksiDiagnosa');
+          Route::get('sysadmin/get-retriksi-diagnosa', 'SysAdmin\SysAdminController@getRetriksiDiagnosa');
+          Route::post('sysadmin/delete-retriksi-diagnosa', 'SysAdmin\SysAdminController@deleteRetriksiDiagnosa');
+          
+          Route::post('sysadmin/save-retriksi-obat', 'SysAdmin\SysAdminController@saveRetriksiObat');
+          Route::get('sysadmin/get-retriksi-obat', 'SysAdmin\SysAdminController@getRetriksiObat');
+          Route::post('sysadmin/delete-retriksi-obat', 'SysAdmin\SysAdminController@deleteRetriksiObat');
 
           Route::get('sysadmin/get-combo-mapemr', 'SysAdmin\SysAdminController@getComboMappingEMR');
           Route::get('sysadmin/get-mapping-emr', 'SysAdmin\SysAdminController@getMappingEMR');
@@ -3889,6 +3920,11 @@ Route::group(['middleware' => 'cors', 'prefix' => 'service'], function () {
     Route::post('api/grab/delivery/quotes', 'Bridging\GrabExpressController@tarifDelivery');
     Route::get('api/grab/delivery/{deliveryID}', 'Bridging\GrabExpressController@getInfoDelivery');
     Route::get('api/grab/delivery-cancel/{deliveryID}', 'Bridging\GrabExpressController@cancelDelivery');
+
+    Route::get('storage/dokumenklaim', 'Registrasi\MonitoringDokumenKlaimController@lihatDokumen');
+    Route::get('storage/dokumenklaimfarmasi', 'Registrasi\MonitoringDokumenKlaimController@lihatDokumenFarmasi');
+    Route::get('storage/bundledokumenklaim', 'Registrasi\MonitoringDokumenKlaimController@bundleDokumen');
+    Route::get('storage/bundledokumenklaimfarmasi', 'Registrasi\MonitoringDokumenKlaimController@bundleDokumenFarmasi');
 
     Route::get('storage_path', function (Illuminate\Http\Request $request)
     {

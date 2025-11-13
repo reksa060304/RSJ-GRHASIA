@@ -11,6 +11,8 @@ define(['initialize'], function (initialize) {
             $scope.pegawai = JSON.parse(window.localStorage.getItem('pegawai'));
             $scope.item.tglAkhir = $scope.now;
             $scope.btnSimpanVis = false;
+            $scope.btnSimpanUpdateTanggal = false;
+            $scope.isDepartemenLab = false;
             $scope.headerVerif = {}
             $scope.item.belumVerifikasi = true;
             $scope.item.orderHariIni = true;
@@ -662,6 +664,73 @@ define(['initialize'], function (initialize) {
 
                 loadDataVerif();
 
+            }
+
+            $scope.updateTglOrder = function () {
+                if ($scope.dataSelected == undefined) {
+                    toastr.error('Pilih data dulu');
+                    return
+                }
+
+                if ($scope.iddepartemen != 575 && $scope.dataSelected.status == 'SELESAI') {
+                    toastr.error('Sudah Di Verifikasi');
+                    return
+                } else if ($scope.iddepartemen == 575 && $scope.dataSelected.status == 'PROSES') {
+                    toastr.error('Sudah Di Verifikasi');
+                    return
+                }
+                
+                $scope.btnSimpanUpdateTanggal = false
+                $scope.item.tglSebelumnya = $scope.dataSelected.tglorder
+                medifirstService.get(`radiologi/cekstatusorder?norec_so=${$scope.dataSelected.norec_so}`).then(function(e){
+                    $scope.cekstatusya = e.data.cekstatus[0].statusorder
+                    $scope.ceknorecso = e.data.cekstatus[0].norec
+                    $scope.userlogins = e.data.userlogin[0].namalengkap
+                })
+
+                $scope.popUpEditTanggal.center().open();
+            }
+
+            $scope.batalEditTanggal = function () {
+                $scope.item.tglSebelumnya = undefined
+                $scope.item.tglTerbaru = undefined
+                $scope.popUpEditTanggal.close();
+            }
+
+            $scope.simpanUpdateTanggal = function () {
+                if ($scope.dataSelected.closing == true) {
+                    window.messageContainer.error("Pelayanan sudah diClosing oleh Kasir!. Silahkan Hubungi Kasir!");
+                    return
+                }
+                if ($scope.item.tglTerbaru == undefined) {
+                    toastr.error('Pilih tanggal dulu');
+                    return
+                }
+                if ($scope.dataSelected.norec_so == $scope.ceknorecso && $scope.cekstatusya == 1) {
+                    window.messageContainer.error("Pasien sudah diverifikasi oleh "+$scope.userlogins+" Mohon Untuk direfresh");
+                    return
+                }
+
+                var itemsave = {
+                    "norec_so": $scope.dataSelected.norec_so,
+                    "tglterbaru":  moment($scope.item.tglTerbaru).format('YYYY-MM-DD HH:mm'),
+                    "tgl_order_lama":  moment($scope.item.tglSebelumnya).format('YYYY-MM-DD HH:mm')
+                }
+
+                $scope.btnSimpanUpdateTanggal = true;
+                var ruangan = $scope.dataSelected.objectruangantujuanfk;
+                if (ruangan == 575) {/*lab */ 
+                    medifirstService.post('radiologi/save-tanggal-order', itemsave)
+                    .then(function (e) {
+                        medifirstService.postLogging('Update Tanggal Order Lab', 'Norec strukorder_t ', $scope.dataSelected.norec_so,
+                        'Update Tanggal Order Lab No Order - ' + $scope.dataSelected.noorder + ' dengan No Registrasi ' + $scope.dataSelected.noregistrasi).then(function (res) {
+                        })
+                        $scope.item.tglTerbaru = undefined
+                        $scope.dataSelected = undefined
+                        $scope.popUpEditTanggal.close();
+                        init()
+                    });
+                }
             }
             // $scope.getHargaTindakan = function (e) {
                 
@@ -1412,6 +1481,9 @@ define(['initialize'], function (initialize) {
                 .ok('OK')
                 $mdDialog.show(confirm).then(function () {
                     medifirstService.post('radiologi/delete-order-penunjang',{norec: $scope.dataSelected.norec_so}).then(function(e){
+                        medifirstService.postLogging('Hapus Order Lab', 'Norec strukorder_t ', $scope.dataSelected.norec_so,
+                        'Hapus Order Lab No Order - ' + $scope.dataSelected.noorder + ' dengan No Registrasi ' + $scope.dataSelected.noregistrasi).then(function (res) {
+                        })
                         init()
                     })
                 })

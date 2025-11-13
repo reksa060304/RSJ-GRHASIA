@@ -3556,6 +3556,10 @@
             "urlDep": "module/EMR/PengkajianAwalKepHCUCtrl"
         },
         {
+            "nameDep": "PengkajianAwalKeperawatanRIJiwaAnakRemajaCtrl",
+            "urlDep": "module/EMR/PengkajianAwalKeperawatanRIJiwaAnakRemajaCtrl"
+        },
+        {
             "nameDep": "PengkajianAwalKepRanapUmumCtrl",
             "urlDep": "module/EMR/PengkajianAwalKepRanapUmumCtrl"
         },
@@ -3768,6 +3772,58 @@
         {
             "nameDep": "BridgingInaCbgV2Ctrl",
             "urlDep": "module/Bridging/BridgingInaCbgV2Ctrl"
+        },
+        {
+            "nameDep": "RL31IndikatorPelayananRsCtrl",
+            "urlDep": "module/Registrasi/Laporan/LaporanRekamMedis/RL31IndikatorPelayananRsCtrl"
+        },
+        {
+            "nameDep": "RL32KegiatanRawatInapCtrl",
+            "urlDep": "module/Registrasi/Laporan/LaporanRekamMedis/RL32KegiatanRawatInapCtrl"
+        },
+        {
+            "nameDep": "RL310RujukanCtrl",
+            "urlDep": "module/Registrasi/Laporan/LaporanRekamMedis/RL310RujukanCtrl"
+        },
+        {
+            "nameDep": "RL39RadiologiCtrl",
+            "urlDep": "module/Registrasi/Laporan/LaporanRekamMedis/RL39RadiologiCtrl"
+        },
+        {
+            "nameDep": "RL317FarmasiCtrl",
+            "urlDep": "module/Registrasi/Laporan/LaporanRekamMedis/RL317FarmasiCtrl"
+        },
+        {
+            "nameDep": "BridgingInaCbgIDRGCtrl",
+            "urlDep": "module/Bridging/BridgingInaCbgIDRGCtrl"
+        },
+        {
+            "nameDep": "RiwayatRegistrasiKodingIDRGCtrl",
+            "urlDep": "module/Registrasi/RiwayatRegistrasiKodingIDRGCtrl"
+        },
+        {
+            "nameDep": "RL311GigiDanMulutCtrl",
+            "urlDep": "module/Registrasi/Laporan/LaporanRekamMedis/RL311GigiDanMulutCtrl"
+        },
+        {
+            "nameDep": "RL312PembedahanCtrl",
+            "urlDep": "module/Registrasi/Laporan/LaporanRekamMedis/RL312PembedahanCtrl"
+        },
+        {
+            "nameDep": "DaftarKlaimRajalCtrl",
+            "urlDep": "module/Klaim/DaftarKlaimRajalCtrl"
+        },
+        {
+            "nameDep": "DaftarKlaimRanapCtrl",
+            "urlDep": "module/Klaim/DaftarKlaimRanapCtrl"
+        },
+        {
+            "nameDep": "DaftarKlaimRajalCtrl",
+            "urlDep": "module/Klaim/DaftarKlaimRajalCtrl"
+        },
+        {
+            "nameDep": "DaftarKlaimRanapCtrl",
+            "urlDep": "module/Klaim/DaftarKlaimRanapCtrl"
         }
     ]
 }

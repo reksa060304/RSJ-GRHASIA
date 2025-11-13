@@ -215,6 +215,22 @@
         </div>
     </div>
     <div class="grid_12">
+        <div class="grid_4">
+            <div class="grid_2">
+                <label c-label item="item">No Order</label>
+            </div>
+            <div class="grid_6" style="margin-top: -13px">
+                <input style="width: 100%;"
+                kendo-combo-box
+                k-ng-model="item.noOrder"
+                k-filter="'contains'"
+                k-auto-bind="false"
+                k-data-source="listNoorder"
+                k-on-select="onSelectNoOrder(kendoEvent)" />
+            </div>
+        </div>
+    </div>
+    <div class="grid_12">
         <div class="grid_12 headerBox">
             <kendo-grid id="kGrids" data-source="dataGrid" options="columnGrid" k-selectable="'row'" k-sortable="'true'"
                 k-resizable="'true'" k-ng-model="dataSelected" ng-click="klikGrid(dataSelected)"></kendo-grid>

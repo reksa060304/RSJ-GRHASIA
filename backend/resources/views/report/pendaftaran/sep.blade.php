@@ -1,214 +1,169 @@
+<!DOCTYPE html>
 <html>
-<head>
-    <title>
-        Report
-    </title>
-        @if(stripos(\Request::url(), 'localhost') !== FALSE)
-            <link href="{{ asset('css/style.css') }}" rel="stylesheet">
-        @else
-         <link href="{{ asset('service/css/style.css') }}" rel="stylesheet">
-        @endif
-</head>
-<style type="text/css" media="print">
-    @media print
-    {
-        @page
-        {
-            size: auto;
-            margin: 0;
-            /* size: portrait; */
+    <head>
+        <title>Surat Eligibilitas Peserta</title>
+    </head>
+    <style>
+        @page { margin: 0px; }
+        body { 
+            margin: 0px;
+            font-family: Tahoma, "Trebuchet MS", sans-serif;
         }
-        footer {
-            display: none
-        }
-        header {
-            display: none
-        }
-        body {
-            -webkit-print-color-adjust: exact !important;
-        }
-    }
-    tr td {
-        /*padding:2px 4px 2px 4px;*/
-    }
-    .borderss{
-        border-bottom: 1px solid black;
-    }
-    body{
-        font-family: Tahoma, Geneva, sans-serif;
-    }
-</style>
-{{----}}
-<body style="background-color: #CCCCCC;margin: 0" onLoad="window.print()">
-<div align="left">
-    <table cellspacing="0" cellpadding="0" bgcolor="#FFFFFF" border="0" width="{{$pageWidth}}">
-        <tbody>
-        <tr>
-            <td width="2%"></td>
-            <td width="16%">
-                <p align="left">
-                      @if(stripos(\Request::url(), 'localhost') !== FALSE)
-                    <img src="{{ asset('img/logo_bpjs.png') }}"
-                         style="width: 200px" border="0"/>
-                           @else
-                     <img src="{{ asset('service/img/logo_bpjs.png') }}"
-                         style="width: 200px" border="0"/>
-                        @endif
-                </p>
-            </td>
-            <td width="82%">
-                <p align="center">
-                    <br/><font style="font-size: 12pt;" color="#000000" face="Tahoma"><b>SURAT ELIGIBILITAS PESERTA</b></font><br>
-                    <font style="font-size: 12pt;" color="#000000" face="Tahoma"><b>{{$dataReport['namaprofile']}}</b></font><br>
-                    <font style="font-size: 10pt;" color="#000000" face="Tahoma">{{$dataReport['alamat']}}</font><br>
-                </p>
-            </td>
-        </tr>
-        </tbody>
-    </table>
-    <table cellspacing="0" cellpadding="0" bgcolor="#FFFFFF" border="0" width="{{$pageWidth}}" style="margin-top: -25px">
-        <tbody>
-        <tr>
-            <td style="padding: 30px;text-align: left">
-                <table  ccellspacing="0" cellpadding="0" border="0" bgcolor="#FFFFFF" width="100%" align="left">
-                    <tr>
-                        <td height="5" width="24%">
-                            <font style="font-size: 10pt;" color="#000000" face="Tahoma">No SEP</font>
-                        </td>
-                        <td height="5" width="2%"><font size="1">:</font></td>
-                        <td height="5" width="24%"><font style="font-size: 10pt;" color="#000000" face="Tahoma">{{$dataReport['nosep']}}</font></td>
-                        <td height="5" width="24%">
-                            <font style="font-size: 10pt;" color="#000000" face="Tahoma">No RM</font>
-                        </td>
-                        <td height="5" width="2%"><font size="1">:</font></td>
-                        <td height="5" width="24%"><font style="font-size: 10pt;" color="#000000" face="Tahoma">{{$dataReport['norm']}}</font></td>
-                    </tr>
-                    <tr>
-                        <td height="5" width="24%">
-                            <font style="font-size: 10pt;" color="#000000" face="Tahoma">Tgl SEP</font>
-                        </td>
-                        <td height="5" width="2%"><font size="1">:</font></td>
-                        <td height="5" width="24%"><font style="font-size: 10pt;" color="#000000" face="Tahoma">{{$dataReport['tanggalsep']}}</font></td>
-                        <td height="5" width="24%">
-                            <font style="font-size: 10pt;" color="#000000" face="Tahoma">No Pendaftaran</font>
-                        </td>
-                        <td height="5" width="2%"><font size="1">:</font></td>
-                        <td height="5" width="24%"><font style="font-size: 10pt;" color="#000000" face="Tahoma">{{$dataReport['noregistrasi']}}</font></td>
-                    </tr>
-                    <tr>
-                        <td height="5" width="24%">
-                            <font style="font-size: 10pt;" color="#000000" face="Tahoma">No Kartu</font>
-                        </td>
-                        <td height="5" width="2%"><font size="1">:</font></td>
-                        <td height="5" width="24%"><font style="font-size: 10pt;" color="#000000" face="Tahoma">{{$dataReport['nokepesertaan']}}</font></td>
-                       
-                        
-                        <td height="5" width="24%">
-                            <font style="font-size: 10pt;" color="#000000" face="Tahoma">Jenis Peserta</font>
-                        </td>
-                        <td height="5" width="2%"><font size="1">:</font></td>
-                        <td height="5" width="24%"><font style="font-size: 10pt;" color="#000000" face="Tahoma">{{$dataReport['jenispeserta']}}</font></td>
-                    </tr>
-                    <tr>
-                        <td height="5" width="24%">
-                            <font style="font-size: 10pt;" color="#000000" face="Tahoma">Nama Peserta</font>
-                        </td>
-                        <td height="5" width="2%"><font size="1">:</font></td>
-                        <td height="5" width="24%"><font style="font-size: 10pt;" color="#000000" face="Tahoma">{{$dataReport['namapeserta']}}</font></td>
-                        <td height="5" width="24%">
-                            <font style="font-size: 10pt;" color="#000000" face="Tahoma">COB</font>
-                        </td>
-                        <td height="5" width="2%"><font size="1">:</font></td>
-                        <td height="5" width="24%"><font style="font-size: 10pt;" color="#000000" face="Tahoma">{{$dataReport['cob']}}</font></td>
-                    </tr>
-                    <tr>
-                        <td height="5" width="24%">
-                            <font style="font-size: 10pt;" color="#000000" face="Tahoma">Tgl Lahir</font>
-                        </td>
-                        <td height="5" width="2%"><font size="1">:</font></td>
-                        <td height="5" width="24%"><font style="font-size: 10pt;" color="#000000" face="Tahoma">{{$dataReport['tgllahir']}}</font></td>
-                        <td height="5" width="24%">
-                            <font style="font-size: 10pt;" color="#000000" face="Tahoma">Jenis Rawat</font>
-                        </td>
-                        <td height="5" width="2%"><font size="1">:</font></td>
-                        <td height="5" width="24%"><font style="font-size: 10pt;" color="#000000" face="Tahoma">{{$dataReport['jenisrawat']}}</font></td>
-                    </tr>
-                    <tr>
-                        <td height="5" width="24%">
-                            <font style="font-size: 10pt;" color="#000000" face="Tahoma">Jenis Kelamin</font>
-                        </td>
-                        <td height="5" width="2%"><font size="1">:</font></td>
-                        <td height="5" width="24%"><font style="font-size: 10pt;" color="#000000" face="Tahoma">{{$dataReport['jeniskelamin']}}</font></td>
-                        <td height="5" width="24%">
-                            <font style="font-size: 10pt;" color="#000000" face="Tahoma">Kelas Rawat</font>
-                        </td>
-                        <td height="5" width="2%"><font size="1">:</font></td>
-                        <td height="5" width="24%"><font style="font-size: 10pt;" color="#000000" face="Tahoma">{{$dataReport['namakelas']}}</font></td>
-                    </tr>
-                    <tr>
-                        <td height="5" width="24%">
-                            <font style="font-size: 10pt;" color="#000000" face="Tahoma">Poli/ Ruangan Tujuan</font>
-                        </td>
-                        <td height="5" width="2%"><font size="1">:</font></td>
-                        <td height="5" width="24%"><font style="font-size: 10pt;" color="#000000" face="Tahoma">{{$dataReport['namaruangan']}}</font></td>
-                        <td height="5" width="24%">
-                            <font style="font-size: 10pt;" color="#000000" face="Tahoma">Pasien/ Keluarga Pasien</font>
-                        </td>
-                        <td height="5" width="2%"><font style="font-size: 12pt;text-align: left;" face="Tahoma">&nbsp;</font></td>
-                        <td height="5" width="24%"><font style="font-size: 10pt;" color="#000000" face="Tahoma">Petugas Bpjs Kesehatan</font></td>
-                    </tr>
-                    <tr>
-                        <td height="5" width="24%">
-                            <font style="font-size: 10pt;" color="#000000" face="Tahoma">Asal Faskes TK I</font>
-                        </td>
-                        <td height="5" width="2%"><font size="1">:</font></td>
-                        <td height="5" width="24%"><font style="font-size: 10pt;" color="#000000" face="Tahoma">{{$dataReport['namapoli']}}</font></td>
-                        <td height="5" width="24%">
-                            <font style="font-size: 12pt;text-align: left;" face="Tahoma">&nbsp;</font>
-                        </td>
-                        <td height="5" width="2%"><font style="font-size: 12pt;text-align: left;" face="Tahoma">&nbsp;</font></td>
-                        <td height="5" width="24%"><font style="font-size: 12pt;text-align: left;" face="Tahoma">&nbsp;</font></td>
-                    </tr>
-                    <tr>
-                        <td height="5" width="24%">
-                            <font style="font-size: 10pt;" color="#000000" face="Tahoma">Diagnosa Awal</font>
-                        </td>
-                        <td height="5" width="2%"><font size="1">:</font></td>
-                        <td height="5" width="24%"><font style="font-size: 10pt;" color="#000000" face="Tahoma">{{$dataReport['namadiagnosa']}}</font></td>
-                        <td height="5" width="24%">
-                            <font style="font-size: 12pt;text-align: left;" face="Tahoma">&nbsp;</font>
-                        </td>
-                        <td height="5" width="2%"><font style="font-size: 12pt;text-align: left;" face="Tahoma">&nbsp;</font></td>
-                        <td height="5" width="24%"><font style="font-size: 12pt;text-align: left;" face="Tahoma">&nbsp;</font></td>
-                    </tr>
-                    <tr>
-                        <td height="5" width="24%">
-                            <font style="font-size: 10pt;" color="#000000" face="Tahoma">Catatan</font>
-                        </td>
-                        <td height="5" width="2%"><font size="1">:</font></td>
-                        <td height="5" width="24%"><font style="font-size: 10pt;" color="#000000" face="Tahoma">{{$dataReport['catatan']}}</font></td>
-                        <td height="5" width="24%">
-                            <font style="font-size: 12pt;text-align: left;" face="Tahoma">_________________</font>
-                        </td>
-                        <td height="5" width="2%"><font style="font-size: 12pt;text-align: left;" face="Tahoma">&nbsp;</font></td>
-                        <td height="5" width="24%"><font style="font-size: 12pt;text-align: left;" face="Tahoma">_________________</font></td>
-                    </tr>
-                    <tr>
-                        <table  ccellspacing="0" cellpadding="0" border="0" bgcolor="#FFFFFF" width="100%" align="left">
-                            <tr>
-                                <td height="5" width="100%">
-                                    <font style="font-size: 10pt;" color="#000000" face="Tahoma">*Saya Menyetujui BPJS Kesehatan menggunakan informasi Medis Pasien jika diperlukan.</font><br/>
-                                    <font style="font-size: 10pt;" color="#000000" face="Tahoma">*SEP bukan sebagai bukti penjaminan peserta</font><br/>
-                                    <font style="font-size: 10pt;" color="#000000" face="Tahoma">Cetakan Ke 1 {{$dataReport['tanggal']}}</font><br/>
-                                </td>
-                            </tr>
-                        </table>
-                    </tr>
-                </table>
-            </td>
-        </tr>
-        </tbody>
-    </table>
-</div>
-</body>
+    </style>
+    <body>
+        <table width="100%">
+            <tr>
+                <td style="padding:0px 30px 0px 30px;">
+                    <table width="100%">
+                        <tr>
+                            <td width="35%">
+                                <p align="left">
+                                    <img src="{{ public_path('img/logo_bpjs.png') }}" style="width: 240px" border="0"/>
+                                </p>
+                            </td>
+                            <td width="65%">
+                                <p align="left">
+                                    <font style="font-size: 14pt;" color="#000000">SURAT ELEGIBILITAS PESERTA</font><br>
+                                    <font style="font-size: 12pt;" color="#000000">{{ $dataReport['ppkPelayanan'] }}</font><br>
+                                </p>
+                            </td>
+                        </tr>
+                    </table>
+                </td>
+            </tr>
+            <tr>
+                <td style="padding:0px 30px 0px 30px;">
+                    <table width="100%">
+                        <tr>
+                            <td height="5" width="15%" style="vertical-align:top;"><font style="font-size: 10pt;" color="#000000">NO. SEP</font></td>
+                            <td height="5" width="2%" style="vertical-align:top;"><font style="font-size: 10pt;" color="#000000">:</font></td>
+                            <td height="5" width="38%" style="vertical-align:top;">
+                                <font style="font-size: 10pt;" color="#000000">{{ $dataReport['nosep'] }}
+                                    @if(date_create($dataReport['tanggalsep']) < date_create($dataReport['tglcreate']))
+                                        {{ " (BACKDATE)" }}
+                                    @endif
+                                </font>
+                            </td>
+                            <td height="5" width="15%" style="vertical-align:top;"><font style="font-size: 10pt;" color="#000000"></font></td>
+                            <td height="5" width="2%" style="vertical-align:top;"><font style="font-size: 10pt;" color="#000000"></font></td>
+                            <td height="5" width="28%" style="vertical-align:top;"><font style="font-size: 10pt;" color="#000000"></font></td>
+                        </tr>
+                        <tr>
+                            <td height="5" width="15%" style="vertical-align:top;"><font style="font-size: 10pt;" color="#000000">Tgl. SEP</font></td>
+                            <td height="5" width="2%" style="vertical-align:top;"><font style="font-size: 10pt;" color="#000000">:</font></td>
+                            <td height="5" width="38%" style="vertical-align:top;padding-right:10px;"><font style="font-size: 10pt;" color="#000000">{{ date_format(date_create($dataReport['tanggalsep']), 'Y-m-d') }}</font></td>
+                            {{-- batas --}}
+                            <td height="5" width="15%" style="vertical-align:top;"><font style="font-size: 10pt;" color="#000000">Peserta</font></td>
+                            <td height="5" width="2%" style="vertical-align:top;"><font style="font-size: 10pt;" color="#000000">:</font></td>
+                            <td height="5" width="28%" style="vertical-align:top;"><font style="font-size: 10pt;" color="#000000">{{ $dataReport['jenispeserta'] }}</font></td>
+                        </tr>
+                        <tr>
+                            <td height="5" width="15%" style="vertical-align:top;"><font style="font-size: 10pt;" color="#000000">No. Kartu</font></td>
+                            <td height="5" width="2%" style="vertical-align:top;"><font style="font-size: 10pt;" color="#000000">:</font></td>
+                            <td height="5" width="38%" style="vertical-align:top;padding-right:10px;"><font style="font-size: 10pt;" color="#000000">{{ $dataReport['nokepesertaan'] }} &nbsp;&nbsp;&nbsp; ( MR. {{ $dataReport['norm'] }} )</font></td>
+                            {{-- batas --}}
+                            <td height="5" width="15%" style="vertical-align:top;"><font style="font-size: 10pt;" color="#000000">COB</font></td>
+                            <td height="5" width="2%" style="vertical-align:top;"><font style="font-size: 10pt;" color="#000000">:</font></td>
+                            <td height="5" width="28%" style="vertical-align:top;"><font style="font-size: 10pt;" color="#000000">{{ $dataReport['cob'] }}</font></td>
+                        </tr>
+                        <tr>
+                            <td height="5" width="15%" style="vertical-align:top;"><font style="font-size: 10pt;" color="#000000">Nama Peserta</font></td>
+                            <td height="5" width="2%" style="vertical-align:top;"><font style="font-size: 10pt;" color="#000000">:</font></td>
+                            <td height="5" width="38%" style="vertical-align:top;padding-right:10px;"><font style="font-size: 10pt;" color="#000000">{{ $dataReport['namapeserta'] }}</font></td>
+                            {{-- batas --}}
+                            <td height="5" width="15%" style="vertical-align:top;"><font style="font-size: 10pt;" color="#000000">Jns. Rawat</font></td>
+                            <td height="5" width="2%" style="vertical-align:top;"><font style="font-size: 10pt;" color="#000000">:</font></td>
+                            <td height="5" width="28%" style="vertical-align:top;"><font style="font-size: 10pt;" color="#000000">{{ $dataReport['jenisrawat'] }}</font></td>
+                        </tr>
+                        <tr>
+                            <td height="5" width="15%" style="vertical-align:top;"><font style="font-size: 10pt;" color="#000000">Tgl. Lahir</font></td>
+                            <td height="5" width="2%" style="vertical-align:top;"><font style="font-size: 10pt;" color="#000000">:</font></td>
+                            <td height="5" width="38%" style="vertical-align:top;padding-right:10px;"><font style="font-size: 10pt;" color="#000000">{{ date_format(date_create($dataReport['tgllahir']), 'Y-m-d') }} &nbsp;&nbsp;&nbsp; Kelamin : {{ $dataReport['jeniskelamin'] }}</font></td>
+                            {{-- batas --}}
+                            <td height="5" width="15%" style="vertical-align:top;"><font style="font-size: 10pt;" color="#000000">Jns. Kunjungan</font></td>
+                            <td height="5" width="2%" style="vertical-align:top;"><font style="font-size: 10pt;" color="#000000">:</font></td>
+                            <td height="5" width="28%" style="vertical-align:top;"><font style="font-size: 10pt;" color="#000000">{{ $dataReport['kunjungan'] }}</font></td>
+                        </tr>
+                        <tr>
+                            <td height="5" width="15%" style="vertical-align:top;"><font style="font-size: 10pt;" color="#000000">No. Telepon</font></td>
+                            <td height="5" width="2%" style="vertical-align:top;"><font style="font-size: 10pt;" color="#000000">:</font></td>
+                            <td height="5" width="38%" style="vertical-align:top;padding-right:10px;"><font style="font-size: 10pt;" color="#000000">{{ $dataReport['notelpmobile'] }}</font></td>
+                            {{-- batas --}}
+                            <td height="5" width="15%" style="vertical-align:top;"><font style="font-size: 10pt;" color="#000000"></font></td>
+                            <td height="5" width="2%" style="vertical-align:top;"><font style="font-size: 10pt;" color="#000000">:</font></td>
+                            <td height="5" width="28%" style="vertical-align:top;"><font style="font-size: 10pt;" color="#000000">{{ $dataReport['procedures'] }}</font></td>
+                        </tr>
+                        <tr>
+                            <td height="5" width="15%" style="vertical-align:top;"><font style="font-size: 10pt;" color="#000000">Sub/Spesialis</font></td>
+                            <td height="5" width="2%" style="vertical-align:top;"><font style="font-size: 10pt;" color="#000000">:</font></td>
+                            <td height="5" width="38%" style="vertical-align:top;padding-right:10px;"><font style="font-size: 10pt;" color="#000000">{{ $dataReport['namaruangan'] }}</font></td>
+                            {{-- batas --}}
+                            <td height="5" width="15%" style="vertical-align:top;"><font style="font-size: 10pt;" color="#000000">Poli Perujuk</font></td>
+                            <td height="5" width="2%" style="vertical-align:top;"><font style="font-size: 10pt;" color="#000000">:</font></td>
+                            <td height="5" width="28%" style="vertical-align:top;"><font style="font-size: 10pt;" color="#000000">{{ $dataReport['polirujukannama'] }}</font></td>
+                        </tr>
+                        <tr>
+                            <td height="5" width="15%" style="vertical-align:top;"><font style="font-size: 10pt;" color="#000000">Dokter</font></td>
+                            <td height="5" width="2%" style="vertical-align:top;"><font style="font-size: 10pt;" color="#000000">:</font></td>
+                            <td height="5" width="38%" style="vertical-align:top;padding-right:10px;"><font style="font-size: 10pt;" color="#000000">{{ $dataReport['namadjpjpmelayanni'] }}</font></td>
+                            {{-- batas --}}
+                            <td height="5" width="15%" style="vertical-align:top;"><font style="font-size: 10pt;" color="#000000">Kls. Hak</font></td>
+                            <td height="5" width="2%" style="vertical-align:top;"><font style="font-size: 10pt;" color="#000000">:</font></td>
+                            <td height="5" width="28%" style="vertical-align:top;"><font style="font-size: 10pt;" color="#000000">{{ $dataReport['haknamakelas'] }}</font></td>
+                        </tr>
+                        <tr>
+                            <td height="5" width="15%" style="vertical-align:top;"><font style="font-size: 10pt;" color="#000000">Faskes Perujuk</font></td>
+                            <td height="5" width="2%" style="vertical-align:top;"><font style="font-size: 10pt;" color="#000000">:</font></td>
+                            <td height="5" width="38%" style="vertical-align:top;padding-right:10px;"><font style="font-size: 10pt;" color="#000000">{{ $dataReport['nmprovider'] }}</font></td>
+                            {{-- batas --}}
+                            <td height="5" width="15%" style="vertical-align:top;"><font style="font-size: 10pt;" color="#000000">Kls. Rawat</font></td>
+                            <td height="5" width="2%" style="vertical-align:top;"><font style="font-size: 10pt;" color="#000000">:</font></td>
+                            <td height="5" width="28%" style="vertical-align:top;"><font style="font-size: 10pt;" color="#000000">{{ $dataReport['namakelas'] }}</font></td>
+                        </tr>
+                        <tr>
+                            <td height="5" width="15%" style="vertical-align:top;"><font style="font-size: 10pt;" color="#000000">Diagnosa Awal</font></td>
+                            <td height="5" width="2%" style="vertical-align:top;"><font style="font-size: 10pt;" color="#000000">:</font></td>
+                            <td height="5" width="38%" style="vertical-align:top;padding-right:10px;"><font style="font-size: 10pt;" color="#000000">{{ $dataReport['namadiagnosa'] }}</font></td>
+                            {{-- batas --}}
+                            <td height="5" width="15%" style="vertical-align:top;"><font style="font-size: 10pt;" color="#000000">Penjamin</font></td>
+                            <td height="5" width="2%" style="vertical-align:top;"><font style="font-size: 10pt;" color="#000000">:</font></td>
+                            <td height="5" width="28%" style="vertical-align:top;"><font style="font-size: 10pt;" color="#000000">{{ $dataReport['penjaminlakalantas'] }}</font></td>
+                        </tr>
+                        <tr>
+                            <td height="5" width="15%" style="vertical-align:top;"><font style="font-size: 10pt;" color="#000000">Catatan</font></td>
+                            <td height="5" width="2%" style="vertical-align:top;"><font style="font-size: 10pt;" color="#000000">:</font></td>
+                            <td height="5" width="38%" style="vertical-align:top;padding-right:10px;"><font style="font-size: 10pt;" color="#000000">{{ $dataReport['catatan'] }}</font></td>
+                            {{-- batas --}}
+                            <td height="5" width="15%" style="vertical-align:top;"><font style="font-size: 10pt;" color="#000000"></font></td>
+                            <td height="5" width="2%" style="vertical-align:top;"><font style="font-size: 10pt;" color="#000000"></font></td>
+                            <td height="5" width="28%" style="vertical-align:top;"><font style="font-size: 10pt;" color="#000000"></font></td>
+                        </tr>
+                    </table>
+                </td>
+            </tr>
+            <tr>
+                <td style="padding:0px 30px 0px 30px;">
+                    <table width="100%">
+                        <tr>
+                            <td height="5" width="60%" style="vertical-align:top" align="left">
+                                <font style="font-size: 8pt;font-style:italic;" color="#000000">*Saya Menyetujui BPJS Kesehatan menggunakan informasi Medis Pasien jika diperlukan.</font><br/>
+                                <font style="font-size: 8pt;font-style:italic;" color="#000000">*SEP bukan sebagai bukti penjaminan peserta</font><br/>
+                                @if($dataReport['objectdepartemenfk'] == 16)
+                                <font style="font-size: 8pt;font-style:italic;" color="#000000">** Dengan diterbitkan SEP ini, Peserta rawat inap telah mendapatkan informasi dan <br> menampati kelas rawat sesuai hak akses kelasnya (terkecuali kelas penuh atau naik kelas <br> sesuai aturan yang berlaku)</font><br/>
+                                @endif
+                                {{-- <font style="font-size: 8pt;font-style:italic;" color="#000000">dengan terlebih dahulu.</font><br/> --}}
+                                <font style="font-size: 8pt;font-style:italic;" color="#000000">Cetakan Ke 1 {{ $dataReport['tanggal'] }}</font><br/>
+                            </td>
+                            <td height="5" width="40%" style="vertical-align:top" align="center">
+                                <font style="font-size: 10pt;" color="#000000">Pasien/Keluarga Pasien</font><br/>
+                                {{-- <font style="font-size: 10pt;" color="#000000">_________________</font><br/> --}}
+                                <img src="data:image/png;base64, {!! $qrcode !!}"><br/>
+                                <font style="font-size: 10pt;" color="#000000">{{ ucwords(strtolower($dataReport['namapeserta'])) }}</font>
+                            </td>
+                        </tr>
+                    </table>
+                </td>
+            </tr>
+        </table>
+    </body>
 </html>

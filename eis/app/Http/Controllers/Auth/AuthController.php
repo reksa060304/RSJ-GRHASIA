@@ -49,11 +49,83 @@ class AuthController extends ApiController
     use CrudMaster, Valet;
     protected $kdProfile = 18;
     protected $formAwal = "dashboard-pelayanan";
+
+    private $recaptchaSiteKey = '6LeZROErAAAAAHnLZL9ZFHknqg_waOvlLzHC3lpb';
+    private $recaptchaSecretKey = '6LeZROErAAAAAAPXeetWb_8p0BZC5UDDNUyDt87B';
+
+    private $captchaDomain = 'simrs-grhasia.jogjaprov.go.id';
+
+    
+
     public function __construct()
     {
         parent::__construct($skip_authentication = true);
     }
 
+    /**
+     * Cek apakah perlu CAPTCHA berdasarkan domain
+     */
+    // private function needsCaptcha()
+    // {
+    //     $currentDomain = request()->getHost();
+    //     return $currentDomain === $this->captchaDomain;
+    // }
+
+    private function needsCaptcha()
+    {
+        $currentDomain = request()->getHost();
+        $allowedDomains = [
+            'simrs-grhasia.jogjaprov.go.id', // (live)
+            // 'localhost:8000', // untuk testing
+            'localhost', // untuk testing
+            '127.0.0.1:8000',  // untuk testing
+            '127.0.0.1', //localhost
+            // '10.10.1.111',    // Tambahkan ini  (dev)
+            '10.10.1.234'     // Tambahkan ini (live)
+        ];
+        return in_array($currentDomain, $allowedDomains);
+    }
+
+    /**
+     * Validasi Google reCAPTCHA
+     */
+    private function validateRecaptcha($recaptchaResponse)
+    {
+        if (empty($recaptchaResponse)) {
+            return false;
+        }
+
+        $url = 'https://www.google.com/recaptcha/api/siteverify';
+        $data = [
+            'secret' => $this->recaptchaSecretKey,
+            'response' => $recaptchaResponse,
+            'remoteip' => request()->ip()
+        ];
+
+        // Gunakan file_get_contents (tanpa install package)
+        $options = [
+            'http' => [
+                'header' => "Content-type: application/x-www-form-urlencoded\r\n",
+                'method' => 'POST',
+                'content' => http_build_query($data)
+            ]
+        ];
+
+        $context = stream_context_create($options);
+        $result = file_get_contents($url, false, $context);
+        
+        if ($result === false) {
+            return false;
+        }
+
+        $resultJson = json_decode($result);
+        return $resultJson->success ?? false;
+    }
+
+    /**
+     * Show login form
+     */
+    
 
     public function createToken($namaUser)
     {
@@ -202,13 +274,31 @@ class AuthController extends ApiController
         return $this->setStatusCode($result['status'])->respond($result);
     }
 
+    // public function show()
+    // {
+    //     if (!empty(session("tokenLogin"))) {
+    //         return redirect("admin/".$this->formAwal);
+    //     }
+    //     return view("auth.login");
+    // }
+
     public function show()
     {
         if (!empty(session("tokenLogin"))) {
             return redirect("admin/".$this->formAwal);
         }
-        return view("auth.login");
+        
+        // DEBUG: Cek domain yang terdeteksi
+        $currentDomain = request()->getHost();
+        // dd($currentDomain); // Ini akan menampilkan domain yang terdeteksi
+        
+        $showCaptcha = $this->needsCaptcha();
+        $recaptchaSiteKey = $this->recaptchaSiteKey;
+        
+        return view("auth.login", compact('showCaptcha', 'recaptchaSiteKey'));
     }
+
+
     public function showIndex(Request $r)
     {
         $kdProfile = session("kdProfile");
@@ -722,6 +812,8 @@ sb.id,
         //        return view("module.view-bed.index",compact('ruangan','data','namaruang','statusbed'));
         return redirect()->route("home", ['objectdepartemenfk' =>  !empty($dept) ? $dept->objectdepartemenfk : '', 'objectruanganfk' => $r['id_ruangan']]);
     }
+
+    /*
     public function loginKeun(Request $r)
     {
         try {
@@ -743,6 +835,43 @@ sb.id,
             dd($e);
         }
     }
+    */
+    
+    public function loginKeun(Request $r)
+    {
+        try {
+            // Validasi CAPTCHA jika domain memerlukan
+            if ($this->needsCaptcha()) {
+                $recaptchaResponse = $r->input('g-recaptcha-response');
+                
+                if (!$this->validateRecaptcha($recaptchaResponse)) {
+                    toastr()->error('Verifikasi CAPTCHA gagal. Silakan coba lagi.', 'Error!');
+                    return redirect()->route("login", ['username' => $r->username]);
+                }
+            }
+
+            // Proses login seperti biasa
+            $data = array('username' => $r->username, 'password' => $r->password);
+            $data = $this->validate_input($data);
+
+            if ($this->validate_login($data)) {
+                if (!empty(session("role")) && session("role") == 'user') {
+                    return redirect()->route("show_page", ["role" => session("role"), "pages" => "bed"]);
+                }
+                return redirect()->route("show_page", ["role" => session("role"), "pages" => $this->formAwal]);
+            } else {
+                toastr()->error('Akses Tidak Tersedia Untuk Akun Tersebut', 'Error!');
+                return redirect()->route("login", ['username' => $r->username]);
+            }
+        } catch (\Exception $e) {
+            // Log error untuk debugging
+            \Log::error('Login error: ' . $e->getMessage());
+            toastr()->error('Terjadi kesalahan. Silakan coba lagi.', 'Error!');
+            return redirect()->route("login", ['username' => $r->username]);
+        }
+    }    
+
+
     public function validate_login($data)
     {
         $user = \DB::table('loginuser_s')

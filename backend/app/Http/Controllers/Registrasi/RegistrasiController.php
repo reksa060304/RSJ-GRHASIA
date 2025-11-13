@@ -4563,7 +4563,14 @@ class RegistrasiController extends ApiController
             $dataNoCMFk = $newId;
             $nocmfk = $dataPS->id;
             $nocmss = $dataPS->nocm;
-            if (isset($request['pasien']['image'])) {
+            //poto pasien
+            if (!empty($request['pasien']['image'])) {
+                $dataUrl = $request['pasien']['image']; 
+                Pasien::where('id', $nocmfk)->update([
+                    'foto' => $dataUrl, 
+                ]);
+            
+            // if (isset($request['pasien']['image'])) {
                 //agus
                 //                $img =  str_replace('data:image/jpeg;base64,', '', $request['pasien']['image']);
                 //                $img = str_replace(' ', '+', $img);
@@ -7808,7 +7815,7 @@ class RegistrasiController extends ApiController
             ->leftjoin('pegawai_m as pg','pg.id','=','ddp.objectpegawaifk')
             ->where('pd.kdprofile', (int)$kdProfile)
             ->where('pd.noregistrasi', '=', $request['noReg'])
-            ->whereIn('jd.id', [7,8])
+            ->whereIn('jd.id', [17,18])
             ->orderBy('jd.id', 'asc')->get();
             foreach ($inacbg as $ina) {
                 $dtdt = $dtdt . '#' .  $ina->kddiagnosa;
@@ -17713,7 +17720,7 @@ GROUP BY y.KET
                 ->join('pasiendaftar_t as pd','pd.norec','=','apd.noregistrasifk')
                 ->select('ddp.norec as norec_ddp','ddp.objectdiagnosapasienfk')
                 ->where('pd.kdprofile', (int)$kdProfile)
-                ->whereIn('ddp.objectjenisdiagnosafk', [7,8])->where('pd.norec', $request['norec_pd'])->get();
+                ->whereIn('ddp.objectjenisdiagnosafk', [17,18])->where('pd.norec', $request['norec_pd'])->get();
 
                 $dataicd9inacbg = \DB::table('detaildiagnosatindakanpasien_t as ddt')
                 ->join ('diagnosatindakanpasien_t as dtp','dtp.norec','=','ddt.objectdiagnosatindakanpasienfk')
@@ -17783,9 +17790,9 @@ GROUP BY y.KET
                     $dataDetailDiagnosa->objectdiagnosafk = $d->id_diagnosa;
                     $dataDetailDiagnosa->objectdiagnosapasienfk = $dataDiagnosa->norec;
                     if ($d->jd_id == 15) {
-                        $dataDetailDiagnosa->objectjenisdiagnosafk = 7;
+                        $dataDetailDiagnosa->objectjenisdiagnosafk = 17;
                     } else {
-                        $dataDetailDiagnosa->objectjenisdiagnosafk = 8;
+                        $dataDetailDiagnosa->objectjenisdiagnosafk = 18;
                     }
                     $dataDetailDiagnosa->tglinputdiagnosa = $tglInput->format('Y-m-d H:i:s');//$request['detaildiagnosapasien']['tglinputdiagnosa'];
                     $dataDetailDiagnosa->objectpegawaifk =  $this->getCurrentUserID();
@@ -17802,7 +17809,7 @@ GROUP BY y.KET
                     ->join('pasien_m as ps', 'ps.id', '=', 'pd.nocmfk')
                     ->select('dg.kddiagnosa','pd.norec')
         //            ->where('apd.noregistrasifk',$data[$i]->norec)
-                    ->wherein('dp.objectjenisdiagnosafk',array(7,8))
+                    ->wherein('dp.objectjenisdiagnosafk',array(17,18))
                     // ->where('pd.tglregistrasi', '>=', $filter['tglAwal'])
                     // ->where('pd.tglregistrasi', '<=', $filter['tglAkhir'])
                     ->where('pd.kdprofile',$kdProfile)

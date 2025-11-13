@@ -3,7 +3,7 @@
 
 <head>
     <meta charset="utf-8">
-    <title>Report Cetak KGB</title>
+    <title>Surat KGB : {{$data[0]->namalengkap}}</title>
     @if(stripos(\Request::url(), 'localhost') !== FALSE)
     <link href="{{ asset('css/style.css') }}" rel="stylesheet">
     <link rel="stylesheet" href="{{ asset('css/report/paper.css') }}">
@@ -322,6 +322,14 @@
         right: 5%;
     }
 </style>
+<script>
+    window.onload = function() {
+        window.print();
+    };
+    window.onafterprint = function() {
+        window.close();
+    };
+</script>
 </body>
 
 </html>

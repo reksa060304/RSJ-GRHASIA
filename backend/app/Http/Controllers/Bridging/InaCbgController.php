@@ -25,6 +25,8 @@ use DB;
 use Illuminate\Http\Request;
 use App\Traits\Valet;
 use App\Transaksi\HasilGroupingIdrg;
+use App\Transaksi\HasilLaboratorium;
+use Auth;
 use phpDocumentor\Reflection\Types\Null_;
 use Webpatser\Uuid\Uuid;
 
@@ -3526,6 +3528,593 @@ class InaCbgController   extends ApiController
             );
         }
 
+        return $this->setStatusCode($result['status'])->respond($result, $transMessage);
+    }
+
+    public function deleteGroupingInacbg(Request $request){
+        $kdProfile = (int)$this->getDataKdProfile($request);
+        DB::beginTransaction();
+        try {
+
+            if (isset($request['norec_pd'])) {
+                $delete = DB::table('hasilgrouping_t')
+                ->where("noregistrasifk",$request['norec_pd'])
+                ->delete();
+            }
+            
+
+             $transStatus = 'true';
+            $transMessage = "Delete Grouping Inacbg Berhasil! ";
+        } catch (\Exception $e) {
+            $transStatus = 'false';
+            $transMessage = "Delete Grouping Inacbg! Gagal! ";
+        }
+
+        if ($transStatus != 'false') {
+            DB::commit();
+            $result = array(
+                "status" => 201,
+                "message" => $transMessage,
+            );
+        } else {
+            DB::rollBack();
+            $result = array(
+                "status" => 400,
+                "e" => $e->getMessage(),
+                "message" => $transMessage,
+            );
+        }
+
+        // return 'sukses';
+        return $this->setStatusCode($result['status'])->respond($result, $transMessage);
+    }
+    public function deleteGroupingIdrg(Request $request){
+        $kdProfile = (int)$this->getDataKdProfile($request);
+        DB::beginTransaction();
+        try {
+
+            if (isset($request['norec_pd'])) {
+                $delete = DB::table('hasilgroupingidrg_t')
+                ->where("noregistrasifk",$request['norec_pd'])
+                ->delete();
+            }
+            
+
+             $transStatus = 'true';
+            $transMessage = "Delete Grouping Inacbg Berhasil! ";
+        } catch (\Exception $e) {
+            $transStatus = 'false';
+            $transMessage = "Delete Grouping Inacbg! Gagal! ";
+        }
+
+        if ($transStatus != 'false') {
+            DB::commit();
+            $result = array(
+                "status" => 201,
+                "message" => $transMessage,
+            );
+        } else {
+            DB::rollBack();
+            $result = array(
+                "status" => 400,
+                "e" => $e->getMessage(),
+                "message" => $transMessage,
+            );
+        }
+
+        // return 'sukses';
+        return $this->setStatusCode($result['status'])->respond($result, $transMessage);
+    }
+
+    public function getListBerkasMonitoring(Request $r){
+        $data = DB::select(DB::raw("SELECT * FROM dokklaim_m
+            where statusenabled=true 
+            and departemenfk='$r[dpid]'
+            order by nourut, namaberkas
+            "
+        ));
+        $cek = DB::table("dokklaim_t")->where('noregistrasifk',$r['noregistrasifk'])->get();
+        $res['data'] = $data;
+        $res['upload'] = $cek;
+        return $this->respond($res);
+    }
+
+    public function getParameterDok(Request $request) {
+        $kdProfile = $this->getDataKdProfile($request);
+        $idProfile = (int) $kdProfile;
+        $noregistrasi = $request['noregistrasi'];
+        $user = $request['user'];
+        $pd = PasienDaftar::where('noregistrasi',$request['noregistrasi'])->first();
+        $dataDokasuransi = DB::table("dokklaim_m")
+        ->where("id", $request['id'])
+        ->where("statusenabled", true)
+        ->first();
+
+        try {
+            $jsonData = json_decode($dataDokasuransi->config);
+            $sql = str_replace('$noregistrasi', "$noregistrasi", $jsonData->sql);
+            $sql = str_replace('$user', "$user", $sql);
+            $config = collect(DB::select($sql));
+            
+            $result = [];
+            foreach($config as $item) {
+                $parameter = "?q=q";
+                foreach($item as $fieldName => $fieldValue){
+                    $parameter .= "&$fieldName=$fieldValue";
+                }
+                array_push($result, array(
+                    "id" => $dataDokasuransi->id,
+                    "param" => $parameter,
+                    "namafile" => $dataDokasuransi->namaberkas,
+                    "url" => $dataDokasuransi->url,
+                    "noregistrasi" => $noregistrasi,
+                ));
+            }
+            if(in_array($pd->objectruanganlastfk,[838,870,873,862,850])){
+                if($request['id'] == 69 ){
+                
+                    if(count($result) == 0){
+                        $config = collect(DB::select("select distinct ps.nocm, ep.norec_apd, ep.norec as emr, epd.emrfk, pd.kdprofile, '$user' as nama from pasiendaftar_t pd inner join pasien_m ps on ps.id = pd.nocmfk inner join emrpasien_t ep on ltrim(rtrim(ep.noregistrasifk)) = pd.noregistrasi inner join emrpasiend_t epd on epd.emrpasienfk = ep.noemr where pd.noregistrasi = '$noregistrasi' and jenisemr = 'asesmen' and epd.emrfk = 291085"));
+                    }
+                    foreach($config as $item) {
+                        $parameter = "?q=q";
+                        foreach($item as $fieldName => $fieldValue){
+                            $parameter .= "&$fieldName=$fieldValue";
+                        }
+                        array_push($result, array(
+                            "id" => $dataDokasuransi->id,
+                            "param" => $parameter,
+                            "namafile" => $dataDokasuransi->namaberkas,
+                            "url" => $dataDokasuransi->url,
+                            "noregistrasi" => $noregistrasi,
+                        ));
+                    }
+                }
+            } else {
+                if($request['id'] == 3 ){
+                
+                    if(count($result) == 0){
+                        $config = collect(DB::select("select distinct ps.nocm, ep.norec_apd, ep.norec as emr, epd.emrfk, pd.kdprofile, '$user' as nama from pasiendaftar_t pd inner join pasien_m ps on ps.id = pd.nocmfk inner join emrpasien_t ep on ltrim(rtrim(ep.noregistrasifk)) = pd.noregistrasi inner join emrpasiend_t epd on epd.emrpasienfk = ep.noemr where pd.noregistrasi = '$noregistrasi' and jenisemr = 'asesmen' and epd.emrfk = 291085"));
+                    }
+                    foreach($config as $item) {
+                        $parameter = "?q=q";
+                        foreach($item as $fieldName => $fieldValue){
+                            $parameter .= "&$fieldName=$fieldValue";
+                        }
+                        array_push($result, array(
+                            "id" => $dataDokasuransi->id,
+                            "param" => $parameter,
+                            "namafile" => $dataDokasuransi->namaberkas,
+                            "url" => $dataDokasuransi->url,
+                            "noregistrasi" => $noregistrasi,
+                        ));
+                    }
+                }
+            }
+            
+            if (in_array($request['id'], [5,12,19])) {
+                $kdDepartemen = $this->settingDataFixed('KdDepartemenInstalasiLaboratorium', $idProfile);
+                $config = collect(DB::select("
+                    SELECT DISTINCT
+                        pp.norec,
+                        apd.norec AS norec_apd,
+                        ps.objectjeniskelaminfk,
+                        pg.namalengkap,
+                        ps.tgllahir
+                    FROM pelayananpasien_t AS pp
+                    INNER JOIN antrianpasiendiperiksa_t AS apd ON apd.norec = pp.noregistrasifk
+                    INNER JOIN pasiendaftar_t AS pd ON pd.norec = apd.noregistrasifk
+                    INNER JOIN pasien_m AS ps ON ps.id = pd.nocmfk
+                    INNER JOIN pegawai_m AS pg ON pg.id = apd.objectpegawaifk
+                    INNER JOIN ruangan_m AS ru ON ru.id = apd.objectruanganfk
+                    WHERE pp.kdprofile = 30
+                    AND pp.statusenabled = TRUE
+                    AND ru.objectdepartemenfk = $kdDepartemen
+                    AND pd.noregistrasi = '$noregistrasi'
+                "));
+                if (empty($config)) {
+                    return $result = array(
+                        'data' => $result,
+                    );
+                }
+                $arrayNorecPp = $config->pluck('norec')->toArray();
+                $stringNorecPp = implode(',', $arrayNorecPp);
+                $hasilLab = HasilLaboratorium::where('statusenabled', true)->whereIn('norecpelayanan', $arrayNorecPp)->whereNotNull('keterangan')->first();
+                $keterangan = '';
+                if (!empty($hasilLab)) {
+                    $keterangan = $hasilLab->keterangan;
+                }
+                $umurDay = round(abs(strtotime($config[0]->tgllahir) - strtotime(date('Y-m-d H:i'))) / (60 * 60 * 24));
+                $parameter = "?q=q&norec=" . 
+                    $config[0]->norec_apd . "&objectjeniskelaminfk=" .
+                    $config[0]->objectjeniskelaminfk . "&umur=" . 
+                    $umurDay . "&strIdPegawai=" . 
+                    $config[0]->namalengkap . "&strNorecPP=" . 
+                    $stringNorecPp . "&view=true" . "&doketr=" . 
+                    $config[0]->namalengkap . "&catatan=" . 
+                    $keterangan;
+                $result = [];
+                $result[] = array(
+                    "id" => $dataDokasuransi->id,
+                    "param" => $parameter,
+                    "namafile" => $dataDokasuransi->namaberkas,
+                    "url" => $dataDokasuransi->url,
+                    "noregistrasi" => $noregistrasi,
+                );
+            }
+
+            $result = array(
+                'data' => $result,
+            );
+
+        } catch (\Exception $e) {
+            $result = array(
+                'data' => [],
+            );
+        }
+
+        return $this->respond($result);
+    }
+
+    public function getDaftarKlaim(Request $request) {
+        $data = DB::table('pasiendaftar_t as pd')
+            ->join('pasien_m as ps','ps.id','=','pd.nocmfk')
+            ->join('ruangan_m as ru','ru.id','=','pd.objectruanganlastfk')
+            ->join('departemen_m as dep','dep.id','=','ru.objectdepartemenfk')
+            ->join('jeniskelamin_m as jk','jk.id', '=','ps.objectjeniskelaminfk')
+            ->join('pemakaianasuransi_t as pa', 'pa.noregistrasifk', '=', 'pd.norec')
+            ->leftJoin('monitoringklaim_t as mk', 'mk.nosep', '=', 'pa.nosep')
+            ->leftjoin('asuransipasien_m as asu', 'pa.objectasuransipasienfk', '=', 'asu.id')
+            ->leftJoin('kelompokpasien_m as klp','klp.id','=','pd.objectkelompokpasienlastfk')
+            ->leftjoin('hasilgrouping_t as hg', 'hg.noregistrasifk', '=', 'pd.norec')
+            ->leftJoin('pegawai_m as pg','pg.id','=','pd.objectpegawaifk')
+            // ->leftJoin('alamat_m as al','al.nocmfk','=','ps.id')
+            ->join('kelas_m as kls','kls.id','=','pd.objectkelasfk')
+            // ->join('resumemedis_t as rm','rm.noregistrasifk','=', 
+            //     DB::raw("apd.norec 
+            //         AND rm.statusenabled=true 
+            //         AND rm.keteranganlainnya='RawatJalan' 
+            //         AND rm.tglresume IS NOT NULL"
+            //         )
+            //     )
+            ->select(
+                'ru.namaruangan', 'ru.id as idruangan', 'ps.nobpjs',
+                'ps.namapasien', 'ps.nocm', 'ps.objectjeniskelaminfk', 'ps.nohp', DB::raw("to_char(ps.tgllahir,'YYYY-MM-DD') as tgllahir"), 'ps.nobpjs',
+                'pd.norec as norec_pd','pd.noregistrasi', 'pd.statusklaim', DB::raw("to_char(pd.tglregistrasi,'YYYY-MM-DD HH:mm') as tglregistrasi"), 
+                'pa.nosep', 'pa.flagprocedure','pa.statuskunjungan','pa.poliasalkode','pa.tglcreate', 'ps.noidentitas',
+                'asu.nmprovider',
+                'jk.jeniskelamin',
+                'klp.kelompokpasien',
+                'kls.namakelas',
+                'pg.namalengkap as dokter',
+                // 'rm.norec as norec_resume',
+                'mk.status as ketKlaim',
+                'hg.totalpiutangpenjamin',
+                'pd.statuskelengkapandok',
+				'pd.tglmeninggal',
+				DB::raw("to_char(pd.tglpulang,'YYYY-MM-DD HH:mm') as tglpulang"),
+                'pd.objectstatuspulangfk',
+                'dep.id as id_dep'
+            )
+            // ->whereIn('ru.objectdepartemenfk', [18,24,28,26,30,34])
+            // ->where('ru1.objectdepartemenfk','!=', 16)
+            ->whereIN('pd.statusklaim', ['send_claim_individual'])
+            ->where('pd.statusenabled',true)
+            // ->whereNull('apd.objectruanganasalfk')
+            // ->whereIN('ps.nocm', ['000041'])
+			// ->whereNotNull('hg.totalpiutangpenjamin')
+			->groupBy(
+                'ru.namaruangan', 'ru.id', 'ps.nobpjs',
+                'ps.namapasien', 'ps.nocm', 'ps.objectjeniskelaminfk', 'ps.nohp', 'ps.tgllahir', 'ps.nobpjs',
+                'pd.norec','pd.noregistrasi', 'pd.statusklaim', 'pd.tglregistrasi', 
+                'pa.nosep', 'pa.flagprocedure','pa.statuskunjungan','pa.poliasalkode','pa.tglcreate', 'ps.noidentitas',
+                'asu.nmprovider',
+                'jk.jeniskelamin',
+                'klp.kelompokpasien',
+                'kls.namakelas',
+                'pg.namalengkap',
+                // 'rm.norec',
+                'mk.status',
+                'hg.totalpiutangpenjamin',
+                'pd.statuskelengkapandok',
+				'pd.tglmeninggal',
+				'pd.tglpulang',
+                'pd.objectstatuspulangfk',
+                'dep.id'
+            )->orderBy('pd.tglpulang');
+
+        $dokklaim = \DB::table('dokklaim_t as dk')
+            ->join('dokklaim_m as dkm','dkm.id','=','dk.documentklaimfk')
+            ->join('pasiendaftar_t as pd','pd.norec','=','dk.noregistrasifk')
+            ->join('pasien_m as ps','ps.id','=','pd.nocmfk')
+            ->join('ruangan_m as ru','ru.id','=','pd.objectruanganlastfk')
+            ->join('departemen_m as dep','dep.id','=','ru.objectdepartemenfk')
+            ->Join('pemakaianasuransi_t as pa', 'pa.noregistrasifk', '=', 'pd.norec')
+            ->select('dkm.namaberkas','pd.norec as norec_pd')
+            ->groupBy('dkm.namaberkas','pd.norec')
+            ->orderBY('pd.norec')
+            ->orderBY('dkm.namaberkas')
+            ->where('dk.statusenabled',true)
+            ->whereIN('pd.statusklaim', ['send_claim_individual']);
+
+
+        if (isset($request->ispulang) && $request->ispulang == true) {
+            if (isset($request->tglAwal) && $request->tglAwal != "" && $request->tglAwal != "undefined") {
+                $data = $data->where('pd.tglpulang', '>=', $request->tglAwal);
+                $dokklaim = $dokklaim->where('pd.tglpulang', '>=', $request->tglAwal);
+            }
+            if (isset($request->tglAkhir) && $request->tglAkhir != "" && $request->tglAkhir != "undefined") {
+                $data = $data->where('pd.tglpulang', '<=', $request->tglAkhir);
+                $dokklaim = $dokklaim->where('pd.tglpulang', '<=', $request->tglAkhir);
+            }
+        } else {
+            if (isset($request->tglAwal) && $request->tglAwal != "" && $request->tglAwal != "undefined") {
+                $data = $data->where('pd.tglregistrasi', '>=', $request->tglAwal);
+                $dokklaim = $dokklaim->where('pd.tglregistrasi', '>=', $request->tglAwal);
+            }
+            if (isset($request->tglAkhir) && $request->tglAkhir != "" && $request->tglAkhir != "undefined") {
+                $data = $data->where('pd.tglregistrasi', '<=', $request->tglAkhir);
+                $dokklaim = $dokklaim->where('pd.tglregistrasi', '<=', $request->tglAkhir);
+            }
+        }
+
+          
+        if (isset($request->noregistrasi) && $request->noregistrasi != "" && $request->noregistrasi != "undefined") {
+            $data = $data->where('pd.noregistrasi', '=', $request->noregistrasi);
+            $dokklaim = $dokklaim->where('pd.noregistrasi', '=', $request->noregistrasi);
+        }
+        if (isset($request->norm) && $request->norm != "" && $request->norm != "undefined") {
+            $data = $data->where('ps.nocm', '=', $request->norm);
+            $dokklaim = $dokklaim->where('ps.nocm', '=', $request->norm);
+        }
+        if (isset($request->namapasien) && $request->namapasien != "" && $request->namapasien != "undefined") {
+            $data = $data->where('ps.namapasien', 'ilike', '%' . $request->namapasien . '%');
+            $dokklaim = $dokklaim->where('ps.namapasien', 'ilike', '%' . $request->namapasien . '%');
+        }
+        if (isset($request->ruanganid) && $request->ruanganid != "" && $request->ruanganid != "undefined") {
+            $data = $data->where('pd.objectruanganlastfk', '=', $request->ruanganid);
+            $dokklaim = $dokklaim->where('pd.objectruanganlastfk', '=', $request->ruanganid);
+        }
+        if (isset($request->depid) && $request->depid != "" && $request->depid != "undefined") {
+            $data = $data->where('dep.id', '=', $request->depid);
+            $dokklaim = $dokklaim->where('dep.id', '=', $request->depid);
+        }
+        if (isset($request->nosep) && $request->nosep != "" && $request->nosep != "undefined") {
+            $data = $data->where('pa.nosep','ilike', '%' . $request->nosep.'%');
+            $dokklaim = $dokklaim->where('pa.nosep','ilike', '%' . $request->nosep.'%');
+        }
+        if (isset($request->jenispel) && $request->jenispel != "" && $request->jenispel != "undefined") {
+            if($request->jenispel == 1){
+                $data = $data->where('dep.id',16);
+                $dokklaim = $dokklaim->where('dep.id',16);
+            } else {
+                $data = $data->where('dep.id','!=',16);
+                $dokklaim = $dokklaim->where('dep.id','!=',16);
+            }
+        }
+
+        if (isset($request['jenisdiagnosa']) && $request['jenisdiagnosa'] != '' && $request['jenisdiagnosa'] != 'undefined') {
+            $data = $data
+                ->join('antrianpasiendiperiksa_t as apd', function ($join) {
+                    $join->on('apd.noregistrasifk', '=', 'pd.norec')
+                        ->on('apd.objectruanganfk', '=', DB::raw('pd.objectruanganlastfk'));
+                })
+                ->join('diagnosapasien_t as dp', 'dp.noregistrasifk', '=', 'apd.norec')
+                ->join('detaildiagnosapasien_t as ddp', function ($join) use ($request) {
+                    $join->on('ddp.objectdiagnosapasienfk', '=', 'dp.norec')
+                        ->where('ddp.objectjenisdiagnosafk', '=', $request['jenisdiagnosa'])
+                        ->where('ddp.objectdiagnosafk', '=', $request['diagnosa']);
+                });
+        }
+            
+        $data = $data->get();
+
+        $dokklaim = $dokklaim->get();
+
+        $dokumenMap = [];
+        foreach ($dokklaim as $d) {
+            $norecPd = $d->norec_pd;
+            $namaberkas = trim($d->namaberkas);
+        
+            if (!isset($dokumenMap[$norecPd])) {
+                $dokumenMap[$norecPd] = $namaberkas;
+            } else {
+                if (strpos($dokumenMap[$norecPd], $namaberkas) === false) {
+                    $dokumenMap[$norecPd] .= " \ $namaberkas";
+                }
+            }
+        }
+
+        $dataulasan = \DB::table("ulasanklaim_t")
+			->where('statusenabled', true);
+            // ->where('tglregistrasi', '>=', $request->tglAwal)
+            // ->where('tglregistrasi', '<=', $request->tglAkhir)
+            // ->get();
+
+            if (isset($request->ispulang) && $request->ispulang == true) {
+                if (isset($request->tglAwal) && $request->tglAwal != "" && $request->tglAwal != "undefined") {
+                    $dataulasan = $dataulasan->where('tglpulang', '>=', $request->tglAwal);
+                }
+                if (isset($request->tglAkhir) && $request->tglAkhir != "" && $request->tglAkhir != "undefined") {
+                    $dataulasan = $dataulasan->where('tglpulang', '<=', $request->tglAkhir);
+                }
+            } else {
+                if (isset($request->tglAwal) && $request->tglAwal != "" && $request->tglAwal != "undefined") {
+                    $dataulasan = $dataulasan->where('tglregistrasi', '>=', $request->tglAwal);
+                }
+                if (isset($request->tglAkhir) && $request->tglAkhir != "" && $request->tglAkhir != "undefined") {
+                    $dataulasan = $dataulasan->where('tglregistrasi', '<=', $request->tglAkhir);
+                }
+            }
+        $dataulasan = $dataulasan->get();
+        $arrDataUlasan = [];
+        if($dataulasan) {
+            $arrDataUlasan = json_decode(json_encode($dataulasan), true);
+        }
+
+       
+
+        $i=0;
+        foreach($data as $item) {
+            // $cekresume = DB::table('resumemedis_t')
+            //     ->select('norec')
+            //     ->where('noregistrasifk', $item->norec_apd)
+            //     ->where('keteranganlainnya', 'RawatJalan')
+            //     ->whereNotNull('tglresume')
+            //     ->where('statusenabled', true);
+                
+            // $countresume        = $cekresume->count();
+            // $data[$i]->isresume = !empty($item->norec_resume)?'Selesai':'-';
+            // $data[$i]->norec_resume = '';
+            // if($countresume>0) {
+            //     $resresume = $cekresume->first();
+            //     $data[$i]->norec_resume = $resresume->norec;
+            // }
+           
+            $norec_pd = $item->norec_pd;
+            $filterUlasan = array_filter($arrDataUlasan, function ($val) use ($norec_pd) {
+                return ($val['noregistrasifk'] == $norec_pd);
+            });
+            $filterUlasan = array_merge($filterUlasan);
+            $ulasanBelumdibaca = array_filter($arrDataUlasan, function ($val) use ($norec_pd) {
+                return ($val['noregistrasifk'] == $norec_pd && $val['isread']==true && $val['isread']==false);
+            });
+            $data[$i]->ulasan = "Tot Ulasan ".count($filterUlasan);
+
+            $data[$i]->totalpiutangpenjamin = !empty($item->totalpiutangpenjamin)?$item->totalpiutangpenjamin:"Belum Ada";
+
+            $item->listdokumen = isset($dokumenMap[$item->norec_pd]) ? $dokumenMap[$item->norec_pd] : 'Tidak Ada';
+            $tglLahir = new \DateTime($item->tgllahir);
+            $today = new \DateTime($item->tglpulang);
+            $y = $today->diff($tglLahir)->y;
+            $m = $today->diff($tglLahir)->m;
+            $d = $today->diff($tglLahir)->d;
+            $umur = $y;
+
+            $data[$i]->umur = $umur;
+
+            $i++;
+        }
+        return $this->respond($data);
+    }
+
+    public function postDokumenKlaim(Request $request) 
+    {
+        $kdProfile = $this->getDataKdProfile($request);
+        $idProfile = (int) $kdProfile;
+        $dataReq = $request->all();
+
+        // $request->validate([
+        //      'fileBerkas'=>'required|mimes:pdf'
+        // ]);
+
+        $uploadBerkasPasien = $request->file('fileBerkas');
+        $dataRegistrasi = PasienDaftar::where('norec', $dataReq['noregistrasifk'])->first();
+        $path = 'dokumen_klaim/'.$dataRegistrasi->noregistrasi;
+
+        DB::beginTransaction();
+        try {
+            // penamaan file 
+            $extension = $uploadBerkasPasien->getClientOriginalExtension();
+            $filename = $dataReq['namafile'].'_'.$dataRegistrasi->noregistrasi.'.'.$extension;
+
+            $dataInsert = array(
+                "norec" => substr(Uuid::generate(), 0, 32),
+                "kdprofile" => $idProfile,
+                "statusenabled" => true,
+                "filename" => $filename,
+                "filepath" => $path.'/'.$filename,
+                "nocmfk" => $dataRegistrasi->nocmfk,
+                "noregistrasifk" => $dataReq['noregistrasifk'],
+                "documentklaimfk" => $dataReq['documentklaimfk'],
+                "tglupload" => date('Y-m-d H:i:s'),
+            );
+            DB::table('dokklaim_t')->updateOrInsert(["filename" => $filename], $dataInsert);;
+            $request->file('fileBerkas')->move($path, $filename);
+
+            $transStatus = true;
+        } catch (\Exception $e) {
+            $transStatus = false;
+        }
+
+        if ($transStatus) {
+            $transMessage = 'Simpan Berhasil';
+            DB::commit();
+            $result = array(
+                "status" => 201,
+                "message" => $transMessage,
+                "dokumen" => $dataInsert,
+                "as" => 'inhuman',
+            );
+        } else {
+            $transMessage = "Simpan Gagal";
+            DB::rollBack();
+            $result = array(
+                "status" => 400,
+                "message" => $transMessage,
+                "as" => 'inhuman',
+            );
+        }
+        return $this->setStatusCode($result['status'])->respond($result, $transMessage);
+    }
+
+    
+    public function deleteDokumenKlaim(Request $request)
+    {
+        $kdProfile = $this->getDataKdProfile($request);
+        $idProfile = (int) $kdProfile;
+        DB::beginTransaction();
+        try {
+            $dok_m = DB::table("dokklaim_m")->where('id',$request['documentklaimfk'])->first();
+            $dok = DB::table("dokklaim_m")->where('namaberkas',$dok_m->namaberkas)->where('statusenabled',true)->get();
+            $dok_id = [];
+            foreach($dok AS $item){
+                $dok_id[] = $item->id;
+            }
+            $dataRegistrasi = PasienDaftar::where('noregistrasi', $request['noregistrasi'])->first();
+            $Dkmn = DB::table("dokklaim_t")
+            ->where('noregistrasifk', $dataRegistrasi->norec)
+            ->where('documentklaimfk',$request['documentklaimfk'])
+            ->where('kdprofile',$idProfile)
+            ->get();
+            foreach($Dkmn as $d){
+                // delete file
+                $path = public_path($d->filepath);
+                if (\File::exists($d->filepath)){
+                    \File::delete($path);
+                }
+            }
+            
+
+            // detele data
+            DB::table("dokklaim_t")
+            ->where('noregistrasifk', $dataRegistrasi->norec)
+            ->whereIn('documentklaimfk',$dok_id)
+            ->where('kdprofile',$idProfile)
+            ->delete();
+
+            $transStatus = true;
+        } catch (\Exception $e) {
+            $transStatus = false;
+        }
+
+        if ($transStatus) {
+            $transMessage = 'Hapus Berhasil';
+            DB::commit();
+            $result = array(
+                "status" => 201,
+                "message" => $transMessage,
+                "as" => 'inhuman',
+            );
+        } else {
+            $transMessage = "Hapus Gagal";
+            DB::rollBack();
+            $result = array(
+                "status" => 400,
+                "message" => $transMessage,
+                "as" => 'inhuman',
+            );
+        }
         return $this->setStatusCode($result['status'])->respond($result, $transMessage);
     }
 }

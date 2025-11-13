@@ -371,14 +371,17 @@ class ReservasiOnlineController extends ApiController
   
             }
         
+            $statusPasien = '';
             if($request['isBaru'] == true){
                 $newptp->tipepasien = "BARU";
                 $newptp->type = "BARU";
                 $newptp->isconfirm = false; // Set isconfirm to false for new patients
+                $statusPasien = "BARU";
             }else{
                 $newptp->tipepasien = "LAMA";
                 $newptp->type = "LAMA";
                 $newptp->isconfirm = true;
+                $statusPasien = "LAMA";
             }
 //            $newptp->objectasalrujukanfk = 0;
 //            $newptp->objectstrukreturfk= 0;
@@ -445,6 +448,7 @@ class ReservasiOnlineController extends ApiController
                     'israwatinap' =>  'false',
                     'statusschedule' => $newptp->noreservasi,
                     'objectrekananfk' => $request['tipePembayaran']['id'] == 2 ? 2552 : null,
+                    'statuspasien' => $statusPasien,
                     'isjkn' => false
                 );
                 $antrianpasiendiperiksa = array(
@@ -527,12 +531,7 @@ class ReservasiOnlineController extends ApiController
         $kdProfile = $this->getDataKdProfile($request);
 
         $data = \DB::table('antrianpasienregistrasi_t as apr')
-             ->leftjoin('pasien_m as pm', function ($join){
-                $join->on('pm.id','=','apr.nocmfk');
-                $join->where('pm.statusenabled','=',true);
-             })
-            ->leftJoin('pasiendaftar_t as pd', 'pd.statusschedule', '=', 'apr.noreservasi')
-            ->leftJoin('antrianpasiendiperiksa_t as apd', 'apd.noregistrasifk', '=', 'pd.norec')
+            ->leftJoin('pasien_m as pm','pm.id','=','apr.nocmfk')
             ->leftJoin('alamat_m as alm','alm.nocmfk','=','pm.id')
             ->leftJoin('jeniskelamin_m as jk','jk.id','=','pm.objectjeniskelaminfk')
             ->leftJoin('jeniskelamin_m as jks','jks.id','=','apr.objectjeniskelaminfk')
@@ -541,77 +540,91 @@ class ReservasiOnlineController extends ApiController
             ->leftJoin('ruangan_m as ru','ru.id','=','apr.objectruanganfk')
             ->leftJoin('pegawai_m as pg','pg.id','=','apr.objectpegawaifk')
             ->leftJoin('kelompokpasien_m as kps','kps.id','=','apr.objectkelompokpasienfk')
-            ->select('apr.norec','pm.nocm','apr.noreservasi','apr.tanggalreservasi','apr.objectruanganfk','apd.noantrian',
-                'apr.objectpegawaifk','ru.namaruangan','apr.isconfirm','pg.namalengkap as dokter','pm.id as nocmfk','pd.ischeckin',
-               'pm.namapasien','apr.namapasien','alm.alamatlengkap','pk.pekerjaan','pm.noasuransilain','pm.noidentitas',
-                'apr.nobpjs','pm.nohp','pdd.pendidikan','apr.type','kps.kelompokpasien','apr.objectkelompokpasienfk','ru.objectdepartemenfk',
-                'ru.prefixnoantrian', 'apr.norujukan','apr.tanggal','apr.jamreservasi',
+            ->leftJoin('pasiendaftar_t as pd','pd.statusschedule','=','apr.noreservasi')
+            ->leftJoin('antrianpasiendiperiksa_t as apd','apd.noregistrasifk','=','pd.norec')
+            ->leftJoin('bpjsrencanakontrol_t as brk','brk.nosuratkontrol','=','apr.norujukan')
+            ->leftJoin('asuransipasien_m as asu','asu.nocmfk','=','pm.id')
+            ->select('apr.norec','apd.noantrian','pm.nocm','apr.noreservasi','apr.tanggalreservasi','apr.objectruanganfk', 'asu.objectkelasdijaminfk as hakkelasfk', 'asu.jenispeserta',
+                'apr.objectpegawaifk','ru.namaruangan','apr.isconfirm','pg.namalengkap as dokter','pm.id as nocmfk', 'pg.kddokterbpjs',
+               'pm.namapasien','apr.namapasien','alm.alamatlengkap','pk.pekerjaan','pm.noasuransilain','pm.noidentitas','brk.nosepasalkontrol',
+                'apr.nobpjs','pm.nohp','pdd.pendidikan','apr.type','kps.kelompokpasien','apr.objectkelompokpasienfk','ru.objectdepartemenfk','brk.tglrujukan',
+                'ru.prefixnoantrian','ru.kdinternal as noruangan', 'apr.norujukan','pd.norec as norec_pd','pd.tglregistrasi','apd.norec as norec_apd','pd.noregistrasi', 'apr.norujukan as noreferensi','brk.kdprovperujuk','brk.namaprovperujuk','brk.diagnosa','brk.nosuratkontrol','brk.norujukan','brk.asalrujukan','brk.kodedokter as kddokterskdp','brk.jnspelsepasal','brk.tglrencanakontrol','brk.namadokter as namadokterskdp','apr.objectasalrujukanfk',
                 DB::raw('(case when pm.namapasien is null then apr.namapasien else pm.namapasien end) as namapasien, 
                 (case when apr.isconfirm=true then \'Confirm\' else \'Reservasi\' end) as status,case when pm.tempatlahir is null then apr.tempatlahir else pm.tempatlahir end as tempatlahir,
                 case when jk.jeniskelamin is null then jks.jeniskelamin else jk.jeniskelamin end as jeniskelamin,
+                case when jk.jeniskelamin is null then jks.id else jk.id end as jk_id,
                 case when apr.tgllahir is null then pm.tgllahir else apr.tgllahir end as tgllahir,
-                apr.tanggal,apr.jamreservasi,
-                case when apr.tipepasien = \'LAMA\' then pm.nohp else  apr.notelepon end as notelepon' )
+                case when apr.tipepasien = \'LAMA\' then pm.nohp else  apr.notelepon end as notelepon,
+                case when apr.perjanjianfk is not null then  \'pasien-kontrol\' else  \'reservasi-online\' end as keterangan' )
             )
             // ->whereNull('apr.isconfirm')
             ->where('apr.noreservasi','!=','-')
             ->whereNotNull('apr.noreservasi')
-             ->where('apr.kdprofile',  $kdProfile )
+            ->where('apr.kdprofile',  $kdProfile )
+            ->where('pd.statusenabled',true)
             ->where('apr.statusenabled',true);
 
-            $status = false;
+
         if(isset($request['nocmNama']) && $request['nocmNama'] != "" && $request['nocmNama'] != "undefined" && $request['nocmNama'] != "null") {
             $data =
 
             $data->whereRaw("(pm.nocm  = '$request[nocmNama]' or apr.namapasien ilike '%$request[nocmNama]%')");
                 //  $data->where('pm.nocm', $request['nocmNama'])
                 //  -> Orwhere('apr.namapasien', 'ilike','%'.$request['nocmNama'].'%');
-            $status = true;
+
         }
-        if(isset($request['tgllahir']) && $request['tgllahir'] != "" && $request['tgllahir'] != "undefined" && $request['tgllahir'] != "null" &&  $request['tgllahir'] !='Invaliddate'  &&  $request['tgllahir'] !='Invalid date') {
+        if(isset($request['tgllahir']) && $request['tgllahir'] != "" && $request['tgllahir'] != "undefined" && $request['tgllahir'] != "null" &&  $request['tgllahir'] !='Invaliddate') {
             $tgllahir= $request['tgllahir'];
             $data =
 //                $data->whereRaw("CONVERT(varchar, pm.tgllahir, 105)  ='$tgllahir' " )
                 $data->whereRaw("to_char( apr.tgllahir, 'dd-MM-yyyy')  ='$tgllahir' " );
-            $status = true;
-
         }
 
         if(isset($request['noReservasi']) && $request['noReservasi'] != "" && $request['noReservasi'] != "undefined" && $request['noReservasi'] != "null") {
             $data =
                  $data->where('apr.noreservasi', $request['noReservasi']);
-            $status = true;
-
             
         }
         if(isset($request['nik']) && $request['nik'] != "" && $request['nik'] != "undefined" && $request['nik'] != "null") {
             $data =
                  $data->where('apr.noidentitas', $request['nik']);
-            $status = true;
-
             
         }
+        if(isset($request['id_ruangan']) && $request['id_ruangan'] != "" 
+            && $request['id_ruangan'] != "undefined" && $request['id_ruangan'] != "null") {
+            $data =  $data->where('apr.objectruanganfk', $request['id_ruangan']);
+        }
+        if(isset($request['id_dokter']) && $request['id_dokter'] != "" 
+            && $request['id_dokter'] != "undefined" && $request['id_dokter'] != "null") {
+            $data =  $data->where('apr.objectpegawaifk', $request['id_dokter']);
+        }
+        if(isset($request['dari']) && $request['dari'] != "" 
+            && $request['dari'] != "undefined" && $request['dari'] != "null") {
+            $data =  $data->where('apr.tanggalreservasi','>=', $request['dari'].' 00:00');
+        }
+        if(isset($request['sampai']) && $request['sampai'] != "" 
+            && $request['sampai'] != "undefined" && $request['sampai'] != "null") {
+            $data =  $data->where('apr.tanggalreservasi','<=', $request['sampai'].' 23:59');
+        }
+
+        if(isset($request['cekin']) && $request['cekin'] == "true"  ) {
+            $data =  $data->whereNull('apr.isconfirm');
+        }
+
+
         $data = $data->orderBy('apr.tanggalreservasi','desc');
         if(isset($request['jmlRows']) && $request['jmlRows'] != "" && $request['jmlRows'] != "undefined" && $request['jmlRows'] != "null" && $request['jmlRows'] != 0) {
             $data=$data->take($request['jmlRows']);
-            $status = true;
-
         }
 
         if(isset($request['jmlOffset']) && $request['jmlOffset'] != "" && $request['jmlOffset'] != "undefined" && $request['jmlOffset'] != "null") {
             $data=$data->offset($request['jmlOffset']);
-            $status = true;
-
         }
-        if($status == true){
-            $data = $data->get();
-        }else{
-            $data = 0;
-        }
+        $data = $data->get();
 
         $result = array(
             'data' => $data,
-            'as' => 'ramdan@epic',
+            'as' => '@epic',
         );
         return $this->respond($result);
     }

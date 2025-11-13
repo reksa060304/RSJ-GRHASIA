@@ -8464,4 +8464,1450 @@ class LaporanRekamMedisController extends   ApiController
         );
         return $this->respond($result);
     }
+
+    public function getDataRL31IndikatorPel(Request $request) {
+        $idProfile = (int) $this->getDataKdProfile($request);
+        $idDepRaJal = (int) $this->settingDataFixed('KdDepartemenRawatJalan', $idProfile);
+        $idDepRanap = (int) $this->settingDataFixed('idDepRawatInap', $idProfile);
+        $idStatKelMeninggal = (int) $this->settingDataFixed('KdStatKeluarMeninggal', $idProfile);
+        $idKondisiPasienMeninggal = (int) $this->settingDataFixed('KdKondisiPasienMeninggal≥48', $idProfile);
+        $tglAwal = $request['tglAwal'];
+        $tglAkhir = $request['tglAkhir'];
+        $tahun = new \DateTime($tglAkhir);
+        $tahun = date('Y');
+        $datetime1 = new \DateTime($tglAwal);
+        $datetime2 = new \DateTime($tglAkhir);
+        $interval = $datetime1->diff($datetime2);
+        $sehari = 1; //$interval->format('%d');
+        $data10 = [];
+    
+        // Menghitung jumlah tempat tidur per ruangan
+        $jumlahTTPerRuangan = DB::select(DB::raw("
+            SELECT 
+                ru.id AS ruangan_id,
+                ru.namaruangan AS namaruangan,
+                COUNT(tt.id) AS jumlah_tempat_tidur
+            FROM tempattidur_m AS tt
+            INNER JOIN kamar_m AS kmr ON kmr.id = tt.objectkamarfk
+            INNER JOIN ruangan_m AS ru ON ru.id = kmr.objectruanganfk
+            WHERE tt.kdprofile = $idProfile
+            AND tt.statusenabled = true
+            AND kmr.statusenabled = true
+            AND tt.reportdisplay NOT ILIKE '%cadangan%'
+            and ru.statusenabled = true
+            GROUP BY ru.id,ru.namaruangan
+        "));
+    
+        // Jika tidak ada tempat tidur, kembalikan data kosong
+        if (count($jumlahTTPerRuangan) == 0) {
+            $data10[] = array(
+                'lamarawat' => 0,
+                'hariperawatan' => 0,
+                'pasienpulang' => 0,
+                'meninggal' => 0,
+                'matilebih48' => 0,
+                'tahun' => 0,
+                'bulan' => date('d-M-Y'),
+                'bor' => 0,
+                'alos' => 0,
+                'bto' => 0,
+                'toi' => 0,
+                'gdr' => 0,
+                'ndr' => 0,
+            );
+            return $data10;
+        }
+    
+        // Query untuk menghitung hari perawatan per ruangan
+        $hariPerawatan = DB::select(DB::raw("
+            SELECT 
+                ru.id AS ruangan_id,
+                 ru.namaruangan AS namaruangan,
+                COUNT(pd.noregistrasi) AS jumlahhariperawatan
+            FROM pasiendaftar_t AS pd
+            INNER JOIN ruangan_m AS ru ON ru.id = pd.objectruanganlastfk
+            WHERE ru.objectdepartemenfk in (16,35)
+            AND pd.kdprofile = $idProfile
+            AND pd.statusenabled = true
+            and ru.statusenabled = true
+            AND ( (pd.tglregistrasi < '$tglAwal' AND pd.tglpulang >= '$tglAkhir') OR pd.tglpulang IS NULL )
+            GROUP BY ru.id,ru.namaruangan
+        "));
+    
+        // Query untuk menghitung lama rawat dan pasien pulang per ruangan
+        $lamaRawat = DB::select(DB::raw("
+            SELECT 
+                ru.id AS ruangan_id,
+                ru.namaruangan AS namaruangan,
+                SUM(DATE_PART('DAY', pd.tglpulang - pd.tglregistrasi)) AS lamarawat,
+                COUNT(pd.noregistrasi) AS jumlahpasienpulang
+            FROM pasiendaftar_t AS pd
+            INNER JOIN ruangan_m AS ru ON ru.id = pd.objectruanganlastfk
+            WHERE pd.kdprofile = $idProfile
+            AND pd.tglpulang BETWEEN '$tglAwal' AND '$tglAkhir'
+            AND pd.tglpulang IS NOT NULL
+            AND pd.statusenabled = true
+            AND ru.objectdepartemenfk in (16,35)
+            and ru.statusenabled = true
+            GROUP BY ru.id,ru.namaruangan 
+        "));
+    
+        // Query untuk menghitung jumlah pasien meninggal dan lebih dari 48 jam per ruangan
+        $dataMeninggal = DB::select(DB::raw("
+            SELECT 
+                ru.id AS ruangan_id,
+                ru.namaruangan AS namaruangan,
+                COUNT(x.noregistrasi) AS jumlahmeninggal,
+                COUNT(CASE WHEN x.objectkondisipasienfk = $idKondisiPasienMeninggal THEN 1 END) AS jumlahlebih48
+            FROM (
+                SELECT 
+                    pd.noregistrasi,
+                    pd.objectruanganlastfk,
+                    pd.objectkondisipasienfk
+                FROM pasiendaftar_t AS pd
+                INNER JOIN statuskeluar_m ON statuskeluar_m.id = pd.objectstatuskeluarfk
+                LEFT JOIN kondisipasien_m ON kondisipasien_m.id = pd.objectkondisipasienfk
+                WHERE pd.kdprofile = $idProfile
+                AND pd.objectstatuskeluarfk = $idStatKelMeninggal
+                AND pd.tglregistrasi BETWEEN '$tglAwal' AND '$tglAkhir'
+                AND pd.statusenabled = true
+            ) AS x
+            INNER JOIN ruangan_m AS ru ON ru.id = x.objectruanganlastfk
+            where ru.statusenabled = true
+            GROUP BY ru.id,ru.namaruangan
+        "));
+    
+        // Query untuk menghitung rata-rata per ruangan
+        $ratarata = DB::select(DB::raw("
+            WITH cte AS (
+                SELECT 
+                    EXTRACT(YEAR FROM month) AS year,
+                    SUM(days) AS jumlah
+                FROM (
+                    SELECT 
+                        DATE_TRUNC('month', dt) AS month,
+                        COUNT(*) AS days
+                    FROM GENERATE_SERIES(DATE '$tglAwal', DATE '$tglAkhir', INTERVAL '1 DAY') AS dt
+                    GROUP BY DATE_TRUNC('month', dt)
+                ) AS x
+                GROUP BY EXTRACT(YEAR FROM month)
+            )
+            SELECT 
+                ru.id AS ruangan_id,
+                ru.namaruangan AS namaruangan,
+                EXTRACT(YEAR FROM apd.tglmasuk) AS tgl,
+                COUNT(apd.norec) AS jumlah,
+                cte.jumlah,
+                ROUND(COUNT(apd.norec) / cte.jumlah) AS total
+            FROM antrianpasiendiperiksa_t AS apd
+            INNER JOIN ruangan_m AS ru ON ru.id = apd.objectruanganfk
+            INNER JOIN cte ON cte.year = EXTRACT(YEAR FROM apd.tglmasuk)
+            WHERE apd.tglmasuk BETWEEN '$tglAwal' AND '$tglAkhir'
+            AND apd.kdprofile = $idProfile
+            AND apd.statusenabled = true
+            AND ru.objectdepartemenfk in (16,35)
+            and ru.statusenabled = true
+            GROUP BY ru.id,apd.tglmasuk,ru.namaruangan, cte.jumlah
+        "));
+    
+        // Menghitung BOR, ALOS, dan TOI per ruangan
+        foreach ($jumlahTTPerRuangan as $ruangan) {
+            // Inisialisasi variabel dengan nilai default
+            $bor = 0;
+            $alos = 0;
+            $toi = 0;
+            $bto = 0;
+            $gdr = 0;
+            $ndr = 0;
+            $jumlahTempatTidur = $ruangan->jumlah_tempat_tidur;
+    
+            // Inisialisasi data lainnya jika tidak ada
+            $hariPerawatanJml = 0;
+            $jumlahPasienPulang = 0;
+            $lamaRawatJumlah = 0;
+            $jumlahMeninggal = 0;
+            $jumlahLebih48 = 0;
+    
+            foreach ($hariPerawatan as $hari) {
+                if ($hari->ruangan_id == $ruangan->ruangan_id) {
+                    $hariPerawatanJml = $hari->jumlahhariperawatan;
+                }
+            }
+    
+            foreach ($lamaRawat as $lama) {
+                if ($lama->ruangan_id == $ruangan->ruangan_id) {
+                    $jumlahPasienPulang = $lama->jumlahpasienpulang;
+                    $lamaRawatJumlah = $lama->lamarawat;
+                }
+            }
+    
+            foreach ($dataMeninggal as $meninggal) {
+                if ($meninggal->ruangan_id == $ruangan->ruangan_id) {
+                    $jumlahMeninggal = $meninggal->jumlahmeninggal;
+                    $jumlahLebih48 = $meninggal->jumlahlebih48;
+                }
+            }
+    
+            // Perhitungan jika ada pasien pulang
+            if ($jumlahPasienPulang > 0) {
+                $alos = $lamaRawatJumlah / $jumlahPasienPulang;
+                $bto = $jumlahPasienPulang / $jumlahTempatTidur;
+                $bor = ($hariPerawatanJml * 100) / ($jumlahTempatTidur * $sehari);
+                $toi = (($jumlahTempatTidur * $sehari) - $hariPerawatanJml) / $jumlahPasienPulang;
+                $gdr = ($jumlahMeninggal * 1000) / $jumlahPasienPulang;
+                $ndr = ($jumlahLebih48 * 1000) / $jumlahPasienPulang;
+            }
+    
+            $data10[] = array(
+                'ruangan_id' => $ruangan->ruangan_id,
+                'namaruangan' => $ruangan->namaruangan,
+                'lamarawat' => $lamaRawatJumlah,
+                'hariperawatan' => $hariPerawatanJml,
+                'pasienpulang' => $jumlahPasienPulang,
+                'meninggal' => $jumlahMeninggal,
+                'matilebih48' => $jumlahLebih48,
+                'bor' => number_format($bor, 2),
+                'alos' => number_format($alos, 2),
+                'bto' => number_format($bto, 2),
+                'toi' => number_format($toi, 2),
+                'gdr' => number_format($gdr, 2),
+                'ndr' => number_format($ndr, 2),
+            );
+        }
+    
+        // Mengirimkan hasil
+        $result = array(
+            'data' => $data10,
+            'message' => 'Success',
+        );
+        return $this->respond($result);
+    }
+
+    public function getDataRL32RawatInap(Request $request){
+        $kdProfile = $this->getDataKdProfile($request);
+        $idProfile = (int) $kdProfile;
+        $deptId = explode (',',$this->settingDataFixed('KdListDepartemen',$idProfile));
+        $KdJenisLaporan = (int) $this->settingDataFixed('KdJenisLapRanap', $idProfile);
+        $kdDepartemenRawatPelayanan = [];
+        foreach ($deptId as $items){
+            $kdDepartemenRawatPelayanan []=  (int)$items;
+        }
+        $data = DB::table('antrianpasiendiperiksa_t as app')
+            ->join('pasiendaftar_t as pd', 'pd.norec', '=', 'app.noregistrasifk')
+            ->join('asalrujukan_m as ar', 'ar.id', '=', 'app.objectasalrujukanfk')
+            ->join('pasien_m as pm', 'pm.id', '=', 'pd.nocmfk')
+            ->join('ruangan_m as ru', 'ru.id', '=', 'app.objectruanganfk')
+            ->join('departemen_m as dpm', 'dpm.id', '=', 'ru.objectdepartemenfk')
+            ->join('pelayananpasien_t as pp', 'pp.noregistrasifk', '=', 'app.norec')
+            // ->join('produk_m as pr', 'pr.id', '=', 'pp.produkfk')
+            ->join('mapproduktolaporanrl_m as mprl', 'mprl.produkfk', '=', 'pp.produkfk')
+            ->join('jenislaporan_m as jl', 'jl.id', '=', 'mprl.objectjenislaporanfk')
+            ->join('kelompoklaporan_m as kl', 'kl.id', '=', 'mprl.objectkontenlaporanfk')
+            ->join('pegawai_m as pg', 'pg.id', '=', 'pd.objectpegawaifk')
+            ->join('kelas_m as kls', 'kls.id', '=', 'app.objectkelasfk')
+            ->leftjoin('statuskeluar_m as sk', 'sk.id', '=', 'pd.objectstatuskeluarfk')
+            ->join('jeniskelamin_m as jk', 'jk.id', '=', 'pm.objectjeniskelaminfk')
+            ->select(
+                'pd.tglregistrasi',
+                'pm.nocm',
+                'pd.noregistrasi',
+                'pm.namapasien',
+                'app.objectasalrujukanfk',
+                'ar.asalrujukan',
+                'ru.namaruangan',
+                'dpm.namadepartemen',
+                'pg.namalengkap',
+                'pm.objectjeniskelaminfk',
+                'ru.objectdepartemenfk',
+                'pd.objectstatuskeluarfk as objectstatuskeluarfk',
+                'pd.objectkelasfk as objectkelasfk',
+                'kl.kelompoklaporan as jenis_spesialisasi',
+                'jl.jenislaporan',
+                // 'pr.id as produkfk',
+                DB::raw(
+                    "
+                    CASE
+                        WHEN pd.tglpulang IS NULL THEN
+                        DATE_PART('day', now() - pd.tglregistrasi::timestamp)
+                        ELSE
+                        DATE_PART('day', pd.tglpulang::TIMESTAMP - pd.tglregistrasi::timestamp)
+                        END AS lamadirawat,
+                        to_char( pd.tglregistrasi,'MM') as bulanregistrasi,
+                        to_char( pd.tglregistrasi,'DD') as hariregistrasi,
+                        to_char( pd.tglregistrasi,'YYYY-MM-DD') as tglregistrasi"
+                )
+
+            )
+            ->where('app.kdprofile', $idProfile)
+            ->whereIn('dpm.id',$kdDepartemenRawatPelayanan)
+            ->where('jl.id',$KdJenisLaporan);
+
+        if (isset($request['tglAwal']) && $request['tglAwal'] != "" && $request['tglAwal'] != "undefined") {
+            $data = $data->where('pd.tglregistrasi', '>=', $request['tglAwal']);
+        }
+        if (isset($request['tglAkhir']) && $request['tglAkhir'] != "" && $request['tglAkhir'] != "undefined") {
+            $tgl = $request['tglAkhir'];
+            $data = $data->where('pd.tglregistrasi', '<=', $tgl);
+        }
+
+        $data = $data->get();
+
+        $data10 = [];
+        $jml = 0;
+        $sama = false;
+
+        $pasienAwalBulan = 0;
+        $pasienMasuk = 0;
+        $pasienKeluarHidup = 0;
+        $matilebih48jaml = 0;
+        $matilebih48jamp = 0;
+        $matikurang48jaml = 0;
+        $matikurang48jamp = 0;
+        $jumlahLamaDirawat = 0;
+        $pasienAkhirBulan = 0;
+        $jumlahHariDirawat = 0;
+        $rincianVvip = 0;
+        $rincianVip = 0;
+        $rincianKel1 = 0;
+        $rincianKel2 = 0;
+        $rincianKel3 = 0;
+        $rincianKelasKhusus = 0;
+        $DiTerimaKembali = 0;
+
+
+        foreach ($data as $item) {
+            $sama = false;
+            $i = 0;
+            foreach ($data10 as $hideung) {
+                if ($item->jenis_spesialisasi == $data10[$i]['jenis_spesialisasi']) {
+                    $sama = true;
+                    $jml = (float)$hideung['jumlah'] + 1;
+                    $data10[$i]['jumlah'] = $jml;
+
+                    if (date('d', strtotime($item->tglregistrasi)) == '01') {
+                        $data10[$i]['pasienawalbulan'] = (float)$hideung['pasienawalbulan'] + 1;
+                    } else if (date('d', strtotime($item->tglregistrasi)) == date('t', strtotime($item->tglregistrasi))) {
+                        $data10[$i]['pasienakhirbulan'] = (float)$hideung['pasienakhirbulan'] + 1;
+                    } else if ($item->objectdepartemenfk == 16 || $item->objectdepartemenfk == 25) {
+                        $data10[$i]['pasienmasuk'] = (float)$hideung['pasienmasuk'] + 1;
+                    } elseif ($item->objectstatuskeluarfk != 5) {
+                        $data10[$i]['pasienkeluarhidup'] = (float)$hideung['pasienkeluarhidup'] + 1;
+                    } elseif ($item->objectstatuskeluarfk == 5 && $item->lamadirawat < 48 && $item->objectjeniskelaminfk == 1) {
+                        $data10[$i]['matikurang48jaml'] = (float)$hideung['matikurang48jaml'] + 1;
+                    } elseif ($item->objectstatuskeluarfk == 5 && $item->lamadirawat < 48 && $item->objectjeniskelaminfk == 2) {
+                        $data10[$i]['matikurang48jamp'] = (float)$hideung['matikurang48jamp'] + 1;
+                    } elseif ($item->objectstatuskeluarfk == 5 && $item->lamadirawat > 48 && $item->objectjeniskelaminfk == 1) {
+                        $data10[$i]['matilebih48jaml'] = (float)$hideung['matilebih48jaml'] + 1;
+                    } elseif ($item->objectstatuskeluarfk == 5 && $item->lamadirawat > 48 && $item->objectjeniskelaminfk == 2) {
+                        $data10[$i]['matilebih48jamp'] = (float)$hideung['matilebih48jamp'] + 1;
+                    }
+
+                    if ($item->objectkelasfk == 8) {
+                        $data10[$i]['rincianvvip'] = (float)$hideung['rincianvvip'] + 1;
+                    } elseif ($item->objectkelasfk == 4) {
+                        $data10[$i]['rincianvip'] = (float)$hideung['rincianvip'] + 1;
+                    } elseif ($item->objectkelasfk == 3) {
+                        $data10[$i]['rinciankel1'] = (float)$hideung['rinciankel1'] + 1;
+                    } elseif ($item->objectkelasfk == 2) {
+                        $data10[$i]['rinciankel2'] = (float)$hideung['rinciankel2'] + 1;
+                    } elseif ($item->objectkelasfk == 1) {
+                        $data10[$i]['rinciankel3'] = (float)$hideung['rinciankel3'] + 1;
+                    } elseif ($item->objectkelasfk == 6 && $item->objectkelasfk == 9 ) {
+                        $data10[$i]['rinciankelaskhusus'] = (float)$hideung['rinciankelaskhusus'] + 1;
+                    }
+                }
+                $i = $i + 1;
+            }
+
+            if ($sama == false) {
+                if (date('d', strtotime($item->tglregistrasi)) == '01') {
+                    $pasienAwalbulan = 1;
+                    $pasienMasuk = 0;
+                    $pasienKeluarHidup = 0;
+                    $matilebih48jaml = 0;
+                    $matilebih48jamp = 0;
+                    $matikurang48jaml = 0;
+                    $matikurang48jamp = 0;
+                    $jumlahLamaDirawat = 0;
+                    $pasienAkhirbulan = 0;
+                    $jumlahHariDirawat = 0;
+                    $rincianVvip = 0;
+                    $rincianVip = 0;
+                    $rincianKel1 = 0;
+                    $rincianKel2 = 0;
+                    $rincianKel3 = 0;
+                    $rincianKelasKhusus = 0;
+                    $DiTerimaKembali = 0;
+                } else if (date('d', strtotime($item->tglregistrasi)) == date('t', strtotime($item->tglregistrasi))) {
+                    $pasienAwalbulan = 0;
+                    $pasienMasuk = 0;
+                    $pasienKeluarHidup = 0;
+                    $matilebih48jaml = 0;
+                    $matilebih48jamp = 0;
+                    $matikurang48jaml = 0;
+                    $matikurang48jamp = 0;
+                    $jumlahLamaDirawat = 0;
+                    $pasienAkhirbulan = 1;
+                    $jumlahHariDirawat = 0;
+                    $rincianVvip = 0;
+                    $rincianVip = 0;
+                    $rincianKel1 = 0;
+                    $rincianKel2 = 0;
+                    $rincianKel3 = 0;
+                    $rincianKelasKhusus = 0;
+                    $DiTerimaKembali = 0;
+                } else if ($item->objectdepartemenfk == 16 || $item->objectdepartemenfk == 25) {
+                    $pasienAwalbulan = 0;
+                    $pasienMasuk = 1;
+                    $pasienKeluarHidup = 0;
+                    $matilebih48jaml = 0;
+                    $matilebih48jamp = 0;
+                    $matikurang48jaml = 0;
+                    $matikurang48jamp = 0;
+                    $jumlahLamaDirawat = 0;
+                    $pasienAkhirbulan = 0;
+                    $jumlahHariDirawat = 0;
+                    $rincianVvip = 0;
+                    $rincianVip = 0;
+                    $rincianKel1 = 0;
+                    $rincianKel2 = 0;
+                    $rincianKel3 = 0;
+                    $rincianKelasKhusus = 0;
+                    $DiTerimaKembali = 0;
+                } elseif ($item->objectstatuskeluarfk != 5) {
+                    $pasienAwalbulan = 0;
+                    $pasienMasuk = 0;
+                    $pasienKeluarHidup = 1;
+                    $matilebih48jaml = 0;
+                    $matilebih48jamp = 0;
+                    $matikurang48jaml = 0;
+                    $matikurang48jamp = 0;
+                    $jumlahLamaDirawat = 0;
+                    $pasienAkhirbulan = 0;
+                    $jumlahHariDirawat = 0;
+                    $rincianVvip = 0;
+                    $rincianVip = 0;
+                    $rincianKel1 = 0;
+                    $rincianKel2 = 0;
+                    $rincianKel3 = 0;
+                    $rincianKelasKhusus = 0;
+                    $DiTerimaKembali = 0;
+                } elseif ($item->objectstatuskeluarfk == 5 && $item->lamadirawat < 48 && $item->objectjeniskelaminfk == 1) {
+                    $pasienAwalbulan = 0;
+                    $pasienMasuk = 0;
+                    $pasienKeluarHidup = 0;
+                    $matilebih48jaml = 0;
+                    $matilebih48jamp = 0;
+                    $matikurang48jaml = 1;
+                    $matikurang48jamp = 0;
+                    $jumlahLamaDirawat = 0;
+                    $pasienAkhirbulan = 0;
+                    $jumlahHariDirawat = 0;
+                    $rincianVvip = 0;
+                    $rincianVip = 0;
+                    $rincianKel1 = 0;
+                    $rincianKel2 = 0;
+                    $rincianKel3 = 0;
+                    $rincianKelasKhusus = 0;
+                    $DiTerimaKembali = 0;
+                } elseif ($item->objectstatuskeluarfk == 5 && $item->lamadirawat < 48 && $item->objectjeniskelaminfk == 2) {
+                    $pasienAwalbulan = 0;
+                    $pasienMasuk = 0;
+                    $pasienKeluarHidup = 0;
+                    $matilebih48jaml = 0;
+                    $matilebih48jamp = 0;
+                    $matikurang48jaml = 0;
+                    $matikurang48jamp = 1;
+                    $jumlahLamaDirawat = 0;
+                    $pasienAkhirbulan = 0;
+                    $jumlahHariDirawat = 0;
+                    $rincianVvip = 0;
+                    $rincianVip = 0;
+                    $rincianKel1 = 0;
+                    $rincianKel2 = 0;
+                    $rincianKel3 = 0;
+                    $rincianKelasKhusus = 0;
+                    $DiTerimaKembali = 0;
+                } elseif ($item->objectstatuskeluarfk == 5 && $item->lamadirawat > 48 && $item->objectjeniskelaminfk == 1) {
+                    $pasienAwalbulan = 0;
+                    $pasienMasuk = 0;
+                    $pasienKeluarHidup = 0;
+                    $matilebih48jaml = 1;
+                    $matilebih48jamp = 0;
+                    $matikurang48jaml = 0;
+                    $matikurang48jamp = 0;
+                    $jumlahLamaDirawat = 0;
+                    $pasienAkhirbulan = 0;
+                    $jumlahHariDirawat = 0;
+                    $rincianVvip = 0;
+                    $rincianVip = 0;
+                    $rincianKel1 = 0;
+                    $rincianKel2 = 0;
+                    $rincianKel3 = 0;
+                    $rincianKelasKhusus = 0;
+                    $DiTerimaKembali = 0;
+                } elseif ($item->objectstatuskeluarfk == 5 && $item->lamadirawat > 48 && $item->objectjeniskelaminfk == 2) {
+                    $pasienAwalbulan = 0;
+                    $pasienMasuk = 0;
+                    $pasienKeluarHidup = 0;
+                    $matilebih48jaml = 0;
+                    $matilebih48jamp = 1;
+                    $matikurang48jaml = 0;
+                    $matikurang48jamp = 0;
+                    $jumlahLamaDirawat = 0;
+                    $pasienAkhirbulan = 0;
+                    $jumlahHariDirawat = 0;
+                    $rincianVvip = 0;
+                    $rincianVip = 0;
+                    $rincianKel1 = 0;
+                    $rincianKel2 = 0;
+                    $rincianKel3 = 0;
+                    $rincianKelasKhusus = 0;
+                    $DiTerimaKembali = 0;
+                }
+                if ($item->objectkelasfk == 8) {
+                    $pasienAwalbulan = 0;
+                    $pasienMasuk = 0;
+                    $pasienKeluarHidup = 0;
+                    $matilebih48jaml = 0;
+                    $matilebih48jamp = 0;
+                    $matikurang48jaml = 0;
+                    $matikurang48jamp = 0;
+                    $jumlahLamaDirawat = 0;
+                    $pasienAkhirbulan = 0;
+                    $jumlahHariDirawat = 0;
+                    $rincianVvip = 1;
+                    $rincianVip = 0;
+                    $rincianKel1 = 0;
+                    $rincianKel2 = 0;
+                    $rincianKel3 = 0;
+                    $rincianKelasKhusus = 0;
+                    $DiTerimaKembali = 0;
+                } elseif ($item->objectkelasfk == 5) {
+                    $pasienAwalbulan = 0;
+                    $pasienMasuk = 0;
+                    $pasienKeluarHidup = 0;
+                    $matilebih48jaml = 0;
+                    $matilebih48jamp = 0;
+                    $matikurang48jaml = 0;
+                    $matikurang48jamp = 0;
+                    $jumlahLamaDirawat = 0;
+                    $pasienAkhirbulan = 0;
+                    $jumlahHariDirawat = 0;
+                    $rincianVvip = 0;
+                    $rincianVip = 1;
+                    $rincianKel1 = 0;
+                    $rincianKel2 = 0;
+                    $rincianKel3 = 0;
+                    $rincianKelasKhusus = 0;
+                    $DiTerimaKembali = 0;
+                } elseif ($item->objectkelasfk == 3) {
+                    $pasienAwalbulan = 0;
+                    $pasienMasuk = 0;
+                    $pasienKeluarHidup = 0;
+                    $matilebih48jaml = 0;
+                    $matilebih48jamp = 0;
+                    $matikurang48jaml = 0;
+                    $matikurang48jamp = 0;
+                    $jumlahLamaDirawat = 0;
+                    $pasienAkhirbulan = 0;
+                    $jumlahHariDirawat = 0;
+                    $rincianVvip = 0;
+                    $rincianVip = 0;
+                    $rincianKel1 = 1;
+                    $rincianKel2 = 0;
+                    $rincianKel3 = 0;
+                    $rincianKelasKhusus = 0;
+                    $DiTerimaKembali = 0;
+                } elseif ($item->objectkelasfk == 2) {
+                    $pasienAwalbulan = 0;
+                    $pasienMasuk = 0;
+                    $pasienKeluarHidup = 0;
+                    $matilebih48jaml = 0;
+                    $matilebih48jamp = 0;
+                    $matikurang48jaml = 0;
+                    $matikurang48jamp = 0;
+                    $jumlahLamaDirawat = 0;
+                    $pasienAkhirbulan = 0;
+                    $jumlahHariDirawat = 0;
+                    $rincianVvip = 0;
+                    $rincianVip = 0;
+                    $rincianKel1 = 0;
+                    $rincianKel2 = 1;
+                    $rincianKel3 = 0;
+                    $rincianKelasKhusus = 0;
+                    $DiTerimaKembali = 0;
+                } elseif ($item->objectkelasfk == 1) {
+                    $pasienAwalbulan = 0;
+                    $pasienMasuk = 0;
+                    $pasienKeluarHidup = 0;
+                    $matilebih48jaml = 0;
+                    $matilebih48jamp = 0;
+                    $matikurang48jaml = 0;
+                    $matikurang48jamp = 0;
+                    $jumlahLamaDirawat = 0;
+                    $pasienAkhirbulan = 0;
+                    $jumlahHariDirawat = 0;
+                    $rincianVvip = 0;
+                    $rincianVip = 0;
+                    $rincianKel1 = 0;
+                    $rincianKel2 = 0;
+                    $rincianKel3 = 1;
+                    $rincianKelasKhusus = 0;
+                    $DiTerimaKembali = 0;
+                } elseif ($item->objectkelasfk == 6 && $item->objectkelasfk == 8) {
+                    $pasienAwalbulan = 0;
+                    $pasienMasuk = 0;
+                    $pasienKeluarHidup = 0;
+                    $matilebih48jaml = 0;
+                    $matilebih48jamp = 0;
+                    $matikurang48jaml = 0;
+                    $matikurang48jamp = 0;
+                    $jumlahLamaDirawat = 0;
+                    $pasienAkhirbulan = 0;
+                    $jumlahHariDirawat = 0;
+                    $rincianVvip = 0;
+                    $rincianVip = 0;
+                    $rincianKel1 = 0;
+                    $rincianKel2 = 0;
+                    $rincianKel3 = 0;
+                    $rincianKelasKhusus = 1;
+                    $DiTerimaKembali = 0;
+                }
+
+                $data10[] = array(
+                    'jenis_spesialisasi' => $item->jenis_spesialisasi,
+                    'pasienmasuk' => $pasienMasuk,
+                    'lamadirawat' => $item->lamadirawat,
+                    'pasienawalbulan' => $pasienAwalBulan,
+                    'pasienakhirbulan' => $pasienAkhirBulan,
+                    'pasienkeluarhidup' => $pasienKeluarHidup,
+                    'matilebih48jaml' => $matilebih48jaml,
+                    'matilebih48jamp' => $matilebih48jamp,
+                    'matikurang48jaml' => $matikurang48jaml,
+                    'matikurang48jamp' => $matikurang48jamp,
+                    'jumlahlamadirawat' => $jumlahLamaDirawat,
+                    // 'pasienakhirtahun' => $pasienAkhirTahun,
+                    'jumlahharidirawat' => $jumlahHariDirawat,
+                    'rincianvvip' => $rincianVvip,
+                    'rincianvip' => $rincianVip,
+                    'rinciankel1' => $rincianKel1,
+                    'rinciankel2' => $rincianKel2,
+                    'rinciankel3' => $rincianKel3,
+                    'rinciankelaskhusus' => $rincianKelasKhusus,
+                    'jumlah' => 1,
+                );
+            }
+
+            foreach ($data10 as $key => $row) {
+                $count[$key] = $row['jumlah'];
+            }
+
+            array_multisort($count, SORT_DESC, $data10);
+        }
+
+        $result = array(
+            'data' => $data10,
+            'message' => 'as@cepot',
+        );
+
+        return $this->respond($result);
+    }
+
+    public function getRL310Rujukan(Request $request){
+        $kdProfile = (int) $this->getDataKdProfile($request);
+        $KdJenisLapRujukan = (int) $this->settingDataFixed('KdJenisLapRujukan', $kdProfile);
+        $data = \DB::table('antrianpasiendiperiksa_t as app')
+            ->join('pasiendaftar_t as pd', 'pd.norec', '=', 'app.noregistrasifk')
+            ->join('pelayananpasien_t as pp', 'pp.noregistrasifk', '=', 'app.norec')
+            ->join('produk_m as pr', 'pr.id', '=', 'pp.produkfk')
+            ->join('mapproduktolaporanrl_m as mprl', 'mprl.produkfk', '=', 'pp.produkfk')
+            ->join('jenislaporan_m as jl', 'jl.id', '=', 'mprl.objectjenislaporanfk')
+            ->join('kelompoklaporan_m as kl', 'kl.id', '=', 'mprl.objectkontenlaporanfk')
+            ->join('asalrujukan_m as ar', 'ar.id', '=', 'app.objectasalrujukanfk')
+            ->join('pasien_m as pm', 'pm.id', '=', 'pd.nocmfk')
+            ->join('ruangan_m as ru', 'ru.id', '=', 'pd.objectruanganlastfk')
+            ->join('departemen_m as dpm', 'dpm.id', '=', 'ru.objectdepartemenfk')
+            ->join('pegawai_m as pg', 'pg.id', '=', 'pd.objectpegawaifk')
+            ->join('jeniskelamin_m as jk', 'jk.id', '=', 'pm.objectjeniskelaminfk')
+            ->leftJoin('statuspulang_m as splng', 'splng.id', '=', 'pd.objectstatuspulangfk')
+            ->leftJoin('statuskeluar_m as sklr', 'sklr.id', '=', 'pd.objectstatuskeluarfk')
+            ->select(
+                'pd.tglregistrasi', 'pm.nocm', 'pd.noregistrasi', 'pm.namapasien',
+                'ar.asalrujukan', 'ru.namaruangan', 'dpm.namadepartemen', 'pg.namalengkap',
+                'splng.statuspulang', 'sklr.statuskeluar', 'kl.kelompoklaporan as jenis_spesialisasi', 'app.objectasalrujukanfk', 'pd.objectstatuspulangfk'
+            )
+            ->where('app.kdprofile', $kdProfile)
+            ->where('jl.id', $KdJenisLapRujukan);
+        
+        if (!empty($request['tglAwal'])) {
+            $data = $data->where('pd.tglregistrasi', '>=', $request['tglAwal']);
+        }
+        if (!empty($request['tglAkhir'])) {
+            $data = $data->where('pd.tglregistrasi', '<=', $request['tglAkhir']);
+        }
+        
+        $data = $data->get();
+        $dataSummary = [];
+        
+        foreach ($data as $item) {
+            $jenis = $item->jenis_spesialisasi;
+            if (!isset($dataSummary[$jenis])) {
+                $dataSummary[$jenis] = [
+                    'jenis_spesialisasi' => $jenis,
+                    'jumlah' => 0,
+                    'dtgsendiri' => 0,
+                    'puskesmas' => 0,
+                    'hospital' => 0,
+                    'klinik' => 0,
+                    'PasienRujukan' => 0,
+                    'DTrmaKembali' => 0,
+                    'DKembalikanKRs' => 0,
+                    'DKembalikanKPuskes' => 0,
+                    'DKembalikanKKlinik' => 0,
+                    'Total_masuk' => 0,
+                    'Total_dkmbalikn' => 0,
+                    'Total_drujuk' => 0
+                ];
+            }
+        
+            $dataSummary[$jenis]['jumlah']++;
+            switch ($item->objectasalrujukanfk) {
+                case 5: $dataSummary[$jenis]['dtgsendiri']++; break;
+                case 1: $dataSummary[$jenis]['puskesmas']++; break;
+                case 2: $dataSummary[$jenis]['hospital']++; break;
+                case 3: $dataSummary[$jenis]['klinik']++; break;
+                case 4: $dataSummary[$jenis]['PasienRujukan']++; break;
+                case 6: $dataSummary[$jenis]['DTrmaKembali']++; break;
+            }
+        
+            switch ($item->objectstatuspulangfk) {
+                case 5: $dataSummary[$jenis]['DKembalikanKRs']++; break;
+                case 10: $dataSummary[$jenis]['DKembalikanKPuskes']++; break;
+                case 11: $dataSummary[$jenis]['DKembalikanKKlinik']++; break;
+            }
+        
+            if (in_array($item->objectasalrujukanfk, [1, 2, 3])) {
+                $dataSummary[$jenis]['Total_masuk']++;
+            }
+            if (in_array($item->objectstatuspulangfk, [5, 10, 11])) {
+                $dataSummary[$jenis]['Total_dkmbalikn']++;
+            }
+            if (in_array($item->objectasalrujukanfk, [5, 4])) {
+                $dataSummary[$jenis]['Total_drujuk']++;
+            }
+        }
+        
+        $data = array_values($dataSummary);
+
+        $result = array(
+            'data' => $data,
+            'message' => 'maman',
+        );
+        return $this->respond($result);
+    }
+
+    public function getLaporanRL39Rad(Request $request){
+        $idProfile = (int) $this->getDataKdProfile($request);
+        $dataLogin = $request->all();
+        $KdJenisLapRadiologi = (int) $this->settingDataFixed('KdJenisLapRadiologi', $idProfile);
+
+        //////With Mapping****
+        $data = \DB::table('antrianpasiendiperiksa_t as apd')
+            ->join('ruangan_m as ru', 'ru.id', '=', 'apd.objectruanganfk')
+            ->join('departemen_m as dpm', 'dpm.id', '=', 'ru.objectdepartemenfk')
+            ->join('pelayananpasien_t as pp', 'pp.noregistrasifk', '=', 'apd.norec')
+            ->join('produk_m as pr', 'pr.id', '=', 'pp.produkfk')
+            ->join('mapproduktolaporanrl_m as mpptrl','mpptrl.produkfk','=','pr.id')
+            ->join('kelompoklaporan_m as kl','kl.id','=','mpptrl.objectkontenlaporanfk')
+            ->join('jenislaporan_m as jl','jl.id','=','mpptrl.objectjenislaporanfk')
+            ->select('jl.jenislaporan','kl.kelompoklaporan',
+                (DB::raw('COUNT(mpptrl.objectkontenlaporanfk) as jumlah')
+                )
+            )
+            ->where('apd.kdprofile', $idProfile)
+            ->where('jl.id',$KdJenisLapRadiologi)
+            ->groupBy('mpptrl.objectkontenlaporanfk','jl.jenislaporan','kl.kelompoklaporan');
+
+        if (isset($request['tglAwal']) && $request['tglAwal'] != "" && $request['tglAwal'] != "undefined") {
+            $data = $data->where('pp.tglpelayanan', '>=', $request['tglAwal']);
+        }
+        if (isset($request['tglAkhir']) && $request['tglAkhir'] != "" && $request['tglAkhir'] != "undefined") {
+            $tgl = $request['tglAkhir'];
+            $data = $data->where('pp.tglpelayanan', '<=', $tgl);
+        }
+
+        $data = $data->get();
+        $result = array(
+        //  'data' => $data10,
+            'data' => $data,
+            'message' => 'er@epic',
+
+        );
+
+        return $this->respond($result);
+    }
+
+    public function getPengadaanObatRl(Request $request){
+        $kdProfile = (int) $this->getDataKdProfile($request);
+        $KdJenisLapFarmasi = (int) $this->settingDataFixed('KdJenisLapFarmasi', $kdProfile);
+        //        $dataLogin = $request->all();
+        //
+        //        $data = \DB::table('produk_m as prd')
+        //            ->join('stokprodukdetail_t as spd','spd.objectprodukfk','=','prd.id')
+        //            ->join('ruangan_m as ru','ru.id','=','spd.objectruanganfk')
+        //            ->join('departemen_m as dpm','dpm.id','=','ru.objectdepartemenfk')
+        //
+        //            ->select('prd.namaproduk', 'spd.qtyproduk','spd.objectruanganfk','ru.namaruangan','ru.objectdepartemenfk',
+        //                'prd.id as idproduk', 'prd.isgeneric', 'spd.tglpelayanan',
+        //
+        ////            case when prd.isgeneric = true then 'Obat Generik(Formularium + Non Formularium)'
+        //                DB::raw('(case when prd.objectstatusprodukfk = 1 and prd.isgeneric =\'f\' THEN \'Obat Non Generik Non Formularium\'
+        //                          when prd.objectstatusprodukfk = 2 and prd.isgeneric =\'f\' THEN \'Obat Non Generik Formularium\'
+        //                          else \'Obat Generik(Formularium + Non Formularium)\' end) as detailobat'
+        //                )
+        //            )
+        //
+        //            ->where('prd.objectdetailjenisprodukfk', 474);
+        //
+        //        if (isset($request['tglAwal']) && $request['tglAwal'] != "" && $request['tglAwal'] != "undefined") {
+        //            $data = $data->where('spd.tglpelayanan', '>=', $request['tglAwal']);
+        //        }
+        //        if (isset($request['tglAkhir']) && $request['tglAkhir'] != "" && $request['tglAkhir'] != "undefined") {
+        //            $tgl = $request['tglAkhir'];
+        //            $data = $data->where('spd.tglpelayanan', '<=', $tgl);
+        //        }
+        //        $data = $data->get();
+        //
+        //        $data10 = [];
+        //        $jml = 0;
+        //        $sama = false;
+        //
+        //        $JmlGenerik = 0;
+        //        $stokFormula = 0;
+        //        $stokObat =0;
+        //
+        //        foreach ($data as $item) {
+        //            $sama = false;
+        //            $i = 0;
+        //            foreach ($data10 as $hideung) {
+        //                if ($item->detailobat == $data10[$i]['detailobat']) {
+        //                    $sama = true;
+        //                    $jml = (float)$hideung['jumlah'] + 1;
+        //                    $data10[$i]['jumlah'] = $jml;
+        //
+        //                    if ($item->isgeneric == true)
+        //                    {
+        //                        $data10[$i]['JmlGeneric'] = (float)$hideung['JmlGeneric'] + 1;
+        //                    }
+        //                    $data10[$i]['Total'] = (float)$hideung['Total'] + 1;
+        //                    $data10[$i]['Totalitem'] = (float)$hideung['Total'] + $data10[$i]['JmlGeneric'];
+        //
+        //                }
+        //                $i = $i + 1;
+        //            }
+        //
+        //            if ($sama == false) {
+        //
+        //                if ($item->isgeneric == true)
+        //                {
+        //                    $JmlGenerik = 1;
+        //                    $stokFormula = 0;
+        //                    $stokObat =0;
+        //                }
+        //
+        //                $data10[] = array(
+        //                    'detailobat' => $item->detailobat,
+        //                    'Total' => 1,
+        //                    'JmlGeneric' => $JmlGenerik,
+        //                    'Totalitem' => 1 + $JmlGenerik,
+        //                    'jumlah' => 1,
+        //                );
+        //            }
+        //
+        //            foreach ($data10 as $key => $row) {
+        //                $count[$key] = $row['jumlah'];
+        //            }
+        //
+        //            array_multisort($count, SORT_DESC, $data10);
+        //        }
+        //
+        //        $result = array(
+        //            'data' => $data10,
+        //            'message' => 'as@cepot',
+        //        );
+        //        return $this->respond($result);
+
+
+        //    #with Mapping
+        $data = \DB::table('produk_m as prd')
+            ->join('stokprodukdetail_t as spd','spd.objectprodukfk','=','prd.id')
+            ->join('mapproduktolaporanrl_m as mprl','mprl.produkfk','=','spd.objectprodukfk')
+            ->join('jenislaporan_m as jl','jl.id','=','mprl.objectjenislaporanfk')
+            ->join('kelompoklaporan_m as kl','kl.id','=','mprl.objectkontenlaporanfk')
+            ->join('ruangan_m as ru','ru.id','=','spd.objectruanganfk')
+            ->join('departemen_m as dpm','dpm.id','=','ru.objectdepartemenfk')
+            ->select('prd.namaproduk',
+                'kl.kelompoklaporan as detailobat',
+                DB::raw('count(prd.id) as jumlahitem,sum(spd.qtyproduk) as jumlahtersedia'))
+            ->groupBy('prd.namaproduk','prd.id','kl.kelompoklaporan')
+            ->where('prd.kdprofile', $kdProfile)
+            ->where('jl.id', $KdJenisLapFarmasi);
+
+        if (isset($request['tglAwal']) && $request['tglAwal'] != "" && $request['tglAwal'] != "undefined") {
+            $data = $data->where('spd.tglpelayanan', '>=', $request['tglAwal']);
+        }
+        if (isset($request['tglAkhir']) && $request['tglAkhir'] != "" && $request['tglAkhir'] != "undefined") {
+            $tgl = $request['tglAkhir'];
+            $data = $data->where('spd.tglpelayanan', '<=', $tgl);
+        }
+        $data = $data->get();
+
+        $data10 = [];
+        foreach ($data as $item) {
+            $sama = false;
+            $i = 0;
+            foreach ($data10 as $hideung) {
+                if ($item->detailobat == $data10[$i]['detailobat']) {
+                    $sama = true;
+                    $jml = (float)$hideung['jumlah'] + 1;
+                    $data10[$i]['jumlah'] = $jml;
+                }
+                $i = $i + 1;
+            }
+
+            if ($sama == false) {
+
+                $data10[] = array(
+                    'detailobat' => $item->detailobat,
+                    'jumlahtersedia' => $item->jumlahtersedia,
+                    // 'jumlahfortersedia'=>0,
+                    //                    'Total' => 1,
+                    //                    'JmlGeneric' => $JmlGenerik,
+                    //                    'Totalitem' => 1 + $JmlGenerik,
+                    'jumlah' => 1,
+                );
+            }
+
+            foreach ($data10 as $key => $row) {
+                $count[$key] = $row['jumlah'];
+            }
+            array_multisort($count, SORT_DESC, $data10);
+        }
+        $result = array(
+            'data' => $data10,
+            'message' => 'as@lancelot',
+        );
+        return $this->respond($result);
+    }
+
+    public function getPelayananResepRl(Request $request){
+        $kdProfile = (int) $this->getDataKdProfile($request);
+        $KdJenisLapFarmasi = (int) $this->settingDataFixed('KdJenisLapFarmasi', $kdProfile);
+        //        $dataLogin = $request->all();
+        //
+        //        $data = \DB::table('pasiendaftar_t as pd')
+        //            ->join('antrianpasiendiperiksa_t as apd','apd.noregistrasifk','=','pd.norec')
+        //            ->leftJoin('pelayananpasien_t as pp','pp.noregistrasifk','=','apd.norec')
+        //            ->join('ruangan_m as ru','ru.id','=','apd.objectruanganfk')
+        //            ->join('departemen_m as dpm','dpm.id','=','ru.objectdepartemenfk')
+        //            ->join('produk_m as prd','prd.id','=','pp.produkfk')
+        //            ->select('prd.namaproduk','apd.objectruanganfk','ru.namaruangan','ru.objectdepartemenfk',
+        //                'prd.id as idproduk', 'prd.objectdetailjenisprodukfk',
+        //
+        //                DB::raw('(case when ru.objectdepartemenfk in (16, 17, 35, 26) then \'Rawat Inap\'
+        //                        when ru.objectdepartemenfk in (18, 27, 3, 28) then \'Rawat Jalan\'
+        //                        when prd.id = 24 then \'IGD\'
+        //                        else null end) as deptpelayanan,
+        //                        (case when prd.objectstatusprodukfk = 1 and prd.isgeneric =\'f\' THEN \'Obat Non Generik Non Formularium\'
+        //                        when prd.objectstatusprodukfk = 2 and prd.isgeneric =\'f\' THEN \'Obat Non Generik Formularium\'
+        //                        else \'Obat Generik(Formularium + Non Formularium)\' end) as detailobat'
+        //                )
+        //            )
+        //
+        //            ->where('prd.objectdetailjenisprodukfk', 474);
+        //
+        ////        if (isset($request['tglAwal']) && $request['tglAwal'] != "" && $request['tglAwal'] != "undefined") {
+        ////            $data = $data->where('pd.tglregistrasi', '>=', $request['tglAwal']);
+        ////        }
+        ////        if (isset($request['tglAkhir']) && $request['tglAkhir'] != "" && $request['tglAkhir'] != "undefined") {
+        ////            $tgl = $request['tglAkhir'];
+        ////            $data = $data->where('pd.tglregistrasi', '<=', $tgl);
+        ////        }
+        //        $data = $data->get();
+        //
+        //        $data10 = [];
+        //        $jml = 0;
+        //        $sama = false;
+        //
+        //        $JmlRajal = 0;
+        //        $JmlRI = 0;
+        //        $JmlIGD = 0;
+        //
+        //        foreach ($data as $item) {
+        //            $sama = false;
+        //            $i = 0;
+        //            foreach ($data10 as $hideung) {
+        //                if ($item->detailobat == $data10[$i]['detailobat']) {
+        //                    $sama = true;
+        //                    $jml = (float)$hideung['jumlah'] + 1;
+        //                    $data10[$i]['jumlah'] = $jml;
+        //
+        //                    if ($item->deptpelayanan == 'Rawat Inap')
+        //                    {
+        //                        $data10[$i]['JmlRawatInap'] = (float)$hideung['JmlRawatInap'] + 1;
+        //                    }
+        //                    elseif ($item->deptpelayanan == 'Rawat Jalan')
+        //                    {
+        //                        $data10[$i]['Jmlrj'] = (float)$hideung['Jmlrj'] + 1;
+        //                    }
+        //                    elseif ($item->deptpelayanan == 'IGD')
+        //                    {
+        //                        $data10[$i]['JmlIGD'] = (float)$hideung['JmlIGD'] + 1;
+        //                    }
+        //                }
+        //                $i = $i + 1;
+        //            }
+        //
+        //            if ($sama == false) {
+        //
+        //                if ($item->deptpelayanan == 'Rawat Inap')
+        //                {
+        //                    $JmlRajal = 0;
+        //                    $JmlRI = 1;
+        //                    $JmlIGD = 0;
+        //                }
+        //                elseif ($item->deptpelayanan == 'Rawat Jalan')
+        //                {
+        //                    $JmlRajal = 1;
+        //                    $JmlRI = 0;
+        //                    $JmlIGD = 0;
+        //                }
+        //                elseif ($item->deptpelayanan == 'IGD')
+        //                {
+        //                    $JmlRajal = 0;
+        //                    $JmlRI = 0;
+        //                    $JmlIGD = 1;
+        //                }
+        //                $data10[] = array(
+        //                    'detailobat' => $item->detailobat,
+        //                    'JmlRawatInap' => $JmlRI,
+        //                    'Jmlrj' => $JmlRajal,
+        //                    'JmlIGD' => $JmlIGD,
+        //                    'jumlah' => 1,
+        //                );
+        //            }
+        //
+        //            foreach ($data10 as $key => $row) {
+        //                $count[$key] = $row['jumlah'];
+        //            }
+        //
+        //            array_multisort($count, SORT_DESC, $data10);
+        //        }
+        //
+        //        $result = array(
+        //            'data' => $data10,
+        //            'message' => 'as@cepot',
+        //        );
+        //        return $this->respond($result);
+
+        //#WITH MAPPING
+        $data = \DB::table('pasiendaftar_t as pd')
+            ->join('antrianpasiendiperiksa_t as apd','apd.noregistrasifk','=','pd.norec')
+            ->leftJoin('pelayananpasien_t as pp','pp.noregistrasifk','=','apd.norec')
+            ->join('mapproduktolaporanrl_m as mprl','mprl.produkfk','=','pp.produkfk')
+            ->join('jenislaporan_m as jl','jl.id','=','mprl.objectjenislaporanfk')
+            ->join('kelompoklaporan_m as kl','kl.id','=','mprl.objectkontenlaporanfk')
+            ->join('ruangan_m as ru','ru.id','=','apd.objectruanganfk')
+            ->join('departemen_m as dpm','dpm.id','=','ru.objectdepartemenfk')
+            ->join('produk_m as prd','prd.id','=','pp.produkfk')
+            ->select('prd.namaproduk','apd.objectruanganfk','ru.namaruangan','kl.kelompoklaporan as detailobat',
+                'pp.tglpelayanan',
+                DB::raw('(case when ru.objectdepartemenfk in (16, 17, 35, 26) then \'Rawat Inap\'
+                        when ru.objectdepartemenfk in (18, 27, 3, 28) then \'Rawat Jalan\'
+                        when ru.objectdepartemenfk = 24 then \'IGD\'
+                        else null end) as deptpelayanan'
+                )
+            )
+            ->where('pd.kdprofile', $kdProfile)
+            ->where('jl.id', $KdJenisLapFarmasi);
+
+        if (isset($request['tglAwal']) && $request['tglAwal'] != "" && $request['tglAwal'] != "undefined") {
+            $data = $data->where('pp.tglpelayanan', '>=', $request['tglAwal']);
+        }
+        if (isset($request['tglAkhir']) && $request['tglAkhir'] != "" && $request['tglAkhir'] != "undefined") {
+            $tgl = $request['tglAkhir'];
+            $data = $data->where('pp.tglpelayanan', '<=', $tgl);
+        }
+        $data = $data->get();
+
+        $data10 = [];
+        $jml = 0;
+        $sama = false;
+
+        $JmlRajal = 0;
+        $JmlRI = 0;
+        $JmlIGD = 0;
+
+        foreach ($data as $item) {
+            $sama = false;
+            $i = 0;
+            foreach ($data10 as $hideung) {
+                if ($item->detailobat == $data10[$i]['detailobat']) {
+                    $sama = true;
+                    $jml = (float)$hideung['jumlah'] + 1;
+                    $data10[$i]['jumlah'] = $jml;
+
+                    if ($item->deptpelayanan == 'Rawat Inap')
+                    {
+                        $data10[$i]['JmlRawatInap'] = (float)$hideung['JmlRawatInap'] + 1;
+                    }
+                    elseif ($item->deptpelayanan == 'Rawat Jalan')
+                    {
+                        $data10[$i]['Jmlrj'] = (float)$hideung['Jmlrj'] + 1;
+                    }
+                    elseif ($item->deptpelayanan == 'IGD')
+                    {
+                        $data10[$i]['JmlIGD'] = (float)$hideung['JmlIGD'] + 1;
+                    }
+                }
+                $i = $i + 1;
+            }
+
+            if ($sama == false) {
+
+                if ($item->deptpelayanan == 'Rawat Inap')
+                {
+                    $JmlRajal = 0;
+                    $JmlRI = 1;
+                    $JmlIGD = 0;
+                }
+                elseif ($item->deptpelayanan == 'Rawat Jalan')
+                {
+                    $JmlRajal = 1;
+                    $JmlRI = 0;
+                    $JmlIGD = 0;
+                }
+                elseif ($item->deptpelayanan == 'IGD')
+                {
+                    $JmlRajal = 0;
+                    $JmlRI = 0;
+                    $JmlIGD = 1;
+                }
+                $data10[] = array(
+                    'detailobat' => $item->detailobat,
+        //                    'namaruangan' => $item->namaruangan,
+        //                    'namaproduk' => $item->namaproduk,
+        //                    'tglpelayanan' => $item->tglpelayanan,
+                    'JmlRawatInap' => $JmlRI,
+                    'Jmlrj' => $JmlRajal,
+                    'JmlIGD' => $JmlIGD,
+                    'jumlah' => 1,
+                );
+            }
+
+            foreach ($data10 as $key => $row) {
+                $count[$key] = $row['jumlah'];
+            }
+
+            array_multisort($count, SORT_DESC, $data10);
+        }
+
+        $result = array(
+            'data' => $data10,
+            'message' => 'as@lancelot',
+        );
+        return $this->respond($result);
+    }
+
+    public function getKegiatanKesehatanGigidanMulutRl(Request $request){
+        $kdProfile = $this->getDataKdProfile($request);
+        $idProfile = (int) $kdProfile;
+        $KdJenisLapGigiMulut = (int) $this->settingDataFixed('KdJenisLapGigiMulut',$idProfile);
+        $dataLogin = $request->all();
+        $data = \DB::table('pasiendaftar_t as pd')
+            ->join('antrianpasiendiperiksa_t as apd', 'apd.noregistrasifk', '=', 'pd.norec')
+            ->leftjoin('pelayananpasien_t as pp', 'pp.noregistrasifk', '= ', 'apd.norec')
+            ->join('ruangan_m as ru', 'ru.id', '=', 'apd.objectruanganfk')
+            ->join('produk_m as pr', 'pr.id', '=', 'pp.produkfk')
+            ->join('detailjenisproduk_m as djp', 'djp.id', '=', 'pr.objectdetailjenisprodukfk')
+            ->join('jenisproduk_m as jp', 'jp.id', '=', 'djp.objectjenisprodukfk')
+            ->join('kelompokproduk_m as kp', 'kp.id', '=', 'jp.objectkelompokprodukfk')
+            ->join('strukpelayanan_t as sp', 'sp.norec', '=', 'pp.strukfk')
+            ->join('mapproduktolaporanrl_m as mpptrl','mpptrl.produkfk','=','pr.id')
+            ->join('kelompoklaporan_m as kl','kl.id','=','mpptrl.objectkontenlaporanfk')
+            ->join('jenislaporan_m as jl','jl.id','=','mpptrl.objectjenislaporanfk')
+            ->select('jl.jenislaporan','kl.kelompoklaporan',
+                (DB::raw('COUNT(mpptrl.objectkontenlaporanfk) as jumlah'))
+            //            ->select('pp.norec','pr.id','pr.namaproduk',
+            //                (DB::raw('case
+            //                          when pr.id in (401790,401791,478,479)
+            //                                    then \'Pencabutan Gigi Tetap\'
+            //                          when pr.id in (15366,401789,402686,402692,15247,15364,15245,401796,477,502,15467)
+            //                                    then \'Pencabutan Gigi Sulung\'
+            //                          when pr.id in (401854,10003505,401855,493,493119,401548,402852,574,612)
+            //                                    then \'Pembersihan karang gigi\'
+            //                          when pp.produkfk in (401864,401862,401865,401861,401863,401866,401867,401868,494,495,496,497,498,499,532)
+            //                                    then \'Tumpatan Gigi\'
+            //                          when pp.produkfk in (15728,401872,523,401829,401830,402991,19856,19859,19851,402046,10012701,536,731)
+            //                                    then \'Orthodonti\'
+            //                          when pp.produkfk in (546,724,723,403077,401817)
+            //                                    then \'Jacket/Bridge\'
+            //			              else \'-\'
+            //			              end as jeniskegiatan'))
+            )
+            ->where('pd.kdprofile', $idProfile)
+            ->where('jl.id',$KdJenisLapGigiMulut)
+            ->groupBy('mpptrl.objectkontenlaporanfk','jl.jenislaporan','kl.kelompoklaporan');
+        //            ->where('ru.id', 4)
+        //            ->whereNotIn('djp.objectjenisprodukfk',[97])
+        //            ->wherein('kp.id', [1, 2, 3, 4, 8, 9, 10, 11, 13, 14])
+        //            ->whereNull('sp.statusenabled');
+
+        if (isset($request['tglAwal']) && $request['tglAwal'] != "" && $request['tglAwal'] != "undefined") {
+            $data = $data->where('pp.tglpelayanan', '>=', $request['tglAwal']);
+        }
+        if (isset($request['tglAkhir']) && $request['tglAkhir'] != "" && $request['tglAkhir'] != "undefined") {
+            $tgl = $request['tglAkhir'];
+            $data = $data->where('pp.tglpelayanan', '<=', $tgl);
+        }
+
+        $data = $data->get();
+        //        $data10 = [];
+        //        $jml = 0;
+        //        $jmlCentralLine = 0;
+        //        $jmlKateterUrine = 0;
+        //
+        //        foreach ($data as $item) {
+        //            $sama = false;
+        //            $i = 0;
+        //            foreach ($data10 as $dat) {
+        //                if ($item->jeniskegiatan == $data10[$i]['jeniskegiatan']) {
+        //                    $sama = true;
+        //                    $jml = (float)$dat['jumlah'] + 1;
+        //                    $data10[$i]['jumlah'] = $jml;
+        //
+        //                    $data10[$i]['Total'] = (float)$dat['Total'] + 1;
+        //                }
+        //                $i = $i + 1;
+        //            }
+        //            if ($sama == false) {
+        //
+        //                $data10[] = array(
+        //                    'jeniskegiatan'=>$item->jeniskegiatan,
+        //                    'Total' => 1,
+        //                    'jumlah' => 1,
+        //                );
+        //            }
+        //
+        //            foreach ($data10 as $key => $row) {
+        //                $count[$key] = $row['jumlah'];
+        //            }
+        //            array_multisort($count, SORT_DESC, $data10);
+        //        }
+
+        $result = array(
+        //            'data' => $data10,
+            'data' => $data,
+            'message' => 'kabayan',
+        );
+
+        return $this->respond($result);
+    }
+
+    public function getLaporanRL312Pembedahan(Request $request){
+        $idProfile = (int) $this->getDataKdProfile($request);
+        $KdJenisLapPembedahan = (int) $this->settingDataFixed('KdJenisLapPembedahan', $idProfile);
+        //        $dataLogin = $request->all();
+        $data = \DB::table('antrianpasiendiperiksa_t as apd')
+            ->join('ruangan_m as ru', 'ru.id', '=', 'apd.objectruanganfk')
+            ->join('departemen_m as dpm', 'dpm.id', '=', 'ru.objectdepartemenfk')
+            ->join('pelayananpasien_t as pp', 'pp.noregistrasifk', '=', 'apd.norec')
+            ->join('produk_m as pr', 'pr.id', '=', 'pp.produkfk')
+            ->join('mapproduktolaporanrl_m as mprl','mprl.produkfk','=','pp.produkfk')
+            ->join('jenislaporan_m as jl','jl.id','=','mprl.objectjenislaporanfk')
+            ->join('kelompoklaporan_m as kl','kl.id','=','mprl.objectkontenlaporanfk')
+            ->join('detailjenisproduk_m as djp', 'djp.id', '=', 'pr.objectdetailjenisprodukfk')
+            ->join('jenisproduk_m as jp', 'jp.id', '=', 'djp.objectjenisprodukfk')
+            ->leftJoin('kelompokproduk_m as kp', 'kp.id', '=', 'jp.objectkelompokprodukfk')
+            ->select('pp.tglpelayanan', 'pp.produkfk', 'pr.namaproduk', 'pr.objectdetailjenisprodukfk',
+                'djp.detailjenisproduk','kl.kelompoklaporan as spesialisasi')
+            ->where('apd.kdprofile', $idProfile)
+            ->where('jl.id',$KdJenisLapPembedahan);
+        //                DB::raw('(case when ru.id = 44 then \'Bedah\'
+        //                                when ru.id in (18,3,45,464) then \'Obstetrik & Ginekologi\'
+        //                                when ru.id =198 then \'Bedah Saraf\'
+        //                                when ru.id =6 then \'THT\'
+        //                                when ru.id =5 then \'Mata\'
+        //                                when ru.id =7 then \'Kulit & Kelamin\'
+        //                                when ru.id =4 then \'Gigi & Mulut\'
+        //                                when ru.id =1 then \'Bedah Anak\'
+        //                                when  ru.id=98 then \'Kardiovaskuler\'
+        //                                when ru.id =13 then \'Bedah Orthopedi\'
+        //                                when  ru.id= 35 then \'Thorax\'
+        //                                when  ru.id =240 then \'Urologi\'
+        //                                else \'Lain-lain\' end ) as spesialisasi')
+        //            )
+                //PEMATOKAN :(((((
+        //            ->whereIn('ru.id', [44, 18, 3, 45, 464, 198, 6, 5, 7, 4, 1, 98, 13, 35, 240])
+        //            ->wherein('pr.objectdetailjenisprodukfk', [62, 138, 429, 431, 428, 78, 139, 430, 432, 426, 51,
+        //                427, 425, 433, 51, 427, 425, 433, 48, 140, 437, 434, 9, 52,
+        //                141, 435, 41, 56, 146, 438, 45, 39, 61, 70, 77, 54, 424, 421,
+        //                418, 66, 7, 64, 73, 47, 136, 423, 420, 417, 33, 143, 409, 412,
+        //                411, 60, 63, 6, 410, 414, 408, 415, 413, 142, 411]);
+        if (isset($request['tglAwal']) && $request['tglAwal'] != "" && $request['tglAwal'] != "undefined") {
+            $data = $data->where('pp.tglpelayanan', '>=', $request['tglAwal']);
+        }
+        if (isset($request['tglAkhir']) && $request['tglAkhir'] != "" && $request['tglAkhir'] != "undefined") {
+            $tgl = $request['tglAkhir'];
+            $data = $data->where('pp.tglpelayanan', '<=', $tgl);
+        }
+
+        $data = $data->get();
+
+        $data10 = [];
+        $jml = 0;
+        $khusus = 0;
+        $besar = 0;
+        $sedang = 0;
+        $kecil = 0;
+        $lainnya = 0;
+
+        $sama = false;
+
+
+        foreach ($data as $item) {
+            $sama = false;
+            $i = 0;
+            $o = 0;
+            foreach ($data10 as $hideung) {
+                if ($item->spesialisasi == $data10[$i]['spesialisasi']) {
+                    $sama = true;
+                    $jml = (float)$hideung['jumlah'] + 1;
+                    $data10[$i]['jumlah'] = $jml;
+                    if ($item->objectdetailjenisprodukfk == 62 || $item->objectdetailjenisprodukfk == 78 || $item->objectdetailjenisprodukfk == 51
+                        || $item->objectdetailjenisprodukfk == 138 || $item->objectdetailjenisprodukfk == 139 || $item->objectdetailjenisprodukfk == 427
+                        || $item->objectdetailjenisprodukfk == 429 || $item->objectdetailjenisprodukfk == 430 || $item->objectdetailjenisprodukfk == 425
+                        || $item->objectdetailjenisprodukfk == 431 || $item->objectdetailjenisprodukfk == 432 || $item->objectdetailjenisprodukfk == 433
+                        || $item->objectdetailjenisprodukfk == 428 || $item->objectdetailjenisprodukfk == 426
+                    ) {
+                        $data10[$i]['besar'] = (float)$hideung['besar'] + 1;
+                    } else if ($item->objectdetailjenisprodukfk == 9 || $item->objectdetailjenisprodukfk == 41 || $item->objectdetailjenisprodukfk == 45
+                        || $item->objectdetailjenisprodukfk == 48 || $item->objectdetailjenisprodukfk == 52 || $item->objectdetailjenisprodukfk == 56
+                        || $item->objectdetailjenisprodukfk == 140 || $item->objectdetailjenisprodukfk == 141 || $item->objectdetailjenisprodukfk == 146
+                        || $item->objectdetailjenisprodukfk == 437 || $item->objectdetailjenisprodukfk == 435 || $item->objectdetailjenisprodukfk == 438
+                        || $item->objectdetailjenisprodukfk == 434
+                    ) {
+                        $data10[$i]['khusus'] = (float)$hideung['khusus'] + 1;
+                    } else if ($item->objectdetailjenisprodukfk == 26 || $item->objectdetailjenisprodukfk == 30 || $item->objectdetailjenisprodukfk == 33
+                        || $item->objectdetailjenisprodukfk == 36 || $item->objectdetailjenisprodukfk == 39 || $item->objectdetailjenisprodukfk == 7
+                        || $item->objectdetailjenisprodukfk == 43 || $item->objectdetailjenisprodukfk == 61 || $item->objectdetailjenisprodukfk == 64
+                        || $item->objectdetailjenisprodukfk == 68 || $item->objectdetailjenisprodukfk == 70 || $item->objectdetailjenisprodukfk == 73
+                        || $item->objectdetailjenisprodukfk == 76 || $item->objectdetailjenisprodukfk == 77 || $item->objectdetailjenisprodukfk == 47
+                        || $item->objectdetailjenisprodukfk == 50 || $item->objectdetailjenisprodukfk == 54 || $item->objectdetailjenisprodukfk == 136
+                        || $item->objectdetailjenisprodukfk == 137 || $item->objectdetailjenisprodukfk == 424 || $item->objectdetailjenisprodukfk == 423
+                        || $item->objectdetailjenisprodukfk == 422 || $item->objectdetailjenisprodukfk == 421 || $item->objectdetailjenisprodukfk == 420
+                        || $item->objectdetailjenisprodukfk == 419 || $item->objectdetailjenisprodukfk == 418 || $item->objectdetailjenisprodukfk == 417
+                        || $item->objectdetailjenisprodukfk == 416 || $item->objectdetailjenisprodukfk == 66
+                    ) {
+                        $data10[$i]['sedang'] = (float)$hideung['sedang'] + 1;
+                    } else if ($item->objectdetailjenisprodukfk == 60 || $item->objectdetailjenisprodukfk == 63 || $item->objectdetailjenisprodukfk == 142
+                        || $item->objectdetailjenisprodukfk == 143 || $item->objectdetailjenisprodukfk == 6 || $item->objectdetailjenisprodukfk == 408
+                        || $item->objectdetailjenisprodukfk == 409 || $item->objectdetailjenisprodukfk == 410 || $item->objectdetailjenisprodukfk == 415
+                        || $item->objectdetailjenisprodukfk == 412 || $item->objectdetailjenisprodukfk == 414 || $item->objectdetailjenisprodukfk == 413
+                        || $item->objectdetailjenisprodukfk == 411
+                    ) {
+                        $data10[$i]['kecil'] = (float)$hideung['kecil'] + 1;
+                    }
+            //                    else  {
+            //                        $data10[$i]['lainnya'] = (float)$hideung['lainnya'] + 1;
+            //                    }
+
+                }
+                $i = $i + 1;
+            }
+
+            if ($sama == false) {
+                if ($item->objectdetailjenisprodukfk == 62 || $item->objectdetailjenisprodukfk == 78 || $item->objectdetailjenisprodukfk == 51
+                    || $item->objectdetailjenisprodukfk == 138 || $item->objectdetailjenisprodukfk == 139 || $item->objectdetailjenisprodukfk == 427
+                    || $item->objectdetailjenisprodukfk == 429 || $item->objectdetailjenisprodukfk == 430 || $item->objectdetailjenisprodukfk == 425
+                    || $item->objectdetailjenisprodukfk == 431 || $item->objectdetailjenisprodukfk == 432 || $item->objectdetailjenisprodukfk == 433
+                    || $item->objectdetailjenisprodukfk == 428 || $item->objectdetailjenisprodukfk == 426
+                ) {
+                    $khusus = 0;
+                    $besar = 1;
+                    $sedang = 0;
+                    $kecil = 0;
+                    $lainnya = 0;
+                } else if ($item->objectdetailjenisprodukfk == 9 || $item->objectdetailjenisprodukfk == 41 || $item->objectdetailjenisprodukfk == 45
+                    || $item->objectdetailjenisprodukfk == 48 || $item->objectdetailjenisprodukfk == 52 || $item->objectdetailjenisprodukfk == 56
+                    || $item->objectdetailjenisprodukfk == 140 || $item->objectdetailjenisprodukfk == 141 || $item->objectdetailjenisprodukfk == 146
+                    || $item->objectdetailjenisprodukfk == 437 || $item->objectdetailjenisprodukfk == 435 || $item->objectdetailjenisprodukfk == 438
+                    || $item->objectdetailjenisprodukfk == 434
+                ) {
+                    $khusus = 1;
+                    $besar = 0;
+                    $sedang = 0;
+                    $kecil = 0;
+                    $lainnya = 0;
+                } else if ($item->objectdetailjenisprodukfk == 26 || $item->objectdetailjenisprodukfk == 30 || $item->objectdetailjenisprodukfk == 33
+                    || $item->objectdetailjenisprodukfk == 36 || $item->objectdetailjenisprodukfk == 39 || $item->objectdetailjenisprodukfk == 7
+                    || $item->objectdetailjenisprodukfk == 43 || $item->objectdetailjenisprodukfk == 61 || $item->objectdetailjenisprodukfk == 64
+                    || $item->objectdetailjenisprodukfk == 68 || $item->objectdetailjenisprodukfk == 70 || $item->objectdetailjenisprodukfk == 73
+                    || $item->objectdetailjenisprodukfk == 76 || $item->objectdetailjenisprodukfk == 77 || $item->objectdetailjenisprodukfk == 47
+                    || $item->objectdetailjenisprodukfk == 50 || $item->objectdetailjenisprodukfk == 54 || $item->objectdetailjenisprodukfk == 136
+                    || $item->objectdetailjenisprodukfk == 137 || $item->objectdetailjenisprodukfk == 424 || $item->objectdetailjenisprodukfk == 423
+                    || $item->objectdetailjenisprodukfk == 422 || $item->objectdetailjenisprodukfk == 421 || $item->objectdetailjenisprodukfk == 420
+                    || $item->objectdetailjenisprodukfk == 419 || $item->objectdetailjenisprodukfk == 418 || $item->objectdetailjenisprodukfk == 417
+                    || $item->objectdetailjenisprodukfk == 416 || $item->objectdetailjenisprodukfk == 66
+                ) {
+                    $khusus = 0;
+                    $besar = 0;
+                    $sedang = 1;
+                    $kecil = 0;
+                    $lainnya = 0;
+                } else if ($item->objectdetailjenisprodukfk == 60 || $item->objectdetailjenisprodukfk == 63 || $item->objectdetailjenisprodukfk == 142
+                    || $item->objectdetailjenisprodukfk == 143 || $item->objectdetailjenisprodukfk == 6 || $item->objectdetailjenisprodukfk == 408
+                    || $item->objectdetailjenisprodukfk == 409 || $item->objectdetailjenisprodukfk == 410 || $item->objectdetailjenisprodukfk == 415
+                    || $item->objectdetailjenisprodukfk == 412 || $item->objectdetailjenisprodukfk == 414 || $item->objectdetailjenisprodukfk == 413
+                    || $item->objectdetailjenisprodukfk == 411
+                ) {
+                    $khusus = 0;
+                    $besar = 0;
+                    $sedang = 0;
+                    $kecil = 1;
+                    $lainnya = 0;
+                }
+            //                else{
+            //                    $lainnya=1;
+            //                }
+
+
+                $data10[] = array(
+            //                    'produkfk' => $item->produkfk,
+                    'spesialisasi' => $item->spesialisasi,
+                    'jumlah' => 1,
+                    'khusus' => $khusus,
+                    'besar' => $besar,
+                    'sedang' => $sedang,
+                    'kecil' => $kecil,
+            //                    'lainnya' => $lainnya,
+                );
+            }
+
+            foreach ($data10 as $key => $row) {
+                $count[$key] = $row['jumlah'];
+            }
+
+            array_multisort($count, SORT_DESC, $data10);
+        }
+        $result = array(
+            'data' => $data10,
+            'message' => 'er@epic',
+
+        );
+
+        return $this->respond($result);
+    }
+
 }

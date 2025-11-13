@@ -269,8 +269,19 @@ class RadiologiController extends ApiController
             if (isset($request['noregistrasi']) && $request['noregistrasi'] != "" && $request['noregistrasi'] != "undefined") {
                 $pelayanan = $pelayanan->where('pd.noregistrasi', '=', $request['noregistrasi']);
             }
+            if (isset($request['noorder']) && $request['noorder'] != "" && $request['noorder'] != "undefined") {
+                $pelayanan = $pelayanan->where('so.noorder', '=', $request['noorder']);
+            }
             $pelayanan = $pelayanan->get();
+           
+            $noorderList = [];
             if (count($pelayanan) > 0) {
+                $noorderList = collect($pelayanan)
+                    ->pluck('noorder')   
+                    ->filter()           
+                    ->unique()           
+                    ->values()           
+                    ->toArray();
                 $pelayananpetugas = \DB::table('pasiendaftar_t as pd')
                     ->join('antrianpasiendiperiksa_t as apd', 'apd.noregistrasifk', '=', 'pd.norec')
                     ->join('pelayananpasienpetugas_t as ptu', 'ptu.nomasukfk', '=', 'apd.norec')
@@ -354,6 +365,7 @@ class RadiologiController extends ApiController
         $dataTea =array(
             'data' => $result,
             'detaillogin' => $dataLogin,
+            'noorderList' => $noorderList,
             'message' => 'Inhuman'
         );
         return $this->respond($dataTea);
@@ -3120,6 +3132,49 @@ class RadiologiController extends ApiController
                 'message'  => $transMessage,
                 'e'=> $e->getLine() . ' / '.$e->getMessage(),
                 'as' => 'ramdanegie',
+            );
+        }
+        return $this->setStatusCode($result['status'])->respond($result, $transMessage);
+    }
+
+    public function saveUpdateTanggalOrder(Request $request){
+        $kdProfile = $this->getDataKdProfile($request);
+        $idProfile = (int) $kdProfile;
+        $dataLogin = $request->all();
+
+        DB::beginTransaction();
+        try{
+            StrukOrder::where('norec', $request['norec_so'])
+            ->update([
+                    'tglorder' => $request['tglterbaru'],
+                    'tgl_order_sebelumnya' => $request['tgl_order_lama'],
+                ]
+            );
+            $transStatus = 'true';
+        } catch (\Exception $e) {
+            $transStatus = 'false';
+            $transMessage = "simpan Tanggal";
+            $errMessage = $e->getMessage();
+            $errLine = $e->getLine();
+        }
+
+        if ($transStatus == 'true') {
+            $transMessage = "Simpan Tanggal";
+            DB::commit();
+            $result = array(
+                "status" => 201,
+                "message" => $transMessage,
+                "datalogin" => $dataLogin,
+            );
+            
+        } else {
+            $transMessage = "Simpan Tanggal gagal!!";
+            DB::rollBack();
+            $result = array(
+                "status" => 400,
+                "message"  => $transMessage,
+                "errMsg" => $errMessage ,
+                "errLine" => $errLine,
             );
         }
         return $this->setStatusCode($result['status'])->respond($result, $transMessage);

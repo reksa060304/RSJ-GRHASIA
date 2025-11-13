@@ -4,7 +4,7 @@
 <head>
 
     <title>Transmedic - Halaman Login</title>
-    <meta name="robots" content="noindex, nofollow">
+    <meta name="robots" content="noindex, nofollow">
     <link href="../app/stylesheets/kendo.flat.css" rel="stylesheet">
     <link href="../app/stylesheets/kendo.common.css" rel="stylesheet">
     <link href="../app/stylesheets/kendo.rtl.css" rel="stylesheet">
@@ -21,8 +21,15 @@
 <body id="body" ng-controller="Controller">
     <div>
 
-        <core-login-window on-login="login(userName,password)" is-loading="isBusy">
-
+        <core-login-window 
+            on-login="login(userName,password)" 
+            is-loading="isBusy"
+            captcha-enabled="captchaEnabled"
+            captcha-question="captchaQuestion"
+            captcha-answer="captchaAnswer"
+            user-captcha-input="userCaptchaInput"
+            generate-captcha="generateCaptcha()"
+            validate-captcha="validateCaptcha()">
         </core-login-window>
 
     </div>

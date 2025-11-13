@@ -56,9 +56,13 @@ define(['initialize'], function (initialize) {
                     var tglKadaluarsa = kendoGrid.dataItem(row).tglKadaluarsa;
                     if (tglKadaluarsa != null) {
                         var dateEx = new Date(tglKadaluarsa);
-                        var diffDays = Math.round(Math.abs((dateEx.getTime() - dateNow.getTime()) / (oneDay)))
-                        if (diffDays <= 7) {
-                            $(row.cells).addClass("red");
+                        var sekarang = new Date();
+                        var selisihBulan = (dateEx.getFullYear() - sekarang.getFullYear()) * 12 + (dateEx.getMonth() - sekarang.getMonth());
+                        
+                        if (selisihBulan <= 3) {
+                            $(row).addClass("red");
+                        } else if (selisihBulan >= 4 && selisihBulan <= 12) {
+                            $(row).addClass("koneng");
                         }
                     }
                 }

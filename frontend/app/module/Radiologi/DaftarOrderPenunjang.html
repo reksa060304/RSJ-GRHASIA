@@ -379,7 +379,7 @@
                     <!-- <button class="c-button" ng-click="verifikasi()">Verifikasi</button> -->
                 </div>
                 <div class="grid_1" style="margin-top: 13px">
-                    <button class="btnTemplate1 " ng-disabled="true" ng-click="hapusOrder()"><i
+                    <button class="btnTemplate1 " ng-click="hapusOrder()"><i
                             class="fa fa-trash"></i>Hapus</button>
                 </div>
                 <!-- <div class="grid_2" style="margin-top: 22px">
@@ -399,6 +399,9 @@
                 <div class="grid_2" style="margin-top: 13px">
                     <button class="btnTemplate1" ng-click="detailVerif()"><i class="fa fa-th-list"></i>Detal
                         Verif</button>
+                </div>
+                <div class="grid_2" style="margin-top: 13px">
+                    <button class="btnTemplate1" ng-click="updateTglOrder()"><i class="fa fa-edit"></i>Update Tanggal</button>
                 </div>
                 <div class="grid_2" style="margin-top: 13px" ng-if="iddepartemen != 575">
                     <button class="btnTemplate1" ng-click="TolakOrder()"><i class="fa fa-th-edit"></i>Tolak Order</button>
@@ -796,4 +799,38 @@
 -->
     <div class="grid_12" style="margin-top:60px">
         <div ng-include='"../app/template/Shared/TemplateLoading"'></div>
+    </div>
+
+    <!-- POP UP Edit Tanggal -->
+    <div kendo-window="popUpEditTanggal" k-title="'Detail'" k-visible="false" k-width="900"
+        k-on-close="win2visible = false">
+        <div class="panel panel-default container_12">
+            <div class="grid_12">
+                <div class="grid_12">
+                    <div class="grid_2">
+                        <label c-label item="item">Tanggal Order</label>
+                    </div>
+                    <!-- Tanggal Sebelumnya -->
+                    <div class="grid_4 padDatePicker">
+                        <input style="width: 100%" k-ng-model="item.tglSebelumnya" kendo-datetimepicker k-max="now"
+                            placeholer="yyyy-MM-dd HH:mm" k-format="'yyyy-MM-dd HH:mm'" parsedate="yyyy-MM-dd HH:mm" disabled/>
+                    </div>
+                    <div class="grid_12"></div>  
+                    <div class="grid_2">
+                        <label c-label item="item">Tanggal Order Terbaru </label>
+                    </div>
+                    <!-- Tanggal Terbaru -->
+                    <div class="grid_4 padDatePicker">
+                        <input style="width: 100%" k-ng-model="item.tglTerbaru" kendo-datetimepicker
+                            placeholer="yyyy-MM-dd HH:mm" k-format="'yyyy-MM-dd HH:mm'"/>
+                    </div>
+                </div>
+            </div>
+            <div class="grid_6">
+                <div class="pull-right" style="margin-top:4%">
+                    <button class="k-button" ng-click="simpanUpdateTanggal()" ng-disabled='btnSimpanUpdateTanggal'>Simpan</button>
+                    <button class="k-button" ng-click="batalEditTanggal()">Tutup</button>
+                </div>
+            </div>
+        </div>
     </div>

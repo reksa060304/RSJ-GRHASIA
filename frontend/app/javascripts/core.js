@@ -2034,7 +2034,98 @@ define(['Configuration', 'jQuery', 'kendo.angular',
             }
         })
 
-    .directive('coreLoginWindow', ['socket','$http', function(socket,$http) {
+        // .directive('coreLoginWindow', ['socket','$http', function(socket,$http) {
+        
+        //     return {
+        //         restrict: 'E',
+        //         transclude: true,
+        //         scope: {
+        //             'login': '&?onLogin',
+        //             'load': '=',
+        //             isLoading: '=',
+                   
+        //         },
+        //         templateUrl: 'resources/template/my-login-screen.html',
+        //         link: function(scope) {
+        //             // scope.onload = function() {
+        //             //     $http({
+        //             //         method: 'GET',
+        //             //         url:configuration.baseApiBackend + 'get-profile-login'
+        //             //     }).then(function (response) {
+        //             //         scope.image = response.data.profile;  
+        //             //     })
+        //             // }
+        //             // scope.onload()
+        //             scope.isLoading = false;
+        //             scope.keyDown = function(data) {
+        //                 if (data.code === 'Enter') {
+        //                     scope.validate();
+        //                 }
+        //             };
+        //             scope.$watch('isLoading', function(e) { })
+        //             scope.validate = function() {
+        //                 if ((scope.userName !== '' && scope.userName !== undefined) && scope.password !== '' && scope.password !== undefined) {
+        //                     scope.isLoading = true;
+        //                     scope.login({
+        //                         userName: scope.userName,
+        //                         password: scope.password
+        //                     });
+        //                 } else {
+        //                     if (scope.userName === '')
+        //                         focus('userName');
+        //                     else
+        //                         focus('password');
+        //                     scope.notification.show("User Id atau kata kunci belum terisi", "info");
+        //                 }
+        //             }
+        //             scope.reset = function() {
+        //                 scope.userName = '';
+        //                 scope.password = "";
+        //             }
+
+        //             function guid() {
+        //                 function s4() {
+        //                     return Math.floor((1 + Math.random()) * 0x10000)
+        //                         .toString(16)
+        //                         .substring(1);
+        //                 }
+        //                 return s4() + s4() + s4() + s4() +
+        //                     s4() + s4() + s4() + s4();
+        //             }
+
+        //             scope.showPageLogin = false;
+        //             function readCookie(name) {
+        //                 var nameEQ = name + "=";
+        //                 var ca = document.cookie.split(';');
+        //                 for(var i=0;i < ca.length;i++) {
+        //                     var c = ca[i];
+        //                     while (c.charAt(0)==' ') c = c.substring(1,c.length);
+        //                     if (c.indexOf(nameEQ) == 0) return c.substring(nameEQ.length,c.length);
+        //                 }
+        //                 return null;
+        //             }
+
+        //             if(readCookie('authorization') != null){
+        //                 window.location = "/app/#/home";
+        //                 scope.showPageLogin = false;
+        //             }
+        //             else{
+        //                 scope.showPageLogin = true;
+        //             }
+
+
+        //             var norec = guid();
+        //             socket.on(norec, function(e) {
+        //                 scope.userName = e.message.userName;
+        //                 scope.password = e.message.password;
+        //                 scope.validate();
+        //             })
+        //             scope.qrcode = window.location.origin + '/app/mobile-authentication/' + norec;
+        //         }
+        //     };
+        // }])
+
+        .directive('coreLoginWindow', ['socket','$http', function(socket,$http) {
         
             return {
                 restrict: 'E',
@@ -2043,19 +2134,16 @@ define(['Configuration', 'jQuery', 'kendo.angular',
                     'login': '&?onLogin',
                     'load': '=',
                     isLoading: '=',
-                   
+                    // CAPTCHA variables
+                    captchaEnabled: '=?',
+                    captchaQuestion: '=?',
+                    captchaAnswer: '=?',
+                    userCaptchaInput: '=?',
+                    generateCaptcha: '&?',
+                    validateCaptcha: '&?'
                 },
                 templateUrl: 'resources/template/my-login-screen.html',
                 link: function(scope) {
-                    // scope.onload = function() {
-                    //     $http({
-                    //         method: 'GET',
-                    //         url:configuration.baseApiBackend + 'get-profile-login'
-                    //     }).then(function (response) {
-                    //         scope.image = response.data.profile;  
-                    //     })
-                    // }
-                    // scope.onload()
                     scope.isLoading = false;
                     scope.keyDown = function(data) {
                         if (data.code === 'Enter') {
@@ -2065,6 +2153,15 @@ define(['Configuration', 'jQuery', 'kendo.angular',
                     scope.$watch('isLoading', function(e) { })
                     scope.validate = function() {
                         if ((scope.userName !== '' && scope.userName !== undefined) && scope.password !== '' && scope.password !== undefined) {
+                            
+                            // Validasi CAPTCHA terlebih dahulu jika enabled
+                            if (scope.captchaEnabled && scope.validateCaptcha) {
+                                var captchaValid = scope.validateCaptcha();
+                                if (!captchaValid) {
+                                    return; // Stop jika CAPTCHA salah
+                                }
+                            }
+                            
                             scope.isLoading = true;
                             scope.login({
                                 userName: scope.userName,
@@ -2081,6 +2178,10 @@ define(['Configuration', 'jQuery', 'kendo.angular',
                     scope.reset = function() {
                         scope.userName = '';
                         scope.password = "";
+                        // Reset CAPTCHA input juga
+                        if (scope.userCaptchaInput !== undefined) {
+                            scope.userCaptchaInput = '';
+                        }
                     }
 
                     function guid() {
@@ -2113,7 +2214,6 @@ define(['Configuration', 'jQuery', 'kendo.angular',
                         scope.showPageLogin = true;
                     }
 
-
                     var norec = guid();
                     socket.on(norec, function(e) {
                         scope.userName = e.message.userName;
@@ -2124,6 +2224,9 @@ define(['Configuration', 'jQuery', 'kendo.angular',
                 }
             };
         }])
+
+
+
         .directive('coreLoginForm', function(focus) {
             return {
                 restrict: 'E',

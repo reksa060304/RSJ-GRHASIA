@@ -942,7 +942,7 @@ class PelayananResepController extends ApiController
             ->JOIN('ruangan_m as ru','ru.id','=','apd.objectruanganfk')
             ->JOIN('jeniskemasan_m as jk','jk.id','=','pp.jeniskemasanfk')
             ->LeftJOIN('routefarmasi as rt','rt.id','=','pp.routefk')
-            ->LeftJOIN('orderpelayanan_t as op','op.strukorderfk','=','sr.orderfk')
+            // ->LeftJOIN('orderpelayanan_t as op','op.strukorderfk','=','sr.orderfk')
             ->JOIN('produk_m as pr','pr.id','=','pp.produkfk')
             ->JOIN('satuanstandar_m as ss','ss.id','=','pr.objectsatuanstandarfk')
             ->JOIN('satuanstandar_m as ss2','ss2.id','=','pp.satuanviewfk')
@@ -953,7 +953,7 @@ class PelayananResepController extends ApiController
                 'pr.objectsatuanstandarfk','ss.satuanstandar','pp.satuanviewfk','ss2.satuanstandar as ssview',
                 'pp.jumlah','pp.hargadiscount','pp.dosis','pp.jenisobatfk','pp.jasa','pp.hargajual','pp.hargasatuan','pp.strukterimafk',
                 'pp.qtydetailresep','pp.ispagi','pp.issiang','pp.ismalam','pp.issore','pr.kekuatan','pp.keteranganpakai','pp.iskronis',
-                'pp.satuanresepfk','sn.satuanresep','pp.tglkadaluarsa', 'pp.harganetto', 'op.keteranganpakai as catatandokter')
+                'pp.satuanresepfk','sn.satuanresep','pp.tglkadaluarsa', 'pp.harganetto','sr.orderfk')
             ->where('sr.kdprofile', $idProfile);
 
         if(isset($request['norecResep']) && $request['norecResep']!="" && $request['norecResep']!="undefined"){
@@ -961,6 +961,24 @@ class PelayananResepController extends ApiController
         }
         $data = $data->get();
 
+        $data_catatan_dokter = \DB::table('strukresep_t as sr')
+                                ->LeftJOIN('orderpelayanan_t as op','op.strukorderfk','=','sr.orderfk')
+                                ->select('op.keteranganpakai as catatandokter', 'sr.orderfk')
+                                ->where('sr.kdprofile', $idProfile);
+        if(isset($request['norecResep']) && $request['norecResep']!="" && $request['norecResep']!="undefined"){
+            $data_catatan_dokter = $data_catatan_dokter->where('sr.norec','=', $request['norecResep']);
+        }
+        $data_catatan_dokter = $data_catatan_dokter->get();
+        if(count($data) > 0 && count($data_catatan_dokter) > 0){
+            foreach($data as $item){
+                foreach($data_catatan_dokter as $item_catatan){
+                    if($item->orderfk == $item_catatan->orderfk) {
+                        $item->catatandokter = $item_catatan->catatandokter;
+                        break;
+                    }
+                }
+            }
+        }
         $pelayananPasien=[];
         $i = 0;
         $dataStok = DB::select(DB::raw("select sk.norec,spd.objectprodukfk, sk.tglstruk,spd.objectasalprodukfk,
@@ -1083,7 +1101,7 @@ class PelayananResepController extends ApiController
                 'tglkadaluarsa' => $item->tglkadaluarsa,
                 'kekuatan' => $item->kekuatan,
                 'norecpp' => $item->norecpp,
-                'catatandokter' => $item->catatandokter,
+                'catatandokter' => $item->catatandokter ?? '-',
                 'statusretriksi' => $item->status_retriksi,
             );
         }
@@ -3500,11 +3518,7 @@ class PelayananResepController extends ApiController
         FROM
         (
             SELECT
-                *, ROW_NUMBER () OVER (PARTITION BY noresep, namaproduk, rke, jumlah, norec
-                  ORDER BY
-                    CASE WHEN jeniskemasan IS NULL OR jeniskemasan = '' THEN 1 ELSE 0 END,
-                    tglresep DESC
-                ) NUMBER
+                *, ROW_NUMBER () OVER (PARTITION BY noresep, namaproduk, rke, jumlah, norec) NUMBER
             FROM
                 (
                     SELECT
@@ -3642,9 +3656,7 @@ class PelayananResepController extends ApiController
             pg.namalengkap AS dokter,
             sr.noresep,
             sbmsdhbyr.tglsbm,
-            ps.noidentitas,
-            jkm.jeniskemasan
-
+            ps.noidentitas
         FROM
             pelayananpasien_t AS pp
         LEFT JOIN strukresep_t AS sr ON pp.strukresepfk = sr.norec
@@ -3708,8 +3720,7 @@ class PelayananResepController extends ApiController
                                pg.namalengkap as dokter,
                                sp.nostruk AS noresep,
                                sbmsdhbyr.tglsbm,
-                               '' as noidentitas,
-                               jkm.jeniskemasan
+                               '' as noidentitas
 
 
                         FROM strukpelayanan_t as sp

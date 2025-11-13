@@ -46,6 +46,7 @@ define(['initialize', 'Configuration'], function (initialize,configuration) {
 			$scope.isimportidrg = false
 			$scope.batalKlaim = {}
 			$scope.istopup = false;
+			$scope.isRanap = false;
 			var responData = "";
 			var data2 = []
 			var dataSave = []
@@ -133,12 +134,12 @@ define(['initialize', 'Configuration'], function (initialize,configuration) {
 					});
 					
 					$scope.sourceJenisDiagnosisPrimer1 = [
-						{id:'7',jenisDiagnosa:'Primary / utama UNU Grouper'},
-						{id:'8',jenisDiagnosa:'Secondary UNU Grouper'},
+						{id:'17',jenisDiagnosa:'Primary / utama UNU Grouper'},
+						{id:'18',jenisDiagnosa:'Secondary UNU Grouper'},
 					];
 					$scope.sourceJenisDiagnosisPrimer2 = [
-						{id:'10',jenisDiagnosa:'Primary / utama INA Grouper'},
-						{id:'11',jenisDiagnosa:'Secondary INA Grouper'},
+						{id:'19',jenisDiagnosa:'Primary / utama INA Grouper'},
+						{id:'20',jenisDiagnosa:'Secondary INA Grouper'},
 					];
 					$scope.item.jenisDiagnosis = {id: 7, jenisDiagnosa: "Primary / utama UNU Grouper"}
 					// $scope.sourceJenisDiagnosisPrimer1 = data.data.jenisdiagnosa;
@@ -2837,7 +2838,7 @@ define(['initialize', 'Configuration'], function (initialize,configuration) {
 			$scope.setdataklaim = async function () {
 				if ($scope.itemPopUp.totalbiayars != $scope.totaltarif_rs16) {
 					toastr.warning("Data Tarif yang akan dikirim belum sesuai dengan total tarif rs !");
-					return;
+					// return;
 				}
 				// $scope.isRouteLoading = true;
 				var dt1 = {}
@@ -7228,12 +7229,12 @@ define(['initialize', 'Configuration'], function (initialize,configuration) {
                 ).then(function (data) {
 					$scope.isRouteLoading = false;
 					if (data.data.inacbg.length > 0) {
-                        $scope.item.jenisDiagnosis = {id: 8, jenisDiagnosa: "Secondary UNU Grouper"}
+                        $scope.item.jenisDiagnosis = {id: 18, jenisDiagnosa: "Secondary UNU Grouper"}
 						$scope.itemPopUp.icd10 = data.data.icd10;
 						// console.log($scope.itemPopUp.icd10);
                     } else {
 						$scope.itemPopUp.icd10 = "#"
-						$scope.item.jenisDiagnosis = {id: 7, jenisDiagnosa: "Primary / utama UNU Grouper"}
+						$scope.item.jenisDiagnosis = {id: 17, jenisDiagnosa: "Primary / utama UNU Grouper"}
 					}
 
 					if (['Grouping iDRG Final','Grouping INACBG Reedit','Grouping'].includes($scope.itemPopUp.statusklaim) && $scope.isimportidrg == false) {
@@ -7299,10 +7300,10 @@ define(['initialize', 'Configuration'], function (initialize,configuration) {
 				).then(function (data) {
 					$scope.isRouteLoading = false;
 				if (data.data.dataunu.length > 0) {  
-					$scope.item.jenisDiagnosisUnu = {id: 11, jenisDiagnosa: "Secondary INA Grouper"}
+					$scope.item.jenisDiagnosisUnu = {id: 20, jenisDiagnosa: "Secondary INA Grouper"}
 					$scope.itemPopUp.diagnosa_inagrouper = data.data.icd10unu;
 				} else {
-					$scope.item.jenisDiagnosisUnu = {id: 10, jenisDiagnosa: "Primary / utama INA Grouper"}
+					$scope.item.jenisDiagnosisUnu = {id: 19, jenisDiagnosa: "Primary / utama INA Grouper"}
 					$scope.itemPopUp.diagnosa_inagrouper = $scope.itemPopUp.icd10;
 					// console.log($scope.itemPopUp.diagnosa_inagrouper)
 				}
@@ -7457,6 +7458,12 @@ define(['initialize', 'Configuration'], function (initialize,configuration) {
 				$scope.itemPopUp.diagnosa_inagrouper = null
 
 				$scope.itemPopUp = $scope.dataPasienSelected
+				if ($scope.itemPopUp.objectdepartemenfk == 16) {
+					$scope.isRanap = true
+				} else {
+					$scope.isRanap = false
+				}
+				
 				if ($scope.itemPopUp.response != null) {
 					if ($scope.itemPopUp.response.metadata.code == 200) {
 						$scope.grupingtab = true;
@@ -8568,7 +8575,7 @@ define(['initialize', 'Configuration'], function (initialize,configuration) {
 					// $scope.itemPopUp.discharge_statusid = 5
 				}
 				$scope.itemPopUp.dpjp = {id:$scope.dataPasienSelected.id, namalengkap:$scope.dataPasienSelected.namadokter}
-				$scope.itemPopUp.jenis_tarif = 'TARIF RS KELAS B SWASTA'
+				$scope.itemPopUp.jenis_tarif = 'TARIF RS KELAS A PEMERINTAH'
 				$scope.itemPopUp.kode_tarif = $scope.dataPasienSelected.kodetarif
 				// $scope.listTarifRS =[
 				// 								{namatarif:'Prosedur Non Bedah' ,tarif:$scope.tarif_rs16.prosedur_non_bedah},
@@ -8751,9 +8758,9 @@ define(['initialize', 'Configuration'], function (initialize,configuration) {
 					return
 				}
 				var dpid = $scope.dataPasienSelected.objectdepartemenfk
-				if(dpid != 16) {
-					dpid = 18
-				}
+				// if(dpid != 16) {
+				// 	dpid = 18
+				// }
 				$scope.popUpDokumen = $scope.dataPasienSelected
 				$scope.listBerkasMonitoring =[]
 				$scope.isRouteLoading = true
@@ -9134,11 +9141,11 @@ define(['initialize', 'Configuration'], function (initialize,configuration) {
 					$scope.hideSimpan = false
 					$scope.isRouteLoading = false
 					
-					if (e.data.data.length == 0 && ![49,68].includes(id)) {
+					if (e.data.data.length == 0 && ![4,11,15].includes(id)) {
 						toastr.info("Info", "Data tidak ditemukan");
 						    return
 					} else {
-						if ([49,68].includes(id)) {
+						if ([4,11,15].includes(id)) {
 							var a = {id:id, noregistrasi: noregistrasi, nosep:$scope.popUpDokumen.nosep,length:0, namafile : namafile}
 							simpanDokumen2(a)
 						} else {
@@ -9220,7 +9227,7 @@ define(['initialize', 'Configuration'], function (initialize,configuration) {
             }
 
 			function simpanDokumen2(data) {
-				if (data.length == 0 && [49,68].includes(data.id)) {
+				if (data.length == 0 && [4,11,15].includes(data.id)) {
 					var dt1 = {};
 					var dt2 = [];
 					dt1 = {
@@ -9909,7 +9916,7 @@ define(['initialize', 'Configuration'], function (initialize,configuration) {
 
 				if ($scope.itemPopUp.totalbiayars != $scope.totaltarif_rs16) {
 					toastr.warning("Data Tarif yang akan dikirim belum sesuai dengan total tarif rs !");
-					return;
+					// return;
 				}
 				var dt1 = {}
 				var dt2 = []
@@ -10882,11 +10889,11 @@ define(['initialize', 'Configuration'], function (initialize,configuration) {
 							medifirstService.get(`bridging/inacbg/get-parameter?id=${element.id}&noregistrasi=${element.noregistrasi}&user=${$scope.user.namaLengkap}`).then(function (e) {
 								$scope.isRouteLoading = false
 								
-								if (e.data.data.length == 0 && ![49,68].includes(element.id)) {
+								if (e.data.data.length == 0 && ![4,11,15].includes(element.id)) {
 									toastr.info("Info", "Data tidak ditemukan");
 										return
 								} else {
-									if ([49,68].includes(element.id)) {
+									if ([4,11,15].includes(element.id)) {
 										var a = {id:element.id, noregistrasi: element.noregistrasi, nosep:$scope.popUpDokumen.nosep,length:0}
 										simpanDokumen2(a)
 									} else {
@@ -10959,9 +10966,9 @@ define(['initialize', 'Configuration'], function (initialize,configuration) {
 					return
 				}
 				var dpid = $scope.popUpDokumen.objectdepartemenfk
-				if(dpid != 16) {
-					dpid = 18
-				}
+				// if(dpid != 16) {
+				// 	dpid = 18
+				// }
 				$scope.listBerkasMonitoring =[]
 				medifirstService.get('bridging/inacbg/get-list-berkas-monitoring?dpid=' + dpid + '&noregistrasifk='+$scope.popUpDokumen.norec ).then(function(e){
 					$scope.isRouteLoading = false
@@ -12883,6 +12890,66 @@ define(['initialize', 'Configuration'], function (initialize,configuration) {
 								$scope.isRouteLoading = false
 						});
 				}
+			}
+
+			$scope.ringkasanRajal = function(){
+				if ($scope.dataPasienSelected == undefined) {
+					toastr.error('Pilih data dulu!')
+					return
+				}
+				if ($scope.dataPasienSelected.deptid == 16){
+					toastr.error('Pasien dari Ranap')
+					return
+				}
+				// if ($scope.item.obj[3003998] != undefined) {
+				//     $scope.listPegawai.add($scope.item.obj[3003998])
+				//     $scope.item.pegawai = $scope.item.obj[3003998]
+				// }
+				// if (pegawai == undefined) {
+				//     return
+				// }
+				var local = JSON.parse(localStorage.getItem('profile'))
+				var nama = medifirstService.getPegawaiLogin().namaLengkap
+
+				window.open(configuration.baseApiBackend + 'report/cetak-monitoringjamkes?nocm=' + $scope.dataPasienSelected.nocm +
+					'&norec_pd=' + $scope.dataPasienSelected.norec +
+					// '&emr=' + norecEMR +
+					// '&emrfk=' + $scope.cc.emrfk +
+					'&kdprofile=' + local.id +
+					'&nama=' + nama +
+					// '&isttd=true' +
+					// '&pegawaittd=' + pegawai.value +
+					'&noregistrasi=' + $scope.dataPasienSelected.noregistrasi, '_blank');
+			}
+
+			$scope.ringkasanRajalPerawat = function(){
+				if ($scope.dataPasienSelected == undefined) {
+					toastr.error('Pilih data dulu!')
+					return
+				}
+				if ($scope.dataPasienSelected.deptid == 16){
+					toastr.error('Pasien dari Ranap')
+					return
+				}
+				// if ($scope.item.obj[3003998] != undefined) {
+				//     $scope.listPegawai.add($scope.item.obj[3003998])
+				//     $scope.item.pegawai = $scope.item.obj[3003998]
+				// }
+				// if (pegawai == undefined) {
+				//     return
+				// }
+				var local = JSON.parse(localStorage.getItem('profile'))
+				var nama = medifirstService.getPegawaiLogin().namaLengkap
+
+				window.open(configuration.baseApiBackend + 'report/cetak-monitoringjamkes-perawat?nocm=' + $scope.dataPasienSelected.nocm +
+					'&norec_pd=' + $scope.dataPasienSelected.norec +
+					// '&emr=' + norecEMR +
+					// '&emrfk=' + $scope.cc.emrfk +
+					'&kdprofile=' + local.id +
+					'&nama=' + nama +
+					// '&isttd=true' +
+					// '&pegawaittd=' + pegawai.value +
+					'&noregistrasi=' + $scope.dataPasienSelected.noregistrasi, '_blank');
 			}
 
 			// END ################
