@@ -3872,6 +3872,14 @@
         {
             "nameDep": "RL4210BesarPenyakitRanapCtrl",
             "urlDep": "module/Registrasi/Laporan/LaporanRekamMedis/RL4210BesarPenyakitRanapCtrl"
+        },
+        {
+            "nameDep": "RL5210BesarKasusBaruPenyakitRawatJalanCtrl",
+            "urlDep": "module/Registrasi/Laporan/LaporanRekamMedis/RL5210BesarKasusBaruPenyakitRawatJalanCtrl"
+        },
+        {
+            "nameDep": "RL5310BesarKunjunganPenyakitRawatJalanCtrl",
+            "urlDep": "module/Registrasi/Laporan/LaporanRekamMedis/RL5310BesarKunjunganPenyakitRawatJalanCtrl"
         }
     ]
 }

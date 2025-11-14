@@ -21167,6 +21167,46 @@
         "define": "MedifirstService"
       }
     ]
+  },
+  {
+    "name": "RL5210BesarKasusBaruPenyakitRawatJalan",
+    "url": "/RL5210BesarKasusBaruPenyakitRawatJalan",
+    "templateurl": "module/Registrasi/Laporan/LaporanRekamMedis/RL5210BesarKasusBaruPenyakitRawatJalan.html",
+    "controller": "RL5210BesarKasusBaruPenyakitRawatJalanCtrl",
+    "deps": [
+      {
+        "module": "Services",
+        "define": "Service"
+      },
+      {
+        "module": "LoginServices",
+        "define": "LoginService"
+      },
+      {
+        "module": "MedifirstService",
+        "define": "MedifirstService"
+      }
+    ]
+  },
+  {
+    "name": "RL5310BesarKunjunganPenyakitRawatJalan",
+    "url": "/RL5310BesarKunjunganPenyakitRawatJalan",
+    "templateurl": "module/Registrasi/Laporan/LaporanRekamMedis/RL5310BesarKunjunganPenyakitRawatJalan.html",
+    "controller": "RL5310BesarKunjunganPenyakitRawatJalanCtrl",
+    "deps": [
+      {
+        "module": "Services",
+        "define": "Service"
+      },
+      {
+        "module": "LoginServices",
+        "define": "LoginService"
+      },
+      {
+        "module": "MedifirstService",
+        "define": "MedifirstService"
+      }
+    ]
   }
 ]
 
