@@ -11482,4 +11482,169 @@ class LaporanRekamMedisController extends   ApiController
         return $this->respond($result);
     }
 
+    public function getDataLaporanRL52new(Request $request) {
+            try {
+                $kdProfile = (int) $this->getDataKdProfile($request);
+        
+                $datadiagnosa = \DB::table('antrianpasiendiperiksa_t as app')
+                    ->LEFTJOIN('diagnosapasien_t as dp', 'dp.noregistrasifk', '=', 'app.norec')
+                    ->LEFTJOIN('detaildiagnosapasien_t as ddp', 'ddp.objectdiagnosapasienfk', '=', 'dp.norec')
+                    ->JOIN('ruangan_m as rm', 'app.objectruanganfk', '=', 'rm.id')
+                    ->JOIN('diagnosa_m as dm', 'ddp.objectdiagnosafk', '=', 'dm.id')
+                    ->JOIN('pasiendaftar_t as pd', 'pd.norec', '=', 'app.noregistrasifk')
+                    ->JOIN('pasien_m as ps', 'ps.id', '=', 'pd.nocmfk')
+                    ->LeftJOIN('jeniskelamin_m as jk', 'ps.objectjeniskelaminfk', '=', 'jk.id')
+                    ->select(
+                        \DB::raw("LEFT(dm.kddiagnosa, 3) as kelompok_icd10"),
+                        'dm.namadiagnosa',
+                        'ps.objectjeniskelaminfk',
+                        \DB::raw('COUNT(*) as jumlah_kasus_baru'),
+                        \DB::raw('COUNT(DISTINCT (app.noregistrasifk || \'-\' || app.objectruanganfk)) as jumlah_kunjungan')
+                    )
+                    ->where('app.kdprofile', $kdProfile)
+                    // ->whereRaw("LEFT(dm.kddiagnosa, 1) NOT IN ('O80','O82', 'R', 'V', 'W', 'X', 'Y', 'Z')")
+                    ->where("dp.iskasusbaru", true);
+        
+                if (!empty($request['tglAwal'])) {
+                    $datadiagnosa = $datadiagnosa->where('pd.tglpulang', '>=', $request['tglAwal']);
+                }
+        
+                if (!empty($request['tglAkhir'])) {
+                    $datadiagnosa = $datadiagnosa->where('pd.tglpulang', '<=', $request['tglAkhir']);
+                }
+        
+                $datadiagnosa = $datadiagnosa->groupBy('kelompok_icd10', 'dm.namadiagnosa', 'ps.objectjeniskelaminfk')
+                    ->get();
+        
+                $data10 = [];
+        
+                foreach ($datadiagnosa as $item) {
+                    $kelompokICD = $item->kelompok_icd10;
+        
+                    if (!isset($data10[$kelompokICD])) {
+                        $data10[$kelompokICD] = [
+                            'kelompok_icd10' => $kelompokICD,
+                            'namadiagnosa' => $item->namadiagnosa,
+                            'jumlahL' => 0,
+                            'jumlahP' => 0,
+                            'total_kasus_baru' => 0,
+                            'jumlah_kunjunganL' => 0,
+                            'jumlah_kunjunganP' => 0,
+                            'total_kunjungan' => 0
+                        ];
+                    }
+        
+                    if ($item->objectjeniskelaminfk == 1) { // Laki-laki
+                        $data10[$kelompokICD]['jumlahL'] += $item->jumlah_kasus_baru;
+                        $data10[$kelompokICD]['jumlah_kunjunganL'] += $item->jumlah_kunjungan;
+                    } else if ($item->objectjeniskelaminfk == 2) { // Perempuan
+                        $data10[$kelompokICD]['jumlahP'] += $item->jumlah_kasus_baru;
+                        $data10[$kelompokICD]['jumlah_kunjunganP'] += $item->jumlah_kunjungan;
+                    }
+        
+                    $data10[$kelompokICD]['total_kasus_baru'] = $data10[$kelompokICD]['jumlahL'] + $data10[$kelompokICD]['jumlahP'];
+                    $data10[$kelompokICD]['total_kunjungan'] = $data10[$kelompokICD]['jumlah_kunjunganL'] + $data10[$kelompokICD]['jumlah_kunjunganP'];
+                }
+        
+    
+                usort($data10, function ($a, $b) {
+                    return $b['total_kasus_baru'] <=> $a['total_kasus_baru'];
+                });
+                
+        
+        
+                $result = [
+                    'data' => array_values($data10), 
+                    'message' => 'Data laporan berhasil diambil',
+                ];
+        
+                return $this->respond($result);
+            } catch (\Throwable $th) {
+                return response()->json(['error' => $th->getMessage()], 500);
+            }
+        }
+
+        public function getDataLaporanRL53new(Request $request) {
+            try {
+                $kdProfile = (int) $this->getDataKdProfile($request);
+        
+                $datadiagnosa = \DB::table('antrianpasiendiperiksa_t as app')
+                    ->LEFTJOIN('diagnosapasien_t as dp', 'dp.noregistrasifk', '=', 'app.norec')
+                    ->LEFTJOIN('detaildiagnosapasien_t as ddp', 'ddp.objectdiagnosapasienfk', '=', 'dp.norec')
+                    ->JOIN('ruangan_m as rm', 'app.objectruanganfk', '=', 'rm.id')
+                    ->JOIN('diagnosa_m as dm', 'ddp.objectdiagnosafk', '=', 'dm.id')
+                    ->JOIN('pasiendaftar_t as pd', 'pd.norec', '=', 'app.noregistrasifk')
+                    ->JOIN('pasien_m as ps', 'ps.id', '=', 'pd.nocmfk')
+                    ->LeftJOIN('jeniskelamin_m as jk', 'ps.objectjeniskelaminfk', '=', 'jk.id')
+                    ->select(
+                        \DB::raw("LEFT(dm.kddiagnosa, 3) as kelompok_icd10"),
+                        'dm.namadiagnosa',
+                        'ps.objectjeniskelaminfk',
+                        \DB::raw('COUNT(*) as jumlah_kasus_baru'),
+                        \DB::raw('COUNT(DISTINCT (app.noregistrasifk || \'-\' || app.objectruanganfk)) as jumlah_kunjungan')
+                    )
+                    ->where('app.kdprofile', $kdProfile)
+                    // ->whereRaw("LEFT(dm.kddiagnosa, 1) NOT IN ('O80','O82', 'R', 'V', 'W', 'X', 'Y', 'Z')")
+                    // ->whereRaw("LEFT(dm.kddiagnosa, 1) ")
+                    ->where("dp.iskasusbaru", true);
+        
+                if (!empty($request['tglAwal'])) {
+                    $datadiagnosa = $datadiagnosa->where('pd.tglpulang', '>=', $request['tglAwal']);
+                }
+        
+                if (!empty($request['tglAkhir'])) {
+                    $datadiagnosa = $datadiagnosa->where('pd.tglpulang', '<=', $request['tglAkhir']);
+                }
+        
+                $datadiagnosa = $datadiagnosa->groupBy('kelompok_icd10', 'dm.namadiagnosa', 'ps.objectjeniskelaminfk')
+                    ->get();
+        
+                $data10 = [];
+        
+                foreach ($datadiagnosa as $item) {
+                    $kelompokICD = $item->kelompok_icd10;
+        
+                    if (!isset($data10[$kelompokICD])) {
+                        $data10[$kelompokICD] = [
+                            'kelompok_icd10' => $kelompokICD,
+                            'namadiagnosa' => $item->namadiagnosa,
+                            'jumlahL' => 0,
+                            'jumlahP' => 0,
+                            'total_kasus_baru' => 0,
+                            'jumlah_kunjunganL' => 0,
+                            'jumlah_kunjunganP' => 0,
+                            'total_kunjungan' => 0
+                        ];
+                    }
+        
+                    if ($item->objectjeniskelaminfk == 1) { // Laki-laki
+                        $data10[$kelompokICD]['jumlahL'] += $item->jumlah_kasus_baru;
+                        $data10[$kelompokICD]['jumlah_kunjunganL'] += $item->jumlah_kunjungan;
+                    } else if ($item->objectjeniskelaminfk == 2) { // Perempuan
+                        $data10[$kelompokICD]['jumlahP'] += $item->jumlah_kasus_baru;
+                        $data10[$kelompokICD]['jumlah_kunjunganP'] += $item->jumlah_kunjungan;
+                    }
+        
+                    $data10[$kelompokICD]['total_kasus_baru'] = $data10[$kelompokICD]['jumlahL'] + $data10[$kelompokICD]['jumlahP'];
+                    $data10[$kelompokICD]['total_kunjungan'] = $data10[$kelompokICD]['jumlah_kunjunganL'] + $data10[$kelompokICD]['jumlah_kunjunganP'];
+                }
+        
+    
+                usort($data10, function ($a, $b) {
+                    return $b['total_kunjungan'] <=> $a['total_kunjungan'];
+                });
+                
+        
+        
+                $result = [
+                    'data' => array_values($data10), 
+                    'message' => 'Data laporan berhasil diambil',
+                ];
+        
+                return $this->respond($result);
+            } catch (\Throwable $th) {
+                return response()->json(['error' => $th->getMessage()], 500);
+            }
+        }
+
 }
