@@ -99,6 +99,15 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
             }
 
             $scope.cariFilter = function () {
+                $scope.selectedData2 = [];
+                $scope.dataSelected = {};
+                $scope.selected = [];
+                $scope.item.totalSetor = "";
+                $scope.item.dipilih = "";
+                $scope.item.terbilang = "";
+                if ($scope.grid && $scope.grid.clearSelection) {
+                    $scope.grid.clearSelection(); 
+                }
                 init();
             }
 

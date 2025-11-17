@@ -10988,7 +10988,7 @@ class BendaharaPenerimaanController extends ApiController {
         return $this->setStatusCode(201)->respond($result, 'tes msg');
     }
 
-    public function getKonfirmasiRekeningSTS(Request $request)
+    public function getKonfirmasiRekeningSTSOld(Request $request)
     {
 
         $data = DB::select(DB::raw("
@@ -11214,6 +11214,163 @@ class BendaharaPenerimaanController extends ApiController {
                 AND cap.id IN(".implode(',',$arrIdLevel6).")
         "));
 
+
+        return $this->respond([
+            'data' => $data,
+            'rekening' => $rekeningLv6
+        ]);
+    }
+
+     public function getKonfirmasiRekeningSTS(Request $request)
+    {
+        $kdProfile = 30;
+        $noClosing = $request['noclosing'];
+
+        $data = DB::select(DB::raw("
+            WITH closing AS (
+                SELECT norec FROM strukclosing_t 
+                WHERE noclosing = :noClosing 
+                AND statusenabled = TRUE 
+                AND kdprofile = :kdProfile
+            ),
+           
+            sbm_filtered AS (
+                SELECT DISTINCT sbm.norec, sbm.nostrukfk, sbm.noclosingfk
+                FROM strukbuktipenerimaan_t sbm
+                JOIN closing c ON sbm.noclosingfk = c.norec
+                WHERE sbm.statusenabled = TRUE AND sbm.kdprofile = :kdProfile
+            ),
+           
+            tipe1_kelas AS (
+                SELECT 
+                    cap.id, cap.koderekening, cap.namarekening,
+                    cap1.id idlevel1, cap2.id idlevel2, cap3.id idlevel3,
+                    cap4.id idlevel4, cap5.id idlevel5, cap6.id idlevel6, cap7.id idlevel7,
+                    pp.isobat isobat_group, cb.id idcarabayar,
+                    SUM((((COALESCE(pp.hargajual,0) - COALESCE(pp.hargadiscount,0)) * COALESCE(pp.jumlah,0)) + COALESCE(pp.jasa,0)))::DECIMAL totaldibayarclosing,
+                    CASE WHEN cb.id = 3 THEN pm.namapasien ELSE NULL END namapasien
+                FROM sbm_filtered sbm
+                JOIN strukpelayanan_t sp ON sbm.nostrukfk = sp.norec AND sp.statusenabled = TRUE AND sp.kdprofile = :kdProfile
+                JOIN strukbuktipenerimaancarabayar_t sbmcr ON sbmcr.nosbmfk = sbm.norec AND sbmcr.statusenabled = TRUE AND sbmcr.kdprofile = :kdProfile
+                JOIN carabayar_m cb ON cb.id = sbmcr.objectcarabayarfk AND cb.statusenabled = TRUE AND cb.kdprofile = :kdProfile
+                JOIN pelayananpasien_t pp ON pp.strukfk = sp.norec AND pp.statusenabled = TRUE AND pp.kdprofile = :kdProfile
+                JOIN antrianpasiendiperiksa_t apd ON apd.norec = pp.noregistrasifk AND apd.statusenabled = TRUE AND apd.kdprofile = :kdProfile
+                JOIN pasiendaftar_t pd ON pd.norec = apd.noregistrasifk AND pd.kdprofile = :kdProfile
+                JOIN pasien_m pm ON pm.id = pd.nocmfk
+                JOIN mapbkuakun_t mba ON 
+                    POSITION(','||pd.objectkelompokpasienlastfk||',' IN ','||mba.objectkelompokpasienfk||',') > 0
+                    AND POSITION(','||apd.objectruanganfk||',' IN ','||mba.objectruanganfk||',') > 0
+                    AND mba.statusenabled = TRUE
+                JOIN char_akun_pendapatan_m cap ON cap.id = mba.objectakunpendapatanfk AND cap.statusenabled = TRUE
+                LEFT JOIN char_akun_pendapatan_m cap7 ON cap7.id = cap.headfk
+                LEFT JOIN char_akun_pendapatan_m cap6 ON cap6.id = cap7.headfk
+                LEFT JOIN char_akun_pendapatan_m cap5 ON cap5.id = cap6.headfk
+                LEFT JOIN char_akun_pendapatan_m cap4 ON cap4.id = cap5.headfk
+                LEFT JOIN char_akun_pendapatan_m cap3 ON cap3.id = cap4.headfk
+                LEFT JOIN char_akun_pendapatan_m cap2 ON cap2.id = cap3.headfk
+                LEFT JOIN char_akun_pendapatan_m cap1 ON cap1.id = cap2.headfk
+                WHERE 
+                    ((mba.isobat IS NOT TRUE AND pp.isobat IS NULL) OR (mba.isobat = TRUE AND pp.isobat = TRUE))
+                    AND pp.kelasfk IS NOT NULL
+                    AND POSITION(','||pp.kelasfk||',' IN ','||mba.objectkelasfk||',') > 0
+                GROUP BY cap.id, cap.koderekening, cap.namarekening,
+                        cap1.id, cap2.id, cap3.id, cap4.id, cap5.id, cap6.id, cap7.id,
+                        pp.isobat, cb.id, pm.namapasien
+            ),
+         
+            tipe2_produk AS (
+                SELECT 
+                    cap.id, cap.koderekening, cap.namarekening,
+                    cap1.id idlevel1, cap2.id idlevel2, cap3.id idlevel3,
+                    cap4.id idlevel4, cap5.id idlevel5, cap6.id idlevel6, cap7.id idlevel7,
+                    pp.isobat isobat_group, cb.id idcarabayar,
+                    SUM((((COALESCE(pp.hargajual,0) - COALESCE(pp.hargadiscount,0)) * COALESCE(pp.jumlah,0)) + COALESCE(pp.jasa,0)))::DECIMAL totaldibayarclosing,
+                    CASE WHEN cb.id = 3 THEN pm.namapasien ELSE NULL END namapasien
+                FROM sbm_filtered sbm
+                JOIN strukpelayanan_t sp ON sbm.nostrukfk = sp.norec AND sp.statusenabled = TRUE AND sp.kdprofile = :kdProfile
+                JOIN strukbuktipenerimaancarabayar_t sbmcr ON sbmcr.nosbmfk = sbm.norec AND sbmcr.statusenabled = TRUE AND sbmcr.kdprofile = :kdProfile
+                JOIN carabayar_m cb ON cb.id = sbmcr.objectcarabayarfk AND cb.statusenabled = TRUE AND cb.kdprofile = :kdProfile
+                JOIN pelayananpasien_t pp ON pp.strukfk = sp.norec AND pp.statusenabled = TRUE AND pp.kdprofile = :kdProfile
+                JOIN antrianpasiendiperiksa_t apd ON apd.norec = pp.noregistrasifk AND apd.statusenabled = TRUE AND apd.kdprofile = :kdProfile
+                JOIN pasiendaftar_t pd ON pd.norec = apd.noregistrasifk AND pd.kdprofile = :kdProfile
+                JOIN pasien_m pm ON pm.id = pd.nocmfk
+                JOIN mapbkuakun3_t mba3 ON 
+                    POSITION(','||pp.produkfk||',' IN ','||mba3.objectprodukfk||',') > 0
+                    AND pd.objectkelompokpasienlastfk IN (1,12)
+                    AND mba3.statusenabled = TRUE
+                JOIN char_akun_pendapatan_m cap ON cap.id = mba3.objectakunpendapatanfk AND cap.statusenabled = TRUE
+                LEFT JOIN char_akun_pendapatan_m cap7 ON cap7.id = cap.headfk
+                LEFT JOIN char_akun_pendapatan_m cap6 ON cap6.id = cap7.headfk
+                LEFT JOIN char_akun_pendapatan_m cap5 ON cap5.id = cap6.headfk
+                LEFT JOIN char_akun_pendapatan_m cap4 ON cap4.id = cap5.headfk
+                LEFT JOIN char_akun_pendapatan_m cap3 ON cap3.id = cap4.headfk
+                LEFT JOIN char_akun_pendapatan_m cap2 ON cap2.id = cap3.headfk
+                LEFT JOIN char_akun_pendapatan_m cap1 ON cap1.id = cap2.headfk
+                GROUP BY cap.id, cap.koderekening, cap.namarekening,
+                        cap1.id, cap2.id, cap3.id, cap4.id, cap5.id, cap6.id, cap7.id,
+                        pp.isobat, cb.id, pm.namapasien
+            ),
+        
+            tipe3_nonlayanan AS (
+                SELECT 
+                    cap.id, cap.koderekening, cap.namarekening,
+                    cap1.id idlevel1, cap2.id idlevel2, cap3.id idlevel3,
+                    cap4.id idlevel4, cap5.id idlevel5, cap6.id idlevel6, cap7.id idlevel7,
+                    NULL::BOOLEAN isobat_group, sbmcr.objectcarabayarfk idcarabayar,
+                    SUM(spd.qtyproduk * spd.hargasatuan * spd.qtyoranglast)::DECIMAL totaldibayarclosing,
+                    NULL::VARCHAR namapasien
+                FROM sbm_filtered sbm
+                JOIN strukpelayanan_t sp ON sbm.nostrukfk = sp.norec AND sp.statusenabled = TRUE AND sp.kdprofile = :kdProfile
+                JOIN strukpelayanandetail_t spd ON sp.norec = spd.nostrukfk
+                JOIN strukbuktipenerimaancarabayar_t sbmcr ON sbmcr.nosbmfk = sbm.norec AND sbmcr.statusenabled = TRUE AND sbmcr.kdprofile = :kdProfile
+                JOIN mapbkuakun2_t mba2 ON 
+                    POSITION(','||spd.objectprodukfk||',' IN ','||mba2.objectprodukfk||',') > 0
+                    AND mba2.statusenabled = TRUE
+                JOIN char_akun_pendapatan_m cap ON cap.id = mba2.objectakunpendapatanfk AND cap.statusenabled = TRUE
+                LEFT JOIN char_akun_pendapatan_m cap7 ON cap7.id = cap.headfk
+                LEFT JOIN char_akun_pendapatan_m cap6 ON cap6.id = cap7.headfk
+                LEFT JOIN char_akun_pendapatan_m cap5 ON cap5.id = cap6.headfk
+                LEFT JOIN char_akun_pendapatan_m cap4 ON cap4.id = cap5.headfk
+                LEFT JOIN char_akun_pendapatan_m cap3 ON cap3.id = cap4.headfk
+                LEFT JOIN char_akun_pendapatan_m cap2 ON cap2.id = cap3.headfk
+                LEFT JOIN char_akun_pendapatan_m cap1 ON cap1.id = cap2.headfk
+                GROUP BY cap.id, cap.koderekening, cap.namarekening,
+                        cap1.id, cap2.id, cap3.id, cap4.id, cap5.id, cap6.id, cap7.id,
+                        sbmcr.objectcarabayarfk
+            ),
+            all_akun AS (
+                SELECT * FROM tipe1_kelas
+                UNION ALL
+                SELECT * FROM tipe2_produk
+                UNION ALL
+                SELECT * FROM tipe3_nonlayanan
+            )
+            SELECT 
+                id idrekening, koderekening, namarekening,
+                idlevel1, idlevel2, idlevel3, idlevel4, idlevel5, idlevel6, idlevel7,
+                SUM(totaldibayarclosing) totaldibayarclosing,
+                MAX(namapasien) namapasien
+            FROM all_akun
+            GROUP BY id, koderekening, namarekening, idlevel1, idlevel2, idlevel3, idlevel4, idlevel5, idlevel6, idlevel7
+            ORDER BY 
+                split_part(koderekening,'.',3)::DECIMAL,
+                split_part(koderekening,'.',4)::DECIMAL,
+                split_part(koderekening,'.',5)::DECIMAL
+        "), [
+            'noClosing' => $noClosing,
+            'kdProfile' => $kdProfile
+        ]);
+
+        $arrIdLevel6 = array_values(array_unique(array_filter(array_column($data, 'idlevel6'))));
+        $rekeningLv6 = [];
+        if (!empty($arrIdLevel6)) {
+            $rekeningLv6 = DB::select("
+                SELECT cap.*, cap.koderekening || '-' || cap.namarekening AS text
+                FROM char_akun_pendapatan_m cap 
+                WHERE cap.statusenabled = TRUE AND cap.kdprofile = ? 
+                AND cap.id IN (" . implode(',', $arrIdLevel6) . ")
+            ", [$kdProfile]);
+        }
 
         return $this->respond([
             'data' => $data,
