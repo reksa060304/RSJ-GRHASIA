@@ -47,6 +47,7 @@ define(['initialize', 'Configuration'], function (initialize,configuration) {
 			$scope.batalKlaim = {}
 			$scope.istopup = false;
 			$scope.isRanap = false;
+			$scope.isNoneSpecial = false;
 			var responData = "";
 			var data2 = []
 			var dataSave = []
@@ -2542,6 +2543,28 @@ define(['initialize', 'Configuration'], function (initialize,configuration) {
 								$scope.listspecialprosthesis = specialProsthesis
 								$scope.listspecialinvestigation = specialInvestigation
 								$scope.itemgrop= responData[0].dataresponse
+							} else {
+								var spesialDrug = [{
+									code: '',
+									description: 'None'
+								}]
+								var specialProcedure = [{
+									code: '',
+									description: 'None'
+								}]
+								var specialProsthesis = [{
+									code: '',
+									description: 'None'
+								}]
+								var specialInvestigation = [{
+									code: '',
+									description: 'None'
+								}]
+
+								$scope.listspecialdrug = spesialDrug
+								$scope.listspecialprocedure = specialProcedure
+								$scope.listspecialprosthesis = specialProsthesis
+								$scope.listspecialinvestigation = specialInvestigation
 							}
 						})
 
@@ -4703,6 +4726,28 @@ define(['initialize', 'Configuration'], function (initialize,configuration) {
 								specialInvestigation.push(element)
 							}
 						}
+						$scope.listspecialdrug = spesialDrug
+						$scope.listspecialprocedure = specialProcedure
+						$scope.listspecialprosthesis = specialProsthesis
+						$scope.listspecialinvestigation = specialInvestigation
+					} else {
+						var spesialDrug = [{
+							code: '',
+							description: 'None'
+						}]
+						var specialProcedure = [{
+							code: '',
+							description: 'None'
+						}]
+						var specialProsthesis = [{
+							code: '',
+							description: 'None'
+						}]
+						var specialInvestigation = [{
+							code: '',
+							description: 'None'
+						}]
+
 						$scope.listspecialdrug = spesialDrug
 						$scope.listspecialprocedure = specialProcedure
 						$scope.listspecialprosthesis = specialProsthesis
@@ -7529,6 +7574,7 @@ define(['initialize', 'Configuration'], function (initialize,configuration) {
 				loadIdrg()
 				loadIdrgTd()
 				loadGroupingIdrg()
+				loadGroupingInacbg()
 				loadicd();
 				// loadicdInu();
 				loadicdix();
@@ -8210,15 +8256,15 @@ define(['initialize', 'Configuration'], function (initialize,configuration) {
 					// },
 					{
 						"field": "kddiagnosatindakan",
-						"title": "Kode Diagnosa",
+						"title": "Kode Prosedur",
 						"width": 150
 					}, {
 						"field": "namadiagnosatindakan",
-						"title": "Nama Diagnosa"
+						"title": "Nama Prosedur"
 					},
 					{
 						"field": "ketdiagnosa",
-						"title": "Keterangan diagnosa",
+						"title": "Keterangan Prosedur",
 						"width": "100px",
 					},
 					// {
@@ -11578,15 +11624,15 @@ define(['initialize', 'Configuration'], function (initialize,configuration) {
 				// },
 				{
 					"field": "kddiagnosatindakan",
-					"title": "Kode Diagnosa",
+					"title": "Kode Prosedur",
 					"width": 150
 				}, {
 					"field": "namadiagnosatindakan",
-					"title": "Nama Diagnosa"
+					"title": "Nama Prosedur"
 				},
 				{
 					"field": "ketdiagnosa",
-					"title": "Keterangan diagnosa",
+					"title": "Keterangan Prosedur",
 					"width": "100px",
 				},
 				{
@@ -11723,6 +11769,93 @@ define(['initialize', 'Configuration'], function (initialize,configuration) {
 						$scope.grouper_idrg = true;
 						$scope.itemPopUp.data_idrg = hasilidrg.data
 						$scope.itemPopUp.data_idrg.tglgrouping = moment(hasilidrg.data.tglgrouping).format('D MMM YYYY HH:mm');
+					}
+				})
+			}
+
+			function loadGroupingInacbg() {
+				medifirstService.get("bridging/inacbg/get-grouping-inacbg?noregistrasifk="+ $scope.itemPopUp.norec).then(function (hasilinacbg) {
+					if (hasilinacbg.data && Object.keys(hasilinacbg.data).length > 0) {
+						$scope.grupingtab = true
+						$scope.itemPopUp.cbg_code = hasilinacbg.data.cbg_code
+						$scope.itemPopUp.cbg_description = hasilinacbg.data.cbg_description
+						$scope.itemPopUp.cbg_tarif = hasilinacbg.data.cbg_tarif
+
+						var spesialDrug = []
+						if (hasilinacbg.data.special_cmg_drug_code !== null) {
+							spesialDrug.push({
+								code: hasilinacbg.data.special_cmg_drug_code,
+								description: hasilinacbg.data.special_cmg_drug_description,
+							})
+						} else {
+							spesialDrug.push({
+								code: '',
+								description: 'None',
+							})
+						}
+						
+						var specialProcedure = []
+						if (hasilinacbg.data.special_cmg_procedure_code) {
+							specialProcedure.push({
+								code: hasilinacbg.data.special_cmg_procedure_code,
+								description: hasilinacbg.data.special_cmg_procedure_description,
+							})
+						} else {
+							specialProcedure.push({
+								code: '',
+								description: 'None',
+							})
+						}
+
+						var specialProsthesis = []
+						if (hasilinacbg.data.special_cmg_prosthesis_code) {
+							specialProsthesis.push({
+								code: hasilinacbg.data.special_cmg_prosthesis_code,
+								description: hasilinacbg.data.special_cmg_prosthesis_description,
+							})
+						} else {
+							specialProsthesis.push({
+								code: '',
+								description: 'None',
+							})
+						}
+
+						var specialInvestigation = []
+						if (hasilinacbg.data.special_cmg_investigation_code) {
+							specialInvestigation.push({
+								code: hasilinacbg.data.special_cmg_investigation_code,
+								description: hasilinacbg.data.special_cmg_investigation_description,
+							})
+						} else {
+							specialInvestigation.push({
+								code: '',
+								description: 'None',
+							})
+						}
+
+						$scope.listspecialdrug = spesialDrug
+						$scope.listspecialprocedure = specialProcedure
+						$scope.listspecialprosthesis = specialProsthesis
+						$scope.listspecialinvestigation = specialInvestigation
+
+						$scope.item.specialprocedure = {
+							code: specialProcedure[0].code,
+							description: specialProcedure[0].description
+						}
+						$scope.item.specialprosthesis = {
+							code: specialProsthesis[0].code,
+							description: specialProsthesis[0].description
+						}
+						$scope.item.specialinvestigation = {
+							code: specialInvestigation[0].code,
+							description: specialInvestigation[0].description
+						}
+						$scope.item.specialdrug = {
+							code: spesialDrug[0].code,
+							description: spesialDrug[0].description
+						}
+
+						$scope.isNoneSpecial = true
 					}
 				})
 			}
@@ -12095,14 +12228,69 @@ define(['initialize', 'Configuration'], function (initialize,configuration) {
 								for (var i = 0; i < response.length; i++) {
 									const element = response[i]
 									if(element.datarequest.metadata.method == 'grouper'
-										&& element.dataresponse.metadata.code == 200 && responData[0].dataresponse.response_inacbg.cbg.description != 'GAGAL: KODE DIAGNOSA TIDAK BERLAKU'  ){
+										&& element.dataresponse.metadata.code == 200){
 										arrStatus.push(
 											{
 												nosep:element.datarequest.data.nomor_sep,
 												statusklaim: element.datarequest.metadata.method 
 											})
+
+											var spesialDrugRes = []
+											var specialProcedureRes = []
+											var specialProsthesisRes = []
+											var specialInvestigationRes = []
+											
+											if (responData[0].dataresponse.hasOwnProperty("special_cmg_option") == true && responData[0].dataresponse.special_cmg_option.length > 0) {
+												var responOptions = responData[0].dataresponse.special_cmg_option
+
+												for (let i = 0; i < responOptions.length; i++) {
+													const element = responOptions[i];
+													if (element.type == 'Special Drug') {
+														spesialDrugRes.push(element)
+													}
+													if (element.type == 'Special Procedure') {
+														specialProcedureRes.push(element)
+													}
+													if (element.type == 'Special Prosthesis') {
+														specialProsthesisRes.push(element)
+													}
+													if (element.type == 'Special Investigation') {
+														specialInvestigationRes.push(element)
+													}
+												}
+											}
+
+											var responseInacbg = {
+												noregistrasifk: $scope.itemPopUp.norec,
+												nosep: $scope.itemPopUp.nosep,
+												cbg_code: element.dataresponse.response_inacbg.cbg.code,
+												cbg_description: element.dataresponse.response_inacbg.cbg.description,
+												cbg_tarif: element.dataresponse.response_inacbg?.tariff,
+												subclass: element.dataresponse.response_inacbg?.kelas,
+												status: element.dataresponse.response_inacbg?.status_cd,
+												additional_json: JSON.stringify(response),
+												special_cmg_drug_code: spesialDrugRes.length > 0 ? spesialDrugRes[0].code : null,
+												special_cmg_drug_description: spesialDrugRes.length > 0 ? spesialDrugRes[0].description : null,
+												special_cmg_procedure_code: specialProcedureRes.length > 0 ? specialProcedureRes[0].code : null,
+												special_cmg_procedure_description: specialProcedureRes.length > 0 ? specialProcedureRes[0].description : null,
+												special_cmg_prosthesis_code: specialProsthesisRes.length > 0 ? specialProsthesisRes[0].code : null,
+												special_cmg_prosthesis_description: specialProsthesisRes.length > 0 ? specialProsthesisRes[0].description : null,
+												special_cmg_investigation_code: specialInvestigationRes.length > 0 ? specialInvestigationRes[0].code : null,
+												special_cmg_investigation_description: specialInvestigationRes.length > 0 ? specialInvestigationRes[0].description : null,
+											}
+			
+											await medifirstService.post('bridging/inacbg/save-hasil-grouping-inacbg', responseInacbg).then(function (hasilInacbg) {
+												if (hasilInacbg.data.status == 201) {
+													$scope.grupingtab = true
+													$scope.itemPopUp.cbg_code = hasilInacbg.data.data_inacbg.cbg_code
+													$scope.itemPopUp.cbg_description = hasilInacbg.data.data_inacbg.cbg_description
+													$scope.itemPopUp.cbg_tarif = hasilInacbg.data.data_inacbg.cbg_tarif
+												}
+											})
 									}
 								}
+
+
 								if(arrStatus.length>0){
 
 									for (var i = 0; i < data2.length; i++) {
@@ -12193,6 +12381,47 @@ define(['initialize', 'Configuration'], function (initialize,configuration) {
 									$scope.listspecialinvestigation = specialInvestigation
 									$scope.itemgrop= responData[0].dataresponse
 									$scope.itemPopUp.response = responData[0].dataresponse
+								} else {
+									var spesialDrug = [{
+										code: '',
+										description: 'None'
+									}]
+									var specialProcedure = [{
+										code: '',
+										description: 'None'
+									}]
+									var specialProsthesis = [{
+										code: '',
+										description: 'None'
+									}]
+									var specialInvestigation = [{
+										code: '',
+										description: 'None'
+									}]
+
+									$scope.listspecialdrug = spesialDrug
+									$scope.listspecialprocedure = specialProcedure
+									$scope.listspecialprosthesis = specialProsthesis
+									$scope.listspecialinvestigation = specialInvestigation
+
+									$scope.item.specialprocedure = {
+										code: '',
+										description: 'None'
+									}
+									$scope.item.specialprosthesis = {
+										code: '',
+										description: 'None'
+									}
+									$scope.item.specialinvestigation = {
+										code: '',
+										description: 'None'
+									}
+									$scope.item.specialdrug = {
+										code: '',
+										description: 'None'
+									}
+
+									$scope.isNoneSpecial = true
 								}
 							})
 
@@ -12866,6 +13095,7 @@ define(['initialize', 'Configuration'], function (initialize,configuration) {
 			}
 
 			$scope.checkDiagnosaTindakanIm = function(e) {
+				$scope.item.jumlahprocedureidrg = 1
 				if ($scope.listGridDiagnosaIdrgTd._data.length === 0) {
 					$scope.isRouteLoading = true
 					medifirstService.get(`registrasi/daftar-registrasi/get-diagnosa-9-im-by-kode?kddiagnosatindakan=${e.kdDiagnosaTindakan}`)
