@@ -116,15 +116,15 @@ class MyJKNV2Controller extends ApiController
             return $this->setStatusCode($result['metadata']['code'])->respond($result);
         }
 
-        $rencanakontrol = BpjsRencanaKontrol::where('statusenabled',true)->where('nosuratkontrol',$request['nomorreferensi'])->first();
-        if ($rencanakontrol) {
-            $tanggalPeriksa = date('Y-m-d', strtotime($request['tanggalperiksa']));
-            $tglrencanakontrol = date('Y-m-d',strtotime($rencanakontrol->tglrencanakontrol));
-            if($tanggalPeriksa < $tglrencanakontrol ){
-                $result = array("metadata"=>array("message" => "Tanggal periksa tidak boleh kurang dari tanggal rencana kontrol!", "code" => 201));
-                return $this->setStatusCode($result['metadata']['code'])->respond($result);
-            }
-        }
+        // $rencanakontrol = BpjsRencanaKontrol::where('statusenabled',true)->where('nosuratkontrol',$request['nomorreferensi'])->first();
+        // if ($rencanakontrol) {
+        //     $tanggalPeriksa = date('Y-m-d', strtotime($request['tanggalperiksa']));
+        //     $tglrencanakontrol = date('Y-m-d',strtotime($rencanakontrol->tglrencanakontrol));
+        //     if($tanggalPeriksa < $tglrencanakontrol ){
+        //         $result = array("metadata"=>array("message" => "Tanggal periksa tidak boleh kurang dari tanggal rencana kontrol!", "code" => 201));
+        //         return $this->setStatusCode($result['metadata']['code'])->respond($result);
+        //     }
+        // }
 
         $ruang = Ruangan::where('kdinternal', $request['kodepoli'])
         ->whereRaw(" ( iseksekutif=false or iseksekutif is null ) ")
