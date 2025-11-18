@@ -1101,7 +1101,8 @@
 								k-data-value-field="'code'"
 								k-filter="'contains'"
 								k-auto-bind="false"
-								k-data-source="listspecialprocedure" />
+								k-data-source="listspecialprocedure"
+								ng-disabled="isNoneSpecial" />
 							</div>
 							<div class="grid_2">
 								<button class="k-button" style="margin-top: 5px;" ng-click="hitungSpecialCMG(item.specialprocedure)">Tambah</button>
@@ -1120,7 +1121,8 @@
 								k-data-value-field="'code'"
 								k-filter="'contains'"
 								k-auto-bind="false"
-								k-data-source="listspecialprosthesis" />
+								k-data-source="listspecialprosthesis"
+								ng-disabled="isNoneSpecial" />
 							</div>
 							<div class="grid_2">
 								<button class="k-button" style="margin-top: 5px;" ng-click="hitungSpecialCMG(item.specialprosthesis)">Tambah</button>
@@ -1139,7 +1141,8 @@
 								k-data-value-field="'code'"
 								k-filter="'contains'"
 								k-auto-bind="false"
-								k-data-source="listspecialinvestigation" />
+								k-data-source="listspecialinvestigation"
+								ng-disabled="isNoneSpecial" />
 							</div>
 							<div class="grid_2">
 								<button class="k-button" style="margin-top: 5px;" ng-click="hitungSpecialCMG(item.specialinvestigation)">Tambah</button>
@@ -1158,7 +1161,8 @@
 								k-data-value-field="'code'"
 								k-filter="'contains'"
 								k-auto-bind="true"
-								k-data-source="listspecialdrug" />
+								k-data-source="listspecialdrug"
+								ng-disabled="isNoneSpecial" />
 							</div>
 							<div class="grid_2">
 								<button class="k-button" style="margin-top: 5px;" ng-click="hitungSpecialCMG(item.specialdrug)">Tambah</button>
@@ -1636,7 +1640,7 @@
 						<div class="clear"></div>
 	
 						<div class="grid_12">
-							<input style="width: 100%;" kendo-combo-box k-ng-model="itemPopUp.cob" k-data-text-field="'name'" k-data-value-field="'id'" k-filter="'contains'" k-auto-bind="false" k-data-source="listPenjamin" />
+							<input style="width: 100%;" kendo-combo-box k-ng-model="itemPopUp.cob" k-data-text-field="'name'" k-data-value-field="'id'" k-filter="'contains'" k-auto-bind="false" k-data-source="listPenjamin" ng-disabled="['Final Klaim','Terkirim'].includes(itemPopUp.statusklaim)" />
 							<!-- ng-disabled="true" -->
 						</div>
 					</div>
@@ -1689,7 +1693,7 @@
 							<td colspan="3">
 							<!-- <input style="width: 25%;" kendo-combo-box k-ng-model="item.caramasuk" k-data-text-field="'name'" k-data-value-field="'id'" k-filter="'contains'" k-auto-bind="false" k-data-source="listMasuk" /> -->
 							<!-- <input c-text-box  style="width: 25%;" type="input" class="k-textbox" ng-model="itemPopUp.cara_masuk" ng-disabled="true"/> -->
-							<input style="width: 40%;" kendo-combo-box k-ng-model="itemPopUp.cara_masuk" k-data-text-field="'namalengkap'" k-data-value-field="'id'" k-filter="'contains'" k-auto-bind="true" k-data-source="listmasuk"  />
+							<input style="width: 40%;" kendo-combo-box k-ng-model="itemPopUp.cara_masuk" k-data-text-field="'namalengkap'" k-data-value-field="'id'" k-filter="'contains'" k-auto-bind="true" k-data-source="listmasuk" ng-disabled="['Final Klaim','Terkirim'].includes(itemPopUp.statusklaim)" />
 							</td>
 						</tr>
 						<tr ng-show="itemPopUp.intensif == true">
@@ -1724,7 +1728,7 @@
 							<td align="right" style="padding: 10px 10px;"><label c-label item="item" >Cara Pulang</label></td>
 							<td>
 								<!-- <input style="width: 100%;" kendo-combo-box k-ng-model="item.carapulang" k-data-text-field="'name'" k-data-value-field="'id'" k-filter="'contains'" k-auto-bind="false" k-data-source="listPulang" /> -->
-							<input style="width: 100%;" kendo-combo-box k-ng-model="itemPopUp.discharge_status" k-data-text-field="'namalengkap'" k-data-value-field="'id'" k-filter="'contains'" k-auto-bind="true" k-data-source="listpulang"  />
+							<input style="width: 100%;" kendo-combo-box k-ng-model="itemPopUp.discharge_status" k-data-text-field="'namalengkap'" k-data-value-field="'id'" k-filter="'contains'" k-auto-bind="true" k-data-source="listpulang" ng-disabled="['Final Klaim','Terkirim'].includes(itemPopUp.statusklaim)"  />
 
 
 							</td>
@@ -1745,9 +1749,9 @@
 						<tr>
 							<td align="right" style="padding: 10px 10px;"><label c-label item="item" >Penggunaan Dializer</label></td>
 							<td colspan="3">
-								<input class="k-radio" type="radio" name="reuse_0" ng-model="itemPopUp.dializer_use" id="reuse_0" value="0">
+								<input class="k-radio" type="radio" name="reuse_0" ng-model="itemPopUp.dializer_use" id="reuse_0" value="0" ng-disabled="['Final Klaim','Terkirim'].includes(itemPopUp.statusklaim)">
 								<label class="k-radio-label" for="reuse_0" style="margin-right: 10px;">Multiple Use (reuse)</label>
-								<input class="k-radio" type="radio" name="reuse_1" ng-model="itemPopUp.dializer_use" id="reuse_1"  value="1">
+								<input class="k-radio" type="radio" name="reuse_1" ng-model="itemPopUp.dializer_use" id="reuse_1"  value="1" ng-disabled="['Final Klaim','Terkirim'].includes(itemPopUp.statusklaim)">
 								<label class="k-radio-label" for="reuse_1" style="margin-right: 10px;">Single Use</label>
 								
 								
@@ -1757,7 +1761,7 @@
 							<td align="right" style="padding: 10px 10px;"><label c-label item="item" >Pasien TB</label></td>
 							<td colspan="3">
 								<input type="checkbox" class="k-checkbox" id="itemPopUp.tb"
-								ng-model="itemPopUp.tb">
+								ng-model="itemPopUp.tb" ng-disabled="['Final Klaim','Terkirim'].includes(itemPopUp.statusklaim)">
 								<label class="k-checkbox-label" style="margin-right: 10px;"
 								for="itemPopUp.tb">Ya</label>
 								<input c-text-box  style="width: 40%;" ng-show="itemPopUp.tb == true" type="input" class="k-textbox" ng-model="itemPopUp.nomor_register_sitb" />
@@ -1769,7 +1773,7 @@
 							<td align="right" style="padding: 10px 10px;"><label c-label item="item" >Co-Insidence COVID-19</label></td>
 							<td colspan="3">
 								<input type="checkbox" class="k-checkbox" id="itemPopUp.covid"
-								ng-model="itemPopUp.covid">
+								ng-model="itemPopUp.covid" ng-disabled="['Final Klaim','Terkirim'].includes(itemPopUp.statusklaim)">
 								<label class="k-checkbox-label" style="margin-right: 10px;"
 								for="itemPopUp.covid">Ya</label>
 							</td>
@@ -1777,107 +1781,107 @@
 						<tr ng-show="itemPopUp.covid == true">
 							<td align="right" style="padding: 10px 10px;"><label c-label item="item" >Covid19 CC Ind</label></td>
 							<td>
-								<input c-text-box  style="width: 200px;" type="input" class="k-textbox" ng-model="itemPopUp.covid19_cc_ind" />
+								<input c-text-box  style="width: 200px;" type="input" class="k-textbox" ng-model="itemPopUp.covid19_cc_ind" ng-disabled="['Final Klaim','Terkirim'].includes(itemPopUp.statusklaim)" />
 								
 							</td>
 							<td align="right" style="padding: 10px 10px;"><label c-label item="item" >Covid19 RS Darurat Ind</label></td>
 							<td colspan="">
-								<input c-text-box  style="width: 200px;" type="input" class="k-textbox" ng-model="itemPopUp.covid19_rs_darurat_ind" />
+								<input c-text-box  style="width: 200px;" type="input" class="k-textbox" ng-model="itemPopUp.covid19_rs_darurat_ind" ng-disabled="['Final Klaim','Terkirim'].includes(itemPopUp.statusklaim)" />
 							</td>
 						</tr>
 						<tr ng-show="itemPopUp.covid == true">
 							<td align="right" style="padding: 10px 10px;"><label c-label item="item" >Covid19 CO Insidence Ind</label></td>
 							<td>
-								<input c-text-box  style="width: 200px;" type="input" class="k-textbox" ng-model="itemPopUp.covid19_co_insidense_ind" />
+								<input c-text-box  style="width: 200px;" type="input" class="k-textbox" ng-model="itemPopUp.covid19_co_insidense_ind" ng-disabled="['Final Klaim','Terkirim'].includes(itemPopUp.statusklaim)" />
 								
 							</td>
 							<td align="right" style="padding: 10px 10px;"><label c-label item="item" >Lab Asam Laktat</label></td>
 							<td colspan="">
-								<input c-text-box  style="width: 200px;" type="input" class="k-textbox" ng-model="itemPopUp.lab_asam_laktat" />
+								<input c-text-box  style="width: 200px;" type="input" class="k-textbox" ng-model="itemPopUp.lab_asam_laktat" ng-disabled="['Final Klaim','Terkirim'].includes(itemPopUp.statusklaim)" />
 							</td>
 						</tr>
 						<tr ng-show="itemPopUp.covid == true">
 							<td align="right" style="padding: 10px 10px;"><label c-label item="item" >Lab Procalcitonin</label></td>
 							<td>
-								<input c-text-box  style="width: 200px;" type="input" class="k-textbox" ng-model="itemPopUp.lab_procalcitonin" />
+								<input c-text-box  style="width: 200px;" type="input" class="k-textbox" ng-model="itemPopUp.lab_procalcitonin" ng-disabled="['Final Klaim','Terkirim'].includes(itemPopUp.statusklaim)" />
 								
 							</td>
 							<td align="right" style="padding: 10px 10px;"><label c-label item="item" >Lab CRP</label></td>
 							<td colspan="">
-								<input c-text-box  style="width: 200px;" type="input" class="k-textbox" ng-model="itemPopUp.lab_crp" />
+								<input c-text-box  style="width: 200px;" type="input" class="k-textbox" ng-model="itemPopUp.lab_crp" ng-disabled="['Final Klaim','Terkirim'].includes(itemPopUp.statusklaim)" />
 							</td>
 						</tr >
 						<tr ng-show="itemPopUp.covid == true">
 							<td align="right" style="padding: 10px 10px;"><label c-label item="item" >Lab Kultur</label></td>
 							<td>
-								<input c-text-box  style="width: 200px;" type="input" class="k-textbox" ng-model="itemPopUp.lab_kultur" />
+								<input c-text-box  style="width: 200px;" type="input" class="k-textbox" ng-model="itemPopUp.lab_kultur" ng-disabled="['Final Klaim','Terkirim'].includes(itemPopUp.statusklaim)" />
 								
 							</td>
 							<td align="right" style="padding: 10px 10px;"><label c-label item="item" >Lab D Dimer</label></td>
 							<td colspan="">
-								<input c-text-box  style="width: 200px;" type="input" class="k-textbox" ng-model="itemPopUp.lab_d_dimer" />
+								<input c-text-box  style="width: 200px;" type="input" class="k-textbox" ng-model="itemPopUp.lab_d_dimer" ng-disabled="['Final Klaim','Terkirim'].includes(itemPopUp.statusklaim)" />
 							</td>
 						</tr>
 						<tr ng-show="itemPopUp.covid == true">
 							<td align="right" style="padding: 10px 10px;"><label c-label item="item" >Lab PT</label></td>
 							<td>
-								<input c-text-box  style="width: 200px;" type="input" class="k-textbox" ng-model="itemPopUp.lab_pt" />
+								<input c-text-box  style="width: 200px;" type="input" class="k-textbox" ng-model="itemPopUp.lab_pt" ng-disabled="['Final Klaim','Terkirim'].includes(itemPopUp.statusklaim)" />
 								
 							</td>
 							<td align="right" style="padding: 10px 10px;"><label c-label item="item" >Lab APTT</label></td>
 							<td colspan="">
-								<input c-text-box  style="width: 200px;" type="input" class="k-textbox" ng-model="itemPopUp.lab_aptt" />
+								<input c-text-box  style="width: 200px;" type="input" class="k-textbox" ng-model="itemPopUp.lab_aptt" ng-disabled="['Final Klaim','Terkirim'].includes(itemPopUp.statusklaim)" />
 							</td>
 						</tr>
 						<tr ng-show="itemPopUp.covid == true">
 							<td align="right" style="padding: 10px 10px;"><label c-label item="item" >Lab Waktu Pendarahan</label></td>
 							<td>
-								<input c-text-box  style="width: 200px;" type="input" class="k-textbox" ng-model="itemPopUp.lab_waktu_pendarahan" />
+								<input c-text-box  style="width: 200px;" type="input" class="k-textbox" ng-model="itemPopUp.lab_waktu_pendarahan" ng-disabled="['Final Klaim','Terkirim'].includes(itemPopUp.statusklaim)" />
 								
 							</td>
 							<td align="right" style="padding: 10px 10px;"><label c-label item="item" >Lab Anti HIV</label></td>
 							<td colspan="">
-								<input c-text-box  style="width: 200px;" type="input" class="k-textbox" ng-model="itemPopUp.lab_anti_hiv" />
+								<input c-text-box  style="width: 200px;" type="input" class="k-textbox" ng-model="itemPopUp.lab_anti_hiv" ng-disabled="['Final Klaim','Terkirim'].includes(itemPopUp.statusklaim)" />
 							</td>
 						</tr>
 						<tr ng-show="itemPopUp.covid == true">
 							<td align="right" style="padding: 10px 10px;"><label c-label item="item" >Lab Analisa Gas</label></td>
 							<td>
-								<input c-text-box  style="width: 200px;" type="input" class="k-textbox" ng-model="itemPopUp.lab_analisa_gas" />
+								<input c-text-box  style="width: 200px;" type="input" class="k-textbox" ng-model="itemPopUp.lab_analisa_gas" ng-disabled="['Final Klaim','Terkirim'].includes(itemPopUp.statusklaim)" />
 								
 							</td>
 							<td align="right" style="padding: 10px 10px;"><label c-label item="item" >Lab Albumin</label></td>
 							<td colspan="">
-								<input c-text-box  style="width: 200px;" type="input" class="k-textbox" ng-model="itemPopUp.lab_albumin" />
+								<input c-text-box  style="width: 200px;" type="input" class="k-textbox" ng-model="itemPopUp.lab_albumin" ng-disabled="['Final Klaim','Terkirim'].includes(itemPopUp.statusklaim)" />
 							</td>
 						</tr>
 						<tr ng-show="itemPopUp.covid == true">
 							<td align="right" style="padding: 10px 10px;"><label c-label item="item" >Rad Thorax AP PA</label></td>
 							<td>
-								<input c-text-box  style="width: 200px;" type="input" class="k-textbox" ng-model="itemPopUp.rad_thorax_ap_pa" />
+								<input c-text-box  style="width: 200px;" type="input" class="k-textbox" ng-model="itemPopUp.rad_thorax_ap_pa" ng-disabled="['Final Klaim','Terkirim'].includes(itemPopUp.statusklaim)" />
 							</td>
 							<td align="right" style="padding: 10px 10px;"><label c-label item="item" >Terapi Konvalesen</label></td>
 							<td>
-								<input c-text-box  style="width: 200px;" type="input" class="k-textbox" ng-model="itemPopUp.terapi_konvalesen" />
+								<input c-text-box  style="width: 200px;" type="input" class="k-textbox" ng-model="itemPopUp.terapi_konvalesen" ng-disabled="['Final Klaim','Terkirim'].includes(itemPopUp.statusklaim)" />
 								
 							</td>
 						</tr>
 						<tr ng-show="itemPopUp.covid == true">
 							<td align="right" style="padding: 10px 10px;"><label c-label item="item" >Isoman Ind</label></td>
 							<td>
-								<input c-text-box  style="width: 200px;" type="input" class="k-textbox" ng-model="itemPopUp.isoman_ind" />
+								<input c-text-box  style="width: 200px;" type="input" class="k-textbox" ng-model="itemPopUp.isoman_ind" ng-disabled="['Final Klaim','Terkirim'].includes(itemPopUp.statusklaim)" />
 							</td>
 							
 							<td align="right" style="padding: 10px 10px;"><label c-label item="item" >Akses Naat</label></td>
 							<td colspan="">
-								<input c-text-box  style="width: 200px;" type="input" class="k-textbox" ng-model="itemPopUp.akses_naat" />
+								<input c-text-box  style="width: 200px;" type="input" class="k-textbox" ng-model="itemPopUp.akses_naat" ng-disabled="['Final Klaim','Terkirim'].includes(itemPopUp.statusklaim)" />
 							</td>
 						</tr>
 						<tr>
 							<td align="right" style="padding: 10px 10px;"><label c-label item="item" >Pasien Meninggal</label></td>
 							<td colspan="3">
 								<input type="checkbox" class="k-checkbox" id="itemPopUp.meninggal"
-								ng-model="itemPopUp.meninggal">
+								ng-model="itemPopUp.meninggal" ng-disabled="['Final Klaim','Terkirim'].includes(itemPopUp.statusklaim)">
 								<label class="k-checkbox-label" style="margin-right: 10px;"
 								for="itemPopUp.meninggal">Ya</label>
 							</td>
@@ -1885,40 +1889,40 @@
 						<tr ng-show="itemPopUp.meninggal == true">
 							<td align="right" style="padding: 10px 10px;"><label c-label item="item" >Pemulasaran Jenazah</label></td>
 							<td>
-								<input c-text-box  style="width: 200px;" type="input" class="k-textbox" ng-model="itemPopUp.pemulasaran_jenazah" />
+								<input c-text-box  style="width: 200px;" type="input" class="k-textbox" ng-model="itemPopUp.pemulasaran_jenazah" ng-disabled="['Final Klaim','Terkirim'].includes(itemPopUp.statusklaim)" />
 								
 							</td>
 							<td align="right" style="padding: 10px 10px;"><label c-label item="item" >Kantong Jenazah</label></td>
 							<td colspan="">
-								<input c-text-box  style="width: 200px;" type="input" class="k-textbox" ng-model="itemPopUp.kantong_jenazah" />
+								<input c-text-box  style="width: 200px;" type="input" class="k-textbox" ng-model="itemPopUp.kantong_jenazah" ng-disabled="['Final Klaim','Terkirim'].includes(itemPopUp.statusklaim)" />
 							</td>
 						</tr>
 						<tr ng-show="itemPopUp.meninggal == true">
 							<td align="right" style="padding: 10px 10px;"><label c-label item="item" >Peti Jenazah</label></td>
 							<td>
-								<input c-text-box  style="width: 200px;" type="input" class="k-textbox" ng-model="itemPopUp.peti_jenazah" />
+								<input c-text-box  style="width: 200px;" type="input" class="k-textbox" ng-model="itemPopUp.peti_jenazah" ng-disabled="['Final Klaim','Terkirim'].includes(itemPopUp.statusklaim)" />
 								
 							</td>
 							<td align="right" style="padding: 10px 10px;"><label c-label item="item" >Plastik Erat</label></td>
 							<td colspan="">
-								<input c-text-box  style="width: 200px;" type="input" class="k-textbox" ng-model="itemPopUp.plastik_jenazah" />
+								<input c-text-box  style="width: 200px;" type="input" class="k-textbox" ng-model="itemPopUp.plastik_jenazah" ng-disabled="['Final Klaim','Terkirim'].includes(itemPopUp.statusklaim)" />
 							</td>
 						</tr>
 						<tr ng-show="itemPopUp.meninggal == true">
 							<td align="right" style="padding: 10px 10px;"><label c-label item="item" >Desinfektan Jenazah</label></td>
 							<td>
-								<input c-text-box  style="width: 200px;" type="input" class="k-textbox" ng-model="itemPopUp.desinfektan_jenazah" />
+								<input c-text-box  style="width: 200px;" type="input" class="k-textbox" ng-model="itemPopUp.desinfektan_jenazah" ng-disabled="['Final Klaim','Terkirim'].includes(itemPopUp.statusklaim)" />
 								
 							</td>
 							<td align="right" style="padding: 10px 10px;"><label c-label item="item" >Mobil Jenazah</label></td>
 							<td colspan="">
-								<input c-text-box  style="width: 200px;" type="input" class="k-textbox" ng-model="itemPopUp.mobil_jenazah" />
+								<input c-text-box  style="width: 200px;" type="input" class="k-textbox" ng-model="itemPopUp.mobil_jenazah" ng-disabled="['Final Klaim','Terkirim'].includes(itemPopUp.statusklaim)" />
 							</td>
 						</tr>
 						<tr ng-show="itemPopUp.meninggal == true">
 							<td align="right" style="padding: 10px 10px;"><label c-label item="item" >Desinfektan Mobil Jenazah</label></td>
 							<td>
-								<input c-text-box  style="width: 200px;" type="input" class="k-textbox" ng-model="itemPopUp.desinfektan_mobil_jenazah" />
+								<input c-text-box  style="width: 200px;" type="input" class="k-textbox" ng-model="itemPopUp.desinfektan_mobil_jenazah" ng-disabled="['Final Klaim','Terkirim'].includes(itemPopUp.statusklaim)" />
 
 							</td>
 						
@@ -1927,7 +1931,7 @@
 							<td align="right" style="padding: 10px 10px;"><label c-label item="item" >Bayi Lahir</label></td>
 							<td colspan="3">
 								<input type="checkbox" class="k-checkbox" id="itemPopUp.lahir"
-								ng-model="itemPopUp.lahir">
+								ng-model="itemPopUp.lahir" ng-disabled="['Final Klaim','Terkirim'].includes(itemPopUp.statusklaim)">
 								<label class="k-checkbox-label" style="margin-right: 10px;"
 								for="itemPopUp.lahir">Ya</label>
 							</td>
@@ -1935,7 +1939,7 @@
 						<tr ng-show="itemPopUp.lahir == true">
 							<td align="right" style="padding: 10px 10px;"><label c-label item="item" >Bayi Lahir Status CD</label></td>
 							<td>
-								<input c-text-box  style="width: 200px;" type="input" class="k-textbox" ng-model="itemPopUp.bayi_lahir_status_cd" />
+								<input c-text-box  style="width: 200px;" type="input" class="k-textbox" ng-model="itemPopUp.bayi_lahir_status_cd" ng-disabled="['Final Klaim','Terkirim'].includes(itemPopUp.statusklaim)" />
 								
 							</td>
 							
@@ -1946,7 +1950,7 @@
 						<tr  ng-show="itemPopUp.lahir == true">
 							<td align="right" style="padding: 10px 10px;"><label c-label item="item" >Kantong Darah</label></td>
 							<td>
-								<input c-text-box  style="width: 200px;" type="input" class="k-textbox" ng-model="itemPopUp.kantong_darah" />
+								<input c-text-box  style="width: 200px;" type="input" class="k-textbox" ng-model="itemPopUp.kantong_darah" ng-disabled="['Final Klaim','Terkirim'].includes(itemPopUp.statusklaim)" />
 								
 							</td>
 							
@@ -1955,7 +1959,7 @@
 							<td align="right" style="padding: 10px 10px;"><label c-label item="item" >Persalinan</label></td>
 							<td colspan="3">
 								<input type="checkbox" class="k-checkbox" id="itemPopUp.persalinan"
-								ng-model="itemPopUp.persalinan">
+								ng-model="itemPopUp.persalinan" ng-disabled="['Final Klaim','Terkirim'].includes(itemPopUp.statusklaim)">
 								<label class="k-checkbox-label" style="margin-right: 10px;"
 								for="itemPopUp.persalinan">Ya</label>
 							</td>
@@ -1963,75 +1967,75 @@
 						<tr ng-show="itemPopUp.persalinan == true">
 							<td align="right" style="padding: 10px 10px;"><label c-label item="item" >Usia Kehamilan</label></td>
 							<td>
-								<input c-text-box  style="width: 200px;" type="input" class="k-textbox" ng-model="itemPopUp.usia_kehamilan" />
+								<input c-text-box  style="width: 200px;" type="input" class="k-textbox" ng-model="itemPopUp.usia_kehamilan" ng-disabled="['Final Klaim','Terkirim'].includes(itemPopUp.statusklaim)" />
 								
 							</td>
 							<td align="right" style="padding: 10px 10px;"><label c-label item="item" >Gravida</label></td>
 							<td colspan="">
-								<input c-text-box  style="width: 200px;" type="input" class="k-textbox" ng-model="itemPopUp.gravida" />
+								<input c-text-box  style="width: 200px;" type="input" class="k-textbox" ng-model="itemPopUp.gravida" ng-disabled="['Final Klaim','Terkirim'].includes(itemPopUp.statusklaim)" />
 							</td>
 						</tr>
 						<tr ng-show="itemPopUp.persalinan == true">
 							<td align="right" style="padding: 10px 10px;"><label c-label item="item" >Partus</label></td>
 							<td>
-								<input c-text-box  style="width: 200px;" type="input" class="k-textbox" ng-model="itemPopUp.partus" />
+								<input c-text-box  style="width: 200px;" type="input" class="k-textbox" ng-model="itemPopUp.partus" ng-disabled="['Final Klaim','Terkirim'].includes(itemPopUp.statusklaim)" />
 								
 							</td>
 							<td align="right" style="padding: 10px 10px;"><label c-label item="item" >Abortus</label></td>
 							<td colspan="">
-								<input c-text-box  style="width: 200px;" type="input" class="k-textbox" ng-model="itemPopUp.abortus" />
+								<input c-text-box  style="width: 200px;" type="input" class="k-textbox" ng-model="itemPopUp.abortus" ng-disabled="['Final Klaim','Terkirim'].includes(itemPopUp.statusklaim)" />
 							</td>
 						</tr>
 						<tr ng-show="itemPopUp.persalinan == true">
 							<td align="right" style="padding: 10px 10px;"><label c-label item="item" >Onset Kontraksi</label></td>
 							<td>
 								<!-- <input style="width: 100%;" kendo-combo-box k-ng-model="item.carapulang" k-data-text-field="'name'" k-data-value-field="'id'" k-filter="'contains'" k-auto-bind="false" k-data-source="listPulang" /> -->
-							<input style="width: 50%;" kendo-combo-box k-ng-model="itemPopUp.onset_kontraksi" k-data-text-field="'text'" k-data-value-field="'id'" k-filter="'contains'" k-auto-bind="true" k-data-source="listOnset"  />
+							<input style="width: 50%;" kendo-combo-box k-ng-model="itemPopUp.onset_kontraksi" k-data-text-field="'text'" k-data-value-field="'id'" k-filter="'contains'" k-auto-bind="true" k-data-source="listOnset" ng-disabled="['Final Klaim','Terkirim'].includes(itemPopUp.statusklaim)" />
 
 
 							</td>
 							<td align="right" style="padding: 10px 10px;"><label c-label item="item" >Delivery Sequence</label></td>
 							<td colspan="">
-								<input c-text-box  style="width: 200px;" type="input" class="k-textbox" ng-model="itemPopUp.delivery_sequence" />
+								<input c-text-box  style="width: 200px;" type="input" class="k-textbox" ng-model="itemPopUp.delivery_sequence" ng-disabled="['Final Klaim','Terkirim'].includes(itemPopUp.statusklaim)" />
 							</td>
 						</tr>
 						<tr ng-show="itemPopUp.persalinan == true">
 							<td align="right" style="padding: 10px 10px;"><label c-label item="item" >Delivery Method</label></td>
 							<td>
-								<input c-text-box  style="width: 200px;" type="input" class="k-textbox" ng-model="itemPopUp.delivery_method" />
+								<input c-text-box  style="width: 200px;" type="input" class="k-textbox" ng-model="itemPopUp.delivery_method" ng-disabled="['Final Klaim','Terkirim'].includes(itemPopUp.statusklaim)" />
 								
 							</td>
 							<td align="right" style="padding: 10px 10px;"><label c-label item="item" >Delivery DTTM</label></td>
 							<td colspan="">
-								<input c-text-box  style="width: 200px;" type="input" class="k-textbox" ng-model="itemPopUp.delivery_dttm" />
+								<input c-text-box  style="width: 200px;" type="input" class="k-textbox" ng-model="itemPopUp.delivery_dttm" ng-disabled="['Final Klaim','Terkirim'].includes(itemPopUp.statusklaim)" />
 							</td>
 						</tr>
 						<tr ng-show="itemPopUp.persalinan == true">
 							<td align="right" style="padding: 10px 10px;"><label c-label item="item" >Letak Janin</label></td>
 							<td>
-								<input c-text-box  style="width: 200px;" type="input" class="k-textbox" ng-model="itemPopUp.letak_janin" />
+								<input c-text-box  style="width: 200px;" type="input" class="k-textbox" ng-model="itemPopUp.letak_janin" ng-disabled="['Final Klaim','Terkirim'].includes(itemPopUp.statusklaim)" />
 								
 							</td>
 							<td align="right" style="padding: 10px 10px;"><label c-label item="item" >Kondisi</label></td>
 							<td colspan="">
-								<input c-text-box  style="width: 200px;" type="input" class="k-textbox" ng-model="itemPopUp.kondisi" />
+								<input c-text-box  style="width: 200px;" type="input" class="k-textbox" ng-model="itemPopUp.kondisi" ng-disabled="['Final Klaim','Terkirim'].includes(itemPopUp.statusklaim)" />
 							</td>
 						</tr>
 						<tr ng-show="itemPopUp.persalinan == true">
 							<td align="right" style="padding: 10px 10px;"><label c-label item="item" >Use Manual</label></td>
 							<td>
-								<input c-text-box  style="width: 200px;" type="input" class="k-textbox" ng-model="itemPopUp.use_manual" />
+								<input c-text-box  style="width: 200px;" type="input" class="k-textbox" ng-model="itemPopUp.use_manual" ng-disabled="['Final Klaim','Terkirim'].includes(itemPopUp.statusklaim)" />
 								
 							</td>
 							<td align="right" style="padding: 10px 10px;"><label c-label item="item" >Use Forcep</label></td>
 							<td colspan="">
-								<input c-text-box  style="width: 200px;" type="input" class="k-textbox" ng-model="itemPopUp.use_forcep" />
+								<input c-text-box  style="width: 200px;" type="input" class="k-textbox" ng-model="itemPopUp.use_forcep" ng-disabled="['Final Klaim','Terkirim'].includes(itemPopUp.statusklaim)" />
 							</td>
 						</tr>
 						<tr ng-show="itemPopUp.persalinan == true">
 							<td align="right" style="padding: 10px 10px;"><label c-label item="item" >Use Vacuum</label></td>
 							<td>
-								<input c-text-box  style="width: 200px;" type="input" class="k-textbox" ng-model="itemPopUp.use_vacuum" />
+								<input c-text-box  style="width: 200px;" type="input" class="k-textbox" ng-model="itemPopUp.use_vacuum" ng-disabled="['Final Klaim','Terkirim'].includes(itemPopUp.statusklaim)" />
 								
 							</td>
 							
@@ -2354,7 +2358,7 @@
 										<div class="grid_12">
 											<input kendo-combo-box style="width:100%" k-ng-model="item.diagnosisPrimerIdrg"
 												k-data-text-field="'kodeNama'" k-data-value-field="'id'" k-filter="'contains'"
-												k-auto-bind="false" k-data-source="sourceDiagnosisPrimerIdrg" ng-disabled="findBy=='1'" k-on-change="checkDiagnosaIm(item.diagnosisPrimerIdrg)" />
+												k-auto-bind="false" k-data-source="sourceDiagnosisPrimerIdrg" k-on-change="checkDiagnosaIm(item.diagnosisPrimerIdrg)" ng-disabled="['Final Klaim','Terkirim'].includes(itemPopUp.statusklaim)" />
 										</div>
 									</div>
 									
@@ -2392,11 +2396,11 @@
 										<div class="grid_12">
 											<input kendo-combo-box style="width:100%" k-ng-model="item.diagnosisIdrgTd"
 												k-data-text-field="'kdNama'" k-data-value-field="'id'" k-filter="'contains'"
-												k-auto-bind="false" k-data-source="sourceDiagnosisIdrgTd" ng-disabled="findBy1=='1'" k-on-change="checkDiagnosaTindakanIm(item.diagnosisIdrgTd)" />
+												k-auto-bind="false" k-data-source="sourceDiagnosisIdrgTd" ng-disabled="['Final Klaim','Terkirim'].includes(itemPopUp.statusklaim)" k-on-change="checkDiagnosaTindakanIm(item.diagnosisIdrgTd)" />
 										</div>
 									</div>
 									<div class="grid_2">
-											<input c-text-box type="number" class="k-textbox" ng-model="item.jumlahprocedureidrg" placeholder="jumlah">
+											<input c-text-box type="number" class="k-textbox" ng-model="item.jumlahprocedureidrg" placeholder="jumlah" ng-disabled="['Final Klaim','Terkirim'].includes(itemPopUp.statusklaim)">
 										</div>
 									<div class="grid_12" ng-if="!['Grouping iDRG Final','Grouping INACBG Reedit','Grouping','Grouping INACBG Final','Final Klaim','Terkirim','Klaim Edit'].includes(itemPopUp.statusklaim)">
 										<div class="grid_2" style="margin-right: 5px;">
@@ -2510,7 +2514,7 @@
 										<div class="grid_12">
 											<input kendo-combo-box style="width:100%" k-ng-model="item.diagnosisPrimer"
 												k-data-text-field="'kodeNama'" k-data-value-field="'id'" k-filter="'contains'"
-												k-auto-bind="false" k-data-source="sourceDiagnosisPrimer" ng-disabled="findBy=='1'" />
+												k-auto-bind="false" k-data-source="sourceDiagnosisPrimer" ng-disabled="['Final Klaim','Terkirim'].includes(itemPopUp.statusklaim)" />
 										</div>
 									</div>
 									<!-- <div class="grid_3">
@@ -2598,8 +2602,8 @@
 										<div class="grid_12">
 											<input kendo-combo-box style="width:100%" k-ng-model="item.diagnosisPrimer1"
 												k-data-text-field="'kdNama'" k-data-value-field="'id'" k-filter="'contains'"
-												k-auto-bind="false" k-data-source="sourceDiagnosisPrimer1" ng-disabled="findBy1=='1'"
-												k-on-change="isiNamaDiagnosaT()" />
+												k-auto-bind="false" k-data-source="sourceDiagnosisPrimer1"
+												k-on-change="isiNamaDiagnosaT()" ng-disabled="['Final Klaim','Terkirim'].includes(itemPopUp.statusklaim)" />
 										</div>
 									</div>
 									<!-- <div class="grid_3">
@@ -2683,9 +2687,9 @@
 									</tr>
 									<tr>
 										<td align="right" style="padding: 13px;"><label c-label item="item">Group</label></td>
-									<td>{{ itemgrop.response_inacbg.cbg.description}}</td>
-										<td>{{ itemgrop.response_inacbg.cbg.code }}</td>
-										<td>{{ itemgrop.response_inacbg.tariff != null ? itemgrop.response_inacbg.tariff : 0 | currency: "Rp. ": 0 }}</td>
+									<td>{{ itemPopUp.cbg_description }}</td>
+										<td>{{ itemPopUp.cbg_code }}</td>
+										<td>{{ itemPopUp.tariff != null ? itemPopUp.tariff : 0 | currency: "Rp. ": 0 }}</td>
 								</tr>
 									<tr>
 										<td align="right" style="padding: 13px;"><label c-label item="item">Sub Acute</label></td>
@@ -2709,7 +2713,8 @@
 												k-data-value-field="'code'"
 												k-filter="'contains'"
 												k-auto-bind="false"
-												k-data-source="listspecialprocedure" />
+												k-data-source="listspecialprocedure"
+												ng-disabled="isNoneSpecial" />
 											</div>
 											<div class="grid_2">
 												<button class="k-button" style="margin-top: 5px;" ng-click="simpanTopUp()" ng-if="!['Grouping INACBG Final','Final Klaim','Terkirim','Klaim Edit'].includes(itemPopUp.statusklaim)">Tambah</button>
@@ -2728,7 +2733,8 @@
 												k-data-value-field="'code'"
 												k-filter="'contains'"
 												k-auto-bind="false"
-												k-data-source="listspecialprosthesis" />
+												k-data-source="listspecialprosthesis"
+												ng-disabled="isNoneSpecial" />
 											</div>
 											<div class="grid_2">
 												<button class="k-button" style="margin-top: 5px;" ng-click="simpanTopUp()" ng-if="!['Grouping INACBG Final','Final Klaim','Terkirim','Klaim Edit'].includes(itemPopUp.statusklaim)">Tambah</button>
@@ -2747,7 +2753,8 @@
 												k-data-value-field="'code'"
 												k-filter="'contains'"
 												k-auto-bind="false"
-												k-data-source="listspecialinvestigation" />
+												k-data-source="listspecialinvestigation"
+												ng-disabled="isNoneSpecial" />
 											</div>
 											<div class="grid_2">
 												<button class="k-button" style="margin-top: 5px;" ng-click="simpanTopUp()" ng-if="!['Grouping INACBG Final','Final Klaim','Terkirim','Klaim Edit'].includes(itemPopUp.statusklaim)">Tambah</button>
@@ -2766,7 +2773,8 @@
 												k-data-value-field="'code'"
 												k-filter="'contains'"
 												k-auto-bind="true"
-												k-data-source="listspecialdrug" />
+												k-data-source="listspecialdrug"
+												ng-disabled="isNoneSpecial" />
 											</div>
 											<div class="grid_2">
 												<button class="k-button" style="margin-top: 5px;" ng-click="simpanTopUp()" ng-if="!['Grouping INACBG Final','Final Klaim','Terkirim','Klaim Edit'].includes(itemPopUp.statusklaim)">Tambah</button>
@@ -2786,7 +2794,9 @@
 							<div class="grid_12" >
 								<button class="k-button" ng-click="grouperInacbgStage1()" style="float:right;margin-top:2%" ng-if="istopup == true && !['Grouping INACBG Final','Final Klaim','Terkirim','Klaim Edit'].includes(itemPopUp.statusklaim)">Batal Top Up</button>
 								<!-- <button class="k-button" ng-click="simpanTopUp()" style="float:right;margin-top:2%;margin-right:1%;" ng-if="istopup == true && !['Grouping INACBG Final','Final Klaim','Terkirim','Klaim Edit'].includes(itemPopUp.statusklaim)">Simpan Top Up</button> -->
-								<button ng-if="!['Grouping INACBG Final','Final Klaim','Terkirim','Klaim Edit'].includes(itemPopUp.statusklaim)" class="k-button" ng-click="finalInacbg()" style="float:right;margin-top:2%;margin-right:1%;">Final INACBG</button>
+								<span ng-show="itemPopUp.cbg_description && itemPopUp.cbg_description != 'GAGAL: KODE DIAGNOSA TIDAK BERLAKU'">
+									<button ng-if="!['Grouping INACBG Final','Final Klaim','Terkirim','Klaim Edit'].includes(itemPopUp.statusklaim)" class="k-button" ng-click="finalInacbg()" style="float:right;margin-top:2%;margin-right:1%;">Final INACBG</button>
+								</span>
 								<button ng-if="['Grouping INACBG Final','Klaim Edit'].includes(itemPopUp.statusklaim)" class="k-button" ng-click="editUlangInacbg()" style="float:right;margin-top:2%;margin-right:1%;">Edit Ulang INACBG</button>
 							</div>
 							

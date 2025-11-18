@@ -26,6 +26,7 @@ use Illuminate\Http\Request;
 use App\Traits\Valet;
 use App\Transaksi\HasilGroupingIdrg;
 use App\Transaksi\HasilLaboratorium;
+use App\Transaksi\HasilGroupingInacbg;
 use Auth;
 use phpDocumentor\Reflection\Types\Null_;
 use Webpatser\Uuid\Uuid;
@@ -4116,5 +4117,67 @@ class InaCbgController   extends ApiController
             );
         }
         return $this->setStatusCode($result['status'])->respond($result, $transMessage);
+    }
+
+    public function saveGroupingInacbg(Request $request)
+    {
+        $kdProfile = (int)$this->getDataKdProfile($request);
+        DB::beginTransaction();
+        try {
+            $delete = HasilGroupingInacbg::where('noregistrasifk', $request['noregistrasifk'])->delete();
+
+            $new = new HasilGroupingInacbg();
+            $new->norec =  $new->generateNewId();
+            $new->noregistrasifk = $request['noregistrasifk'];
+            $new->kdprofile = $kdProfile;
+            $new->tglgrouping = date('Y-m-d H:i:s');
+            $new->cbg_code = $request['cbg_code'];
+            $new->cbg_description = $request['cbg_description'];
+            $new->cbg_tarif = $request['cbg_tarif'];
+            $new->subclass = $request['subclass'];
+            $new->status = $request['status'];
+            $new->additional_json = $request['additional_json'];
+            $new->special_cmg_drug_code = $request['special_cmg_drug_code'];
+            $new->special_cmg_drug_description = $request['special_cmg_drug_description'];
+            $new->special_cmg_procedure_code = $request['special_cmg_procedure_code'];
+            $new->special_cmg_procedure_description = $request['special_cmg_procedure_description'];
+            $new->special_cmg_prosthesis_code = $request['special_cmg_prosthesis_code'];
+            $new->special_cmg_prosthesis_description = $request['special_cmg_prosthesis_description'];
+            $new->special_cmg_investigation_code = $request['special_cmg_investigation_code'];
+            $new->special_cmg_investigation_description = $request['special_cmg_investigation_description'];
+            $new->save();
+
+            $transStatus = 'true';
+            $transMessage = "Simpan Grouping Inacbg Berhasil! ";
+        } catch (\Exception $e) {
+            $transStatus = 'false';
+            $transMessage = "Simpan Grouping Inacbg Gagal! ";
+        }
+
+        if ($transStatus != 'false') {
+            DB::commit();
+            $result = array(
+                "status" => 201,
+                "data_inacbg" => $new,
+                "message" => $transMessage,
+            );
+        } else {
+            DB::rollBack();
+            $result = array(
+                "status" => 400,
+                "e" => $e->getMessage(),
+                "message" => $transMessage,
+            );
+        }
+
+        return $this->setStatusCode($result['status'])->respond($result, $transMessage);
+    }
+
+    public function getGroupingInacbg(Request $request){
+        $data = DB::table('hasilgroupinginacbg_t')
+                ->where("noregistrasifk",$request['noregistrasifk'])
+                ->first();
+
+        return $this->respond($data);
     }
 }
