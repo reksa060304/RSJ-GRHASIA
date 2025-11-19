@@ -2281,6 +2281,27 @@ define(['initialize', 'Configuration'], function (initialize, config) {
 				}
 				HapusExp();
 				$scope.popUpEkpertise.close();
+			}
+
+			$scope.BuktiDaftar = function(){
+				if($scope.dataPasienSelected.noregistrasi ==  undefined){
+					toastr.error('Pilih data dulu')
+					return 
+				}
+				if ($scope.dataPasienSelected.noregistrasi) {
+					var local = JSON.parse(localStorage.getItem('profile'))
+					var nama = medifirstService.getPegawaiLogin().namaLengkap
+
+					window.open(config.baseApiBackend + 'report/cetak-bukti-pendaftaran?noregistrasi=' + $scope.dataPasienSelected.nocm +
+						'&norec_pd=' + $scope.dataPasienSelected.norec +
+						// '&emr=' + norecEMR +
+						// '&emrfk=' + $scope.cc.emrfk +
+						'&kdprofile=' + local.id +
+						'&nama=' + nama +
+						// '&isttd=true' +
+						// '&pegawaittd=' + pegawai.value +
+						'&noregistrasi=' + $scope.dataPasienSelected.noregistrasi, '_blank');
+				}
 			}			
 
 			$scope.CheckImage = function () {                
