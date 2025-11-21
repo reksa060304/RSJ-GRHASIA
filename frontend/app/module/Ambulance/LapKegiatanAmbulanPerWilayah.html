@@ -156,6 +156,17 @@
                     <div class="clear"></div>
                 </div>
             </div>
+            <div class="grid_2">
+                <div class="grid_12">
+                    <label c-label item="item">Wilayah</label>
+                </div>
+                <div class="clear"></div>
+
+                <div class="grid_12">
+                    <input c-text-box type="input" filter="" class="k-textbox" ng-model="item.wilayah"
+                        ng-keypress="($event.which == 13)? SearchData():item.wilayah" />
+                </div>  
+            </div>
 
             <!-- Jenis Mobil -->
             <!-- <div class="grid_2">

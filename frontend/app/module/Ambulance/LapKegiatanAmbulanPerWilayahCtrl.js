@@ -42,6 +42,9 @@ define(['initialize', 'Configuration'], function (initialize, config) {
                         data[0].data[i].no = i + 1
                         data[0].data[i].wilayah = ambilKotaKabupaten(data[0].data[i].address)
                     }
+                    if ($scope.item.wilayah != '' && $scope.item.wilayah != null && $scope.item.wilayah != undefined) {
+                        data[0].data = data[0].data.filter(item => item.wilayah.toLowerCase().includes($scope.item.wilayah))
+                    }
                     $scope.dataDaftarPasienPulang = new kendo.data.DataSource({
                         data: data[0].data,
                         group: $scope.group,
