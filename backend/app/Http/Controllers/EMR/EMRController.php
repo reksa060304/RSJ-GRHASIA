@@ -6627,7 +6627,7 @@ class EMRController  extends ApiController
                 )
             );
             if ($item->statusorder == 0) {
-                $status = 'Menunggu Verifikasi';
+                $status = 'Menunggu';
             };
             if ($item->statusorder == 5) {
                 // $status = 'Verifikasi';
