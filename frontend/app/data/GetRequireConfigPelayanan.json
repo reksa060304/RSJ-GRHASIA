@@ -3794,6 +3794,10 @@
             "urlDep": "module/Registrasi/Laporan/LaporanRekamMedis/RL317FarmasiCtrl"
         },
         {
+            "nameDep": "RL318FarmasiCtrl",
+            "urlDep": "module/Registrasi/Laporan/LaporanRekamMedis/RL318FarmasiCtrl"
+        },
+        {
             "nameDep": "BridgingInaCbgIDRGCtrl",
             "urlDep": "module/Bridging/BridgingInaCbgIDRGCtrl"
         },
