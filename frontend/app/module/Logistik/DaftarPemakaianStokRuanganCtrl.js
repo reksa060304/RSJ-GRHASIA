@@ -153,87 +153,22 @@ define(['initialize'], function (initialize) {
                     fileName: "DaftarPemakaianStokRuangan.xlsx",
                     allPages: true,
                 },
-                excelExport: function(e) {
-                var sheet = e.workbook.sheets[0];
-                sheet.rows = []; // hapus sheet default
-                sheet.name = "Pemakaian Ruangan";
-                sheet.frozenRows = 1;
+                excelExport: function (e) {
+                    var sheet = e.workbook.sheets[0];
+                    sheet.frozenRows = 2;
+                    sheet.mergedCells = ["A1:G1"];
+                    sheet.name = "Sheet";
 
-                // Header judul besar
-                var titleRow = {
-                    cells: [
-                        { value: "Daftar Pemakaian Stok Ruangan", colSpan: 6, textAlign: "center", fontSize: 18, bold: true }
-                    ],
-                    type: "header",
-                    height: 30
-                };
+                    var myHeaders = [{
+                        value: "Daftar Pemakaian Stok Ruangan",
+                        fontSize: 20,
+                        textAlign: "center",
+                        background: "#ffffff",
+                        // color:"#ffffff"
+                    }];
 
-                // Data main
-                var data =  e.data;
-
-                // Tambahkan header utama
-                sheet.rows.push(titleRow);
-                sheet.rows.push({
-                        cells: [
-                            { value: "No", bold: true },
-                            { value: "Tanggal", bold: true },
-                            { value: "No Pemakaian", bold: true },
-                            { value: "Keterangan", bold: true },
-                            { value: "Ruangan", bold: true },
-                            { value: "Pegawai", bold: true },
-                            { value: "Total", bold: true }
-                        ],
-                        type: "header",
-                        height: 25
-                    });
-
-                // Loop grup data
-                data.forEach(function(group) {
-                    // Baris header grup
-                    sheet.rows.push({
-                        cells: [
-                            { value: group.no },
-                            { value: group.tglstruk },
-                            { value: group.nostruk },
-                            { value: group.keterangan },
-                            { value: group.namaruangan },
-                            { value: group.namapegawai },
-                            { value: group.total }
-                        ],
-                        bold: true,
-                        background: "#f5f5f5"
-                    });
-
-                    // Header kolom
-                    sheet.rows.push({
-                        cells: [
-                            { value: "-", bold: true },
-                            { value: "Deskripsi", bold: true },
-                            { value: "Satuan", bold: true },
-                            { value: "Qty", bold: true },
-                            { value: "Harga Satuan", bold: true },
-                            { value: "Total", bold: true }
-                        ]
-                    });
-
-                    // Detail item
-                    group.details.forEach(function(item) {
-                        sheet.rows.push({
-                            cells: [
-                                { value: '' },
-                                { value: item.namaproduk },
-                                { value: item.satuanstandar },
-                                { value: item.qtyproduk },
-                                { value: item.hargasatuan },
-                                { value: group.total }
-                            ]
-                        });
-                    });
-
-                    // Baris kosong antar grup
-                    sheet.rows.push({ cells: [] });
-                });
-            },
+                    sheet.rows.splice(0, 0, { cells: myHeaders, type: "header", height: 70 });
+                },
                 scrollable: true,
                 columns: [
           

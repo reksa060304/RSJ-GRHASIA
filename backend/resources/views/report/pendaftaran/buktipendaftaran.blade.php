@@ -153,12 +153,6 @@
                                 </td>
                             </tr>
                             <tr>
-                                <td height="5" width="100%" colspan="3" style="text-align: center">
-                                    {{-- <font style="font-size: 8pt;" color="#000000" face="Tahoma">Dokter</font> --}}
-                                    <font >{!! QrCode::size(100)->margin(2)->generate($dataReport['noregistrasi']) !!}</font>
-                                </td>
-                            </tr>
-                            <tr>
                                 <table ccellspacing="0" cellpadding="0" border="0" width="100%" align="center">
                                     <tr>
                                         <td style="text-align: center">

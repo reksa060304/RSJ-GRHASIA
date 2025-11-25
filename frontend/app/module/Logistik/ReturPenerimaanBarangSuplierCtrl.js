@@ -583,61 +583,61 @@ define(['initialize'], function (initialize) {
                 }
             });
 
-            // $scope.$watch('item.jumlah', function (newValue, oldValue) {
-            //     if (newValue != oldValue) {
-            //         qty = parseFloat($scope.item.jumlah)
-            //         hrgsatuan = parseFloat($scope.item.hargaSatuan)
-            //         ppn = parseFloat($scope.item.ppn)
-            //         hargadiskon = parseFloat($scope.item.hargaDiskon)
-            //         $scope.item.subTotaltxt = qty * (hrgsatuan + ppn - hargadiskon)
-            //     }
-            // });
-            // $scope.$watch('item.jumlahRetur', function (newValue, oldValue) {
-            //     if (newValue != oldValue) {
-            //         qty = parseFloat($scope.item.jumlahRetur)
-            //         hrgsatuan = parseFloat($scope.item.hargaSatuan)
-            //         ppn = parseFloat($scope.item.ppn)
-            //         hargadiskon = parseFloat($scope.item.hargaDiskon)
-            //         $scope.item.subTotaltxt = qty * (hrgsatuan + ppn - hargadiskon)
-            //     }
-            // });
-            // $scope.$watch('item.hargaSatuan', function (newValue, oldValue) {
-            //     if (newValue != oldValue) {
-            //         qty = parseFloat($scope.item.jumlah)
-            //         hrgsatuan = parseFloat($scope.item.hargaSatuan)
-            //         ppn = parseFloat($scope.item.ppn)
-            //         hargadiskon = parseFloat($scope.item.hargaDiskon)
-            //         $scope.item.subTotaltxt = qty * (hrgsatuan + ppn - hargadiskon)
-            //     }
-            // });
-            // $scope.$watch('item.ppn', function (newValue, oldValue) {
-            //     if (newValue != oldValue) {
-            //         qty = parseFloat($scope.item.jumlah)
-            //         hrgsatuan = parseFloat($scope.item.hargaSatuan)
-            //         ppn = parseFloat($scope.item.ppn)
-            //         hargadiskon = parseFloat($scope.item.hargaDiskon)
-            //         $scope.item.subTotaltxt = qty * (hrgsatuan + ppn - hargadiskon)
-            //     }
-            // });
-            // $scope.$watch('item.hargaDiskon', function (newValue, oldValue) {
-            //     if (newValue != oldValue) {
-            //         qty = parseFloat($scope.item.jumlah)
-            //         hrgsatuan = parseFloat($scope.item.hargaSatuan)
-            //         ppn = parseFloat($scope.item.ppn)
-            //         hargadiskon = parseFloat($scope.item.hargaDiskon)
-            //         $scope.item.subTotaltxt = qty * (hrgsatuan + ppn - hargadiskon)
-            //     }
-            // });
-            // $scope.$watch('item.ppnpersen', function (newValue, oldValue) {
-            //     if (newValue != oldValue) {
-            //         $scope.item.ppn = (parseFloat($scope.item.ppnpersen) * parseFloat($scope.item.hargaSatuan)) / 100
-            //     }
-            // });
-            // $scope.$watch('item.hargaDiskonPersen', function (newValue, oldValue) {
-            //     if (newValue != oldValue) {
-            //         $scope.item.hargaDiskon = (parseFloat($scope.item.hargaDiskonPersen) * parseFloat($scope.item.hargaSatuan)) / 100
-            //     }
-            // });
+            $scope.$watch('item.jumlah', function (newValue, oldValue) {
+                if (newValue != oldValue) {
+                    qty = parseFloat($scope.item.jumlah)
+                    hrgsatuan = parseFloat($scope.item.hargaSatuan)
+                    ppn = parseFloat($scope.item.ppn)
+                    hargadiskon = parseFloat($scope.item.hargaDiskon)
+                    $scope.item.subTotaltxt = qty * (hrgsatuan + ppn - hargadiskon)
+                }
+            });
+            $scope.$watch('item.jumlahRetur', function (newValue, oldValue) {
+                if (newValue != oldValue) {
+                    qty = parseFloat($scope.item.jumlahRetur)
+                    hrgsatuan = parseFloat($scope.item.hargaSatuan)
+                    ppn = parseFloat($scope.item.ppn)
+                    hargadiskon = parseFloat($scope.item.hargaDiskon)
+                    $scope.item.subTotaltxt = qty * (hrgsatuan + ppn - hargadiskon)
+                }
+            });
+            $scope.$watch('item.hargaSatuan', function (newValue, oldValue) {
+                if (newValue != oldValue) {
+                    qty = parseFloat($scope.item.jumlah)
+                    hrgsatuan = parseFloat($scope.item.hargaSatuan)
+                    ppn = parseFloat($scope.item.ppn)
+                    hargadiskon = parseFloat($scope.item.hargaDiskon)
+                    $scope.item.subTotaltxt = qty * (hrgsatuan + ppn - hargadiskon)
+                }
+            });
+            $scope.$watch('item.ppn', function (newValue, oldValue) {
+                if (newValue != oldValue) {
+                    qty = parseFloat($scope.item.jumlah)
+                    hrgsatuan = parseFloat($scope.item.hargaSatuan)
+                    ppn = parseFloat($scope.item.ppn)
+                    hargadiskon = parseFloat($scope.item.hargaDiskon)
+                    $scope.item.subTotaltxt = qty * (hrgsatuan + ppn - hargadiskon)
+                }
+            });
+            $scope.$watch('item.hargaDiskon', function (newValue, oldValue) {
+                if (newValue != oldValue) {
+                    qty = parseFloat($scope.item.jumlah)
+                    hrgsatuan = parseFloat($scope.item.hargaSatuan)
+                    ppn = parseFloat($scope.item.ppn)
+                    hargadiskon = parseFloat($scope.item.hargaDiskon)
+                    $scope.item.subTotaltxt = qty * (hrgsatuan + ppn - hargadiskon)
+                }
+            });
+            $scope.$watch('item.ppnpersen', function (newValue, oldValue) {
+                if (newValue != oldValue) {
+                    $scope.item.ppn = (parseFloat($scope.item.ppnpersen) * parseFloat($scope.item.hargaSatuan)) / 100
+                }
+            });
+            $scope.$watch('item.hargaDiskonPersen', function (newValue, oldValue) {
+                if (newValue != oldValue) {
+                    $scope.item.hargaDiskon = (parseFloat($scope.item.hargaDiskonPersen) * parseFloat($scope.item.hargaSatuan)) / 100
+                }
+            });
 
             $scope.formatTanggal = function (tanggal) {
                 return moment(tanggal).format('DD-MMM-YYYY');
@@ -799,31 +799,23 @@ define(['initialize'], function (initialize) {
 
                 $scope.item.jumlah = dataSelected.jumlah
                 $scope.item.hargaSatuan = dataSelected.hargasatuan
-                // if (dataSelected.persenppn == 0 && dataSelected.ppn == "10") {
-                //     $scope.item.ppnpersen = dataSelected.ppn
-                //     $scope.item.ppn = (parseFloat($scope.item.ppnpersen) * parseFloat(dataSelected.hargasatuan)) / 100
-                // } else if (dataSelected.persenppn == "10") {
-                //     $scope.item.ppnpersen = dataSelected.persenppn
-                //     $scope.item.ppn = (parseFloat($scope.item.ppnpersen) * parseFloat(dataSelected.hargasatuan)) / 100
-                // } else if (dataSelected.ppn != "10" && dataSelected.ppn != 0) {
-                //     var ppnu = 0;
-                //     var ppnu = parseFloat(dataSelected.hargasatuan) / parseFloat(dataSelected.ppn)
-                //     $scope.item.ppn = dataSelected.ppn
-                //     $scope.item.ppnpersen = ppnu;
-                //     //                 $scope.item.ppn = (parseFloat($scope.item.ppnpersen)*parseFloat(dataSelected.hargasatuan))/100
-                // } else 
-                    
-                if (dataSelected.persenppn && dataSelected.ppn) {
+                if (dataSelected.persenppn == 0 && dataSelected.ppn == "10") {
+                    $scope.item.ppnpersen = dataSelected.ppn
+                    $scope.item.ppn = (parseFloat($scope.item.ppnpersen) * parseFloat(dataSelected.hargasatuan)) / 100
+                } else if (dataSelected.persenppn == "10") {
                     $scope.item.ppnpersen = dataSelected.persenppn
+                    $scope.item.ppn = (parseFloat($scope.item.ppnpersen) * parseFloat(dataSelected.hargasatuan)) / 100
+                } else if (dataSelected.ppn != "10" && dataSelected.ppn != 0) {
+                    var ppnu = 0;
+                    var ppnu = parseFloat(dataSelected.hargasatuan) / parseFloat(dataSelected.ppn)
                     $scope.item.ppn = dataSelected.ppn
-                    // $scope.item.ppn = (parseFloat($scope.item.ppnpersen) * parseFloat(dataSelected.hargasatuan)) / 100
+                    $scope.item.ppnpersen = ppnu;
+                    //                 $scope.item.ppn = (parseFloat($scope.item.ppnpersen)*parseFloat(dataSelected.hargasatuan))/100
                 } else {
                     // var ppnu = parseFloat(dataSelected.hargasatuan)/parseFloat(dataSelected.ppn)
                     $scope.item.ppnpersen = 0
                     $scope.item.ppn = 0
                 }
-                // in udah di hitung di backend
-                $scope.item.subTotaltxt = dataSelected.total
                 $scope.item.jumlahRetur = 0;
                 // $scope.item.ppn = dataSelected.ppn
                 $scope.item.hargaDiskon = dataSelected.hargadiscount
@@ -855,8 +847,6 @@ define(['initialize'], function (initialize) {
                 $scope.item.hargadiskon = 0
                 $scope.item.no = undefined
                 $scope.item.ppn = 0
-                $scope.item.ppnpersen = 0
-                $scope.item.hargaDiskonPersen = 0
                 $scope.item.hargaDiskon = 0
                 $scope.item.subTotaltxt = 0
                 $scope.item.jumlahRetur = 0
@@ -877,22 +867,22 @@ define(['initialize'], function (initialize) {
 
             function GetprodukRetur() {
 
-                // medifirstService.get("logistik/get-data-to-retur?noTerima=" + norecTerima
-                //     + "&ruanganfk=" + $scope.item.ruanganPenerima.id
-                //     , true).then(function (dat) {
+                medifirstService.get("logistik/get-data-to-retur?noTerima=" + norecTerima
+                    + "&ruanganfk=" + $scope.item.ruanganPenerima.id
+                    , true).then(function (dat) {
 
-                //         datas = dat.data;
-                //         var jumlah = 0;
-                //         for (var i = 0; i < datas.length; i++) {
-                //             for (var j = 0; j < data2.length; j++) {
-                //                 if (data2[j].produkfk == datas[i].kdeproduk) {
-                //                     if (datas[i].qtyproduk <= data2[j].qtyprodukretur) {
-                //                         jumlah = i + 1;
-                //                     }
-                //                 }
-                //             }
-                //         }
-                //         if (data2.length <= jumlah) {
+                        datas = dat.data;
+                        var jumlah = 0;
+                        for (var i = 0; i < datas.length; i++) {
+                            for (var j = 0; j < data2.length; j++) {
+                                if (data2[j].produkfk == datas[i].kdeproduk) {
+                                    if (datas[i].qtyproduk <= data2[j].qtyprodukretur) {
+                                        jumlah = i + 1;
+                                    }
+                                }
+                            }
+                        }
+                        if (data2.length <= jumlah) {
 
                             var rkk = null
                             if ($scope.item.ruanganKK != undefined) {
@@ -974,12 +964,12 @@ define(['initialize'], function (initialize) {
 
                             })
 
-                    //     } else {
-                    //         alert("Stok Telah Terpakai, Tidak Bisa Di Retur!!!")
-                    //         return;
-                    //     }
+                        } else {
+                            alert("Stok Telah Terpakai, Tidak Bisa Di Retur!!!")
+                            return;
+                        }
 
-                    // });
+                    });
             }
 
             function SaveReturPenerimaan() {

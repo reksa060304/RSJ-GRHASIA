@@ -338,9 +338,6 @@ define(['initialize', 'Configuration'], function (initialize, config) {
                         }
                         $scope.item.kekuatan = dat.data.kekuatan
                         $scope.item.sediaan = dat.data.sediaan
-                        if (dat.data.jmlretriksi != null && dat.data.jmlretriksi > 0){
-                            $scope.item.jmlretriksi = dat.data.jmlretriksi
-                        }
                         if(dataProdukDetail.length >0)
                             $scope.tglkadaluarsa = moment(dataProdukDetail[0].tglkadaluarsa).format('YYYY-MM-DD HH:mm');
                             $scope.item.satuannya = dataProdukDetail[0].satuan
@@ -369,7 +366,6 @@ define(['initialize', 'Configuration'], function (initialize, config) {
                         }
                         statusTambah = true
                         gettotal();
-                        cekRetriksiAll();
                     });
             }
             $scope.getNilaiKonversi = function () {
@@ -644,90 +640,7 @@ define(['initialize', 'Configuration'], function (initialize, config) {
                 return moment(tanggal).format('DD-MMM-YYYY');
             }
 
-            async function cekRetriksiAll() {
-                clearRetriksi()
-                $scope.item.cekRetriksi = false;
-
-                // --- Diagnosa retriksi ---
-                let diagnosaPromise = medifirstService
-                    .get("emr/get-diagnosapasienbynoreg?noReg=" + $scope.item.noregistrasi, true)
-                    .then(async function(dat) {
-                        let arrDiagnosa = dat.data.datas || [];
-                        for (let element of arrDiagnosa) {
-                            if ($scope.item.produk?.id && element.id) {
-                                let dg_res = await medifirstService.get(
-                                    "emr/get-restriksi-diagnosa?produkfk=" + $scope.item.produk.id +
-                                    "&diagnosafk=" + element.id, true
-                                );
-                                if (dg_res.data?.length > 0 && dg_res.data[0].keteranganpakai) {
-                                    $scope.item.dgretriksi_alert = dg_res.data[0].keteranganpakai;
-                                    break;
-                                }
-                            }
-                        }
-                    });
-
-                // --- Obat retriksi ---
-                let obatPromise = (async () => {
-                    if (data2?.length > 0) {
-                        for (let prod of data2) {
-                            if ($scope.item.produk?.id && prod.produkfk) {
-                                let ob_res = await medifirstService.get(
-                                    "emr/get-restriksi-obat?produkfk_1=" + $scope.item.produk.id +
-                                    "&produkfk_2=" + prod.produkfk, true
-                                );
-                                if (ob_res.data?.length > 0 && ob_res.data[0].keteranganpakai) {
-                                    $scope.item.obretriksi_alert = ob_res.data[0].keteranganpakai;
-                                    break;
-                                }
-                            }
-                        }
-                    }
-                })();
-
-                await Promise.all([diagnosaPromise, obatPromise]);
-                $scope.item.cekRetriksi = true;
-                $scope.$applyAsync();
-            };
-
-            $scope.saveRetriksi = function () {
-                if ($scope.item.KeteranganRetriksi == undefined || $scope.item.KeteranganRetriksi == '' ) {
-                    alert("Keterangan Retriksi harus di isi!")
-                } else {            
-                   $scope.popUpRetriksi.close();
-                    Lanjuttambah();
-                }
-            }
-
-            function clearRetriksi() {
-                $scope.item.jmlretriksi_alert = undefined
-                $scope.item.dgretriksi_alert = undefined
-                $scope.item.obretriksi_alert = undefined
-            }
-
             $scope.tambah = function () {
-                    if ($scope.item.jumlah == NaN || $scope.item.jumlah == undefined || $scope.item.jumlah == '' || $scope.item.jumlah == '0') {
-                        alert("Jumlah harus di isi!")
-                        return;
-                    }    
-
-                    if ($scope.item.KeteranganRetriksi == undefined || $scope.item.KeteranganRetriksi == '' ) {
-                        // cek jml retriksi dulu
-                        if ($scope.item.jmlretriksi != undefined && $scope.item.jumlah > $scope.item.jmlretriksi) {
-                                $scope.item.jmlretriksi_alert = $scope.item.jmlretriksi
-                        }
-                        if ($scope.item.jmlretriksi_alert || $scope.item.dgretriksi_alert || $scope.item.obretriksi_alert) {
-                            $scope.popUpRetriksi.center().open();
-                        }  else {
-                            Lanjuttambah();
-                            clearRetriksi()
-                        }
-                    } else {
-                            Lanjuttambah();
-                            clearRetriksi()
-                    }
-            }
-            function Lanjuttambah() {
                 if($scope.item.alergi != undefined){
                     let kodeArr = $scope.item.alergi.split(",");
 
@@ -772,10 +685,10 @@ define(['initialize', 'Configuration'], function (initialize, config) {
                 //     toastr.error("Data Sudah Diclosing, Hubungi Tatarekening!");
                 //     return;
                 // }
-                // if ($scope.item.jumlah == NaN || $scope.item.jumlah == undefined || $scope.item.jumlah == '' || $scope.item.jumlah == '0') {
-                //     alert("Jumlah harus di isi!")
-                //     return;
-                // }
+                if ($scope.item.jumlah == NaN || $scope.item.jumlah == undefined || $scope.item.jumlah == '' || $scope.item.jumlah == '0') {
+                    alert("Jumlah harus di isi!")
+                    return;
+                }
                 // if ($scope.item.dosis.includes(",") ) {
                 //     toastr.error("Terdapat koma dalam dosis, mohon untuk diganti dengan titik!")
                 //     return;
@@ -915,7 +828,6 @@ define(['initialize', 'Configuration'], function (initialize, config) {
                                             data.dosis = dosis
                                             data.jumlahxmakan = jumlahmakan
                                             data.keterangan = KetPakai,
-                                            data.ket_ret = $scope.item.KeteranganRetriksi,
                                             data.tglkadaluarsa = $scope.tglkadaluarsa != undefined ? $scope.tglkadaluarsa : null,
                                             data.isoutofstok = isOutOfStok,
                                             data.satuandosis = $scope.item.satuannya,
@@ -968,8 +880,7 @@ define(['initialize', 'Configuration'], function (initialize, config) {
                                         keterangan: KetPakai,
                                         tglkadaluarsa : $scope.tglkadaluarsa != undefined ? $scope.tglkadaluarsa : null,
                                         isoutofstok : isOutOfStok,
-                                        satuandosis : $scope.item.satuannya,
-                                        ket_ret : $scope.item.KeteranganRetriksi
+                                        satuandosis : $scope.item.satuannya
                                     }
                                     data2.push(data)
                                     // $scope.dataGrid.add($scope.dataSelected)
@@ -1020,7 +931,6 @@ define(['initialize', 'Configuration'], function (initialize, config) {
                 $scope.item.aturanPakai = { id: dataSelected.aturanpakaifk, name: dataSelected.aturanpakai }
                 $scope.item.aturanpakaitxt = dataSelected.aturanpakai
                 $scope.item.KeteranganPakai = dataSelected.keterangan
-                $scope.item.KeteranganRetriksi = dataSelected.ket_ret
                 $scope.item.satuannya = dataSelected.satuandosis
                 $scope.currentAturanPakai = []
 
@@ -1089,9 +999,6 @@ define(['initialize', 'Configuration'], function (initialize, config) {
                 $scope.item.satuanresep = undefined;
                 $scope.item.kekuatan = ''
                 $scope.item.satuannya = undefined
-                $scope.item.KeteranganRetriksi = undefined
-                $scope.item.jmlretriksi = undefined
-                $scope.item.cekRetriksi = undefined;
                 
                 $scope.item.KeteranganPakai = $scope.item.jenisKemasan.id == 1 ? $scope.item.KeteranganPakai : '';
                 if ($scope.item.jenisKemasan.id != 1) {
@@ -1200,11 +1107,6 @@ define(['initialize', 'Configuration'], function (initialize, config) {
                     "field": "keterangan",
                     "title": "Keterangan",
                     "width": "200px",
-                },
-                {
-                    "field": "ket_ret",
-                    "title": "Ket Retriksi",
-                    "width": "150px",
                 },
                 {
                     "field": "hargasatuan",
