@@ -718,7 +718,7 @@ define(['initialize', 'Configuration'], function (initialize, config) {
                         var Norec = $scope.item.noresep;
                         var Noreg = $scope.item.noregistrasi;
                         //grhasia ga perlu cetak ketika tekan selesai
-                        // if ($scope.item.statusorder == 'Verifikasi' || $scope.item.statusorder == 'Packaging' || $scope.item.statusorder == 'Menunggu di Panggil') {
+                        // if ($scope.item.statusorder == 'Verifikasi' || $scope.item.statusorder == 'Packaging' || $scope.item.statusorder == 'Selesai') {
                         //     var stt = 'false'
                         //     if (confirm('View Antrian Farmasi? ')) {
                         //         // Save it!
@@ -1075,19 +1075,19 @@ define(['initialize', 'Configuration'], function (initialize, config) {
                         data: $scope.item.noorder
                     };
                     medifirstService.postNonMessage('farmasi/disable-notif', notf).then(function () {});
-            
+
                     medifirstService.get("farmasi/get-penjagaan-verif-eresep?noorder=" + $scope.item.noorder).then(function (e) {
                         var cek, cek2;
-                        
+
                         // Cek status verifikasi resep
                         if (e.data.detail[0].tglresep == null) {
                             cek = 123;
                         } else {
                             cek = 234;
                         }
-            
+
                         console.log(cek);
-            
+
                         if (cek == 234) {
                             messageContainer.error("Data yang sudah diverif tidak bisa diverif ulang");
                             return;
@@ -1099,7 +1099,7 @@ define(['initialize', 'Configuration'], function (initialize, config) {
                             } else {
                                 cek2 = 789;
                             }
-            
+
                             if (cek2 == 789) {
                                 let petugasVerif = e.data.detail[0].petugasverif
                                 toastr.warning("Sedang Dikerjakan Petugas: " + petugasVerif);
@@ -1111,9 +1111,7 @@ define(['initialize', 'Configuration'], function (initialize, config) {
                                     noorder: $scope.item.noorder,
                                     petugasverif: userLogin.namaLengkap
                                 };
-                                
                                 medifirstService.post('farmasi/save-petugasverif', objSave).then(function () {});
-            
                                 // Siapkan data untuk halaman InputResepApotik
                                 var arrStr = {
                                     0: $scope.item.nocm,
@@ -1133,7 +1131,7 @@ define(['initialize', 'Configuration'], function (initialize, config) {
                                     14: '',
                                     17: $scope.item.cito,
                                 };
-                                
+
                                 cacheHelper.set('InputResepApotikCtrl', arrStr);
                                 $state.go('InputResepApotik');
                             }
@@ -1171,7 +1169,7 @@ define(['initialize', 'Configuration'], function (initialize, config) {
                     alert('Sudah di verifikasi!!')
                 }
             }
-            
+
             $scope.preview = function () {
                 console.log($scope.item)
                 if ($scope.item == undefined) {
@@ -1185,7 +1183,7 @@ define(['initialize', 'Configuration'], function (initialize, config) {
                 });
             }
             $scope.ambilObat = function () {
-                if ($scope.item.statusorder == 'Menunggu di Panggil') {
+                if ($scope.item.statusorder == 'Selesai') {
                     // noresep
                     $scope.item.tglambil = new Date()
                     $scope.item.namapengambil = $scope.item.namapasien
@@ -1194,7 +1192,7 @@ define(['initialize', 'Configuration'], function (initialize, config) {
                     client.get('http://127.0.0.1:2905/printvb/Pendaftaran?displaykeun=1&noantri=' + $scope.item.noantri + '&namapasien=' + $scope.item.nocm + ', ' + $scope.item.namapasien + '&view=true', function (response) {
                         // do something with response
                     });
-                    // if ( $scope.item.statusorder == 'Menunggu di Panggil') {
+                    // if ( $scope.item.statusorder == 'Selesai') {
                     let params = $scope.item.noregistrasi
                     if ($scope.item.noreservasi != undefined && $scope.item.noreservasi != '' && $scope.item.noreservasi != 'Kios-K') {
                         params = $scope.item.noreservasi
@@ -1220,7 +1218,7 @@ define(['initialize', 'Configuration'], function (initialize, config) {
                     // alert('Status harus Selesai!!')
                     // }
                 } else {
-                    toastr.error("Status Data Harus Menunggu di Panggil !!")
+                    toastr.error("Status Data Harus Selesai !!")
                     // toastr.error("Status Data Harus Selesai !!")
                     return;
                 }
@@ -1245,19 +1243,19 @@ define(['initialize', 'Configuration'], function (initialize, config) {
                     tglambil: moment($scope.item.tglambil).format('YYYY-MM-DD HH:mm'),
                     namapengambil: nm,
                     strukresep: strukresep,
-                    persyaratanAdministrasi1: $scope.item.persyaratanAdministrasi1, 
-                    persyaratanAdministrasi2: $scope.item.persyaratanAdministrasi2, 
-                    persyaratanAdministrasi3: $scope.item.persyaratanAdministrasi3, 
-                    persyaratanAdministrasi4: $scope.item.persyaratanAdministrasi4, 
-                    persyaratanFarmasetik1: $scope.item.persyaratanFarmasetik1, 
-                    persyaratanFarmasetik2: $scope.item.persyaratanFarmasetik2, 
-                    persyaratanFarmasetik3: $scope.item.persyaratanFarmasetik3, 
-                    persyaratanFarmasetik4: $scope.item.persyaratanFarmasetik4, 
-                    persyaratanKlinis1: $scope.item.persyaratanKlinis1, 
-                    persyaratanKlinis2: $scope.item.persyaratanKlinis2, 
-                    persyaratanKlinis3: $scope.item.persyaratanKlinis3, 
-                    persyaratanKlinis4: $scope.item.persyaratanKlinis4, 
-                    persyaratanKlinis5: $scope.item.persyaratanKlinis5 
+                    persyaratanAdministrasi1: $scope.item.persyaratanAdministrasi1,
+                    persyaratanAdministrasi2: $scope.item.persyaratanAdministrasi2,
+                    persyaratanAdministrasi3: $scope.item.persyaratanAdministrasi3,
+                    persyaratanAdministrasi4: $scope.item.persyaratanAdministrasi4,
+                    persyaratanFarmasetik1: $scope.item.persyaratanFarmasetik1,
+                    persyaratanFarmasetik2: $scope.item.persyaratanFarmasetik2,
+                    persyaratanFarmasetik3: $scope.item.persyaratanFarmasetik3,
+                    persyaratanFarmasetik4: $scope.item.persyaratanFarmasetik4,
+                    persyaratanKlinis1: $scope.item.persyaratanKlinis1,
+                    persyaratanKlinis2: $scope.item.persyaratanKlinis2,
+                    persyaratanKlinis3: $scope.item.persyaratanKlinis3,
+                    persyaratanKlinis4: $scope.item.persyaratanKlinis4,
+                    persyaratanKlinis5: $scope.item.persyaratanKlinis5
                 }
                 medifirstService.post('farmasi/save-status-resepelektonik', objSave).then(function (e) {
                     medifirstService.postLogging('Rubah Status Sudah Di Ambil Order Resep Elektronik', 'No Order Struk Order',
@@ -1390,7 +1388,7 @@ define(['initialize', 'Configuration'], function (initialize, config) {
 
             $scope.cetakLabeKecil = function () {
                 var userLogin = medifirstService.getPegawaiLogin();
-                if ($scope.item.statusorder == 'Verifikasi' || $scope.item.statusorder == 'Packaging' || $scope.item.statusorder == 'Menunggu di Panggil' || $scope.item.statusorder == 'Sudah Di Ambil') {
+                if ($scope.item.statusorder == 'Verifikasi' || $scope.item.statusorder == 'Packaging' || $scope.item.statusorder == 'Selesai' || $scope.item.statusorder == 'Sudah Di Ambil') {
                     var Norec = $scope.item.norecresep;
                     var stt = 'false'
                     if (confirm('View Label? ')) {
@@ -1410,7 +1408,7 @@ define(['initialize', 'Configuration'], function (initialize, config) {
             $scope.cetakLabelRekap = function () {
                 var Norec = $scope.item.norecresep;
                 var userLogin = medifirstService.getPegawaiLogin();
-                if ($scope.item.statusorder == 'Verifikasi' || $scope.item.statusorder == 'Packaging' || $scope.item.statusorder == 'Menunggu di Panggil' || $scope.item.statusorder == 'Sudah Di Ambil') {
+                if ($scope.item.statusorder == 'Verifikasi' || $scope.item.statusorder == 'Packaging' || $scope.item.statusorder == 'Selesai' || $scope.item.statusorder == 'Sudah Di Ambil') {
                     medifirstService.get("farmasi/get-data-waktuminum-resep?Norec_sr=" + Norec).then(function (dat) {
                         $scope.datas = dat.data;
                         var JmlPagi = 0;
@@ -1566,7 +1564,7 @@ define(['initialize', 'Configuration'], function (initialize, config) {
                 var userLogin = medifirstService.getPegawaiLogin();
                 var Norec = $scope.item.noresep;
                 var Noreg = $scope.item.noregistrasi;
-                if ($scope.item.statusorder == 'Verifikasi' || $scope.item.statusorder == 'Packaging' || $scope.item.statusorder == 'Menunggu di Panggil' || $scope.item.statusorder == 'Sudah Di Ambil') {
+                if ($scope.item.statusorder == 'Verifikasi' || $scope.item.statusorder == 'Packaging' || $scope.item.statusorder == 'Selesai' || $scope.item.statusorder == 'Sudah Di Ambil') {
                     var stt = 'false'
                     if (confirm('View Antrian Farmasi? ')) {
                         // Save it!
@@ -1795,7 +1793,7 @@ define(['initialize', 'Configuration'], function (initialize, config) {
 
             $scope.cetakLabelRekapRajal = function () {
                 var userLogin = medifirstService.getPegawaiLogin();
-                if ($scope.item.statusorder == 'Verifikasi' || $scope.item.statusorder == 'Packaging' || $scope.item.statusorder == 'Menunggu di Panggil' || $scope.item.statusorder == 'Sudah Di Ambil') {
+                if ($scope.item.statusorder == 'Verifikasi' || $scope.item.statusorder == 'Packaging' || $scope.item.statusorder == 'Selesai' || $scope.item.statusorder == 'Sudah Di Ambil') {
                     var Norec = $scope.item.norecresep;
                     var stt = 'false'
                     if (confirm('View Label? ')) {
