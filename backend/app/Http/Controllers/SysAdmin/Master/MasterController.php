@@ -174,41 +174,41 @@ class MasterController extends ApiController{
         }
         return $this->setStatusCode($result['status'])->respond($result, $transMessage);
     }
-    public function UpdateStatusRetriksiProduk(Request $request){
-        $kdProfile = (int) $this->getDataKdProfile($request);
-        DB::beginTransaction();
-        $data=$request['data'];
-        try {
-                $dataOP = Produk::where('id', $request['id'])
-                    ->where('kdprofile',$kdProfile)
-                    ->update([
-                        'status_retriksi' => $request['status'],
-                ]);
+    // public function UpdateStatusRetriksiProduk(Request $request){
+    //     $kdProfile = (int) $this->getDataKdProfile($request);
+    //     DB::beginTransaction();
+    //     $data=$request['data'];
+    //     try {
+    //             $dataOP = Produk::where('id', $request['id'])
+    //                 ->where('kdprofile',$kdProfile)
+    //                 ->update([
+    //                     'status_retriksi' => $request['status'],
+    //             ]);
 
-            $transStatus = 'true';
-        }catch (\Exception $e) {
-            $transStatus = 'false';
-        }
+    //         $transStatus = 'true';
+    //     }catch (\Exception $e) {
+    //         $transStatus = 'false';
+    //     }
 
-        if ($transStatus == 'true') {
-            $transMessage = "Simpan Berhasil";
-            DB::commit();
-            $result = array(
-                "status" => 201,
-                "message" => $transMessage,
-                "as" => 'ea@epic',
-            );
-        } else {
-            $transMessage = "Simpan Gagal";
-            DB::rollBack();
-            $result = array(
-                "status" => 400,
-                "message"  => $transMessage,
-                "as" => 'ea@epic',
-            );
-        }
-        return $this->setStatusCode($result['status'])->respond($result, $transMessage);
-    }
+    //     if ($transStatus == 'true') {
+    //         $transMessage = "Simpan Berhasil";
+    //         DB::commit();
+    //         $result = array(
+    //             "status" => 201,
+    //             "message" => $transMessage,
+    //             "as" => 'ea@epic',
+    //         );
+    //     } else {
+    //         $transMessage = "Simpan Gagal";
+    //         DB::rollBack();
+    //         $result = array(
+    //             "status" => 400,
+    //             "message"  => $transMessage,
+    //             "as" => 'ea@epic',
+    //         );
+    //     }
+    //     return $this->setStatusCode($result['status'])->respond($result, $transMessage);
+    // }
     public function UpdateStatusRetriksiProduk(Request $request){
         $kdProfile = (int) $this->getDataKdProfile($request);
         DB::beginTransaction();
