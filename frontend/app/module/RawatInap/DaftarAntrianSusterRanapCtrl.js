@@ -382,6 +382,13 @@ define(['initialize'], function (initialize) {
                     "template": "<span class='style-center'>#: lamarawat #</span>"
                 },
                 {
+                    "field": "inacbgtotalgrouper",
+                    "title": "Plafon Bpjs",
+                    "width": "150px",
+                    "template": "<span class='style-left'>{{formatRupiah('#: inacbgtotalgrouper #')}}</span>"
+
+                },
+                {
                     "field": "iskompleks",
                     "title": "Kompleks",
                     "width": "50px",
@@ -1346,6 +1353,14 @@ define(['initialize'], function (initialize) {
 
 
             }  
+
+            $scope.formatRupiah = function (value, currency = 'Rp') {
+                if (value == null || value == 'null') return currency + " 0";
+
+                return currency + " " + parseFloat(value)
+                    .toFixed(2)
+                    .replace(/(\d)(?=(\d{3})+\.)/g, "$1,");
+            };
             
         }
     ]);

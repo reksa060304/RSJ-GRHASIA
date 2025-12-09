@@ -556,6 +556,7 @@ Route::group(['middleware' => 'cors', 'prefix' => 'service'], function () {
               Route::post('bridging/inacbg/post-dokumen-klaim','Bridging\InaCbgController@postDokumenKlaim');
               Route::post('bridging/inacbg/delete-dokumen-klaim','Bridging\InaCbgController@deleteDokumenKlaim');
               Route::post('bridging/inacbg/save-hasil-grouping-inacbg','Bridging\InaCbgController@saveGroupingInacbg');
+              Route::post('bridging/inacbg/save-base-tarif', 'Bridging\InaCbgController@saveBaseTarif');
 
             // START IDRG    
             Route::get('registrasi/get-icd-9-by-noreg-idrg','Registrasi\RegistrasiController@getIcd9PasienByNoreg');

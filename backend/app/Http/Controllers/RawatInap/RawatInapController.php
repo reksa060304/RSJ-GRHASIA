@@ -235,7 +235,7 @@ class RawatInapController extends ApiController
                   --br.norec, 
                   klstg.namakelas as kelasditanggung,
                   age(current_date, to_date(to_char(pd.tglregistrasi,'YYYY-MM-DD'),'YYYY-MM-DD'))as lamarawat,
-                 pd.norec as norec_pd, apd.tglmasuk, apd.norec as norec_apd, row_number() over (partition by pd.noregistrasi order by apd.tglmasuk desc) as rownum ,pd.ketklinis
+                 pd.norec as norec_pd, apd.tglmasuk, apd.norec as norec_apd, row_number() over (partition by pd.noregistrasi order by apd.tglmasuk desc) as rownum ,pd.ketklinis,pd.inacbgtotalgrouper
                  from antrianpasiendiperiksa_t as apd
                  inner join pasiendaftar_t as pd on pd.norec = apd.noregistrasifk and pd.objectruanganlastfk = apd.objectruanganfk
              --    left join batalregistrasi_t as br on br.pasiendaftarfk = pd.norec

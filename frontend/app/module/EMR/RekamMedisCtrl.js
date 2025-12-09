@@ -106,8 +106,8 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
                 medifirstService.get('emr/get-total-billing?noregistrasi=' + noregistrasi).then(function (e) {
                     $scope.header.totalBilling = $scope.formatRupiah(e.data.billing, 'Rp. ')
                     $scope.header.totalBillingNominal = parseFloat(e.data.billing)
-                    $scope.header.plafonBPJS = $scope.formatRupiah(e.data.plafon, 'Rp. ')
-                    $scope.header.plafonBPJSNominal = parseFloat(e.data.plafon)
+                    // $scope.header.plafonBPJS = $scope.formatRupiah(e.data.plafon, 'Rp. ')
+                    // $scope.header.plafonBPJSNominal = parseFloat(e.data.plafon)
                 })
             }
 
@@ -133,6 +133,13 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
                 }
                 $scope.header.generate = true;
                 $scope.header = result
+                if ($scope.header.inacbgtotalgrouper !== null) {
+                    $scope.header.plafonBPJS = $scope.formatRupiah($scope.header.inacbgtotalgrouper, 'Rp. ')
+                    $scope.header.inacbgtotalgrouperBPJSNominal = parseFloat($scope.header.inacbgtotalgrouper)
+                } else {
+                    $scope.header.plafonBPJS = $scope.formatRupiah(0, 'Rp. ')
+                    $scope.header.inacbgtotalgrouperBPJSNominal = parseFloat(0)
+                }
                 $scope.header.tgllahirs = moment($scope.header.tgllahir).format('DD-MM-YYYY')
                 syncItemFromHeader() 
                 $scope.buildKetalergi()

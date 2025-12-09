@@ -4180,4 +4180,37 @@ class InaCbgController   extends ApiController
 
         return $this->respond($data);
     }
+
+    public function saveBaseTarif(Request $request)
+    {
+        DB::beginTransaction();
+        try {
+            PasienDaftar::where('norec', $request['norec'])->update([
+                'inacbgtotalgrouper' => (float)$request['base_tarif']
+            ]);
+
+            $transStatus = true;
+            $transMessage = "Simpan Base Tarif Berhasil!";
+        } catch (\Exception $e) {
+            $transStatus = false;
+            $transMessage = "Simpan Base Tarif Gagal!";
+        }
+
+        if ($transStatus) {
+            DB::commit();
+            $result = array(
+                "status" => 201,
+                "message" => $transMessage,
+            );
+        } else {
+            DB::rollBack();
+            $result = array(
+                "status" => 400,
+                "e" => $e->getMessage(),
+                "message" => $transMessage,
+            );
+        }
+
+        return $this->setStatusCode($result['status'])->respond($result, $transMessage);
+    }
 }

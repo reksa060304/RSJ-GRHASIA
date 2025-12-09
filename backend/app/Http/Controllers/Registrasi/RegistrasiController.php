@@ -374,6 +374,12 @@ class RegistrasiController extends ApiController
         //            ->count('norec');
         //        $noAntrian = $countNoAntrian + 1;
 
+        $cekRiwayatPlafon = PasienDaftar::where('nocmfk', $r_NewPD['nocmfk'])->where('statusenabled', true)->orderBy('tglregistrasi', 'desc')->first();
+        $plafonBpjs = 0;
+        if (!empty($cekRiwayatPlafon)) {
+            $plafonBpjs = (float)$cekRiwayatPlafon->inacbgtotalgrouper;
+        }
+
         if ($r_NewPD['israwatinap'] == 'true') {
             $isRawatInap = 'true';
         } else {
@@ -498,6 +504,7 @@ class RegistrasiController extends ApiController
                 //$dataPD->tglmeninggal = true;
                 //endregion
                 $dataPD->noregistrasi = $noRegistrasi;
+                $dataPD->inacbgtotalgrouper = $plafonBpjs;
                 $dataPD->save();
                 $dataPDnorec = $dataPD->norec;
                 $dataStatusPasien = $dataPD->statuspasien;
