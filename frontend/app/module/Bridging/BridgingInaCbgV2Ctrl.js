@@ -12224,6 +12224,7 @@ define(['initialize', 'Configuration'], function (initialize,configuration) {
 								$scope.itemPopUp.response = responData[0].dataresponse	
 
 								let response = e.data.dataresponse
+								saveBaseTarif(response)
 								let arrStatus =[]
 								for (var i = 0; i < response.length; i++) {
 									const element = response[i]
@@ -12592,6 +12593,19 @@ define(['initialize', 'Configuration'], function (initialize,configuration) {
 
 					// 			})
 					// }
+				}
+
+				function saveBaseTarif(data) {
+					if (data[0].dataresponse.metadata.code == 200) {
+						var json = {
+							norec: $scope.itemPopUp.norec,
+							base_tarif: data[0].dataresponse.response_inacbg.base_tariff
+						}
+
+						medifirstService.post('bridging/inacbg/save-base-tarif', json).then(function (e) {
+
+						})
+					}
 				}
 
 				$scope.finalInacbg = async function (params) {
