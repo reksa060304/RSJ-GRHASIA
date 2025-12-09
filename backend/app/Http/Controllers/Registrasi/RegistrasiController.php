@@ -444,10 +444,14 @@ class RegistrasiController extends ApiController
                 $dataPD->objectkasuspenyakitlastfk = 1;
                 if ($isRawatInap == 'true') {
                     $dataPD->objectkelasfk = $r_NewPD['objectkelasfk'];
+                    if ($dataPD->tglpulang === null) { 
                     $dataPD->tglpulang = null;
+                  }
                 } else {
                     $dataPD->objectkelasfk = (int)$this->settingDataFixed('kdKelasNonKelasRegistrasi', $idProdile);
-                    $dataPD->tglpulang =  $r_NewPD['tglregistrasi'];
+                    if ($dataPD->tglpulang === null) {
+                    $dataPD->tglpulang = $r_NewPD['tglregistrasi'];
+                    }
                 }
                 $dataPD->objectkelompokpasienlastfk = $r_NewPD['objectkelompokpasienlastfk'];
                 $dataPD->nocmfk = $r_NewPD['nocmfk'];

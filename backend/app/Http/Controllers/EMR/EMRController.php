@@ -6978,6 +6978,7 @@ class EMRController  extends ApiController
                     $newPP->ismalam = $r_PPL['ismalam'];
                     $newPP->issore = $r_PPL['issore'];
                     $newPP->keteranganpakai = $r_PPL['keterangan'];
+                    $newPP->keteranganretriksi = $r_PPL['ket_ret'] ?? null;
                     if (isset($r_PPL['satuanresepfk'])) {
                         $newPP->satuanresepfk = $r_PPL['satuanresepfk'];
                     }
@@ -13838,7 +13839,7 @@ if ($rowChanged) {
         $cekKekuatanSupranatural = DB::select(
             DB::raw("
 
-            select pr.kekuatan,sdn.name as sediaan from produk_m as pr 
+            select pr.kekuatan,sdn.name as sediaan,pr.jmlretriksi from produk_m as pr 
             left join rm_sediaan_m as sdn on sdn.id=pr.objectsediaanfk
             where pr.kdprofile = $idProfile and pr.id=:produkfk;
             
@@ -13863,6 +13864,7 @@ if ($rowChanged) {
             'jmlstok' => $jmlstok,
             'kekuatan' => $kekuatan,
             'sediaan' => $sediaan,
+            'jmlretriksi' => $cekKekuatanSupranatural[0]->jmlretriksi,
             'sistemharganetto' => $SistemHargaNetto,
             'metodeambilharganetto' => $MetodeAmbilHargaNetto,
             'metodestokharganetto' => $MetodeStokHargaNetto,
@@ -13870,6 +13872,54 @@ if ($rowChanged) {
             'message' => 'as@epic',
         );
         return $this->respond($result);
+    }
+
+    public function getRestriksiDiagnosa(Request $request)
+    {
+        $kdProfile = $this->getDataKdProfile($request);
+        $idProfile = (int) $kdProfile;
+
+        $data = DB::select(DB::raw(
+            "select
+                        'Diagnosa : ' || dm.kddiagnosa || ' - ' ||dm.namadiagnosa || ', Obat : ' || pm.namaproduk || ', Keterangan Retriksi : ' || rm.keteranganpakai as keteranganpakai
+                    from retriksidiagnosa_m rm
+                    join produk_m pm on pm.id = rm.produkfk
+                    join diagnosa_m dm on dm.id = rm.diagnosafk
+                    where
+                        rm.statusenabled = true and rm.diagnosafk = $request[diagnosafk] and rm.produkfk = $request[produkfk] limit 1"
+        ));
+        
+
+        return $this->respond($data);
+    }
+    public function getRestriksiObat(Request $request)
+    {
+        $kdProfile = $this->getDataKdProfile($request);
+        $idProfile = (int) $kdProfile;
+
+        $data = DB::table('retriksiobat_m as rm')
+        ->join('produk_m as pm', 'pm.id', '=', 'rm.produkfk_1')
+        ->join('produk_m as pm2', 'pm2.id', '=', 'rm.produkfk_2')
+        ->select(
+            DB::raw("
+                'Obat 1 : ' || pm.namaproduk ||
+                ', Obat 2 : ' || pm2.namaproduk ||
+                ', Keterangan Retriksi : ' || rm.keteranganpakai as keteranganpakai
+            ")
+        )
+        ->where('rm.statusenabled', true)
+        ->where(function($q) use ($request) {
+            $q->where(function($q2) use ($request) {
+                $q2->where('rm.produkfk_1', $request->produkfk_1)
+                ->where('rm.produkfk_2', $request->produkfk_2);
+            })->orWhere(function($q2) use ($request) {
+                $q2->where('rm.produkfk_1', $request->produkfk_2)
+                ->where('rm.produkfk_2', $request->produkfk_1);
+            });
+        })
+        ->get();
+
+        return $this->respond($data);
     }
     public function getDetailOrder(Request $request)
     {
@@ -13939,6 +13989,7 @@ if ($rowChanged) {
                 'op.ismalam',
                 'op.issore',
                 'op.keteranganpakai',
+                'op.keteranganretriksi',
                 'op.keteranganpakai as catatandokter',
                 'op.satuanresepfk',
                 'sn.satuanresep',
@@ -14118,7 +14169,8 @@ if ($rowChanged) {
                 'ismalam' =>  $item->ismalam,
                 'issore' =>  $item->issore,
                 "catatandokter" => $item->catatandokter,
-                "keterangan" => null,
+                "ket_ret" => $item->keteranganretriksi,
+                "keterangan" => $item->catatandokter,
                 'satuanresepfk' =>  $item->satuanresepfk,
                 "satuanresep" => $item->satuanresep,
                 "tglkadaluarsa" => $item->tglkadaluarsa,

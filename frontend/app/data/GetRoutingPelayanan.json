@@ -20969,6 +20969,26 @@
     ]
   },
   {
+    "name": "RL318Farmasi",
+    "url": "/RL318Farmasi",
+    "templateurl": "module/Registrasi/Laporan/LaporanRekamMedis/RL318Farmasi.html",
+    "controller": "RL318FarmasiCtrl",
+    "deps": [
+      {
+        "module": "Services",
+        "define": "Service"
+      },
+      {
+        "module": "LoginServices",
+        "define": "LoginService"
+      },
+      {
+        "module": "MedifirstService",
+        "define": "MedifirstService"
+      }
+    ]
+  },
+  {
     "name": "BridgingInaCbgIDRG",
     "url": "/BridgingInaCbgIDRG",
     "templateurl": "module/Bridging/BridgingInaCbgIDRG.html",
@@ -21149,6 +21169,126 @@
     ]
   },
   {
+    "name": "RL13_V3_KetersediaanTempatTidur",
+    "url": "/RL13_V3_KetersediaanTempatTidur",
+    "templateurl": "module/Registrasi/Laporan/LaporanRekamMedis/RL13_V3_KetersediaanTempatTidur.html",
+    "controller": "RL13_V3_KetersediaanTempatTidurCtrl",
+    "deps": [
+      {
+        "module": "Services",
+        "define": "Service"
+      },
+      {
+        "module": "LoginServices",
+        "define": "LoginService"
+      },
+      {
+        "module": "MedifirstService",
+        "define": "MedifirstService"
+      }
+    ]
+  },
+  {
+    "name": "RL37_V3_RekapitulasiKegiatanPelayananNeonatal",
+    "url": "/RL37_V3_RekapitulasiKegiatanPelayananNeonatal",
+    "templateurl": "module/Registrasi/Laporan/LaporanRekamMedis/RL37_V3_RekapitulasiKegiatanPelayananNeonatal.html",
+    "controller": "RL37_V3_RekapitulasiKegiatanPelayananNeonatalCtrl",
+    "deps": [
+      {
+        "module": "Services",
+        "define": "Service"
+      },
+      {
+        "module": "LoginServices",
+        "define": "LoginService"
+      },
+      {
+        "module": "MedifirstService",
+        "define": "MedifirstService"
+      }
+    ]
+  },
+  {
+    "name": "RL38_V3_RekapitulasiKegiatanPelayananLaboratorium",
+    "url": "/RL38_V3_RekapitulasiKegiatanPelayananLaboratorium",
+    "templateurl": "module/Registrasi/Laporan/LaporanRekamMedis/RL38_V3_RekapitulasiKegiatanPelayananLaboratorium.html",
+    "controller": "RL38_V3_RekapitulasiKegiatanPelayananLaboratoriumCtrl",
+    "deps": [
+      {
+        "module": "Services",
+        "define": "Service"
+      },
+      {
+        "module": "LoginServices",
+        "define": "LoginService"
+      },
+      {
+        "module": "MedifirstService",
+        "define": "MedifirstService"
+      }
+    ]
+  },
+  {
+    "name": "RL315_V3_KesehatanJiwaCtrl",
+    "url": "/RL315_V3_KesehatanJiwaCtrl",
+    "templateurl": "module/Registrasi/Laporan/LaporanRekamMedis/RL315_V3_KesehatanJiwaCtrl.html",
+    "controller": "RL315_V3_KesehatanJiwaCtrlCtrl",
+    "deps": [
+      {
+        "module": "Services",
+        "define": "Service"
+      },
+      {
+        "module": "LoginServices",
+        "define": "LoginService"
+      },
+      {
+        "module": "MedifirstService",
+        "define": "MedifirstService"
+      }
+    ]
+  },
+  {
+    "name": "RL316_V3_KeluargaBerencana",
+    "url": "/RL316_V3_KeluargaBerencana",
+    "templateurl": "module/Registrasi/Laporan/LaporanRekamMedis/RL316_V3_KeluargaBerencana.html",
+    "controller": "RL316_V3_KeluargaBerencanaCtrl",
+    "deps": [
+      {
+        "module": "Services",
+        "define": "Service"
+      },
+      {
+        "module": "LoginServices",
+        "define": "LoginService"
+      },
+      {
+        "module": "MedifirstService",
+        "define": "MedifirstService"
+      }
+    ]
+  },
+  {
+    "name": "RL19_V3_RekapitulasiCaraBayar",
+    "url": "/RL19_V3_RekapitulasiCaraBayar",
+    "templateurl": "module/Registrasi/Laporan/LaporanRekamMedis/RL19_V3_RekapitulasiCaraBayar.html",
+    "controller": "RL19_V3_RekapitulasiCaraBayarCtrl",
+    "deps": [
+      {
+        "module": "Services",
+        "define": "Service"
+      },
+      {
+        "module": "LoginServices",
+        "define": "LoginService"
+      },
+      {
+        "module": "MedifirstService",
+        "define": "MedifirstService"
+      }
+    ]
+  },
+  {
     "name": "RL4210BesarPenyakitRanap",
     "url": "/RL4210BesarPenyakitRanap",
     "templateurl": "module/Registrasi/Laporan/LaporanRekamMedis/RL4210BesarPenyakitRanap.html",
@@ -21193,6 +21333,306 @@
     "url": "/RL5310BesarKunjunganPenyakitRawatJalan",
     "templateurl": "module/Registrasi/Laporan/LaporanRekamMedis/RL5310BesarKunjunganPenyakitRawatJalan.html",
     "controller": "RL5310BesarKunjunganPenyakitRawatJalanCtrl",
+    "deps": [
+      {
+        "module": "Services",
+        "define": "Service"
+      },
+      {
+        "module": "LoginServices",
+        "define": "LoginService"
+      },
+      {
+        "module": "MedifirstService",
+        "define": "MedifirstService"
+      }
+    ]
+  },
+  {
+    "name": "DaftarKlaimRajal",
+    "url": "/TW9iaWxlSktOUmF3YXRKYWxhbg==",
+    "templateurl": "module/Klaim/DaftarKlaimRajal.html",
+    "controller": "DaftarKlaimRajalCtrl",
+    "deps": [
+      {
+        "module": "Services",
+        "define": "Service"
+      },
+      {
+        "module": "LoginServices",
+        "define": "LoginService"
+      },
+      {
+        "module": "MedifirstService",
+        "define": "MedifirstService"
+      }
+    ]
+  },
+  {
+    "name": "DaftarKlaimRanap",
+    "url": "/DaftarKlaimRanap",
+    "templateurl": "module/Klaim/DaftarKlaimRanap.html",
+    "controller": "DaftarKlaimRanapCtrl",
+    "deps": [
+      {
+        "module": "Services",
+        "define": "Service"
+      },
+      {
+        "module": "LoginServices",
+        "define": "LoginService"
+      },
+      {
+        "module": "MedifirstService",
+        "define": "MedifirstService"
+      }
+    ]
+  },
+  {
+    "name": "RL11ProfilRumahSakit",
+    "url": "/RL11ProfilRumahSakit",
+    "templateurl": "module/Registrasi/Laporan/LaporanRekamMedis/RL11ProfilRumahSakit.html",
+    "controller": "RL11ProfilRumahSakitCtrl",
+    "deps": [
+      {
+        "module": "Services",
+        "define": "Service"
+      },
+      {
+        "module": "LoginServices",
+        "define": "LoginService"
+      },
+      {
+        "module": "MedifirstService",
+        "define": "MedifirstService"
+      }
+    ]
+  },
+  {
+    "name": "RL12KetersediaanPelayanan",
+    "url": "/RL12KetersediaanPelayanan",
+    "templateurl": "module/Registrasi/Laporan/LaporanRekamMedis/RL12KetersediaanPelayanan.html",
+    "controller": "RL12KetersediaanPelayananCtrl",
+    "deps": [
+      {
+        "module": "Services",
+        "define": "Service"
+      },
+      {
+        "module": "LoginServices",
+        "define": "LoginService"
+      },
+      {
+        "module": "MedifirstService",
+        "define": "MedifirstService"
+      }
+    ]
+  },
+  {
+    "name": "DaftarEMRPasienClose",
+    "url": "/RGFmdGFyRU1SUGFzaWVuQ2xvc2U=",
+    "templateurl": "module/Registrasi/DaftarEMRPasienClose.html",
+    "controller": "DaftarEMRPasienCloseCtrl",
+    "deps": [
+      {
+        "module": "Services",
+        "define": "Service"
+      },
+      {
+        "module": "LoginServices",
+        "define": "LoginService"
+      },
+      {
+        "module": "MedifirstService",
+        "define": "MedifirstService"
+      }
+    ]
+  },
+  {
+    "name": "DaftarEMRRequest",
+    "url": "/DaftarEMRRequest===",
+    "templateurl": "module/Registrasi/DaftarEMRRequest.html",
+    "controller": "DaftarEMRRequestCtrl",
+    "deps": [
+      {
+        "module": "Services",
+        "define": "Service"
+      },
+      {
+        "module": "LoginServices",
+        "define": "LoginService"
+      },
+      {
+        "module": "MedifirstService",
+        "define": "MedifirstService"
+      }
+    ]
+  },
+  {
+    "name": "LapKegiatanAmbulanPerWilayah",
+    "url": "/TGFwS2VnaWF0YW5BbWJ1bGFuUGVyV2lsYXlhaA==",
+    "templateurl": "module/Ambulance/LapKegiatanAmbulanPerWilayah.html",
+    "controller": "LapKegiatanAmbulanPerWilayahCtrl",
+    "deps": [
+      {
+        "module": "Services",
+        "define": "Service"
+      },
+      {
+        "module": "LoginServices",
+        "define": "LoginService"
+      },
+      {
+        "module": "MedifirstService",
+        "define": "MedifirstService"
+      }
+    ]
+  },
+  {
+    "name": "LapKegiatanAmbulanPerPetugas",
+    "url": "/TGFwS2VnaWF0YW5BbWJ1bGFuUGVyUGV0dWdhcw==",
+    "templateurl": "module/Ambulance/LapKegiatanAmbulanPerPetugas.html",
+    "controller": "LapKegiatanAmbulanPerPetugasCtrl",
+    "deps": [
+      {
+        "module": "Services",
+        "define": "Service"
+      },
+      {
+        "module": "LoginServices",
+        "define": "LoginService"
+      },
+      {
+        "module": "MedifirstService",
+        "define": "MedifirstService"
+      }
+    ]
+  },
+  {
+    "name": "LapPendapatanKegiatanAmbulan",
+    "url": "/TGFwUGVuZGFwYXRhbktlZ2lhdGFuQW1idWxhbg==",
+    "templateurl": "module/Ambulance/LapPendapatanKegiatanAmbulan.html",
+    "controller": "LapPendapatanKegiatanAmbulanCtrl",
+    "deps": [
+      {
+        "module": "Services",
+        "define": "Service"
+      },
+      {
+        "module": "LoginServices",
+        "define": "LoginService"
+      },
+      {
+        "module": "MedifirstService",
+        "define": "MedifirstService"
+      }
+    ]
+  },
+  {
+    "name": "RL313_V3_RehabilitasiMedik",
+    "url": "/RL313_V3_RehabilitasiMedik",
+    "templateurl": "module/Registrasi/Laporan/LaporanRekamMedis/RL313_V3_RehabilitasiMedik.html",
+    "controller": "RL313_V3_RehabilitasiMedikCtrl",
+    "deps": [
+      {
+        "module": "Services",
+        "define": "Service"
+      },
+      {
+        "module": "LoginServices",
+        "define": "LoginService"
+      },
+      {
+        "module": "MedifirstService",
+        "define": "MedifirstService"
+      }
+    ]
+  },
+  {
+    "name": "RL314_V3_PelayananKhusus",
+    "url": "/RL314_V3_PelayananKhusus",
+    "templateurl": "module/Registrasi/Laporan/LaporanRekamMedis/RL314_V3_PelayananKhusus.html",
+    "controller": "RL314_V3_PelayananKhususCtrl",
+    "deps": [
+      {
+        "module": "Services",
+        "define": "Service"
+      },
+      {
+        "module": "LoginServices",
+        "define": "LoginService"
+      },
+      {
+        "module": "MedifirstService",
+        "define": "MedifirstService"
+      }
+    ]
+  },
+  {
+    "name": "RL43_V3_10BesarKematianPenyakitPasienRawatInap",
+    "url": "/RL43_V3_10BesarKematianPenyakitPasienRawatInap",
+    "templateurl": "module/Registrasi/Laporan/LaporanRekamMedis/RL43_V3_10BesarKematianPenyakitPasienRawatInap.html",
+    "controller": "RL43_V3_10BesarKematianPenyakitPasienRawatInapCtrl",
+    "deps": [
+      {
+        "module": "Services",
+        "define": "Service"
+      },
+      {
+        "module": "LoginServices",
+        "define": "LoginService"
+      },
+      {
+        "module": "MedifirstService",
+        "define": "MedifirstService"
+      }
+    ]
+  },
+  {
+    "name": "RL51_V3_MobiditasPasienRawatJalan",
+    "url": "/RL51_V3_MobiditasPasienRawatJalan",
+    "templateurl": "module/Registrasi/Laporan/LaporanRekamMedis/RL51_V3_MobiditasPasienRawatJalan.html",
+    "controller": "RL51_V3_MobiditasPasienRawatJalanCtrl",
+    "deps": [
+      {
+        "module": "Services",
+        "define": "Service"
+      },
+      {
+        "module": "LoginServices",
+        "define": "LoginService"
+      },
+      {
+        "module": "MedifirstService",
+        "define": "MedifirstService"
+      }
+    ]
+  },
+  {
+    "name": "RL35_V3_Kunjungan",
+    "url": "/RL35_V3_Kunjungan",
+    "templateurl": "module/Registrasi/Laporan/LaporanRekamMedis/RL35_V3_Kunjungan.html",
+    "controller": "RL35_V3_KunjunganCtrl",
+    "deps": [
+      {
+        "module": "Services",
+        "define": "Service"
+      },
+      {
+        "module": "LoginServices",
+        "define": "LoginService"
+      },
+      {
+        "module": "MedifirstService",
+        "define": "MedifirstService"
+      }
+    ]
+  },
+  {
+    "name": "RL36_V3_Kebidanan",
+    "url": "/RL36_V3_Kebidanan",
+    "templateurl": "module/Registrasi/Laporan/LaporanRekamMedis/RL36_V3_Kebidanan.html",
+    "controller": "RL36_V3_KebidananCtrl",
     "deps": [
       {
         "module": "Services",

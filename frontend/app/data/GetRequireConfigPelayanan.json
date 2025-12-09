@@ -3794,6 +3794,10 @@
             "urlDep": "module/Registrasi/Laporan/LaporanRekamMedis/RL317FarmasiCtrl"
         },
         {
+            "nameDep": "RL318FarmasiCtrl",
+            "urlDep": "module/Registrasi/Laporan/LaporanRekamMedis/RL318FarmasiCtrl"
+        },
+        {
             "nameDep": "BridgingInaCbgIDRGCtrl",
             "urlDep": "module/Bridging/BridgingInaCbgIDRGCtrl"
         },
@@ -3832,6 +3836,26 @@
         {
             "nameDep": "RL19_V3_RekapitulasiCaraBayarCtrl",
             "urlDep": "module/Registrasi/Laporan/LaporanRekamMedis/RL19_V3_RekapitulasiCaraBayarCtrl"
+        },
+        {
+            "nameDep": "RL315_V3_KesehatanJiwaCtrl",
+            "urlDep": "module/Registrasi/Laporan/LaporanRekamMedis/RL315_V3_KesehatanJiwaCtrl"
+        },
+        {
+            "nameDep": "RL316_V3_KeluargaBerencanaCtrl",
+            "urlDep": "module/Registrasi/Laporan/LaporanRekamMedis/RL316_V3_KeluargaBerencanaCtrl"
+        },
+        {
+            "nameDep": "RL13_V3_KetersediaanTempatTidurCtrl",
+            "urlDep": "module/Registrasi/Laporan/LaporanRekamMedis/RL13_V3_KetersediaanTempatTidurCtrl"
+        },
+        {
+            "nameDep": "RL38_V3_RekapitulasiKegiatanPelayananLaboratoriumCtrl",
+            "urlDep": "module/Registrasi/Laporan/LaporanRekamMedis/RL38_V3_RekapitulasiKegiatanPelayananLaboratoriumCtrl"
+        },
+        {
+            "nameDep": "RL37_V3_RekapitulasiKegiatanPelayananNeonatalCtrl",
+            "urlDep": "module/Registrasi/Laporan/LaporanRekamMedis/RL37_V3_RekapitulasiKegiatanPelayananNeonatalCtrl"
         },
         {
             "nameDep": "RL38_V3_RekapitulasiKegiatanPelayananLaboratoriumCtrl",
@@ -3880,6 +3904,42 @@
         {
             "nameDep": "RL5310BesarKunjunganPenyakitRawatJalanCtrl",
             "urlDep": "module/Registrasi/Laporan/LaporanRekamMedis/RL5310BesarKunjunganPenyakitRawatJalanCtrl"
+        },
+        {
+            "nameDep": "DaftarKlaimRajalCtrl",
+            "urlDep": "module/Klaim/DaftarKlaimRajalCtrl"
+        },
+        {
+            "nameDep": "DaftarKlaimRanapCtrl",
+            "urlDep": "module/Klaim/DaftarKlaimRanapCtrl"
+        },
+        {
+            "nameDep": "RL11ProfilRumahSakitCtrl",
+            "urlDep": "module/Registrasi/Laporan/LaporanRekamMedis/RL11ProfilRumahSakitCtrl"
+        },
+        {
+            "nameDep": "RL12KetersediaanPelayananCtrl",
+            "urlDep": "module/Registrasi/Laporan/LaporanRekamMedis/RL12KetersediaanPelayananCtrl"
+        },
+        {
+            "nameDep": "DaftarEMRPasienCloseCtrl",
+            "urlDep": "module/Registrasi/DaftarEMRPasienCloseCtrl"
+        },
+        {
+            "nameDep": "DaftarEMRRequestCtrl",
+            "urlDep": "module/Registrasi/DaftarEMRRequestCtrl"
+        },
+        {
+            "nameDep": "LapKegiatanAmbulanPerWilayahCtrl",
+            "urlDep": "module/Ambulance/LapKegiatanAmbulanPerWilayahCtrl"
+        },
+        {
+            "nameDep": "LapKegiatanAmbulanPerPetugasCtrl",
+            "urlDep": "module/Ambulance/LapKegiatanAmbulanPerPetugasCtrl"
+        },
+        {
+            "nameDep": "LapPendapatanKegiatanAmbulanCtrl",
+            "urlDep": "module/Ambulance/LapPendapatanKegiatanAmbulanCtrl"
         }
     ]
 }

@@ -1,0 +1,138 @@
+<style>
+    .style-center {
+        display: inline-block;
+        text-align: center;
+        width: 100%;
+    }
+
+    .style-right {
+        display: inline-block;
+        text-align: right;
+        width: 100%;
+    }
+
+    .style-left {
+        display: inline-block;
+        text-align: left;
+        width: 100%;
+    }
+
+    .k-grid .k-grid-header .k-header .k-link {
+        height: auto;
+    }
+
+    .k-grid .k-grid-header .k-header {
+        white-space: normal;
+    }
+
+    .k-grid .k-grid-header .k-header {
+        text-align: center;
+    }
+
+    .red {
+        background-color: #ff3860;
+        color: #FFFFFF;
+        /*font-weight: bold;*/
+    }
+
+    .blue {
+        background-color: #1E90FF;
+        color: #191970;
+        /*font-weight: bold;*/
+    }
+
+    .koneng {
+        background-color: #FFFF00;
+        color: #191970;
+        /*font-weight: bold;*/
+    }
+
+    .hejo {
+        background-color: #98FB98;
+        color: #000000;
+        /*font-weight: bold;*/
+    }
+
+    .label {
+        display: inline;
+        /* padding: .2em .6em .3em; */
+        padding: .3em .5em;
+        /* font-size: 75%; */
+        /* font-weight: 700; */
+        line-height: 2;
+        color: #fff;
+        text-align: center;
+        white-space: nowrap;
+        vertical-align: baseline;
+        border-radius: 20%;
+    }
+
+    .label-primary {
+        background-color: #58a2e2;
+    }
+</style>
+
+
+<div ng-show="dataVOloaded">
+
+    <center>
+        <c-panel item="item" header="'Laporan Pendapatan Kegiatan Ambulan'" disabled>
+    </center>
+    <!-- <br/> -->
+
+    <!-- Kriteria -->
+    <div class="grid_12">
+        <div class="grid_12 borderBox containerBorderBox">
+
+            <!-- Periode Pulang -->
+            <div class="grid_1">
+                <div class="grid_12">
+                    <label c-label item="item" c-label-text="Tangggal Order"></label>
+                </div>
+                <div class="clear"></div>
+
+                <div class="grid_12">
+                    <input style="width: 100%" k-options="yearUngkul" k-ng-model="item.tahun"
+                        kendo-date-picker placeholer="YYYY" k-format="'yyyy'" />
+                    <div class="clear"></div>
+                </div>
+            </div>
+
+            <!-- Button Search -->
+            <div class="grid_1">
+                <div class="grid_12">
+                    <label>&nbsp;</label>
+                </div>
+                <div class="clear"></div>
+
+                <div class="grid_12">
+                    <button class="btnTemplate1" style="margin-left: 0;" ng-click="SearchData()"> <i
+                            class="fa fa-search"></i>Cari</button>
+                </div>
+            </div>
+
+
+        </div>
+    </div>
+
+    <!-- DaftarPasienPulang -->
+    <div class="grid_12">
+        <div class="grid_12 headerBox">
+            <p>Data</p>
+        </div>
+        <div class="clear"></div>
+
+        <!-- grid table -->
+        <div class="grid_12 borderBox">
+            <kendo-grid id="kGrid" data-source="dataDaftarPasienPulang" options="columnDaftarPasienPulang"
+                k-pageable="'true'" k-sortable="'true'" k-resizable="'true'" k-selectable="'row'"
+                on-change="onChange(data)" k-ng-model="dataPasienSelected" ng-click="klikGrid(dataPasienSelected)">
+            </kendo-grid>
+
+        </div>
+        <div class="clear"></div>
+    </div>
+
+    <div class="grid_12" style="margin-top:60px">
+        <div ng-include='"../app/template/Shared/TemplateLoading"'></div>
+    </div>
