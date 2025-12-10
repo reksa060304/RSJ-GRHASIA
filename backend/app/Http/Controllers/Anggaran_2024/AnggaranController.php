@@ -3669,6 +3669,124 @@ class AnggaranController extends ApiController {
 
     }
 
+    public function getSPJLSBKU(Request $request)
+    {
+
+        $kdProfile = $this->getDataKdProfile($request);
+        $idProfile = (int) $kdProfile;
+
+        $setting = \DB::table('settinganggaran_t as st')
+            ->join('pegawai_m as pg','pg.id','=','st.objectkepalabludfk')
+            ->join('tahapanggaran_m as ta','ta.id','=','st.objecttahapaktivfk')
+            ->select('st.*','pg.namalengkap', 'ta.tahap', 'ta.id as idtahap', 'pg.id as idpegawai')
+            ->where('st.kdprofile', $idProfile)
+            ->where('st.statusenabled', true)
+            ->orderBy('st.tahunanggaran')
+            ->get();
+
+
+        $pegawai = '';
+        if(isset($request['idpegawai']) && $request['idpegawai'] != "undefined" && $request['idpegawai'] != ''){
+            $pegawai = "and ta.objectpptkfk = ".$request['idpegawai'];
+        }
+
+        $status = '';
+        if(isset($request['status']) && $request['status'] != "undefined" && $request['status'] != '' && $request['status'] == 0){
+            $status = "";
+        } else if(isset($request['status']) && $request['status'] != "undefined" && $request['status'] != '' && $request['status'] == 1){
+            $status = "and (sr.status is null or sr.status = 'Belum Diverifikasi')";
+        } else if(isset($request['status']) && $request['status'] != "undefined" && $request['status'] != '' && $request['status'] == 2){
+            $status = "and sr.status = 'Revisi'";
+        } else if(isset($request['status']) && $request['status'] != "undefined" && $request['status'] != '' && $request['status'] == 3){
+            $status = "and sr.status = 'Sudah Diverifikasi'";
+        }
+
+        $norec = '';
+        if(isset($request['norec']) && $request['norec'] != '' && $request['norec'] != "undefined"){
+            $norec = " and sr.objectbkufk = '".$request['norec']."'";
+        } else{
+            $norec = " and sr.objectbkufk is null ";
+        }
+
+        $data = DB::select(DB::raw("
+
+            SELECT
+                string_agg ( DISTINCT rd.uraian, ',' ) uraian,
+                sr.norec,
+                sr.norealisasi,
+                sr.tglrealisasi,
+                sr.tglverif,
+                COALESCE(sr.jumlahdibayarverif, 0) as jumlahdibayarverif,
+                case 
+                    when pj.jumlah is not null then pj.jumlah
+                    when pj.jumlah is null then 0
+                end as jumlahpanjar,
+                cbs.carabayar,
+                ta.tahun,
+                pg1.namalengkap AS bendahara,
+                pg2.namalengkap AS penerima,
+                rkn.namarekanan AS pihakketiga,
+                ka.kode || ' - ' || ka.keterangan AS kegiatan,
+                ma.kodemataanggaran || ' - ' || ma.namamataanggaran AS mataanggaran,
+                ma.kodemataanggaran,
+                ma.namamataanggaran,
+                ka.keterangan subsubkegiatan,
+                ka.id idsubsubkegiatan,
+                ka2.id idsubkegiatan,
+                ka2.keterangan keterangansubkegiatan,
+                ap.id idasalproduk,
+                ap.asalproduk,
+                rkn.id as idrekanan,
+                rkn.namarekanan
+            FROM
+                strukrealisasi_t sr
+                INNER JOIN realisasidetail_t rd ON rd.strukrealisasifk = sr.norec AND rd.statusenabled = TRUE AND rd.kdprofile = ".$idProfile."
+                JOIN keteranganbelanja_t kb ON kb.norec = rd.keteranganbelanjafk AND kb.statusenabled = TRUE AND kb.kdprofile = ".$idProfile."
+                JOIN transaksianggaran2024_t ta ON ta.norec = kb.objecttransaksifk AND ta.statusenabled = TRUE AND ta.kdprofile = ".$idProfile."
+                JOIN kegiatananggaran2024_m ka ON ka.id = ta.objectkegiatanfk AND ka.statusenabled = TRUE AND ka.kdprofile = ".$idProfile." 
+                JOIN kegiatananggaran2024_m ka2 ON ka2.id = ka.headfk AND ka2.statusenabled = TRUE AND ka2.kdprofile = ".$idProfile."
+                JOIN mataanggaran_m ma ON ma.id = sr.objectmataanggaranfk AND ma.statusenabled = TRUE AND ma.kdprofile = ".$idProfile."
+                JOIN asalproduk_m ap ON ap.id = sr.objectasalprodukfk
+                LEFT JOIN rekanan_m rkn ON rkn.id = sr.rekananfk
+                LEFT JOIN pegawai_m AS pg1 ON pg1.id = sr.bendaharafk
+                LEFT JOIN pegawai_m AS pg2 ON pg2.id = sr.penerimafk
+                LEFT JOIN carabayarspj_m cbs ON cbs.id = sr.objectcarabayarfk
+                left join panjar_t pj on pj.norec = sr.objectpanjarfk
+            WHERE 
+            
+                sr.statusenabled = TRUE
+                AND sr.statusls = 'Sudah Bayar'
+                AND sr.kdprofile = ".$idProfile."
+                AND ta.tahun = '".$setting[0]->tahunanggaran."'
+                $norec
+                and sr.status = 'Sudah Diverifikasi'
+            GROUP BY
+                sr.norec,
+                cbs.carabayar,
+                pg1.namalengkap,
+                pg2.namalengkap,
+                rkn.namarekanan,
+                rkn.id,
+                ta.tahun,
+                ka.id,
+                ka2.id,
+                ka2.keterangan,
+                ma.id,
+                ap.id,
+                pj.norec
+            ORDER BY
+                sr.norealisasi DESC
+        
+        "));
+
+        $response = [
+            'data' => $data,
+        ];
+
+        return $this->respond($response);
+
+    }
+
     public function getPanjarBKU(Request $request)
     {
         $kdProfile = $this->getDataKdProfile($request);

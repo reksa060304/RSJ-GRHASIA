@@ -1247,6 +1247,23 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
             //#endregion End rincian spj
             
             $scope.SimpanPopUpDetailSPJ = function() {
+                var updateLogistik = function(nospj) {
+                    console.log("Mencoba update verifikasi logistik. No SPJ:", nospj, "Data:", $scope.tempDataPenerimaanSPJ);
+                    if ($scope.tempDataPenerimaanSPJ && $scope.tempDataPenerimaanSPJ.length > 0 && nospj) {
+                        var objSave = {
+                            data: $scope.tempDataPenerimaanSPJ,
+                            tglverif: moment($scope.item.tglSPJ).format('YYYY-MM-DD HH:mm'),
+                            nospj: nospj
+                        }
+                        medifirstService.post('logistik/save-verif-spj', objSave).then(function (e) {
+                            $scope.tempDataPenerimaanSPJ = [];
+                            toastr.info('Verifikasi Penerimaan berhasil diupdate');
+                        });
+                    } else {
+                        console.warn("Update logistik dilewati. Data atau No SPJ kosong.");
+                    }
+                };
+
                 $scope.isRouteLoading = true
                 $scope.jumlahspjdipilih = 0
                 $scope.jumlahpanjardipilih = 0
@@ -1344,6 +1361,20 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
                                                                 messageContainer.error("Data yang sudah diverif tidak bisa diubah");
                                                             } else if (cek == 123){
                                                                 medifirstService.post('perencanaan/save-realisasi-spj',datasave).then(function (e) {
+                                                                    //console.log("Response save-realisasi-spj:", e);
+                                                                    
+                                                                    var body = e.data || {};
+                                                                    var nospj = body.nospj;
+                                                                    
+                                                                    if (!nospj && body.result) {
+                                                                        nospj = body.result.norealisasi || body.result.nospj;
+                                                                    }
+                                                                    
+                                                                    if (!nospj) nospj = $scope.item.nospj || $scope.item.norealisasi;
+                                                                    
+                                                                   // console.log(nospj);
+                                                                    updateLogistik(nospj);
+                                                                    
                                                                     loadDataGrid();
                                                                     $scope.item.hidespj = 1
                                                                     $scope.popupTambahSPJ.center().close()
@@ -1399,6 +1430,20 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
                                             $scope.isRouteLoading = false
                                         } else if (cek == 123){
                                             medifirstService.post('anggaran/simpan-spj',datasave).then(function (e) {
+                                                //console.log("Response simpan-spj:", e);
+                                                
+                                                var body = e.data || {};
+                                                var nospj = body.nospj;
+
+                                                if (!nospj && body.result) {
+                                                    nospj = body.result.norealisasi || body.result.nospj;
+                                                }
+
+                                                if (!nospj) nospj = $scope.item.nospj || $scope.item.norealisasi;
+
+                                                //console.log(nospj);
+                                                updateLogistik(nospj);
+
                                                 loadDataGrid();
                                                 $scope.item.hidespj = 1
                                                 $scope.popupTambahSPJ.center().close()
@@ -1793,8 +1838,9 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
                 var objSave =
                     {
                         norec: dataItem.norec,
+                        nospj: dataItem.norealisasi  
                     }
-
+                    // console.log(dataItem.norealisasi)
                 var confirm = $mdDialog.confirm()
                     .title('Peringatan')
                     .textContent('Yakin ingin menghapus data ?')
@@ -7232,6 +7278,226 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
                         
                         }
                     });
+            }
+
+            $scope.ListPenerimaan = function(e){
+                $scope.popupListPenerimaan.center().open();
+                $scope.initPenerimaan();
+            }
+
+            $scope.initPenerimaan = function() {
+                var now = new Date();
+                if ($scope.item.tglAwal == undefined) {
+                    $scope.item.tglAwal = new Date(moment(now).subtract(1, 'months').format('YYYY-MM-DD'));
+                }
+                if ($scope.item.tglAkhir == undefined) {
+                    $scope.item.tglAkhir = new Date(moment(now).format('YYYY-MM-DD'));
+                }
+
+                $scope.listStatusBayar = [
+                    {id: 1, name: 'Terhutang'},
+                    {id: 2, name: 'Sudah SPJ'}
+                ];
+
+                medifirstService.get("farmasi/get-datacombo", true).then(function (dat) {
+                    $scope.listNamaBarang = dat.data.produk;
+                });
+
+                $scope.loadDataPenerimaan();
+            }
+
+            $scope.loadDataPenerimaan = function() {
+                $scope.isRouteLoading = true;
+                
+                var produkfk = ""
+                if ($scope.item.namaBarang != undefined) {
+                    produkfk = "&produkfk=" + $scope.item.namaBarang.id
+                }
+                var noSppb = ""
+                if ($scope.item.noSppb != undefined) {
+                    noSppb = "&noSppb=" + $scope.item.noSppb
+                }
+                var statusBayar = ""
+                if ($scope.item.statusBayar != undefined) {
+                    statusBayar = "&statusBayar=" + $scope.item.statusBayar.id
+                }
+                var ketterima = ""
+                if ($scope.item.ketterima != undefined) {
+                    ketterima = "&ketterima=" + $scope.item.ketterima
+                }
+
+                var tglAwal = moment($scope.item.tglAwal).format('YYYY-MM-DD');
+                var tglAkhir = moment($scope.item.tglAkhir).format('YYYY-MM-DD');
+                
+                // tidak mengirim string 'undefined'
+                var nostruk = $scope.item.struk != undefined ? $scope.item.struk : '';
+                var nofaktur = $scope.item.nofaktur != undefined ? $scope.item.nofaktur : '';
+                var namarekanan = $scope.item.namarekanan != undefined ? $scope.item.namarekanan : '';
+
+                medifirstService.get("logistik/get-daftar-penerimaan?" +
+                    "tglAwal=" + tglAwal +
+                    "&tglAkhir=" + tglAkhir +
+                    "&nostruk=" + nostruk +
+                    "&nofaktur=" + nofaktur +
+                    "&namarekanan=" + namarekanan
+                    + produkfk
+                    + noSppb + statusBayar + ketterima
+                    , true).then(function (dat) {
+                        $scope.isRouteLoading = false;
+                        $scope.selectedDataPenerimaan = []; // Reset array pilihan
+                        var data2 = dat.data.daftar;
+                        // Helpercheckbox
+                        for (var i = 0; i < data2.length; i++) {
+                            data2[i].no = i + 1;
+                            data2[i].statCheckbox2 = false;
+                            if (data2[i].details) {
+                                for (let e = 0; e < data2[i].details.length; e++) {
+                                    data2[i].details[e].no = e + 1;
+                                }
+                            }
+                        }
+                        $scope.dataGridPenerimaan = new kendo.data.DataSource({
+                            data: data2,
+                            pageSize: 100,
+                            total: data2.length,
+                            serverPaging: false,
+                            schema: {
+                                model: {
+                                    fields: {
+                                        totalharusdibayar: { type: "number" },
+                                        jmlitem: { type: "number" }
+                                    }
+                                }
+                            }
+                        });
+                    });
+            }
+
+            $scope.cariFilterPenerimaan = function() {
+                $scope.loadDataPenerimaan();
+            }
+
+            $scope.formatRupiah = function(value, currency) {
+                if(!value) return (currency || "") + " 0.00";
+                return (currency || "") + " " + parseFloat(value).toFixed(2).replace(/(\d)(?=(\d{3})+\.)/g, "$1,");
+            }
+            $scope.formatTanggal = function(tanggal) {
+                 if(!tanggal) return "-";
+                return moment(tanggal).format('DD-MMM-YYYY');
+            }
+
+            $scope.selectRow2 = function(e) {
+                 var element = $(e.currentTarget);
+                var checked = element.is(':checked'),
+                    row = element.closest('tr'),
+                    grid = $("#kGridPenerimaan").data("kendoGrid"),
+                    dataItem = grid.dataItem(row);                
+    
+                if (!$scope.selectedDataPenerimaan) $scope.selectedDataPenerimaan = [];
+
+                if (checked) {
+                    row.addClass("k-state-selected");
+                    dataItem.statCheckbox2 = true;
+                    // Cek duplikasi 
+                    var isExist = _.find($scope.selectedDataPenerimaan, function(o){ return o.no == dataItem.no; });
+                    if(!isExist) {
+                        $scope.selectedDataPenerimaan.push(dataItem);
+                    }
+                } else {
+                    row.removeClass("k-state-selected");
+                    dataItem.statCheckbox2 = false;
+                    for(var i = $scope.selectedDataPenerimaan.length - 1; i >= 0; i--){
+                        if($scope.selectedDataPenerimaan[i].no == dataItem.no){
+                            $scope.selectedDataPenerimaan.splice(i, 1);
+                        }
+                    }
+                }
+                console.log("Selected Data Penerimaan:", $scope.selectedDataPenerimaan);
+            }
+
+            $scope.optionsGridPenerimaan = {
+                toolbar: ["excel"],
+                excel: {
+                    fileName: "DaftarPenerimaan.xlsx",
+                    allPages: true,
+                },
+                pageable: true,
+                scrollable: true,
+                columns: [
+                    {
+                        "title": "#",
+                        "template": "<input type='checkbox' class='checkbox' ng-click='selectRow2($event)' ng-model='dataItem.statCheckbox2' />",
+                        "width": "30px"
+                    },
+                    { "field": "no", "title": "No", "width": "35px" },
+                    { "field": "nofaktur", "title": "No Dokumen", "width": "100px" },
+                    { "field": "nosppb", "title": "No PO", "width": "100px", "template": "#if (nosppb) {# #= nosppb # #} else {# - #} #" },
+                    { "field": "tglstruk", "title": "Tanggal Penerimaan", "width": "80px", "template": "#= moment(tglstruk).format('DD-MMM-YYYY') #" },
+                    { "field": "namarekanan", "title": "Supplier", "width": "120px" },
+                    { "field": "jmlitem", "title": "Item", "width": "50px", "template": "<span class='style-right'>#= kendo.toString(jmlitem) #</span>" },
+                    { "field": "totalharusdibayar", "title": "Total Tagihan", "width": "100px", "template": "<span class='style-right'>#= kendo.toString(totalharusdibayar, 'n2') #</span>" },
+                    { "field": "isverifspj", "title": "Verifikasi SPJ", "width": "100px", "template": "#if (isverifspj) {# Sudah Diverifikasi #} else {# - #} #" },
+                    { "field": "tglverifspj", "title": "Tanggal Verifikasi", "width": "100px", "template": "#if (tglverifspj) {# #= moment(tglverifspj).format('DD-MMM-YYYY') # #} else {# - #} #" },
+                    { "field": "nospj", "title": "No SPJ", "width": "120px" },
+                    { "field": "keteranganambil", "title": "Ket Terima", "width": "120px" }
+                ]
+            };
+
+            $scope.data2 = function(dataItem) {
+                return {
+                    dataSource: {
+                        data: dataItem.details,
+                        pageSize: 10
+                    },
+                    columns: [
+                        { "field": "namaproduk", "title": "Nama Produk", "width": "150px" },
+                        { "field": "satuanstandar", "title": "Satuan", "width": "50px" },
+                        { "field": "qtyproduk", "title": "Qty", "width": "50px" },
+                        { "field": "hargasatuan", "title": "Harga", "width": "80px", "template": "#= kendo.toString(hargasatuan, 'n2') #" },
+                        { "field": "total", "title": "Total", "width": "80px", "template": "#= kendo.toString(total, 'n2') #" }
+                    ]
+                }
+            };
+
+             $scope.SimpanVerifPenerimaan = function(){
+                 if ($scope.selectedDataPenerimaan == undefined || $scope.selectedDataPenerimaan.length == 0) {
+                    toastr.error('Checklist data dulu')
+                    return
+                }
+
+                for (let i = 0; i < $scope.selectedDataPenerimaan.length; i++) {
+                    if ($scope.selectedDataPenerimaan[i].tglverifspj != null){
+                        toastr.error('Tanggal ada yang sudah di verif SPJ')
+                        return
+                    }
+                }
+
+                // Hitung total nominal penerimaan
+                var total = 0;
+                var listNoFaktur = [];
+                for (var i = 0; i < $scope.selectedDataPenerimaan.length; i++) {
+                    total += parseFloat($scope.selectedDataPenerimaan[i].totalharusdibayar);
+                    
+                    if ($scope.selectedDataPenerimaan[i].nofaktur) {
+                        listNoFaktur.push($scope.selectedDataPenerimaan[i].nofaktur);
+                    }
+                }
+
+                // Simpan data temporary
+                $scope.tempDataPenerimaanSPJ = $scope.selectedDataPenerimaan;
+
+            
+                $scope.item.hargaSatuanSPJ = total;
+                $scope.item.jmlSPJ = 1;
+                $scope.item.subTotalSPJ = total;
+                $scope.item.keteranganSPJ = "Sesuai No Faktur: " + listNoFaktur.join(', ');
+
+                $scope.popupListPenerimaan.close();
+                toastr.info("Data penerimaan dipilih. Total: " + $scope.formatRupiah(total, 'Rp.'));
+            }
+            
+            $scope.batalVerif = function(){
+                $scope.popUpVerif.close()
             }
 
             /////////////////////////////////////////////////////////////////////

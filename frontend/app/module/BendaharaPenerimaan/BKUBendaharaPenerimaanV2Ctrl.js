@@ -407,6 +407,31 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
                             });
                         });
                     }
+
+
+                    // untuk spjls
+                    if ($scope.item.itemJenisBukti.id == 12) {
+
+                        medifirstService.get("bendaharapenerimaan/get-spjls").then(function (e) {
+                            
+                            let dataGridSPJLS = e.data;
+
+                            $scope.dataGridSPJLS = new kendo.data.DataSource({
+                                data: dataGridSPJLS,
+                                pageSize: 10,
+                                total: dataGridSPJLS.length,
+                                group: $scope.group,
+                                serverPaging: false,
+                                schema: {
+                                    model: {
+                                        fields: {
+                                        }
+                                    }
+                                },
+                                aggregate: []
+                            });
+                        });
+                    }
                 }
             });
 
@@ -437,6 +462,12 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
                 $scope.item.uraian = data.keterangan
 				$scope.item.jumlah = data.jumlah
                 $scope.norecPengembalianPembayaran = data.norec
+            }
+
+            $scope.klikGridSPJLS = function (data){
+                $scope.item.uraian = data.statusls + " - " + data.norealisasi
+				$scope.item.jumlah = data.jumlahdibayarverif    
+                $scope.norecSPJLS = data.norec
             }
 
             $scope.SavePenerimaan = function () {
@@ -588,6 +619,22 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
 
                         // reset data pengembalian pembayaran
                         $scope.dataGridPengembalianPembayaran = new kendo.data.DataSource({
+                            data:  [],
+                            pageSize: 10,
+                            group: $scope.group,
+                            serverPaging: false,
+                            schema: {
+                                model: {
+                                    fields: {
+                                    }
+                                }
+                            },
+                            aggregate: [
+                            ]
+                        });
+
+                        // reset data spjls
+                        $scope.dataGridSPJLS = new kendo.data.DataSource({
                             data:  [],
                             pageSize: 10,
                             group: $scope.group,
@@ -1072,6 +1119,21 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
 					{"field": "tglpengembalian", "title": "Tanggal Pengembalian"},
 					{"field": "jumlah", "title": "Jumlah Pengembalian"},
 					{"field": "keterangan", "title": "Keterangan Pengembalian"},
+                ]
+			};
+
+            $scope.columnGridSPJLS = {
+                sortable: true,
+                selectable: "multiple",
+                pageable: true,
+                columns: [
+                    {"field": "norealisasi", "title" : "No SPJLS"},
+					{"field": "tglrealisasi", "title": "Tanggal Realisasi"},
+					{"field": "jumlahdibayarverif", "title": "Jumlah"},
+					{"field": "statusls", "title": "Status"},
+                    {"field": "tglverif", "title": "Tanggal Verifikasi"},
+
+
                 ]
 			};
 

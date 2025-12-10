@@ -127,6 +127,12 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
                 { id: 3, status: "Sudah Verifikasi" },
             ];
 
+             $scope.listStatusSPJLS = [
+                { id: 0, status: "Semua" },
+                { id: 1, status: "Belum Bayar" },
+                { id: 2, status: "Sudah Bayar" },
+            ];
+
             $scope.listDivKonsolidasi = [
                 { id: 1, div: "Div: 1" },
                 { id: 2, div: "Div: 2" },
@@ -1982,6 +1988,36 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
                 }
                 
             }
+   
+        $scope.SimpanVerifikasiSPJLs = function(){
+           
+            if (!$scope.item.radioVerifikasi) {
+                alert('Pilih Status Transfer terlebih dahulu!');
+                return;
+            }
+
+            var objSave = {
+                norec: $scope.norecverif,
+                statusls: $scope.item.radioVerifikasi,
+                keterangan: $scope.item.keteranganVerif,
+                carabayar: $scope.item.radioPencairanVerifikasi,
+                jumlahdibayarverif: $scope.item.jumlahdibayarSPJ,
+                pph: $scope.item.pph != undefined ? $scope.item.pph : 0,
+                ppn: $scope.item.ppn != undefined ? $scope.item.ppn : 0,
+                sppspm: $scope.item.radioPencairanVerifikasi == '3' ? true : false
+            }
+
+           // console.log('Data yang dikirim ke backend:', objSave);
+
+            medifirstService.post('perencanaan/update-status-ls', objSave).then(function (e) {
+                alert('Verifikasi berhasil disimpan!');
+                loadDataGrid();
+                $scope.popupVerifSPJ.center().close()
+            }, function (error) {
+                console.error('Error:', error);
+                alert('Gagal menyimpan verifikasi!');
+            })
+        };
 
             function batalVerifSPJ(e) {
                 e.preventDefault();
@@ -5360,9 +5396,9 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
                 for (let i = 0; i < rows.length; i++) {
                     // const element = rows[i];
                     var row = rows[i];
-                    var status = kendoGrid.dataItem(row).status;
-                    //console.log(status);
-                    if (status == "Revisi") {
+                    var statusls = kendoGrid.dataItem(row).statusls;
+                    console.log(statusls);
+                    if (statusls == "Belum Bayar") {
                         $(row.cells[1]).addClass("koneng");
                         $(row.cells[2]).addClass("koneng");
                         $(row.cells[3]).addClass("koneng");
@@ -5377,7 +5413,7 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
                         $(row.cells[12]).addClass("koneng");
                         $(row.cells[13]).addClass("koneng");
                         $(row.cells[14]).addClass("koneng");
-                    } else if (status == "Sudah Diverifikasi") {
+                    } else if (statusls == "Sudah Bayar") {
                         $(row.cells[1]).addClass("green");
                         $(row.cells[2]).addClass("green");
                         $(row.cells[3]).addClass("green");
@@ -5392,6 +5428,10 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
                         $(row.cells[12]).addClass("green");
                         $(row.cells[13]).addClass("green");
                         $(row.cells[14]).addClass("green");
+                        $(row.cells[15]).addClass("green");
+                        $(row.cells[16]).addClass("green");
+                        $(row.cells[17]).addClass("green");
+                        
                     }
 
                 }
@@ -5570,6 +5610,7 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
                           ],
                              title: "",
                              width: "100px",
+                             hidden: true
                     },
                 ]
             };

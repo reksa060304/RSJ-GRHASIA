@@ -5776,6 +5776,49 @@ class PerencanaanController extends ApiController {
         return $this->setStatusCode($result['status'])->respond($result, $transMessage);
     }
 
+
+    public function updateStatusLS(Request $request) {
+        DB::beginTransaction();
+        $kdProfile = $this->getDataKdProfile($request);
+        $idProfile = (int) $kdProfile;
+
+        try{
+            $KB = StrukRealisasi::where('norec', $request['norec'])
+                ->first();
+            
+            if (!$KB) {
+                throw new \Exception('Data SPJ tidak ditemukan');
+            }
+            
+            $KB->statusls = $request['statusls'];
+            $KB->save();
+            $transStatus = 'true';
+
+        } catch (\Exception $e) {
+            $transStatus = 'false';
+        }
+
+        if ($transStatus == 'true') {
+            $transMessage = "Update Status LS Berhasil";
+            DB::commit();
+            $result = array(
+                'status' => 201,
+                'message' => $transMessage,
+                'result' => $KB,
+                'as' => '@epic',
+            );
+        } else {
+            $transMessage = "Update Status LS Gagal";
+            DB::rollBack();
+            $result = array(
+                'status' => 400,
+                'line'=> $e->getLine(),
+                'message'=> $e->getMessage(),
+                'as' => '@epic',
+            );
+        }
+        return $this->setStatusCode($result['status'])->respond($result, $transMessage);
+    }
     public function savePanjarSPJ(Request $request) {
         DB::beginTransaction();
         $kdProfile = $this->getDataKdProfile($request);
@@ -5868,6 +5911,15 @@ class PerencanaanController extends ApiController {
                 // disable sambungan spjtopanjar
                 DB::table('spjtopanjar_t')->where('objectspjfk', $request['norec'])->update([
                     'statusenabled' => false
+                ]);
+
+               // update strukpelayanan_t
+                DB::table('strukpelayanan_t')
+                ->where('nospj', $request['nospj'])
+                ->update([
+                    'isverifspj' => null,
+                    'tglverifspj' => null,
+                    'nospj' => null
                 ]);
 
                 $transStatus = 'true';

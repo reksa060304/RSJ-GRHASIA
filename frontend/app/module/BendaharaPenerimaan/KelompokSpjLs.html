@@ -560,6 +560,11 @@
 								<button class="btnTemplate1" ng-click="CariSPJ()">Cari</button>
 							</div>
 							<div class="grid_12">
+								<p style="color: #1b801b;font-weight: bold; font-style: italic;">
+									*Warna Hijau : sudah diverifikasi LS
+								</p>
+							</div>
+							<div class="grid_12">
 
 								<div class="grid_12 borderBox">
 									<kendo-grid id="kGridsSPJ" k-data-source="dataSourceSPJ" k-selectable="'row'"  class="max-height"
@@ -3063,24 +3068,23 @@
 		</div><br>
 	</div>
 </div>
-<div kendo-window="popupVerifSPJ" k-title="'Verifikasi SPJ'" k-visible="false" k-width="900" k-height="500">
+<div kendo-window="popupVerifSPJ" k-title="'Verifikasi SPJ'" k-visible="false" k-width="660" k-height="400">
 	<div class="panel panel-default container_12">
 		<div class="grid_12">
 			<div class="grid_12">
 				<div class="grid_3" style="text-align: left;">
-					Pilih Status SPJ
+					Pilih Status Transfer
 				</div>
 				<div class="grid_3" >
 					<md-radio-group ng-model="item.radioVerifikasi">
-						<div class="grid_6"><md-radio-button value="Sudah Diverifikasi" class="md-primary">Sudah Diverifikasi</md-radio-button></div>
-						<div class="grid_6"><md-radio-button value="Belum Diverifikasi" class="md-primary">Belum Diverifikasi</md-radio-button></div>
-						<div class="grid_6"><md-radio-button value="Revisi" class="md-primary">Revisi</md-radio-button></div>
+						<div class="grid_6"><md-radio-button value="Sudah Bayar" class="md-primary">Sudah Bayar</md-radio-button></div>
+						<div class="grid_6"><md-radio-button value="Belum Bayar" class="md-primary">Belum Bayar</md-radio-button></div>
 					</md-radio-group>
 				</div>
 			</div>
 			<div class="grid_12">
 				<div class="grid_3" style="text-align: left;">
-					Tanggal Verifikasi
+					Tanggal Transfer
 				</div>
 				<div class="grid_6" style="margin-top: -10px;">
 					<input style="width: 100%" k-ng-model="item.tglVerifSPJ" kendo-datepicker 
@@ -3099,7 +3103,7 @@
                                         resize: none;" ng-model="item.keteranganVerif"></textarea>
 				</div>
 			</div>
-			<div class="grid_12">
+			<!-- <div class="grid_12">
 				<div class="grid_3" style="text-align: left;margin-top: 15px;">
 					Cara Pembayaran
 				</div>
@@ -3122,16 +3126,16 @@
 						<button class="btnTemplate1" ng-click="CariPanjarVerifSPJ()" ng-hide="false">Cari</button>
 					</div>
 				</div>
-			</div>
+			</div> -->
 			<div class="grid_12" style="margin-top: 30px;">
 				<div class="grid_3" style="text-align: left;">
-					Jumlah Dibayar
+					Jumlah Transfer
 				</div>
 				<div class="grid_6" style="margin-top: -10px;">
 					<input c-text-box type="input" class="k-textbox" ng-model="item.jumlahdibayarSPJ"  />
 				</div>
 			</div>
-			<div class="grid_12">
+			<!-- <div class="grid_12">
 				<div class="grid_3" style="text-align: left;">
 					JUMLAH PAJAK 1. PPh
 				</div>
@@ -3158,7 +3162,7 @@
 				<div class="grid_1" style="margin-top: -10px; margin-left: 10px;">
 					<button class="btnTemplate1" ng-click="CariPanjarVerif()" >Cari</button>
 				</div>
-			</div>
+			</div> -->
 		</div>
 
 		<!-- <div class="grid_12">
@@ -3173,7 +3177,7 @@
 			
 			<div class="grid_5"></div>
 			<div class="grid_2">
-				<button class="btnTemplate1" ng-click="SimpanVerifikasiSPJ()">Simpan</button>
+				<button class="btnTemplate1" ng-click="SimpanVerifikasiSPJLs()">Verifikasi Transfer</button>
 			</div>
 			<div class="grid_5"></div>
 		</div>

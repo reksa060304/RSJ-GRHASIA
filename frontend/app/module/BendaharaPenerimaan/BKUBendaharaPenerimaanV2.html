@@ -390,21 +390,89 @@
                     </kendo-grid>
                 </div> -->
     
-                <div class="grid_12 borderBox" ng-hide="hidespm">
-                    <kendo-grid id="grid" data-source="dataGridSPM" options="columnGridSPM" k-pageable="'true'"
-                        k-sortable="'true'" k-groupable="'false'" k-resizable="'true'" k-selectable="'row'"
-                        k-ng-model="dataSelectedspm" ng-click="klikGridspm(dataSelectedspm)"
+               <!-- <div class="grid_12 borderBox" ng-hide="hidespm">
+                    <kendo-grid id="gridSPM" data-source="dataGridSPM" options="columnGridSPM" 
+                        k-pageable="'true'" k-sortable="'true'" k-groupable="'false'" k-resizable="'true'" 
+                        k-selectable="'row'" k-ng-model="dataSelectedspm" ng-click="klikGridspm(dataSelectedspm)"
                         style="min-height: 0px; max-height: 500px;">
                     </kendo-grid>
                 </div>
 
                 <div class="grid_12 borderBox" ng-if="item.itemJenisBukti.jenisbukti !== 'SPM'">
-                    <kendo-grid id="grid" data-source="dataGridPengembalianPembayaran" options="columnGridPengembalianPembayaran" k-pageable="'true'"
-                        k-sortable="'true'" k-groupable="'false'" k-resizable="'true'" k-selectable="'row'"
-                        k-ng-model="dataSelectedPengembalianPembayaran" ng-click="klikGridPengembalianPembayaran(dataSelectedPengembalianPembayaran)"
+                    <kendo-grid id="gridPengembalian1" data-source="dataGridPengembalianPembayaran" 
+                        options="columnGridPengembalianPembayaran" k-pageable="'true'" k-sortable="'true'" 
+                        k-groupable="'false'" k-resizable="'true'" k-selectable="'row'"
+                        k-ng-model="dataSelectedPengembalianPembayaran" 
+                        ng-click="klikGridPengembalianPembayaran(dataSelectedPengembalianPembayaran)"
                         style="min-height: 0px; max-height: 500px;">
                     </kendo-grid>
                 </div>
+
+                <div class="grid_12 borderBox" ng-if="item.itemJenisBukti.jenisbukti !== 'SPJLS'">
+                    <kendo-grid id="gridPengembalian2" data-source="dataGridSPJLS" 
+                        options="columnGridSPJLS" k-pageable="'true'" k-sortable="'true'" 
+                        k-groupable="'false'" k-resizable="'true'" k-selectable="'row'"
+                        k-ng-model="dataSelectedSPJLS" 
+                        ng-click="klikGridSPJLS(dataSelectedSPJLS)"
+                        style="min-height: 0px; max-height: 500px;">
+                    </kendo-grid>
+                </div> -->
+
+            <!-- GRID SPM -->
+           <div class="grid_12 borderBox" ng-if="item.itemJenisBukti.id === 1">
+                <kendo-grid id="gridSPM"
+                    data-source="dataGridSPM"
+                    options="columnGridSPM"
+                    k-pageable="'true'"
+                    k-sortable="'true'"
+                    k-groupable="'false'"
+                    k-resizable="'true'"
+                    k-selectable="'row'"
+                    k-ng-model="dataSelectedspm"
+                    ng-click="klikGridspm(dataSelectedspm)"
+                    style="min-height: 0px; max-height: 500px;">
+                </kendo-grid>
+            </div>
+
+
+            <!-- GRID PENGEMBALIAN PEMBAYARAN -->
+            <div class="grid_12 borderBox" ng-if="item.itemJenisBukti.id === 10">
+                <kendo-grid id="gridPengembalian1"
+                    data-source="dataGridPengembalianPembayaran"
+                    options="columnGridPengembalianPembayaran"
+                    k-pageable="'true'"
+                    k-sortable="'true'"
+                    k-groupable="'false'"
+                    k-resizable="'true'"
+                    k-selectable="'row'"
+                    k-ng-model="dataSelectedPengembalianPembayaran"
+                    ng-click="klikGridPengembalianPembayaran(dataSelectedPengembalianPembayaran)"
+                    style="min-height: 0px; max-height: 500px;">
+                </kendo-grid>
+            </div>
+
+
+            <!-- GRID SPJLS -->
+            <div class="grid_12 borderBox" ng-if="item.itemJenisBukti.id === 12">
+                <kendo-grid id="gridSPJLS"
+                    data-source="dataGridSPJLS"
+                    options="columnGridSPJLS"
+                    k-pageable="'true'"
+                    k-sortable="'true'"
+                    k-groupable="'false'"
+                    k-resizable="'true'"
+                    k-selectable="'row'"
+                    k-ng-model="dataSelectedSPJLS"
+                    ng-click="klikGridSPJLS(dataSelectedSPJLS)"
+                    style="min-height: 0px; max-height: 500px;">
+                </kendo-grid>
+            </div>
+
+
+            
+
+
+                
             </div>
     
             <div style="margin-top: 1em;" class="grid_12">

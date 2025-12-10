@@ -128,6 +128,7 @@ Route::group(['middleware' => 'cors', 'prefix' => 'service'], function () {
         Route::get('bendaharapenerimaan/get-saldoawal-bkubp', 'BendaharaPenerimaan\BendaharaPenerimaanController@getSaldoAwalBKUBP');
         Route::post('bendaharapenerimaan/simpan-saldoawal-bkubp', 'BendaharaPenerimaan\BendaharaPenerimaanController@simpanSaldoAwalBKUBP');
         Route::post('bendaharapenerimaan/hapus-saldoawal-bkubp', 'BendaharaPenerimaan\BendaharaPenerimaanController@hapusSaldoAwalBKUBP');
+        Route::get('bendaharapenerimaan/get-spjls', 'BendaharaPenerimaan\BendaharaPenerimaanController@getSPJLS');
         
         Route::get('bendaharapenerimaan/get-pengembalian-pembayaran', 'BendaharaPenerimaan\BendaharaPenerimaanController@getPengembalianPembayaran');
         Route::get('bendaharapenerimaan/cek-sbm-pengembalian-pembayaran', 'BendaharaPenerimaan\BendaharaPenerimaanController@cekSBMPengembalianPembayaran');
@@ -2104,6 +2105,7 @@ Route::group(['middleware' => 'cors', 'prefix' => 'service'], function () {
             Route::post('anggaran/simpan-lock-spj-subsubkegiatan', 'Anggaran_2024\AnggaranController@simpanLockSPJSubSubKegiatan');
             Route::post('anggaran/simpan-lock-angkas-subsubkegiatan', 'Anggaran_2024\AnggaranController@simpanLockAngkasSubSubKegiatan');
             Route::get('anggaran/get-spj-bkuv2', 'Anggaran_2024\AnggaranController@getSPJBKU');
+            Route::get('anggaran/get-spj-ls-bkuv2', 'Anggaran_2024\AnggaranController@getSPJLSBKU');
             Route::get('anggaran/get-panjar-bkuv2', 'Anggaran_2024\AnggaranController@getPanjarBKU');
             Route::get('anggaran/get-spj-to-pajakv2', 'Anggaran_2024\AnggaranController@getSPJToPajak');
             Route::post('anggaran/save-pajakv2', 'Anggaran_2024\AnggaranController@savePajakV2');
@@ -2114,6 +2116,8 @@ Route::group(['middleware' => 'cors', 'prefix' => 'service'], function () {
            
             // start SPJ LS
             Route::get('anggaran/get-spj-ls', 'Anggaran_2024\AnggaranController@getSPJLS');
+            Route::post('perencanaan/update-status-ls', 'Perencanaan\PerencanaanController@updateStatusLS');
+
             // End SPJ LS
            
             // End Anggaran 2024

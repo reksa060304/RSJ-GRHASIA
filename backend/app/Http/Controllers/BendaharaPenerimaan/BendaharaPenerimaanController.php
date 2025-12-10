@@ -13,6 +13,7 @@ use App\Http\Controllers\ApiController;
 use App\Master\Pegawai;
 use App\Traits\Valet;
 use App\Transaksi\BKUPenerimaanV2;
+use App\Transaksi\StrukRealisasi;
 use App\Transaksi\PengembalianPembayaran;
 use App\Transaksi\StrukBuktiPenerimaan;
 use App\Transaksi\StrukBuktiPenerimaanCaraBayar;
@@ -12030,6 +12031,21 @@ class BendaharaPenerimaanController extends ApiController {
         "));
 
         return $this->respond($data);
+    }
+
+    public function getSPJLS(Request $request)
+    {
+        $kdProfile = $this->getDataKdProfile($request);
+        $idProfile = (int) $kdProfile;
+
+        $data = StrukRealisasi::where('statusenabled', TRUE)
+            ->where('status', 'Sudah Diverifikasi')
+            ->where('statusls', 'Sudah Bayar')
+            ->whereNull('objectbkufk')
+            ->select('norec', 'norealisasi', 'tglrealisasi', 'jumlahdibayarverif', 'status', 'statusls', 'tglverif', 'keterangan', 'objectbkufk')
+            ->get();
+
+        return $this->respond($data);        
     }
 
     public function simpanBKUV2(Request $request)
