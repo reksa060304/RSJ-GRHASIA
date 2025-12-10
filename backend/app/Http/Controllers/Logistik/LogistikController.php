@@ -6544,6 +6544,9 @@ class LogistikController extends ApiController{
         if (isset($request['ketterima']) && $request['ketterima'] != "" && $request['ketterima'] != "undefined") {
             $data = $data->where('sp.keteranganambil', 'ILIKE', '%' . $request['ketterima'] . '%');
         }
+        if (isset($request['nospj']) && $request['nospj'] != "" && $request['nospj'] != "undefined") {
+            $data = $data->where('sp.nospj', 'ILIKE', '%' . $request['nospj'] . '%');
+        }
 //        $data = $data->distinct();
         $data = $data->where('sp.statusenabled', true);
         $data = $data->where('sp.objectkelompoktransaksifk', 35);
