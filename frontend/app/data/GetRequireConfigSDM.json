@@ -322,6 +322,14 @@
     {
       "nameDep": "SettingAkunMahasiswaCtrl",
       "urlDep": "module/SDM/SettingAkunMahasiswaCtrl"
+    },
+    {
+      "nameDep": "LaporanCutiKaryawanCtrl",
+      "urlDep": "module/SDM/LaporanCutiKaryawanCtrl"
+    },
+    {
+      "nameDep": "InformasiJabatanPegawaiCtrl",
+      "urlDep": "module/SDM/InformasiJabatanPegawaiCtrl"
     }
   ]
 }

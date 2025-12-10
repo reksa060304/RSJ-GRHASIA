@@ -1,0 +1,89 @@
+<style>
+    .k-grid .k-grid-header .k-header .k-link {
+        height: auto;
+    }
+
+    .k-grid .k-grid-header .k-header  {
+        white-space: normal;
+    }
+    .k-grid .k-grid-header .k-header  {
+        text-align: center;
+    }
+</style>
+<div class="panel panel-default container_12">
+	<div class="panel-heading" c-translate>Informasi Jabatan Pegawai</div>
+	<div class="panel-body">
+		<fieldset style="min-height:50px !important" align="left">
+            <legend><h2>Pencarian</h2></legend>
+            <div class="grid_12">        		
+            	<div class="grid_6">          									   
+					<div class="grid_6">
+				        <label c-label item="item" c-label-text="Jabatan"></label>
+				        <input ng-disabled="isDisable" style="width: 100%;" kendo-combo-box k-ng-model="item.Jabatan" k-data-text-field="'namajabatan'" k-data-value-field="'id'" k-filter="'contains'" k-auto-bind="false" k-data-source="listJabatan"/>
+				    </div>
+            	</div>
+            	<div class="grid_6 k-edit-buttons  k-state-default " style="margin-top:25px"    >       
+	                <button class="k-button k-button-icontext k-primary k-grid-update" ng-click="Search()"  style="width:100px"  ><span class="k-sprite k-icon k-i-search"></span>Cari </button>
+	                <button class="k-button  k-button-icontext" ng-click="ClearSearch()" style="width:100px" ><span class="k-sprite k-icon k-delete"></span>Clear</button>
+	            </div>  
+            </div>
+        </fieldset>
+	</div>
+	<div class="grid_12" style="margin-top:10px">
+		<div class="grid_12 headerBox">
+			<p>Detail</p>
+		</div>		
+		<div class="grid_12 borderBox">
+			<kendo-grid  
+                        k-data-source="sourceLaporan" 
+                        k-selectable="'row'" 
+                        k-groupable="'false'"
+                        k-options="columnLaporan" 
+                        k-ng-model="dataPasienSelected" 
+                        ng-click="click(dataPasienSelected)">
+            </kendo-grid> 		 
+		</div>
+	</div>
+	<div class="grid_12" style="margin-top:60px"  ng-show="isLoadingData">
+		<div ng-include='"../app/template/Shared/TemplateLoading"'></div>
+	</div>
+</div>				
+<!-- Popup Edit -->
+	<div kendo-window="winEdit"
+		k-title="'Edit Data Jabatan'"
+		k-width="400"
+		k-height="300"
+		k-visible="false"
+		k-modal="true"
+		k-resizable="false"
+		k-on-open="winEditVisible = true"
+		k-on-close="winEditVisible = false">
+
+		<div class="grid_12" style="margin-top:10px">
+    <label c-label>ID</label>
+    <input type="text" class="k-textbox" ng-model="editForm.id" style="width:100%" readonly>
+</div>
+
+<div class="grid_12" style="margin-top:10px">
+    <label c-label>Nama Jabatan</label>
+    <input type="text" class="k-textbox" ng-model="editForm.namajabatan" style="width:100%">
+</div>
+
+<div class="grid_12" style="margin-top:10px">
+    <label c-label>Kualifikasi Pendidikan</label>
+    <textarea class="k-textbox" ng-model="editForm.kualifikasipendidikan"
+              style="width:100%; height:80px; resize: vertical;"></textarea>
+</div>
+
+<div class="grid_12" style="margin-top:10px">
+    <label c-label>Jumlah Kebutuhan</label>
+    <input type="number" class="k-textbox" ng-model="editForm.jumlahkebutuhan" style="width:100%">
+</div>
+
+
+		<div class="grid_12" style="margin-top:20px; text-align:right">
+			<button class="k-button k-primary" ng-click="saveEdit()">Simpan</button>
+			<button class="k-button" ng-click="closeEdit()">Batal</button>
+		</div>
+	</div>
+<!-- End of Popup Edit -->
