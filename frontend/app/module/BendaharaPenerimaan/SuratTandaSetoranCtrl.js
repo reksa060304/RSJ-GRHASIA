@@ -108,6 +108,15 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
                 if ($scope.grid && $scope.grid.clearSelection) {
                     $scope.grid.clearSelection(); 
                 }
+                $scope.selectedData2 = [];
+                $scope.dataSelected = {};
+                $scope.selected = [];
+                $scope.item.totalSetor = "";
+                $scope.item.dipilih = "";
+                $scope.item.terbilang = "";
+                if ($scope.grid && $scope.grid.clearSelection) {
+                    $scope.grid.clearSelection(); // FIXED: reset highlight di grid
+                }
                 init();
             }
 
