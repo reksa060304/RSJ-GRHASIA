@@ -664,6 +664,11 @@ define(['initialize'], function (initialize) {
                 $scope.inputOrder = true;
             }
             $scope.Simpan = function () {
+                if (!$scope.item.keterangan || $scope.item.keterangan.trim().length < 4) {
+                    toastr.warning('Keterangan di isi minimal 4 huruf');
+                    return false;
+                }
+
                 $scope.isRouteLoading = true
                 $scope.savebtn = true
                 medifirstService.get("farmasi/get-penjagaan-closing-kasir?noregistrasi=" + $scope.item.noregistrasi ).then(function (e) {
