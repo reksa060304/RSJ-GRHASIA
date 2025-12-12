@@ -17,6 +17,7 @@ define(['initialize'], function (initialize) {
 			$scope.listItemPenambahan = []
 			$scope.ListBahanProduk = []
 			$scope.ListJenisSertifikat = []
+			$scope.item.image = "../app/images/noimage.png"
 
 			// default tanggal penambahan nilai asset
 			// $scope.item.tglpenambahan = moment(new Date()).format('YYYY-MM-DD HH:mm:ss')
@@ -185,6 +186,216 @@ define(['initialize'], function (initialize) {
 				}
 			}
 
+			 $("#photo").kendoUpload({
+                localization: {
+                    "select": "Pilih Photo..."
+                },
+                async: {
+                    saveUrl: "save",
+                    removeUrl: "remove",
+                    autoUpload: false
+                },
+                multiple: false,
+                select: function (e) {
+                    var ALLOWED_EXTENSIONS = [".jpeg", ".jpg", ".png"];
+                    var extension = e.files[0].extension.toLowerCase();
+                    if (ALLOWED_EXTENSIONS.indexOf(extension) == -1) {
+                        toastr.error('Mohon Pilih File Gambar (.jpg, .jpeg, .png)')
+                        e.preventDefault();
+                        // return
+                    }
+
+
+
+                    var fileInfo = e.files[0];
+                    var wrapper = this.wrapper;
+                    // debugger
+                    $scope.ImageUrlData = wrapper.context.value;
+                    setTimeout(function () {
+                        addPreview(fileInfo, wrapper);
+                        compress(e);
+
+                    });
+                    // $scope.previewImage = compress(e);
+                    // imageToDataUri(e.files[0].rawFile,220,220)
+                    // console.log(resultPhotoKami)
+
+                }
+            });
+
+            function addPreview(file, wrapper) {
+                var raw = file.rawFile;
+                var reader = new FileReader();
+
+                if (raw) {
+
+                    reader.onloadend = function () {
+                        var preview = $("<img class='img-responsive'>").attr("src", this.result);
+
+                        wrapper.find(".k-file[data-uid='" + file.uid + "'] .k-file-extension-wrapper")
+                            .replaceWith(preview);
+                        // $scope.item.image = this.result
+                        // $scope.previewImage = this.result
+
+                    };
+
+                    reader.readAsDataURL(raw);
+                    // const img = new Image();
+                }
+            }
+
+
+            function compress(e) {
+                var width = 1000;
+                var height = 500;
+                var fileName = 	e.files[0].name;
+                var reader = new FileReader();
+                var raw = e.files[0].rawFile;
+                reader.readAsDataURL(raw);
+                reader.onload = event => {
+                    var img = new Image();
+                    img.src = event.target.result;
+                    img.onload = () => {
+                        var elem = document.createElement('canvas');
+
+                        elem.width = width;
+                        elem.height = height;
+
+                        var ctx = elem.getContext('2d');
+                        ctx.drawImage(img, 0, 0, width, height);
+                        $scope.urlImage = ctx.canvas.toDataURL('image/jpeg', 1);
+                        
+                        // Tampilkan preview di popup
+                        document.getElementById('previewImage').src = $scope.urlImage;
+                    },
+                        reader.onerror = error => console.log(error);
+                };
+            }
+            function base64toHEX(base64) {
+
+                var raw = atob(base64);
+
+                var HEX = '';
+
+                for (var i = 0; i < raw.length; i++) {
+
+                    var _hex = raw.charCodeAt(i).toString(16)
+
+                    HEX += (_hex.length == 2 ? _hex : '0' + _hex);
+
+                }
+                return HEX.toUpperCase();
+
+            }
+
+            //   console.log(base64toHEX("oAAABTUAAg=="));
+            // medifirstService.get('registrasi/get-image').then(function (e) {
+            //     $scope.item.image = e.data[0].image
+            // })
+            $scope.UploadPhoto = function () {
+                if ($scope.urlImage != undefined) {
+                    // saveImageToDirsaveImageToDir($scope.urlImage,'0182781')
+                    $scope.item.image = $scope.urlImage
+                    $scope.popUpUpload.close()
+                } else {
+                    toastr.info('Gambar belum di pilih')
+                    return
+                }
+            }
+
+            $scope.showPopUp = function () {
+                $scope.popUpUpload.center().open()
+            }
+
+            $scope.TutupPopUp = function () {
+                if ($scope.urlImage != undefined)
+                    $scope.item.image = "../app/images/noimage.png"
+                $scope.urlImage = undefined
+                $scope.popUpUpload.close()
+            }
+            $scope.Back = function () {
+                window.history.back()
+            }
+            /*Capitalize*/
+
+            var HttpClient = function () {
+                this.get = function (aUrl, aCallback) {
+                    var anHttpRequest = new XMLHttpRequest();
+                    anHttpRequest.onreadystatechange = function () {
+                        if (anHttpRequest.readyState == 4)
+                            aCallback(anHttpRequest.responseText);
+                    }
+
+                    anHttpRequest.open("GET", aUrl, true);
+                    anHttpRequest.send(null);
+                    anHttpRequest.response
+                }
+            }
+            var base64_chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/"
+            function clean_hex(input) {
+                input = input.toUpperCase();
+                input = input.replace(/0x/gi, "");
+                input = input.replace(/[^A-Fa-f0-9]/g, "");
+                return input;
+            }
+
+            function binary_to_base64(input) {
+                var ret = new Array();
+                var i = 0;
+                var j = 0;
+                var char_array_3 = new Array(3);
+                var char_array_4 = new Array(4);
+                var in_len = input.length;
+                var pos = 0;
+
+                while (in_len--) {
+                    char_array_3[i++] = input[pos++];
+                    if (i == 3) {
+                        char_array_4[0] = (char_array_3[0] & 0xfc) >> 2;
+                        char_array_4[1] = ((char_array_3[0] & 0x03) << 4) + ((char_array_3[1] & 0xf0) >> 4);
+                        char_array_4[2] = ((char_array_3[1] & 0x0f) << 2) + ((char_array_3[2] & 0xc0) >> 6);
+                        char_array_4[3] = char_array_3[2] & 0x3f;
+
+                        for (i = 0; (i < 4); i++)
+                            ret += base64_chars.charAt(char_array_4[i]);
+                        i = 0;
+                    }
+                }
+
+                if (i) {
+                    for (j = i; j < 3; j++)
+                        char_array_3[j] = 0;
+
+                    char_array_4[0] = (char_array_3[0] & 0xfc) >> 2;
+                    char_array_4[1] = ((char_array_3[0] & 0x03) << 4) + ((char_array_3[1] & 0xf0) >> 4);
+                    char_array_4[2] = ((char_array_3[1] & 0x0f) << 2) + ((char_array_3[2] & 0xc0) >> 6);
+                    char_array_4[3] = char_array_3[2] & 0x3f;
+
+                    for (j = 0; (j < i + 1); j++)
+                        ret += base64_chars.charAt(char_array_4[j]);
+
+                    while ((i++ < 3))
+                        ret += '=';
+
+                }
+
+                return ret;
+            }
+            //    document.getElementById("myImage").src=='data:image/jpeg;'+Convert(();
+            function Convert(binaryString) {
+                var cleaned_hex = clean_hex(binaryString);
+                if (cleaned_hex.length % 2) {
+                    alert("Error: cleaned hex string length is odd.");
+                    return "";
+                }
+                var binary = new Array();
+                for (var i = 0; i < cleaned_hex.length / 2; i++) {
+                    var h = cleaned_hex.substr(i * 2, 2);
+                    binary[i] = parseInt(h, 16);
+                }
+                return binary_to_base64(binary);
+            }
+
 			$scope.getDataLain = function () {				
 				var produkId = '';
 				if ($scope.item.produk != undefined) {
@@ -231,6 +442,7 @@ define(['initialize'], function (initialize) {
 							$scope.item.noaset = datas.noregisteraset_int;
 							$scope.item.TahunPerolehan = datas.tahunperolehan;
 							$scope.item.koderegisterrs = datas.koderegisterrs;
+							$scope.item.image = (datas.image != null && datas.image != '') ? datas.image : "../app/images/noimage.png";
 							// $scope.item.kdRs=datas.kdproduk;
 							$scope.item.produk = { id: datas.idproduk, namaproduk: datas.namaproduk };
 							// $scope.item.namaProduk=datas.namaproduk;
@@ -841,6 +1053,7 @@ define(['initialize'], function (initialize) {
 					kdbmn: KodeBmn,
 					hargaperolehan: hargaperolehan,
 					noaset: noaset,
+					image: $scope.item.image != undefined && $scope.item.image != "../app/images/noimage.png" ? $scope.item.image : null,
 					// :$scope.item.kdEksternal,
 					// :$scope.item.kdAspak,
 					kdrsabhk: kodeRS,

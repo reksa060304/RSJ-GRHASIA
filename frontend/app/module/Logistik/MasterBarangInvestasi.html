@@ -192,7 +192,7 @@
 					</div>					
 				</div>
 				<div class="grid_12">
-					<div class="grid_3">
+					<div class="grid_2">
 						<div class="grid_12">
 							<label c-label item="item">Judul/Pencipta</label>
 						</div>
@@ -200,7 +200,7 @@
 							<input c-text-box type="input" filter="" class="k-textbox" ng-model="item.Judul" />
 						</div>
 					</div>
-					<div class="grid_3">
+					<div class="grid_2">
 						<div class="grid_12">
 							<label c-label item="item">Spesifikasi</label>
 						</div>
@@ -208,19 +208,79 @@
 							<input c-text-box type="input" filter="" class="k-textbox" ng-model="item.Spesifikasi" />
 						</div>
 					</div>
-					<div class="grid_3">
+					<div class="grid_2">
 						<div class="grid_12">
 							<label c-label item="item">Jenis Aset</label>
 						</div>
 						<div class="grid_12">
 							<input c-text-box type="input" filter="" class="k-textbox" ng-model="item.JenisAset" />
 						</div>
+					</div>
+				<div class="grid_6">
+					<div class="grid_12">
+						<div kendo-window="popUpUpload" k-title="'Upload Foto Aset'" k-width="700" k-height="500" k-visible="false"
+							k-on-open="win2visible = true" k-on-close="win2visible = false">
+							<div class="panel panel-default container_12" style="padding: 15px;">
+								<div class="grid_12">
+									<div class="grid_5">
+										<div class="grid_12">
+											<label style="font-weight: bold; font-size: 14px;">Pilih Photo</label>
+										</div>
+										<div class="grid_12" style="margin-top: 10px;">
+											<input type="file" id="photo">
+										</div>
+									</div>
+									<div class="grid_7">
+										<div class="grid_12">
+											<label style="font-weight: bold; font-size: 14px;">Preview</label>
+										</div>
+										<div class="grid_12"
+											style="border: 2px solid #ddd; border-radius: 5px; padding: 10px; height: 280px; overflow: auto; display: flex; align-items: center; justify-content: center; background-color: #f9f9f9;">
+											<img id="previewImage" style="max-width: 90%; max-height: 330px; object-fit: contain;"
+												src="" alt="Preview">
+										</div>
+									</div>
+								</div>
+								<div class="grid_12" style="margin-top: 20px;">
+									<div class="k-edit-buttons k-state-default pull-right">
+										<button class="k-button k-button-icontext" ng-click="UploadPhoto()"
+											style="padding: 10px 20px; background-color: #107c10; color: white;"><i
+												class="fa fa-upload"></i> &nbsp; Upload</button>
+										<button class="k-button k-button-icontext" ng-click="TutupPopUp()"
+											style="padding: 10px 20px; background-color: #d13438; color: white;"><i
+												class="fa fa-times-circle"></i>&nbsp;Tutup</button>
+									</div>
+								</div>
+							</div>
+						</div>
 					</div>					
 				</div>
+				
 				<div class="grid_12" style="margin-top: 5px">
 					<div ng-cloak>
 						<md-content>
 							<md-tabs md-dynamic-height md-border-bottom>
+								<md-tab label = "Foto Asset">
+									<md-content class="md-padding">
+										<div class="grid_12" style="text-align: center; padding: 5px;">
+											<div class="grid_12" style="margin-top: 3px;">
+												<fieldset class="effect-shadow" style="border-radius: 10px; cursor: pointer; display: inline-block; width: 100%; max-width: 100%;">
+													<div class="profile_img" ng-click="showPopUp()">
+														<div id="crop-avatar" style="padding: 5px;">
+															<img style="width: 100%; max-width: 100%; height: 450px; object-fit: contain;" 
+																class="img-responsive avatar-view" src="{{item.image}}" alt="Avatar" title="Klik untuk ubah foto">
+														</div>
+													</div>
+												</fieldset>
+											</div>
+											<div class="grid_12" style="margin-top: 10px;">
+												<button class="k-button k-button-icontext" ng-click="showPopUp()" style="padding: 8px 20px; background-color: #0078d4; color: white;">
+													<i class="fa fa-camera"></i> &nbsp; Ubah Foto
+												</button>
+											</div>
+										</div>
+									</md-content>
+								</md-tab>
 								<md-tab label="Alamat">
 									<md-content class="md-padding">
 										<div class="panel-body">
