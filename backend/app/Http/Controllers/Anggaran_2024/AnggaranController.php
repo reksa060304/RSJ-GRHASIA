@@ -1894,9 +1894,15 @@ class AnggaranController extends ApiController {
         $asalproduk = '';
         $sumberdanapanjar = '';
         if (isset($request['asalproduk']) && $request['asalproduk'] != "" && $request['asalproduk'] != "undefined") {
-            $asalproduk =  "and kb.objectasalprodukfk = ".$request['asalproduk'];
+             $asalproduk =  "and kb.objectasalprodukfk = ".$request['asalproduk']." and sr.objectasalprodukfk = ".$request['asalproduk'];  
             $sumberdanapanjar = "and pj.objectasalprodukfk = ".$request['asalproduk'];
         }
+
+        $asalprodukAnggaran = '';
+        if (isset($request['asalproduk']) && $request['asalproduk'] != "" && $request['asalproduk'] != "undefined") {
+            $asalprodukAnggaran = " AND kb.objectasalprodukfk = " . (int)$request['asalproduk'];
+        }
+
 
         // $data = DB::select(DB::raw("
 
@@ -2029,7 +2035,7 @@ class AnggaranController extends ApiController {
                 AND kb.objecttahapfk = ".$setting[0]->objecttahapaktivfk."
                 $subsubkegiatan
                 AND kb.objectmataanggaranfk = ".$request['mataanggaran']."
-                $asalproduk
+                $asalprodukAnggaran
         ")))->first();
 
         $total = $spj->totalspj + ( $panjar[0]->totalpanjar - $panjarspj[0]->totalpanjarspj );
