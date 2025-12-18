@@ -8622,6 +8622,9 @@ define(['initialize', 'Configuration'], function (initialize,configuration) {
 				}
 				$scope.itemPopUp.dpjp = {id:$scope.dataPasienSelected.id, namalengkap:$scope.dataPasienSelected.namadokter}
 				$scope.itemPopUp.jenis_tarif = 'TARIF RS KELAS A PEMERINTAH'
+=======
+				$scope.itemPopUp.jenis_tarif = 'TARIF RS KELAS ' + $scope.dataPasienSelected.kodetarif.charAt(0) + ' PEMERINTAH'
+>>>>>>> 1b35a0e78 (fix(inacbg) : kelas tarif otomatis berdasarkan ruangan)
 				$scope.itemPopUp.kode_tarif = $scope.dataPasienSelected.kodetarif
 				// $scope.listTarifRS =[
 				// 								{namatarif:'Prosedur Non Bedah' ,tarif:$scope.tarif_rs16.prosedur_non_bedah},

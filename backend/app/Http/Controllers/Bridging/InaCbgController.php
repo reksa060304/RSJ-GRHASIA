@@ -1561,9 +1561,9 @@ class InaCbgController   extends ApiController
             if ($item->namafield == 'url'){
                 $url = $item->nilaifield;
             }
-            if ($item->namafield == 'kodetarif'){
-                $kodetarif = $item->nilaifield;
-            }
+            // if ($item->namafield == 'kodetarif'){
+            //     $kodetarif = $item->nilaifield;
+            // }
         }
 
         $data = \DB::table('pasiendaftar_t as pd')
@@ -1601,7 +1601,7 @@ class InaCbgController   extends ApiController
                 'pd.tglpulang', 'pd.statuspasien','apd.norec as norec_apd', 'stp.namaexternal as statuspulang', 'usiakehamilan','gravida','partus','abortus','tt.reportdisplay as nobed',
                 'pd.pegawaikirim','pd.pegawaisimpan','pd.pegawaigrouper','pd.pegawaifinalklaim','pd.pegeditklaim', 'pd.tgledit','pd.tglklaim',
                 'pg.id as pgid', 'pg.namalengkap as namadokter','kp.id as kpid', 'asl.caramasuk_inacbg','stp.kodeexternal', 'ru.objectdepartemenfk', 'hg.special_cmg', 'hg.response', 'dp.namadepartemen', 'pd.catatanklaim',
-                'pd.objectruanganlastfk as ruanganid',DB::raw("case when pas.nosep is null then '-' else pas.nosep end as nosep"),'pas.norec as norec_pa', DB::raw("null as los, null as jam"),
+                'pd.objectruanganlastfk as ruanganid', 'ru.kodekelasbpjs',DB::raw("case when pas.nosep is null then '-' else pas.nosep end as nosep"),'pas.norec as norec_pa', DB::raw("null as los, null as jam"),
                 DB::raw(" EXTRACT ( YEAR FROM AGE( pd.tglregistrasi, ps.tgllahir ) )|| ' Tahun ' as umur"),
                 'ps.nobpjs as nokepesertaan','ps.tgllahir','ps.objectjeniskelaminfk','dept.id as deptid',DB::RAW('CASE WHEN kls.nourut is null then kls3.nourut ELSE kls.nourut END as nokelasdaftar'), DB::raw("Case When kls2.nourut is null Then kls.nourut ELSE kls2.nourut END as nokelasdijamin"),
                 DB::raw('CASE WHEN kls.reportdisplay is null then kls3.reportdisplay ELSE kls.reportdisplay END as namakelasdaftar'),'kls2.reportdisplay as namakelas','pd.objectstatuspulangfk','pd.icd10',
@@ -1709,7 +1709,7 @@ class InaCbgController   extends ApiController
                                 // 'pg2.namalengkap',
                                 'pd.pegawaikirim','pd.pegawaisimpan','pd.pegawaigrouper','pd.pegawaifinalklaim','pd.pegeditklaim',
                                 'stp.kodeexternal', 'ru.objectdepartemenfk', 'hg.special_cmg', 'hg.response', 'dp.namadepartemen',
-                                'pd.objectruanganlastfk','pas.nosep','pas.norec',
+                                'pd.objectruanganlastfk','pas.nosep','pas.norec','ru.kodekelasbpjs',
                                 'ps.nobpjs','ps.tgllahir','ps.objectjeniskelaminfk','dept.id',
                                 'kls.nourut','kls2.nourut', 'hg.totalpiutangpenjamin','pd.icd10',
                                 'kls.reportdisplay','kls2.reportdisplay','pd.objectstatuspulangfk',
@@ -2028,7 +2028,8 @@ class InaCbgController   extends ApiController
                 $h->jenis_rawat = isset($kdDepartemenRawatInap[$h->deptid]) ? 1 : 2;
 
                 $h->codernik = $codernik;
-                $h->kodetarif = $kodetarif;
+                // $h->kodetarif = $kodetarif;
+                $h->kodetarif = $h->kodekelasbpjs;
                 $h->deposit = isset($totalDeposit[$h->noregistrasi]) ? ceil($totalDeposit[$h->noregistrasi]) : 0;
                 $h->pegverif = isset($pegVerif[$h->noregistrasi]) ? $pegVerif[$h->noregistrasi] : '-';
                 $h->statusverif = isset($statusverif[$h->noregistrasi]) ? $statusverif[$h->noregistrasi] : '-';
