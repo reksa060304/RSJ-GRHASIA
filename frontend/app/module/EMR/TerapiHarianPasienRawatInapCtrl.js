@@ -35,7 +35,10 @@ define(['initialize'], function (initialize) {
             $scope.listDataInhalasi3 = []
             $scope.listDataInhalasi4 = []
             var chacePeriode = cacheHelper.get('cacheRekamMedis');
-            
+            $scope.item = {
+                obj: {},
+                obj2: {}
+            };
             $scope.norec_pd = chacePeriode[8]
             // $scope.listSkor = []
             $scope.loading = true
@@ -8130,6 +8133,39 @@ define(['initialize'], function (initialize) {
                     }
                 })
             }
+
+            var obatHighAlertMapping = [
+                // Obat Oral
+                { obatId: 1300006, checkboxId: 1300008 },
+                { obatId: 1300024, checkboxId: 1300026 },
+                { obatId: 1300042, checkboxId: 1300044 },
+                { obatId: 1300060, checkboxId: 1300062 },
+                { obatId: 1300078, checkboxId: 1300080 },
+                { obatId: 1300096, checkboxId: 1300098 },
+                { obatId: 1300114, checkboxId: 1300116 },
+                { obatId: 1300132, checkboxId: 1300134 },
+                // Obat Topikal
+                { obatId: 1300166, checkboxId: 1300168 },
+                // Obat Injeksi
+                { obatId: 1300204, checkboxId: 1300206 },
+                { obatId: 1300222, checkboxId: 1300224 },
+                { obatId: 1300240, checkboxId: 1300242 },
+                // Obat Inhalasi
+                { obatId: 1300276, checkboxId: 1300278 },
+                { obatId: 1300294, checkboxId: 1300296 },
+                { obatId: 1300312, checkboxId: 1300314 }
+            ];
+
+            // Setup semua watchers
+            obatHighAlertMapping.forEach(function(mapping) {
+                $scope.$watch('item.obj[' + mapping.obatId + ']', function(newVal) {
+                    if (newVal && newVal.highalert) {
+                        $scope.item.obj[mapping.checkboxId] = (newVal.highalert === "t");
+                    } else {
+                        $scope.item.obj[mapping.checkboxId] = false;
+                    }
+                }, true);
+            });
 
             if (chacePeriode != undefined) {
                 $scope.cc.nocm = chacePeriode[0]

@@ -3508,7 +3508,7 @@ class EMRController  extends ApiController
         $dataProduk = \DB::table('pelayananpasien_t as pp')
             ->join('antrianpasiendiperiksa_t as apd', 'apd.norec', '=', 'pp.noregistrasifk')
             ->join('produk_m as pd', 'pd.id', '=', 'pp.produkfk')
-            ->select('pd.id as value', 'pd.namaproduk as text')
+            ->select('pd.id as value', 'pd.namaproduk as text', 'pd.highalert')
             ->where('pd.statusenabled', true)
             ->where('apd.noregistrasifk', $req['norec_pd'])
             ->where('pd.kdprofile', $idProfile)
