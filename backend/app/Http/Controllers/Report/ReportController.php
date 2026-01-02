@@ -27579,7 +27579,7 @@ public function suratBuktiPengembalian(Request $request)
             ->orderBy('st.tahunanggaran')
             ->get();
 
-        $tahun = '';
+       $tahun = '';
         if (isset($request['tahun']) && $request['tahun'] != "" && $request['tahun'] != "undefined") {
             $tahun = "and ta.tahun = '".$request['tahun']."'";
         }else{
@@ -27590,10 +27590,20 @@ public function suratBuktiPengembalian(Request $request)
         if (isset($request['tahap']) && $request['tahap'] != "" && $request['tahap'] != "undefined") {
             $tahap = "and ta.objecttahapfk = '".$request['tahap']."'";
         }
-
+        
         $subsubkegiatan = '';
-        if (isset($request['subsubkegiatan']) && $request['subsubkegiatan'] != "" && $request['subsubkegiatan'] != "undefined") {
+        if (isset($request['subsubkegiatan']) && !empty($request['subsubkegiatan']) && $request['subsubkegiatan'] != "undefined") {
             $subsubkegiatan = "and ta.objectkegiatanfk = '".$request['subsubkegiatan']."'";
+        } else {
+            
+            $firstKegiatan = DB::table('transaksianggaran2024_t')
+                ->where('statusenabled', true)
+                ->where('kdprofile', 30)
+                ->first();
+            
+            if ($firstKegiatan) {
+                $subsubkegiatan = "and ta.objectkegiatanfk = '".$firstKegiatan->objectkegiatanfk."'";
+            }
         }
 
         $kegiatan = DB::select(DB::raw("
@@ -27654,18 +27664,13 @@ public function suratBuktiPengembalian(Request $request)
                 $tahun
                 $tahap
                 $subsubkegiatan
-            GROUP BY
-                kb.norec, ma.id, ka.id, ma3.id, ma2.id, ma1.id, ap.id
             ORDER BY
-                SPLIT_PART(ma.kodemataanggaran, '.', 1),
-                SPLIT_PART(ma.kodemataanggaran, '.', 2),
-                SPLIT_PART(ma.kodemataanggaran, '.', 3),
-                case 
-                        when SPLIT_PART(ma.kodemataanggaran, '.', 5) = '' THEN cast(SPLIT_PART(ma.kodemataanggaran, '.', 4) as INTEGER)
-                        else cast(SPLIT_PART(ma.kodemataanggaran, '.', 5) as INTEGER)
-                END asc
+                ma1.kodemataanggaran,
+                ma2.kodemataanggaran,
+                ma3.kodemataanggaran,
+                ma.kodemataanggaran,
+                kb.norec
         "));
-
         $tanggalcetak = $this->tanggal_indonesia(date('Y-m-d',strtotime($request['tglcetak'])));
 
         return view('report.rba.cetak-rba-detailv2', [
