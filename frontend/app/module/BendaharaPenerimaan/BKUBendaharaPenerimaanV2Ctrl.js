@@ -300,6 +300,7 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
                 $scope.dataSelectedspm = null;
                 $scope.item.asalProduk = null;
                 $scope.norecPengembalianPembayaran = null
+                $scope.norecSPJLS = null
 
 			}
 
@@ -516,8 +517,14 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
 					dataObjPost.totalpengeluaran = null;
 				}
 
+				if ($scope.isSaving) {
+					return;
+				}
+				$scope.isSaving = true;
+
 				medifirstService.post('bendaharapenerimaan/simpan-bkupenerimaanv2', dataObjPost)
                     .then(function (e) {
+						$scope.isSaving = false;
 					    kosongkan();
 					    loadData()
                         $scope.popUpPenerimaan.close()
@@ -538,7 +545,9 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
                             ]
                         });
 
-				    })
+				    }, function (error) {
+						$scope.isSaving = false;
+					})
 			}
 
             $scope.SavePengeluaran = function() {
@@ -584,7 +593,8 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
 					totalpengeluaran: $scope.item.jumlah,
 					ispenerimaan: false,
                     asalproduk: $scope.item.asalProduk ? $scope.item.asalProduk.id : null,
-                    norecPengembalianPembayaran: $scope.norecPengembalianPembayaran		
+                    norecPengembalianPembayaran: $scope.norecPengembalianPembayaran,
+                    norecSPJLS: $scope.norecSPJLS	
 				}
 
 				// if ($scope.isBendaharaPengeluaran) {
@@ -595,8 +605,14 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
 				// 	dataObjPost.totalpengeluaran = null;
 				// }
 
+				if ($scope.isSaving) {
+					return;
+				}
+				$scope.isSaving = true;
+
 				medifirstService.post('bendaharapenerimaan/simpan-bkupenerimaanv2', dataPengeluaran)
                     .then(function (e) {
+						$scope.isSaving = false;
 					    kosongkan();
 					    loadData()
                         $scope.popUpPengeluaran.close()
@@ -649,7 +665,9 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
                             ]
                         });
 
-				    })
+				    }, function (error) {
+						$scope.isSaving = false;
+					})
             }
 
             $scope.handlePopUpCetak = function() {
