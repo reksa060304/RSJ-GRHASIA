@@ -205,6 +205,12 @@
                     k-ng-model="dataSelected" ng-click="klikGrid(dataSelected)" style="min-height: 0px; max-height: 500px;" >
                 </kendo-grid>
             </div>
+            <div class="grid_12 borderBox" ng-hide="hidespjls">
+                <kendo-grid id="gridspjls" data-source="dataGridSPJLS" options="columnGridSPJLS" k-pageable="'true'"
+                    k-sortable="'true'" k-groupable="'false'" k-resizable="'true'" k-selectable="'row'"
+                    k-ng-model="dataSelected" ng-click="klikGrid(dataSelected)" style="min-height: 0px; max-height: 500px;" >
+                </kendo-grid>
+            </div>
             <div class="grid_12 borderBox" ng-hide="hidepemungutanpajak">
                 <kendo-grid id="gridpemungutanpajak" data-source="dataGridPemungutanPajak" options="columnGridPemungutan" k-pageable="'true'"
                     k-sortable="'true'" k-groupable="'false'" k-resizable="'true'" k-selectable="'row'"

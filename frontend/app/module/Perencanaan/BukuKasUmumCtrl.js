@@ -169,7 +169,7 @@ define(['initialize'], function (initialize) {
 
             $scope.$watch('item.itemJenisBukti', function (newValue, oldValue) {
                 if (newValue != oldValue) {
-                    // console.log($scope.item.itemJenisBukti.id)
+                    $scope.hidespjls = true
                     if($scope.item.itemJenisBukti.id == 3){
                         // panjar
                         $scope.hidepanjar = false
@@ -518,6 +518,43 @@ define(['initialize'], function (initialize) {
                             });
                         });
 
+                    } else if($scope.item.itemJenisBukti.jenisbukti.indexOf('SPJ LS') > -1){
+
+                        // SPJ LS
+                        $scope.hidespm = true
+                        $scope.hidepengembalianpanjar = true
+                        $scope.hidepanjar =true
+                        $scope.hidejasgir =true
+                        $scope.hidepajak =true
+                        $scope.hidests =true
+                        $scope.hidespj =true
+                        $scope.hidespjls =false
+                        $scope.hiderekanan = false
+                        $scope.hidePenyetoranPajak = true
+                        $scope.hidepemungutanpajak = true
+                        $scope.hidePengembalianBelanja = true
+
+                        var tglawal = moment($scope.item.tglawal).format('YYYY-MM-DD');
+                        var tglakhir = moment($scope.item.tglakhir).format('YYYY-MM-DD');
+                        
+                        medifirstService.get("anggaran/get-spj-ls?tglAwal="+tglawal+"&tglAkhir="+tglakhir+"&status=0&belumBKU=true").then(function (e) {
+                        
+                            $scope.dataGridSPJLS = new kendo.data.DataSource({
+                                data:  e.data.data,
+                                pageSize: 10,
+                                total: e.data.data.length,
+                                group: $scope.group,
+                                serverPaging: false,
+                                schema: {
+                                    model: {
+                                        fields: {
+                                        }
+                                    }
+                                },
+                                aggregate: [
+                                ]
+                            });
+                        });
                     }
                 }
             });
@@ -555,6 +592,7 @@ define(['initialize'], function (initialize) {
                     "bku": $scope.selectedData2,
                     "tglbku": moment($scope.item.tglbku).format('YYYY-MM-DD'),
                     "jenisbukti": $scope.item.itemJenisBukti.id,
+                    "jenisbuktitext": $scope.item.itemJenisBukti.jenisbukti,
                     "asalproduk": $scope.item.sumberDana.id,
                     "uraian": $scope.item.uraianBKU,
                     "rekananfk": rekanan,
@@ -2349,6 +2387,103 @@ define(['initialize'], function (initialize) {
                     { field: 'pengeluaran', title: 'Pengeluaran' },
                 ]
             };
+
+            $scope.columnGridSPJLS = {
+                sortable: true,
+                selectable: "multiple",
+                pageable: true,
+                columns: [
+                    {
+                        "template": "<input type='checkbox' class='checkbox style-center' ng-click='onClickSatuSPJLS($event,2)' />",
+                        "width": "30px"
+                    },
+                    {
+                        "field": "norealisasi",
+                        "title": "Nomor SPJ",
+                        "width": "100px",
+                    },
+                    {
+                        "field": "tglrealisasi",
+                        "title": "Tanggal",
+                        "width": "100px",
+                        "template": "#= new moment(tglrealisasi).format('YYYY-MM-DD') #",
+                    },
+                    {
+                        "field": "pihakketiga",
+                        "title": "Rekanan",
+                        "width": "100px",
+                    },
+                    {
+                        "field": "asalproduk",
+                        "title": "Sumber Dana",
+                        "width": "100px",
+                    },
+                    {
+                        "field": "uraian",
+                        "title": "Uraian",
+                        "width": "100px",
+                    },
+                    {
+                        "field": "totalbelanja",
+                        "title": "Total",
+                        "width": "100px",
+                        "template": "<span class='style-right'>{{formatRupiah('#: totalbelanja #', 'Rp.')}}</span>",
+                    }
+                ]
+            };
+
+            $scope.onClickSatuSPJLS = function (e, param) {
+				var element = $(e.currentTarget);
+				var checked = element.is(':checked')
+				var row = element.closest('tr')
+				var grid = $("#gridspjls").data("kendoGrid")
+				var dataItem = grid.dataItem(row);
+                $scope.item.uraianBKU = ''
+
+				if (checked) {
+					var result = $.grep($scope.selectedData2, function (e) {
+						return e.norealisasi == dataItem.norealisasi;
+					});
+					if (result.length == 0) {
+						$scope.selectedData2.push(dataItem);
+					} else {
+						for (var i = 0; i < $scope.selectedData2.length; i++)
+							if ($scope.selectedData2[i].norealisasi === dataItem.norealisasi) {
+								$scope.selectedData2.splice(i, 1);
+								break;
+							}
+						$scope.selectedData2.push(dataItem);
+					}
+
+                    // Mapping for SPJ LS fields
+                    $scope.item.pihakKetiga = {namarekanan: dataItem.pihakketiga}
+					row.addClass("k-state-selected");
+                    
+				} else {
+					for (var i = 0; i < $scope.selectedData2.length; i++)
+						if ($scope.selectedData2[i].norealisasi === dataItem.norealisasi) {
+							$scope.selectedData2.splice(i, 1);
+							break;
+						}
+                    $scope.item.pihakKetiga = undefined
+					row.removeClass("k-state-selected");
+				}
+
+                $scope.item.sumberDana = {id: dataItem.idasalproduk, asalproduk: dataItem.asalproduk}
+
+                for (var i = 0; i < $scope.selectedData2.length; i++){
+                    var rekananName = $scope.item.pihakKetiga ? $scope.item.pihakKetiga.namarekanan : '-';
+                    if(i != $scope.selectedData2.length-1){
+                        $scope.item.uraianBKU += $scope.selectedData2[i].uraian + " \n " +
+                        dataItem.mataanggaran + " \n " +
+                        rekananName + ', '
+                    } else{
+                        $scope.item.uraianBKU += $scope.selectedData2[i].uraian + " \n " +
+                        dataItem.mataanggaran + " \n " +
+                        rekananName
+                    }
+                }
+			}
 
             // $scope.formatRupiah = function (value, currency) {
             //     return currency + " " + value.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".");

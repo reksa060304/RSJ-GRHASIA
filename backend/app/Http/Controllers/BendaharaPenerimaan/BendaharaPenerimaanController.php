@@ -12041,8 +12041,9 @@ class BendaharaPenerimaanController extends ApiController {
         $data = StrukRealisasi::where('statusenabled', TRUE)
             ->where('status', 'Sudah Diverifikasi')
             ->where('statusls', 'Sudah Bayar')
-            ->whereNull('objectbkufk')
-            ->select('norec', 'norealisasi', 'tglrealisasi', 'jumlahdibayarverif', 'status', 'statusls', 'tglverif', 'keterangan', 'objectbkufk')
+            // ->where('norealisasi', 'ilike', '%LS%')
+            ->whereNull('objectbkupenerimaanfk')
+            ->select('norec', 'norealisasi', 'tglrealisasi', 'jumlahdibayarverif', 'status', 'statusls', 'tglverif', 'keterangan', 'objectbkupenerimaanfk')
             ->get();
 
         return $this->respond($data);        
@@ -12083,6 +12084,13 @@ class BendaharaPenerimaanController extends ApiController {
             if(isset($request['norecPengembalianPembayaran'])){
                 PengembalianPembayaran::where('norec', $request['norecPengembalianPembayaran'])->update([
                     'objectbkufk' => $BKU->norec
+                ]);
+            }
+
+            // update spj ls (strukrealisasi)
+            if(isset($request['norecSPJLS'])){
+                StrukRealisasi::where('norec', $request['norecSPJLS'])->update([
+                    'objectbkupenerimaanfk' => $BKU->norec
                 ]);
             }
 
@@ -12136,6 +12144,13 @@ class BendaharaPenerimaanController extends ApiController {
                 'objectbkufk' => null
             ]);
 
+            // update strukrealisasi (spj ls)
+            StrukRealisasi::where('objectbkupenerimaanfk', $request['norec'])
+                ->where('kdprofile', $idProfile)
+                ->update([
+                    'objectbkupenerimaanfk' => null
+            ]);
+
             $transStatus = true;
 
         } catch (\Exception $e) {
@@ -12166,6 +12181,7 @@ class BendaharaPenerimaanController extends ApiController {
         }
         return $this->setStatusCode($result['status'])->respond($result, $transMsg);
     }
+
 
     public function cekTargetPendapatan(Request $request)
     {

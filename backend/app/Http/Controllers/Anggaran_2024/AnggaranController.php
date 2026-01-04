@@ -4803,6 +4803,11 @@ class AnggaranController extends ApiController {
             )";
         }
 
+        $belumBKU = "";
+        if(isset($request['belumBKU']) && $request['belumBKU'] != "undefined" && $request['belumBKU'] == 'true'){
+            $belumBKU = "and sr.objectbkufk is null";
+        }
+
         // jika ada filter tahun ambil dari filter atau dari settinganggaran
         $tahunSPJ = "";
         if(isset($request['tahun']) && $request['tahun'] != "undefined" && $request['tahun'] != ''){
@@ -4876,6 +4881,7 @@ class AnggaranController extends ApiController {
             $mataanggaran
             $asalproduk
             $cari
+            $belumBKU
         GROUP BY
             sr.norec,
             cbs.carabayar,

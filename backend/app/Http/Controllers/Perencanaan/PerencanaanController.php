@@ -4395,8 +4395,39 @@ class PerencanaanController extends ApiController {
         //var_dump($saldoakhir);
 
         try{ 
-                    
-                    if($request['jenisbukti'] == 1){
+                    if(isset($request['jenisbuktitext']) && $request['jenisbuktitext'] == 'SPJ LS'){
+                        $MA = new BKU();
+                        $norecKS = $MA->generateNewId();
+                        $MA->norec = $norecKS;
+                        $MA->kdprofile = $idProfile;
+                        $MA->statusenabled = true;
+                        $noa = $this->generateCodeBKU(new BKU, 'nobku', $request['asalproduk'], 5, '', $idProfile);
+                        $MA->nobku = $noa.'-B02';
+                        $MA->objectjenisbuktifk = $request['jenisbukti'];
+                        $MA->tglbku = $request['tglbku'];
+                        $MA->uraianbku = $request['uraian'];
+                        $MA->rekananfk = $request['rekananfk'];
+                        $MA->objectasalprodukfk = $request['asalproduk'];
+
+                        $MA->objectmataanggaranfk = $request['bku'][0]['kodemataanggaran'];
+
+                        for($i = 0; $i < count($request['bku']); $i++){
+                                $penerimaan += $request['bku'][$i]['totalbelanja'];
+                                $pengeluaran += $request['bku'][$i]['totalbelanja'];
+                        }
+
+                        $MA->tgljam = date('Y-m-d H:i:s');
+                        $MA->penerimaan = $penerimaan;
+                        $MA->pengeluaran = $pengeluaran;
+                        $MA->saldo = $saldofix;
+                        $MA->save();
+
+                        for($x = 0; $x < count($request['bku']); $x++){
+                            $MP = StrukRealisasi::where('norec', '=', $request['bku'][$x]['norec'])->first();
+                            $MP->objectbkufk = $MA->norec;
+                            $MP->save();
+                        }
+                    } else if($request['jenisbukti'] == 1){
                         $MA = new BKU();
                         $norecKS = $MA->generateNewId(); 
                         $MA->norec = $norecKS;
