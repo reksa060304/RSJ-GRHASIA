@@ -140,6 +140,15 @@ Route::group(['middleware' => 'cors', 'prefix' => 'service'], function () {
         Route::get('report/cetak-spj-bulanan-bp', 'Report\ReportController@cetakSPJBulananBP');
         Route::get('bendaharapenerimaan/cek-sts-manual', 'BendaharaPenerimaan\BendaharaPenerimaanController@cekSTSManual');
         Route::get('report/cetak-sts-manualv2', 'Report\ReportController@cetakSTSManualV2');
+        
+        // BKU Mapping Dashboard
+        Route::get('bendaharapenerimaan/get-mapping-bku', 'BendaharaPenerimaan\MappingBkuController@getMappingBKU');
+        Route::get('bendaharapenerimaan/get-combo-mapping-bku', 'BendaharaPenerimaan\MappingBkuController@getComboMappingBKU');
+        Route::post('bendaharapenerimaan/save-mapping-bku', 'BendaharaPenerimaan\MappingBkuController@saveMappingBKU');
+        Route::post('bendaharapenerimaan/delete-mapping-bku', 'BendaharaPenerimaan\MappingBkuController@deleteMappingBKU');
+        Route::post('bendaharapenerimaan/check-unmapped-tariffs', 'BendaharaPenerimaan\MappingBkuController@checkUnmappedTariffs');
+        // End BKU Mapping Dashboard
+        
         // End bendahara penerimaan
 
         // start bendahara pengeluaran
