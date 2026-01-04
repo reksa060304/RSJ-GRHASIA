@@ -13637,6 +13637,33 @@ GROUP BY y.KET
                 "));
 
             if (count($data) == 0) {
+                // Cek apakah pasien sudah pernah registrasi di hari yang sama
+                $tglRegistrasi = date('Y-m-d', strtotime($pasiendaftar->tglregistrasi));
+                $cekSudahDaftarHariIni = DB::table('pasiendaftar_t as pd')
+                    ->join('antrianpasiendiperiksa_t as apd', 'apd.noregistrasifk', '=', 'pd.norec')
+                    ->join('pelayananpasien_t as pp', 'pp.noregistrasifk', '=', 'apd.norec')
+                    ->leftJoin('batalregistrasi_t as br', 'br.pasiendaftarfk', '=', 'pd.norec')
+                    ->where('pd.nocmfk', $pasiendaftar->nocmfk)
+                    ->where('pd.tglregistrasi', '>=', $tglRegistrasi . ' 00:00')
+                    ->where('pd.tglregistrasi', '<=', $tglRegistrasi . ' 23:59')
+                    ->where('pd.norec', '!=', $pasiendaftar->norec) // Exclude registrasi saat ini
+                    ->where('pp.status', '=', 'admin otomatis')
+                    ->whereNull('br.pasiendaftarfk')
+                    ->where('pd.kdprofile', (int)$kdProfile)
+                    ->where('pd.statusenabled', true)
+                    ->exists();
+
+                // Jika sudah pernah daftar hari ini DAN sudah ada admin otomatis, skip penambahan biaya admin
+                if ($cekSudahDaftarHariIni) {
+                    DB::commit();
+                    $result = array(
+                        "status" => 201,
+                        "message" => "Administrasi Otomatis sudah ada di registrasi sebelumnya hari ini",
+                        "as" => 'er@epic',
+                    );
+                    return $this->setStatusCode($result['status'])->respond($result, "Administrasi Otomatis - Skip (sudah ada hari ini)");
+                }
+
                 $status = "";
                 if ($pasiendaftar->statuspasien != null) {
                     $status = $pasiendaftar->statuspasien;
