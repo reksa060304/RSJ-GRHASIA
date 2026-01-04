@@ -1,0 +1,110 @@
+<div ng-show="dataVOloaded" ng-cloak>
+    <div class="grid_12">
+        <div class="panel panel-default">
+            <div class="panel-heading">
+                <span class="title">Mapping Akun STS</span>
+            </div>
+            <div class="panel-body">
+                <!-- TABS -->
+                <div class="grid_12">
+                    <md-content>
+                        <md-tabs md-dynamic-height md-border-bottom md-selected="selectedTabIndex">
+                            <md-tab label="Mapping General (Tipe 1)">
+                                <md-content class="md-padding">
+                                    <div kendo-grid k-options="gridTipe1" k-data-source="dataSourceTipe1" k-ng-model="dataSelectedTipe1"></div>
+                                </md-content>
+                            </md-tab>
+                            <md-tab label="Mapping Produk Spesifik (Tipe 2)">
+                                <md-content class="md-padding">
+                                    <div kendo-grid k-options="gridTipe2" k-data-source="dataSourceTipe2" k-ng-model="dataSelectedTipe2"></div>
+                                </md-content>
+                            </md-tab>
+                            <md-tab label="Mapping Non-Layanan (Tipe 3)">
+                                <md-content class="md-padding">
+                                    <div kendo-grid k-options="gridTipe3" k-data-source="dataSourceTipe3" k-ng-model="dataSelectedTipe3"></div>
+                                </md-content>
+                            </md-tab>
+                        </md-tabs>
+                    </md-content>
+                </div>
+
+                <!-- FORM -->
+                <div class="grid_12" style="margin-top: 20px;" ng-show="isAdding || isEditing">
+                    <div class="panel panel-default">
+                        <div class="panel-heading">
+                            <span class="title">{{isAdding ? 'Tambah' : 'Edit'}} Mapping {{selectedTypeLabel}}</span>
+                        </div>
+                        <div class="panel-body">
+                            <div class="grid_12">
+                                <div class="grid_4">
+                                    <label c-label item="item" c-label-text="Rekening Akuntansi"></label>
+                                    <input kendo-combo-box k-ng-model="item.rekening" k-data-text-field="'text'" k-data-value-field="'id'" k-filter="'contains'" k-auto-bind="false" k-data-source="listRekening" style="width: 100%;" />
+                                </div>
+                                
+                                <!-- Fields for Tipe 1 -->
+                                <div ng-show="selectedType == 1">
+                                    <div class="grid_4">
+                                        <label c-label item="item" c-label-text="Kelompok Pasien"></label>
+                                        <select kendo-multi-select k-options="multiSelectOptions" k-ng-model="item.kelompokPasien" k-data-source="listKelompokPasien"></select>
+                                    </div>
+                                    <div class="grid_4">
+                                        <label c-label item="item" c-label-text="Ruangan"></label>
+                                        <select kendo-multi-select k-options="multiSelectOptions" k-ng-model="item.ruangan" k-data-source="listRuangan"></select>
+                                    </div>
+                                    <div class="grid_2">
+                                        <label c-label item="item" c-label-text="Kelas"></label>
+                                        <select kendo-multi-select k-options="multiSelectOptions" k-ng-model="item.kelas" k-data-source="listKelas"></select>
+                                    </div>
+                                    <div class="grid_2">
+                                        <label c-label item="item" c-label-text="Is Obat?"></label>
+                                        <div class="grid_12" style="margin-top: 5px;">
+                                            <input type="checkbox" class="k-checkbox" id="isObat" ng-model="item.isObat">
+                                            <label class="k-checkbox-label" for="isObat">Ya</label>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- Fields for Tipe 2 & 3 -->
+                                <div ng-show="selectedType == 2 || selectedType == 3">
+                                    <div class="grid_8">
+                                        <label c-label item="item" c-label-text="Produk"></label>
+                                        <select kendo-multi-select k-options="multiSelectOptions" k-ng-model="item.produk" k-data-source="listProduk"></select>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="grid_12" style="margin-top: 15px;">
+                                <div class="grid_8"></div>
+                                <div class="grid_2">
+                                    <button class="c-button" ng-click="save()">Simpan</button>
+                                </div>
+                                <div class="grid_2">
+                                    <button class="c-button error" ng-click="cancel()">Batal</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Action Toolbar -->
+                <div class="grid_12" style="margin-top: 10px;" ng-hide="isAdding || isEditing">
+                    <div class="grid_2">
+                        <button class="c-button" ng-click="add()">Tambah Mapping</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div ng-include='"../app/template/Shared/TemplateLoading"'></div>
+</div>
+
+
+<style>
+    .k-tabstrip > .k-content {
+        padding: 10px;
+    }
+    .grid_12 {
+        padding: 5px;
+    }
+</style>
+

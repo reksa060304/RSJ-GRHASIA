@@ -2438,5 +2438,44 @@
         "define": "MedifirstService"
       }
     ]
+  },
+  {
+    "name": "LaporanPenerimaanBarangdanSPJKeuangan",
+    "url": "/LaporanPenerimaanBarangdanSPJKeuangan",
+    "templateurl": "module/Perencanaan/LaporanPenerimaanBarangdanSPJKeuangan.html",
+    "controller": "LaporanPenerimaanBarangdanSPJKeuanganCtrl",
+    "deps": [{
+        "module": "Services",
+        "define": "Service"
+      },
+      {
+        "module": "LoginServices",
+        "define": "LoginService"
+      },
+      {
+        "module": "MedifirstService",
+        "define": "MedifirstService"
+      }
+    ]
+  },
+  {
+    "name": "MappingSTS",
+    "url": "/MappingSTS",
+    "templateurl": "module/BendaharaPenerimaan/MappingSTS.html",
+    "controller": "MappingSTSCtrl",
+    "deps": [
+      {
+        "module": "Services",
+        "define": "Service"
+      },
+      {
+        "module": "LoginServices",
+        "define": "LoginService"
+      },
+      {
+        "module": "MedifirstService",
+        "define": "MedifirstService"
+      }
+    ]
   }
 ]

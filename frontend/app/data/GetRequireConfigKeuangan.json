@@ -491,6 +491,14 @@
         {
             "nameDep": "PenyetoranPajakV2Ctrl",
             "urlDep": "module/BendaharaPengeluaran/PenyetoranPajakV2Ctrl"
+        }, 
+        {
+            "nameDep": "LaporanPenerimaanBarangdanSPJKeuanganCtrl",
+            "urlDep": "module/Perencanaan/LaporanPenerimaanBarangdanSPJKeuanganCtrl"
+        },
+        {
+            "nameDep": "MappingSTSCtrl",
+            "urlDep": "module/BendaharaPenerimaan/MappingSTSCtrl"
         }
     ]
 }
