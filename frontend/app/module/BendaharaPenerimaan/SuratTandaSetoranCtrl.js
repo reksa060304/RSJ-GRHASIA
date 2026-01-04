@@ -374,9 +374,24 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
                     });
                 }
 
-                
             }
 
+            // Grid options for unmapped tariffs popup
+            $scope.unmappedTariffs = [];
+            $scope.unmappedDataSource = new kendo.data.DataSource({ data: [] });
+            $scope.unmappedGridOptions = {
+                pageable: false,
+                scrollable: true,
+                columns: [
+                    { field: "tipe", title: "Tipe", width: "100px" },
+                    { field: "produk", title: "Produk", width: "200px" },
+                    { field: "kelompokpasien", title: "Kelompok Pasien", width: "120px" },
+                    { field: "ruangan", title: "Ruangan", width: "120px" },
+                    { field: "kelas", title: "Kelas", width: "80px" },
+                    { field: "isobat", title: "Obat?", width: "60px" },
+                    { field: "total", title: "Total", width: "100px", format: "{0:n0}" }
+                ]
+            };
 
 
             $scope.detail = function () {
@@ -800,6 +815,46 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
 
                 $scope.isRouteLoading = true;
 
+                // Collect noclosing from selected data
+                var noclosing = [];
+                for (var i = 0; i < $scope.selectedData2.length; i++) {
+                    noclosing.push($scope.selectedData2[i].nopenerimaan);
+                }
+
+                // First check for unmapped tariffs
+                medifirstService.post('bendaharapenerimaan/check-unmapped-tariffs', { noclosing: noclosing })
+                    .then(function (checkResponse) {
+                        
+                        if (checkResponse.data.hasUnmapped) {
+                            $scope.isRouteLoading = false;                        
+                            $scope.unmappedTariffs = checkResponse.data.unmapped;
+                            $scope.unmappedDataSource = new kendo.data.DataSource({
+                                data: checkResponse.data.unmapped,
+                                pageSize: 50
+                            });
+                            $scope.popupUnmappedTariffs.center().open();
+                        } else {
+                            $scope.loadKonfirmasiRekening();
+                        }
+                    })
+                    .catch(function (err) {
+                        $scope.isRouteLoading = false;
+                        toastr.error('Gagal cek mapping tarif');
+                        console.error(err);
+                    });
+            }
+
+            $scope.lanjutSimpanSTS = function () {
+                $scope.popupUnmappedTariffs.close();
+                $scope.isRouteLoading = true;
+                $scope.loadKonfirmasiRekening();
+            };
+
+            $scope.batalUnmappedPopup = function () {
+                $scope.popupUnmappedTariffs.close();
+            };
+
+            $scope.loadKonfirmasiRekening = function() {
                 $scope.detailSTSV2 = []
                 $scope.listRekeningSTS = []
 
@@ -816,9 +871,7 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
 
                         response.data.data.map(item => $scope.totaldibayar += parseFloat(item.totaldibayarclosing))
 
-
-                        // jika ada dua rekening berbeda maka akan menyimpan dua sts
-                        $scope.dataSTS = []
+                        $scope.dataKonfirmasiSTS = []
                         
                         $scope.listRekeningSTS.map((rek) => {
                             
@@ -851,7 +904,7 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
                                 detailSTS: detailSTS
                             }
 
-                            $scope.dataSTS.push(obj)
+                            $scope.dataKonfirmasiSTS.push(obj)
                         })
 
                         $scope.popupSimpanSTS.center().open()
@@ -863,7 +916,7 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
 
                 $scope.listRekeningSTS = []
                 $scope.detailSTSV2 = []
-                $scope.dataSTS = []
+                $scope.dataKonfirmasiSTS = []
 
                 $scope.popupSimpanSTS.close()
             }
@@ -878,7 +931,7 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
                 let valid = false;
 
                 // validasi
-                $scope.dataSTS.map((item) => {
+                $scope.dataKonfirmasiSTS.map((item) => {
                     
                     if(item.rekening == null){
                         toastr.error('Pilih Rekening Dulu')
@@ -900,7 +953,7 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
 
                 if(valid == true){
                     // data yang dikirim
-                    $scope.dataSTS.map((item) => {
+                    $scope.dataKonfirmasiSTS.map((item) => {
                         item.terbilang = terbilang(item.totalSetoran)
                         item.scfk = $scope.selectedData2[0].scfk
                         item.sckfk =  $scope.selectedData2[0].sckfk
@@ -909,7 +962,7 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
                     })
 
                     let objSimpanSTSV2 = {
-                        sts: $scope.dataSTS
+                        setoran: $scope.dataKonfirmasiSTS
                     }
                     
                     $scope.isRouteLoading = true;

@@ -345,7 +345,7 @@
 
             <div style="margin-top: 1em;" class="grid_12">
                 <p style="font-size: 1em; text-align: center; font-weight: bold;">Data STS yang akan disimpan</p>
-                <div ng-repeat="(index, value) in dataSTS">
+                <div ng-repeat="(index, value) in dataKonfirmasiSTS">
                     
                     <div class="grid_12" style="margin-top: 1.5em;">
                         <!-- <div class="grid_4">
@@ -415,3 +415,40 @@
         <span></span>
     # } #
 </script>
+
+<!-- Popup Warning: Tarif Belum Termapping -->
+<div kendo-window="popupUnmappedTariffs" k-title="'Peringatan: Tarif Belum Termapping'" k-visible="false" k-width="900" k-height="500" k-modal="true">
+    <div class="panel panel-default panel-white container_12">
+        <div class="grid_12" style="padding: 10px;">
+            <div class="alert" style="background-color: #fff3cd; border: 1px solid #ffc107; padding: 15px; border-radius: 4px; margin-bottom: 15px;">
+                <strong><i class="fa fa-exclamation-triangle" style="color: #856404;"></i> Perhatian!</strong>
+                <p style="margin: 10px 0 0 0; color: #856404;">
+                    Terdapat <strong>{{unmappedTariffs.length}}</strong> tarif/produk yang belum memiliki mapping STS. 
+                    Data ini tidak akan masuk ke rekening STS manapun saat disimpan.
+                </p>
+            </div>
+            
+            <div class="grid_12" style="height: 280px; overflow: auto;">
+                <div kendo-grid k-data-source="unmappedDataSource" k-options="unmappedGridOptions"></div>
+            </div>
+            
+            <div class="grid_12" style="margin-top: 15px; padding-top: 15px; border-top: 1px solid #ddd;">
+                <div class="grid_6">
+                    <p style="margin: 0; font-size: 12px; color: #666;">
+                        <i class="fa fa-info-circle"></i> Untuk menambah mapping, buka menu <strong>Mapping Akun STS</strong>
+                    </p>
+                </div>
+                <div class="grid_3" style="text-align: right;">
+                    <button class="k-button k-primary" ng-click="lanjutSimpanSTS()" style="width: 100%;">
+                        <i class="fa fa-check"></i> Lanjut Simpan
+                    </button>
+                </div>
+                <div class="grid_3">
+                    <button class="k-button" ng-click="batalUnmappedPopup()" style="width: 100%;">
+                        <i class="fa fa-times"></i> Batal
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

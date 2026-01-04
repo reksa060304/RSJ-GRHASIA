@@ -10988,7 +10988,7 @@ class BendaharaPenerimaanController extends ApiController {
         return $this->setStatusCode(201)->respond($result, 'tes msg');
     }
 
-    public function getKonfirmasiRekeningSTSOld(Request $request)
+    public function getKonfirmasiRekeningSTSold(Request $request)
     {
 
         $data = DB::select(DB::raw("
@@ -11221,7 +11221,7 @@ class BendaharaPenerimaanController extends ApiController {
         ]);
     }
 
-     public function getKonfirmasiRekeningSTS(Request $request)
+    public function getKonfirmasiRekeningSTS(Request $request)
     {
         $kdProfile = 30;
         $noClosing = $request['noclosing'];
@@ -11233,22 +11233,30 @@ class BendaharaPenerimaanController extends ApiController {
                 AND statusenabled = TRUE 
                 AND kdprofile = :kdProfile
             ),
-           
+            -- PRE-FILTER: Ambil semua closing ref
             sbm_filtered AS (
                 SELECT DISTINCT sbm.norec, sbm.nostrukfk, sbm.noclosingfk
                 FROM strukbuktipenerimaan_t sbm
                 JOIN closing c ON sbm.noclosingfk = c.norec
                 WHERE sbm.statusenabled = TRUE AND sbm.kdprofile = :kdProfile
             ),
-           
-            tipe1_kelas AS (
+            -- BASE: Semua pelayanan pasien dengan info dasar
+            base_pelayanan AS (
                 SELECT 
-                    cap.id, cap.koderekening, cap.namarekening,
-                    cap1.id idlevel1, cap2.id idlevel2, cap3.id idlevel3,
-                    cap4.id idlevel4, cap5.id idlevel5, cap6.id idlevel6, cap7.id idlevel7,
-                    pp.isobat isobat_group, cb.id idcarabayar,
-                    SUM((((COALESCE(pp.hargajual,0) - COALESCE(pp.hargadiscount,0)) * COALESCE(pp.jumlah,0)) + COALESCE(pp.jasa,0)))::DECIMAL totaldibayarclosing,
-                    CASE WHEN cb.id = 3 THEN pm.namapasien ELSE NULL END namapasien
+                    pp.norec as pp_norec,
+                    pp.produkfk,
+                    pp.strukfk,
+                    pp.isobat,
+                    pp.kelasfk,
+                    pp.hargajual,
+                    pp.hargadiscount,
+                    pp.jumlah,
+                    pp.jasa,
+                    (((COALESCE(pp.hargajual,0) - COALESCE(pp.hargadiscount,0)) * COALESCE(pp.jumlah,0)) + COALESCE(pp.jasa,0)) as subtotal,
+                    pd.objectkelompokpasienlastfk,
+                    apd.objectruanganfk,
+                    pm.namapasien,
+                    cb.id as idcarabayar
                 FROM sbm_filtered sbm
                 JOIN strukpelayanan_t sp ON sbm.nostrukfk = sp.norec AND sp.statusenabled = TRUE AND sp.kdprofile = :kdProfile
                 JOIN strukbuktipenerimaancarabayar_t sbmcr ON sbmcr.nosbmfk = sbm.norec AND sbmcr.statusenabled = TRUE AND sbmcr.kdprofile = :kdProfile
@@ -11257,9 +11265,21 @@ class BendaharaPenerimaanController extends ApiController {
                 JOIN antrianpasiendiperiksa_t apd ON apd.norec = pp.noregistrasifk AND apd.statusenabled = TRUE AND apd.kdprofile = :kdProfile
                 JOIN pasiendaftar_t pd ON pd.norec = apd.noregistrasifk AND pd.kdprofile = :kdProfile
                 JOIN pasien_m pm ON pm.id = pd.nocmfk
+            ),
+            -- TIPE 1: KELAS PASIEN (prioritas utama)
+            tipe1_kelas AS (
+                SELECT 
+                    bp.pp_norec,
+                    cap.id, cap.koderekening, cap.namarekening,
+                    cap1.id idlevel1, cap2.id idlevel2, cap3.id idlevel3,
+                    cap4.id idlevel4, cap5.id idlevel5, cap6.id idlevel6, cap7.id idlevel7,
+                    bp.isobat isobat_group, bp.idcarabayar,
+                    bp.subtotal::DECIMAL totaldibayarclosing,
+                    CASE WHEN bp.idcarabayar = 3 THEN bp.namapasien ELSE NULL END namapasien
+                FROM base_pelayanan bp
                 JOIN mapbkuakun_t mba ON 
-                    POSITION(','||pd.objectkelompokpasienlastfk||',' IN ','||mba.objectkelompokpasienfk||',') > 0
-                    AND POSITION(','||apd.objectruanganfk||',' IN ','||mba.objectruanganfk||',') > 0
+                    POSITION(','||bp.objectkelompokpasienlastfk||',' IN ','||mba.objectkelompokpasienfk||',') > 0
+                    AND POSITION(','||bp.objectruanganfk||',' IN ','||mba.objectruanganfk||',') > 0
                     AND mba.statusenabled = TRUE
                 JOIN char_akun_pendapatan_m cap ON cap.id = mba.objectakunpendapatanfk AND cap.statusenabled = TRUE
                 LEFT JOIN char_akun_pendapatan_m cap7 ON cap7.id = cap.headfk
@@ -11270,33 +11290,24 @@ class BendaharaPenerimaanController extends ApiController {
                 LEFT JOIN char_akun_pendapatan_m cap2 ON cap2.id = cap3.headfk
                 LEFT JOIN char_akun_pendapatan_m cap1 ON cap1.id = cap2.headfk
                 WHERE 
-                    ((mba.isobat IS NOT TRUE AND pp.isobat IS NULL) OR (mba.isobat = TRUE AND pp.isobat = TRUE))
-                    AND pp.kelasfk IS NOT NULL
-                    AND POSITION(','||pp.kelasfk||',' IN ','||mba.objectkelasfk||',') > 0
-                GROUP BY cap.id, cap.koderekening, cap.namarekening,
-                        cap1.id, cap2.id, cap3.id, cap4.id, cap5.id, cap6.id, cap7.id,
-                        pp.isobat, cb.id, pm.namapasien
+                    ((mba.isobat IS NOT TRUE AND bp.isobat IS NULL) OR (mba.isobat = TRUE AND bp.isobat = TRUE))
+                    AND bp.kelasfk IS NOT NULL
+                    AND POSITION(','||bp.kelasfk||',' IN ','||mba.objectkelasfk||',') > 0
             ),
-         
+            -- TIPE 2: PRODUK SPECIFIC (hanya untuk yg TIDAK ada di TIPE1)
             tipe2_produk AS (
                 SELECT 
+                    bp.pp_norec,
                     cap.id, cap.koderekening, cap.namarekening,
                     cap1.id idlevel1, cap2.id idlevel2, cap3.id idlevel3,
                     cap4.id idlevel4, cap5.id idlevel5, cap6.id idlevel6, cap7.id idlevel7,
-                    pp.isobat isobat_group, cb.id idcarabayar,
-                    SUM((((COALESCE(pp.hargajual,0) - COALESCE(pp.hargadiscount,0)) * COALESCE(pp.jumlah,0)) + COALESCE(pp.jasa,0)))::DECIMAL totaldibayarclosing,
-                    CASE WHEN cb.id = 3 THEN pm.namapasien ELSE NULL END namapasien
-                FROM sbm_filtered sbm
-                JOIN strukpelayanan_t sp ON sbm.nostrukfk = sp.norec AND sp.statusenabled = TRUE AND sp.kdprofile = :kdProfile
-                JOIN strukbuktipenerimaancarabayar_t sbmcr ON sbmcr.nosbmfk = sbm.norec AND sbmcr.statusenabled = TRUE AND sbmcr.kdprofile = :kdProfile
-                JOIN carabayar_m cb ON cb.id = sbmcr.objectcarabayarfk AND cb.statusenabled = TRUE AND cb.kdprofile = :kdProfile
-                JOIN pelayananpasien_t pp ON pp.strukfk = sp.norec AND pp.statusenabled = TRUE AND pp.kdprofile = :kdProfile
-                JOIN antrianpasiendiperiksa_t apd ON apd.norec = pp.noregistrasifk AND apd.statusenabled = TRUE AND apd.kdprofile = :kdProfile
-                JOIN pasiendaftar_t pd ON pd.norec = apd.noregistrasifk AND pd.kdprofile = :kdProfile
-                JOIN pasien_m pm ON pm.id = pd.nocmfk
+                    bp.isobat isobat_group, bp.idcarabayar,
+                    bp.subtotal::DECIMAL totaldibayarclosing,
+                    CASE WHEN bp.idcarabayar = 3 THEN bp.namapasien ELSE NULL END namapasien
+                FROM base_pelayanan bp
                 JOIN mapbkuakun3_t mba3 ON 
-                    POSITION(','||pp.produkfk||',' IN ','||mba3.objectprodukfk||',') > 0
-                    AND pd.objectkelompokpasienlastfk IN (1,12)
+                    POSITION(','||bp.produkfk||',' IN ','||mba3.objectprodukfk||',') > 0
+                    AND bp.objectkelompokpasienlastfk IN (1,12)
                     AND mba3.statusenabled = TRUE
                 JOIN char_akun_pendapatan_m cap ON cap.id = mba3.objectakunpendapatanfk AND cap.statusenabled = TRUE
                 LEFT JOIN char_akun_pendapatan_m cap7 ON cap7.id = cap.headfk
@@ -11306,18 +11317,19 @@ class BendaharaPenerimaanController extends ApiController {
                 LEFT JOIN char_akun_pendapatan_m cap3 ON cap3.id = cap4.headfk
                 LEFT JOIN char_akun_pendapatan_m cap2 ON cap2.id = cap3.headfk
                 LEFT JOIN char_akun_pendapatan_m cap1 ON cap1.id = cap2.headfk
-                GROUP BY cap.id, cap.koderekening, cap.namarekening,
-                        cap1.id, cap2.id, cap3.id, cap4.id, cap5.id, cap6.id, cap7.id,
-                        pp.isobat, cb.id, pm.namapasien
+                WHERE NOT EXISTS (
+                    SELECT 1 FROM tipe1_kelas t1 WHERE t1.pp_norec = bp.pp_norec
+                )
             ),
-        
+            -- TIPE 3: NON-LAYANAN (dari strukpelayanandetail)
             tipe3_nonlayanan AS (
                 SELECT 
+                    spd.norec as pp_norec,
                     cap.id, cap.koderekening, cap.namarekening,
                     cap1.id idlevel1, cap2.id idlevel2, cap3.id idlevel3,
                     cap4.id idlevel4, cap5.id idlevel5, cap6.id idlevel6, cap7.id idlevel7,
                     NULL::BOOLEAN isobat_group, sbmcr.objectcarabayarfk idcarabayar,
-                    SUM(spd.qtyproduk * spd.hargasatuan * spd.qtyoranglast)::DECIMAL totaldibayarclosing,
+                    (spd.qtyproduk * spd.hargasatuan * spd.qtyoranglast)::DECIMAL totaldibayarclosing,
                     NULL::VARCHAR namapasien
                 FROM sbm_filtered sbm
                 JOIN strukpelayanan_t sp ON sbm.nostrukfk = sp.norec AND sp.statusenabled = TRUE AND sp.kdprofile = :kdProfile
@@ -11334,16 +11346,53 @@ class BendaharaPenerimaanController extends ApiController {
                 LEFT JOIN char_akun_pendapatan_m cap3 ON cap3.id = cap4.headfk
                 LEFT JOIN char_akun_pendapatan_m cap2 ON cap2.id = cap3.headfk
                 LEFT JOIN char_akun_pendapatan_m cap1 ON cap1.id = cap2.headfk
-                GROUP BY cap.id, cap.koderekening, cap.namarekening,
-                        cap1.id, cap2.id, cap3.id, cap4.id, cap5.id, cap6.id, cap7.id,
-                        sbmcr.objectcarabayarfk
+            ),
+            -- TIPE 4: FALLBACK - item yang tidak ter-mapping di tipe manapun
+            tipe4_fallback AS (
+                SELECT 
+                    bp.pp_norec,
+                    def_rek.id, def_rek.koderekening, def_rek.namarekening,
+                    def_rek.idlevel1, def_rek.idlevel2, def_rek.idlevel3,
+                    def_rek.idlevel4, def_rek.idlevel5, def_rek.idlevel6, def_rek.idlevel7,
+                    bp.isobat isobat_group, bp.idcarabayar,
+                    bp.subtotal::DECIMAL totaldibayarclosing,
+                    CASE WHEN bp.idcarabayar = 3 THEN bp.namapasien ELSE NULL END namapasien
+                FROM base_pelayanan bp
+                -- Default rekening untuk fallback (Retribusi Pelayanan Lainnya - sesuaikan ID jika perlu)
+                CROSS JOIN (
+                    SELECT 
+                        cap.id, 
+                        cap.koderekening, 
+                        cap.namarekening,
+                        cap1.id as idlevel1, 
+                        cap2.id as idlevel2, 
+                        cap3.id as idlevel3,
+                        cap4.id as idlevel4, 
+                        cap5.id as idlevel5, 
+                        cap6.id as idlevel6, 
+                        cap7.id as idlevel7
+                    FROM char_akun_pendapatan_m cap
+                    LEFT JOIN char_akun_pendapatan_m cap7 ON cap7.id = cap.headfk
+                    LEFT JOIN char_akun_pendapatan_m cap6 ON cap6.id = cap7.headfk
+                    LEFT JOIN char_akun_pendapatan_m cap5 ON cap5.id = cap6.headfk
+                    LEFT JOIN char_akun_pendapatan_m cap4 ON cap4.id = cap5.headfk
+                    LEFT JOIN char_akun_pendapatan_m cap3 ON cap3.id = cap4.headfk
+                    LEFT JOIN char_akun_pendapatan_m cap2 ON cap2.id = cap3.headfk
+                    LEFT JOIN char_akun_pendapatan_m cap1 ON cap1.id = cap2.headfk
+                    WHERE cap.koderekening = '4.1.02.01.01.0006.06.006' AND cap.statusenabled = TRUE
+                    LIMIT 1
+                ) def_rek
+                WHERE NOT EXISTS (SELECT 1 FROM tipe1_kelas t1 WHERE t1.pp_norec = bp.pp_norec)
+                AND NOT EXISTS (SELECT 1 FROM tipe2_produk t2 WHERE t2.pp_norec = bp.pp_norec)
             ),
             all_akun AS (
-                SELECT * FROM tipe1_kelas
+                SELECT id, koderekening, namarekening, idlevel1, idlevel2, idlevel3, idlevel4, idlevel5, idlevel6, idlevel7, isobat_group, idcarabayar, totaldibayarclosing, namapasien FROM tipe1_kelas
                 UNION ALL
-                SELECT * FROM tipe2_produk
+                SELECT id, koderekening, namarekening, idlevel1, idlevel2, idlevel3, idlevel4, idlevel5, idlevel6, idlevel7, isobat_group, idcarabayar, totaldibayarclosing, namapasien FROM tipe2_produk
                 UNION ALL
-                SELECT * FROM tipe3_nonlayanan
+                SELECT id, koderekening, namarekening, idlevel1, idlevel2, idlevel3, idlevel4, idlevel5, idlevel6, idlevel7, isobat_group, idcarabayar, totaldibayarclosing, namapasien FROM tipe3_nonlayanan
+                UNION ALL
+                SELECT id, koderekening, namarekening, idlevel1, idlevel2, idlevel3, idlevel4, idlevel5, idlevel6, idlevel7, isobat_group, idcarabayar, totaldibayarclosing, namapasien FROM tipe4_fallback
             )
             SELECT 
                 id idrekening, koderekening, namarekening,
@@ -11442,7 +11491,7 @@ class BendaharaPenerimaanController extends ApiController {
         DB::beginTransaction();
         try {
             
-            $dataSTS = $request['sts'];
+            $dataSTS = $request['setoran'];
 
 
             // buat no sts dulu karena jika ada rekening pelayanan dan nonlayanan dibku harus beda tapi di sts harus sama
@@ -11895,7 +11944,7 @@ class BendaharaPenerimaanController extends ApiController {
                     LEFT JOIN carabayar_m cb ON cb.id = sbmcr.objectcarabayarfk
                     INNER JOIN ststosck_t ssc ON ssc.objectsckfk = sck.norec AND ssc.statusenabled = TRUE
                     INNER JOIN surattandasetoran_t sts ON sts.norec = ssc.objectstsfk AND sts.statusenabled = TRUE
-                    INNER JOIN char_akun_pendapatan_m cap ON cap.id = sts.objectakunpendapatanfk AND cap.statusenabled = TRUE
+                    LEFT JOIN char_akun_pendapatan_m cap ON cap.id = sts.objectakunpendapatanfk AND cap.statusenabled = TRUE
                     WHERE
                         sc.statusenabled = TRUE
                         AND sc.kdprofile = 30
