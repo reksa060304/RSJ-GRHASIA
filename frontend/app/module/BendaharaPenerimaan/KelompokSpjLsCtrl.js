@@ -1818,7 +1818,7 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
                 
                 var dataItem = this.dataItem($(e.currentTarget).closest("tr"));
                 
-                if (dataItem.objectbkufk != null) {
+                if (dataItem.objectbkupenerimaanfk != null) {
                     toastr.error('Sudah dibuat BKU tidak bisa diverifikasi')
                     return
                 }
@@ -1992,7 +1992,7 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
         $scope.SimpanVerifikasiSPJLs = function(){
            
             if (!$scope.item.radioVerifikasi) {
-                alert('Pilih Status Transfer terlebih dahulu!');
+                toastr.error('Pilih Status Transfer terlebih dahulu!');
                 return;
             }
 
@@ -2010,12 +2010,12 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
            // console.log('Data yang dikirim ke backend:', objSave);
 
             medifirstService.post('perencanaan/update-status-ls', objSave).then(function (e) {
-                alert('Verifikasi berhasil disimpan!');
+                toastr.success('Verifikasi berhasil disimpan!');
                 loadDataGrid();
                 $scope.popupVerifSPJ.center().close()
             }, function (error) {
                 console.error('Error:', error);
-                alert('Gagal menyimpan verifikasi!');
+                toastr.error('Gagal menyimpan verifikasi!');
             })
         };
 
