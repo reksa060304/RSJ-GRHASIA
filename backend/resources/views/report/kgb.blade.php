@@ -136,7 +136,7 @@
                 <td>
                     <table style="text-align:center;font-family: Arial; padding-left: 79%">           
                 <tr>
-                            <td style="font-size: 11pt">${tanggal naskah}</td>
+                            <td style="font-size: 11pt">${tanggal_naskah}</td>
                 </tr>
                     </table>
                 </td>
