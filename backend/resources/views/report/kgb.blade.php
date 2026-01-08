@@ -131,25 +131,34 @@
             </table>
             <hr style="border:1px solid #000;margin-bottom:0px">
             <hr style="border:0.5px solid #000;margin-top:2px">
+ 
+            <tr>
+                <td>
+                    <table style="text-align:center;font-family: Arial; padding-left: 79%">           
+                <tr>
+                            <td style="font-size: 11pt">${tanggal naskah}</td>
+                </tr>
+                    </table>
+                </td>
+            </tr>
             <table id="dt" cellspacing="0" cellpadding="0" border="0" width="100%">
                 <tr>
-                    <td style="text-align: center; font-family: Arial; font-size: 12pt">
+                    <td style="padding-left: 5%; font-family: Arial; font-size: 11pt">
+                        Yth. Kepala Badan Pengelola Keuangan dan Aset <br>
+                        c.q. Kepala Bidang Pengelolaan Kas Daerah DIY <br>
+                        <br>
+                        di Yogyakarta <br>
+                    </td>
+                </tr>
+                <tr>
+                    <td style="text-align: center; padding-top: 20px; padding-bottom: 15px; font-family: Arial; font-size: 12pt">
                         <b><u>SURAT PEMBERITAHUAN KENAIKAN GAJI BERKALA</u></b>
                         <div style="margin-top: 10px;">
-                            NOMOR : {{ $data[0]->nosk }}
+                            NOMOR : ${nomor_naskah}
                         </div>
                     </td>
                 </tr>
 
-                <tr>
-                    <td style="padding-left: 50%; padding-top: 20px; font-family: Arial; font-size: 11pt">
-                        K e p a d a : <br>
-                        Yth. Kepala Badan Pengelola Keuangan dan Aset <br>
-                        c.q. Kepala Bidang Pengelolaan Kas Daerah DIY <br>
-                        di - <br>
-                        Yogyakarta <br>
-                    </td>
-                </tr>
                 <tr>
                     <td height="50" style="padding-left: 5%;font-family: Arial; font-size: 11pt">
                         Dengan ini diberitahukan bahwa berhubung telah dipenuhi masa kerja dan syarat-syarat lainnya maka kepada:
@@ -266,18 +275,18 @@
             <tr>
                 <td>
                     <table style="text-align:center;font-family: Arial; padding-left: 60%">
+                        
                         <tr>
-                            <td style="font-size: 11pt">Yogyakarta, {{$data[0]->tglttd}}</td>
+                            <td style="padding-bottom: 41px;font-size: 11pt">DIREKTUR,</td>
                         </tr>
                         <tr>
-                            <td style="padding-bottom: 81px;font-size: 11pt">DIREKTUR,</td>
-                        </tr>
+                            <td style="font-size: 11pt; padding-bottom: 40px">${ttd_pengirim}</td>
+                        <tr>
                         <tr>
                             <td style="font-size: 11pt"><b>dr. AKHMAD AKHADI S., M.P.H. <br>
                                     <hr style="margin: 0;" color="black">
                                 </b></td>
                         </tr>
-                        <tr>
                             <td style="font-size: 11pt"><b>NIP. 19680714 200012 1 002</b></td>
                         </tr>
                     </table>
