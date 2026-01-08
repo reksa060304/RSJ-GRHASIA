@@ -485,6 +485,48 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
                 
             }
 
+            $scope.CetakRBADetailNew = function(){
+                var tahap = ""
+                if ($scope.item.tahapdetail != undefined) {
+                    tahap = $scope.item.tahapdetail.id
+                }
+
+                var terhadap = ""
+                if ($scope.item.terhadapdetail != undefined) {
+                    terhadap = $scope.item.terhadapdetail.id
+                }
+
+                var tahun = ""
+                if ($scope.item.tahundetail != undefined) {
+                    tahun = $scope.item.tahundetail
+                }
+                var kode = ""
+                var subsubkegiatan = ""
+                if ($scope.item.subkegiatandetail != undefined) {
+                    subsubkegiatan = $scope.item.subkegiatandetail.id
+                    kode = "&kode=" + $scope.item.subkegiatandetail.kode
+                }
+
+                if ($scope.item.terhadapdetail != undefined) {
+
+                    window.open(baseTransaksi + "report/get-cetak-rba-detail-sebelum-sesudahv2" 
+                        + "?tahun=" + moment(tahun).format('YYYY') 
+                        + "&subsubkegiatan=" + subsubkegiatan 
+                        + "&tahap=" + tahap 
+                        + "&terhadap=" + terhadap 
+                        + "&tglcetak=" + moment($scope.item.tglCetak4).format('YYYY-MM-DD HH:mm') 
+                        +kode, '_blank');
+
+                } else if($scope.item.terhadapdetail == undefined){               
+                    window.open(baseTransaksi + "report/get-cetak-rba-detail-new" 
+                        + "?tahun="+moment(tahun).format('YYYY') 
+                        + "&subsubkegiatan="+subsubkegiatan 
+                        + "&tahap="+tahap
+                        + "&tglcetak="+moment($scope.item.tglCetak4).format('YYYY-MM-DD HH:mm'), '_blank');
+                }
+                
+            }
+
             $scope.CetakPendapatan = function(){
                 // var tahap = ""
                 // if ($scope.item.tahapdetail != undefined) {

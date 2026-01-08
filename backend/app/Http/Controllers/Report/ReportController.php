@@ -27679,6 +27679,123 @@ public function suratBuktiPengembalian(Request $request)
 
     }
 
+    public function cetakRBADetailNew(Request $request)
+    {
+
+        $setting = \DB::table('settinganggaran_t as st')
+            ->join('pegawai_m as pg','pg.id','=','st.objectkepalabludfk')
+            ->join('tahapanggaran_m as ta','ta.id','=','st.objecttahapaktivfk')
+            ->select('st.*','pg.namalengkap', 'ta.tahap', 'ta.id as idtahap', 'pg.id as idpegawai', 'pg.nippns')
+            ->where('st.kdprofile', 30)
+            ->where('st.statusenabled', true)
+            ->orderBy('st.tahunanggaran')
+            ->get();
+
+       $tahun = '';
+        if (isset($request['tahun']) && $request['tahun'] != "" && $request['tahun'] != "undefined") {
+            $tahun = "and ta.tahun = '".$request['tahun']."'";
+        }else{
+            $tahun = "and ta.tahun = '".$setting[0]->tahunanggaran."'";
+        }
+
+        $tahap = '';
+        if (isset($request['tahap']) && $request['tahap'] != "" && $request['tahap'] != "undefined") {
+            $tahap = "and ta.objecttahapfk = '".$request['tahap']."'";
+        }
+        
+        $subsubkegiatan = '';
+        if (isset($request['subsubkegiatan']) && !empty($request['subsubkegiatan']) && $request['subsubkegiatan'] != "undefined") {
+            $subsubkegiatan = "and ta.objectkegiatanfk = '".$request['subsubkegiatan']."'";
+        } else {
+            
+            $firstKegiatan = DB::table('transaksianggaran2024_t')
+                ->where('statusenabled', true)
+                ->where('kdprofile', 30)
+                ->first();
+            
+            if ($firstKegiatan) {
+                $subsubkegiatan = "and ta.objectkegiatanfk = '".$firstKegiatan->objectkegiatanfk."'";
+            }
+        }
+
+        $kegiatan = DB::select(DB::raw("
+            SELECT 
+                ta.*,
+                ka.kode as kodesubsubkegiatan, ka.keterangan as keterangansubsubkegiatan,
+                ka3.kode as kodesubkegiatan, ka3.keterangan as keterangansubkegiatan,
+                ka2.kode as kodekegiatan, ka2.keterangan as keterangankegiatan,
+                ka1.kode as kodeprogram, ka1.keterangan as keteranganprogram,
+                th.id as idtahap, th.tahap
+            FROM kegiatananggaran2024_m ka 
+            JOIN transaksianggaran2024_t ta ON ta.objectkegiatanfk = ka.id AND ta.statusenabled = TRUE AND ta.kdprofile = 30
+            JOIN tahapanggaran_m th ON th.id = ta.objecttahapfk AND th.statusenabled = TRUE AND th.kdprofile = 30
+            LEFT JOIN kegiatananggaran2024_m ka3 ON ka3.id = ka.headfk AND ka3.statusenabled = TRUE AND ka3.kdprofile = 30
+            LEFT JOIN kegiatananggaran2024_m ka2 ON ka2.id = ka3.headfk AND ka2.statusenabled = TRUE AND ka2.kdprofile = 30
+            LEFT JOIN kegiatananggaran2024_m ka1 ON ka1.id = ka2.headfk AND ka1.statusenabled = TRUE AND ka1.kdprofile = 30
+            WHERE
+                ka.statusenabled = TRUE
+                AND ka.kdprofile = 30
+                $tahun
+                $tahap
+                $subsubkegiatan
+        "));
+
+        $asalproduk = DB::select(DB::raw("
+            SELECT 
+                ap.id, ap.asalproduk
+            FROM asalproduk_m ap
+            WHERE
+                ap.statusenabled = TRUE
+                AND ap.kdprofile = 30
+                AND ap.isanggaran = TRUE
+        
+        "));
+
+        $data = DB::select(DB::raw("
+
+            SELECT 
+                kb.norec, kb.keteranganbelanja, kb.jml, kb.hargasatuan, kb.satuan, kb.subtotal,
+                ma.id as idmataanggaran, ma.namamataanggaran, ma.kodemataanggaran,
+                ma3.id as idmataanggaran3, ma3.namamataanggaran as namamataanggaran3, ma3.kodemataanggaran as kodemataanggaran3,
+                ma2.id as idmataanggaran2, ma2.namamataanggaran as namamataanggaran2, ma2.kodemataanggaran as kodemataanggaran2,
+                ma1.id as idmataanggaran1, ma1.namamataanggaran as namamataanggaran1, ma1.kodemataanggaran as kodemataanggaran1,
+                ka.id as idkegiatan, ka.kode as kodekegiatan, ka.keterangan as keterangankegiatan,
+                ap.id as idasalproduk
+            FROM keteranganbelanja_t kb
+            JOIN transaksianggaran2024_t ta ON ta.norec = kb.objecttransaksifk AND ta.statusenabled = TRUE AND ta.kdprofile = 30
+            JOIN kegiatananggaran2024_m ka ON ka.id = ta.objectkegiatanfk AND ka.statusenabled = TRUE AND ka.kdprofile = 30
+            JOIN mataanggaran_m ma ON ma.id = kb.objectmataanggaranfk AND ma.statusenabled = TRUE AND ma.kdprofile = 30
+            JOIN tahapanggaran_m th ON th.id = ta.objecttahapfk AND th.statusenabled = TRUE AND th.kdprofile = 30
+            JOIN asalproduk_m ap ON ap.id = kb.objectasalprodukfk AND ap.statusenabled = TRUE AND ap.kdprofile = 30
+            JOIN mataanggaran_m ma3 ON ma3.id = ma.headfk AND ma3.statusenabled = TRUE AND ma3.kdprofile = 30
+            JOIN mataanggaran_m ma2 ON ma2.id = ma3.headfk AND ma2.statusenabled = TRUE AND ma2.kdprofile = 30
+            JOIN mataanggaran_m ma1 ON ma1.id = ma2.headfk AND ma1.statusenabled = TRUE AND ma1.kdprofile = 30
+            WHERE
+                kb.statusenabled = TRUE
+                AND kb.kdprofile = 30
+                $tahun
+                $tahap
+                $subsubkegiatan
+            ORDER BY
+                ma1.kodemataanggaran,
+                ma2.kodemataanggaran,
+                ma3.kodemataanggaran,
+                ma.kodemataanggaran,
+                kb.norec
+        "));
+        $tanggalcetak = $this->tanggal_indonesia(date('Y-m-d',strtotime($request['tglcetak'])));
+
+        return view('report.rba.cetak-rba-detail-new', [
+            'data' => $data,
+            'asalproduk' => $asalproduk,
+            'kegiatan' => $kegiatan,
+            'tahun' => $request['tahun'],
+            'tanggalcetak' => $tanggalcetak,
+            'settingrba' => $setting
+        ]);
+
+    }
+
     public function cetakRBADetailSebelumSesudahV2(Request $request)
     {
         $setting = \DB::table('settinganggaran_t as st')
