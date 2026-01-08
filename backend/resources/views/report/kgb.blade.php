@@ -281,7 +281,7 @@
                         </tr>
                         <tr>
                             <td style="font-size: 11pt; padding-bottom: 40px">${ttd_pengirim}</td>
-                        <tr>
+                        </tr>
                         <tr>
                             <td style="font-size: 11pt"><b>dr. AKHMAD AKHADI S., M.P.H. <br>
                                     <hr style="margin: 0;" color="black">
