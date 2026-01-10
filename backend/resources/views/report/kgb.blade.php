@@ -145,6 +145,10 @@
                 <tr>
                     <td style="padding-left: 5%; font-family: Arial; font-size: 11pt">
                         Yth. Kepala Badan Pengelola Keuangan dan Aset <br>
+                    </td>
+                </tr>
+                <tr>
+                    <td style="padding-left: 9.5%; font-family: Arial; font-size: 11pt">
                         c.q. Kepala Bidang Pengelolaan Kas Daerah DIY <br>
                         <br>
                         di Yogyakarta <br>
@@ -274,7 +278,7 @@
             </tr>
             <tr>
                 <td>
-                    <table style="text-align:center;font-family: Arial; padding-left: 60%">
+                    <table style="text-align:left;font-family: Arial; padding-left: 63%">
                         
                         <tr>
                             <td style="padding-bottom: 41px;font-size: 11pt">DIREKTUR,</td>
@@ -284,11 +288,7 @@
                         </tr>
                         <tr>
                             <td style="font-size: 11pt"><b>dr. AKHMAD AKHADI S., M.P.H. <br>
-                                    <hr style="margin: 0;" color="black">
                                 </b></td>
-                        </tr>
-                            <td style="font-size: 11pt"><b>NIP. 19680714 200012 1 002</b></td>
-                        </tr>
                     </table>
                 </td>
             </tr>
