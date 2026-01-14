@@ -281,10 +281,10 @@
                     <table style="text-align:left;font-family: Arial; padding-left: 63%">
                         
                         <tr>
-                            <td style="padding-bottom: 41px;font-size: 11pt">DIREKTUR,</td>
+                            <td style="padding-bottom: 52px;font-size: 11pt">DIREKTUR,</td>
                         </tr>
                         <tr>
-                            <td style="font-size: 11pt; padding-bottom: 40px">${ttd_pengirim}</td>
+                            <td style="font-size: 11pt; padding-bottom: 50px">${ttd_pengirim}</td>
                         </tr>
                         <tr>
                             <td style="font-size: 11pt"><b>dr. AKHMAD AKHADI S., M.P.H. <br>
