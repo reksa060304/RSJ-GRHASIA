@@ -231,34 +231,31 @@ export class ViewerPoliComponent implements OnInit {
       if (status == true) {
 
         this.dipanggil = true
-        if (this.item.poliPanggil === 'POLIKLINIK JIWA' || this.item.poliPanggil === 'Ruang Dokter 1' || 
-            this.item.poliPanggil === 'Ruang Dokter 2' || this.item.poliPanggil === 'Ruang Dokter 3' ||
-            this.item.poliPanggil === 'Ruang Dokter 4' || this.item.poliPanggil === 'Ruang Perawat 1' ||
-            this.item.poliPanggil === 'Ruang Perawat 2' || this.item.poliPanggil === 'Poliklinik Umum' ||
-            this.item.poliPanggil === 'Ruang Psikiater 1' || this.item.poliPanggil === 'Ruang Psikiater 2' ||
-            this.item.poliPanggil === 'Ruang Psikiater 3' || this.item.poliPanggil === 'Ruang Psikiater 4' ||
-            this.item.poliPanggil === 'Ruang Psikiater 5' || this.item.poliPanggil === 'Ruang Psikiater 6' 
-          ) {
+        
+        const teksAntrian = result.jenis == 'penunjang' 
+          ? 'Nomor Registrasi ' + this.item.antriTerakhir
+          : 'Nomor Antrian ' + Terbilang(this.item.antriTerakhir);
+        const teksPengumuman = teksAntrian + '. Silahkan Ke ' + this.item.poliPanggil;
+        
+        const ruanganChime = [
+          'POLIKLINIK JIWA', 'Ruang Dokter 1', 'Ruang Dokter 2', 'Ruang Dokter 3', 'Ruang Dokter 4',
+          'Ruang Perawat 1', 'Ruang Perawat 2', 'Poliklinik Umum',
+          'Ruang Psikiater 1', 'Ruang Psikiater 2', 'Ruang Psikiater 3', 
+          'Ruang Psikiater 4', 'Ruang Psikiater 5', 'Ruang Psikiater 6'
+        ];
+        
+        if (ruanganChime.includes(this.item.poliPanggil)) {
           this.sound = new Howl({
-            src: ['assets/sound/in.wav'],  // Ganti dengan path file suara lonceng Anda
-            autoplay: true
+            src: ['assets/sound/in.wav'],
+            autoplay: true,
+            onend: () => this.playAudio(teksPengumuman, this.item.poliPanggil, this.item.antriTerakhir)
           });
-
-          this.item.antrianYangDipanggil = this.item.antriTerakhir
-          this.item.poliYangDipanggil = this.item.poliPanggil
-
-          this.dipanggil = false
-      
+          this.item.antrianYangDipanggil = this.item.antriTerakhir;
+          this.item.poliYangDipanggil = this.item.poliPanggil;
+          this.item.namaYangDipanggil = this.item.namapasien;
         } else {
-          
-          if (result.jenis != undefined && result.jenis == 'penunjang') {
-            this.playAudio('Nomor Registrasi ' + this.item.antriTerakhir
-              //+ '. ' + this.item.nama
-              + '. Ke Ruang. ' + this.item.poliPanggil,this.item.poliPanggil,this.item.antriTerakhir);
-          } else {
-            this.playAudio('Nomor Antrian ' + Terbilang(this.item.antriTerakhir) + '. Silahkan Ke. ' + this.item.poliPanggil, this.item.poliPanggil,this.item.antriTerakhir);
-          }
-      }
+          this.playAudio(teksPengumuman, this.item.poliPanggil, this.item.antriTerakhir);
+        }
     }
     });
 
