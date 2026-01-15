@@ -1,0 +1,410 @@
+<div class="header-navbar navbar navbar-expand-lg align-items-center navbar-shadow navbar-light floating-nav"
+    style="    margin-top: 0.5rem;">
+    <div class="navbar-container d-flex content">
+        <div class="bookmark-wrapper d-flex align-items-center" [routerLink]="['/index']" pTooltip="Kembali">
+            <a aria-current="page" class="nuxt-link-exact-active nuxt-link-active"
+                style="display: flex; height: 100%;"><img style="object-fit: cover; height: 40px;"
+                    src="assets/img/logo_grhasia_com.png"><span
+                    style="font-size: 18px; margin-left: 20px; font-weight: bold; display: flex; align-items: center;">
+                    <div class="labels white--text" style="line-height: 1; align-self: center;">
+                        <div style="font-size: 2rem;color:#495057">{{namaProfile}} </div>
+                        <div style="font-weight: 500; color:#495057;font-size: 1rem; margin-top: 5px;">TRANSMEDIC</div>
+                    </div>
+                </span></a>
+
+        </div>
+        <ul class="nav navbar-nav align-items-center ml-auto">
+            <li class="nav-item d-none d-lg-block"><a type="button" class="nav-link nav-link-style btn"><span
+                        class="ficon font-medium-5 feather icon-moon"></span></a></li>
+            <li ngbdropdown="" class="nav-item dropdown-user">
+                <span id="navbarUserDropdown" ngbdropdowntoggle="" aria-haspopup="true" aria-expanded="false"
+                    class="dropdown-toggle nav-link dropdown-user-link">
+                    <div class="user-nav d-sm-flex d-none">
+                        <span class="user-name font-weight-bolder"
+                            style="cursor: pointer;">
+                            <h5>
+                                <span class="tanggal" >{{tgl}}</span>
+                                <span class="jam">{{jamSekarang}}</span>
+                                <!-- <a (click)="fullScreen()" pTooltip="Fullscreen" style="color: blue;margin-left:10px" class="">
+                                    <i class="fa fa-expand fa-fw text"></i>
+                                </a> -->
+                            </h5>
+
+                        </span>
+
+                    </div>
+
+                </span>
+            </li>
+        </ul>
+    </div>
+</div>
+<div class="app-content">
+    <!-- <div class="p-grid" style="margin-top: -2.5rem;"> -->
+    <div class="p-grid">
+        <!-- <div class="p-col-12 " style="    margin-top: -1.5rem;">
+        </div> -->
+
+        <!-- <div class="p-col-12 p-lg-6 p-md-6">
+            <div class="p-grid">
+                <div class="p-col-12 p-md-12  widget-customer-carousel" (click)="showPop()">
+                    <div class="card text-center" style="cursor: pointer;">
+                        <p-scrollPanel [style]="{width: '100%', height: 'calc(100vh - 415px)'}">
+                            <div class="video-player-wrapper">
+                                <iframe [src]='safeURL' frameborder="0" width="100%" style="height:calc(100vh - 415px)"
+                                    allow='autoplay' allowfullscreen></iframe>
+
+                            </div>
+                        </p-scrollPanel>
+                    </div>
+                </div>
+            </div>
+        </div> -->
+        <!-- <div class="p-col-12 p-lg-6 p-md-6">
+            <div class="p-grid">
+                <div class="p-col-12 p-md-12  widget-customer-carousel">
+                    <div class="card  brder text-center">
+                        <p-scrollPanel [style]="{width: '100%', height: 'calc(100vh - 430px)'}">
+                            <div class="customer-item-content">
+                                <h4 style="padding:10px;">Antrian Terakhir</h4>
+                            </div>
+                            <div class="badge-light-danger2" style=" height: calc(100vh - 600px);"
+                                [ngClass]="{'blink ' : dipanggil}">
+                                <p class="text-noakhir" style="    padding-top: calc(100% - 700px);">
+                                    {{item.antriTerakhir != undefined ? item.antriTerakhir : '-' }}
+                                </p>
+                               
+                            </div>
+                            <div class="customer-item-content" style="margin-top:10px;">
+                                <span class="text-menu">Silahkan Menuju</span>
+                                <p class="text-poliakhir">{{item.poliPanggil}}</p>
+                            </div>
+                        </p-scrollPanel>
+                    </div>
+                </div>
+            </div>
+        </div> -->
+        <div class="p-col-12 p-lg-12 p-md-12" *ngIf="listRuanganAktif && listRuanganAktif.length > 0">
+            <div class="widget-customer-carousel" [class.single-room-mode]="listRuanganAktif.length == 1">
+                <div class="card  brder text-center">
+                    <div class="p-grid">
+                        <div class="p-col-6 p-lg-6 p-md-6">
+                            <!-- <img class="image-left" [src]="'assets/img/'0.png'" alt="Foto Dokter"> -->
+                            <!-- Jika foto dokter ada, tampilkan fotonya, jika tidak ada, tampilkan gambar default -->
+                            <img *ngIf="item && item.listFotoDokter; else defaultImage" [src]="item.listFotoDokter" alt="Foto Dokter" style="width: 150px; height: 150px;">
+                            <ng-template #defaultImage>
+                            <img class="image-left" src="assets/img/0.png" alt="Default Foto Dokter">
+                            </ng-template>
+                            <div class="customer-item-content" style="margin-top:10px;">
+                                <span class="text-menu">Silahkan Menuju</span>
+                                <p class="text-poliakhir">{{item ? item.poliYangDipanggil : '-'}}</p>                                
+                                <p class="text-menu">{{item && item.namadokter != undefined ? item.namadokter : '-' }}</p>
+                            </div>
+                        </div> 
+                        <div class="p-col-6 p-lg-6 p-md-6">
+                            <p-scrollPanel [style]="{width: '100%'}">
+                                <div class="customer-item-content">
+                                    <h4 style="padding-top:5px;">No Antrian</h4>
+                                </div>
+                                <div class="badge-light" style=""
+                                    [ngClass]="{'blink ' : dipanggil}">
+                                    <p class="text-noakhir" style="">
+                                        {{item && item.antrianYangDipanggil != undefined ? item.antrianYangDipanggil : '-' }}
+                                    </p>
+                                </div>
+                                <!-- <span class="text-menu">
+                                    {{item.namapasien != undefined ? item.namapasien : '-' }}
+                                </span> -->
+                            </p-scrollPanel>
+                        </div> 
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="p-col-12 p-lg-12" style="margin-top:10px">
+            <div class="card " *ngIf="listRuanganAktif.length== 0 ">
+                <div class="p-grid">
+                    <div class="p-col-12 p-md-2" *ngFor="let itemzz of numberss">
+                        <div class="card text-center">
+                            <div style=" position: relative;
+                                left: 20%;">
+                                <p-skeleton shape="circle" size="7rem" styleClass="text-center p-mb-2"></p-skeleton>
+                            </div>
+                            <p-skeleton width="100%" height="15px" styleClass="p-mb-2" borderRadius="16px">
+                            </p-skeleton>
+                            <p-skeleton width="100%" height="20px" styleClass="p-mb-2" borderRadius="16px">
+                            </p-skeleton>
+                            <p-skeleton width="100%" height="35px" borderRadius="16px"></p-skeleton>
+
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="p-grid" *ngIf="listRuanganAktif.length > 1 ">
+                <div class="p-col-12 p-md-3 widget-customer-carousel" *ngFor="let items of listRuanganAktif">
+                    <!-- <div class="card brder2 text-center">
+                        <img class="image" src="assets/img/{{items.nocounter}}.png">
+                        <p class="text-antrian">Antrian</p>
+                        <p class="text-ruangan">{{items.namaruangan}}</p>
+                        <div class="badge-light-danger22">
+                            <p class="">
+                                {{items.namadokter}}
+                            </p>
+                        </div>
+                        <div class="badge-light-danger22">
+                            <p class="text-nomorantri">
+                                {{items.noantri}}
+                            </p>
+                        </div>
+                    </div> -->
+                    <div class="container card brder2 text-center">
+                        <div class="content-wrapper">
+                            <!-- <img class="image-left" src="assets/img/{{items.nocounter}}.png"> -->
+                            <img class="image-left" [src]="items.fotoDokter ? items.fotoDokter : 'assets/img/' + items.nocounter + '.png'" alt="Foto Dokter">
+
+                            <div class="text-left">
+                                <!-- <p class="queue-text" style="text-align: left;">Antrian</p> -->
+                                <p class="room-name" style="text-align: left;">{{items.namaruangan}}</p>
+                                <div class="doctor-badge" style="text-align: left;">
+                                    <p>{{items.namadokter}}</p>
+                                </div>
+                                <div class="queue-number-badge" style="text-align: left;">
+                                     <p class="queue-number">No Antrian: {{items.noantri}}</p>
+                                </div>
+                                <div class="doctor-badge" style="text-align: left;">
+                                    <p>{{items.namapasien}}</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <!-- <div class="p-col-12 p-md-2" *ngFor="let itemzz of listSkele">
+                    <div class="card text-center">
+                        <div style=" position: relative;
+                            left: 20%;">
+                            <p-skeleton shape="circle" size="7rem" styleClass="text-center p-mb-2"></p-skeleton>
+                        </div>
+                        <p-skeleton width="100%" height="15px" styleClass="p-mb-2" borderRadius="16px">
+                        </p-skeleton>
+                        <p-skeleton width="100%" height="20px" styleClass="p-mb-2" borderRadius="16px">
+                        </p-skeleton>
+                        <p-skeleton width="100%" height="35px" borderRadius="16px"></p-skeleton>
+
+                    </div>
+                </div> -->
+                <!-- <div class="p-col-12 p-md-2 widget-customer-carousel">
+                    <div class="card brder2 text-center">
+                        <img class="image" src="assets/img/11.png">
+                        <p style="color: #868C9B;font-size: 1rem;margin:0">Antrian</p>
+                        <p style="font-size:1.3rem;color:#646464;margin:0">Poli Anak</p>
+                        <div class="badge-light-danger22">
+                            <p
+                                style="font-size: 1.5rem;color:black;margin:0 0 0 0;font-weight: bold;padding:5px 0 5px 0">
+                                1
+                            </p>
+
+                        </div>
+                    </div>
+
+                </div>
+                <div class="p-col-12 p-md-2 widget-customer-carousel">
+                    <div class="card brder2 text-center">
+                        <img class="image" src="assets/img/21.png">
+                        <p style="color: #868C9B;font-size: 1rem;margin:0">Antrian</p>
+                        <p style="font-size:1.3rem;color:#646464;margin:0">Poli Gigi</p>
+                        <div class="badge-light-danger22">
+                            <p
+                                style="font-size: 1.5rem;color:black;margin:0 0 0 0;font-weight: bold;padding:5px 0 5px 0">
+                                2
+                            </p>
+
+                        </div>
+                    </div>
+
+                </div>
+                <div class="p-col-12 p-md-2 widget-customer-carousel">
+                    <div class="card brder2 text-center">
+                        <img class="image" src="assets/img/31.png">
+                        <p style="color: #868C9B;font-size: 1rem;margin:0">Antrian</p>
+                        <p style="font-size:1.3rem;color:#646464;margin:0">Poli THT</p>
+                        <div class="badge-light-danger22">
+                            <p
+                                style="font-size: 1.5rem;color:black;margin:0 0 0 0;font-weight: bold;padding:5px 0 5px 0">
+                                13
+                            </p>
+
+                        </div>
+                    </div>
+
+                </div>
+                <div class="p-col-12 p-md-2 widget-customer-carousel">
+                    <div class="card brder2 text-center">
+                        <img class="image" src="assets/img/41.png">
+                        <p style="color: #868C9B;font-size: 1rem;margin:0">Antrian</p>
+                        <p style="font-size:1.3rem;color:#646464;margin:0">Poli Jantung</p>
+                        <div class="badge-light-danger22">
+                            <p
+                                style="font-size: 1.5rem;color:black;margin:0 0 0 0;font-weight: bold;padding:5px 0 5px 0">
+                                15
+                            </p>
+
+                        </div>
+                    </div>
+
+                </div>
+                <div class="p-col-12 p-md-2 widget-customer-carousel">
+                    <div class="card brder2 text-center">
+                        <img class="image" src="assets/img/51.png">
+                        <p style="color: #868C9B;font-size: 1rem;margin:0">Antrian</p>
+                        <p style="font-size:1.3rem;color:#646464;margin:0">Poli Obgyn</p>
+                        <div class="badge-light-danger22">
+                            <p
+                                style="font-size: 1.5rem;color:black;margin:0 0 0 0;font-weight: bold;padding:5px 0 5px 0">
+                                11
+                            </p>
+
+                        </div>
+                    </div>
+
+                </div> -->
+            </div>
+
+            <!-- <div class="card " *ngIf="listRuanganAktif.length < 6 ">
+                <div class="p-grid">
+                    <div class="p-col-12 p-md-2" *ngFor="let itemzz of numberss">
+                        <div class="card text-center">
+                            <div style=" position: relative;
+                                left: 20%;">
+                                <p-skeleton shape="circle" size="7rem" styleClass="text-center p-mb-2"></p-skeleton>
+                            </div>
+                            <p-skeleton width="100%" height="15px" styleClass="p-mb-2" borderRadius="16px">
+                            </p-skeleton>
+                            <p-skeleton width="100%" height="20px" styleClass="p-mb-2" borderRadius="16px">
+                            </p-skeleton>
+                            <p-skeleton width="100%" height="35px" borderRadius="16px"></p-skeleton>
+
+                        </div>
+                    </div>
+                </div>
+            </div> -->
+        </div>
+    </div>
+</div>
+<p-dialog header="Detail" [(visible)]="popUp" [modal]="true" [style]="{width: '50vw'}" [maximizable]="true"
+    [baseZIndex]="10000" [draggable]="false" [resizable]="false">
+    <div class="p-fluid p-formgrid ">
+        <div class="p-grid">
+            <div class="p-col-12">
+                <!-- <p-panel header="Pilih Channel" [toggleable]="true"> -->
+                <!-- <div class="p-grid  ">
+                        <div class="p-col-12 p-md-3" *ngFor="let itemss of videoSource">
+                            <p-radioButton [inputId]="itemss.url" [value]="itemss" [(ngModel)]="item.channel">
+                            </p-radioButton>
+                            <label [for]="itemss.url"> {{itemss.name}}</label>
+                        </div>
+                    </div> -->
+                <!-- <div class="p-grid ">
+                        <div class="p-col-12"> -->
+                <label class="label" for="input">URL</label>
+                <input type="text" [(ngModel)]="videoURL" pInputText placeholder="URL Video" />
+                <!-- </div> -->
+
+                <!-- <div class="p-field-checkbox">
+                            <p-checkbox name="group1" binary="true" [(ngModel)]="isVoiceBrowser" inputId="ny">
+                            </p-checkbox>
+                            <label for="ny">Pakai Suara Browser</label>
+                        </div> -->
+                <!-- </div>
+                </p-panel>-->
+            </div>
+        </div>
+    </div>
+    <ng-template pTemplate="footer">
+        <p-button icon="pi pi-save" (click)="save(player)" label="Simpan" class="ui-button-success">
+        </p-button>
+    </ng-template>
+</p-dialog>
+<style>
+.badge-success {
+    background-color: #28a745;
+    color: #fff;
+    padding: 5px 10px;
+    border-radius: 5px;
+}
+
+.badge-danger {
+    background-color: #dc3545;
+    color: #fff;
+    padding: 5px 10px;
+    border-radius: 5px;
+}
+
+/* TAMBAHAN */
+.container {
+    display: flex;
+    justify-content: left; /* Center the content horizontally */
+    align-items: left; /* Center the content vertically */
+}
+
+.content-wrapper {
+    display: flex;
+    align-items: left; /* Align the image and text vertically */
+}
+
+.image-left {
+    margin-right: 10px; /* Add space between the image and text */
+    width: 100px; /* Set image size as needed */
+    height: auto;
+}
+
+.text-right {
+    display: block; /* Ensures text stays in a block next to the image */
+}
+
+.queue-text, .room-name, .doctor-badge, .queue-number-badge {
+    margin: 5px 0; /* Optional: spacing between text elements */
+}
+
+.queue-number {
+    font-weight: bold; /* Optional: make the queue number bold */
+}
+
+.single-room-mode .card {
+    height: calc(100vh - 100px); 
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.single-room-mode img {
+    width: 300px !important;
+    height: 300px !important;
+}
+
+</style>
+<style>
+/* ... existing styles ... */
+/* Override specific to single room mode */
+.single-room-mode .text-poliakhir {
+    font-size: 5rem !important; /* Reduced from 8rem */
+    white-space: normal !important; /* Allow wrapping */
+    line-height: 1.2;
+    overflow: visible !important;
+    text-overflow: clip !important;
+    -webkit-line-clamp: unset !important;
+}
+
+.single-room-mode .text-menu {
+    font-size: 3rem !important; /* Reduced from 4rem */
+    margin-top: 20px;
+}
+
+.single-room-mode .text-noakhir {
+    font-size: 15rem !important; /* Reduced from 25rem to fit better if needed, or keep if it fits */
+    font-weight: bold;
+}
+
+.single-room-mode h4 {
+    font-size: 3rem !important; /* Reduced from 5rem */
+}
+</style>

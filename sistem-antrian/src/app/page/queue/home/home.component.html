@@ -70,6 +70,11 @@
                 <a class="f-s-5">Poli Khusus</a>
             </div>
         </div>
+        <div class="p-col-12 p-md-6  p-sm-6">
+            <div class="button-viewer2" (click)="showPoliRuangan = true" pTooltip="Viewer Poli">
+                <a class="f-s-5">Poli ruangan</a>
+            </div>
+        </div>
     </div>
 </div>
 
@@ -102,6 +107,22 @@
     </div>
     <ng-template pTemplate="footer">
         <p-button icon="pi pi-save" (click)="savePoliKuhuhs(poli)" label="Lanjut" class="ui-button-success">
+        </p-button>
+    </ng-template>
+</p-dialog>
+<p-dialog header="Pilih Poli Ruangan" [(visible)]="showPoliRuangan" [modal]="true" [maximizable]="true"
+    [draggable]="true" [resizable]="true" [style]="{width: '70vw'}">
+    <div class="p-fluid p-formgrid ">
+        <div class="p-grid">
+            <div class="p-col-12">
+                <p-multiSelect [options]="listPoli" [(ngModel)]="poli" defaultLabel="Nama Poli"
+                    optionLabel="namaruangan" appendTo="body" display="chip">
+                </p-multiSelect>
+            </div>
+        </div>
+    </div>
+    <ng-template pTemplate="footer">
+        <p-button icon="pi pi-save" (click)="savePoliRuangan(poli)" label="Lanjut" class="ui-button-success">
         </p-button>
     </ng-template>
 </p-dialog>

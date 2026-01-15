@@ -61,6 +61,17 @@ export class HomeComponent implements OnInit {
         data = data.substring(1, data.length);
         this.route.navigate(["/viewer-poli-khusus/" + data]);
     }
+    savePoliRuangan(e) {
+        if (e == undefined) return;
+        let data = "";
+        for (let x = 0; x < e.length; x++) {
+            const element = e[x];
+            data = data + "," + element.id;
+        }
+
+        data = data.substring(1, data.length);
+        this.route.navigate(["/viewer-poli-ruangan/" + data]);
+    }
 
     saveFarma(e) {
         if (e == undefined) return;

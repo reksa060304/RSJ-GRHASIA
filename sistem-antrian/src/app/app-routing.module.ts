@@ -19,6 +19,7 @@ import { AccessDeniedComponent,  NotFoundComponent } from './page';
                     { path: 'index', loadChildren: () => import('./page/queue/home/home.module').then(m => m.HomeModule) },
                     { path: 'viewer-poli/:ruanganid', loadChildren: () => import('./page/queue/viewer-poli/viewer-poli.module').then(m => m.ViewerPoliModule) },
                     { path: 'viewer-poli-khusus/:ruanganid', loadChildren: () => import('./page/queue/viewer-poli-khusus/viewer-poli.module').then(m => m.ViewerPoliModule) },
+                    { path: 'viewer-poli-ruangan/:ruanganid', loadChildren: () => import('./page/queue/viewer-ruangan/viewer-poli.module').then(m => m.ViewerPoliModule) },
                     { path: 'viewer-farmasi/:ruanganid', loadChildren: () => import('./page/queue/viewer-farmasi/viewer-farmasi.module').then(m => m.ViewerFarmasiModule) },
 
                     { canActivate: [AuthGuard], path: 'not-found', component: NotFoundComponent },
