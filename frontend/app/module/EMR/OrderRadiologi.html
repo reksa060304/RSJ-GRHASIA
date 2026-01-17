@@ -205,12 +205,12 @@
                                             ng-click="cekpemeriksaanKeluar(item.pemeriksaanKeluar)">
                                         <label class="k-checkbox-label" for="pemeriksaanKeluar"><b>Pemeriksaan
                                                 Luar</b></label>
-                                    </div>
+                                    </div> -->
                                     <div class="grid_3" style="margin-top: 15px;">
                                         <input type="checkbox" class="k-checkbox" id="isPaket" ng-model="item.paket"
                                             value="true" ng-click="cekPaket(item.paket)">
                                         <label class="k-checkbox-label" for="isPaket"><b>Paket</b></label>
-                                    </div> -->
+                                    </div>
                                 </div>
                             </fieldset>
                         </div>
@@ -373,6 +373,64 @@
 
     </div>
 </div>
+<!-- tambah paket -->
+<div kendo-window="popUpPaket" k-title="'Paket'" k-width="1000" k-visible="false" k-on-close="customClicked()">
+    <div class="panel panel-default container_12" style="padding: 0px 10px;">
+
+        <fieldset class="effect-shadow" style=" border-radius: 4px;margin-top:10px">
+            <legend id="filterData">
+                <a ng-click="showAndHide()">Daftar Paket Tindakan</a>
+            </legend>
+            <div class="grid_12">
+
+                <div class="grid_12" style="margin-top: 10px">
+
+                    <div class="grid_6">
+                        <div class="grid_12">
+                            <label c-label item="item" c-label-text="Nama Paket"></label>
+                        </div>
+                        <div class="grid_12">
+                            <input c-text-box type="input" filter="" class="k-textbox" ng-model="paket.namaPaket" />
+                        </div>
+                    </div>
+
+                    <div class="grid_1">
+                        <label c-label c-label-text=""></label>
+                        <em style="margin-top:6px;" ng-click='resetFilterPaket()' id="iconButton" data-role="button"
+                            class="k-button k-button-icon k-primary" role="button" aria-disabled="false"
+                            tabindex="0"><span class="k-sprite k-icon k-i-cancel"></span></em>
+                    </div>
+                </div>
+            </div>
+            <div class="grid_12" style="margin-top: 10px">
+                <div id="gridPaket" kendo-grid k-data-source="sourcePaket" k-selectable="'row'" k-pageable="'true'"
+                    options="optionsPaket" k-ng-model="dataPaketSelect" ng-click="klikPaket(dataPaketSelect)">
+                    <div k-detail-template>
+                        <kendo-tabstrip>
+                            <div>
+                                <div id="kGridDetail" kendo-grid k-options="data2(dataItem)" k-sortable="'true'"
+                                    k-selectable="'row'">
+                                </div>
+                            </div>
+                        </kendo-tabstrip>
+                    </div>
+                </div>
+            </div>
+        </fieldset>
+        <div class="grid_12">
+            <div class="k-edit-buttons  k-state-default pull-right" style="margin-top:10px">
+                <img ng-show="loading" style="margin-top:10px"
+                    src="data:image/gif;base64,R0lGODlhEAAQAPIAAP///wAAAMLCwkJCQgAAAGJiYoKCgpKSkiH/C05FVFNDQVBFMi4wAwEAAAAh/hpDcmVhdGVkIHdpdGggYWpheGxvYWQuaW5mbwAh+QQJCgAAACwAAAAAEAAQAAADMwi63P4wyklrE2MIOggZnAdOmGYJRbExwroUmcG2LmDEwnHQLVsYOd2mBzkYDAdKa+dIAAAh+QQJCgAAACwAAAAAEAAQAAADNAi63P5OjCEgG4QMu7DmikRxQlFUYDEZIGBMRVsaqHwctXXf7WEYB4Ag1xjihkMZsiUkKhIAIfkECQoAAAAsAAAAABAAEAAAAzYIujIjK8pByJDMlFYvBoVjHA70GU7xSUJhmKtwHPAKzLO9HMaoKwJZ7Rf8AYPDDzKpZBqfvwQAIfkECQoAAAAsAAAAABAAEAAAAzMIumIlK8oyhpHsnFZfhYumCYUhDAQxRIdhHBGqRoKw0R8DYlJd8z0fMDgsGo/IpHI5TAAAIfkECQoAAAAsAAAAABAAEAAAAzIIunInK0rnZBTwGPNMgQwmdsNgXGJUlIWEuR5oWUIpz8pAEAMe6TwfwyYsGo/IpFKSAAAh+QQJCgAAACwAAAAAEAAQAAADMwi6IMKQORfjdOe82p4wGccc4CEuQradylesojEMBgsUc2G7sDX3lQGBMLAJibufbSlKAAAh+QQJCgAAACwAAAAAEAAQAAADMgi63P7wCRHZnFVdmgHu2nFwlWCI3WGc3TSWhUFGxTAUkGCbtgENBMJAEJsxgMLWzpEAACH5BAkKAAAALAAAAAAQABAAAAMyCLrc/jDKSatlQtScKdceCAjDII7HcQ4EMTCpyrCuUBjCYRgHVtqlAiB1YhiCnlsRkAAAOwAAAAAAAAAAAA==" />
+
+                <button class="k-button k-primary  k-button-icontext" ng-click="tambahPaket()"><span
+                        class="k-icon fa fa-edit"></span>Tambah</button>
+                <button class="k-button  btnHapus k-button-icontext" ng-click="tutupPaket()"><span
+                        class="k-icon k-cancel"></span>Tutup</button>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- end tambah paket -->
 
 <style type="text/css">
     .custom-button {

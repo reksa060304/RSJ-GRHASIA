@@ -1310,6 +1310,119 @@ define(['initialize', 'Configuration'], function (initialize, config) {
 				}
 				$scope.popUpEkpertise.close();
 			}
+            // tambah Paket 
+            $scope.paket = {}
+            $scope.cekPaket = function (bool) {
+                if (bool) {
+                    if ($scope.item.ruangantujuan == undefined) {
+                        toastr.error('Pilih ruangan dulu')
+                        return
+                    }
+                    $scope.popUpPaket.center().open()
+                    medifirstService.get('sysadmin/general/get-paket-tindakan').then(function (e) {
+                        $scope.sourcePaket = new kendo.data.DataSource({
+                            data: e.data,
+                            pageSize: 10,
+                        });
+                    })
+                }
+            }
+            $scope.optionsPaket = {
+                pageable: true,
+                scrollable: true,
+                columns: [
+                    { field: "namapaket", title: "Nama Paket", width: 120, },
+                    { field: "jml", title: "Jumlah Tindakan", width: 80 },
+                ],
+            };
+            $scope.data2 = function (dataItem) {
+                for (var i = 0; i < dataItem.details.length; i++) {
+                    dataItem.details[i].no = i + 1
+                }
+                return {
+                    dataSource: new kendo.data.DataSource({
+                        data: dataItem.details,
+
+                    }),
+                    columns: [
+                        { field: "namaproduk", title: "Nama Pelayanan", width: 120 }
+                    ]
+                }
+            };
+            $scope.tutupPaket = function () {
+                kosongkanPaket()
+                $scope.item.paket = false
+                $scope.popUpPaket.close()
+            }
+            $scope.$watch('paket.namaPaket', function (newVal, oldVal) {
+                if (newVal !== oldVal) {
+                    applyFilter("namapaket", newVal)
+                }
+            })
+            function applyFilter(filterField, filterValue) {
+                var dataGrid = $("#gridPaket").data("kendoGrid");
+                var currFilterObject = dataGrid.dataSource.filter();
+                var currentFilters = currFilterObject ? currFilterObject.filters : [];
+
+                if (currentFilters && currentFilters.length > 0) {
+                    for (var i = 0; i < currentFilters.length; i++) {
+                        if (currentFilters[i].field == filterField) {
+                            currentFilters.splice(i, 1);
+                            break;
+                        }
+                    }
+                }
+
+                if (filterValue.id) {
+                    currentFilters.push({
+                        field: filterField,
+                        operator: "eq",
+                        value: filterValue.id
+                    });
+                } else {
+                    currentFilters.push({
+                        field: filterField,
+                        operator: "contains",
+                        value: filterValue
+                    })
+                }
+
+                dataGrid.dataSource.filter({
+                    logic: "and",
+                    filters: currentFilters
+                })
+            }
+            $scope.resetFilterPaket = function () {
+                var dataGrid = $("#gridPaket").data("kendoGrid");
+                dataGrid.dataSource.filter({});
+                $scope.paket = {};
+            }
+            $scope.klikPaket = function (select) {
+                $scope.totalHargaDefault = 0
+            }
+            $scope.tambahPaket = function () {
+                if ($scope.dataPaketSelect == undefined) {
+                    toastr.error('Pilih Paket dulu')
+                    return
+                }
+
+                var arr = $scope.dataPaketSelect.details
+                $scope.loading = true
+                
+                for (var i = 0; i < arr.length; i++) {
+                    const detailPaket = arr[i];
+                    $scope.item.layanan[detailPaket.objectprodukfk] = true
+                }
+
+                $scope.loading = false
+                $scope.popUpPaket.close()
+            }
+            function kosongkanPaket() {
+                $scope.selectedPegawaiPaket = []
+                delete $scope.paket.jenisPelaksana
+                delete $scope.paket.namaPaket
+            }
+            // end tambah paket
         }
     ]);
 });
