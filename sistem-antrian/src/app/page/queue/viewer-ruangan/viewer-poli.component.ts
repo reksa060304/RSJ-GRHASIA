@@ -241,24 +241,19 @@ export class ViewerPoliComponent implements OnInit {
           : 'Nomor Antrian ' + Terbilang(this.item.antriTerakhir);
         const teksPengumuman = teksAntrian + '. Silahkan Ke ' + this.item.poliPanggil;
         
-        if (this.listRuangan) {
-          const ruanganChime = this.listRuangan.map(e => e.namaruangan);
-            
-          if (ruanganChime.includes(this.item.poliPanggil)) {
-            this.sound = new Howl({
-              src: ['assets/sound/in.wav'],
-              autoplay: true,
-              onend: () => this.playAudio(teksPengumuman, this.item.poliPanggil, this.item.antriTerakhir)
-            });
+        this.sound = new Howl({
+          src: ['assets/sound/in.wav'],
+          autoplay: true,
+          onend: () => {
             this.item.antrianYangDipanggil = this.item.antriTerakhir;
             this.item.poliYangDipanggil = this.item.poliPanggil;
             this.item.namaYangDipanggil = this.item.namapasien;
-          } else {
-            this.playAudio(teksPengumuman, this.item.poliPanggil, this.item.antriTerakhir);
+            this.dipanggil = false;
           }
-        } else {
-             this.playAudio(teksPengumuman, this.item.poliPanggil, this.item.antriTerakhir);
-        }
+        });
+        this.item.antrianYangDipanggil = this.item.antriTerakhir;
+        this.item.poliYangDipanggil = this.item.poliPanggil;
+        this.item.namaYangDipanggil = this.item.namapasien;
     }
     });
 

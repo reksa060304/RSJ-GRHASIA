@@ -86,36 +86,31 @@
         </div> -->
         <div class="p-col-12 p-lg-12 p-md-12" *ngIf="listRuanganAktif && listRuanganAktif.length > 0">
             <div class="widget-customer-carousel" [class.single-room-mode]="listRuanganAktif.length == 1">
-                <div class="card  brder text-center">
-                    <div class="p-grid">
-                        <div class="p-col-6 p-lg-6 p-md-6">
-                            <!-- <img class="image-left" [src]="'assets/img/'0.png'" alt="Foto Dokter"> -->
-                            <!-- Jika foto dokter ada, tampilkan fotonya, jika tidak ada, tampilkan gambar default -->
-                            <img *ngIf="item && item.listFotoDokter; else defaultImage" [src]="item.listFotoDokter" alt="Foto Dokter" style="width: 150px; height: 150px;">
+                <div class="card brder text-center">
+                    <div class="p-grid" style="height: 100%; align-items: center;">
+                        <!-- Kolom Kiri - Ruangan -->
+                        <div class="p-col-6 p-lg-6 p-md-6 left-column">
+                            <!-- Foto Dokter -->
+                            <img *ngIf="item && item.listFotoDokter; else defaultImage" [src]="item.listFotoDokter" alt="Foto Dokter" class="doctor-image">
                             <ng-template #defaultImage>
-                            <img class="image-left" src="assets/img/0.png" alt="Default Foto Dokter">
+                                <img class="doctor-image" src="assets/img/0.png" alt="Default Foto Dokter">
                             </ng-template>
-                            <div class="customer-item-content" style="margin-top:10px;">
+                            <div class="customer-item-content" style="margin-top: 30px;">
                                 <span class="text-menu">Silahkan Menuju</span>
                                 <p class="text-poliakhir">{{item ? item.poliYangDipanggil : '-'}}</p>                                
-                                <p class="text-menu">{{item && item.namadokter != undefined ? item.namadokter : '-' }}</p>
+                                <p class="text-menu text-dokter">{{item && item.namadokter != undefined ? item.namadokter : '-' }}</p>
                             </div>
                         </div> 
-                        <div class="p-col-6 p-lg-6 p-md-6">
-                            <p-scrollPanel [style]="{width: '100%'}">
-                                <div class="customer-item-content">
-                                    <h4 style="padding-top:5px;">No Antrian</h4>
-                                </div>
-                                <div class="badge-light" style=""
-                                    [ngClass]="{'blink ' : dipanggil}">
-                                    <p class="text-noakhir" style="">
-                                        {{item && item.antrianYangDipanggil != undefined ? item.antrianYangDipanggil : '-' }}
-                                    </p>
-                                </div>
-                                <!-- <span class="text-menu">
-                                    {{item.namapasien != undefined ? item.namapasien : '-' }}
-                                </span> -->
-                            </p-scrollPanel>
+                        <!-- Kolom Kanan - No Antrian -->
+                        <div class="p-col-6 p-lg-6 p-md-6 right-column">
+                            <div class="customer-item-content">
+                                <h4 class="antrian-label">No Antrian</h4>
+                            </div>
+                            <div class="badge-light" [ngClass]="{'blink ' : dipanggil}">
+                                <p class="text-noakhir">
+                                    {{item && item.antrianYangDipanggil != undefined ? item.antrianYangDipanggil : '-' }}
+                                </p>
+                            </div>
                         </div> 
                     </div>
                 </div>
@@ -369,46 +364,84 @@
     font-weight: bold; /* Optional: make the queue number bold */
 }
 
+/* Single Room Mode - Full Screen Layout */
 .single-room-mode .card {
     height: calc(100vh - 100px); 
     display: flex;
     align-items: center;
     justify-content: center;
+    padding: 40px !important;
 }
 
-.single-room-mode img {
-    width: 300px !important;
-    height: 300px !important;
+/* Kolom Kiri */
+.single-room-mode .left-column {
+    padding-right: 80px !important;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
 }
 
-</style>
-<style>
-/* ... existing styles ... */
+/* Kolom Kanan */
+.single-room-mode .right-column {
+    padding-left: 80px !important;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+}
+
+/* Gambar Dokter */
+.single-room-mode .doctor-image {
+    width: 280px !important;
+    height: 280px !important;
+    border-radius: 0 !important; 
+    object-fit: contain;
+    box-shadow: 0 8px 20px rgba(0,0,0,0.15);
+}
+
 /* Override specific to single room mode */
 .single-room-mode .text-poliakhir {
-    font-size: 5rem !important; /* Reduced from 8rem */
-    white-space: normal !important; /* Allow wrapping */
-    line-height: 1.2;
+    font-size: 6rem !important;
+    white-space: nowrap !important; 
+    line-height: 1.1;
     overflow: visible !important;
     text-overflow: clip !important;
     -webkit-line-clamp: unset !important;
-    margin-top: 2rem !important;
-    margin-bottom: 2rem !important;
+    margin-top: 1.5rem !important;
+    margin-bottom: 1.5rem !important;
+    font-weight: bold;
+    color: #2c3e50;
 }
 
 .single-room-mode .text-menu {
-    font-size: 3rem !important; /* Reduced from 4rem */
-    margin-top: 2rem !important;
-    margin-bottom: 2rem !important;
+    font-size: 3.5rem !important;
+    margin-top: 1rem !important;
+    margin-bottom: 1rem !important;
     display: block;
+    color: #34495e;
+}
+
+.single-room-mode .text-dokter {
+    font-size: 2.5rem !important;
+    color: #7f8c8d;
+    margin-top: 1.5rem !important;
 }
 
 .single-room-mode .text-noakhir {
-    font-size: 15rem !important; /* Reduced from 25rem to fit better if needed, or keep if it fits */
+    font-size: 20rem !important;
     font-weight: bold;
+    color: #2c3e50;
+    line-height: 1;
+}
+
+.single-room-mode .antrian-label {
+    font-size: 4rem !important;
+    color: #34495e;
+    margin-bottom: 2rem;
 }
 
 .single-room-mode h4 {
-    font-size: 3rem !important; /* Reduced from 5rem */
+    font-size: 4rem !important;
 }
 </style>
