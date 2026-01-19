@@ -329,13 +329,18 @@ class NoAuthController extends ApiController
         ->select('pr.namaproduk as tindakan', 'ht.hargasatuan as harga', 'kl.namakelas as kelas', 'jp.jenispelayanan')
         ->where('ht.statusenabled',true)
         // ->where('ht.kdprofile', $kdProfile)
-        ->where('ht.hargasatuan', '>', 0)
-        ->whereRaw("to_char(ht.tglberlakuawal, 'YYYY') >= '". $request['tahun'] ."'")
-        ->whereRaw("to_char(ht.tglberlakuakhir, 'YYYY') <= '". $request['tahun'] ."'");
+        ->where('ht.hargasatuan', '>', 0);
+        //->whereRaw("to_char(ht.tglberlakuawal, 'YYYY') >= '". $request['tahun'] ."'")
+       // ->whereRaw("to_char(ht.tglberlakuakhir, 'YYYY') <= '". $request['tahun'] ."'");
 
         if(isset($request['namatindakan']) && $request['namatindakan'] != "" && $request['namatindakan'] != null) {
             $data = $data->where('pr.namaproduk', 'ilike', '%'. $request['namatindakan']  .'%');
         }
+
+        if(isset($request['namakelas']) && $request['namakelas'] != "" && $request['namakelas'] != null) {
+            $data = $data->where('kl.namakelas', 'ilike', '%'. $request['namakelas']  .'%');
+        }
+
         $data = $data->get();
         $result = array(
             "data" => $data,
