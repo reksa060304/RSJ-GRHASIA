@@ -26231,6 +26231,7 @@ public function suratBuktiPengembalian(Request $request)
         $sts = DB::select(DB::raw("
             SELECT
                 sts.nosts,
+                sts.keterangan,
                 SUM(sts.totalsetoran) as totalsetoran,
                 sts.tglpenerimaan
             FROM surattandasetoran_t sts 
@@ -26239,7 +26240,7 @@ public function suratBuktiPengembalian(Request $request)
                 AND sts.kdprofile = 30 
                 AND sts.nosts = '".$request['nosts']."'  
             GROUP BY
-                sts.nosts, sts.tglpenerimaan  
+                sts.nosts, sts.keterangan, sts.tglpenerimaan  
         "));
 
         return view('report.spj.cetak-stsv2',compact('data', 'sts'));
