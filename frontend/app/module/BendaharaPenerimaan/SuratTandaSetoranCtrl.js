@@ -883,16 +883,45 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
                                 if(rek.id == detail.idlevel6){
                                     totalSetoran += parseFloat(detail.totaldibayarclosing)
                                     detailSTS.push(detail)
-                                }
 
-                                if(detail.namapasien !== null){
-                                    uraianSTS = 'TF an ' + detail.namapasien
-                                }
+                                    let desc = 'Pendapatan';
+                                    if(detail.carabayar) desc += ' ' + detail.carabayar;
+                                    if(detail.namapasien) desc += ' an ' + detail.namapasien;
+                                    if(detail.namaruangan) desc += ' Pelayanan ' + detail.namaruangan;
+                                    if (desc !== 'Pendapatan') {
 
-                                if(detail.namapasien == null){
-                                    uraianSTS = 'Penerimaan Tanggal ' + moment(new Date).format('DD-MM-YYYY')
+                                    }
                                 }
                             })
+
+                            let uniqueUraian = [];
+                            $scope.detailSTSV2.forEach((detail) => {
+                                if(rek.id == detail.idlevel6){
+                                    let descParts = [];
+                                    //cek apakah ada nama pasien
+                                    let isTunai = detail.carabayar && detail.carabayar.toUpperCase().includes('TUNAI');
+                                    
+                                    if (isTunai) {
+                                        descParts.push('Penerimaan Tanggal ' + moment($scope.item.tanggalSTS).format('DD-MM-YYYY'));
+                                    } else {
+                                        descParts.push('Pendapatan');
+                                        if(detail.carabayar) descParts.push(detail.carabayar);
+                                        if(detail.namapasien) descParts.push('an ' + detail.namapasien);
+                                        if(detail.namaruangan) descParts.push('Pelayanan ' + detail.namaruangan);
+                                    }
+                                    
+                                    let desc = descParts.join(' ');
+                                    if(desc !== 'Pendapatan' && !uniqueUraian.includes(desc)){
+                                        uniqueUraian.push(desc);
+                                    }
+                                }
+                            });
+
+                            if(uniqueUraian.length > 0){
+                                uraianSTS = uniqueUraian.join('; ');
+                            } else {
+                                uraianSTS = 'Penerimaan Tanggal ' + moment(new Date).format('DD-MM-YYYY');
+                            }
 
                             let obj = {
                                 tanggalSTS: moment($scope.item.tanggalSTS).format('YYYY-MM-DD HH:mm:ss'),
@@ -996,6 +1025,9 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
                             // refresh
                             init();
                             $scope.selectedData2 = []
+                            $scope.item.totalSetor = "";
+                            $scope.item.dipilih = "";
+                            $scope.item.terbilang = "";
                             $scope.popupSimpanSTS.close()
                                                            
                         });

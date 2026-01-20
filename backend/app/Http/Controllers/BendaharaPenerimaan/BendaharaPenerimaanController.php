@@ -11257,7 +11257,9 @@ class BendaharaPenerimaanController extends ApiController {
                     pd.objectkelompokpasienlastfk,
                     apd.objectruanganfk,
                     pm.namapasien,
-                    cb.id as idcarabayar
+                    cb.id as idcarabayar,
+                    cb.carabayar,
+                    ru.namaruangan
                 FROM sbm_filtered sbm
                 JOIN strukpelayanan_t sp ON sbm.nostrukfk = sp.norec AND sp.statusenabled = TRUE AND sp.kdprofile = :kdProfile
                 JOIN strukbuktipenerimaancarabayar_t sbmcr ON sbmcr.nosbmfk = sbm.norec AND sbmcr.statusenabled = TRUE AND sbmcr.kdprofile = :kdProfile
@@ -11266,6 +11268,7 @@ class BendaharaPenerimaanController extends ApiController {
                 JOIN antrianpasiendiperiksa_t apd ON apd.norec = pp.noregistrasifk AND apd.statusenabled = TRUE AND apd.kdprofile = :kdProfile
                 JOIN pasiendaftar_t pd ON pd.norec = apd.noregistrasifk AND pd.kdprofile = :kdProfile
                 JOIN pasien_m pm ON pm.id = pd.nocmfk
+                LEFT JOIN ruangan_m ru ON ru.id = apd.objectruanganfk
             ),
             -- TIPE 1: KELAS PASIEN (prioritas utama)
             tipe1_kelas AS (
@@ -11276,7 +11279,9 @@ class BendaharaPenerimaanController extends ApiController {
                     cap4.id idlevel4, cap5.id idlevel5, cap6.id idlevel6, cap7.id idlevel7,
                     bp.isobat isobat_group, bp.idcarabayar,
                     bp.subtotal::DECIMAL totaldibayarclosing,
-                    CASE WHEN bp.idcarabayar = 3 THEN bp.namapasien ELSE NULL END namapasien
+                    bp.namapasien,
+                    bp.carabayar,
+                    bp.namaruangan
                 FROM base_pelayanan bp
                 JOIN mapbkuakun_t mba ON 
                     POSITION(','||bp.objectkelompokpasienlastfk||',' IN ','||mba.objectkelompokpasienfk||',') > 0
@@ -11304,7 +11309,9 @@ class BendaharaPenerimaanController extends ApiController {
                     cap4.id idlevel4, cap5.id idlevel5, cap6.id idlevel6, cap7.id idlevel7,
                     bp.isobat isobat_group, bp.idcarabayar,
                     bp.subtotal::DECIMAL totaldibayarclosing,
-                    CASE WHEN bp.idcarabayar = 3 THEN bp.namapasien ELSE NULL END namapasien
+                    bp.namapasien,
+                    bp.carabayar,
+                    bp.namaruangan
                 FROM base_pelayanan bp
                 JOIN mapbkuakun3_t mba3 ON 
                     POSITION(','||bp.produkfk||',' IN ','||mba3.objectprodukfk||',') > 0
@@ -11331,15 +11338,21 @@ class BendaharaPenerimaanController extends ApiController {
                     cap4.id idlevel4, cap5.id idlevel5, cap6.id idlevel6, cap7.id idlevel7,
                     NULL::BOOLEAN isobat_group, sbmcr.objectcarabayarfk idcarabayar,
                     (spd.qtyproduk * spd.hargasatuan * spd.qtyoranglast)::DECIMAL totaldibayarclosing,
-                    NULL::VARCHAR namapasien
+                    pm.namapasien,
+                    cb.carabayar,
+                    ru.namaruangan
                 FROM sbm_filtered sbm
                 JOIN strukpelayanan_t sp ON sbm.nostrukfk = sp.norec AND sp.statusenabled = TRUE AND sp.kdprofile = :kdProfile
                 JOIN strukpelayanandetail_t spd ON sp.norec = spd.nostrukfk
                 JOIN strukbuktipenerimaancarabayar_t sbmcr ON sbmcr.nosbmfk = sbm.norec AND sbmcr.statusenabled = TRUE AND sbmcr.kdprofile = :kdProfile
-                JOIN mapbkuakun2_t mba2 ON 
+                JOIN carabayar_m cb ON cb.id = sbmcr.objectcarabayarfk AND cb.statusenabled = TRUE AND cb.kdprofile = :kdProfile
+                LEFT JOIN mapbkuakun2_t mba2 ON 
                     POSITION(','||spd.objectprodukfk||',' IN ','||mba2.objectprodukfk||',') > 0
                     AND mba2.statusenabled = TRUE
-                JOIN char_akun_pendapatan_m cap ON cap.id = mba2.objectakunpendapatanfk AND cap.statusenabled = TRUE
+                LEFT JOIN pasiendaftar_t pd ON pd.norec = sp.noregistrasifk
+                LEFT JOIN pasien_m pm ON pm.id = pd.nocmfk
+                LEFT JOIN ruangan_m ru ON ru.id = spd.objectruanganasalfk
+                LEFT JOIN char_akun_pendapatan_m cap ON cap.id = mba2.objectakunpendapatanfk AND cap.statusenabled = TRUE
                 LEFT JOIN char_akun_pendapatan_m cap7 ON cap7.id = cap.headfk
                 LEFT JOIN char_akun_pendapatan_m cap6 ON cap6.id = cap7.headfk
                 LEFT JOIN char_akun_pendapatan_m cap5 ON cap5.id = cap6.headfk
@@ -11347,6 +11360,7 @@ class BendaharaPenerimaanController extends ApiController {
                 LEFT JOIN char_akun_pendapatan_m cap3 ON cap3.id = cap4.headfk
                 LEFT JOIN char_akun_pendapatan_m cap2 ON cap2.id = cap3.headfk
                 LEFT JOIN char_akun_pendapatan_m cap1 ON cap1.id = cap2.headfk
+                WHERE mba2.id IS NOT NULL 
             ),
             -- TIPE 4: FALLBACK - item yang tidak ter-mapping di tipe manapun
             tipe4_fallback AS (
@@ -11357,9 +11371,11 @@ class BendaharaPenerimaanController extends ApiController {
                     def_rek.idlevel4, def_rek.idlevel5, def_rek.idlevel6, def_rek.idlevel7,
                     bp.isobat isobat_group, bp.idcarabayar,
                     bp.subtotal::DECIMAL totaldibayarclosing,
-                    CASE WHEN bp.idcarabayar = 3 THEN bp.namapasien ELSE NULL END namapasien
+                    bp.namapasien,
+                    bp.carabayar,
+                    bp.namaruangan
                 FROM base_pelayanan bp
-                -- Default rekening untuk fallback (Retribusi Pelayanan Lainnya - sesuaikan ID jika perlu)
+                -- Default rekening untuk fallback
                 CROSS JOIN (
                     SELECT 
                         cap.id, 
@@ -11387,21 +11403,24 @@ class BendaharaPenerimaanController extends ApiController {
                 AND NOT EXISTS (SELECT 1 FROM tipe2_produk t2 WHERE t2.pp_norec = bp.pp_norec)
             ),
             all_akun AS (
-                SELECT id, koderekening, namarekening, idlevel1, idlevel2, idlevel3, idlevel4, idlevel5, idlevel6, idlevel7, isobat_group, idcarabayar, totaldibayarclosing, namapasien FROM tipe1_kelas
+                SELECT id, koderekening, namarekening, idlevel1, idlevel2, idlevel3, idlevel4, idlevel5, idlevel6, idlevel7, isobat_group, idcarabayar, totaldibayarclosing, namapasien, carabayar, namaruangan FROM tipe1_kelas
                 UNION ALL
-                SELECT id, koderekening, namarekening, idlevel1, idlevel2, idlevel3, idlevel4, idlevel5, idlevel6, idlevel7, isobat_group, idcarabayar, totaldibayarclosing, namapasien FROM tipe2_produk
+                SELECT id, koderekening, namarekening, idlevel1, idlevel2, idlevel3, idlevel4, idlevel5, idlevel6, idlevel7, isobat_group, idcarabayar, totaldibayarclosing, namapasien, carabayar, namaruangan FROM tipe2_produk
                 UNION ALL
-                SELECT id, koderekening, namarekening, idlevel1, idlevel2, idlevel3, idlevel4, idlevel5, idlevel6, idlevel7, isobat_group, idcarabayar, totaldibayarclosing, namapasien FROM tipe3_nonlayanan
+                SELECT id, koderekening, namarekening, idlevel1, idlevel2, idlevel3, idlevel4, idlevel5, idlevel6, idlevel7, isobat_group, idcarabayar, totaldibayarclosing, namapasien, carabayar, namaruangan FROM tipe3_nonlayanan
                 UNION ALL
-                SELECT id, koderekening, namarekening, idlevel1, idlevel2, idlevel3, idlevel4, idlevel5, idlevel6, idlevel7, isobat_group, idcarabayar, totaldibayarclosing, namapasien FROM tipe4_fallback
+                SELECT id, koderekening, namarekening, idlevel1, idlevel2, idlevel3, idlevel4, idlevel5, idlevel6, idlevel7, isobat_group, idcarabayar, totaldibayarclosing, namapasien, carabayar, namaruangan FROM tipe4_fallback
             )
             SELECT 
                 id idrekening, koderekening, namarekening,
                 idlevel1, idlevel2, idlevel3, idlevel4, idlevel5, idlevel6, idlevel7,
                 SUM(totaldibayarclosing) totaldibayarclosing,
-                MAX(namapasien) namapasien
+                -- Ambil Nama Pasien
+                STRING_AGG(DISTINCT namapasien, ', ') as namapasien,
+                carabayar,
+                namaruangan
             FROM all_akun
-            GROUP BY id, koderekening, namarekening, idlevel1, idlevel2, idlevel3, idlevel4, idlevel5, idlevel6, idlevel7
+            GROUP BY id, koderekening, namarekening, idlevel1, idlevel2, idlevel3, idlevel4, idlevel5, idlevel6, idlevel7, carabayar, namaruangan
             ORDER BY 
                 split_part(koderekening,'.',3)::DECIMAL,
                 split_part(koderekening,'.',4)::DECIMAL,
