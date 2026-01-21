@@ -2770,7 +2770,7 @@ class AnggaranController extends ApiController {
                     WHERE
                         pj.statusenabled = TRUE
                         AND pj.kdprofile = ".$idProfile."
-                        AND ta.tahun = '".$setting[0]->tahunanggaran."'
+                        AND EXTRACT(YEAR FROM pj.tglpanjar) = '".$setting[0]->tahunanggaran."'                        
                     GROUP BY
                         pj.norec
                 "));
