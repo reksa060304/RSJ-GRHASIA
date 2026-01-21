@@ -3539,8 +3539,13 @@ class InaCbgController   extends ApiController
         try {
 
             if (isset($request['norec_pd'])) {
+                $norecPd = trim($request['norec_pd']);
                 $delete = DB::table('hasilgrouping_t')
-                ->where("noregistrasifk",$request['norec_pd'])
+                ->where("noregistrasifk",$norecPd)
+                ->delete();
+
+                $delete2 = DB::table('hasilgroupinginacbg_t')
+                ->where("noregistrasifk",$norecPd)
                 ->delete();
             }
             
@@ -3576,8 +3581,13 @@ class InaCbgController   extends ApiController
         try {
 
             if (isset($request['norec_pd'])) {
+                $norecPd = trim($request['norec_pd']);
                 $delete = DB::table('hasilgroupingidrg_t')
-                ->where("noregistrasifk",$request['norec_pd'])
+                ->where("noregistrasifk",$norecPd)
+                ->delete();
+
+                $delete2 = DB::table('hasilgroupinginacbg_t')
+                ->where("noregistrasifk",$norecPd)
                 ->delete();
             }
             
@@ -4125,11 +4135,12 @@ class InaCbgController   extends ApiController
         $kdProfile = (int)$this->getDataKdProfile($request);
         DB::beginTransaction();
         try {
-            $delete = HasilGroupingInacbg::where('noregistrasifk', $request['noregistrasifk'])->delete();
+            $norecPd = trim($request['noregistrasifk']);
+            $delete = HasilGroupingInacbg::where('noregistrasifk', $norecPd)->delete();
 
             $new = new HasilGroupingInacbg();
             $new->norec =  $new->generateNewId();
-            $new->noregistrasifk = $request['noregistrasifk'];
+            $new->noregistrasifk = $norecPd;
             $new->kdprofile = $kdProfile;
             $new->tglgrouping = date('Y-m-d H:i:s');
             $new->cbg_code = $request['cbg_code'];
@@ -4175,8 +4186,9 @@ class InaCbgController   extends ApiController
     }
 
     public function getGroupingInacbg(Request $request){
+        $norecPd = trim($request['noregistrasifk']);
         $data = DB::table('hasilgroupinginacbg_t')
-                ->where("noregistrasifk",$request['noregistrasifk'])
+                ->where("noregistrasifk",$norecPd)
                 ->first();
 
         return $this->respond($data);

@@ -48,6 +48,10 @@ define(['initialize', 'Configuration'], function (initialize,configuration) {
 			$scope.istopup = false;
 			$scope.isRanap = false;
 			$scope.isNoneSpecial = false;
+			$scope.isDisableDrug = false;
+			$scope.isDisableProcedure = false;
+			$scope.isDisableProsthesis = false;
+			$scope.isDisableInvestigation = false;
 			var responData = "";
 			var data2 = []
 			var dataSave = []
@@ -5061,47 +5065,86 @@ define(['initialize', 'Configuration'], function (initialize,configuration) {
 					return
 				}
 
-				// if (responData[0].dataresponse.hasOwnProperty("special_cmg_option") == true && responData[0].dataresponse.special_cmg_option.length > 0)
+				var spesialDrug = []
+				var specialProcedure = []
+				var specialProsthesis = []
+				var specialInvestigation = []
 
 				if($scope.dataPasienSelected.response != null && $scope.dataPasienSelected.response.hasOwnProperty("special_cmg_option") == true && $scope.dataPasienSelected.response.special_cmg_option.length > 0) {
-					var spesialDrug = []
-					var specialProcedure = []
-					var specialProsthesis = []
-					var specialInvestigation = []
+					
 					for (let i = 0; i < $scope.dataPasienSelected.response.special_cmg_option.length; i++) {
 						const element = $scope.dataPasienSelected.response.special_cmg_option[i];
 						if (element.type == 'Special Drug') {
 							spesialDrug.push(element)
-							$scope.item.specialdrug = setItemCMG(element)
+							// $scope.item.specialdrug = setItemCMG(element)
 						}
 						if (element.type == 'Special Procedure') {
 							specialProcedure.push(element)
-							$scope.item.specialprocedure = setItemCMG(element)
+							// $scope.item.specialprocedure = setItemCMG(element)
 						}
 						if (element.type == 'Special Prosthesis') {
 							specialProsthesis.push(element)
-							$scope.item.specialprosthesis = setItemCMG(element)
+							// $scope.item.specialprosthesis = setItemCMG(element)
 						}
 						if (element.type == 'Special Investigation') {
 							specialInvestigation.push(element)
-							$scope.item.specialinvestigation = setItemCMG(element)
+							// $scope.item.specialinvestigation = setItemCMG(element)
 						}
 					}
-					$scope.listspecialdrug = spesialDrug
-					$scope.listspecialprocedure = specialProcedure
-					$scope.listspecialprosthesis = specialProsthesis
-					$scope.listspecialinvestigation = specialInvestigation
+					
+				} 
+				
+				// tambah logic none jika tidak ada data special cmg
+				if (spesialDrug.length == 0) {
+					spesialDrug.push({code: "", description: "None"})
+				} else {
+                     spesialDrug.unshift({code: "", description: "None"})
+                }
+
+				if (specialProcedure.length == 0) {
+					specialProcedure.push({code: "", description: "None"})
+				} else {
+                     specialProcedure.unshift({code: "", description: "None"})
+                }
+
+				if (specialProsthesis.length == 0) {
+					specialProsthesis.push({code: "", description: "None"})
+				} else {
+                    specialProsthesis.unshift({code: "", description: "None"})
+                }
+
+				if (specialInvestigation.length == 0) {
+					specialInvestigation.push({code: "", description: "None"})
+				} else {
+                    specialInvestigation.unshift({code: "", description: "None"})
+                }
+
+                $scope.listspecialdrug = spesialDrug
+                $scope.listspecialprocedure = specialProcedure
+                $scope.listspecialprosthesis = specialProsthesis
+                $scope.listspecialinvestigation = specialInvestigation
+
+				$timeout(function() {
+					
+					$scope.item.specialdrug = spesialDrug[0]
+					$scope.item.specialprocedure = specialProcedure[0]
+					$scope.item.specialprosthesis = specialProsthesis[0]
+					$scope.item.specialinvestigation = specialInvestigation[0]
 
 					// Get current actions
 					var actions = $scope.popupCMG.options.actions;
 					// Remove "Close" button
-					actions.splice(actions.indexOf("Close"), 1);
+					if(actions.indexOf("Close") >= 0) {
+						actions.splice(actions.indexOf("Close"), 1);
+					}
 					// Set the new options
 					$scope.popupCMG.setOptions({ actions : actions });
 					$scope.popupCMG.center().open();
-				} else {
-					toastr.error('Pasien ini Bukan Top-up CMG Options!')
-				}
+				}, 100);
+
+				// } else {
+				// 	toastr.error('Pasien ini Bukan Top-up CMG Options!')
+				// }
 				// var dt1 ={}
 				// var dt2 =[]
 				// for (var i = dataSave.length - 1; i >= 0; i--) {
@@ -7124,35 +7167,21 @@ define(['initialize', 'Configuration'], function (initialize,configuration) {
 				
 			}
 			$scope.hitungSpecialCMG = function(e) {
-				var cmg = "";
-				if ($scope.item.specialprocedure) {
-					if (cmg != "") {
-						cmg = cmg + '#' + $scope.item.specialprocedure.code
-					} else {
-						cmg = $scope.item.specialprocedure.code
-					}
+				var cmgArr = [];
+				if ($scope.item.specialprocedure && $scope.item.specialprocedure.code) {
+					cmgArr.push($scope.item.specialprocedure.code);
 				}
-				if ($scope.item.specialprosthesis) {
-					if (cmg != "") {
-						cmg = cmg + '#' + $scope.item.specialprosthesis.code
-					} else {
-						cmg = $scope.item.specialprosthesis.code
-					}
+				if ($scope.item.specialprosthesis && $scope.item.specialprosthesis.code) {
+					cmgArr.push($scope.item.specialprosthesis.code);
 				}
-				if ($scope.item.specialinvestigation) {
-					if (cmg != "") {
-						cmg = cmg + '#' + $scope.item.specialinvestigation.code
-					} else {
-						cmg = $scope.item.specialinvestigation.code
-					}
+				if ($scope.item.specialinvestigation && $scope.item.specialinvestigation.code) {
+					cmgArr.push($scope.item.specialinvestigation.code);
 				}
-				if ($scope.item.specialdrug) {
-					if (cmg != "") {
-						cmg = cmg + '#' + $scope.item.specialdrug.code
-					} else {
-						cmg = $scope.item.specialdrug.code
-					}
+				if ($scope.item.specialdrug && $scope.item.specialdrug.code) {
+					cmgArr.push($scope.item.specialdrug.code);
 				}
+				
+				var cmg = cmgArr.join('#');
 
 				var dt1 = {}
 				var dt2 = []
@@ -7189,6 +7218,22 @@ define(['initialize', 'Configuration'], function (initialize,configuration) {
 					if(ambil == "code") { return "" }
 					if(ambil == "tarif") { return 0 }
 				}
+			}
+
+            $scope.getTotalClaim = function(data) {
+				var total = 0;
+				if (data.tariff) {
+					total += parseFloat(data.tariff);
+				}
+				if (data.response && data.response.response_inacbg && data.response.response_inacbg.special_cmg) {
+					var specials = data.response.response_inacbg.special_cmg;
+					for (var i = 0; i < specials.length; i++) {
+						if (specials[i].tariff) {
+							total += parseFloat(specials[i].tariff);
+						}
+					}
+				}
+				return total;
 			}
 
 			$scope.batalgrouper2 = function() {
@@ -7326,11 +7371,11 @@ define(['initialize', 'Configuration'], function (initialize,configuration) {
 				
 
 				// Get current actions
-				var actions = $scope.popupApgarScore.options.actions;
-				// Remove "Close" button
-				actions.splice(actions.indexOf("Close"), 1);
-				// Set the new options
-				$scope.popupApgarScore.setOptions({ actions : actions });
+				// var actions = $scope.popupApgarScore.options.actions;
+				// // Remove "Close" button
+				// actions.splice(actions.indexOf("Close"), 1);
+				// // Set the new options
+				// $scope.popupApgarScore.setOptions({ actions : actions });
             }
 
 			function loadicdInu() {
@@ -7478,11 +7523,329 @@ define(['initialize', 'Configuration'], function (initialize,configuration) {
             //     });
 			// }
 			$scope.InputDiagnosa = function () {
+                console.log("InputDiagnosa called", $scope.dataPasienSelected);
                 if ($scope.dataPasienSelected.noregistrasi == undefined) {
+					console.error("InputDiagnosa: noregistrasi undefined");
 					toastr.error("Harap pilih data terlebih dahulu !");
 					return
                 }
-                $scope.grupingtab = false;
+
+				$scope.itemPopUp = $scope.dataPasienSelected
+
+				// Sync inacbg
+				var objDataStr = {
+					"data": [{
+						"metadata": {
+							"method": "get_claim_data"
+						},
+						"data": {
+							"nomor_sep": $scope.dataPasienSelected.nosep
+						}
+					}]
+				}
+				medifirstService.post('bridging/inacbg/save-bridging-inacbg', objDataStr).then(function (e) {
+					if (e.data.dataresponse && e.data.dataresponse[0] && e.data.dataresponse[0].dataresponse && e.data.dataresponse[0].dataresponse.metadata.code == 200) {
+						var dataInacbg = e.data.dataresponse[0].dataresponse.response.data;
+						// Update itemPopUp
+						if ($scope.itemPopUp) {
+							$scope.itemPopUp.diagnosa = dataInacbg.diagnosa;
+							$scope.itemPopUp.procedure = dataInacbg.procedure;
+							$scope.itemPopUp.diagnosa_inagrouper = dataInacbg.diagnosa_inagrouper;
+							$scope.itemPopUp.procedure_inagrouper = dataInacbg.procedure_inagrouper;
+							$scope.itemPopUp.tarif_rs = dataInacbg.tarif_rs;
+                            
+                             // Update grouper 
+                             if (dataInacbg.grouper) {
+                                $scope.itemPopUp.grouper = dataInacbg.grouper
+                                if(dataInacbg.grouper.response_idrg){
+                                     $scope.itemPopUp.data_idrg = dataInacbg.grouper.response_idrg
+									 // Update status klaim 
+                                     if(dataInacbg.grouper.response_idrg.status_cd == 'final'){
+                                   
+                                         $scope.itemPopUp.statusklaim = 'Grouping iDRG Final';
+										 $scope.grouper_idrg = true; 
+                                     }
+                                }
+                             }
+							 
+							 if(dataInacbg.klaim_status_cd && dataInacbg.klaim_status_cd != 'normal' && (!$scope.itemPopUp.statusklaim || !$scope.itemPopUp.statusklaim.includes('Final'))){
+								$scope.itemPopUp.statusklaim = dataInacbg.klaim_status_cd;
+							 }
+							 if (dataInacbg.klaim_status_cd == 'normal') {
+								 if (dataInacbg.grouper && dataInacbg.grouper.response_idrg && dataInacbg.grouper.response_inacbg == null) {
+									 $scope.itemPopUp.statusklaim = 'Klaim';									
+									 var objDelete = {
+										 norec_pd: $scope.itemPopUp.norec
+									 };
+									 medifirstService.postNonMessage('bridging/inacbg/delete-grouping-inacbg', objDelete).then(function (e) {
+										 console.log('Deleted local INACBG grouping - E-Klaim status normal, no response_inacbg');
+										 $scope.grupingtab = false;
+										 $scope.itemPopUp.cbg_code = null;
+										 $scope.itemPopUp.cbg_description = null;
+										 $scope.itemPopUp.cbg_tarif = null;
+									 });
+								 } else if (dataInacbg.grouper && dataInacbg.grouper.response_inacbg != null) {
+									 $scope.itemPopUp.statusklaim = 'Grouping'; 
+								 }
+							 }
+							 if (dataInacbg.grouper && dataInacbg.grouper.response_idrg && dataInacbg.grouper.response_idrg.status_cd == 'final') {
+								$scope.itemPopUp.statusklaim = 'Grouping iDRG Final';
+							 }
+							 
+							 
+							 if (dataInacbg.grouper && dataInacbg.grouper.response_inacbg && dataInacbg.grouper.response_inacbg.status_cd == 'final') {
+								$scope.itemPopUp.statusklaim = 'Grouping INACBG Final';
+							 }
+                            //  console.log('E-Klaim INACBG Data:', dataInacbg);
+                             $scope.remoteInacbgData = dataInacbg;
+
+                             
+                             function lookupDiagnosaName(kddiagnosa) {
+                                 return medifirstService.get('master/diagnosa/get-combo-diagnosa?kddiagnosa=' + kddiagnosa)
+                                     .then(function(res) {
+                                         if (res.data && res.data.length > 0) {
+                                             return res.data[0].namadiagnosa || kddiagnosa;
+                                         }
+                                         return kddiagnosa;
+                                     }).catch(function() { return kddiagnosa; });
+                             }
+
+                             // helper melihat nama prosedur
+                             function lookupProsedurName(kddiagnosatindakan) {
+                                 return medifirstService.get('master/diagnosa-tindakan/get-combo-diagnosa-tindakan?kddiagnosatindakan=' + kddiagnosatindakan)
+                                     .then(function(res) {
+                                         if (res.data && res.data.length > 0) {
+                                             return res.data[0].namadiagnosatindakan || kddiagnosatindakan;
+                                         }
+                                         return kddiagnosatindakan;
+                                     }).catch(function() { return kddiagnosatindakan; })
+                             }
+
+                             if (dataInacbg.diagnosa) {
+                                 var arrDiagInacbg = dataInacbg.diagnosa.split('#');
+                                 var gridDataInacbg = [];
+                                 for (var i = 0; i < arrDiagInacbg.length; i++) {
+                                     if (arrDiagInacbg[i].trim()) {
+                                         gridDataInacbg.push({
+                                             jenisdiagnosa: i === 0 ? 'Primer' : 'Sekunder',
+                                             kddiagnosa: arrDiagInacbg[i],
+                                             namadiagnosa: arrDiagInacbg[i], // diganti setelah lookup
+                                             keterangan: 'E-Klaim Sync'
+                                         });
+                                     }
+                                 }
+                                 
+                                 if (gridDataInacbg.length > 0) {
+                                     var inacbgLookupPromises = gridDataInacbg.map(function(item) { return lookupDiagnosaName(item.kddiagnosa); });
+                                     Promise.all(inacbgLookupPromises).then(function(names) {
+                                         for (var i = 0; i < gridDataInacbg.length; i++) {
+                                             gridDataInacbg[i].namadiagnosa = names[i];
+                                         }
+                                         $scope.listGridDiagnosa.data(gridDataInacbg);
+                                         $scope.$apply();
+                                     });
+                                 } else {
+                                     $scope.listGridDiagnosa.data(gridDataInacbg);
+                                 }
+                             }
+
+                             if (dataInacbg.procedure) {
+                                 var arrProcInacbg = dataInacbg.procedure.split('#');
+                                 var gridDataProcInacbg = [];
+                                 for (var i = 0; i < arrProcInacbg.length; i++) {
+                                     if (arrProcInacbg[i].trim()) {
+                                         gridDataProcInacbg.push({
+                                             kddiagnosatindakan: arrProcInacbg[i],
+                                             namadiagnosatindakan: arrProcInacbg[i], // diganti setelah lookup
+                                             ketdiagnosa: 'E-Klaim Sync'
+                                         });
+                                     }
+                                 }
+
+                                 if (gridDataProcInacbg.length > 0) {
+                                     var inacbgProcLookupPromises = gridDataProcInacbg.map(function(item) { return lookupProsedurName(item.kddiagnosatindakan); });
+                                     Promise.all(inacbgProcLookupPromises).then(function(names) {
+                                         for (var i = 0; i < gridDataProcInacbg.length; i++) {
+                                             gridDataProcInacbg[i].namadiagnosatindakan = names[i];
+                                         }
+                                         $scope.listGridDiagnosa1.data(gridDataProcInacbg);
+                                         $scope.$apply();
+                                     });
+                                 } else {
+                                     $scope.listGridDiagnosa1.data(gridDataProcInacbg);
+                                 }
+                             }
+
+                             // Persiapan importidrg10 untuk simpan iDRG (dari field 'diagnosa_inagrouper')
+                             if (dataInacbg.diagnosa_inagrouper) {
+                                 var arrDiagIdrg = dataInacbg.diagnosa_inagrouper.split('#');
+                                 $scope.importIcd = [];
+                                 for (var i = 0; i < arrDiagIdrg.length; i++) {
+                                     if (arrDiagIdrg[i].trim()) {
+                                         $scope.importIcd.push({
+                                             kddiagnosa: arrDiagIdrg[i],
+                                             type: i === 0 ? "Primer" : "Sekunder"
+                                         });
+                                     }
+                                 }
+                             }
+
+                             // Persiapan importicd9 untuk simpan iDRG (dari field 'procedure_inagrouper')
+                             if (dataInacbg.procedure_inagrouper) {
+                                 var arrProcIdrg = dataInacbg.procedure_inagrouper.split('#');
+                                 $scope.importIcd9 = [];
+                                 for (var i = 0; i < arrProcIdrg.length; i++) {
+                                     if (arrProcIdrg[i].trim()) {
+                                         $scope.importIcd9.push({
+                                             kddiagnosatindakan: arrProcIdrg[i]
+                                         });
+                                     }
+                                 }
+                             }
+
+                             // Auto-save diagnosa ICD-10 to local database (save as iDRG type)
+                             if ($scope.importIcd && $scope.importIcd.length > 0) {
+                                 var eKlaimIcd10 = dataInacbg.diagnosa_inagrouper || '';
+                                 var localIcd10 = $scope.itemPopUp.icd10idrg || $scope.dataPasienSelected.icd10idrg || '';
+                                 localIcd10 = localIcd10.replace(/^#/, '');
+                                 
+                                 if (eKlaimIcd10 !== localIcd10) {
+                                     var objSaveIcd10 = {
+                                         detaildiagnosapasien: {
+                                             import: 1,
+                                             noregistrasifk: $scope.dataPasienSelected.norec_apd,
+                                             tglregistrasi: $scope.dataPasienSelected.tglregistrasi,
+                                             data: $scope.importIcd,
+                                             tglinputdiagnosa: moment(new Date()).format('YYYY-MM-DD HH:mm:ss'),
+                                             jenistype: 'iDRG'
+                                         }
+                                     };
+                                     medifirstService.post('registrasi/save-diagnosa-pasien-import', objSaveIcd10).then(function(res) {
+                                         console.log('Auto-save ICD-10 iDRG dari get_claim_data berhasil (data berbeda)');
+                                         loadIdrg(true);
+                                     });
+                                 } else {
+                                    //  console.log('ICD-10 sudah sinkron, skip save');
+                                 }
+                             }
+
+                             if ($scope.importIcd9 && $scope.importIcd9.length > 0) {
+                                 var eKlaimIcd9 = dataInacbg.procedure_inagrouper || '';
+                                 var localIcd9 = $scope.itemPopUp.icd9idrg || $scope.dataPasienSelected.icd9idrg || '';
+                                 localIcd9 = localIcd9.replace(/^#/, '');
+                                 
+                                 if (eKlaimIcd9 !== localIcd9) {
+                                     var objSaveIcd9 = {
+                                         detaildiagnosatindakanpasien: {
+                                             objectpasienfk: $scope.dataPasienSelected.norec_apd,
+                                             tglpendaftaran: $scope.dataPasienSelected.tglregistrasi,
+                                             data: $scope.importIcd9,
+                                             ketdiagnosa: 'iDRG' 
+                                         }
+                                     };
+                                     medifirstService.post('registrasi/save-diagnosa-tindakan-pasien-import', objSaveIcd9).then(function(res) {
+                                         console.log('Auto-save ICD-9 iDRG dari get_claim_data berhasil (data berbeda)');
+                                         loadIdrgTd(true); 
+                                     });
+                                 } else {
+                                     console.log('ICD-9 sudah sinkron, skip save');
+                                 }
+                             }
+
+        
+                             if (dataInacbg.grouper && dataInacbg.grouper.response_idrg) {
+                                 var idrg = dataInacbg.grouper.response_idrg;
+                                 $scope.itemPopUp.data_idrg = idrg;
+                                 $scope.itemPopUp.data_idrg.tglgrouping = moment(new Date()).format('D MMM YYYY HH:mm');
+                                 $scope.grouper_idrg = true;
+
+                                 // Sync to local DB in background - only if different
+                                 var localDrgCode = $scope.dataPasienSelected.drg_code || '';
+                                 if (idrg.drg_code !== localDrgCode) {
+                                     var objIdrg = {
+                                        noregistrasifk: $scope.itemPopUp.norec,
+                                        drg_code: idrg.drg_code,
+                                        drg_description: idrg.drg_description,
+                                        logic_version: idrg.logic_version,
+                                        mdc_description: idrg.mdc_description,
+                                        mdc_number: idrg.mdc_number,
+                                        script_version: idrg.script_version
+                                     };
+                                     medifirstService.post('bridging/inacbg/save-hasil-grouping-idrg', objIdrg).then(function() {
+                                         console.log('Auto-save hasil grouping iDRG berhasil (data berbeda)');
+                                     });
+                                 } else {
+                                     console.log('Hasil grouping iDRG sudah sinkron, skip save');
+                                 }
+                             }
+                             if (dataInacbg.grouper && (dataInacbg.grouper.response_inacbg || dataInacbg.cbg_code)) {
+                                 var inacbg = dataInacbg.grouper.response_inacbg || {};
+                                 
+                                 // mapping kembali untuk kompatibilitas
+                                 var cbgCode = (inacbg.cbg && inacbg.cbg.code) || inacbg.cbg_code || dataInacbg.cbg_code;
+                                 var cbgDesc = (inacbg.cbg && inacbg.cbg.description) || inacbg.cbg_description || dataInacbg.cbg_description;
+                                 var cbgTarif = inacbg.cbg_tarif || inacbg.tariff || dataInacbg.cbg_tarif;
+                                 var subClass = inacbg.subclass || dataInacbg.subclass;
+                                 
+                                 var parsedTarif = cbgTarif ? parseInt(cbgTarif) : 0;
+                                 console.log('DEBUG TARIF:', cbgTarif, '->', parsedTarif);
+
+                                 $scope.itemPopUp.cbg_code = cbgCode;
+                                 $scope.itemPopUp.cbg_description = cbgDesc;
+                                 $scope.itemPopUp.cbg_tarif = parsedTarif;
+                                 $scope.itemPopUp.tariff = parsedTarif; 
+                                 $scope.itemPopUp.total_tarif = parsedTarif; 
+                                 $scope.grupingtab = true;
+
+                                 if (inacbg.status_cd === 'final') {
+                                     $scope.itemPopUp.status_cd = 'final';
+                                     $scope.itemPopUp.statusklaim = 'Grouping INACBG Final';
+                                 }
+
+                                 // Sync to local DB in background - only if different
+                                 var localCbgCode = $scope.dataPasienSelected.cbg_code || '';
+                                 var localTarif = $scope.dataPasienSelected.cbg_tarif;
+                                 var localStatus = $scope.dataPasienSelected.status;
+                                 
+                                 var isDiff = false;
+                                 if (cbgCode !== localCbgCode) isDiff = true;
+                                 if (cbgTarif && parseInt(cbgTarif) != parseInt(localTarif)) isDiff = true;
+                                 if (inacbg.status_cd && inacbg.status_cd !== localStatus) isDiff = true;
+                                 if (inacbg.status_cd === 'final') isDiff = true;
+
+                                 if (cbgCode && isDiff) {
+                                     var objInacbg = {
+                                        noregistrasifk: $scope.itemPopUp.norec,
+                                        cbg_code: cbgCode,
+                                        cbg_description: cbgDesc,
+                                        cbg_tarif: cbgTarif ? parseInt(cbgTarif) : 0,
+                                        subclass: subClass,
+                                        status: inacbg.status_cd || dataInacbg.klaim_status_cd, 
+                                        special_cmg_drug_code: inacbg.special_cmg_drug_code || dataInacbg.special_cmg_drug_code,
+                                        special_cmg_drug_description: inacbg.special_cmg_drug_description || dataInacbg.special_cmg_drug_description,
+                                        special_cmg_procedure_code: inacbg.special_cmg_procedure_code || dataInacbg.special_cmg_procedure_code,
+                                        special_cmg_procedure_description: inacbg.special_cmg_procedure_description || dataInacbg.special_cmg_procedure_description,
+                                        special_cmg_prosthesis_code: inacbg.special_cmg_prosthesis_code || dataInacbg.special_cmg_prosthesis_code,
+                                        special_cmg_prosthesis_description: inacbg.special_cmg_prosthesis_description || dataInacbg.special_cmg_prosthesis_description,
+                                        special_cmg_investigation_code: inacbg.special_cmg_investigation_code || dataInacbg.special_cmg_investigation_code,
+                                        special_cmg_investigation_description: inacbg.special_cmg_investigation_description || dataInacbg.special_cmg_investigation_description
+                                     };
+                                     console.log('Auto-saving INACBG Payload:', objInacbg);
+                                     medifirstService.post('bridging/inacbg/save-hasil-grouping-inacbg', objInacbg).then(function() {
+                                         console.log('Auto-save hasil grouping INA-CBG berhasil (data berbeda/final)');
+                                     });
+                                 } else {
+                                     console.log('Hasil grouping INA-CBG sudah sinkron, skip save');
+                                 }
+                             }
+
+                             loadIdrg(true);
+                             loadIdrgTd(true);
+						}
+					}
+				});
+				// End Sync inacbg
+                // $scope.grupingtab = false;
 				$scope.grouper_idrg = false;
 				$scope.itemgrop = {}
 				$scope.listspecialdrug = []
@@ -7502,7 +7865,7 @@ define(['initialize', 'Configuration'], function (initialize,configuration) {
 				$scope.itemPopUp.icd10 = null
 				$scope.itemPopUp.diagnosa_inagrouper = null
 
-				$scope.itemPopUp = $scope.dataPasienSelected
+				// $scope.itemPopUp = $scope.dataPasienSelected
 				if ($scope.itemPopUp.objectdepartemenfk == 16) {
 					$scope.isRanap = true
 				} else {
@@ -7567,12 +7930,17 @@ define(['initialize', 'Configuration'], function (initialize,configuration) {
 				$scope.listGridDiagnosa1 = new kendo.data.DataSource({
 						data: [],
 				});
-                $scope.popUpInputDiagnosa.center().open()
+                console.log("InputDiagnosa: Opening popup", $scope.popUpInputDiagnosa);
+                if ($scope.popUpInputDiagnosa) {
+                    $scope.popUpInputDiagnosa.center().open()
+                } else {
+                    console.error("InputDiagnosa: popUpInputDiagnosa is undefined!");
+                }
 				$scope.dataPasienSelected.tglregistrasi = new Date($scope.dataPasienSelected.tglregistrasi);
                 loadpopup();
 				loadRiwayat();
-				loadIdrg()
-				loadIdrgTd()
+				loadIdrg(true)
+				loadIdrgTd(true)
 				loadGroupingIdrg()
 				loadGroupingInacbg()
 				loadicd();
@@ -9373,14 +9741,12 @@ define(['initialize', 'Configuration'], function (initialize,configuration) {
 			
 		
 
-			$scope.import = function() {
+			$scope.import = function(isSilent) {
 				if ($scope.dataPasienSelected.noregistrasi == undefined) {
 					toastr.error('Data pasien belum dipilih');
 					return;
 				}
 				$scope.now = new Date();
-				
-				
 				
                 var detaildiagnosapasien = {
 					import: 1,
@@ -9394,7 +9760,7 @@ define(['initialize', 'Configuration'], function (initialize,configuration) {
                     detaildiagnosapasien: detaildiagnosapasien,
                 }
 
-				if ($scope.item.countIcdInacbg > 0) {
+				if ($scope.item.countIcdInacbg > 0 && !isSilent) {
 					var confirm = $mdDialog.confirm()
 					.title('Informasi')
 					.textContent('Diagnosa UNU Grouper sudah ada, apakah ingin tetap melakukan import?')
@@ -9418,10 +9784,12 @@ define(['initialize', 'Configuration'], function (initialize,configuration) {
 					  
 				} else {
 					medifirstService.post('registrasi/save-diagnosa-pasien-import', objSave).then(function (e) {
-						for (var i = 0; i < $scope.importIcd.length; i++) {
-							$scope.saveLogging('Diagnosis', 'Norec DiagnosaPasien_T', e.data.data.norec,
-						'Input Diagnosis ICD 10 ( ' + $scope.importIcd[i].kdNama + ' )' + ' No Registrasi / No RM ' + $scope.dataPasienSelected.noregistrasi
-						+ '/ ' +  $scope.dataPasienSelected.nocm);
+						if($scope.importIcd){
+							for (var i = 0; i < $scope.importIcd.length; i++) {
+								$scope.saveLogging('Diagnosis', 'Norec DiagnosaPasien_T', e.data.data.norec,
+							'Input Diagnosis ICD 10 ( ' + $scope.importIcd[i].kdNama + ' )' + ' No Registrasi / No RM ' + $scope.dataPasienSelected.noregistrasi
+							+ '/ ' +  $scope.dataPasienSelected.nocm);
+							}
 						}
 						
 						delete $scope.importIcd;
@@ -9429,11 +9797,11 @@ define(['initialize', 'Configuration'], function (initialize,configuration) {
 						// loadData()
 					})
 				}
-				$scope.import1();
+				$scope.import1(isSilent);
 			}
 
 
-			$scope.import1 = function() {
+			$scope.import1 = function(isSilent) {
 				$scope.now = new Date();
                 var detaildiagnosatindakanpasien = {
                     objectpasienfk: $scope.dataPasienSelected.norec_apd,
@@ -9446,7 +9814,7 @@ define(['initialize', 'Configuration'], function (initialize,configuration) {
                     detaildiagnosatindakanpasien: detaildiagnosatindakanpasien
                 }
 
-				if ($scope.item.countIcd9Inacbg > 0) {
+				if ($scope.item.countIcd9Inacbg > 0 && !isSilent) {
 					var confirm = $mdDialog.confirm()
 					.title('Informasi')
 					.textContent('Diagnosa ICD 9 UNU sudah ada, apakah ingin tetap melakukan import?')
@@ -9454,10 +9822,12 @@ define(['initialize', 'Configuration'], function (initialize,configuration) {
 					.ok('Ya')
           			$mdDialog.show(confirm).then(function () {
 						medifirstService.post('registrasi/save-diagnosa-tindakan-pasien-import', objSave).then(function (e) {
-							for (var i = 0; i < $scope.importIcd9.length; i++) {
-								$scope.saveLogging('Diagnosis', 'Norec DiagnosaTindakanPasien_T', e.data.data.norec,
-								'Input Diagnosis ICD 9 ( ' +  $scope.importIcd9[i].kdNama + ' )' + ' No Registrasi / No RM ' + $scope.dataPasienSelected.noregistrasi
-								+ '/ ' +  $scope.dataPasienSelected.nocm)
+							if($scope.importIcd9){
+								for (var i = 0; i < $scope.importIcd9.length; i++) {
+									$scope.saveLogging('Prosedur', 'Norec DiagnosaTindakanPasien_T', e.data.data.norec,
+								'Input Prosedur ICD 9 ( ' + $scope.importIcd9[i].kddiagnosatindakan + ' )' + ' No Registrasi / No RM ' + $scope.dataPasienSelected.noregistrasi
+								+ '/ ' +  $scope.dataPasienSelected.nocm);
+								}
 							}
 						
 					
@@ -9470,10 +9840,12 @@ define(['initialize', 'Configuration'], function (initialize,configuration) {
 				} else {
 					medifirstService.post('registrasi/save-diagnosa-tindakan-pasien-import', objSave).then(function (e) {
 						
-						for (var i = 0; i < $scope.importIcd9.length; i++) {
-							$scope.saveLogging('Diagnosis', 'Norec DiagnosaTindakanPasien_T', e.data.data.norec,
-							'Input Diagnosis ICD 9 ( ' +  $scope.importIcd9[i].kdNama + ' )' + ' No Registrasi / No RM ' + $scope.dataPasienSelected.noregistrasi
-							+ '/ ' +  $scope.dataPasienSelected.nocm)
+						if($scope.importIcd9){
+							for (var i = 0; i < $scope.importIcd9.length; i++) {
+								$scope.saveLogging('Prosedur', 'Norec DiagnosaTindakanPasien_T', e.data.data.norec,
+							'Input Prosedur ICD 9 ( ' + $scope.importIcd9[i].kddiagnosatindakan + ' )' + ' No Registrasi / No RM ' + $scope.dataPasienSelected.noregistrasi
+							+ '/ ' +  $scope.dataPasienSelected.nocm);
+							}
 						}
 					
 						delete $scope.importIcd9;
@@ -11095,7 +11467,7 @@ define(['initialize', 'Configuration'], function (initialize,configuration) {
             }
 
 			$scope.dataSelectedIdrg = {};
-			function loadIdrg(params) {
+			function loadIdrg(noSync) {
 				var norReg = ""
                 if ($scope.itemPopUp.noregistrasi != undefined) {
                     norReg = "noReg=" + $scope.itemPopUp.noregistrasi;
@@ -11117,7 +11489,7 @@ define(['initialize', 'Configuration'], function (initialize,configuration) {
 							return item.id == 15;
 						});
 					}
-						if(!['Grouping iDRG Final','Grouping INACBG Reedit','Grouping','Grouping INACBG Final','Final Klaim','Terkirim','Klaim Edit'].includes($scope.itemPopUp.statusklaim)){
+						if(!noSync && !['Grouping iDRG Final','Grouping INACBG Reedit','Grouping','Grouping INACBG Final','Final Klaim','Terkirim','Klaim Edit'].includes($scope.itemPopUp.statusklaim)){
 							$scope.setIdrgIcd10()
 						}
 					var a = data.data.idrg.length;
@@ -11226,7 +11598,7 @@ define(['initialize', 'Configuration'], function (initialize,configuration) {
 
 
 			$scope.dataSelectedIdrgTd = {}
-			function loadIdrgTd(params) {
+			function loadIdrgTd(noSync) {
 				var norReg = ""
                 if ($scope.itemPopUp.noregistrasi != undefined) {
                     norReg = "noReg=" + $scope.itemPopUp.noregistrasi;
@@ -11243,7 +11615,7 @@ define(['initialize', 'Configuration'], function (initialize,configuration) {
 							$scope.itemPopUp.icd9idrg = '#'
 						}
 
-						if(!['Grouping iDRG Final','Grouping INACBG Reedit','Grouping','Grouping INACBG Final','Final Klaim','Terkirim','Klaim Edit'].includes($scope.itemPopUp.statusklaim)){
+						if(!noSync && !['Grouping iDRG Final','Grouping INACBG Reedit','Grouping','Grouping INACBG Final','Final Klaim','Terkirim','Klaim Edit'].includes($scope.itemPopUp.statusklaim)){
 							$scope.setIdrgIcd9()
 						}
 					
@@ -11757,7 +12129,7 @@ define(['initialize', 'Configuration'], function (initialize,configuration) {
 
 				if (item) {
 					item.set(fieldName, newValue); 
-					$scope.dataDaftarPasienPulang.sync();
+					// $scope.dataDaftarPasienPulang.sync();
 				} else {
 					console.warn("Data dengan norec " + norec + " tidak ditemukan.");
 				}
@@ -11779,19 +12151,18 @@ define(['initialize', 'Configuration'], function (initialize,configuration) {
 						$scope.grupingtab = true
 						$scope.itemPopUp.cbg_code = hasilinacbg.data.cbg_code
 						$scope.itemPopUp.cbg_description = hasilinacbg.data.cbg_description
-						$scope.itemPopUp.cbg_tarif = hasilinacbg.data.cbg_tarif
+						$scope.itemPopUp.cbg_tarif = parseInt(hasilinacbg.data.cbg_tarif)
+						$scope.itemPopUp.tariff = parseInt(hasilinacbg.data.cbg_tarif)
 
+						var noneItem = { code: '', description: 'None' }
 						var spesialDrug = []
-						if (hasilinacbg.data.special_cmg_drug_code !== null) {
+						if (hasilinacbg.data.special_cmg_drug_code) {
 							spesialDrug.push({
 								code: hasilinacbg.data.special_cmg_drug_code,
 								description: hasilinacbg.data.special_cmg_drug_description,
 							})
 						} else {
-							spesialDrug.push({
-								code: '',
-								description: 'None',
-							})
+							spesialDrug.push(noneItem)
 						}
 						
 						var specialProcedure = []
@@ -11801,10 +12172,7 @@ define(['initialize', 'Configuration'], function (initialize,configuration) {
 								description: hasilinacbg.data.special_cmg_procedure_description,
 							})
 						} else {
-							specialProcedure.push({
-								code: '',
-								description: 'None',
-							})
+							specialProcedure.push(noneItem)
 						}
 
 						var specialProsthesis = []
@@ -11814,10 +12182,7 @@ define(['initialize', 'Configuration'], function (initialize,configuration) {
 								description: hasilinacbg.data.special_cmg_prosthesis_description,
 							})
 						} else {
-							specialProsthesis.push({
-								code: '',
-								description: 'None',
-							})
+							specialProsthesis.push(noneItem)
 						}
 
 						var specialInvestigation = []
@@ -11827,10 +12192,7 @@ define(['initialize', 'Configuration'], function (initialize,configuration) {
 								description: hasilinacbg.data.special_cmg_investigation_description,
 							})
 						} else {
-							specialInvestigation.push({
-								code: '',
-								description: 'None',
-							})
+							specialInvestigation.push(noneItem)
 						}
 
 						$scope.listspecialdrug = spesialDrug
@@ -11838,23 +12200,65 @@ define(['initialize', 'Configuration'], function (initialize,configuration) {
 						$scope.listspecialprosthesis = specialProsthesis
 						$scope.listspecialinvestigation = specialInvestigation
 
-						$scope.item.specialprocedure = {
-							code: specialProcedure[0].code,
-							description: specialProcedure[0].description
-						}
-						$scope.item.specialprosthesis = {
-							code: specialProsthesis[0].code,
-							description: specialProsthesis[0].description
-						}
-						$scope.item.specialinvestigation = {
-							code: specialInvestigation[0].code,
-							description: specialInvestigation[0].description
-						}
-						$scope.item.specialdrug = {
-							code: spesialDrug[0].code,
-							description: spesialDrug[0].description
+						if (spesialDrug.length === 0 || spesialDrug[0].code === '' || spesialDrug[0].code === null || spesialDrug[0].description === 'None') {
+							$scope.item.specialdrug = spesialDrug[0]
+							$scope.isDisableDrug = true
+						} else {
+							$scope.item.specialdrug = spesialDrug[0]
+							$scope.isDisableDrug = false
 						}
 
+						if (specialProcedure.length === 0 || specialProcedure[0].code === '' || specialProcedure[0].code === null || specialProcedure[0].description === 'None') {
+							$scope.item.specialprocedure = specialProcedure[0]
+							$scope.isDisableProcedure = true
+						} else {
+							$scope.item.specialprocedure = specialProcedure[0]
+							$scope.isDisableProcedure = false
+						}
+						
+						if (specialProsthesis.length === 0 || specialProsthesis[0].code === '' || specialProsthesis[0].code === null || specialProsthesis[0].description === 'None') {
+							$scope.item.specialprosthesis = specialProsthesis[0]
+							$scope.isDisableProsthesis = true
+						} else {
+							$scope.item.specialprosthesis = specialProsthesis[0]
+							$scope.isDisableProsthesis = false
+						}
+
+						if (specialInvestigation.length === 0 || specialInvestigation[0].code === '' || specialInvestigation[0].code === null || specialInvestigation[0].description === 'None') {
+							$scope.item.specialinvestigation = specialInvestigation[0]
+							$scope.isDisableInvestigation = true
+						} else {
+							$scope.item.specialinvestigation = specialInvestigation[0]
+							$scope.isDisableInvestigation = false
+						}
+
+						$scope.isNoneSpecial = false
+						if (hasilinacbg.data.status == 'final') {
+							$scope.itemPopUp.statusklaim = 'Grouping INACBG Final';
+						}
+					} else {
+					$scope.grupingtab = false
+					$scope.itemPopUp.cbg_code = null
+					$scope.itemPopUp.cbg_description = null
+					$scope.itemPopUp.cbg_tarif = null
+					var noneItem = { code: '', description: 'None' }
+						
+						$scope.listspecialdrug = [noneItem]
+						$scope.item.specialdrug = noneItem
+						$scope.isDisableDrug = true
+
+						$scope.listspecialprocedure = [noneItem]
+						$scope.item.specialprocedure = noneItem
+						$scope.isDisableProcedure = true
+
+						$scope.listspecialprosthesis = [noneItem]
+						$scope.item.specialprosthesis = noneItem
+						$scope.isDisableProsthesis = true
+
+						$scope.listspecialinvestigation = [noneItem]
+						$scope.item.specialinvestigation = noneItem
+						$scope.isDisableInvestigation = true
+						
 						$scope.isNoneSpecial = true
 					}
 				})
@@ -12246,16 +12650,16 @@ define(['initialize', 'Configuration'], function (initialize,configuration) {
 
 												for (let i = 0; i < responOptions.length; i++) {
 													const element = responOptions[i];
-													if (element.type == 'Special Drug') {
+													if (element.type.toLowerCase().indexOf('drug') > -1) {
 														spesialDrugRes.push(element)
 													}
-													if (element.type == 'Special Procedure') {
+													if (element.type.toLowerCase().indexOf('procedure') > -1) {
 														specialProcedureRes.push(element)
 													}
-													if (element.type == 'Special Prosthesis') {
+													if (element.type.toLowerCase().indexOf('prosthesis') > -1) {
 														specialProsthesisRes.push(element)
 													}
-													if (element.type == 'Special Investigation') {
+													if (element.type.toLowerCase().indexOf('investigation') > -1) {
 														specialInvestigationRes.push(element)
 													}
 												}
@@ -12285,7 +12689,8 @@ define(['initialize', 'Configuration'], function (initialize,configuration) {
 													$scope.grupingtab = true
 													$scope.itemPopUp.cbg_code = hasilInacbg.data.data_inacbg.cbg_code
 													$scope.itemPopUp.cbg_description = hasilInacbg.data.data_inacbg.cbg_description
-													$scope.itemPopUp.cbg_tarif = hasilInacbg.data.data_inacbg.cbg_tarif
+													$scope.itemPopUp.cbg_tarif = parseInt(hasilInacbg.data.data_inacbg.cbg_tarif)
+													$scope.itemPopUp.tariff = parseInt(hasilInacbg.data.data_inacbg.cbg_tarif)
 												}
 											})
 									}
@@ -12352,7 +12757,7 @@ define(['initialize', 'Configuration'], function (initialize,configuration) {
 								
 								
 								// loadData()
-								if (responData[0].dataresponse.hasOwnProperty("special_cmg_option") == true && responData[0].dataresponse.special_cmg_option.length > 0) {
+								if (responData[0].dataresponse.special_cmg_option && responData[0].dataresponse.special_cmg_option.length > 0) {
 									toastr.info('Terdeteksi Top-up CMG Options')
 									$scope.istopup = true
 									dataSEPCMG = responData[0].datarequest.data.nomor_sep
@@ -12363,65 +12768,102 @@ define(['initialize', 'Configuration'], function (initialize,configuration) {
 									var specialInvestigation = []
 									for (let i = 0; i < responOptions.length; i++) {
 										const element = responOptions[i];
-										if (element.type == 'Special Drug') {
+										if (element.type.toLowerCase().indexOf('drug') > -1) {
 											spesialDrug.push(element)
 										}
-										if (element.type == 'Special Procedure') {
+										if (element.type.toLowerCase().indexOf('procedure') > -1) {
 											specialProcedure.push(element)
 										}
-										if (element.type == 'Special Prosthesis') {
+										if (element.type.toLowerCase().indexOf('prosthesis') > -1) {
 											specialProsthesis.push(element)
 										}
-										if (element.type == 'Special Investigation') {
+										if (element.type.toLowerCase().indexOf('investigation') > -1) {
 											specialInvestigation.push(element)
 										}
 									}
+
+									var noneItem = { code: '', description: 'None' }
+									if (spesialDrug.length === 0) {
+										spesialDrug.push(noneItem)
+										$scope.item.specialdrug = noneItem
+										$scope.isDisableDrug = true
+									} else if (spesialDrug[0].code === '' || spesialDrug[0].code === null || spesialDrug[0].description === 'None') {
+										$scope.item.specialdrug = spesialDrug[0]
+										$scope.isDisableDrug = true
+									} else {
+										spesialDrug.unshift(noneItem)
+										$scope.item.specialdrug = spesialDrug[1]
+										$scope.isDisableDrug = false
+									}
+
+									if (specialProcedure.length === 0) {
+										specialProcedure.push(noneItem)
+										$scope.item.specialprocedure = noneItem
+										$scope.isDisableProcedure = true
+									} else if (specialProcedure[0].code === '' || specialProcedure[0].code === null || specialProcedure[0].description === 'None') {
+										$scope.item.specialprocedure = specialProcedure[0]
+										$scope.isDisableProcedure = true
+									} else {
+										specialProcedure.unshift(noneItem)
+										$scope.item.specialprocedure = specialProcedure[1]
+										$scope.isDisableProcedure = false
+									}
+
+									if (specialProsthesis.length === 0) {
+										specialProsthesis.push(noneItem)
+										$scope.item.specialprosthesis = noneItem
+										$scope.isDisableProsthesis = true
+									} else if (specialProsthesis[0].code === '' || specialProsthesis[0].code === null || specialProsthesis[0].description === 'None') {
+										$scope.item.specialprosthesis = specialProsthesis[0]
+										$scope.isDisableProsthesis = true
+									} else {
+										specialProsthesis.unshift(noneItem)
+										$scope.item.specialprosthesis = specialProsthesis[1]
+										$scope.isDisableProsthesis = false
+									}
+
+									if (specialInvestigation.length === 0) {
+										specialInvestigation.push(noneItem)
+										$scope.item.specialinvestigation = noneItem
+										$scope.isDisableInvestigation = true
+									} else if (specialInvestigation[0].code === '' || specialInvestigation[0].code === null || specialInvestigation[0].description === 'None') {
+										$scope.item.specialinvestigation = specialInvestigation[0]
+										$scope.isDisableInvestigation = true
+									} else {
+										specialInvestigation.unshift(noneItem)
+										$scope.item.specialinvestigation = specialInvestigation[1]
+										$scope.isDisableInvestigation = false
+									}
+
 									$scope.listspecialdrug = spesialDrug
 									$scope.listspecialprocedure = specialProcedure
 									$scope.listspecialprosthesis = specialProsthesis
 									$scope.listspecialinvestigation = specialInvestigation
 									$scope.itemgrop= responData[0].dataresponse
 									$scope.itemPopUp.response = responData[0].dataresponse
+									$scope.isNoneSpecial = false
+									if (responData[0].dataresponse.response_inacbg && responData[0].dataresponse.response_inacbg.status_cd == 'final') {
+										$scope.itemPopUp.statusklaim = 'Grouping INACBG Final';
+									}
 								} else {
-									var spesialDrug = [{
+									var noneItem = {
 										code: '',
 										description: 'None'
-									}]
-									var specialProcedure = [{
-										code: '',
-										description: 'None'
-									}]
-									var specialProsthesis = [{
-										code: '',
-										description: 'None'
-									}]
-									var specialInvestigation = [{
-										code: '',
-										description: 'None'
-									}]
+									}
+									$scope.listspecialdrug = [noneItem]
+									$scope.listspecialprocedure = [noneItem]
+									$scope.listspecialprosthesis = [noneItem]
+									$scope.listspecialinvestigation = [noneItem]
 
-									$scope.listspecialdrug = spesialDrug
-									$scope.listspecialprocedure = specialProcedure
-									$scope.listspecialprosthesis = specialProsthesis
-									$scope.listspecialinvestigation = specialInvestigation
+									$scope.item.specialprocedure = noneItem
+									$scope.item.specialprosthesis = noneItem
+									$scope.item.specialinvestigation = noneItem
+									$scope.item.specialdrug = noneItem
 
-									$scope.item.specialprocedure = {
-										code: '',
-										description: 'None'
-									}
-									$scope.item.specialprosthesis = {
-										code: '',
-										description: 'None'
-									}
-									$scope.item.specialinvestigation = {
-										code: '',
-										description: 'None'
-									}
-									$scope.item.specialdrug = {
-										code: '',
-										description: 'None'
-									}
-
+									$scope.isDisableDrug = true
+									$scope.isDisableProcedure = true
+									$scope.isDisableProsthesis = true
+									$scope.isDisableInvestigation = true
 									$scope.isNoneSpecial = true
 								}
 							})
@@ -12723,6 +13165,18 @@ define(['initialize', 'Configuration'], function (initialize,configuration) {
 										nosep:element.datarequest.data.nomor_sep,
 										statusklaim: element.datarequest.metadata.method
 									})
+
+                                var objDelete = {
+                                    norec_pd : $scope.itemPopUp.norec
+                                }	
+                                await medifirstService.postNonMessage('bridging/inacbg/delete-grouping-inacbg', objDelete).then( async function (e) {
+                                    $scope.itemgrop = {}
+                                    $scope.itemPopUp.response = {}
+                                    $scope.updateDataByNorec($scope.itemPopUp.norec, "response", null);
+                                    $scope.updateDataByNorec($scope.itemPopUp.norec, "totalpiutangpenjamin", null);
+                                    $scope.updateDataByNorec($scope.itemPopUp.norec, "special_cmg", null);
+                                    $scope.grupingtab = false
+                                })
 
 							}
 						}

@@ -576,6 +576,10 @@ Route::group(['middleware' => 'cors', 'prefix' => 'service'], function () {
             Route::get('bridging/inacbg/get-daftar-pasien-idrg','Bridging\InaCbgController@getDaftarPasienIDRG');
 
             Route::post('registrasi/save-import-diagnosa-idrg', 'Registrasi\RegistrasiController@saveImportIdrg');
+            Route::post('registrasi/save-diagnosa-pasien-import', 'Registrasi\RegistrasiController@saveDiagnosaPasienImport');
+            Route::post('registrasi/save-diagnosa-tindakan-pasien-import', 'Registrasi\RegistrasiController@saveDiagnosaTindakanPasienImport');
+            Route::get('master/diagnosa/get-combo-diagnosa', 'Registrasi\RegistrasiController@getComboDiagnosa');
+            Route::get('master/diagnosa-tindakan/get-combo-diagnosa-tindakan', 'Registrasi\RegistrasiController@getComboDiagnosaTindakan');
             // END IDRG
               //** BPJS DATA PENUNJANG */
               Route::post('bridging/bpjs/save-data-mappingdkoterbpjs','Bridging\BridgingBPJSV2Controller@saveMappingDokterBpjsDokterRs');
