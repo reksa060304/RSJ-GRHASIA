@@ -2144,6 +2144,7 @@ Route::group(['middleware' => 'cors', 'prefix' => 'service'], function () {
             Route::get('report/get-cetak-angkasv2', 'Report\ReportController@CetakAngkasV2');
             Route::get('report/get-cetak-konsolidasi-per-permenv2', 'Report\ReportController@CetakKonsolidasiPermenV2');
             Route::get('report/get-cetak-spj-dan-monev-rbav2', 'Report\ReportController@CetakSPJMonevRBAV2');
+            Route::get('report/get-cetak-angkas-jadwalv3', 'Report\ReportController@CetakAngkasJadwalV3');
             // end cetak laporan anggaran 2024
 
             // cetak laporan keuangan 2024

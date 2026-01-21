@@ -28781,6 +28781,192 @@ public function suratBuktiPengembalian(Request $request)
         return view('report.spj.cetakangkasjadwal',compact('data', 'pageWidth', 'tahun', 'tahap', 'subsubkegiatan'));
     }
 
+        public function CetakAngkasJadwalV3(Request $request){
+        $tahun = $request['tahun'];
+
+        $qtahun  = '';
+        if (isset($request['tahun']) && $request['tahun'] != "" && $request['tahun'] != "undefined") {
+            $qtahun =  " and ta.tahun =  '" . $request['tahun']."'";
+        }
+
+        $qsubsubkegiatan  = '';
+        if (isset($request['subsubkegiatan']) && $request['subsubkegiatan'] != "" && $request['subsubkegiatan'] != "undefined") {
+            $qsubsubkegiatan =  " and ka.id =  '" . $request['subsubkegiatan']."'";
+        }
+
+        $qtahap  = '';
+        if (isset($request['tahap']) && $request['tahap'] != "" && $request['tahap'] != "undefined") {
+            $qtahap =  " and ta.objecttahapfk =  '" . $request['tahap']."'";
+        }
+
+        $subk = $request['subkegiatan'];
+        $subsubk = $request['subsubkegiatan'];
+        $thp = $request['tahap'];
+
+        $tahap = DB::select(DB::raw("select * from tahapanggaran_m where id = ".$thp));
+
+        $subkegiatan = DB::select(DB::raw("select * from kegiatananggaran2024_m where id = ".$subk));
+
+        $subsubkegiatan = DB::select(DB::raw("select * from kegiatananggaran2024_m where id = ".$subsubk));
+
+        $data = DB::select(DB::raw("
+        select * from (
+            select DENSE_RANK ( ) OVER ( order by kodemataanggaran ) AS nourut, 
+            case 
+            when kodemataanggaran ilike 'I.A.%' then 1
+            when kodemataanggaran ilike 'I.B.%' then 2
+            when kodemataanggaran ilike 'II.%' then 3
+            when kodemataanggaran ilike 'III.%' then 4
+          end as urut1,
+          case 
+            when kodemataanggaran ilike 'I.A.%' then split_part(kodemataanggaran,'.',3)
+            when kodemataanggaran ilike 'I.B.%' then split_part(kodemataanggaran,'.',3)
+            when kodemataanggaran ilike 'II.%' then split_part(kodemataanggaran,'.',2)
+            when kodemataanggaran ilike 'III.%' then split_part(kodemataanggaran,'.',2)
+          end as split3,
+          case 
+            when kodemataanggaran ilike 'I.A.%' then split_part(kodemataanggaran,'.',4)
+            when kodemataanggaran ilike 'I.B.%' then split_part(kodemataanggaran,'.',4)
+            when kodemataanggaran ilike 'II.%' then split_part(kodemataanggaran,'.',3)
+            when kodemataanggaran ilike 'III.%' then split_part(kodemataanggaran,'.',3)
+          end as split4,
+          case 
+            when kodemataanggaran ilike 'I.A.%' then split_part(kodemataanggaran,'.',5)
+            when kodemataanggaran ilike 'I.B.%' then split_part(kodemataanggaran,'.',5)
+            when kodemataanggaran ilike 'II.%' then split_part(kodemataanggaran,'.',4)
+            when kodemataanggaran ilike 'III.%' then split_part(kodemataanggaran,'.',4)
+          end as split5,
+          case 
+            when kodemataanggaran ilike 'I.A.%' then LENGTH(split_part(kodemataanggaran, '.', 5))
+            when kodemataanggaran ilike 'I.B.%' then LENGTH(split_part(kodemataanggaran, '.', 5))
+            when kodemataanggaran ilike 'II.%' then LENGTH(split_part(kodemataanggaran, '.', 4))
+            when kodemataanggaran ilike 'III.%' then LENGTH(split_part(kodemataanggaran, '.', 4))
+          end as len5,
+              kodefix, kodemataanggaran, namamataanggaran, sum(jumlahjan) jumlahjan, sum(jumlahfeb) jumlahfeb,
+        sum(jumlahmar) jumlahmar, sum(jumlahapr) jumlahapr, sum(jumlahmei) jumlahmei, sum(jumlahjun) jumlahjun,
+        sum(jumlahjul) jumlahjul, sum(jumlahagt) jumlahagt, sum(jumlahsep) jumlahsep, sum(jumlahokt) jumlahokt,
+        sum(jumlahnov) jumlahnov, sum(jumlahdes) jumlahdes,
+        sum(jumlahjan) + sum(jumlahfeb) + sum(jumlahmar) + sum(jumlahapr) + sum(jumlahmei) + sum(jumlahjun) +
+        sum(jumlahjul) + sum(jumlahagt) + sum(jumlahsep) + sum(jumlahokt) + sum(jumlahnov) + sum(jumlahdes) subtotal,
+          '' asalproduk
+        from(
+            select 
+            case 
+                when CHAR_LENGTH(right(ma.kodemataanggaran, 4)) - CHAR_LENGTH( REPLACE ( right(ma.kodemataanggaran, 4), '.', '1234') ) = -6 then right(ma.kodemataanggaran, 3)
+                when CHAR_LENGTH(right(ma.kodemataanggaran, 4)) - CHAR_LENGTH( REPLACE ( right(ma.kodemataanggaran, 4), '.', '1234') ) = -3 then right(ma.kodemataanggaran, 4)
+            end as kodefix,
+            ma.kodemataanggaran, ma.namamataanggaran,
+            case when akb.bulanint = 1 then sum(akb.nilai::float8) else 0 end as jumlahjan,
+            case when akb.bulanint = 2 then sum(akb.nilai::float8) else 0 end as jumlahfeb,
+            case when akb.bulanint = 3 then sum(akb.nilai::float8) else 0 end as jumlahmar,
+            case when akb.bulanint = 4 then sum(akb.nilai::float8) else 0 end as jumlahapr,
+            case when akb.bulanint = 5 then sum(akb.nilai::float8) else 0 end as jumlahmei,
+            case when akb.bulanint = 6 then sum(akb.nilai::float8) else 0 end as jumlahjun,
+            case when akb.bulanint = 7 then sum(akb.nilai::float8) else 0 end as jumlahjul,
+            case when akb.bulanint = 8 then sum(akb.nilai::float8) else 0 end as jumlahagt,
+            case when akb.bulanint = 9 then sum(akb.nilai::float8) else 0 end as jumlahsep,
+            case when akb.bulanint = 10 then sum(akb.nilai::float8) else 0 end as jumlahokt,
+            case when akb.bulanint = 11 then sum(akb.nilai::float8) else 0 end as jumlahnov,
+            case when akb.bulanint = 12 then sum(akb.nilai::float8) else 0 end as jumlahdes
+            from mataanggaran_m ma
+            inner join keteranganbelanja_t kb on ma.id=kb.objectmataanggaranfk
+            inner join transaksianggaran2024_t ta ON ta.norec = kb.objecttransaksifk
+            inner join kegiatananggaran2024_m ka ON ka.id = ta.objectkegiatanfk
+            left join alokasiketeranganbelanja_t akb on akb.keteranganbelanjafk = kb.norec
+            and akb.kdprofile = 30 and akb.statusenabled = true
+            where ma.kdprofile = 30 and ma.statusenabled = true
+            and kb.kdprofile = 30 and kb.statusenabled = true
+            and ka.kdprofile = 30 and ka.statusenabled = true
+            $qtahun
+            $qsubsubkegiatan
+            $qtahap
+            group by 
+            ma.kodemataanggaran, ma.namamataanggaran, akb.bulanint
+        ) as x group by kodefix, kodemataanggaran, namamataanggaran
+        
+        union all
+        
+        select DENSE_RANK ( ) OVER ( order by kodemataanggaran ) AS nourut, 
+        case 
+          when kodemataanggaran ilike 'I.A.%' then 1
+          when kodemataanggaran ilike 'I.B.%' then 2
+          when kodemataanggaran ilike 'II.%' then 3
+          when kodemataanggaran ilike 'III.%' then 4
+        end as urut1,
+        case 
+          when kodemataanggaran ilike 'I.A.%' then split_part(kodemataanggaran,'.',3)
+          when kodemataanggaran ilike 'I.B.%' then split_part(kodemataanggaran,'.',3)
+          when kodemataanggaran ilike 'II.%' then split_part(kodemataanggaran,'.',2)
+          when kodemataanggaran ilike 'III.%' then split_part(kodemataanggaran,'.',2)
+        end as split3,
+        case 
+          when kodemataanggaran ilike 'I.A.%' then split_part(kodemataanggaran,'.',4)
+          when kodemataanggaran ilike 'I.B.%' then split_part(kodemataanggaran,'.',4)
+          when kodemataanggaran ilike 'II.%' then split_part(kodemataanggaran,'.',3)
+          when kodemataanggaran ilike 'III.%' then split_part(kodemataanggaran,'.',3)
+        end as split4,
+        case 
+          when kodemataanggaran ilike 'I.A.%' then split_part(kodemataanggaran,'.',5)
+          when kodemataanggaran ilike 'I.B.%' then split_part(kodemataanggaran,'.',5)
+          when kodemataanggaran ilike 'II.%' then split_part(kodemataanggaran,'.',4)
+          when kodemataanggaran ilike 'III.%' then split_part(kodemataanggaran,'.',4)
+        end as split5,
+        case 
+          when kodemataanggaran ilike 'I.A.%' then LENGTH(split_part(kodemataanggaran, '.', 5))
+          when kodemataanggaran ilike 'I.B.%' then LENGTH(split_part(kodemataanggaran, '.', 5))
+          when kodemataanggaran ilike 'II.%' then LENGTH(split_part(kodemataanggaran, '.', 4))
+          when kodemataanggaran ilike 'III.%' then LENGTH(split_part(kodemataanggaran, '.', 4))
+        end as len5,
+        '' kodefix, kodemataanggaran,  keteranganbelanja namamataanggaran, sum(jumlahjan) jumlahjan, sum(jumlahfeb) jumlahfeb,
+        sum(jumlahmar) jumlahmar, sum(jumlahapr) jumlahapr, sum(jumlahmei) jumlahmei, sum(jumlahjun) jumlahjun,
+        sum(jumlahjul) jumlahjul, sum(jumlahagt) jumlahagt, sum(jumlahsep) jumlahsep, sum(jumlahokt) jumlahokt,
+        sum(jumlahnov) jumlahnov, sum(jumlahdes) jumlahdes,
+        sum(jumlahjan) + sum(jumlahfeb) + sum(jumlahmar) + sum(jumlahapr) + sum(jumlahmei) + sum(jumlahjun) +
+        sum(jumlahjul) + sum(jumlahagt) + sum(jumlahsep) + sum(jumlahokt) + sum(jumlahnov) + sum(jumlahdes) subtotal,
+        asalproduk
+        from(
+            select
+            ma.kodemataanggaran, ma.namamataanggaran, kb.norec, kb.keteranganbelanja,
+            case when akb.bulanint = 1 then sum(akb.nilai::float8) else 0 end as jumlahjan,
+            case when akb.bulanint = 2 then sum(akb.nilai::float8) else 0 end as jumlahfeb,
+            case when akb.bulanint = 3 then sum(akb.nilai::float8) else 0 end as jumlahmar,
+            case when akb.bulanint = 4 then sum(akb.nilai::float8) else 0 end as jumlahapr,
+            case when akb.bulanint = 5 then sum(akb.nilai::float8) else 0 end as jumlahmei,
+            case when akb.bulanint = 6 then sum(akb.nilai::float8) else 0 end as jumlahjun,
+            case when akb.bulanint = 7 then sum(akb.nilai::float8) else 0 end as jumlahjul,
+            case when akb.bulanint = 8 then sum(akb.nilai::float8) else 0 end as jumlahagt,
+            case when akb.bulanint = 9 then sum(akb.nilai::float8) else 0 end as jumlahsep,
+            case when akb.bulanint = 10 then sum(akb.nilai::float8) else 0 end as jumlahokt,
+            case when akb.bulanint = 11 then sum(akb.nilai::float8) else 0 end as jumlahnov,
+            case when akb.bulanint = 12 then sum(akb.nilai::float8) else 0 end as jumlahdes,
+            ap.asalproduk
+            from mataanggaran_m ma
+            inner join keteranganbelanja_t kb on ma.id=kb.objectmataanggaranfk
+            inner join transaksianggaran2024_t ta ON ta.norec = kb.objecttransaksifk
+            inner join kegiatananggaran2024_m ka ON ka.id = ta.objectkegiatanfk
+            inner join asalproduk_m ap on ap.id = kb.objectasalprodukfk
+            left join alokasiketeranganbelanja_t akb on akb.keteranganbelanjafk = kb.norec
+            and akb.kdprofile = 30 and akb.statusenabled = true
+            where ma.kdprofile = 30 and ma.statusenabled = true
+            and kb.kdprofile = 30 and kb.statusenabled = true
+            and ka.kdprofile = 30 and ka.statusenabled = true
+            $qtahun
+            $qsubsubkegiatan
+            $qtahap
+            group by 
+            ma.kodemataanggaran, ma.namamataanggaran, kb.norec, kb.keteranganbelanja, akb.bulanint, ap.asalproduk
+        ) as x group by kodemataanggaran, namamataanggaran, norec, keteranganbelanja, asalproduk
+        order by nourut, kodefix desc
+        )as x 
+        order by kodemataanggaran asc, kodefix desc
+        "));
+        // order by split_part(x.kodemataanggaran,'.',4) asc , split_part(x.kodemataanggaran,'.',5) ::int4 asc, kodefix desc
+
+        $pageWidth = 1200;
+        //return $this->respond($result);
+        return view('report.spj.cetakangkasjadwalv3',compact('data', 'pageWidth', 'tahun', 'tahap', 'subsubkegiatan'));
+    }
+
     public function CetakAngkasV2(Request $request){
         $tahun = $request['tahun'];
 
