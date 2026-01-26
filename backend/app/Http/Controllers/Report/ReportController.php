@@ -32065,4 +32065,58 @@ public function suratBuktiPengembalian(Request $request)
         $pdf = \PDF::loadView('report.asset.cetak-bukti-order-barang-asset', compact('dataReport', 'pageWidth', 'profile'));
         return $pdf->stream('cetak-bukti-order-barang-asset.pdf');
     }
+
+    public function CetakRekapTotalAnggaranV3(Request $request){
+        $tahun = $request['tahun'];
+        $tahap = $request['tahap'];
+
+        $settingrba = DB::select(DB::raw("select sa.*, pg.reportdisplay as namalengkap, pg.nippns from settinganggaran_t sa
+        inner join pegawai_m pg on pg.id = sa.objectkepalabludfk
+        where sa.statusenabled = true"));
+        
+        $tanggalcetak = $this->tanggal_indonesia(date('Y-m-d',strtotime($request['tglcetak']))); 
+
+        $qtahap  = '';
+        if (isset($request['tahap']) && $request['tahap'] != "" && $request['tahap'] != "undefined") {
+            $qtahap =  ' and ta.objecttahapfk =  ' . $request['tahap'];
+        }
+
+       $itahap = DB::select(DB::raw("select id, tahap, $tahun thn from tahapanggaran_m where id = $tahap"));
+
+       $sebelum = DB::select(DB::raw("
+            SELECT mat.kodemataanggaran, mat.namamataanggaran, SUM(kb.subtotal) AS subtotal
+            FROM kegiatananggaran2024_m km
+            INNER JOIN transaksianggaran2024_t ta ON ta.objectkegiatanfk = km.id
+            INNER JOIN keteranganbelanja_t kb ON kb.objecttransaksifk = ta.norec
+            INNER JOIN mataanggaran_m ma ON ma.id = kb.objectmataanggaranfk
+            INNER JOIN mataanggaran_m mat ON ma.kodemataanggaran ILIKE mat.kodemataanggaran || '%'
+            AND (
+                CASE 
+                    WHEN mat.kodemataanggaran ILIKE '5.1.%' THEN (char_length(mat.kodemataanggaran) = 6)
+                    WHEN mat.kodemataanggaran ILIKE '5.2.%' THEN (char_length(mat.kodemataanggaran) = 6)
+                END
+            )
+            INNER JOIN tahapanggaran_m th ON th.id = kb.objecttahapfk 
+            WHERE km.kdprofile = 30 AND km.statusenabled = true
+            AND ma.kdprofile = 30 AND ma.statusenabled = true
+            AND mat.kdprofile = 30 AND mat.statusenabled = true
+            AND kb.kdprofile = 30 AND kb.statusenabled = true
+            $qtahap
+            AND ta.tahun = '$tahun'
+            GROUP BY mat.kodemataanggaran, mat.namamataanggaran
+            HAVING SUM(kb.subtotal) > 0
+            ORDER BY mat.kodemataanggaran
+        "));
+
+        $result = array(
+            'data' => $sebelum,
+            'message' => '@epic',
+        );
+
+        $pageWidth = 1200;
+        return view('report.spj.cetakrekaptotalanggaranv3',compact('sebelum','pageWidth', 'itahap', 'tanggalcetak','settingrba'));
+    }
+
+
+    //batas
 }

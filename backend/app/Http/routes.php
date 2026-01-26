@@ -2143,6 +2143,7 @@ Route::group(['middleware' => 'cors', 'prefix' => 'service'], function () {
             Route::get('report/get-cetak-rba-persubsubv2', 'Report\ReportController@cetakRBAPersubsub');
             Route::get('report/get-cetak-rba-persubsub-sebelumsesudahv2', 'Report\ReportController@cetakRBAPersubsubSebelumSesudahV2');
             Route::get('report/get-cetak-rekap-total-anggaranv2', 'Report\ReportController@CetakRekapTotalAnggaranV2');
+            Route::get('report/get-cetak-rekap-total-anggaranv3', 'Report\ReportController@CetakRekapTotalAnggaranV3');
             Route::get('report/get-cetak-rekap-total-anggaran-sebelum-sesudahv2', 'Report\ReportController@CetakRekapTotalAnggaranSebelumSesudahV2');
             Route::get('report/get-cetak-angkas-jadwalv2', 'Report\ReportController@CetakAngkasJadwalV2');
             Route::get('report/get-cetak-angkasv2', 'Report\ReportController@CetakAngkasV2');

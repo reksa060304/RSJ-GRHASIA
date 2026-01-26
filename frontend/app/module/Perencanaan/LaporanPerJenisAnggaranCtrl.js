@@ -404,6 +404,24 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
                 }
             }
 
+              $scope.CetakDataRekapv3 = function(){
+                var tahap = ""
+                if ($scope.item.tahaprekap != undefined){
+                    tahap = $scope.item.tahaprekap.id
+                }
+                
+                var terhadap = ""
+                if ($scope.item.terhadaprekap != undefined){
+                    terhadap = $scope.item.terhadaprekap.id
+                }
+
+                if($scope.item.terhadaprekap == undefined || tahap == terhadap){
+                    window.open(baseTransaksi + "report/get-cetak-rekap-total-anggaranv3?tahap="+tahap+"&tahun="+moment($scope.item.tahunrekap).format('YYYY')+"&tglcetak="+moment($scope.item.tglCetak6).format('YYYY-MM-DD HH:mm'), '_blank');
+                } else if($scope.item.terhadaprekap != undefined || tahap != terhadap){
+                    window.open(baseTransaksi + "report/get-cetak-rekap-total-anggaran-sebelum-sesudahv2?tahap="+tahap+"&tahun="+moment($scope.item.tahunrekap).format('YYYY') +"&terhadap="+terhadap+"&tglcetak="+moment($scope.item.tglCetak6).format('YYYY-MM-DD HH:mm'), '_blank');
+                }
+            }
+
             $scope.CetakSumberDana = function(){
                 var tahap = ""
                 if ($scope.item.tahapSumberDana != undefined) {
