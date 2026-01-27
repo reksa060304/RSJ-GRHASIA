@@ -907,7 +907,7 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
                                         descParts.push('Pendapatan');
                                         if(detail.carabayar) descParts.push(detail.carabayar);
                                         if(detail.namapasien) descParts.push('an ' + detail.namapasien);
-                                        if(detail.namaruangan) descParts.push('Pelayanan ' + detail.namaruangan);
+                                        // if(detail.namaruangan) descParts.push('Pelayanan ' + detail.namaruangan);
                                     }
                                     
                                     let desc = descParts.join(' ');
