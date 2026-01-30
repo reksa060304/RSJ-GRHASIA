@@ -3864,13 +3864,15 @@ class AnggaranController extends ApiController {
                 cbs.carabayar, 
                 ma.kodemataanggaran || '~' || ma.namamataanggaran as mataanggaran,
                 sr.norec, sr.norealisasi, string_agg(DISTINCT rd.uraian, ',') uraian, sr.keterangan, sr.tglverif, sr.jumlahdibayarverif, sr.pph, sr.ppn, 
-                ka.keterangan as kegiatan, ap.asalproduk 
+                ka.keterangan as kegiatan, ap.asalproduk,
+                CASE WHEN sspj.norec IS NOT NULL THEN 'SPJ LS' ELSE 'SPJ UP' END as jenisspj
             FROM strukrealisasi_t sr
             inner join realisasidetail_t rd on rd.strukrealisasifk = sr.norec
             inner join keteranganbelanja_t kb ON kb.norec = rd.keteranganbelanjafk AND kb.statusenabled = TRUE AND kb.kdprofile = 30
             inner join transaksianggaran2024_t ta ON ta.norec = kb.objecttransaksifk AND ta.statusenabled = TRUE AND ta.kdprofile = 30
             inner join kegiatananggaran2024_m ka ON ka.id = ta.objectkegiatanfk AND ka.statusenabled = TRUE AND ka.kdprofile = 30
-            inner join carabayarspj_m cbs on cbs.id = sr.objectcarabayarfk
+            LEFT JOIN carabayarspj_m cbs on cbs.id = sr.objectcarabayarfk
+            LEFT JOIN sppspmspj_t sspj ON sspj.objectspjfk = sr.norec AND sspj.statusenabled = TRUE AND sspj.kdprofile = 30
             inner JOIN mataanggaran_m ma on ma.id=sr.objectmataanggaranfk
             left JOIN rekanan_m rkn on rkn.id=sr.rekananfk
             inner join asalproduk_m ap on ap.id = sr.objectasalprodukfk
@@ -3885,7 +3887,7 @@ class AnggaranController extends ApiController {
             group by 
                 rkn.namarekanan, 
                 sr.norec, cbs.carabayar, ma.kodemataanggaran || '~' || ma.namamataanggaran,
-                ka.keterangan,ap.asalproduk
+                ka.keterangan,ap.asalproduk,sspj.norec
         "));
         
         foreach ($data as $d) {
@@ -4121,6 +4123,57 @@ class AnggaranController extends ApiController {
                 sr.tglverif,
                 pp.pph
         "));
+
+        //jika data kosong maka ambil dari strukrealisasi_t
+        if (empty($data)) {
+            $data = DB::select(DB::raw("
+                SELECT
+                    sr.objectbkufk,
+                    null as nopajakpp,
+                    null as uraianpajak,
+                    sr.norealisasi,
+                    string_agg ( DISTINCT rd.uraian, ',' ) uraian,
+                    sr.tglverif tglrealisasi,
+                    'PPh' AS kode,
+                    sr.pph AS jumlah 
+                FROM strukrealisasi_t sr
+                LEFT JOIN realisasidetail_t rd ON rd.strukrealisasifk = sr.norec AND rd.statusenabled = TRUE AND rd.kdprofile = ".$idProfile."
+                WHERE
+                    sr.norec = '".$norec."'
+                    AND sr.kdprofile = ".$idProfile."
+                    AND sr.pph <> 0
+                GROUP BY
+                    sr.norec,
+                    sr.norealisasi,
+                    sr.tglverif,
+                    sr.pph,
+                    sr.objectbkufk
+                    
+                UNION ALL
+                
+                SELECT
+                    sr.objectbkufk,
+                    null as nopajakpp,
+                    null as uraianpajak,
+                    sr.norealisasi,
+                    string_agg ( DISTINCT rd.uraian, ',' ) uraian,
+                    sr.tglverif tglrealisasi,
+                    'PPN' AS kode,
+                    sr.ppn AS jumlah 
+                FROM strukrealisasi_t sr
+                LEFT JOIN realisasidetail_t rd ON rd.strukrealisasifk = sr.norec AND rd.statusenabled = TRUE AND rd.kdprofile = ".$idProfile."
+                WHERE
+                    sr.norec = '".$norec."'
+                    AND sr.kdprofile = ".$idProfile."
+                    AND sr.ppn <> 0
+                GROUP BY
+                    sr.norec,
+                    sr.norealisasi,
+                    sr.tglverif,
+                    sr.ppn,
+                    sr.objectbkufk
+            "));
+        }
 
         $result = array(
             'data' => $data,
