@@ -2506,6 +2506,9 @@ class BendaharaPenerimaanController extends ApiController {
         and sh.statusenabled <> false
         and sc.kdprofile = $kdProfile
         and sc.statusenabled <> false       
+        and sck.statusenabled <> false
+        and sbm.statusenabled <> false
+        and (ssc.statusenabled IS NULL OR ssc.statusenabled <> false)
         order by sc.tglclosing desc
         ) as x where nopenerimaan is not null
         $status
