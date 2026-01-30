@@ -1102,10 +1102,10 @@
 								k-filter="'contains'"
 								k-auto-bind="false"
 								k-data-source="listspecialprocedure"
-								ng-disabled="isNoneSpecial" />
+								ng-disabled="isNoneSpecial || isDisableProcedure" />
 							</div>
 							<div class="grid_2">
-								<button class="k-button" style="margin-top: 5px;" ng-click="hitungSpecialCMG(item.specialprocedure)">Tambah</button>
+								<button class="k-button" style="margin-top: 5px;" ng-click="hitungSpecialCMG(item.specialprocedure)" ng-disabled="isNoneSpecial || isDisableProcedure">Tambah</button>
 							</div>
 						</td>
 						<td>{{ getSpecialCMG(dataPasienSelected.response.response.special_cmg, 'Special Procedure', 'code') }}</td>
@@ -1122,10 +1122,10 @@
 								k-filter="'contains'"
 								k-auto-bind="false"
 								k-data-source="listspecialprosthesis"
-								ng-disabled="isNoneSpecial" />
+								ng-disabled="isNoneSpecial || isDisableProsthesis" />
 							</div>
 							<div class="grid_2">
-								<button class="k-button" style="margin-top: 5px;" ng-click="hitungSpecialCMG(item.specialprosthesis)">Tambah</button>
+								<button class="k-button" style="margin-top: 5px;" ng-click="hitungSpecialCMG(item.specialprosthesis)" ng-disabled="isNoneSpecial || isDisableProsthesis">Tambah</button>
 							</div>
 						</td>
 						<td>{{ getSpecialCMG(dataPasienSelected.response.response.special_cmg, 'Special Prosthesis', 'code') }}</td>
@@ -1142,10 +1142,10 @@
 								k-filter="'contains'"
 								k-auto-bind="false"
 								k-data-source="listspecialinvestigation"
-								ng-disabled="isNoneSpecial" />
+								ng-disabled="isNoneSpecial || isDisableInvestigation" />
 							</div>
 							<div class="grid_2">
-								<button class="k-button" style="margin-top: 5px;" ng-click="hitungSpecialCMG(item.specialinvestigation)">Tambah</button>
+								<button class="k-button" style="margin-top: 5px;" ng-click="hitungSpecialCMG(item.specialinvestigation)" ng-disabled="isNoneSpecial || isDisableInvestigation">Tambah</button>
 							</div>
 						</td>
 						<td>{{ getSpecialCMG(dataPasienSelected.response.response.special_cmg, 'Special Investigation', 'code') }}</td>
@@ -1162,10 +1162,10 @@
 								k-filter="'contains'"
 								k-auto-bind="true"
 								k-data-source="listspecialdrug"
-								ng-disabled="isNoneSpecial" />
+								ng-disabled="isNoneSpecial || isDisableDrug" />
 							</div>
 							<div class="grid_2">
-								<button class="k-button" style="margin-top: 5px;" ng-click="hitungSpecialCMG(item.specialdrug)">Tambah</button>
+								<button class="k-button" style="margin-top: 5px;" ng-click="hitungSpecialCMG(item.specialdrug)" ng-disabled="isNoneSpecial || isDisableDrug">Tambah</button>
 							</div>
 						</td>
 						<td>{{ getSpecialCMG(dataPasienSelected.response.response.special_cmg, 'Special Drug', 'code') }}</td>
@@ -2338,7 +2338,7 @@
 							<button class="k-button" ng-click="new_claim3()" style="float:right;margin-top:2%;margin-right:1%;" ng-if="['-'].includes(itemPopUp.statusklaim)">New Klaim</button>
 					</div>
 					<div class="grid_12">
-						<fieldset>
+						<fieldset ng-if="['Klaim', 'Klaim Edit', 'Grouping iDRG Final', 'Grouping iDRG', 'Grouping INACBG Final', 'Grouping INACBG Reedit', 'Grouping', 'Final Klaim', 'Terkirim'].includes(itemPopUp.statusklaim)">
 							<legend>iDRG</legend>
 							<fieldset>
 								<legend>Diagnosa (ICD 10)</legend>
@@ -2483,7 +2483,7 @@
 			            </div>
 			        </div> -->
 			        <!-- ICD 10 -->
-					<fieldset ng-if="['Grouping iDRG Final','Grouping INACBG Reedit','Grouping','Grouping INACBG Final','Final Klaim','Terkirim','Klaim Edit'].includes(itemPopUp.statusklaim)">
+					<fieldset ng-if="['Grouping iDRG Final','Grouping INACBG Reedit','Grouping','Grouping INACBG Final','Final Klaim','Terkirim'].includes(itemPopUp.statusklaim)">
 						<legend>INACBG</legend>
 						<div class="grid_12" ng-if="isInu">
 							<fieldset>
@@ -2658,8 +2658,8 @@
 							</fieldset>
 						</div>
 						<div class="grid_12">		
-								<button ng-if="['Grouping iDRG Final','Grouping INACBG Reedit','Grouping'].includes(itemPopUp.statusklaim)" class="k-button" ng-click="grouperInacbgStage1()" style="float:right;margin-top:1%;margin-right:1%;">Grouping INACBG</button>
-								<button ng-if="['Grouping iDRG Final','Grouping INACBG Reedit','Grouping'].includes(itemPopUp.statusklaim)" class="k-button" ng-click="importIdrg()" style="float:right;margin-top:1%;margin-right:1%;" ng-disabled="disabledTombol">Import iDRG</button>
+								<button ng-if="['Grouping iDRG Final','Grouping INACBG Reedit','Grouping','Grouping INACBG Final'].includes(itemPopUp.statusklaim)" class="k-button" ng-click="grouperInacbgStage1()" style="float:right;margin-top:1%;margin-right:1%;">Grouping INACBG</button>
+								<button ng-if="['Grouping iDRG Final','Grouping INACBG Reedit','Grouping','Grouping INACBG Final'].includes(itemPopUp.statusklaim)" class="k-button" ng-click="importIdrg()" style="float:right;margin-top:1%;margin-right:1%;" ng-disabled="disabledTombol">Import iDRG</button>
 						</div>
 						<div class="grid_12" ng-show="grupingtab" style="margin-top: 10px;">
 								<table align="center" style="width:98.50%;color: #4c5356;" id="customers" ng-class="{'hijau-lumayan': ['Grouping INACBG Final','Final Klaim','Terkirim'].includes(itemPopUp.statusklaim)}">
@@ -2714,10 +2714,10 @@
 												k-filter="'contains'"
 												k-auto-bind="false"
 												k-data-source="listspecialprocedure"
-												ng-disabled="isNoneSpecial" />
+												ng-disabled="isNoneSpecial || isDisableProcedure" />
 											</div>
 											<div class="grid_2">
-												<button class="k-button" style="margin-top: 5px;" ng-click="simpanTopUp()" ng-if="!['Grouping INACBG Final','Final Klaim','Terkirim','Klaim Edit'].includes(itemPopUp.statusklaim)">Tambah</button>
+												<button class="k-button" style="margin-top: 5px;" ng-click="simpanTopUp()" ng-if="!['Grouping INACBG Final','Final Klaim','Terkirim','Klaim Edit'].includes(itemPopUp.statusklaim)" ng-disabled="isNoneSpecial || isDisableProcedure">Tambah</button>
 											</div>
 										</td>
 										<td>{{ getSpecialCMG(itemPopUp.response.response_inacbg.special_cmg, 'Special Procedure', 'code') }}</td>
@@ -2734,10 +2734,10 @@
 												k-filter="'contains'"
 												k-auto-bind="false"
 												k-data-source="listspecialprosthesis"
-												ng-disabled="isNoneSpecial" />
+												ng-disabled="isNoneSpecial || isDisableProsthesis" />
 											</div>
 											<div class="grid_2">
-												<button class="k-button" style="margin-top: 5px;" ng-click="simpanTopUp()" ng-if="!['Grouping INACBG Final','Final Klaim','Terkirim','Klaim Edit'].includes(itemPopUp.statusklaim)">Tambah</button>
+												<button class="k-button" style="margin-top: 5px;" ng-click="simpanTopUp()" ng-if="!['Grouping INACBG Final','Final Klaim','Terkirim','Klaim Edit'].includes(itemPopUp.statusklaim)" ng-disabled="isNoneSpecial || isDisableProsthesis">Tambah</button>
 											</div>
 										</td>
 										<td>{{ getSpecialCMG(itemPopUp.response.response_inacbg.special_cmg, 'Special Prosthesis', 'code') }}</td>
@@ -2754,10 +2754,10 @@
 												k-filter="'contains'"
 												k-auto-bind="false"
 												k-data-source="listspecialinvestigation"
-												ng-disabled="isNoneSpecial" />
+												ng-disabled="isNoneSpecial || isDisableInvestigation" />
 											</div>
 											<div class="grid_2">
-												<button class="k-button" style="margin-top: 5px;" ng-click="simpanTopUp()" ng-if="!['Grouping INACBG Final','Final Klaim','Terkirim','Klaim Edit'].includes(itemPopUp.statusklaim)">Tambah</button>
+												<button class="k-button" style="margin-top: 5px;" ng-click="simpanTopUp()" ng-if="!['Grouping INACBG Final','Final Klaim','Terkirim','Klaim Edit'].includes(itemPopUp.statusklaim)" ng-disabled="isNoneSpecial || isDisableInvestigation">Tambah</button>
 											</div>
 										</td>
 										<td>{{ getSpecialCMG(itemPopUp.response.response_inacbg.special_cmg, 'Special Investigation', 'code') }}</td>
@@ -2774,10 +2774,10 @@
 												k-filter="'contains'"
 												k-auto-bind="true"
 												k-data-source="listspecialdrug"
-												ng-disabled="isNoneSpecial" />
+												ng-disabled="isNoneSpecial || isDisableDrug" />
 											</div>
 											<div class="grid_2">
-												<button class="k-button" style="margin-top: 5px;" ng-click="simpanTopUp()" ng-if="!['Grouping INACBG Final','Final Klaim','Terkirim','Klaim Edit'].includes(itemPopUp.statusklaim)">Tambah</button>
+												<button class="k-button" style="margin-top: 5px;" ng-click="simpanTopUp()" ng-if="!['Grouping INACBG Final','Final Klaim','Terkirim','Klaim Edit'].includes(itemPopUp.statusklaim)" ng-disabled="isNoneSpecial || isDisableDrug">Tambah</button>
 											</div>
 										</td>
 										<td>{{ getSpecialCMG(itemPopUp.response.response_inacbg.special_cmg, 'Special Drug', 'code') }}</td>
@@ -2785,7 +2785,7 @@
 									</tr>
 									<tr>
 										<td align="right" colspan="3"><label c-label item="item">Total</label></td>
-										<td><label c-label item="item">{{ itemPopUp.response.response_inacbg.tariff != null ? itemPopUp.response.response_inacbg.tariff : 0 | currency: "Rp. ": 0 }}</label></td>
+										<td><label c-label item="item">{{ getTotalClaim(itemPopUp) | currency: "Rp. ": 0 }}</label></td>
 									</tr>
 								</table>
 								</form>
@@ -2993,9 +2993,9 @@
 						<!-- <div class="grid_2" style="margin: 10px " ng-if="['-'].includes(itemPopUp.statusklaim)">
 							<button class="btnTemplate1"  ng-click="new_claim3()">Kirim Klaim</button>
 						</div> -->
-						<div class="grid_2" style="margin: 10px " ng-if="['-'].includes(itemPopUp.statusklaim)">
+						<!-- <div class="grid_2" style="margin: 10px " ng-if="['-'].includes(itemPopUp.statusklaim)">
 							<button class="btnTemplate1"  ng-click="setdataklaim()">Simpan</button>
-						</div>
+						</div> -->
 						<!-- <div class="grid_2" style="margin: 10px ">
 							<button class="btnTemplate1"  ng-click="grouping2()">Grouper</button>
 						</div> -->

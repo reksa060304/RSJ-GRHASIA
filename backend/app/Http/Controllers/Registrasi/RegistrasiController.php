@@ -17954,5 +17954,899 @@ GROUP BY y.KET
 
         return $this->setStatusCode($result['status'])->respond($result, $transMessage);
     }
+    public function saveDiagnosaPasienImport(Request $request) {
+        $kdProfile = $this->getDataKdProfile($request);
+        $idProfile = (int)$kdProfile;
+        $dataLogin = $request->all();
+        DB::beginTransaction();
+        try {
+            $dataDetail = $request['detaildiagnosapasien'];
+            $noregistrasifk = $dataDetail['noregistrasifk']; // APD norec
+            $tglregistrasi = $dataDetail['tglregistrasi'];
+            $dataImport = $dataDetail['data'];
+            $jenistype = isset($dataDetail['jenistype']) ? $dataDetail['jenistype'] : 'INAcbg';
+
+            $jenisPrimer = ($jenistype == 'iDRG') ? 15 : 17;
+            $jenisSekunder = ($jenistype == 'iDRG') ? 16 : 18;
+
+            $existing = \DB::table('detaildiagnosapasien_t as ddp')
+                ->select('ddp.norec', 'ddp.objectdiagnosapasienfk')
+                ->where('ddp.kdprofile', $idProfile)
+                ->where('ddp.noregistrasifk', $noregistrasifk)
+                ->whereIn('ddp.objectjenisdiagnosafk', [$jenisPrimer, $jenisSekunder])
+                ->get();
+
+            if (count($existing) > 0) {
+                $norecDdpArray = array_column($existing, 'norec');
+                $objectdiagnosapasienfkArray = array_column($existing, 'objectdiagnosapasienfk');
+                DetailDiagnosaPasien::whereIn('norec', $norecDdpArray)->where('kdprofile', $idProfile)->delete();
+                DiagnosaPasien::whereIn('norec', $objectdiagnosapasienfkArray)->where('kdprofile', $idProfile)->delete();
+            }
+
+            $tglInput = Carbon::now();
+            foreach ($dataImport as $d) {
+                $idDiagnosa = null;
+                if (isset($d['id'])) {
+                    $idDiagnosa = $d['id'];
+                } else {
+                    $dg = \DB::table('diagnosa_m')->where('kddiagnosa', $d['kddiagnosa'])->where('kdprofile', $idProfile)->first();
+                    if ($dg) {
+                        $idDiagnosa = $dg->id;
+                    }
+                }
+
+                if ($idDiagnosa) {
+                    $dataDiagnosa = new DiagnosaPasien();
+                    $dataDiagnosa->norec = $dataDiagnosa->generateNewId();
+                    $dataDiagnosa->kdprofile = $idProfile;
+                    $dataDiagnosa->statusenabled = true;
+                    $dataDiagnosa->noregistrasifk = $noregistrasifk;
+                    $dataDiagnosa->ketdiagnosis = 'Diagnosa Pasien';
+                    $dataDiagnosa->tglpendaftaran = $tglregistrasi;
+                    $dataDiagnosa->save();
+
+                    $dataDetailDiagnosa = new DetailDiagnosaPasien();
+                    $dataDetailDiagnosa->norec = $dataDetailDiagnosa->generateNewId();
+                    $dataDetailDiagnosa->kdprofile = $idProfile;
+                    $dataDetailDiagnosa->statusenabled = true;
+                    $dataDetailDiagnosa->objectpegawaifk = $this->getCurrentUserID();
+                    $dataDetailDiagnosa->noregistrasifk = $noregistrasifk;
+                    $dataDetailDiagnosa->tglregistrasi = $tglregistrasi;
+                    $dataDetailDiagnosa->objectdiagnosafk = $idDiagnosa;
+                    $dataDetailDiagnosa->objectdiagnosapasienfk = $dataDiagnosa->norec;
+                    $dataDetailDiagnosa->objectjenisdiagnosafk = (isset($d['type']) && $d['type'] == 'Primer') ? $jenisPrimer : $jenisSekunder;
+                    $dataDetailDiagnosa->tglinputdiagnosa = $tglInput->format('Y-m-d H:i:s');
+                    $dataDetailDiagnosa->save();
+                    
+                    $tglInput->addSeconds(2);
+                }
+            }
+
+            $pd = \DB::table('antrianpasiendiperiksa_t')->where('norec', $noregistrasifk)->first();
+            if ($pd) {
+                $dataDiagnosaRows = \DB::table('detaildiagnosapasien_t as dp')
+                    ->join('diagnosa_m as dg', 'dg.id', '=', 'dp.objectdiagnosafk')
+                    ->select('dg.kddiagnosa')
+                    ->where('dp.kdprofile', $idProfile)
+                    ->where('dp.noregistrasifk', $noregistrasifk)
+                    ->whereIn('dp.objectjenisdiagnosafk', [$jenisPrimer, $jenisSekunder])
+                    ->orderBy('dp.objectjenisdiagnosafk', 'asc')
+                    ->orderBy('dp.tglinputdiagnosa', 'asc')
+                    ->get();
+                
+                $icd10Str = '';
+                foreach ($dataDiagnosaRows as $it) {
+                    $icd10Str .= ($icd10Str == '' ? '' : '#') . $it->kddiagnosa;
+                }
+                PasienDaftar::where('norec', $pd->noregistrasifk)->update(['icd10' => $icd10Str]);
+            }
+
+            DB::commit();
+            $result = array('status' => 201, 'message' => 'Simpan Berhasil');
+        } catch (\Exception $e) {
+            DB::rollBack();
+            $result = array('status' => 400, 'message' => $e->getMessage());
+        }
+        return $this->setStatusCode($result['status'])->respond($result, $result['message']);
+    }
+
+    public function saveDiagnosaTindakanPasienImport(Request $request) {
+        $kdProfile = $this->getDataKdProfile($request);
+        $idProfile = (int)$kdProfile;
+        DB::beginTransaction();
+        try {
+            $dataDetail = $request['detaildiagnosatindakanpasien'];
+            $noregistrasifk = $dataDetail['objectpasienfk']; // APD norec
+            $tglregistrasi = $dataDetail['tglpendaftaran'];
+            $dataImport = $dataDetail['data'];
+            $ketdiagnosa = isset($dataDetail['ketdiagnosa']) ? $dataDetail['ketdiagnosa'] : 'INAcbg';
+
+            $existing = \DB::table('detaildiagnosatindakanpasien_t as ddt')
+                ->join('diagnosatindakanpasien_t as dtp', 'dtp.norec', '=', 'ddt.objectdiagnosatindakanpasienfk')
+                ->select('ddt.norec', 'dtp.norec as norec_dtp')
+                ->where('ddt.kdprofile', $idProfile)
+                ->where('dtp.objectpasienfk', $noregistrasifk)
+                ->where('ddt.ketdiagnosa', $ketdiagnosa)
+                ->get();
+
+            if (count($existing) > 0) {
+                $norecDdtArray = array_column($existing, 'norec');
+                $norecDtpArray = array_column($existing, 'norec_dtp');
+                DetailDiagnosaTindakanPasien::whereIn('norec', $norecDdtArray)->where('kdprofile', $idProfile)->delete();
+                DiagnosaTindakanPasien::whereIn('norec', $norecDtpArray)->where('kdprofile', $idProfile)->delete();
+            }
+
+            $tglInput = Carbon::now();
+            foreach ($dataImport as $d) {
+                $idProc = null;
+                if (isset($d['id'])) {
+                    $idProc = $d['id'];
+                } else if (isset($d['kddiagnosatindakan'])) {
+                    $dg = \DB::table('diagnosatindakan_m')->where('kddiagnosatindakan', $d['kddiagnosatindakan'])->where('kdprofile', $idProfile)->first();
+                    if ($dg) {
+                        $idProc = $dg->id;
+                    }
+                }
+
+                if ($idProc) {
+                    $dataDiagnosaIcd9 = new DiagnosaTindakanPasien();
+                    $dataDiagnosaIcd9->norec = $dataDiagnosaIcd9->generateNewId();
+                    $dataDiagnosaIcd9->kdprofile = $idProfile;
+                    $dataDiagnosaIcd9->statusenabled = true;
+                    $dataDiagnosaIcd9->objectpasienfk = $noregistrasifk;
+                    $dataDiagnosaIcd9->tglpendaftaran = $tglregistrasi;
+                    $dataDiagnosaIcd9->save();
+
+                    $dataDetailDiagnosaIcd9 = new DetailDiagnosaTindakanPasien();
+                    $dataDetailDiagnosaIcd9->norec = $dataDetailDiagnosaIcd9->generateNewId();
+                    $dataDetailDiagnosaIcd9->kdprofile = $idProfile;
+                    $dataDetailDiagnosaIcd9->statusenabled = true;
+                    $dataDetailDiagnosaIcd9->objectpegawaifk = $this->getCurrentUserID();
+                    $dataDetailDiagnosaIcd9->ketdiagnosa = $ketdiagnosa;
+                    $dataDetailDiagnosaIcd9->objectdiagnosatindakanfk = $idProc;
+                    $dataDetailDiagnosaIcd9->objectdiagnosatindakanpasienfk = $dataDiagnosaIcd9->norec;
+                    $dataDetailDiagnosaIcd9->tglinputdiagnosa = $tglInput->format('Y-m-d H:i:s');
+                    $dataDetailDiagnosaIcd9->save();
+
+                    $tglInput->addSeconds(2);
+                }
+            }
+
+            DB::commit();
+            $result = array('status' => 201, 'message' => 'Simpan Berhasil');
+        } catch (\Exception $e) {
+            DB::rollBack();
+            $result = array('status' => 400, 'message' => $e->getMessage());
+        }
+        return $this->setStatusCode($result['status'])->respond($result, $result['message']);
+    }
     // End IDRG
+
+    public function getDokumenPasien(Request $request)
+    {
+        $kdProfile = $this->getDataKdProfile($request);
+        $idProfile = (int) $kdProfile;
+
+        $data = \DB::table('dokumen_pasien_t as dok')
+            ->select('dok.*')
+            ->where('dok.statusenabled', true)
+            ->where('dok.kdprofile', $idProfile);
+        if (isset($request['nocm']) && $request['nocm'] != '') {
+            $data = $data->where('dok.nocm', $request['nocm']);
+        }
+
+        $data = $data->get();
+
+        $result = array(
+            'data' => $data,
+            'message' => 'er@epic',
+        );
+        return $this->respond($result);
+    }
+
+    public function simpanDokumenPasien(Request $request){
+        $kdProfile = $this->getDataKdProfile($request);
+        $dataReq = $request->all();
+        $uploadBerkasPasien = $request->file('filePasien');
+        $path = 'DokumenPasienM/' . $dataReq['nocm'];
+
+        DB::beginTransaction();
+        try {
+            $dataDokumen = \DB::table('dokumen_pasien_t as dok')
+                ->where('dok.norec', '=', $dataReq['norec'])
+                ->where('dok.kdprofile', $kdProfile)
+                ->where('dok.statusenabled', true)
+                ->first();
+
+            if ($dataDokumen == '' || $dataDokumen == null) {
+
+                if (!empty($uploadBerkasPasien)) {
+                    // penamaan file 
+                    $extension = $uploadBerkasPasien->getClientOriginalExtension();
+                    $filename = $dataReq['namafile'] . '_' . date('YmdHis') . '.' . $extension;
+
+                    $emrDkmn = new DokumenPasien();
+                    $norecDkmn = $emrDkmn->generateNewId();
+                    $emrDkmn->norec = $norecDkmn;
+                    $emrDkmn->kdprofile = $kdProfile;
+                    $emrDkmn->statusenabled = true;
+                    $emrDkmn->nocm = $dataReq['nocm'];
+                    $emrDkmn->tglberkas = date('Y-m-d H:i:s');
+                    $emrDkmn->file = $path . '/' . $filename;
+                    $emrDkmn->namafile = $filename;
+                    $emrDkmn->deskripsi = $dataReq['keterangan'];
+                    $emrDkmn->objectberkaspasien = $dataReq['objectberkaspasien'];
+                    $emrDkmn->save();
+                    $request->file('filePasien')->move($path, $filename);
+                }
+            } else {
+                $emrDkmn = DokumenPasien::where('norec', $dataReq['norec'])->first();
+                $emrDkmn->deskripsi = $dataReq['keterangan'];
+                $extension = explode('.', $emrDkmn->file)[1];
+
+                if (!empty($uploadBerkasPasien)) {
+
+                    if (\File::exists($emrDkmn->file))
+                        \File::delete($emrDkmn->file);
+
+                    // penamaan file 
+                    $extension = $uploadBerkasPasien->getClientOriginalExtension();
+                    $filename = $dataReq['namafile'] . '_' . date('YmdHis') . '.' . $extension;
+                    $emrDkmn->file = $path . '/' . $filename;
+                    $request->file('filePasien')->move($path, $filename);
+                } else {
+
+                    if (\File::exists($emrDkmn->file)) {
+                        $filename = $dataReq['namafile'] . '_' . date('YmdHis') . '.' . $extension;
+                        \File::move($emrDkmn->file, $path . '/' . $filename);
+                        $emrDkmn->file = $path . '/' . $filename;
+                    }
+                }
+
+                $emrDkmn->namafile = $dataReq['namafile'] . '_' . date('YmdHis') . '.' . $extension;
+                $emrDkmn->objectberkaspasien = $dataReq['objectberkaspasien'];
+                $emrDkmn->save();
+            }
+            $transStatus = 'true';
+        } catch (\Exception $e) {
+            $transStatus = 'false';
+        }
+
+        if ($transStatus == 'true') {
+            $transMessage = 'Simpan Berhasil';
+            DB::commit();
+            $result = array(
+                "status" => 201,
+                "message" => $transMessage,
+                "dokumen" => $emrDkmn,
+                "as" => 'inhuman',
+            );
+        } else {
+            $transMessage = "Simpan Gagal";
+            DB::rollBack();
+            $result = array(
+                "status" => 400,
+                "message" => $transMessage,
+                "as" => 'inhuman',
+            );
+        }
+        return $this->setStatusCode($result['status'])->respond($result, $transMessage);
+    }
+
+    public function hapusDokumenPasien(Request $request)
+    {
+        $kdProfile = $this->getDataKdProfile($request);
+        $idProfile = (int) $kdProfile;
+        DB::beginTransaction();
+        try {
+
+            $dokumen = DokumenPasien::where('norec', $request['norec'])
+                ->where('kdprofile', $idProfile)
+                ->first();
+
+            $path = public_path($dokumen->file);
+            $strpathdel = 'DokumenPasienM/' . $dokumen->nocm . '/Deleted';
+            $pathdel = public_path($strpathdel . '/' . $dokumen->namafile);
+            if (\File::exists($dokumen->file)) {
+                \File::delete($path);
+            }
+            $dokumen->delete();
+
+            $transStatus = 'true';
+        } catch (\Exception $e) {
+            $transStatus = 'false';
+        }
+
+        if ($transStatus == 'true') {
+            $transMessage = "Data Terhapus";
+            DB::commit();
+            
+            $result = array(
+                "status" => 201,
+                "message" => $transMessage,
+                "as" => 'er@epic',
+            );
+        } else {
+            $transMessage = "Hapus Gagal";
+            DB::rollBack();
+            $result = array(
+                "status" => 400,
+                "message" => $transMessage,
+                "as" => 'er@epic',
+            );
+        }
+        return $this->setStatusCode($result['status'])->respond($result, $transMessage);
+    }
+
+    public function getDaftarPasienEmrClose(Request $request){
+        $kdProfile = $this->getDataKdProfile($request);
+        // $tglAwal = $request['tglAwal'];
+        // $tglAkhir = $request['tglAkhir'];
+        // $noregistrasi = '';
+        $filter = $request->all();
+        // if (isset($request['noregistrasi']) && $request['noregistrasi'] != "" && $request['noregistrasi'] != "undefined") {
+        //     $noregistrasi = " and pd.noregistrasi ilike '%" . $request['noregistrasi'] . "%'";
+        // }
+
+        // $data= DB::select(DB::raw("
+        // SELECT
+        //     pd.tglregistrasi,
+        //     ps.nocm,
+        //     pd.noregistrasi,
+        //     ps.namapasien,
+        //     rm.namarekanan,
+        //     kp.kelompokpasien,
+        //     ru.namaruangan,
+        //     pd.statuspasien,
+        //     pd.tglpulang,
+        //     pd.tglmeninggal,
+        //     pd.iscloseemr
+        // FROM
+        //     pasiendaftar_t as pd 
+        //     LEFT JOIN pasien_m as ps on ps.id = pd.nocmfk
+        //     LEFT JOIN ruangan_m as ru on ru.id = pd.objectruanganlastfk
+        //     left join rekanan_m as rm on rm.id = pd.objectrekananfk
+        //     INNER JOIN kelompokpasien_m AS kp ON kp.id = pd.objectkelompokpasienlastfk
+        // WHERE
+        //     pd.statusenabled = TRUE
+        //     AND pd.kdprofile = $kdProfile
+        //     and pd.tglregistrasi between '$tglAwal' and '$tglAkhir'
+        //     $openemr
+        //     $noregistrasi
+        //     "));
+
+        $data = \DB::table('pasiendaftar_t as pd')
+                ->leftjoin('pasien_m as ps','ps.id','=','pd.nocmfk')
+                ->leftjoin('ruangan_m as ru','ru.id','=','pd.objectruanganlastfk')
+                ->leftjoin('rekanan_m as rm','rm.id','=','pd.objectrekananfk')
+                ->leftjoin('kelompokpasien_m AS kp','kp.id', '=','pd.objectkelompokpasienlastfk')
+                ->leftjoin('antrianpasiendiperiksa_t as apd', function($join){
+                    $join->on('apd.noregistrasifk','=','pd.norec')
+                        ->on('apd.objectruanganfk','=','pd.objectruanganlastfk');
+                })
+                // ->join('detaildiagnosapasien_t AS ddp', 'ddp.noregistrasifk' ,'=', 'apd.norec')
+                ->select(DB::raw("
+                pd.tglregistrasi,ps.nocm,pd.noregistrasi,ps.namapasien,rm.namarekanan,kp.kelompokpasien,ru.namaruangan,
+                pd.statuspasien,pd.tglpulang,pd.tglmeninggal,pd.iscloseemr, pd.norec
+                "))
+                ->where('pd.statusenabled', TRUE)
+                ->where('pd.kdprofile', $kdProfile);
+        
+                
+                if (isset($filter['tglAwal']) && $filter['tglAwal'] != "" && $filter['tglAwal'] != "undefined") {
+            $data = $data->where('pd.tglregistrasi', '>=', $filter['tglAwal']);
+        }
+        if (isset($filter['tglAkhir']) && $filter['tglAkhir'] != "" && $filter['tglAkhir'] != "undefined") {
+            $data = $data->where('pd.tglregistrasi', '<=', $filter['tglAkhir']);
+        }
+        if (isset($filter['isKirim']) && $filter['isKirim'] != "" && $filter['isKirim'] != "undefined") {
+            $data = $data->where('pd.iscloseemr', '=', $filter['isKirim']);
+        }
+        if (isset($filter['isNonKirim']) && $filter['isNonKirim'] != "" && $filter['isNonKirim'] != "undefined") {
+            $data = $data->where(function($query) {
+                $query->whereNull('pd.iscloseemr')
+                      ->orWhere('pd.iscloseemr', '!=', true);
+            });
+        }
+        
+        if (isset($filter['noregistrasi']) && $filter['noregistrasi'] != "" && $filter['noregistrasi'] != "undefined") {
+            $data = $data->where('pd.noregistrasi', '=', $filter['noregistrasi']);
+        }
+        
+        if (isset($filter['nocm']) && $filter['nocm'] != "" && $filter['nocm'] != "undefined") {
+            $data = $data->where('ps.nocm', '=', $filter['nocm']);
+        }
+        // if(isset($request['isKirim']) && $request['isKirim']!="" && $request['isKirim']!="undefined" && $request['isKirim'] == "true" || $request['isKirim'] == true){
+        //     $data = $data->where('pd.iscloseemr');
+        // }
+        // if(isset($request['isNonKirim']) && $request['isNonKirim']!="" && $request['isNonKirim']!="undefined" && $request['isNonKirim'] == "false" || $request['isNonKirim'] == false){
+        //     $data = $data->where('pd.iscloseemr');
+        // }
+        
+        $data = $data->distinct()->get();
+        
+        $result = array(
+            'data' => $data,
+            'as' => 'ea@epic'
+        );
+        return $this->respond($data);
+    }
+
+    public function getDaftarReqAkses(Request $request){
+        $kdProfile = $this->getDataKdProfile($request);
+        
+        $filter = $request->all();
+       
+        $data = \DB::table('aksesrekammedis_t as ark')
+                ->leftjoin('pasiendaftar_t as pd','pd.norec','=','ark.noregistrasifk')
+                ->leftjoin('ruangan_m as ru','ru.id','=','ark.ruanganuserfk')
+                ->leftjoin('pasien_m as ps','ps.id','=','pd.nocmfk')
+                ->leftjoin('pegawai_m as pg','pg.id','=','ark.pegawaifk')
+                ->leftjoin('pegawai_m as pg2','pg2.id','=','ark.pemberiaksesfk')
+    
+                ->select(DB::raw("
+                pd.tglregistrasi,ps.nocm,pd.noregistrasi,ps.namapasien,ru.namaruangan as unitpegawai,
+                ark.norec, pg.namalengkap as pegawaidiberiakses, ark.tglawal, ark.tglakhir, ark,tglinput, pg2.namalengkap as pegawaipemberiakses,
+                ark.keterangan, ark.tglawalreq, ark.tglakhirreq, ark.tglorder
+                "))
+                ->where('pd.statusenabled', TRUE)
+                ->where('ark.statusenabled', TRUE)
+                ->where('ark.statusenabled', TRUE)
+                ->whereNotNull('ark.tglawalreq')
+                ->where('pd.kdprofile', $kdProfile)
+                ->orderBy('ark.tglorder', 'desc');
+        
+                if (isset($filter['tglawalreq']) && $filter['tglawalreq'] != "" && $filter['tglawalreq'] != "undefined") {
+                    $data = $data->where('ark.tglorder', '>=', $filter['tglawalreq']);
+                }
+                if (isset($filter['tglakhirreq']) && $filter['tglakhirreq'] != "" && $filter['tglakhirreq'] != "undefined") {
+                    $data = $data->where('ark.tglorder', '<=', $filter['tglakhirreq']);
+                }        
+             
+        
+        $data = $data->distinct()->get();
+        
+        $result = array(
+            'data' => $data,
+            'as' => 'rd'
+        );
+        return $this->respond($result);
+    }
+
+    public function simpanOpenEMR(Request $request){
+        $kdProfile = $this->getDataKdProfile($request);
+        $idProfile = (int) $kdProfile;
+
+        DB::beginTransaction();
+        try {
+            // $datazz = PasienDaftar::where('noregistrasi', $request['noregistrasi'])->where('kdprofile', (int)$kdProfile)->first();
+            // if(isset($datazz->iscloseemr = null)){
+                PasienDaftar::where('noregistrasi', $request['noregistrasi'])
+                ->where('kdprofile', $idProfile)
+                ->update([
+                    'iscloseemr' => false,
+                ]);
+            // else {
+            //     PasienDaftar::where('noregistrasi', $request['noregistrasi'])
+            //     ->where('kdprofile', $idProfile)
+            //     ->update([
+            //         'iscloseemr' => false,
+            //     ]);
+            // }
+        // try {
+        //     $datazz = PasienDaftar::where('norec', $request['norec'])->where('kdprofile', (int)$kdProfile)->first();
+        //     if (isset($datazz->iscloseemr) && $datazz->iscloseemr === null) {
+        //         $data = PasienDaftar::where('norec', $request['norec'])
+        //         ->where('kdprofile', (int)$kdProfile)
+        //         ->update([
+        //                 'iscloseemr' => true]
+        //         );
+        //     }else{
+        //         $data = PasienDaftar::where('norec', $request['norec'])
+        //         ->where('kdprofile', (int)$kdProfile)
+        //         ->update([
+        //                 'iscloseemr' => true]
+        //         );
+        //     }
+            $transStatus = 'true';
+            $transMessage = "EMR Tersedia !";
+        } catch (\Exception $e) {
+            $transStatus = 'false';
+            $transMessage = "EMR Open Harap Hubungi Rekam Medis";
+        }
+
+        if ($transStatus != 'false') {
+            DB::commit();
+            $result = array(
+                "status" => 201,
+                "message" => $transMessage,
+            );
+        } else {
+            DB::rollBack();
+            $result = array(
+                "status" => 400,
+                "message" => $transMessage,
+            );
+        }
+
+        return $this->setStatusCode($result['status'])->respond($result, $transMessage);
+        // return $this->respond($result, $data);
+    }
+
+    public function simpanCloseEMR(Request $request){
+        $kdProfile = $this->getDataKdProfile($request);
+        $idProfile = (int) $kdProfile;
+
+        DB::beginTransaction();
+        try {
+            // $datazz = PasienDaftar::where('noregistrasi', $request['noregistrasi'])->where('kdprofile', (int)$kdProfile)->first();
+            // if(isset($datazz->iscloseemr = null)){
+                PasienDaftar::where('noregistrasi', $request['noregistrasi'])
+                ->where('kdprofile', $idProfile)
+                ->update([
+                    'iscloseemr' => true,
+                ]);
+            // else {
+            //     PasienDaftar::where('noregistrasi', $request['noregistrasi'])
+            //     ->where('kdprofile', $idProfile)
+            //     ->update([
+            //         'iscloseemr' => false,
+            //     ]);
+            // }
+        // try {
+        //     $datazz = PasienDaftar::where('norec', $request['norec'])->where('kdprofile', (int)$kdProfile)->first();
+        //     if (isset($datazz->iscloseemr) && $datazz->iscloseemr === null) {
+        //         $data = PasienDaftar::where('norec', $request['norec'])
+        //         ->where('kdprofile', (int)$kdProfile)
+        //         ->update([
+        //                 'iscloseemr' => true]
+        //         );
+        //     }else{
+        //         $data = PasienDaftar::where('norec', $request['norec'])
+        //         ->where('kdprofile', (int)$kdProfile)
+        //         ->update([
+        //                 'iscloseemr' => true]
+        //         );
+        //     }
+            $transStatus = 'true';
+            $transMessage = "EMR Terkunci!";
+        } catch (\Exception $e) {
+            $transStatus = 'false';
+            $transMessage = "EMR Gagal Terkunci!";
+        }
+
+        if ($transStatus != 'false') {
+            DB::commit();
+            $result = array(
+                "status" => 201,
+                "message" => $transMessage,
+            );
+        } else {
+            DB::rollBack();
+            $result = array(
+                "status" => 400,
+                "message" => $transMessage,
+            );
+        }
+
+        return $this->setStatusCode($result['status'])->respond($result, $transMessage);
+        // return $this->respond($result, $data);
+    }
+
+    public function postReqKendali(Request $request){
+        $idProfile = (int) $this->getDataKdProfile($request);
+        $tglAyeuna = date('Y-m-d H:i:s');
+        \DB::beginTransaction();
+        try{
+                $dataInsert = [];
+                foreach ($request['dataTambah'] as $item){
+                    $dataInsert[] = array(
+                        'norec' => substr(Uuid::generate(), 0, 32),
+                        'kdprofile' => $idProfile,
+                        'statusenabled' => true,
+                        'noregistrasifk' => $item['norec_pd'],
+                        'pegawaifk' => $item['pegawaifk'],
+                        'keterangan' => $item['keterangan'],
+                        'tglawalreq' => $item['tglawalreq'],
+                        'tglakhirreq' => $item['tglakhirreq'],
+                        'ruanganuserfk' => $item['ruanganuserfk'],
+                        'isreq' => true,
+                        // 'pemberiaksesfk' => $this->getCurrentUserID(),
+                        'tglorder' => $tglAyeuna,
+                    );
+                    if (count($dataInsert) > 5){
+                        AksesRekamMedis::insert($dataInsert);
+                        $dataInsert = [];
+                    }
+                }
+
+                AksesRekamMedis::insert($dataInsert);
+
+            
+
+            $transStatus = true;
+        } catch (\Exception $e) {
+            $transStatus = false;
+        }
+
+        if ($transStatus){
+            $transMessage = "Request Akses Berhasil";
+            \DB::commit();
+            $result = array(
+                'status' => 201,
+            );
+        } else {
+            $transMessage = "Request Akses Gagal";
+            DB::rollBack();
+            $result = array(
+                'status' => 400,
+                'as' => 'ea@epic',
+            );
+        }
+
+        return $this->setStatusCode($result['status'])->respond($result, $transMessage);
+    }
+
+    public function postKendali(Request $request){
+        $idProfile = (int) $this->getDataKdProfile($request);
+        $tglAyeuna = date('Y-m-d H:i:s');
+        \DB::beginTransaction();
+        try{
+                if(isset($request['norec']) && $request['norec'] != 'undefined'){
+                    AksesRekamMedis::where('norec', $request['norec'])->update(
+                        [
+                            'tglawal' => $request['tglawal'],
+                            'tglakhir' => $request['tglakhir'],
+                            'pemberiaksesfk' => $this->getCurrentUserID(),
+                            'tglinput' => $tglAyeuna,
+                        ]
+                    );
+                } else {
+                    $dataInsert = [];
+                    foreach ($request['dataTambah'] as $item){
+                        $dataInsert[] = array(
+                            'norec' => substr(Uuid::generate(), 0, 32),
+                            'kdprofile' => $idProfile,
+                            'statusenabled' => true,
+                            'noregistrasifk' => $item['norec_pd'],
+                            'pegawaifk' => $item['pegawaifk'],
+                            'keterangan' => $item['keterangan'],
+                            'tglawal' => $item['tglawal'],
+                            'tglakhir' => $item['tglakhir'],
+                            'ruanganuserfk' => $item['ruanganuserfk'],
+                            'pemberiaksesfk' => $this->getCurrentUserID(),
+                            'tglinput' => $tglAyeuna,
+                        );
+                        if (count($dataInsert) > 5){
+                            AksesRekamMedis::insert($dataInsert);
+                            $dataInsert = [];
+                        }
+                    }
+    
+                    AksesRekamMedis::insert($dataInsert);
+                }
+               
+
+            
+
+            $transStatus = true;
+        } catch (\Exception $e) {
+            $transStatus = false;
+        }
+
+        if ($transStatus){
+            $transMessage = "Beri Akses Berhasil";
+            \DB::commit();
+            $result = array(
+                'status' => 201,
+            );
+        } else {
+            $transMessage = "Beri Akses Gagal";
+            DB::rollBack();
+            $result = array(
+                'status' => 400,
+                'as' => 'ea@epic',
+            );
+        }
+        return $this->setStatusCode($result['status'])->respond($result, $transMessage);
+    }
+
+    public function deleteKendali(Request $request){
+        $idProfile = (int) $this->getDataKdProfile($request);
+        \DB::beginTransaction();
+        try{
+            AksesRekamMedis::where('norec', $request['norec'])->where('kdprofile', $idProfile)->delete();
+            $transStatus = true;
+        } catch (\Exception $e) {
+            $transStatus = false;
+        }
+
+        if ($transStatus){
+            $transMessage = "Hapus Akses Berhasil";
+            \DB::commit();
+            $result = array(
+                'status' => 201,
+            );
+        } else {
+            $transMessage = "Hapus Akses Gagal";
+            DB::rollBack();
+            $result = array(
+                'status' => 400,
+                'as' => 'rd',
+            );
+        }
+        return $this->setStatusCode($result['status'])->respond($result, $transMessage);
+    }
+
+    public function cekCloseEmr(Request $request){
+        $kdProfile = $this->getDataKdProfile($request);
+        $akses = true;
+
+        $pd = PasienDaftar::WHERE('norec',$request['norec_pd'])->where('kdprofile',(int)$kdProfile)->first();
+        if($pd->iscloseemr == true){
+            $akses = false;
+            $cekAkses = AksesRekamMedis::where('noregistrasifk',$request['norec_pd'])->where('pegawaifk',$this->getCurrentUserID())
+                ->where('tglawal', '<=', Carbon::now())
+                ->where('tglakhir', '>=', Carbon::now())->get();
+            if(count($cekAkses) > 0){
+                $akses = true;
+            }
+        }
+
+        $result = array(
+            'akses' => $akses,
+            'as' => 'rd'
+        );
+        return $this->respond($result);
+
+    }
+
+    public function getDaftarReqPasienEmrClose(Request $request){
+        $kdProfile = $this->getDataKdProfile($request);
+        $filter = $request->all();
+
+        $data = \DB::table('pasiendaftar_t as pd')
+                ->leftjoin('pasien_m as ps','ps.id','=','pd.nocmfk')
+                ->leftjoin('ruangan_m as ru','ru.id','=','pd.objectruanganlastfk')
+                ->leftjoin('rekanan_m as rm','rm.id','=','pd.objectrekananfk')
+                ->leftjoin('kelompokpasien_m AS kp','kp.id', '=','pd.objectkelompokpasienlastfk')
+                ->leftjoin('antrianpasiendiperiksa_t as apd', function($join){
+                    $join->on('apd.noregistrasifk','=','pd.norec')
+                        ->on('apd.objectruanganfk','=','pd.objectruanganlastfk');
+                })
+                // ->join('detaildiagnosapasien_t AS ddp', 'ddp.noregistrasifk' ,'=', 'apd.norec')
+                ->select(DB::raw("
+                pd.tglregistrasi,ps.nocm,pd.noregistrasi,ps.namapasien,rm.namarekanan,kp.kelompokpasien,ru.namaruangan,
+                pd.statuspasien,pd.tglpulang,pd.tglmeninggal,pd.iscloseemr, pd.norec
+                "))
+                ->where('pd.statusenabled', TRUE)
+                ->where('pd.iscloseemr', TRUE)
+                ->where('pd.kdprofile', $kdProfile);
+        
+                
+                if (isset($filter['tglAwal']) && $filter['tglAwal'] != "" && $filter['tglAwal'] != "undefined") {
+            $data = $data->where('pd.tglregistrasi', '>=', $filter['tglAwal']);
+        }
+        if (isset($filter['tglAkhir']) && $filter['tglAkhir'] != "" && $filter['tglAkhir'] != "undefined") {
+            $data = $data->where('pd.tglregistrasi', '<=', $filter['tglAkhir']);
+        }
+        if (isset($filter['isKirim']) && $filter['isKirim'] != "" && $filter['isKirim'] != "undefined") {
+            $data = $data->where('pd.iscloseemr', '=', $filter['isKirim']);
+        }
+        if (isset($filter['ruangId']) && $filter['ruangId'] != "" && $filter['ruangId'] != "undefined") {
+            $data = $data->where('ru.id', '=', $filter['ruangId']);
+        }
+        if (isset($filter['isNonKirim']) && $filter['isNonKirim'] != "" && $filter['isNonKirim'] != "undefined") {
+            $data = $data->where(function($query) {
+                $query->whereNull('pd.iscloseemr')
+                      ->orWhere('pd.iscloseemr', '!=', true);
+            });
+        }
+        
+        if (isset($filter['noregistrasi']) && $filter['noregistrasi'] != "" && $filter['noregistrasi'] != "undefined") {
+            $data = $data->where('pd.noregistrasi', '=', $filter['noregistrasi']);
+        }
+        
+        if (isset($filter['nocm']) && $filter['nocm'] != "" && $filter['nocm'] != "undefined") {
+            $data = $data->where('ps.nocm', '=', $filter['nocm']);
+        }
+        
+        $data = $data->distinct()->get();
+        
+        $result = array(
+            'data' => $data,
+            'as' => 'ea@epic'
+        );
+        return $this->respond($data);
+    }
+
+    public function getDaftarAkses(Request $request){
+        $kdProfile = $this->getDataKdProfile($request);
+        
+        $filter = $request->all();
+       
+        $data = \DB::table('aksesrekammedis_t as ark')
+                ->leftjoin('pasiendaftar_t as pd','pd.norec','=','ark.noregistrasifk')
+                ->leftjoin('ruangan_m as ru','ru.id','=','ark.ruanganuserfk')
+                ->leftjoin('pasien_m as ps','ps.id','=','pd.nocmfk')
+                ->leftjoin('pegawai_m as pg','pg.id','=','ark.pegawaifk')
+                ->leftjoin('pegawai_m as pg2','pg2.id','=','ark.pemberiaksesfk')
+    
+                ->select(DB::raw("
+                pd.tglregistrasi,ps.nocm,pd.noregistrasi,ps.namapasien,ru.namaruangan as unitpegawai,
+                ark.norec, pg.namalengkap as pegawaidiberiakses, ark.tglawal, ark.tglakhir, ark,tglinput, pg2.namalengkap as pegawaipemberiakses,
+                ark.keterangan
+                "))
+                ->where('pd.statusenabled', TRUE)
+                ->where('ark.statusenabled', TRUE)
+                ->where('ark.statusenabled', TRUE)
+                ->whereNotNull('ark.tglawal')
+                ->where('pd.kdprofile', $kdProfile);
+        
+                
+             
+        
+        $data = $data->distinct()->get();
+        
+        $result = array(
+            'data' => $data,
+            'as' => 'rd'
+        );
+        return $this->respond($result);
+    }
+    public function otomatisCloseEmr(Request $request){
+        $kdProfile = $this->getDataKdProfile($request);
+        \DB::beginTransaction();
+        try{
+            $pd = PasienDaftar::where('kdprofile',$kdProfile)->where('tglpulang', '<=', Carbon::now()->subDays(2))
+            ->where(function($query) {
+                $query->where('iscloseemr', '!=', true)
+                      ->orWhereNull('iscloseemr'); 
+            })
+            ->where('statusenabled',true)
+            ->update(['iscloseemr' => true]);
+           
+            //  return $this->respond($pd);
+            $transStatus = true;
+        } catch (\Exception $e) {
+            $transStatus = false;
+        }
+       
+       
+
+        if ($transStatus){
+            $transMessage = "Close EMR Berhasil";
+            \DB::commit();
+            $result = array(
+                'status' => 201,
+            );
+        } else {
+            $transMessage = "Close EMR Gagal";
+            DB::rollBack();
+            $result = array(
+                'status' => 400,
+                'as' => 'rd',
+            );
+        }
+        return $this->setStatusCode($result['status'])->respond($result, $transMessage);
+    }
+    public function getComboDiagnosa(Request $request) {
+        $data = \DB::table('diagnosaim_m')
+            ->select('id', 'kddiagnosa', 'namadiagnosa')
+            ->where('statusenabled', true)
+            ->where('kddiagnosa', $request['kddiagnosa'])
+            ->get();
+
+        return $this->respond($data);
+    }
+
+    public function getComboDiagnosaTindakan(Request $request) {
+        $data = \DB::table('diagnosatindakanim_m')
+            ->select('id', 'kddiagnosatindakan', 'namadiagnosatindakan')
+            ->where('statusenabled', true)
+            ->where('kddiagnosatindakan', $request['kddiagnosatindakan'])
+            ->get();
+
+        return $this->respond($data);
+    }
 }

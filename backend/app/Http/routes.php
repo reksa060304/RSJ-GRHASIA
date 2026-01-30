@@ -576,6 +576,10 @@ Route::group(['middleware' => 'cors', 'prefix' => 'service'], function () {
             Route::get('bridging/inacbg/get-daftar-pasien-idrg','Bridging\InaCbgController@getDaftarPasienIDRG');
 
             Route::post('registrasi/save-import-diagnosa-idrg', 'Registrasi\RegistrasiController@saveImportIdrg');
+            Route::post('registrasi/save-diagnosa-pasien-import', 'Registrasi\RegistrasiController@saveDiagnosaPasienImport');
+            Route::post('registrasi/save-diagnosa-tindakan-pasien-import', 'Registrasi\RegistrasiController@saveDiagnosaTindakanPasienImport');
+            Route::get('master/diagnosa/get-combo-diagnosa', 'Registrasi\RegistrasiController@getComboDiagnosa');
+            Route::get('master/diagnosa-tindakan/get-combo-diagnosa-tindakan', 'Registrasi\RegistrasiController@getComboDiagnosaTindakan');
             // END IDRG
               //** BPJS DATA PENUNJANG */
               Route::post('bridging/bpjs/save-data-mappingdkoterbpjs','Bridging\BridgingBPJSV2Controller@saveMappingDokterBpjsDokterRs');
@@ -2139,11 +2143,13 @@ Route::group(['middleware' => 'cors', 'prefix' => 'service'], function () {
             Route::get('report/get-cetak-rba-persubsubv2', 'Report\ReportController@cetakRBAPersubsub');
             Route::get('report/get-cetak-rba-persubsub-sebelumsesudahv2', 'Report\ReportController@cetakRBAPersubsubSebelumSesudahV2');
             Route::get('report/get-cetak-rekap-total-anggaranv2', 'Report\ReportController@CetakRekapTotalAnggaranV2');
+            Route::get('report/get-cetak-rekap-total-anggaranv3', 'Report\ReportController@CetakRekapTotalAnggaranV3');
             Route::get('report/get-cetak-rekap-total-anggaran-sebelum-sesudahv2', 'Report\ReportController@CetakRekapTotalAnggaranSebelumSesudahV2');
             Route::get('report/get-cetak-angkas-jadwalv2', 'Report\ReportController@CetakAngkasJadwalV2');
             Route::get('report/get-cetak-angkasv2', 'Report\ReportController@CetakAngkasV2');
             Route::get('report/get-cetak-konsolidasi-per-permenv2', 'Report\ReportController@CetakKonsolidasiPermenV2');
             Route::get('report/get-cetak-spj-dan-monev-rbav2', 'Report\ReportController@CetakSPJMonevRBAV2');
+            Route::get('report/get-cetak-angkas-jadwalv3', 'Report\ReportController@CetakAngkasJadwalV3');
             // end cetak laporan anggaran 2024
 
             // cetak laporan keuangan 2024

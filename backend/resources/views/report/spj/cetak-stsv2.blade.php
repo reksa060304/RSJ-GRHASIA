@@ -57,11 +57,11 @@
                         } else if ($nilai < 100) {
                             $temp = penyebut($nilai/10)." Puluh". penyebut($nilai % 10);
                         } else if ($nilai < 200) {
-                            $temp = " seratus" . penyebut($nilai - 100);
+                            $temp = " Seratus" . penyebut($nilai - 100);
                         } else if ($nilai < 1000) {
                             $temp = penyebut($nilai/100) . " Ratus" . penyebut($nilai % 100);
                         } else if ($nilai < 2000) {
-                            $temp = " seribu" . penyebut($nilai - 1000);
+                            $temp = " Seribu" . penyebut($nilai - 1000);
                         } else if ($nilai < 1000000) {
                             $temp = penyebut($nilai/1000) . " Ribu" . penyebut($nilai % 1000);
                         } else if ($nilai < 1000000000) {
@@ -75,6 +75,13 @@
                     }
                 @endphp
                 {{ penyebut((float)$sts[0]->totalsetoran) }}
+            </td>
+        </tr>
+        <tr>
+            <td style="vertical-align: top;">Keterangan</td>
+            <td style="padding: 0 0.3em; vertical-align: top;">:</td>
+            <td>
+                {{ $sts[0]->keterangan }}
             </td>
         </tr>
         <tr>
