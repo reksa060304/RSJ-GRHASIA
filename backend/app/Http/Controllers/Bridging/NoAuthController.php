@@ -191,18 +191,29 @@ class NoAuthController extends ApiController
         // $idProfile = (int) $kdProfile;
         $filter = $request->all();
 
-        $data = \DB::table('jadwaldokter_m as jd')
-            ->join('ruangan_m AS ru','ru.id','=','jd.objectruanganfk')
-            ->join('pegawai_m as pg','pg.id','=','jd.objectpegawaifk')
-            // ->leftJoin('hari_m AS hr','hr.id','=','jd.objecthariawal')
-            // ->leftJoin('hari_m AS hr1','hr1.id','=','jd.objecthariakhir')
-            ->select(DB::raw("jd.id as idjadwalpegawai,jd.objectruanganfk,ru.namaruangan,
-                              jd.objectpegawaifk,pg.namalengkap,pg.nosip,pg.nostr,pg.noidentitas as nik,
-                              jd.jammulai,jd.jamakhir,jd.keterangan, jd.hari"))
-            // ->where('jd.kdprofile', $idProfile)
-             ->where('ru.statusenabled',true)
-              ->where('pg.statusenabled', true)
-            ->where('jd.statusenabled', true);
+        // $data = \DB::table('jadwaldokter_m as jd')
+        //     ->join('ruangan_m AS ru','ru.id','=','jd.objectruanganfk')
+        //     ->join('pegawai_m as pg','pg.id','=','jd.objectpegawaifk')
+        //     // ->leftJoin('hari_m AS hr','hr.id','=','jd.objecthariawal')
+        //     // ->leftJoin('hari_m AS hr1','hr1.id','=','jd.objecthariakhir')
+        //     ->select(DB::raw("jd.id as idjadwalpegawai,jd.objectruanganfk,ru.namaruangan,
+        //                       jd.objectpegawaifk,pg.namalengkap,pg.nosip,pg.nostr,pg.noidentitas as nik,
+        //                       jd.jammulai,jd.jamakhir,jd.keterangan, jd.hari"))
+        //     // ->where('jd.kdprofile', $idProfile)
+        //      ->where('ru.statusenabled',true)
+        //       ->where('pg.statusenabled', true)
+        //     ->where('jd.statusenabled', true);
+
+        $data = \DB::table('slottingonline_m as slot')
+            ->join('ruangan_m as ru', 'ru.id', '=', 'slot.objectruanganfk' )
+            ->join('pegawai_m as pg', 'pg.id', '=', 'slot.objectpegawaifk')
+            ->select('ru.id as idruangan', 'slot.id', 'ru.namaruangan', 'ru.objectdepartemenfk', 'slot.jambuka', 'slot.jamtutup',
+            'slot.quota','pg.namalengkap','slot.objectpegawaifk','slot.hari')
+
+            ->where('ru.statusenabled', true)
+            ->where('pg.statusenabled', true)
+            ->where('slot.statusenabled', true);
+
 
         if (isset($request['dokterId']) && $request['dokterId'] != "" && $request['dokterId'] != "undefined") {
             $data = $data->where('pg.id', '=', $request['dokterId']);
@@ -228,7 +239,7 @@ class NoAuthController extends ApiController
 
     public static function getKetersediaanTempatTidurPerkelas(Request $request)
     {
-        $data =  DB::select(DB::raw("
+        $dataKelas =  DB::select(DB::raw("
                 SELECT 
                     q2.namakelas,
                     COALESCE(q1.terpakai,0) as terpakai,
@@ -309,8 +320,162 @@ class NoAuthController extends ApiController
                 ORDER BY q1.namakelas;
             "));
 
+
+        $dataPeruangan =  DB::select(DB::raw("
+                    SELECT
+                DENSE_RANK() OVER (ORDER BY x.namaruangan) AS nourut,
+                'tidak' AS tab,
+                x.namaruangan,
+                CASE
+                    WHEN SUM(x.kosong) IS NULL THEN x.isi
+                    WHEN x.isi IS NULL THEN SUM(x.kosong + 0)
+                    ELSE SUM(x.kosong) + x.isi
+                END AS qty,
+                CASE
+                    WHEN SUM(x.kosong) IS NULL THEN 0
+                    ELSE SUM(x.kosong)
+                END AS kosong,
+                CASE
+                    WHEN x.isi IS NULL THEN 0
+                    ELSE x.isi
+                END AS isi
+            FROM (
+                SELECT
+                    ru.id AS idruangan,
+                    ru.namaruangan,
+                    kl.id,
+                    a.isi,
+                    CASE
+                        WHEN sb.id = 2 THEN COUNT(sb.id)
+                    END AS kosong
+                FROM tempattidur_m AS tt
+                    LEFT JOIN kamar_m AS km ON km.id = tt.objectkamarfk
+                    LEFT JOIN ruangan_m AS ru ON ru.id = km.objectruanganfk
+                    LEFT JOIN statusbed_m AS sb ON sb.id = tt.objectstatusbedfk
+                    LEFT JOIN kelas_m AS kl ON kl.id = km.objectkelasfk
+                    LEFT JOIN (
+                        SELECT
+                            COUNT(pd.noregistrasi) AS isi,
+                            ru.namaruangan,
+                            ru.id
+                        FROM pasiendaftar_t AS pd
+                            INNER JOIN antrianpasiendiperiksa_t AS apd
+                                ON pd.norec = apd.noregistrasifk
+                                AND apd.tglkeluar IS NULL
+                            INNER JOIN pasien_m AS p ON p.id = pd.nocmfk
+                            INNER JOIN ruangan_m AS ru ON ru.id = pd.objectruanganlastfk
+                            INNER JOIN kelas_m AS kls ON kls.id = pd.objectkelasfk
+                            LEFT JOIN kamar_m AS kmr ON kmr.id = apd.objectkamarfk
+                            LEFT JOIN tempattidur_m AS tt ON tt.id = apd.nobed
+                        WHERE
+                            pd.kdprofile = 30
+                            AND pd.statusenabled = true
+                            AND pd.tglpulang IS NULL
+                        GROUP BY
+                            ru.namaruangan,
+                            ru.id
+                    ) AS a ON a.id = ru.id
+                WHERE
+                    tt.kdprofile = 30
+                    AND ru.objectdepartemenfk IN (16)
+                    AND ru.statusenabled = true
+                    AND km.statusenabled = true
+                    AND tt.statusenabled = true
+                GROUP BY
+                    ru.id,
+                    sb.id,
+                    kl.id,
+                    a.isi
+            ) AS x
+            GROUP BY
+                x.namaruangan,
+                x.isi
+
+            UNION ALL
+
+            SELECT
+                DENSE_RANK() OVER (ORDER BY x.namaruangan) AS nourut,
+                'iya' AS tab,
+                ' ' || x.namakamar AS namaruangan,
+                CASE
+                    WHEN SUM(x.kosong) IS NULL THEN x.isi
+                    WHEN x.isi IS NULL THEN SUM(x.kosong + 0)
+                    ELSE SUM(x.kosong) + x.isi
+                END AS qty,
+                CASE
+                    WHEN SUM(x.kosong) IS NULL THEN 0
+                    ELSE SUM(x.kosong)
+                END AS kosong,
+                CASE
+                    WHEN x.isi IS NULL THEN 0
+                    ELSE x.isi
+                END AS isi
+            FROM (
+                SELECT
+                    km.id AS idruangan,
+                    km.namakamar,
+                    ru.namaruangan,
+                    a.isi,
+                    CASE
+                        WHEN sb.id = 2 THEN COUNT(sb.id)
+                    END AS kosong
+                FROM tempattidur_m AS tt
+                    LEFT JOIN kamar_m AS km ON km.id = tt.objectkamarfk
+                    LEFT JOIN ruangan_m AS ru ON ru.id = km.objectruanganfk
+                    LEFT JOIN statusbed_m AS sb ON sb.id = tt.objectstatusbedfk
+                    LEFT JOIN kelas_m AS kl ON kl.id = km.objectkelasfk
+                    LEFT JOIN (
+                        SELECT
+                            COUNT(pd.noregistrasi) AS isi,
+                            kmr.namakamar,
+                            kmr.id
+                        FROM pasiendaftar_t AS pd
+                            INNER JOIN antrianpasiendiperiksa_t AS apd
+                                ON pd.norec = apd.noregistrasifk
+                                AND apd.tglkeluar IS NULL
+                            INNER JOIN pasien_m AS p ON p.id = pd.nocmfk
+                            INNER JOIN ruangan_m AS ru ON ru.id = pd.objectruanganlastfk
+                            INNER JOIN kelas_m AS kls ON kls.id = pd.objectkelasfk
+                            LEFT JOIN kamar_m AS kmr ON kmr.id = apd.objectkamarfk
+                            LEFT JOIN tempattidur_m AS tt ON tt.id = apd.nobed
+                        WHERE
+                            pd.kdprofile = 30
+                            AND pd.statusenabled = true
+                            AND pd.tglpulang IS NULL
+                        GROUP BY
+                            kmr.namakamar,
+                            kmr.id
+                    ) AS a ON a.id = km.id
+                WHERE
+                    tt.kdprofile = 30
+                    AND ru.objectdepartemenfk IN (16)
+                    AND ru.statusenabled = true
+                    AND km.statusenabled = true
+                    AND tt.statusenabled = true
+                GROUP BY
+                    km.id,
+                    sb.id,
+                    ru.namaruangan,
+                    km.namakamar,
+                    a.isi
+                ORDER BY
+                    km.namakamar
+            ) AS x
+            GROUP BY
+                x.namakamar,
+                x.namaruangan,
+                x.isi
+            ORDER BY
+                nourut,
+                tab DESC;
+
+            "));
+
+
         $result = array(
-            "data" => $data,
+            // "data" => $data,
+            "dataKelas" => $dataKelas,
+            "dataRuangan" => $dataPeruangan,
             "message" => "ea@epic"
         );
         return $result;
@@ -325,11 +490,27 @@ class NoAuthController extends ApiController
         $data = DB::table('harganettoprodukbykelas_m as ht')
         ->join('produk_m as pr', 'pr.id', '=', 'ht.objectprodukfk')
         ->join('kelas_m as kl', 'kl.id', '=', 'ht.objectkelasfk')
-        ->join('jenispelayanan_m as jp', 'jp.id', '=', 'ht.objectjenispelayananfk')
-        ->select('pr.namaproduk as tindakan', 'ht.hargasatuan as harga', 'kl.namakelas as kelas', 'jp.jenispelayanan')
+        // ->join('jenispelayanan_m as jp', 'jp.id', '=', 'ht.objectjenispelayananfk')
+        
+        ->leftJoin('mapruangantoproduk_m as mp', 'mp.objectprodukfk', '=', 'pr.id' )
+        ->leftJoin('ruangan_m as ru', 'ru.id', '=', 'mp.objectruanganfk')
+
+        ->select('pr.namaproduk as tindakan', 'ht.hargasatuan as harga', 'kl.namakelas as kelas', 'ru.namaruangan' )
         ->where('ht.statusenabled',true)
         // ->where('ht.kdprofile', $kdProfile)
-        ->where('ht.hargasatuan', '>', 0);
+        ->where('ht.hargasatuan', '>', 0)
+
+        ->where(function($q){
+            $q->whereNull('ht.objectpenjaminfk')
+              ->orWhere('ht.objectpenjaminfk', '<>', 2899);
+        })
+
+        ->where(function ($q) {
+        $q->where('mp.statusenabled', true)
+          ->orWhereNull('mp.statusenabled');
+         });
+
+        // ->where('ht.objectpenjaminfk', '<>', 2899);
         //->whereRaw("to_char(ht.tglberlakuawal, 'YYYY') >= '". $request['tahun'] ."'")
        // ->whereRaw("to_char(ht.tglberlakuakhir, 'YYYY') <= '". $request['tahun'] ."'");
 
