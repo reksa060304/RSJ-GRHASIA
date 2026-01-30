@@ -883,14 +883,6 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
                                 if(rek.id == detail.idlevel6){
                                     totalSetoran += parseFloat(detail.totaldibayarclosing)
                                     detailSTS.push(detail)
-
-                                    let desc = 'Pendapatan';
-                                    if(detail.carabayar) desc += ' ' + detail.carabayar;
-                                    if(detail.namapasien) desc += ' an ' + detail.namapasien;
-                                    if(detail.namaruangan) desc += ' Pelayanan ' + detail.namaruangan;
-                                    if (desc !== 'Pendapatan') {
-
-                                    }
                                 }
                             })
 
@@ -904,14 +896,13 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
                                     if (isTunai) {
                                         descParts.push('Penerimaan Tanggal ' + moment($scope.item.tanggalSTS).format('DD-MM-YYYY'));
                                     } else {
-                                        descParts.push('Pendapatan');
                                         if(detail.carabayar) descParts.push(detail.carabayar);
                                         if(detail.namapasien) descParts.push('an ' + detail.namapasien);
                                         // if(detail.namaruangan) descParts.push('Pelayanan ' + detail.namaruangan);
                                     }
                                     
                                     let desc = descParts.join(' ');
-                                    if(desc !== 'Pendapatan' && !uniqueUraian.includes(desc)){
+                                    if(desc && desc.trim() !== '' && !uniqueUraian.includes(desc)){
                                         uniqueUraian.push(desc);
                                     }
                                 }
