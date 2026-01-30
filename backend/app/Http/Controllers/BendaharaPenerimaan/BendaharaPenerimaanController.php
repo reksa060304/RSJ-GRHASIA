@@ -11281,7 +11281,8 @@ class BendaharaPenerimaanController extends ApiController {
                     bp.subtotal::DECIMAL totaldibayarclosing,
                     bp.namapasien,
                     bp.carabayar,
-                    bp.namaruangan
+                    bp.namaruangan,
+                    NULL::VARCHAR as namapelanggan
                 FROM base_pelayanan bp
                 JOIN mapbkuakun_t mba ON 
                     POSITION(','||bp.objectkelompokpasienlastfk||',' IN ','||mba.objectkelompokpasienfk||',') > 0
@@ -11311,7 +11312,8 @@ class BendaharaPenerimaanController extends ApiController {
                     bp.subtotal::DECIMAL totaldibayarclosing,
                     bp.namapasien,
                     bp.carabayar,
-                    bp.namaruangan
+                    bp.namaruangan,
+                    NULL::VARCHAR as namapelanggan
                 FROM base_pelayanan bp
                 JOIN mapbkuakun3_t mba3 ON 
                     POSITION(','||bp.produkfk||',' IN ','||mba3.objectprodukfk||',') > 0
@@ -11340,7 +11342,8 @@ class BendaharaPenerimaanController extends ApiController {
                     (spd.qtyproduk * spd.hargasatuan * spd.qtyoranglast)::DECIMAL totaldibayarclosing,
                     pm.namapasien,
                     cb.carabayar,
-                    ru.namaruangan
+                    ru.namaruangan,
+                    sp.namapasien_klien as namapelanggan
                 FROM sbm_filtered sbm
                 JOIN strukpelayanan_t sp ON sbm.nostrukfk = sp.norec AND sp.statusenabled = TRUE AND sp.kdprofile = :kdProfile
                 JOIN strukpelayanandetail_t spd ON sp.norec = spd.nostrukfk
@@ -11373,7 +11376,8 @@ class BendaharaPenerimaanController extends ApiController {
                     bp.subtotal::DECIMAL totaldibayarclosing,
                     bp.namapasien,
                     bp.carabayar,
-                    bp.namaruangan
+                    bp.namaruangan,
+                    NULL::VARCHAR as namapelanggan
                 FROM base_pelayanan bp
                 -- Default rekening untuk fallback
                 CROSS JOIN (
@@ -11403,13 +11407,13 @@ class BendaharaPenerimaanController extends ApiController {
                 AND NOT EXISTS (SELECT 1 FROM tipe2_produk t2 WHERE t2.pp_norec = bp.pp_norec)
             ),
             all_akun AS (
-                SELECT id, koderekening, namarekening, idlevel1, idlevel2, idlevel3, idlevel4, idlevel5, idlevel6, idlevel7, isobat_group, idcarabayar, totaldibayarclosing, namapasien, carabayar, namaruangan FROM tipe1_kelas
+                SELECT id, koderekening, namarekening, idlevel1, idlevel2, idlevel3, idlevel4, idlevel5, idlevel6, idlevel7, isobat_group, idcarabayar, totaldibayarclosing, namapasien, carabayar, namaruangan, namapelanggan FROM tipe1_kelas
                 UNION ALL
-                SELECT id, koderekening, namarekening, idlevel1, idlevel2, idlevel3, idlevel4, idlevel5, idlevel6, idlevel7, isobat_group, idcarabayar, totaldibayarclosing, namapasien, carabayar, namaruangan FROM tipe2_produk
+                SELECT id, koderekening, namarekening, idlevel1, idlevel2, idlevel3, idlevel4, idlevel5, idlevel6, idlevel7, isobat_group, idcarabayar, totaldibayarclosing, namapasien, carabayar, namaruangan, namapelanggan FROM tipe2_produk
                 UNION ALL
-                SELECT id, koderekening, namarekening, idlevel1, idlevel2, idlevel3, idlevel4, idlevel5, idlevel6, idlevel7, isobat_group, idcarabayar, totaldibayarclosing, namapasien, carabayar, namaruangan FROM tipe3_nonlayanan
+                SELECT id, koderekening, namarekening, idlevel1, idlevel2, idlevel3, idlevel4, idlevel5, idlevel6, idlevel7, isobat_group, idcarabayar, totaldibayarclosing, namapasien, carabayar, namaruangan, namapelanggan FROM tipe3_nonlayanan
                 UNION ALL
-                SELECT id, koderekening, namarekening, idlevel1, idlevel2, idlevel3, idlevel4, idlevel5, idlevel6, idlevel7, isobat_group, idcarabayar, totaldibayarclosing, namapasien, carabayar, namaruangan FROM tipe4_fallback
+                SELECT id, koderekening, namarekening, idlevel1, idlevel2, idlevel3, idlevel4, idlevel5, idlevel6, idlevel7, isobat_group, idcarabayar, totaldibayarclosing, namapasien, carabayar, namaruangan, namapelanggan FROM tipe4_fallback
             )
             SELECT 
                 id idrekening, koderekening, namarekening,
@@ -11418,7 +11422,8 @@ class BendaharaPenerimaanController extends ApiController {
                 -- Ambil Nama Pasien
                 STRING_AGG(DISTINCT namapasien, ', ') as namapasien,
                 carabayar,
-                namaruangan
+                namaruangan,
+                STRING_AGG(DISTINCT namapelanggan, ', ') as namapelanggan
             FROM all_akun
             GROUP BY id, koderekening, namarekening, idlevel1, idlevel2, idlevel3, idlevel4, idlevel5, idlevel6, idlevel7, carabayar, namaruangan
             ORDER BY 

@@ -893,7 +893,15 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
                                     //cek apakah ada nama pasien
                                     let isTunai = detail.carabayar && detail.carabayar.toUpperCase().includes('TUNAI');
                                     
-                                    if (isTunai) {
+                                    let isTagihanNonLayanan = (!detail.namapasien || detail.namapasien.trim() === '') && 
+                                                               ((detail.namapelanggan && detail.namapelanggan.trim() !== '') || 
+                                                                (detail.namaruangan && detail.namaruangan.trim() !== ''));
+                                    
+                                    if (isTagihanNonLayanan) {                                    
+                                        if(detail.carabayar) descParts.push(detail.carabayar);
+                                        let customerName = detail.namapelanggan || detail.namaruangan;
+                                        descParts.push('an ' + customerName);
+                                    } else if (isTunai) {
                                         descParts.push('Penerimaan Tanggal ' + moment($scope.item.tanggalSTS).format('DD-MM-YYYY'));
                                     } else {
                                         if(detail.carabayar) descParts.push(detail.carabayar);
