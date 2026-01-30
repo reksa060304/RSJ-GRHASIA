@@ -67,8 +67,13 @@ define(['initialize'], function (initialize) {
                 $scope.dataLogin2 = medifirstService.getMapLoginUserToRuangan();
                 // $scope.ad = $scope.dataLogin2[0].id;
                 medifirstService.get("ipsrs/get-combo-pegawai-perbaikan").then(function (data) {
-                    $scope.listPegawai = data.data.data;
-                    $scope.listStaff = data.data.data;
+                    var rawData = data.data.data;
+                    $scope.listPegawai = rawData.filter(function(item) {
+                        return item.objectkelompokuserfk === 36;
+                    });
+                    $scope.listStaff = rawData.filter(function(item) {
+                        return item.objectkelompokuserfk === 36;
+                    });
                     $scope.selectOptionsPegawai = {
 						placeholder: "Pilih Pegawai...",
 						dataTextField: "namalengkap",
@@ -937,10 +942,10 @@ define(['initialize'], function (initialize) {
                     toastr.error("Data Belum Dipilih!")
                     return;
                 }                
-                if ($scope.dataSelected.statuspekerjaan == "Selesai") {
-                    toastr.error("Status Pekerjaan Telah Selesai!")
-                    return;
-                }
+                // if ($scope.dataSelected.statuspekerjaan == "Selesai") {
+                //     toastr.error("Status Pekerjaan Telah Selesai!")
+                //     return;
+                // }
                 // if (moment($scope.item.tglMulai).format('YYYY-MM-DD HH:mm') == moment($scope.item.tglSelesai).format('YYYY-MM-DD HH:mm')) {
                 //     toastr.error("Tanggal Mulai dan Tanggal Selasai Tidak Boleh Sama!")
                 //     return;

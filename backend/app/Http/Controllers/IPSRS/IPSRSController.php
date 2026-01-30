@@ -1080,7 +1080,7 @@ class IPSRSController extends ApiController
     }
     public function getComboPegawai(Request $request)
     {
-        $data=\DB::select(DB::raw("SELECT DISTINCT pg.id, pg.namalengkap from pegawai_m pg 
+        $data=\DB::select(DB::raw("SELECT DISTINCT pg.id, pg.namalengkap, lu.objectkelompokuserfk from pegawai_m pg 
         inner join loginuser_s lu on lu.objectpegawaifk = pg.id
         where lu.objectkelompokuserfk in(36,38,47) and pg.kdprofile = 30 and pg.statusenabled=true and lu.kdprofile = 30 and lu.statusenabled=true 
         and pg.id not in(2,320263)"));
