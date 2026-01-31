@@ -2492,7 +2492,7 @@ class BendaharaPenerimaanController extends ApiController {
         // }, $nobatal);
 
         $detail = DB::select(DB::raw("select * from(
-        select distinct ssc.statusenabled, cb.id idcarabayar, sc.noclosing as nopenerimaan, sc.tglclosing as tglpenerimaan, sck.totaldibayar as totalpenerimaan, sts.nosts, cb.carabayar, sc.objectpegawaidiclosefk as pegawai, sc.norec as scfk, sck.norec as sckfk, ssc.objectstsfk 
+        select distinct ssc.statusenabled, cb.id idcarabayar, sc.noclosing as nopenerimaan, sc.tglclosing as tglpenerimaan, sck.totaldibayar as totalpenerimaan, sts.nosts, sts.keterangan, cb.carabayar, sc.objectpegawaidiclosefk as pegawai, sc.norec as scfk, sck.norec as sckfk, ssc.objectstsfk 
         from strukclosing_t sc
         inner join strukclosingkasir_t sck on sck.noclosingfk = sc.norec
         inner join strukbuktipenerimaan_t sbm on sbm.noclosingfk = sc.norec
@@ -2506,9 +2506,6 @@ class BendaharaPenerimaanController extends ApiController {
         and sh.statusenabled <> false
         and sc.kdprofile = $kdProfile
         and sc.statusenabled <> false       
-        and sck.statusenabled <> false
-        and sbm.statusenabled <> false
-        and (ssc.statusenabled IS NULL OR ssc.statusenabled <> false)
         order by sc.tglclosing desc
         ) as x where nopenerimaan is not null
         $status
@@ -11625,7 +11622,81 @@ class BendaharaPenerimaanController extends ApiController {
             );
         }
         return $this->setStatusCode($result['status'])->respond($result, $transMsg);
+    }
 
+    public function editSTSV2(Request $request)
+    {
+        $kdProfile = $this->getDataKdProfile($request);
+        $idProfile = (int) $kdProfile;
+
+        DB::beginTransaction();
+        try {
+                $norecSTS = $request['norec'];
+            $nostsNew = trim($request['nosts']);
+            $keteranganNew = $request['keterangan'];
+
+            // Cek duplikasi nomor STS
+            $duplicateCheck = DB::table('surattandasetoran_t')
+                ->where('nosts', $nostsNew)
+                ->where('kdprofile', $idProfile)
+                ->where('statusenabled', true)
+                ->where('norec', '!=', $norecSTS)
+                ->count();
+
+            if ($duplicateCheck > 0) {
+                DB::rollBack();
+                $result = array(
+                    "status" => 400,
+                    "message" => "Nomor STS '$nostsNew' sudah digunakan! Silakan gunakan nomor lain.",
+                    "as" => 'as@epic',
+                );
+                return $this->setStatusCode($result['status'])->respond($result, $result['message']);
+            }
+
+            // Update
+            DB::table('surattandasetoran_t')
+                ->where('norec', $norecSTS)
+                ->where('kdprofile', $idProfile)
+                ->update([
+                    'nosts' => $nostsNew,
+                    'keterangan' => $keteranganNew
+                ]);
+
+            // Update BKU
+            DB::table('bkupenerimaanv2_t')
+                ->where('objectstsfk', $norecSTS)
+                ->where('kdprofile', $idProfile)
+                ->update([
+                    'uraianbku' => $keteranganNew
+                ]);
+
+            $transStatus = true;
+
+        } catch (\Exception $e) {
+            $transStatus = false;
+        }
+
+        $transMsg = "";
+        if($transStatus == true) {
+            $transMsg = 'Edit STS Berhasil';
+            DB::commit();
+            $result = array(
+                "status" => 201,
+                "message" => $transMsg,
+                "as" => 'as@epic',
+            );
+        } else {
+            $transMsg = 'Edit STS Gagal!!';
+            DB::rollBack();
+            $result = array(
+                "status" => 400,
+                "message"  => $transMsg,
+                "err" => $e->getMessage(),
+                "line" => $e->getLine(),
+                "as" => 'as@epic',
+            );
+        }
+        return $this->setStatusCode($result['status'])->respond($result, $transMsg);
     }
 
     public function simpanSTSKlaimV2(Request $request)
@@ -11899,22 +11970,43 @@ class BendaharaPenerimaanController extends ApiController {
         $kdProfile = $this->getDataKdProfile($request);
         $idProfile = (int) $kdProfile;
 
-        $data = DB::select(DB::raw("
+        $tglAwal = $request->get('tglAwal');
+        $tglAkhir = $request->get('tglAkhir');
+        $nosts = $request->get('nosts');
+        $uraian = $request->get('uraian');
+        $keterangan = $request->get('keterangan');
+        $noRekening = $request->get('noRekening');
 
-            SELECT
-                bkup.*, COALESCE(cap.koderekening, '0') as norekening
-            FROM bkupenerimaanv2_t bkup
-            LEFT JOIN surattandasetoran_t sts ON sts.norec = bkup.objectstsfk AND sts.statusenabled = TRUE
-            LEFT JOIN char_akun_pendapatan_m cap ON cap.id = bkup.objectakunpendapatanfk AND cap.statusenabled = TRUE
-            LEFT JOIN spm_t spm ON spm.norec = bkup.objectspmfk AND spm.statusenabled = TRUE
-            LEFT JOIN spp_t spp on spp.norec = spm.objectsppfk AND spp.statusenabled = TRUE
-            LEFT JOIN asalproduk_m ap on ap.id = spm.objectasalprodukfk and ap.statusenabled = true 
-            WHERE
-                bkup.statusenabled = TRUE
-                AND bkup.kdprofile = ".$idProfile."
-            ORDER BY
-                bkup.tglbku DESC
-        "));
+        $query = DB::table('bkupenerimaanv2_t as bkup')
+            ->select(
+                'bkup.*',
+                DB::raw('COALESCE(cap.koderekening, \'0\') as norekening'),
+                DB::raw('COALESCE(sts.nosts, \'0\') as nosts')
+            )
+            ->leftJoin('surattandasetoran_t as sts', 'sts.norec', '=', 'bkup.objectstsfk')
+            ->leftJoin('char_akun_pendapatan_m as cap', 'cap.id', '=', 'bkup.objectakunpendapatanfk')
+            ->leftJoin('spm_t as spm', 'spm.norec', '=', 'bkup.objectspmfk')
+            ->leftJoin('spp_t as spp', 'spp.norec', '=', 'spm.objectsppfk')
+            ->leftJoin('asalproduk_m as ap', 'ap.id', '=', 'spm.objectasalprodukfk')
+            ->where('bkup.statusenabled', '=', true)
+            ->where('bkup.kdprofile', '=', $idProfile);
+
+        if ($tglAwal && $tglAkhir && $tglAwal != 'null' && $tglAkhir != 'null') {
+            $query->whereBetween('bkup.tglbku', [$tglAwal, $tglAkhir]);
+        }
+        if ($nosts && $nosts != '' && $nosts != 'null' && $nosts != 'undefined') {
+            $query->where('sts.nosts', 'ilike', '%' . $nosts . '%');
+        }
+        if ($uraian && $uraian != '' && $uraian != 'null' && $uraian != 'undefined') {
+            $query->where('bkup.uraianbku', 'ilike', '%' . $uraian . '%');
+        }
+        if ($keterangan && $keterangan != '' && $keterangan != 'null' && $keterangan != 'undefined') {
+            $query->where('bkup.uraianbku', 'ilike', '%' . $keterangan . '%');
+        }
+        if ($noRekening && $noRekening != '' && $noRekening != 'null' && $noRekening != 'undefined') {
+            $query->where('cap.koderekening', 'ilike', '%' . $noRekening . '%');
+        }
+        $data = $query->orderBy('bkup.tglbku', 'desc')->get();
 
         return $this->respond($data);
     }

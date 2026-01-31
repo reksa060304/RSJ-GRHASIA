@@ -939,7 +939,12 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
 						},
 						{
 							field: "norekening",
-							title: "No. Bukti",
+							title: "No. Rekening",
+							width: "130px",
+						},
+                        {
+							field: "nosts",
+							title: "No. STS",
 							width: "130px",
 						},
 						{

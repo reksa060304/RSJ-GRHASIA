@@ -98,7 +98,8 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
                 $scope.item.namaProduk = undefined;
             }
 
-            $scope.cariFilter = function () {
+            // Function to clear selection
+            $scope.clearSelection = function() {
                 $scope.selectedData2 = [];
                 $scope.dataSelected = {};
                 $scope.selected = [];
@@ -108,15 +109,10 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
                 if ($scope.grid && $scope.grid.clearSelection) {
                     $scope.grid.clearSelection(); 
                 }
-                $scope.selectedData2 = [];
-                $scope.dataSelected = {};
-                $scope.selected = [];
-                $scope.item.totalSetor = "";
-                $scope.item.dipilih = "";
-                $scope.item.terbilang = "";
-                if ($scope.grid && $scope.grid.clearSelection) {
-                    $scope.grid.clearSelection(); // FIXED: reset highlight di grid
-                }
+            };
+
+            $scope.cariFilter = function () {
+                $scope.clearSelection();
                 init();
             }
 
@@ -1093,6 +1089,78 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
                 // mengambalikan nilai yang ada dalam variabel penyimpanan
                 return penyimpanan;
             }
+
+          
+            $scope.itemEditSTS = {};
+            $scope.selectedSTSForEdit = null;
+
+            $scope.openEditSTS = function() {
+                if (!$scope.selectedData2 || $scope.selectedData2.length === 0) {
+                    toastr.error('Pilih data STS yang akan diedit terlebih dahulu dengan mencentang checkbox!');
+                    return;
+                }
+
+                if ($scope.selectedData2.length > 1) {
+                    toastr.error('Pilih hanya 1 data STS untuk diedit!');
+                    return;
+                }
+
+                var selectedData = $scope.selectedData2[0];
+
+                if (!selectedData.nosts || selectedData.nosts === null) {
+                    toastr.error('Data yang dipilih belum memiliki STS. Silakan pilih data yang sudah ada Nomor STS nya.');
+                    return;
+                }
+
+                $scope.selectedSTSForEdit = selectedData;
+                $scope.itemEditSTS = {
+                    norec: selectedData.objectstsfk,  // norec sts
+                    nosts: selectedData.nosts,
+                    keterangan: selectedData.keterangan || ''
+                };
+
+                $scope.popupEditSTS.center().open();
+            };
+
+            $scope.simpanEditSTS = function() {
+                if (!$scope.itemEditSTS.nosts || $scope.itemEditSTS.nosts.trim() === '') {
+                    toastr.error('Nomor STS tidak boleh kosong!');
+                    return;
+                }
+
+                $scope.isRouteLoading = true;
+
+                var dataToSend = {
+                    norec: $scope.itemEditSTS.norec,
+                    nosts: $scope.itemEditSTS.nosts,
+                    keterangan: $scope.itemEditSTS.keterangan || ''
+                };
+
+                medifirstService.post('bendaharapenerimaan/edit-stsv2', dataToSend).then(function(response) {
+                    $scope.isRouteLoading = false;
+                    
+                    if (response.status === 201) {
+                        $scope.popupEditSTS.close();                    
+                        init();
+                        initSTS();
+                        $scope.clearSelection();
+                    } else {
+                        var errorMsg = response.data && response.data.message ? response.data.message : 'Terjadi kesalahan';
+                        toastr.error(errorMsg);
+                    }
+                }, function(error) {
+                    $scope.isRouteLoading = false;
+                    var errorMsg = error.data && error.data.message ? error.data.message : 'Terjadi kesalahan';
+                    toastr.error(errorMsg);
+                });
+            };
+
+            $scope.batalEditSTS = function() {
+                $scope.itemEditSTS = {};
+                $scope.selectedSTSForEdit = null;                
+                $scope.popupEditSTS.close();                
+                $scope.clearSelection();
+            };
 
             //////////////////////////////////////////////////////////////          END             /////////////////////////////////////////////////////////////////////////////////////       
         }

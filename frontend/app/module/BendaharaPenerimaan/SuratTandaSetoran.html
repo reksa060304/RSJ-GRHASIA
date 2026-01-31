@@ -288,6 +288,9 @@
                 <div class="grid_2">
                     <button class="c-button" ng-click="popupSimpan()">Simpan V2</button>
                 </div>
+                <div class="grid_2">
+                    <button class="c-button" ng-click="openEditSTS()">Edit STS V2</button>
+                </div>
             </div>
         </div>
 
@@ -392,6 +395,37 @@
                 <div class="grid_1"></div>
                 <div class="grid_2">
                     <button class="btnTemplate1" ng-click="batalSTS()">Batal</button>
+                </div>
+            </div>
+    
+        </div>
+    </div>
+
+    <!-- Popup Edit STS -->
+    <div kendo-window="popupEditSTS" k-title="'Edit STS'" k-visible="false" k-width="600" k-modal="true">
+        <div style="padding: 1.5em;" class="panel panel-default container_12">
+
+            <h1 style="font-size:1em; font-weight: bold;">Edit Data STS</h1>
+            
+            <div class="grid_12" style="margin-top: 1em;">
+                <div class="grid_12">
+                    <label c-label>Nomor STS</label>
+                    <input c-text-box type="input" class="k-textbox" ng-model="itemEditSTS.nosts" style="width: 100%;"/>
+                </div>
+
+                <div class="grid_12" style="margin-top: 1em;">
+                    <label c-label>Keterangan</label>
+                    <textarea class="k-textbox" ng-model="itemEditSTS.keterangan" style="width: 100%; height: 100px;"></textarea>
+                </div>
+            </div>
+
+            <div class="grid_12" style="margin-top: 20px;">
+                <div class="grid_2">
+                    <button class="btnTemplate1" ng-click="simpanEditSTS()">Simpan</button>
+                </div>
+                <div class="grid_1"></div>
+                <div class="grid_2">
+                    <button class="btnTemplate1" ng-click="batalEditSTS()">Batal</button>
                 </div>
             </div>
     

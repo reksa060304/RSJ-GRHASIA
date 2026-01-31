@@ -112,6 +112,7 @@ Route::group(['middleware' => 'cors', 'prefix' => 'service'], function () {
         Route::get('bendaharapenerimaan/get-konfirmasi-rekening-sts', 'BendaharaPenerimaan\BendaharaPenerimaanController@getKonfirmasiRekeningSTS');
         Route::post('bendaharapenerimaan/save-detail-stsv2', 'BendaharaPenerimaan\BendaharaPenerimaanController@saveDetailSTSV2');
         Route::post('bendaharapenerimaan/simpan-stsv2', 'BendaharaPenerimaan\BendaharaPenerimaanController@simpanSTSV2');
+        Route::post('bendaharapenerimaan/edit-stsv2', 'BendaharaPenerimaan\BendaharaPenerimaanController@editSTSV2');
         Route::get('report/cetak-stsklaimv2', 'Report\ReportController@cetakSTSKlaimV2');
         Route::post('bendaharapenerimaan/simpan-stsklaimv2', 'BendaharaPenerimaan\BendaharaPenerimaanController@simpanSTSKlaimV2');
         Route::get('bendaharapenerimaan/get-data-combo-v2', 'BendaharaPenerimaan\BendaharaPenerimaanController@getDataComboV2');
@@ -1763,6 +1764,7 @@ Route::group(['middleware' => 'cors', 'prefix' => 'service'], function () {
             Route::get('logistik/get-daftar-produkkadaluarsa', 'Logistik\LogistikController@getDataComboKadaluarsa');
             Route::get('logistik/get-daftar-barang-kadaluarsa', 'Logistik\LogistikController@getBarangKadaluarsa');
             Route::get('logistik/get-daftar-retur-penerimaan-detail', 'Logistik\LogistikController@getDaftarReturPenerimaanSuplierDetail');
+            Route::get('logistik/get-detail-transaksi-stock-flow', 'Logistik\LogistikController@getDetailTransaksiStockFlow');
             Route::get('logistik/get-daftar-so', 'Logistik\LogistikController@getDaftarStokRuanganSO');
             Route::get('logistik/get-daftar-so-detail', 'Logistik\LogistikController@getDaftarStokRuanganSODetail');
             Route::get('logistik/get-daftar-combo-anggaran', 'Logistik\LogistikController@getDataComboMataAnggaran');
