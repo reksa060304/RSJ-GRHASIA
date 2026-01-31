@@ -1142,8 +1142,9 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
                     if (response.status === 201) {
                         $scope.popupEditSTS.close();                    
                         init();
-                        initSTS();
                         $scope.clearSelection();
+                        initSTS();
+                        
                     } else {
                         var errorMsg = response.data && response.data.message ? response.data.message : 'Terjadi kesalahan';
                         toastr.error(errorMsg);
