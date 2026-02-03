@@ -209,7 +209,7 @@ class ResepElektronikController extends ApiController
         $jenis = '';
         $result=[];
         foreach ($data as $item){
-            if ($item->statusorder == 0){$status='Menunggu';};
+            if ($item->statusorder == 0){$status='Menunggu Verifikasi';};
             if ($item->statusorder == 5){$status='Verifikasi';};
             if ($item->statusorder == 1){$status='Produksi';};
             if ($item->statusorder == 2){$status='Packaging';};
