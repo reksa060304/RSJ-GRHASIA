@@ -12234,6 +12234,15 @@ if ($rowChanged) {
 
         return $this->respond($result);
     }
+    public function getComboBerkasPasienNew(Request $request)
+    {
+        $result = \DB::table('berkas_identitas_pasien_m as bp')
+            ->select('bp.id', 'bp.nama')
+            ->where('bp.statusenabled', true)
+            ->get();
+
+        return $this->respond($result);
+    }
     public function postVerifikasiEMR(Request $request)
     {
         $kdProfile = $this->getDataKdProfile($request);

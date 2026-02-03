@@ -1134,6 +1134,7 @@ Route::group(['middleware' => 'cors', 'prefix' => 'service'], function () {
           Route::post('emr/image-upload', 'EMR\EMRController@saveCapKakiBayi');
           Route::get('emr/get-cap-kaki-bayi', 'EMR\EMRController@getCapKakiBayi');
           Route::get('report/cetak-laporan-ipcn', 'Report\ReportController@cetakLaporanIPCN');
+          Route::get('emr/combo-jenis-berkas-pasien-new', 'EMR\EMRController@getComboBerkasPasienNew');
 
           Route::get('emr/get-berkas-pasien', 'EMR\EMRController@getBerkasPasien');
           Route::post('emr/post-berkas-pasien', 'EMR\EMRController@postBerkasPasien');
