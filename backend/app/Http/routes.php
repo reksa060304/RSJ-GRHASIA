@@ -2141,6 +2141,7 @@ Route::group(['middleware' => 'cors', 'prefix' => 'service'], function () {
             // cetak laporan anggaran 2024
             Route::get('report/get-cetak-rba-detailv2', 'Report\ReportController@cetakRBADetailV2');
             Route::get('report/get-cetak-rba-detail-new', 'Report\ReportController@cetakRBADetailNew');
+            Route::get('report/get-cetak-rba-detail-sebelum-sesudah-new', 'Report\ReportController@cetakRBADetailSebelumSesudahNew');
             Route::get('report/get-cetak-rba-detail-sebelum-sesudahv2', 'Report\ReportController@cetakRBADetailSebelumSesudahV2');
             Route::get('report/get-cetak-rba-persubsubv2', 'Report\ReportController@cetakRBAPersubsub');
             Route::get('report/get-cetak-rba-persubsub-sebelumsesudahv2', 'Report\ReportController@cetakRBAPersubsubSebelumSesudahV2');

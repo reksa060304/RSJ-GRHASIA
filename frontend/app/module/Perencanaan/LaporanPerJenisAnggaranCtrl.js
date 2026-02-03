@@ -554,7 +554,7 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
 
                 if ($scope.item.terhadapdetail != undefined) {
 
-                    window.open(baseTransaksi + "report/get-cetak-rba-detail-sebelum-sesudahv2" 
+                    window.open(baseTransaksi + "report/get-cetak-rba-detail-sebelum-sesudah-new" 
                         + "?tahun=" + moment(tahun).format('YYYY') 
                         + "&subsubkegiatan=" + subsubkegiatan 
                         + "&tahap=" + tahap 

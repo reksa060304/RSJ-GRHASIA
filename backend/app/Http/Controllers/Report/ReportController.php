@@ -27797,6 +27797,280 @@ public function suratBuktiPengembalian(Request $request)
 
     }
 
+     public function cetakRBADetailSebelumSesudahNew(Request $request)
+    {
+        $setting = \DB::table('settinganggaran_t as st')
+            ->join('pegawai_m as pg','pg.id','=','st.objectkepalabludfk')
+            ->join('tahapanggaran_m as ta','ta.id','=','st.objecttahapaktivfk')
+            ->select('st.*','pg.namalengkap', 'ta.tahap', 'ta.id as idtahap', 'pg.id as idpegawai', 'pg.nippns')
+            ->where('st.kdprofile', 30)
+            ->where('st.statusenabled', true)
+            ->orderBy('st.tahunanggaran')
+            ->get();
+
+        $asalProduk = DB::select(DB::raw("
+            SELECT 
+                ap.id, ap.asalproduk
+            FROM asalproduk_m ap
+            WHERE
+                ap.statusenabled = TRUE
+                AND ap.kdprofile = 30
+                AND ap.isanggaran = TRUE
+        
+        "));
+
+
+        $tahun = '';
+        if (isset($request['tahun']) && $request['tahun'] != "" && $request['tahun'] != "undefined") {
+            $tahun = "and ta.tahun = '".$request['tahun']."'";
+        }else{
+            $tahun = "and ta.tahun = '".$setting[0]->tahunanggaran."'";
+        }
+
+        $tahap = '';
+        if (isset($request['tahap']) && $request['tahap'] != "" && $request['tahap'] != "undefined") {
+            $tahap = "and ta.objecttahapfk = '".$request['tahap']."'";
+        }
+
+        $terhadap = '';
+        if (isset($request['terhadap']) && $request['terhadap'] != "" && $request['terhadap'] != "undefined") {
+            $terhadap = "and ta.objecttahapfk = '".$request['terhadap']."'";
+        }
+
+        $subsubkegiatan = '';
+        if (isset($request['subsubkegiatan']) && $request['subsubkegiatan'] != "" && $request['subsubkegiatan'] != "undefined") {
+            $subsubkegiatan = "and ta.objectkegiatanfk = '".$request['subsubkegiatan']."'";
+        }
+
+        $program = DB::select(DB::raw("
+            SELECT 
+                ta.*,
+                ka.kode as kodesubsubkegiatan, ka.keterangan as keterangansubsubkegiatan,
+                ka3.kode as kodesubkegiatan, ka3.keterangan as keterangansubkegiatan,
+                ka2.kode as kodekegiatan, ka2.keterangan as keterangankegiatan,
+                ka1.kode as kodeprogram, ka1.keterangan as keteranganprogram,
+                th.id as idtahap, th.tahap
+            FROM kegiatananggaran2024_m ka 
+            JOIN transaksianggaran2024_t ta ON ta.objectkegiatanfk = ka.id AND ta.statusenabled = TRUE AND ta.kdprofile = 30
+            JOIN tahapanggaran_m th ON th.id = ta.objecttahapfk AND th.statusenabled = TRUE AND th.kdprofile = 30
+            LEFT JOIN kegiatananggaran2024_m ka3 ON ka3.id = ka.headfk AND ka3.statusenabled = TRUE AND ka3.kdprofile = 30
+            LEFT JOIN kegiatananggaran2024_m ka2 ON ka2.id = ka3.headfk AND ka2.statusenabled = TRUE AND ka2.kdprofile = 30
+            LEFT JOIN kegiatananggaran2024_m ka1 ON ka1.id = ka2.headfk AND ka1.statusenabled = TRUE AND ka1.kdprofile = 30
+            WHERE
+                ka.statusenabled = TRUE
+                AND ka.kdprofile = 30
+                $tahun
+                $tahap
+                $subsubkegiatan
+        "));
+
+        $data = DB::select(DB::raw("
+
+            SELECT
+                kb.norec AS norec_kb,
+                kb.keteranganbelanja,
+                kb.jml,
+                kb.satuan,
+                kb.hargasatuan,
+                kb.subtotal,
+                kb.objectasalprodukfk,
+                ka.id AS id_kegiatananggaran,
+                ka.kode AS kode_kegiatananggaran,
+                ka.keterangan,
+                ta.tahun,
+                ta.indikatormasuk,
+                ta.indikatorkeluaran,
+                ta.indikatorhasil,
+                ta.targetmasuk,
+                ta.targetkeluaran,
+                ta.targethasil,
+                ma.id AS id_mataanggaran4,
+                ma.namamataanggaran AS nama_mataanggaran4,
+                ma.kodemataanggaran AS kode_mataanggaran4,
+                ma3.id AS id_mataanggaran3,
+                ma3.namamataanggaran AS nama_mataanggaran3,
+                ma3.kodemataanggaran AS kode_mataanggaran3,
+                ma2.id AS id_mataanggaran2,
+                ma2.namamataanggaran AS nama_mataanggaran2,
+                ma2.kodemataanggaran AS kode_mataanggaran2,
+                ma1.id AS id_mataanggaran1,
+                ma1.namamataanggaran AS nama_mataanggaran1,
+                ma1.kodemataanggaran AS kode_mataanggaran1,
+                th.tahap 
+            FROM keteranganbelanja_t AS kb
+            JOIN transaksianggaran2024_t ta ON ta.norec = kb.objecttransaksifk AND ta.statusenabled = TRUE AND ta.kdprofile = 30
+            JOIN kegiatananggaran2024_m AS ka ON ka.id = ta.objectkegiatanfk AND ka.statusenabled = TRUE AND ka.kdprofile = 30
+            JOIN mataanggaran_m AS ma ON ma.id = kb.objectmataanggaranfk AND ma.statusenabled = TRUE AND ma.kdprofile = 30
+            JOIN tahapanggaran_m AS th ON th.id = ta.objecttahapfk AND th.statusenabled = TRUE AND th.kdprofile = 30
+            JOIN asalproduk_m AS ap ON ap.id = kb.objectasalprodukfk AND ap.statusenabled = TRUE AND ap.kdprofile = 30
+            JOIN mataanggaran_m ma3 ON ma3.id = ma.headfk AND ma3.statusenabled = TRUE AND ma3.kdprofile = 30
+            JOIN mataanggaran_m ma2 ON ma2.id = ma3.headfk AND ma2.statusenabled = TRUE AND ma2.kdprofile = 30
+            JOIN mataanggaran_m ma1 ON ma1.id = ma2.headfk AND ma1.statusenabled = TRUE AND ma1.kdprofile = 30
+            WHERE
+                kb.statusenabled = TRUE 
+                AND kb.kdprofile = 30 
+                $tahun
+                $tahap
+                $subsubkegiatan
+            ORDER BY
+                ma1.kodemataanggaran,
+                ma2.kodemataanggaran,
+                ma3.kodemataanggaran,
+                ma.kodemataanggaran,
+                kb.norec
+        "));
+
+        $sesudah = DB::select(DB::raw("
+            SELECT
+                kb.norec AS norec_kb,
+                kb.keteranganbelanja,
+                kb.jml,
+                kb.satuan,
+                kb.hargasatuan,
+                kb.subtotal,
+                kb.objectasalprodukfk,
+                ka.id AS id_kegiatananggaran,
+                ka.kode AS kode_kegiatananggaran,
+                ka.keterangan,
+                ta.tahun,
+                ta.indikatormasuk,
+                ta.indikatorkeluaran,
+                ta.indikatorhasil,
+                ta.targetmasuk,
+                ta.targetkeluaran,
+                ta.targethasil,
+                ma.id AS id_mataanggaran4,
+                ma.namamataanggaran AS nama_mataanggaran4,
+                ma.kodemataanggaran AS kode_mataanggaran4,
+                ma3.id AS id_mataanggaran3,
+                ma3.namamataanggaran AS nama_mataanggaran3,
+                ma3.kodemataanggaran AS kode_mataanggaran3,
+                ma2.id AS id_mataanggaran2,
+                ma2.namamataanggaran AS nama_mataanggaran2,
+                ma2.kodemataanggaran AS kode_mataanggaran2,
+                ma1.id AS id_mataanggaran1,
+                ma1.namamataanggaran AS nama_mataanggaran1,
+                ma1.kodemataanggaran AS kode_mataanggaran1,
+                th.tahap 
+            FROM keteranganbelanja_t AS kb
+            JOIN transaksianggaran2024_t ta ON ta.norec = kb.objecttransaksifk AND ta.statusenabled = TRUE AND ta.kdprofile = 30
+            JOIN kegiatananggaran2024_m AS ka ON ka.id = ta.objectkegiatanfk AND ka.statusenabled = TRUE AND ka.kdprofile = 30
+            JOIN mataanggaran_m AS ma ON ma.id = kb.objectmataanggaranfk AND ma.statusenabled = TRUE AND ma.kdprofile = 30
+            JOIN tahapanggaran_m AS th ON th.id = ta.objecttahapfk AND th.statusenabled = TRUE AND th.kdprofile = 30
+            JOIN asalproduk_m AS ap ON ap.id = kb.objectasalprodukfk AND ap.statusenabled = TRUE AND ap.kdprofile = 30
+            JOIN mataanggaran_m ma3 ON ma3.id = ma.headfk AND ma3.statusenabled = TRUE AND ma3.kdprofile = 30
+            JOIN mataanggaran_m ma2 ON ma2.id = ma3.headfk AND ma2.statusenabled = TRUE AND ma2.kdprofile = 30
+            JOIN mataanggaran_m ma1 ON ma1.id = ma2.headfk AND ma1.statusenabled = TRUE AND ma1.kdprofile = 30
+            WHERE
+                kb.statusenabled = TRUE 
+                AND kb.kdprofile = 30 
+                $tahun
+                $terhadap
+                $subsubkegiatan
+            ORDER BY
+                ma1.kodemataanggaran,
+                ma2.kodemataanggaran,
+                ma3.kodemataanggaran,
+                ma.kodemataanggaran,
+                kb.norec
+        "));
+
+
+        $sesudahLookup = [];
+        $indikatorLookup = []; 
+        
+        foreach ($sesudah as $ses) {
+            $key = $ses->kode_kegiatananggaran . '|' . $ses->kode_mataanggaran4 . '|' . $ses->keteranganbelanja;
+            $sesudahLookup[$key] = $ses;
+            
+            $keyKegiatan = $ses->kode_kegiatananggaran;
+            if (!isset($indikatorLookup[$keyKegiatan])) {
+                $indikatorLookup[$keyKegiatan] = [
+                    'indikatormasuk' => $ses->indikatormasuk,
+                    'indikatorkeluaran' => $ses->indikatorkeluaran,
+                    'indikatorhasil' => $ses->indikatorhasil,
+                    'targetmasuk' => $ses->targetmasuk,
+                    'targetkeluaran' => $ses->targetkeluaran,
+                    'targethasil' => $ses->targethasil,
+                ];
+            }
+        }
+
+
+        foreach ($data as $seb) {
+
+            $seb->jml_sesudah = 0;
+            $seb->satuan_sesudah = null;
+            $seb->hargasatuan_sesudah = 0;
+            $seb->objectasalprodukfk_sesudah = null;
+            $seb->indikatormasuk_sesudah = null;
+            $seb->indikatorkeluaran_sesudah = null;
+            $seb->indikatorhasil_sesudah = null;
+            $seb->targetmasuk_sesudah = null;
+            $seb->targetkeluaran_sesudah = null;
+            $seb->targethasil_sesudah = null;
+            
+
+            $key = $seb->kode_kegiatananggaran . '|' . $seb->kode_mataanggaran4 . '|' . $seb->keteranganbelanja;
+            if (isset($sesudahLookup[$key])) {
+                $ses = $sesudahLookup[$key];
+                $seb->jml_sesudah = $ses->jml;
+                $seb->satuan_sesudah = $ses->satuan;
+                $seb->hargasatuan_sesudah = $ses->hargasatuan;
+                $seb->objectasalprodukfk_sesudah = $ses->objectasalprodukfk;
+            }
+            
+            $keyKegiatan = $seb->kode_kegiatananggaran;
+            if (isset($indikatorLookup[$keyKegiatan])) {
+                $ind = $indikatorLookup[$keyKegiatan];
+                $seb->indikatormasuk_sesudah = $ind['indikatormasuk'];
+                $seb->indikatorkeluaran_sesudah = $ind['indikatorkeluaran'];
+                $seb->indikatorhasil_sesudah = $ind['indikatorhasil'];
+                $seb->targetmasuk_sesudah = $ind['targetmasuk'];
+                $seb->targetkeluaran_sesudah = $ind['targetkeluaran'];
+                $seb->targethasil_sesudah = $ind['targethasil'];
+            }
+        }
+
+        // Fungsi untuk mengambil asal produk apa saja yang ada dalam belanja secara unique
+        function cariAsal($data, $asal, $uniqueAsalNames = [], $index = 0) {
+            // Base case: if index is out of bounds, return uniqueAsalNames
+            if ($index >= count($data)) {
+                return $uniqueAsalNames;
+            }
+            
+            // Get the current id_asal from data
+            $currentIdAsal = $data[$index]->objectasalprodukfk;
+            
+            // Check if this id_asal is already in uniqueAsalNames
+            if (!in_array($currentIdAsal, array_column($uniqueAsalNames, 'id'))) {
+                // Find the corresponding asal by id
+                foreach ($asal as $item) {
+                    if ($item->id == $currentIdAsal) {
+                        $uniqueAsalNames[] = $item;
+                        break;
+                    }
+                }
+            }
+            
+            // Recursive call for the next index
+            return cariAsal($data, $asal, $uniqueAsalNames, $index + 1);
+        }
+        
+        // Call the function
+        $uniqueAsalNames = cariAsal($data, $asalProduk);
+
+        $tanggalcetak = $this->tanggal_indonesia(date('Y-m-d',strtotime($request['tglcetak'])));        
+
+        return view('report.rba.cetak-rba-detail-sebelum-sesudah-new', [
+            'data' => $data,
+            'asalproduk' => $uniqueAsalNames,
+            'settingrba' => $setting,
+            'program' => $program,
+            'tanggalcetak' => isset($request['tglcetak']) ? $tanggalcetak : ''
+        ]);
+    }
+
     public function cetakRBADetailSebelumSesudahV2(Request $request)
     {
         $setting = \DB::table('settinganggaran_t as st')
