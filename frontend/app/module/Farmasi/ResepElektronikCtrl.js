@@ -70,7 +70,7 @@ define(['initialize', 'Configuration'], function (initialize, config) {
                         // $(row.cells[1]).addClass("red");
                     }
                     var statusorder = kendoGrid.dataItem(row).statusorder;
-                    if (statusorder != null && statusorder == 'Menunggu') {
+                    if (statusorder != null && statusorder == 'Menunggu Verifikasi') {
                         $(row.cells[11]).addClass("koneng");
                     } else if (statusorder != null && statusorder == 'Verifikasi') {
                         $(row.cells[11]).addClass("green");
@@ -356,7 +356,7 @@ define(['initialize', 'Configuration'], function (initialize, config) {
             //     }]
             // };
             $scope.listStatus = [
-                { id: 0, status: 'Menunggu' },
+                { id: 0, status: 'Menunggu Verifikasi' },
                 { id: 1, status: 'Produksi' },
                 { id: 2, status: 'Packaging' },
                 { id: 3, status: 'Selesai' },
@@ -616,7 +616,7 @@ define(['initialize', 'Configuration'], function (initialize, config) {
             }
 
             $scope.updateProduksi = function () {
-                if ($scope.item.statusorder != 'Menunggu') {
+                if ($scope.item.statusorder != 'Menunggu Verifikasi') {
                     //managePasien.updateStatusOrder($scope.item.strukOrder.noOrder, 1).then(function(e) {
                     //
                     //managePasien.updateStatusOrder($scope.item.noorder, 1).then(function(e) {
@@ -655,7 +655,7 @@ define(['initialize', 'Configuration'], function (initialize, config) {
             }
 
             $scope.updatePackaging = function () {
-                if ($scope.item.statusorder != 'Menunggu') {
+                if ($scope.item.statusorder != 'Menunggu Verifikasi') {
                     //managePasien.updateStatusOrder($scope.item.strukOrder.noOrder, 2).then(function(e) {
                     // managePasien.updateStatusOrder($scope.item.noorder, 2).then(function(e) {
                     //     $scope.refresh();
@@ -694,7 +694,7 @@ define(['initialize', 'Configuration'], function (initialize, config) {
 
             }
             $scope.updateDone = function () {
-                if ($scope.item.statusorder != 'Menunggu') {
+                if ($scope.item.statusorder != 'Menunggu Verifikasi') {
                     //managePasien.updateStatusOrder($scope.item.strukOrder.noOrder, 3).then(function(e) {
                     // managePasien.updateStatusOrder($scope.item.noorder, 3).then(function(e) {
                     //     $scope.refresh();
@@ -760,7 +760,7 @@ define(['initialize', 'Configuration'], function (initialize, config) {
             function updateDone2(e) {
                 e.preventDefault();
                 var dataItem = this.dataItem($(e.currentTarget).closest("tr"));
-                if (dataItem.statusorder != 'Menunggu') {
+                if (dataItem.statusorder != 'Menunggu Verifikasi') {
                     var strukresep = ""
                     if (dataItem.noorder == dataItem.noresep) { //resep yang input langsung tanpa order
                         strukresep = true
@@ -792,7 +792,7 @@ define(['initialize', 'Configuration'], function (initialize, config) {
                     }
                     saveAntrol(params, 7, dataItem.norec)
                 } else {
-                    if (dataItem.statusorder == 'Menunggu') {
+                    if (dataItem.statusorder == 'Menunggu Verifikasi') {
                         toastr.error("Status Data Belum Diverifikasi !!")
                         return;
                     } else {
@@ -1831,7 +1831,7 @@ define(['initialize', 'Configuration'], function (initialize, config) {
                 }
             }
             $scope.cetakResepDokterRev = function () {
-                if ($scope.item.statusorder != 'Menunggu') {
+                if ($scope.item.statusorder != 'Menunggu Verifikasi') {
                     var local = JSON.parse(localStorage.getItem('profile'));
                     var profile = local.id;
                     if ($scope.item.noorder == null) {
@@ -2274,7 +2274,7 @@ define(['initialize', 'Configuration'], function (initialize, config) {
 
                 console.log($scope.selectedData2);
                 for (let i = 0; i < $scope.selectedData2.length; i++) {
-                    if ($scope.selectedData2[i].statusorder == 'Menunggu') {
+                    if ($scope.selectedData2[i].statusorder == 'Menunggu Verifikasi') {
                         toastr.error("Status Data Belum Diverifikasi !!")
                         return;
                     }
@@ -2461,7 +2461,7 @@ define(['initialize', 'Configuration'], function (initialize, config) {
             $scope.cetakTilik = function () {
                 console.log($scope.selectedData2);
                 for (let i = 0; i < $scope.selectedData2.length; i++) {
-                    if ($scope.selectedData2[i].statusorder == 'Menunggu') {
+                    if ($scope.selectedData2[i].statusorder == 'Menunggu Verifikasi') {
                         toastr.error("Status Data Belum Diverifikasi !!")
                         return;
                     }
