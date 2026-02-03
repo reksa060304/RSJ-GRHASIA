@@ -942,7 +942,10 @@ class PelayananResepController extends ApiController
             ->JOIN('ruangan_m as ru','ru.id','=','apd.objectruanganfk')
             ->JOIN('jeniskemasan_m as jk','jk.id','=','pp.jeniskemasanfk')
             ->LeftJOIN('routefarmasi as rt','rt.id','=','pp.routefk')
-            ->LeftJOIN('orderpelayanan_t as op','op.strukorderfk','=','sr.orderfk')
+            ->leftJoin('orderpelayanan_t as op', function ($join) {
+                $join->on('op.strukorderfk', '=', 'sr.orderfk')
+                    ->on('op.objectprodukfk', '=', 'pp.produkfk');
+            })
             ->JOIN('produk_m as pr','pr.id','=','pp.produkfk')
             ->JOIN('satuanstandar_m as ss','ss.id','=','pr.objectsatuanstandarfk')
             ->JOIN('satuanstandar_m as ss2','ss2.id','=','pp.satuanviewfk')
