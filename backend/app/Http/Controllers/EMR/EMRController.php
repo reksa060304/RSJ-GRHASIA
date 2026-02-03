@@ -76,6 +76,8 @@ use App\Transaksi\CPPTEMR;
 use App\Transaksi\CABAKEMR;
 use App\Transaksi\PelayananPasien;
 use App\Transaksi\RiwayatAlergiPasien;
+use App\Transaksi\CatatanPasienDaftar;
+use App\Transaksi\AntrianApotik;
 //use Illuminate\Http\Response;
 use DB;
 use App\Traits\Valet;
@@ -6966,8 +6968,10 @@ class EMRController  extends ApiController
                     $newPP->objectprodukfk = $r_PPL['produkfk'];
                     if ($r_PPL['jeniskemasan'] == 'Racikan') {
                         $newPP->qtyproduk = ($r_PPL['dosis'] / $r_PPL['kekuatan']) * $r_PPL['jumlah'];
+                         $racikanORnonracikan = 'R';
                     } else {
                         $newPP->qtyproduk = $r_PPL['jumlah'];
+                         $racikanORnonracikan = 'N';
                     }
                     $newPP->qtystokcurrent = $r_PPL['jmlstok'];
                     $newPP->racikanke = $r_PPL['rke'];
@@ -7013,6 +7017,42 @@ class EMRController  extends ApiController
                     $newPP->save();
                 }
             }
+
+            
+                if ($noOrder) {
+                        $dataAntrian = AntrianApotik::where('noorder', $noOrder)->where('kdprofile', $idProfile)->first();
+                        if (!empty($dataAntrian)) {
+                            AntrianApotik::where('noorder', $noOrder)
+                            ->where('kdprofile', $idProfile)
+                            ->update([
+                                "noorder" => $noOrder,
+                                "tglresep" => date('Y-m-d H:i:s'),
+                                // "status" => '6'
+                            ]);
+                        }else{
+                            $countAntrian = AntrianApotik::where('jenis', $racikanORnonracikan)
+                                ->where('kdprofile', $idProfile)
+                                ->whereBetween('tglresep', [date('Y-m-d 00:00'), date('Y-m-d 23:59')])
+                                ->max('noantri');
+                            
+                            $noAntriApotik = (str_pad((int)$countAntrian + 1, 4, "0", STR_PAD_LEFT));                    
+                            $newAA = new AntrianApotik();
+                            $norecAA = $newAA->generateNewId();
+                            $newAA->norec = $norecAA;
+                            $newAA->kdprofile = $idProfile;
+                            $newAA->statusenabled = true;
+                            $newAA->noantri = $noAntriApotik;
+                            $newAA->keterangan = $pasien->namapasien;
+                            $newAA->noregistrasifk = $dataDetail->norec;
+                            $newAA->jenis = $racikanORnonracikan;
+                            $newAA->tglresep = date('Y-m-d H:i:s');
+                            $newAA->noorder = $noOrder;
+                            // $newAA->status = '6';
+                            
+                            $newAA->save();                           
+                        }    
+                }
+
             $statusBot = false;
             $telegram_id = '';
             foreach ($request['data'] as $data) {

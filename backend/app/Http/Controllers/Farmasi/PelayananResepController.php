@@ -2620,8 +2620,13 @@ class PelayananResepController extends ApiController
                     $noAntri = "";
                     if ($historyOrder != null ){
                         $dataAntrian = AntrianApotik::where('noresep', $noResep)->where('kdprofile', $idProfile)->first();
+                        if (empty($dataAntrian)) {
+                            $dataAntrian = AntrianApotik::where('noorder', $r_SR['noorder'])->where('kdprofile', $idProfile)->first();
+                        }
                         if (!empty($dataAntrian)) {
+                            // dd($dataAntrian);
                             AntrianApotik::where('noresep', $noResep)
+                            ->orWhere('noorder', $r_SR['noorder'])
                             ->where('kdprofile', $idProfile)
                             ->update([
                                 "noresep" => $noResep,
@@ -2646,6 +2651,7 @@ class PelayananResepController extends ApiController
                             $newAA->jenis = $racikanORnonracikan;
                             $newAA->tglresep = date('Y-m-d H:i:s');
                             $newAA->noresep = $noResep;
+                            $newAA->noorder = $r_SR['noorder'];
                             $newAA->status = '6';
                             
                             $newAA->save();                           

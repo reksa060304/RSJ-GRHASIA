@@ -163,4 +163,83 @@ export class TouchscreenComponent implements OnInit {
     //   positionClass: 'toast-bottom-center'
     // });
   }
+
+cekDanGoTo(name: string) {
+  this.httpService.get('medifirst2000/kiosk/get-jam-tutup-hari-ini').subscribe(
+    (resps: any) => {
+      // Jika respons kosong atau tidak valid
+      if (!resps) {
+        this._alertService.warning('Gagal mendapatkan informasi jadwal hari ini.');
+        return;
+      }
+
+      // Jika belum disetting di master
+      if (resps.status === false) {
+        // this._alertService.warning(resps.message || 'Hari ini belum disetting di master slot.');
+        this.goTo(name);
+        return;
+      }
+
+      const jamServer = moment(resps.waktuServer, 'HH:mm');
+      const jamBuka = moment(resps.jamBuka, 'HH:mm');
+      const jamTutup = moment(resps.jamTutup, 'HH:mm');
+
+      // Jika masih dalam jam tutup → tidak boleh daftar
+      if (!resps.bolehDaftar) {
+        this._alertService.warning(resps.message || 'Pendaftaran sedang ditutup.');
+        return;
+      }
+
+      // Jika sudah lewat jam tutup → boleh daftar
+      if (resps.bolehDaftar) {
+        this._alertService.info(resps.message || 'Pendaftaran dibuka. Silakan lanjut.');
+        this.goTo(name);
+        return;
+      }
+
+      // Fallback: jika tidak masuk kondisi di atas
+      this._alertService.warning('Status jadwal pendaftaran tidak diketahui.');
+    },
+    error => {
+      this._alertService.error('Gagal mengecek jadwal pendaftaran.');
+
+    }
+  );
+}
+
+
+
+  // showPopupFarm = false;
+  // noRegFarm = '';
+
+  // @ViewChild('scanInputFarm') scanInputFarm!: ElementRef;
+
+  // openPopup() {
+  //   this.showPopupFarm = true;
+
+  //   // Fokus otomatis ke input begitu popup muncul
+  //   setTimeout(() => {
+  //     this.scanInputFarm?.nativeElement.focus();
+  //   }, 100);
+  // }
+
+  // closePopup() {
+  //   this.showPopupFarm = false;
+  // }
+
+  // submitNoRegFarm() {
+  //   if (this.noRegFarm) {
+  //   console.log('Nomor reservasi:', this.noRegFarm);
+  //   // this.closePopup();
+  //   window.open(Configuration.get().apiBackend + 'medifirst2000/report/cetak-antrian-farm?noreg='
+  //           + this.noRegFarm
+  //           + '&kdprofile=21', '_blank');
+      
+  //   } else {
+  //   alert('Masukan No Registrasi Terlebih Dahulu.');
+  //   }
+  //   // jalankan logika pencarian / validasi
+  //   // this.closePopup();
+  // }
+
 }
