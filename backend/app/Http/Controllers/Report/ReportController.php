@@ -25958,12 +25958,12 @@ public function suratBuktiPengembalian(Request $request)
                 sts.nosts, stsd2.totalsetoran,
                 cap_stsd.id,cap7.id,cap6.id,cap5.id,cap4.id,cap3.id,cap2.id,cap1.id
             ORDER BY
-                split_part(cap1.koderekening, '.', 1)::INTEGER asc,
-                split_part(cap2.koderekening, '.', 2)::INTEGER asc,
-                split_part(cap3.koderekening, '.', 3)::INTEGER asc,
-                split_part(cap4.koderekening, '.', 4)::INTEGER asc,
-                split_part(cap5.koderekening, '.', 5)::INTEGER asc,
-                split_part(cap6.koderekening, '.', 6)::INTEGER asc,
+                COALESCE(NULLIF(split_part(cap1.koderekening, '.', 1), '')::INTEGER, 0) asc,
+                COALESCE(NULLIF(split_part(cap2.koderekening, '.', 2), '')::INTEGER, 0) asc,
+                COALESCE(NULLIF(split_part(cap3.koderekening, '.', 3), '')::INTEGER, 0) asc,
+                COALESCE(NULLIF(split_part(cap4.koderekening, '.', 4), '')::INTEGER, 0) asc,
+                COALESCE(NULLIF(split_part(cap5.koderekening, '.', 5), '')::INTEGER, 0) asc,
+                COALESCE(NULLIF(split_part(cap6.koderekening, '.', 6), '')::INTEGER, 0) asc,
                 cap_stsd.koderekening asc
         "));
 

@@ -2492,7 +2492,7 @@ class BendaharaPenerimaanController extends ApiController {
         // }, $nobatal);
 
         $detail = DB::select(DB::raw("select * from(
-        select distinct ssc.statusenabled, cb.id idcarabayar, sc.noclosing as nopenerimaan, sc.tglclosing as tglpenerimaan, sck.totaldibayar as totalpenerimaan, sts.nosts, sts.keterangan, cb.carabayar, sc.objectpegawaidiclosefk as pegawai, sc.norec as scfk, sck.norec as sckfk, ssc.objectstsfk 
+        select distinct on (sc.noclosing) ssc.statusenabled, cb.id idcarabayar, sc.noclosing as nopenerimaan, sc.tglclosing as tglpenerimaan, sck.totaldibayar as totalpenerimaan, sts.nosts, sts.keterangan, cb.carabayar, sc.objectpegawaidiclosefk as pegawai, sc.norec as scfk, sck.norec as sckfk, ssc.objectstsfk 
         from strukclosing_t sc
         inner join strukclosingkasir_t sck on sck.noclosingfk = sc.norec
         inner join strukbuktipenerimaan_t sbm on sbm.noclosingfk = sc.norec
@@ -2506,7 +2506,7 @@ class BendaharaPenerimaanController extends ApiController {
         and sh.statusenabled <> false
         and sc.kdprofile = $kdProfile
         and sc.statusenabled <> false       
-        order by sc.tglclosing desc
+        order by sc.noclosing, sc.tglclosing desc
         ) as x where nopenerimaan is not null
         $status
         $noclosing
