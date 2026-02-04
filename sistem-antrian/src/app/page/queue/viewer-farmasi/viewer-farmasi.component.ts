@@ -18,6 +18,8 @@ export class ViewerFarmasiComponent implements OnInit {
   item: any = {}
   apiTimer: any;
   dataSource: any[] = []
+  dataSourceN: any[] = []
+  dataSourceR: any[] = []
   color = ['white', 'blue', 'gray', 'darkgray', 'orange']
   listKelas = []
   dipanggilN: boolean = false;
@@ -174,9 +176,19 @@ export class ViewerFarmasiComponent implements OnInit {
   }
   load() {
     this.dataSource = []
+    this.dataSourceN = []
+    this.dataSourceR = []
     this.apiService.get('viewer/get-list-antrian-farmasi').subscribe(e => {
 
       this.dataSource = e
+      for (let i = 0; i < e.length; i++) {
+        const element = e[i];
+        if (element.aajenis == "N") {
+          this.dataSourceN.push(element)
+        } else {
+          this.dataSourceR.push(element)
+        }
+      }
     })
 
   }
