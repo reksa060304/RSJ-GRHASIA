@@ -1,5 +1,6 @@
 define(['initialize', 'Configuration'], function (initialize, configuration) {
     'use strict';
+    var baseTransaksi = configuration.baseApiBackend;
     initialize.controller('RegistrasiRuanganCtrl', ['MedifirstService', '$scope', '$state', '$mdDialog', '$rootScope', 'CacheHelper', 'DateHelper', 'CetakHelper', 'ModelItem',
         function (medifirstService, $scope, $state, $mdDialog, $rootScope, cacheHelper, dateHelper, cetakHelper, ModelItem) {
             $scope.now = new Date();
@@ -1336,7 +1337,7 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
                 })
             }
 
-            $scope.nomorAntrian = function () {
+            $scope.nomorAntrianvb = function () {
                 var stt = 'false'
                 if (confirm('View Bukti Pendaftaran? ')) {
                     // Save it!
@@ -1358,6 +1359,24 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
                         // do something with response
                     });
             }
+
+            $scope.nomorAntrian = function () {
+                let noreg = ''
+                if ($scope.Noregistrasi != undefined) {
+                    noreg = $scope.Noregistrasi
+                } else {
+                    noreg = $scope.cacheNoRegistrasi
+                }
+                if (noreg == '') {
+                    toastr.warning('Nomor registrasi tidak ditemukan');
+                    return;
+                }
+                
+                // Open bukti pendaftaran in new window
+                window.open(baseTransaksi + 'report/cetak-bukti-pendaftaran?noregistrasi=' + noreg, '_blank');
+           
+            }
+
 
 
             // function HapusPenanggungJawab(){
