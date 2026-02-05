@@ -4231,3 +4231,12 @@ Route::group(['middleware' => 'cors'], function () {
     // Route::post('Fasyankes/apd/{method}', 'Bridging\BridgingSiranapV2Controller@FasyankesAPD');
 
 });
+
+// ==================== API Bridging Bank BPD ====================
+Route::group(['middleware' => 'cors'], function () {
+    // Inquiry endpoint - GET informasi tagihan pasien
+    Route::get('api/inquiry', 'Bridging\BridgingBPDController@inquiry');
+    
+    // Payment endpoint - POST untuk flagging pembayaran tagihan
+    Route::post('api/payment', 'Bridging\BridgingBPDController@payment');
+});
