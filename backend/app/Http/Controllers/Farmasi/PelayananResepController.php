@@ -3698,7 +3698,6 @@ class PelayananResepController extends ApiController
         LEFT JOIN cte ON cte.noreff = pp.norec
         LEFT JOIN cter ON cter.noreff = sr.norec
         LEFT JOIN jeniskemasan_m AS jks ON jks.id = pp.jeniskemasanfk
-        LEFT JOIN jeniskemasan_m AS jks ON jks.id = pp.jeniskemasanfk
         WHERE
             pp.tglpelayanan BETWEEN '$tglAwal'
         AND '$tglAkhir'
