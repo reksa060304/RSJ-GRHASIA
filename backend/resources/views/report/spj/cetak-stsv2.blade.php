@@ -39,7 +39,15 @@
         <tr>
             <td>Harap Menerima Uang Sebesar</td>
             <td style="padding: 0 0.3em;">:</td>
-            <td>{{ number_format($sts[0]->totalsetoran, 2, '.', ',') }}</td>
+            <td>
+                @php
+                    $totalSemuaDetail = 0;
+                    foreach ($data as $row) {
+                        $totalSemuaDetail += $row->totaldibayarclosing;
+                    }
+                @endphp
+                {{ number_format($totalSemuaDetail, 2, '.', ',') }}
+            </td>
         </tr>
         <tr>
             <td>Terbilang</td>
@@ -74,7 +82,7 @@
                         return $temp;
                     }
                 @endphp
-                {{ penyebut((float)$sts[0]->totalsetoran) }}
+                {{ penyebut((float)$totalSemuaDetail) }}
             </td>
         </tr>
         <tr>

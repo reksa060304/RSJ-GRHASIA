@@ -26287,6 +26287,19 @@ public function suratBuktiPengembalian(Request $request)
             $data = $detail;
 
         }
+        // grupdata jika ada rekneing yang sama
+        $groupedData = [];
+        foreach ($data as $row) {
+            $key = $row->idrekening;
+            
+            if (!isset($groupedData[$key])) {
+                $groupedData[$key] = clone $row;
+            } else {
+                $groupedData[$key]->totaldibayarclosing += $row->totaldibayarclosing;
+            }
+        }
+        
+        $data = array_values($groupedData);
 
 
         $sts = DB::select(DB::raw("
