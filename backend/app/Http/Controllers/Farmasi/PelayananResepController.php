@@ -3564,8 +3564,6 @@ class PelayananResepController extends ApiController
                     noregistrasi,
                     nocm,
                     namapasien,
-                    jeniskemasan,
-                    jeniskemasan,
                     dokter,
                     noresep,
                     tglsbm,
@@ -3736,7 +3734,6 @@ class PelayananResepController extends ApiController
                                sp.nostruk_intern as nocm,
                                sp.namapasien_klien as namapasien,
                                jks.jeniskemasan,
-                               jks.jeniskemasan,
                                pg.namalengkap as dokter,
                                sp.nostruk AS noresep,
                                sbmsdhbyr.tglsbm,
@@ -3759,7 +3756,6 @@ class PelayananResepController extends ApiController
                         --LEFT JOIN pegawai_m AS pg1 ON pg1.id = lu.objectpegawaifk
                         LEFT JOIN produk_m AS pro ON pro.id = spd.objectprodukfk
                         LEFT JOIN jeniskemasan_m AS jks ON jks.id = pp.jeniskemasanfk
-                        LEFT JOIN jeniskemasan_m AS jks ON jks.id = pp.jeniskemasanfk
                         LEFT JOIN satuanstandar_m AS ss ON ss.id = spd.objectsatuanstandarfk
                         LEFT JOIN jeniskemasan_m AS jkm ON jkm.id = pp.jeniskemasanfk
                                         left join  cte on cte.noreff = pp.norec
@@ -3773,7 +3769,6 @@ class PelayananResepController extends ApiController
                         $namaItemText
                         $namaPasienTextSP
                         $isobat
-                        $jkid
                         $jkid
                  ) AS x
 			) AS C
