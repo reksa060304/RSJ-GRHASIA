@@ -11270,9 +11270,36 @@ class BendaharaPenerimaanController extends ApiController {
                 JOIN pasien_m pm ON pm.id = pd.nocmfk
                 LEFT JOIN ruangan_m ru ON ru.id = apd.objectruanganfk
             ),
-            -- TIPE 1: KELAS PASIEN (prioritas utama)
+            -- TIPE 2: PRODUK SPECIFIC (prioritas PERTAMA - lebih spesifik)
+            tipe2_produk AS (
+                SELECT DISTINCT ON (bp.pp_norec)
+                    bp.pp_norec,
+                    cap.id, cap.koderekening, cap.namarekening,
+                    cap1.id idlevel1, cap2.id idlevel2, cap3.id idlevel3,
+                    cap4.id idlevel4, cap5.id idlevel5, cap6.id idlevel6, cap7.id idlevel7,
+                    bp.isobat isobat_group, bp.idcarabayar,
+                    bp.subtotal::DECIMAL totaldibayarclosing,
+                    bp.namapasien,
+                    bp.carabayar,
+                    bp.namaruangan,
+                    NULL::VARCHAR as namapelanggan
+                FROM base_pelayanan bp
+                JOIN mapbkuakun3_t mba3 ON 
+                    POSITION(','||bp.produkfk||',' IN ','||mba3.objectprodukfk||',') > 0
+                    AND mba3.statusenabled = TRUE
+                JOIN char_akun_pendapatan_m cap ON cap.id = mba3.objectakunpendapatanfk AND cap.statusenabled = TRUE
+                LEFT JOIN char_akun_pendapatan_m cap7 ON cap7.id = cap.headfk
+                LEFT JOIN char_akun_pendapatan_m cap6 ON cap6.id = cap7.headfk
+                LEFT JOIN char_akun_pendapatan_m cap5 ON cap5.id = cap6.headfk
+                LEFT JOIN char_akun_pendapatan_m cap4 ON cap4.id = cap5.headfk
+                LEFT JOIN char_akun_pendapatan_m cap3 ON cap3.id = cap4.headfk
+                LEFT JOIN char_akun_pendapatan_m cap2 ON cap2.id = cap3.headfk
+                LEFT JOIN char_akun_pendapatan_m cap1 ON cap1.id = cap2.headfk
+                ORDER BY bp.pp_norec, mba3.id
+            ),
+            -- TIPE 1: KELAS PASIEN (hanya untuk yg TIDAK ada di TIPE2)
             tipe1_kelas AS (
-                SELECT 
+                SELECT DISTINCT ON (bp.pp_norec)
                     bp.pp_norec,
                     cap.id, cap.koderekening, cap.namarekening,
                     cap1.id idlevel1, cap2.id idlevel2, cap3.id idlevel3,
@@ -11300,40 +11327,15 @@ class BendaharaPenerimaanController extends ApiController {
                     ((mba.isobat IS NOT TRUE AND bp.isobat IS NULL) OR (mba.isobat = TRUE AND bp.isobat = TRUE))
                     AND bp.kelasfk IS NOT NULL
                     AND POSITION(','||bp.kelasfk||',' IN ','||mba.objectkelasfk||',') > 0
-            ),
-            -- TIPE 2: PRODUK SPECIFIC (hanya untuk yg TIDAK ada di TIPE1)
-            tipe2_produk AS (
-                SELECT 
-                    bp.pp_norec,
-                    cap.id, cap.koderekening, cap.namarekening,
-                    cap1.id idlevel1, cap2.id idlevel2, cap3.id idlevel3,
-                    cap4.id idlevel4, cap5.id idlevel5, cap6.id idlevel6, cap7.id idlevel7,
-                    bp.isobat isobat_group, bp.idcarabayar,
-                    bp.subtotal::DECIMAL totaldibayarclosing,
-                    bp.namapasien,
-                    bp.carabayar,
-                    bp.namaruangan,
-                    NULL::VARCHAR as namapelanggan
-                FROM base_pelayanan bp
-                JOIN mapbkuakun3_t mba3 ON 
-                    POSITION(','||bp.produkfk||',' IN ','||mba3.objectprodukfk||',') > 0
-                    AND bp.objectkelompokpasienlastfk IN (1,12)
-                    AND mba3.statusenabled = TRUE
-                JOIN char_akun_pendapatan_m cap ON cap.id = mba3.objectakunpendapatanfk AND cap.statusenabled = TRUE
-                LEFT JOIN char_akun_pendapatan_m cap7 ON cap7.id = cap.headfk
-                LEFT JOIN char_akun_pendapatan_m cap6 ON cap6.id = cap7.headfk
-                LEFT JOIN char_akun_pendapatan_m cap5 ON cap5.id = cap6.headfk
-                LEFT JOIN char_akun_pendapatan_m cap4 ON cap4.id = cap5.headfk
-                LEFT JOIN char_akun_pendapatan_m cap3 ON cap3.id = cap4.headfk
-                LEFT JOIN char_akun_pendapatan_m cap2 ON cap2.id = cap3.headfk
-                LEFT JOIN char_akun_pendapatan_m cap1 ON cap1.id = cap2.headfk
-                WHERE NOT EXISTS (
-                    SELECT 1 FROM tipe1_kelas t1 WHERE t1.pp_norec = bp.pp_norec
-                )
+                    -- Exclude items already in tipe2
+                    AND NOT EXISTS (
+                        SELECT 1 FROM tipe2_produk t2 WHERE t2.pp_norec = bp.pp_norec
+                    )
+                ORDER BY bp.pp_norec, mba.id
             ),
             -- TIPE 3: NON-LAYANAN (dari strukpelayanandetail)
             tipe3_nonlayanan AS (
-                SELECT 
+                SELECT DISTINCT ON (spd.norec)
                     spd.norec as pp_norec,
                     cap.id, cap.koderekening, cap.namarekening,
                     cap1.id idlevel1, cap2.id idlevel2, cap3.id idlevel3,
@@ -11363,11 +11365,17 @@ class BendaharaPenerimaanController extends ApiController {
                 LEFT JOIN char_akun_pendapatan_m cap3 ON cap3.id = cap4.headfk
                 LEFT JOIN char_akun_pendapatan_m cap2 ON cap2.id = cap3.headfk
                 LEFT JOIN char_akun_pendapatan_m cap1 ON cap1.id = cap2.headfk
-                WHERE mba2.id IS NOT NULL 
+                WHERE mba2.id IS NOT NULL
+                -- Exclude items already in tipe1 or tipe2
+                AND NOT EXISTS (
+                    SELECT 1 FROM base_pelayanan bp 
+                    WHERE bp.strukfk = sp.norec
+                )
+                ORDER BY spd.norec, mba2.id
             ),
             -- TIPE 4: FALLBACK - item yang tidak ter-mapping di tipe manapun
             tipe4_fallback AS (
-                SELECT 
+                SELECT DISTINCT ON (bp.pp_norec)
                     bp.pp_norec,
                     def_rek.id, def_rek.koderekening, def_rek.namarekening,
                     def_rek.idlevel1, def_rek.idlevel2, def_rek.idlevel3,
@@ -11405,6 +11413,7 @@ class BendaharaPenerimaanController extends ApiController {
                 ) def_rek
                 WHERE NOT EXISTS (SELECT 1 FROM tipe1_kelas t1 WHERE t1.pp_norec = bp.pp_norec)
                 AND NOT EXISTS (SELECT 1 FROM tipe2_produk t2 WHERE t2.pp_norec = bp.pp_norec)
+                ORDER BY bp.pp_norec
             ),
             all_akun AS (
                 SELECT id, koderekening, namarekening, idlevel1, idlevel2, idlevel3, idlevel4, idlevel5, idlevel6, idlevel7, isobat_group, idcarabayar, totaldibayarclosing, namapasien, carabayar, namaruangan, namapelanggan FROM tipe1_kelas
@@ -11421,11 +11430,11 @@ class BendaharaPenerimaanController extends ApiController {
                 SUM(totaldibayarclosing) totaldibayarclosing,
                 -- Ambil Nama Pasien
                 STRING_AGG(DISTINCT namapasien, ', ') as namapasien,
-                carabayar,
-                namaruangan,
+                STRING_AGG(DISTINCT carabayar, ', ') as carabayar,
+                STRING_AGG(DISTINCT namaruangan, ', ') as namaruangan,
                 STRING_AGG(DISTINCT namapelanggan, ', ') as namapelanggan
             FROM all_akun
-            GROUP BY id, koderekening, namarekening, idlevel1, idlevel2, idlevel3, idlevel4, idlevel5, idlevel6, idlevel7, carabayar, namaruangan
+            GROUP BY id, koderekening, namarekening, idlevel1, idlevel2, idlevel3, idlevel4, idlevel5, idlevel6, idlevel7
             ORDER BY 
                 split_part(koderekening,'.',3)::DECIMAL,
                 split_part(koderekening,'.',4)::DECIMAL,
