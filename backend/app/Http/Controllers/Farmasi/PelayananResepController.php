@@ -3667,7 +3667,6 @@ class PelayananResepController extends ApiController
             ps.nocm,
             ps.namapasien,
             jks.jeniskemasan,
-            jks.jeniskemasan,
             pg.namalengkap AS dokter,
             sr.noresep,
             sbmsdhbyr.tglsbm,
