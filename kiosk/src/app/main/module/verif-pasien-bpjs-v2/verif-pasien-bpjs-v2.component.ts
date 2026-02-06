@@ -481,43 +481,43 @@ export class VerifPasienBpjsV2Component implements OnInit {
   cetakAntrian() {
     let petugas = '-'
 
-    if (localStorage.getItem('isCetakDS') == 'true') {
-      this.service.get('http://127.0.0.1:1237/printvb/Pendaftaran?cetak-buktipendaftaran=1&norec='
-        + this.item.noregistrasi + '&petugas=' + petugas + '&view=false').subscribe(response => { });
-        this.router.navigate(['/touchscreen/checkin-v2'] )
-    } else if (localStorage.getItem('isCetakDS') == 'android') {
-      // this.httpService.get("medifirst2000/report/get-cetak-bukti-pendaftaran?noregistrasi="
-      //   + this.item.noregistrasi
-      // ).subscribe(e => {
-      //   window.open(
-      //     'https://apps.transmedic.co.id/cetak-antrian?isBukti=true'
-      //     + '&namaProfile=' + Configuration.profile().nama
-      //     + '&alamat=' + Configuration.profile().alamat
-      //     + '&noregistrasi=' + e.noregistrasi
-      //     + '&norm=' + e.norm
-      //     + '&namapasien=' + e.namapasien
-      //     + '&kelompokpasien=' + e.kelompokpasien
-      //     + '&noantrian=' + e.noantrian
-      //     + '&statuspasien=' + e.statuspasien
-      //     + '&tanggalreservasi=' + e.tanggalreservasi
-      //     + '&ruangan=' + e.ruangan
-      //     + '&status=' + e.statusonline
-      //     + '&namadokter=' + e.namadokter
-      //     + '&tglregistrasi=' + e.tglregistrasi
-      //     + '&nosep=' + e.nosep
-      //     + '&link=' + Configuration.profile().link
-      //   );
-      // })
+    // if (localStorage.getItem('isCetakDS') == 'true') {
+    //   this.service.get('http://127.0.0.1:1237/printvb/Pendaftaran?cetak-buktipendaftaran=1&norec='
+    //     + this.item.noregistrasi + '&petugas=' + petugas + '&view=false').subscribe(response => { });
+    //     this.router.navigate(['/touchscreen/checkin-v2'] )
+    // } else if (localStorage.getItem('isCetakDS') == 'android') {
+    //   // this.httpService.get("medifirst2000/report/get-cetak-bukti-pendaftaran?noregistrasi="
+    //   //   + this.item.noregistrasi
+    //   // ).subscribe(e => {
+    //   //   window.open(
+    //   //     'https://apps.transmedic.co.id/cetak-antrian?isBukti=true'
+    //   //     + '&namaProfile=' + Configuration.profile().nama
+    //   //     + '&alamat=' + Configuration.profile().alamat
+    //   //     + '&noregistrasi=' + e.noregistrasi
+    //   //     + '&norm=' + e.norm
+    //   //     + '&namapasien=' + e.namapasien
+    //   //     + '&kelompokpasien=' + e.kelompokpasien
+    //   //     + '&noantrian=' + e.noantrian
+    //   //     + '&statuspasien=' + e.statuspasien
+    //   //     + '&tanggalreservasi=' + e.tanggalreservasi
+    //   //     + '&ruangan=' + e.ruangan
+    //   //     + '&status=' + e.statusonline
+    //   //     + '&namadokter=' + e.namadokter
+    //   //     + '&tglregistrasi=' + e.tglregistrasi
+    //   //     + '&nosep=' + e.nosep
+    //   //     + '&link=' + Configuration.profile().link
+    //   //   );
+    //   // })
+    //   window.open(Configuration.get().apiBackend + 'medifirst2000/report/cetak-bukti-pendaftaran?noregistrasi='
+    //     + this.item.noregistrasi
+    //     + '&kdprofile=46', '_blank');
+    //     this.router.navigate(['/touchscreen/checkin-v2'] )
+    // } else {
       window.open(Configuration.get().apiBackend + 'medifirst2000/report/cetak-bukti-pendaftaran?noregistrasi='
         + this.item.noregistrasi
-        + '&kdprofile=46', '_blank');
+        + '&kdprofile=30', '_blank');
         this.router.navigate(['/touchscreen/checkin-v2'] )
-    } else {
-      window.open(Configuration.get().apiBackend + 'medifirst2000/report/cetak-bukti-pendaftaran?noregistrasi='
-        + this.item.noregistrasi
-        + '&kdprofile=46', '_blank');
-        this.router.navigate(['/touchscreen/checkin-v2'] )
-    }
+    // }
   }
 
   ngAfterViewInit() {
