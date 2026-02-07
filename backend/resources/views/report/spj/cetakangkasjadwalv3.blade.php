@@ -104,7 +104,7 @@
     <table cellpadding="0" cellspacing="0" border="0" class = "tabel">
                 <thead>
                     <tr>
-                    <td align="center" style="padding: 10px; font-weight: bold ">No</td>
+                    {{-- <td align="center" style="padding: 10px; font-weight: bold ">No</td> --}}
                     <td align="center" style="padding: 10px; font-weight: bold ">Kode Rekening</td>
                     <td align="center" style="padding: 10px; font-weight: bold; ">Uraian</td>
                     <td align="center" style="padding: 10px; font-weight: bold;  ">Jan</td>
@@ -168,7 +168,7 @@
                 @endif
                 <tr>
                 @if($dt->kodefix != '' || $dt->asalproduk == '')
-                    <td align="center" style="padding: 10px;font-weight:bold;"></td>
+                    {{-- <td align="center" style="padding: 10px;font-weight:bold;"></td> --}}
                     <td style="padding: 10px;font-weight:bold;">{{ $dt->kodemataanggaran }}</td>
                     <td style="padding: 10px;font-weight:bold;">{{ $dt->namamataanggaran }}</td>
                     <td style="padding: 10px;font-weight:bold;">{{ $dt->jumlahjan!= 0? number_format($dt->jumlahjan,0,',','.') : '' }}</td>
@@ -187,7 +187,7 @@
                     <td style="padding: 10px;font-weight:bold;">{{ $dt->asalproduk }}</td>
                 @else
                     <td align="center" style="padding: 10px;">{{ $i }}</td>
-                    <td style="padding: 10px;"></td>
+                    {{-- <td style="padding: 10px;"></td> --}}
                     <td style="padding: 10px;">{{ $dt->namamataanggaran }}</td>
                     <td style="padding: 10px;">{{ $dt->jumlahjan!= 0? number_format($dt->jumlahjan,0,',','.') : '' }}</td>
                     <td style="padding: 10px;">{{ $dt->jumlahfeb!= 0? number_format($dt->jumlahfeb,0,',','.') : '' }}</td>
@@ -221,7 +221,7 @@
                 </tr>
                 @endforeach
                 <tr>
-                    <td colspan="3" align="center" style="padding: 10px; font-weight: bold ">Jumlah Total</td>
+                    <td colspan="2" align="center" style="padding: 10px; font-weight: bold ">Jumlah Total</td>
                     <td align="center" style="padding: 10px;font-weight: bold">{{ $totaljan != 0 ? number_format($totaljan,0,',','.') : ''}}</td>
                     <td align="center" style="padding: 10px;font-weight: bold">{{ $totalfeb != 0 ? number_format($totalfeb,0,',','.') : ''}}</td>
                     <td align="center" style="padding: 10px;font-weight: bold">{{ $totalmar != 0 ? number_format($totalmar,0,',','.') : ''}}</td>
