@@ -1646,7 +1646,7 @@ class ReportController extends ApiController{
                 at.tglresep,
                 at.jenis,
                 jk.jeniskelamin,
-                pm.tgllahir,
+                Date(pm.tgllahir) as tgllahir,
                 alm.alamatlengkap
             ")
             ->first();
@@ -1660,7 +1660,7 @@ class ReportController extends ApiController{
             'tglresep' => date('d-M-Y   H:i:s', strtotime($data->tglresep)),
             'noregistrasi' => $data->noregistrasi,
             'norm' => $data->nocm,
-            'tgllahir' => $data->tgllahir,
+            'tgllahir' => $this->tanggal_indonesia($data->tgllahir),
             'namapasien' => $data->namapasien,
             'jeniskelamin' => $data->jeniskelamin,
             'ruangan' => $data->namaruangan,

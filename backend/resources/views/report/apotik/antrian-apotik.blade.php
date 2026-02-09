@@ -76,6 +76,18 @@
                         </tr>
                         <tr>
                             <td style="height:5px; width:30%">
+                                <span style="font-size: 8pt;" >Tgl Lahir</span>
+                            </td>
+                            <td style="height:5px; width:2%">
+                                <span size="1">:</span>
+                            </td>
+                            <td style="height:5">
+                                <span style="font-size: 8pt;" >
+                                    {{ $dataReport['tgllahir'] }}</span>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td style="height:5px; width:30%">
                                 <span style="font-size: 8pt;" >Alamat</span>
                             </td>
                             <td style="height:5px; width:2%">
