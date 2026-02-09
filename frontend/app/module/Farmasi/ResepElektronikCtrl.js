@@ -1,7 +1,7 @@
 define(['initialize', 'Configuration'], function (initialize, config) {
     'use strict';
-    initialize.controller('ResepElektronikCtrl', ['SaveToWindow', '$rootScope', '$scope', 'ModelItem', '$state', 'CacheHelper', 'DateHelper', '$mdDialog', 'CetakHelper', 'MedifirstService', '$q',
-        function (saveToWindow, $rootScope, $scope, ModelItem, $state, cacheHelper, DateHelper, $mdDialog, cetakHelper, medifirstService, $q) {
+    initialize.controller('ResepElektronikCtrl', ['SaveToWindow', '$rootScope', '$scope', 'ModelItem', '$state', 'CacheHelper', 'DateHelper', '$mdDialog', 'CetakHelper', 'MedifirstService', '$q', 'socket',
+        function (saveToWindow, $rootScope, $scope, ModelItem, $state, cacheHelper, DateHelper, $mdDialog, cetakHelper, medifirstService, $q, socket) {
             $scope.title = "Resep elektronik";
             $scope.dataVOloaded = true;
             $scope.item = {};
@@ -1184,6 +1184,16 @@ define(['initialize', 'Configuration'], function (initialize, config) {
             }
             $scope.ambilObat = function () {
                 if ($scope.item.statusorder == 'Selesai') {
+                    // panggil antrian farmasi
+                    socket.emit('call-antrian-farmasi', {
+                        namapasien: $scope.item.namapasien,
+                        namaruangan: $scope.item.namaruangan,
+                        noantri: $scope.item.noantri,
+                        nocm: $scope.item.nocm,
+                        noregistrasi: $scope.item.noregistrasi,
+                        jenis: $scope.item.jenis,
+                        status: 'panggil'
+                    });
                     // noresep
                     $scope.item.tglambil = new Date()
                     $scope.item.namapengambil = $scope.item.namapasien

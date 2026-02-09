@@ -108,7 +108,8 @@ export class ViewerFarmasiComponent implements OnInit {
           const element2 = this.listRuanganAktif[x];
           if (element2.namaruangan == result.namaruangan) {
             status = true
-            this.item.antriTerakhir = result.noregistrasi.substring(4)
+            // this.item.antriTerakhir = result.noregistrasi.substring(4)
+            this.item.antriTerakhir = result.noantri
             this.item.jenis = result.jenis
             this.item.ruangan = result.namaruangan
             no = this.item.antriTerakhir
