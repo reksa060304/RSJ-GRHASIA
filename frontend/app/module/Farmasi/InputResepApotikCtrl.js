@@ -2077,11 +2077,11 @@ Which will check for empty strings (""), null, undefined, false and the numbers 
                     "title": "Tgl Exp",
                     "width": "100px"
                 },
-                {
-                    "field": "ket_ret",
-                    "title": "Keterangan Retriksi",
-                    "width": "100px",
-                },
+                // {
+                //     "field": "ket_ret",
+                //     "title": "Keterangan Retriksi",
+                //     "width": "100px",
+                // },
             ];
             // $scope.columnGridR = [
             // {
