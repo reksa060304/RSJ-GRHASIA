@@ -67,7 +67,7 @@ define(['initialize', 'Configuration'], function (initialize, config) {
                 //         })
                 //     }
                 // });
-                medifirstService.get("emr/combo-jenis-berkas", true).then(function (dat) {
+                medifirstService.get(`emr/combo-jenis-berkas-pasien-new`, true).then(function (dat) {
                     $scope.listJenisBerkas = dat.data;
                 });
             }
