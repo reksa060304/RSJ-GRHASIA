@@ -4235,8 +4235,8 @@ Route::group(['middleware' => 'cors'], function () {
 // ==================== API Bridging Bank BPD ====================
 Route::group(['middleware' => 'cors'], function () {
     // Inquiry endpoint - GET informasi tagihan pasien
-    Route::get('api/inquiry', 'Bridging\BridgingBPDController@inquiry');
+    Route::get('service/api/inquiry', 'Bridging\BridgingBPDController@inquiry');
     
     // Payment endpoint - POST untuk flagging pembayaran tagihan
-    Route::post('api/payment', 'Bridging\BridgingBPDController@payment');
+    Route::post('service/api/payment', 'Bridging\BridgingBPDController@payment');
 });
