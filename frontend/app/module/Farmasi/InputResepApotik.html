@@ -820,6 +820,32 @@
                                                     ng-disabled="txtbiaya" />
                                             </div>
                                         </div>
+                                        <div class="grid_3" ng-show="item.ket_ret">
+                                            <div class="grid_12">
+                                                <label 
+                                                    c-label 
+                                                    item="item" 
+                                                    c-label-text="Keterangan Retriksi" 
+                                                    real 
+                                                    style="color: red; font-weight: bold;">
+                                                </label>
+                                            </div>                  
+                                            <div class="grid_12">
+                                                <textarea 
+                                                    ng-model="item.ket_ret" 
+                                                    disabled
+                                                    style="
+                                                        width: 99%;
+                                                        height: 50px;
+                                                        border-radius: 8px;
+                                                        border: 1px solid red;
+                                                        background-color: #ffe6e6;
+                                                        color: red;
+                                                        padding: 6px;
+                                                    ">
+                                                </textarea>
+                                            </div>
+                                        </div>
                                     </div>
                                     <div class="grid_12">
                                         <div class="grid_6"></div>

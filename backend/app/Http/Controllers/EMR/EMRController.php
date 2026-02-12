@@ -6944,6 +6944,17 @@ class EMRController  extends ApiController
                 //## PelayananPasien
                 $r_PP = $data['orderfarmasi'];
                 $prod = [];
+                
+                $hasRacikan = false;
+                foreach ($r_PP as $r_PPL_check) {
+                    if ($r_PPL_check['jeniskemasan'] == 'Racikan') {
+                        $hasRacikan = true;
+                        break;
+                    }
+                }
+                // kalo ada racikan di satu order masuk ke racikan
+                $racikanORnonracikan = $hasRacikan ? 'R' : 'N';
+                
                 // $r_PP = $request['0']['orderfarmasi'];
                 foreach ($r_PP as $r_PPL) {
                     $qtyJumlah = (float)$r_PPL['jumlah'] * (float)$r_PPL['nilaikonversi'];
@@ -6968,10 +6979,10 @@ class EMRController  extends ApiController
                     $newPP->objectprodukfk = $r_PPL['produkfk'];
                     if ($r_PPL['jeniskemasan'] == 'Racikan') {
                         $newPP->qtyproduk = ($r_PPL['dosis'] / $r_PPL['kekuatan']) * $r_PPL['jumlah'];
-                         $racikanORnonracikan = 'R';
+                       //  $racikanORnonracikan = 'R';
                     } else {
                         $newPP->qtyproduk = $r_PPL['jumlah'];
-                         $racikanORnonracikan = 'N';
+                       //  $racikanORnonracikan = 'N';
                     }
                     $newPP->qtystokcurrent = $r_PPL['jmlstok'];
                     $newPP->racikanke = $r_PPL['rke'];

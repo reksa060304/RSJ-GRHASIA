@@ -1,7 +1,7 @@
 define(['initialize', 'Configuration'], function (initialize, config) {
     'use strict';
-    initialize.controller('ResepElektronikCtrl', ['SaveToWindow', '$rootScope', '$scope', 'ModelItem', '$state', 'CacheHelper', 'DateHelper', '$mdDialog', 'CetakHelper', 'MedifirstService', '$q',
-        function (saveToWindow, $rootScope, $scope, ModelItem, $state, cacheHelper, DateHelper, $mdDialog, cetakHelper, medifirstService, $q) {
+    initialize.controller('ResepElektronikCtrl', ['SaveToWindow', '$rootScope', '$scope', 'ModelItem', '$state', 'CacheHelper', 'DateHelper', '$mdDialog', 'CetakHelper', 'MedifirstService', '$q', 'socket',
+        function (saveToWindow, $rootScope, $scope, ModelItem, $state, cacheHelper, DateHelper, $mdDialog, cetakHelper, medifirstService, $q, socket) {
             $scope.title = "Resep elektronik";
             $scope.dataVOloaded = true;
             $scope.item = {};
@@ -1184,6 +1184,16 @@ define(['initialize', 'Configuration'], function (initialize, config) {
             }
             $scope.ambilObat = function () {
                 if ($scope.item.statusorder == 'Selesai') {
+                    // panggil antrian farmasi
+                    socket.emit('call-antrian-farmasi', {
+                        namapasien: $scope.item.namapasien,
+                        namaruangan: $scope.item.namaruangan,
+                        noantri: $scope.item.noantri,
+                        nocm: $scope.item.nocm,
+                        noregistrasi: $scope.item.noregistrasi,
+                        jenis: $scope.item.jenis,
+                        status: 'panggil'
+                    });
                     // noresep
                     $scope.item.tglambil = new Date()
                     $scope.item.namapengambil = $scope.item.namapasien
@@ -1560,24 +1570,33 @@ define(['initialize', 'Configuration'], function (initialize, config) {
                 // }
             }
 
+            // old version
+            // $scope.cetakNomorAntrian = function () {
+            //     var userLogin = medifirstService.getPegawaiLogin();
+            //     var Norec = $scope.item.noresep;
+            //     var Noreg = $scope.item.noregistrasi;
+            //     if ($scope.item.statusorder == 'Verifikasi' || $scope.item.statusorder == 'Packaging' || $scope.item.statusorder == 'Selesai' || $scope.item.statusorder == 'Sudah Di Ambil') {
+            //         var stt = 'false'
+            //         if (confirm('View Antrian Farmasi? ')) {
+            //             // Save it!
+            //             stt = 'true';
+            //         } else {
+            //             // Do nothing!
+            //             stt = 'false'
+            //         }
+            //         var client = new HttpClient();
+            //         client.get('http://127.0.0.1:1237/printvb/farmasi?cetak-buktiantrianfarmasi=' + Norec + '&noregistrasi=' + Noreg + '&view=' + stt, function (response) {
+            //             // aadc=response;
+            //         });
+            //     }
+            // }
+            // new version
             $scope.cetakNomorAntrian = function () {
-                var userLogin = medifirstService.getPegawaiLogin();
-                var Norec = $scope.item.noresep;
-                var Noreg = $scope.item.noregistrasi;
-                if ($scope.item.statusorder == 'Verifikasi' || $scope.item.statusorder == 'Packaging' || $scope.item.statusorder == 'Selesai' || $scope.item.statusorder == 'Sudah Di Ambil') {
-                    var stt = 'false'
-                    if (confirm('View Antrian Farmasi? ')) {
-                        // Save it!
-                        stt = 'true';
-                    } else {
-                        // Do nothing!
-                        stt = 'false'
-                    }
-                    var client = new HttpClient();
-                    client.get('http://127.0.0.1:1237/printvb/farmasi?cetak-buktiantrianfarmasi=' + Norec + '&noregistrasi=' + Noreg + '&view=' + stt, function (response) {
-                        // aadc=response;
-                    });
+                if ($scope.item == undefined) {
+                    toastr.error('Pilih data dulu')
+                    return
                 }
+                window.open(config.baseApiBackend + "report/cetak-antrian-farm?noreg=" + $scope.item.noregistrasi);
             }
             $scope.formatRupiah = function (value, currency) {
                 return currency + " " + parseFloat(value).toFixed(2).replace(/(\d)(?=(\d{3})+\.)/g, "$1,");
