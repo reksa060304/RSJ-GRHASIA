@@ -1840,7 +1840,8 @@ class AnggaranController extends ApiController {
                 ma.id,
                 ma.kodemataanggaran,
                 ma.namamataanggaran,
-                ma.kodemataanggaran || ' - ' || ma.namamataanggaran as text
+                ma.kodemataanggaran || ' - ' || ma.namamataanggaran as text,
+                ma.ispenerimaan
             FROM kegiatananggaran2024_m ka
             JOIN transaksianggaran2024_t ta ON ta.objectkegiatanfk = ka.id AND ta.statusenabled = TRUE AND ta.kdprofile = ".$idProfile."
             JOIN keteranganbelanja_t kb ON kb.objecttransaksifk = ta.norec AND kb.statusenabled = TRUE AND kb.kdprofile = ".$idProfile."

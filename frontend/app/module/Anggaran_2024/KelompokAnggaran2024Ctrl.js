@@ -953,6 +953,15 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
                     return
                 }
                 
+                if ($scope.item.mataAnggaranSPJ.ispenerimaan === true || 
+                    $scope.item.mataAnggaranSPJ.ispenerimaan === 1 || 
+                    $scope.item.mataAnggaranSPJ.ispenerimaan === '1') {
+                    
+                    $scope.isRekeningPenerimaan = true;
+                } else {
+                    $scope.isRekeningPenerimaan = false;
+                }
+
                 $scope.item.noUrutSPJ = DataDetailSPJ.length + 1
                 $scope.item.keteranganSPJ = ''
                 $scope.item.jmlSPJ = ''
