@@ -31914,7 +31914,7 @@ public function suratBuktiPengembalian(Request $request)
             'data' => $header,
             'grouped' => $grouped,
             'umur' => $this->formatUmur($r->input('umur')),
-            'user' => 'Programmer Administrator',
+            'user' => $r['nama'] ?? $r['strIdPegawai'] ?? 'Programmer Administrator',
             'catatan' => $catatan,
             'dokterr' => $dokterr,
             'tte' => $tte
@@ -31944,7 +31944,7 @@ public function suratBuktiPengembalian(Request $request)
                 'data' => $header,
                 'grouped' => $grouped,
                 'umur' => $this->formatUmur($r->input('umur')),
-                'user' => 'Programmer Administrator',
+                'user' => $r['nama'] ?? $r['strIdPegawai'] ?? 'Programmer Administrator',
                 'catatan' => $catatan,
                 'dokterr' => $dokterr,
                 'tte' => $tte
@@ -31955,7 +31955,7 @@ public function suratBuktiPengembalian(Request $request)
                 'data' => $header,
                 'grouped' => $grouped,
                 'umur' => $this->formatUmur($r->input('umur')),
-                'user' => 'Programmer Administrator',
+                'user' => $r['nama'] ?? $r['strIdPegawai'] ?? 'Programmer Administrator',
                 'catatan' => $catatan,
                 'dokterr' => $dokterr,
                 'tte' => $tte
