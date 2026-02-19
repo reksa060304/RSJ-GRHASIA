@@ -587,7 +587,7 @@ class BridgingBPDController extends ApiController
             $strukBuktiPenerimaan->objectpegawaipenerimafk = $this->idUser;
             $strukBuktiPenerimaan->tglsbm = date('Y-m-d H:i:s');
             $strukBuktiPenerimaan->totaldibayar = $totalBayar;
-            $strukBuktiPenerimaan->nosbm = $this->generateCode(new StrukBuktiPenerimaan, 'nosbm', 14, 'SBM-' . $this->getDateTime()->format('ym'), $kdProfile);
+            $strukBuktiPenerimaan->nosbm = $this->generateCode(new StrukBuktiPenerimaan, 'nosbm', 14, 'RV-' . $this->getDateTime()->format('ym'), $kdProfile);
 
             try {
                 $strukBuktiPenerimaan->save();
