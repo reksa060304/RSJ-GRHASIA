@@ -31,7 +31,8 @@ class BridgingBPDController extends ApiController
      * Constructor
      * Skip authentication default Laravel karena menggunakan Basic Auth dari Bank BPD
      */
-    protected $idUser = 13;
+    // protected $idUser = 13;
+    protected $idUser = 31212;
     
     use Valet, PelayananPasienTrait, SettingDataFixedTrait,InternalList;
     public function __construct()
