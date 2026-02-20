@@ -363,7 +363,7 @@ define(['initialize', 'Configuration'], function (initialize, config) {
                 { id: 2, status: 'Packaging' },
                 { id: 3, status: 'Selesai' },
                 { id: 4, status: 'Penyerahan Obat' },
-                { id: 5, status: 'Verifikasi' },
+                // { id: 5, status: 'Verifikasi' },
             ]
             $scope.selectOptionStatus = {
                 placeholder: "Status...",
