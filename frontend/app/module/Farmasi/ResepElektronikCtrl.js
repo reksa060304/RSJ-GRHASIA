@@ -357,6 +357,8 @@ define(['initialize', 'Configuration'], function (initialize, config) {
             // };
             $scope.listStatus = [
                 { id: 0, status: 'Menunggu Verifikasi' },
+                // { id: 0, status: 'Menunggu' },
+                { id: 5, status: 'Proses Penyiapan Obat' },
                 { id: 1, status: 'Produksi' },
                 { id: 2, status: 'Packaging' },
                 { id: 3, status: 'Selesai' },
