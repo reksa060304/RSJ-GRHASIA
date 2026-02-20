@@ -32,12 +32,20 @@ class BridgingBPDController extends ApiController
      * Skip authentication default Laravel karena menggunakan Basic Auth dari Bank BPD
      */
     // protected $idUser = 13;
-    protected $idUser = 31212;
+    protected $idUser;
     
     use Valet, PelayananPasienTrait, SettingDataFixedTrait,InternalList;
     public function __construct()
     {
         parent::__construct($skip_authentication = true);
+
+        // Load idUser for BPD transactions from settings (fallback to 31212)
+        try {
+            $setting = SettingDataFixed::where('namafield', 'idUserBPD')->first();
+            $this->idUser = ($setting && isset($setting->nilaifield)) ? (int)$setting->nilaifield : 320262088;
+        } catch (\Exception $e) {
+            $this->idUser = 320262088;
+        }
     }
 
     /**
@@ -143,6 +151,7 @@ class BridgingBPDController extends ApiController
                     'jk.reportdisplay as jenis_kelamin'
                 )
                 ->where('p.nocm', $noRm)
+                ->where('p.statusenabled', true)
                 ->first();
 
             if (!$pasien) {
@@ -155,6 +164,7 @@ class BridgingBPDController extends ApiController
             // Step 2: Ambil data registrasi/kunjungan terakhir berdasarkan tglregistrasi
             $pasienDaftar = DB::table('pasiendaftar_t as pd')
                 ->where('pd.nocmfk', $pasien->id_pasien)
+                ->where('pd.statusenabled', true)
                 ->orderBy('pd.tglregistrasi', 'DESC')
                 ->first();
 
