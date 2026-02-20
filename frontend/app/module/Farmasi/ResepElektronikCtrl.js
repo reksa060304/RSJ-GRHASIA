@@ -180,6 +180,8 @@ define(['initialize', 'Configuration'], function (initialize, config) {
                         "field": "statusorder",
                         "title": "Status",
                         "width": "60px",
+                        aggregates: ["count"],
+                        groupHeaderTemplate: "Status #= value # "
 
                     }, {
                         "field": "namapengambilorder",
@@ -285,13 +287,22 @@ define(['initialize', 'Configuration'], function (initialize, config) {
             // $scope.startDate = new Date();
             // $scope.untilDate = new Date();
             $scope.ruanganId = "";
-            $scope.group = {
-                field: "jenis",
-                aggregates: [{
+            $scope.group = [
+                {
                     field: "jenis",
-                    aggregate: "count"
-                }]
-            };
+                    aggregates: [{
+                        field: "jenis",
+                        aggregate: "count"
+                    }]
+                },
+                {
+                    field: "statusorder",
+                    aggregates: [{
+                        field: "statusorder",
+                        aggregate: "count"
+                    }]
+                }
+            ];
             // $scope.arrColumnGridResepElektronik = [{
             //     "field": "strukOrder.noOrder",
             //     "title": "No Pesanan",
