@@ -448,7 +448,7 @@ define(['initialize', 'Configuration'], function (initialize, config) {
 
 
                         if (e.data[i].noorder == e.data[i].noresep) {
-                            if (e.data[i].statusorder == 'Menunggu')
+                            if (e.data[i].statusorder == 'Menunggu' || e.data[i].statusorder == 'Menunggu Verifikasi')
                                 e.data[i].statusorder = 'Verifikasi'
                         }
                         if (e.data[i].checkreseppulang == '1') {
@@ -486,7 +486,7 @@ define(['initialize', 'Configuration'], function (initialize, config) {
                         if (e.data[i].statusorder == 'Selesai') {
                             verif += 1
                         }
-                        if (e.data[i].statusorder == 'Menunggu') {
+                        if (e.data[i].statusorder == 'Menunggu' || e.data[i].statusorder == 'Menunggu Verifikasi') {
                             nunggu += 1
                         }
                         if (e.data[i].jenis == 'Racikan') {
