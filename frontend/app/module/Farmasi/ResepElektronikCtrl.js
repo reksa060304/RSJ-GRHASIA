@@ -512,15 +512,19 @@ define(['initialize', 'Configuration'], function (initialize, config) {
                     $scope.raciks = raciks
                     $scope.nonraciks = nonraciks
                     $scope.isRouteLoading = false
-                    e.data.sort(function (a, b) {
-                        if (a.noantri < b.noantri) { return -1; }
-                        if (a.noantri > b.noantri) { return 1; }
-                        return 0;
-                    })
+                    // e.data.sort(function (a, b) {
+                    //     if (a.noantri < b.noantri) { return -1; }
+                    //     if (a.noantri > b.noantri) { return 1; }
+                    //     return 0;
+                    // })
                     $scope.patienGrids = new kendo.data.DataSource({
                         //data: ModelItem.beforePost(e.data.data, true),
                         data: ModelItem.beforePost(e.data, true),
-                        group: $scope.group
+                        group: $scope.group,
+                        sort: [
+                            { field: "tglweh", dir: "desc" },
+                            { field: "tglorder", dir: "desc" }
+                        ]
                     });
 
 
