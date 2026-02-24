@@ -32566,6 +32566,30 @@ public function suratBuktiPengembalian(Request $request)
         return view('report.spj.cetakrekaptotalanggaranv3',compact('sebelum','pageWidth', 'itahap', 'tanggalcetak','settingrba'));
     }
 
+    public function invoiceDiklat2(Request $request)
+        {
+            $kdProfile = 30;
+            $profile = DB::select("select*from profile_m where kdprofile = $kdProfile and statusenabled = true");
+            $detail = \DB::select(
+                DB::raw("SELECT sdpe.institusipendidikan, djp.detailjenisproduk,sdpe.jumlahpeserta, sdpe.tanggalmulai, sdpe.tanggalselesai, pr.namaproduk, sdpe.qty, sdpe.satuan, sdpe.biayapenelitian FROM sdm_penelitianeksternal_t sdpe 
+                inner join detailjenisproduk_m djp on djp.id = sdpe.objectdetailjenisprodukfk
+                inner join produk_m pr on pr.id = sdpe.objectprodukfk
+                where sdpe.norec ilike '$request[norec]' and sdpe.statusenabled = true and sdpe.kdprofile = 30
+            "));
+            $mahasiswa = \DB::select(
+                DB::raw("SELECT ru.namaruangan, pg.namalengkap,spd.* FROM sdm_pesertadidik_t spd 
+                left join pegawai_m pg on pg.id = spd.objectpegawailastfk
+                left join ruangan_m ru on ru.id = spd.objectruanganlastfk
+                where spd.noregistrasifk ilike '$request[norec]'")
+            );
+            $result = array(
+                "detail"=> $detail,
+                "mahasiswa"=> $mahasiswa,
+                "as"=> "Fizi"
+            );
+            // dd($result);
+            return view('report.invoice-diklat2', compact('detail', 'mahasiswa', 'profile'));
+        }
 
     //batas
 }

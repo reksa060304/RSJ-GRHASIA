@@ -289,6 +289,10 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
                                     click: cetakInvoice,
                                 },
                                 {
+                                    text: "Invoice V2",
+                                    click: cetakInvoice2,
+                                },
+                                {
                                 text: "nametag",
                                 click: cetaknametag,
                             }, {
@@ -392,6 +396,14 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
                     "norec": dataItem.norec
                 }
                 window.open(baseTransaksi + "report/diklat-invoice?norec=" + dataItem.norec);
+            }
+            function cetakInvoice2(e){
+                e.preventDefault()
+                var dataItem = this.dataItem($(e.currentTarget).closest("tr"));
+                var datasend = {
+                    "norec": dataItem.norec
+                }
+                window.open(baseTransaksi + "report/diklat-invoice2?norec=" + dataItem.norec);
             }
             $scope.columnMahasiswaAktif = {
                 toolbar: ["excel"],

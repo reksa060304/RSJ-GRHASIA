@@ -1548,6 +1548,7 @@ Route::group(['middleware' => 'cors', 'prefix' => 'service'], function () {
           Route::get('report/cetak-ekspertise','Report\ReportController@cetakEkspertise');
           Route::get('report/diklat-nametag','Report\ReportController@nametagDiklat');
           Route::get('report/diklat-invoice', 'Report\ReportController@invoiceDiklat');
+          Route::get('report/diklat-invoice2', 'Report\ReportController@invoiceDiklat2');
           Route::get('report/cetak-hasil-lab-histopatologi','Report\ReportController@cetakHispatologi');
           Route::get('report/cetak-resep-dokter','Report\ReportController@cetakResepDokter');
           Route::get('report/cetak-detail-order','Report\ReportController@cetakDetailOrder');
@@ -2122,6 +2123,7 @@ Route::group(['middleware' => 'cors', 'prefix' => 'service'], function () {
             Route::get('anggaran/get-pajak-pphppn', 'Anggaran_2024\AnggaranController@getPajakPPHPPN');
             Route::get('anggaran/get-bku-pemungutanpajak', 'Anggaran_2024\AnggaranController@getBKUPemungutanPajak');
             Route::get('anggaran/get-bku-pengembalianpanjar', 'Anggaran_2024\AnggaranController@getBKUPengembalianPanjar');
+            Route::get('perencanaan/get-password-rba', 'Perencanaan\PerencanaanController@getPassRBA');
            
             // start SPJ LS
             Route::get('anggaran/get-spj-ls', 'Anggaran_2024\AnggaranController@getSPJLS');
