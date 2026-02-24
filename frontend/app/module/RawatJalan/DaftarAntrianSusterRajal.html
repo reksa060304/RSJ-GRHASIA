@@ -41,6 +41,7 @@
     .label-primary {
         background-color: #58a2e2;
     }
+
     .green {
         background-color: #49e171;
         color: #FFFFFF;
@@ -58,7 +59,7 @@
                     </div>
                     <div class="grid_12">
                         <div class="grid_6 padDatePicker">
-                            <input style="width: 100%" k-ng-model="item.periodeAwal" kendo-datetimepicker
+                            <input style="width: 100%" k-ng-model="item.periodeAwal" kendo-datetimepicker k-max="now"
                                 placeholer="yyyy-MM-dd HH:mm" k-format="'yyyy-MM-dd HH:mm'"
                                 parsedate="yyyy-MM-dd HH:mm" />
                         </div>
@@ -271,14 +272,14 @@
             <button class="btnTemplate1" style="margin-left: 0;" ng-click="pasienMeninggal()"><i
                     class="fa fa-bed"></i>Meninggal</button>
         </div>
-         <div class="grid_2" style="margin-top:-10px">
+        <div class="grid_2" style="margin-top:-10px">
             <button class="btnTemplate1 red" style="margin-left: 0;" ng-click="emr()"><i
                     class="fa fa-stethoscope"></i>EMR</button>
         </div>
-         <div class="grid_2" style="margin-top:-10px">
-             <button class="btnTemplate1" style="margin-left: 0;" ng-click="pasienPulang()"><i
-                     class="fa fa-bed"></i>Pulang</button>
-         </div>
+        <div class="grid_2" style="margin-top:-10px">
+            <button class="btnTemplate1" style="margin-left: 0;" ng-click="pasienPulang()"><i
+                    class="fa fa-bed"></i>Pulang</button>
+        </div>
     </div>
 
     <div class="grid_12">
@@ -327,8 +328,7 @@
         <input style="width: 100%; " kendo-combo-box k-ng-model="item.pilihRuangan" k-data-text-field="'namaexternal'"
             k-filter=" 'contains' " k-data-value-field=" 'id' " k-auto-bind="false " k-data-source="listPilihRuang" />
         <div class="clear">
-            <button class="k-button" ng-click="simpanPanggil()"
-                style="float:right;margin-top:4%">Panggil</button>
+            <button class="k-button" ng-click="simpanPanggil()" style="float:right;margin-top:4%">Panggil</button>
         </div>
     </div>
     <div kendo-window="winDialogss" k-title="'Pilih Dokter'" k-width="400" k-height="120" k-visible="false"
@@ -525,19 +525,18 @@
         </div>
     </div>
     <div kendo-window="winPasienMeninggal" k-title="'Pasien Meninggal'" k-width="750" k-visible="false"
-        k-on-open="win2visible = true" k-on-close="win2visible = false">    
+        k-on-open="win2visible = true" k-on-close="win2visible = false">
         <div class="panel panel-default container_12" style="padding: 0px 10px;">
             <div class="grid_12">
                 <div class="grid_6">
                     <!-- Status keluar -->
-                    <div class="grid_12" >
+                    <div class="grid_12">
                         <label c-label item="item" c-label-text="statusKeluar"></label>
                     </div>
                     <div class="grid_12">
                         <input style="width: 100%;" kendo-combo-box k-ng-model="item.statusKeluarJ"
                             k-data-text-field="'statuskeluar'" k-filter="'contains'" k-data-value-field="'id'"
-                            k-auto-bind="false" k-data-source="listStatusKeluar" k-on-change="loadKelas()"
-                            disabled />
+                            k-auto-bind="false" k-data-source="listStatusKeluar" k-on-change="loadKelas()" disabled />
                     </div>
                 </div>
                 <div class="grid_6">
@@ -555,23 +554,29 @@
             <div class="grid_12">
                 <div class="grid_4">
                     <label c-label item="item" c-label-text="tanggalMeninggal"></label>
-                    <input style="width: 100%" kendo-date-time-picker k-ng-model="item.tglMeninggal" k-options="formatJam24"/>
+                    <input style="width: 100%" kendo-date-time-picker k-ng-model="item.tglMeninggal"
+                        k-options="formatJam24" />
                 </div>
                 <div class="grid_4">
                     <label c-label item="item" c-label-text="PenyebabKematian"></label>
-                    <input style="width: 100%;" kendo-combo-box k-ng-model="item.penyebabKematian" k-data-text-field="'penyebabkematian'" k-filter="'contains'" k-data-value-field="'id'" k-auto-bind="false" k-data-source="listPenyebabKematian" k-on-change="IsiPenyebab()"/>
+                    <input style="width: 100%;" kendo-combo-box k-ng-model="item.penyebabKematian"
+                        k-data-text-field="'penyebabkematian'" k-filter="'contains'" k-data-value-field="'id'"
+                        k-auto-bind="false" k-data-source="listPenyebabKematian" k-on-change="IsiPenyebab()" />
                 </div>
                 <div class="grid_4" ng-show="PenyebabKematianManual">
                     <label c-label item="item" c-label-text="PenyebabKematian"></label>
-                    <input c-text-box type="input" filter="'string'" class="k-textbox" ng-model="item.PenyebabKematianText" />
+                    <input c-text-box type="input" filter="'string'" class="k-textbox"
+                        ng-model="item.PenyebabKematianText" />
                 </div>
-                
-            </div>            
+
+            </div>
             <div class="dialog_buttons pull-right" style="margin-top: 15px;">
-                <input type="button" class="confirm_no k-button" value="Batal" style="width: 70px" ng-click="BatalMeninggal()"/>
+                <input type="button" class="confirm_no k-button" value="Batal" style="width: 70px"
+                    ng-click="BatalMeninggal()" />
                 &nbsp;
-                <input type="button" class="confirm_yes k-button" value="Simpan" style="width: 70px" ng-click="SimpanMeninggal()"/>
-            </div> 
+                <input type="button" class="confirm_yes k-button" value="Simpan" style="width: 70px"
+                    ng-click="SimpanMeninggal()" />
+            </div>
         </div>
     </div>
 
