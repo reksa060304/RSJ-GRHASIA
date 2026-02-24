@@ -32,7 +32,8 @@ class BridgingBPDController extends ApiController
      * Skip authentication default Laravel karena menggunakan Basic Auth dari Bank BPD
      */
     // protected $idUser = 13;
-    protected $idUser;
+    protected $idUser;    // loginuser_s.id
+    protected $idPegawai; // pegawai_m.id (derived from loginuser_s)
     
     use Valet, PelayananPasienTrait, SettingDataFixedTrait,InternalList;
     public function __construct()
@@ -41,10 +42,13 @@ class BridgingBPDController extends ApiController
 
         // Load idUser for BPD transactions from settings (fallback to 31212)
         try {
-            $setting = SettingDataFixed::where('namafield', 'idUserBPD')->first();
-            $this->idUser = ($setting && isset($setting->nilaifield)) ? (int)$setting->nilaifield : 320262088;
+            $settingIdUser = SettingDataFixed::where('namafield', 'idUserBPD')->first();
+            $settingIdPegawai = SettingDataFixed::where('namafield', 'idPegawaiBPD')->first();
+            $this->idUser = ($settingIdUser && isset($settingIdUser->nilaifield)) ? (int)$settingIdUser->nilaifield : 31213;
+            $this->idPegawai = ($settingIdPegawai && isset($settingIdPegawai->nilaifield)) ? (int)$settingIdPegawai->nilaifield : 320262088;
         } catch (\Exception $e) {
-            $this->idUser = 320262088;
+            $this->idUser = 31213;
+            $this->idPegawai = 320262088;
         }
     }
 
@@ -175,15 +179,16 @@ class BridgingBPDController extends ApiController
                 ], 404);
             }
 
-            // Step 3: Check sudah bayar atau belum        
-            if ($pasienDaftar->nostruklastfk != null) {
-                return response()->json([
-                    'response_code' => '88',
-                    'response_message' => 'bill already paid',
-                ], 400);
-            } 
+            // Step 3: Check sudah bayar atau belum
+            // Cek apakah masih ada pelayanan yang belum diverifikasi (strukfk IS NULL)
+            $pelayananBelumBayar = DB::table('antrianpasiendiperiksa_t as apd')
+                ->join('pelayananpasien_t as pp', 'pp.noregistrasifk', '=', 'apd.norec')
+                ->where('apd.noregistrasifk', $pasienDaftar->norec)
+                ->where('pp.statusenabled', true)
+                ->whereNull('pp.strukfk')
+                ->count();
 
-            if ($pasienDaftar->nosbmlastfk != null) {
+            if (($pasienDaftar->nostruklastfk != null || $pasienDaftar->nosbmlastfk != null) && $pelayananBelumBayar == 0) {
                 return response()->json([
                     'response_code' => '88',
                     'response_message' => 'bill already paid',
@@ -206,6 +211,8 @@ class BridgingBPDController extends ApiController
                         'sbm.nosbm', 'sp.norec as norec_sp', 'pp.jasa'
                     )
                     ->where('pd.norec', $pasienDaftar->norec)
+                    ->where('pp.statusenabled', true)
+                    ->whereNull('pp.strukfk')
                     ->orderBy('pp.tglpelayanan')
                     ->orderBy('pp.rke');
     
@@ -385,7 +392,7 @@ class BridgingBPDController extends ApiController
             $strukPelayanan->noregistrasifk = $pasienDaftar->norec;
             $strukPelayanan->objectkelaslastfk = $pasienDaftar->objectkelasfk;
             $strukPelayanan->objectkelompoktransaksifk = 1;
-            $strukPelayanan->objectpegawaipenerimafk = $this->idUser;// $this->getCurrentLoginID();
+            $strukPelayanan->objectpegawaipenerimafk = $this->idPegawai;// $this->getCurrentLoginID();
             $strukPelayanan->nostruk = $noStruk;
             $strukPelayanan->totalharusdibayar = $totalBilling - $totalDeposit;
             $strukPelayanan->tglstruk = $this->getDateTime();
@@ -468,7 +475,7 @@ class BridgingBPDController extends ApiController
         if ($transStatus) {
             $logAcc = new  LogAcc;
             $logAcc->norec = $logAcc->generateNewId();
-            $logAcc->jenistransaksi = 'Verifikasi TataRekening';
+            $logAcc->jenistransaksi = 'Verifikasi TataRekening Bank BPD';
             $logAcc->noreff = $strukPelayanan->norec;
             $logAcc->status = 0;
             $logAcc->tanggal = $this->getDateTime()->format('Y-m-d H:i:s');
@@ -498,10 +505,10 @@ class BridgingBPDController extends ApiController
             $logUser->norec = $logUser->generateNewId();
             $logUser->kdprofile = $idProfile;
             $logUser->statusenabled = true;
-            $logUser->jenislog = 'Verifikasi TataRekening';
+            $logUser->jenislog = 'Verifikasi TataRekening Bank BPD';
             $logUser->noreff = $strukPelayanan->norec;
-            $logUser->referensi = $strukPelayanan->nostruk;
-            $logUser->keterangan = 'Verifikasi TataRekening untuk pasien registrasi ' . $noRegister . ' - No Struk: ' . $strukPelayanan->nostruk;
+            $logUser->referensi = 'norec Struk Pelayanan';
+            $logUser->keterangan = 'Verifikasi TataRekening melalui Bank BPD untuk pasien registrasi ' . $noRegister . ' - No Struk: ' . $strukPelayanan->nostruk;
             $logUser->objectloginuserfk = $this->idUser;
             $logUser->tanggal = $this->getDateTime()->format('Y-m-d H:i:s');
 
@@ -589,7 +596,7 @@ class BridgingBPDController extends ApiController
             $strukBuktiPenerimaan = new StrukBuktiPenerimaan();
             $strukBuktiPenerimaan->norec = $strukBuktiPenerimaan->generateNewId();
             $strukBuktiPenerimaan->kdprofile = $kdProfile;
-            $strukBuktiPenerimaan->keteranganlainnya = "Pembayaran Tagihan Pasien";
+            $strukBuktiPenerimaan->keteranganlainnya = "Pembayaran Melalui Si Banter BPD DIY";
             $strukBuktiPenerimaan->statusenabled = 1;
             $strukBuktiPenerimaan->nostrukfk = $strukPelayanan->norec;
             $strukBuktiPenerimaan->objectkelompokpasienfk = $strukPelayanan->pasien_daftar->pasien->objectkelompokpasienfk;
@@ -597,21 +604,17 @@ class BridgingBPDController extends ApiController
             $strukBuktiPenerimaan->objectpegawaipenerimafk = $this->idUser;
             $strukBuktiPenerimaan->tglsbm = date('Y-m-d H:i:s');
             $strukBuktiPenerimaan->totaldibayar = $totalBayar;
-            $strukBuktiPenerimaan->nosbm = $this->generateCode(new StrukBuktiPenerimaan, 'nosbm', 14, 'RV-' . $this->getDateTime()->format('ym'), $kdProfile);
-
-            try {
-                $strukBuktiPenerimaan->save();
-            } catch (\Exception $e) {
-                DB::rollBack();
-                return response()->json([
-                    'response_code' => '96',
-                    'response_message' => 'system malfunction',
-                    'error_details' => $e->getMessage()
-                ], 500);
-            }
-
+            $strukBuktiPenerimaan->nosbm = $this->generateCode(new StrukBuktiPenerimaan, 'nosbm', 14, 'RV-' . $this->getDateTime()->format('ym'), $kdProfile); 
+            $strukBuktiPenerimaan->save();
+            
             // Tentukan ID cara bayar
-            $objectCaraBayarFk = ($request->input('transaction_method') == 'QRIS') ? 12 : 9;
+            $settingField = ($request->input('transaction_method') == 'QRIS') 
+                ? 'idCaraBayarSiBanterQRIS' 
+                : 'idCaraBayarSiBanterVA';
+            $settingCaraBayar = SettingDataFixed::where('namafield', $settingField)->first();
+            $objectCaraBayarFk = ($settingCaraBayar && isset($settingCaraBayar->nilaifield)) 
+                ? (int)$settingCaraBayar->nilaifield 
+                : (($request->input('transaction_method') == 'QRIS') ? 13 : 14); 
 
             // Buat cara pembayaran
             $SBPCB = new StrukBuktiPenerimaanCaraBayar();
@@ -621,17 +624,7 @@ class BridgingBPDController extends ApiController
             $SBPCB->nosbmfk = $strukBuktiPenerimaan->norec;
             $SBPCB->objectcarabayarfk = $objectCaraBayarFk;
             $SBPCB->totaldibayar = $totalBayar;
-
-            try {
-                $SBPCB->save();
-            } catch (\Exception $e) {
-                DB::rollBack();
-                return response()->json([
-                    'response_code' => '96',
-                    'response_message' => 'system malfunction',
-                    'error_details' => $e->getMessage()
-                ], 500);
-            }
+            $SBPCB->save();
 
             // Update struktur pelayanan
             $strukPelayanan->nosbmlastfk = $strukBuktiPenerimaan->norec;
@@ -698,6 +691,12 @@ class BridgingBPDController extends ApiController
 
             try {
                 $logUser->save();
+                PasienDaftar::where('noregistrasi', $strukPelayanan->pasien_daftar->noregistrasi)
+                ->where('kdprofile', $kdProfile)
+                ->update([
+                    'isclosing' => true,
+                    'tglclosing' => $this->getDateTime()->format('Y-m-d H:i:s')
+                ]);
             } catch (\Exception $e) {
                 DB::rollBack();
                 return response()->json([

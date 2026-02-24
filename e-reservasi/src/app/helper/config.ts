@@ -8,9 +8,10 @@ export class Configuration {
       }
     } else if (window.location.hostname.indexOf('localhost') > -1) {
       return {
-        apiBackend: 'http://localhost:3331/service/',
+        apiBackend: 'http://localhost:8009/service/',
         headerToken: 'X-AUTH-TOKEN',
         authLogin: ':8400',
+        socketIO: ':9998',
       }
     } else if (window.location.hostname.indexOf('10.122.250.11') > -1) {
       return {
