@@ -252,6 +252,27 @@
         </thead>
         <tbody>
             @php
+                // pindah data dari sesudah ke sebelum
+                foreach ($data as $swap_item) {
+                    $t_jml = $swap_item->jml;
+                    $swap_item->jml = $swap_item->jml_sesudah;
+                    $swap_item->jml_sesudah = $t_jml;
+
+                    $t_sat = $swap_item->satuan;
+                    $swap_item->satuan = $swap_item->satuan_sesudah;
+                    $swap_item->satuan_sesudah = $t_sat;
+
+                    $t_hrg = $swap_item->hargasatuan;
+                    $swap_item->hargasatuan = $swap_item->hargasatuan_sesudah;
+                    $swap_item->hargasatuan_sesudah = $t_hrg;
+
+                    if(isset($swap_item->objectasalprodukfk_sesudah)) {
+                        $t_apfk = $swap_item->objectasalprodukfk;
+                        $swap_item->objectasalprodukfk = $swap_item->objectasalprodukfk_sesudah;
+                        $swap_item->objectasalprodukfk_sesudah = $t_apfk;
+                    }
+                }
+
                 $parent1 = null;
                 $parent2 = null;
                 $parent3 = null;
@@ -272,7 +293,7 @@
                                 $totalParent1Sesudah = $totalParent1Sesudah + ( (int)$kb->jml_sesudah * (int)$kb->hargasatuan_sesudah );
                             }
                         }
-                        $selisihParent1 = (int)$totalParent1 - (int)$totalParent1Sesudah;
+                        $selisihParent1 = (int)$totalParent1Sesudah - (int)$totalParent1;
                     @endphp
 
                     <tr>
@@ -346,7 +367,7 @@
                                 $totalParent2Sesudah = $totalParent2Sesudah + ( (int)$kb->jml_sesudah * (int)$kb->hargasatuan_sesudah );
                             }
                         }
-                        $selisihParent2 =  (int)$totalParent2 - (int)$totalParent2Sesudah;
+                        $selisihParent2 = (int)$totalParent2Sesudah - (int)$totalParent2;
                     @endphp
                     <tr>
                         <td style="padding:5px;"><b>{{ $item->kode_mataanggaran2 }}</b></td>
@@ -419,7 +440,7 @@
                                 $totalParent3Sesudah = $totalParent3Sesudah + ( (int)$kb->jml_sesudah * (int)$kb->hargasatuan_sesudah );
                             }
                         }
-                        $selisihParent3 = (int)$totalParent3 - (int)$totalParent3Sesudah;
+                        $selisihParent3 = (int)$totalParent3Sesudah - (int)$totalParent3;
                     @endphp
 
                     <tr>
@@ -496,7 +517,7 @@
                                 $totalParent4Sesudah = $totalParent4Sesudah + ( (int)$ma4->jml_sesudah * (int)$ma4->hargasatuan_sesudah );
                             }
                         }
-                        $selisihParent4 = (int)$totalParent4 - (int)$totalParent4Sesudah;
+                        $selisihParent4 = (int)$totalParent4Sesudah - (int)$totalParent4;
                         // $persenParent4 = (abs($selisihParent4) / ($totalParent4 + $totalParent4Sesudah) * 100);
                     @endphp
                     <tr>
@@ -564,7 +585,7 @@
                 @php
                     $totalKB = ( (int)$item->jml * (int)$item->hargasatuan );
                     $totalKBSesudah = ( (int)$item->jml_sesudah * (int)$item->hargasatuan_sesudah );
-                    $selisih = $totalKB - $totalKBSesudah;
+                    $selisih = $totalKBSesudah - $totalKB;
                 @endphp
                 
                 <tr>
