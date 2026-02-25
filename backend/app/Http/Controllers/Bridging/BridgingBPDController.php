@@ -188,6 +188,82 @@ class BridgingBPDController extends ApiController
                 ->whereNull('pp.strukfk')
                 ->count();
 
+            // Sudah verifikasi tapi belum bayar: nostruklastfk ada, nosbmlastfk masih null
+            // Langsung tampilkan data bill yang sudah diverifikasi tanpa simpan verifikasi lagi
+            if ($pasienDaftar->nostruklastfk != null && $pasienDaftar->nosbmlastfk == null) {
+                $pelayananVerified = DB::table('pasiendaftar_t as pd')
+                    ->leftjoin('antrianpasiendiperiksa_t as apd', 'apd.noregistrasifk', '=', 'pd.norec')
+                    ->leftjoin('pelayananpasien_t as pp', 'pp.noregistrasifk', '=', 'apd.norec')
+                    ->leftjoin('produk_m as pr', 'pr.id', '=', 'pp.produkfk')
+                    ->leftjoin('kelas_m as kl', 'kl.id', '=', 'apd.objectkelasfk')
+                    ->join('ruangan_m as ru', 'ru.id', '=', 'apd.objectruanganfk')
+                    ->leftjoin('strukpelayanan_t as sp', 'sp.norec', '=', 'pp.strukfk')
+                    ->select(
+                        'pp.norec', 'pp.tglpelayanan', 'pp.rke', 'pr.id as prid', 'pr.namaproduk', 
+                        'pp.jumlah', 'kl.id as klid', 'kl.namakelas',
+                        'ru.id as ruid', 'ru.namaruangan', 'pp.produkfk', 'pp.hargajual', 'pp.hargadiscount', 
+                        'sp.nostruk', 'sp.tglstruk', 'apd.norec as norec_apd',
+                        'sp.norec as norec_sp', 'pp.jasa'
+                    )
+                    ->where('sp.norec', $pasienDaftar->nostruklastfk)
+                    ->where('pp.statusenabled', true)
+                    ->whereNotNull('pp.strukfk')
+                    ->orderBy('pp.tglpelayanan')
+                    ->orderBy('pp.rke')
+                    ->get();
+
+                $totalBillingVerified = 0;
+                $tagihanArrayVerified = [];
+                $noKwitansiVerified = 1;
+                $transactionIdVerified = null;
+
+                foreach ($pelayananVerified as $value) {
+                    if ($value->produkfk == (int)$idProdukDeposit->nilaifield) {
+                        continue;
+                    }
+                    if ($value->namaproduk == null) {
+                        continue;
+                    }
+
+                    $jasa = (isset($value->jasa) && $value->jasa != "" && $value->jasa != "undefined") ? $value->jasa : 0;
+                    $harga = (float)$value->hargajual;
+                    $diskon = (float)$value->hargadiscount;
+                    $subtotal = (($harga - $diskon) * $value->jumlah) + $jasa;
+
+                    $tagihanArrayVerified[] = [
+                        'no_kwitansi' => $noKwitansiVerified,
+                        'keterangan' => $value->namaproduk,
+                        'nominal' => number_format($subtotal, 2, '.', '')
+                    ];
+
+                    $totalBillingVerified += $subtotal;
+                    $noKwitansiVerified++;
+
+                    if ($transactionIdVerified == null && $value->nostruk != null) {
+                        $transactionIdVerified = $value->nostruk;
+                    }
+                }
+
+                $tglLahirVerified = '';
+                if (isset($pasien->tgllahir) && $pasien->tgllahir) {
+                    $tglLahirVerified = date('d/m/Y', strtotime($pasien->tgllahir));
+                }
+
+                return response()->json([
+                    'response_code' => '00',
+                    'response_message' => 'success',
+                    'no_rm' => $pasien->no_rm,
+                    'nama_pasien' => $pasien->namapasien,
+                    'alamat_pasien' => $pasien->alamat,
+                    'jenis_kelamin' => $pasien->jenis_kelamin,
+                    'tanggal_lahir' => $tglLahirVerified,
+                    'total_tagihan' => number_format($totalBillingVerified, 2, '.', ''),
+                    'transaction_id' => $transactionIdVerified,
+                    'tagihan' => $tagihanArrayVerified
+                ], 200);
+            }
+
+            // Kode existing di bawah ini TIDAK DIUBAH
             if (($pasienDaftar->nostruklastfk != null || $pasienDaftar->nosbmlastfk != null) && $pelayananBelumBayar == 0) {
                 return response()->json([
                     'response_code' => '88',
