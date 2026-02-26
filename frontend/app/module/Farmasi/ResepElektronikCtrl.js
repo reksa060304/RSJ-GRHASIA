@@ -190,12 +190,6 @@ define(['initialize', 'Configuration'], function (initialize, config) {
 
                     },
                     {
-                        "field": "noruangan",
-                        "title": "No Ruang",
-                        "width": "80px",
-
-                    },
-                    {
                         "field": "cekreseppulang",
                         "title": "Resep Pulang",
                         "width": "80px",
@@ -205,6 +199,12 @@ define(['initialize', 'Configuration'], function (initialize, config) {
                         "field": "cito",
                         "title": "Cito",
                         "width": "80px",
+                    },
+                    {
+                        "field": "noruangan",
+                        "title": "No Ruang",
+                        "width": "80px",
+
                     },
                     {
                         "field": "isbayar",
@@ -249,7 +249,6 @@ define(['initialize', 'Configuration'], function (initialize, config) {
                         "title": "Jenis",
                         aggregates: ["count"],
                         groupHeaderTemplate: " #= value # "
-
                     },]
             };
 
@@ -289,16 +288,16 @@ define(['initialize', 'Configuration'], function (initialize, config) {
             $scope.ruanganId = "";
             $scope.group = [
                 {
-                    field: "jenis",
+                    field: "statusorder",
                     aggregates: [{
-                        field: "jenis",
+                        field: "statusorder",
                         aggregate: "count"
                     }]
                 },
                 {
-                    field: "statusorder",
+                    field: "jenis",
                     aggregates: [{
-                        field: "statusorder",
+                        field: "jenis",
                         aggregate: "count"
                     }]
                 }
@@ -458,10 +457,11 @@ define(['initialize', 'Configuration'], function (initialize, config) {
                         //itungUsia(dat.data[i].tgllahir)
 
 
-                        if (e.data[i].noorder == e.data[i].noresep) {
-                            if (e.data[i].statusorder == 'Menunggu' || e.data[i].statusorder == 'Menunggu Verifikasi')
-                                e.data[i].statusorder = 'Verifikasi'
-                        }
+                        // pisah verifikasi dan menunggu verifikasi
+                        // if (e.data[i].noorder == e.data[i].noresep) {
+                        //     if (e.data[i].statusorder == 'Menunggu' || e.data[i].statusorder == 'Menunggu Verifikasi')
+                        //         e.data[i].statusorder = 'Verifikasi'
+                        // }
                         if (e.data[i].checkreseppulang == '1') {
                             e.data[i].cekreseppulang = '✔'
                         } else {
