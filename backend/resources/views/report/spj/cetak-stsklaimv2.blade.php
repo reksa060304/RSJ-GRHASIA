@@ -30,6 +30,13 @@
             <td style="text-align: center;">(STS)</td>
         </tr>
     </table>
+    @php
+        $totalDariDetail = 0;
+        foreach ($data as $row) {
+            $totalDariDetail += $row->totaldibayarclosing;
+        }
+        $totalDariDetail = round($totalDariDetail, 2);
+    @endphp
     <table style="border-collapse:collapse;">
         <tr>
             <td>No. STS</td>
@@ -39,43 +46,59 @@
         <tr>
             <td>Harap Menerima Uang Sebesar</td>
             <td style="padding: 0 0.3em;">:</td>
-            <td>{{ number_format($sts[0]->totalsetoran, 2, '.', ',') }}</td>
+            <td>Rp. {{ number_format($totalDariDetail, 2, ',', '.') }}</td>
         </tr>
         <tr>
             <td>Terbilang</td>
             <td style="padding: 0 0.3em;">:</td>
             <td>
                 @php
-                    function penyebut($nilai) {
-                        $nilai = abs($nilai);
-                        $huruf = array("", "Satu", "Dua", "Tiga", "Empat", "Lima", "Enam", "Tujuh", "Delapan", "Sembilan", "Sepuluh", "Sebelas");
+                    function angkaKeHuruf($nilai) {
+                        $nilai = abs((int) $nilai);
+                        $huruf = ["", "Satu", "Dua", "Tiga", "Empat", "Lima", "Enam", "Tujuh", "Delapan", "Sembilan", "Sepuluh", "Sebelas"];
                         $temp = "";
                         if ($nilai < 12) {
-                            $temp = " ". $huruf[$nilai];
-                        } else if ($nilai <20) {
-                            $temp = penyebut($nilai - 10). " Belas";
-                        } else if ($nilai < 100) {
-                            $temp = penyebut($nilai/10)." Puluh". penyebut($nilai % 10);
-                        } else if ($nilai < 200) {
-                            $temp = " Seratus" . penyebut($nilai - 100);
-                        } else if ($nilai < 1000) {
-                            $temp = penyebut($nilai/100) . " Ratus" . penyebut($nilai % 100);
-                        } else if ($nilai < 2000) {
-                            $temp = " Seribu" . penyebut($nilai - 1000);
-                        } else if ($nilai < 1000000) {
-                            $temp = penyebut($nilai/1000) . " Ribu" . penyebut($nilai % 1000);
-                        } else if ($nilai < 1000000000) {
-                            $temp = penyebut($nilai/1000000) . " Juta" . penyebut($nilai % 1000000);
-                        } else if ($nilai < 1000000000000) {
-                            $temp = penyebut($nilai/1000000000) . " Milyar" . penyebut(fmod($nilai,1000000000));
-                        } else if ($nilai < 1000000000000000) {
-                            $temp = penyebut($nilai/1000000000000) . " Trilyun" . penyebut(fmod($nilai,1000000000000));
-                        }     
+                            $temp = " " . $huruf[$nilai];
+                        } elseif ($nilai < 20) {
+                            $temp = angkaKeHuruf($nilai - 10) . " Belas";
+                        } elseif ($nilai < 100) {
+                            $temp = angkaKeHuruf((int)($nilai / 10)) . " Puluh" . angkaKeHuruf($nilai % 10);
+                        } elseif ($nilai < 200) {
+                            $temp = " Seratus" . angkaKeHuruf($nilai - 100);
+                        } elseif ($nilai < 1000) {
+                            $temp = angkaKeHuruf((int)($nilai / 100)) . " Ratus" . angkaKeHuruf($nilai % 100);
+                        } elseif ($nilai < 2000) {
+                            $temp = " Seribu" . angkaKeHuruf($nilai - 1000);
+                        } elseif ($nilai < 1000000) {
+                            $temp = angkaKeHuruf((int)($nilai / 1000)) . " Ribu" . angkaKeHuruf($nilai % 1000);
+                        } elseif ($nilai < 1000000000) {
+                            $temp = angkaKeHuruf((int)($nilai / 1000000)) . " Juta" . angkaKeHuruf($nilai % 1000000);
+                        } elseif ($nilai < 1000000000000) {
+                            $temp = angkaKeHuruf((int)($nilai / 1000000000)) . " Miliar" . angkaKeHuruf($nilai % 1000000000);
+                        } elseif ($nilai < 1000000000000000) {
+                            $temp = angkaKeHuruf((int)($nilai / 1000000000000)) . " Triliun" . angkaKeHuruf($nilai % 1000000000000);
+                        }
                         return $temp;
                     }
+
+                    function terbilangRupiah($nilai) {
+                        $nilai = abs($nilai);
+                        $bulat = (int) floor($nilai);
+                        $sen   = (int) round(($nilai - $bulat) * 100);
+                        $hasil = trim(angkaKeHuruf($bulat)) . " Rupiah";
+                        if ($sen > 0) {
+                            $hasil .= " " . trim(angkaKeHuruf($sen)) . " Sen";
+                        }
+                        return $hasil;
+                    }
                 @endphp
-                {{ penyebut((float)$sts[0]->totalsetoran) }}
+                {{ terbilangRupiah($totalDariDetail) }}
             </td>
+        </tr>
+        <tr>
+            <td style="vertical-align: top;">Keterangan</td>
+            <td style="padding: 0 0.3em; vertical-align: top;">:</td>
+            <td>{{ $sts[0]->keterangan }}</td>
         </tr>
         <tr>
             <td>Tanggal</td>
@@ -116,7 +139,7 @@
                                 }
                             }
                         @endphp
-                        {{ number_format($jmllevel1, 2, '.', ',') }}
+                        {{ number_format($jmllevel1, 2, ',', '.') }}
                     </td>
                 </tr>
             @endif
@@ -135,7 +158,7 @@
                                 }
                             }
                         @endphp
-                        {{ number_format($jmllevel2, 2, '.', ',') }}
+                        {{ number_format($jmllevel2, 2, ',', '.') }}
                     </td>
                 </tr>
             @endif
@@ -154,7 +177,7 @@
                                 }
                             }
                         @endphp
-                        {{ number_format($jmllevel3, 2, '.', ',') }}
+                        {{ number_format($jmllevel3, 2, ',', '.') }}
                     </td>
                 </tr>
             @endif
@@ -173,7 +196,7 @@
                                 }
                             }
                         @endphp
-                        {{ number_format($jmllevel4, 2, '.', ',') }}
+                        {{ number_format($jmllevel4, 2, ',', '.') }}
                     </td>
                 </tr>
             @endif
@@ -192,7 +215,7 @@
                                 }
                             }
                         @endphp
-                        {{ number_format($jmllevel5, 2, '.', ',') }}
+                        {{ number_format($jmllevel5, 2, ',', '.') }}
                     </td>
                 </tr>
             @endif
@@ -211,7 +234,7 @@
                                 }
                             }
                         @endphp
-                        {{ number_format($jmllevel6, 2, '.', ',') }}
+                        {{ number_format($jmllevel6, 2, ',', '.') }}
                     </td>
                 </tr>
             @endif
@@ -230,7 +253,7 @@
                                 }
                             }
                         @endphp
-                        {{ number_format($jmllevel7, 2, '.', ',') }}
+                        {{ number_format($jmllevel7, 2, ',', '.') }}
                     </td>
                 </tr>
             @endif
@@ -247,7 +270,7 @@
                             }
                         }
                     @endphp
-                    {{ number_format($jmllevel8, 2, '.', ',') }}
+                    {{ number_format($jmllevel8, 2, ',', '.') }}
                     
                 </td>
             </tr>
@@ -272,9 +295,35 @@
                         $jmlsemua += $row->totaldibayarclosing;
                     }
                 @endphp
-                {{ number_format($jmlsemua, 2, '.', ',') }}
+                {{ number_format($jmlsemua, 2, ',', '.') }}
             </td>
         </tr>
+    </table>
+
+        <table style="width: 90%; font-size: 10pt; text-align: center; margin-left: auto; margin-right: auto; margin-top: 1cm;">
+        <tbody>
+            <tr>
+                <td style="width:30%; padding: 5px;" align="center">MENGETAHUI:</td>
+                <td style="width:30%; padding: 5px;" align="center">TELAH DIPERIKSA</td>
+                <td style="width:30%; padding: 5px;" align="center"></td>
+            </tr>
+            <tr>
+                <td style="width:30%; padding: 5px;" align="center">Pimpinan BLUD</td>
+                <td style="width:30%; padding: 5px;" align="center">Verifikator</td>
+                <td style="width:30%; padding: 5px;" align="center">Bendahara Penerima Pembantu</td>
+            </tr>
+            
+            <tr>
+                <td style="width:30%; padding: 5px; padding-top: 80px;" align="center">dr. Akhmad Akhadi S, MPH</td>
+                <td style="width:30%; padding: 5px; padding-top: 80px;" align="center">Reny Astuti, SE</td>
+                <td style="width:30%; padding: 5px; padding-top: 80px;" align="center">Suri Herlina Pratiwi, SKM, M.PH</td>
+            </tr>
+            <tr>
+                <td style="width:30%; padding: 5px;" align="center">NIP. 19680714 200012 1 002</td>
+                <td style="width:30%; padding: 5px;" align="center">NIP. 19700404 199303 2 005</td>
+                <td style="width:30%; padding: 5px;" align="center">NIP. 19860422 201101 2 013</td>
+            </tr>
+        </tbody>
     </table>
 
     <script>
