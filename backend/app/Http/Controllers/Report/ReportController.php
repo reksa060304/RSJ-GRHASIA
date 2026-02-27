@@ -31045,14 +31045,13 @@ public function suratBuktiPengembalian(Request $request)
     public function cetakSTSManualV2(Request $request)
     {
         $nosts = $request['nosts'];
-        $data = [];
 
-        $detailv2 = DB::select(DB::raw("
+        $data = DB::select(DB::raw("
             SELECT
                 cap_stsd.id as idrekening,
                 cap_stsd.koderekening,
                 cap_stsd.namarekening,
-                stsd2.totalsetoran as totaldibayarclosing,
+                SUM(stsd2.totalsetoran) as totaldibayarclosing,
                 cap7.id as idlevel7,
                 cap7.koderekening as koderekeninglevel7,
                 cap7.namarekening as namarekeninglevel7,
@@ -31074,8 +31073,7 @@ public function suratBuktiPengembalian(Request $request)
                 cap1.id as idlevel1,
                 cap1.koderekening as koderekeninglevel1,
                 cap1.namarekening as namarekeninglevel1
-            FROM surattandasetoran_t sts
-            JOIN surattandasetorandetailv2_t stsd2 ON stsd2.objectstsfk = sts.nosts AND stsd2.statusenabled = TRUE AND stsd2.kdprofile = 30
+            FROM surattandasetorandetailv2_t stsd2
             JOIN char_akun_pendapatan_m cap_stsd ON cap_stsd.id = stsd2.objectakunpendapatanfk AND cap_stsd.statusenabled = TRUE AND cap_stsd.kdprofile = 30
             LEFT JOIN char_akun_pendapatan_m cap7 ON cap7.id = cap_stsd.headfk
             LEFT JOIN char_akun_pendapatan_m cap6 ON cap6.id = cap7.headfk
@@ -31084,40 +31082,38 @@ public function suratBuktiPengembalian(Request $request)
             LEFT JOIN char_akun_pendapatan_m cap3 ON cap3.id = cap4.headfk
             LEFT JOIN char_akun_pendapatan_m cap2 ON cap2.id = cap3.headfk
             LEFT JOIN char_akun_pendapatan_m cap1 ON cap1.id = cap2.headfk
-            WHERE 
-                sts.statusenabled = TRUE
-                AND sts.kdprofile = 30
-                AND sts.nosts = '".$nosts."'
+            WHERE
+                stsd2.objectstsfk = '".$nosts."'
+                AND stsd2.statusenabled = TRUE
+                AND stsd2.kdprofile = 30
             GROUP BY
-                sts.nosts, stsd2.totalsetoran,
-                cap_stsd.id,cap7.id,cap6.id,cap5.id,cap4.id,cap3.id,cap2.id,cap1.id
+                cap_stsd.id, cap_stsd.koderekening, cap_stsd.namarekening,
+                cap7.id, cap7.koderekening, cap7.namarekening,
+                cap6.id, cap6.koderekening, cap6.namarekening,
+                cap5.id, cap5.koderekening, cap5.namarekening,
+                cap4.id, cap4.koderekening, cap4.namarekening,
+                cap3.id, cap3.koderekening, cap3.namarekening,
+                cap2.id, cap2.koderekening, cap2.namarekening,
+                cap1.id, cap1.koderekening, cap1.namarekening
             ORDER BY
-                split_part(cap1.koderekening, '.', 1)::INTEGER asc,
-                split_part(cap2.koderekening, '.', 2)::INTEGER asc,
-                split_part(cap3.koderekening, '.', 3)::INTEGER asc,
-                split_part(cap4.koderekening, '.', 4)::INTEGER asc,
-                split_part(cap5.koderekening, '.', 5)::INTEGER asc,
-                split_part(cap6.koderekening, '.', 6)::INTEGER asc,
-                cap_stsd.koderekening asc
+                cap_stsd.koderekening ASC
         "));
-
-        $data = $detailv2;
 
         $sts = DB::select(DB::raw("
             SELECT
                 sts.nosts,
-                SUM(sts.totalsetoran) as totalsetoran,
-                sts.tglpenerimaan
-            FROM surattandasetoran_t sts 
-            WHERE 
-                sts.statusenabled = TRUE 
-                AND sts.kdprofile = 30 
-                AND sts.nosts = '".$request['nosts']."'  
-            GROUP BY
-                sts.nosts, sts.tglpenerimaan  
+                sts.totalsetoran,
+                sts.tglpenerimaan,
+                sts.keterangan
+            FROM surattandasetoran_t sts
+            WHERE
+                sts.statusenabled = TRUE
+                AND sts.kdprofile = 30
+                AND sts.nosts = '".$request['nosts']."'
+            LIMIT 1
         "));
 
-        return view('report.keuangan.cetak-sts-manualv2',compact('data', 'sts'));
+        return view('report.keuangan.cetak-sts-manualv2', compact('data', 'sts'));
     }
     public function laporanBundleHaisBulanan(Request $request)
     {
