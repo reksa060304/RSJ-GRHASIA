@@ -246,41 +246,24 @@ class NoAuthController extends ApiController
                     q2.jml,
                     (q2.jml -  COALESCE(q1.terpakai,0)) AS kosong
                 FROM (
-                    SELECT 
-                        x.namakelas,
-                        COUNT(x.namakelas) AS terpakai
-                    FROM (
-                        SELECT DISTINCT
-                            pd.tglregistrasi,
-                            P.nocm,
-                            pd.noregistrasi,
-                            ru.namaruangan,
-                            P.namapasien,
-                            kls.namakelas,
-                            tt.objectstatusbedfk
-                        FROM
-                            pasiendaftar_t AS pd
-                            INNER JOIN antrianpasiendiperiksa_t AS apd ON pd.norec = apd.noregistrasifk 
-                            AND apd.tglkeluar IS NULL
-                            INNER JOIN pasien_m AS P ON P.ID = pd.nocmfk
-                            INNER JOIN ruangan_m AS ru ON ru.ID = pd.objectruanganlastfk
-                            INNER JOIN kelas_m AS kls ON kls.ID = pd.objectkelasfk
-                            INNER JOIN jeniskelamin_m AS jk ON jk.ID = P.objectjeniskelaminfk
-                            LEFT JOIN pegawai_m AS pg ON pg.ID = pd.objectpegawaifk
-                            LEFT JOIN kelompokpasien_m AS kp ON kp.ID = pd.objectkelompokpasienlastfk
-                            LEFT JOIN departemen_m AS dept ON dept.ID = ru.objectdepartemenfk
-                            LEFT JOIN batalregistrasi_t AS br ON pd.norec = br.pasiendaftarfk
-                            LEFT JOIN kamar_m AS kmr ON kmr.ID = apd.objectkamarfk
-                            LEFT JOIN tempattidur_m AS tt ON tt.ID = apd.nobed
-                            LEFT JOIN alamat_m AS alm ON alm.nocmfk = P.ID 
-                        WHERE
-                            br.norec IS NULL 
-                            AND pd.tglpulang IS NULL 
-                            AND pd.kdprofile = 30 
-                            AND pd.statusenabled = TRUE
-                            AND kls.namakelas IS NOT NULL
-                    ) AS x
-                    GROUP BY x.namakelas
+                    SELECT
+                        kls.namakelas,
+                        COUNT(DISTINCT pd.noregistrasi) AS terpakai
+                    FROM pasiendaftar_t pd
+                    INNER JOIN antrianpasiendiperiksa_t apd
+                        ON pd.norec = apd.noregistrasifk
+                        AND apd.tglkeluar IS NULL
+                    INNER JOIN kelas_m kls
+                        ON kls.id = pd.objectkelasfk
+                    LEFT JOIN batalregistrasi_t br
+                        ON br.pasiendaftarfk = pd.norec
+                    WHERE
+                        br.norec IS NULL
+                        AND pd.tglpulang IS NULL
+                        AND pd.kdprofile = 30
+                        AND pd.statusenabled = TRUE
+                        AND kls.namakelas IS NOT NULL
+                    GROUP BY kls.namakelas 
                 ) AS q1
                 RIGHT JOIN (
                     SELECT 
@@ -355,7 +338,7 @@ class NoAuthController extends ApiController
                     LEFT JOIN kelas_m AS kl ON kl.id = km.objectkelasfk
                     LEFT JOIN (
                         SELECT
-                            COUNT(pd.noregistrasi) AS isi,
+                            COUNT(DISTINCT pd.noregistrasi) AS isi,
                             ru.namaruangan,
                             ru.id
                         FROM pasiendaftar_t AS pd
@@ -426,7 +409,7 @@ class NoAuthController extends ApiController
                     LEFT JOIN kelas_m AS kl ON kl.id = km.objectkelasfk
                     LEFT JOIN (
                         SELECT
-                            COUNT(pd.noregistrasi) AS isi,
+                            COUNT(DISTINCT pd.noregistrasi) AS isi,
                             kmr.namakamar,
                             kmr.id
                         FROM pasiendaftar_t AS pd
