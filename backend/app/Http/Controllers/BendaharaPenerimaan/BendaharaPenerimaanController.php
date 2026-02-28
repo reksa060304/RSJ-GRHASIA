@@ -10989,6 +10989,187 @@ class BendaharaPenerimaanController extends ApiController {
         return $this->setStatusCode(201)->respond($result, 'tes msg');
     }
 
+     public function getSTSPertanggalV2(Request $request) {
+        $kdProfile = $this->getDataKdProfile($request);
+        $idProfile = (int) $kdProfile;
+
+        $bulanx = $request['bulan'];
+        $tahunx = $request['tahun'];
+        $bayar = '';
+        $nosts = '';
+        if (isset($request['carabayar']) && $request['carabayar'] != "" && $request['carabayar'] != "undefined") {
+            $idCaraBayar = (int) $request['carabayar'];
+            $bayar = " and sts.norec in (
+                select ssc.objectstsfk
+                from ststosck_t ssc
+                inner join strukclosingkasir_t sck on sck.norec = ssc.objectsckfk
+                where sck.carabayarfk = $idCaraBayar
+            )";
+        }
+
+        if(isset($request['nosts']) && $request['nosts'] != ''){
+            $nosts = "and sts.nosts ilike '%". $request['nosts']. "%'";
+        }
+
+        //ambil daftar akun level 8
+        $akunList = DB::select(DB::raw(
+            "SELECT id, namarekening, koderekening, nourut
+             FROM char_akun_pendapatan_m
+             WHERE statusenabled = true AND level = '8'
+             ORDER BY nourut, id"
+        ));
+
+        //buat case when dan sum dinamis
+        $pivotCases = [];
+        $outerSums  = [];
+        $columnMeta = [];
+
+        foreach ($akunList as $akun) {
+            $colAlias    = 'col_' . $akun->id;
+            //buat case when dan sum dinamis
+            $pivotCases[] = "case when x.cap_id = {$akun->id} then sum(x.totalfix) else 0 end as {$colAlias}";
+            $outerSums[]  = "sum({$colAlias}) {$colAlias}";
+
+            $columnMeta[] = [
+                'id'           => $akun->id,
+                'namarekening' => $akun->namarekening,
+                'koderekening' => $akun->koderekening,
+                'nourut'       => $akun->nourut,
+                'alias'        => $colAlias,
+            ];
+        }
+
+        $pivotSql = implode(",\n        ", $pivotCases);
+        $outerSql = implode(",\n        ", $outerSums);
+
+        //eksekusi query utama
+        $data = DB::select(DB::raw("
+        select extract(day from tanggal) as tanggal,
+        {$outerSql}
+        from(
+        select x.tanggal,
+        {$pivotSql}
+        from(
+            select
+                sts.tglpenerimaan::date as tanggal,
+                stsd2.objectakunpendapatanfk as cap_id,
+                sum(stsd2.totalsetoran) as totalfix
+            from surattandasetoran_t sts
+            inner join surattandasetorandetailv2_t stsd2 on stsd2.objectstsfk = sts.nosts
+            inner join char_akun_pendapatan_m cap on cap.id = stsd2.objectakunpendapatanfk
+            where sts.statusenabled = true
+            and sts.kdprofile = $idProfile
+            and stsd2.kdprofile = $idProfile
+            and stsd2.statusenabled = true
+            and extract(year from sts.tglpenerimaan::date) = ".$tahunx."
+            and extract(month from sts.tglpenerimaan::date) = ".$bulanx."
+            $bayar
+            $nosts
+            group by sts.tglpenerimaan::date, stsd2.objectakunpendapatanfk
+        ) as x group by x.tanggal, x.cap_id
+        ) as y group by extract(day from tanggal) order by tanggal"));
+
+        $result = array(
+            'detail'  => $data,
+            'columns' => $columnMeta,
+        );
+        
+        return $this->setStatusCode(201)->respond($result, 'tes msg');
+    }
+
+     public function getDetailSTSPertanggalV2(Request $request) {
+        $kdProfile = $this->getDataKdProfile($request);
+        $idProfile = (int) $kdProfile;
+
+        $bulanx = $request['bulan'];
+        $tahunx = $request['tahun'];
+        $tglx   = $request['tgl'];
+
+        // Filter cara bayar
+        $bayar = '';
+        if (isset($request['carabayar']) && $request['carabayar'] != '' && $request['carabayar'] != 'undefined') {
+            $idCaraBayar = (int) $request['carabayar'];
+            $bayar = " and sts.norec in (
+                select ssc.objectstsfk
+                from ststosck_t ssc
+                inner join strukclosingkasir_t sck on sck.norec = ssc.objectsckfk
+                where sck.carabayarfk = $idCaraBayar
+            )";
+        }
+
+        //ambil daftar akun pendapatan level 8 untuk pivot dinamis
+        $akunList = DB::select(DB::raw("
+            SELECT id, namarekening, koderekening, nourut
+            FROM char_akun_pendapatan_m
+            WHERE statusenabled = true AND level = '8'
+            ORDER BY nourut, id
+        "));
+
+        if (empty($akunList)) {
+            return $this->setStatusCode(201)->respond([
+                'detail'  => [],
+                'columns' => [],
+            ], 'No akun data');
+        }
+
+        //buat sql pivot dinamis
+        $pivotCases = [];
+        $outerSums  = [];
+        $columnMeta = [];
+
+        foreach ($akunList as $akun) {
+            $colAlias = 'col_' . $akun->id;
+            $pivotCases[] = "case when x.cap_id = {$akun->id} then sum(x.totalfix) else 0 end as {$colAlias}";
+            $outerSums[]  = "sum({$colAlias}) {$colAlias}";
+
+            $columnMeta[] = [
+                'id'           => $akun->id,
+                'namarekening' => $akun->namarekening,
+                'koderekening' => $akun->koderekening,
+                'nourut'       => $akun->nourut,
+                'alias'        => $colAlias,
+            ];
+        }
+
+        $pivotSql = implode(",\n        ", $pivotCases);
+        $outerSql = implode(",\n        ", $outerSums);
+
+        //eksekusi query utama
+        $data = DB::select(DB::raw("
+        select nosts, tglpenerimaan,
+        {$outerSql}
+        from(
+        select x.nosts, x.tglpenerimaan,
+        {$pivotSql}
+        from(
+            select
+                sts.nosts,
+                sts.tglpenerimaan::date as tglpenerimaan,
+                stsd2.objectakunpendapatanfk as cap_id,
+                sum(stsd2.totalsetoran) as totalfix
+            from surattandasetoran_t sts
+            inner join surattandasetorandetailv2_t stsd2 on stsd2.objectstsfk = sts.nosts
+            inner join char_akun_pendapatan_m cap on cap.id = stsd2.objectakunpendapatanfk
+            where sts.statusenabled = true
+            and sts.kdprofile = $idProfile
+            and stsd2.kdprofile = $idProfile
+            and stsd2.statusenabled = true
+            and extract(year from sts.tglpenerimaan::date) = ".$tahunx."
+            and extract(month from sts.tglpenerimaan::date) = ".$bulanx."
+            and extract(day from sts.tglpenerimaan::date) = ".$tglx."
+            $bayar
+            group by sts.nosts, sts.tglpenerimaan::date, stsd2.objectakunpendapatanfk
+        ) as x group by x.nosts, x.tglpenerimaan, x.cap_id
+        ) as y group by nosts, tglpenerimaan order by tglpenerimaan, nosts"));
+
+        $result = array(
+            'detail'  => $data,
+            'columns' => $columnMeta,
+        );
+
+        return $this->setStatusCode(201)->respond($result, 'tes msg');
+    }
+
     public function getKonfirmasiRekeningSTSold(Request $request)
     {
 

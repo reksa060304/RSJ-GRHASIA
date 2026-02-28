@@ -455,6 +455,10 @@
         {
             "nameDep": "STSPertanggalCtrl",
             "urlDep": "module/BendaharaPenerimaan/STSPertanggalCtrl"
+        },
+        {
+            "nameDep": "STSPertanggalV2Ctrl",
+            "urlDep": "module/BendaharaPenerimaan/STSPertanggalV2Ctrl"
         }, 
         {
             "nameDep": "MapSTStoRuanganCtrl",
