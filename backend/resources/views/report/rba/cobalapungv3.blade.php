@@ -1167,17 +1167,23 @@
             </tr>
 
             {{-- BAGIAN 3: PENGEMBALIAN, SPJ NETTO, PENERIMAAN, PENGELUARAN, DAN FOOTER --}}
-{{-- Letakkan kode ini sebelum </tbody> di Part 2 --}}
+        </tbody>
 
             {{-- START PENGEMBALIAN --}}
             <tr style="font-weight: bold;">
                 @php
                     $totalpengembalian_bulanlalu = 0;
                     $totalpengembalian_bulanini = 0;
+                    $totalpengembalianls_bulanlalu = 0;
+                    $totalpengembalianls_bulanini = 0;
 
                     foreach ($spjbku as $row) {
                         $totalpengembalian_bulanlalu += (float)$row->pengembalianbelanja_bulan_lalu;
                         $totalpengembalian_bulanini += (float)$row->pengembalianbelanja_bulan_ini;
+                    }
+                    foreach ($spjls as $row) {
+                        $totalpengembalianls_bulanlalu += (float)$row->pengembalianbelanja_bulan_lalu;
+                        $totalpengembalianls_bulanini += (float)$row->pengembalianbelanja_bulan_ini;
                     }
                 @endphp
                 <td colspan="2" style="padding-left:1cm; border: none; border-left: 1px solid black; font-size: 10pt;">
@@ -1187,9 +1193,10 @@
                 <td style="border: none; text-align: right;">{{ number_format($totalpengembalian_bulanlalu,2,'.',',') }}</td>
                 <td style="border: none; text-align: right;">{{ number_format($totalpengembalian_bulanini,2,'.',',') }}</td>
                 <td style="border: none; text-align: right;">{{ number_format($totalpengembalian_bulanlalu + $totalpengembalian_bulanini,2,'.',',') }}</td>
-                <td style="border: none;"></td>
-                <td style="border: none;"></td>
-                <td colspan="4" style="border:none; border-right: 1px solid black;"></td>
+                <td style="border: none; text-align: right;">{{ number_format($totalpengembalianls_bulanlalu,2,'.',',') }}</td>
+                <td style="border: none; text-align: right;">{{ number_format($totalpengembalianls_bulanini,2,'.',',') }}</td>
+                <td style="border: none; text-align: right;">{{ number_format($totalpengembalianls_bulanlalu + $totalpengembalianls_bulanini,2,'.',',') }}</td>
+                <td colspan="3" style="border:none; border-right: 1px solid black;"></td>
             </tr>
 
             {{-- belanja pegawai pengembalian --}}
@@ -1197,11 +1204,19 @@
                 @php
                     $pengembalianbelanjapegawai_bulanlalu = 0;
                     $pengembalianbelanjapegawai_bulanini = 0;
+                    $pengembalianbelanjapegawails_bulanlalu = 0;
+                    $pengembalianbelanjapegawails_bulanini = 0;
 
                     foreach ($spjbku as $row) {
                         if($row->idmataanggaranpermen == 102){
                             $pengembalianbelanjapegawai_bulanlalu += (float)$row->pengembalianbelanja_bulan_lalu;
                             $pengembalianbelanjapegawai_bulanini += (float)$row->pengembalianbelanja_bulan_ini;
+                        }
+                    }
+                    foreach ($spjls as $row) {
+                        if($row->idmataanggaranpermen == 102){
+                            $pengembalianbelanjapegawails_bulanlalu += (float)$row->pengembalianbelanja_bulan_lalu;
+                            $pengembalianbelanjapegawails_bulanini += (float)$row->pengembalianbelanja_bulan_ini;
                         }
                     }
                 @endphp
@@ -1212,9 +1227,10 @@
                 <td style="border: none; text-align: right;">{{ number_format($pengembalianbelanjapegawai_bulanlalu,2,'.',',') }}</td>
                 <td style="border: none; text-align: right;">{{ number_format($pengembalianbelanjapegawai_bulanini,2,'.',',') }}</td>
                 <td style="border: none; text-align: right;">{{ number_format($pengembalianbelanjapegawai_bulanlalu + $pengembalianbelanjapegawai_bulanini,2,'.',',') }}</td>
-                <td style="border: none;"></td>
-                <td style="border: none;"></td>
-                <td colspan="4" style="border:none; border-right: 1px solid black;"></td>
+                <td style="border: none; text-align: right;">{{ number_format($pengembalianbelanjapegawails_bulanlalu,2,'.',',') }}</td>
+                <td style="border: none; text-align: right;">{{ number_format($pengembalianbelanjapegawails_bulanini,2,'.',',') }}</td>
+                <td style="border: none; text-align: right;">{{ number_format($pengembalianbelanjapegawails_bulanlalu + $pengembalianbelanjapegawails_bulanini,2,'.',',') }}</td>
+                <td colspan="3" style="border:none; border-right: 1px solid black;"></td>
             </tr>
 
             {{-- belanja barang dan jasa pengembalian --}}
@@ -1222,11 +1238,19 @@
                 @php
                     $pengembalianbelanjabarangjasa_bulanlalu = 0;
                     $pengembalianbelanjabarangjasa_bulanini = 0;
+                    $pengembalianbelanjabarangjasals_bulanlalu = 0;
+                    $pengembalianbelanjabarangjasals_bulanini = 0;
 
                     foreach ($spjbku as $row) {
                         if($row->idmataanggaranpermen == 109){
                             $pengembalianbelanjabarangjasa_bulanlalu += (float)$row->pengembalianbelanja_bulan_lalu;
                             $pengembalianbelanjabarangjasa_bulanini += (float)$row->pengembalianbelanja_bulan_ini;
+                        }
+                    }
+                    foreach ($spjls as $row) {
+                        if($row->idmataanggaranpermen == 109){
+                            $pengembalianbelanjabarangjasals_bulanlalu += (float)$row->pengembalianbelanja_bulan_lalu;
+                            $pengembalianbelanjabarangjasals_bulanini += (float)$row->pengembalianbelanja_bulan_ini;
                         }
                     }
                 @endphp
@@ -1237,21 +1261,30 @@
                 <td style="border: none; text-align: right;">{{ number_format($pengembalianbelanjabarangjasa_bulanlalu,2,'.',',') }}</td>
                 <td style="border: none; text-align: right;">{{ number_format($pengembalianbelanjabarangjasa_bulanini,2,'.',',') }}</td>
                 <td style="border: none; text-align: right;">{{ number_format($pengembalianbelanjabarangjasa_bulanlalu + $pengembalianbelanjabarangjasa_bulanini,2,'.',',') }}</td>
-                <td style="border: none;"></td>
-                <td style="border: none;"></td>
-                <td colspan="4" style="border:none; border-right: 1px solid black;"></td>
+                <td style="border: none; text-align: right;">{{ number_format($pengembalianbelanjabarangjasals_bulanlalu,2,'.',',') }}</td>
+                <td style="border: none; text-align: right;">{{ number_format($pengembalianbelanjabarangjasals_bulanini,2,'.',',') }}</td>
+                <td style="border: none; text-align: right;">{{ number_format($pengembalianbelanjabarangjasals_bulanlalu + $pengembalianbelanjabarangjasals_bulanini,2,'.',',') }}</td>
+                <td colspan="3" style="border:none; border-right: 1px solid black;"></td>
             </tr>
-            
+
             {{-- belanja Modal PM pengembalian --}}
             <tr>
                 @php
                     $pengembalianbelanjamodalpm_bulanlalu = 0;
                     $pengembalianbelanjamodalpm_bulanini = 0;
+                    $pengembalianbelanjamodalpmls_bulanlalu = 0;
+                    $pengembalianbelanjamodalpmls_bulanini = 0;
 
                     foreach ($spjbku as $row) {
                         if($row->idmataanggaranpermen == 104){
                             $pengembalianbelanjamodalpm_bulanlalu += (float)$row->pengembalianbelanja_bulan_lalu;
                             $pengembalianbelanjamodalpm_bulanini += (float)$row->pengembalianbelanja_bulan_ini;
+                        }
+                    }
+                    foreach ($spjls as $row) {
+                        if($row->idmataanggaranpermen == 104){
+                            $pengembalianbelanjamodalpmls_bulanlalu += (float)$row->pengembalianbelanja_bulan_lalu;
+                            $pengembalianbelanjamodalpmls_bulanini += (float)$row->pengembalianbelanja_bulan_ini;
                         }
                     }
                 @endphp
@@ -1262,9 +1295,10 @@
                 <td style="border: none; text-align: right;">{{ number_format($pengembalianbelanjamodalpm_bulanlalu,2,'.',',') }}</td>
                 <td style="border: none; text-align: right;">{{ number_format($pengembalianbelanjamodalpm_bulanini,2,'.',',') }}</td>
                 <td style="border: none; text-align: right;">{{ number_format($pengembalianbelanjamodalpm_bulanlalu + $pengembalianbelanjamodalpm_bulanini,2,'.',',') }}</td>
-                <td style="border: none;"></td>
-                <td style="border: none;"></td>
-                <td colspan="4" style="border:none; border-right: 1px solid black;"></td>
+                <td style="border: none; text-align: right;">{{ number_format($pengembalianbelanjamodalpmls_bulanlalu,2,'.',',') }}</td>
+                <td style="border: none; text-align: right;">{{ number_format($pengembalianbelanjamodalpmls_bulanini,2,'.',',') }}</td>
+                <td style="border: none; text-align: right;">{{ number_format($pengembalianbelanjamodalpmls_bulanlalu + $pengembalianbelanjamodalpmls_bulanini,2,'.',',') }}</td>
+                <td colspan="3" style="border:none; border-right: 1px solid black;"></td>
             </tr>
 
             {{-- belanja Modal Gedung dan Bangunan pengembalian --}}
@@ -1272,11 +1306,19 @@
                 @php
                     $pengembalianbelanjagedungbangunan_bulanlalu = 0;
                     $pengembalianbelanjagedungbangunan_bulanini = 0;
+                    $pengembalianbelanjagedungbangunanls_bulanlalu = 0;
+                    $pengembalianbelanjagedungbangunanls_bulanini = 0;
 
                     foreach ($spjbku as $row) {
                         if($row->idmataanggaranpermen == 105 || $row->idmataanggaranpermen == 127){
                             $pengembalianbelanjagedungbangunan_bulanlalu += (float)$row->pengembalianbelanja_bulan_lalu;
                             $pengembalianbelanjagedungbangunan_bulanini += (float)$row->pengembalianbelanja_bulan_ini;
+                        }
+                    }
+                    foreach ($spjls as $row) {
+                        if($row->idmataanggaranpermen == 105 || $row->idmataanggaranpermen == 127){
+                            $pengembalianbelanjagedungbangunanls_bulanlalu += (float)$row->pengembalianbelanja_bulan_lalu;
+                            $pengembalianbelanjagedungbangunanls_bulanini += (float)$row->pengembalianbelanja_bulan_ini;
                         }
                     }
                 @endphp
@@ -1287,17 +1329,21 @@
                 <td style="border: none; text-align: right;">{{ number_format($pengembalianbelanjagedungbangunan_bulanlalu,2,'.',',') }}</td>
                 <td style="border: none; text-align: right;">{{ number_format($pengembalianbelanjagedungbangunan_bulanini,2,'.',',') }}</td>
                 <td style="border: none; text-align: right;">{{ number_format($pengembalianbelanjagedungbangunan_bulanlalu + $pengembalianbelanjagedungbangunan_bulanini,2,'.',',') }}</td>
-                <td style="border: none;"></td>
-                <td style="border: none;"></td>
-                <td colspan="4" style="border:none; border-right: 1px solid black;"></td>
+                <td style="border: none; text-align: right;">{{ number_format($pengembalianbelanjagedungbangunanls_bulanlalu,2,'.',',') }}</td>
+                <td style="border: none; text-align: right;">{{ number_format($pengembalianbelanjagedungbangunanls_bulanini,2,'.',',') }}</td>
+                <td style="border: none; text-align: right;">{{ number_format($pengembalianbelanjagedungbangunanls_bulanlalu + $pengembalianbelanjagedungbangunanls_bulanini,2,'.',',') }}</td>
+                <td colspan="3" style="border:none; border-right: 1px solid black;"></td>
             </tr>
             {{-- END PENGEMBALIAN --}}
+
 
             {{-- START SPJ NETTO --}}
             <tr style="font-weight: bold;">
                 @php
                     $spjnetto_bulanlalu = $bruto_bulanlalu - $totalpengembalian_bulanlalu;
                     $spjnetto_bulanini = $bruto_bulanini - $totalpengembalian_bulanini;
+                    $spjnettols_bulanlalu = $bruto_ls_bulanlalu - $totalpengembalianls_bulanlalu;
+                    $spjnettols_bulanini = $bruto_ls_bulanini - $totalpengembalianls_bulanini;
                 @endphp
                 <td colspan="2" style="padding-left:1cm; border: none; border-left: 1px solid black; font-size: 10pt;">
                     SPJ NETTO
@@ -1306,9 +1352,10 @@
                 <td style="border: none; text-align: right;">{{ number_format($spjnetto_bulanlalu,2,'.',',') }}</td>
                 <td style="border: none; text-align: right;">{{ number_format($spjnetto_bulanini,2,'.',',') }}</td>
                 <td style="border: none; text-align: right;">{{ number_format($spjnetto_bulanlalu + $spjnetto_bulanini,2,'.',',') }}</td>
-                <td style="border: none;"></td>
-                <td style="border: none;"></td>
-                <td colspan="4" style="border:none; border-right: 1px solid black;"></td>
+                <td style="border: none; text-align: right;">{{ number_format($spjnettols_bulanlalu,2,'.',',') }}</td>
+                <td style="border: none; text-align: right;">{{ number_format($spjnettols_bulanini,2,'.',',') }}</td>
+                <td style="border: none; text-align: right;">{{ number_format($spjnettols_bulanlalu + $spjnettols_bulanini,2,'.',',') }}</td>
+                <td colspan="3" style="border:none; border-right: 1px solid black;"></td>
             </tr>
             {{-- END SPJ NETTO --}}
 

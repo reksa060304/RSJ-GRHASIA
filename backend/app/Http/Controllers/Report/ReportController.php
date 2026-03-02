@@ -26490,7 +26490,7 @@ public function suratBuktiPengembalian(Request $request)
                 sr.statusenabled = TRUE
                 AND sr.kdprofile = 30
                 AND ta.tahun = '".$settingRBA->tahunanggaran."'
-                AND (sr.statusls IS NULL OR sr.statusls = '')
+                AND (sr.objectcarabayarfk IS NULL OR sr.objectcarabayarfk != 3)
                 -- AND sr.objectasalprodukfk IN (".implode(',', $asalProduk).")
                 ".$asalproduk_sr."
             GROUP BY
@@ -26588,7 +26588,7 @@ public function suratBuktiPengembalian(Request $request)
                 sr.statusenabled = TRUE
                 AND sr.kdprofile = 30
                 AND ta.tahun = '".$settingRBA->tahunanggaran."'
-                AND sr.statusls IS NOT NULL AND sr.statusls != ''
+                AND sr.objectcarabayarfk = 3
                 -- AND sr.objectasalprodukfk IN (".implode(',', $asalProduk).")
                 ".$asalproduk_sr."
             GROUP BY
