@@ -11468,6 +11468,14 @@ class BendaharaPenerimaanController extends ApiController {
                 JOIN mapbkuakun3_t mba3 ON 
                     POSITION(','||bp.produkfk||',' IN ','||mba3.objectprodukfk||',') > 0
                     AND mba3.statusenabled = TRUE
+                JOIN mapbkuakun_t mba ON
+                    POSITION(','||bp.objectkelompokpasienlastfk||',' IN ','||mba.objectkelompokpasienfk||',') > 0
+                    AND POSITION(','||bp.objectruanganfk||',' IN ','||mba.objectruanganfk||',') > 0
+                    AND mba.statusenabled = TRUE
+                    AND bp.kelasfk IS NOT NULL
+                    AND POSITION(','||bp.kelasfk||',' IN ','||mba.objectkelasfk||',') > 0
+                    AND ((mba.isobat IS NOT TRUE AND bp.isobat IS NULL) OR (mba.isobat = TRUE AND bp.isobat = TRUE))
+                    AND mba.objectakunpendapatanfk = mba3.objectakunpendapatanfk
                 JOIN char_akun_pendapatan_m cap ON cap.id = mba3.objectakunpendapatanfk AND cap.statusenabled = TRUE
                 LEFT JOIN char_akun_pendapatan_m cap7 ON cap7.id = cap.headfk
                 LEFT JOIN char_akun_pendapatan_m cap6 ON cap6.id = cap7.headfk
