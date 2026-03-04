@@ -155,6 +155,7 @@ Route::group(['middleware' => 'cors', 'prefix' => 'service'], function () {
 
         // start bendahara pengeluaran
         Route::get('bendaharapengeluaran/get-sppspmspj-byspj', 'BendaharaPengeluaran\BendaharaPengeluaranController@getSPPSPMSPJBySPJ');
+        Route::get('bendaharapengeluaran/get-jenis-bukti-spp', 'BendaharaPengeluaran\BendaharaPengeluaranController@getJenisBuktiSPP');
         Route::get('report/get-cetak-sppspj', 'Report\ReportController@getCetakSPPSPJ');
         Route::get('report/get-cetak-spmspj', 'Report\ReportController@getCetakSPMSPJ');
         Route::get('report/get-cetak-sptjm', 'Report\ReportController@getCetakSPTJM');
