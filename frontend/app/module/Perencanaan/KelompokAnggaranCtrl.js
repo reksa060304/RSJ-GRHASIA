@@ -813,7 +813,7 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
                 
             }
             $scope.TambahSPP = function(){
-                medifirstService.get("bendaharapenerimaan/get-jenis-bukti-spp").then(function(res) {
+                medifirstService.get("bendaharapengeluaran/get-jenis-bukti-spp").then(function(res) {
                     $scope.listJenisBukti = res.data;
                     if (res.data && res.data.length > 0) {
                         $scope.item.itemJenisBukti = res.data[0];
@@ -8511,7 +8511,7 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
 
 				})
 
-                medifirstService.get("bendaharapenerimaan/get-jenis-bukti-spp").then(function(res) {
+                medifirstService.get("bendaharapengeluaran/get-jenis-bukti-spp").then(function(res) {
                     $scope.listJenisBukti = res.data;
                     if (res.data && res.data.length > 0) {
                         $scope.item.itemJenisBuktiSPM = res.data.find(x => x.jenisbukti == 'UP') || res.data[0];
@@ -8714,7 +8714,7 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
                     console.log(dataSPMSelected)
                     $scope.norecspm = dataSPMSelected.norec
                     $scope.item.nospm = dataSPMSelected.nospm
-                    medifirstService.get("bendaharapenerimaan/get-jenis-bukti-spp").then(function(res) {
+                    medifirstService.get("bendaharapengeluaran/get-jenis-bukti-spp").then(function(res) {
                         $scope.listJenisBukti = res.data;
                         if(dataSPMSelected.jenisbukti != null){
                             $scope.item.itemJenisBuktiSPM = res.data.find(x => x.jenisbukti == dataSPMSelected.jenisbukti) || {};
@@ -8750,7 +8750,7 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
                     console.log(dataItem)
                     $scope.norecspm = dataItem.norec
                     $scope.item.nospm = dataItem.nospm
-                    medifirstService.get("bendaharapenerimaan/get-jenis-bukti-spp").then(function(res) {
+                    medifirstService.get("bendaharapengeluaran/get-jenis-bukti-spp").then(function(res) {
                         $scope.listJenisBukti = res.data;
                         if(dataItem.jenisbukti != null){
                             $scope.item.itemJenisBuktiSPM = res.data.find(x => x.jenisbukti == dataItem.jenisbukti) || {};
@@ -8788,7 +8788,7 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
                 if (dataItem != undefined) {
                     console.log(dataItem)
 
-                    medifirstService.get("bendaharapenerimaan/get-jenis-bukti-spp").then(function(res) {
+                    medifirstService.get("bendaharapengeluaran/get-jenis-bukti-spp").then(function(res) {
                         $scope.listJenisBukti = res.data;
                         if(dataItem.jenisbukti != null){
                             $scope.item.itemJenisBukti = res.data.find(x => x.jenisbukti == dataItem.jenisbukti) || {};
