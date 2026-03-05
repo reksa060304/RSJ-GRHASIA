@@ -11032,7 +11032,7 @@ class BendaharaPenerimaanController extends ApiController {
 
             $columnMeta[] = [
                 'id'           => $akun->id,
-                'namarekening' => $akun->namarekening,
+                'namarekening' => $akun->namarekening . ' - ' . $akun->koderekening,
                 'koderekening' => $akun->koderekening,
                 'nourut'       => $akun->nourut,
                 'alias'        => $colAlias,
@@ -11124,7 +11124,7 @@ class BendaharaPenerimaanController extends ApiController {
 
             $columnMeta[] = [
                 'id'           => $akun->id,
-                'namarekening' => $akun->namarekening,
+                'namarekening' => $akun->namarekening . ' - ' . $akun->koderekening,
                 'koderekening' => $akun->koderekening,
                 'nourut'       => $akun->nourut,
                 'alias'        => $colAlias,
