@@ -11016,7 +11016,7 @@ class BendaharaPenerimaanController extends ApiController {
             "SELECT id, namarekening, koderekening, nourut
              FROM char_akun_pendapatan_m
              WHERE statusenabled = true AND level = '8'
-             ORDER BY nourut, id"
+             ORDER BY koderekening"
         ));
 
         //buat case when dan sum dinamis
@@ -11102,7 +11102,7 @@ class BendaharaPenerimaanController extends ApiController {
             SELECT id, namarekening, koderekening, nourut
             FROM char_akun_pendapatan_m
             WHERE statusenabled = true AND level = '8'
-            ORDER BY nourut, id
+            ORDER BY koderekening
         "));
 
         if (empty($akunList)) {
