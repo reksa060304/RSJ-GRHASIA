@@ -144,8 +144,14 @@
 
                         @foreach($sebelum as $sb)
                         @php
-                        // Akumulasi untuk total sebelum/sesudah (hanya level div == 2 agar tidak double count)
-                        if ($sb->div == 2) {
+                            $segCount = substr_count($sb->kode, '.') + 1;
+                            $isBold = $segCount <= 6;
+                        @endphp
+                        @php
+                        // Akumulasi untuk total sebelum/sesudah (hanya level segCount == 5 atau div paling atas yang mau dihitung)
+                        // Biasanya ini level Kegiatan utama (5 titik, misal 1.02.01.1.02)
+                        // Sepertinya sebelumnya div == 2 (segCount=6). Kita ganti jadi segCount == 6 agar konsisten.
+                        if ($segCount == 6) {
                             $sebelumjasalayanan   += $sb->jasalayanan;
                             $sebelumapbd          += $sb->apbd;
                             $sebelumdak           += $sb->dak;
@@ -159,33 +165,19 @@
                             $sesudahsilpa         += $sb->ksilpa;
                             $sesudahtotal         += $sb->ktotal;
                         }
-                        // Jumlahkan semua nilai bertambah/berkurang yang tampil di kolom (tanpa filter div)
-                        $berkurang += abs($sb->ktotal - $sb->total);
+                        // Jumlahkan semua nilai bertambah/berkurang yang tampil di kolom (berdasarkan segCount == 6 juga untuk total akhir yang benar)
+                        if ($segCount == 6) {
+                           $berkurang += abs($sb->ktotal - $sb->total);
+                        }
                         @endphp
                         <tr>
                             {{-- Kolom NO / Kode Rekening --}}
-                            @if($sb->div == 1)
-                            <td style="text-align:left; font-weight:bold;">{{ $sb->kode }}</td>
-                            @elseif($sb->div == 2)
-                            <td style="text-align:left; font-weight:bold;">{{ $sb->kode }}</td>
-                            @elseif($sb->div == 3)
-                            <td style="text-align:left;">{{ $sb->kode }}</td>
-                            @else
-                            <td style="text-align:left;">{{ $sb->kode }}</td>
-                            @endif
+                            <td style="text-align:left; {{ $isBold ? 'font-weight:bold;' : '' }}">{{ $sb->kode }}</td>
 
                             {{-- Kolom KETERANGAN --}}
-                            @if($sb->div == 1)
-                            <td style="text-align:left; font-weight:bold;">{{ $sb->kegiatan }}</td>
-                            @elseif($sb->div == 2)
-                            <td style="text-align:left; font-weight:bold;">{{ $sb->kegiatan }}</td>
-                            @elseif($sb->div == 3)
-                            <td style="text-align:left;">{{ $sb->kegiatan }}</td>
-                            @else
-                            <td style="text-align:left;">{{ $sb->kegiatan }}</td>
-                            @endif
+                            <td style="text-align:left; {{ $isBold ? 'font-weight:bold;' : '' }}">{{ $sb->kegiatan }}</td>
 
-                            @php $bold = $sb->div <= 2 ? 'font-weight:bold;' : ''; @endphp
+                            @php $bold = $isBold ? 'font-weight:bold;' : ''; @endphp
 
                             {{-- Sebelum Perubahan --}}
                             <td style="text-align:right; {{ $bold }}">

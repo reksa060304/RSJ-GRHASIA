@@ -19244,12 +19244,18 @@ public function suratBuktiPengembalian(Request $request)
                 GROUP BY y.subkegiatan, y.tahap, y.kode, y.div 
                 ) AS A 
             ORDER BY
-                A.kode 
+                COALESCE(CAST(NULLIF(split_part(A.kode, '.', 1), '') AS integer), 0),
+                COALESCE(CAST(NULLIF(split_part(A.kode, '.', 2), '') AS integer), 0),
+                COALESCE(CAST(NULLIF(split_part(A.kode, '.', 3), '') AS integer), 0),
+                COALESCE(CAST(NULLIF(split_part(A.kode, '.', 4), '') AS integer), 0),
+                COALESCE(CAST(NULLIF(split_part(A.kode, '.', 5), '') AS integer), 0),
+                COALESCE(CAST(NULLIF(split_part(A.kode, '.', 6), '') AS integer), 0),
+                COALESCE(CAST(NULLIF(split_part(A.kode, '.', 7), '') AS integer), 0) ASC
             ) AS j
             FULL OUTER JOIN (
             SELECT
                 * 
-            FROM
+            FROM    
                 (
                 SELECT y.kegiatan AS kegiatan, y.tahap, y.kode, y.div,
                     SUM ( y.apbd ) AS apbd, SUM ( y.jasalayanan ) AS jasalayanan,
@@ -19356,6 +19362,14 @@ public function suratBuktiPengembalian(Request $request)
                     GROUP BY x.subkegiatan, x.tahap, x.asalproduk, x.subtotal, x.kode, x.div, x.id_asalproduk 
                     ) AS y GROUP BY y.subkegiatan, y.tahap, y.kode, y.div 
                 ) AS A ORDER BY A.kode ) AS K ON j.kegiatan = K.kegiatan AND j.kode = K.kode
+        ORDER BY
+            COALESCE(CAST(NULLIF(split_part(COALESCE(j.kode, K.kode), '.', 1), '') AS integer), 0),
+            COALESCE(CAST(NULLIF(split_part(COALESCE(j.kode, K.kode), '.', 2), '') AS integer), 0),
+            COALESCE(CAST(NULLIF(split_part(COALESCE(j.kode, K.kode), '.', 3), '') AS integer), 0),
+            COALESCE(CAST(NULLIF(split_part(COALESCE(j.kode, K.kode), '.', 4), '') AS integer), 0),
+            COALESCE(CAST(NULLIF(split_part(COALESCE(j.kode, K.kode), '.', 5), '') AS integer), 0),
+            COALESCE(CAST(NULLIF(split_part(COALESCE(j.kode, K.kode), '.', 6), '') AS integer), 0),
+            COALESCE(CAST(NULLIF(split_part(COALESCE(j.kode, K.kode), '.', 7), '') AS integer), 0) ASC
         "));
         $settingrba = DB::select(DB::raw("select sa.*, pg.reportdisplay as namalengkap, pg.nippns from settinganggaran_t sa
         inner join pegawai_m pg on pg.id = sa.objectkepalabludfk
