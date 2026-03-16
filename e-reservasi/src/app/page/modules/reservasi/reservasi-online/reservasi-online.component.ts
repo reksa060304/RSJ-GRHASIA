@@ -1529,8 +1529,10 @@ export class ReservasiOnlineComponent implements OnInit {
                 let hariFix = this.listHari[_hari];
                 element.tanggalreservasi = hariFix + ', ' + 
                   moment(new Date(element.tanggalreservasi)).format('DD/MMM/YYYY HH:mm');
+                // Guard: jika tanggal null, fallback dari tanggalreservasi (ambil tanggal saja)
+                const tglSumber = element.tanggal || element.tanggalreservasi;
                 element.tanggal = hariFix + ', ' + 
-                  moment(new Date(element.tanggal)).format('DD/MMM/YYYY');
+                  moment(new Date(tglSumber)).format('DD/MMM/YYYY');
               }
               
               let tglReserDays = new Date(resultNoReservasi.tanggalreservasi);
@@ -1574,7 +1576,11 @@ export class ReservasiOnlineComponent implements OnInit {
               label: "History"
             };
             
-            this.cetakHistory(resultNoReservasi);
+            // Cari record yang baru disimpan dari dataSource (hasil get-history).
+            const matchedHistoryRecord = this.dataSource.find(
+              item => item.noreservasi === resultNoReservasi.noreservasi
+            );
+            this.cetakHistory(matchedHistoryRecord || resultNoReservasi);
             this.simpanVisible = true;
             
           }, error => {

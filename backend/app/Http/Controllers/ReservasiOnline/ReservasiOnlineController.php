@@ -526,7 +526,7 @@ class ReservasiOnlineController extends ApiController
         // variabel pecahkan 2 = tahun
         return $pecahkan[2] . ' ' . $bulan[ (int)$pecahkan[1] ] . ' ' . $pecahkan[0];
     }
-    public function getHistoryReservasi(Request $request)
+     public function getHistoryReservasi(Request $request)
     {        
         $kdProfile = $this->getDataKdProfile($request);
 
@@ -540,11 +540,17 @@ class ReservasiOnlineController extends ApiController
             ->leftJoin('ruangan_m as ru','ru.id','=','apr.objectruanganfk')
             ->leftJoin('pegawai_m as pg','pg.id','=','apr.objectpegawaifk')
             ->leftJoin('kelompokpasien_m as kps','kps.id','=','apr.objectkelompokpasienfk')
-            ->leftJoin('pasiendaftar_t as pd','pd.statusschedule','=','apr.noreservasi')
-            ->leftJoin('antrianpasiendiperiksa_t as apd','apd.noregistrasifk','=','pd.norec')
+            ->leftJoin('pasiendaftar_t as pd', function($join) {
+                $join->on('pd.statusschedule','=','apr.noreservasi')
+                     ->where('pd.statusenabled', '=', true);
+            })
+            ->leftJoin('antrianpasiendiperiksa_t as apd', function($join) {
+                $join->on('apd.noregistrasifk','=','pd.norec')
+                     ->on('apd.objectruanganfk', '=', 'apr.objectruanganfk');
+            })
             ->leftJoin('bpjsrencanakontrol_t as brk','brk.nosuratkontrol','=','apr.norujukan')
             ->leftJoin('asuransipasien_m as asu','asu.nocmfk','=','pm.id')
-            ->select('apr.norec','apd.noantrian','pm.nocm','apr.noreservasi','apr.tanggalreservasi','apr.objectruanganfk', 'asu.objectkelasdijaminfk as hakkelasfk', 'asu.jenispeserta',
+            ->select('apr.norec','apd.noantrian','pm.nocm','apr.noreservasi','apr.tanggalreservasi','apr.tanggal','apr.jamreservasi','apr.objectruanganfk', 'asu.objectkelasdijaminfk as hakkelasfk', 'asu.jenispeserta',
                 'apr.objectpegawaifk','ru.namaruangan','apr.isconfirm','pg.namalengkap as dokter','pm.id as nocmfk', 'pg.kddokterbpjs',
                'pm.namapasien','apr.namapasien','alm.alamatlengkap','pk.pekerjaan','pm.noasuransilain','pm.noidentitas','brk.nosepasalkontrol',
                 'apr.nobpjs','pm.nohp','pdd.pendidikan','apr.type','kps.kelompokpasien','apr.objectkelompokpasienfk','ru.objectdepartemenfk','brk.tglrujukan',

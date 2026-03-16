@@ -758,9 +758,10 @@
                   <p-column [style]="{'min-width':'100px','width':'100px'}">
                     <ng-template let-h="rowData" pTemplate="body">
                       <button pButton type="button" (click)="cetakHistory(h)" icon="fa-print"
-                        pTooltip="Lihat Bukti Reservasi" tooltipPosition="top"></button>
-                      <button pButton type="button" class="ui-button ui-button-danger" (click)="hapusHistory(h)" icon="fa-trash" pTooltip="Batal Reservasi"
-                      tooltipPosition="top"></button>
+                        pTooltip="Lihat Bukti Reservasi" tooltipPosition="top"
+                        style="width: 40px; height: 40px; margin-right: 4px;"></button>
+                      <button pButton type="button" class="ui-button-danger" (click)="hapusHistory(h)" icon="fa-trash" pTooltip="Batal Reservasi"
+                      tooltipPosition="top" style="width: 40px; height: 40px;"></button>
                     </ng-template>
                   </p-column>
                   <p-column field="tanggal" header="Tanggal" [sortable]="true" [style]="{'width':'150px'}"></p-column>

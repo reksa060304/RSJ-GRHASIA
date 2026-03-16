@@ -4,7 +4,7 @@ import {Component} from '@angular/core';
     selector: 'app-footer',
     template: `
         <div class="footer clearfix">
-        <span>Copyright TRANSMEDIC, 2019 @EPIC_TEAM</span>
+        <span>Copyright TRANSMEDIC, {{ currentYear }} @EPIC_TEAM</span>
         <!--    <div class="footer-links">
             <a href="#" class="first">Panduan</a>
              <span class="link-divider">|</span>
@@ -20,5 +20,5 @@ import {Component} from '@angular/core';
     `
 })
 export class AppFooterComponent {
-
+    currentYear = new Date().getFullYear();
 }
