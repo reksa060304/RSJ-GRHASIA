@@ -626,7 +626,8 @@ class ReservasiOnlineController extends ApiController
         if(isset($request['jmlOffset']) && $request['jmlOffset'] != "" && $request['jmlOffset'] != "undefined" && $request['jmlOffset'] != "null") {
             $data=$data->offset($request['jmlOffset']);
         }
-        $data = $data->get();
+        // $data = $data->get();
+        $data = collect($data->get())->unique('norec')->values()->all();
 
         $result = array(
             'data' => $data,
