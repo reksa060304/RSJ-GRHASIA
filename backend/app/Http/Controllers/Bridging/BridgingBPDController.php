@@ -161,7 +161,7 @@ class BridgingBPDController extends ApiController
             if (!$pasien) {
                 return response()->json([
                     'response_code' => '87',
-                    'response_message' => 'bill not found'
+                    'response_message' => 'patient not found'
                 ], 404);
             }
 
@@ -175,7 +175,7 @@ class BridgingBPDController extends ApiController
             if (!$pasienDaftar) {
                 return response()->json([
                     'response_code' => '87',
-                    'response_message' => 'bill not found'
+                    'response_message' => 'no registration found'
                 ], 404);
             }
 
@@ -341,8 +341,16 @@ class BridgingBPDController extends ApiController
                         $noKwitansi++;
                     }
                 }
-    
+                // Jika tidak ada tagihan sama sekali, balikan response khusus
+                if ($totalBilling == 0) {
+                    return response()->json([
+                        'response_code' => '87',
+                        'response_message' => 'bill not found'
+                    ], 400);
+                }
+
                 // Jika ada tagihan, lakukan verifikasi terlebih dahulu untuk mendapatkan nomor verifikasi (nostruk)
+                $transactionId = null;
                 if ($totalBilling > 0) {
                     $datachecklist = [];
                     foreach ($pelayanan as $p) {
