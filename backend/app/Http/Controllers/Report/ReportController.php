@@ -26447,13 +26447,12 @@ public function suratBuktiPengembalian(Request $request)
                 CAST(SPLIT_PART(ka.kode, '.', 5) AS INTEGER) ASC,
                 CAST(SPLIT_PART(ka.kode, '.', 6) AS INTEGER) ASC,
                 CAST(SPLIT_PART(ka.kode, '.', 7) AS INTEGER) ASC,
-                SPLIT_PART(ma.kodemataanggaran, '.', 1),
-                SPLIT_PART(ma.kodemataanggaran, '.', 2),
-                SPLIT_PART(ma.kodemataanggaran, '.', 3),
-                case 
-                    when SPLIT_PART(ma.kodemataanggaran, '.', 5) = '' THEN cast(SPLIT_PART(ma.kodemataanggaran, '.', 4) as INTEGER)
-                    else cast(SPLIT_PART(ma.kodemataanggaran, '.', 5) as INTEGER)
-                END asc
+                SPLIT_PART(ma.kodemataanggaran, '.', 1) ASC,
+                SPLIT_PART(ma.kodemataanggaran, '.', 2) ASC,
+                SPLIT_PART(ma.kodemataanggaran, '.', 3) ASC,
+                case when SPLIT_PART(ma.kodemataanggaran, '.', 4) = '' then 0 else cast(SPLIT_PART(ma.kodemataanggaran, '.', 4) as INTEGER) end ASC,
+                case when SPLIT_PART(ma.kodemataanggaran, '.', 5) = '' then 0 else cast(SPLIT_PART(ma.kodemataanggaran, '.', 5) as INTEGER) end ASC,
+                case when SPLIT_PART(ma.kodemataanggaran, '.', 6) = '' then 0 else cast(SPLIT_PART(ma.kodemataanggaran, '.', 6) as INTEGER) end ASC
         "));
 
         $dataSPJ = DB::select(DB::raw("
@@ -26547,10 +26546,9 @@ public function suratBuktiPengembalian(Request $request)
                 SPLIT_PART(ma.kodemataanggaran, '.', 1) ASC,
                 SPLIT_PART(ma.kodemataanggaran, '.', 2) ASC,
                 SPLIT_PART(ma.kodemataanggaran, '.', 3) ASC,
-                case 
-                    when SPLIT_PART(ma.kodemataanggaran, '.', 5) = '' THEN cast(SPLIT_PART(ma.kodemataanggaran, '.', 4) as INTEGER)
-                    else cast(SPLIT_PART(ma.kodemataanggaran, '.', 5) as INTEGER)
-                END asc
+                case when SPLIT_PART(ma.kodemataanggaran, '.', 4) = '' then 0 else cast(SPLIT_PART(ma.kodemataanggaran, '.', 4) as INTEGER) end ASC,
+                case when SPLIT_PART(ma.kodemataanggaran, '.', 5) = '' then 0 else cast(SPLIT_PART(ma.kodemataanggaran, '.', 5) as INTEGER) end ASC,
+                case when SPLIT_PART(ma.kodemataanggaran, '.', 6) = '' then 0 else cast(SPLIT_PART(ma.kodemataanggaran, '.', 6) as INTEGER) end ASC
         "));
         // dd($dataSPJ);
 
@@ -26645,10 +26643,9 @@ public function suratBuktiPengembalian(Request $request)
                 SPLIT_PART(ma.kodemataanggaran, '.', 1) ASC,
                 SPLIT_PART(ma.kodemataanggaran, '.', 2) ASC,
                 SPLIT_PART(ma.kodemataanggaran, '.', 3) ASC,
-                case 
-                    when SPLIT_PART(ma.kodemataanggaran, '.', 5) = '' THEN cast(SPLIT_PART(ma.kodemataanggaran, '.', 4) as INTEGER)
-                    else cast(SPLIT_PART(ma.kodemataanggaran, '.', 5) as INTEGER)
-                END asc
+                case when SPLIT_PART(ma.kodemataanggaran, '.', 4) = '' then 0 else cast(SPLIT_PART(ma.kodemataanggaran, '.', 4) as INTEGER) end ASC,
+                case when SPLIT_PART(ma.kodemataanggaran, '.', 5) = '' then 0 else cast(SPLIT_PART(ma.kodemataanggaran, '.', 5) as INTEGER) end ASC,
+                case when SPLIT_PART(ma.kodemataanggaran, '.', 6) = '' then 0 else cast(SPLIT_PART(ma.kodemataanggaran, '.', 6) as INTEGER) end ASC
         "));
         // dd($dataSPJLS);
 
