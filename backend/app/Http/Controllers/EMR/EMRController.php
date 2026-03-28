@@ -2687,6 +2687,46 @@ class EMRController  extends ApiController
 
             $dataSOnorec = $dataSO->norec;
 
+            // AUTO VERIF KONSULTASI
+            if ($request['norec_so'] == "") {
+                $pd = PasienDaftar::where('norec', $request['norec_pd'])->first();
+                $apd = AntrianPasienDiperiksa::where('noregistrasifk', $request['norec_pd'])->first();
+                
+                $hitungAntrian = AntrianPasienDiperiksa::where('objectruanganfk', $request['objectruangantujuanfk'])
+                                ->where('tglregistrasi', '>=', date('Y-m-d 00:00:00'))
+                                ->where('tglregistrasi', '<=', date('Y-m-d 23:59:59'))
+                                ->count();
+
+                $dataAPD = new AntrianPasienDiperiksa;
+                $dataAPD->norec = $dataAPD->generateNewId();
+                $dataAPD->kdprofile = $kdProfile;
+                $dataAPD->statusenabled = true;
+                $dataAPD->objectasalrujukanfk = $apd ? $apd->objectasalarujukanfk : null;
+                $dataAPD->objectkelasfk = 6; 
+                $dataAPD->noantrian = $hitungAntrian + 1;
+                $dataAPD->noregistrasifk = $request['norec_pd'];
+                $dataAPD->objectpegawaifk = $request['pegawaifk'];
+                $dataAPD->objectruanganfk = $request['objectruangantujuanfk'];
+                $dataAPD->statusantrian = 0;
+                $dataAPD->statuspasien = 1;
+                $dataAPD->statuskunjungan = 'LAMA';
+                $dataAPD->statuspenyakit = 'BARU';
+                $dataAPD->objectruanganasalfk = $request['objectruanganasalfk'];
+                $dataAPD->tglregistrasi = $pd ? $pd->tglregistrasi : date('Y-m-d H:i:s');
+                $dataAPD->tglkeluar = date('Y-m-d H:i:s');
+                $dataAPD->tglmasuk = date('Y-m-d H:i:s');
+                $dataAPD->objectstrukorderfk = $dataSOnorec;
+                $dataAPD->save();
+            } else {
+                 $dataAPD = AntrianPasienDiperiksa::where('objectstrukorderfk', $dataSOnorec)->first();
+                 if ($dataAPD) {
+                     $dataAPD->objectpegawaifk = $request['pegawaifk'];
+                     $dataAPD->objectruanganfk = $request['objectruangantujuanfk'];
+                     $dataAPD->objectruanganasalfk = $request['objectruanganasalfk'];
+                     $dataAPD->save();
+                 }
+            }
+
             //            foreach ($request['details'] as $item) {
             //                $dataOP = new OrderPelayanan();
             //                $dataOP->norec = $dataOP->generateNewId();
