@@ -1372,12 +1372,16 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
                     return;
                 }
                 
-                // Open bukti pendaftaran in new window
-                window.open(baseTransaksi + 'report/cetak-bukti-pendaftaran?noregistrasi=' + noreg, '_blank');
-           
+                // Open bukti pendaftaran in print popup
+                var local = JSON.parse(localStorage.getItem('profile'))
+                var nama = medifirstService.getPegawaiLogin().namaLengkap
+
+                var url = baseTransaksi + 'report/cetak-bukti-pendaftaran?noregistrasi=' + noreg +
+                    '&kdprofile=' + local.id +
+                    '&nama=' + nama;
+
+                window.open(url, 'BuktiDaftar', 'width=520,height=800,scrollbars=yes,resizable=yes');
             }
-
-
 
             // function HapusPenanggungJawab(){
             //    $scope.dataItem = {};

@@ -71,7 +71,8 @@ define(['initialize'], function (initialize) {
                 $scope.popUp.center().open()
             }
             $scope.batal = function () {
-                $scope.popUp.close()
+                if ($scope.popUp) $scope.popUp.close();
+                if ($scope.popUpJawab) $scope.popUpJawab.close();
             }
             init();
 
@@ -228,6 +229,7 @@ define(['initialize'], function (initialize) {
                 medifirstService.post( 'emr/post-konsultasi',objSave).then(function (e) {
                     clear()
                     init();
+                    $scope.popUp.close();
                     medifirstService.postLogging('Konsultasi', 'Norec strukorder_t', e.data.strukorder.norec, 'Menu Dokter').then(function (res) {
                     })
                 });

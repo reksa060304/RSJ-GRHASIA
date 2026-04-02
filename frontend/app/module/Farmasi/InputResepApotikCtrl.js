@@ -1789,8 +1789,11 @@ Which will check for empty strings (""), null, undefined, false and the numbers 
                     $scope.item.catatanDokter = dataSelected.catatandokter
                 // }
                 $scope.item.satuannya = dataSelected.satuandosis
-                // $scope.item.KeteranganPakai = dataSelected.keterangan  // dibiarkan kosong saat klik grid
-                $scope.item.KeteranganPakai = ''
+                if (noOrder == 'EditResep') {
+                    $scope.item.KeteranganPakai = dataSelected.keterangan
+                } else {
+                    $scope.item.KeteranganPakai = ''
+                }
                 $scope.item.ket_ret = dataSelected.ket_ret
                 $scope.item.diskonTotalPersen = dataSelected.persendiscount
                 $scope.currentAturanPakai = []

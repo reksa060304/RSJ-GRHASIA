@@ -1549,7 +1549,7 @@ define(['initialize', 'Configuration'], function (initialize, config) {
 
 				}
 			}
-			$scope.cetakNoAntrian = function () {
+			$scope.cetakNoAntrianOLD = function () {
 				if ($scope.item != undefined) {
 					//cetakan langsung service VB 6 by grh   
 					var client = new HttpClient();
@@ -2281,7 +2281,45 @@ define(['initialize', 'Configuration'], function (initialize, config) {
 				}
 				HapusExp();
 				$scope.popUpEkpertise.close();
+			}
+
+			$scope.BuktiDaftar = function(){
+				if($scope.dataPasienSelected.noregistrasi ==  undefined){
+					toastr.error('Pilih data dulu')
+					return 
+				}
+				if ($scope.dataPasienSelected.noregistrasi) {
+					var local = JSON.parse(localStorage.getItem('profile'))
+					var nama = medifirstService.getPegawaiLogin().namaLengkap
+
+					var url = config.baseApiBackend + 'report/cetak-bukti-pendaftaran?noregistrasi=' + $scope.dataPasienSelected.nocm +
+						'&norec_pd=' + $scope.dataPasienSelected.norec +
+						'&kdprofile=' + local.id +
+						'&nama=' + nama +
+						'&noregistrasi=' + $scope.dataPasienSelected.noregistrasi;
+
+					window.open(url, 'BuktiDaftar', 'width=520,height=800,scrollbars=yes,resizable=yes');
+				}
 			}			
+
+			$scope.cetakNoAntrian = function(){
+				if($scope.dataPasienSelected.noregistrasi ==  undefined){
+					toastr.error('Pilih data dulu')
+					return 
+				}
+				if ($scope.dataPasienSelected.noregistrasi) {
+					var local = JSON.parse(localStorage.getItem('profile'))
+					var nama = medifirstService.getPegawaiLogin().namaLengkap
+
+					var url = config.baseApiBackend + 'report/cetak-bukti-pendaftaran?noregistrasi=' + $scope.dataPasienSelected.nocm +
+						'&norec_pd=' + $scope.dataPasienSelected.norec +
+						'&kdprofile=' + local.id +
+						'&nama=' + nama +
+						'&noregistrasi=' + $scope.dataPasienSelected.noregistrasi;
+
+					window.open(url, 'BuktiDaftar', 'width=520,height=800,scrollbars=yes,resizable=yes');
+				}
+			}
 
 			$scope.CheckImage = function () {                
                 var ket = $scope.itemimg.keterangan == null ? '' : $scope.itemimg.keterangan

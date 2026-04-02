@@ -222,7 +222,25 @@
 
                         {{-- Memo Section --}}
                         <font style="font-size: 8pt;" color="#000000" face="Tahoma">Memo :</font>
-                        <div style="text-align: center;padding-top: 40px;">
+                        <table cellspacing="0" cellpadding="3" border="0" width="100%" style="margin-top: 5px;">
+                            <tr>
+                                <td width="20px" style="vertical-align: middle;">
+                                    <span style="font-size:13pt;color:#000000;line-height:1;">&#9744;</span>
+                                </td>
+                                <td>
+                                    <font style="font-size: 8pt;" color="#000000" face="Tahoma">Injeksi</font>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td width="20px" style="vertical-align: middle;">
+                                    <span style="font-size:13pt;color:#000000;line-height:1;">&#9744;</span>
+                                </td>
+                                <td>
+                                    <font style="font-size: 8pt;" color="#000000" face="Tahoma">Konsultasi ke klinik . . . . . . . . . . . . . .</font>
+                                </td>
+                            </tr>
+                        </table>
+                        <div style="text-align: center;padding-top: 15px;">
                             <font style="font-size: 10pt;font-weight: bold;" color="#000000" face="Tahoma">****</font>
                         </div>
                     </td>
