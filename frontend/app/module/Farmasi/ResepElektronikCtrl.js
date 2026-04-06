@@ -1613,7 +1613,11 @@ define(['initialize', 'Configuration'], function (initialize, config) {
                     toastr.error('Pilih data dulu')
                     return
                 }
-                window.open(config.baseApiBackend + "report/cetak-antrian-farm?noreg=" + $scope.item.noregistrasi);
+                if ($scope.item.noorder && String($scope.item.noorder).includes('/')) {
+                    window.open(config.baseApiBackend + "report/cetak-antrian-farm?noresep=" + $scope.item.noorder);
+                } else {
+                    window.open(config.baseApiBackend + "report/cetak-antrian-farm?noorder=" + $scope.item.noorder);
+                }
             }
             $scope.formatRupiah = function (value, currency) {
                 return currency + " " + parseFloat(value).toFixed(2).replace(/(\d)(?=(\d{3})+\.)/g, "$1,");

@@ -1614,6 +1614,8 @@ class ReportController extends ApiController{
     public function cetakAntrianFarmKiosk(Request $request) {
         $kdProfile = (int)$request['kdprofile'];
         $noreg = $request['noreg'];
+        $noresep = $request['noresep'];
+        $noorder = $request['noorder'];
 
         $tglAyeuna = date('Y-m-d H:i:s');
 
@@ -1622,7 +1624,8 @@ class ReportController extends ApiController{
                 select * from profile_m where statusenabled=true limit 1
             "))->first();
 
-        $data = DB::table('antrianapotik_t as at')
+        if (empty($noresep)){
+            $data = DB::table('antrianapotik_t as at')
             ->join('pasiendaftar_t as pt', 'pt.norec', '=', 'at.noregistrasifk')
             ->join('pasien_m as pm', 'pm.id', '=', 'pt.nocmfk')
             ->leftJoin('jeniskelamin_m as jk', 'jk.id', '=', 'pm.objectjeniskelaminfk')
@@ -1631,9 +1634,12 @@ class ReportController extends ApiController{
             // ->join('ruangan_m as rm', 'rm.id', '=', 'st.objectruangantujuanfk')
             ->join('kelompokpasien_m as km', 'km.id', '=', 'pt.objectkelompokpasienlastfk')
             ->leftJoin('alamat_m as alm', 'alm.nocmfk', '=', 'pm.id')
-            ->where(function ($query) use ($noreg) {
+            ->where(function ($query) use ($noreg, $noorder) {
                 $query->where('pt.noregistrasi', $noreg)
                     ->orWhere('pm.nocm', $noreg);
+                    if (!empty($noorder)) {
+                        $query->orWhere('at.noorder', $noorder);
+                    }
             })
             ->where('st.statusenabled', true)
             ->where('at.statusenabled', true)
@@ -1653,7 +1659,36 @@ class ReportController extends ApiController{
                 alm.alamatlengkap
             ")
             ->first();
-            
+        } else {
+            $data = DB::table('antrianapotik_t as at')
+                ->join('strukresep_t as st', 'at.noresep', '=', 'st.noresep')
+                ->join('antrianpasiendiperiksa_t as apd', 'apd.norec', '=', 'st.pasienfk')
+                ->join('pasiendaftar_t as pt', 'pt.norec', '=', 'apd.noregistrasifk')
+                ->join('pasien_m as pm', 'pm.id', '=', 'pt.nocmfk')
+                ->leftJoin('jeniskelamin_m as jk', 'jk.id', '=', 'pm.objectjeniskelaminfk')
+                ->join('ruangan_m as rm', 'rm.id', '=', 'st.ruanganfk')
+                ->join('kelompokpasien_m as km', 'km.id', '=', 'pt.objectkelompokpasienlastfk')
+                ->leftJoin('alamat_m as alm', 'alm.nocmfk', '=', 'pm.id')
+                ->where('at.noresep', $noresep)
+                ->where('st.statusenabled', true)
+                ->where('at.statusenabled', true)
+                ->orderBy('at.tglresep', 'desc')
+                ->selectRaw("
+                    at.jenis || ' - ' || at.noantri as noantri, 
+                    pm.namapasien, 
+                    pm.nocm, 
+                    pt.noregistrasi, 
+                    rm.namaruangan,
+                    km.kelompokpasien,
+                    pt.tglregistrasi,
+                    at.tglresep,
+                    at.jenis,
+                    jk.jeniskelamin,
+                    Date(pm.tgllahir) as tgllahir,
+                    alm.alamatlengkap
+                ")
+                ->first();
+        }
         $pageWidth = 50;
         
         $dataReport = array(
