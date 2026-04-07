@@ -1211,6 +1211,17 @@ define(['initialize', 'Configuration'], function (initialize, config) {
                         jenis: $scope.item.jenis,
                         status: 'panggil'
                     });
+                    var objSave =
+                    {
+                        noorder: $scope.item.noorder,
+                        statusorder: 10
+                    }
+                    medifirstService.post('farmasi/save-status-panggil-resep', objSave).then(function (e) {
+                        medifirstService.postLogging('Memanggil Order Resep Elektronik', 'No Order Struk Order',
+                            $scope.item.noorder, 'Memanggil Order Resep Elektronik No Order: ' + $scope.item.noorder + '/ Noregistrasi : ' + $scope.item.noregistrasi).then(function (res) {
+                                $scope.refresh();
+                            })
+                    });
                     // noresep
                     $scope.item.tglambil = new Date()
                     $scope.item.namapengambil = $scope.item.namapasien

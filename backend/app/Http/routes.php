@@ -1175,6 +1175,7 @@ Route::group(['middleware' => 'cors', 'prefix' => 'service'], function () {
           Route::get('farmasi/get-alergi', 'Farmasi\ResepElektronikController@getAlergi');
           Route::get('farmasi/get-daftar-detail-order', 'Farmasi\ResepElektronikController@getDaftarDetailOrder');
           Route::post('farmasi/save-status-resepelektonik', 'Farmasi\ResepElektronikController@saveStatusResepElektronik');
+          Route::post('farmasi/save-status-panggil-resep', 'Farmasi\ResepElektronikController@saveStatusPanggilResep');
           Route::post('farmasi/update-status-grabexpress', 'Farmasi\ResepElektronikController@updateStatusGrabExpress');
           Route::post('farmasi/cek-stokproduk-farmasi','Farmasi\PelayananResepController@cekStokFarmasi');
           // Route::post('updatebro','Farmasi\PelayananResepController@updatebro');
@@ -3882,6 +3883,7 @@ Route::group(['middleware' => 'cors', 'prefix' => 'service'], function () {
         Route::get('viewer/get-fotodokter-viewer','Antrian\AntrianController@getFotoDokterViewer');
         Route::get('viewer/get-dipanggil','Antrian\AntrianController@getDipanggil');
         Route::get('viewer/get-list-antrian-farmasi','Antrian\AntrianController@getListAntrianFarm');
+        Route::get('viewer/get-list-antrian-farmasi-terlewat','Antrian\AntrianController@getListAntrianFarmTerlewat');
         Route::get('viewer/get-data-viewer-far','Antrian\AntrianController@getViewerFar');
         Route::get('viewer/get-data-status-pelayanan','Antrian\AntrianController@getStatusPelayanan');
 

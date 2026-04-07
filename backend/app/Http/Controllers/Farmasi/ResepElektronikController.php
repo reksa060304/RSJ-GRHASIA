@@ -818,6 +818,55 @@ class ResepElektronikController extends ApiController
         }
         return $this->setStatusCode($result['status'])->respond($result, $transMessage);
     }
+    public function saveStatusPanggilResep(Request $request) {
+        $kdProfile = $this->getDataKdProfile($request);
+        $idProfile = (int) $kdProfile;
+
+        DB::beginTransaction();
+        try{
+                $data = StrukOrder::where('noorder', $request['noorder'])->where('kdprofile',$idProfile)->first();
+                $dt = StrukResep::where('orderfk',$data->norec)->where('kdprofile',$idProfile)->first();
+
+                if($request['statusorder']=="10"){ // panggil
+                    StrukResep::where('noresep', $dt->noresep)
+                    ->where('kdprofile',$idProfile)
+                    ->update([
+                            'ispanggil' => true,
+                        ]
+                    );
+                }
+
+            $transStatus = 'true';
+        } catch (\Exception $e) {
+            $transStatus = 'false';
+            $errObj = $e;
+            $errMsg = $e->getMessage();
+        }
+        
+        $transMessage = "Save Status";
+
+        if ($transStatus == 'true') {
+            $transMessage = $transMessage . " Berhasil";
+            DB::commit();
+            $result = array(
+                "status" => 201,
+                'QuestionnaireResponse' => isset($ihs) ? $ihs : null,
+                "by" => 'maman@tso',
+            );
+        } else {
+            $transMessage = $transMessage . " Gagal!!";
+            DB::rollBack();
+            $result = array(
+                "status" => 400,
+                "by" => 'maman@tso',
+                "e" => $e->getLine() . "// " .$e->getMessage(),
+                "errObj" => $errObj,
+                "errMsg" => $errMsg,
+                
+            );
+        }
+        return $this->setStatusCode($result['status'])->respond($result, $transMessage);
+    }
 
     public function saveSkriningFarmasi(Request $request){
         $kdProfile = (int) $this->getDataKdProfile($request);

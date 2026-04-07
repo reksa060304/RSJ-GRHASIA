@@ -20,6 +20,9 @@ export class ViewerFarmasiComponent implements OnInit {
   dataSource: any[] = []
   dataSourceN: any[] = []
   dataSourceR: any[] = []
+  dataSourceL: any[] = []
+  dataSourceN_L: any[] = []
+  dataSourceR_L: any[] = []
   color = ['white', 'blue', 'gray', 'darkgray', 'orange']
   listKelas = []
   dipanggilN: boolean = false;
@@ -188,6 +191,22 @@ export class ViewerFarmasiComponent implements OnInit {
           this.dataSourceN.push(element)
         } else {
           this.dataSourceR.push(element)
+        }
+      }
+    })
+
+    this.dataSourceL = []
+    this.dataSourceN_L = []
+    this.dataSourceR_L = []
+    this.apiService.get('viewer/get-list-antrian-farmasi-terlewat').subscribe(e => {
+
+      this.dataSourceL = e
+      for (let i = 0; i < e.length; i++) {
+        const element = e[i];
+        if (element.aajenis == "N") {
+          this.dataSourceN_L.push(element)
+        } else {
+          this.dataSourceR_L.push(element)
         }
       }
     })
