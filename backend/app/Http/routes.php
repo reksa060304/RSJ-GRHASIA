@@ -3475,6 +3475,8 @@ Route::group(['middleware' => 'cors', 'prefix' => 'service'], function () {
                 Route::post('sysadmin/general/save-jenis-kerusakan-simrs','SysAdmin\GeneralController@SaveDataJenisKerusakanSIMRS');
                 Route::post('sysadmin/general/hapus-permohonan-simrs','SysAdmin\GeneralController@HapusPermohonanSIMRS');
                 Route::post('sysadmin/general/save-map-administrasi','SysAdmin\GeneralController@saveMappingAdminstrasiCuy');
+                Route::get('sysadmin/general/get-combo-administrasi-penunjang', 'SysAdmin\GeneralController@getComboAdministrasiPenunjang');
+                Route::post('sysadmin/general/save-map-administrasi-penunjang','SysAdmin\GeneralController@saveMappingAdminPenunjang');
                 Route::post('sysadmin/general/save-map-laporankeuanganlingkuppelayanan','SysAdmin\GeneralController@saveMappingLaporanKeuanganToLingkupPelayanan');
                 Route::get('sysadmin/logging/save-log-meninggal-pasien-rj', 'SysAdmin\LoggingController@saveLogMeninggalPasienRJ');
                 Route::get('sysadmin/logging/save-log-pulang-pasien-rj', 'SysAdmin\LoggingController@saveLogPulangPasienRJ');

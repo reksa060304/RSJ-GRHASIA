@@ -22,8 +22,8 @@
     <!-- <c-panel item="item" header="'Produk'" disabled> -->
     <div class="grid_12">
 
-        <div class="grid_12 headerBox">
-            <h1 style="color: white;"><b>Map Administrasi Otomatis</b></h1>
+        <div class="grid_12 headerBox" style="margin-bottom:20px;">
+            <h1 style="color: white;"><b>Map Administrasi Otomatis (Karcis & Akomodasi)</b></h1>
         </div>
         <div class="grid_2">
         </div>
@@ -106,7 +106,203 @@
             </div>
 
         </div>
+
+        <!-- ================= BAGIAN PENUNJANG ================= -->
+        <div class="grid_12 headerBox" style="margin-top: 40px; margin-bottom: 10px;">
+            <h1 style="color: white;"><b>Map Administrasi Otomatis Penunjang (Lab & Radiologi)</b></h1>
+        </div>
+
+        <div class="grid_2"></div>
+        <div class="grid_8">
+
+            <div class="grid_12 borderBox" style="margin-top:10px;">
+            <div class="grid_12 headerBox" style="margin-bottom: 8px;">
+                <p>Form Mapping Penunjang</p>
+            </div>
+
+            <!-- Baris 1: Ruangan Asal + Tipe Pen + Ruangan Pen + Produk -->
+            <div class="grid_3">
+                <div class="grid_12">
+                    <label c-label item="itemPenunjang">Ruangan Asal <span style="color:red">*</span></label>
+                </div>
+                <div class="grid_12">
+                    <input style="width: 100%;" kendo-combo-box 
+                        k-ng-model="itemPenunjang.ruanganAsal"
+                        k-data-text-field="'namaruangan'"
+                        k-data-value-field="'id'"
+                        k-filter="'contains'"
+                        k-auto-bind="false"
+                        k-data-source="listRuanganAsalPenunjang"
+                        k-on-change="onChangeRuanganAsalPenunjang()" />
+                </div>
+            </div>
+
+            <div class="grid_3">
+                <div class="grid_12">
+                     <label c-label item="itemPenunjang">Tipe Penunjang <span style="color:red">*</span></label>
+                </div>
+                <div class="grid_12">
+                    <input style="width: 100%;" kendo-combo-box 
+                        k-ng-model="itemPenunjang.tipePenunjang"
+                        k-data-text-field="'name'"
+                        k-data-value-field="'id'"
+                        k-filter="'contains'"
+                        k-auto-bind="false"
+                        k-data-source="listTipePenunjang"
+                        k-on-change="onChangeTipePenunjang()" />
+                </div>
+            </div>
+
+            <div class="grid_3">
+                <div class="grid_12">
+                    <label c-label item="itemPenunjang">Ruangan Penunjang <span style="color:red">*</span></label>
+                </div>
+                <div class="grid_12">
+                    <input style="width: 100%;" kendo-combo-box k-ng-model="itemPenunjang.ruanganTujuan"
+                        k-data-text-field="'namaruangan'"
+                        k-data-value-field="'id'"
+                        k-filter="'contains'"
+                        k-auto-bind="false"
+                        k-data-source="listRuanganTujuanPenunjang"
+                        k-on-change="onChangeRuanganPenunjang()" />
+                </div>
+            </div>
+
+            <div class="grid_3">
+                <div class="grid_12">
+                    <label c-label item="itemPenunjang">Produk / Tindakan <span style="color:red">*</span></label>
+                </div>
+                <div class="grid_12">
+                    <input style="width: 100%;" kendo-combo-box k-ng-model="itemPenunjang.produk"
+                        k-data-text-field="'namaproduk'"
+                        k-data-value-field="'id'"
+                        k-filter="'contains'"
+                        k-auto-bind="false"
+                        k-data-source="listProdukPenunjang"
+                        k-on-change="getdetailHargaPenunjang()" />
+                </div>
+            </div>
+
+            <!-- Baris 2: Jenis Pelayanan + Jenis Pasien + Harga -->
+            <div class="grid_3">
+                <div class="grid_12">
+                    <label c-label item="itemPenunjang">Jenis Pelayanan <span style="color:red">*</span></label>
+                </div>
+                <div class="grid_12">
+                    <input style="width: 100%;" kendo-combo-box k-ng-model="itemPenunjang.jenisPelayanan"
+                        k-data-text-field="'jenispelayanan'"
+                        k-data-value-field="'id'"
+                        k-filter="'contains'"
+                        k-auto-bind="false"
+                        k-data-source="listJenisPelayanan"
+                        k-on-change="getdetailHargaPenunjang()" />
+                </div>
+            </div>
+            <div class="grid_3" style="margin-top: 8px;">
+                <div class="grid_12">
+                    <label c-label item="itemPenunjang">Jenis Pasien</label>
+                </div>
+                <div class="grid_12" style="margin-top: 5px;">
+                    <md-radio-group ng-model="itemPenunjang.tipe" layout="row">
+                        <md-radio-button value="BARU" class="md-primary" style="margin-right: 15px;">BARU</md-radio-button>
+                        <md-radio-button value="LAMA" class="md-primary">LAMA</md-radio-button>
+                    </md-radio-group>
+                </div>
+            </div>
+
+            <div class="grid_3" style="margin-top: 8px;">
+                <div class="grid_12">
+                    <label c-label item="itemPenunjang">Harga (Rp)</label>
+                </div>
+                <div class="grid_12">
+                    <input c-text-box type="input" filter="'numeric'" class="k-textbox"
+                        ng-model="itemPenunjang.hargaTindakan" readonly="true" disabled style="width:100%;" />
+                </div>
+            </div>
+
+            <!-- Baris 3: Tombol Aksi -->
+            <div class="grid_12" style="margin-top: 12px;">
+                <div class="grid_8"></div>
+                <div class="grid_4">
+                    <div class="grid_4">
+                        <button class="c-button" ng-click="tambahDataPenunjang()" ng-disabled="isSavingPenunjang">
+                            <i class="fa fa-save"></i> Simpan
+                        </button>
+                    </div>
+                    <div class="grid_4">
+                        <button class="c-button" ng-click="hapusDataPenunjang()" ng-disabled="isSavingPenunjang || !itemPenunjang.maid">
+                            <i class="fa fa-trash"></i> Hapus
+                        </button>
+                    </div>
+                    <div class="grid_4">
+                        <button class="c-button" ng-click="kosongkanPenunjang()">
+                            <i class="fa fa-refresh"></i> Reset
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Filter / Search Grid Penunjang -->
+        <div class="grid_12 borderBox" style="margin-top: 10px;">
+            <div class="grid_12 headerBox" style="margin-bottom: 8px;">
+                <p>List Mapping Penunjang</p>
+            </div>
+
+            <div class="grid_4" style="margin-bottom: 8px;">
+                <div class="grid_12">
+                    <label c-label item="itemPenunjang">Cari Produk</label>
+                </div>
+                <div class="grid_12">
+                    <input class="k-textbox" style="width:100%;"
+                        ng-model="searchFilterPenunjang.namaproduk"
+                        placeholder="Ketik nama produk..."
+                        ng-change="applySearchFilterPenunjang()" />
+                </div>
+            </div>
+            <div class="grid_4" style="margin-bottom: 8px;">
+                <div class="grid_12">
+                    <label c-label item="itemPenunjang">Cari Jenis Pelayanan</label>
+                </div>
+                <div class="grid_12">
+                    <input class="k-textbox" style="width:100%;"
+                        ng-model="searchFilterPenunjang.jenispelayanan"
+                        placeholder="Ketik jenis pelayanan..."
+                        ng-change="applySearchFilterPenunjang()" />
+                </div>
+            </div>
+            <div class="grid_2">
+                <div class="grid_12">
+                    <label c-label item="itemPenunjang" style="color:transparent;">Reset</label>
+                </div>
+                <div class="grid_12">
+                    <button class="c-button" ng-click="resetSearchPenunjang()">
+                        <i class="fa fa-search"></i> Reset Cari
+                    </button>
+                </div>
+            </div>
+
+            <!-- Kendo Grid -->
+            <div class="grid_12 borderBox" style="margin-top: 4px;">
+                <div id="kGridPenunjang" kendo-grid
+                    k-data-source="dataGridPenunjang"
+                    k-selectable="'row'"
+                    k-columns="columnGridPenunjang"
+                    k-pageable="'true'"
+                    k-sortable="'true'"
+                    k-ng-model="dataSelectedPenunjang"
+                    ng-click="klikGridPenunjang(dataSelectedPenunjang)">
+                </div>
+            </div>
+
+            <div class="grid_12" style="margin-top: 8px; color: #666; font-size: 12px;">
+                <i class="fa fa-info-circle"></i>
+                Klik baris pada tabel untuk memuat data ke form. Pilih Tipe Penunjang dan Ruangan terlebih dahulu untuk memuat daftar produk.
+            </div>
+        </div>
+
+        </div>
+        <!-- ================= END PENUNJANG ================= -->
+
     </div>
-
-
 </div>
