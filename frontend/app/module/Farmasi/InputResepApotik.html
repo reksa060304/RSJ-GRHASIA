@@ -1287,7 +1287,7 @@
                                                 ng-model="data.KetKlinis" />
                                         </div>
                                     </div>
-                                    <div class="grid_12">
+                                    <div class="grid_12" hidden>
                                         <div class="grid_6">
                                             <div class="grid_8" style="padding-top:10px">
                                                 <label c-label>4. telaah Obat</label>
@@ -1487,6 +1487,229 @@
                                         <button class="c-button" ng-click="simpanSkrining()">Simpan</button>
                                     </div>
                                     
+                                </div>
+                            </div>
+                        </md-content>
+                    </md-tab>
+                    <md-tab label="VERIFIKASI KESESUAIAN OBAT">
+                        <md-content class="md-padding">
+                            <div class="grid_12">
+                                <div class="grid_12">
+                                    <div class="grid_12 headerBox">
+                                        <p>VERIFIKASI KESESUAIAN OBAT</p>
+                                    </div>
+                                </div>
+
+                                <div class="grid_12" style="margin-top: 10px;">
+                                    <div class="grid_12 borderBox" style="padding: 10px;">
+                                        <div class="grid_12 headerBox">
+                                            <p>Verifikasi Kesesuaian Obat Saat Penyiapan</p>
+                                        </div>
+                                        <div class="grid_12" style="margin-top: 10px;">
+                                            <div class="grid_4"><label c-label>Telaah Obat</label></div>
+                                            <div class="grid_1"><label c-label>Ya</label></div>
+                                            <div class="grid_1"><label c-label>Tidak</label></div>
+                                            <div class="grid_6"><label c-label>Keterangan/Tindak Lanjut</label></div>
+                                        </div>
+                                        <div class="grid_12" style="margin-top:5px;">
+                                            <div class="grid_4"><label c-label>Identitas pasien</label></div>
+                                            <div class="grid_1"><input type="radio" name="penyiapanIdentitas" ng-model="data.penyiapanIdentitas" value="Ya" /></div>
+                                            <div class="grid_1"><input type="radio" name="penyiapanIdentitas" ng-model="data.penyiapanIdentitas" value="Tidak" /></div>
+                                            <div class="grid_6"><input c-text-box type="input" class="k-textbox" ng-model="data.penyiapanKetIdentitas" /></div>
+                                        </div>
+                                        <div class="grid_12" style="margin-top:5px;">
+                                            <div class="grid_4"><label c-label>Nama Obat dengan resep</label></div>
+                                            <div class="grid_1"><input type="radio" name="penyiapanNamaObat" ng-model="data.penyiapanNamaObat" value="Ya" /></div>
+                                            <div class="grid_1"><input type="radio" name="penyiapanNamaObat" ng-model="data.penyiapanNamaObat" value="Tidak" /></div>
+                                            <div class="grid_6"><input c-text-box type="input" class="k-textbox" ng-model="data.penyiapanKetNamaObat" /></div>
+                                        </div>
+                                        <div class="grid_12" style="margin-top:5px;">
+                                            <div class="grid_4"><label c-label>Jumlah/Dosis dengan resep</label></div>
+                                            <div class="grid_1"><input type="radio" name="penyiapanJumlahDosis" ng-model="data.penyiapanJumlahDosis" value="Ya" /></div>
+                                            <div class="grid_1"><input type="radio" name="penyiapanJumlahDosis" ng-model="data.penyiapanJumlahDosis" value="Tidak" /></div>
+                                            <div class="grid_6"><input c-text-box type="input" class="k-textbox" ng-model="data.penyiapanKetJumlahDosis" /></div>
+                                        </div>
+                                        <div class="grid_12" style="margin-top:5px;">
+                                            <div class="grid_4"><label c-label>Rute dengan resep</label></div>
+                                            <div class="grid_1"><input type="radio" name="penyiapanRute" ng-model="data.penyiapanRute" value="Ya" /></div>
+                                            <div class="grid_1"><input type="radio" name="penyiapanRute" ng-model="data.penyiapanRute" value="Tidak" /></div>
+                                            <div class="grid_6"><input c-text-box type="input" class="k-textbox" ng-model="data.penyiapanKetRute" /></div>
+                                        </div>
+                                        <div class="grid_12" style="margin-top:5px;">
+                                            <div class="grid_4"><label c-label>Waktu dan frekuensi Pemberian dengan resep</label></div>
+                                            <div class="grid_1"><input type="radio" name="penyiapanWaktuFrekuensi" ng-model="data.penyiapanWaktuFrekuensi" value="Ya" /></div>
+                                            <div class="grid_1"><input type="radio" name="penyiapanWaktuFrekuensi" ng-model="data.penyiapanWaktuFrekuensi" value="Tidak" /></div>
+                                            <div class="grid_6"><input c-text-box type="input" class="k-textbox" ng-model="data.penyiapanKetWaktuFrekuensi" /></div>
+                                        </div>
+                                        <div class="grid_12">
+                                            <div class="grid_6"></div>
+                                            <div class="grid_6">
+                                                <div class="grid_12">
+                                                    <label c-label>Penelaah</label>
+                                                </div>
+                                                <div class="grid_12"><input c-text-box type="input" class="k-textbox" ng-model="data.penelaahPenyiapan" /></div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="grid_12" style="margin-top: 10px;">
+                                    <div class="grid_12 borderBox" style="padding: 10px;">
+                                        <div class="grid_12 headerBox">
+                                            <p>Verifikasi Kesesuaian Obat Saat Peracikan (jika ada resep racikan)</p>
+                                        </div>
+                                        <div class="grid_12" style="margin-top: 10px;">
+                                            <div class="grid_4"><label c-label>Telaah Obat</label></div>
+                                            <div class="grid_1"><label c-label>Ya</label></div>
+                                            <div class="grid_1"><label c-label>Tidak</label></div>
+                                            <div class="grid_6"><label c-label>Keterangan/Tindak Lanjut</label></div>
+                                        </div>
+                                        <div class="grid_12" style="margin-top:5px;">
+                                            <div class="grid_4"><label c-label>Identitas pasien</label></div>
+                                            <div class="grid_1"><input type="radio" name="peracikanIdentitas" ng-model="data.peracikanIdentitas" value="Ya" /></div>
+                                            <div class="grid_1"><input type="radio" name="peracikanIdentitas" ng-model="data.peracikanIdentitas" value="Tidak" /></div>
+                                            <div class="grid_6"><input c-text-box type="input" class="k-textbox" ng-model="data.peracikanKetIdentitas" /></div>
+                                        </div>
+                                        <div class="grid_12" style="margin-top:5px;">
+                                            <div class="grid_4"><label c-label>Nama Obat dengan resep</label></div>
+                                            <div class="grid_1"><input type="radio" name="peracikanNamaObat" ng-model="data.peracikanNamaObat" value="Ya" /></div>
+                                            <div class="grid_1"><input type="radio" name="peracikanNamaObat" ng-model="data.peracikanNamaObat" value="Tidak" /></div>
+                                            <div class="grid_6"><input c-text-box type="input" class="k-textbox" ng-model="data.peracikanKetNamaObat" /></div>
+                                        </div>
+                                        <div class="grid_12" style="margin-top:5px;">
+                                            <div class="grid_4"><label c-label>Jumlah/Dosis dengan resep</label></div>
+                                            <div class="grid_1"><input type="radio" name="peracikanJumlahDosis" ng-model="data.peracikanJumlahDosis" value="Ya" /></div>
+                                            <div class="grid_1"><input type="radio" name="peracikanJumlahDosis" ng-model="data.peracikanJumlahDosis" value="Tidak" /></div>
+                                            <div class="grid_6"><input c-text-box type="input" class="k-textbox" ng-model="data.peracikanKetJumlahDosis" /></div>
+                                        </div>
+                                        <div class="grid_12" style="margin-top:5px;">
+                                            <div class="grid_4"><label c-label>Rute dengan resep</label></div>
+                                            <div class="grid_1"><input type="radio" name="peracikanRute" ng-model="data.peracikanRute" value="Ya" /></div>
+                                            <div class="grid_1"><input type="radio" name="peracikanRute" ng-model="data.peracikanRute" value="Tidak" /></div>
+                                            <div class="grid_6"><input c-text-box type="input" class="k-textbox" ng-model="data.peracikanKetRute" /></div>
+                                        </div>
+                                        <div class="grid_12" style="margin-top:5px;">
+                                            <div class="grid_4"><label c-label>Waktu dan frekuensi Pemberian dengan resep</label></div>
+                                            <div class="grid_1"><input type="radio" name="peracikanWaktuFrekuensi" ng-model="data.peracikanWaktuFrekuensi" value="Ya" /></div>
+                                            <div class="grid_1"><input type="radio" name="peracikanWaktuFrekuensi" ng-model="data.peracikanWaktuFrekuensi" value="Tidak" /></div>
+                                            <div class="grid_6"><input c-text-box type="input" class="k-textbox" ng-model="data.peracikanKetWaktuFrekuensi" /></div>
+                                        </div>
+                                        <div class="grid_12">
+                                            <div class="grid_6"></div>
+                                            <div class="grid_6">
+                                                <div class="grid_12">
+                                                    <label c-label>Penelaah</label>
+                                                </div>
+                                                <div class="grid_12"><input c-text-box type="input" class="k-textbox" ng-model="data.penelaahPeracikan" /></div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="grid_12" style="margin-top: 10px;">
+                                    <div class="grid_12 borderBox" style="padding: 10px;">
+                                        <div class="grid_12 headerBox">
+                                            <p>Verifikasi Kesesuaian Obat Saat Pelabelan</p>
+                                        </div>
+                                        <div class="grid_12" style="margin-top: 10px;">
+                                            <div class="grid_4"><label c-label>Telaah Obat</label></div>
+                                            <div class="grid_1"><label c-label>Ya</label></div>
+                                            <div class="grid_1"><label c-label>Tidak</label></div>
+                                            <div class="grid_6"><label c-label>Keterangan/Tindak Lanjut</label></div>
+                                        </div>
+                                        <div class="grid_12" style="margin-top:5px;">
+                                            <div class="grid_4"><label c-label>Identitas pasien</label></div>
+                                            <div class="grid_1"><input type="radio" name="pelabelanIdentitas" ng-model="data.pelabelanIdentitas" value="Ya" /></div>
+                                            <div class="grid_1"><input type="radio" name="pelabelanIdentitas" ng-model="data.pelabelanIdentitas" value="Tidak" /></div>
+                                            <div class="grid_6"><input c-text-box type="input" class="k-textbox" ng-model="data.pelabelanKetIdentitas" /></div>
+                                        </div>
+                                        <div class="grid_12" style="margin-top:5px;">
+                                            <div class="grid_4"><label c-label>Nama Obat dengan resep</label></div>
+                                            <div class="grid_1"><input type="radio" name="pelabelanNamaObat" ng-model="data.pelabelanNamaObat" value="Ya" /></div>
+                                            <div class="grid_1"><input type="radio" name="pelabelanNamaObat" ng-model="data.pelabelanNamaObat" value="Tidak" /></div>
+                                            <div class="grid_6"><input c-text-box type="input" class="k-textbox" ng-model="data.pelabelanKetNamaObat" /></div>
+                                        </div>
+                                        <div class="grid_12" style="margin-top:5px;">
+                                            <div class="grid_4"><label c-label>Jumlah/Dosis dengan resep</label></div>
+                                            <div class="grid_1"><input type="radio" name="pelabelanJumlahDosis" ng-model="data.pelabelanJumlahDosis" value="Ya" /></div>
+                                            <div class="grid_1"><input type="radio" name="pelabelanJumlahDosis" ng-model="data.pelabelanJumlahDosis" value="Tidak" /></div>
+                                            <div class="grid_6"><input c-text-box type="input" class="k-textbox" ng-model="data.pelabelanKetJumlahDosis" /></div>
+                                        </div>
+                                        <div class="grid_12" style="margin-top:5px;">
+                                            <div class="grid_4"><label c-label>Rute dengan resep</label></div>
+                                            <div class="grid_1"><input type="radio" name="pelabelanRute" ng-model="data.pelabelanRute" value="Ya" /></div>
+                                            <div class="grid_1"><input type="radio" name="pelabelanRute" ng-model="data.pelabelanRute" value="Tidak" /></div>
+                                            <div class="grid_6"><input c-text-box type="input" class="k-textbox" ng-model="data.pelabelanKetRute" /></div>
+                                        </div>
+                                        <div class="grid_12" style="margin-top:5px;">
+                                            <div class="grid_4"><label c-label>Waktu dan frekuensi Pemberian dengan resep</label></div>
+                                            <div class="grid_1"><input type="radio" name="pelabelanWaktuFrekuensi" ng-model="data.pelabelanWaktuFrekuensi" value="Ya" /></div>
+                                            <div class="grid_1"><input type="radio" name="pelabelanWaktuFrekuensi" ng-model="data.pelabelanWaktuFrekuensi" value="Tidak" /></div>
+                                            <div class="grid_6"><input c-text-box type="input" class="k-textbox" ng-model="data.pelabelanKetWaktuFrekuensi" /></div>
+                                        </div>
+                                        <div class="grid_12">
+                                            <div class="grid_6"></div>
+                                            <div class="grid_6">
+                                                <div class="grid_12">
+                                                    <label c-label>Penelaah</label>
+                                                </div>
+                                                <div class="grid_12"><input c-text-box type="input" class="k-textbox" ng-model="data.penelaahPelabelan" /></div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="grid_12" style="margin-top: 10px; margin-bottom: 10px;">
+                                    <div class="grid_12 borderBox" style="padding: 10px;">
+                                        <div class="grid_12 headerBox">
+                                            <p>Verifikasi Kesesuaian Obat Saat Diserahkan ke Pasien</p>
+                                        </div>
+                                        <div class="grid_12" style="margin-top: 10px;">
+                                            <div class="grid_4"><label c-label>Telaah Obat</label></div>
+                                            <div class="grid_1"><label c-label>Ya</label></div>
+                                            <div class="grid_1"><label c-label>Tidak</label></div>
+                                            <div class="grid_6"><label c-label>Keterangan/Tindak Lanjut</label></div>
+                                        </div>
+                                        <div class="grid_12" style="margin-top:5px;">
+                                            <div class="grid_4"><label c-label>Identitas pasien</label></div>
+                                            <div class="grid_1"><input type="radio" name="diserahkanIdentitas" ng-model="data.diserahkanIdentitas" value="Ya" /></div>
+                                            <div class="grid_1"><input type="radio" name="diserahkanIdentitas" ng-model="data.diserahkanIdentitas" value="Tidak" /></div>
+                                            <div class="grid_6"><input c-text-box type="input" class="k-textbox" ng-model="data.diserahkanKetIdentitas" /></div>
+                                        </div>
+                                        <div class="grid_12" style="margin-top:5px;">
+                                            <div class="grid_4"><label c-label>Nama Obat dengan resep</label></div>
+                                            <div class="grid_1"><input type="radio" name="diserahkanNamaObat" ng-model="data.diserahkanNamaObat" value="Ya" /></div>
+                                            <div class="grid_1"><input type="radio" name="diserahkanNamaObat" ng-model="data.diserahkanNamaObat" value="Tidak" /></div>
+                                            <div class="grid_6"><input c-text-box type="input" class="k-textbox" ng-model="data.diserahkanKetNamaObat" /></div>
+                                        </div>
+                                        <div class="grid_12" style="margin-top:5px;">
+                                            <div class="grid_4"><label c-label>Jumlah/Dosis dengan resep</label></div>
+                                            <div class="grid_1"><input type="radio" name="diserahkanJumlahDosis" ng-model="data.diserahkanJumlahDosis" value="Ya" /></div>
+                                            <div class="grid_1"><input type="radio" name="diserahkanJumlahDosis" ng-model="data.diserahkanJumlahDosis" value="Tidak" /></div>
+                                            <div class="grid_6"><input c-text-box type="input" class="k-textbox" ng-model="data.diserahkanKetJumlahDosis" /></div>
+                                        </div>
+                                        <div class="grid_12" style="margin-top:5px;">
+                                            <div class="grid_4"><label c-label>Rute dengan resep</label></div>
+                                            <div class="grid_1"><input type="radio" name="diserahkanRute" ng-model="data.diserahkanRute" value="Ya" /></div>
+                                            <div class="grid_1"><input type="radio" name="diserahkanRute" ng-model="data.diserahkanRute" value="Tidak" /></div>
+                                            <div class="grid_6"><input c-text-box type="input" class="k-textbox" ng-model="data.diserahkanKetRute" /></div>
+                                        </div>
+                                        <div class="grid_12" style="margin-top:5px;">
+                                            <div class="grid_4"><label c-label>Waktu dan frekuensi Pemberian dengan resep</label></div>
+                                            <div class="grid_1"><input type="radio" name="diserahkanWaktuFrekuensi" ng-model="data.diserahkanWaktuFrekuensi" value="Ya" /></div>
+                                            <div class="grid_1"><input type="radio" name="diserahkanWaktuFrekuensi" ng-model="data.diserahkanWaktuFrekuensi" value="Tidak" /></div>
+                                            <div class="grid_6"><input c-text-box type="input" class="k-textbox" ng-model="data.diserahkanKetWaktuFrekuensi" /></div>
+                                        </div>
+                                        <div class="grid_12">
+                                            <div class="grid_6"></div>
+                                            <div class="grid_6">
+                                                <div class="grid_12">
+                                                    <label c-label>Penelaah</label>
+                                                </div>
+                                                <div class="grid_12"><input c-text-box type="input" class="k-textbox" ng-model="data.penelaahDiserahkan" /></div>
+                                            </div>
+                                        </div>
+                                    </div>
                                 </div>
                             </div>
                         </md-content>

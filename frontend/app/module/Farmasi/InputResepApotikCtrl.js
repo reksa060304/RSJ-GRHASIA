@@ -641,6 +641,31 @@ define(['initialize'], function (initialize) {
                 // $scope.data.DataInteraksi = 2;
                 // $scope.data.DataAntibiotik = 2;
                 // $scope.data.DataPoli = 2;
+
+                // verifikasi fields
+                $scope.data.penyiapanIdentitas = 'Ya';
+                $scope.data.penyiapanNamaObat = 'Ya';
+                $scope.data.penyiapanJumlahDosis = 'Ya';
+                $scope.data.penyiapanRute = 'Ya';
+                $scope.data.penyiapanWaktuFrekuensi = 'Ya';
+
+                $scope.data.peracikanIdentitas = 'Ya';
+                $scope.data.peracikanNamaObat = 'Ya';
+                $scope.data.peracikanJumlahDosis = 'Ya';
+                $scope.data.peracikanRute = 'Ya';
+                $scope.data.peracikanWaktuFrekuensi = 'Ya';
+
+                $scope.data.pelabelanIdentitas = 'Ya';
+                $scope.data.pelabelanNamaObat = 'Ya';
+                $scope.data.pelabelanJumlahDosis = 'Ya';
+                $scope.data.pelabelanRute = 'Ya';
+                $scope.data.pelabelanWaktuFrekuensi = 'Ya';
+
+                $scope.data.diserahkanIdentitas = 'Ya';
+                $scope.data.diserahkanNamaObat = 'Ya';
+                $scope.data.diserahkanJumlahDosis = 'Ya';
+                $scope.data.diserahkanRute = 'Ya';
+                $scope.data.diserahkanWaktuFrekuensi = 'Ya';
             }
 
             $scope.getCheckisKronis = function (getCheckisKronis) {
@@ -924,6 +949,54 @@ define(['initialize'], function (initialize) {
                     $scope.data.DataStatus = datas.rstatusjamin
                     $scope.data.DataJumlah = datas.rjumlahobat
                     $scope.data.DataWaktu = datas.rdatawaktu
+                    // verfikasi fields
+                    $scope.data.penyiapanIdentitas = datas.penyiapanidentitas;
+                    $scope.data.penyiapanNamaObat = datas.penyiapannamaobat;
+                    $scope.data.penyiapanJumlahDosis = datas.penyiapanjumlahdosis;
+                    $scope.data.penyiapanRute = datas.penyiapanrute;
+                    $scope.data.penyiapanWaktuFrekuensi = datas.penyiapanwaktufrekuensi;
+                    $scope.data.penyiapanKetIdentitas = datas.penyiapanketidentitas;
+                    $scope.data.penyiapanKetNamaObat = datas.penyiapanketnamaobat;
+                    $scope.data.penyiapanKetJumlahDosis = datas.penyiapanketjumlahdosis;
+                    $scope.data.penyiapanKetRute = datas.penyiapanketrute;
+                    $scope.data.penyiapanKetWaktuFrekuensi = datas.penyiapanketwaktufrekuensi;
+                    $scope.data.penelaahPenyiapan = datas.penelaahpenyiapan;
+
+                    $scope.data.peracikanIdentitas = datas.peracikanidentitas;
+                    $scope.data.peracikanNamaObat = datas.peracikannamaobat;
+                    $scope.data.peracikanJumlahDosis = datas.peracikanjumlahdosis;
+                    $scope.data.peracikanRute = datas.peracikanrute;
+                    $scope.data.peracikanWaktuFrekuensi = datas.peracikanwaktufrekuensi;
+                    $scope.data.peracikanKetIdentitas = datas.peracikanketidentitas;
+                    $scope.data.peracikanKetNamaObat = datas.peracikanketnamaobat;
+                    $scope.data.peracikanKetJumlahDosis = datas.peracikanketjumlahdosis;
+                    $scope.data.peracikanKetRute = datas.peracikanketrute;
+                    $scope.data.peracikanKetWaktuFrekuensi = datas.peracikanketwaktufrekuensi;
+                    $scope.data.penelaahPeracikan = datas.penelaahperacikan;
+
+                    $scope.data.pelabelanIdentitas = datas.pelabelanidentitas;
+                    $scope.data.pelabelanNamaObat = datas.pelabelannamaobat;
+                    $scope.data.pelabelanJumlahDosis = datas.pelabelanjumlahdosis;
+                    $scope.data.pelabelanRute = datas.pelabelanrute;
+                    $scope.data.pelabelanWaktuFrekuensi = datas.pelabelanwaktufrekuensi;
+                    $scope.data.pelabelanKetIdentitas = datas.pelabelanketidentitas;
+                    $scope.data.pelabelanKetNamaObat = datas.pelabelanketnamaobat;
+                    $scope.data.pelabelanKetJumlahDosis = datas.pelabelanketjumlahdosis;
+                    $scope.data.pelabelanKetRute = datas.pelabelanketrute;
+                    $scope.data.pelabelanKetWaktuFrekuensi = datas.pelabelanketwaktufrekuensi;
+                    $scope.data.penelaahPelabelan = datas.penelaahpelabelan;
+
+                    $scope.data.diserahkanIdentitas = datas.diserahkanidentitas;
+                    $scope.data.diserahkanNamaObat = datas.diserahlahnamaobat;
+                    $scope.data.diserahkanJumlahDosis = datas.diserahanjumlahdosis;
+                    $scope.data.diserahkanRute = datas.diserahanrute;
+                    $scope.data.diserahkanWaktuFrekuensi = datas.diserahanwaktufrekuensi;
+                    $scope.data.diserahkanKetIdentitas = datas.diserahlanketidentitas;
+                    $scope.data.diserahkanKetNamaObat = datas.diserahlanketnamaobat;
+                    $scope.data.diserahkanKetJumlahDosis = datas.diserahlanketjumlahdosis;
+                    $scope.data.diserahkanKetRute = datas.diserahlanketrute;
+                    $scope.data.diserahkanKetWaktuFrekuensi = datas.diserahlanketwaktufrekuensi;
+                    $scope.data.penelaahDiserahkan = datas.penelaahdiserahkan;
                     
                     if (datas.prinsipbesar != '' || datas.prinsipbesar != null) {
                         var prinsipbesar = datas.prinsipbesar.split(',')
@@ -2726,6 +2799,55 @@ Which will check for empty strings (""), null, undefined, false and the numbers 
                     "rjumlahobat": parseInt($scope.data.DataJumlah),
                     "rdatawaktu": parseInt($scope.data.DataWaktu),
                     "ketskrining": ketskrining,
+
+                    // Verifikasi fields
+                    "penyiapanIdentitas": $scope.data.penyiapanIdentitas,
+                    "penyiapanNamaObat": $scope.data.penyiapanNamaObat,
+                    "penyiapanJumlahDosis": $scope.data.penyiapanJumlahDosis,
+                    "penyiapanRute": $scope.data.penyiapanRute,
+                    "penyiapanWaktuFrekuensi": $scope.data.penyiapanWaktuFrekuensi,
+                    "penyiapanKetIdentitas": $scope.data.penyiapanKetIdentitas ? $scope.data.penyiapanKetIdentitas : '',
+                    "penyiapanKetNamaObat": $scope.data.penyiapanKetNamaObat ? $scope.data.penyiapanKetNamaObat : '',
+                    "penyiapanKetJumlahDosis": $scope.data.penyiapanKetJumlahDosis ? $scope.data.penyiapanKetJumlahDosis : '',
+                    "penyiapanKetRute": $scope.data.penyiapanKetRute ? $scope.data.penyiapanKetRute : '',
+                    "penyiapanKetWaktuFrekuensi": $scope.data.penyiapanKetWaktuFrekuensi ? $scope.data.penyiapanKetWaktuFrekuensi : '',
+                    "penelaahPenyiapan": $scope.data.penelaahPenyiapan,
+
+                    "peracikanIdentitas": $scope.data.peracikanIdentitas,
+                    "peracikanNamaObat": $scope.data.peracikanNamaObat,
+                    "peracikanJumlahDosis": $scope.data.peracikanJumlahDosis,
+                    "peracikanRute": $scope.data.peracikanRute,
+                    "peracikanWaktuFrekuensi": $scope.data.peracikanWaktuFrekuensi,
+                    "peracikanKetIdentitas": $scope.data.peracikanKetIdentitas ? $scope.data.peracikanKetIdentitas : '',
+                    "peracikanKetNamaObat": $scope.data.peracikanKetNamaObat ? $scope.data.peracikanKetNamaObat : '',
+                    "peracikanKetJumlahDosis": $scope.data.peracikanKetJumlahDosis ? $scope.data.peracikanKetJumlahDosis : '',
+                    "peracikanKetRute": $scope.data.peracikanKetRute ? $scope.data.peracikanKetRute : '',
+                    "peracikanKetWaktuFrekuensi": $scope.data.peracikanKetWaktuFrekuensi ? $scope.data.peracikanKetWaktuFrekuensi : '',
+                    "penelaahPeracikan": $scope.data.penelaahPeracikan,
+
+                    "pelabelanIdentitas": $scope.data.pelabelanIdentitas,
+                    "pelabelanNamaObat": $scope.data.pelabelanNamaObat,
+                    "pelabelanJumlahDosis": $scope.data.pelabelanJumlahDosis,
+                    "pelabelanRute": $scope.data.pelabelanRute,
+                    "pelabelanWaktuFrekuensi": $scope.data.pelabelanWaktuFrekuensi,
+                    "pelabelanKetIdentitas": $scope.data.pelabelanKetIdentitas ? $scope.data.pelabelanKetIdentitas : '',
+                    "pelabelanKetNamaObat": $scope.data.pelabelanKetNamaObat ? $scope.data.pelabelanKetNamaObat : '',
+                    "pelabelanKetJumlahDosis": $scope.data.pelabelanKetJumlahDosis ? $scope.data.pelabelanKetJumlahDosis : '',
+                    "pelabelanKetRute": $scope.data.pelabelanKetRute ? $scope.data.pelabelanKetRute : '',
+                    "pelabelanKetWaktuFrekuensi": $scope.data.pelabelanKetWaktuFrekuensi ? $scope.data.pelabelanKetWaktuFrekuensi : '',
+                    "penelaahPelabelan": $scope.data.penelaahPelabelan,
+
+                    "diserahkanIdentitas": $scope.data.diserahkanIdentitas,
+                    "diserahkanNamaObat": $scope.data.diserahkanNamaObat,
+                    "diserahkanJumlahDosis": $scope.data.diserahkanJumlahDosis,
+                    "diserahkanRute": $scope.data.diserahkanRute,
+                    "diserahkanWaktuFrekuensi": $scope.data.diserahkanWaktuFrekuensi,
+                    "diserahkanKetIdentitas": $scope.data.diserahkanKetIdentitas ? $scope.data.diserahkanKetIdentitas : '',
+                    "diserahkanKetNamaObat": $scope.data.diserahkanKetNamaObat ? $scope.data.diserahkanKetNamaObat : '',
+                    "diserahkanKetJumlahDosis": $scope.data.diserahkanKetJumlahDosis ? $scope.data.diserahkanKetJumlahDosis : '',
+                    "diserahkanKetRute": $scope.data.diserahkanKetRute ? $scope.data.diserahkanKetRute : '',
+                    "diserahkanKetWaktuFrekuensi": $scope.data.diserahkanKetWaktuFrekuensi ? $scope.data.diserahkanKetWaktuFrekuensi : '',
+                    "penelaahDiserahkan": $scope.data.penelaahDiserahkan,
                 }
                 console.log(objSave);
                 // return

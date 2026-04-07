@@ -873,6 +873,56 @@ class ResepElektronikController extends ApiController
                 $dataPP->rbeban = $request['rbeban'];
                 $dataPP->ridentitasdokter = $request['ridentitasdokter'];
                 $dataPP->rdatawaktu = $request['rdatawaktu'];
+
+                // verifikasi fields
+                $dataPP->penyiapanidentitas = $request['penyiapanIdentitas'];
+                $dataPP->penyiapannamaobat = $request['penyiapanNamaObat'];
+                $dataPP->penyiapanjumlahdosis = $request['penyiapanJumlahDosis'];
+                $dataPP->penyiapanrute = $request['penyiapanRute'];
+                $dataPP->penyiapanwaktufrekuensi = $request['penyiapanWaktuFrekuensi'];
+                $dataPP->penyiapanketidentitas = $request['penyiapanKetIdentitas'];
+                $dataPP->penyiapanketnamaobat = $request['penyiapanKetNamaObat'];
+                $dataPP->penyiapanketjumlahdosis = $request['penyiapanKetJumlahDosis'];
+                $dataPP->penyiapanketrute = $request['penyiapanKetRute'];
+                $dataPP->penyiapanketwaktufrekuensi = $request['penyiapanKetWaktuFrekuensi'];
+                $dataPP->penelaahpenyiapan = $request['penelaahPenyiapan'];
+                
+                $dataPP->peracikanidentitas = $request['peracikanIdentitas'];
+                $dataPP->peracikannamaobat = $request['peracikanNamaObat'];
+                $dataPP->peracikanjumlahdosis = $request['peracikanJumlahDosis'];
+                $dataPP->peracikanrute = $request['peracikanRute'];
+                $dataPP->peracikanwaktufrekuensi = $request['peracikanWaktuFrekuensi'];
+                $dataPP->peracikanketidentitas = $request['peracikanKetIdentitas'];
+                $dataPP->peracikanketnamaobat = $request['peracikanKetNamaObat'];
+                $dataPP->peracikanketjumlahdosis = $request['peracikanKetJumlahDosis'];
+                $dataPP->peracikanketrute = $request['peracikanKetRute'];
+                $dataPP->peracikanketwaktufrekuensi = $request['peracikanKetWaktuFrekuensi'];
+                $dataPP->penelaahperacikan = $request['penelaahPeracikan'];
+
+                $dataPP->pelabelanidentitas = $request['pelabelanIdentitas'];
+                $dataPP->pelabelannamaobat = $request['pelabelanNamaObat'];
+                $dataPP->pelabelanjumlahdosis = $request['pelabelanJumlahDosis'];
+                $dataPP->pelabelanrute = $request['pelabelanRute'];
+                $dataPP->pelabelanwaktufrekuensi = $request['pelabelanWaktuFrekuensi'];
+                $dataPP->pelabelanketidentitas = $request['pelabelanKetIdentitas'];
+                $dataPP->pelabelanketnamaobat = $request['pelabelanKetNamaObat'];
+                $dataPP->pelabelanketjumlahdosis = $request['pelabelanKetJumlahDosis'];
+                $dataPP->pelabelanketrute = $request['pelabelanKetRute'];
+                $dataPP->pelabelanketwaktufrekuensi = $request['pelabelanKetWaktuFrekuensi'];
+                $dataPP->penelaahpelabelan = $request['penelaahPelabelan'];
+
+                $dataPP->diserahkanidentitas = $request['diserahkanIdentitas'];
+                $dataPP->diserahlahnamaobat = $request['diserahkanNamaObat'];
+                $dataPP->diserahanjumlahdosis = $request['diserahkanJumlahDosis'];
+                $dataPP->diserahanrute = $request['diserahkanRute'];
+                $dataPP->diserahanwaktufrekuensi = $request['diserahkanWaktuFrekuensi'];
+                $dataPP->diserahlanketidentitas = $request['diserahkanKetIdentitas'];
+                $dataPP->diserahlanketnamaobat = $request['diserahkanKetNamaObat'];
+                $dataPP->diserahlanketjumlahdosis = $request['diserahkanKetJumlahDosis'];
+                $dataPP->diserahlanketrute = $request['diserahkanKetRute'];
+                $dataPP->diserahlanketwaktufrekuensi = $request['diserahkanKetWaktuFrekuensi'];
+                $dataPP->penelaahdiserahkan = $request['penelaahDiserahkan'];
+                // end verifikasi fields
                 $dataPP->save();
 
                 $idPP=$dataPP->norec;
@@ -926,7 +976,15 @@ class ResepElektronikController extends ApiController
         if(isset($request['norecResep']) && $request['norecResep']!="" && $request['norecResep']!="undefined"){
             $sf = "and sf.norec_apd = '$nresep'";
         }
-        $data = DB::select(DB::raw("select sf.norec, sf.norec_apd,sf.objectruanganfk,sf.rpenulis,sf.rtanggalresep,sf.rklinis,sf.rmr,sf.rpasien,sf.rtanggallahir,sf.rberatbedan,sf.rdokter,sf.rruang,sf.rstatusjamin,sf.robat,sf.rkekuatan,sf.rjumlahobat,sf.ketskrining,sf.norec_apd,sf.tglinput,sf.rcarabayar,sf.rruanganresep,sf.rnamaobat,sf.rstabilitas,sf.raturan,sf.ralergi,sf.rinteraksi,sf.rvariasi,sf.rbeban,sf.ridentitasdokter,sf.rdatawaktu
+        $data = DB::select(DB::raw("select sf.norec, sf.norec_apd,sf.objectruanganfk,sf.rpenulis,sf.rtanggalresep,sf.rklinis,sf.rmr,sf.rpasien,sf.rtanggallahir,sf.rberatbedan,sf.rdokter,sf.rruang,sf.rstatusjamin,sf.robat,sf.rkekuatan,sf.rjumlahobat,sf.ketskrining,sf.norec_apd,sf.tglinput,sf.rcarabayar,sf.rruanganresep,sf.rnamaobat,sf.rstabilitas,sf.raturan,sf.ralergi,sf.rinteraksi,sf.rvariasi,sf.rbeban,sf.ridentitasdokter,sf.rdatawaktu,
+        sf.penyiapanidentitas, sf.penyiapannamaobat, sf.penyiapanjumlahdosis, sf.penyiapanrute, sf.penyiapanwaktufrekuensi,
+        sf.penyiapanketidentitas, sf.penyiapanketnamaobat, sf.penyiapanketjumlahdosis, sf.penyiapanketrute, sf.penyiapanketwaktufrekuensi, sf.penelaahpenyiapan,
+        sf.peracikanidentitas, sf.peracikannamaobat, sf.peracikanjumlahdosis, sf.peracikanrute, sf.peracikanwaktufrekuensi,
+        sf.peracikanketidentitas, sf.peracikanketnamaobat, sf.peracikanketjumlahdosis, sf.peracikanketrute, sf.peracikanketwaktufrekuensi, sf.penelaahperacikan,
+        sf.pelabelanidentitas, sf.pelabelannamaobat, sf.pelabelanjumlahdosis, sf.pelabelanrute, sf.pelabelanwaktufrekuensi,
+        sf.pelabelanketidentitas, sf.pelabelanketnamaobat, sf.pelabelanketjumlahdosis, sf.pelabelanketrute, sf.pelabelanketwaktufrekuensi, sf.penelaahpelabelan,
+        sf.diserahkanidentitas, sf.diserahlahnamaobat, sf.diserahanjumlahdosis, sf.diserahanrute, sf.diserahanwaktufrekuensi,
+        sf.diserahlanketidentitas, sf.diserahlanketnamaobat, sf.diserahlanketjumlahdosis, sf.diserahlanketrute, sf.diserahlanketwaktufrekuensi, sf.penelaahdiserahkan
         from skriningfarmasi_t as sf
         where sf.kdprofile = 30
         $sf
