@@ -1361,8 +1361,9 @@ class RadiologiController extends ApiController
                         'ru.namaruangan', 'ru2.namaruangan as ruangantujuan',     'so.keteranganlainnya','apd.norec as norec_apd',
                         // 'apd.norec as norec_apd',
                         'ru.id as ruid','so.cito','pd.isclosing as closing',
-                        (DB::raw("case when so.statusorder is null then 'MASUK' else
-                                    'SELESAI' end as status")))
+                        (DB::raw("case 
+                        when so.statusorder is null then 'MASUK'
+                        else 'SELESAI' end as status")))
                     ->where('so.kdprofile', $idProfile)
                     ->where('ru2.objectdepartemenfk', $this->settingDataFixed('KdDepartemenInstalasiRadiologi', $idProfile))
                     ->where('so.statusenabled', true)
@@ -1410,7 +1411,7 @@ class RadiologiController extends ApiController
                         // 'apd.norec as norec_apd',
                         'ru.namaruangan', 'ru2.namaruangan as ruangantujuan',
                              'so.keteranganlainnya','so.cito','pd.isclosing as closing',
-                        (DB::raw("case when pp.order_no is null then 'MASUK' else
+                        (DB::raw("case when so.statusorder is null and pp.order_no is null then 'MASUK' else
                                     'SELESAI' end as status")))
                     ->where('so.kdprofile', $idProfile)
                     ->where('ru2.objectdepartemenfk', $this->settingDataFixed('KdDepartemenInstalasiRadiologi', $idProfile))
@@ -1418,16 +1419,18 @@ class RadiologiController extends ApiController
                     ->whereNotIn('so.objectruangantujuanfk',[$this->settingDataFixed('kdRuanganElektromedik', $idProfile)]);
                 if (isset($request['isNotVerif']) && $request['isNotVerif'] != "" && $request['isNotVerif'] != "undefined") {
                     if ($request['isNotVerif'] == true) {
-                        $data = $data->whereNull('pp.order_no');
+                        $data = $data->where(function($query) {
+                            $query->whereNull('so.statusorder')->whereNull('pp.order_no');
+                        });
                         $data = $data->whereNull('so.keterangantolak');
-
                     }
                 }
                 if (isset($request['isVerif']) && $request['isVerif'] != "" && $request['isVerif'] != "undefined") {
                     if ($request['isVerif'] == true) {
-                        $data = $data->whereNotNull('pp.order_no');
+                        $data = $data->where(function($query) {
+                            $query->whereNotNull('so.statusorder')->orWhereNotNull('pp.order_no');
+                        });
                         $data = $data->whereNull('so.keterangantolak');
-
                     }
                 }
             }
@@ -1858,6 +1861,8 @@ class RadiologiController extends ApiController
     public function savePelayananPasien(Request $request) {
         $kdProfile = $this->getDataKdProfile($request);
         $idProfile = (int) $kdProfile;
+        $PelPasien = null;
+        $PelPasienDetail = null;
         DB::beginTransaction();
         try{
 
