@@ -1635,10 +1635,11 @@ class ReportController extends ApiController{
             ->join('kelompokpasien_m as km', 'km.id', '=', 'pt.objectkelompokpasienlastfk')
             ->leftJoin('alamat_m as alm', 'alm.nocmfk', '=', 'pm.id')
             ->where(function ($query) use ($noreg, $noorder) {
-                $query->where('pt.noregistrasi', $noreg)
-                    ->orWhere('pm.nocm', $noreg);
                     if (!empty($noorder)) {
-                        $query->orWhere('at.noorder', $noorder);
+                        $query->where('at.noorder', $noorder);
+                    } else {
+                        $query->where('pt.noregistrasi', $noreg)
+                            ->orWhere('pm.nocm', $noreg);
                     }
             })
             ->where('st.statusenabled', true)
