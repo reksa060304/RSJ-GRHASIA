@@ -273,8 +273,39 @@ define(['initialize'], function (initialize) {
                     true
                 ).then(function (dat) {
                     $scope.listRuanganTujuanPenunjang = dat.data.ruangan;
+                    
+                    if (idTipe == 3 || idTipe == 27) { 
+                        var ruanganTujuan = $scope.listRuanganTujuanPenunjang.find(function(x) { 
+                            var nr = x.namaruangan.toLowerCase();
+                            if (idTipe == 3) {
+                                return nr.indexOf('patologi klinik') > -1; 
+                            } else if (idTipe == 27) {
+                                return nr.indexOf('radiologi') > -1;
+                            }
+                            return false;
+                        });
+                        if (ruanganTujuan) {
+                            $scope.itemPenunjang.ruanganTujuan = ruanganTujuan;
+                        }
+                        
+                        if ($scope.listJenisPelayanan) {
+                            for (var x = 0; x < $scope.listJenisPelayanan.length; x++) {
+                                var element = $scope.listJenisPelayanan[x];
+                                if(element.jenispelayanan.toLowerCase().indexOf('reguler') > -1){
+                                    $scope.itemPenunjang.jenisPelayanan = element;
+                                    break;
+                                }
+                            }
+                        }
+                        if ($scope.itemPenunjang.ruanganTujuan) {
+                            $scope.onChangeRuanganPenunjang();
+                        } else {
+                            loadProdukDanMappingPenunjang();
+                        }
+                    } else {
+                        loadProdukDanMappingPenunjang();
+                    }
                 });
-                loadProdukDanMappingPenunjang();
             };
 
             $scope.onChangeRuanganPenunjang = function () {
@@ -345,8 +376,8 @@ define(['initialize'], function (initialize) {
                     ruanganasal: $scope.itemPenunjang.ruanganAsal.id,
                     ruanganpenunjang: $scope.itemPenunjang.ruanganTujuan.id,
                     jenispelayanan: $scope.itemPenunjang.jenisPelayanan.id,
-                    statuspasien: $scope.itemPenunjang.tipe || null,
-                    status: 'SIMPAN_JANG'
+                    statuspasien: null,
+                    status: 'SIMPAN'
                 };
 
                 medifirstService.post('sysadmin/general/save-map-administrasi-penunjang', objSave).then(function (e) {
@@ -436,7 +467,7 @@ define(['initialize'], function (initialize) {
                                     id: dataSelected.jenispelayananfk, 
                                     jenispelayanan: dataSelected.jenispelayanan 
                                 };
-                                $scope.itemPenunjang.tipe = dataSelected.statuspasien;
+                                // $scope.itemPenunjang.tipe = dataSelected.statuspasien;
                                 
                                 $scope.getdetailHargaPenunjang();
                             });
@@ -489,8 +520,7 @@ define(['initialize'], function (initialize) {
                 { field: "namaruangan_asal", title: "Ruangan Asal", width: "150px" },
                 { field: "namaruangan_tujuan", title: "Ruangan Penunjang", width: "150px" },
                 { field: "namaproduk", title: "Produk / Tindakan", width: "200px" },
-                { field: "jenispelayanan", title: "Jenis Pelayanan", width: "120px" },
-                { field: "statuspasien", title: "Jenis Pasien", width: "80px" }
+                { field: "jenispelayanan", title: "Jenis Pelayanan", width: "120px" }
             ];
             // END PENUNJANG
 
