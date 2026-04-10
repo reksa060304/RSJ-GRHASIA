@@ -592,7 +592,7 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
                     })
             }
 
-            $scope.processAutoOrderPenunjang = function (ruanganAsalId, dataPD, dokterId, jenisPel, statusPasien, kelasId) {
+            $scope.processAutoOrderPenunjang = function (ruanganAsalId, dataPD, dokterId, jenisPel, statusPasien, kelasId, tglOrder) {
                 medifirstService.get("sysadmin/general/get-combo-administrasi-penunjang?ruanganasal=" + ruanganAsalId)
                     .then(function(res) {
                         var listMapping = res.data.listmapping;
@@ -648,6 +648,7 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
                                     objectruangantujuanfk: target.ruanganTujuan,
                                     departemenfk: target.departemenTujuan,
                                     pegawaiorderfk: dokterId,
+                                    tglorder: tglOrder || moment(new Date()).format('YYYY-MM-DD HH:mm:ss'),
                                     details: target.details
                                 };
                                
@@ -682,7 +683,7 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
                                                                 hargasatuan: pel.hargasatuan || 0,
                                                                 qtyproduk: pel.qtyproduk || 1,
                                                                 komponenharga: pel.details || [],
-                                                                tglpelayanan: moment(new Date()).format('YYYY-MM-DD HH:mm'),
+                                                                tglpelayanan: tglOrder || moment(new Date()).format('YYYY-MM-DD HH:mm:ss'),
                                                                 nourut: pi + 1,
                                                                 ihs_service_request: pel.ihs_service_request || null
                                                             });
@@ -696,7 +697,7 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
                                                                 hargasatuan: 0,
                                                                 qtyproduk: det.qtyproduk || 1,
                                                                 komponenharga: [],
-                                                                tglpelayanan: moment(new Date()).format('YYYY-MM-DD HH:mm'),
+                                                                tglpelayanan: tglOrder || moment(new Date()).format('YYYY-MM-DD HH:mm:ss'),
                                                                 nourut: di + 1,
                                                                 ihs_service_request: null
                                                             });
@@ -722,6 +723,7 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
                                                         namadokterverif: "",
                                                         iddokterorder: dokterOrderId,
                                                         namadokterorder: "",
+                                                        tglpelayanan: tglOrder || moment(new Date()).format('YYYY-MM-DD HH:mm:ss'),
                                                         details: bridgingData
                                                     };
 
@@ -933,7 +935,7 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
                                         norecPD, 'Edit Registrasi ke ruangan ' + $scope.item.ruangan.namaruangan + ' pada No Registrasi ' + $scope.model.noRegistrasi)
                                 } else {
                                     // Trigger Auto Order Penunjang Here
-                                    $scope.processAutoOrderPenunjang($scope.item.ruangan.id, $scope.resultPD, dokterId, jenisPel, statusPasien, kelasId);
+                                    $scope.processAutoOrderPenunjang($scope.item.ruangan.id, $scope.resultPD, dokterId, jenisPel, statusPasien, kelasId, moment($scope.item.tglRegistrasi).format('YYYY-MM-DD HH:mm:ss'));
 
                                     //##log Pasien Daftar
                                     medifirstService.get("sysadmin/logging/save-log-pendaftaran-pasien?norec_pd="
