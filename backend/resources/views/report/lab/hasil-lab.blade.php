@@ -51,8 +51,8 @@
         .judul {
             text-align: center;
             font-weight: bold;
-            font-size: 15px;
-            margin: 5px 0 6px 0;
+            font-size: 20px;
+            margin: 10px 0 8px 0;
             border-bottom: 1px solid #000;
             padding-bottom: 3px;
         }
@@ -167,11 +167,11 @@
 
             <td
                 style="width:60%; border-bottom:3px solid black; padding-bottom:1em; text-align:center; vertical-align:middle;">
-                <div style="font-size:14px;">
-                    <strong>RS Jiwa Grhasia</strong><br>
-                    INSTALASI LABORATORIUM KLINIK<br>
-                    Jl. Kaliurang KM.17, Duwetsari, Pakembinangun, Kec. Pakem,<br>
-                    Kabupaten Sleman, Daerah Istimewa Yogyakarta 55582
+                <div style="font-size:16px; line-height: 1.3;">
+                    <strong style="font-size: 22px;">RS JIWA GRHASIA</strong><br>
+                    <span style="font-size: 18px; font-weight: bold;">INSTALASI LABORATORIUM KLINIK</span><br>
+                    <span style="font-size: 14px;">Jl. Kaliurang KM.17, Duwetsari, Pakembinangun, Kec. Pakem,<br>
+                    Kabupaten Sleman, Daerah Istimewa Yogyakarta 55582</span>
                 </div>
             </td>
 
@@ -251,7 +251,7 @@
         <table style="width:100%; margin-bottom:20px;">
             <tr>
                 <td class="left" colspan="2">
-                    <strong>Catatan :</strong> {{ $catatan ?? '-' }}
+                    <strong>Catatan :</strong> {{ (empty($catatan) || $catatan == 'undefined') ? '-' : $catatan }}
                 </td>
             </tr>
         </table>
