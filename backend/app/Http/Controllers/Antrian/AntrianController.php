@@ -189,6 +189,11 @@ class AntrianController extends ApiController
         ->first();
         return $this->respond($apd);
     }
+    public function getIntervalAntrianFarm(Request $request){
+        $kdProfile = $this->getDataKdProfile($request);
+        $interval = (int) $this->settingDataFixed('IntervalViewerFarm', $kdProfile);
+        return $interval;
+    }
     public function getListAntrianFarm(Request $request){
         $kdProfile = $this->getDataKdProfile($request);
         $kdJenisTrasnsaksiResep = (int) $this->settingDataFixed('kdKelompokTransaksiOrderResep', $kdProfile);

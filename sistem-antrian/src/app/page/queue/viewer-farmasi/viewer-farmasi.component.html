@@ -5,7 +5,7 @@
                 style="display: flex;align-items: center;justify-content: space-between;background-color: #afdaf7;">
                 <div style="display: flex;align-items: center;">
                     <img src="assets/img/logo_grhasia_com.png" style="height: 55px;margin-left: 20px;">
-                    <h3 style="margin-left: 20px;margin-top:0;margin-bottom: 0;"> {{namaProfile}}</h3>
+                    <h2 style="margin-left: 20px;margin-top:0;margin-bottom: 0;"> {{namaProfile}}</h2>
                 </div>
                 <p class="subtitle" style="float:right;margin-right: 20px;">
                     <button pButton type="button" icon="fa fa-expand" class="p-button-rounded p-mr-2"
@@ -20,7 +20,7 @@
                 <div class="card-header">
                     <p class="subtitle" style="color: white;"> <i class="pi pi-fast-forward"></i></p>
                     <div class="card-title" style="text-align: center;">
-                        <h3> LIST ANTRIAN</h3>
+                        <h1> LIST ANTRIAN</h1>
                     </div>
                     <p class="subtitle"> <i class="pi pi-fast-forward"></i></p>
                 </div>
@@ -31,7 +31,7 @@
                             <div class="cards timeline">
                                 <div class="card-header">
                                     <div class="card-title">
-                                        <h3>Non Racikan </h3>
+                                        <h2>Non Racikan </h2>
 
                                     </div>
                                     <p class="subtitle"> <i class="pi pi-clock"></i></p>
@@ -44,14 +44,14 @@
                                                     scrollable="true">
                                                     <ng-template pTemplate="header">
                                                         <tr>
-                                                            <th width="250px">No Antrian</th>
+                                                            <th width="250px"><h2>Antrian</h2></th>
                                                         </tr>
                                                     </ng-template>
                                                     <ng-template pTemplate="body" let-items>
 
                                                         <tr [ngClass]="{'row-kosong': items.tersedia == 0}">
                                                             <td width="250px">
-                                                                {{items.aajenis + "-" + items.aanoantri}}
+                                                                <h2>{{items.aajenis + "-" + items.aanoantri}}</h2>
                                                             </td>
 
                                                         </tr>
@@ -66,7 +66,7 @@
                             <div class="cards timeline">
                                 <div class="card-header">
                                     <div class="card-title">
-                                        <h3>Racikan</h3>
+                                        <h2>Racikan</h2>
 
                                     </div>
                                     <p class="subtitle"> <i class="pi pi-clock"></i></p>
@@ -79,14 +79,14 @@
                                                     scrollable="true">
                                                     <ng-template pTemplate="header">
                                                         <tr>
-                                                            <th width="250px">No Antrian</th>
+                                                            <th width="250px"><h2>No Antrian</h2></th>
                                                         </tr>
                                                     </ng-template>
                                                     <ng-template pTemplate="body" let-items>
 
                                                         <tr [ngClass]="{'row-kosong': items.tersedia == 0}">
                                                             <td width="250px">
-                                                                {{items.aajenis + "-" + items.aanoantri}}
+                                                                <h2>{{items.aajenis + "-" + items.aanoantri}}</h2>
                                                             </td>
 
                                                         </tr>
@@ -112,7 +112,7 @@
                 <div class="card-header">
                     <p class="subtitle" style="color: white;"> <i class="pi pi-fast-forward"></i></p>
                     <div class="card-title" style="text-align: center;">
-                        <h3> ANTRIAN TERAKHIR</h3>
+                        <h1> ANTRIAN TERAKHIR</h1>
                     </div>
                     <p class="subtitle"> <i class="pi pi-fast-forward"></i></p>
                 </div>
@@ -155,7 +155,7 @@
                 <div class="card-header">
                     <p class="subtitle" style="color: white;"> <i class="pi pi-fast-forward"></i></p>
                     <div class="card-title" style="text-align: center;">
-                        <h3> ANTRIAN TERLEWAT</h3>
+                        <h1> ANTRIAN TERLEWAT</h1>
                     </div>
                     <p class="subtitle"> <i class="pi pi-fast-forward"></i></p>
                 </div>
@@ -166,7 +166,7 @@
                             <div class="cards timeline">
                                 <div class="card-header">
                                     <div class="card-title">
-                                        <h3>Non Racikan </h3>
+                                        <h2>Non Racikan </h2>
 
                                     </div>
                                     <p class="subtitle"> <i class="pi pi-clock"></i></p>
@@ -179,14 +179,14 @@
                                                     scrollable="true">
                                                     <ng-template pTemplate="header">
                                                         <tr>
-                                                            <th width="250px">No Antrian</th>
+                                                            <th width="250px"><h2>No Antrian</h2></th>
                                                         </tr>
                                                     </ng-template>
                                                     <ng-template pTemplate="body" let-items>
 
                                                         <tr [ngClass]="{'row-kosong': items.tersedia == 0}">
                                                             <td width="250px">
-                                                                {{items.aajenis + "-" + items.aanoantri}}
+                                                                <h2>{{items.aajenis + "-" + items.aanoantri}}</h2>
                                                             </td>
 
                                                         </tr>
@@ -201,7 +201,7 @@
                             <div class="cards timeline">
                                 <div class="card-header">
                                     <div class="card-title">
-                                        <h3>Racikan</h3>
+                                        <h2>Racikan</h2>
 
                                     </div>
                                     <p class="subtitle"> <i class="pi pi-clock"></i></p>
@@ -214,14 +214,14 @@
                                                     scrollable="true">
                                                     <ng-template pTemplate="header">
                                                         <tr>
-                                                            <th width="250px">No Antrian</th>
+                                                            <th width="250px"><h2>No Antrian</h2></th>
                                                         </tr>
                                                     </ng-template>
                                                     <ng-template pTemplate="body" let-items>
 
                                                         <tr [ngClass]="{'row-kosong': items.tersedia == 0}">
                                                             <td width="250px">
-                                                                {{items.aajenis + "-" + items.aanoantri}}
+                                                                <h2>{{items.aajenis + "-" + items.aanoantri}}</h2>
                                                             </td>
 
                                                         </tr>
