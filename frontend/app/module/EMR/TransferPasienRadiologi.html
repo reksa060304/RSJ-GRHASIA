@@ -1,0 +1,245 @@
+<style type="text/css">
+    fieldset {
+        border-radius: 5px;
+        border: 1px solid #228be6;
+        margin-top: 10px;
+    }
+    legend {
+        padding: 5px;
+        margin-left: 10px;
+    }
+    .activeBtn {
+        background-color: #10c4b2;
+        color: #ffffff;
+    }
+</style>
+
+<div class="grid_12" disable-contents="allDisabled">
+    <div class="grid_12">
+        <div class="panel panel-default container_12">
+            <div class="panel-heading" c-translate>Transfer Pasien ke Radiologi (ISBAR)</div>
+        </div>
+
+        <div class="grid_12" style="margin-top: 10px;">
+            <!-- S (SITUATION) -->
+            <fieldset ng-if="listSituation.length > 0">
+                <legend><b>{{listSituation[0].caption}}</b></legend>
+                <div class="grid_12">
+                        <div ng-repeat="stat in listSituation">
+                        <div ng-repeat="jawab in stat.details | orderBy:'nourut'" ng-switch on="jawab.type">
+                            <div class="grid_{{jawab.style||12}}" ng-switch-when="label" ng-if="jawab.caption != stat.caption">
+                                <label c-label item="item" style="font-weight: bold; margin-top: 10px;">{{jawab.caption}}</label>
+                            </div>
+                            <div class="grid_{{jawab.style||12}}" ng-switch-when="label_bold">
+                                <label c-label item="item" style="font-weight: bold; margin-top: 10px; font-size: 14px;">{{jawab.caption}}</label>
+                            </div>
+                            <div class="grid_{{jawab.style||6}}" ng-switch-when="textbox">
+                                <label c-label item="item" ng-show="jawab.caption">{{jawab.caption}}</label>
+                                <input class="k-textbox" ng-model="item.obj[jawab.id]" type="text">
+                            </div>
+                            <div class="grid_{{jawab.style||12}}" ng-switch-when="textarea">
+                                <label c-label item="item" ng-show="jawab.caption">{{jawab.caption}}</label>
+                                <textarea c-text-area class="k-textbox" style="min-height: 80px;" ng-model="item.obj[jawab.id]"></textarea>
+                            </div>
+                            <div class="grid_{{jawab.style||4}}" ng-switch-when="checkbox" style="margin-top: 10px;">
+                                <input type="checkbox" class="k-checkbox" id="check_{{jawab.id}}" ng-model="item.obj[jawab.id]">
+                                <label class="k-checkbox-label" for="check_{{jawab.id}}">{{jawab.caption}}</label>
+                            </div>
+                            <div class="grid_{{jawab.style||6}}" ng-switch-when="combobox">
+                                <label c-label item="item" ng-show="jawab.caption">{{jawab.caption}}</label>
+                                <input kendo-combo-box style="width:100%;" 
+                                    k-data-source="jawab.cbotable == 'listRuangan' ? listRuangan : listPegawai" 
+                                    k-ng-model="item.obj[jawab.id]" 
+                                    k-data-text-field="jawab.cbotable == 'listRuangan' ? 'namaruangan' : 'text'" 
+                                    k-filter="'contains'"
+                                    k-auto-bind="false" />
+                            </div>
+                            <div class="grid_{{jawab.style||6}}" ng-switch-when="datetime">
+                                <label c-label item="item" ng-show="jawab.caption">{{jawab.caption}}</label>
+                                <input kendo-date-time-picker k-ng-model="item.obj[jawab.id]" style="width: 100%" />
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </fieldset>
+
+            <!-- B (BACKGROUND) -->
+            <fieldset ng-if="listBackground.length > 0">
+                <legend><b>{{listBackground[0].caption}}</b></legend>
+                <div class="grid_12">
+                        <div ng-repeat="stat in listBackground">
+                        <div ng-repeat="jawab in stat.details | orderBy:'nourut'" ng-switch on="jawab.type">
+                            <div class="grid_{{jawab.style||12}}" ng-switch-when="label" ng-if="jawab.caption != stat.caption">
+                                <label c-label item="item" style="font-weight: bold; margin-top: 10px;">{{jawab.caption}}</label>
+                            </div>
+                            <div class="grid_{{jawab.style||12}}" ng-switch-when="label_bold">
+                                <label c-label item="item" style="font-weight: bold; margin-top: 10px; font-size: 14px;">{{jawab.caption}}</label>
+                            </div>
+                            <div class="grid_{{jawab.style||6}}" ng-switch-when="textbox">
+                                <label c-label item="item" ng-show="jawab.caption">{{jawab.caption}}</label>
+                                <input class="k-textbox" ng-model="item.obj[jawab.id]" type="text">
+                            </div>
+                            <div class="grid_{{jawab.style||12}}" ng-switch-when="textarea">
+                                <label c-label item="item" ng-show="jawab.caption">{{jawab.caption}}</label>
+                                <textarea c-text-area class="k-textbox" style="min-height: 80px;" ng-model="item.obj[jawab.id]"></textarea>
+                            </div>
+                            <div class="grid_{{jawab.style||4}}" ng-switch-when="checkbox" style="margin-top: 10px;">
+                                <input type="checkbox" class="k-checkbox" id="check_{{jawab.id}}" ng-model="item.obj[jawab.id]">
+                                <label class="k-checkbox-label" for="check_{{jawab.id}}">{{jawab.caption}}</label>
+                            </div>
+                            <div class="grid_{{jawab.style||6}}" ng-switch-when="combobox">
+                                <label c-label item="item" ng-show="jawab.caption">{{jawab.caption}}</label>
+                                <input kendo-combo-box style="width:100%;" 
+                                    k-data-source="jawab.cbotable == 'listRuangan' ? listRuangan : listPegawai" 
+                                    k-ng-model="item.obj[jawab.id]" 
+                                    k-data-text-field="jawab.cbotable == 'listRuangan' ? 'namaruangan' : 'text'" 
+                                    k-filter="'contains'"
+                                    k-auto-bind="false" />
+                            </div>
+                            <div class="grid_{{jawab.style||6}}" ng-switch-when="datetime">
+                                <label c-label item="item" ng-show="jawab.caption">{{jawab.caption}}</label>
+                                <input kendo-date-time-picker k-ng-model="item.obj[jawab.id]" style="width: 100%" />
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </fieldset>
+
+            <!-- A (ASSESSMENT) -->
+            <fieldset ng-if="listAssessment.length > 0">
+                <legend><b>{{listAssessment[0].caption}}</b></legend>
+                <div class="grid_12">
+                        <div ng-repeat="stat in listAssessment">
+                        <div ng-repeat="jawab in stat.details | orderBy:'nourut'" ng-switch on="jawab.type">
+                            <div class="grid_{{jawab.style||12}}" ng-switch-when="label" ng-if="jawab.caption != stat.caption">
+                                <label c-label item="item" style="font-weight: bold; margin-top: 10px;">{{jawab.caption}}</label>
+                            </div>
+                            <div class="grid_{{jawab.style||12}}" ng-switch-when="label_bold">
+                                <label c-label item="item" style="font-weight: bold; margin-top: 10px; font-size: 14px;">{{jawab.caption}}</label>
+                            </div>
+                            <div class="grid_{{jawab.style||4}}" ng-switch-when="textbox">
+                                <label c-label item="item" ng-show="jawab.caption">{{jawab.caption}}</label>
+                                <input class="k-textbox" ng-model="item.obj[jawab.id]" type="text">
+                            </div>
+                            <div class="grid_{{jawab.style||12}}" ng-switch-when="textarea">
+                                <label c-label item="item" ng-show="jawab.caption">{{jawab.caption}}</label>
+                                <textarea c-text-area class="k-textbox" style="min-height: 80px;" ng-model="item.obj[jawab.id]"></textarea>
+                            </div>
+                            <div class="grid_{{jawab.style||4}}" ng-switch-when="checkbox" style="margin-top: 10px;">
+                                <input type="checkbox" class="k-checkbox" id="check_{{jawab.id}}" ng-model="item.obj[jawab.id]">
+                                <label class="k-checkbox-label" for="check_{{jawab.id}}">{{jawab.caption}}</label>
+                            </div>
+                            <div class="grid_{{jawab.style||6}}" ng-switch-when="combobox">
+                                <label c-label item="item" ng-show="jawab.caption">{{jawab.caption}}</label>
+                                <input kendo-combo-box style="width:100%;" 
+                                    k-data-source="jawab.cbotable == 'listRuangan' ? listRuangan : listPegawai" 
+                                    k-ng-model="item.obj[jawab.id]" 
+                                    k-data-text-field="jawab.cbotable == 'listRuangan' ? 'namaruangan' : 'text'" 
+                                    k-filter="'contains'"
+                                    k-auto-bind="false" />
+                            </div>
+                            <div class="grid_{{jawab.style||6}}" ng-switch-when="datetime">
+                                <label c-label item="item" ng-show="jawab.caption">{{jawab.caption}}</label>
+                                <input kendo-date-time-picker k-ng-model="item.obj[jawab.id]" style="width: 100%" />
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </fieldset>
+
+            <!-- R (RECOMMENDATION) -->
+            <fieldset ng-if="listRecommendation.length > 0">
+                <legend><b>{{listRecommendation[0].caption}}</b></legend>
+                <div class="grid_12">
+                    <div ng-repeat="stat in listRecommendation">
+                        <div ng-repeat="jawab in stat.details | orderBy:'nourut'" ng-switch on="jawab.type">
+                            <div class="grid_{{jawab.style||12}}" ng-switch-when="label" ng-if="jawab.caption != stat.caption">
+                                <label c-label item="item" style="font-weight: bold; margin-top: 10px;">{{jawab.caption}}</label>
+                            </div>
+                            <div class="grid_{{jawab.style||12}}" ng-switch-when="label_bold">
+                                <label c-label item="item" style="font-weight: bold; margin-top: 10px; font-size: 14px;">{{jawab.caption}}</label>
+                            </div>
+                            <div class="grid_{{jawab.style||6}}" ng-switch-when="textbox">
+                                <label c-label item="item" ng-show="jawab.caption">{{jawab.caption}}</label>
+                                <input class="k-textbox" ng-model="item.obj[jawab.id]" type="text">
+                            </div>
+                            <div class="grid_{{jawab.style||12}}" ng-switch-when="textarea">
+                                <label c-label item="item" ng-show="jawab.caption">{{jawab.caption}}</label>
+                                <textarea c-text-area class="k-textbox" style="min-height: 80px;" ng-model="item.obj[jawab.id]"></textarea>
+                            </div>
+                            <div class="grid_{{jawab.style||4}}" ng-switch-when="checkbox" style="margin-top: 10px;">
+                                <input type="checkbox" class="k-checkbox" id="check_{{jawab.id}}" ng-model="item.obj[jawab.id]">
+                                <label class="k-checkbox-label" for="check_{{jawab.id}}">{{jawab.caption}}</label>
+                            </div>
+                            <div class="grid_{{jawab.style||6}}" ng-switch-when="combobox">
+                                <label c-label item="item" ng-show="jawab.caption">{{jawab.caption}}</label>
+                                <input kendo-combo-box style="width:100%;" 
+                                    k-data-source="jawab.cbotable == 'listRuangan' ? listRuangan : listPegawai" 
+                                    k-ng-model="item.obj[jawab.id]" 
+                                    k-data-text-field="jawab.cbotable == 'listRuangan' ? 'namaruangan' : 'text'" 
+                                    k-filter="'contains'"
+                                    k-auto-bind="false" />
+                            </div>
+                            <div class="grid_{{jawab.style||6}}" ng-switch-when="datetime">
+                                <label c-label item="item" ng-show="jawab.caption">{{jawab.caption}}</label>
+                                <input kendo-date-time-picker k-ng-model="item.obj[jawab.id]" style="width: 100%" />
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </fieldset>
+
+            <!-- Tanggal & Petugas -->
+            <fieldset ng-if="listTtd.length > 0">
+                <legend><b>Tanggal & Petugas</b></legend>
+                <div class="grid_12">
+                    <div ng-repeat="stat in listTtd" ng-class="listTtd.length > 1 ? 'grid_6' : 'grid_12'">
+                        <div ng-repeat="jawab in stat.details | orderBy:'nourut'" ng-switch on="jawab.type">
+                            <div ng-class="listTtd.length > 1 ? 'grid_12' : 'grid_{{jawab.style||6}}'" ng-switch-when="combobox">
+                                <label c-label item="item" ng-show="jawab.caption">{{jawab.caption}}</label>
+                                <input kendo-combo-box 
+                                    k-data-source="jawab.cbotable == 'listRuangan' ? listRuangan : listPegawai" 
+                                    k-ng-model="item.obj[jawab.id]" 
+                                    k-data-text-field="jawab.cbotable == 'listRuangan' ? 'namaruangan' : 'text'" 
+                                    k-filter="'contains'"
+                                    k-auto-bind="false"
+                                    style="width: 100%;" />
+                            </div>
+                            <div ng-class="listTtd.length > 1 ? 'grid_12' : 'grid_{{jawab.style||6}}'" ng-switch-when="datetime">
+                                <label c-label item="item" ng-show="jawab.caption">{{jawab.caption}}</label>
+                                <input kendo-date-time-picker k-ng-model="item.obj[jawab.id]" style="width: 100%" />
+                            </div>
+                            <div ng-class="listTtd.length > 1 ? 'grid_12' : 'grid_{{jawab.style||6}}'" ng-switch-when="textbox">
+                                <label c-label item="item" ng-show="jawab.caption">{{jawab.caption}}</label>
+                                <input class="k-textbox" ng-model="item.obj[jawab.id]" type="text">
+                            </div>
+                            <div ng-class="listTtd.length > 1 ? 'grid_12' : 'grid_{{jawab.style||6}}'" ng-switch-when="checkbox">
+                                <div class="grid_12" style="margin-top: 10px;">
+                                    <input type="checkbox" class="k-checkbox" id="item.obj{{jawab.id}}" ng-model="item.obj[jawab.id]">
+                                    <label class="k-checkbox-label" for="item.obj{{jawab.id}}">&nbsp;{{jawab.caption}}</label>
+                                </div>
+                            </div>
+                            <div class="grid_{{jawab.style||6}}" ng-switch-when="label" ng-if="stat.details.length > 1 && jawab.caption != stat.caption">
+                                <label c-label item="item" style="font-weight: bold; margin-top: 10px;">{{jawab.caption}}</label>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </fieldset>
+        </div>
+
+        <div class="grid_12" style="margin-top:20px;">
+            <div class="grid_8"></div>
+            <div class="grid_2" ng-show="tombolSimpanVis">
+                <button class="k-button k-button-icontext activeBtn" ng-click="Save()" style="width:100%">
+                    <span class="k-icon k-i-check"></span>Simpan
+                </button>
+            </div>
+            <div class="grid_2">
+                <button class="k-button k-button-icontext" ng-click="Kembali()" style="width:100%">
+                    <span class="k-icon k-i-cancel"></span>Kembali
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
