@@ -1907,7 +1907,7 @@ define(['initialize', 'Configuration'], function (initialize, config) {
                     return
                 }
                 window.open(config.baseApiBackend + "report/cetak-resep-dokter-rev?noorder=" + $scope.item.noorder + "&norec=" + $scope.item.norecresep +
-                    "&nocm=" + $scope.item.nocm + '&kodeprofile=' + profile + '&qtybagi=' + stt + '&cetakkin=' + cetakkin);
+                    "&nocm=" + $scope.item.nocm + '&kodeprofile=' + profile + '&qtybagi=' + stt + '&cetakkin=' + cetakkin, 'BuktiDaftar', 'width=800,height=800,scrollbars=yes,resizable=yes');
                 // // window.open(config.baseApiBackend + "report/cetak-hasil-lab-histopatologi?norec=" + $scope.dataSelected.norec_pp + '&kdprofile=' + profile
                 //     + '&user=' + user + '&jenis=his', '_blank');
                 $scope.popUpResepDokter.close()

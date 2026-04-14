@@ -1308,6 +1308,21 @@ class ReportController extends ApiController{
             left join skriningfarmasi_t st on st.norec_apd = s.norec
             where s.norec = '$norec'
         "))->first();
+
+        $ks_obat = collect(DB::select("
+            select s.noresep, 
+            st.penyiapanidentitas, st.penyiapannamaobat, st.penyiapanjumlahdosis, st.penyiapanrute, st.penyiapanwaktufrekuensi,
+            st.penyiapanketidentitas, st.penyiapanketnamaobat, st.penyiapanketjumlahdosis, st.penyiapanketrute, st.penyiapanketwaktufrekuensi, st.penelaahpenyiapan,
+            st.peracikanidentitas, st.peracikannamaobat, st.peracikanjumlahdosis, st.peracikanrute, st.peracikanwaktufrekuensi,
+            st.peracikanketidentitas, st.peracikanketnamaobat, st.peracikanketjumlahdosis, st.peracikanketrute, st.peracikanketwaktufrekuensi, st.penelaahperacikan,
+            st.pelabelanidentitas, st.pelabelannamaobat, st.pelabelanjumlahdosis, st.pelabelanrute, st.pelabelanwaktufrekuensi,
+            st.pelabelanketidentitas, st.pelabelanketnamaobat, st.pelabelanketjumlahdosis, st.pelabelanketrute, st.pelabelanketwaktufrekuensi, st.penelaahpelabelan,
+            st.diserahkanidentitas, st.diserahlahnamaobat, st.diserahanjumlahdosis, st.diserahanrute, st.diserahanwaktufrekuensi,
+            st.diserahlanketidentitas, st.diserahlanketnamaobat, st.diserahlanketjumlahdosis, st.diserahlanketrute, st.diserahlanketwaktufrekuensi, st.penelaahdiserahkan
+            from strukresep_t s
+            left join skriningfarmasi_t st on st.norec_apd = s.norec
+            where s.norec = '$norec'
+        "))->first();
     //    dd($details);
         $pageWidth = 550;
         //var_dump($skrining);
@@ -1315,7 +1330,7 @@ class ReportController extends ApiController{
         // return $r['norec'];
         $cetakkin = $r['cetakkin'];
         return view('report.apotik.resepdokterrev',
-            compact('raw', 'pageWidth','r','details','profile', 'skrining','cetakkin'));
+            compact('raw', 'pageWidth','r','details','profile', 'skrining', 'ks_obat','cetakkin'));
     }
 
     public function cetakDetailOrder(Request $r) {
