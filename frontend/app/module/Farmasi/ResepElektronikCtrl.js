@@ -1624,10 +1624,10 @@ define(['initialize', 'Configuration'], function (initialize, config) {
                     toastr.error('Pilih data dulu')
                     return
                 }
-                if ($scope.item.noorder && String($scope.item.noorder).includes('/')) {
-                    window.open(config.baseApiBackend + "report/cetak-antrian-farm?noresep=" + $scope.item.noorder);
+                if ($scope.item.noantri == '-' ) {
+                    window.open(config.baseApiBackend + "report/cetak-antrian-farm?noorder=" + $scope.item.noorder + "&kdprofile=21", 'BuktiDaftar', 'width=800,height=800,scrollbars=yes,resizable=yes');
                 } else {
-                    window.open(config.baseApiBackend + "report/cetak-antrian-farm?noorder=" + $scope.item.noorder);
+                    window.open(config.baseApiBackend + "report/cetak-antrian-farm?noresep=" + $scope.item.noorder + "&kdprofile=21", 'BuktiDaftar', 'width=800,height=800,scrollbars=yes,resizable=yes');
                 }
             }
             $scope.formatRupiah = function (value, currency) {

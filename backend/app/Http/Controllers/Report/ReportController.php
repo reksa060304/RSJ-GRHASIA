@@ -17,6 +17,7 @@ use Illuminate\Support\Facades\Storage;
 use App\Master\Pegawai;
 use App\Traits\PelayananPasienTrait;
 use App\Transaksi\PasienDaftar;
+use App\Transaksi\AntrianApotik;
 
 use Barryvdh\DomPDF\Facade as PDF;
 use JasperPHP\JasperPHP;
@@ -1631,35 +1632,157 @@ class ReportController extends ApiController{
             ->leftJoin('jeniskelamin_m as jk', 'jk.id', '=', 'pm.objectjeniskelaminfk')
             ->join('strukorder_t as st', 'st.noorder', '=', 'at.noorder')
             ->join('ruangan_m as rm', 'rm.id', '=', 'st.objectruanganfk')
-            // ->join('ruangan_m as rm', 'rm.id', '=', 'st.objectruangantujuanfk')
             ->join('kelompokpasien_m as km', 'km.id', '=', 'pt.objectkelompokpasienlastfk')
             ->leftJoin('alamat_m as alm', 'alm.nocmfk', '=', 'pm.id')
-            ->where(function ($query) use ($noreg, $noorder) {
-                    if (!empty($noorder)) {
-                        $query->where('at.noorder', $noorder);
-                    } else {
-                        $query->where('pt.noregistrasi', $noreg)
-                            ->orWhere('pm.nocm', $noreg);
-                    }
+            ->where(function ($q) use ($noreg, $noorder) {
+                if (!empty($noorder)) {
+                    $q->where('at.noorder', $noorder);
+                } else {
+                    $q->where(function ($q2) use ($noreg) {
+                        $q2->where('pt.noregistrasi', $noreg)
+                        ->orWhere('pm.nocm', $noreg);
+                    });
+                }
             })
+            ->where('pt.statusenabled', true)
             ->where('st.statusenabled', true)
             ->where('at.statusenabled', true)
-            ->orderBy('at.tglresep', 'desc')
-            ->selectRaw("
-                at.jenis || ' - ' || at.noantri as noantri, 
-                pm.namapasien, 
-                pm.nocm, 
-                pt.noregistrasi, 
-                rm.namaruangan,
-                km.kelompokpasien,
-                pt.tglregistrasi,
-                at.tglresep,
-                at.jenis,
-                jk.jeniskelamin,
-                Date(pm.tgllahir) as tgllahir,
-                alm.alamatlengkap
-            ")
+            ->where('st.statusorder', 0)
+            // ->whereIn('st.statusorder', [0, 1, 2, 3])
+            ->orderBy('pt.tglregistrasi', 'desc')
+            ->orderBy('st.tglorder', 'desc')
+            ->orderBy('at.noantri', 'desc')
+            ->select([
+                DB::raw("at.jenis || ' - ' || at.noantri as noantri"),
+                'pm.namapasien',
+                'st.noorder',
+                'pm.nocm',
+                'pt.noregistrasi',
+                'rm.namaruangan',
+                'km.kelompokpasien',
+                'pt.tglregistrasi',
+                'at.tglresep',
+                'at.jenis',
+                'jk.jeniskelamin',
+                DB::raw("DATE(pm.tgllahir) as tgllahir"),
+                'alm.alamatlengkap'
+            ])
+
             ->first();
+
+            // generate antrian apotik
+            if(empty($data)){
+                $cekOrder = DB::table('strukorder_t as st')
+                ->join('pasiendaftar_t as pt', 'pt.norec', '=', 'st.noregistrasifk')
+                ->join('pasien_m as pm', 'pm.id', '=', 'pt.nocmfk')
+                ->where(function ($query) use ($noreg, $noorder) {
+                        if (!empty($noorder)) {
+                            $query->where('st.noorder', $noorder);
+                        } else {
+                            $query->where('pt.noregistrasi', $noreg)
+                                ->orWhere('pm.nocm', $noreg);
+                        }
+                })
+                ->where('pt.statusenabled', true)
+                ->where('st.statusenabled', true)
+                ->where('st.statusorder', 0)
+                // ->whereIn('st.statusorder', [0, 1, 2, 3])
+                ->orderBy('pt.tglregistrasi', 'desc')
+                ->orderBy('st.tglorder', 'desc')
+                ->selectRaw("
+                    st.norec,
+                    st.noorder,
+                    pm.namapasien,
+                    pm.nocm,
+                    pt.norec
+                ")
+                ->first();
+
+                if (!empty($cekOrder->noorder)) {
+                    $detOrder = DB::table('orderpelayanan_t as op')
+                        ->where('op.strukorderfk', $cekOrder->norec)
+                        ->where('op.statusenabled', true)
+                        ->select('op.jeniskemasanfk')
+                        ->get();
+
+                    $hasRacikan = false;
+                    foreach ($detOrder as $cek) {
+                        if ($cek['jeniskemasanfk'] == 1) {
+                            $hasRacikan = true;
+                            break;
+                        }
+                    }
+                    $racikanORnonracikan = $hasRacikan ? 'R' : 'N';
+                    
+                    $countAntrian = AntrianApotik::where('jenis', $racikanORnonracikan)
+                        ->where('kdprofile', $kdProfile)
+                        ->whereBetween('tglresep', [date('Y-m-d 00:00'), date('Y-m-d 23:59')])
+                        ->max('noantri');
+                    
+                    
+                        $noAntriApotik = (str_pad((int)$countAntrian + 1, 4, "0", STR_PAD_LEFT));                    
+                        $newAA = new AntrianApotik();
+                        $norecAA = $newAA->generateNewId();
+                        $newAA->norec = $norecAA;
+                        $newAA->kdprofile = $kdProfile;
+                        $newAA->statusenabled = true;
+                        $newAA->noantri = $noAntriApotik;
+                        $newAA->keterangan = $cekOrder->namapasien;
+                        $newAA->noregistrasifk = $cekOrder->norec;
+                        $newAA->jenis = $racikanORnonracikan;
+                        $newAA->tglresep = date('Y-m-d H:i:s');
+                        $newAA->noorder = $cekOrder->noorder;
+                        // $newAA->status = '6';
+                        
+                        $newAA->save();  
+                    
+                    
+
+                    $data = DB::table('antrianapotik_t as at')
+                    ->join('pasiendaftar_t as pt', 'pt.norec', '=', 'at.noregistrasifk')
+                    ->join('pasien_m as pm', 'pm.id', '=', 'pt.nocmfk')
+                    ->leftJoin('jeniskelamin_m as jk', 'jk.id', '=', 'pm.objectjeniskelaminfk')
+                    ->join('strukorder_t as st', 'st.noorder', '=', 'at.noorder')
+                    ->join('ruangan_m as rm', 'rm.id', '=', 'st.objectruanganfk')
+                    ->join('kelompokpasien_m as km', 'km.id', '=', 'pt.objectkelompokpasienlastfk')
+                    ->leftJoin('alamat_m as alm', 'alm.nocmfk', '=', 'pm.id')
+                    ->where(function ($q) use ($noreg, $noorder) {
+                        if (!empty($noorder)) {
+                            $q->where('at.noorder', $noorder);
+                        } else {
+                            $q->where(function ($q2) use ($noreg) {
+                                $q2->where('pt.noregistrasi', $noreg)
+                                ->orWhere('pm.nocm', $noreg);
+                            });
+                        }
+                    })
+                    ->where('pt.statusenabled', true)
+                    ->where('st.statusenabled', true)
+                    ->where('at.statusenabled', true)
+                    ->where('st.statusorder', 0)
+                    // ->whereIn('st.statusorder', [0, 1, 2, 3])
+                    ->orderBy('pt.tglregistrasi', 'desc')
+                    ->orderBy('st.tglorder', 'desc')
+                    ->orderBy('at.noantri', 'desc')
+                    ->select([
+                        DB::raw("at.jenis || ' - ' || at.noantri as noantri"),
+                        'pm.namapasien',
+                        'st.noorder',
+                        'pm.nocm',
+                        'pt.noregistrasi',
+                        'rm.namaruangan',
+                        'km.kelompokpasien',
+                        'pt.tglregistrasi',
+                        'at.tglresep',
+                        'at.jenis',
+                        'jk.jeniskelamin',
+                        DB::raw("DATE(pm.tgllahir) as tgllahir"),
+                        'alm.alamatlengkap'
+                    ])
+
+                    ->first();
+                }
+            }
         } else {
             $data = DB::table('antrianapotik_t as at')
                 ->join('strukresep_t as st', 'at.noresep', '=', 'st.noresep')
@@ -1672,11 +1795,13 @@ class ReportController extends ApiController{
                 ->leftJoin('alamat_m as alm', 'alm.nocmfk', '=', 'pm.id')
                 ->where('at.noresep', $noresep)
                 ->where('st.statusenabled', true)
+                ->where('pt.statusenabled', true)
                 ->where('at.statusenabled', true)
                 ->orderBy('at.tglresep', 'desc')
                 ->selectRaw("
                     at.jenis || ' - ' || at.noantri as noantri, 
                     pm.namapasien, 
+                    st.noresep as noorder,
                     pm.nocm, 
                     pt.noregistrasi, 
                     rm.namaruangan,
@@ -1689,6 +1814,42 @@ class ReportController extends ApiController{
                     alm.alamatlengkap
                 ")
                 ->first();
+
+                if(empty($data)){
+                    $data = DB::table('antrianapotik_t as at')
+                    ->join('pasiendaftar_t as pt', 'pt.norec', '=', 'at.noregistrasifk')
+                    ->join('pasien_m as pm', 'pm.id', '=', 'pt.nocmfk')
+                    ->leftJoin('jeniskelamin_m as jk', 'jk.id', '=', 'pm.objectjeniskelaminfk')
+                    ->join('strukorder_t as st', 'st.noorder', '=', 'at.noorder')
+                    ->join('ruangan_m as rm', 'rm.id', '=', 'st.objectruanganfk')
+                    ->join('kelompokpasien_m as km', 'km.id', '=', 'pt.objectkelompokpasienlastfk')
+                    ->leftJoin('alamat_m as alm', 'alm.nocmfk', '=', 'pm.id')
+                    ->where(function ($q) use ($noresep) {
+                            $q->where('at.noorder', $noresep);
+                    })
+                    ->where('pt.statusenabled', true)
+                    ->where('st.statusenabled', true)
+                    ->where('at.statusenabled', true)
+                    ->orderBy('pt.tglregistrasi', 'desc')
+                    ->orderBy('st.tglorder', 'desc')
+                    ->select([
+                        DB::raw("at.jenis || ' - ' || at.noantri as noantri"),
+                        'pm.namapasien',
+                        'st.noorder',
+                        'pm.nocm',
+                        'pt.noregistrasi',
+                        'rm.namaruangan',
+                        'km.kelompokpasien',
+                        'pt.tglregistrasi',
+                        'at.tglresep',
+                        'at.jenis',
+                        'jk.jeniskelamin',
+                        DB::raw("DATE(pm.tgllahir) as tgllahir"),
+                        'alm.alamatlengkap'
+                    ])
+
+                    ->first();
+                }
         }
         $pageWidth = 50;
         
@@ -1707,6 +1868,7 @@ class ReportController extends ApiController{
             'jenis' => $data->jenis,
             'noantrian' => $data->noantri,
             'kelompokpasien' => $data->kelompokpasien,
+            'noorder' => $data->noorder,
         );
         return view('report.apotik.antrian-apotik',
             compact('dataReport', 'pageWidth','profile'));
