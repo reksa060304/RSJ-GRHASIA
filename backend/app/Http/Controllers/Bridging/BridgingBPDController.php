@@ -345,7 +345,7 @@ class BridgingBPDController extends ApiController
                 if ($totalBilling == 0) {
                     return response()->json([
                         'response_code' => '87',
-                        'response_message' => 'bill not found'
+                        'response_message' => 'Zero outstanding balance'
                     ], 400);
                 }
 
