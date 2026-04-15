@@ -5226,6 +5226,144 @@ class GeneralController extends ApiController
         }
         return $this->setStatusCode($result['status'])->respond($result, $transMessage);
     }
+    public function getComboAdministrasiPenunjang(Request $request) {
+        $kdProfile = (int) $this->getDataKdProfile($request);
+        $departemenfk = $request['departemenfk'] ?? null;
+        $dataRuangan = \DB::table('ruangan_m as ru')
+            ->select('ru.id', 'ru.namaruangan', 'ru.objectdepartemenfk')
+            ->where('ru.statusenabled', true)
+            ->where('ru.kdprofile', $kdProfile)
+            ->orderBy('ru.namaruangan');
+
+        if ($departemenfk) {
+            $dataRuangan = $dataRuangan->where('ru.objectdepartemenfk', (int)$departemenfk);
+        }
+        if (isset($request['idRuanganTujuan'])) {
+             $dataRuangan = $dataRuangan->where('ru.id', (int)$request['idRuanganTujuan']);
+        }
+        $dataRuangan = $dataRuangan->get();
+
+        $dataProduk = [];
+        $datalistMapping = [];
+
+        if (isset($request['ruanganpenunjang']) && $request['ruanganpenunjang'] != "" && $request['ruanganpenunjang'] != "undefined") {
+            $dataProduk = \DB::table('mapruangantoproduk_m as mpr')
+                ->join('produk_m as prd', 'prd.id', '=', 'mpr.objectprodukfk')
+                ->select('prd.id', 'prd.namaproduk')
+                ->where('mpr.kdprofile', $kdProfile)
+                ->where('mpr.objectruanganfk', (int)$request['ruanganpenunjang'])
+                ->where('mpr.statusenabled', true)
+                ->where('prd.statusenabled', true)
+                ->orderBy('prd.namaproduk')
+                ->distinct()
+                ->get();
+        }
+
+        if (isset($request['ruanganasal']) && $request['ruanganasal'] != "" && $request['ruanganasal'] != "undefined") {
+            $dbMapping = \DB::table('produk_m as pr')
+                ->join('mapruangantoadministrasi_t as ma', 'ma.objectprodukfk', '=', 'pr.id')
+                ->join('jenispelayanan_m as jp', 'jp.id', '=', 'ma.jenispelayananfk')
+                ->join('ruangan_m as rasal', 'rasal.id', '=', 'ma.objectruanganfk')
+                ->leftJoin('ruangan_m as rtuj', 'rtuj.id', '=', 'ma.objectkamarfk')
+                ->select(
+                    'pr.id as produkfk',
+                    'pr.namaproduk',
+                    'ma.id as maid',
+                    'ma.jenispelayananfk',
+                    'jp.jenispelayanan',
+                    'ma.statuspasien',
+                    'ma.objectruanganfk',
+                    'rasal.namaruangan as namaruangan_asal',
+                    'ma.objectkamarfk',
+                    'rtuj.namaruangan as namaruangan_tujuan',
+                    'rtuj.objectdepartemenfk'
+                )
+                ->where('pr.kdprofile', $kdProfile)
+                ->where('pr.statusenabled', true)
+                ->where('ma.statusenabled', true)
+                ->where('ma.objectruanganfk', (int)$request['ruanganasal'])
+                ->orderBy('pr.namaproduk');
+
+            if (isset($request['ruanganpenunjang']) && $request['ruanganpenunjang'] != "") {
+                $dbMapping = $dbMapping->where('ma.objectkamarfk', (int)$request['ruanganpenunjang']);
+            }
+            $datalistMapping = $dbMapping->get();
+        }
+
+        $result = array(
+            'ruangan'      => $dataRuangan,
+            'produk'       => $dataProduk,
+            'listmapping'  => $datalistMapping,
+            'message'      => 'as@epic',
+        );
+
+        return $this->respond($result);
+    }
+
+    public function saveMappingAdminPenunjang(Request $request) {
+        $kdProfile = (int) $this->getDataKdProfile($request);
+        $data = $request->all();
+        DB::beginTransaction();
+        try {
+            if ($data['status'] == 'HAPUS') {
+                MapRuanganToAdministrasi::where('id', $request['maid'])
+                    ->where('kdprofile', $kdProfile)
+                    ->delete();
+            } else {
+                if ($data['maid'] == '') {
+                    // INSERT baru
+                    $newKS = new MapRuanganToAdministrasi();
+                    $norecKS = MapRuanganToAdministrasi::max('id');
+                    $norecKS = $norecKS + 1;
+                    $newKS->id             = $norecKS;
+                    $newKS->norec          = $norecKS;
+                    $newKS->kdprofile      = $kdProfile;
+                    $newKS->statusenabled  = true;
+                    $newKS->objectprodukfk = $data['pelayanan'];
+                    $newKS->objectruanganfk = $data['ruanganasal'];
+                    $newKS->objectkamarfk   = $data['ruanganpenunjang'];
+                    $newKS->jenispelayananfk = $data['jenispelayanan'];
+                    $newKS->statuspasien   = isset($data['statuspasien']) ? $data['statuspasien'] : null;
+                    $newKS->israwatgabung  = null;
+                    $newKS->save();
+                } else {
+                    // UPDATE existing
+                    MapRuanganToAdministrasi::where('id', $request['maid'])
+                        ->where('kdprofile', $kdProfile)
+                        ->update([
+                            'objectruanganfk'  => $data['ruanganasal'],
+                            'objectkamarfk'    => $data['ruanganpenunjang'],
+                            'objectprodukfk'   => $data['pelayanan'],
+                            'jenispelayananfk' => $data['jenispelayanan'],
+                            'statuspasien'     => isset($data['statuspasien']) ? $data['statuspasien'] : null,
+                        ]);
+                }
+            }
+            $transStatus = 'true';
+        } catch (\Exception $e) {
+            $transStatus = 'false';
+        }
+
+        $transMessage = "Map Administrasi Penunjang";
+        if ($transStatus == 'true') {
+            $transMessage .= " Berhasil";
+            DB::commit();
+            $result = array(
+                "status"  => 201,
+                "message" => $transMessage,
+                "as"      => 'as@epic',
+            );
+        } else {
+            $transMessage .= " Gagal!!";
+            DB::rollBack();
+            $result = array(
+                "status"  => 400,
+                "message" => $transMessage,
+                "as"      => 'as@epic',
+            );
+        }
+        return $this->setStatusCode($result['status'])->respond($result, $transMessage);
+    }
 
     public function getJenisPelayanan(Request $r){
 

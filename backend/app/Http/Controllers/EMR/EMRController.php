@@ -2687,6 +2687,46 @@ class EMRController  extends ApiController
 
             $dataSOnorec = $dataSO->norec;
 
+            // AUTO VERIF KONSULTASI
+            if ($request['norec_so'] == "") {
+                $pd = PasienDaftar::where('norec', $request['norec_pd'])->first();
+                $apd = AntrianPasienDiperiksa::where('noregistrasifk', $request['norec_pd'])->first();
+                
+                $hitungAntrian = AntrianPasienDiperiksa::where('objectruanganfk', $request['objectruangantujuanfk'])
+                                ->where('tglregistrasi', '>=', date('Y-m-d 00:00:00'))
+                                ->where('tglregistrasi', '<=', date('Y-m-d 23:59:59'))
+                                ->count();
+
+                $dataAPD = new AntrianPasienDiperiksa;
+                $dataAPD->norec = $dataAPD->generateNewId();
+                $dataAPD->kdprofile = $kdProfile;
+                $dataAPD->statusenabled = true;
+                $dataAPD->objectasalrujukanfk = $apd ? $apd->objectasalarujukanfk : null;
+                $dataAPD->objectkelasfk = 6; 
+                $dataAPD->noantrian = $hitungAntrian + 1;
+                $dataAPD->noregistrasifk = $request['norec_pd'];
+                $dataAPD->objectpegawaifk = $request['pegawaifk'];
+                $dataAPD->objectruanganfk = $request['objectruangantujuanfk'];
+                $dataAPD->statusantrian = 0;
+                $dataAPD->statuspasien = 1;
+                $dataAPD->statuskunjungan = 'LAMA';
+                $dataAPD->statuspenyakit = 'BARU';
+                $dataAPD->objectruanganasalfk = $request['objectruanganasalfk'];
+                $dataAPD->tglregistrasi = $pd ? $pd->tglregistrasi : date('Y-m-d H:i:s');
+                $dataAPD->tglkeluar = date('Y-m-d H:i:s');
+                $dataAPD->tglmasuk = date('Y-m-d H:i:s');
+                $dataAPD->objectstrukorderfk = $dataSOnorec;
+                $dataAPD->save();
+            } else {
+                 $dataAPD = AntrianPasienDiperiksa::where('objectstrukorderfk', $dataSOnorec)->first();
+                 if ($dataAPD) {
+                     $dataAPD->objectpegawaifk = $request['pegawaifk'];
+                     $dataAPD->objectruanganfk = $request['objectruangantujuanfk'];
+                     $dataAPD->objectruanganasalfk = $request['objectruanganasalfk'];
+                     $dataAPD->save();
+                 }
+            }
+
             //            foreach ($request['details'] as $item) {
             //                $dataOP = new OrderPelayanan();
             //                $dataOP->norec = $dataOP->generateNewId();
@@ -6945,15 +6985,15 @@ class EMRController  extends ApiController
                 $r_PP = $data['orderfarmasi'];
                 $prod = [];
                 
-                $hasRacikan = false;
-                foreach ($r_PP as $r_PPL_check) {
-                    if ($r_PPL_check['jeniskemasan'] == 'Racikan') {
-                        $hasRacikan = true;
-                        break;
-                    }
-                }
-                // kalo ada racikan di satu order masuk ke racikan
-                $racikanORnonracikan = $hasRacikan ? 'R' : 'N';
+                // $hasRacikan = false;
+                // foreach ($r_PP as $r_PPL_check) {
+                //     if ($r_PPL_check['jeniskemasan'] == 'Racikan') {
+                //         $hasRacikan = true;
+                //         break;
+                //     }
+                // }
+                // // kalo ada racikan di satu order masuk ke racikan
+                // $racikanORnonracikan = $hasRacikan ? 'R' : 'N';
                 
                 // $r_PP = $request['0']['orderfarmasi'];
                 foreach ($r_PP as $r_PPL) {
@@ -7030,39 +7070,39 @@ class EMRController  extends ApiController
             }
 
             
-                if ($noOrder) {
-                        $dataAntrian = AntrianApotik::where('noorder', $noOrder)->where('kdprofile', $idProfile)->first();
-                        if (!empty($dataAntrian)) {
-                            AntrianApotik::where('noorder', $noOrder)
-                            ->where('kdprofile', $idProfile)
-                            ->update([
-                                "noorder" => $noOrder,
-                                "tglresep" => date('Y-m-d H:i:s'),
-                                // "status" => '6'
-                            ]);
-                        }else{
-                            $countAntrian = AntrianApotik::where('jenis', $racikanORnonracikan)
-                                ->where('kdprofile', $idProfile)
-                                ->whereBetween('tglresep', [date('Y-m-d 00:00'), date('Y-m-d 23:59')])
-                                ->max('noantri');
+                // if ($noOrder) {
+                //         $dataAntrian = AntrianApotik::where('noorder', $noOrder)->where('kdprofile', $idProfile)->first();
+                //         if (!empty($dataAntrian)) {
+                //             AntrianApotik::where('noorder', $noOrder)
+                //             ->where('kdprofile', $idProfile)
+                //             ->update([
+                //                 "noorder" => $noOrder,
+                //                 "tglresep" => date('Y-m-d H:i:s'),
+                //                 // "status" => '6'
+                //             ]);
+                //         }else{
+                //             $countAntrian = AntrianApotik::where('jenis', $racikanORnonracikan)
+                //                 ->where('kdprofile', $idProfile)
+                //                 ->whereBetween('tglresep', [date('Y-m-d 00:00'), date('Y-m-d 23:59')])
+                //                 ->max('noantri');
                             
-                            $noAntriApotik = (str_pad((int)$countAntrian + 1, 4, "0", STR_PAD_LEFT));                    
-                            $newAA = new AntrianApotik();
-                            $norecAA = $newAA->generateNewId();
-                            $newAA->norec = $norecAA;
-                            $newAA->kdprofile = $idProfile;
-                            $newAA->statusenabled = true;
-                            $newAA->noantri = $noAntriApotik;
-                            $newAA->keterangan = $pasien->namapasien;
-                            $newAA->noregistrasifk = $dataDetail->norec;
-                            $newAA->jenis = $racikanORnonracikan;
-                            $newAA->tglresep = date('Y-m-d H:i:s');
-                            $newAA->noorder = $noOrder;
-                            // $newAA->status = '6';
+                //             $noAntriApotik = (str_pad((int)$countAntrian + 1, 4, "0", STR_PAD_LEFT));                    
+                //             $newAA = new AntrianApotik();
+                //             $norecAA = $newAA->generateNewId();
+                //             $newAA->norec = $norecAA;
+                //             $newAA->kdprofile = $idProfile;
+                //             $newAA->statusenabled = true;
+                //             $newAA->noantri = $noAntriApotik;
+                //             $newAA->keterangan = $pasien->namapasien;
+                //             $newAA->noregistrasifk = $dataDetail->norec;
+                //             $newAA->jenis = $racikanORnonracikan;
+                //             $newAA->tglresep = date('Y-m-d H:i:s');
+                //             $newAA->noorder = $noOrder;
+                //             // $newAA->status = '6';
                             
-                            $newAA->save();                           
-                        }    
-                }
+                //             $newAA->save();                           
+                //         }    
+                // }
 
             $statusBot = false;
             $telegram_id = '';

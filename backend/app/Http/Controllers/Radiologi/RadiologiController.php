@@ -454,7 +454,11 @@ class RadiologiController extends ApiController
                     $dataSO->objectkelompoktransaksifk = 9;
                     $dataSO->tglrencana = $request['tglrencana'];
                 }
-                $dataSO->tglorder = date('Y-m-d H:i:s');
+                if (isset($request['tglorder'])) {
+                    $dataSO->tglorder = $request['tglorder'];
+                } else {
+                    $dataSO->tglorder = date('Y-m-d H:i:s');
+                }
                 $dataSO->totalbeamaterai = 0;
                 $dataSO->totalbiayakirim = 0;
                 $dataSO->totalbiayatambahan = 0;
@@ -503,6 +507,8 @@ class RadiologiController extends ApiController
 
                     if (isset($item['tglrencana'])){
                         $dataOP->tglpelayanan = $item['tglrencana'];
+                    }elseif (isset($request['tglorder'])){
+                        $dataOP->tglpelayanan = $request['tglorder'];
                     }else{
                         $dataOP->tglpelayanan = date('Y-m-d H:i:s');
                     }
@@ -516,6 +522,14 @@ class RadiologiController extends ApiController
                 }
 
             }else {
+                $dataSO = StrukOrder::where('norec', $request['norec_so'])->first();
+                if ($dataSO) {
+                    if (isset($request['tglorder'])) {
+                        $dataSO->tglorder = $request['tglorder'];
+                    }
+                    $dataSO->save();
+                }
+
 
                 foreach ($request['details'] as $item) {
                     $dataOP = new OrderPelayanan;
@@ -539,6 +553,8 @@ class RadiologiController extends ApiController
 
                     if (isset($item['tglrencana'])){
                         $dataOP->tglpelayanan = $item['tglrencana'];
+                    }elseif (isset($request['tglorder'])){
+                        $dataOP->tglpelayanan = $request['tglorder'];
                     }else{
                         $dataOP->tglpelayanan = date('Y-m-d H:i:s');
                     }
@@ -1361,8 +1377,9 @@ class RadiologiController extends ApiController
                         'ru.namaruangan', 'ru2.namaruangan as ruangantujuan',     'so.keteranganlainnya','apd.norec as norec_apd',
                         // 'apd.norec as norec_apd',
                         'ru.id as ruid','so.cito','pd.isclosing as closing',
-                        (DB::raw("case when so.statusorder is null then 'MASUK' else
-                                    'SELESAI' end as status")))
+                        (DB::raw("case 
+                        when so.statusorder is null then 'MASUK'
+                        else 'SELESAI' end as status")))
                     ->where('so.kdprofile', $idProfile)
                     ->where('ru2.objectdepartemenfk', $this->settingDataFixed('KdDepartemenInstalasiRadiologi', $idProfile))
                     ->where('so.statusenabled', true)
@@ -1410,7 +1427,7 @@ class RadiologiController extends ApiController
                         // 'apd.norec as norec_apd',
                         'ru.namaruangan', 'ru2.namaruangan as ruangantujuan',
                              'so.keteranganlainnya','so.cito','pd.isclosing as closing',
-                        (DB::raw("case when pp.order_no is null then 'MASUK' else
+                        (DB::raw("case when so.statusorder is null and pp.order_no is null then 'MASUK' else
                                     'SELESAI' end as status")))
                     ->where('so.kdprofile', $idProfile)
                     ->where('ru2.objectdepartemenfk', $this->settingDataFixed('KdDepartemenInstalasiRadiologi', $idProfile))
@@ -1418,16 +1435,18 @@ class RadiologiController extends ApiController
                     ->whereNotIn('so.objectruangantujuanfk',[$this->settingDataFixed('kdRuanganElektromedik', $idProfile)]);
                 if (isset($request['isNotVerif']) && $request['isNotVerif'] != "" && $request['isNotVerif'] != "undefined") {
                     if ($request['isNotVerif'] == true) {
-                        $data = $data->whereNull('pp.order_no');
+                        $data = $data->where(function($query) {
+                            $query->whereNull('so.statusorder')->whereNull('pp.order_no');
+                        });
                         $data = $data->whereNull('so.keterangantolak');
-
                     }
                 }
                 if (isset($request['isVerif']) && $request['isVerif'] != "" && $request['isVerif'] != "undefined") {
                     if ($request['isVerif'] == true) {
-                        $data = $data->whereNotNull('pp.order_no');
+                        $data = $data->where(function($query) {
+                            $query->whereNotNull('so.statusorder')->orWhereNotNull('pp.order_no');
+                        });
                         $data = $data->whereNull('so.keterangantolak');
-
                     }
                 }
             }
@@ -1858,6 +1877,8 @@ class RadiologiController extends ApiController
     public function savePelayananPasien(Request $request) {
         $kdProfile = $this->getDataKdProfile($request);
         $idProfile = (int) $kdProfile;
+        $PelPasien = null;
+        $PelPasienDetail = null;
         DB::beginTransaction();
         try{
 
@@ -1891,15 +1912,26 @@ class RadiologiController extends ApiController
                     $dataAPD->statuspasien = 1;
                     $dataAPD->objectstrukorderfk = $request['norec_so'];
                     $dataAPD->tglregistrasi = $pd->tglregistrasi;// date('Y-m-d H:i:s');
-                    $dataAPD->tglmasuk = date('Y-m-d H:i:s');
-                    $dataAPD->tglkeluar = date('Y-m-d H:i:s');
+                    if (isset($request['tglpelayanan'])) {
+                       $dataAPD->tglmasuk = $request['tglpelayanan'];
+                       $dataAPD->tglkeluar = $request['tglpelayanan'];
+                    } else {
+                        $dataAPD->tglmasuk = date('Y-m-d H:i:s');
+                        $dataAPD->tglkeluar = date('Y-m-d H:i:s');
+                    }
                     $dataAPD->save();
 
                     $dataAPDnorec = $dataAPD->norec;
                     $dataAPDtglPel = $dataAPD->tglregistrasi;
                 }else{
                     $dataAPDnorec  = $apd->norec;
-                    $dataAPDtglPel = $apd->tglregistrasi;
+                    $dataAPDtglPel = $pd->tglregistrasi;
+                    if (isset($request['tglpelayanan'])) {
+                       $apd->tglmasuk = $request['tglpelayanan'];
+                       $apd->tglkeluar = $request['tglpelayanan'];
+                    }
+                    $apd->tglregistrasi = $pd->tglregistrasi;
+                    $apd->save();
                 }
 //            else{
 //                $dataAPD =  PelayananPasien::where('norec',$request['norec_pp'])->first();
@@ -1925,7 +1957,7 @@ class RadiologiController extends ApiController
                 // 'norecpelayanan',$value['norecpelayanan']
 
                 'noregistrasifk' => $dataAPDnorec,
-                'tglpelayanan' => date('Y-m-d H:i:s'),
+                'tglpelayanan' => isset($request['tglpelayanan']) ? $request['tglpelayanan'] : date('Y-m-d H:i:s'),
                 'produkfk' => $item['produkid'],
                 // detailpemeriksaan
                 ])->count();
@@ -1949,7 +1981,7 @@ class RadiologiController extends ApiController
                 $PelPasien->produkfk =  $item['produkid'];
                 $PelPasien->stock =  1;
                 $PelPasien->strukorderfk =  $request['norec_so'];
-                $PelPasien->tglpelayanan = date('Y-m-d H:i:s');
+                $PelPasien->tglpelayanan = isset($request['tglpelayanan']) ? $request['tglpelayanan'] : date('Y-m-d H:i:s');
                 $PelPasien->harganetto =  $item['hargasatuan'];
 
                 $PelPasien->save();

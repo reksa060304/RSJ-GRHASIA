@@ -13676,6 +13676,7 @@ GROUP BY y.KET
                                 and map.jenispelayananfk=:jenispelayanan
                                 and map.kdprofile=:kdprofile
                                 and map.statuspasien=:statuspasien
+                                and map.objectkamarfk is null
                                 and hett.statusenabled=true
                                 and hett.objectpenjaminfk is null"),
                     array(
@@ -13697,6 +13698,7 @@ GROUP BY y.KET
                                         and map.jenispelayananfk=:jenispelayanan
                                         and map.kdprofile=:kdprofile
                                         and map.statuspasien=:statuspasien
+                                        and map.objectkamarfk is null
                                         and hett.statusenabled=true
                                         and hett.objectpenjaminfk is null"),
                     array(
@@ -14619,6 +14621,7 @@ GROUP BY y.KET
                                 and map.jenispelayananfk=:jenispelayanan
                                 and map.kdprofile=:kdprofile
                                 and map.statuspasien=:statuspasien
+                                and map.objectkamarfk is null
                                 and hett.statusenabled=true
                                 and hett.objectpenjaminfk is null"),
                     array(
@@ -14640,6 +14643,7 @@ GROUP BY y.KET
                                         and map.jenispelayananfk=:jenispelayanan
                                         and map.kdprofile=:kdprofile
                                         and map.statuspasien=:statuspasien
+                                        and map.objectkamarfk is null
                                         and hett.statusenabled=true
                                         and hett.objectpenjaminfk is null"),
                     array(

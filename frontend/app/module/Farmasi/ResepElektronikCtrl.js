@@ -1211,6 +1211,17 @@ define(['initialize', 'Configuration'], function (initialize, config) {
                         jenis: $scope.item.jenis,
                         status: 'panggil'
                     });
+                    var objSave =
+                    {
+                        noorder: $scope.item.noorder,
+                        statusorder: 10
+                    }
+                    medifirstService.post('farmasi/save-status-panggil-resep', objSave).then(function (e) {
+                        medifirstService.postLogging('Memanggil Order Resep Elektronik', 'No Order Struk Order',
+                            $scope.item.noorder, 'Memanggil Order Resep Elektronik No Order: ' + $scope.item.noorder + '/ Noregistrasi : ' + $scope.item.noregistrasi).then(function (res) {
+                                $scope.refresh();
+                            })
+                    });
                     // noresep
                     $scope.item.tglambil = new Date()
                     $scope.item.namapengambil = $scope.item.namapasien
@@ -1613,7 +1624,11 @@ define(['initialize', 'Configuration'], function (initialize, config) {
                     toastr.error('Pilih data dulu')
                     return
                 }
-                window.open(config.baseApiBackend + "report/cetak-antrian-farm?noreg=" + $scope.item.noregistrasi);
+                if ($scope.item.noantri == '-' ) {
+                    window.open(config.baseApiBackend + "report/cetak-antrian-farm?noorder=" + $scope.item.noorder + "&kdprofile=21", 'BuktiDaftar', 'width=800,height=800,scrollbars=yes,resizable=yes');
+                } else {
+                    window.open(config.baseApiBackend + "report/cetak-antrian-farm?noresep=" + $scope.item.noorder + "&kdprofile=21", 'BuktiDaftar', 'width=800,height=800,scrollbars=yes,resizable=yes');
+                }
             }
             $scope.formatRupiah = function (value, currency) {
                 return currency + " " + parseFloat(value).toFixed(2).replace(/(\d)(?=(\d{3})+\.)/g, "$1,");
@@ -1892,7 +1907,7 @@ define(['initialize', 'Configuration'], function (initialize, config) {
                     return
                 }
                 window.open(config.baseApiBackend + "report/cetak-resep-dokter-rev?noorder=" + $scope.item.noorder + "&norec=" + $scope.item.norecresep +
-                    "&nocm=" + $scope.item.nocm + '&kodeprofile=' + profile + '&qtybagi=' + stt + '&cetakkin=' + cetakkin);
+                    "&nocm=" + $scope.item.nocm + '&kodeprofile=' + profile + '&qtybagi=' + stt + '&cetakkin=' + cetakkin, 'BuktiDaftar', 'width=800,height=800,scrollbars=yes,resizable=yes');
                 // // window.open(config.baseApiBackend + "report/cetak-hasil-lab-histopatologi?norec=" + $scope.dataSelected.norec_pp + '&kdprofile=' + profile
                 //     + '&user=' + user + '&jenis=his', '_blank');
                 $scope.popUpResepDokter.close()

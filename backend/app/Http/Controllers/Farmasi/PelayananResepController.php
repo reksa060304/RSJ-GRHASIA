@@ -2176,7 +2176,14 @@ class PelayananResepController extends ApiController
             $newSR->pasienfk = $r_SR['pasienfk'];
             $newSR->penulisresepfk = $r_SR['penulisresepfk'];
             $newSR->ruanganfk = $r_SR['ruanganfk'];
-            $newSR->status = 0;//$r_SR['status'];;
+            // Jika input manual (noorder kosong),
+            // status langsung = Proses Penyiapan Obat
+            $noorderVal = $r_SR['noorder'] ?? '';
+            if ($noorderVal == '') {
+                $newSR->status = 5; // Proses Penyiapan Obat 
+            } else {
+                $newSR->status = 0; // Menunggu Verifikasi 
+            }
             $newSR->tglresep =  $r_SR['tglresep'];//->format('Y-m-d H:i:s');
             if(isset($r_SR['cito'])){
                 $newSR->cito =  $r_SR['cito'];
