@@ -10,9 +10,9 @@ use App\Traits\Valet;
 use Webpatser\Uuid\Uuid;
 use File;
 use App\Transaksi\PasienDaftar;
-use Webklex\PDFMerger\Facades\PDFMergerFacade as PDFMerger;
-// use App\Traits\Valet as PDFMerger;
-use setasign\Fpdi\Tcpdf\Fpdi;
+// use Webklex\PDFMerger\Facades\PDFMergerFacade as PDFMerger;
+use App\Traits\Valet as PDFMerger;
+use setasign\Fpdi\Fpdi;
 use Symfony\Component\Filesystem\Filesystem;
 use Xthiago\PDFVersionConverter\Converter\GhostscriptConverterCommand;
 use Xthiago\PDFVersionConverter\Converter\GhostscriptConverter;
@@ -93,12 +93,8 @@ class MonitoringDokumenKlaimController extends ApiController
 
         $fileName = 'bundle_'.$request['noregistrasi'].'.pdf';
         $pathbundle = 'dokumen_klaim/'.$request['noregistrasi'] . "/" . $fileName;
-        $directory = public_path('dokumen_klaim/' . $request['noregistrasi']);
-        if (!File::isDirectory($directory)) {
-            File::makeDirectory($directory, 0777, true, true);
-        }
-        if (File::exists(public_path($pathbundle))){
-            File::delete(public_path($pathbundle));
+        if (File::exists($pathbundle)){
+            File::delete($pathbundle);
         }
 
         if(count($dataDokumen) > 0){
@@ -212,31 +208,15 @@ class MonitoringDokumenKlaimController extends ApiController
                     }
                 }
         
-                if (File::exists($namafile)) {
-                    array_push($file, $namafile);
-                }
+                array_push($file, $namafile);
             }
     
-            if (count($file) > 0) {
-                $pdf = new Fpdi();
-                foreach ($file as $data) {
-                    $pageCount = $pdf->setSourceFile($data);
-                    for ($n = 1; $n <= $pageCount; $n++) {
-                        $templateId = $pdf->importPage($n);
-                        $size = $pdf->getTemplateSize($templateId);
-                        $pdf->addPage($size['width'] > $size['height'] ? 'L' : 'P', array($size['width'], $size['height']));
-                        $pdf->useTemplate($templateId, 0, 0, $size['width'], $size['height']);
-                    }
-                }
-                $pdf->Output(public_path($pathbundle), 'F');
-            } else {
-                echo '
-                <script language="javascript">
-                    window.alert("Tidak ada file fisik yang ditemukan.");
-                    window.close()
-                </script>';
-                die;
+            $pdf = PDFMerger::init();
+            foreach ($file as $data) {
+                $pdf->addPDF($data, 'all');
             }
+            $pdf->merge();
+            $pdf->save(public_path($pathbundle));
     
             $file = File::get($pathbundle);
             $type = File::mimeType($pathbundle);
@@ -285,12 +265,8 @@ class MonitoringDokumenKlaimController extends ApiController
 
         $fileName = 'bundle_'.$request['noregistrasi'].'.pdf';
         $pathbundle = 'dokumen_klaim_farmasi/'.$request['noregistrasi'] . "/" . $fileName;
-        $directory = public_path('dokumen_klaim_farmasi/' . $request['noregistrasi']);
-        if (!File::isDirectory($directory)) {
-            File::makeDirectory($directory, 0777, true, true);
-        }
-        if (File::exists(public_path($pathbundle))){
-            File::delete(public_path($pathbundle));
+        if (File::exists($pathbundle)){
+            File::delete($pathbundle);
         }
 
         if(count($dataDokumen) > 0){
@@ -336,35 +312,39 @@ class MonitoringDokumenKlaimController extends ApiController
                     }
                 }
         
-                if (File::exists($namafile)) {
-                    array_push($file, $namafile);
-                }
+                array_push($file, $namafile);
             }
     
-            if (count($file) > 0) {
-                $mergedPdfPath = public_path($pathbundle);
-                $pdf = new Fpdi();
-                foreach ($file as $data) {
-                    $pageCount = $pdf->setSourceFile($data);
-                    for ($pageNo = 1; $pageNo <= $pageCount; $pageNo++) {
-                        $templateId = $pdf->importPage($pageNo);
-                        $size = $pdf->getTemplateSize($templateId);
-                        
-                        $pdf->addPage($size['width'] > $size['height'] ? 'L' : 'P', array($size['width'], $size['height']));
-                        $pdf->useTemplate($templateId, 0, 0, $size['width'], $size['height']);
-                    }
-                }
-                
-                $pdf->setTitle('Bundle_' . $request['noregistrasi']);
-                $pdf->Output($mergedPdfPath, 'F');
-            } else {
-                echo '
-                <script language="javascript">
-                    window.alert("Tidak ada file fisik yang ditemukan.");
-                    window.close()
-                </script>';
-                die;
+            $mergedPdfPath = public_path($pathbundle);
+            $pdfMerger = PDFMerger::init();
+            foreach ($file as $data) {
+                $pdfMerger->addPDF($data, 'all');
             }
+            
+            $pdfMerger->merge();
+            $pdfMerger->save($mergedPdfPath);
+
+            $pdf = new Fpdi();
+
+            // Memuat file PDF gabungan yang sudah disimpan
+            $pageCount = $pdf->setSourceFile($mergedPdfPath);
+            
+            for ($pageNo = 1; $pageNo <= $pageCount; $pageNo++) {
+                // Mengambil ukuran halaman
+                $size = $pdf->getTemplateSize($pdf->importPage($pageNo));
+                
+                // Menambahkan halaman baru dengan ukuran yang sama dengan halaman asli
+                $pdf->addPage($size['orientation'], [$size['width'], $size['height']]);
+                
+                // Menggunakan template halaman yang diimpor
+                $template = $pdf->importPage($pageNo);
+                $pdf->useTemplate($template, 0, 0, $size['width'], $size['height']);
+            }
+            
+            $pdf->setTitle('Bundle_' . $request['noregistrasi']);
+            
+            $pdf->Output('F', $mergedPdfPath);
+    
             $file = File::get($pathbundle);
             $type = File::mimeType($pathbundle);
 
