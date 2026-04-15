@@ -11051,21 +11051,25 @@ class BendaharaPenerimaanController extends ApiController {
         {$pivotSql}
         from(
             select
-                sts.tglpenerimaan::date as tanggal,
+                sts.tanggal,
                 stsd2.objectakunpendapatanfk as cap_id,
                 sum(stsd2.totalsetoran) as totalfix
-            from surattandasetoran_t sts
+            from (
+                select nosts, tglpenerimaan::date as tanggal
+                from surattandasetoran_t sts
+                where sts.statusenabled = true
+                and sts.kdprofile = $idProfile
+                and extract(year from sts.tglpenerimaan::date) = ".$tahunx."
+                and extract(month from sts.tglpenerimaan::date) = ".$bulanx."
+                $bayar
+                $nosts
+                group by nosts, tglpenerimaan::date
+            ) as sts
             inner join surattandasetorandetailv2_t stsd2 on stsd2.objectstsfk = sts.nosts
             inner join char_akun_pendapatan_m cap on cap.id = stsd2.objectakunpendapatanfk
-            where sts.statusenabled = true
-            and sts.kdprofile = $idProfile
-            and stsd2.kdprofile = $idProfile
+            where stsd2.kdprofile = $idProfile
             and stsd2.statusenabled = true
-            and extract(year from sts.tglpenerimaan::date) = ".$tahunx."
-            and extract(month from sts.tglpenerimaan::date) = ".$bulanx."
-            $bayar
-            $nosts
-            group by sts.tglpenerimaan::date, stsd2.objectakunpendapatanfk
+            group by sts.tanggal, stsd2.objectakunpendapatanfk
         ) as x group by x.tanggal, x.cap_id
         ) as y group by extract(day from tanggal) order by tanggal"));
 
@@ -11144,21 +11148,25 @@ class BendaharaPenerimaanController extends ApiController {
         from(
             select
                 sts.nosts,
-                sts.tglpenerimaan::date as tglpenerimaan,
+                sts.tglpenerimaan,
                 stsd2.objectakunpendapatanfk as cap_id,
                 sum(stsd2.totalsetoran) as totalfix
-            from surattandasetoran_t sts
+            from (
+                select nosts, tglpenerimaan::date as tglpenerimaan
+                from surattandasetoran_t sts
+                where sts.statusenabled = true
+                and sts.kdprofile = $idProfile
+                and extract(year from sts.tglpenerimaan::date) = ".$tahunx."
+                and extract(month from sts.tglpenerimaan::date) = ".$bulanx."
+                and extract(day from sts.tglpenerimaan::date) = ".$tglx."
+                $bayar
+                group by nosts, tglpenerimaan::date
+            ) as sts
             inner join surattandasetorandetailv2_t stsd2 on stsd2.objectstsfk = sts.nosts
             inner join char_akun_pendapatan_m cap on cap.id = stsd2.objectakunpendapatanfk
-            where sts.statusenabled = true
-            and sts.kdprofile = $idProfile
-            and stsd2.kdprofile = $idProfile
+            where stsd2.kdprofile = $idProfile
             and stsd2.statusenabled = true
-            and extract(year from sts.tglpenerimaan::date) = ".$tahunx."
-            and extract(month from sts.tglpenerimaan::date) = ".$bulanx."
-            and extract(day from sts.tglpenerimaan::date) = ".$tglx."
-            $bayar
-            group by sts.nosts, sts.tglpenerimaan::date, stsd2.objectakunpendapatanfk
+            group by sts.nosts, sts.tglpenerimaan, stsd2.objectakunpendapatanfk
         ) as x group by x.nosts, x.tglpenerimaan, x.cap_id
         ) as y group by nosts, tglpenerimaan order by tglpenerimaan, nosts"));
 
