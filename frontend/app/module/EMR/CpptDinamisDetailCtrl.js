@@ -1,12 +1,13 @@
 define(['initialize', 'Configuration'], function (initialize, config) {
     'use strict';
     var baseTransaksi = config.baseUrlData;
-    initialize.controller('CpptDinamisDetailCtrl', ['$rootScope', '$scope', '$state', 'CacheHelper', 'MedifirstService','$mdDialog',
-        function ($rootScope, $scope, $state, cacheHelper, medifirstService, $mdDialog) {
+    initialize.controller('CpptDinamisDetailCtrl', ['$rootScope', '$scope', '$state', 'CacheHelper', 'MedifirstService','$mdDialog', '$q', '$sce', '$timeout',
+        function ($rootScope, $scope, $state, cacheHelper, medifirstService, $mdDialog, $q, $sce, $timeout) {
 
             $scope.item = {};
             $scope.cc = {};
             $scope.show = {};
+            $scope.isIframeLoading = false;
             var namaEMR = ''
             var nomorEMR = '-'
             $scope.cc.emrfk = $state.params.namaEMR
@@ -25,7 +26,58 @@ define(['initialize', 'Configuration'], function (initialize, config) {
             $scope.allDisabled = false
             var pegawaiInputDetail  =''
             // nomorEMR = $state.params.nomorEMR   
+            $scope.item.obj = [];
+            $scope.item.obj2 = [];
             $scope.show.obj = [];
+            $scope.iframeLoaded = function (el) {
+                var iframe = el || document.getElementById('iframeCetak');
+                if (!iframe) return;
+                var isAboutBlank = false;
+                try {
+                    if (iframe.src === 'about:blank' || (iframe.contentWindow && iframe.contentWindow.location.href.indexOf('about:blank') > -1)) {
+                        isAboutBlank = true;
+                    }
+                } catch (secError) {
+                    isAboutBlank = false;
+                }
+                if (isAboutBlank) return;
+                $timeout(function () {
+                    $scope.isIframeLoading = false;
+                });
+                // blok klik kanan
+                try {
+                    var iframeDoc = iframe.contentDocument || iframe.contentWindow.document;
+                    var blockMenu = function (e) { e.preventDefault(); return false; };
+                    iframeDoc.addEventListener('contextmenu', blockMenu);
+                    if (iframeDoc.body) iframeDoc.body.addEventListener('contextmenu', blockMenu);
+                    iframeDoc.addEventListener('keydown', function(e) {
+                        if (e.ctrlKey && (e.keyCode === 83 || e.keyCode === 80 || e.keyCode === 74 || e.keyCode === 85)) {
+                            e.preventDefault();
+                            return false;
+                        }
+                    });
+                } catch (e) {
+                    
+                }
+            }
+
+            var blockKeys = function (e) {
+                // Block Ctrl+S, Ctrl+P, Ctrl+J, Ctrl+U
+                if (e.ctrlKey && (e.keyCode === 83 || e.keyCode === 80 || e.keyCode === 74 || e.keyCode === 85)) {
+                    e.preventDefault();
+                    return false;
+                }
+            };
+
+            $scope.onOpenPopupCetak = function () {
+                window.addEventListener('keydown', blockKeys);
+            }
+
+            $scope.onClosePopupCetak = function () {
+                $scope.isIframeLoading = false;
+                $scope.cetakanUrl = $sce.trustAsResourceUrl("about:blank");
+                window.removeEventListener('keydown', blockKeys);
+            }
             $scope.showbtnadd = [];
             $scope.showbtnremove = [];
             $scope.show.obj[22034963] = true
@@ -159,8 +211,25 @@ define(['initialize', 'Configuration'], function (initialize, config) {
                         $scope.cc.norec_emr = nomorEMR
                     }
                 }
-                loadRiwayat($scope.cc.nocm)
+                loadRiwayat($scope.cc.nocm);
+                //load settingan url
+                medifirstService.get("sysadmin/settingdatafixed/get/MappingCetakEmr").then(function (res) {
+                    if (res.data && res.data.value) {
+                        $scope.dbReportMappingStr = res.data.value;
+                    }
+                });
             }
+
+            $rootScope.$on('$stateChangeStart', function (event, toState, toParams, fromState, fromParams) {
+                console.log('State change to: ' + toState.name);
+                if (toState.name.indexOf('EMR') > -1 || toParams.namaEMR) {
+                    toastr.info('Memuat form...', 'Informasi');
+                    $scope.isRouteLoading = true;
+                    if ($scope.item) {
+                        $scope.item.obj = [];
+                    }
+                }
+            });
 
             function loadRiwayat(params) {
                 $scope.isRouteLoading = true;
@@ -208,6 +277,21 @@ define(['initialize', 'Configuration'], function (initialize, config) {
                
                    
             }
+
+            $scope.cetakdetailEMR = function (e) {
+                if (!e) return;
+                var dataToPrint = {
+                    emrfk: e.emrid ? e.emrid : e.emrfk,
+                    norec_emr: e.norec ? e.norec : e.norec_emr,
+                    caption: e.caption ? e.caption : e.reportdisplay,
+                    nocm: e.nocm ? e.nocm : $scope.cc.nocm,
+                    norec_apd: e.norec_apd ? e.norec_apd : $scope.cc.norec,
+                    norec_pd: e.norec_pd ? e.norec_pd : $scope.cc.norec_pd,
+                    noregistrasi: e.noregistrasi ? e.noregistrasi : $scope.cc.noregistrasi
+                };
+                $scope.detailEMR(dataToPrint);
+            }
+            
             $scope.columnGridRiwayatCPPT = {
                 selectable: 'row',
                 pageable: true,
@@ -1243,6 +1327,190 @@ define(['initialize', 'Configuration'], function (initialize, config) {
                     // })
                 })
             }
+
+            $scope.riwayatPengkajian = function () {
+                $scope.loadRiwayatEMR();
+            }
+
+            $scope.dataSourceRiwayatEMR = new kendo.data.DataSource({
+                data: [],
+                pageSize: 10,
+                serverPaging: false
+            });
+
+            $scope.loadRiwayatEMR = function () {
+                var nocm = $scope.cc.nocm || '';
+                var url = 'emr/get-emr-transaksi-detail-form?nocm=' + encodeURIComponent(nocm) + '&jenisEmr=asesmen';
+
+                medifirstService.get(url, true).then(function (e) {
+                    var res = e.data ? e.data : e;                    
+                    if (res.mappingCetak) {
+                        $scope.dbReportMappingStr = res.mappingCetak;
+                    }
+                    
+                    var flattenedData = [];
+                    
+                    var rawData = [];
+                    if (res && Array.isArray(res.data)) {
+                        rawData = res.data;
+                    }
+                    // data mentah
+                    rawData.forEach(function (parent) {
+                        if (parent.details && Array.isArray(parent.details)) {
+                            parent.details.forEach(function (detail) {
+                                flattenedData.push({
+                                    tglregistrasi: parent.tglregistrasi,
+                                    noregistrasi: parent.noregistrasi,
+                                    caption: detail.namaform,
+                                    norec_emr: parent.norec,
+                                    emrfk: detail.emrfk,
+                                    norec_apd: parent.norec_apd,
+                                    urlform: detail.reportdisplay,
+                                    nocm: parent.nocm,
+                                    norec_pd: parent.norec_pd
+                                });
+                            });
+                        }
+                    });
+
+                    // Tambahkan nomor urut
+                    for (var i = 0; i < flattenedData.length; i++) {
+                        flattenedData[i].no = i + 1;
+                    }
+
+                    $scope.dataSourceRiwayatEMR.data(flattenedData);
+                    $scope.popupRiwayatEMR.center().open();
+                }, function () {
+                    toastr.error('Gagal memuat riwayat EMR');
+                });
+            }
+
+            $scope.columnRiwayatEMR = [
+                { 
+                    "title": "No", 
+                    "width": "50px",
+                    "template": "<span class='style-center'>#: (data.no) ? data.no : '' #</span>"
+                },
+                { "field": "tglregistrasi", "title": "Tgl Registrasi", "width": "130px",
+                  "template": "#= kendo.toString(new Date(tglregistrasi), 'dd-MM-yyyy HH:mm') #" },
+                { "field": "noregistrasi", "title": "No Registrasi", "width": "120px" },
+                { "field": "caption", "title": "Nama Formulir", "width": "250px" }
+                //{ "field": "verifikator", "title": "Verifikator", "width": "150px" }
+            ];
+
+            $scope.detailEMR = function (data) {
+                if (!data) {
+                    toastr.error('Pilih data terlebih dahulu');
+                    return;
+                }
+                var reportMapping = {};
+                // gabungkan mapping emr dari setting data fixed
+                if ($scope.dbReportMappingStr) {
+                    try {
+                        // Format JSON: {"443":{"url":"abc","isBackend":true}}
+                        var fromDb = JSON.parse($scope.dbReportMappingStr);
+                        for (var key in fromDb) { reportMapping[key] = fromDb[key]; }
+                    } catch (err) {
+                        // format string: ID:URL:isBackend,ID:URL... (isBackend 1=true, 0=false)
+                        var pairs = $scope.dbReportMappingStr.split(',');
+                        pairs.forEach(function(pair) {
+                            var parts = pair.split(':');
+                            if (parts.length >= 2) {
+                                reportMapping[parts[0].trim()] = {
+                                    url: parts[1].trim(),
+                                    isBackend: parts[2] ? (parts[2].trim() == '1' || parts[2].trim() == 'true') : true
+                                };
+                            }
+                        });
+                    }
+                }
+
+                var local = JSON.parse(localStorage.getItem('profile'));
+                var loginPegawai = medifirstService.getPegawaiLogin();
+                var nama = loginPegawai ? loginPegawai.namaLengkap : 'Admin';
+                var kdProfile = (local && local.id) ? local.id : 30;
+                
+                var url = "";
+                var baseUrlApp = window.location.href.split('#')[0];
+                // ambil mapping data
+                var configEMR = data.emrfk ? reportMapping[data.emrfk.toString()] : null;
+                var finalUrlForm = configEMR ? configEMR.url : data.urlform;
+
+                // console.log('DetailEMR Clicked:', {
+                //     emrfk: data.emrfk,
+                //     caption: data.caption,
+                //     configFound: configEMR,
+                //     finalUrlForm: finalUrlForm
+                // });
+
+                if (!finalUrlForm && data.caption && data.caption.indexOf('CPPT') > -1) {
+                    finalUrlForm = 'get-cetak-cmrm05';
+                }
+
+                var isReportBackend = (configEMR && configEMR.isBackend) || (finalUrlForm && (
+                    finalUrlForm.indexOf('cetak') > -1 || 
+                    finalUrlForm.indexOf('get-cetak') > -1
+                ));
+
+                // ekseskusi sesuai jenis
+                if (isReportBackend && finalUrlForm) {
+                    var reportPath = finalUrlForm;
+                    if (reportPath.indexOf('report/') === 0) {
+                        reportPath = reportPath.replace('report/', '');
+                    }
+                    if (reportPath.indexOf('/') === 0) {
+                        reportPath = reportPath.substring(1);
+                    }
+                    
+                    var queryParams = {
+                        nocm: data.nocm ? data.nocm.trim() : '',
+                        norec_apd: (data.norec_apd || data.noregistrasi || '').trim(),
+                        emr: data.norec_emr ? data.norec_emr.trim() : '',
+                        emrfk: data.emrfk || '',
+                        kdprofile: kdProfile,
+                        nama: encodeURIComponent(nama ? nama.trim() : 'Admin'),
+                        noregistrasi: data.noregistrasi ? data.noregistrasi.trim() : '',
+                        norec_pd: data.norec_pd ? data.norec_pd.trim() : ''
+                    };
+
+                    var queryString = Object.keys(queryParams).map(function(key) {
+                        return key + '=' + queryParams[key];
+                    }).join('&');
+
+                    url = config.baseApiBackend + 'report/' + reportPath + '?' + queryString + '#toolbar=0&navpanes=0';
+                    
+                    console.info('Opening Backend Print Popup:', url);
+                    $scope.isIframeLoading = true;
+                    $scope.titleCetak = 'Cetak ' + (data.caption || 'Dokumen EMR');
+                    
+                    $timeout(function() {
+                        if ($scope.popUpsCetak) {
+                            $scope.popUpsCetak.title($scope.titleCetak);
+                            $scope.popUpsCetak.center().open();
+                            
+                            $scope.cetakanUrl = $sce.trustAsResourceUrl("about:blank");
+                            $timeout(function() {
+                                $scope.cetakanUrl = $sce.trustAsResourceUrl(url);
+                            }, 500);
+                        }
+                    });
+
+                } else if (finalUrlForm && finalUrlForm != "") {
+                    url = baseUrlApp + "#/" + finalUrlForm +
+                        "?noCM=" + (data.nocm || '') +
+                        "&norecSatu=" + (data.norec_apd || '') +
+                        "&norec_emr=" + (data.norec_emr || '') +
+                        "&emrfk=" + (data.emrfk || '');
+                    
+                    console.info('Redirecting to Frontend State:', url);
+                    window.open(url, '_blank');
+
+                } else {
+                    //cetakan belum di mapping
+                    toastr.warning('Cetak EMR ini belum tersedia karena belum ada template cetakan yang dikonfigurasi.');
+                }
+            }
+
             //batas
         }
 

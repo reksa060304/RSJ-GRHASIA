@@ -9253,6 +9253,16 @@ class EMRController  extends ApiController
     {
         $kdProfile = $this->getDataKdProfile($request);
         $idProfile = (int) $kdProfile;
+        //ambil emr
+        $listEmrFkShow = $this->settingDataFixed('Kdrmriwayatpengkajian', $kdProfile);
+        $emrFkAllowed = [];
+        if (!empty($listEmrFkShow)) {
+            $emrFkAllowed = array_unique(array_map('intval', explode(',', $listEmrFkShow)));
+        }
+        $paramEmrFk = !empty($emrFkAllowed)
+            ? "AND emrdp.emrfk IN (" . implode(',', $emrFkAllowed) . ")"
+            : "AND 1=0";
+            
         //todo : detail
         $paramNocm = '';
         $paramNoreg = '';
@@ -9316,7 +9326,7 @@ class EMRController  extends ApiController
               $paramNocm
               $paramNoreg
                AND emrp.jenisemr ILIKE '%$jenisEMr%'
-          
+                 $paramEmrFk
                GROUP BY emrdp.emrpasienfk,
                emrdp.emrfk,emrp.norec,emr.caption,
                emr.reportdisplay,emr.namaexternal 
@@ -9340,7 +9350,7 @@ class EMRController  extends ApiController
              $paramNocm
              $paramNoreg
               AND emrp.jenisemr ILIKE '%$jenisEMr%'
-         
+                $paramEmrFk
               GROUP BY emrdp.emrpasienfk,
               emrdp.emrfk,emrp.norec,emr.caption,
               emr.reportdisplay,emr.namaexternal ,
@@ -9441,7 +9451,11 @@ class EMRController  extends ApiController
         }
         $result = array(
             'data' => $result,
+            'mappingCetak' => $this->settingDataFixed('MappingCetakEmr', $kdProfile),
             'message' => 'as@epic',
+            // 'debug_listEmrFk' => $listEmrFkShow,
+            // 'debug_emrFkAllowed' => $emrFkAllowed,
+            // 'debug_paramEmrFk' => $paramEmrFk,
         );
         return $this->respond($result);
     }
