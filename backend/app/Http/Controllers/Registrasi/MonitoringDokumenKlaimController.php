@@ -13,6 +13,7 @@ use App\Transaksi\PasienDaftar;
 use Webklex\PDFMerger\Facades\PDFMergerFacade as PDFMerger;
 // use App\Traits\Valet as PDFMerger;
 use setasign\Fpdi\Tcpdf\Fpdi;
+require_once(base_path('vendor/tecnickcom/tcpdf/tcpdf.php'));
 use Symfony\Component\Filesystem\Filesystem;
 use Xthiago\PDFVersionConverter\Converter\GhostscriptConverterCommand;
 use Xthiago\PDFVersionConverter\Converter\GhostscriptConverter;
