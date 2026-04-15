@@ -19480,6 +19480,25 @@
     ]
   },
   {
+    "name": "RekamMedis.AsesmenMedis.MenuIndex.FormPemantauanTerapiObat",
+    "url": "/FormPemantauanTerapiObat/:index/:idEMR",
+    "templateurl": "module/EMR/FormPemantauanTerapiObat.html",
+    "controller": "FormPemantauanTerapiObatCtrl",
+    "deps": [{
+        "module": "Services",
+        "define": "Service"
+      },
+      {
+        "module": "LoginServices",
+        "define": "LoginService"
+      },
+      {
+        "module": "MedifirstService",
+        "define": "MedifirstService"
+      }
+    ]
+  },
+  {
     "name": "RekamMedis.AsesmenMedis.MenuIndex.FormCatatanPemantauanTerapiObat",
     "url": "/FormCatatanPemantauanTerapiObat/:index/:idEMR",
     "templateurl": "module/EMR/FormCatatanPemantauanTerapiObat.html",

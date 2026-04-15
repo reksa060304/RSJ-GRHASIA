@@ -607,6 +607,7 @@ Route::group(['middleware' => 'cors', 'prefix' => 'service'], function () {
                 Route::post('farmasi/save-rekonsiliasi-obat', 'EMR\EMRController@saveRekonsiliasiObat');
                 Route::post('emr/farmasi-save-preview', 'EMR\EMRController@savePreview');
                 Route::get('emr/get-rekonsiliasi-obat','EMR\EMRController@getRekonsiliasiObat');
+                Route::get('emr/get-hasil-lab-emr-terbaru', 'EMR\EMRController@getHasilLabManualTerbaru');
                 Route::post('farmasi/delete-rekonsiliasi-obat', 'EMR\EMRController@deleteRekonsiliasiObat');
                 // Route::group(['prefix' => 'sisrute'], function () {
               Route::get('bridging/sisrute/referensi/faskes','Bridging\BridgingSisruteController@getFaskes');
@@ -945,6 +946,7 @@ Route::group(['middleware' => 'cors', 'prefix' => 'service'], function () {
           Route::post('emr/get-emr-inputan-otomatis', 'EMR\EMRController@getInputanOtomatis');
           Route::get('emr/get-emr-transaksi-detail', 'EMR\EMRController@getEMRTransaksiDetail');
           Route::get('emr/get-emr-transaksi-detail-edit', 'EMR\EMRController@getEMRTransaksiDetailEdit');
+          Route::get('emr/get-autoload-emr', 'EMR\EMRController@getAutoloadEmr');
           Route::post('emr/get-emr-transaksi-details', 'EMR\EMRController@getEMRTransaksiDetails');
           Route::get('emr/get-emr-transaksi-detail2', 'EMR\EMRController@getEMRTransaksiDetail2');
           Route::get('report/cetak-cppt-ranap-rev','Report\ReportController@cetakCPPTRanapRev');
@@ -1606,6 +1608,7 @@ Route::group(['middleware' => 'cors', 'prefix' => 'service'], function () {
           Route::get('report/cetak-pengkajian-rajal-nonjiwa','Report\ReportController@cetakPengkajianRajalNonJiwa');
           Route::get('report/cetak-pengkajian-igd','Report\ReportController@cetakPengkajianIGDNonJiwa');
           Route::get('report/cetak-pengkajian-rajal','Report\ReportController@cetakPengkajianRajalJiwa');
+          Route::get('report/cetak-pemantauan-terapi-obat','Report\ReportController@cetakPemantauanTerapiObat');
           Route::get('report/cetak-rujukan-edukasi-psikiatri','Report\ReportController@cetakRujukanEdukasiPsikiatri');
           Route::get('report/cetak-rujukan-edukasi-pasien-dengan-komorbid-epilepsi','Report\ReportController@cetakRujukanEdukasiPasienGangguanJiwaDenganKomorbidEpilepsi');
           Route::get('report/cetak-rujukan-edukasi-pasien-dengan-komorbid-sindrome-geriatri-low-intake','Report\ReportController@cetakRujukanEdukasiPasienGangguanJiwaDenganKomorbidSindromeGeriatriLowIntake');

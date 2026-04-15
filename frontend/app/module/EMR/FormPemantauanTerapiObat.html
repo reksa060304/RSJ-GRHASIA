@@ -1,0 +1,499 @@
+<style type="text/css">
+  .tg {
+    border-collapse: collapse;
+    border-spacing: 0;
+    border-color: #aabcfe;
+  }
+
+  .tg td {
+    font-family: Arial, sans-serif;
+    font-size: 14px;
+    padding: 10px 5px;
+    border-style: solid;
+    border-width: 1px;
+    overflow: hidden;
+    word-break: normal;
+    border-color: #aabcfe;
+    color: #669;
+    background-color: #e8edff;
+  }
+
+  .tg th {
+    font-family: Arial, sans-serif;
+    font-size: 14px;
+    font-weight: normal;
+    padding: 10px 5px;
+    border-style: solid;
+    border-width: 1px;
+    overflow: hidden;
+    word-break: normal;
+    border-color: #aabcfe;
+    color: #039;
+    background-color: #b9c9fe;
+  }
+
+  .tg .tg-yw4l {
+    vertical-align: top;
+  }
+
+  .rowstyle {
+    border-bottom: 1px dashed lightblue;
+  }
+
+  .footer {
+    text-align: center;
+    font-size: 120%;
+    font-weight: 700;
+    margin-bottom: 20px;
+  }
+
+  table,
+  th,
+  td {
+    border: 1px solid #929191;
+    border-collapse: collapse;
+    padding: 5px;
+  }
+
+  th,
+  td {
+    padding: 5px;
+    text-align: left;
+  }
+
+  /* table {
+        font-family: arial, sans-serif;
+        border-collapse: collapse;
+        width: 40px;
+
+    }
+
+    td,
+    th {
+        border: 1px solid #dddddd;
+        text-align: left;
+        padding: 8px;
+    }
+
+    tr:nth-child(even) {
+        background-color: #dddddd;
+    } */
+</style>
+
+<div class="grid_12">
+  <div class="grid_12">
+    <div class="panel panel-default container_12">
+      <div class="panel-heading" c-translate>Form Pemantauan Obat</div>
+    </div>
+    <div style="margin-top: 10px">
+      <div class="grid_12" style="margin-top: 20px">
+        <table style="width: 100%; color: #4c5356">
+          <tr>
+            <th>
+              <span><b>DATA PASIEN</b></span>
+            </th>
+          </tr>
+          <tr>
+            <th>
+              <div class="grid_12">
+                <div class="grid_2" style="padding-top: 18px">
+                  <span>Berat Badan :</span>
+                </div>
+                <div class="grid_2">
+                  <input
+                    class="k-textbox"
+                    ng-model="item.obj[3014250]"
+                    type="text"
+                    placeholder="Berat Badan"
+                  />
+                </div>
+                <div class="grid_1" style="padding-top: 18px">
+                  <span>Kg</span>
+                </div>
+                <div class="grid_2" style="padding-top: 18px">
+                  <span>Tinggi Badan :</span>
+                </div>
+                <div class="grid_2">
+                  <input
+                    class="k-textbox"
+                    ng-model="item.obj[7890444]"
+                    type="text"
+                    placeholder="Tinggi Badan"
+                  />
+                </div>
+                <div class="grid_3" style="padding-top: 18px">
+                  <span>cm</span>
+                </div>
+              </div>
+
+              <div class="grid_12">
+                <div class="grid_2" style="padding-top: 18px">
+                  <span>Alamat :</span>
+                </div>
+                <div class="grid_10">
+                  <input
+                    class="k-textbox"
+                    ng-model="item.obj[3014252]"
+                    type="text"
+                    placeholder="Alamat"
+                  />
+                </div>
+              </div>
+              <div class="grid_2" style="padding-top: 18px">
+                <span>Nomor Telepon : </span>
+              </div>
+              <div class="grid_10">
+                <input
+                  style="width: 30%"
+                  class="k-textbox"
+                  ng-model="item.obj[3014253]"
+                  type="text"
+                  placeholder="Nomor Telepon"
+                />
+              </div>
+              <div class="grid_3" style="padding-top: 18px">
+                <span>Tanggal Masuk Rumah Sakit : </span>
+              </div>
+              <div class="grid_4">
+                <input
+                  style="width: 70%"
+                  k-ng-model="item.obj[3014254]"
+                  kendo-datetimepicker
+                  placeholer="yyyy-MM-dd HH:mm"
+                  k-format="'yyyy-MM-dd HH:mm'"
+                  parsedate="yyyy-MM-dd HH:mm"
+                />
+              </div>
+              <div class="grid_2" style="padding-top: 18px">
+                <span>Ruang Rawat Inap : </span>
+              </div>
+              <div class="grid_3">
+                <input
+                  style="width: 100%"
+                  kendo-combo-box
+                  k-ng-model="item.obj[3014255]"
+                  k-data-text-field="'text'"
+                  k-data-value-field="'value'"
+                  k-filter="'contains'"
+                  k-auto-bind="false"
+                  k-data-source="listRuang"
+                />
+              </div>
+            </th>
+          </tr>
+          <tr>
+            <th>
+              <span><b>KELUHAN UTAMA</b></span>
+            </th>
+          </tr>
+          <tr>
+            <th>
+              <textarea
+                style="width: 100%; height: 100px"
+                c-text-area
+                type="input"
+                filter="'string'"
+                class="k-textbox"
+                ng-model="item.obj[3014256]"
+              />
+            </th>
+          </tr>
+          <tr>
+            <th>
+              <span><b>RIWAYAT PENYAKIT SEKARANG</b></span>
+            </th>
+          </tr>
+          <tr>
+            <th>
+              <textarea
+                style="width: 100%; height: 100px"
+                c-text-area
+                type="input"
+                filter="'string'"
+                class="k-textbox"
+                ng-model="item.obj[3014257]"
+              />
+            </th>
+          </tr>
+          <tr>
+            <th>
+              <span><b>RIWAYAT PENYAKIT TERDAHULU</b></span>
+            </th>
+          </tr>
+          <tr>
+            <th>
+              <textarea
+                style="width: 100%; height: 100px"
+                c-text-area
+                type="input"
+                filter="'string'"
+                class="k-textbox"
+                ng-model="item.obj[3014258]"
+              />
+            </th>
+          </tr>
+          <tr>
+            <th>
+              <span><b>RIWAYAT KELUARGA</b></span>
+            </th>
+          </tr>
+          <tr>
+            <th>
+              <textarea
+                style="width: 100%; height: 100px"
+                c-text-area
+                type="input"
+                filter="'string'"
+                class="k-textbox"
+                ng-model="item.obj[3014259]"
+              />
+            </th>
+          </tr>
+          <tr>
+            <th>
+              <span><b>RIWAYAT SOSIAL</b></span>
+            </th>
+          </tr>
+          <tr>
+            <th>
+              <textarea
+                style="width: 100%; height: 100px"
+                c-text-area
+                type="input"
+                filter="'string'"
+                class="k-textbox"
+                ng-model="item.obj[3014260]"
+              />
+            </th>
+          </tr>
+          <tr>
+            <th>
+              <span><b>RIWAYAT PENGGUNAAN OBAT</b></span>
+            </th>
+          </tr>
+          <tr>
+            <th>
+              <textarea
+                style="width: 100%; height: 250px"
+                c-text-area
+                type="input"
+                filter="'string'"
+                class="k-textbox"
+                ng-model="item.obj[3014261]"
+              />
+            </th>
+          </tr>
+          <tr>
+            <th>
+              <span><b>HASIL PEMERIKSAAN FISIK</b></span>
+            </th>
+          </tr>
+          <tr>
+            <th>
+              <textarea
+                style="width: 100%; height: 250px"
+                c-text-area
+                type="input"
+                filter="'string'"
+                class="k-textbox"
+                ng-model="item.obj[3014262]"
+              />
+            </th>
+          </tr>
+          <tr>
+            <th>
+              <span><b>HASIL PEMERIKSAAN LABORATORIUM</b></span>
+            </th>
+          </tr>
+          <tr>
+            <th>
+                <div class="grid_12">
+                    <kendo-grid
+                    k-data-source="resultGrids"
+                    id="gridLabId"
+                    k-selectable="'row'"
+                    k-options="ColumnResult"
+                    k-ng-model="dataSelected"
+                    >
+                    </kendo-grid>
+                </div>
+            </th>
+          </tr>
+          <tr>
+            <th>
+              <span><b>HASIL PEMERIKSAAN DIAGNOSTIK</b></span>
+            </th>
+          </tr>
+          <tr>
+            <th>
+              <textarea
+                style="width: 100%; height: 100px"
+                c-text-area
+                type="input"
+                filter="'string'"
+                class="k-textbox"
+                ng-model="item.obj[3014264]"
+              />
+            </th>
+          </tr>
+          <tr>
+            <th>
+              <span><b>HASIL PEMERIKSAAN MIKROBIOLOGI</b></span>
+            </th>
+          </tr>
+          <tr>
+            <th>
+              <textarea
+                style="width: 100%; height: 100px"
+                c-text-area
+                type="input"
+                filter="'string'"
+                class="k-textbox"
+                ng-model="item.obj[3014265]"
+              />
+            </th>
+          </tr>
+          <tr>
+            <th>
+              <span><b>DIAGNOSIS</b></span>
+            </th>
+          </tr>
+          <tr>
+            <th>
+              <textarea
+                style="width: 100%; height: 100px"
+                c-text-area
+                type="input"
+                filter="'string'"
+                class="k-textbox"
+                ng-model="item.obj[3014266]"
+              />
+            </th>
+          </tr>
+          <tr>
+            <th>
+              <span><b>PENGGUNAAN OBAT SAAT INI</b></span>
+            </th>
+          </tr>
+          <tr>
+            <th>
+              <textarea
+                style="width: 100%; height: 400px"
+                c-text-area
+                type="input"
+                filter="'string'"
+                class="k-textbox"
+                ng-model="item.obj[3014267]"
+              />
+            </th>
+          </tr>
+          <tr>
+            <th>
+              <span><b>PEMANTAUAN (S O A P)</b></span>
+            </th>
+          </tr>
+          <tr>
+            <th>
+              <textarea
+                style="width: 100%; height: 600px"
+                c-text-area
+                type="input"
+                filter="'string'"
+                class="k-textbox"
+                ng-model="item.obj[3014268]"
+              />
+            </th>
+          </tr>
+        </table>
+        <!-- <table style="width:100%;color: #4c5356;">
+                    <tr>
+                        <th>
+                            <div class="grid_12" style ="text-align: center;">
+                                <b>Tanggal Jam</b>
+                            </div>
+                        </th>
+                        <th>
+                            <div class="grid_12" style ="text-align: center;">
+                                <b>Pelaksanaan</b>
+                            </div>
+                        </th>
+                        <th>
+                            <div class="grid_12" style ="text-align: center;">
+                                <b>Evaluasi</b>
+                            </div>
+                        </th>
+                        <th>
+                            <div class="grid_12 " style ="text-align: center;">
+                                <b>Paraf Nama</b>
+                            </div>
+                        </th>
+                    </tr>
+                              
+                    <tr>
+                        <td>
+                            <div class="grid_12">
+                                <input style="width: 100%" k-ng-model="item.obj[3012250]" kendo-datetimepicker
+                                    placeholer="yyyy-MM-dd HH:mm" k-format="'yyyy-MM-dd HH:mm'"
+                                    parsedate="yyyy-MM-dd HH:mm" />
+                            </div>
+                        </td><td>
+                            <div class="grid_12">
+                                <label for="">
+                                    &nbsp;Nama Obat :</label>
+                                <label c-label item="item">
+                                    <textarea style="width: 100%;height: 100px" c-text-area type="input"
+                                                filter="'string'" class="k-textbox" 
+                                                ng-model="item.obj[3012251]" />
+                                </label>
+                            </div>
+                            <div class="grid_12">
+                                <label for="">
+                                    &nbsp;Efek Obat :</label>
+                                <label c-label item="item">
+                                    <textarea style="width: 100%;height: 100px" c-text-area type="input"
+                                                filter="'string'" class="k-textbox" 
+                                                ng-model="item.obj[3012252]" />
+                                </label>
+                            </div>
+                            <div class="grid_12">
+                                <label for="">
+                                    &nbsp;Efek yang tidak diharapkan :</label>
+                                <label c-label item="item">
+                                    <textarea style="width:100%;height: 100px" c-text-area type="input"
+                                                filter="'string'" class="k-textbox" 
+                                                ng-model="item.obj[3012253]" />
+                                </label>
+                            </div>
+                        </td>
+                        <td style="vertical-align: top;">
+                            <div class="grid_12">
+                                <label for="">
+                                    &nbsp;</label>
+                                <label c-label item="item">
+                                    <textarea style="width: 100%;height: 300px" c-text-area type="input"
+                                                filter="'string'" class="k-textbox" 
+                                                ng-model="item.obj[3012254]" />
+                                </label>
+                            </div>
+                        </td>
+                        <td style="vertical-align: top;">
+                            <div class="grid_12 margin-bottom margin-top-30" style="margin-top: 100px;">
+                                <label c-label item="item">Nama Perawat</label>
+                                <input style="width: 100%;" kendo-combo-box k-ng-model="item.obj[3012255]"
+                                    k-data-text-field="'text'" k-data-value-field="'value'" k-filter="'contains'"
+                                    k-auto-bind="false" k-data-source="listPegawai" />
+                            </div>
+                        </td>
+                         
+                    </tr>
+                   
+                </table> -->
+      </div>
+    </div>
+  </div>
+</div>
+
+<br />
+<div class="grid_12">
+  <div ng-include='"../app/module/EMR/TemplateButtonDinamis" '></div>
+</div>
