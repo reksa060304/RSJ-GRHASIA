@@ -1626,8 +1626,10 @@ define(['initialize', 'Configuration'], function (initialize, config) {
                 }
                 if ($scope.item.noantri == '-' ) {
                     window.open(config.baseApiBackend + "report/cetak-antrian-farm?noorder=" + $scope.item.noorder + "&kdprofile=21", 'BuktiDaftar', 'width=800,height=800,scrollbars=yes,resizable=yes');
+                    $scope.refresh();
                 } else {
                     window.open(config.baseApiBackend + "report/cetak-antrian-farm?noresep=" + $scope.item.noorder + "&kdprofile=21", 'BuktiDaftar', 'width=800,height=800,scrollbars=yes,resizable=yes');
+                    $scope.refresh();
                 }
             }
             $scope.formatRupiah = function (value, currency) {

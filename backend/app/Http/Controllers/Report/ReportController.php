@@ -1705,24 +1705,24 @@ class ReportController extends ApiController{
                 ->orderBy('pt.tglregistrasi', 'desc')
                 ->orderBy('st.tglorder', 'desc')
                 ->selectRaw("
-                    st.norec,
+                    st.norec as norec_so,
                     st.noorder,
                     pm.namapasien,
                     pm.nocm,
-                    pt.norec
+                    pt.norec as norec_pd
                 ")
                 ->first();
 
                 if (!empty($cekOrder->noorder)) {
                     $detOrder = DB::table('orderpelayanan_t as op')
-                        ->where('op.strukorderfk', $cekOrder->norec)
+                        ->where('op.strukorderfk', $cekOrder->norec_so)
                         ->where('op.statusenabled', true)
                         ->select('op.jeniskemasanfk')
                         ->get();
 
                     $hasRacikan = false;
                     foreach ($detOrder as $cek) {
-                        if ($cek['jeniskemasanfk'] == 1) {
+                        if ($cek->jeniskemasanfk == 1) {
                             $hasRacikan = true;
                             break;
                         }
@@ -1743,7 +1743,7 @@ class ReportController extends ApiController{
                         $newAA->statusenabled = true;
                         $newAA->noantri = $noAntriApotik;
                         $newAA->keterangan = $cekOrder->namapasien;
-                        $newAA->noregistrasifk = $cekOrder->norec;
+                        $newAA->noregistrasifk = $cekOrder->norec_pd;
                         $newAA->jenis = $racikanORnonracikan;
                         $newAA->tglresep = date('Y-m-d H:i:s');
                         $newAA->noorder = $cekOrder->noorder;
