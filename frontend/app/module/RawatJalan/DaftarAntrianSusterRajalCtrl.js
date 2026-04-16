@@ -115,6 +115,10 @@ define(['initialize'], function (initialize) {
                     $scope.listPilihRuang = data.data.ruangperawat;
                 });
                 
+                $scope.listStatusPasien = [
+                    { id: 1, name: "BARU" },
+                    { id: 2, name: "LAMA" }
+                ]
             }
 
             function loadData() {
@@ -159,6 +163,10 @@ define(['initialize'], function (initialize) {
                 if ($scope.item.rows != undefined) {
                     jmlRow = "&jmlRow=" + $scope.item.rows
                 }
+                var statusPasien = ""
+                if ($scope.item.statusPasien != undefined) {
+                    statusPasien = "&statusPasien=" + $scope.item.statusPasien.name
+                }
 
                 $q.all([
                     medifirstService.get("rawatjalan/get-daftar-antrian-rajal?" +
@@ -169,7 +177,8 @@ define(['initialize'], function (initialize) {
                         "&nama=" + nama +
                         "&ruanganArr=" + listRuangan
                         + ruangId
-                        + jmlRow),
+                        + jmlRow
+                        + statusPasien),
                 ]).then(function (data) {
                     $scope.isRouteLoading = false;
                     var datas = data[0].data;

@@ -53,7 +53,7 @@
         <div class="panel-heading"><label class='title' c-label item="item">Daftar Pasien Rawat Jalan</label></div>
         <div class="panel-body">
             <div class="grid_12">
-                <div class="grid_4" style="margin-top:5px">
+                <div class="grid_3" style="margin-top:5px">
                     <div class="grid_12" style="margin-left:10px">
                         <label c-label c-label-text="tanggalMasuk"></label>
                     </div>
@@ -83,6 +83,12 @@
                     <label c-label real>Nama Pasien</label>
                     <input c-text-box type="input" filter="'char'" class="k-textbox" ng-model="item.namaPasien"
                         ng-keypress="($event.which == 13)? SearchEnter():item.namaPasien" />
+                </div>
+                <div class="grid_1" style="margin-top:5px">
+                    <label c-label real>Status Pasien</label>
+                    <input style="width: 100%;" kendo-combo-box k-ng-model="item.statusPasien"
+                        k-data-text-field="'name'" k-data-value-field="'id'" k-filter="'contains'"
+                        k-auto-bind="false" k-data-source="listStatusPasien" />
                 </div>
                 <div class="grid_2" style="margin-top:5px">
                     <label c-label c-label-text="namaRuangan" real></label>

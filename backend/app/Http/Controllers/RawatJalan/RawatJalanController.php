@@ -480,6 +480,9 @@ $ruangdokter = \DB::table('ruangan_m as ru')
             }
             $data = $data->whereIn('ru.id',$kodeRuang);
         }
+        if (isset($filter['statusPasien']) && $filter['statusPasien'] != "" && $filter['statusPasien'] != "undefined") {
+            $data = $data->where('pd.statuspasien', '=', $filter['statusPasien']);
+        }
         if (isset($filter['jmlRow']) && $filter['jmlRow'] != "" && $filter['jmlRow'] != "undefined") {
             $data = $data->take($filter['jmlRow']);
         }
