@@ -3972,6 +3972,10 @@
         {
             "nameDep": "DaftarRegistrasiPasienDokterCtrl",
             "urlDep": "module/TataRekening/DaftarRegistrasiPasienDokterCtrl"
+        },
+         {
+            "nameDep": "TransferPasienRadiologiCtrl",
+            "urlDep": "module/EMR/TransferPasienRadiologiCtrl"
         }
     ]
 }
