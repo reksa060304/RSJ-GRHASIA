@@ -295,11 +295,11 @@ define(['initialize'], function(initialize) {
                         "title":"No Registrasi",
                         "width":"80px"
                     },
-                    {
-                        "field": "noregistrasi",
-                        "title": "Nama Pasien",
-                        "width": "80px"
-                    },
+                    // {
+                    //     "field": "noregistrasi",
+                    //     "title": "Nama Pasien",
+                    //     "width": "80px"
+                    // },
                     {
                         "field":"nocm",
                         "title":"No. Rekam Medis",
@@ -320,6 +320,16 @@ define(['initialize'], function(initialize) {
                         "title": "Status",
                         "width": "80px"
                     },
+                    {
+                        "field": "pengorder",
+                        "title": "Pengorder",
+                        "width": "100px"
+                    },
+                    {
+                        "field": "namaruanganasal",
+                        "title": "Ruangan Asal",
+                        "width": "100px"
+                    }, 
                     {
                         "field":"namadokter",
                         "title":"Dokter",
