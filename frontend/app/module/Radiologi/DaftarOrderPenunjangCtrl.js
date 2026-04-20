@@ -1182,6 +1182,7 @@ define(['initialize'], function (initialize) {
                     "namadokterverif": $scope.item.dokterVerif.namalengkap,
                     "iddokterorder": $scope.item.dokterOrder.id,
                     "namadokterorder": $scope.item.dokterOrder.namalengkap,
+                    "departemenfk": $scope.sourceVerif._data[0].objectdepartemenfk,
                     "details" :  dataPost,
                 }
 

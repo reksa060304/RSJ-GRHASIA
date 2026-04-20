@@ -7768,15 +7768,17 @@ class EMRController  extends ApiController
             if ($request['norec_so'] == "") {
                 $transMessage = "Simpan Order Pelayanan";
                 DB::commit();
-                $objetoRequest = new \Illuminate\Http\Request();
-                $objetoRequest['noorder'] = $dataSO->noorder;
-                $ihs = app('App\Http\Controllers\Bridging\IHSController')->ServiceRequest($objetoRequest, true);
+                if ($request['departemenfk'] != 27) {
+                    $objetoRequest = new \Illuminate\Http\Request();
+                    $objetoRequest['noorder'] = $dataSO->noorder;
+                    $ihs = app('App\Http\Controllers\Bridging\IHSController')->ServiceRequest($objetoRequest, true);
+                }
 
                 $result = array(
                     "status" => 201,
                     "message" => $transMessage,
                     "strukorder" => $dataSO,
-                    "ServiceRequest" => $ihs,
+                    "ServiceRequest" => $ihs ?? null,
                     "as" => 'inhuman',
                 );
             } else {

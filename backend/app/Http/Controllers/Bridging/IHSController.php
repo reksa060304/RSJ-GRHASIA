@@ -3641,6 +3641,7 @@ class IHSController extends ApiController
                 ,op.objectprodukfk 
                 ,pr.ihs_loinc_id
                 ,pr.ihs_loinc_common_name
+                ,pr.modality
                 ,ps.ihs_number as ihs_pasien
                 ,ps.namapasien
                 ,pd.ihs_id as ihs_encounter
@@ -3667,8 +3668,7 @@ class IHSController extends ApiController
             WHERE
                 pd.kdprofile = $kdProfile 
                 AND so.noorder = '$request[noorder]';
-                
-           "));
+            "));
 
 
 
@@ -3686,6 +3686,7 @@ class IHSController extends ApiController
 
             foreach ($q as $k =>  $item) {
                 $assen = [];
+                $orderDetail = array();
 
                 if (!empty($item->accession_num)) {
                     $assen = array(
@@ -3701,6 +3702,28 @@ class IHSController extends ApiController
                         ),
                         "system" => "http://sys-ids.kemkes.go.id/acsn/" . $profile->ihs_id,
                         "value" => $item->accession_num
+                    );
+                }
+
+                if (!empty($item->modality)) {
+                    $orderDetail = array(
+                        array(
+                            'coding' => array(
+                                0 => array(
+                                    'system' => 'http://dicom.nema.org/resources/ontology/DCM',
+                                    'code' => $item->modality
+                                )
+                            ),
+                            'text' => 'Modality Code: ' . $item->modality
+                        ),
+                        array(
+                            'coding' => array(
+                                0 => array(
+                                    'system' => 'http://sys-ids.kemkes.go.id/ae-title',
+                                    'display' => 'US0001'
+                                )
+                            )
+                        )
                     );
                 }
 
@@ -3767,6 +3790,9 @@ class IHSController extends ApiController
                     ),
                 );
 
+                if (count($orderDetail) > 0) {
+                    $data['orderDetail'] = $orderDetail;
+                }
 
                 if ($item->ihs_idforput == null) {
                     unset($data['id']);

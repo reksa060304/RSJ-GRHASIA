@@ -2038,6 +2038,13 @@ class RadiologiController extends ApiController
         if ($transStatus == 'true') {
             $transMessage = "Simpan PelayananPasien Sukses";
             DB::commit();
+
+            if ($request['departemenfk'] == 27) {
+                $objetoRequest1 = new \Illuminate\Http\Request();
+                $objetoRequest1 ['noorder']= $request['noorder'];
+                $ihs1 = app('App\Http\Controllers\Bridging\IHSController')->ServiceRequest($objetoRequest1,true);
+            }
+
             $objetoRequest = new \Illuminate\Http\Request();
             $objetoRequest ['noorder']= $request['noorder'];
             $ihs = app('App\Http\Controllers\Bridging\IHSController')->Specimen($objetoRequest,true);
@@ -2048,6 +2055,7 @@ class RadiologiController extends ApiController
                 'dataPP' => $PelPasien,
 //                'dataPPP' => $PelPasienPetugas,
                 'dataPPD' => $PelPasienDetail,
+                'ServiceRequest'=> $ihs1 ?? null,
                 'Specimen'=> $ihs,
                 'as' => 'ramdanegie',
             );
