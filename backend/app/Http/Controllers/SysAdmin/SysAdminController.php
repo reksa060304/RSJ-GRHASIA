@@ -130,42 +130,71 @@ class SysAdminController  extends ApiController {
     public function saveRetriksiDiagnosa(Request $request){
         $kdProfile = (int) $this->getDataKdProfile($request);
         DB::beginTransaction();
-        // try {
-            foreach ( $request['details'] as $item){
-                $kode[] = (double) $item['id'];
+        try {
+            if(isset($request['excel']) && $request['excel'] == true){
 
-            }
-            $hapus = RetriksiDiagnosa::where('statusenabled',true);
+                foreach ( $request['data'] as $item){
+                    if(isset($item['diagnosa']) && $item['diagnosa'] !=''){
+                        //cek data kalo tidak ada maka buat baru
+                        $produk_id = DB::table('produk_m')->where('namaproduk', $item['produk'])->value('id');
+                        $diagnosa_id = DB::table('diagnosa_m')->where('namadiagnosa', $item['diagnosa'])->value('id');
+                        
+                        if (!DB::table('retriksidiagnosa_m as rd')
+                            ->where('rd.statusenabled', true)
+                            ->where('rd.kdprofile', $kdProfile)
+                            ->where('rd.diagnosafk', $diagnosa_id)
+                            ->where('rd.produkfk', $produk_id)
+                            ->exists()) {
 
-            if(isset($request['diagnosaId']) && $request['diagnosaId'] !='' ){
-                $hapus = $hapus->where('diagnosafk',$request['diagnosaId']);
-            }
-            $hapus = $hapus->whereIn('produkfk',$kode);
-            $hapus->delete();
-            foreach ( $request['details'] as $item){
-                $map = new RetriksiDiagnosa();
-                $map->id = RetriksiDiagnosa::max('id') + 1;
-                $map->kdprofile = $kdProfile;
-                $map->statusenabled = true;
-                $map->norec =  substr(\Webpatser\Uuid\Uuid::generate(), 0, 32);
-                $map->kodeexternal = "RET-DIAG";
-                $map->produkfk = $item['id'];
-                $map->diagnosafk = $request['diagnosaId'];
-                $map->keteranganpakai = $request['ketpakai'];
-                $map->save();
+                            $map = new RetriksiDiagnosa();
+                            $map->id = RetriksiDiagnosa::max('id') + 1;
+                            $map->kdprofile = $kdProfile;
+                            $map->statusenabled = true;
+                            $map->norec =  substr(\Webpatser\Uuid\Uuid::generate(), 0, 32);
+                            $map->kodeexternal = "RET-DIAG";
+                            $map->produkfk = $produk_id;
+                            $map->diagnosafk = $diagnosa_id;
+                            $map->keteranganpakai = $item['ket_Pakai'];
+                            $map->save();
+                        }
+                    }
+                }
+            } else {
+                foreach ( $request['details'] as $item){
+                        //cek data kalo tidak ada maka buat baru
+                        if (!DB::table('retriksidiagnosa_m as rd')
+                            ->where('rd.statusenabled', true)
+                            ->where('rd.kdprofile', $kdProfile)
+                            ->where('rd.diagnosafk', $request['diagnosaId'])
+                            ->where('rd.produkfk', $item['id'])
+                            ->exists()) {
+
+                            $map = new RetriksiDiagnosa();
+                            $map->id = RetriksiDiagnosa::max('id') + 1;
+                            $map->kdprofile = $kdProfile;
+                            $map->statusenabled = true;
+                            $map->norec =  substr(\Webpatser\Uuid\Uuid::generate(), 0, 32);
+                            $map->kodeexternal = "RET-DIAG";
+                            $map->produkfk = $item['id'];
+                            $map->diagnosafk = $request['diagnosaId'];
+                            $map->keteranganpakai = $request['ketpakai'];
+                            $map->save();
+                        }
+                }
+
+                
             }
 
             $transStatus = 'true';
-        // } catch (\Exception $e) {
-        //     $transStatus = 'false';
-        // }
+        } catch (\Exception $e) {
+            $transStatus = 'false';
+        }
         if ($transStatus == 'true') {
             $transMessage = "Sukses";
             DB::commit();
 
             $result = array(
                 'status' => 201,
-                'data' => $map,
                 'as' => 'er@epic',
             );
         } else {
@@ -241,28 +270,58 @@ class SysAdminController  extends ApiController {
         $kdProfile = (int) $this->getDataKdProfile($request);
         DB::beginTransaction();
         // try {
-            foreach ( $request['details'] as $item){
-                $kode[] = (double) $item['id'];
+            if(isset($request['excel']) && $request['excel'] == true){
 
-            }
-            $hapus = RetriksiObat::where('statusenabled',true);
+                foreach ( $request['data'] as $item){
+                    if(isset($item['produk_1']) && $item['produk_1'] !=''){
+                        //cek data kalo tidak ada maka buat baru
+                        $produk_1 = DB::table('produk_m')->where('namaproduk', $item['produk_1'])->value('id');
+                        $produk_2 = DB::table('produk_m')->where('namaproduk', $item['produk_2'])->value('id');
 
-            if(isset($request['produkid_1']) && $request['produkid_1'] !='' ){
-                $hapus = $hapus->where('produkfk_1',$request['produkid_1']);
-            }
-            $hapus = $hapus->whereIn('produkfk_1',$kode);
-            $hapus->delete();
-            foreach ( $request['details'] as $item){
-                $map = new RetriksiObat();
-                $map->id = RetriksiObat::max('id') + 1;
-                $map->kdprofile = $kdProfile;
-                $map->statusenabled = true;
-                $map->norec =  substr(\Webpatser\Uuid\Uuid::generate(), 0, 32);
-                $map->kodeexternal = "RET-DIAG";
-                $map->produkfk_1 = $request['produkid_1'];
-                $map->produkfk_2 = $item['id'];
-                $map->keteranganpakai = $request['ketpakai'];
-                $map->save();
+                        if (!DB::table('retriksiobat_m as rd')
+                            ->where('rd.statusenabled', true)
+                            ->where('rd.kdprofile', $kdProfile)
+                            ->where('rd.produkfk_1', $produk_1)
+                            ->where('rd.produkfk_2', $produk_2)
+                            ->exists()) {
+
+                            $map = new RetriksiObat();
+                            $map->id = RetriksiObat::max('id') + 1;
+                            $map->kdprofile = $kdProfile;
+                            $map->statusenabled = true;
+                            $map->norec =  substr(\Webpatser\Uuid\Uuid::generate(), 0, 32);
+                            $map->kodeexternal = "RET-OBAT";
+                            $map->produkfk_1 = $produk_1;
+                            $map->produkfk_2 = $produk_2;
+                            $map->keteranganpakai = $item['ket_Pakai'];
+                            $map->save();
+                        }
+                    }
+                }
+            } else {
+                foreach ( $request['details'] as $item){
+                    //cek data kalo tidak ada maka buat baru
+                        if (!DB::table('retriksiobat_m as rd')
+                            ->where('rd.statusenabled', true)
+                            ->where('rd.kdprofile', $kdProfile)
+                            ->where('rd.produkfk_1', $request['produkid_1'])
+                            ->where('rd.produkfk_2', $item['id'])
+                            ->exists()) {
+
+                            $map = new RetriksiObat();
+                            $map->id = RetriksiObat::max('id') + 1;
+                            $map->kdprofile = $kdProfile;
+                            $map->statusenabled = true;
+                            $map->norec =  substr(\Webpatser\Uuid\Uuid::generate(), 0, 32);
+                            $map->kodeexternal = "RET-OBAT";
+                            $map->produkfk_1 = $request['produkid_1'];
+                            $map->produkfk_2 = $item['id'];
+                            $map->keteranganpakai = $request['ketpakai'];
+                            $map->save();
+                        }
+                }
+
+                
             }
 
             $transStatus = 'true';
@@ -275,7 +334,6 @@ class SysAdminController  extends ApiController {
 
             $result = array(
                 'status' => 201,
-                'data' => $map,
                 'as' => 'er@epic',
             );
         } else {

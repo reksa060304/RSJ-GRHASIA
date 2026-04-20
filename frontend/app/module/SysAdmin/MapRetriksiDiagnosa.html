@@ -64,7 +64,12 @@
                     </div>
                 </div>
                 <div class="grid_12">
-                    <div class="grid_11"></div>
+                    <div class="grid_3" style="margin-top:22px">
+                        <input id="upload" type="file" kendo-upload
+                            k-async="{ saveUrl: 'save', removeUrl: 'remove', autoUpload: true }" k-multiple="false"
+                            k-select="onUploadExcel" />
+                    </div>
+                    <div class="grid_8"></div>
                     <div class="grid_1">
                         <div class="grid_12">
                             <label c-label item="item" c-label-text="Jml Row"></label>

@@ -173,7 +173,14 @@ define(['initialize'], function (initialize) {
                         name: "delete", text: "Hapus",
                         template: '<button ng-click="hapusData()" class="k-button k-button-icontext k-grid-upload" href="\\#"><span class="k-icon k-i-cancel"></span>Hapus</button>'
                     },
+                    {
+                        name: "excel", text: "Export Excel",
+                    }
                 ],
+                excel: {
+                    fileName: "Data Map Retriksi Obat To Obat_" + moment($scope.now).format('DD/MMM/YYYY'),
+                    allPages: true,
+                },
                 columns: [
                     {
                         "template": "<input type='checkbox' class='checkbox' ng-click='onClick($event)' />",
@@ -183,18 +190,18 @@ define(['initialize'], function (initialize) {
                     },
                     {
                         "field": "namaproduk_1",
-                        "title": "Produk 1",
+                        "title": "Produk_1",
                         "width": "30%"
                     },
                     {
                         "field": "namaproduk_2",
-                        "title": "Produk 2",
+                        "title": "Produk_2",
                         "width": "30%"
                     },
                     {
 
                         "field": "keteranganpakai",
-                        "title": "Ket Pakai",
+                        "title": "Ket_Pakai",
                         "width": "30%"
                     },
                 ]
@@ -378,6 +385,69 @@ define(['initialize'], function (initialize) {
                 // }
                 // console.log($scope.arrayEMRTemp)
             }
+
+            /***Upload Excel */
+            $("#upload").kendoUpload({
+                localization: {
+                    "select": "Pilih File Excel..."
+                },
+
+                select: function (e) {
+                    var ALLOWED_EXTENSIONS = [".xlsx"];
+                    var extension = e.files[0].extension.toLowerCase();
+                    if (ALLOWED_EXTENSIONS.indexOf(extension) == -1) {
+                        toastr.error('Mohon Pilih File Excel (.xls)')
+                        e.preventDefault();
+                        // return
+                    }
+                    var file = e.files[0];
+                    var stringFile = e.files[0].name;
+                    if (!stringFile.toLowerCase().includes("data map retriksi obat to obat".toLowerCase())) {
+                        toastr.info('Data Map Retriksi Obat To Obat.xlsx', 'Contoh Nama File');
+                        toastr.error('Nama File Tidak Sesuai', 'Info');
+                        return;
+                    }
+
+                    for (var i = 0; i < e.files.length; i++) {
+                        var file = e.files[i].rawFile;
+
+                        if (file) {
+                            var reader = new FileReader();
+                            reader.onload = function (e) {
+                                var data = e.target.result;
+                                var workbook = XLSX.read(data, {
+                                    type: 'binary'
+                                });
+
+                                workbook.SheetNames.forEach(function (sheetName) {
+                                    // Here is your object
+                                    var XL_row_object = XLSX.utils.sheet_to_row_object_array(workbook.Sheets[sheetName]);
+                                    var json_object = JSON.stringify(XL_row_object);
+                                    console.log(XL_row_object);
+                                    var objSave =
+                                    {
+                                        data: XL_row_object,
+                                        excel: true
+                                    }
+
+                                    medifirstService.post('sysadmin/save-retriksi-obat', objSave).then(function (data) {
+                                       loadData();
+                                    })
+                                })
+
+                            };
+
+                            reader.onerror = function (ex) {
+                                console.log(ex);
+                            };
+
+                            reader.readAsBinaryString(file);
+                        }
+                    }
+                },
+
+            })
+            /***END Upload Excel */
             
 
         }
