@@ -244,7 +244,7 @@
             {{-- level-7 --}}
             @if ($rek->idlevel7 && ($rek->idlevel7 !== $idlevel7) && str_contains($rek->koderekeninglevel4, '4.1.02.01'))
                 <tr style="font-weight: bold;">
-                    <td style="font-weight:bold;"></td>
+                    <td style="font-weight:bold;">{{ $rek->koderekeninglevel7 }}</td>
                     <td style="font-weight:bold;">{{ $rek->namarekeninglevel7 }}</td>
                     <td style="font-weight:bold;">
                         @php
@@ -262,7 +262,7 @@
             @endif
 
             <tr>
-                <td></td>
+                <td>{{ $rek->koderekening }}</td>
                 <td>{{ $rek->namarekening }}</td>
                 <td>
                     @php
