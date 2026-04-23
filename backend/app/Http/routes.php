@@ -1070,6 +1070,7 @@ Route::group(['middleware' => 'cors', 'prefix' => 'service'], function () {
           Route::post('emr/hapus-delegasi-obat', 'EMR\EMRController@hapusDelegasiObat');
 
           Route::get('emr/get-emr-transaksi-detail-form', 'EMR\EMRController@getEMRTransaksiDetailForm');
+          Route::get('emr/get-emr-transaksi-detail-form-new', 'EMR\EMRController@getEMRTransaksiDetailFormNew');
           Route::post('emr/hapus-emr-transaksi-norec', 'EMR\EMRController@hapusEMRtransaksiNorec');
           Route::post('emr/save-verif-cppt-dokter', 'EMR\EMRController@saveVerifCPPTEmr');
           Route::post('emr/save-kepatuhancuci', 'EMR\EMRController@saveDataKepatuhanCuci');
