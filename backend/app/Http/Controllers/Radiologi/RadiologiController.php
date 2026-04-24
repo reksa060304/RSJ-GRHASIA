@@ -175,7 +175,10 @@ class RadiologiController extends ApiController
                     ->leftJOIN('strukpelayanan_t as sp', 'sp.norec', '=', 'pp.strukfk')
                     ->leftjoin('strukbuktipenerimaan_t as sbm', 'sp.nosbmlastfk', '=', 'sbm.norec')
                     ->leftJOIN('strukorder_t as so', 'so.norec', '=', 'pp.strukorderfk')
-//                    ->leftJOIN('orderpelayanan_t op', 'so.norec', '=', 'op.strukorderfk') // syamsu tambahan
+                    ->leftJoin('orderpelayanan_t as op', function($join) {
+                        $join->on('op.strukorderfk', '=', 'pp.strukorderfk')
+                             ->on('op.objectprodukfk', '=', 'pp.produkfk');
+                    })
                     ->leftjoin('pmi_m as pmi','pmi.id','=','pp.pmifk')
                    ->leftJOIN('ris_order as ris', 'ris.order_no', '=',
                        DB::raw('so.noorder AND ris.order_code=cast(pp.produkfk as text)'))
@@ -186,16 +189,16 @@ class RadiologiController extends ApiController
                     ->select('ps.nocm', 'ps.namapasien', 'jk.jeniskelamin', 'pp.tglpelayanan', 'pp.produkfk', 'pr.namaproduk',
                         'pp.jumlah', 'pp.hargasatuan', 'pp.hargadiscount', 'sp.nostruk', 'pd.noregistrasi', 'ru.namaruangan',
                         'dp.namadepartemen', 'ps.id as psid', 'apd.norec as norec_apd', 'sp.norec as norec_sp', 'pp.norec as norec_pp',
-                        'ru.objectdepartemenfk', 'so.noorder', 'ris.order_key as idbridging', 'apd.objectruanganfk','pp.iscito','pp.jasa','so.keteranganlainnya',
+                        'ru.objectdepartemenfk', 'so.noorder', 'ris.order_key as idbridging', 'op.ihs_id as idbridging_ihs', 'apd.objectruanganfk','pp.iscito','pp.jasa','so.keteranganlainnya',
                         'ps.objectjeniskelaminfk','ps.tgllahir','sbm.nosbm','pmi.pmi',  'ris.order_cnt as nourutrad', // syamsu tambahan
-                        DB::raw("case when ris.order_key is not null then 'Sudah Dikirim' else '-' end as statusbridging,hr.norec as  hr_norec,pp.tglpanggil"))
+                        DB::raw("case when ris.order_key is not null or op.ihs_id is not null then 'Sudah Dikirim' else '-' end as statusbridging,hr.norec as  hr_norec,pp.tglpanggil"))
                     ->where('pp.kdprofile',$idProfile)
                     ->whereNull('pp.isobat')
                     ->where('ru.objectdepartemenfk', $this->settingDataFixed('KdDepartemenInstalasiRadiologi', $idProfile))
                     ->groupBy('ps.nocm', 'ps.namapasien', 'jk.jeniskelamin', 'pp.tglpelayanan', 'pp.produkfk', 'pr.namaproduk',
                         'pp.jumlah', 'pp.hargasatuan', 'pp.hargadiscount', 'sp.nostruk', 'pd.noregistrasi', 'ru.namaruangan',
                         'dp.namadepartemen', 'ps.id', 'apd.norec', 'sp.norec', 'pp.norec',
-                        'ru.objectdepartemenfk', 'so.noorder', 'ris.order_key', 'apd.objectruanganfk','pp.iscito','pp.jasa', 'hr.norec','sbm.nosbm','pmi.pmi','so.keteranganlainnya','pp.tglpanggil')
+                        'ru.objectdepartemenfk', 'so.noorder', 'ris.order_key', 'op.ihs_id', 'apd.objectruanganfk','pp.iscito','pp.jasa', 'hr.norec','sbm.nosbm','pmi.pmi','so.keteranganlainnya','pp.tglpanggil')
                    
                     ->orderBy('pp.tglpelayanan');
 
@@ -213,7 +216,10 @@ class RadiologiController extends ApiController
                     ->leftJOIN('strukpelayanan_t as sp', 'sp.norec', '=', 'pp.strukfk')
                     ->leftjoin('strukbuktipenerimaan_t as sbm', 'sp.nosbmlastfk', '=', 'sbm.norec')
                     ->leftJOIN('strukorder_t as so', 'so.norec', '=', 'pp.strukorderfk')
-//                    ->leftJOIN('orderpelayanan_t op', 'so.norec', '=', 'op.strukorderfk') // syamsu tambahan
+                    ->leftJoin('orderpelayanan_t as op', function($join) {
+                        $join->on('op.strukorderfk', '=', 'pp.strukorderfk')
+                             ->on('op.objectprodukfk', '=', 'pp.produkfk');
+                    })
 //                    ->leftJOIN('lisorder as lis', 'lis.ono', '=', 'so.noorder')
                     ->leftJOIN('order_lab as lis', 'lis.no_lab', '=',
                         DB::raw("so.noorder AND 
@@ -222,9 +228,9 @@ class RadiologiController extends ApiController
                         'pp.jumlah', 'pp.hargasatuan', 'pp.hargadiscount', 'sp.nostruk', 'pd.noregistrasi', 'ru.namaruangan',
                         'dp.namadepartemen', 'ps.id as psid', 'apd.norec as norec_apd', 'sp.norec as norec_sp', 'pp.norec as norec_pp',
                         'ru.objectdepartemenfk', 'so.noorder',
-                        'lis.no_lab as idbridging','so.keteranganlainnya',
+                        'lis.no_lab as idbridging','op.ihs_id as idbridging_ihs','so.keteranganlainnya',
                         'apd.objectruanganfk','pp.iscito','pp.jasa','ps.objectjeniskelaminfk','ps.tgllahir','sbm.nosbm','pmi.pmi','so.keteranganlainnya'
-                        ,DB::raw("case when lis.no_lab is not null then 'Sudah Dikirim' else '-' end as statusbridging,'' as hr_norec , null as nourutrad,pp.tglpanggil") // syamsu tambahan
+                        ,DB::raw("case when lis.no_lab is not null or op.ihs_id is not null then 'Sudah Dikirim' else '-' end as statusbridging,'' as hr_norec , null as nourutrad,pp.tglpanggil") // syamsu tambahan
                     )
                     ->where('pp.kdprofile',$idProfile)
                     ->whereNull('pp.isobat')
@@ -346,6 +352,7 @@ class RadiologiController extends ApiController
                         'dokterid' => $DokterId,
                         'noorder' => $item->noorder,
                         'idbridging' => $item->idbridging,
+                        'idbridging_ihs' => $item->idbridging_ihs,
                         'statusbridging' => $item->statusbridging,
                         'iscito' => $item->iscito,
                         'jasa' => (float)$item->jasa,
