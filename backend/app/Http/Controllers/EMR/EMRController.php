@@ -2805,7 +2805,9 @@ class EMRController  extends ApiController
                 'so.objectruangantujuanfk',
                 'so.objectruanganfk',
                 'apd.norec as norec_apd',
-                'so.keteranganlainnya'
+                'so.keteranganlainnya',
+                'so.keterangantolak',
+                'so.tgltolak'
             )
             ->where('so.kdprofile', $idProfile)
             ->where('so.statusenabled', true)
@@ -2837,6 +2839,9 @@ class EMRController  extends ApiController
         $idProfile = (int) $kdProfile;
         try {
             $dataSO = StrukOrder::where('norec', $request['norec'])->where('kdprofile', $idProfile)->update(
+                ['statusenabled' => false]
+            );
+            $dataAPD = AntrianPasienDiperiksa::where('objectstrukorderfk', $request['norec'])->where('kdprofile', $idProfile)->update(
                 ['statusenabled' => false]
             );
             $transStatus = 'true';
