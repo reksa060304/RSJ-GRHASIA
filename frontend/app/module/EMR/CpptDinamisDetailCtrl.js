@@ -1340,7 +1340,7 @@ define(['initialize', 'Configuration'], function (initialize, config) {
 
             $scope.loadRiwayatEMR = function () {
                 var nocm = $scope.cc.nocm || '';
-                var url = 'emr/get-emr-transaksi-detail-form?nocm=' + encodeURIComponent(nocm) + '&jenisEmr=asesmen';
+                var url = 'emr/get-emr-transaksi-detail-form-new?nocm=' + encodeURIComponent(nocm) + '&jenisEmr=asesmen';
 
                 medifirstService.get(url, true).then(function (e) {
                     var res = e.data ? e.data : e;                    
