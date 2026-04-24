@@ -35,6 +35,7 @@ define(['initialize'], function (initialize) {
                 },],
                 pageable: true,
                 scrollable: true,
+                dataBound: onDataBound,
                 columns: [
                     // { field: "rowNumber", title: "#", width: 40, width: 40, attributes: { style: "text-align:right; padding-right: 15px;"}, hideMe: true},
                     { field: "no", title: "No", width: 40 },
@@ -53,6 +54,13 @@ define(['initialize'], function (initialize) {
                         width: 150,
                         // "template": "#= keteranganlainnya.replace(/\\n/g, '<br />') == null ? '' : keteranganlainnya.replace(/\\n/g, '<br />')  #"
                         template: "#= keteranganlainnya ? keteranganlainnya.replace(/\\n/g, '<br />') : '' #"
+
+                    },
+                    {
+                        field: "keterangantolak",
+                        title: "Ditolak",
+                        width: 150,
+                        template: "#= keterangantolak ? keterangantolak : '' #"
 
                     },
                     { command: [
@@ -76,6 +84,19 @@ define(['initialize'], function (initialize) {
             }
             init();
 
+            function onDataBound(e) {
+                var grid = this;
+                grid.tbody.find('>tr').each(function () {
+                    var dataItem = grid.dataItem(this);
+                    if (dataItem && dataItem.keteranganlainnya) {
+                        $(this).addClass('green');
+                    }
+                    if (dataItem && dataItem.tgltolak) {
+                        $(this).addClass('red');
+                    }
+                });
+            }
+
             function hapus(e) {
                 e.preventDefault();
                 var dataItem = this.dataItem($(e.currentTarget).closest("tr"));
@@ -84,6 +105,19 @@ define(['initialize'], function (initialize) {
                     toastr.error("Data Tidak Ditemukan");
                     return
                 }
+
+                if (dataItem.keteranganlainnya != null) {
+                    toastr.error("Konsultasi sudah dijawab oleh " + dataItem.namalengkap + ", tidak bisa dihapus!");
+                    return
+                }
+                
+                if (dataItem.tgltolak != null) {
+                    toastr.error("Konsultasi sudah ditolak, tidak bisa dihapus!");
+                    return
+                }
+
+                if (!confirm('Yakin mau hapus order?')) return;
+
                 var itemDelete = {
                     "norec": dataItem.norec
                 }
