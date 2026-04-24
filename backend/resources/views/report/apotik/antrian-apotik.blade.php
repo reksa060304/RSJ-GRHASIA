@@ -42,7 +42,7 @@
 
 <body style="margin: 0">
 
-    <div class="print-copy">
+    <!-- <div class="print-copy">
     <table style="background-color:#FFFFFF; width:365px; border:0">
         <caption style="display: none"></caption>
         <tbody>
@@ -166,7 +166,7 @@
             </tr>
         </tbody>
     </table>
-    </div>
+    </div> -->
     <div class="print-copy" style="margin-top: 20px">
     <table style="background-color:#FFFFFF; width:365px; border:0">
         <caption style="display: none"></caption>
