@@ -1227,7 +1227,8 @@ class ReportController extends ApiController{
             "));
         $raw = collect(DB::select("
             select pm2.nocm ,to_char(pm2.tgllahir,'dd-mm-yyyy') as tgllahir,age(pm2.tgllahir) as umur ,jm.jeniskelamin ,pm2.namapasien ,pm3.namalengkap, rm.namaruangan ruanganasal, ra.namaruangan ruangantujuan, pm2.alergi, 
-            to_char(st.tglorder,'dd-mm-yyyy HH24:MI:ss') as tglorder,pm3.nosip, kp.kelompokpasien, pas.nosep 
+            to_char(st.tglorder,'dd-mm-yyyy HH24:MI:ss') as tglorder,pm3.nosip, kp.kelompokpasien, pas.nosep,
+            aa.jenis || ' - ' || aa.noantri as noantri
             from strukorder_t st
             inner join pasien_m pm2 on pm2.id = st.nocmfk
             inner join jeniskelamin_m jm on jm.id = pm2.objectjeniskelaminfk
@@ -1237,6 +1238,7 @@ class ReportController extends ApiController{
             inner join pasiendaftar_t AS pd ON pd.norec = st.noregistrasifk
             left join kelompokpasien_m AS kp ON kp.id = pd.objectkelompokpasienlastfk
             LEFT JOIN pemakaianasuransi_t AS pas ON pas.noregistrasifk = pd.norec
+            left join antrianapotik_t as aa on aa.noorder = st.noorder
             where st.noorder = '$noorder'
         "))->first();
         $detel = [];
@@ -1263,7 +1265,8 @@ class ReportController extends ApiController{
             // $raw->umur = $this->getAge($raw->tgllahir ,date('Y-m-d'));
         }else if (empty($raw)){
             $raw = collect(DB::select("
-                select pm2.nocm ,to_char(pm2.tgllahir,'dd-mm-yyyy') as tgllahir,age(pm2.tgllahir) as umur ,jm.jeniskelamin ,pm2.namapasien ,pm3.namalengkap, rm.namaruangan ruangantujuan, to_char(s.tglresep ,'dd-mm-yyyy HH:MM:ss') as tglorder,pm3.nosip, kp.kelompokpasien, ra.namaruangan ruanganasal, pm2.alergi
+                select pm2.nocm ,to_char(pm2.tgllahir,'dd-mm-yyyy') as tgllahir,age(pm2.tgllahir) as umur ,jm.jeniskelamin ,pm2.namapasien ,pm3.namalengkap, rm.namaruangan ruangantujuan, to_char(s.tglresep ,'dd-mm-yyyy HH:MM:ss') as tglorder,pm3.nosip, kp.kelompokpasien, ra.namaruangan ruanganasal, pm2.alergi,
+                aa.jenis || ' - ' || aa.noantri as noantri
                 from strukresep_t s
                 inner join antrianpasiendiperiksa_t at2 on at2.norec = s.pasienfk 
                 inner join pasiendaftar_t pt on pt.norec = at2.noregistrasifk 
@@ -1273,6 +1276,7 @@ class ReportController extends ApiController{
                 inner join ruangan_m rm on rm.id = s.ruanganfk 
                 left join ruangan_m ra on ra.id = at2.objectruanganasalfk 
                 left join kelompokpasien_m AS kp ON kp.id = pt.objectkelompokpasienlastfk
+                left join antrianapotik_t as aa on aa.noresep = s.noresep
                 where s.norec = '$norec'
 
             "))->first();
