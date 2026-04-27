@@ -64,7 +64,18 @@
                                     <font style="font-size: 8pt;" color="#000000" face="Tahoma">:</font>
                                 </td>
                                 <td>
-                                    <font style="font-size: 16pt; font-weight: bold;" color="#000000" face="Tahoma">{{$dataReport['noantrian']}}</font>
+                                    <font style="font-size: 32pt; font-weight: bold;" color="#000000" face="Tahoma">{{$dataReport['noantrian']}}</font>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>
+                                    <font style="font-size: 8pt;" color="#000000" face="Tahoma">Tgl. Cetak</font>
+                                </td>
+                                <td>
+                                    <font style="font-size: 8pt;" color="#000000" face="Tahoma">:</font>
+                                </td>
+                                <td>
+                                    <font style="font-size: 8pt;" color="#000000" face="Tahoma">{{date('d-m-Y H:i:s')}}</font>
                                 </td>
                             </tr>
                             <tr>
@@ -84,7 +95,7 @@
                                     <font style="font-size: 8pt;" color="#000000" face="Tahoma">{{$dataReport['tglregistrasi']}}</font>
                                 </td>
                             </tr>
-                            <tr>
+                            <!-- <tr>
                                 <td>
                                     <font style="font-size: 8pt;" color="#000000" face="Tahoma">No. Registrasi</font>
                                 </td>
@@ -94,7 +105,7 @@
                                 <td>
                                     <font style="font-size: 8pt;" color="#000000" face="Tahoma">{{$dataReport['noregistrasi']}}</font>
                                 </td>
-                            </tr>
+                            </tr> -->
                             <tr>
                                 <td>
                                     <font style="font-size: 8pt;" color="#000000" face="Tahoma">No. RM</font>
@@ -103,7 +114,7 @@
                                     <font style="font-size: 8pt;" color="#000000" face="Tahoma">:</font>
                                 </td>
                                 <td>
-                                    <font style="font-size: 8pt; font-weight: bold;" color="#000000" face="Tahoma">{{$dataReport['norm']}}</font>
+                                    <font style="font-size: 12pt; font-weight: bold;" color="#000000" face="Tahoma">{{$dataReport['norm']}}</font>
                                 </td>
                             </tr>
                             <tr>
@@ -162,7 +173,7 @@
 
                         {{-- Additional Info --}}
                         <table cellspacing="0" cellpadding="2" border="0" width="100%">
-                            @if($dataReport['tanggalreservasi'] != '')
+                            <!-- @if($dataReport['tanggalreservasi'] != '')
                             <tr>
                                 <td width="35%">
                                     <font style="font-size: 8pt;" color="#000000" face="Tahoma">Tgl. Reservasi</font>
@@ -174,10 +185,10 @@
                                     <font style="font-size: 8pt;" color="#000000" face="Tahoma">{{$dataReport['tanggalreservasi']}}</font>
                                 </td>
                             </tr>
-                            @endif
+                            @endif -->
                             <tr>
                                 <td>
-                                    <font style="font-size: 8pt;" color="#000000" face="Tahoma">Dokter</font>
+                                    <font style="font-size: 8pt;" color="#000000" face="Tahoma">Pemberi Layanan</font>
                                 </td>
                                 <td>
                                     <font style="font-size: 8pt;" color="#000000" face="Tahoma">:</font>
@@ -191,8 +202,11 @@
                         <hr style="border-top: 1px solid #000; margin: 8px 0;" />
 
                         {{-- QR Code Section --}}
-                        <div style="text-align: center;padding: 15px 0 10px 0;">
-                            {!! QrCode::size(100)->margin(2)->generate($dataReport['noregistrasi']) !!}
+                        <div style="text-align: center;padding: 15px 0 0 0;">
+                            <font style="font-size: 9pt; font-weight: bold; font-style: italic;" color="#000000" face="Tahoma">Scan barcode untuk antrian farmasi</font>
+                        </div>
+                        <div style="text-align: center;padding: 5px 0 12px 0;">
+                            {!! QrCode::size(150)->margin(2)->generate($dataReport['noregistrasi']) !!}
                         </div>
 
                         {{-- Online Patient Section --}}
@@ -237,6 +251,14 @@
                                 </td>
                                 <td>
                                     <font style="font-size: 8pt;" color="#000000" face="Tahoma">Konsultasi ke klinik . . . . . . . . . . . . . .</font>
+                                </td>
+                            </tr>
+                             <tr>
+                                <td width="20px" style="vertical-align: middle;">
+                                    <span style="font-size:13pt;color:#000000;line-height:1;">&#9744;</span>
+                                </td>
+                                <td>
+                                    <font style="font-size: 8pt;" color="#000000" face="Tahoma">Lain-Lain . . . . . . . . . . . . . . . . . . . . .</font>
                                 </td>
                             </tr>
                         </table>

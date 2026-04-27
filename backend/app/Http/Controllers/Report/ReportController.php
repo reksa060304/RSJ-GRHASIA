@@ -1905,10 +1905,10 @@ class ReportController extends ApiController{
             ->leftJoin('pegawai_m as pp','pd.objectpegawaifk','=','pp.id')
             ->leftJoin('kelompokpasien_m as kp','pd.objectkelompokpasienlastfk','=','kp.id')
             ->leftJoin('antrianpasienregistrasi_t as apr','apr.noreservasi','=','pd.statusschedule')
-            ->select(DB::raw("pd.noregistrasi,ps.nocm,ps.tgllahir,ps.namapasien,to_char(pd.tglregistrasi, 'DD-MM-YYYY HH:mm') AS tglregistrasi,jk.reportdisplay AS jk, 
+            ->select(DB::raw("pd.noregistrasi,ps.nocm,ps.tgllahir,ps.namapasien,to_char(pd.tglregistrasi, 'DD-MM-YYYY HH24:MI:SS') AS tglregistrasi,jk.reportdisplay AS jk, 
                      ap.alamatlengkap,ap.mobilephone2,ru.namaruangan AS ruanganperiksa,pp.namalengkap AS namadokter, 
                      kp.kelompokpasien,apdp.noantrian,pd.statuspasien,apr.noreservasi,CASE WHEN apr.tanggalreservasi IS NULL THEN '' 
-                     ELSE to_char(apr.tanggalreservasi, 'DD-MM-YYYY HH:mm') END AS tanggalreservasi"))
+                     ELSE to_char(apr.tanggalreservasi, 'DD-MM-YYYY HH24:MI:SS') END AS tanggalreservasi"))
             ->where('pd.noregistrasi', $request['noregistrasi'])
             ->first();
 
