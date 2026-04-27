@@ -1201,7 +1201,7 @@ define(['initialize', 'Configuration'], function (initialize, config) {
             }
             $scope.ambilObat = function () {
                 if ($scope.item.statusorder == 'Selesai') {
-                    // panggil antrian farmasi
+                    /* // panggil antrian farmasi DIPINDAH KE DALAM POPUP (panggilAntrian)
                     socket.emit('call-antrian-farmasi', {
                         namapasien: $scope.item.namapasien,
                         namaruangan: $scope.item.namaruangan,
@@ -1222,6 +1222,7 @@ define(['initialize', 'Configuration'], function (initialize, config) {
                                 $scope.refresh();
                             })
                     });
+                    */
                     // noresep
                     $scope.item.tglambil = new Date()
                     $scope.item.namapengambil = $scope.item.namapasien
@@ -1895,6 +1896,44 @@ define(['initialize', 'Configuration'], function (initialize, config) {
                     }
                 } else {
                     toastr.error("Status Data Belum Diverifikasi !!")
+                    return;
+                }
+            }
+            $scope.panggilAntrian = function () {
+                if ($scope.item.statusorder == 'Selesai') {
+                    // panggil antrian farmasi
+                    socket.emit('call-antrian-farmasi', {
+                        namapasien: $scope.item.namapasien,
+                        namaruangan: $scope.item.namaruangan,
+                        noantri: $scope.item.noantri,
+                        nocm: $scope.item.nocm,
+                        noregistrasi: $scope.item.noregistrasi,
+                        jenis: $scope.item.jenis,
+                        status: 'panggil'
+                    });
+                    
+                    var strukresep = ""
+                    if ($scope.item.noorder == $scope.item.noresep) { //resep yang input langsung tanpa order
+                        strukresep = true
+                    }
+                    var objSave = {
+                        noorder: $scope.item.noorder,
+                        statusorder: 3,
+                        tglambil: null,
+                        namapengambil: null,
+                        tglselesai: null,
+                        namaselesai: 'selesai',
+                        strukresep: strukresep
+                    }
+                    medifirstService.post('farmasi/save-status-panggil-resep', objSave).then(function (e) {
+                        medifirstService.postLogging('Memanggil Order Resep Elektronik', 'No Order Struk Order',
+                            $scope.item.noorder, 'Memanggil Order Resep Elektronik No Order: ' + $scope.item.noorder + '/ Noregistrasi : ' + $scope.item.noregistrasi).then(function (res) {
+                                $scope.refresh();
+                            })
+                    });
+                    toastr.info("Memanggil Antrian " + $scope.item.noantri + " ...");
+                } else {
+                    toastr.error("Status Data Harus Selesai !!")
                     return;
                 }
             }
