@@ -97,8 +97,7 @@
                         <td class="description fs-9" style="text-align: right"><b>CM.FM.02</b></td>
                     </tr>
                     <tr>
-                        <td class="price fs-9"><strong></strong></td>
-                        <td class="description fs-9" style="text-align: left"></td>
+                        <td colspan="2" class="fs-13"><strong>No. Antrian: {{ $raw->noantri }}</strong></td>
                         <td style="width: 10px;"><strong></strong></td>
                         <td class="price fs-9"><strong></strong></td>
                         <td class=" fs-9" style="text-align: right" width="200"><b><u>RESEP {{ $raw->kelompokpasien }}</u></b></td>
@@ -828,8 +827,7 @@
                                 <td class="description fs-9" style="text-align: right"><b>CM.FM.02</b></td>
                             </tr>
                             <tr>
-                                <td class="price fs-9"><strong></strong></td>
-                                <td class="description fs-9" style="text-align: left"></td>
+                                <td colspan="2" class="fs-13"><strong>No. Antrian: {{ $raw->noantri }}</strong></td>
                                 <td style="width: 10px;"><strong></strong></td>
                                 <td class="price fs-9"><strong></strong></td>
                                 <td class=" fs-9" style="text-align: right" width="200"><b><u>RESEP {{ $raw->kelompokpasien }}</u></b></td>
