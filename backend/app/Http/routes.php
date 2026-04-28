@@ -3564,6 +3564,7 @@ Route::group(['middleware' => 'cors', 'prefix' => 'service'], function () {
                 Route::get('sysadmin/master/get-ruanganbyidDepart/{id}', 'SysAdmin\Master\MasterController@getRuanganbyIddepartemen');
                 Route::get('sysadmin/master/list-produk/{limit?}', 'SysAdmin\Master\MasterController@getListProdukMap');
                 Route::get('sysadmin/master/get-kelompok-produk', 'SysAdmin\Master\MasterController@getkelompokproduk');
+                Route::get('sysadmin/master/get-kategory-produk-catering', 'SysAdmin\Master\MasterController@getkategoryprodukcatering');
                 Route::get('sysadmin/master/get-daftar-jenisdiet', 'SysAdmin\Master\MasterController@getDaftarJenisDiet');
                 Route::get('sysadmin/master/get-daftar-jeniswaktu', 'SysAdmin\Master\MasterController@getDaftarJenisWaktu');
                 Route::get('sysadmin/master/get-departemen', 'SysAdmin\Master\MasterController@getDepartemen');
@@ -3631,6 +3632,10 @@ Route::group(['middleware' => 'cors', 'prefix' => 'service'], function () {
                 Route::post('sysadmin/master/delete-kategorydiet', 'SysAdmin\Master\MasterController@deleteKategoryDiet');
                 Route::post('sysadmin/master/save-data-paket', 'SysAdmin\Master\MasterController@saveDataPaket');
                 Route::post('sysadmin/master/save-statusenabled-paket', 'SysAdmin\Master\MasterController@UpdateStatusEnabledPaket');
+
+                Route::post('sysadmin/master/save-kategoryprodukdiet', 'SysAdmin\Master\MasterController@saveKategoryProdukDiet');
+                Route::get('sysadmin/master/get-daftar-kategoryprodukdiet', 'SysAdmin\Master\MasterController@getKategoryProdukDiet');
+                Route::post('sysadmin/master/delete-kategoryprodukdiet', 'SysAdmin\Master\MasterController@deleteKategoryProdukDiet');
 
                 Route::post('sysadmin/master/save-pelayananmutu', 'SysAdmin\Master\MasterController@savePelayananMutu');
                 Route::post('sysadmin/master/delete-pelayananmutu', 'SysAdmin\Master\MasterController@deletePelayananMutu');

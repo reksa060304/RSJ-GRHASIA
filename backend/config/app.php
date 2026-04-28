@@ -173,7 +173,7 @@ return [
 	    //https://packagist.org/packages/codedge/laravel-fpdf
         //L5Swagger\L5SwaggerServiceProvider::class,
         SimpleSoftwareIO\QrCode\QrCodeServiceProvider::class,
-        Webklex\PDFMerger\Providers\PDFMergerServiceProvider::class
+        // Webklex\PDFMerger\Providers\PDFMergerServiceProvider::class
     ],
 
     /*
@@ -231,7 +231,7 @@ return [
         'Fpdf' => Codedge\Fpdf\Facades\Fpdf::class, // [2]
         'PDF' => Barryvdh\DomPDF\Facade::class,
         'QrCode' => SimpleSoftwareIO\QrCode\Facades\QrCode::class,
-        'PDFMerger' => Webklex\PDFMerger\Facades\PDFMergerFacade::class
+        //'PDFMerger' => Webklex\PDFMerger\Facades\PDFMergerFacade::class
     ],
 
 ];
