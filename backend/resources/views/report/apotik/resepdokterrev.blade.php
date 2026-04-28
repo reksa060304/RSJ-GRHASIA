@@ -97,7 +97,7 @@
                         <td class="description fs-9" style="text-align: right"><b>CM.FM.02</b></td>
                     </tr>
                     <tr>
-                        <td colspan="2" class="fs-13"><strong>No. Antrian: {{ $raw->noantri }}</strong></td>
+                        <td colspan="2" class="fs-13"><strong></strong></td>
                         <td style="width: 10px;"><strong></strong></td>
                         <td class="price fs-9"><strong></strong></td>
                         <td class=" fs-9" style="text-align: right" width="200"><b><u>RESEP {{ $raw->kelompokpasien }}</u></b></td>
@@ -181,13 +181,15 @@
                         </td>
                         <td style="width: 10px;"><strong></strong></td>
                     </tr>
-                    <tr style="height: 10px;"><td></td></tr>
                     <tr>
-                        <td class="price fs-9"><strong></strong></td>
-                        <td class="description fs-9" style="text-align: left"></td>
+                        <td class="price fs-9"><strong>No. Antrian</strong></td>
+                    </tr>
+                    <tr>
+                        <td colspan="2" style="text-align: left; vertical-align: middle; height: 50px;">
+                            <strong style="font-size: 36px;">{{ $raw->noantri }}</strong>
+                        </td>
                         <td style="width: 10px;"><strong></strong></td>
-                        <td class="price fs-9"><strong></strong></td>
-                        <td class="price fs-9" style="text-align: center">Tanda Tangan Penerima</td>
+                        <td colspan="2" class="price fs-9" style="text-align: center; vertical-align: middle;">Tanda Tangan Penerima</td>
                     </tr>
                     <tr style="height: 30px;"><td></td></tr>
                     <tr>

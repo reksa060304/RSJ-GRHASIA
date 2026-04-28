@@ -203,7 +203,7 @@
 
                         {{-- QR Code Section --}}
                         <div style="text-align: center;padding: 15px 0 0 0;">
-                            <font style="font-size: 9pt; font-weight: bold; font-style: italic;" color="#000000" face="Tahoma">Scan barcode untuk antrian farmasi</font>
+                            <font style="font-size: 9pt; font-weight: bold; font-style: italic;" color="#000000" face="Tahoma">Scan barcode untuk cetak antrian farmasi</font>
                         </div>
                         <div style="text-align: center;padding: 5px 0 12px 0;">
                             {!! QrCode::size(150)->margin(2)->generate($dataReport['noregistrasi']) !!}
