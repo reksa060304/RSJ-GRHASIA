@@ -100,8 +100,7 @@ export class CheckinFarmComponent implements OnInit , AfterViewInit{
   submitNoRegFarm() {
     if (this.noRegFarm) {
       const url = Configuration.get().apiBackend + 'medifirst2000/report/cetak-antrian-farm?noreg='
-        + this.noRegFarm
-        + '&kdprofile=21';
+        + this.noRegFarm;
 
       this.service.get(url, { responseType: 'text' }).subscribe({
         next: (response) => {
@@ -112,11 +111,11 @@ export class CheckinFarmComponent implements OnInit , AfterViewInit{
           }
         },
         error: (err) => {
-          alert('Terjadi kesalahan saat memeriksa resep.');
+          alert('Pasien Rawat Inap tidak perlu melakukan check-in farmasi melalui kiosk, silakan hubungi petugas farmasi untuk informasi lebih lanjut.');
         }
       });
 
-      this.noRegFarm = undefined;
+      // this.noRegFarm = undefined;
     } else {
       alert('Masukan No Registrasi Terlebih Dahulu.');
     }

@@ -1625,11 +1625,15 @@ define(['initialize', 'Configuration'], function (initialize, config) {
                     toastr.error('Pilih data dulu')
                     return
                 }
+                if ($scope.item.departemen_id == 16) {
+                    toastr.error('Rawat inap tidak perlu cetak nomor antrian!')
+                    return
+                }
                 if ($scope.item.noantri == '-' ) {
-                    window.open(config.baseApiBackend + "report/cetak-antrian-farm?noorder=" + $scope.item.noorder + "&kdprofile=21", 'BuktiDaftar', 'width=800,height=800,scrollbars=yes,resizable=yes');
+                    window.open(config.baseApiBackend + "report/cetak-antrian-farm?noorder=" + $scope.item.noorder, 'BuktiDaftar', 'width=800,height=800,scrollbars=yes,resizable=yes');
                     $scope.refresh();
                 } else {
-                    window.open(config.baseApiBackend + "report/cetak-antrian-farm?noresep=" + $scope.item.noorder + "&kdprofile=21", 'BuktiDaftar', 'width=800,height=800,scrollbars=yes,resizable=yes');
+                    window.open(config.baseApiBackend + "report/cetak-antrian-farm?noresep=" + $scope.item.noorder, 'BuktiDaftar', 'width=800,height=800,scrollbars=yes,resizable=yes');
                     $scope.refresh();
                 }
             }

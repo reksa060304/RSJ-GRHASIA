@@ -1632,7 +1632,6 @@ class ReportController extends ApiController{
 //        return view('','$result');
     }
     public function cetakAntrianFarmKiosk(Request $request) {
-        $kdProfile = (int)$request['kdprofile'];
         $noreg = $request['noreg'];
         $noresep = $request['noresep'];
         $noorder = $request['noorder'];
@@ -1643,6 +1642,8 @@ class ReportController extends ApiController{
             ("
                 select * from profile_m where statusenabled=true limit 1
             "))->first();
+
+        $kdProfile = (int)$request['kdprofile'] ?? (int)$profile->id;
 
         if (empty($noresep)){
             $data = DB::table('antrianapotik_t as at')
@@ -1668,6 +1669,7 @@ class ReportController extends ApiController{
             ->where('at.statusenabled', true)
             ->where('st.statusorder', 0)
             // ->whereIn('st.statusorder', [0, 1, 2, 3])
+            ->whereRaw('rm.objectdepartemenfk != 16')
             ->orderBy('pt.tglregistrasi', 'desc')
             ->orderBy('st.tglorder', 'desc')
             ->orderBy('at.noantri', 'desc')
@@ -1694,6 +1696,7 @@ class ReportController extends ApiController{
                 $cekOrder = DB::table('strukorder_t as st')
                 ->join('pasiendaftar_t as pt', 'pt.norec', '=', 'st.noregistrasifk')
                 ->join('pasien_m as pm', 'pm.id', '=', 'pt.nocmfk')
+                ->join('ruangan_m as rm', 'rm.id', '=', 'st.objectruanganfk')
                 ->where(function ($query) use ($noreg, $noorder) {
                         if (!empty($noorder)) {
                             $query->where('st.noorder', $noorder);
@@ -1706,6 +1709,7 @@ class ReportController extends ApiController{
                 ->where('st.statusenabled', true)
                 ->where('st.statusorder', 0)
                 // ->whereIn('st.statusorder', [0, 1, 2, 3])
+                ->whereRaw('rm.objectdepartemenfk != 16')
                 ->orderBy('pt.tglregistrasi', 'desc')
                 ->orderBy('st.tglorder', 'desc')
                 ->selectRaw("
@@ -1732,17 +1736,26 @@ class ReportController extends ApiController{
                         }
                     }
                     $racikanORnonracikan = $hasRacikan ? 'R' : 'N';
-                    
-                    $countAntrian = AntrianApotik::where('jenis', $racikanORnonracikan)
-                        ->where('kdprofile', $kdProfile)
-                        ->whereBetween('tglresep', [date('Y-m-d 00:00'), date('Y-m-d 23:59')])
-                        ->max('noantri');
-                    
-                    
-                        $noAntriApotik = (str_pad((int)$countAntrian + 1, 4, "0", STR_PAD_LEFT));                    
+                    \DB::transaction(function () use (
+                        &$noAntriApotik,
+                        $racikanORnonracikan,
+                        $kdProfile,
+                        $cekOrder
+                    ) {
+                        $last = \DB::table('antrianapotik_t')
+                            ->where('jenis', $racikanORnonracikan)
+                            ->where('kdprofile', $kdProfile)
+                            ->whereRaw('DATE(tglresep) = CURRENT_DATE')
+                            ->orderBy('noantri', 'desc')
+                            ->lockForUpdate()
+                            ->first();
+
+                        $countAntrian = $last ? ((int)$last->noantri + 1) : 1;
+
+                        $noAntriApotik = str_pad($countAntrian, 4, "0", STR_PAD_LEFT);
+
                         $newAA = new AntrianApotik();
-                        $norecAA = $newAA->generateNewId();
-                        $newAA->norec = $norecAA;
+                        $newAA->norec = $newAA->generateNewId();
                         $newAA->kdprofile = $kdProfile;
                         $newAA->statusenabled = true;
                         $newAA->noantri = $noAntriApotik;
@@ -1752,8 +1765,8 @@ class ReportController extends ApiController{
                         $newAA->tglresep = date('Y-m-d H:i:s');
                         $newAA->noorder = $cekOrder->noorder;
                         // $newAA->status = '6';
-                        
-                        $newAA->save();  
+                        $newAA->save();
+                    });
                     
                     
 
@@ -1780,6 +1793,7 @@ class ReportController extends ApiController{
                     ->where('at.statusenabled', true)
                     ->where('st.statusorder', 0)
                     // ->whereIn('st.statusorder', [0, 1, 2, 3])
+                    ->whereRaw('rm.objectdepartemenfk != 16')
                     ->orderBy('pt.tglregistrasi', 'desc')
                     ->orderBy('st.tglorder', 'desc')
                     ->orderBy('at.noantri', 'desc')
@@ -1816,6 +1830,7 @@ class ReportController extends ApiController{
                 ->where('st.statusenabled', true)
                 ->where('pt.statusenabled', true)
                 ->where('at.statusenabled', true)
+                ->whereRaw('rm.objectdepartemenfk != 16')
                 ->orderBy('at.tglresep', 'desc')
                 ->selectRaw("
                     at.jenis || ' - ' || at.noantri as noantri, 
@@ -1849,6 +1864,7 @@ class ReportController extends ApiController{
                     ->where('pt.statusenabled', true)
                     ->where('st.statusenabled', true)
                     ->where('at.statusenabled', true)
+                    ->whereRaw('rm.objectdepartemenfk != 16')
                     ->orderBy('pt.tglregistrasi', 'desc')
                     ->orderBy('st.tglorder', 'desc')
                     ->select([
