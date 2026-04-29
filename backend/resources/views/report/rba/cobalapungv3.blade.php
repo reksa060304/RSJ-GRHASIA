@@ -228,13 +228,13 @@
                             $pegawai2_ls_bulanini = 0;
 
                             foreach ($data as $key => $anggaranKegiatan) {
-                                if($anggaranKegiatan->idmataanggaranpermen == 102){
+                                if($item->kode_kegiatan2 == $anggaranKegiatan->kode_kegiatan2 && ($anggaranKegiatan->idmataanggaranpermen == 102 || $anggaranKegiatan->idjenisanggaran == 3)){
                                     $pegawai2 += (float)$anggaranKegiatan->total_anggaran; 
                                 }
                             }
 
                             foreach ($spjbku as $row) {
-                                if($row->idmataanggaranpermen == 102){
+                                if($item->kode_kegiatan2 == $row->kode_kegiatan2 && ($row->idmataanggaranpermen == 102 || $row->idjenisanggaran == 3)){
                                     $pegawai2_bulanlalu += (float)$row->total_belanja_bulan_lalu;
                                     $pegawai2_bulanini += (float)$row->total_belanja_bulan_ini;
                                     $pengembalianpegawai2 += (float)$row->totalpengembalian;
@@ -242,7 +242,7 @@
                             }
                             
                             foreach ($spjls as $row) {
-                                if($row->idmataanggaranpermen == 102){
+                                if($item->kode_kegiatan2 == $row->kode_kegiatan2 && ($row->idmataanggaranpermen == 102 || $row->idjenisanggaran == 3)){
                                     $pegawai2_ls_bulanlalu += (float)$row->total_belanja_bulan_lalu;
                                     $pegawai2_ls_bulanini += (float)$row->total_belanja_bulan_ini;
                                     $pengembalianpegawai2 += (float)$row->totalpengembalian;
@@ -276,13 +276,13 @@
                             $barangjasa2_ls_bulanini = 0;
 
                             foreach ($data as $key => $anggaranKegiatan) {
-                                if($anggaranKegiatan->idmataanggaranpermen == 109){
+                                if($item->kode_kegiatan2 == $anggaranKegiatan->kode_kegiatan2 && ($anggaranKegiatan->idmataanggaranpermen == 109 || $anggaranKegiatan->idjenisanggaran == 4)){
                                     $barangjasa2 += (float)$anggaranKegiatan->total_anggaran;  
                                 }
                             }
 
                             foreach ($spjbku as $row) {
-                                if($row->idmataanggaranpermen == 109){
+                                if($item->kode_kegiatan2 == $row->kode_kegiatan2 && ($row->idmataanggaranpermen == 109 || $row->idjenisanggaran == 4)){
                                     $barangjasa2_bulanlalu += (float)$row->total_belanja_bulan_lalu;
                                     $barangjasa2_bulanini += (float)$row->total_belanja_bulan_ini;
                                     $pengembalianbarangjasa2 += (float)$row->totalpengembalian;
@@ -290,7 +290,7 @@
                             }
                             
                             foreach ($spjls as $row) {
-                                if($row->idmataanggaranpermen == 109){
+                                if($item->kode_kegiatan2 == $row->kode_kegiatan2 && ($row->idmataanggaranpermen == 109 || $row->idjenisanggaran == 4)){
                                     $barangjasa2_ls_bulanlalu += (float)$row->total_belanja_bulan_lalu;
                                     $barangjasa2_ls_bulanini += (float)$row->total_belanja_bulan_ini;
                                     $pengembalianbarangjasa2 += (float)$row->totalpengembalian;
@@ -324,13 +324,13 @@
                             $belanjaModal2_ls_bulanini = 0;
 
                             foreach ($data as $key => $anggaranKegiatan) {
-                                if($anggaranKegiatan->idjenisanggaran == 6 || $anggaranKegiatan->idjenisanggaran == 5){
+                                if($item->kode_kegiatan2 == $anggaranKegiatan->kode_kegiatan2 && in_array($anggaranKegiatan->idjenisanggaran, [5, 6, 7])){
                                     $belanjaModal2 += (int)$anggaranKegiatan->total_anggaran;  
                                 }
                             }
 
                             foreach ($spjbku as $row) {
-                                if($row->idjenisanggaran == 6 || $row->idjenisanggaran == 5){
+                                if($item->kode_kegiatan2 == $row->kode_kegiatan2 && in_array($row->idjenisanggaran, [5, 6, 7])){
                                     $belanjaModal2_bulanlalu += (float)$row->total_belanja_bulan_lalu;
                                     $belanjaModal2_bulanini += (float)$row->total_belanja_bulan_ini;
                                     $pengembalianmodal2 += (float)$row->totalpengembalian;
@@ -338,7 +338,7 @@
                             }
                             
                             foreach ($spjls as $row) {
-                                if($row->idjenisanggaran == 6 || $row->idjenisanggaran == 5){
+                                if($item->kode_kegiatan2 == $row->kode_kegiatan2 && in_array($row->idjenisanggaran, [5, 6, 7])){
                                     $belanjaModal2_ls_bulanlalu += (float)$row->total_belanja_bulan_lalu;
                                     $belanjaModal2_ls_bulanini += (float)$row->total_belanja_bulan_ini;
                                     $pengembalianmodal2 += (float)$row->totalpengembalian;
@@ -424,13 +424,13 @@
                             $pegawai3_ls_bulanini = 0;
                             
                             foreach ($data as $key => $anggaranKegiatan) {
-                                if($anggaranKegiatan->idmataanggaranpermen == 102){
+                                if($item->kode_kegiatan3 == $anggaranKegiatan->kode_kegiatan3 && ($anggaranKegiatan->idmataanggaranpermen == 102 || $anggaranKegiatan->idjenisanggaran == 3)){
                                     $pegawai3 += (int)$anggaranKegiatan->total_anggaran;  
                                 }
                             }
 
                             foreach ($spjbku as $row) {
-                                if($row->idmataanggaranpermen == 102){
+                                if($item->kode_kegiatan3 == $row->kode_kegiatan3 && ($row->idmataanggaranpermen == 102 || $row->idjenisanggaran == 3)){
                                     $pegawai3_bulanlalu += (float)$row->total_belanja_bulan_lalu;
                                     $pegawai3_bulanini += (float)$row->total_belanja_bulan_ini;
                                     $pengembalianpegawai3 += (float)$row->totalpengembalian;
@@ -438,7 +438,7 @@
                             }
                             
                             foreach ($spjls as $row) {
-                                if($row->idmataanggaranpermen == 102){
+                                if($item->kode_kegiatan3 == $row->kode_kegiatan3 && ($row->idmataanggaranpermen == 102 || $row->idjenisanggaran == 3)){
                                     $pegawai3_ls_bulanlalu += (float)$row->total_belanja_bulan_lalu;
                                     $pegawai3_ls_bulanini += (float)$row->total_belanja_bulan_ini;
                                     $pengembalianpegawai3 += (float)$row->totalpengembalian;
@@ -472,13 +472,13 @@
                             $barangjasa3_ls_bulanini = 0;
 
                             foreach ($data as $key => $anggaranKegiatan) {
-                                if($anggaranKegiatan->idmataanggaranpermen == 109){
+                                if($item->kode_kegiatan3 == $anggaranKegiatan->kode_kegiatan3 && ($anggaranKegiatan->idmataanggaranpermen == 109 || $anggaranKegiatan->idjenisanggaran == 4)){
                                     $barangjasa3 += (int)$anggaranKegiatan->total_anggaran;  
                                 }
                             }
 
                             foreach ($spjbku as $row) {
-                                if($row->idmataanggaranpermen == 109){
+                                if($item->kode_kegiatan3 == $row->kode_kegiatan3 && ($row->idmataanggaranpermen == 109 || $row->idjenisanggaran == 4)){
                                     $barangjasa3_bulanlalu += (float)$row->total_belanja_bulan_lalu;
                                     $barangjasa3_bulanini += (float)$row->total_belanja_bulan_ini;
                                     $pengembalianbarangjasa3 += (float)$row->totalpengembalian;
@@ -486,7 +486,7 @@
                             }
                             
                             foreach ($spjls as $row) {
-                                if($row->idmataanggaranpermen == 109){
+                                if($item->kode_kegiatan3 == $row->kode_kegiatan3 && ($row->idmataanggaranpermen == 109 || $row->idjenisanggaran == 4)){
                                     $barangjasa3_ls_bulanlalu += (float)$row->total_belanja_bulan_lalu;
                                     $barangjasa3_ls_bulanini += (float)$row->total_belanja_bulan_ini;
                                     $pengembalianbarangjasa3 += (float)$row->totalpengembalian;
@@ -520,13 +520,13 @@
                             $belanjaModal3_ls_bulanini = 0;
 
                             foreach ($data as $key => $anggaranKegiatan) {
-                                if($anggaranKegiatan->idjenisanggaran == 6 || $anggaranKegiatan->idjenisanggaran == 5){
+                                if($item->kode_kegiatan3 == $anggaranKegiatan->kode_kegiatan3 && in_array($anggaranKegiatan->idjenisanggaran, [5, 6, 7])){
                                     $belanjaModal3 += (int)$anggaranKegiatan->total_anggaran;  
                                 }
                             }
 
                             foreach ($spjbku as $row) {
-                                if($row->idjenisanggaran == 6 || $row->idjenisanggaran == 5){
+                                if($item->kode_kegiatan3 == $row->kode_kegiatan3 && in_array($row->idjenisanggaran, [5, 6, 7])){
                                     $belanjaModal3_bulanlalu += (float)$row->total_belanja_bulan_lalu;
                                     $belanjaModal3_bulanini += (float)$row->total_belanja_bulan_ini;
                                     $pengembalianmodal3 += (float)$row->totalpengembalian;
@@ -534,7 +534,7 @@
                             }
                             
                             foreach ($spjls as $row) {
-                                if($row->idjenisanggaran == 6 || $row->idjenisanggaran == 5){
+                                if($item->kode_kegiatan3 == $row->kode_kegiatan3 && in_array($row->idjenisanggaran, [5, 6, 7])){
                                     $belanjaModal3_ls_bulanlalu += (float)$row->total_belanja_bulan_lalu;
                                     $belanjaModal3_ls_bulanini += (float)$row->total_belanja_bulan_ini;
                                 }
