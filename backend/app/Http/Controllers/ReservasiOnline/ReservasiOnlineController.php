@@ -332,7 +332,7 @@ class ReservasiOnlineController extends ApiController
             ->whereBetween('tanggalreservasi', [date('Y-m-d 00:00',strtotime($tgl)), date('Y-m-d 23:59',strtotime($tgl))])
             ->max('noantrian') + 1;
             $newptp = new AntrianPasienRegistrasi();
-            $nontrian=AntrianPasienRegistrasi::max('noantrian')+ 1;
+            // $nontrian=AntrianPasienRegistrasi::max('noantrian')+ 1;
             $newptp->norec = $newptp->generateNewId();;
             $newptp->kdprofile = (int) $kdProfile ;
             $newptp->statusenabled = true;
