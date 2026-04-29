@@ -797,8 +797,16 @@ Route::group(['middleware' => 'cors', 'prefix' => 'service'], function () {
         Route::get('sysadmin/master/get-data-master-bahasa', 'SysAdmin\Master\MasterController@getDataMasterBahasa');
         Route::post('sysadmin/master/save-bahasa', 'SysAdmin\Master\MasterController@saveDataMasterBahasa');
         Route::post('sysadmin/master/delete-master-bahasa', 'SysAdmin\Master\MasterController@deleteMasterBahasa');
-
-        
+        Route::post('sysadmin/master/get-data-combo', 'SysAdmin\Master\MasterController@getDataComboArr');
+        Route::post('gizi/save-menu-makanan', 'Gizi\MasterGiziController@saveMenuMakanan');
+        Route::delete('gizi/delete-menu-makanan/{id}', 'Gizi\MasterGiziController@deleteMenuMakanan');
+        Route::get('gizi/get-data-menu-makanan', 'Gizi\MasterGiziController@getDataMenuMakanan');
+        Route::post('gizi/save-mapping-produk-menu', 'Gizi\MasterGiziController@saveMappingProdukMenu');
+        Route::get('gizi/get-data-mapping-produk-menu', 'Gizi\MasterGiziController@getDataMappingProdukMenu');
+        Route::delete('gizi/delete-mapping-produk-menu/{id}', 'Gizi\MasterGiziController@deleteMappingProdukMenu');
+        Route::post('gizi/save-siklus-catering', 'Gizi\MasterGiziController@saveSiklusCatering');
+        Route::get('gizi/get-data-siklus-catering', 'Gizi\MasterGiziController@getSiklusCatering');
+        Route::delete('gizi/delete-siklus-catering/{id}', 'Gizi\MasterGiziController@deleteSiklusCatering');
         Route::group(['prefix' => 'cssd'], function () {
 
         });

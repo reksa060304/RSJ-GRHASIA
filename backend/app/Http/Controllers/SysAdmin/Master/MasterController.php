@@ -6667,6 +6667,44 @@ class MasterController extends ApiController{
         }
         return $this->setStatusCode($result['status'])->respond($result, $transMessage);
     }
+
+    public function getDataComboArr(Request $request)
+    {
+        $kdProfile = (int) $this->getDataKdProfile($request);
+
+        $tables = $request->tableArr;
+        $data = [];
+
+        foreach ($tables as $item){
+
+            $query = \DB::table($item['table']);
+
+            // JOIN
+            if (!empty($item['join'])) {
+                foreach ($item['join'] as $join) {
+                    $query->leftJoin(
+                        $join['table'],
+                        $join['on'][0],
+                        $join['on'][1],
+                        $join['on'][2]
+                    );
+                }
+            }
+
+            // SELECT
+            if (!empty($item['select'])) {
+                $query->select($item['select']);
+            }
+
+            // DEFAULT FILTER
+            $query->where($item['table'].'.statusenabled', true)
+                ->where($item['table'].'.kdprofile', $kdProfile);
+
+            $data[$item['table']] = $query->get();
+        }
+
+        return $this->respond($data);
+    }
     
 ////////
 }
