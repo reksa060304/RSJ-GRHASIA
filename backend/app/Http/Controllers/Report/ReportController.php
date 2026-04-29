@@ -1744,7 +1744,6 @@ class ReportController extends ApiController{
                     ) {
                         $last = \DB::table('antrianapotik_t')
                             ->where('jenis', $racikanORnonracikan)
-                            ->where('kdprofile', $kdProfile)
                             ->whereRaw('DATE(tglresep) = CURRENT_DATE')
                             ->orderBy('noantri', 'desc')
                             ->lockForUpdate()

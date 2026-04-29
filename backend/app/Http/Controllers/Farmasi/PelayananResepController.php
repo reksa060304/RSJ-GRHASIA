@@ -2647,7 +2647,6 @@ class PelayananResepController extends ApiController
                             $kelpasien = (int)$dataDetail->objectkelompokpasienlastfk;
                             $last = \DB::table('antrianapotik_t')
                                 ->where('jenis', $racikanORnonracikan)
-                                ->where('kdprofile', $idProfile)
                                 ->whereRaw('DATE(tglresep) = CURRENT_DATE')
                                 ->orderBy('noantri', 'desc')
                                 ->lockForUpdate()
@@ -2676,7 +2675,6 @@ class PelayananResepController extends ApiController
                         $kelpasien = (int)$dataDetail->objectkelompokpasienlastfk;
                          $last = \DB::table('antrianapotik_t')
                                 ->where('jenis', $racikanORnonracikan)
-                                ->where('kdprofile', $idProfile)
                                 ->whereRaw('DATE(tglresep) = CURRENT_DATE')
                                 ->orderBy('noantri', 'desc')
                                 ->lockForUpdate()
