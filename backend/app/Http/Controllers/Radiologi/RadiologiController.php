@@ -189,7 +189,7 @@ class RadiologiController extends ApiController
                     ->select('ps.nocm', 'ps.namapasien', 'jk.jeniskelamin', 'pp.tglpelayanan', 'pp.produkfk', 'pr.namaproduk',
                         'pp.jumlah', 'pp.hargasatuan', 'pp.hargadiscount', 'sp.nostruk', 'pd.noregistrasi', 'ru.namaruangan',
                         'dp.namadepartemen', 'ps.id as psid', 'apd.norec as norec_apd', 'sp.norec as norec_sp', 'pp.norec as norec_pp',
-                        'ru.objectdepartemenfk', 'so.noorder', 'ris.order_key as idbridging', 'op.ihs_id as idbridging_ihs', 'apd.objectruanganfk','pp.iscito','pp.jasa','so.keteranganlainnya',
+                        'ru.objectdepartemenfk', 'so.noorder', 'ris.accession_num as idbridging', 'op.ihs_id as idbridging_ihs', 'apd.objectruanganfk','pp.iscito','pp.jasa','so.keteranganlainnya',
                         'ps.objectjeniskelaminfk','ps.tgllahir','sbm.nosbm','pmi.pmi',  'ris.order_cnt as nourutrad', // syamsu tambahan
                         DB::raw("case when ris.order_key is not null or op.ihs_id is not null then 'Sudah Dikirim' else '-' end as statusbridging,hr.norec as  hr_norec,pp.tglpanggil"))
                     ->where('pp.kdprofile',$idProfile)

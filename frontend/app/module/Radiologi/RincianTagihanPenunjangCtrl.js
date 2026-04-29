@@ -347,6 +347,11 @@ define(['initialize', 'Configuration'], function (initialize, config) {
                         "width": "90px",
                     },
                     {
+                        "field": "idbridging",
+                        "title": "ID Bridging",
+                        "width": "150px",
+                    },
+                    {
                         "field": "tglpanggil",
                         "title": "Tgl Panggil",
                         "width": "90px",
