@@ -429,6 +429,10 @@
             "nameDep": "KategoryDietRevCtrl",
             "urlDep": "module/SysAdmin/KategoryDietRevCtrl"
         },
+         {
+            "nameDep": "KategoryProdukDietCtrl",
+            "urlDep": "module/SysAdmin/KategoryProdukDietCtrl"
+        },
         {
             "nameDep": "MasterSiklusGiziRevCtrl",
             "urlDep": "module/SysAdmin/MasterSiklusGiziRevCtrl"

@@ -2548,6 +2548,25 @@ class MasterController extends ApiController{
         return $this->respond($data);
     }
 
+    public function getkategoryprodukcatering(Request $request){
+        $kdProfile = (int) $this->getDataKdProfile($request);
+        $id = $request['idKategoryProdukCatering'];
+        $idKdKategoryCatering = explode(',', $this->settingDataFixed('kdKategoryProdukDiet', $kdProfile));
+        $kdKategoryProduk = [];
+        foreach ($idKdKategoryCatering as $item){
+            $kdKategoryProduk []=  (int)$item;
+        }
+        $data = \DB::table('kategoryproduk_m')
+            ->select('id','kategoryproduk')
+            ->where('kdprofile', $kdProfile)
+            ->wherein('id', $kdKategoryProduk);
+        if (isset($request['idKategoryProdukCatering']) && $request['idKategoryProdukCatering'] != "" && $request['idKategoryProdukCatering'] != "undefined") {
+            $data = $data->where('id','=',$request['idKategoryProdukCatering']);
+        }
+        $data = $data->get();
+        return $this->respond($data);
+    }
+
     public function addProdukToRuangan(Request $request){
         $kdProfile = (int) $this->getDataKdProfile($request);
         $is_search=$request['is_search'];
@@ -3061,6 +3080,128 @@ class MasterController extends ApiController{
         );
         return $this->respond($result);
     }
+
+
+    public function deleteKategoryProdukDiet(Request $request) {
+        $kdProfile = (int) $this->getDataKdProfile($request);
+        DB::beginTransaction();
+        try{
+            $PM = Produk::where('id',$request['id'])
+                ->where('kdprofile', $kdProfile)
+                ->update([
+                    'statusenabled' => false
+                ]);
+            $transStatus = 'true';
+        } catch (\Exception $e) {
+            $transStatus = 'false';
+        }
+
+        if ($transStatus == 'true') {
+            $transMessage = "Sukses";
+            DB::commit();
+            $result = array(
+                "status" => 201,
+                "kategoryprodukdiet" => $PM,
+                "as" => 'inhuman',
+            );
+
+        } else {
+            $transMessage = "Hapus gagal";
+            DB::rollBack();
+            $result = array(
+                "status" => 400,
+                "as" => 'inhuman',
+            );
+        }
+        return $this->setStatusCode($result['status'])->respond($result, $transMessage);
+    }
+
+    public function getKategoryProdukDiet(Request $request) {
+        $kdProfile = (int) $this->getDataKdProfile($request);
+        $idKdKategoryCatering = $this->settingDataFixed('kdKategoryProdukDiet', $kdProfile);
+        // $idKdKategoryCatering = explode(',', $this->settingDataFixed('kdKategoryProdukDiet', $kdProfile));
+        // $kdKategoryProduk = [];
+        // foreach ($idKdKategoryCatering as $item){
+        //     $kdKategoryProduk []=  (int)$item;
+        // }
+        $data = \DB::table('produk_m as pm')
+            // ->select('pm.*')
+            ->leftjoin ('kategoryproduk_m as km','km.id','=','pm.objectkategoryprodukfk')
+            ->select('pm.*','km.kategoryproduk')
+            ->where('pm.kdprofile', $kdProfile)
+            ->where('pm.statusenabled', true)
+            ->where('pm.objectkategoryprodukfk', (int)$idKdKategoryCatering);
+
+        if(isset($request['id']) && $request['id']!="" && $request['id']!="undefined"){
+            $data = $data->where('pm.id','=', $request['id']);
+        }
+        if(isset($request['produkDiet']) && $request['produkDiet']!="" && $request['produkDiet']!="undefined"){
+            $data = $data->where('pm.namaproduk','ILIKE', '%'.$request['produkDiet'].'%');
+        }
+        // if(isset($request['kategoryProdukId']) && $request['kategoryProdukId']!="" && $request['kategoryProdukId']!="undefined"){
+        //     $data = $data->where('pm.objectkategoryprodukfk','=', $request['kategoryProdukId']);
+        // }
+
+        $data = $data->get();
+        $result = array(
+            'data'=> $data,
+            'message' => 'inhuman',
+        );
+        return $this->respond($result);
+    }
+
+    public function saveKategoryProdukDiet(Request $request) {
+        $kdProfile = (int) $this->getDataKdProfile($request);
+        $idKdKategoryCatering = $this->settingDataFixed('kdKategoryProdukDiet', $kdProfile);
+        $data = $request->all();
+        DB::beginTransaction();
+        try{
+        
+            if ($data['id'] == "" || $data['id'] == null) {
+                $newId = Produk::max('id');
+                $newId = $newId + 1;
+                $prod = new Produk();
+                $prod->id = $newId;
+                $prod->kdprofile = $kdProfile;
+            }else{
+                $prod =  Produk::where('id',$data['id'])->where('kdprofile', $kdProfile)->first();
+            }
+
+            $prod->statusenabled =  $data['statusenabled'];
+            $prod->namaexternal = $data['namaproduk'];
+            $prod->norec = $prod->generateNewId();
+            $prod->namaproduk = $data['namaproduk'];
+            $prod->reportdisplay = $data['reportdisplay'];
+            $prod->keterangan = $data['keterangan'];
+            $prod->qproduk = $data['jumlah'];
+            $prod->objectkategoryprodukfk = (int)$idKdKategoryCatering;
+            
+            $prod->save();
+            $transStatus = 'true';
+        } catch (\Exception $e) {
+            $transStatus = 'false';
+        }
+
+        if ($transStatus == 'true') {
+            $transMessage = "Simpan Kategory Produk Diet";
+            DB::commit();
+            $result = array(
+                "status" => 201,
+                "kategoryprodukdiet" => $prod,
+                "as" => 'inhuman',
+            );
+
+        } else {
+            $transMessage = "Simpan gagal";
+            DB::rollBack();
+            $result = array(
+                "status" => 400,
+                "as" => 'inhuman',
+            );
+        }
+        return $this->setStatusCode($result['status'])->respond($result, $transMessage);
+    }
+
     public function saveKategoryDiet(Request $request) {
         $kdProfile = (int) $this->getDataKdProfile($request);
         DB::beginTransaction();
