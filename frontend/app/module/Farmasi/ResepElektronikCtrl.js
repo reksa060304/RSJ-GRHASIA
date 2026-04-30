@@ -1904,7 +1904,7 @@ define(['initialize', 'Configuration'], function (initialize, config) {
                 }
             }
             $scope.panggilAntrian = function () {
-                if ($scope.item.statusorder == 'Selesai') {
+                if ($scope.item.statusorder == 'Selesai' || $scope.item.statusorder == 'Dipanggil') {
                     // panggil antrian farmasi
                     socket.emit('call-antrian-farmasi', {
                         namapasien: $scope.item.namapasien,
@@ -1916,18 +1916,9 @@ define(['initialize', 'Configuration'], function (initialize, config) {
                         status: 'panggil'
                     });
                     
-                    var strukresep = ""
-                    if ($scope.item.noorder == $scope.item.noresep) { //resep yang input langsung tanpa order
-                        strukresep = true
-                    }
                     var objSave = {
                         noorder: $scope.item.noorder,
-                        statusorder: 10,
-                        tglambil: null,
-                        namapengambil: null,
-                        tglselesai: null,
-                        namaselesai: 'selesai',
-                        strukresep: strukresep
+                        statusorder: 10
                     }
                     medifirstService.post('farmasi/save-status-panggil-resep', objSave).then(function (e) {
                         medifirstService.postLogging('Memanggil Order Resep Elektronik', 'No Order Struk Order',
