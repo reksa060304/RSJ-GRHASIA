@@ -1643,7 +1643,11 @@ class ReportController extends ApiController{
                 select * from profile_m where statusenabled=true limit 1
             "))->first();
 
-        $kdProfile = (int)$request['kdprofile'] ?? (int)$profile->id;
+        if ((int)$profile->id == 30) {
+            $kdProfile = (int)$profile->id;
+        } else {
+            $kdProfile = 30;
+        }
 
         if (empty($noresep)){
             $data = DB::table('antrianapotik_t as at')
@@ -1763,6 +1767,7 @@ class ReportController extends ApiController{
                         $newAA->jenis = $racikanORnonracikan;
                         $newAA->tglresep = date('Y-m-d H:i:s');
                         $newAA->noorder = $cekOrder->noorder;
+                        $newAA->source = 'KIOS-K';
                         // $newAA->status = '6';
                         $newAA->save();
                     });

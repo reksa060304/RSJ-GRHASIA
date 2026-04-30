@@ -2659,7 +2659,7 @@ class PelayananResepController extends ApiController
                             $newAA = new AntrianApotik();
                             $norecAA = $newAA->generateNewId();
                             $newAA->norec = $norecAA;
-                            $newAA->kdprofile = $idProfile;
+                            $newAA->kdprofile = 30;
                             $newAA->statusenabled = true;
                             $newAA->noantri = $noAntriApotik;
                             $newAA->keterangan = $dataDetail->namapasien;
@@ -2668,7 +2668,7 @@ class PelayananResepController extends ApiController
                             $newAA->noresep = $noResep;
                             $newAA->noorder = $r_SR['noorder'];
                             $newAA->status = '6';
-                            
+                            $newAA->source = 'VERIF';
                             $newAA->save();                           
                         }    
                     }else{
@@ -2686,7 +2686,7 @@ class PelayananResepController extends ApiController
                         $newAA = new AntrianApotik();
                         $norecAA = $newAA->generateNewId();
                         $newAA->norec = $norecAA;
-                        $newAA->kdprofile = $idProfile;
+                        $newAA->kdprofile = 30;
                         $newAA->statusenabled = true;
                         $newAA->noantri = $noAntriApotik;
                         $newAA->keterangan = $dataDetail->namapasien;
@@ -2695,7 +2695,7 @@ class PelayananResepController extends ApiController
                         // $newAA->strukresepfk = $norec_SR;
                         $newAA->noresep = $noResep;
                         $newAA->status = '6';
-                        
+                        $newAA->source = 'VERIF';
                         $newAA->save();   
                     }
             }
