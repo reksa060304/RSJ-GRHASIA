@@ -486,7 +486,7 @@ $ruangdokter = \DB::table('ruangan_m as ru')
         if (isset($filter['jmlRow']) && $filter['jmlRow'] != "" && $filter['jmlRow'] != "undefined") {
             $data = $data->take($filter['jmlRow']);
         }
-        $data = $data->whereIn('ru.objectdepartemenfk',[18,24,28,26,30,34]);
+        $data = $data->whereIn('ru.objectdepartemenfk',[18,24,28,26,30,34,68]);
 //        $data = $data->orderBy('pd.tglregistrasi');
         $data = $data->orderBy('apd.noantrian');
         $data = $data->get();
@@ -1485,7 +1485,7 @@ $ruangdokter = \DB::table('ruangan_m as ru')
         if (isset($filter['jmlRow']) && $filter['jmlRow'] != "" && $filter['jmlRow'] != "undefined") {
             $data = $data->take($filter['jmlRow']);
         }
-        $data = $data->whereIn('ru.objectdepartemenfk',[18,24,28,26,30,34]);
+        $data = $data->whereIn('ru.objectdepartemenfk',[18,24,28,26,30,34,68]);
 //        $data = $data->orderBy('pd.tglregistrasi');
         $data = $data->orderBy('apd.noantrian');
         $data = $data->get();
