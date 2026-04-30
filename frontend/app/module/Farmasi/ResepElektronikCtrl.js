@@ -1922,7 +1922,7 @@ define(['initialize', 'Configuration'], function (initialize, config) {
                     }
                     var objSave = {
                         noorder: $scope.item.noorder,
-                        statusorder: 3,
+                        statusorder: 10,
                         tglambil: null,
                         namapengambil: null,
                         tglselesai: null,
