@@ -26252,52 +26252,46 @@ public function suratBuktiPengembalian(Request $request)
                 cap_stsd.koderekening,
                 cap_stsd.namarekening,
                 stsd2.totalsetoran as totaldibayarclosing,
-                cap7.id as idlevel7,
-                cap7.koderekening as koderekeninglevel7,
-                cap7.namarekening as namarekeninglevel7,
-                cap6.id as idlevel6,
-                cap6.koderekening as koderekeninglevel6,
-                cap6.namarekening as namarekeninglevel6,
-                cap5.id as idlevel5,
-                cap5.koderekening as koderekeninglevel5,
-                cap5.namarekening as namarekeninglevel5,
-                cap4.id as idlevel4,
-                cap4.koderekening as koderekeninglevel4,
-                cap4.namarekening as namarekeninglevel4,
-                cap3.id as idlevel3,
-                cap3.koderekening as koderekeninglevel3,
-                cap3.namarekening as namarekeninglevel3,
-                cap2.id as idlevel2,
-                cap2.koderekening as koderekeninglevel2,
-                cap2.namarekening as namarekeninglevel2,
-                cap1.id as idlevel1,
-                cap1.koderekening as koderekeninglevel1,
-                cap1.namarekening as namarekeninglevel1
+                cap1.id as idlevel1, cap1.koderekening as koderekeninglevel1, cap1.namarekening as namarekeninglevel1,
+                cap2.id as idlevel2, cap2.koderekening as koderekeninglevel2, cap2.namarekening as namarekeninglevel2,
+                cap3.id as idlevel3, cap3.koderekening as koderekeninglevel3, cap3.namarekening as namarekeninglevel3,
+                cap4.id as idlevel4, cap4.koderekening as koderekeninglevel4, cap4.namarekening as namarekeninglevel4,
+                cap5.id as idlevel5, cap5.koderekening as koderekeninglevel5, cap5.namarekening as namarekeninglevel5,
+                cap6.id as idlevel6, cap6.koderekening as koderekeninglevel6, cap6.namarekening as namarekeninglevel6,
+                cap7.id as idlevel7, cap7.koderekening as koderekeninglevel7, cap7.namarekening as namarekeninglevel7
             FROM surattandasetoran_t sts
             JOIN surattandasetorandetailv2_t stsd2 ON stsd2.objectstsfk = sts.nosts AND stsd2.statusenabled = TRUE AND stsd2.kdprofile = 30
             JOIN char_akun_pendapatan_m cap_stsd ON cap_stsd.id = stsd2.objectakunpendapatanfk AND cap_stsd.statusenabled = TRUE AND cap_stsd.kdprofile = 30
-            LEFT JOIN char_akun_pendapatan_m cap7 ON cap7.id = cap_stsd.headfk
-            LEFT JOIN char_akun_pendapatan_m cap6 ON cap6.id = cap7.headfk
-            LEFT JOIN char_akun_pendapatan_m cap5 ON cap5.id = cap6.headfk
-            LEFT JOIN char_akun_pendapatan_m cap4 ON cap4.id = cap5.headfk
-            LEFT JOIN char_akun_pendapatan_m cap3 ON cap3.id = cap4.headfk
-            LEFT JOIN char_akun_pendapatan_m cap2 ON cap2.id = cap3.headfk
-            LEFT JOIN char_akun_pendapatan_m cap1 ON cap1.id = cap2.headfk
+            LEFT JOIN char_akun_pendapatan_m cap1 ON cap1.koderekening = split_part(cap_stsd.koderekening, '.', 1) AND cap1.level = 1 AND cap1.kdprofile = 30
+            LEFT JOIN char_akun_pendapatan_m cap2 ON cap2.koderekening = split_part(cap_stsd.koderekening, '.', 1) || '.' || split_part(cap_stsd.koderekening, '.', 2) AND cap2.level = 2 AND cap2.kdprofile = 30
+            LEFT JOIN char_akun_pendapatan_m cap3 ON cap3.koderekening = split_part(cap_stsd.koderekening, '.', 1) || '.' || split_part(cap_stsd.koderekening, '.', 2) || '.' || split_part(cap_stsd.koderekening, '.', 3) AND cap3.level = 3 AND cap3.kdprofile = 30
+            LEFT JOIN char_akun_pendapatan_m cap4 ON cap4.koderekening = split_part(cap_stsd.koderekening, '.', 1) || '.' || split_part(cap_stsd.koderekening, '.', 2) || '.' || split_part(cap_stsd.koderekening, '.', 3) || '.' || split_part(cap_stsd.koderekening, '.', 4) AND cap4.level = 4 AND cap4.kdprofile = 30
+            LEFT JOIN char_akun_pendapatan_m cap5 ON cap5.koderekening = split_part(cap_stsd.koderekening, '.', 1) || '.' || split_part(cap_stsd.koderekening, '.', 2) || '.' || split_part(cap_stsd.koderekening, '.', 3) || '.' || split_part(cap_stsd.koderekening, '.', 4) || '.' || split_part(cap_stsd.koderekening, '.', 5) AND cap5.level = 5 AND cap5.kdprofile = 30
+            LEFT JOIN char_akun_pendapatan_m cap6 ON cap6.koderekening = split_part(cap_stsd.koderekening, '.', 1) || '.' || split_part(cap_stsd.koderekening, '.', 2) || '.' || split_part(cap_stsd.koderekening, '.', 3) || '.' || split_part(cap_stsd.koderekening, '.', 4) || '.' || split_part(cap_stsd.koderekening, '.', 5) || '.' || split_part(cap_stsd.koderekening, '.', 6) AND cap6.level = 6 AND cap6.kdprofile = 30
+            LEFT JOIN char_akun_pendapatan_m cap7 ON cap7.koderekening = split_part(cap_stsd.koderekening, '.', 1) || '.' || split_part(cap_stsd.koderekening, '.', 2) || '.' || split_part(cap_stsd.koderekening, '.', 3) || '.' || split_part(cap_stsd.koderekening, '.', 4) || '.' || split_part(cap_stsd.koderekening, '.', 5) || '.' || split_part(cap_stsd.koderekening, '.', 6) || '.' || split_part(cap_stsd.koderekening, '.', 7) AND cap7.level = 7 AND cap7.kdprofile = 30
             WHERE 
                 sts.statusenabled = TRUE
                 AND sts.kdprofile = 30
                 AND sts.nosts = '".$nosts."'
             GROUP BY
                 sts.nosts, stsd2.totalsetoran,
-                cap_stsd.id,cap7.id,cap6.id,cap5.id,cap4.id,cap3.id,cap2.id,cap1.id
+                cap_stsd.id,cap_stsd.koderekening,cap_stsd.namarekening,
+                cap7.id,cap7.koderekening,cap7.namarekening,
+                cap6.id,cap6.koderekening,cap6.namarekening,
+                cap5.id,cap5.koderekening,cap5.namarekening,
+                cap4.id,cap4.koderekening,cap4.namarekening,
+                cap3.id,cap3.koderekening,cap3.namarekening,
+                cap2.id,cap2.koderekening,cap2.namarekening,
+                cap1.id,cap1.koderekening,cap1.namarekening
             ORDER BY
-                COALESCE(NULLIF(split_part(cap1.koderekening, '.', 1), '')::INTEGER, 0) asc,
-                COALESCE(NULLIF(split_part(cap2.koderekening, '.', 2), '')::INTEGER, 0) asc,
-                COALESCE(NULLIF(split_part(cap3.koderekening, '.', 3), '')::INTEGER, 0) asc,
-                COALESCE(NULLIF(split_part(cap4.koderekening, '.', 4), '')::INTEGER, 0) asc,
-                COALESCE(NULLIF(split_part(cap5.koderekening, '.', 5), '')::INTEGER, 0) asc,
-                COALESCE(NULLIF(split_part(cap6.koderekening, '.', 6), '')::INTEGER, 0) asc,
-                cap_stsd.koderekening asc
+                COALESCE(NULLIF(split_part(cap_stsd.koderekening, '.', 1), ''), '0')::DECIMAL,
+                COALESCE(NULLIF(split_part(cap_stsd.koderekening, '.', 2), ''), '0')::DECIMAL,
+                COALESCE(NULLIF(split_part(cap_stsd.koderekening, '.', 3), ''), '0')::DECIMAL,
+                COALESCE(NULLIF(split_part(cap_stsd.koderekening, '.', 4), ''), '0')::DECIMAL,
+                COALESCE(NULLIF(split_part(cap_stsd.koderekening, '.', 5), ''), '0')::DECIMAL,
+                COALESCE(NULLIF(split_part(cap_stsd.koderekening, '.', 6), ''), '0')::DECIMAL,
+                COALESCE(NULLIF(split_part(cap_stsd.koderekening, '.', 7), ''), '0')::DECIMAL,
+                COALESCE(NULLIF(split_part(cap_stsd.koderekening, '.', 8), ''), '0')::DECIMAL ASC
         "));
 
         // check jika punya detailv2
@@ -26308,252 +26302,135 @@ public function suratBuktiPengembalian(Request $request)
     
                 SELECT 
                     x.id as idrekening, x.namarekening, x.koderekening, 
-                    x.idlevel7, x.koderekeninglevel7, x.namarekeninglevel7, 
-                    x.idlevel6, x.koderekeninglevel6, x.namarekeninglevel6,
-                    x.idlevel5, x.koderekeninglevel5, x.namarekeninglevel5,
-                    x.idlevel4, x.koderekeninglevel4, x.namarekeninglevel4,
-                    x.idlevel3, x.koderekeninglevel3, x.namarekeninglevel3,
-                    x.idlevel2, x.koderekeninglevel2, x.namarekeninglevel2,
                     x.idlevel1, x.koderekeninglevel1, x.namarekeninglevel1,
+                    x.idlevel2, x.koderekeninglevel2, x.namarekeninglevel2,
+                    x.idlevel3, x.koderekeninglevel3, x.namarekeninglevel3,
+                    x.idlevel4, x.koderekeninglevel4, x.namarekeninglevel4,
+                    x.idlevel5, x.koderekeninglevel5, x.namarekeninglevel5,
+                    x.idlevel6, x.koderekeninglevel6, x.namarekeninglevel6,
+                    x.idlevel7, x.koderekeninglevel7, x.namarekeninglevel7,
                     SUM(x.totaldibayarclosing)::DECIMAL as totaldibayarclosing
                 FROM (	
+                    -- Branch 1: mapbkuakun_t
                     SELECT
-                        cap.id,
-                        cap.koderekening, 
-                        cap.namarekening,
-                        cap7.id as idlevel7,
-                        cap7.koderekening as koderekeninglevel7,
-                        cap7.namarekening as namarekeninglevel7,
-                        cap6.id as idlevel6,
-                        cap6.koderekening as koderekeninglevel6,
-                        cap6.namarekening as namarekeninglevel6,
-                        cap5.id as idlevel5,
-                        cap5.koderekening as koderekeninglevel5,
-                        cap5.namarekening as namarekeninglevel5,
-                        cap4.id as idlevel4,
-                        cap4.koderekening as koderekeninglevel4,
-                        cap4.namarekening as namarekeninglevel4,
-                        cap3.id as idlevel3,
-                        cap3.koderekening as koderekeninglevel3,
-                        cap3.namarekening as namarekeninglevel3,
-                        cap2.id as idlevel2,
-                        cap2.koderekening as koderekeninglevel2,
-                        cap2.namarekening as namarekeninglevel2,
-                        cap1.id as idlevel1,
-                        cap1.koderekening as koderekeninglevel1,
-                        cap1.namarekening as namarekeninglevel1,
-                        COALESCE(SUM(
-                                    (((COALESCE(pp.hargajual::DECIMAL, 0) - COALESCE(pp.hargadiscount::DECIMAL, 0)) * pp.jumlah::DECIMAL) + COALESCE(pp.jasa::DECIMAL, 0))
-                            ), 0) AS totaldibayarclosing
+                        cap.id, cap.koderekening, cap.namarekening,
+                        cap1.id as idlevel1, cap1.koderekening as koderekeninglevel1, cap1.namarekening as namarekeninglevel1,
+                        cap2.id as idlevel2, cap2.koderekening as koderekeninglevel2, cap2.namarekening as namarekeninglevel2,
+                        cap3.id as idlevel3, cap3.koderekening as koderekeninglevel3, cap3.namarekening as namarekeninglevel3,
+                        cap4.id as idlevel4, cap4.koderekening as koderekeninglevel4, cap4.namarekening as namarekeninglevel4,
+                        cap5.id as idlevel5, cap5.koderekening as koderekeninglevel5, cap5.namarekening as namarekeninglevel5,
+                        cap6.id as idlevel6, cap6.koderekening as koderekeninglevel6, cap6.namarekening as namarekeninglevel6,
+                        cap7.id as idlevel7, cap7.koderekening as koderekeninglevel7, cap7.namarekening as namarekeninglevel7,
+                        COALESCE(SUM((((COALESCE(pp.hargajual::DECIMAL, 0) - COALESCE(pp.hargadiscount::DECIMAL, 0)) * pp.jumlah::DECIMAL) + COALESCE(pp.jasa::DECIMAL, 0))), 0) AS totaldibayarclosing
                     FROM pasiendaftar_t pd 
                     JOIN antrianpasiendiperiksa_t apd ON apd.noregistrasifk = pd.norec AND apd.statusenabled = TRUE AND apd.kdprofile = 30
                     JOIN pelayananpasien_t pp ON pp.noregistrasifk = apd.norec AND pp.statusenabled = TRUE AND pp.kdprofile = 30
-                    JOIN ruangan_m ru ON ru.id = apd.objectruanganfk AND ru.statusenabled = TRUE AND ru.kdprofile = 30
-                    JOIN produk_m pr ON pr.id = pp.produkfk
-                    JOIN detailjenisproduk_m djp ON djp.id = pr.objectdetailjenisprodukfk
                     JOIN strukpelayanan_t sp ON sp.norec = pp.strukfk AND sp.statusenabled = TRUE AND sp.kdprofile = 30
                     JOIN strukbuktipenerimaan_t sbm ON sbm.nostrukfk = sp.norec AND sbm.statusenabled = TRUE AND sbm.kdprofile = 30
-                    JOIN strukbuktipenerimaancarabayar_t sbmcr ON sbmcr.nosbmfk = sbm.norec AND sbmcr.statusenabled = TRUE AND sbmcr.kdprofile = 30
-                    JOIN carabayar_m cb ON cb.id = sbmcr.objectcarabayarfk AND cb.statusenabled = TRUE AND cb.kdprofile = 30
                     JOIN strukclosing_t AS sc ON sc.norec = sbm.noclosingfk AND sc.statusenabled = TRUE AND sc.kdprofile = 30
                     JOIN strukclosingkasir_t sck ON sck.noclosingfk = sc.norec
                     JOIN ststosck_t as ssc on ssc.objectsckfk = sck.norec
                     JOIN surattandasetoran_t as sts on sts.norec = ssc.objectstsfk AND sts.statusenabled = TRUE AND sts.kdprofile = 30
-                    LEFT JOIN mapbkuakun_t mba 
-                        ON pd.objectkelompokpasienlastfk::VARCHAR = ANY(string_to_array(mba.objectkelompokpasienfk, ','))
+                    LEFT JOIN mapbkuakun_t mba ON pd.objectkelompokpasienlastfk::VARCHAR = ANY(string_to_array(mba.objectkelompokpasienfk, ','))
                         AND apd.objectruanganfk::VARCHAR = ANY(string_to_array(mba.objectruanganfk , ','))
                         AND mba.statusenabled = TRUE
                     LEFT JOIN char_akun_pendapatan_m cap ON cap.id = mba.objectakunpendapatanfk
-                    LEFT JOIN char_akun_pendapatan_m cap7 ON cap7.id = cap.headfk
-                    LEFT JOIN char_akun_pendapatan_m cap6 ON cap6.id = cap7.headfk
-                    LEFT JOIN char_akun_pendapatan_m cap5 ON cap5.id = cap6.headfk
-                    LEFT JOIN char_akun_pendapatan_m cap4 ON cap4.id = cap5.headfk
-                    LEFT JOIN char_akun_pendapatan_m cap3 ON cap3.id = cap4.headfk
-                    LEFT JOIN char_akun_pendapatan_m cap2 ON cap2.id = cap3.headfk
-                    LEFT JOIN char_akun_pendapatan_m cap1 ON cap1.id = cap2.headfk
-                    WHERE 
-                        sts.nosts = '".$nosts."'
-                        AND pd.statusenabled = TRUE
-                        AND pd.kdprofile = 30
-                        AND (
-                                (mba.isobat IS NOT TRUE AND pp.isobat IS NULL) 
-                                OR 
-                                (mba.isobat = TRUE AND pp.isobat = TRUE)
-                            )
+                    LEFT JOIN char_akun_pendapatan_m cap1 ON cap1.koderekening = split_part(cap.koderekening, '.', 1) AND cap1.level = 1 AND cap1.kdprofile = 30
+                    LEFT JOIN char_akun_pendapatan_m cap2 ON cap2.koderekening = split_part(cap.koderekening, '.', 1) || '.' || split_part(cap.koderekening, '.', 2) AND cap2.level = 2 AND cap2.kdprofile = 30
+                    LEFT JOIN char_akun_pendapatan_m cap3 ON cap3.koderekening = split_part(cap.koderekening, '.', 1) || '.' || split_part(cap.koderekening, '.', 2) || '.' || split_part(cap.koderekening, '.', 3) AND cap3.level = 3 AND cap3.kdprofile = 30
+                    LEFT JOIN char_akun_pendapatan_m cap4 ON cap4.koderekening = split_part(cap.koderekening, '.', 1) || '.' || split_part(cap.koderekening, '.', 2) || '.' || split_part(cap.koderekening, '.', 3) || '.' || split_part(cap.koderekening, '.', 4) AND cap4.level = 4 AND cap4.kdprofile = 30
+                    LEFT JOIN char_akun_pendapatan_m cap5 ON cap5.koderekening = split_part(cap.koderekening, '.', 1) || '.' || split_part(cap.koderekening, '.', 2) || '.' || split_part(cap.koderekening, '.', 3) || '.' || split_part(cap.koderekening, '.', 4) || '.' || split_part(cap.koderekening, '.', 5) AND cap5.level = 5 AND cap5.kdprofile = 30
+                    LEFT JOIN char_akun_pendapatan_m cap6 ON cap6.koderekening = split_part(cap.koderekening, '.', 1) || '.' || split_part(cap.koderekening, '.', 2) || '.' || split_part(cap.koderekening, '.', 3) || '.' || split_part(cap.koderekening, '.', 4) || '.' || split_part(cap.koderekening, '.', 5) || '.' || split_part(cap.koderekening, '.', 6) AND cap6.level = 6 AND cap6.kdprofile = 30
+                    LEFT JOIN char_akun_pendapatan_m cap7 ON cap7.koderekening = split_part(cap.koderekening, '.', 1) || '.' || split_part(cap.koderekening, '.', 2) || '.' || split_part(cap.koderekening, '.', 3) || '.' || split_part(cap.koderekening, '.', 4) || '.' || split_part(cap.koderekening, '.', 5) || '.' || split_part(cap.koderekening, '.', 6) || '.' || split_part(cap.koderekening, '.', 7) AND cap7.level = 7 AND cap7.kdprofile = 30
+                    WHERE sts.nosts = '".$nosts."' AND pd.statusenabled = TRUE AND pd.kdprofile = 30
+                        AND ((mba.isobat IS NOT TRUE AND pp.isobat IS NULL) OR (mba.isobat = TRUE AND pp.isobat = TRUE))
                         AND pp.kelasfk::VARCHAR = ANY(string_to_array(mba.objectkelasfk , ','))
-                    GROUP BY
-                        cap.id,
-                        cap.koderekening,
-                        cap.namarekening,
-                        pp.isobat,
-                        cap7.id,
-                        cap6.id,
-                        cap5.id,
-                        cap4.id,
-                        cap3.id,
-                        cap2.id,
-                        cap1.id
-                    
-                    -- untuk berdasarkan produk
-                    UNION
+                    GROUP BY cap.id, cap.koderekening, cap.namarekening, cap1.id, cap1.koderekening, cap1.namarekening, cap2.id, cap2.koderekening, cap2.namarekening, cap3.id, cap3.koderekening, cap3.namarekening, cap4.id, cap4.koderekening, cap4.namarekening, cap5.id, cap5.koderekening, cap5.namarekening, cap6.id, cap6.koderekening, cap6.namarekening, cap7.id, cap7.koderekening, cap7.namarekening
+
+                    UNION ALL
+
+                    -- Branch 2: mapbkuakun3_t (produk)
                     SELECT
-                        cap.id,
-                        cap.koderekening, 
-                        cap.namarekening,
-                        cap7.id as idlevel7,
-                        cap7.koderekening as koderekeninglevel7,
-                        cap7.namarekening as namarekeninglevel7,
-                        cap6.id as idlevel6,
-                        cap6.koderekening as koderekeninglevel6,
-                        cap6.namarekening as namarekeninglevel6,
-                        cap5.id as idlevel5,
-                        cap5.koderekening as koderekeninglevel5,
-                        cap5.namarekening as namarekeninglevel5,
-                        cap4.id as idlevel4,
-                        cap4.koderekening as koderekeninglevel4,
-                        cap4.namarekening as namarekeninglevel4,
-                        cap3.id as idlevel3,
-                        cap3.koderekening as koderekeninglevel3,
-                        cap3.namarekening as namarekeninglevel3,
-                        cap2.id as idlevel2,
-                        cap2.koderekening as koderekeninglevel2,
-                        cap2.namarekening as namarekeninglevel2,
-                        cap1.id as idlevel1,
-                        cap1.koderekening as koderekeninglevel1,
-                        cap1.namarekening as namarekeninglevel1,
+                        cap.id, cap.koderekening, cap.namarekening,
+                        cap1.id as idlevel1, cap1.koderekening as koderekeninglevel1, cap1.namarekening as namarekeninglevel1,
+                        cap2.id as idlevel2, cap2.koderekening as koderekeninglevel2, cap2.namarekening as namarekeninglevel2,
+                        cap3.id as idlevel3, cap3.koderekening as koderekeninglevel3, cap3.namarekening as namarekeninglevel3,
+                        cap4.id as idlevel4, cap4.koderekening as koderekeninglevel4, cap4.namarekening as namarekeninglevel4,
+                        cap5.id as idlevel5, cap5.koderekening as koderekeninglevel5, cap5.namarekening as namarekeninglevel5,
+                        cap6.id as idlevel6, cap6.koderekening as koderekeninglevel6, cap6.namarekening as namarekeninglevel6,
+                        cap7.id as idlevel7, cap7.koderekening as koderekeninglevel7, cap7.namarekening as namarekeninglevel7,
                         SUM(((COALESCE(pp.hargajual::DECIMAL, 0) - COALESCE(pp.hargadiscount::DECIMAL, 0)) * pp.jumlah::DECIMAL) + COALESCE(pp.jasa::DECIMAL, 0))
                     FROM pasiendaftar_t pd 
                     JOIN antrianpasiendiperiksa_t apd ON apd.noregistrasifk = pd.norec AND apd.statusenabled = TRUE AND apd.kdprofile = 30
                     JOIN pelayananpasien_t pp ON pp.noregistrasifk = apd.norec AND pp.statusenabled = TRUE AND pp.kdprofile = 30
-                    JOIN ruangan_m ru ON ru.id = apd.objectruanganfk AND ru.statusenabled = TRUE AND ru.kdprofile = 30
-                    JOIN produk_m pr ON pr.id = pp.produkfk
-                    JOIN detailjenisproduk_m djp ON djp.id = pr.objectdetailjenisprodukfk --AND djp.statusenabled = TRUE AND djp.kdprofile = 30
                     JOIN strukpelayanan_t sp ON sp.norec = pp.strukfk AND sp.statusenabled = TRUE AND sp.kdprofile = 30
                     JOIN strukbuktipenerimaan_t sbm ON sbm.nostrukfk = sp.norec AND sbm.statusenabled = TRUE AND sbm.kdprofile = 30
-                    JOIN strukbuktipenerimaancarabayar_t sbmcr ON sbmcr.nosbmfk = sbm.norec AND sbmcr.statusenabled = TRUE AND sbmcr.kdprofile = 30
-                    JOIN carabayar_m cb ON cb.id = sbmcr.objectcarabayarfk AND cb.statusenabled = TRUE AND cb.kdprofile = 30
                     JOIN strukclosing_t AS sc ON sc.norec = sbm.noclosingfk AND sc.statusenabled = TRUE AND sc.kdprofile = 30
                     JOIN strukclosingkasir_t sck ON sck.noclosingfk = sc.norec
                     JOIN ststosck_t as ssc on ssc.objectsckfk = sck.norec
                     JOIN surattandasetoran_t as sts on sts.norec = ssc.objectstsfk AND sts.statusenabled = TRUE AND sts.kdprofile = 30
-                    JOIN mapbkuakun3_t mba3 
-                        ON pp.produkfk::VARCHAR = ANY(string_to_array(mba3.objectprodukfk, ','))
-                        AND pd.objectkelompokpasienlastfk IN (1,12) 
-                        AND mba3.statusenabled = TRUE
+                    JOIN mapbkuakun3_t mba3 ON pp.produkfk::VARCHAR = ANY(string_to_array(mba3.objectprodukfk, ',')) AND pd.objectkelompokpasienlastfk IN (1,12) AND mba3.statusenabled = TRUE
                     JOIN char_akun_pendapatan_m cap ON cap.id = mba3.objectakunpendapatanfk
-                    JOIN char_akun_pendapatan_m cap7 ON cap7.id = cap.headfk
-                    JOIN char_akun_pendapatan_m cap6 ON cap6.id = cap7.headfk
-                    JOIN char_akun_pendapatan_m cap5 ON cap5.id = cap6.headfk
-                    JOIN char_akun_pendapatan_m cap4 ON cap4.id = cap5.headfk
-                    JOIN char_akun_pendapatan_m cap3 ON cap3.id = cap4.headfk
-                    JOIN char_akun_pendapatan_m cap2 ON cap2.id = cap3.headfk
-                    JOIN char_akun_pendapatan_m cap1 ON cap1.id = cap2.headfk
-                    WHERE 
-                        sts.nosts = '".$nosts."'
-                        AND pd.statusenabled = TRUE
-                        AND pd.kdprofile = 30
-                    GROUP BY
-                        cap.id,
-                        cap.koderekening,
-                        cap.namarekening,
-                        pp.isobat,
-                        cap7.id,
-                        cap6.id,
-                        cap5.id,
-                        cap4.id,
-                        cap3.id,
-                        cap2.id,
-                        cap1.id
-                    
-                    -- untuk non layanan
-                    UNION
-                    SELECT DISTINCT
-                        cap.id,
-                        cap.koderekening,
-                        cap.namarekening,
-                        cap7.id as idlevel7,
-                        cap7.koderekening as koderekeninglevel7,
-                        cap7.namarekening as namarekeninglevel7,
-                        cap6.id as idlevel6,
-                        cap6.koderekening as koderekeninglevel6,
-                        cap6.namarekening as namarekeninglevel6,
-                        cap5.id as idlevel5,
-                        cap5.koderekening as koderekeninglevel5,
-                        cap5.namarekening as namarekeninglevel5,
-                        cap4.id as idlevel4,
-                        cap4.koderekening as koderekeninglevel4,
-                        cap4.namarekening as namarekeninglevel4,
-                        cap3.id as idlevel3,
-                        cap3.koderekening as koderekeninglevel3,
-                        cap3.namarekening as namarekeninglevel3,
-                        cap2.id as idlevel2,
-                        cap2.koderekening as koderekeninglevel2,
-                        cap2.namarekening as namarekeninglevel2,
-                        cap1.id as idlevel1,
-                        cap1.koderekening as koderekeninglevel1,
-                        cap1.namarekening as namarekeninglevel1,
+                    LEFT JOIN char_akun_pendapatan_m cap1 ON cap1.koderekening = split_part(cap.koderekening, '.', 1) AND cap1.level = 1 AND cap1.kdprofile = 30
+                    LEFT JOIN char_akun_pendapatan_m cap2 ON cap2.koderekening = split_part(cap.koderekening, '.', 1) || '.' || split_part(cap.koderekening, '.', 2) AND cap2.level = 2 AND cap2.kdprofile = 30
+                    LEFT JOIN char_akun_pendapatan_m cap3 ON cap3.koderekening = split_part(cap.koderekening, '.', 1) || '.' || split_part(cap.koderekening, '.', 2) || '.' || split_part(cap.koderekening, '.', 3) AND cap3.level = 3 AND cap3.kdprofile = 30
+                    LEFT JOIN char_akun_pendapatan_m cap4 ON cap4.koderekening = split_part(cap.koderekening, '.', 1) || '.' || split_part(cap.koderekening, '.', 2) || '.' || split_part(cap.koderekening, '.', 3) || '.' || split_part(cap.koderekening, '.', 4) AND cap4.level = 4 AND cap4.kdprofile = 30
+                    LEFT JOIN char_akun_pendapatan_m cap5 ON cap5.koderekening = split_part(cap.koderekening, '.', 1) || '.' || split_part(cap.koderekening, '.', 2) || '.' || split_part(cap.koderekening, '.', 3) || '.' || split_part(cap.koderekening, '.', 4) || '.' || split_part(cap.koderekening, '.', 5) AND cap5.level = 5 AND cap5.kdprofile = 30
+                    LEFT JOIN char_akun_pendapatan_m cap6 ON cap6.koderekening = split_part(cap.koderekening, '.', 1) || '.' || split_part(cap.koderekening, '.', 2) || '.' || split_part(cap.koderekening, '.', 3) || '.' || split_part(cap.koderekening, '.', 4) || '.' || split_part(cap.koderekening, '.', 5) || '.' || split_part(cap.koderekening, '.', 6) AND cap6.level = 6 AND cap6.kdprofile = 30
+                    LEFT JOIN char_akun_pendapatan_m cap7 ON cap7.koderekening = split_part(cap.koderekening, '.', 1) || '.' || split_part(cap.koderekening, '.', 2) || '.' || split_part(cap.koderekening, '.', 3) || '.' || split_part(cap.koderekening, '.', 4) || '.' || split_part(cap.koderekening, '.', 5) || '.' || split_part(cap.koderekening, '.', 6) || '.' || split_part(cap.koderekening, '.', 7) AND cap7.level = 7 AND cap7.kdprofile = 30
+                    WHERE sts.nosts = '".$nosts."' AND pd.statusenabled = TRUE AND pd.kdprofile = 30
+                    GROUP BY cap.id, cap.koderekening, cap.namarekening, cap1.id, cap1.koderekening, cap1.namarekening, cap2.id, cap2.koderekening, cap2.namarekening, cap3.id, cap3.koderekening, cap3.namarekening, cap4.id, cap4.koderekening, cap4.namarekening, cap5.id, cap5.koderekening, cap5.namarekening, cap6.id, cap6.koderekening, cap6.namarekening, cap7.id, cap7.koderekening, cap7.namarekening
+
+                    UNION ALL
+
+                    -- Branch 3: mapbkuakun2_t (non layanan)
+                    SELECT
+                        cap.id, cap.koderekening, cap.namarekening,
+                        cap1.id as idlevel1, cap1.koderekening as koderekeninglevel1, cap1.namarekening as namarekeninglevel1,
+                        cap2.id as idlevel2, cap2.koderekening as koderekeninglevel2, cap2.namarekening as namarekeninglevel2,
+                        cap3.id as idlevel3, cap3.koderekening as koderekeninglevel3, cap3.namarekening as namarekeninglevel3,
+                        cap4.id as idlevel4, cap4.koderekening as koderekeninglevel4, cap4.namarekening as namarekeninglevel4,
+                        cap5.id as idlevel5, cap5.koderekening as koderekeninglevel5, cap5.namarekening as namarekeninglevel5,
+                        cap6.id as idlevel6, cap6.koderekening as koderekeninglevel6, cap6.namarekening as namarekeninglevel6,
+                        cap7.id as idlevel7, cap7.koderekening as koderekeninglevel7, cap7.namarekening as namarekeninglevel7,
                         SUM(spd.qtyproduk * spd.hargasatuan * spd.qtyoranglast) as totaldibayarclosing
                     FROM strukclosingkasir_t AS sck
                     JOIN strukclosing_t AS sc ON sc.norec = sck.noclosingfk
                     JOIN strukbuktipenerimaan_t AS sbm ON sbm.noclosingfk = sc.norec
-                    JOIN strukbuktipenerimaancarabayar_t sbmcr ON sbmcr.nosbmfk = sbm.norec
                     JOIN strukpelayanan_t AS sp ON sbm.nostrukfk = sp.norec
                     JOIN strukpelayanandetail_t AS spd ON sp.norec = spd.nostrukfk
-                    JOIN produk_m pr ON pr.id = spd.objectprodukfk
-                    JOIN carabayar_m AS cb ON cb.id = sck.carabayarfk
-                    JOIN detailjenisproduk_m djp ON djp.id = pr.objectdetailjenisprodukfk
-                    JOIN jenisproduk_m jpr ON jpr.id = djp.objectjenisprodukfk
-                    left join ruangan_m as ru on ru.id = spd.objectruanganasalfk
-                    left join pasiendaftar_t as pd on sp.noregistrasifk = pd.norec
-                    left join antrianpasiendiperiksa_t apd on pd.norec=apd.noregistrasifk
-                    left join pelayananpasien_t pp on apd.norec=pp.noregistrasifk
                     JOIN ststosck_t as ssc on ssc.objectsckfk = sck.norec
                     JOIN surattandasetoran_t as sts on sts.norec = ssc.objectstsfk AND sts.statusenabled = TRUE AND sts.kdprofile = 30
-                    JOIN mapbkuakun2_t mba2 
-                        ON spd.objectprodukfk::VARCHAR = ANY(string_to_array(mba2.objectprodukfk, ',')) 
-                        AND mba2.statusenabled = TRUE
+                    JOIN mapbkuakun2_t mba2 ON spd.objectprodukfk::VARCHAR = ANY(string_to_array(mba2.objectprodukfk, ',')) AND mba2.statusenabled = TRUE
                     JOIN char_akun_pendapatan_m cap ON cap.id = mba2.objectakunpendapatanfk
-                    LEFT JOIN char_akun_pendapatan_m cap7 ON cap7.id = cap.headfk
-                    LEFT JOIN char_akun_pendapatan_m cap6 ON cap6.id = cap7.headfk
-                    LEFT JOIN char_akun_pendapatan_m cap5 ON cap5.id = cap6.headfk
-                    LEFT JOIN char_akun_pendapatan_m cap4 ON cap4.id = cap5.headfk
-                    LEFT JOIN char_akun_pendapatan_m cap3 ON cap3.id = cap4.headfk
-                    LEFT JOIN char_akun_pendapatan_m cap2 ON cap2.id = cap3.headfk
-                    LEFT JOIN char_akun_pendapatan_m cap1 ON cap1.id = cap2.headfk
-                    WHERE 
-                        sts.nosts = '".$nosts."'
-                    GROUP BY
-                        cap.id,
-                        cap.koderekening,
-                        cap.namarekening,
-                        cap7.id,
-                        cap6.id,
-                        cap5.id,
-                        cap4.id,
-                        cap3.id,
-                        cap2.id,
-                        cap1.id
-                    ) as x
-                    GROUP BY
-                        x.id,
-                        x.koderekening,
-                        x.namarekening,
-                        x.idlevel7, x.koderekeninglevel7, x.namarekeninglevel7, 
-                        x.idlevel6, x.koderekeninglevel6, x.namarekeninglevel6,
-                        x.idlevel5, x.koderekeninglevel5, x.namarekeninglevel5,
-                        x.idlevel4, x.koderekeninglevel4, x.namarekeninglevel4,
-                        x.idlevel3, x.koderekeninglevel3, x.namarekeninglevel3,
-                        x.idlevel2, x.koderekeninglevel2, x.namarekeninglevel2,
-                        x.idlevel1, x.koderekeninglevel1, x.namarekeninglevel1
-                    ORDER BY
-                        split_part(x.koderekening, '.', 3)::DECIMAL,
-                        split_part(x.koderekening, '.', 4)::DECIMAL,
-                        split_part(x.koderekening, '.', 5)::DECIMAL,
-                        split_part(x.koderekening, '.', 6)::DECIMAL,
-                        split_part(x.koderekening, '.', 7)::DECIMAL,
-                        split_part(x.koderekening, '.', 8)::DECIMAL ASC
-            
-            
+                    LEFT JOIN char_akun_pendapatan_m cap1 ON cap1.koderekening = split_part(cap.koderekening, '.', 1) AND cap1.level = 1 AND cap1.kdprofile = 30
+                    LEFT JOIN char_akun_pendapatan_m cap2 ON cap2.koderekening = split_part(cap.koderekening, '.', 1) || '.' || split_part(cap.koderekening, '.', 2) AND cap2.level = 2 AND cap2.kdprofile = 30
+                    LEFT JOIN char_akun_pendapatan_m cap3 ON cap3.koderekening = split_part(cap.koderekening, '.', 1) || '.' || split_part(cap.koderekening, '.', 2) || '.' || split_part(cap.koderekening, '.', 3) AND cap3.level = 3 AND cap3.kdprofile = 30
+                    LEFT JOIN char_akun_pendapatan_m cap4 ON cap4.koderekening = split_part(cap.koderekening, '.', 1) || '.' || split_part(cap.koderekening, '.', 2) || '.' || split_part(cap.koderekening, '.', 3) || '.' || split_part(cap.koderekening, '.', 4) AND cap4.level = 4 AND cap4.kdprofile = 30
+                    LEFT JOIN char_akun_pendapatan_m cap5 ON cap5.koderekening = split_part(cap.koderekening, '.', 1) || '.' || split_part(cap.koderekening, '.', 2) || '.' || split_part(cap.koderekening, '.', 3) || '.' || split_part(cap.koderekening, '.', 4) || '.' || split_part(cap.koderekening, '.', 5) AND cap5.level = 5 AND cap5.kdprofile = 30
+                    LEFT JOIN char_akun_pendapatan_m cap6 ON cap6.koderekening = split_part(cap.koderekening, '.', 1) || '.' || split_part(cap.koderekening, '.', 2) || '.' || split_part(cap.koderekening, '.', 3) || '.' || split_part(cap.koderekening, '.', 4) || '.' || split_part(cap.koderekening, '.', 5) || '.' || split_part(cap.koderekening, '.', 6) AND cap6.level = 6 AND cap6.kdprofile = 30
+                    LEFT JOIN char_akun_pendapatan_m cap7 ON cap7.koderekening = split_part(cap.koderekening, '.', 1) || '.' || split_part(cap.koderekening, '.', 2) || '.' || split_part(cap.koderekening, '.', 3) || '.' || split_part(cap.koderekening, '.', 4) || '.' || split_part(cap.koderekening, '.', 5) || '.' || split_part(cap.koderekening, '.', 6) || '.' || split_part(cap.koderekening, '.', 7) AND cap7.level = 7 AND cap7.kdprofile = 30
+                    WHERE sts.nosts = '".$nosts."'
+                    GROUP BY cap.id, cap.koderekening, cap.namarekening, cap1.id, cap1.koderekening, cap1.namarekening, cap2.id, cap2.koderekening, cap2.namarekening, cap3.id, cap3.koderekening, cap3.namarekening, cap4.id, cap4.koderekening, cap4.namarekening, cap5.id, cap5.koderekening, cap5.namarekening, cap6.id, cap6.koderekening, cap6.namarekening, cap7.id, cap7.koderekening, cap7.namarekening
+                ) as x
+                GROUP BY
+                    x.id, x.namarekening, x.koderekening, 
+                    x.idlevel1, x.koderekeninglevel1, x.namarekeninglevel1,
+                    x.idlevel2, x.koderekeninglevel2, x.namarekeninglevel2,
+                    x.idlevel3, x.koderekeninglevel3, x.namarekeninglevel3,
+                    x.idlevel4, x.koderekeninglevel4, x.namarekeninglevel4,
+                    x.idlevel5, x.koderekeninglevel5, x.namarekeninglevel5,
+                    x.idlevel6, x.koderekeninglevel6, x.namarekeninglevel6,
+                    x.idlevel7, x.koderekeninglevel7, x.namarekeninglevel7
+                ORDER BY
+                    COALESCE(NULLIF(split_part(x.koderekening, '.', 1), ''), '0')::DECIMAL,
+                    COALESCE(NULLIF(split_part(x.koderekening, '.', 2), ''), '0')::DECIMAL,
+                    COALESCE(NULLIF(split_part(x.koderekening, '.', 3), ''), '0')::DECIMAL,
+                    COALESCE(NULLIF(split_part(x.koderekening, '.', 4), ''), '0')::DECIMAL,
+                    COALESCE(NULLIF(split_part(x.koderekening, '.', 5), ''), '0')::DECIMAL,
+                    COALESCE(NULLIF(split_part(x.koderekening, '.', 6), ''), '0')::DECIMAL,
+                    COALESCE(NULLIF(split_part(x.koderekening, '.', 7), ''), '0')::DECIMAL,
+                    COALESCE(NULLIF(split_part(x.koderekening, '.', 8), ''), '0')::DECIMAL ASC
             "));
 
             $data = $detail;
@@ -26681,18 +26558,18 @@ public function suratBuktiPengembalian(Request $request)
                 mp.mataanggaranpermen,
                 ja.id
             ORDER BY
-                CAST(SPLIT_PART(ka.kode, '.', 2) AS INTEGER) ASC,
-                CAST(SPLIT_PART(ka.kode, '.', 3) AS INTEGER) ASC,
-                CAST(SPLIT_PART(ka.kode, '.', 4) AS INTEGER) ASC,
-                CAST(SPLIT_PART(ka.kode, '.', 5) AS INTEGER) ASC,
-                CAST(SPLIT_PART(ka.kode, '.', 6) AS INTEGER) ASC,
-                CAST(SPLIT_PART(ka.kode, '.', 7) AS INTEGER) ASC,
-                SPLIT_PART(ma.kodemataanggaran, '.', 1) ASC,
-                SPLIT_PART(ma.kodemataanggaran, '.', 2) ASC,
-                SPLIT_PART(ma.kodemataanggaran, '.', 3) ASC,
-                case when SPLIT_PART(ma.kodemataanggaran, '.', 4) = '' then 0 else cast(SPLIT_PART(ma.kodemataanggaran, '.', 4) as INTEGER) end ASC,
-                case when SPLIT_PART(ma.kodemataanggaran, '.', 5) = '' then 0 else cast(SPLIT_PART(ma.kodemataanggaran, '.', 5) as INTEGER) end ASC,
-                case when SPLIT_PART(ma.kodemataanggaran, '.', 6) = '' then 0 else cast(SPLIT_PART(ma.kodemataanggaran, '.', 6) as INTEGER) end ASC
+                COALESCE(NULLIF(SPLIT_PART(ka.kode, '.', 2), ''), '0')::INTEGER ASC,
+                COALESCE(NULLIF(SPLIT_PART(ka.kode, '.', 3), ''), '0')::INTEGER ASC,
+                COALESCE(NULLIF(SPLIT_PART(ka.kode, '.', 4), ''), '0')::INTEGER ASC,
+                COALESCE(NULLIF(SPLIT_PART(ka.kode, '.', 5), ''), '0')::INTEGER ASC,
+                COALESCE(NULLIF(SPLIT_PART(ka.kode, '.', 6), ''), '0')::INTEGER ASC,
+                COALESCE(NULLIF(SPLIT_PART(ka.kode, '.', 7), ''), '0')::INTEGER ASC,
+                COALESCE(NULLIF(SPLIT_PART(ma.kodemataanggaran, '.', 1), ''), '0')::INTEGER ASC,
+                COALESCE(NULLIF(SPLIT_PART(ma.kodemataanggaran, '.', 2), ''), '0')::INTEGER ASC,
+                COALESCE(NULLIF(SPLIT_PART(ma.kodemataanggaran, '.', 3), ''), '0')::INTEGER ASC,
+                COALESCE(NULLIF(SPLIT_PART(ma.kodemataanggaran, '.', 4), ''), '0')::INTEGER ASC,
+                COALESCE(NULLIF(SPLIT_PART(ma.kodemataanggaran, '.', 5), ''), '0')::INTEGER ASC,
+                COALESCE(NULLIF(SPLIT_PART(ma.kodemataanggaran, '.', 6), ''), '0')::INTEGER ASC
         "));
 
         $dataSPJ = DB::select(DB::raw("
@@ -26777,18 +26654,18 @@ public function suratBuktiPengembalian(Request $request)
                 mp.mataanggaranpermen,
                 ja.id
             ORDER BY
-                CAST(SPLIT_PART(ka.kode, '.', 2) AS INTEGER) ASC,
-                CAST(SPLIT_PART(ka.kode, '.', 3) AS INTEGER) ASC,
-                CAST(SPLIT_PART(ka.kode, '.', 4) AS INTEGER) ASC,
-                CAST(SPLIT_PART(ka.kode, '.', 5) AS INTEGER) ASC,
-                CAST(SPLIT_PART(ka.kode, '.', 6) AS INTEGER) ASC,
-                CAST(SPLIT_PART(ka.kode, '.', 7) AS INTEGER) ASC,
-                SPLIT_PART(ma.kodemataanggaran, '.', 1) ASC,
-                SPLIT_PART(ma.kodemataanggaran, '.', 2) ASC,
-                SPLIT_PART(ma.kodemataanggaran, '.', 3) ASC,
-                case when SPLIT_PART(ma.kodemataanggaran, '.', 4) = '' then 0 else cast(SPLIT_PART(ma.kodemataanggaran, '.', 4) as INTEGER) end ASC,
-                case when SPLIT_PART(ma.kodemataanggaran, '.', 5) = '' then 0 else cast(SPLIT_PART(ma.kodemataanggaran, '.', 5) as INTEGER) end ASC,
-                case when SPLIT_PART(ma.kodemataanggaran, '.', 6) = '' then 0 else cast(SPLIT_PART(ma.kodemataanggaran, '.', 6) as INTEGER) end ASC
+                COALESCE(NULLIF(SPLIT_PART(ka.kode, '.', 2), ''), '0')::INTEGER ASC,
+                COALESCE(NULLIF(SPLIT_PART(ka.kode, '.', 3), ''), '0')::INTEGER ASC,
+                COALESCE(NULLIF(SPLIT_PART(ka.kode, '.', 4), ''), '0')::INTEGER ASC,
+                COALESCE(NULLIF(SPLIT_PART(ka.kode, '.', 5), ''), '0')::INTEGER ASC,
+                COALESCE(NULLIF(SPLIT_PART(ka.kode, '.', 6), ''), '0')::INTEGER ASC,
+                COALESCE(NULLIF(SPLIT_PART(ka.kode, '.', 7), ''), '0')::INTEGER ASC,
+                COALESCE(NULLIF(SPLIT_PART(ma.kodemataanggaran, '.', 1), ''), '0')::INTEGER ASC,
+                COALESCE(NULLIF(SPLIT_PART(ma.kodemataanggaran, '.', 2), ''), '0')::INTEGER ASC,
+                COALESCE(NULLIF(SPLIT_PART(ma.kodemataanggaran, '.', 3), ''), '0')::INTEGER ASC,
+                COALESCE(NULLIF(SPLIT_PART(ma.kodemataanggaran, '.', 4), ''), '0')::INTEGER ASC,
+                COALESCE(NULLIF(SPLIT_PART(ma.kodemataanggaran, '.', 5), ''), '0')::INTEGER ASC,
+                COALESCE(NULLIF(SPLIT_PART(ma.kodemataanggaran, '.', 6), ''), '0')::INTEGER ASC
         "));
         // dd($dataSPJ);
 
@@ -26874,18 +26751,18 @@ public function suratBuktiPengembalian(Request $request)
                 mp.mataanggaranpermen,
                 ja.id
             ORDER BY
-                CAST(SPLIT_PART(ka.kode, '.', 2) AS INTEGER) ASC,
-                CAST(SPLIT_PART(ka.kode, '.', 3) AS INTEGER) ASC,
-                CAST(SPLIT_PART(ka.kode, '.', 4) AS INTEGER) ASC,
-                CAST(SPLIT_PART(ka.kode, '.', 5) AS INTEGER) ASC,
-                CAST(SPLIT_PART(ka.kode, '.', 6) AS INTEGER) ASC,
-                CAST(SPLIT_PART(ka.kode, '.', 7) AS INTEGER) ASC,
-                SPLIT_PART(ma.kodemataanggaran, '.', 1) ASC,
-                SPLIT_PART(ma.kodemataanggaran, '.', 2) ASC,
-                SPLIT_PART(ma.kodemataanggaran, '.', 3) ASC,
-                case when SPLIT_PART(ma.kodemataanggaran, '.', 4) = '' then 0 else cast(SPLIT_PART(ma.kodemataanggaran, '.', 4) as INTEGER) end ASC,
-                case when SPLIT_PART(ma.kodemataanggaran, '.', 5) = '' then 0 else cast(SPLIT_PART(ma.kodemataanggaran, '.', 5) as INTEGER) end ASC,
-                case when SPLIT_PART(ma.kodemataanggaran, '.', 6) = '' then 0 else cast(SPLIT_PART(ma.kodemataanggaran, '.', 6) as INTEGER) end ASC
+                COALESCE(NULLIF(SPLIT_PART(ka.kode, '.', 2), ''), '0')::INTEGER ASC,
+                COALESCE(NULLIF(SPLIT_PART(ka.kode, '.', 3), ''), '0')::INTEGER ASC,
+                COALESCE(NULLIF(SPLIT_PART(ka.kode, '.', 4), ''), '0')::INTEGER ASC,
+                COALESCE(NULLIF(SPLIT_PART(ka.kode, '.', 5), ''), '0')::INTEGER ASC,
+                COALESCE(NULLIF(SPLIT_PART(ka.kode, '.', 6), ''), '0')::INTEGER ASC,
+                COALESCE(NULLIF(SPLIT_PART(ka.kode, '.', 7), ''), '0')::INTEGER ASC,
+                COALESCE(NULLIF(SPLIT_PART(ma.kodemataanggaran, '.', 1), ''), '0')::INTEGER ASC,
+                COALESCE(NULLIF(SPLIT_PART(ma.kodemataanggaran, '.', 2), ''), '0')::INTEGER ASC,
+                COALESCE(NULLIF(SPLIT_PART(ma.kodemataanggaran, '.', 3), ''), '0')::INTEGER ASC,
+                COALESCE(NULLIF(SPLIT_PART(ma.kodemataanggaran, '.', 4), ''), '0')::INTEGER ASC,
+                COALESCE(NULLIF(SPLIT_PART(ma.kodemataanggaran, '.', 5), ''), '0')::INTEGER ASC,
+                COALESCE(NULLIF(SPLIT_PART(ma.kodemataanggaran, '.', 6), ''), '0')::INTEGER ASC
         "));
         // dd($dataSPJLS);
 

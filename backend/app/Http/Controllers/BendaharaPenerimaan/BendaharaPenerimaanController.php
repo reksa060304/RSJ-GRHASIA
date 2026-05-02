@@ -11431,7 +11431,7 @@ class BendaharaPenerimaanController extends ApiController {
                 WHERE sbm.statusenabled = TRUE AND sbm.kdprofile = :kdProfile
             ),
             -- BASE: Semua pelayanan pasien dengan info dasar
-            base_pelayanan AS (
+            base_pelayanan_raw AS (
                 SELECT 
                     pp.norec as pp_norec,
                     pp.produkfk,
@@ -11442,13 +11442,15 @@ class BendaharaPenerimaanController extends ApiController {
                     pp.hargadiscount,
                     pp.jumlah,
                     pp.jasa,
-                    (((COALESCE(pp.hargajual,0) - COALESCE(pp.hargadiscount,0)) * COALESCE(pp.jumlah,0)) + COALESCE(pp.jasa,0)) as subtotal,
+                    (((COALESCE(pp.hargajual,0) - COALESCE(pp.hargadiscount,0)) * COALESCE(pp.jumlah,0)) + COALESCE(pp.jasa,0)) as subtotal_raw,
                     pd.objectkelompokpasienlastfk,
                     apd.objectruanganfk,
                     pm.namapasien,
                     cb.id as idcarabayar,
                     cb.carabayar,
-                    ru.namaruangan
+                    ru.namaruangan,
+                    sbmcr.norec as sbmcr_norec,
+                    sbmcr.totaldibayar as sbmcr_totaldibayar
                 FROM sbm_filtered sbm
                 JOIN strukpelayanan_t sp ON sbm.nostrukfk = sp.norec AND sp.statusenabled = TRUE AND sp.kdprofile = :kdProfile
                 JOIN strukbuktipenerimaancarabayar_t sbmcr ON sbmcr.nosbmfk = sbm.norec AND sbmcr.statusenabled = TRUE AND sbmcr.kdprofile = :kdProfile
@@ -11458,6 +11460,30 @@ class BendaharaPenerimaanController extends ApiController {
                 JOIN pasiendaftar_t pd ON pd.norec = apd.noregistrasifk AND pd.kdprofile = :kdProfile
                 JOIN pasien_m pm ON pm.id = pd.nocmfk
                 LEFT JOIN ruangan_m ru ON ru.id = apd.objectruanganfk
+            ),
+            base_pelayanan AS (
+                SELECT 
+                    pp_norec,
+                    produkfk,
+                    strukfk,
+                    isobat,
+                    kelasfk,
+                    hargajual,
+                    hargadiscount,
+                    jumlah,
+                    jasa,
+                    CASE 
+                        WHEN SUM(subtotal_raw) OVER (PARTITION BY sbmcr_norec) > 0 
+                        THEN subtotal_raw * (sbmcr_totaldibayar / SUM(subtotal_raw) OVER (PARTITION BY sbmcr_norec))
+                        ELSE 0 
+                    END as subtotal,
+                    objectkelompokpasienlastfk,
+                    objectruanganfk,
+                    namapasien,
+                    idcarabayar,
+                    carabayar,
+                    namaruangan
+                FROM base_pelayanan_raw
             ),
             -- TIPE 2: PRODUK SPECIFIC (prioritas PERTAMA - lebih spesifik)
             tipe2_produk AS (
