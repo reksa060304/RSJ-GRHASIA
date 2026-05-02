@@ -11474,7 +11474,7 @@ class BendaharaPenerimaanController extends ApiController {
                     jasa,
                     CASE 
                         WHEN SUM(subtotal_raw) OVER (PARTITION BY sbmcr_norec) > 0 
-                        THEN subtotal_raw * (sbmcr_totaldibayar / SUM(subtotal_raw) OVER (PARTITION BY sbmcr_norec))
+                        THEN subtotal_raw * (COALESCE(sbmcr_totaldibayar,0) / SUM(subtotal_raw) OVER (PARTITION BY sbmcr_norec))
                         ELSE 0 
                     END as subtotal,
                     objectkelompokpasienlastfk,
@@ -11493,7 +11493,7 @@ class BendaharaPenerimaanController extends ApiController {
                     cap1.id idlevel1, cap2.id idlevel2, cap3.id idlevel3,
                     cap4.id idlevel4, cap5.id idlevel5, cap6.id idlevel6, cap7.id idlevel7,
                     bp.isobat isobat_group, bp.idcarabayar,
-                    bp.subtotal::DECIMAL totaldibayarclosing,
+                    COALESCE(bp.subtotal,0)::DECIMAL totaldibayarclosing,
                     bp.namapasien,
                     bp.carabayar,
                     bp.namaruangan,
@@ -11528,7 +11528,7 @@ class BendaharaPenerimaanController extends ApiController {
                     cap1.id idlevel1, cap2.id idlevel2, cap3.id idlevel3,
                     cap4.id idlevel4, cap5.id idlevel5, cap6.id idlevel6, cap7.id idlevel7,
                     bp.isobat isobat_group, bp.idcarabayar,
-                    bp.subtotal::DECIMAL totaldibayarclosing,
+                    COALESCE(bp.subtotal,0)::DECIMAL totaldibayarclosing,
                     bp.namapasien,
                     bp.carabayar,
                     bp.namaruangan,
@@ -11564,7 +11564,7 @@ class BendaharaPenerimaanController extends ApiController {
                     cap1.id idlevel1, cap2.id idlevel2, cap3.id idlevel3,
                     cap4.id idlevel4, cap5.id idlevel5, cap6.id idlevel6, cap7.id idlevel7,
                     NULL::BOOLEAN isobat_group, sbmcr.objectcarabayarfk idcarabayar,
-                    (spd.qtyproduk * spd.hargasatuan * spd.qtyoranglast)::DECIMAL totaldibayarclosing,
+                    (COALESCE(spd.qtyproduk,0) * COALESCE(spd.hargasatuan,0) * COALESCE(spd.qtyoranglast, 1))::DECIMAL totaldibayarclosing,
                     pm.namapasien,
                     cb.carabayar,
                     ru.namaruangan,
