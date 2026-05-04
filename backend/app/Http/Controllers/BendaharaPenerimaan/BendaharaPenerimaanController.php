@@ -11014,9 +11014,21 @@ class BendaharaPenerimaanController extends ApiController {
         //ambil daftar akun level 8
         $akunList = DB::select(DB::raw(
             "SELECT id, namarekening, koderekening, nourut
-             FROM char_akun_pendapatan_m
-             WHERE statusenabled = true AND level = '8'
-             ORDER BY koderekening"
+             FROM char_akun_pendapatan_m p
+             WHERE statusenabled = true 
+             AND NOT EXISTS (
+                SELECT 1 FROM char_akun_pendapatan_m c 
+                WHERE c.headfk = p.id AND c.statusenabled = true
+             )
+             ORDER BY 
+                split_part(koderekening, '.', 1) ASC,
+                case when split_part(koderekening, '.', 2) = '' then 0 else split_part(koderekening, '.', 2)::int end ASC,
+                case when split_part(koderekening, '.', 3) = '' then 0 else split_part(koderekening, '.', 3)::int end ASC,
+                case when split_part(koderekening, '.', 4) = '' then 0 else split_part(koderekening, '.', 4)::int end ASC,
+                case when split_part(koderekening, '.', 5) = '' then 0 else split_part(koderekening, '.', 5)::int end ASC,
+                case when split_part(koderekening, '.', 6) = '' then 0 else split_part(koderekening, '.', 6)::int end ASC,
+                case when split_part(koderekening, '.', 7) = '' then 0 else split_part(koderekening, '.', 7)::int end ASC,
+                case when split_part(koderekening, '.', 8) = '' then 0 else split_part(koderekening, '.', 8)::int end ASC"
         ));
 
         //buat case when dan sum dinamis
@@ -11104,9 +11116,21 @@ class BendaharaPenerimaanController extends ApiController {
         //ambil daftar akun pendapatan level 8 untuk pivot dinamis
         $akunList = DB::select(DB::raw("
             SELECT id, namarekening, koderekening, nourut
-            FROM char_akun_pendapatan_m
-            WHERE statusenabled = true AND level = '8'
-            ORDER BY koderekening
+            FROM char_akun_pendapatan_m p
+            WHERE statusenabled = true 
+            AND NOT EXISTS (
+                SELECT 1 FROM char_akun_pendapatan_m c 
+                WHERE c.headfk = p.id AND c.statusenabled = true
+            )
+            ORDER BY 
+                split_part(koderekening, '.', 1) ASC,
+                case when split_part(koderekening, '.', 2) = '' then 0 else split_part(koderekening, '.', 2)::int end ASC,
+                case when split_part(koderekening, '.', 3) = '' then 0 else split_part(koderekening, '.', 3)::int end ASC,
+                case when split_part(koderekening, '.', 4) = '' then 0 else split_part(koderekening, '.', 4)::int end ASC,
+                case when split_part(koderekening, '.', 5) = '' then 0 else split_part(koderekening, '.', 5)::int end ASC,
+                case when split_part(koderekening, '.', 6) = '' then 0 else split_part(koderekening, '.', 6)::int end ASC,
+                case when split_part(koderekening, '.', 7) = '' then 0 else split_part(koderekening, '.', 7)::int end ASC,
+                case when split_part(koderekening, '.', 8) = '' then 0 else split_part(koderekening, '.', 8)::int end ASC
         "));
 
         if (empty($akunList)) {
