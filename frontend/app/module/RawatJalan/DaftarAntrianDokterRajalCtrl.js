@@ -1,7 +1,7 @@
 define(['initialize'], function (initialize) {
     'use strict';
-    initialize.controller('DaftarAntrianDokterRajalCtrl', ['SaveToWindow', '$rootScope', '$scope', 'ModelItem', '$state', 'DateHelper', 'socket', '$mdDialog', '$window', 'CetakHelper', 'MedifirstService', 'CacheHelper', '$q',
-        function (saveToWindow, $rootScope, $scope, ModelItem, $state, dateHelper, socket, $mdDialog, window, cetakHelper, medifirstService, cacheHelper, $q) {
+    initialize.controller('DaftarAntrianDokterRajalCtrl', ['SaveToWindow', '$rootScope', '$scope', 'ModelItem', '$state', 'DateHelper', 'socket', '$mdDialog', '$window', 'CetakHelper', 'MedifirstService', 'CacheHelper', '$q', '$interval',
+        function (saveToWindow, $rootScope, $scope, ModelItem, $state, dateHelper, socket, $mdDialog, window, cetakHelper, medifirstService, cacheHelper, $q, $interval) {
             $scope.dataVOloaded = true;
             $scope.now = new Date();
             $scope.item = {};
@@ -37,11 +37,21 @@ define(['initialize'], function (initialize) {
             loadData()
             // postRensarWTRJ();
             loadKonsul()
+
             // function postRensarWTRJ() {
             //     manageSarprasPhp.saveDataTransaksi('rensar/post-waktu-tunggu-rj')
             //         .then(function (res) {
             //         })
             // }
+            var timerKonsul = $interval(function () {
+                loadKonsul();
+            }, 30000); // Periksa setiap 30 detik
+
+            $scope.$on('$destroy', function () {
+                if (timerKonsul) {
+                    $interval.cancel(timerKonsul);
+                }
+            });
             // loadData()
             $scope.SearchEnter = function () {
                 loadData()
@@ -239,24 +249,56 @@ define(['initialize'], function (initialize) {
                         3: $scope.item.ruangan != undefined ? $scope.item.ruangan.namaruangan : null,
                         4: $scope.item.ruanganMulti,
                     }
-                    // var chacePeriode = tglAwal + "~" + tglAkhir + "~" + $scope.item.ruangan.id + "~" + $scope.item.ruangan.namaruangan + '~' + listRuangan;
+                // var chacePeriode = tglAwal + "~" + tglAkhir + "~" + $scope.item.ruangan.id + "~" + $scope.item.ruangan.namaruangan + '~' + listRuangan;
                     cacheHelper.set('DaftarAntrianDokterRajalCtrl', chacePeriode);
                 });
             }
             function loadKonsul() {
-                medifirstService.get("rawatjalan/get-order-konsul?dokterid=" + $scope.dataLogin.id).then(function (e) {
+                medifirstService.get("rawatjalan/get-order-konsul-new?dokterid=" + $scope.dataLogin.id).then(function (e) {
                     var res = e.data.data
                     for (var i = res.length - 1; i >= 0; i--) {
-                        if (res[i].norec_apd != null)
-                            res.splice([i], 1)
+                        if (res[i].keteranganlainnya != null || res[i].tgltolak != null)
+                            res.splice(i, 1)
                     }
                     if (res.length > 0) {
                         $scope.showNotif = true
                         $scope.lengthKonsul = res.length
-                    } else
+                    } else {
                         $scope.showNotif = false
-
+                        $scope.lengthKonsul = 0
+                    }
                 })
+            }
+            var onDataBound = function (e) {
+                var grid = this;
+                grid.tbody.find('>tr').each(function () {
+                    var dataItem = grid.dataItem(this);
+                    if (dataItem && dataItem.keteranganlainnya) {
+                        $(this).addClass('green');
+                    }
+                    if (dataItem && dataItem.tgltolak) {
+                        $(this).addClass('red');
+                    }
+                });
+            }
+            function jawab(e) {
+                e.preventDefault();
+                var dataItem = this.dataItem($(e.currentTarget).closest("tr"));
+                if (dataItem.tgltolak) {
+                    toastr.error('Order sudah ditolak: ' + dataItem.keterangantolak)
+                    return
+                }
+
+                $scope.itemKonsul = {
+                    norec_so: dataItem.norec_so ? dataItem.norec_so : dataItem.norec,
+                    ruanganAsalJawab: dataItem.ruanganasal ? dataItem.ruanganasal : dataItem.namaruanganasal,
+                    ruanganTujuanJawab: dataItem.ruangantujuan ? dataItem.ruangantujuan : dataItem.namaruangan,
+                    dokterJawab: dataItem.namalengkap ? dataItem.namalengkap : dataItem.namadokter,
+                    keteranganJawab: dataItem.keteranganorder,
+                    jawaban: dataItem.keteranganlainnya
+                }
+
+                $scope.popUpJawab.center().open()
             }
             $scope.klikGrid = function (dataPasienSelected) {
                 // loadCombo();
@@ -1746,16 +1788,13 @@ define(['initialize'], function (initialize) {
                 $scope.winKonsul.center().open()
             }
             function loadGridKonsul() {
-                medifirstService.get("rawatjalan/get-order-konsul?dokterid=" + $scope.dataLogin.id).then(function (e) {
+                medifirstService.get("rawatjalan/get-order-konsul-new?dokterid=" + $scope.dataLogin.id).then(function (e) {
                     var result = e.data.data
                     if (result.length > 0) {
                         $scope.item.dokterTujuan = result[0].namalengkap
                         for (var i = 0; i < result.length; i++) {
                             result[i].no = i + 1
-                            if (result[i].norec_apd != null)
-                                result[i].status = 'Selesai'
-                            else
-                                result[i].status = '-'
+                            result[i].status = result[i].keteranganlainnya ? 'Sudah Dijawab' : (result[i].tgltolak ? 'Ditolak' : 'Belum Dijawab')
                         }
                     }
                     $scope.sourceKonsul = new kendo.data.DataSource({
@@ -1767,27 +1806,54 @@ define(['initialize'], function (initialize) {
                 })
             }
             $scope.konsulOpt = {
-
                 pageable: true,
                 scrollable: true,
+                dataBound: onDataBound,
                 columns: [
-                    // { field: "rowNumber", title: "#", width: 40, width: 40, attributes: { style: "text-align:right; padding-right: 15px;"}, hideMe: true},
                     { field: "no", title: "No", width: 40 },
                     { field: "noregistrasi", title: "No Registrasi", width: 100 },
                     { field: "nocm", title: "No RM", width: 80 },
-                    { field: "namapasien", title: "Nama ", width: 120 },
+                    { field: "namapasien", title: "Nama Pasien", width: 120 },
                     { field: "tglorder", title: "Tanggal", width: 120 },
                     { field: "ruanganasal", title: "Ruangan Asal", width: 120 },
                     { field: "ruangantujuan", title: "Ruangan Tujuan", width: 150 },
                     { field: "pengonsul", title: "Pengonsul", width: 120 },
                     { field: "keteranganorder", title: "Keterangan", width: 120 },
+                    { field: "keterangantolak", title: "Keterangan Tolak", width: 150 },
                     { field: "status", title: "Status", width: 120 },
-                    { command: [{ name: "edit", text: "Verifikasi", click: verif }], title: "&nbsp;", width: 120 }
+                    { command: [{ name: "custom_jawab", text: "Jawab", click: jawab }], title: "&nbsp;", width: 100 },
+                    // { command: [{ name: "edit", text: "Verifikasi", click: verif }], title: "&nbsp;", width: 120 },
+                    { command: [{ name: "delete", text: "Tolak", click: TolakVerif }], title: "&nbsp;", width: 120 },
                 ],
             };
+            $scope.SaveJawab = function () {
+                if ($scope.itemKonsul.jawaban == undefined || $scope.itemKonsul.jawaban == "") {
+                    toastr.error("Jawaban Belum di isi!")
+                    return
+                }
+
+                var objSave = {
+                    norec_so: $scope.itemKonsul.norec_so,
+                    jawaban: $scope.itemKonsul.jawaban
+                }
+                medifirstService.post('emr/update-jawaban-konsultasi', objSave).then(function (e) {
+                    $scope.itemKonsul.jawaban = undefined
+                    loadGridKonsul()
+                    loadKonsul()
+                    $scope.popUpJawab.close()
+
+                });
+            }
+            $scope.batal = function () {
+                $scope.popUpJawab.close();
+            }
             function verif(e) {
                 e.preventDefault();
                 var dataItem = this.dataItem($(e.currentTarget).closest("tr"));
+                if (dataItem.tgltolak) {
+                    toastr.error('Order sudah ditolak: ' + dataItem.keterangantolak)
+                    return
+                }
                 if (dataItem.status == 'Selesai') {
                     toastr.error('Sudah di verifkasi')
                     return
@@ -1808,10 +1874,41 @@ define(['initialize'], function (initialize) {
                     loadData();
                     loadKonsul()
                     $scope.saveLogKonsul();
-
-
                 })
 
+            }
+            function TolakVerif(e) {
+                e.preventDefault();
+                var dataItem = this.dataItem($(e.currentTarget).closest("tr"));
+                if (dataItem.tgltolak) {
+                    toastr.error('Order sudah ditolak')
+                    return
+                }
+                if (dataItem.keteranganlainnya) {
+                    toastr.error('Order sudah dijawab')
+                    return
+                }
+                $scope.tolakItem = dataItem
+                $scope.popUpTolakOrder.center().open()
+            }
+            $scope.saveTolakOrder = function (e) {
+                if ($scope.item.keteranganJawab == undefined) {
+                    toastr.error('Alasan Tolak Konsultasi Wajib Diisi')
+                    return
+                }
+                var dataKonsul = {
+                    "norec_so": e.norec,
+                    "keterangantolak": $scope.item.keteranganJawab
+                }
+                medifirstService.post('rawatjalan/tolak-konsul-from-order', dataKonsul).then(function (e) {
+                    $scope.item.keteranganJawab = undefined
+                    $scope.popUpTolakOrder.close()
+                    loadGridKonsul()
+                    loadKonsul()
+                    medifirstService.postLogging('Tolak Order Konsultasi', 'Norec strukorder_t', e.norec,
+                        'Tolak Order Konsultasi No Order - ' + e.noorder + ' dengan No Registrasi ' + e.noregistrasi).then(function (res) { })
+
+                })
             }
             //#save Log Konsul
             $scope.saveLogKonsul = function () {
