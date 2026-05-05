@@ -315,6 +315,9 @@ class MasterGiziController extends ApiController
         ->when($request['siklus'], function ($query) use ($request) {
             return $query->where('sikluscateringgizi_m.siklus', $request['siklus']);
         })
+        ->when($request['produk'], function ($query) use ($request) {
+            return $query->where('pr.namaproduk', 'ilike', '%' . $request['produk'] . '%');
+        })
         ->when($request['tanggal'], function ($query) use ($request) {
             return $query->where('sikluscateringgizi_m.tanggal', $request['tanggal']);
         })

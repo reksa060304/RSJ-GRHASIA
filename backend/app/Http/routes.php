@@ -807,6 +807,9 @@ Route::group(['middleware' => 'cors', 'prefix' => 'service'], function () {
         Route::post('gizi/save-siklus-catering', 'Gizi\MasterGiziController@saveSiklusCatering');
         Route::get('gizi/get-data-siklus-catering', 'Gizi\MasterGiziController@getSiklusCatering');
         Route::delete('gizi/delete-siklus-catering/{id}', 'Gizi\MasterGiziController@deleteSiklusCatering');
+        Route::get('gizi/telemedicine/get-data-produk-diet', 'Gizi\GiziTelemedicineController@getDataProdukDiet');
+        Route::get('gizi/telemedicine/get-data-menu-makanan', 'Gizi\GiziTelemedicineController@getDataMenuMakanan');
+
         Route::group(['prefix' => 'cssd'], function () {
 
         });

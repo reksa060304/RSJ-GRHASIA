@@ -213,6 +213,8 @@ define(['initialize'], function (initialize) {
             async function fetchData() {
                 var params = {
                     menumakanan: $scope.item.namaMenu || "",
+                    produk: $scope.item.produk || "",
+                    siklus: $scope.item.siklus || "",
                     // nanti bisa tambah:
                     // kategori: $scope.item.kategori,
                     // tanggal: $scope.item.tanggal
