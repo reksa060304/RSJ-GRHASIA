@@ -26,6 +26,7 @@ use App\Master\MapProdukToMenuMakanan;
 use App\Master\MenuMakanan;
 use App\Master\Produk;
 use App\Master\SiklusCateringGizi;
+use App\Master\SlottingLibur;
 use App\Transaksi\PasienDaftar;
 use App\Transaksi\AntrianPasienDiperiksa;
 use App\Transaksi\RiwayatOrderGizi;
@@ -43,7 +44,7 @@ class GiziTelemedicineController extends ApiController
 
         $kdProfile = (int) $this->getDataKdProfile($request);
         $kdProdukDiet = $this->settingDataFixed('kdKategoryProdukDiet', $kdProfile);
-        $data = Produk::select('id','namaproduk as produk_diet')
+        $data = Produk::select('id','namaproduk')
         ->where('kdprofile', $kdProfile)
         ->where('objectkategoryprodukfk', $kdProdukDiet)
         ->where('statusenabled', true)
@@ -60,10 +61,33 @@ class GiziTelemedicineController extends ApiController
     public function getDataMenuMakanan(Request $request)
     {
 
+        $start = Carbon::today();
+        $end = Carbon::today()->addDays(6); // total 7 hari (hari ini + 6)
         $kdProfile = (int) $this->getDataKdProfile($request);
-        $data = MenuMakanan::select('id','menumakanan','keterangan')
-        ->where('kdprofile', $kdProfile)
-        ->where('statusenabled', true)
+        $data = SiklusCateringGizi::select('mm.id as menumakana_id','mm.menumakanan','pr.namaproduk','pr.id as produk_id','sikluscateringgizi_m.tanggal')
+        ->leftjoin('produk_m as pr', 'pr.id', '=', 'sikluscateringgizi_m.produk_id')
+        ->leftjoin('menumakanan_m as mm', 'mm.id', '=', 'sikluscateringgizi_m.menumakanan_id')
+        ->where('sikluscateringgizi_m.kdprofile', $kdProfile)
+        ->when($request['produk_id'], function ($query) use ($request) {
+            return $query->where('pr.id', $request['produk_id']);
+        })
+        ->when($request['tanggal'], function ($query) use ($request) {
+            return $query->where('sikluscateringgizi_m.tanggal', $request['tanggal']);
+        })
+        ->whereNotIn(
+                DB::raw('DATE(sikluscateringgizi_m.tanggal)'),
+                function ($q) {
+                    $q->select('tgllibur')
+                    ->from('slottinglibur_m')
+                    ->where('statusenabled', true)
+                    ->where('objectruanganfk', 784);
+                }
+            )
+        ->whereBetween('sikluscateringgizi_m.tanggal',[$start, $end])
+        ->whereRaw("EXTRACT(DOW FROM sikluscateringgizi_m.tanggal) != 0")
+        ->where('sikluscateringgizi_m.statusenabled', true)
+        ->orderBy('sikluscateringgizi_m.siklus', 'asc')
+        ->orderBy('sikluscateringgizi_m.tanggal', 'asc')
         ->get();
 
         $result = array(
