@@ -64,9 +64,10 @@ class GiziTelemedicineController extends ApiController
         $start = Carbon::today();
         $end = Carbon::today()->addDays(6); // total 7 hari (hari ini + 6)
         $kdProfile = (int) $this->getDataKdProfile($request);
-        $data = SiklusCateringGizi::select('mm.id as menumakanan_id','mm.menumakanan','pr.namaproduk','pr.id as produk_id','sikluscateringgizi_m.tanggal','mm.keterangan')
+        $data = SiklusCateringGizi::select('mm.id as menumakanan_id','mm.menumakanan','pr.namaproduk','pr.id as produk_id','sikluscateringgizi_m.tanggal','mm.keterangan','pr.qproduk as kuota','hnp.harganetto1')
         ->leftjoin('produk_m as pr', 'pr.id', '=', 'sikluscateringgizi_m.produk_id')
         ->leftjoin('menumakanan_m as mm', 'mm.id', '=', 'sikluscateringgizi_m.menumakanan_id')
+        ->join('harganettoprodukbykelas_m as hnp','hnp.objectprodukfk','=','pr.id')
         ->where('sikluscateringgizi_m.kdprofile', $kdProfile)
         ->when($request['produk_id'], function ($query) use ($request) {
             return $query->where('pr.id', $request['produk_id']);
