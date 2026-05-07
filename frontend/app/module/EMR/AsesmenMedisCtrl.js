@@ -7,6 +7,10 @@ define(['initialize'], function (initialize) {
             $scope.buatBaru = true;
             $scope.hapusButton = true;
             $scope.hapusHide = true
+            $scope.isDokter = false
+            if(medifirstService.getKelompokUser() == 'dokter' ){
+                $scope.isDokter = true
+            }
             if(medifirstService.getKelompokUser() == 'mahasiswadiklat'){
                 $scope.buatBaru = false;
                 $scope.hapusButton = false;
@@ -150,7 +154,7 @@ define(['initialize'], function (initialize) {
                 var mapemr = "&departemen=" + $scope.item.idDepartemen
                 // if($scope.item.idDepartemen == 18)
                     mapemr += "&ruangan=" + $scope.item.idRuangan
-                medifirstService.get("emr/get-menu-rekam-medis-dynamic?namaemr=asesmen" + mapemr + "&idJenisEmr=" + $scope.IdJenisEmr).then(function (e) {
+                medifirstService.get("emr/get-menu-rekam-medis-dynamic?namaemr=asesmen" + mapemr + "&idJenisEmr=" + $scope.IdJenisEmr + "&isDokter=" + $scope.isDokter).then(function (e) {
                     var deptInap = [16, 35, 17]
                     var deptId = localStorage.getItem('departemenPengkajian');
                     var strKode = ''

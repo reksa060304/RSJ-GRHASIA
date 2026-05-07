@@ -3193,11 +3193,46 @@ class EMRController  extends ApiController
         }
 
         $idJenisEmr = isset($request['idJenisEmr']) ? (int) $request['idJenisEmr'] : null;
+        $isFilteredByJenisEmr = false;
 
         if ($idJenisEmr && isset($navigasiMap[$idJenisEmr])) {
             $targetId = $navigasiMap[$idJenisEmr];
             $node = findNodeById($data, $targetId);
             $data = $node ? ($node['child'] ?? []) : [];
+            $isFilteredByJenisEmr = true;
+        }
+
+        function filterByDokter($nodes, $isDokter) {
+            $result = [];
+
+            foreach ($nodes as $node) {
+                // ✅ Tentukan apakah ini header Medis
+                $isHeader = !empty($node['child']) && empty($node['reportdisplay']);
+                $isMedisHeader = $isHeader && isset($node['caption']) && $node['caption'] === 'Medis';
+
+                if ($isMedisHeader) {
+                    if ($isDokter) {
+                        // Dokter: tampilkan node Medis + child nya (child tidak di filter)
+                        $result[] = $node;
+                    }
+                    // Bukan dokter: skip node Medis beserta child nya
+                } else {
+                    // Bukan header Medis: recurse ke child kalau ada
+                    if (!empty($node['child'])) {
+                        $node['child'] = filterByDokter($node['child'], $isDokter);
+                    }
+                    $result[] = $node;
+                }
+            }
+
+            return $result;
+        }
+
+        // Apply filter kalau isDokter dikirim
+        if (isset($request['isDokter']) && $isFilteredByJenisEmr) {
+            $isDokter = $request['isDokter'] === 'true' || $request['isDokter'] === true;
+            $data = filterByDokter($data, $isDokter);
+            
         }
 
         $result = array(
