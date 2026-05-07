@@ -390,6 +390,8 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
                         nomorEMR: noemr
                     });
                 } else {
+                    cacheHelper.set('cacheSelectedMenuId', idTree);
+                    $rootScope.$broadcast('onMenuNavSelected', { id: idTree });
                     $state.go(urlTrue);
                 }
             }
