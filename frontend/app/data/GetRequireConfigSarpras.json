@@ -1082,6 +1082,10 @@
             "urlDep": "module/Perencanaan/LaporanPerJenisAnggaranCtrl"
         },
         {
+            "nameDep": "CetakNPDCtrl",
+            "urlDep": "module/Perencanaan/CetakNPDCtrl"
+        },
+        {
             "nameDep": "LaporanPPTKCtrl",
             "urlDep": "module/Perencanaan/LaporanPPTKCtrl"
         },

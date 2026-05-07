@@ -63,6 +63,21 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
                 { id: 2, jenisrekening: "Tampilkan Rek Permen"}
             ];
 
+            $scope.listBulan = [
+                { id: 1, nama: "Januari" },
+                { id: 2, nama: "Februari" },
+                { id: 3, nama: "Maret" },
+                { id: 4, nama: "April" },
+                { id: 5, nama: "Mei" },
+                { id: 6, nama: "Juni" },
+                { id: 7, nama: "Juli" },
+                { id: 8, nama: "Agustus" },
+                { id: 9, nama: "September" },
+                { id: 10, nama: "Oktober" },
+                { id: 11, nama: "November" },
+                { id: 12, nama: "Desember" }
+            ];
+
             loadDataCombo()
             function loadDataCombo() {
                 medifirstService.get("perencanaan/get-data-combo?&idpegawai=" + idpegawai).then(function (e) {
@@ -241,6 +256,59 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
                 
                 
             }
+
+            $scope.CetakNPD = function(){
+
+                if ($scope.item.tahunmonev == undefined){
+                    toastr.warning('Tahun harus diisi', 'Informasi');
+                    return
+                }
+
+                if ($scope.item.tahapmonev == undefined){
+                    toastr.warning('Tahap dipilih dulu', 'Informasi');
+                    return
+                }
+
+                if ($scope.item.jenisrekeningmonev == undefined){
+                    toastr.warning('Jenis Rekening harus diisi', 'Informasi');
+                    return
+                }
+
+                if ($scope.item.kegiatanmonev == undefined){
+                    toastr.warning('Sub Kegiatan harus diisi', 'Informasi');
+                    return
+                }
+
+                if ($scope.item.subkegiatanmonev == undefined){
+                    toastr.warning('Sub Sub Kegiatan harus diisi', 'Informasi');
+                    return
+                }
+
+                var tahun = ""
+                if ($scope.item.tahunmonev != undefined){
+                    tahun = moment($scope.item.tahunmonev).format('YYYY')
+                }
+
+                var asalproduk = ""
+                if($scope.item.asalprodulmonev !== undefined && $scope.item.asalprodulmonev !== null){
+                    asalproduk = "&asalproduk=" + $scope.item.asalprodulmonev.id
+                }
+                
+                var tahap = ""
+                if ($scope.item.tahapmonev != undefined){
+                    tahap = "&tahap=" + $scope.item.tahapmonev.id
+                }
+
+                var bulan = ""
+                if ($scope.item.bulanmonev != undefined){
+                    bulan = "&bulan=" + $scope.item.bulanmonev.id
+                }
+
+                window.open(baseTransaksi + "report/get-cetak-npd?tahun="+tahun+"&jenisrekening="+$scope.item.jenisrekeningmonev.id+"&subkegiatan="+$scope.item.kegiatanmonev.id+"&subsubkegiatan="+$scope.item.subkegiatanmonev.id+tahap+asalproduk+bulan, '_blank');
+
+                
+            }
+
 
             $scope.CetakPermen = function(){
                 var tahap = ""
