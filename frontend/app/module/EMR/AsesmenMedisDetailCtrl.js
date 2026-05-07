@@ -9,6 +9,7 @@ define(['initialize'], function (initialize) {
             var nomorEMR = ''
             var norecEMR = ''
             $scope.tombolSimpanVis = true;
+            $scope.IdJenisEmr = null;
             var dataLoad = [];
             var urlcetak = ''
             // $scope.now = new Date()
@@ -37,6 +38,8 @@ define(['initialize'], function (initialize) {
                     nomorEMR = chacePeriode[0]
                     norecEMR = chacePeriode[1]
                 }
+                $scope.IdJenisEmr = cacheHelper.get('cacheSelectedMenuId');
+                console.log('IdJenisEmr (di detail):', $scope.IdJenisEmr);
             }
 
             function FormLoad() {

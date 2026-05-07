@@ -3095,7 +3095,8 @@ class EMRController  extends ApiController
             ->where('emr.statusenabled', true)
             ->where('emr.namaemr', $request['namaemr'])
             ->select('emr.*')
-            ->orderBy('emr.nourut');
+            ->orderBy('emr.nourut', 'asc')
+            ->orderBy('emr.id', 'asc');
 
         if (isset($request['departemen']) && $request['departemen'] != '' && $request['departemen'] != 'undefined') {
             $dataMapping = \DB::table('mapruangantoemr_t as mapemr')
@@ -3166,6 +3167,38 @@ class EMRController  extends ApiController
         }
 
         $data = recursiveElements($data);
+
+        $navigasiMap = [
+            3003035 => 21023,    // EMR IGD          → id IGD
+            3003036 => 21021,    // EMR Rawat Jalan  → id Rawat Jalan
+            3003037 => 21024,    // EMR Rawat Inap   → id Rawat Inap
+            3003038 => 3000555,  // EMR NAPZA        → id NAPZA
+            3003039 => 667,      // EMR Farmasi      → id Farmasi
+            3003040 => 210235,   // EMR Gizi         → id Gizi
+            3003041 => 210238,   // EMR Rehab Mental → id Rehabilitasi Mental
+        ];
+
+        // ✅ Cari node by ID (bukan caption)
+        function findNodeById($tree, $targetId) {
+            foreach ($tree as $node) {
+                if ($node['id'] === $targetId) {
+                    return $node;
+                }
+                if (!empty($node['child'])) {
+                    $found = findNodeById($node['child'], $targetId);
+                    if ($found !== null) return $found;
+                }
+            }
+            return null;
+        }
+
+        $idJenisEmr = isset($request['idJenisEmr']) ? (int) $request['idJenisEmr'] : null;
+
+        if ($idJenisEmr && isset($navigasiMap[$idJenisEmr])) {
+            $targetId = $navigasiMap[$idJenisEmr];
+            $node = findNodeById($data, $targetId);
+            $data = $node ? ($node['child'] ?? []) : [];
+        }
 
         $result = array(
             'data' => $data,
@@ -9257,7 +9290,84 @@ class EMRController  extends ApiController
     public function getEMRTransaksiDetailForm(Request $request)
     {
         $kdProfile = $this->getDataKdProfile($request);
-        $idProfile = (int) $kdProfile;            
+        $idProfile = (int) $kdProfile;     
+        
+        // ✅ Fungsi collect semua ID dari subtree secara rekursif
+        function collectAllIds($nodes) {
+            $ids = [];
+            foreach ($nodes as $node) {
+                $ids[] = $node['id'];
+                if (!empty($node['child'])) {
+                    $ids = array_merge($ids, collectAllIds($node['child']));
+                }
+            }
+            return $ids;
+        }
+
+        // ✅ Ambil list emrfk yang allowed berdasarkan idJenisEmr
+        $emrFkAllowed = null;
+        $idJenisEmr = isset($request['idJenisEmr']) ? (int) $request['idJenisEmr'] : null;
+
+        if ($idJenisEmr) {
+            $navigasiMap = [
+                3003035 => 21023,
+                3003036 => 21021,
+                3003037 => 21024,
+                3003038 => 3000555,
+                3003039 => 667,
+                3003040 => 210235,
+                3003041 => 210238,
+            ];
+
+            if (isset($navigasiMap[$idJenisEmr])) {
+                // Ambil tree EMR dulu
+                $treeRaw = \DB::table('emr_t as emr')
+                    ->where('emr.kdprofile', $idProfile)
+                    ->where('emr.statusenabled', true)
+                    ->where('emr.namaemr', 'asesmen')
+                    ->select('emr.id', 'emr.headfk', 'emr.caption')
+                    ->orderBy('emr.nourut', 'asc')
+                    ->get();
+
+                // Build tree
+                $treeArr = [];
+                foreach ($treeRaw as $row) {
+                    $treeArr[] = [
+                        'id'     => $row->id,
+                        'headfk' => $row->headfk,
+                        'caption'=> $row->caption,
+                    ];
+                }
+                $elements = [];
+                $tree = [];
+                foreach ($treeArr as &$el) {
+                    $elements[$el['id']] = &$el;
+                    if (isset($elements[$el['headfk']])) {
+                        $elements[$el['headfk']]['child'][] = &$el;
+                    } else {
+                        if ($el['headfk'] <= 10) $tree[] = &$el;
+                    }
+                }
+
+                // Cari node target
+                function findNodeById($tree, $targetId) {
+                    foreach ($tree as $node) {
+                        if ($node['id'] === $targetId) return $node;
+                        if (!empty($node['child'])) {
+                            $found = findNodeById($node['child'], $targetId);
+                            if ($found !== null) return $found;
+                        }
+                    }
+                    return null;
+                }
+
+                $targetNode = findNodeById($tree, $navigasiMap[$idJenisEmr]);
+                if ($targetNode && !empty($targetNode['child'])) {
+                    $emrFkAllowed = collectAllIds($targetNode['child']);
+                }
+            }
+        }
+
         //todo : detail
         $paramNocm = '';
         $paramNoreg = '';
@@ -9275,6 +9385,9 @@ class EMRController  extends ApiController
         }
         if (isset($request['emrfk']) && $request['emrfk'] != '') {
             $data = $data->where('emrdp.emrfk', $request['emrfk']);
+        }
+        if ($emrFkAllowed && count($emrFkAllowed) > 0) {
+            $data = $data->whereIn('emrp.emrfk', $emrFkAllowed);
         }
         if (isset($request['norec']) && $request['norec'] != '') {
             $data = $data->where('emrp.norec', $request['norec']);
