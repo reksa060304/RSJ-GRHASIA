@@ -49,6 +49,7 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
             function loadDataCombo() {
                 var idpegawai = medifirstService.getPegawaiLogin().id;
                 medifirstService.get("perencanaan/get-data-combo?&idpegawai=" + idpegawai).then(function (e) {
+                    $scope.listPegawai = e.data.pegawai
                     medifirstService.get("anggaran/get-combo-anggaran").then(function (res) {
                         $scope.listTahap = res.data.tahap
                         $scope.listKegiatanV2 = res.data.divsubsubKg
@@ -114,8 +115,12 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
                 var tglCetak = "&tglcetak=" + moment($scope.item.tglCetak).format('YYYY-MM-DD')
                 var tglLunas = "&tgllunas=" + moment($scope.item.tglLunas).format('YYYY-MM-DD')
                 var tglPJ = "&tglpj=" + moment($scope.item.tglPertanggungjawaban).format('YYYY-MM-DD')
+                var idpelaksana = ""
+                if ($scope.item.pelaksana != undefined) {
+                    idpelaksana = "&idpelaksana=" + $scope.item.pelaksana.id
+                }
 
-                window.open(baseTransaksi + "report/get-cetak-npd?tahun="+tahun+"&jenisrekening="+$scope.item.jenisrekening.id+"&subkegiatan="+$scope.item.subkegiatan.id+"&subsubkegiatan="+$scope.item.subsubkegiatan.id+tahap+asalproduk+bulan+tglCetak+tglLunas+tglPJ, '_blank');
+                window.open(baseTransaksi + "report/get-cetak-npd?tahun="+tahun+"&jenisrekening="+$scope.item.jenisrekening.id+"&subkegiatan="+$scope.item.subkegiatan.id+"&subsubkegiatan="+$scope.item.subsubkegiatan.id+tahap+asalproduk+bulan+tglCetak+tglLunas+tglPJ+idpelaksana, '_blank');
             }
         }
     ]);

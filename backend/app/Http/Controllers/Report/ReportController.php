@@ -5347,6 +5347,7 @@ class ReportController extends ApiController{
                     SUM ( spj_current ) AS spj_current,
                     SUM ( spj_prev ) + SUM ( spj_current ) AS jumlahspj,
                     SUM ( angkas_prev ) AS angkas_prev,
+                    SUM ( angkas_current ) AS angkas_current,
                     SUM ( panjar ) - SUM(panjarspj) + SUM ( spj_prev ) + SUM ( spj_current ) as subtotal,
                     SUM ( jumlahanggaran ) - ((SUM (panjar) - SUM(panjarspj)) + SUM ( spj_prev ) + SUM ( spj_current )) as sisaanggaran
                 FROM
@@ -5360,16 +5361,19 @@ class ReportController extends ApiController{
                         0 AS panjar,
                         0 AS spj_prev, 0 AS spj_current,
                         0 AS panjarspj,
-                        COALESCE ( SUM ( akb.angkas_prev ), 0 ) AS angkas_prev
+                        COALESCE ( SUM ( akb.angkas_prev ), 0 ) AS angkas_prev,
+                        COALESCE ( SUM ( akb.angkas_current ), 0 ) AS angkas_current
                     FROM
                         keteranganbelanja_t kb
                         JOIN transaksianggaran2024_t ta ON ta.norec = kb.objecttransaksifk AND ta.statusenabled = TRUE
                         JOIN kegiatananggaran2024_m ka ON ka.id = ta.objectkegiatanfk
                         JOIN mataanggaran_m ma ON ma.id = kb.objectmataanggaranfk 
                         LEFT JOIN (
-                            SELECT keteranganbelanjafk, SUM(CAST(nilai AS FLOAT)) as angkas_prev
+                            SELECT keteranganbelanjafk, 
+                                SUM(CASE WHEN bulanint < $bulan THEN CAST(nilai AS FLOAT) ELSE 0 END) as angkas_prev,
+                                SUM(CASE WHEN bulanint = $bulan THEN CAST(nilai AS FLOAT) ELSE 0 END) as angkas_current
                             FROM alokasiketeranganbelanja_t
-                            WHERE bulanint < $bulan AND statusenabled = TRUE
+                            WHERE bulanint <= $bulan AND statusenabled = TRUE
                             GROUP BY keteranganbelanjafk
                         ) akb ON akb.keteranganbelanjafk = kb.norec
                     WHERE
@@ -5401,7 +5405,8 @@ class ReportController extends ApiController{
                         COALESCE ( SUM ( CASE WHEN EXTRACT(MONTH FROM sr.tglrealisasi) < $bulan THEN rd.subtotal ELSE 0 END ), 0 ) AS spj_prev,
                         COALESCE ( SUM ( CASE WHEN EXTRACT(MONTH FROM sr.tglrealisasi) = $bulan THEN rd.subtotal ELSE 0 END ), 0 ) AS spj_current,
                         0 AS panjarspj,
-                        0 AS angkas_prev
+                        0 AS angkas_prev,
+                        0 AS angkas_current
                     FROM
                         strukrealisasi_t sr
                         JOIN realisasidetail_t rd ON rd.strukrealisasifk = sr.norec AND rd.statusenabled = TRUE
@@ -5437,7 +5442,8 @@ class ReportController extends ApiController{
                         COALESCE ( SUM ( P.jumlah ), 0 ) - COALESCE ( SUM ( pp.jumlahpengembalian ), 0 ) AS panjar,
                         0 AS spj_prev, 0 AS spj_current,
                         0 AS panjarspj,
-                        0 AS angkas_prev
+                        0 AS angkas_prev,
+                        0 AS angkas_current
                     FROM
                         panjar_t P 
                         JOIN kegiatananggaran2024_m ka ON ka.id = P.objectsubsubkegiatanfk
@@ -5490,6 +5496,7 @@ class ReportController extends ApiController{
                     SUM ( spj_current ) AS spj_current,
                     SUM ( spj_prev ) + SUM ( spj_current ) AS jumlahspj,
                     SUM ( angkas_prev ) AS angkas_prev,
+                    SUM ( angkas_current ) AS angkas_current,
                     SUM ( panjar ) - SUM(panjarspj) + SUM ( spj_prev ) + SUM ( spj_current ) as subtotal,
                     SUM ( jumlahanggaran ) - ((SUM (panjar) - SUM(panjarspj)) + SUM ( spj_prev ) + SUM ( spj_current )) as sisaanggaran
                 FROM
@@ -5503,16 +5510,19 @@ class ReportController extends ApiController{
                         0 AS panjar,
                         0 AS spj_prev, 0 AS spj_current,
                         0 AS panjarspj,
-                        COALESCE ( SUM ( akb.angkas_prev ), 0 ) AS angkas_prev
+                        COALESCE ( SUM ( akb.angkas_prev ), 0 ) AS angkas_prev,
+                        COALESCE ( SUM ( akb.angkas_current ), 0 ) AS angkas_current
                     FROM
                         keteranganbelanja_t kb
                         JOIN transaksianggaran2024_t ta ON ta.norec = kb.objecttransaksifk AND ta.statusenabled = TRUE
                         JOIN kegiatananggaran_m ka ON ka.id = ta.objectkegiatanfk
                         JOIN mataanggaran_m ma ON ma.id = kb.objectmataanggaranfk 
                         LEFT JOIN (
-                            SELECT keteranganbelanjafk, SUM(CAST(nilai AS FLOAT)) as angkas_prev
+                            SELECT keteranganbelanjafk, 
+                                SUM(CASE WHEN bulanint < $bulan THEN CAST(nilai AS FLOAT) ELSE 0 END) as angkas_prev,
+                                SUM(CASE WHEN bulanint = $bulan THEN CAST(nilai AS FLOAT) ELSE 0 END) as angkas_current
                             FROM alokasiketeranganbelanja_t
-                            WHERE bulanint < $bulan AND statusenabled = TRUE
+                            WHERE bulanint <= $bulan AND statusenabled = TRUE
                             GROUP BY keteranganbelanjafk
                         ) akb ON akb.keteranganbelanjafk = kb.norec
                     WHERE
@@ -5542,7 +5552,8 @@ class ReportController extends ApiController{
                         COALESCE ( SUM ( CASE WHEN EXTRACT(MONTH FROM sr.tglrealisasi) < $bulan THEN sr.totalbelanja ELSE 0 END ), 0 ) AS spj_prev,
                         COALESCE ( SUM ( CASE WHEN EXTRACT(MONTH FROM sr.tglrealisasi) = $bulan THEN sr.totalbelanja ELSE 0 END ), 0 ) AS spj_current,
                         COALESCE ( SUM ( sr.totalpanjar ), 0 ) AS panjarspj,
-                        0 AS angkas_prev
+                        0 AS angkas_prev,
+                        0 AS angkas_current
                     FROM
                         strukrealisasi_t sr
                         JOIN kegiatananggaran_m ka ON ka.id = sr.objectkegiatanfk
@@ -5573,7 +5584,8 @@ class ReportController extends ApiController{
                         COALESCE ( SUM ( P.jumlah ), 0 ) - COALESCE ( SUM ( pp.jumlahpengembalian ), 0 ) AS panjar,
                         0 AS spj_prev, 0 AS spj_current,
                         0 AS panjarspj,
-                        0 AS angkas_prev
+                        0 AS angkas_prev,
+                        0 AS angkas_current
                     FROM
                         panjar_t P 
                         JOIN kegiatananggaran_m ka ON ka.id = P.objectsubsubkegiatanfk

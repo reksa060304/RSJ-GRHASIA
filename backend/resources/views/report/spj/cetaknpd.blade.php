@@ -152,7 +152,7 @@
         <tr>
             <td width="280" style="white-space: nowrap;">1. Pejabat Pelaksana Teknis Kegiatan</td>
             <td width="10">:</td>
-            <td>{{ isset($subsubkegiatan[0]->pptk) ? $subsubkegiatan[0]->pptk : '............................................................' }}</td>
+            <td>{{ isset($subsubkegiatan[0]->pptk) ? $subsubkegiatan[0]->pptk : '-' }}</td>
         </tr>
         <tr>
             <td>2. Program</td>
@@ -177,7 +177,7 @@
         <tr>
             <td>6. Nomor DPA-SKPD</td>
             <td>:</td>
-            <td>{{ $signatories->nomordasarpengeluaran ?? '............................................................' }}</td>
+            <td>{{ $signatories->nomordasarpengeluaran ?? '-' }}</td>
         </tr>
         <tr>
             <td>7. Tahun Anggaran</td>
@@ -219,9 +219,28 @@
             @endphp
             @foreach ($data as $dt)
                 @php
-                    $akumulasiPrev = $dt->spj_prev; 
-                    $pencairanUP = $dt->spj_current; 
-                    $pencairanLS = 0; 
+                    $akumulasiPrev = $dt->spj_prev;
+                    $sisaPrevRaw = $dt->angkas_prev - $dt->spj_prev;
+                    $angkasBulanIni = $dt->angkas_current;
+
+                    $pencairanSisaPrev = 0;
+                    $pencairanUP = 0;
+                    $pencairanLS = 0;
+
+                    // Cek Sisa Sebelumnya
+                    if ($sisaPrevRaw > 50000000) {
+                        $pencairanLS += $sisaPrevRaw;
+                    } else {
+                        $pencairanSisaPrev = $sisaPrevRaw;
+                    }
+
+                    // Cek Angkas Bulan Ini
+                    if ($angkasBulanIni > 50000000) {
+                        $pencairanLS += $angkasBulanIni;
+                    } else {
+                        $pencairanUP = $angkasBulanIni;
+                    }
+
                     $akumulasiTotal = $dt->jumlahspj;
                     
                     $totalAnggaran += $dt->jumlahanggaran;
@@ -230,7 +249,7 @@
                     $totalLS += $pencairanLS;
                     $totalAkumulasi += $akumulasiTotal;
                     $totalSisa += $dt->sisaanggaran;
-                    $totalSisaPencairanPrev += ($dt->angkas_prev - $akumulasiPrev);
+                    $totalSisaPencairanPrev += $pencairanSisaPrev;
                 @endphp
                 <tr>
                     <td class="text-center">{{ $no++ }}</td>
@@ -238,7 +257,7 @@
                     <td>{{ $dt->namamataanggaran }}</td>
                     <td class="text-right">Rp {{ number_format($dt->jumlahanggaran, 0, ',', '.') }}</td>
                     <td class="text-right">Rp {{ number_format($akumulasiPrev, 0, ',', '.') }}</td>
-                    <td class="text-right">Rp {{ number_format($dt->angkas_prev - $akumulasiPrev, 0, ',', '.') }}</td>
+                    <td class="text-right">Rp {{ number_format($pencairanSisaPrev, 0, ',', '.') }}</td>
                     <td class="text-right">Rp {{ number_format($pencairanUP, 0, ',', '.') }}</td>
                     <td class="text-right">Rp {{ number_format($pencairanLS, 0, ',', '.') }}</td>
                     <td class="text-right">Rp {{ number_format($akumulasiTotal, 0, ',', '.') }}</td>

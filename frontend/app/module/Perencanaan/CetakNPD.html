@@ -170,6 +170,14 @@
                            k-format="'dd-MM-yyyy'" style="width:100%" />
                 </div>
 
+                <div class="npd-field w-xl">
+                    <label>Pelaksana</label>
+                    <input kendo-combo-box k-ng-model="item.pelaksana"
+                           k-data-text-field="'namalengkap'" k-data-value-field="'id'"
+                           k-filter="'contains'" k-auto-bind="false"
+                           k-data-source="listPegawai" />
+                </div>
+
                 <div class="npd-field" style="justify-content:flex-end; padding-top:2px;">
                     <label>&nbsp;</label>
                     <button class="primary c-button npd-cetak-btn" ng-click="CetakNPD()">
