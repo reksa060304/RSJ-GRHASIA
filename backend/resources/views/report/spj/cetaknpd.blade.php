@@ -259,18 +259,20 @@
             </tr>
         </tbody>
     </table>
-
+    @php
+        $jumlahDiminta = $totalSisaPencairanPrev + $totalUP + $totalLS;
+    @endphp
     <table style="width: 100%;">
         <tr>
             <td width="150">Jumlah yang diminta</td>
             <td width="10">:</td>
-            <td style="font-weight: bold;">Rp {{ number_format($totalAkumulasi, 0, ',', '.') }}</td>
+            <td style="font-weight: bold;">Rp {{ number_format($jumlahDiminta, 0, ',', '.') }}</td>
         </tr>
         <tr>
             <td>Terbilang</td>
             <td>:</td>
             <td class="terbilang" id="terbilang_text">
-                {{ terbilang($totalAkumulasi) }} Rupiah
+                {{ terbilang($jumlahDiminta) }} Rupiah
             </td>
         </tr>
     </table>
@@ -308,8 +310,14 @@
                     <br>
                     <p style="margin: 0;">Pelaksana,</p>
                     <br><br><br><br><br><br>
-                    <p style="margin: 0; font-weight: bold; text-decoration: underline;">{{ $signatories->bendahara ?? '-' }}</p>
-                    <p style="margin: 0;">NIP. {{ $signatories->nip_bendahara ?? '-' }}</p>
+                    <p style="margin: 0; font-weight: bold; text-decoration: underline;">
+                        {{ $pelaksana->namalengkap ?? '-' }}
+                    </p>
+                    @if(!empty($pelaksana->nippns) && $pelaksana->nippns != '-')
+                    <p style="margin: 0;">
+                        NIP. {{ $pelaksana->nippns }}
+                    </p>
+                    @endif
                 </td>
             </tr>
         </table>

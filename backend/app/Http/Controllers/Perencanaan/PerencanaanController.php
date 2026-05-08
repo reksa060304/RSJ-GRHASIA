@@ -763,6 +763,13 @@ class PerencanaanController extends ApiController {
             ->where('pg.objectjabatanfungsionalfk', 1426)
             ->orderBy('pg.namalengkap')
             ->get();
+        $pegawai_all = \DB::table('pegawai_m as pg')
+            ->select('pg.namalengkap', 'pg.nippns', \DB::raw('MIN(pg.id) as id'))
+            ->where('pg.kdprofile', $idProfile)
+            ->where('pg.statusenabled', true)
+            ->groupBy('pg.namalengkap', 'pg.nippns')
+            ->orderBy('pg.namalengkap')
+            ->get();
 
         $tahap = \DB::table('tahapanggaran_m as th')
             ->select('th.tahap', 'th.id')
@@ -1184,6 +1191,7 @@ class PerencanaanController extends ApiController {
             'konsolidasikelima' => $konsolidasikelima,
             'ppppp'=> $listsubsubkegiatan,
             'bendahara'=> $bendahara,
+            'pegawai'=> $pegawai_all,
             'message' => 'epic',
         );
 
