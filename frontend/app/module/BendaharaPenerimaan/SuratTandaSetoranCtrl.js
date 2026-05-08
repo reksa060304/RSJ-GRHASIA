@@ -1,8 +1,8 @@
 define(['initialize', 'Configuration'], function (initialize, configuration) {
     'use strict';
     var baseTransaksi = configuration.baseApiBackend;
-    initialize.controller('SuratTandaSetoranCtrl', ['$scope', 'DateHelper', '$http', '$state', 'MedifirstService',
-        function ($scope, dateHelper, $http, $state, medifirstService) {
+    initialize.controller('SuratTandaSetoranCtrl', ['$scope', 'DateHelper', '$http', '$state', 'MedifirstService', '$timeout',
+        function ($scope, dateHelper, $http, $state, medifirstService, $timeout) {
             //Inisial Variable   
             $scope.isRouteLoading = false;
             $scope.item = {};
@@ -25,6 +25,8 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
                     { id: 1, names: "Sudah STS" },
                     { id: 2, names: "Belum STS"}
                 ];
+                $scope.item.statusSTS = $scope.listStatusSTS[0];
+                init();
             });
 
             function init() {
@@ -796,6 +798,7 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
                 window.open(baseTransaksi + "report/cetak-stsv2?nosts="+$scope.selectedData2[0].nosts, '_blank');
             }
 
+            $scope.isViewingMapping = false;
             $scope.popupSimpan = function(){
                 
                 // validasi
@@ -809,6 +812,7 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
                     return
                 }
 
+                $scope.isViewingMapping = false;
                 $scope.isRouteLoading = true;
 
                 // Collect noclosing from selected data
@@ -931,7 +935,9 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
                             $scope.dataKonfirmasiSTS.push(obj)
                         })
 
-                        $scope.popupSimpanSTS.center().open()
+                        $timeout(function() {
+                            $scope.popupSimpanSTS.center().open();
+                        }, 200);
                     })
             }
 
@@ -941,6 +947,7 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
                 $scope.listRekeningSTS = []
                 $scope.detailSTSV2 = []
                 $scope.dataKonfirmasiSTS = []
+                $scope.isViewingMapping = false;
 
                 $scope.popupSimpanSTS.close()
             }
@@ -1162,6 +1169,45 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
                 $scope.popupEditSTS.close();                
                 $scope.clearSelection();
             };
+
+            $scope.lihatMapping = function() {
+                // validasi
+                if($scope.selectedData2.length < 1){
+                    toastr.error('Pilih Data Dulu')
+                    return
+                }
+
+                $scope.isViewingMapping = true;
+                $scope.isRouteLoading = true;
+
+                var noclosing = [];
+                for (var i = 0; i < $scope.selectedData2.length; i++) {
+                    noclosing.push($scope.selectedData2[i].nopenerimaan);
+                }
+
+                medifirstService.post('bendaharapenerimaan/check-unmapped-tariffs', { noclosing: noclosing })
+                    .then(function (checkResponse) {
+                        
+                        if (checkResponse.data.hasUnmapped) {
+                            $scope.isRouteLoading = false;                        
+                            $scope.unmappedTariffs = checkResponse.data.unmapped;
+                            $scope.unmappedDataSource = new kendo.data.DataSource({
+                                data: checkResponse.data.unmapped,
+                                pageSize: 50
+                            });
+                            $timeout(function() {
+                                $scope.popupUnmappedTariffs.center().open();
+                            }, 200);
+                        } else {
+                            $scope.loadKonfirmasiRekening();
+                        }
+                    })
+                    .catch(function (err) {
+                        $scope.isRouteLoading = false;
+                        toastr.error('Gagal cek mapping tarif');
+                        console.error(err);
+                    });
+            }
 
             //////////////////////////////////////////////////////////////          END             /////////////////////////////////////////////////////////////////////////////////////       
         }
