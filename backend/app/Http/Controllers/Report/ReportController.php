@@ -1748,8 +1748,7 @@ class ReportController extends ApiController{
                     ) {
                         $last = \DB::table('antrianapotik_t')
                             ->where('jenis', $racikanORnonracikan)
-                            // ->whereRaw('DATE(tglresep) = CURRENT_DATE')
-                            ->whereRaw("DATE(tglresep) = '" . date('Y-m-d') . "'")
+                            ->whereRaw('DATE(tglresep) = CURRENT_DATE')
                             ->orderBy('noantri', 'desc')
                             ->lockForUpdate()
                             ->first();
