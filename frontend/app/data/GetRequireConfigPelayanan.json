@@ -3942,8 +3942,16 @@
             "urlDep": "module/EMR/TransferPasienRadiologiCtrl"
         },
         {
+            "nameDep": "OrderGiziTelemedicineCtrl",
+            "urlDep": "module/Gizi/OrderGiziTelemedicine/OrderGiziTelemedicineCtrl"
+        },
+        {
             "nameDep": "SetupSiklusGiziCtrl",
             "urlDep": "module/Gizi/SetupSiklus/SetupSiklusGiziCtrl"
+        },
+        {
+            "nameDep": "DashboardDietGiziCtrl",
+            "urlDep": "module/Gizi/DashboardDietGizi/DashboardDietGiziCtrl"
         }
     ]
 }

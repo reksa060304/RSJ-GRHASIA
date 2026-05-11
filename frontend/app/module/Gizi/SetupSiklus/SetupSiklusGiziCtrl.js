@@ -30,6 +30,7 @@ define(['initialize'], function (initialize) {
             $scope.listSetSiklus = []
             $scope.listSetSiklusProduk = []
             $scope.arrayProdukTemp = []
+            var lastProdukDietSiklusId = null
             
             $scope.columnGrid = {
                 selectable: 'row',
@@ -193,7 +194,10 @@ define(['initialize'], function (initialize) {
                             "table": "menumakanan_m"
                         },
                         {
-                            "table": "produk_m"
+                            "table": "produk_m",
+                            "where": [
+                                {'column':'objectkategoryprodukfk','operator':'=','value':7}
+                            ]
                         },
                     ]
                 }
@@ -241,7 +245,6 @@ define(['initialize'], function (initialize) {
                         data: data.data.data,
                         pageSize: 10,
                         serverPaging: true,
-                        group: { field: "siklus" }
                     });
                 })
             }
@@ -253,6 +256,11 @@ define(['initialize'], function (initialize) {
 
             $scope.tambahSiklus = function () {
                 $scope.itemSiklus = {}
+                $scope.listMenuMakananMapping = []
+                $scope.listMenuMakananMappingDefault = []
+                $scope.listSetSiklusProduk = []
+                $scope.listSetSiklus = []
+                lastProdukDietSiklusId = null
                 $scope.popUpsSiklus.center().open();
             }
             $scope.tambahMappingProdukMenu = function () {
@@ -262,7 +270,9 @@ define(['initialize'], function (initialize) {
             }
             $scope.tutup = function () {
                 $scope.itemDaftarMenu = {}
-                $scope.popUps.close();
+                if ($scope.popUps) $scope.popUps.close();
+                if ($scope.popUpsMenuKeProduk) $scope.popUpsMenuKeProduk.close();
+                if ($scope.popUpsSiklus) $scope.popUpsSiklus.close();
             }
             function editData(e) {
                 e.preventDefault();
@@ -509,6 +519,13 @@ define(['initialize'], function (initialize) {
                 console.log($scope.arrayProdukTemp)
             }
             $scope.pilihMappingMenuMakanan = function (data) {
+                console.log(data);
+                var produkDietId = data != undefined && data.id != undefined ? data.id : null
+
+                if (lastProdukDietSiklusId == produkDietId) {
+                    return
+                }
+                lastProdukDietSiklusId = produkDietId
                 
                 if (data != undefined) {
                     medifirstService.get('gizi/get-data-mapping-produk-menu?produk_id=' + data.id).then(function (e) {
@@ -518,41 +535,59 @@ define(['initialize'], function (initialize) {
                         })
                         console.log($scope.listMenuMakananMapping);
                         $scope.listMenuMakananMappingDefault = $scope.listMenuMakananMapping
+                        $scope.listSetSiklusProduk = []
+                        $scope.listSetSiklus = []
                         
                     })
                 } else {
                     $scope.listMenuMakananMapping = []
+                    $scope.listMenuMakananMappingDefault = []
+                    $scope.listSetSiklusProduk = []
+                    $scope.listSetSiklus = []
                 }
             }
 
-            $scope.setSiklus = function (data) {
-                console.log(data);
+            function validasiFormSiklus() {
                 if($scope.itemSiklus.produkDiet == undefined){
                     toastr.error('Produk Diet harus di isi')
-                    return
+                    return false
                 }
                 if($scope.itemSiklus.siklus == undefined){
                     toastr.error('Siklus harus di isi')
-                    return
+                    return false
                 }
                 if($scope.itemSiklus.tanggalAwal == undefined){
                     toastr.error('Tanggal Berlaku Awal harus di isi')
-                    return
+                    return false
                 }
                 if($scope.itemSiklus.tanggalAkhir == undefined){
                     toastr.error('Tanggal Berlaku Akhir harus di isi')
-                    return
+                    return false
                 }
 
-                data.checked = false;
-                $scope.listSetSiklusProduk.push(data);
+                return true
+            }
 
+            function refreshListSetSiklus() {
+                if ($scope.listSetSiklusProduk.length == 0) {
+                    $scope.listSetSiklus = []
+                    return
+                }
+                if (!validasiFormSiklus()) {
+                    return
+                }
+                
                 let start = new Date($scope.itemSiklus.tanggalAwal);
                 let end = new Date($scope.itemSiklus.tanggalAkhir);
 
+                if (start > end) {
+                    toastr.error('Tanggal Berlaku Akhir harus lebih besar atau sama dengan Tanggal Berlaku Awal')
+                    $scope.listSetSiklus = []
+                    return
+                }
+
                 let listSetSiklus = [];
                 let menus = $scope.listSetSiklusProduk;
-                console.log(menus);
                 
                 let i = 0; // index untuk menu
 
@@ -572,8 +607,47 @@ define(['initialize'], function (initialize) {
                 }
                 $scope.listSetSiklus = listSetSiklus;
                 console.log($scope.listSetSiklus);
+            }
+
+            $scope.setSiklus = function (data) {
+                console.log(data);
+                if (!validasiFormSiklus()) {
+                    return
+                }
+
+                var isSelected = $scope.listSetSiklusProduk.some(function (menu) {
+                    return menu.id == data.id
+                })
+
+                if (isSelected) {
+                    toastr.warning('Menu Makanan sudah dipilih')
+                    return
+                }
+
+                data.checked = false;
+                $scope.listSetSiklusProduk.push(data);
+                refreshListSetSiklus();
                 
             };
+
+            $scope.hapusMenuSiklus = function (data, index) {
+                $scope.listSetSiklusProduk.splice(index, 1)
+
+                $scope.listMenuMakananMappingDefault.forEach(function (menu) {
+                    if (menu.id == data.id) {
+                        menu.checked = true
+                    }
+                })
+
+                $scope.listMenuMakananMapping.forEach(function (menu) {
+                    if (menu.id == data.id) {
+                        menu.checked = true
+                    }
+                })
+
+                refreshListSetSiklus();
+            }
+
             $scope.resetMappingMenuMakanan = function () {
                 $scope.listMenuMakananMapping.forEach(function (e) {
                     e.checked = true
@@ -588,14 +662,19 @@ define(['initialize'], function (initialize) {
                 }
                 $scope.listTempMenuMakananMapping = []
                 var name = $scope.itemSiklus.cariProduk.toLowerCase()
-                for (let i = 0; i < $scope.listMenuMakananMapping.length; i++) {
-                    var arr = $scope.listMenuMakananMapping[i].menumakanan.toLowerCase()
+                for (let i = 0; i < $scope.listMenuMakananMappingDefault.length; i++) {
+                    var arr = $scope.listMenuMakananMappingDefault[i].menumakanan.toLowerCase()
                     if (arr.indexOf(name) != -1) {
-                        $scope.listTempMenuMakananMapping.push($scope.listMenuMakananMapping[i])
+                        $scope.listTempMenuMakananMapping.push($scope.listMenuMakananMappingDefault[i])
                     }
                 }
                 $scope.listMenuMakananMapping = []
                 $scope.listMenuMakananMapping = $scope.listTempMenuMakananMapping
+            }
+
+            $scope.clearMenuMakananSiklus = function () {
+                $scope.itemSiklus.cariProduk = ""
+                $scope.listMenuMakananMapping = $scope.listMenuMakananMappingDefault
             }
 
             $scope.saveSiklus = function () {

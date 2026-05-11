@@ -809,7 +809,14 @@ Route::group(['middleware' => 'cors', 'prefix' => 'service'], function () {
         Route::delete('gizi/delete-siklus-catering/{id}', 'Gizi\MasterGiziController@deleteSiklusCatering');
         Route::get('gizi/telemedicine/get-data-produk-diet', 'Gizi\GiziTelemedicineController@getDataProdukDiet');
         Route::get('gizi/telemedicine/get-data-menu-makanan', 'Gizi\GiziTelemedicineController@getDataMenuMakanan');
-
+        Route::post('gizi/telemedicine/simpan-order-diet', 'Gizi\GiziDietTelemedicineController@simpanOrderDiet');
+        Route::get('gizi/telemedicine/get-order-diet', 'Gizi\GiziDietTelemedicineController@getOrderDiet');
+        Route::get('gizi/telemedicine/get-order-diet-verified', 'Gizi\GiziDietTelemedicineController@getOrderDietVerified');
+        Route::post('gizi/telemedicine/verifikasi-order-diet', 'Gizi\GiziDietTelemedicineController@verifikasiOrderDiet');
+        Route::post('gizi/telemedicine/batal-verifikasi-order-diet', 'Gizi\GiziDietTelemedicineController@batalVerifikasiOrderDiet');
+        Route::post('gizi/telemedicine/update-status-order', 'Gizi\GiziDietTelemedicineController@updateStatusOrderDiet');
+        Route::post('gizi/telemedicine/upload-bukti-bayar', 'Gizi\GiziDietTelemedicineController@uploadBuktiBayarDiet');
+        
         Route::group(['prefix' => 'cssd'], function () {
 
         });

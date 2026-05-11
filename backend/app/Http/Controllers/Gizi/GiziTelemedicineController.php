@@ -69,6 +69,7 @@ class GiziTelemedicineController extends ApiController
         ->leftjoin('menumakanan_m as mm', 'mm.id', '=', 'sikluscateringgizi_m.menumakanan_id')
         ->join('harganettoprodukbykelas_m as hnp','hnp.objectprodukfk','=','pr.id')
         ->where('sikluscateringgizi_m.kdprofile', $kdProfile)
+        ->where('hnp.kdprofile', $kdProfile)
         ->when($request['produk_id'], function ($query) use ($request) {
             return $query->where('pr.id', $request['produk_id']);
         })
@@ -87,10 +88,12 @@ class GiziTelemedicineController extends ApiController
         ->whereBetween('sikluscateringgizi_m.tanggal',[$start, $end])
         ->whereRaw("EXTRACT(DOW FROM sikluscateringgizi_m.tanggal) != 0")
         ->where('sikluscateringgizi_m.statusenabled', true)
+        ->where('hnp.statusenabled', true)
+        ->where('hnp.harganetto1', '>', 0)
         ->orderBy('sikluscateringgizi_m.siklus', 'asc')
         ->orderBy('sikluscateringgizi_m.tanggal', 'asc')
         ->get();
-
+        
         $result = array(
             "status" => 200,
             "data" => $data,

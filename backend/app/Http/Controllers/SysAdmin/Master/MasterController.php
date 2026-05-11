@@ -6690,7 +6690,12 @@ class MasterController extends ApiController{
                     );
                 }
             }
-
+            if (!empty($item['where'])) {
+                foreach ($item['where'] as $where) {
+                    $query->where($where['column'], $where['operator'],$where['value']);
+                }
+            }
+            
             // SELECT
             if (!empty($item['select'])) {
                 $query->select($item['select']);

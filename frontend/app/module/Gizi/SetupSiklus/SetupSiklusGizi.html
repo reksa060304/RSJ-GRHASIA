@@ -40,6 +40,32 @@
     fieldset {
         border-radius: 5px;
     }
+
+    .siklus-menu-box {
+        height: 285px;
+        overflow-y: auto;
+        padding: 8px;
+    }
+
+    .siklus-menu-item {
+        margin-bottom: 6px;
+    }
+
+    .siklus-selected-table {
+        width: 100%;
+        border-collapse: collapse;
+    }
+
+    .siklus-selected-table th,
+    .siklus-selected-table td {
+        border: 1px solid #ddd;
+        padding: 6px;
+    }
+
+    .siklus-selected-table th {
+        background-color: #f5f5f5;
+        text-align: center;
+    }
 </style>
 
 <div class="panel panel-default container_12">
@@ -351,42 +377,66 @@
                 <a ng-click="showAndHide()">Daftar Menu Makanan</a>
             </legend>
             <div class="grid_12">
-                <div class="grid_12 headerBox">
-                    <p> <input type="checkbox" class="k-checkbox" id="cekAll" ng-model="itemSiklus.cekAll"
-                            ng-click="cekAll(itemSiklus.cekAll)">
-                        <label class="k-checkbox-label" for="cekAll" style="margin-left:5px"><b>Check
-                                All</b></label></p>
-                </div>
-                <div class="grid_12 borderBox containerBorderBox" style="max-height:280px; overflow-y:auto;">
-                    <div class="grid_4" ng-repeat="item in listMenuMakananMapping track by $index  ">
-                        <!-- <input type="checkbox" ng-checked="item.isChecked" class="k-checkbox"
-                            name="{{item.namaproduk}}" id="{{item.namaproduk}}" ng-model="bool" value="{{item.id}}"
-                            ng-click="ceklisOne(bool,item)">
-
-                        <label class="k-checkbox-label" for="{{item.namaproduk}}">{{item.namaproduk}}</label> -->
-                        <button ng-if="item.checked" class="k-button btnAdd k-button-icontext k-primary k-grid-update"
-                            ng-click="setSiklus(item)"><span class="k-icon k-i-search"></span>{{item.menumakanan}}</button>
+                <div class="grid_6">
+                    <div class="grid_12 headerBox">
+                        <p><label style="margin-left:5px"><b>List Menu Makanan</b></label></p>
                     </div>
-                </div>
-                <div class="grid_12">
-                    <div class="grid_5">
-                        <div class="grid_4" style="margin-top:10px">
-                            <label c-label item="item">Nama Menu Makanan</label>
-                        </div>
-                        <div class="grid_8">
-                            <input c-text-box type="input" filter="" class="k-textbox"
-                                ng-keypress="($event.which == 13)? cariMenuMakananSiklus():itemSiklus.cariProduk"
-                                ng-model="itemSiklus.cariProduk" />
+                    <div class="grid_12 borderBox containerBorderBox siklus-menu-box">
+                        <div class="siklus-menu-item" ng-repeat="item in listMenuMakananMapping track by $index">
+                            <button ng-if="item.checked" style="width: 100%; text-align:left"
+                                class="k-button btnAdd k-button-icontext k-primary k-grid-update"
+                                ng-click="setSiklus(item)"><span class="k-icon k-i-plus"></span>{{item.menumakanan}}</button>
                         </div>
                     </div>
-                    <div class="grid_2" style="margin-top: 10px">
-                        <button class="k-button  btnAdd k-button-icontext k-primary k-grid-update"
-                            ng-click="cariMenuMakananSiklus()"><span class="k-icon k-i-search"></span>Cari</button>
-
+                    <div class="grid_12">
+                        <div class="grid_7">
+                            <div class="grid_12" style="margin-top:10px">
+                                <label c-label item="item">Nama Menu Makanan</label>
+                            </div>
+                            <div class="grid_12">
+                                <input c-text-box type="input" filter="" class="k-textbox"
+                                    ng-keypress="($event.which == 13)? cariMenuMakananSiklus():itemSiklus.cariProduk"
+                                    ng-model="itemSiklus.cariProduk" />
+                            </div>
+                        </div>
+                        <div class="grid_2" style="margin-top: 27px">
+                            <button class="k-button btnAdd k-button-icontext k-primary k-grid-update"
+                                ng-click="cariMenuMakananSiklus()"><span class="k-icon k-i-search"></span>Cari</button>
+                        </div>
+                        <div class="grid_3" style="margin-top: 27px">
+                            <button class="k-button btnAdd k-button-icontext k-primary k-grid-update"
+                                ng-click="clearMenuMakananSiklus()"><span class="k-icon k-cancel"></span>Clear</button>
+                        </div>
                     </div>
-                    <div class="grid_2" style="margin-top: 10px;margin-left: -70px">
-                        <button class="k-button  btnAdd k-button-icontext k-primary k-grid-update"
-                            ng-click="cariMenuMakananSiklus()"><span class="k-icon k-cancel"></span>Clear</button>
+                </div>
+                <div class="grid_6">
+                    <div class="grid_12 headerBox">
+                        <p><label style="margin-left:5px"><b>Menu Makanan Terpilih</b></label></p>
+                    </div>
+                    <div class="grid_12 borderBox containerBorderBox siklus-menu-box">
+                        <table class="siklus-selected-table">
+                            <thead>
+                                <tr>
+                                    <th style="width:40px">No</th>
+                                    <th>Menu Makanan</th>
+                                    <th style="width:80px">Aksi</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr ng-repeat="menu in listSetSiklusProduk track by $index">
+                                    <td class="style-center">{{ $index + 1 }}</td>
+                                    <td>{{ menu.menumakanan }}</td>
+                                    <td class="style-center">
+                                        <button class="k-button btnHapus k-button-icontext" ng-click="hapusMenuSiklus(menu, $index)">
+                                            <span class="k-icon k-delete"></span>Hapus
+                                        </button>
+                                    </td>
+                                </tr>
+                                <tr ng-if="listSetSiklusProduk.length == 0">
+                                    <td colspan="3">Belum ada menu dipilih</td>
+                                </tr>
+                            </tbody>
+                        </table>
                     </div>
                 </div>
             </div>
