@@ -344,6 +344,27 @@ define(['initialize'], function (initialize) {
                    LoadData();            
                 })
             }
+            $scope.cekinReservasi = function(){
+                if ($scope.item== undefined){
+                    toastr.error('silahkan pilih data ...')
+                    return
+                }
+                var confirm = $mdDialog.confirm()
+                                .title('Konfirmasi')
+                                .textContent('Yakin cek In data ini?')                                
+                                .ariaLabel('Lucky day')
+                                .cancel('Tidak')
+                                .ok('Ya')
+                            $mdDialog.show(confirm).then(function () {
+                                $scope.confirmCekin();
+                            })
+            }
+            $scope.confirmCekin = function(){
+                medifirstService.post( "reservasionline/update-tgl-cekin",{"norec":$scope.item.norec})
+                .then(function (data) {               
+                   LoadData();            
+                })
+            }
 
         }
     ]);

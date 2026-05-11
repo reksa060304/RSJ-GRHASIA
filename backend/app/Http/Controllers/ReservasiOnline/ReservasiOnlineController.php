@@ -4711,4 +4711,52 @@ SELECT
             );
             return $this->respond($result);
         }
+        
+        public function updateTglCheckin (Request $request)
+        {
+            DB::beginTransaction();
+            try {
+                $tglSekarang = \Carbon\Carbon::now()->format('Y-m-d H:i:s');
+
+                // 1. Ambil data noreservasi dari tabel antrian berdasarkan norec yang dikirim
+                $antrian = DB::table('antrianpasienregistrasi_t')
+                    ->where('norec', $request['norec'])
+                    ->first();
+
+                if (!$antrian) {
+                    throw new \Exception("Data antrian tidak ditemukan.");
+                }
+
+                // 2. Update tabel pasiendaftar_t menggunakan relasi statusschedule = noreservasi
+                // Kita update tglcheckin di pasiendaftar_t
+                $updatePasiendaftar = DB::table('pasiendaftar_t')
+                    ->where('statusschedule', $antrian->noreservasi)
+                    ->update([
+                        'tglcheckin' => $tglSekarang
+                    ]);
+
+                // 3. (Opsional namun disarankan) Update juga di tabel antrian sebagai penanda kedatangan
+                // DB::table('antrianpasienregistrasi_t')
+                //     ->where('norec', $request['norec'])
+                //     ->update([
+                //         'tglcheckin' => $tglSekarang
+                //     ]);
+
+                DB::commit();
+                
+                return $this->setStatusCode(201)->respond([
+                    "status" => 201,
+                    "message" => "Cek In Berhasil",
+                    "tglcheckin" => $tglSekarang,
+                    "as" => 'ramdan@epic'
+                ], "Cek In Berhasil");
+
+            } catch (\Exception $e) {
+                DB::rollBack();
+                return $this->setStatusCode(400)->respond([
+                    "status" => 400,
+                    "message" => "Gagal Cek In: " . $e->getMessage()
+                ], "Gagal Cek In");
+            }
+        }
 }
