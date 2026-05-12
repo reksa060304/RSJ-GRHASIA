@@ -10,8 +10,7 @@ use App\Traits\Valet;
 use Webpatser\Uuid\Uuid;
 use File;
 use App\Transaksi\PasienDaftar;
-// use Webklex\PDFMerger\Facades\PDFMergerFacade as PDFMerger;
-use iio\libmergepdf\Merger;
+use Webklex\PDFMerger\Facades\PDFMergerFacade as PDFMerger;
 // use App\Traits\Valet as PDFMerger;
 use setasign\Fpdi\Fpdi;
 use Symfony\Component\Filesystem\Filesystem;
@@ -212,19 +211,12 @@ class MonitoringDokumenKlaimController extends ApiController
                 array_push($file, $namafile);
             }
     
-            // $pdf = PDFMerger::init();
-            // foreach ($file as $data) {
-            //     $pdf->addPDF($data, 'all');
-            // }
-            // $pdf->merge();
-            // $pdf->save(public_path($pathbundle));
-
-            $merger = new Merger();
+            $pdf = PDFMerger::init();
             foreach ($file as $data) {
-                $merger->addFile($data);
+                $pdf->addPDF($data, 'all');
             }
-            $mergedPdfContent = $merger->merge();
-            file_put_contents(public_path($pathbundle), $mergedPdfContent);
+            $pdf->merge();
+            $pdf->save(public_path($pathbundle));
     
             $file = File::get($pathbundle);
             $type = File::mimeType($pathbundle);
@@ -324,32 +316,15 @@ class MonitoringDokumenKlaimController extends ApiController
             }
     
             $mergedPdfPath = public_path($pathbundle);
-            // $pdfMerger = PDFMerger::init();
-            // foreach ($file as $data) {
-            //     $pdfMerger->addPDF($data, 'all');
-            // }
-            
-            // $pdfMerger->merge();
-            // $pdfMerger->save($mergedPdfPath);
-
-            // $pdf = new Fpdi();
-
-
-            // $pdfMerger = PDFMerger::init();
-            // foreach ($file as $data) {
-            //     $pdfMerger->addPDF($data, 'all');
-            // }
-            // $pdfMerger->merge();
-            // $pdfMerger->save($mergedPdfPath);
-
-            $pdfMerger = new Merger();
+            $pdfMerger = PDFMerger::init();
             foreach ($file as $data) {
-                $pdfMerger->addFile($data);
+                $pdfMerger->addPDF($data, 'all');
             }
-            $mergedPdfContent = $pdfMerger->merge();
-            file_put_contents($mergedPdfPath, $mergedPdfContent);
+            
+            $pdfMerger->merge();
+            $pdfMerger->save($mergedPdfPath);
 
-             $pdf = new Fpdi();
+            $pdf = new Fpdi();
 
             // Memuat file PDF gabungan yang sudah disimpan
             $pageCount = $pdf->setSourceFile($mergedPdfPath);
