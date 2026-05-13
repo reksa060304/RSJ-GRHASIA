@@ -16,6 +16,7 @@ define(['initialize', 'Configuration'], function (initialize, config) {
             $scope.totaladl = 0
             $scope.skorNutrisiAnak = 0
             $scope.skorNutrisiDewasa = 0
+            $scope.skorMNA = 0
             $scope.totalGziDewasa = 0
             $scope.cc = {}
             var nomorEMR = '-'
@@ -303,6 +304,26 @@ define(['initialize', 'Configuration'], function (initialize, config) {
                     }
                 }
                 $scope.listData5 = arrayAskep5
+                for (var i = 0; i < $scope.listData5.length; i++) {
+                    var details = $scope.listData5[i].details;
+                    var perawatIndex = -1;
+                    for (var j = 0; j < details.length; j++) {
+                        var item = details[j];
+                        if (item.id == 3020161) {
+                            item.type = "mna";
+                        } else if (item.id > 3020161 && item.id <= 3020189) {
+                            item.type = "hidden";
+                        } else if (item.id == 3020089) {
+                            item.type = "humpty";
+                            perawatIndex = j;
+                        }
+                    }
+                    // Pindahkan Perawat ke paling bawah setelah loop selesai untuk menghindari infinite loop
+                    if (perawatIndex !== -1) {
+                        var perawatField = details.splice(perawatIndex, 1)[0];
+                        details.push(perawatField);
+                    }
+                }
                 console.log($scope.listData5);
 
 
@@ -672,7 +693,65 @@ define(['initialize', 'Configuration'], function (initialize, config) {
                     ]
                 },
             ]
-            
+            $scope.listSkriningGiziMNA = [
+                {
+                    "id": 1, "no": "A", "nama": "Apakah asupan makanan berkurang selama 3 bulan terakhir?",
+                    "detail": [
+                        { "id": 3020161, "nama": "0 = Asupan makanan sangat berkurang", "descNilai": "0", "type": "checkbox" },
+                        { "id": 3020162, "nama": "1 = Asupan makanan agak berkurang", "descNilai": "1", "type": "checkbox" },
+                        { "id": 3020163, "nama": "2 = Asupan makanan tidak berkurang", "descNilai": "2", "type": "checkbox" },
+                    ]
+                },
+                {
+                    "id": 2, "no": "B", "nama": "Berat badan turun selama 3 bulan terakhir?",
+                    "detail": [
+                        { "id": 3020165, "nama": "0 = Berat badan turun lebih dari 3 kg", "descNilai": "0", "type": "checkbox" },
+                        { "id": 3020166, "nama": "1 = Tidak tahu", "descNilai": "1", "type": "checkbox" },
+                        { "id": 3020167, "nama": "2 = Berat badan turun antara 1 hingga 3 kg", "descNilai": "2", "type": "checkbox" },
+                        { "id": 3020168, "nama": "3 = Berat badan tidak turun", "descNilai": "3", "type": "checkbox" },
+                    ]
+                },
+                {
+                    "id": 3, "no": "C", "nama": "Pergerakan atau Mobilitas?",
+                    "detail": [
+                        { "id": 3020170, "nama": "0 = Terbatas di tempat tidur atau kursi", "descNilai": "0", "type": "checkbox" },
+                        { "id": 3020171, "nama": "1 = Mampu bangun dari tempat tidur/kursi, tapi tidak bisa keluar", "descNilai": "1", "type": "checkbox" },
+                        { "id": 3020172, "nama": "2 = Dapat bepergian ke luar rumah", "descNilai": "2", "type": "checkbox" },
+                    ]
+                },
+                {
+                    "id": 4, "no": "D", "nama": "Mengalami tekanan psikologis atau penyakit akut (3 bln terakhir)?",
+                    "detail": [
+                        { "id": 3020174, "nama": "0 = Ya", "descNilai": "0", "type": "checkbox" },
+                        { "id": 3020175, "nama": "2 = Tidak", "descNilai": "2", "type": "checkbox" },
+                    ]
+                },
+                {
+                    "id": 5, "no": "E", "nama": "Gangguan neuropsikologis",
+                    "detail": [
+                        { "id": 3020177, "nama": "0 = Demensia berat atau depresi", "descNilai": "0", "type": "checkbox" },
+                        { "id": 3020178, "nama": "1 = Demensia ringan", "descNilai": "1", "type": "checkbox" },
+                        { "id": 3020179, "nama": "2 = Tidak ada gangguan psikologis", "descNilai": "2", "type": "checkbox" },
+                    ]
+                },
+                {
+                    "id": 6, "no": "F1", "nama": "Indeks Massa Tubuh (IMT)",
+                    "detail": [
+                        { "id": 3020181, "nama": "0 = IMT kurang dari 19", "descNilai": "0", "type": "checkbox" },
+                        { "id": 3020182, "nama": "1 = IMT 19 hingga kurang dari 21", "descNilai": "1", "type": "checkbox" },
+                        { "id": 3020183, "nama": "2 = IMT 21 hingga kurang dari 23", "descNilai": "2", "type": "checkbox" },
+                        { "id": 3020184, "nama": "3 = IMT 23 atau lebih besar", "descNilai": "3", "type": "checkbox" },
+                    ]
+                },
+                {
+                    "id": 7, "no": "F2", "nama": "Lingkar lengan atas (LiLA) - Jika IMT tidak dapat diukur",
+                    "detail": [
+                        { "id": 3020186, "nama": "0,0 = LiLA kurang dari 21", "descNilai": "0", "type": "checkbox" },
+                        { "id": 3020187, "nama": "0,5 = LiLA 21 hingga 22", "descNilai": "0.5", "type": "checkbox" },
+                        { "id": 3020188, "nama": "1,0 = LiLA lebih dari 22", "descNilai": "1", "type": "checkbox" },
+                    ]
+                }
+            ]
             $scope.listDiagnosaKhusus = [
                 {
                     "id": 1, "nama": "Skrining Nyeri",
@@ -1476,6 +1555,7 @@ define(['initialize', 'Configuration'], function (initialize, config) {
                     }
 
                 }
+                $scope.getSkorMNA();
             })
             $scope.skorNutrisi = 0
             $scope.getSkorNutrisi = function (jawab) {
@@ -1531,6 +1611,39 @@ define(['initialize', 'Configuration'], function (initialize, config) {
                 }
                 $scope.item.obj[3020079] = $scope.skorNutrisiDewasa
             }
+
+            $scope.skorMNA = 0
+            $scope.getSkorMNA = function (stat, detail) {
+                if (stat && detail) {
+                    if ($scope.item.obj[stat.id]) {
+                        for (var i = 0; i < detail.length; i++) {
+                            if (detail[i].id != stat.id) {
+                                $scope.item.obj[detail[i].id] = false
+                            }
+                        }
+                    }
+                }
+
+                // hitung total score
+                var total = 0
+                if ($scope.listSkriningGiziMNA) {
+                    for (var i = 0; i < $scope.listSkriningGiziMNA.length; i++) {
+                        var question = $scope.listSkriningGiziMNA[i]
+                        for (var j = 0; j < question.detail.length; j++) {
+                            var option = question.detail[j]
+                            if ($scope.item.obj[option.id] === true) {
+                                var nilai = parseFloat(option.descNilai) || 0
+                                total += nilai
+                            }
+                        }
+                    }
+                }
+                
+                $scope.skorMNA = total
+                // ID 3020189 dari Untitled-1
+                $scope.item.obj[3020189] = total.toString()
+            }
+
             $scope.getSkorAsesmen = function(stat,skor){
                 var arrobj = Object.keys($scope.item.obj)
                 var arrSave = []
