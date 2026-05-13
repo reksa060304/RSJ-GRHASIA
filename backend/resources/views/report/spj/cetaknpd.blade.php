@@ -241,14 +241,15 @@
                         $pencairanUP = $angkasBulanIni;
                     }
 
-                    $akumulasiTotal = $dt->jumlahspj;
+                    $akumulasiTotal = $akumulasiPrev + $pencairanSisaPrev + $pencairanUP + $pencairanLS;
+                    $sisaRow = $dt->jumlahanggaran - $akumulasiTotal;
                     
                     $totalAnggaran += $dt->jumlahanggaran;
                     $totalPrev += $akumulasiPrev;
                     $totalUP += $pencairanUP;
                     $totalLS += $pencairanLS;
                     $totalAkumulasi += $akumulasiTotal;
-                    $totalSisa += $dt->sisaanggaran;
+                    $totalSisa += $sisaRow;
                     $totalSisaPencairanPrev += $pencairanSisaPrev;
                 @endphp
                 <tr>
@@ -261,7 +262,7 @@
                     <td class="text-right">Rp {{ number_format($pencairanUP, 0, ',', '.') }}</td>
                     <td class="text-right">Rp {{ number_format($pencairanLS, 0, ',', '.') }}</td>
                     <td class="text-right">Rp {{ number_format($akumulasiTotal, 0, ',', '.') }}</td>
-                    <td class="text-right">Rp {{ number_format($dt->sisaanggaran, 0, ',', '.') }}</td>
+                    <td class="text-right">Rp {{ number_format($sisaRow, 0, ',', '.') }}</td>
                 </tr>
             @endforeach
         </tbody>
