@@ -151,6 +151,13 @@ define(['initialize'], function (initialize) {
                         width: 100
                     }, 
                     {
+                        field: "tglcheckin",
+                        title: "Tanggal Checkin",
+
+                        template: "<span class='style-left'>{{formatTanggal('#: tglcheckin #')}}</span>",
+                        width: 120
+                    },
+                    {
                         field: "nomorantrean",
                         title: "No Antrean",
                         width: 100

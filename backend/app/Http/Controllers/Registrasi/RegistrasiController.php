@@ -7271,6 +7271,7 @@ class RegistrasiController extends ApiController
                 'kps.kelompokpasien',
                 'apr.tglinput',
                 'apr.nocmfk',
+                'pd.tglcheckin',
                 DB::raw('(case when pm.namapasien is null then apr.namapasien else pm.namapasien end) as namapasien,
                 (case when apr.isconfirm=\'true\' then \'Confirm\' else \'Reservasi\' end) as status,apr.jamreservasi,apr.ismobilejkn,apd.noantrian,apr.jenis')
             )
@@ -8174,6 +8175,7 @@ class RegistrasiController extends ApiController
                 'pa.tglcreate',
                 'asu.nmprovider',
                 'ar.asalrujukan',
+                'pd.tglcheckin',
                 DB::raw('coalesce(it.qtytracer,0) as qtytracer'),
                 DB::raw("pd.ismobilejkn,
                 case when pd.ismobilejkn = true then 
