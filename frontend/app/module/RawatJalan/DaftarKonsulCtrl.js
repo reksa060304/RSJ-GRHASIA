@@ -165,6 +165,9 @@ define(['initialize'], function(initialize) {
                             datas[i].isonline ='Online'
                             datas[i].tglregistrasi = datas[i].tanggalreservasi
                         }
+                        if (datas[i].tgltolak != undefined) {
+                            datas[i].isonline = 'Ditolak'
+                        }
                         if (datas[i].tgldipanggilsuster != undefined) {
                             datas[i].stts = 'Di Panggil Perawat'
                         }
@@ -233,12 +236,24 @@ define(['initialize'], function(initialize) {
                 field: "namaruangan",
                 aggregate: "count"
             }]
-            var onDataBound = function () {
+            var onDataBound = function (e) {
+                var grid = this;
+                grid.tbody.find('>tr').each(function () {
+                    var dataItem = grid.dataItem(this);
+                      if (dataItem && dataItem.keteranganlainnya) {
+                          $(this).addClass('green');
+                      }
+                      if (dataItem && dataItem.tgltolak) {
+                          $(this).addClass('red');
+                      }
+                });
+
                 $('td').each(function () {
                   if ($(this).text() == '-') {$(this).addClass('red')}
                   if ($(this).text() == 'Di Panggil Perawat') {$(this).addClass('green')}
                   if ($(this).text() == 'Di Panggil Dokter') {$(this).addClass('blue')}
                   if ($(this).text() == 'Online') {$(this).addClass('koneng')}
+                  if ($(this).text() == 'Ditolak') {$(this).addClass('red')}
                 
                 })
               }
@@ -295,11 +310,11 @@ define(['initialize'], function(initialize) {
                         "title":"No Registrasi",
                         "width":"80px"
                     },
-                    {
-                        "field": "noregistrasi",
-                        "title": "Nama Pasien",
-                        "width": "80px"
-                    },
+                    // {
+                    //     "field": "noregistrasi",
+                    //     "title": "Nama Pasien",
+                    //     "width": "80px"
+                    // },
                     {
                         "field":"nocm",
                         "title":"No. Rekam Medis",
@@ -320,6 +335,16 @@ define(['initialize'], function(initialize) {
                         "title": "Status",
                         "width": "80px"
                     },
+                    {
+                        "field": "pengorder",
+                        "title": "Pengorder",
+                        "width": "100px"
+                    },
+                    {
+                        "field": "namaruanganasal",
+                        "title": "Ruangan Asal",
+                        "width": "100px"
+                    }, 
                     {
                         "field":"namadokter",
                         "title":"Dokter",
@@ -361,6 +386,11 @@ define(['initialize'], function(initialize) {
                         "title": "Status",
                         "width": "80px"
                     },  
+                    {
+                        "field": "keterangantolak",
+                        "title": "Keterangan Tolak",
+                        "width": "150px"
+                    },
                     {
                         "field":"iskompleks",
                         "title":"Kompleks",
@@ -1947,31 +1977,28 @@ define(['initialize'], function(initialize) {
                 $scope.winKonsul.center().open()
             }
             function loadKonsul() {
-                medifirstService.get("rawatjalan/get-order-konsul?dokterid=" + $scope.dataLogin.id).then(function (e) {
+                medifirstService.get("rawatjalan/get-order-konsul-new?dokterid=" + $scope.dataLogin.id).then(function (e) {
                     var res = e.data.data
                     for (var i = res.length - 1; i >= 0; i--) {
-                        if (res[i].norec_apd != null)
+                        if (res[i].keteranganlainnya != null)
                             res.splice([i], 1)
                     }
                     if (res.length > 0) {
                         $scope.showNotif = true
                         $scope.lengthKonsul = res.length
-                    } else
+                    } else {
                         $scope.showNotif = false
-
+                    }
                 })
             }
             function loadGridKonsul() {
-                medifirstService.get("rawatjalan/get-order-konsul?dokterid=" + $scope.dataLogin.id).then(function (e) {
+                medifirstService.get("rawatjalan/get-order-konsul-new?dokterid=" + $scope.dataLogin.id).then(function (e) {
                     var result = e.data.data
                     if (result.length > 0) {
                         $scope.item.dokterTujuan = result[0].namalengkap
                         for (var i = 0; i < result.length; i++) {
                             result[i].no = i + 1
-                            if (result[i].norec_apd != null)
-                                result[i].status = 'Selesai'
-                            else
-                                result[i].status = '-'
+                            result[i].status = result[i].keteranganlainnya ? 'Sudah Dijawab' : (result[i].tgltolak ? 'Ditolak' : 'Belum Dijawab')
                         }
                     }
                     $scope.sourceKonsul = new kendo.data.DataSource({
@@ -1985,7 +2012,7 @@ define(['initialize'], function(initialize) {
             $scope.konsulOpt = {
 
                 pageable: true,
-                scrollable: true,
+                dataBound: onDataBound,
                 columns: [
                     // { field: "rowNumber", title: "#", width: 40, width: 40, attributes: { style: "text-align:right; padding-right: 15px;"}, hideMe: true},
                     { field: "no", title: "No", width: 40 },
@@ -1997,15 +2024,69 @@ define(['initialize'], function(initialize) {
                     { field: "ruangantujuan", title: "Ruangan Tujuan", width: 150 },
                     { field: "pengonsul", title: "Pengonsul", width: 120 },
                     { field: "keteranganorder", title: "Keterangan", width: 120 },
+                    { field: "keterangantolak", title: "Keterangan Tolak", width: 150 },
                     { field: "status", title: "Status", width: 120 },
-                    { command: [{ name: "edit", text: "Verifikasi", click: verif }], title: "&nbsp;", width: 120 },
+                    // { command: [{ name: "edit", text: "Jawab", click: jawab }], title: "&nbsp;", width: 100 },
+                    // { command: [{ name: "edit", text: "Verifikasi", click: verif }], title: "&nbsp;", width: 120 },
                     { command: [{ name: "delete", text: "Tolak Verifikasi", click: TolakVerif }], title: "&nbsp;", width: 120 },
                     // { command: [{ name: "delete", text: "Hapus Data", click: Hapus }], title: "&nbsp;", width: 120 },
                 ],
             };
-            function verif(e) {
+             function jawab(e) {
                 e.preventDefault();
                 var dataItem = this.dataItem($(e.currentTarget).closest("tr"));
+                if (dataItem.tgltolak) {
+                    toastr.error('Order sudah ditolak: ' + dataItem.keterangantolak)
+                    return
+                }
+
+                // Reset data popup agar tidak tumpang tindih dengan klik sebelumnya
+                $scope.item.norec = undefined
+                $scope.item.ruanganAsalJawab = undefined
+                $scope.item.ruanganTujuanJawab = undefined
+                $scope.item.dokterJawab = undefined
+                $scope.item.keteranganJawab = undefined
+                $scope.item.jawaban = undefined
+
+                $scope.item.norec = dataItem.norec_so ? dataItem.norec_so : dataItem.norec 
+                $scope.item.ruanganAsalJawab = dataItem.ruanganasal ? dataItem.ruanganasal : dataItem.namaruanganasal
+                $scope.item.ruanganTujuanJawab =  dataItem.ruangantujuan ? dataItem.ruangantujuan : dataItem.namaruangan
+                $scope.item.dokterJawab  = dataItem.namalengkap ? dataItem.namalengkap : dataItem.namadokter 
+                $scope.item.keteranganJawab  = dataItem.keteranganorder
+                if(dataItem.keteranganlainnya != null)
+                    $scope.item.jawaban  = dataItem.keteranganlainnya
+                    
+                $scope.popUpJawab.center().open()
+            }
+            $scope.SaveJawab = function(){
+                if ($scope.item.jawaban == undefined) {
+                    toastr.error("Jawaban Belum di isi!")
+                    return
+                }
+             
+                var objSave = {
+                    norec_so: $scope.item.norec,
+                    jawaban : $scope.item.jawaban
+                }
+                medifirstService.post( 'emr/update-jawaban-konsultasi',objSave).then(function (e) {
+                    $scope.item.jawaban = undefined
+                    loadGridKonsul()
+                    loadKonsul()
+                    $scope.findData()
+                    $scope.popUpJawab.close()
+                    
+                });
+            }
+            $scope.batal = function () {
+                $scope.popUpJawab.close();
+            }
+             function verif(e) {
+                e.preventDefault();
+                var dataItem = this.dataItem($(e.currentTarget).closest("tr"));
+                if (dataItem.tgltolak) {
+                    toastr.error('Order sudah ditolak: ' + dataItem.keterangantolak)
+                    return
+                }
                 if (dataItem.status == 'Selesai') {
                     toastr.error('Sudah di verifkasi')
                     return
@@ -2039,10 +2120,13 @@ define(['initialize'], function(initialize) {
             }
             function TolakVerif(e) {
                 e.preventDefault();
-                e.preventDefault();
                 var dataItem = this.dataItem($(e.currentTarget).closest("tr"));
-                if (dataItem.status == 'Selesai') {
-                    toastr.error('Sudah di verifkasi')
+                if (dataItem.tgltolak) {
+                    toastr.error('Order sudah ditolak')
+                    return
+                }
+                if (dataItem.keteranganlainnya) {
+                    toastr.error('Order sudah dijawab')
                     return
                 }
                 $scope.tolakItem = dataItem

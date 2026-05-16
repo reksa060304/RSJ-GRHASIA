@@ -142,12 +142,13 @@
                             if($item->kode_kegiatan1 == $row->kode_kegiatan1){
                                 $lsKegiatan1BulanLalu += (float)$row->total_belanja_bulan_lalu;
                                 $lsKegiatan1BulanIni += (float)$row->total_belanja_bulan_ini;
+                                $totalPengembalianKegiatan1 += (float)$row->totalpengembalian;
                             }
                         }
                     @endphp
 
                     <tr style="font-weight: bold;">
-                        <td>{{ $item->kode_kegiatan1 }}</td>
+                        <td style="text-align: left;">{{ $item->kode_kegiatan1 }}</td>
                         <td style="width: auto;">{{ $item->keterangan_kegiatan1 }}</td>
                         <td style="text-align: right;">{{ number_format($anggaranKegiatan1,2,'.',',') }}</td>
                         <td style="text-align: right;">{{ number_format($belanjaKegiatan1BulanLalu,2,'.',',') }}</td>
@@ -194,12 +195,13 @@
                             if($item->kode_kegiatan2 == $row->kode_kegiatan2){
                                 $lsKegiatan2BulanLalu += (float)$row->total_belanja_bulan_lalu;
                                 $lsKegiatan2BulanIni += (float)$row->total_belanja_bulan_ini;
+                                $totalPengembalianKegiatan2 += (float)$row->totalpengembalian;
                             }
                         }
                     @endphp    
 
                     <tr style="font-weight: bold;">
-                        <td>{{ $item->kode_kegiatan2 }}</td>
+                        <td style="text-align: left;">{{ $item->kode_kegiatan2 }}</td>
                         <td style="width: auto;">{{ $item->keterangan_kegiatan2 }}</td>
                         <td style="text-align: right;">{{ number_format($anggaranKegiatan2,2,'.',',') }}</td>
                         <td style="text-align: right;">{{ number_format($belanjaKegiatan2BulanLalu,2,'.',',') }}</td>
@@ -226,13 +228,13 @@
                             $pegawai2_ls_bulanini = 0;
 
                             foreach ($data as $key => $anggaranKegiatan) {
-                                if($anggaranKegiatan->idmataanggaranpermen == 102){
+                                if($item->kode_kegiatan2 == $anggaranKegiatan->kode_kegiatan2 && ($anggaranKegiatan->idmataanggaranpermen == 102 || $anggaranKegiatan->idjenisanggaran == 3)){
                                     $pegawai2 += (float)$anggaranKegiatan->total_anggaran; 
                                 }
                             }
 
                             foreach ($spjbku as $row) {
-                                if($row->idmataanggaranpermen == 102){
+                                if($item->kode_kegiatan2 == $row->kode_kegiatan2 && ($row->idmataanggaranpermen == 102 || $row->idjenisanggaran == 3)){
                                     $pegawai2_bulanlalu += (float)$row->total_belanja_bulan_lalu;
                                     $pegawai2_bulanini += (float)$row->total_belanja_bulan_ini;
                                     $pengembalianpegawai2 += (float)$row->totalpengembalian;
@@ -240,9 +242,10 @@
                             }
                             
                             foreach ($spjls as $row) {
-                                if($row->idmataanggaranpermen == 102){
+                                if($item->kode_kegiatan2 == $row->kode_kegiatan2 && ($row->idmataanggaranpermen == 102 || $row->idjenisanggaran == 3)){
                                     $pegawai2_ls_bulanlalu += (float)$row->total_belanja_bulan_lalu;
                                     $pegawai2_ls_bulanini += (float)$row->total_belanja_bulan_ini;
+                                    $pengembalianpegawai2 += (float)$row->totalpengembalian;
                                 }
                             }
                         @endphp
@@ -273,13 +276,13 @@
                             $barangjasa2_ls_bulanini = 0;
 
                             foreach ($data as $key => $anggaranKegiatan) {
-                                if($anggaranKegiatan->idmataanggaranpermen == 109){
+                                if($item->kode_kegiatan2 == $anggaranKegiatan->kode_kegiatan2 && ($anggaranKegiatan->idmataanggaranpermen == 109 || $anggaranKegiatan->idjenisanggaran == 4)){
                                     $barangjasa2 += (float)$anggaranKegiatan->total_anggaran;  
                                 }
                             }
 
                             foreach ($spjbku as $row) {
-                                if($row->idmataanggaranpermen == 109){
+                                if($item->kode_kegiatan2 == $row->kode_kegiatan2 && ($row->idmataanggaranpermen == 109 || $row->idjenisanggaran == 4)){
                                     $barangjasa2_bulanlalu += (float)$row->total_belanja_bulan_lalu;
                                     $barangjasa2_bulanini += (float)$row->total_belanja_bulan_ini;
                                     $pengembalianbarangjasa2 += (float)$row->totalpengembalian;
@@ -287,9 +290,10 @@
                             }
                             
                             foreach ($spjls as $row) {
-                                if($row->idmataanggaranpermen == 109){
+                                if($item->kode_kegiatan2 == $row->kode_kegiatan2 && ($row->idmataanggaranpermen == 109 || $row->idjenisanggaran == 4)){
                                     $barangjasa2_ls_bulanlalu += (float)$row->total_belanja_bulan_lalu;
                                     $barangjasa2_ls_bulanini += (float)$row->total_belanja_bulan_ini;
+                                    $pengembalianbarangjasa2 += (float)$row->totalpengembalian;
                                 }
                             }
                         @endphp
@@ -320,13 +324,13 @@
                             $belanjaModal2_ls_bulanini = 0;
 
                             foreach ($data as $key => $anggaranKegiatan) {
-                                if($anggaranKegiatan->idjenisanggaran == 6 || $anggaranKegiatan->idjenisanggaran == 5){
+                                if($item->kode_kegiatan2 == $anggaranKegiatan->kode_kegiatan2 && in_array($anggaranKegiatan->idjenisanggaran, [5, 6, 7])){
                                     $belanjaModal2 += (int)$anggaranKegiatan->total_anggaran;  
                                 }
                             }
 
                             foreach ($spjbku as $row) {
-                                if($row->idjenisanggaran == 6 || $row->idjenisanggaran == 5){
+                                if($item->kode_kegiatan2 == $row->kode_kegiatan2 && in_array($row->idjenisanggaran, [5, 6, 7])){
                                     $belanjaModal2_bulanlalu += (float)$row->total_belanja_bulan_lalu;
                                     $belanjaModal2_bulanini += (float)$row->total_belanja_bulan_ini;
                                     $pengembalianmodal2 += (float)$row->totalpengembalian;
@@ -334,9 +338,10 @@
                             }
                             
                             foreach ($spjls as $row) {
-                                if($row->idjenisanggaran == 6 || $row->idjenisanggaran == 5){
+                                if($item->kode_kegiatan2 == $row->kode_kegiatan2 && in_array($row->idjenisanggaran, [5, 6, 7])){
                                     $belanjaModal2_ls_bulanlalu += (float)$row->total_belanja_bulan_lalu;
                                     $belanjaModal2_ls_bulanini += (float)$row->total_belanja_bulan_ini;
+                                    $pengembalianmodal2 += (float)$row->totalpengembalian;
                                 }
                             }
                         @endphp
@@ -387,11 +392,12 @@
                             if($item->kode_kegiatan3 == $row->kode_kegiatan3){
                                 $lsKegiatan3BulanLalu += (float)$row->total_belanja_bulan_lalu;
                                 $lsKegiatan3BulanIni += (float)$row->total_belanja_bulan_ini;
+                                $totalPengembalianKegiatan3 += (float)$row->totalpengembalian;
                             }
                         }
                     @endphp
                     <tr style="font-weight: bold;">
-                        <td>{{ $item->kode_kegiatan3 }}</td>
+                        <td style="text-align: left;">{{ $item->kode_kegiatan3 }}</td>
                         <td style="width: auto;">{{ $item->keterangan_kegiatan3 }}</td>
                         <td style="text-align: right;">{{ number_format($anggaranKegiatan3,2,'.',',') }}</td>
                         <td style="text-align: right;">{{ number_format($belanjaKegiatan3BulanLalu,2,'.',',') }}</td>
@@ -418,13 +424,13 @@
                             $pegawai3_ls_bulanini = 0;
                             
                             foreach ($data as $key => $anggaranKegiatan) {
-                                if($anggaranKegiatan->idmataanggaranpermen == 102){
+                                if($item->kode_kegiatan3 == $anggaranKegiatan->kode_kegiatan3 && ($anggaranKegiatan->idmataanggaranpermen == 102 || $anggaranKegiatan->idjenisanggaran == 3)){
                                     $pegawai3 += (int)$anggaranKegiatan->total_anggaran;  
                                 }
                             }
 
                             foreach ($spjbku as $row) {
-                                if($row->idmataanggaranpermen == 102){
+                                if($item->kode_kegiatan3 == $row->kode_kegiatan3 && ($row->idmataanggaranpermen == 102 || $row->idjenisanggaran == 3)){
                                     $pegawai3_bulanlalu += (float)$row->total_belanja_bulan_lalu;
                                     $pegawai3_bulanini += (float)$row->total_belanja_bulan_ini;
                                     $pengembalianpegawai3 += (float)$row->totalpengembalian;
@@ -432,9 +438,10 @@
                             }
                             
                             foreach ($spjls as $row) {
-                                if($row->idmataanggaranpermen == 102){
+                                if($item->kode_kegiatan3 == $row->kode_kegiatan3 && ($row->idmataanggaranpermen == 102 || $row->idjenisanggaran == 3)){
                                     $pegawai3_ls_bulanlalu += (float)$row->total_belanja_bulan_lalu;
                                     $pegawai3_ls_bulanini += (float)$row->total_belanja_bulan_ini;
+                                    $pengembalianpegawai3 += (float)$row->totalpengembalian;
                                 }
                             }
                         @endphp
@@ -465,13 +472,13 @@
                             $barangjasa3_ls_bulanini = 0;
 
                             foreach ($data as $key => $anggaranKegiatan) {
-                                if($anggaranKegiatan->idmataanggaranpermen == 109){
+                                if($item->kode_kegiatan3 == $anggaranKegiatan->kode_kegiatan3 && ($anggaranKegiatan->idmataanggaranpermen == 109 || $anggaranKegiatan->idjenisanggaran == 4)){
                                     $barangjasa3 += (int)$anggaranKegiatan->total_anggaran;  
                                 }
                             }
 
                             foreach ($spjbku as $row) {
-                                if($row->idmataanggaranpermen == 109){
+                                if($item->kode_kegiatan3 == $row->kode_kegiatan3 && ($row->idmataanggaranpermen == 109 || $row->idjenisanggaran == 4)){
                                     $barangjasa3_bulanlalu += (float)$row->total_belanja_bulan_lalu;
                                     $barangjasa3_bulanini += (float)$row->total_belanja_bulan_ini;
                                     $pengembalianbarangjasa3 += (float)$row->totalpengembalian;
@@ -479,9 +486,10 @@
                             }
                             
                             foreach ($spjls as $row) {
-                                if($row->idmataanggaranpermen == 109){
+                                if($item->kode_kegiatan3 == $row->kode_kegiatan3 && ($row->idmataanggaranpermen == 109 || $row->idjenisanggaran == 4)){
                                     $barangjasa3_ls_bulanlalu += (float)$row->total_belanja_bulan_lalu;
                                     $barangjasa3_ls_bulanini += (float)$row->total_belanja_bulan_ini;
+                                    $pengembalianbarangjasa3 += (float)$row->totalpengembalian;
                                 }
                             }
                         @endphp
@@ -512,13 +520,13 @@
                             $belanjaModal3_ls_bulanini = 0;
 
                             foreach ($data as $key => $anggaranKegiatan) {
-                                if($anggaranKegiatan->idjenisanggaran == 6 || $anggaranKegiatan->idjenisanggaran == 5){
+                                if($item->kode_kegiatan3 == $anggaranKegiatan->kode_kegiatan3 && in_array($anggaranKegiatan->idjenisanggaran, [5, 6, 7])){
                                     $belanjaModal3 += (int)$anggaranKegiatan->total_anggaran;  
                                 }
                             }
 
                             foreach ($spjbku as $row) {
-                                if($row->idjenisanggaran == 6 || $row->idjenisanggaran == 5){
+                                if($item->kode_kegiatan3 == $row->kode_kegiatan3 && in_array($row->idjenisanggaran, [5, 6, 7])){
                                     $belanjaModal3_bulanlalu += (float)$row->total_belanja_bulan_lalu;
                                     $belanjaModal3_bulanini += (float)$row->total_belanja_bulan_ini;
                                     $pengembalianmodal3 += (float)$row->totalpengembalian;
@@ -526,7 +534,7 @@
                             }
                             
                             foreach ($spjls as $row) {
-                                if($row->idjenisanggaran == 6 || $row->idjenisanggaran == 5){
+                                if($item->kode_kegiatan3 == $row->kode_kegiatan3 && in_array($row->idjenisanggaran, [5, 6, 7])){
                                     $belanjaModal3_ls_bulanlalu += (float)$row->total_belanja_bulan_lalu;
                                     $belanjaModal3_ls_bulanini += (float)$row->total_belanja_bulan_ini;
                                 }
@@ -583,11 +591,12 @@
                             if($item->kode_kegiatan == $row->kode_kegiatan){
                                 $lsKegiatan4BulanLalu += (float)$row->total_belanja_bulan_lalu;
                                 $lsKegiatan4BulanIni += (float)$row->total_belanja_bulan_ini;
+                                $totalPengembalianKegiatan4 += (float)$row->totalpengembalian;
                             }
                         }
                     @endphp
                     <tr style="font-weight: bold;">
-                        <td>{{ $item->kode_kegiatan }}</td>
+                        <td style="text-align: left;">{{ $item->kode_kegiatan }}</td>
                         <td style="width: auto;">{{ $item->keterangan_kegiatan }}</td>
                         <td style="text-align: right;">{{ number_format($anggaranKegiatan4,2,'.',',') }}</td>
                         <td style="text-align: right;">{{ number_format($belanjaKegiatanBulanLalu,2,'.',',') }}</td>
@@ -664,8 +673,8 @@
                                     }
                                 @endphp
                                 <tr>
-                                    <td></td>
-                                    <td style="width: auto;">{{ $ma->kode_mataanggaran1 }}. {{ $ma->nama_mataanggaran1 }}</td>
+                                    <td style="text-align: left;">{{ $ma->kode_mataanggaran1 }}</td>
+                                    <td style="width: auto; font-weight: bold;">{{ $ma->nama_mataanggaran1 }}</td>
                                     <td style="text-align: right;">{{ number_format($totalRekening1,2,'.',',') }}</td>
                                     <td style="text-align: right;">{{ number_format($totalBelanjaBulanLalu1,2,'.',',') }}</td>
                                     <td style="text-align: right;">{{ number_format($totalBelanjaBulanIni1,2,'.',',') }}</td>
@@ -722,18 +731,17 @@
                                                 $ls2BulanLalu += (float)$row->total_belanja_bulan_lalu;
                                                 $ls2BulanIni += (float)$row->total_belanja_bulan_ini;
                                                 $totalLs2 += (float)$row->total_belanja;
+                                                $totalPengembalian2 += (float)$row->totalpengembalian;
                                             }
                                         }
                                     }
                                 @endphp
                                 <tr>
-                                    <td></td>
-                                    <td style="padding-left: 10px; width:auto;">
-                                        @php
-                                            $split = explode('.', $ma->kode_mataanggaran2);
-                                            $kode = end($split);
-                                        @endphp
-                                        {{ $kode }}. {{ $ma->nama_mataanggaran2 }}
+                                    <td style="text-align: left;">
+                                        {{ $ma->kode_mataanggaran2 }}
+                                    </td>
+                                    <td style="width:auto; padding-left: 0.5cm;">
+                                        {{ $ma->nama_mataanggaran2 }}
                                     </td>
                                     <td style="text-align: right;">{{ number_format($totalRekening2,2,'.',',') }}</td>
                                     <td style="text-align: right;">{{ number_format($totalBelanjaBulanLalu2,2,'.',',') }}</td>
@@ -791,18 +799,17 @@
                                                 $ls3BulanLalu += (float)$row->total_belanja_bulan_lalu;
                                                 $ls3BulanIni += (float)$row->total_belanja_bulan_ini;
                                                 $totalLs3 += (float)$row->total_belanja;
+                                                $totalPengembalian3 += (float)$row->totalpengembalian;
                                             }
                                         }
                                     }
                                 @endphp
                                 <tr>
-                                    <td></td>
-                                    <td style="padding-left: 20px; width:auto;">
-                                        @php
-                                            $split = explode('.', $ma->kode_mataanggaran3);
-                                            $kode = end($split);
-                                        @endphp
-                                        {{ $kode }}. {{ $ma->nama_mataanggaran3 }}
+                                    <td style="text-align: left;">
+                                        {{ $ma->kode_mataanggaran3 }}
+                                    </td>
+                                    <td style="width:auto; padding-left: 1cm;">
+                                        {{ $ma->nama_mataanggaran3 }}
                                     </td>
                                     <td style="text-align: right;">{{ number_format($totalRekening3,2,'.',',') }}</td>
                                     <td style="text-align: right;">{{ number_format($totalBelanjaBulanLalu3,2,'.',',') }}</td>
@@ -850,19 +857,18 @@
                                             $lsBulanLalu = (float)$row->total_belanja_bulan_lalu;
                                             $lsBulanIni = (float)$row->total_belanja_bulan_ini;
                                             $totalLsDetail = (float)$row->total_belanja;
+                                            $totalPengembalian += (float)$row->totalpengembalian;
                                         }
                                     }
                                 }
                             @endphp
 
                             <tr>
-                                <td></td>
-                                <td style="padding-left: 30px; width:auto;">
-                                    @php
-                                        $split = explode('.', $ma->kode_mataanggaran);
-                                        $kode = array_slice($split, -2, 2);
-                                    @endphp
-                                    {{ $kode[0] }}.{{ $kode[1] }}. {{ $ma->nama_mataanggaran }}
+                                <td style="text-align: left;">
+                                    {{ $ma->kode_mataanggaran }}
+                                </td>
+                                <td style="width:auto; padding-left: 1.5cm;">
+                                    {{ $ma->nama_mataanggaran }}
                                 </td>
                                 <td style="text-align: right;">{{ number_format($ma->total_anggaran,2,'.',',') }}</td>
                                 <td style="text-align: right;">{{ number_format($totalBulanLalu,2,'.',',') }}</td>
@@ -964,14 +970,14 @@
                     }
 
                     foreach ($spjbku as $key => $row) {
-                        if($row->idmataanggaranpermen == 102){
+                        if($row->idmataanggaranpermen == 102 || substr($row->kode_mataanggaran, 0, 6) == '5.1.01'){
                             $pegawai_bulanlalu += (float)$row->total_belanja_bulan_lalu;
                             $pegawai_bulanini += (float)$row->total_belanja_bulan_ini;
                         }
                     }
                     
                     foreach ($spjls as $key => $row) {
-                        if($row->idmataanggaranpermen == 102){
+                        if($row->idmataanggaranpermen == 102 || substr($row->kode_mataanggaran, 0, 6) == '5.1.01'){
                             $pegawai_ls_bulanlalu += (float)$row->total_belanja_bulan_lalu;
                             $pegawai_ls_bulanini += (float)$row->total_belanja_bulan_ini;
                         }
@@ -1008,14 +1014,14 @@
                     }
 
                     foreach ($spjbku as $key => $row) {
-                        if($row->idmataanggaranpermen == 109){
+                        if($row->idmataanggaranpermen == 109 || substr($row->kode_mataanggaran, 0, 6) == '5.1.02'){
                             $barangjasa_bulanlalu += (float)$row->total_belanja_bulan_lalu;
                             $barangjasa_bulanini += (float)$row->total_belanja_bulan_ini;
                         }
                     }
                     
                     foreach ($spjls as $key => $row) {
-                        if($row->idmataanggaranpermen == 109){
+                        if($row->idmataanggaranpermen == 109 || substr($row->kode_mataanggaran, 0, 6) == '5.1.02'){
                             $barangjasa_ls_bulanlalu += (float)$row->total_belanja_bulan_lalu;
                             $barangjasa_ls_bulanini += (float)$row->total_belanja_bulan_ini;
                         }
@@ -1052,14 +1058,14 @@
                     }
 
                     foreach ($spjbku as $key => $row) {
-                        if($row->idjenisanggaran == 6){
+                        if($row->idjenisanggaran == 6 || substr($row->kode_mataanggaran, 0, 4) == '5.2.02'){
                             $modalpm_bulanlalu += (float)$row->total_belanja_bulan_lalu;
                             $modalpm_bulanini += (float)$row->total_belanja_bulan_ini;
                         }
                     }
                     
                     foreach ($spjls as $key => $row) {
-                        if($row->idjenisanggaran == 6){
+                        if($row->idjenisanggaran == 6 || substr($row->kode_mataanggaran, 0, 4) == '5.2.02'){
                             $modalpm_ls_bulanlalu += (float)$row->total_belanja_bulan_lalu;
                             $modalpm_ls_bulanini += (float)$row->total_belanja_bulan_ini;
                         }
@@ -1167,17 +1173,23 @@
             </tr>
 
             {{-- BAGIAN 3: PENGEMBALIAN, SPJ NETTO, PENERIMAAN, PENGELUARAN, DAN FOOTER --}}
-{{-- Letakkan kode ini sebelum </tbody> di Part 2 --}}
+        </tbody>
 
             {{-- START PENGEMBALIAN --}}
             <tr style="font-weight: bold;">
                 @php
                     $totalpengembalian_bulanlalu = 0;
                     $totalpengembalian_bulanini = 0;
+                    $totalpengembalianls_bulanlalu = 0;
+                    $totalpengembalianls_bulanini = 0;
 
                     foreach ($spjbku as $row) {
                         $totalpengembalian_bulanlalu += (float)$row->pengembalianbelanja_bulan_lalu;
                         $totalpengembalian_bulanini += (float)$row->pengembalianbelanja_bulan_ini;
+                    }
+                    foreach ($spjls as $row) {
+                        $totalpengembalianls_bulanlalu += (float)$row->pengembalianbelanja_bulan_lalu;
+                        $totalpengembalianls_bulanini += (float)$row->pengembalianbelanja_bulan_ini;
                     }
                 @endphp
                 <td colspan="2" style="padding-left:1cm; border: none; border-left: 1px solid black; font-size: 10pt;">
@@ -1187,9 +1199,10 @@
                 <td style="border: none; text-align: right;">{{ number_format($totalpengembalian_bulanlalu,2,'.',',') }}</td>
                 <td style="border: none; text-align: right;">{{ number_format($totalpengembalian_bulanini,2,'.',',') }}</td>
                 <td style="border: none; text-align: right;">{{ number_format($totalpengembalian_bulanlalu + $totalpengembalian_bulanini,2,'.',',') }}</td>
-                <td style="border: none;"></td>
-                <td style="border: none;"></td>
-                <td colspan="4" style="border:none; border-right: 1px solid black;"></td>
+                <td style="border: none; text-align: right;">{{ number_format($totalpengembalianls_bulanlalu,2,'.',',') }}</td>
+                <td style="border: none; text-align: right;">{{ number_format($totalpengembalianls_bulanini,2,'.',',') }}</td>
+                <td style="border: none; text-align: right;">{{ number_format($totalpengembalianls_bulanlalu + $totalpengembalianls_bulanini,2,'.',',') }}</td>
+                <td colspan="3" style="border:none; border-right: 1px solid black;"></td>
             </tr>
 
             {{-- belanja pegawai pengembalian --}}
@@ -1197,11 +1210,19 @@
                 @php
                     $pengembalianbelanjapegawai_bulanlalu = 0;
                     $pengembalianbelanjapegawai_bulanini = 0;
+                    $pengembalianbelanjapegawails_bulanlalu = 0;
+                    $pengembalianbelanjapegawails_bulanini = 0;
 
                     foreach ($spjbku as $row) {
-                        if($row->idmataanggaranpermen == 102){
+                        if($row->idmataanggaranpermen == 102 || substr($row->kode_mataanggaran, 0, 6) == '5.1.01'){
                             $pengembalianbelanjapegawai_bulanlalu += (float)$row->pengembalianbelanja_bulan_lalu;
                             $pengembalianbelanjapegawai_bulanini += (float)$row->pengembalianbelanja_bulan_ini;
+                        }
+                    }
+                    foreach ($spjls as $row) {
+                        if($row->idmataanggaranpermen == 102 || substr($row->kode_mataanggaran, 0, 6) == '5.1.01'){
+                            $pengembalianbelanjapegawails_bulanlalu += (float)$row->pengembalianbelanja_bulan_lalu;
+                            $pengembalianbelanjapegawails_bulanini += (float)$row->pengembalianbelanja_bulan_ini;
                         }
                     }
                 @endphp
@@ -1212,9 +1233,10 @@
                 <td style="border: none; text-align: right;">{{ number_format($pengembalianbelanjapegawai_bulanlalu,2,'.',',') }}</td>
                 <td style="border: none; text-align: right;">{{ number_format($pengembalianbelanjapegawai_bulanini,2,'.',',') }}</td>
                 <td style="border: none; text-align: right;">{{ number_format($pengembalianbelanjapegawai_bulanlalu + $pengembalianbelanjapegawai_bulanini,2,'.',',') }}</td>
-                <td style="border: none;"></td>
-                <td style="border: none;"></td>
-                <td colspan="4" style="border:none; border-right: 1px solid black;"></td>
+                <td style="border: none; text-align: right;">{{ number_format($pengembalianbelanjapegawails_bulanlalu,2,'.',',') }}</td>
+                <td style="border: none; text-align: right;">{{ number_format($pengembalianbelanjapegawails_bulanini,2,'.',',') }}</td>
+                <td style="border: none; text-align: right;">{{ number_format($pengembalianbelanjapegawails_bulanlalu + $pengembalianbelanjapegawails_bulanini,2,'.',',') }}</td>
+                <td colspan="3" style="border:none; border-right: 1px solid black;"></td>
             </tr>
 
             {{-- belanja barang dan jasa pengembalian --}}
@@ -1222,11 +1244,19 @@
                 @php
                     $pengembalianbelanjabarangjasa_bulanlalu = 0;
                     $pengembalianbelanjabarangjasa_bulanini = 0;
+                    $pengembalianbelanjabarangjasals_bulanlalu = 0;
+                    $pengembalianbelanjabarangjasals_bulanini = 0;
 
                     foreach ($spjbku as $row) {
-                        if($row->idmataanggaranpermen == 109){
+                        if($row->idmataanggaranpermen == 109 || substr($row->kode_mataanggaran, 0, 6) == '5.1.02'){
                             $pengembalianbelanjabarangjasa_bulanlalu += (float)$row->pengembalianbelanja_bulan_lalu;
                             $pengembalianbelanjabarangjasa_bulanini += (float)$row->pengembalianbelanja_bulan_ini;
+                        }
+                    }
+                    foreach ($spjls as $row) {
+                        if($row->idmataanggaranpermen == 109 || substr($row->kode_mataanggaran, 0, 6) == '5.1.02'){
+                            $pengembalianbelanjabarangjasals_bulanlalu += (float)$row->pengembalianbelanja_bulan_lalu;
+                            $pengembalianbelanjabarangjasals_bulanini += (float)$row->pengembalianbelanja_bulan_ini;
                         }
                     }
                 @endphp
@@ -1237,21 +1267,30 @@
                 <td style="border: none; text-align: right;">{{ number_format($pengembalianbelanjabarangjasa_bulanlalu,2,'.',',') }}</td>
                 <td style="border: none; text-align: right;">{{ number_format($pengembalianbelanjabarangjasa_bulanini,2,'.',',') }}</td>
                 <td style="border: none; text-align: right;">{{ number_format($pengembalianbelanjabarangjasa_bulanlalu + $pengembalianbelanjabarangjasa_bulanini,2,'.',',') }}</td>
-                <td style="border: none;"></td>
-                <td style="border: none;"></td>
-                <td colspan="4" style="border:none; border-right: 1px solid black;"></td>
+                <td style="border: none; text-align: right;">{{ number_format($pengembalianbelanjabarangjasals_bulanlalu,2,'.',',') }}</td>
+                <td style="border: none; text-align: right;">{{ number_format($pengembalianbelanjabarangjasals_bulanini,2,'.',',') }}</td>
+                <td style="border: none; text-align: right;">{{ number_format($pengembalianbelanjabarangjasals_bulanlalu + $pengembalianbelanjabarangjasals_bulanini,2,'.',',') }}</td>
+                <td colspan="3" style="border:none; border-right: 1px solid black;"></td>
             </tr>
-            
+
             {{-- belanja Modal PM pengembalian --}}
             <tr>
                 @php
                     $pengembalianbelanjamodalpm_bulanlalu = 0;
                     $pengembalianbelanjamodalpm_bulanini = 0;
+                    $pengembalianbelanjamodalpmls_bulanlalu = 0;
+                    $pengembalianbelanjamodalpmls_bulanini = 0;
 
                     foreach ($spjbku as $row) {
-                        if($row->idmataanggaranpermen == 104){
+                        if($row->idjenisanggaran == 6 || substr($row->kode_mataanggaran, 0, 4) == '5.2.02'){
                             $pengembalianbelanjamodalpm_bulanlalu += (float)$row->pengembalianbelanja_bulan_lalu;
                             $pengembalianbelanjamodalpm_bulanini += (float)$row->pengembalianbelanja_bulan_ini;
+                        }
+                    }
+                    foreach ($spjls as $row) {
+                        if($row->idjenisanggaran == 6 || substr($row->kode_mataanggaran, 0, 4) == '5.2.02'){
+                            $pengembalianbelanjamodalpmls_bulanlalu += (float)$row->pengembalianbelanja_bulan_lalu;
+                            $pengembalianbelanjamodalpmls_bulanini += (float)$row->pengembalianbelanja_bulan_ini;
                         }
                     }
                 @endphp
@@ -1262,9 +1301,10 @@
                 <td style="border: none; text-align: right;">{{ number_format($pengembalianbelanjamodalpm_bulanlalu,2,'.',',') }}</td>
                 <td style="border: none; text-align: right;">{{ number_format($pengembalianbelanjamodalpm_bulanini,2,'.',',') }}</td>
                 <td style="border: none; text-align: right;">{{ number_format($pengembalianbelanjamodalpm_bulanlalu + $pengembalianbelanjamodalpm_bulanini,2,'.',',') }}</td>
-                <td style="border: none;"></td>
-                <td style="border: none;"></td>
-                <td colspan="4" style="border:none; border-right: 1px solid black;"></td>
+                <td style="border: none; text-align: right;">{{ number_format($pengembalianbelanjamodalpmls_bulanlalu,2,'.',',') }}</td>
+                <td style="border: none; text-align: right;">{{ number_format($pengembalianbelanjamodalpmls_bulanini,2,'.',',') }}</td>
+                <td style="border: none; text-align: right;">{{ number_format($pengembalianbelanjamodalpmls_bulanlalu + $pengembalianbelanjamodalpmls_bulanini,2,'.',',') }}</td>
+                <td colspan="3" style="border:none; border-right: 1px solid black;"></td>
             </tr>
 
             {{-- belanja Modal Gedung dan Bangunan pengembalian --}}
@@ -1272,11 +1312,19 @@
                 @php
                     $pengembalianbelanjagedungbangunan_bulanlalu = 0;
                     $pengembalianbelanjagedungbangunan_bulanini = 0;
+                    $pengembalianbelanjagedungbangunanls_bulanlalu = 0;
+                    $pengembalianbelanjagedungbangunanls_bulanini = 0;
 
                     foreach ($spjbku as $row) {
-                        if($row->idmataanggaranpermen == 105 || $row->idmataanggaranpermen == 127){
+                        if($row->idjenisanggaran == 5){
                             $pengembalianbelanjagedungbangunan_bulanlalu += (float)$row->pengembalianbelanja_bulan_lalu;
                             $pengembalianbelanjagedungbangunan_bulanini += (float)$row->pengembalianbelanja_bulan_ini;
+                        }
+                    }
+                    foreach ($spjls as $row) {
+                        if($row->idjenisanggaran == 5){
+                            $pengembalianbelanjagedungbangunanls_bulanlalu += (float)$row->pengembalianbelanja_bulan_lalu;
+                            $pengembalianbelanjagedungbangunanls_bulanini += (float)$row->pengembalianbelanja_bulan_ini;
                         }
                     }
                 @endphp
@@ -1287,17 +1335,21 @@
                 <td style="border: none; text-align: right;">{{ number_format($pengembalianbelanjagedungbangunan_bulanlalu,2,'.',',') }}</td>
                 <td style="border: none; text-align: right;">{{ number_format($pengembalianbelanjagedungbangunan_bulanini,2,'.',',') }}</td>
                 <td style="border: none; text-align: right;">{{ number_format($pengembalianbelanjagedungbangunan_bulanlalu + $pengembalianbelanjagedungbangunan_bulanini,2,'.',',') }}</td>
-                <td style="border: none;"></td>
-                <td style="border: none;"></td>
-                <td colspan="4" style="border:none; border-right: 1px solid black;"></td>
+                <td style="border: none; text-align: right;">{{ number_format($pengembalianbelanjagedungbangunanls_bulanlalu,2,'.',',') }}</td>
+                <td style="border: none; text-align: right;">{{ number_format($pengembalianbelanjagedungbangunanls_bulanini,2,'.',',') }}</td>
+                <td style="border: none; text-align: right;">{{ number_format($pengembalianbelanjagedungbangunanls_bulanlalu + $pengembalianbelanjagedungbangunanls_bulanini,2,'.',',') }}</td>
+                <td colspan="3" style="border:none; border-right: 1px solid black;"></td>
             </tr>
             {{-- END PENGEMBALIAN --}}
+
 
             {{-- START SPJ NETTO --}}
             <tr style="font-weight: bold;">
                 @php
                     $spjnetto_bulanlalu = $bruto_bulanlalu - $totalpengembalian_bulanlalu;
                     $spjnetto_bulanini = $bruto_bulanini - $totalpengembalian_bulanini;
+                    $spjnettols_bulanlalu = $bruto_ls_bulanlalu - $totalpengembalianls_bulanlalu;
+                    $spjnettols_bulanini = $bruto_ls_bulanini - $totalpengembalianls_bulanini;
                 @endphp
                 <td colspan="2" style="padding-left:1cm; border: none; border-left: 1px solid black; font-size: 10pt;">
                     SPJ NETTO
@@ -1306,9 +1358,10 @@
                 <td style="border: none; text-align: right;">{{ number_format($spjnetto_bulanlalu,2,'.',',') }}</td>
                 <td style="border: none; text-align: right;">{{ number_format($spjnetto_bulanini,2,'.',',') }}</td>
                 <td style="border: none; text-align: right;">{{ number_format($spjnetto_bulanlalu + $spjnetto_bulanini,2,'.',',') }}</td>
-                <td style="border: none;"></td>
-                <td style="border: none;"></td>
-                <td colspan="4" style="border:none; border-right: 1px solid black;"></td>
+                <td style="border: none; text-align: right;">{{ number_format($spjnettols_bulanlalu,2,'.',',') }}</td>
+                <td style="border: none; text-align: right;">{{ number_format($spjnettols_bulanini,2,'.',',') }}</td>
+                <td style="border: none; text-align: right;">{{ number_format($spjnettols_bulanlalu + $spjnettols_bulanini,2,'.',',') }}</td>
+                <td colspan="3" style="border:none; border-right: 1px solid black;"></td>
             </tr>
             {{-- END SPJ NETTO --}}
 

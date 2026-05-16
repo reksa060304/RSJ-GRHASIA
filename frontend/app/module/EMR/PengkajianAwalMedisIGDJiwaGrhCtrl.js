@@ -2975,6 +2975,18 @@ define(['initialize','Configuration'], function (initialize, configuration) {
                 });
             }
 
+            $scope.$watch('item.obj[310303]', function (newVal) {
+                if (newVal !== undefined) {
+                    $scope.item.obj[310600] = newVal;
+                }
+            });
+
+            $scope.$watch('item.obj[310304]', function (newVal) {
+                if (newVal !== undefined) {
+                    $scope.item.obj[310601] = newVal;
+                }
+            });
+
             $scope.cetakBlade = function(){
                 if (norecEMR == '') {
                     toastr.error('Dokumen belum pernah di isi')

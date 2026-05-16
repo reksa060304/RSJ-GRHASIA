@@ -11014,9 +11014,21 @@ class BendaharaPenerimaanController extends ApiController {
         //ambil daftar akun level 8
         $akunList = DB::select(DB::raw(
             "SELECT id, namarekening, koderekening, nourut
-             FROM char_akun_pendapatan_m
-             WHERE statusenabled = true AND level = '8'
-             ORDER BY nourut, id"
+             FROM char_akun_pendapatan_m p
+             WHERE statusenabled = true 
+             AND NOT EXISTS (
+                SELECT 1 FROM char_akun_pendapatan_m c 
+                WHERE c.headfk = p.id AND c.statusenabled = true
+             )
+             ORDER BY 
+                split_part(koderekening, '.', 1) ASC,
+                case when split_part(koderekening, '.', 2) = '' then 0 else split_part(koderekening, '.', 2)::int end ASC,
+                case when split_part(koderekening, '.', 3) = '' then 0 else split_part(koderekening, '.', 3)::int end ASC,
+                case when split_part(koderekening, '.', 4) = '' then 0 else split_part(koderekening, '.', 4)::int end ASC,
+                case when split_part(koderekening, '.', 5) = '' then 0 else split_part(koderekening, '.', 5)::int end ASC,
+                case when split_part(koderekening, '.', 6) = '' then 0 else split_part(koderekening, '.', 6)::int end ASC,
+                case when split_part(koderekening, '.', 7) = '' then 0 else split_part(koderekening, '.', 7)::int end ASC,
+                case when split_part(koderekening, '.', 8) = '' then 0 else split_part(koderekening, '.', 8)::int end ASC"
         ));
 
         //buat case when dan sum dinamis
@@ -11032,7 +11044,7 @@ class BendaharaPenerimaanController extends ApiController {
 
             $columnMeta[] = [
                 'id'           => $akun->id,
-                'namarekening' => $akun->namarekening,
+                'namarekening' => $akun->namarekening . ' - ' . $akun->koderekening,
                 'koderekening' => $akun->koderekening,
                 'nourut'       => $akun->nourut,
                 'alias'        => $colAlias,
@@ -11051,21 +11063,25 @@ class BendaharaPenerimaanController extends ApiController {
         {$pivotSql}
         from(
             select
-                sts.tglpenerimaan::date as tanggal,
+                sts.tanggal,
                 stsd2.objectakunpendapatanfk as cap_id,
                 sum(stsd2.totalsetoran) as totalfix
-            from surattandasetoran_t sts
+            from (
+                select nosts, tglpenerimaan::date as tanggal
+                from surattandasetoran_t sts
+                where sts.statusenabled = true
+                and sts.kdprofile = $idProfile
+                and extract(year from sts.tglpenerimaan::date) = ".$tahunx."
+                and extract(month from sts.tglpenerimaan::date) = ".$bulanx."
+                $bayar
+                $nosts
+                group by nosts, tglpenerimaan::date
+            ) as sts
             inner join surattandasetorandetailv2_t stsd2 on stsd2.objectstsfk = sts.nosts
             inner join char_akun_pendapatan_m cap on cap.id = stsd2.objectakunpendapatanfk
-            where sts.statusenabled = true
-            and sts.kdprofile = $idProfile
-            and stsd2.kdprofile = $idProfile
+            where stsd2.kdprofile = $idProfile
             and stsd2.statusenabled = true
-            and extract(year from sts.tglpenerimaan::date) = ".$tahunx."
-            and extract(month from sts.tglpenerimaan::date) = ".$bulanx."
-            $bayar
-            $nosts
-            group by sts.tglpenerimaan::date, stsd2.objectakunpendapatanfk
+            group by sts.tanggal, stsd2.objectakunpendapatanfk
         ) as x group by x.tanggal, x.cap_id
         ) as y group by extract(day from tanggal) order by tanggal"));
 
@@ -11100,9 +11116,21 @@ class BendaharaPenerimaanController extends ApiController {
         //ambil daftar akun pendapatan level 8 untuk pivot dinamis
         $akunList = DB::select(DB::raw("
             SELECT id, namarekening, koderekening, nourut
-            FROM char_akun_pendapatan_m
-            WHERE statusenabled = true AND level = '8'
-            ORDER BY nourut, id
+            FROM char_akun_pendapatan_m p
+            WHERE statusenabled = true 
+            AND NOT EXISTS (
+                SELECT 1 FROM char_akun_pendapatan_m c 
+                WHERE c.headfk = p.id AND c.statusenabled = true
+            )
+            ORDER BY 
+                split_part(koderekening, '.', 1) ASC,
+                case when split_part(koderekening, '.', 2) = '' then 0 else split_part(koderekening, '.', 2)::int end ASC,
+                case when split_part(koderekening, '.', 3) = '' then 0 else split_part(koderekening, '.', 3)::int end ASC,
+                case when split_part(koderekening, '.', 4) = '' then 0 else split_part(koderekening, '.', 4)::int end ASC,
+                case when split_part(koderekening, '.', 5) = '' then 0 else split_part(koderekening, '.', 5)::int end ASC,
+                case when split_part(koderekening, '.', 6) = '' then 0 else split_part(koderekening, '.', 6)::int end ASC,
+                case when split_part(koderekening, '.', 7) = '' then 0 else split_part(koderekening, '.', 7)::int end ASC,
+                case when split_part(koderekening, '.', 8) = '' then 0 else split_part(koderekening, '.', 8)::int end ASC
         "));
 
         if (empty($akunList)) {
@@ -11124,7 +11152,7 @@ class BendaharaPenerimaanController extends ApiController {
 
             $columnMeta[] = [
                 'id'           => $akun->id,
-                'namarekening' => $akun->namarekening,
+                'namarekening' => $akun->namarekening . ' - ' . $akun->koderekening,
                 'koderekening' => $akun->koderekening,
                 'nourut'       => $akun->nourut,
                 'alias'        => $colAlias,
@@ -11144,21 +11172,25 @@ class BendaharaPenerimaanController extends ApiController {
         from(
             select
                 sts.nosts,
-                sts.tglpenerimaan::date as tglpenerimaan,
+                sts.tglpenerimaan,
                 stsd2.objectakunpendapatanfk as cap_id,
                 sum(stsd2.totalsetoran) as totalfix
-            from surattandasetoran_t sts
+            from (
+                select nosts, tglpenerimaan::date as tglpenerimaan
+                from surattandasetoran_t sts
+                where sts.statusenabled = true
+                and sts.kdprofile = $idProfile
+                and extract(year from sts.tglpenerimaan::date) = ".$tahunx."
+                and extract(month from sts.tglpenerimaan::date) = ".$bulanx."
+                and extract(day from sts.tglpenerimaan::date) = ".$tglx."
+                $bayar
+                group by nosts, tglpenerimaan::date
+            ) as sts
             inner join surattandasetorandetailv2_t stsd2 on stsd2.objectstsfk = sts.nosts
             inner join char_akun_pendapatan_m cap on cap.id = stsd2.objectakunpendapatanfk
-            where sts.statusenabled = true
-            and sts.kdprofile = $idProfile
-            and stsd2.kdprofile = $idProfile
+            where stsd2.kdprofile = $idProfile
             and stsd2.statusenabled = true
-            and extract(year from sts.tglpenerimaan::date) = ".$tahunx."
-            and extract(month from sts.tglpenerimaan::date) = ".$bulanx."
-            and extract(day from sts.tglpenerimaan::date) = ".$tglx."
-            $bayar
-            group by sts.nosts, sts.tglpenerimaan::date, stsd2.objectakunpendapatanfk
+            group by sts.nosts, sts.tglpenerimaan, stsd2.objectakunpendapatanfk
         ) as x group by x.nosts, x.tglpenerimaan, x.cap_id
         ) as y group by nosts, tglpenerimaan order by tglpenerimaan, nosts"));
 
@@ -11423,7 +11455,7 @@ class BendaharaPenerimaanController extends ApiController {
                 WHERE sbm.statusenabled = TRUE AND sbm.kdprofile = :kdProfile
             ),
             -- BASE: Semua pelayanan pasien dengan info dasar
-            base_pelayanan AS (
+            base_pelayanan_raw AS (
                 SELECT 
                     pp.norec as pp_norec,
                     pp.produkfk,
@@ -11434,13 +11466,15 @@ class BendaharaPenerimaanController extends ApiController {
                     pp.hargadiscount,
                     pp.jumlah,
                     pp.jasa,
-                    (((COALESCE(pp.hargajual,0) - COALESCE(pp.hargadiscount,0)) * COALESCE(pp.jumlah,0)) + COALESCE(pp.jasa,0)) as subtotal,
+                    (((COALESCE(pp.hargajual,0) - COALESCE(pp.hargadiscount,0)) * COALESCE(pp.jumlah,0)) + COALESCE(pp.jasa,0)) as subtotal_raw,
                     pd.objectkelompokpasienlastfk,
                     apd.objectruanganfk,
                     pm.namapasien,
                     cb.id as idcarabayar,
                     cb.carabayar,
-                    ru.namaruangan
+                    ru.namaruangan,
+                    sbmcr.norec as sbmcr_norec,
+                    sbmcr.totaldibayar as sbmcr_totaldibayar
                 FROM sbm_filtered sbm
                 JOIN strukpelayanan_t sp ON sbm.nostrukfk = sp.norec AND sp.statusenabled = TRUE AND sp.kdprofile = :kdProfile
                 JOIN strukbuktipenerimaancarabayar_t sbmcr ON sbmcr.nosbmfk = sbm.norec AND sbmcr.statusenabled = TRUE AND sbmcr.kdprofile = :kdProfile
@@ -11451,6 +11485,30 @@ class BendaharaPenerimaanController extends ApiController {
                 JOIN pasien_m pm ON pm.id = pd.nocmfk
                 LEFT JOIN ruangan_m ru ON ru.id = apd.objectruanganfk
             ),
+            base_pelayanan AS (
+                SELECT 
+                    pp_norec,
+                    produkfk,
+                    strukfk,
+                    isobat,
+                    kelasfk,
+                    hargajual,
+                    hargadiscount,
+                    jumlah,
+                    jasa,
+                    CASE 
+                        WHEN SUM(subtotal_raw) OVER (PARTITION BY sbmcr_norec) > 0 
+                        THEN subtotal_raw * (COALESCE(sbmcr_totaldibayar,0) / SUM(subtotal_raw) OVER (PARTITION BY sbmcr_norec))
+                        ELSE 0 
+                    END as subtotal,
+                    objectkelompokpasienlastfk,
+                    objectruanganfk,
+                    namapasien,
+                    idcarabayar,
+                    carabayar,
+                    namaruangan
+                FROM base_pelayanan_raw
+            ),
             -- TIPE 2: PRODUK SPECIFIC (prioritas PERTAMA - lebih spesifik)
             tipe2_produk AS (
                 SELECT DISTINCT ON (bp.pp_norec)
@@ -11459,7 +11517,7 @@ class BendaharaPenerimaanController extends ApiController {
                     cap1.id idlevel1, cap2.id idlevel2, cap3.id idlevel3,
                     cap4.id idlevel4, cap5.id idlevel5, cap6.id idlevel6, cap7.id idlevel7,
                     bp.isobat isobat_group, bp.idcarabayar,
-                    bp.subtotal::DECIMAL totaldibayarclosing,
+                    COALESCE(bp.subtotal,0)::DECIMAL totaldibayarclosing,
                     bp.namapasien,
                     bp.carabayar,
                     bp.namaruangan,
@@ -11468,6 +11526,14 @@ class BendaharaPenerimaanController extends ApiController {
                 JOIN mapbkuakun3_t mba3 ON 
                     POSITION(','||bp.produkfk||',' IN ','||mba3.objectprodukfk||',') > 0
                     AND mba3.statusenabled = TRUE
+                JOIN mapbkuakun_t mba ON
+                    POSITION(','||bp.objectkelompokpasienlastfk||',' IN ','||mba.objectkelompokpasienfk||',') > 0
+                    AND POSITION(','||bp.objectruanganfk||',' IN ','||mba.objectruanganfk||',') > 0
+                    AND mba.statusenabled = TRUE
+                    AND bp.kelasfk IS NOT NULL
+                    AND POSITION(','||bp.kelasfk||',' IN ','||mba.objectkelasfk||',') > 0
+                    AND ((mba.isobat IS NOT TRUE AND bp.isobat IS NULL) OR (mba.isobat = TRUE AND bp.isobat = TRUE))
+                    AND mba.objectakunpendapatanfk = mba3.objectakunpendapatanfk
                 JOIN char_akun_pendapatan_m cap ON cap.id = mba3.objectakunpendapatanfk AND cap.statusenabled = TRUE
                 LEFT JOIN char_akun_pendapatan_m cap7 ON cap7.id = cap.headfk
                 LEFT JOIN char_akun_pendapatan_m cap6 ON cap6.id = cap7.headfk
@@ -11486,7 +11552,7 @@ class BendaharaPenerimaanController extends ApiController {
                     cap1.id idlevel1, cap2.id idlevel2, cap3.id idlevel3,
                     cap4.id idlevel4, cap5.id idlevel5, cap6.id idlevel6, cap7.id idlevel7,
                     bp.isobat isobat_group, bp.idcarabayar,
-                    bp.subtotal::DECIMAL totaldibayarclosing,
+                    COALESCE(bp.subtotal,0)::DECIMAL totaldibayarclosing,
                     bp.namapasien,
                     bp.carabayar,
                     bp.namaruangan,
@@ -11522,7 +11588,7 @@ class BendaharaPenerimaanController extends ApiController {
                     cap1.id idlevel1, cap2.id idlevel2, cap3.id idlevel3,
                     cap4.id idlevel4, cap5.id idlevel5, cap6.id idlevel6, cap7.id idlevel7,
                     NULL::BOOLEAN isobat_group, sbmcr.objectcarabayarfk idcarabayar,
-                    (spd.qtyproduk * spd.hargasatuan * spd.qtyoranglast)::DECIMAL totaldibayarclosing,
+                    (COALESCE(spd.qtyproduk,0) * COALESCE(spd.hargasatuan,0) * COALESCE(spd.qtyoranglast, 1))::DECIMAL totaldibayarclosing,
                     pm.namapasien,
                     cb.carabayar,
                     ru.namaruangan,

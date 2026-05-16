@@ -1,7 +1,7 @@
 define(['initialize', 'Configuration'], function (initialize, config) {
     'use strict';
-    initialize.controller('RincianTagihanPenunjangCtrl', ['$scope', 'MedifirstService', '$state', 'CacheHelper', '$window',
-        function ($scope, medifirstService, $state, cacheHelper, $window) {
+    initialize.controller('RincianTagihanPenunjangCtrl', ['$q', '$scope', 'MedifirstService', '$state', 'CacheHelper', '$window',
+        function ($q, $scope, medifirstService, $state, cacheHelper, $window) {
             $scope.item = {};
             $scope.itemimg = {};
             // $scope.dataVOloaded = true;
@@ -118,6 +118,7 @@ define(['initialize', 'Configuration'], function (initialize, config) {
                 medifirstService.get("radiologi/get-rincian-pelayanan?noregistrasifk=" + norec_apd
                     // medifirstService.get("lab-radiologi/get-rincian-pelayanan?objectdepartemenfk=" + departemenfk + "&noregistrasi=" +   $scope.item.noregistrasi
                     , true).then(function (dat) {
+                        console.log('Rincian Pelayanan Data:', dat.data.data);
                         if (dat.data.data.length > 0) {
                             $scope.item.tgllahir = dat.data.data[0].tgllahir
                             $scope.item.objectjeniskelaminfk = dat.data.data[0].objectjeniskelaminfk
@@ -138,6 +139,7 @@ define(['initialize', 'Configuration'], function (initialize, config) {
                                 // ✘
                                 // ❎
                             }
+                            dat.data.data[i].idbridging_ihs_display = dat.data.data[i].idbridging_ihs ? dat.data.data[i].idbridging_ihs : '-';
                             if (dat.data.data[i].iscito == "1") {
                                 dat.data.data[i].statuscito = "✔";
                                 // ✅
@@ -229,6 +231,7 @@ define(['initialize', 'Configuration'], function (initialize, config) {
                         } else {
                             dat.data.data[i].statusbridging = "✘";
                         }
+                        dat.data.data[i].idbridging_ihs_display = dat.data.data[i].idbridging_ihs ? dat.data.data[i].idbridging_ihs : '-';
                         if (dat.data.data[i].iscito == "1") {
                             dat.data.data[i].statuscito = "✔";
                         } else {
@@ -344,6 +347,11 @@ define(['initialize', 'Configuration'], function (initialize, config) {
                         "width": "90px",
                     },
                     {
+                        "field": "idbridging",
+                        "title": "ID Bridging",
+                        "width": "150px",
+                    },
+                    {
                         "field": "tglpanggil",
                         "title": "Tgl Panggil",
                         "width": "90px",
@@ -426,6 +434,11 @@ define(['initialize', 'Configuration'], function (initialize, config) {
                         "field": "statusbridging",
                         "title": "Bridging",
                         "width": "50px",
+                    },
+                    {
+                        "field": "idbridging_ihs_display",
+                        "title": "ID IHS",
+                        "width": "100px",
                     },
                     {
                         "field": "pmi",
@@ -2360,6 +2373,103 @@ define(['initialize', 'Configuration'], function (initialize, config) {
             $scope.closePopUp = function () {
                 $scope.popUpRiwayatHasil.close();
             }
+
+    //  manual bridging
+            $scope.kirimIHS = function () {
+                var dataChecked = [];
+                for (var i = 0; i < $scope.dataGrid._data.length; i++) {
+                    if ($scope.dataGrid._data[i].statCheckbox) {
+                        dataChecked.push($scope.dataGrid._data[i]);
+                    }
+                }
+
+                if (dataChecked.length === 0) {
+                    toastr.warning('Ceklis data yang mau dikirim ke IHS', 'Peringatan');
+                    return;
+                }
+
+                var noOrders = [];
+                for (var j = 0; j < dataChecked.length; j++) {
+                    if (!dataChecked[j].noorder) {
+                        toastr.warning('Salah satu data belum memiliki No Order. Lakukan Kirim ke RIS terlebih dahulu.', 'Peringatan');
+                        return;
+                    }
+                    if (noOrders.indexOf(dataChecked[j].noorder) === -1) {
+                        noOrders.push(dataChecked[j].noorder);
+                    }
+                }
+
+                $scope.isKirimIHS = true;
+                toastr.info('Memproses pengiriman ke IHS...', 'Informasi');
+
+                var allPromises = [];
+
+                noOrders.forEach(function(noorder) {
+                    var payload = { noorder: noorder };
+
+                    var defer = $q.defer();
+                    medifirstService.post('bridging/ihs/ServiceRequest', payload).then(function(resSR) {
+                        var srResponse = resSR.data;
+                        var srOk = srResponse && srResponse.resourceType !== 'OperationOutcome';
+                        // console.log('[IHS] ServiceRequest noorder=' + noorder, srResponse);
+
+                        // Langsung kirim Specimen
+                        medifirstService.post('bridging/ihs/Specimen', payload).then(function(resSP) {
+                            var spResponse = resSP.data;
+                            var spOk = spResponse && spResponse.resourceType !== 'OperationOutcome';
+                            // console.log('[IHS] Specimen noorder=' + noorder, spResponse);
+
+                            if (srOk && spOk) {
+                                toastr.success('Berhasil dikirim ke IHS - No Order: ' + noorder, 'Sukses');
+                                defer.resolve();
+                            } else {
+                                var errMsg = '';
+                                // Helper untuk ambil pesan error
+                                var getErrorMessage = function(res) {
+                                    if (res && res.issue && res.issue[0]) {
+                                        var issue = res.issue[0];
+                                        if (issue.details && issue.details.text) return issue.details.text;
+                                        if (issue.diagnostics) return issue.diagnostics;
+                                        if (issue.code) return issue.code;
+                                    }
+                                    return 'Error tidak diketahui';
+                                };
+
+                                if (!srOk) errMsg += 'SR: ' + getErrorMessage(srResponse) + '. ';
+                                if (!spOk) errMsg += 'Specimen: ' + getErrorMessage(spResponse);
+                                
+                                toastr.error('Gagal Bridging No Order ' + noorder + ': ' + errMsg, 'Kesalahan Satu Sehat', { timeOut: 10000 });
+                                defer.resolve(); 
+                            }
+                        }, function(errSP) {
+                            // console.error('[IHS] Specimen Error noorder=' + noorder, errSP);
+                            toastr.error('Sistem Gagal Mengirim Specimen: ' + noorder, 'Error');
+                            defer.reject(errSP);
+                        });
+                    }, function(errSR) {
+                        // console.error('[IHS] ServiceRequest Error noorder=' + noorder, errSR);
+                        toastr.error('Sistem Gagal Mengirim ServiceRequest: ' + noorder, 'Error');
+                        defer.reject(errSR);
+                    });
+
+                    allPromises.push(defer.promise);
+                });
+
+                $q.all(allPromises).finally(function() {
+                    $scope.isKirimIHS = false;
+                    if ($scope.item.noOrder) {
+                        var mockEvent = {
+                            sender: {
+                                value: function() { return $scope.item.noOrder; }
+                            },
+                            item: null
+                        };
+                        $scope.onSelectNoOrder(mockEvent);
+                    } else {
+                        init(); // Refresh semua
+                    }
+                });
+            };
 
             //** BATAS */
         }

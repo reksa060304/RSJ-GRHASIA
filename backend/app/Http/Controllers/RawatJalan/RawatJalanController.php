@@ -480,10 +480,13 @@ $ruangdokter = \DB::table('ruangan_m as ru')
             }
             $data = $data->whereIn('ru.id',$kodeRuang);
         }
+        if (isset($filter['statusPasien']) && $filter['statusPasien'] != "" && $filter['statusPasien'] != "undefined") {
+            $data = $data->where('pd.statuspasien', '=', $filter['statusPasien']);
+        }
         if (isset($filter['jmlRow']) && $filter['jmlRow'] != "" && $filter['jmlRow'] != "undefined") {
             $data = $data->take($filter['jmlRow']);
         }
-        $data = $data->whereIn('ru.objectdepartemenfk',[18,24,28,26,30,34]);
+        $data = $data->whereIn('ru.objectdepartemenfk',[18,24,28,26,30,34,68]);
 //        $data = $data->orderBy('pd.tglregistrasi');
         $data = $data->orderBy('apd.noantrian');
         $data = $data->get();
@@ -1059,6 +1062,62 @@ $ruangdokter = \DB::table('ruangan_m as ru')
         );
         return $this->respond($result);
     }
+
+    public function getOrderKonsulNew(Request $request){
+        $kdProfile = $this->getDataKdProfile($request);
+        $idProfile = (int) $kdProfile;
+        $arrRuangId = [];
+        if(isset($request['perawatId']) && $request['perawatId'] != ''){
+            $dataruangan = \DB::table('maploginusertoruangan_s as mlu')
+                ->join('ruangan_m as ru','ru.id','=','mlu.objectruanganfk')
+                ->select('ru.id','ru.namaruangan')
+                ->where('mlu.kdprofile', $idProfile)
+                ->where('mlu.objectloginuserfk',$request['perawatId'])
+                ->get();
+
+            if(count($dataruangan) > 0){
+                foreach ($dataruangan as $item){
+                    $arrRuangId []  =$item->id ;
+                }
+            }
+        }
+
+
+        $kelTrans = KelompokTransaksi::where('kelompoktransaksi','KONSULTASI DOKTER')->first();
+        $data= \DB::table('strukorder_t as so')
+            ->Join ('pasiendaftar_t as pd','pd.norec','=','so.noregistrasifk')
+            ->Join('pasien_m as ps','ps.id','=','pd.nocmfk')
+            ->leftJoin('ruangan_m as ru','ru.id','=','so.objectruanganfk')
+            ->leftJoin('ruangan_m as rutuju','rutuju.id','=','so.objectruangantujuanfk')
+            ->leftJoin('pegawai_m as pg','pg.id','=','so.objectpegawaiorderfk')
+            ->leftJoin('pegawai_m as pet','pet.id','=','so.objectpetugasfk')
+            ->leftJoin('antrianpasiendiperiksa_t as apd','apd.objectstrukorderfk','=','so.norec')
+            ->select('so.norec','so.noorder','so.tglorder','ru.namaruangan as ruanganasal','pg.namalengkap',
+                'rutuju.namaruangan as ruangantujuan','pet.namalengkap as pengonsul',
+                'pd.noregistrasi','pd.tglregistrasi','ps.nocm','so.keteranganorder','so.keteranganlainnya','so.keterangantolak','so.tgltolak','pd.norec as norec_pd',
+                'ps.namapasien','pg.id as pegawaifk','so.objectruangantujuanfk','so.objectruanganfk','apd.norec as norec_apd')
+            ->where('so.kdprofile', $idProfile)
+            ->where('so.statusenabled',true)
+            ->where('so.objectkelompoktransaksifk',$kelTrans->id)
+            ->where('so.tglorder', '>=', date('Y-m-d 00:00:00'))
+            ->orderBy('so.tglorder','desc');
+        if(isset($request['norecpd']) && $request['norecpd'] != ''){
+            $data = $data->where('pd.norec', $request['norecpd']);
+        }
+        if(isset($request['dokterid']) && $request['dokterid'] != ''){
+            $data = $data->where('pg.id', $request['dokterid']);
+        }
+        if(isset($request['perawatId']) && $request['perawatId'] != ''){
+            $data = $data->whereIn('rutuju.id',$arrRuangId);
+        }
+
+        $data = $data->get();
+        $result = array(
+            'data' => $data,
+            'message' => 'Inhuman',
+        );
+        return $this->respond($result);
+    }
     public function saveKonsulFromOrder(Request $request){
         $kdProfile = $this->getDataKdProfile($request);
         $idProfile = (int) $kdProfile;
@@ -1365,6 +1424,7 @@ $ruangdokter = \DB::table('ruangan_m as ru')
             ->join('kelas_m as kls','kls.id','=','pd.objectkelasfk')
             ->join('ruangan_m as ru','ru.id','=','apd.objectruanganfk')
             ->leftJoin('ruangan_m as ruasal', 'ruasal.id', '=', 'so.objectruanganfk')
+            ->leftJoin('pegawai_m as pg_order', 'pg_order.id', '=', 'so.objectpetugasfk')
             // ->leftJoin('departemen_m as dept','dept.id','=','ru.objectdepartemenfk')
             ->leftJoin('pegawai_m as pg','pg.id','=','apd.objectpegawaifk')
             ->leftJoin('pegawai_m as pg2','pg2.id','=','apd.residencefk')
@@ -1382,9 +1442,11 @@ $ruangdokter = \DB::table('ruangan_m as ru')
                 'apd.tgldipanggildokter','apd.statuspasien as statuspanggil','pd.statuspasien','apd.tgldipanggildokter','apd.tgldipanggilsuster','apr.noreservasi','apd.noantrian',
                 'apr.tanggalreservasi',  'alm.alamatlengkap','klstg.namakelas as kelasdijamin',
                 'ru.ipaddress','ps.iskompleks','apd.residencefk','pg2.namalengkap as residence', 'ruasal.id as idruanganasal'
-                , 'ruasal.namaruangan as namaruanganasal', 'so.norec as norec_so', 'so.keteranganorder', 'so.keteranganlainnya'
+                , 'ruasal.namaruangan as namaruanganasal', 'pg_order.namalengkap as pengorder', 'so.norec as norec_so', 'so.keteranganorder', 'so.keteranganlainnya', 'so.keterangantolak', 'so.tgltolak'
                 ,DB::raw('case when apd.ispelayananpasien is null then \'false\' else \'true\' end as statuslayanan'))
             ->where('apd.kdprofile', $idProfile)
+            ->where('so.statusenabled',true)
+            ->where('apd.statusenabled',true)
             ->where('pd.statusenabled',true)
             ->where('ps.statusenabled',true);
 
@@ -1423,7 +1485,7 @@ $ruangdokter = \DB::table('ruangan_m as ru')
         if (isset($filter['jmlRow']) && $filter['jmlRow'] != "" && $filter['jmlRow'] != "undefined") {
             $data = $data->take($filter['jmlRow']);
         }
-        $data = $data->whereIn('ru.objectdepartemenfk',[18,24,28,26,30,34]);
+        $data = $data->whereIn('ru.objectdepartemenfk',[18,24,28,26,30,34,68]);
 //        $data = $data->orderBy('pd.tglregistrasi');
         $data = $data->orderBy('apd.noantrian');
         $data = $data->get();

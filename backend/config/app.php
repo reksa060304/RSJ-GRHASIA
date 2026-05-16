@@ -173,7 +173,7 @@ return [
 	    //https://packagist.org/packages/codedge/laravel-fpdf
         //L5Swagger\L5SwaggerServiceProvider::class,
         SimpleSoftwareIO\QrCode\QrCodeServiceProvider::class,
-        Webklex\PDFMerger\Providers\PDFMergerServiceProvider::class
+        Webklex\PDFMerger\Providers\PDFMergerServiceProvider::class  
     ],
 
     /*

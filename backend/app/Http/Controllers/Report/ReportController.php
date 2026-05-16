@@ -17,6 +17,7 @@ use Illuminate\Support\Facades\Storage;
 use App\Master\Pegawai;
 use App\Traits\PelayananPasienTrait;
 use App\Transaksi\PasienDaftar;
+use App\Transaksi\AntrianApotik;
 
 use Barryvdh\DomPDF\Facade as PDF;
 use JasperPHP\JasperPHP;
@@ -1226,7 +1227,8 @@ class ReportController extends ApiController{
             "));
         $raw = collect(DB::select("
             select pm2.nocm ,to_char(pm2.tgllahir,'dd-mm-yyyy') as tgllahir,age(pm2.tgllahir) as umur ,jm.jeniskelamin ,pm2.namapasien ,pm3.namalengkap, rm.namaruangan ruanganasal, ra.namaruangan ruangantujuan, pm2.alergi, 
-            to_char(st.tglorder,'dd-mm-yyyy HH24:MI:ss') as tglorder,pm3.nosip, kp.kelompokpasien, pas.nosep 
+            to_char(st.tglorder,'dd-mm-yyyy HH24:MI:ss') as tglorder,pm3.nosip, kp.kelompokpasien, pas.nosep,
+            aa.jenis || ' - ' || aa.noantri as noantri
             from strukorder_t st
             inner join pasien_m pm2 on pm2.id = st.nocmfk
             inner join jeniskelamin_m jm on jm.id = pm2.objectjeniskelaminfk
@@ -1236,6 +1238,7 @@ class ReportController extends ApiController{
             inner join pasiendaftar_t AS pd ON pd.norec = st.noregistrasifk
             left join kelompokpasien_m AS kp ON kp.id = pd.objectkelompokpasienlastfk
             LEFT JOIN pemakaianasuransi_t AS pas ON pas.noregistrasifk = pd.norec
+            left join antrianapotik_t as aa on aa.noorder = st.noorder
             where st.noorder = '$noorder'
         "))->first();
         $detel = [];
@@ -1262,7 +1265,8 @@ class ReportController extends ApiController{
             // $raw->umur = $this->getAge($raw->tgllahir ,date('Y-m-d'));
         }else if (empty($raw)){
             $raw = collect(DB::select("
-                select pm2.nocm ,to_char(pm2.tgllahir,'dd-mm-yyyy') as tgllahir,age(pm2.tgllahir) as umur ,jm.jeniskelamin ,pm2.namapasien ,pm3.namalengkap, rm.namaruangan ruangantujuan, to_char(s.tglresep ,'dd-mm-yyyy HH:MM:ss') as tglorder,pm3.nosip, kp.kelompokpasien, ra.namaruangan ruanganasal, pm2.alergi
+                select pm2.nocm ,to_char(pm2.tgllahir,'dd-mm-yyyy') as tgllahir,age(pm2.tgllahir) as umur ,jm.jeniskelamin ,pm2.namapasien ,pm3.namalengkap, rm.namaruangan ruangantujuan, to_char(s.tglresep ,'dd-mm-yyyy HH:MM:ss') as tglorder,pm3.nosip, kp.kelompokpasien, ra.namaruangan ruanganasal, pm2.alergi,
+                aa.jenis || ' - ' || aa.noantri as noantri
                 from strukresep_t s
                 inner join antrianpasiendiperiksa_t at2 on at2.norec = s.pasienfk 
                 inner join pasiendaftar_t pt on pt.norec = at2.noregistrasifk 
@@ -1272,6 +1276,7 @@ class ReportController extends ApiController{
                 inner join ruangan_m rm on rm.id = s.ruanganfk 
                 left join ruangan_m ra on ra.id = at2.objectruanganasalfk 
                 left join kelompokpasien_m AS kp ON kp.id = pt.objectkelompokpasienlastfk
+                left join antrianapotik_t as aa on aa.noresep = s.noresep
                 where s.norec = '$norec'
 
             "))->first();
@@ -1307,6 +1312,21 @@ class ReportController extends ApiController{
             left join skriningfarmasi_t st on st.norec_apd = s.norec
             where s.norec = '$norec'
         "))->first();
+
+        $ks_obat = collect(DB::select("
+            select s.noresep, 
+            st.penyiapanidentitas, st.penyiapannamaobat, st.penyiapanjumlahdosis, st.penyiapanrute, st.penyiapanwaktufrekuensi,
+            st.penyiapanketidentitas, st.penyiapanketnamaobat, st.penyiapanketjumlahdosis, st.penyiapanketrute, st.penyiapanketwaktufrekuensi, st.penelaahpenyiapan,
+            st.peracikanidentitas, st.peracikannamaobat, st.peracikanjumlahdosis, st.peracikanrute, st.peracikanwaktufrekuensi,
+            st.peracikanketidentitas, st.peracikanketnamaobat, st.peracikanketjumlahdosis, st.peracikanketrute, st.peracikanketwaktufrekuensi, st.penelaahperacikan,
+            st.pelabelanidentitas, st.pelabelannamaobat, st.pelabelanjumlahdosis, st.pelabelanrute, st.pelabelanwaktufrekuensi,
+            st.pelabelanketidentitas, st.pelabelanketnamaobat, st.pelabelanketjumlahdosis, st.pelabelanketrute, st.pelabelanketwaktufrekuensi, st.penelaahpelabelan,
+            st.diserahkanidentitas, st.diserahlahnamaobat, st.diserahanjumlahdosis, st.diserahanrute, st.diserahanwaktufrekuensi,
+            st.diserahlanketidentitas, st.diserahlanketnamaobat, st.diserahlanketjumlahdosis, st.diserahlanketrute, st.diserahlanketwaktufrekuensi, st.penelaahdiserahkan
+            from strukresep_t s
+            left join skriningfarmasi_t st on st.norec_apd = s.norec
+            where s.norec = '$norec'
+        "))->first();
     //    dd($details);
         $pageWidth = 550;
         //var_dump($skrining);
@@ -1314,7 +1334,7 @@ class ReportController extends ApiController{
         // return $r['norec'];
         $cetakkin = $r['cetakkin'];
         return view('report.apotik.resepdokterrev',
-            compact('raw', 'pageWidth','r','details','profile', 'skrining','cetakkin'));
+            compact('raw', 'pageWidth','r','details','profile', 'skrining', 'ks_obat','cetakkin'));
     }
 
     public function cetakDetailOrder(Request $r) {
@@ -1612,8 +1632,9 @@ class ReportController extends ApiController{
 //        return view('','$result');
     }
     public function cetakAntrianFarmKiosk(Request $request) {
-        $kdProfile = (int)$request['kdprofile'];
         $noreg = $request['noreg'];
+        $noresep = $request['noresep'];
+        $noorder = $request['noorder'];
 
         $tglAyeuna = date('Y-m-d H:i:s');
 
@@ -1622,35 +1643,253 @@ class ReportController extends ApiController{
                 select * from profile_m where statusenabled=true limit 1
             "))->first();
 
-        $data = DB::table('antrianapotik_t as at')
+        if ((int)$profile->id == 30) {
+            $kdProfile = (int)$profile->id;
+        } else {
+            $kdProfile = 30;
+        }
+
+        if (empty($noresep)){
+            $data = DB::table('antrianapotik_t as at')
             ->join('pasiendaftar_t as pt', 'pt.norec', '=', 'at.noregistrasifk')
             ->join('pasien_m as pm', 'pm.id', '=', 'pt.nocmfk')
             ->leftJoin('jeniskelamin_m as jk', 'jk.id', '=', 'pm.objectjeniskelaminfk')
             ->join('strukorder_t as st', 'st.noorder', '=', 'at.noorder')
             ->join('ruangan_m as rm', 'rm.id', '=', 'st.objectruanganfk')
-            // ->join('ruangan_m as rm', 'rm.id', '=', 'st.objectruangantujuanfk')
             ->join('kelompokpasien_m as km', 'km.id', '=', 'pt.objectkelompokpasienlastfk')
             ->leftJoin('alamat_m as alm', 'alm.nocmfk', '=', 'pm.id')
-            ->where('pt.noregistrasi', $noreg)
+            ->where(function ($q) use ($noreg, $noorder) {
+                if (!empty($noorder)) {
+                    $q->where('at.noorder', $noorder);
+                } else {
+                    $q->where(function ($q2) use ($noreg) {
+                        $q2->where('pt.noregistrasi', $noreg)
+                        ->orWhere('pm.nocm', $noreg);
+                    });
+                }
+            })
+            ->where('pt.statusenabled', true)
             ->where('st.statusenabled', true)
             ->where('at.statusenabled', true)
-            ->orderBy('at.tglresep', 'desc')
-            ->selectRaw("
-                at.jenis || ' - ' || at.noantri as noantri, 
-                pm.namapasien, 
-                pm.nocm, 
-                pt.noregistrasi, 
-                rm.namaruangan,
-                km.kelompokpasien,
-                pt.tglregistrasi,
-                at.tglresep,
-                at.jenis,
-                jk.jeniskelamin,
-                Date(pm.tgllahir) as tgllahir,
-                alm.alamatlengkap
-            ")
+            ->where('st.statusorder', 0)
+            // ->whereIn('st.statusorder', [0, 1, 2, 3])
+            ->whereRaw('rm.objectdepartemenfk != 16')
+            ->orderBy('pt.tglregistrasi', 'desc')
+            ->orderBy('st.tglorder', 'desc')
+            ->orderBy('at.noantri', 'desc')
+            ->select([
+                DB::raw("at.jenis || ' - ' || at.noantri as noantri"),
+                'pm.namapasien',
+                'st.noorder',
+                'pm.nocm',
+                'pt.noregistrasi',
+                'rm.namaruangan',
+                'km.kelompokpasien',
+                'pt.tglregistrasi',
+                'at.tglresep',
+                'at.jenis',
+                'jk.jeniskelamin',
+                DB::raw("DATE(pm.tgllahir) as tgllahir"),
+                'alm.alamatlengkap'
+            ])
+
             ->first();
-            
+
+            // generate antrian apotik
+            if(empty($data)){
+                $cekOrder = DB::table('strukorder_t as st')
+                ->join('pasiendaftar_t as pt', 'pt.norec', '=', 'st.noregistrasifk')
+                ->join('pasien_m as pm', 'pm.id', '=', 'pt.nocmfk')
+                ->join('ruangan_m as rm', 'rm.id', '=', 'st.objectruanganfk')
+                ->where(function ($query) use ($noreg, $noorder) {
+                        if (!empty($noorder)) {
+                            $query->where('st.noorder', $noorder);
+                        } else {
+                            $query->where('pt.noregistrasi', $noreg)
+                                ->orWhere('pm.nocm', $noreg);
+                        }
+                })
+                ->where('pt.statusenabled', true)
+                ->where('st.statusenabled', true)
+                ->where('st.statusorder', 0)
+                // ->whereIn('st.statusorder', [0, 1, 2, 3])
+                ->whereRaw('rm.objectdepartemenfk != 16')
+                ->orderBy('pt.tglregistrasi', 'desc')
+                ->orderBy('st.tglorder', 'desc')
+                ->selectRaw("
+                    st.norec as norec_so,
+                    st.noorder,
+                    pm.namapasien,
+                    pm.nocm,
+                    pt.norec as norec_pd
+                ")
+                ->first();
+
+                if (!empty($cekOrder->noorder)) {
+                    $detOrder = DB::table('orderpelayanan_t as op')
+                        ->where('op.strukorderfk', $cekOrder->norec_so)
+                        ->where('op.statusenabled', true)
+                        ->select('op.jeniskemasanfk')
+                        ->get();
+
+                    $hasRacikan = false;
+                    foreach ($detOrder as $cek) {
+                        if ($cek->jeniskemasanfk == 1) {
+                            $hasRacikan = true;
+                            break;
+                        }
+                    }
+                    $racikanORnonracikan = $hasRacikan ? 'R' : 'N';
+                    \DB::transaction(function () use (
+                        &$noAntriApotik,
+                        $racikanORnonracikan,
+                        $kdProfile,
+                        $cekOrder
+                    ) {
+                        $last = \DB::table('antrianapotik_t')
+                            ->where('jenis', $racikanORnonracikan)
+                            ->whereRaw('DATE(tglresep) = CURRENT_DATE')
+                            ->orderBy('noantri', 'desc')
+                            ->lockForUpdate()
+                            ->first();
+
+                        $countAntrian = $last ? ((int)$last->noantri + 1) : 1;
+
+                        $noAntriApotik = str_pad($countAntrian, 4, "0", STR_PAD_LEFT);
+
+                        $newAA = new AntrianApotik();
+                        $newAA->norec = $newAA->generateNewId();
+                        $newAA->kdprofile = $kdProfile;
+                        $newAA->statusenabled = true;
+                        $newAA->noantri = $noAntriApotik;
+                        $newAA->keterangan = $cekOrder->namapasien;
+                        $newAA->noregistrasifk = $cekOrder->norec_pd;
+                        $newAA->jenis = $racikanORnonracikan;
+                        $newAA->tglresep = date('Y-m-d H:i:s');
+                        $newAA->noorder = $cekOrder->noorder;
+                        $newAA->source = 'KIOS-K';
+                        // $newAA->status = '6';
+                        $newAA->save();
+                    });
+                    
+                    
+
+                    $data = DB::table('antrianapotik_t as at')
+                    ->join('pasiendaftar_t as pt', 'pt.norec', '=', 'at.noregistrasifk')
+                    ->join('pasien_m as pm', 'pm.id', '=', 'pt.nocmfk')
+                    ->leftJoin('jeniskelamin_m as jk', 'jk.id', '=', 'pm.objectjeniskelaminfk')
+                    ->join('strukorder_t as st', 'st.noorder', '=', 'at.noorder')
+                    ->join('ruangan_m as rm', 'rm.id', '=', 'st.objectruanganfk')
+                    ->join('kelompokpasien_m as km', 'km.id', '=', 'pt.objectkelompokpasienlastfk')
+                    ->leftJoin('alamat_m as alm', 'alm.nocmfk', '=', 'pm.id')
+                    ->where(function ($q) use ($noreg, $noorder) {
+                        if (!empty($noorder)) {
+                            $q->where('at.noorder', $noorder);
+                        } else {
+                            $q->where(function ($q2) use ($noreg) {
+                                $q2->where('pt.noregistrasi', $noreg)
+                                ->orWhere('pm.nocm', $noreg);
+                            });
+                        }
+                    })
+                    ->where('pt.statusenabled', true)
+                    ->where('st.statusenabled', true)
+                    ->where('at.statusenabled', true)
+                    ->where('st.statusorder', 0)
+                    // ->whereIn('st.statusorder', [0, 1, 2, 3])
+                    ->whereRaw('rm.objectdepartemenfk != 16')
+                    ->orderBy('pt.tglregistrasi', 'desc')
+                    ->orderBy('st.tglorder', 'desc')
+                    ->orderBy('at.noantri', 'desc')
+                    ->select([
+                        DB::raw("at.jenis || ' - ' || at.noantri as noantri"),
+                        'pm.namapasien',
+                        'st.noorder',
+                        'pm.nocm',
+                        'pt.noregistrasi',
+                        'rm.namaruangan',
+                        'km.kelompokpasien',
+                        'pt.tglregistrasi',
+                        'at.tglresep',
+                        'at.jenis',
+                        'jk.jeniskelamin',
+                        DB::raw("DATE(pm.tgllahir) as tgllahir"),
+                        'alm.alamatlengkap'
+                    ])
+
+                    ->first();
+                }
+            }
+        } else {
+            $data = DB::table('antrianapotik_t as at')
+                ->join('strukresep_t as st', 'at.noresep', '=', 'st.noresep')
+                ->join('antrianpasiendiperiksa_t as apd', 'apd.norec', '=', 'st.pasienfk')
+                ->join('pasiendaftar_t as pt', 'pt.norec', '=', 'apd.noregistrasifk')
+                ->join('pasien_m as pm', 'pm.id', '=', 'pt.nocmfk')
+                ->leftJoin('jeniskelamin_m as jk', 'jk.id', '=', 'pm.objectjeniskelaminfk')
+                ->join('ruangan_m as rm', 'rm.id', '=', 'st.ruanganfk')
+                ->join('kelompokpasien_m as km', 'km.id', '=', 'pt.objectkelompokpasienlastfk')
+                ->leftJoin('alamat_m as alm', 'alm.nocmfk', '=', 'pm.id')
+                ->where('at.noresep', $noresep)
+                ->where('st.statusenabled', true)
+                ->where('pt.statusenabled', true)
+                ->where('at.statusenabled', true)
+                ->whereRaw('rm.objectdepartemenfk != 16')
+                ->orderBy('at.tglresep', 'desc')
+                ->selectRaw("
+                    at.jenis || ' - ' || at.noantri as noantri, 
+                    pm.namapasien, 
+                    st.noresep as noorder,
+                    pm.nocm, 
+                    pt.noregistrasi, 
+                    rm.namaruangan,
+                    km.kelompokpasien,
+                    pt.tglregistrasi,
+                    at.tglresep,
+                    at.jenis,
+                    jk.jeniskelamin,
+                    Date(pm.tgllahir) as tgllahir,
+                    alm.alamatlengkap
+                ")
+                ->first();
+
+                if(empty($data)){
+                    $data = DB::table('antrianapotik_t as at')
+                    ->join('pasiendaftar_t as pt', 'pt.norec', '=', 'at.noregistrasifk')
+                    ->join('pasien_m as pm', 'pm.id', '=', 'pt.nocmfk')
+                    ->leftJoin('jeniskelamin_m as jk', 'jk.id', '=', 'pm.objectjeniskelaminfk')
+                    ->join('strukorder_t as st', 'st.noorder', '=', 'at.noorder')
+                    ->join('ruangan_m as rm', 'rm.id', '=', 'st.objectruanganfk')
+                    ->join('kelompokpasien_m as km', 'km.id', '=', 'pt.objectkelompokpasienlastfk')
+                    ->leftJoin('alamat_m as alm', 'alm.nocmfk', '=', 'pm.id')
+                    ->where(function ($q) use ($noresep) {
+                            $q->where('at.noorder', $noresep);
+                    })
+                    ->where('pt.statusenabled', true)
+                    ->where('st.statusenabled', true)
+                    ->where('at.statusenabled', true)
+                    ->whereRaw('rm.objectdepartemenfk != 16')
+                    ->orderBy('pt.tglregistrasi', 'desc')
+                    ->orderBy('st.tglorder', 'desc')
+                    ->select([
+                        DB::raw("at.jenis || ' - ' || at.noantri as noantri"),
+                        'pm.namapasien',
+                        'st.noorder',
+                        'pm.nocm',
+                        'pt.noregistrasi',
+                        'rm.namaruangan',
+                        'km.kelompokpasien',
+                        'pt.tglregistrasi',
+                        'at.tglresep',
+                        'at.jenis',
+                        'jk.jeniskelamin',
+                        DB::raw("DATE(pm.tgllahir) as tgllahir"),
+                        'alm.alamatlengkap'
+                    ])
+
+                    ->first();
+                }
+        }
         $pageWidth = 50;
         
         $dataReport = array(
@@ -1668,6 +1907,7 @@ class ReportController extends ApiController{
             'jenis' => $data->jenis,
             'noantrian' => $data->noantri,
             'kelompokpasien' => $data->kelompokpasien,
+            'noorder' => $data->noorder,
         );
         return view('report.apotik.antrian-apotik',
             compact('dataReport', 'pageWidth','profile'));
@@ -1689,10 +1929,10 @@ class ReportController extends ApiController{
             ->leftJoin('pegawai_m as pp','pd.objectpegawaifk','=','pp.id')
             ->leftJoin('kelompokpasien_m as kp','pd.objectkelompokpasienlastfk','=','kp.id')
             ->leftJoin('antrianpasienregistrasi_t as apr','apr.noreservasi','=','pd.statusschedule')
-            ->select(DB::raw("pd.noregistrasi,ps.nocm,ps.tgllahir,ps.namapasien,to_char(pd.tglregistrasi, 'DD-MM-YYYY HH:mm') AS tglregistrasi,jk.reportdisplay AS jk, 
+            ->select(DB::raw("pd.noregistrasi,ps.nocm,ps.tgllahir,ps.namapasien,to_char(pd.tglregistrasi, 'DD-MM-YYYY HH24:MI:SS') AS tglregistrasi,jk.reportdisplay AS jk, 
                      ap.alamatlengkap,ap.mobilephone2,ru.namaruangan AS ruanganperiksa,pp.namalengkap AS namadokter, 
                      kp.kelompokpasien,apdp.noantrian,pd.statuspasien,apr.noreservasi,CASE WHEN apr.tanggalreservasi IS NULL THEN '' 
-                     ELSE to_char(apr.tanggalreservasi, 'DD-MM-YYYY HH:mm') END AS tanggalreservasi"))
+                     ELSE to_char(apr.tanggalreservasi, 'DD-MM-YYYY HH24:MI:SS') END AS tanggalreservasi"))
             ->where('pd.noregistrasi', $request['noregistrasi'])
             ->first();
 
@@ -5036,6 +5276,377 @@ class ReportController extends ApiController{
         return view('report.spj.cetakspjmonev',compact('data', 'pageWidth', 'tahun', 'subkegiatan', 'subsubkegiatan'));
     }
 
+    public function CetakNPD(Request $request){
+        $tahun = $request['tahun'];
+        $bulan = isset($request['bulan']) ? $request['bulan'] : date('m');
+        $jenisrekening = $request['jenisrekening'];
+
+        $qtahun  = '';
+        $qtahunka  = '';
+        if (isset($request['tahun']) && $request['tahun'] != "" && $request['tahun'] != "undefined") {
+            $qtahun =  " and extract(year from sr.tglrealisasi) =  '" . $request['tahun']."'";
+            $qtahunka =  " and ka.tahun =  '" . $request['tahun']."'";
+        }
+
+        $qsubsubkegiatan  = '';
+        $qsubsubkegiatansr  = '';
+        if (isset($request['subsubkegiatan']) && $request['subsubkegiatan'] != "" && $request['subsubkegiatan'] != "undefined") {
+            $qsubsubkegiatan =  " and ka.id =  '" . $request['subsubkegiatan']."'";
+            $qsubsubkegiatansr =  " and sr.objectkegiatanfk =  '" . $request['subsubkegiatan']."'";
+        }
+
+        $subk = $request['subkegiatan'];
+        $subsubk = $request['subsubkegiatan'];
+
+        // Jika Jenis Rekening adalah RBA (ID = 1)
+        if ($jenisrekening == 1) {
+            // Ambil Hierarki Lengkap (Sub Sub -> Sub -> Kegiatan -> Program)
+            $subsubkegiatan = DB::select(DB::raw("
+                SELECT 
+                    km.id, km.kode, regexp_replace(km.keterangan, '\\d|-', '', 'g') as keterangan2,
+                    kg.kode as kode_sub, kg.keterangan as keterangan_sub,
+                    kgg.kode as kode_keg, kgg.keterangan as keterangan_keg,
+                    kggg.kode as kode_prog, kggg.keterangan as keterangan_prog,
+                    pg.namalengkap as pptk,
+                    pg.nippns as nip_pptk
+                FROM kegiatananggaran2024_m km
+                LEFT JOIN kegiatananggaran2024_m kg ON kg.id = km.headfk
+                LEFT JOIN kegiatananggaran2024_m kgg ON kgg.id = kg.headfk
+                LEFT JOIN kegiatananggaran2024_m kggg ON kggg.id = kgg.headfk
+                LEFT JOIN transaksianggaran2024_t ta ON ta.objectkegiatanfk = km.id AND ta.statusenabled = TRUE AND ta.tahun = '$tahun'
+                LEFT JOIN pegawai_m pg ON pg.id = ta.objectpptkfk
+                WHERE km.id = $subsubk
+                LIMIT 1
+            "));
+            
+            // Format data untuk header
+            if(!empty($subsubkegiatan)){
+                $subsubkegiatan[0]->program = $subsubkegiatan[0]->kode_prog . ' - ' . $subsubkegiatan[0]->keterangan_prog;
+                $subsubkegiatan[0]->kegiatan = $subsubkegiatan[0]->kode_keg . ' - ' . $subsubkegiatan[0]->keterangan_keg;
+                // Sub kegiatan sudah ada di $subkegiatan (level 4)
+            }
+
+            $subkegiatan = DB::select(DB::raw("select * from kegiatananggaran2024_m where id = ".$subk));
+
+            $asalproduk_kb = "";
+            $asalproduk_sr = "";
+            $asalproduk_pj = "";
+            if (isset($request['asalproduk']) && $request['asalproduk'] != "" && $request['asalproduk'] != "undefined") {
+                $asalproduk_kb = "and kb.objectasalprodukfk = ".$request['asalproduk'];
+                $asalproduk_sr = "and sr.objectasalprodukfk = ".$request['asalproduk'];
+                $asalproduk_pj = "and P.objectasalprodukfk = ".$request['asalproduk'];
+            }
+
+            $data = DB::select(DB::raw("
+                SELECT
+                    x.kodemataanggaran,
+                    x.namamataanggaran,
+                    SUM ( jumlahanggaran ) AS jumlahanggaran,
+                    SUM ( panjar ) - SUM(panjarspj) AS jumlahpanjar,
+                    SUM ( spj_prev ) AS spj_prev,
+                    SUM ( spj_current ) AS spj_current,
+                    SUM ( spj_prev ) + SUM ( spj_current ) AS jumlahspj,
+                    SUM ( angkas_prev ) AS angkas_prev,
+                    SUM ( angkas_current ) AS angkas_current,
+                    SUM ( panjar ) - SUM(panjarspj) + SUM ( spj_prev ) + SUM ( spj_current ) as subtotal,
+                    SUM ( jumlahanggaran ) - ((SUM (panjar) - SUM(panjarspj)) + SUM ( spj_prev ) + SUM ( spj_current )) as sisaanggaran
+                FROM
+                    (
+                    SELECT
+                        ma.ID AS idAng,
+                        ka.kode,
+                        ma.kodemataanggaran,
+                        ma.namamataanggaran,
+                        COALESCE ( SUM ( kb.subtotal ), 0 ) AS jumlahanggaran,
+                        0 AS panjar,
+                        0 AS spj_prev, 0 AS spj_current,
+                        0 AS panjarspj,
+                        COALESCE ( SUM ( akb.angkas_prev ), 0 ) AS angkas_prev,
+                        COALESCE ( SUM ( akb.angkas_current ), 0 ) AS angkas_current
+                    FROM
+                        keteranganbelanja_t kb
+                        JOIN transaksianggaran2024_t ta ON ta.norec = kb.objecttransaksifk AND ta.statusenabled = TRUE
+                        JOIN kegiatananggaran2024_m ka ON ka.id = ta.objectkegiatanfk
+                        JOIN mataanggaran_m ma ON ma.id = kb.objectmataanggaranfk 
+                        LEFT JOIN (
+                            SELECT keteranganbelanjafk, 
+                                SUM(CASE WHEN bulanint < $bulan THEN CAST(nilai AS FLOAT) ELSE 0 END) as angkas_prev,
+                                SUM(CASE WHEN bulanint = $bulan THEN CAST(nilai AS FLOAT) ELSE 0 END) as angkas_current
+                            FROM alokasiketeranganbelanja_t
+                            WHERE bulanint <= $bulan AND statusenabled = TRUE
+                            GROUP BY keteranganbelanjafk
+                        ) akb ON akb.keteranganbelanjafk = kb.norec
+                    WHERE
+                        ka.ID = $subsubk 
+                        AND ta.tahun = '$tahun' 
+                        AND ta.objecttahapfk = ".$request['tahap']."
+                        AND kb.statusenabled = TRUE 
+                        AND kb.kdprofile = 30 
+                        AND ka.statusenabled = TRUE 
+                        AND ka.kdprofile = 30 
+                        AND ma.statusenabled = TRUE 
+                        AND ma.kdprofile = 30
+                        $asalproduk_kb 
+                    GROUP BY
+                        ma.ID,
+                        ka.kode,
+                        ma.kodemataanggaran,
+                        ma.namamataanggaran
+                    
+                    UNION
+                    
+                    SELECT
+                        ma.ID AS idAng,
+                        ka.kode,
+                        ma.kodemataanggaran,
+                        ma.namamataanggaran,
+                        0 AS jumlahanggaran,
+                        0 AS panjar,
+                        COALESCE ( SUM ( CASE WHEN EXTRACT(MONTH FROM sr.tglrealisasi) < $bulan THEN rd.subtotal ELSE 0 END ), 0 ) AS spj_prev,
+                        COALESCE ( SUM ( CASE WHEN EXTRACT(MONTH FROM sr.tglrealisasi) = $bulan THEN rd.subtotal ELSE 0 END ), 0 ) AS spj_current,
+                        0 AS panjarspj,
+                        0 AS angkas_prev,
+                        0 AS angkas_current
+                    FROM
+                        strukrealisasi_t sr
+                        JOIN realisasidetail_t rd ON rd.strukrealisasifk = sr.norec AND rd.statusenabled = TRUE
+                        JOIN keteranganbelanja_t kb ON kb.norec = rd.keteranganbelanjafk AND kb.statusenabled = TRUE
+                        JOIN transaksianggaran2024_t ta ON ta.norec = kb.objecttransaksifk AND ta.statusenabled = TRUE
+                        JOIN kegiatananggaran2024_m ka ON ka.id = ta.objectkegiatanfk AND ka.statusenabled = TRUE
+                        JOIN mataanggaran_m ma ON ma.ID = sr.objectmataanggaranfk 
+                    WHERE
+                        sr.statusenabled = TRUE 
+                        AND sr.status ILIKE '%Sudah Diverifikasi%'
+                        AND sr.kdprofile = 30 
+                        AND ta.tahun = '$tahun'
+                        AND ta.objectkegiatanfk = ".$subsubk."
+                        AND ka.statusenabled = TRUE 
+                        AND ka.kdprofile = 30 
+                        AND ma.statusenabled = TRUE 
+                        AND ma.kdprofile = 30 
+                        $asalproduk_sr
+                    GROUP BY
+                        ma.ID,
+                        ka.kode,
+                        ma.kodemataanggaran,
+                        ma.namamataanggaran 
+                        
+                    UNION
+
+                    SELECT
+                        ma.ID AS idAng,
+                        ka.kode,
+                        ma.kodemataanggaran,
+                        ma.namamataanggaran,
+                        0 AS jumlahanggaran,
+                        COALESCE ( SUM ( P.jumlah ), 0 ) - COALESCE ( SUM ( pp.jumlahpengembalian ), 0 ) AS panjar,
+                        0 AS spj_prev, 0 AS spj_current,
+                        0 AS panjarspj,
+                        0 AS angkas_prev,
+                        0 AS angkas_current
+                    FROM
+                        panjar_t P 
+                        JOIN kegiatananggaran2024_m ka ON ka.id = P.objectsubsubkegiatanfk
+                        JOIN mataanggaran_m ma ON ma.ID = P.objectmataanggaranfk
+                        LEFT JOIN pengembalianpanjar_t pp ON pp.objectpanjarfk = P.norec 
+                        AND pp.statusenabled = TRUE 
+                        AND pp.kdprofile = 30
+                    WHERE
+                        P.statusenabled = TRUE 
+                        AND P.kdprofile = 30
+                        AND ka.id IN (SELECT ta2.objectkegiatanfk FROM transaksianggaran2024_t ta2 WHERE ta2.statusenabled = TRUE AND ta2.tahun = '".$tahun."' AND ta2.objectkegiatanfk = ".$subsubk." )
+                        AND ka.statusenabled = TRUE 
+                        AND ka.kdprofile = 30 
+                        AND ma.statusenabled = TRUE 
+                        AND ma.kdprofile = 30 
+                        $asalproduk_pj
+                        AND EXTRACT(YEAR FROM tglpanjar) = '".$tahun."'
+                    GROUP BY
+                        ma.ID,
+                        ka.kode,
+                        ma.kodemataanggaran,
+                        ma.namamataanggaran
+                        
+                    ) AS x 
+                GROUP BY
+                    kodemataanggaran,
+                    namamataanggaran
+            "));
+
+        } else {
+            // Logika SPJ Lama
+            $subsubkegiatan = DB::select(DB::raw("
+                SELECT ka.*, ka.keterangan as keterangan2,
+                    pg.namalengkap as pptk, pg.nippns as nip_pptk
+                FROM kegiatananggaran_m ka
+                LEFT JOIN transaksianggaran2024_t ta ON ta.objectkegiatanfk = ka.id AND ta.statusenabled = TRUE AND ta.tahun = '$tahun'
+                LEFT JOIN pegawai_m pg ON pg.id = ta.objectpptkfk
+                WHERE ka.id = $subsubk
+                LIMIT 1
+            "));
+            $subkegiatan = DB::select(DB::raw("select *, keterangan as keterangan2 from kegiatananggaran_m where id = ".$subk));
+
+            $data = DB::select(DB::raw("
+                SELECT
+                    x.kodemataanggaran,
+                    x.namamataanggaran,
+                    SUM ( jumlahanggaran ) AS jumlahanggaran,
+                    SUM ( panjar ) - SUM(panjarspj) AS jumlahpanjar,
+                    SUM ( spj_prev ) AS spj_prev,
+                    SUM ( spj_current ) AS spj_current,
+                    SUM ( spj_prev ) + SUM ( spj_current ) AS jumlahspj,
+                    SUM ( angkas_prev ) AS angkas_prev,
+                    SUM ( angkas_current ) AS angkas_current,
+                    SUM ( panjar ) - SUM(panjarspj) + SUM ( spj_prev ) + SUM ( spj_current ) as subtotal,
+                    SUM ( jumlahanggaran ) - ((SUM (panjar) - SUM(panjarspj)) + SUM ( spj_prev ) + SUM ( spj_current )) as sisaanggaran
+                FROM
+                    (
+                    SELECT
+                        ma.ID AS idAng,
+                        ka.kode,
+                        ma.kodemataanggaran,
+                        ma.namamataanggaran,
+                        COALESCE ( SUM ( kb.subtotal ), 0 ) AS jumlahanggaran,
+                        0 AS panjar,
+                        0 AS spj_prev, 0 AS spj_current,
+                        0 AS panjarspj,
+                        COALESCE ( SUM ( akb.angkas_prev ), 0 ) AS angkas_prev,
+                        COALESCE ( SUM ( akb.angkas_current ), 0 ) AS angkas_current
+                    FROM
+                        keteranganbelanja_t kb
+                        JOIN transaksianggaran2024_t ta ON ta.norec = kb.objecttransaksifk AND ta.statusenabled = TRUE
+                        JOIN kegiatananggaran_m ka ON ka.id = ta.objectkegiatanfk
+                        JOIN mataanggaran_m ma ON ma.id = kb.objectmataanggaranfk 
+                        LEFT JOIN (
+                            SELECT keteranganbelanjafk, 
+                                SUM(CASE WHEN bulanint < $bulan THEN CAST(nilai AS FLOAT) ELSE 0 END) as angkas_prev,
+                                SUM(CASE WHEN bulanint = $bulan THEN CAST(nilai AS FLOAT) ELSE 0 END) as angkas_current
+                            FROM alokasiketeranganbelanja_t
+                            WHERE bulanint <= $bulan AND statusenabled = TRUE
+                            GROUP BY keteranganbelanjafk
+                        ) akb ON akb.keteranganbelanjafk = kb.norec
+                    WHERE
+                        ka.ID = $subsubk 
+                        AND ta.tahun = '$tahun' 
+                        AND kb.statusenabled = TRUE 
+                        AND kb.kdprofile = 30 
+                        AND ka.statusenabled = TRUE 
+                        AND ka.kdprofile = 30 
+                        AND ma.statusenabled = TRUE 
+                        AND ma.kdprofile = 30
+                    GROUP BY
+                        ma.ID,
+                        ka.kode,
+                        ma.kodemataanggaran,
+                        ma.namamataanggaran
+                    
+                    UNION
+                    
+                    SELECT
+                        ma.ID AS idAng,
+                        ka.kode,
+                        ma.kodemataanggaran,
+                        ma.namamataanggaran,
+                        0 AS jumlahanggaran,
+                        0 AS panjar,
+                        COALESCE ( SUM ( CASE WHEN EXTRACT(MONTH FROM sr.tglrealisasi) < $bulan THEN sr.totalbelanja ELSE 0 END ), 0 ) AS spj_prev,
+                        COALESCE ( SUM ( CASE WHEN EXTRACT(MONTH FROM sr.tglrealisasi) = $bulan THEN sr.totalbelanja ELSE 0 END ), 0 ) AS spj_current,
+                        COALESCE ( SUM ( sr.totalpanjar ), 0 ) AS panjarspj,
+                        0 AS angkas_prev,
+                        0 AS angkas_current
+                    FROM
+                        strukrealisasi_t sr
+                        JOIN kegiatananggaran_m ka ON ka.id = sr.objectkegiatanfk
+                        JOIN mataanggaran_m ma ON ma.id = sr.objectmataanggaranfk
+                    WHERE
+                        sr.statusenabled = TRUE 
+                        AND sr.kdprofile = 30
+                        AND ka.id = $subsubk
+                        AND EXTRACT(YEAR FROM sr.tglrealisasi) = '$tahun'
+                        AND ka.statusenabled = TRUE 
+                        AND ka.kdprofile = 30 
+                        AND ma.statusenabled = TRUE 
+                        AND ma.kdprofile = 30 
+                    GROUP BY
+                        ma.ID,
+                        ka.kode,
+                        ma.kodemataanggaran,
+                        ma.namamataanggaran 
+                        
+                    UNION
+
+                    SELECT
+                        ma.ID AS idAng,
+                        ka.kode,
+                        ma.kodemataanggaran,
+                        ma.namamataanggaran,
+                        0 AS jumlahanggaran,
+                        COALESCE ( SUM ( P.jumlah ), 0 ) - COALESCE ( SUM ( pp.jumlahpengembalian ), 0 ) AS panjar,
+                        0 AS spj_prev, 0 AS spj_current,
+                        0 AS panjarspj,
+                        0 AS angkas_prev,
+                        0 AS angkas_current
+                    FROM
+                        panjar_t P 
+                        JOIN kegiatananggaran_m ka ON ka.id = P.objectsubsubkegiatanfk
+                        JOIN mataanggaran_m ma ON ma.ID = P.objectmataanggaranfk
+                        LEFT JOIN pengembalianpanjar_t pp ON pp.objectpanjarfk = P.norec 
+                        AND pp.statusenabled = TRUE 
+                        AND pp.kdprofile = 30
+                    WHERE
+                        P.statusenabled = TRUE 
+                        AND P.kdprofile = 30
+                        AND ka.id = $subsubk
+                        AND ka.statusenabled = TRUE 
+                        AND ka.kdprofile = 30 
+                        AND ma.statusenabled = TRUE 
+                        AND ma.kdprofile = 30 
+                        AND EXTRACT(YEAR FROM tglpanjar) = '".$tahun."'
+                    GROUP BY
+                        ma.ID,
+                        ka.kode,
+                        ma.kodemataanggaran,
+                        ma.namamataanggaran
+                        
+                    ) AS x 
+                GROUP BY
+                    kodemataanggaran,
+                    namamataanggaran
+            "));
+        }
+       
+        $signatories = DB::select(DB::raw("
+            SELECT 
+                p1.namalengkap as direktur, p1.nippns as nip_direktur,
+                p2.namalengkap as bendahara, p2.nippns as nip_bendahara,
+                sa.nomordasarpengeluaran
+            FROM settinganggaran_t sa
+            LEFT JOIN pegawai_m p1 ON p1.id = sa.objectkepalabludfk
+            LEFT JOIN pegawai_m p2 ON p2.id = sa.objectbendpengeluaran
+            WHERE sa.statusenabled = TRUE
+            LIMIT 1
+        "));
+        $signatories = !empty($signatories) ? $signatories[0] : null;
+        $tglcetak = isset($request['tglcetak']) ? $this->tanggal_indonesia($request['tglcetak']) : $this->tanggal_indonesia(date('Y-m-d'));
+        $tgllunas = isset($request['tgllunas']) ? $this->tanggal_indonesia($request['tgllunas']) : $this->tanggal_indonesia(date('Y-m-d'));
+        $tglpj = isset($request['tglpj']) ? $this->tanggal_indonesia($request['tglpj']) : $this->tanggal_indonesia(date('Y-m-d'));
+
+        $pelaksana = null;
+        if (isset($request['idpelaksana']) && $request['idpelaksana'] != "" && $request['idpelaksana'] != "undefined") {
+            $pelaksana = DB::select(DB::raw("
+                SELECT namalengkap, nippns 
+                FROM pegawai_m 
+                WHERE id = " . $request['idpelaksana'] . "
+                LIMIT 1
+            "));
+            $pelaksana = !empty($pelaksana) ? $pelaksana[0] : null;
+        }
+
+        $pageWidth = 1200;
+        return view('report.spj.cetaknpd',compact('data', 'pageWidth', 'tahun', 'subkegiatan', 'subsubkegiatan', 'signatories', 'tglcetak', 'tgllunas', 'tglpj', 'pelaksana'));
+    }
+
+
     public function CetakKonsolidasiPermen(Request $request){
         $tahun = $request['tahun'];
 
@@ -6184,7 +6795,7 @@ class ReportController extends ApiController{
                         ma.namamataanggaran,
                         COALESCE ( SUM ( kb.subtotal ), 0 ) AS jumlahanggaran,
                         0 AS panjar,
-                        0 AS spj,
+                        0 AS spj_prev, 0 AS spj_current,
                         0 AS panjarspj 
                     FROM
                         keteranganbelanja_t kb
@@ -6256,7 +6867,7 @@ class ReportController extends ApiController{
                         ma.namamataanggaran,
                         0 AS jumlahanggaran,
                         COALESCE ( SUM ( P.jumlah ), 0 ) - COALESCE ( SUM ( pp.jumlahpengembalian ), 0 ) AS panjar,
-                        0 AS spj,
+                        0 AS spj_prev, 0 AS spj_current,
                         0 AS panjarspj 
                     FROM
                         panjar_t
@@ -6299,7 +6910,7 @@ class ReportController extends ApiController{
                         ma.namamataanggaran,
                         0 AS jumlahanggaran,
                         0 AS panjar, 
-                        0 AS spj,
+                        0 AS spj_prev, 0 AS spj_current,
                         COALESCE ( SUM ( sp.jumlahspj ), 0 ) AS panjarspj
                     FROM
                         panjar_t
@@ -19112,25 +19723,42 @@ public function suratBuktiPengembalian(Request $request)
             $qterhadap =  ' and kb.objecttahapfk =  ' . $request['terhadap'];
         }
         $sebelum = \DB::select(DB::raw("
-        SELECT j.*, K.apbd AS kapbd, K.jasalayanan as kjasalayanan, K.total as ktotal, k.tahap tahapsesudah
+        SELECT 
+            COALESCE(j.kegiatan, K.kegiatan) AS kegiatan,
+            COALESCE(j.kode, K.kode) AS kode,
+            COALESCE(j.div, K.div) AS div,
+            COALESCE(j.tahap, '') AS tahap,
+            COALESCE(j.apbd, 0) AS apbd,
+            COALESCE(j.jasalayanan, 0) AS jasalayanan,
+            COALESCE(j.dak, 0) AS dak,
+            COALESCE(j.danais, 0) AS danais,
+            COALESCE(j.silpa, 0) AS silpa,
+            COALESCE(j.total, 0) AS total,
+            COALESCE(K.apbd, 0) AS kapbd,
+            COALESCE(K.jasalayanan, 0) AS kjasalayanan,
+            COALESCE(K.dak, 0) AS kdak,
+            COALESCE(K.danais, 0) AS kdanais,
+            COALESCE(K.silpa, 0) AS ksilpa,
+            COALESCE(K.total, 0) AS ktotal,
+            K.tahap AS tahapsesudah
         FROM
             (
             SELECT
                 * 
             FROM
                 (
-                SELECT y.kegiatan, y.tahap, y.kode, y.div, SUM ( y.apbd ) AS apbd, SUM ( y.jasalayanan ) AS jasalayanan, SUM ( y.apbd ) + SUM ( y.jasalayanan ) AS total 
+                SELECT y.kegiatan, y.tahap, y.kode, y.div,
+                    SUM ( y.apbd ) AS apbd, SUM ( y.jasalayanan ) AS jasalayanan,
+                    SUM ( y.dak ) AS dak, SUM ( y.danais ) AS danais, SUM ( y.silpa ) AS silpa,
+                    SUM ( y.apbd ) + SUM ( y.jasalayanan ) + SUM ( y.dak ) + SUM ( y.danais ) + SUM ( y.silpa ) AS total 
                 FROM
                     (
                     SELECT x.kegiatan, x.subkegiatan, x.tahap, x.kode, x.div,
-                    CASE
-                        WHEN x.id_asalproduk = 15 THEN x.subtotal 
-                        ELSE 0 
-                        END AS apbd,
-                    CASE
-                            WHEN x.id_asalproduk = 18 THEN
-                            subtotal ELSE 0 
-                        END AS jasalayanan 
+                    CASE WHEN x.id_asalproduk = 15 THEN x.subtotal ELSE 0 END AS apbd,
+                    CASE WHEN x.id_asalproduk = 18 THEN x.subtotal ELSE 0 END AS jasalayanan,
+                    CASE WHEN x.id_asalproduk = 21 THEN x.subtotal ELSE 0 END AS dak,
+                    CASE WHEN x.id_asalproduk = 2  THEN x.subtotal ELSE 0 END AS danais,
+                    CASE WHEN x.id_asalproduk = 4  THEN x.subtotal ELSE 0 END AS silpa
                     FROM
                         (
                         SELECT kmss.keterangan kegiatan, ap.ID AS id_asalproduk, kms.keterangan subkegiatan, kmss.kode, kmss.div, km.keterangan subsubkegiatan, ta.tahap, ta.ID, ap.asalproduk, SUM ( kb.subtotal ) subtotal 
@@ -19150,41 +19778,21 @@ public function suratBuktiPengembalian(Request $request)
                             and kb.kdprofile = 30 and kb.statusenabled = true
                             $qterhadap
                             and th.tahun = '$request[tahun]'
-                            AND km.keterangan IN (
-                            SELECT
-                                km.keterangan 
-                            FROM
-                                kegiatananggaran2024_m km
-                                inner join kegiatananggaran2024_m kms on km.headfk = kms.id
-                                inner join kegiatananggaran2024_m kmss on kms.headfk = kmss.id
-                                inner join transaksianggaran2024_t th ON th.objectkegiatanfk = km.id AND th.statusenabled = TRUE
-                                inner join keteranganbelanja_t kb on kb.objecttransaksifk = th.norec
-                                LEFT JOIN tahapanggaran_m ta ON ta.ID = kb.objecttahapfk 
-                            WHERE
-                                km.kdprofile = 30 
-                                AND km.statusenabled = TRUE 
-                                and kms.kdprofile = 30 and kms.statusenabled = true
-                                and kmss.kdprofile = 30 and kmss.statusenabled = true
-                                and kb.kdprofile = 30 and kb.statusenabled = true
-                                $qtahap
-                                and th.tahun = '$request[tahun]'
-                            GROUP BY kms.keterangan, kmss.keterangan, kmss.kode, ap.asalproduk, kmss.div, km.keterangan, ta.tahap, ta.ID 
-                            ) 
                         GROUP BY kms.keterangan, kmss.keterangan, kmss.kode, ap.asalproduk, kmss.div, km.keterangan, ta.tahap, ta.ID, ap.ID 
                         ) AS x GROUP BY x.kegiatan, x.subkegiatan, x.tahap, x.asalproduk, x.subtotal, x.kode, x.div, x.id_asalproduk 
                     ) AS y GROUP BY y.kegiatan, y.tahap, y.kode, y.div UNION ALL
-                SELECT y.subkegiatan, y.tahap, y.kode, y.div, SUM ( y.apbd ) AS apbd, SUM ( y.jasalayanan ) AS jasalayanan, SUM ( y.apbd ) + SUM ( y.jasalayanan ) AS total 
+                SELECT y.subkegiatan, y.tahap, y.kode, y.div,
+                    SUM ( y.apbd ) AS apbd, SUM ( y.jasalayanan ) AS jasalayanan,
+                    SUM ( y.dak ) AS dak, SUM ( y.danais ) AS danais, SUM ( y.silpa ) AS silpa,
+                    SUM ( y.apbd ) + SUM ( y.jasalayanan ) + SUM ( y.dak ) + SUM ( y.danais ) + SUM ( y.silpa ) AS total 
                 FROM
                     (
                     SELECT x.kegiatan, x.subkegiatan, x.tahap, x.kode, x.div,
-                    CASE
-                            WHEN x.id_asalproduk = 15 THEN
-                            x.subtotal ELSE 0 
-                        END AS apbd,
-                    CASE
-                            WHEN x.id_asalproduk = 18 THEN
-                            subtotal ELSE 0 
-                        END AS jasalayanan 
+                    CASE WHEN x.id_asalproduk = 15 THEN x.subtotal ELSE 0 END AS apbd,
+                    CASE WHEN x.id_asalproduk = 18 THEN x.subtotal ELSE 0 END AS jasalayanan,
+                    CASE WHEN x.id_asalproduk = 21 THEN x.subtotal ELSE 0 END AS dak,
+                    CASE WHEN x.id_asalproduk = 2  THEN x.subtotal ELSE 0 END AS danais,
+                    CASE WHEN x.id_asalproduk = 4  THEN x.subtotal ELSE 0 END AS silpa
                     FROM
                         (
                         SELECT ap.ID AS id_asalproduk, kmss.keterangan kegiatan, kms.keterangan subkegiatan, kms.kode, kms.div, km.keterangan subsubkegiatan, ta.tahap, ta.ID, SUM ( kb.subtotal ) subtotal 
@@ -19204,53 +19812,74 @@ public function suratBuktiPengembalian(Request $request)
                             and kb.kdprofile = 30 and kb.statusenabled = true
                             $qterhadap
                             and th.tahun = '$request[tahun]'
-                            AND km.keterangan IN (
-                            SELECT
-                                km.keterangan 
-                            FROM
-                                kegiatananggaran2024_m km
-                                inner join kegiatananggaran2024_m kms on km.headfk = kms.id
-                                inner join kegiatananggaran2024_m kmss on kms.headfk = kmss.id
-                                inner join transaksianggaran2024_t th ON th.objectkegiatanfk = km.id AND th.statusenabled = TRUE
-                                inner join keteranganbelanja_t kb on kb.objecttransaksifk = th.norec
-                                INNER JOIN asalproduk_m ap ON ap.ID = kb.objectasalprodukfk
-                                LEFT JOIN tahapanggaran_m ta ON ta.ID = kb.objecttahapfk 
-                            WHERE
-                                km.kdprofile = 30 
-                                AND km.statusenabled = TRUE 
-                                and kms.kdprofile = 30 and kms.statusenabled = true
-                                and kmss.kdprofile = 30 and kmss.statusenabled = true
-                                and kb.kdprofile = 30 and kb.statusenabled = true
-                                $qtahap
-                                and th.tahun = '$request[tahun]' 
-                            GROUP BY kms.keterangan, kmss.keterangan, kms.kode, ap.asalproduk, kms.div, km.keterangan, ta.tahap, ta.ID, ap.ID 
-                            ) 
                         GROUP BY kms.keterangan, kmss.keterangan, kms.kode, ap.asalproduk, kms.div, km.keterangan, ta.tahap, ta.ID, ap.ID 
                         ) AS x 
                     GROUP BY x.kegiatan, x.subkegiatan, x.tahap, x.id_asalproduk, x.subtotal, x.kode, x.div 
                     ) AS y 
+                GROUP BY y.subkegiatan, y.tahap, y.kode, y.div UNION ALL
+                SELECT y.subkegiatan, y.tahap, y.kode, y.div,
+                    SUM ( y.apbd ) AS apbd, SUM ( y.jasalayanan ) AS jasalayanan,
+                    SUM ( y.dak ) AS dak, SUM ( y.danais ) AS danais, SUM ( y.silpa ) AS silpa,
+                    SUM ( y.apbd ) + SUM ( y.jasalayanan ) + SUM ( y.dak ) + SUM ( y.danais ) + SUM ( y.silpa ) AS total 
+                FROM
+                    (
+                    SELECT x.subkegiatan, x.tahap, x.kode, x.div,
+                    CASE WHEN x.id_asalproduk = 15 THEN x.subtotal ELSE 0 END AS apbd,
+                    CASE WHEN x.id_asalproduk = 18 THEN x.subtotal ELSE 0 END AS jasalayanan,
+                    CASE WHEN x.id_asalproduk = 21 THEN x.subtotal ELSE 0 END AS dak,
+                    CASE WHEN x.id_asalproduk = 2  THEN x.subtotal ELSE 0 END AS danais,
+                    CASE WHEN x.id_asalproduk = 4  THEN x.subtotal ELSE 0 END AS silpa
+                    FROM
+                        (
+                        SELECT ap.ID AS id_asalproduk, km.keterangan subkegiatan, km.kode, km.div, km.keterangan subsubkegiatan, ta.tahap, ta.ID, SUM ( kb.subtotal ) subtotal 
+                        FROM
+                            kegiatananggaran2024_m km
+                            inner join kegiatananggaran2024_m kms on km.headfk = kms.id
+                            inner join kegiatananggaran2024_m kmss on kms.headfk = kmss.id
+                            inner join transaksianggaran2024_t th ON th.objectkegiatanfk = km.id AND th.statusenabled = TRUE
+                            inner join keteranganbelanja_t kb on kb.objecttransaksifk = th.norec
+                            INNER JOIN asalproduk_m ap ON ap.ID = kb.objectasalprodukfk
+                            LEFT JOIN tahapanggaran_m ta ON ta.ID = kb.objecttahapfk 
+                        WHERE
+                            km.kdprofile = 30 
+                            AND km.statusenabled = TRUE 
+                            and kms.kdprofile = 30 and kms.statusenabled = true
+                            and kmss.kdprofile = 30 and kmss.statusenabled = true
+                            and kb.kdprofile = 30 and kb.statusenabled = true
+                            $qterhadap
+                            and th.tahun = '$request[tahun]'
+                        GROUP BY km.keterangan, km.kode, ap.asalproduk, kms.div, km.keterangan, ta.tahap, ta.ID, ap.ID, km.div 
+                        ) AS x 
+                    GROUP BY x.subkegiatan, x.tahap, x.id_asalproduk, x.subtotal, x.kode, x.div 
+                    ) AS y 
                 GROUP BY y.subkegiatan, y.tahap, y.kode, y.div 
                 ) AS A 
             ORDER BY
-                A.kode 
+                COALESCE(CAST(NULLIF(split_part(A.kode, '.', 1), '') AS integer), 0),
+                COALESCE(CAST(NULLIF(split_part(A.kode, '.', 2), '') AS integer), 0),
+                COALESCE(CAST(NULLIF(split_part(A.kode, '.', 3), '') AS integer), 0),
+                COALESCE(CAST(NULLIF(split_part(A.kode, '.', 4), '') AS integer), 0),
+                COALESCE(CAST(NULLIF(split_part(A.kode, '.', 5), '') AS integer), 0),
+                COALESCE(CAST(NULLIF(split_part(A.kode, '.', 6), '') AS integer), 0),
+                COALESCE(CAST(NULLIF(split_part(A.kode, '.', 7), '') AS integer), 0) ASC
             ) AS j
-            INNER JOIN (
+            FULL OUTER JOIN (
             SELECT
                 * 
-            FROM
+            FROM    
                 (
-                SELECT y.kegiatan AS kegiatan, y.tahap, y.kode, y.div, SUM ( y.apbd ) AS apbd, SUM ( y.jasalayanan ) AS jasalayanan, SUM ( y.apbd ) + SUM ( y.jasalayanan ) AS total 
+                SELECT y.kegiatan AS kegiatan, y.tahap, y.kode, y.div,
+                    SUM ( y.apbd ) AS apbd, SUM ( y.jasalayanan ) AS jasalayanan,
+                    SUM ( y.dak ) AS dak, SUM ( y.danais ) AS danais, SUM ( y.silpa ) AS silpa,
+                    SUM ( y.apbd ) + SUM ( y.jasalayanan ) + SUM ( y.dak ) + SUM ( y.danais ) + SUM ( y.silpa ) AS total 
                 FROM
                     (
                     SELECT x.kegiatan, x.tahap, x.kode, x.div,
-                    CASE
-                            WHEN x.id_asalproduk = 15 THEN
-                            x.subtotal ELSE 0 
-                        END AS apbd,
-                    CASE
-                            WHEN x.id_asalproduk = 18 THEN
-                            subtotal ELSE 0 
-                        END AS jasalayanan 
+                    CASE WHEN x.id_asalproduk = 15 THEN x.subtotal ELSE 0 END AS apbd,
+                    CASE WHEN x.id_asalproduk = 18 THEN x.subtotal ELSE 0 END AS jasalayanan,
+                    CASE WHEN x.id_asalproduk = 21 THEN x.subtotal ELSE 0 END AS dak,
+                    CASE WHEN x.id_asalproduk = 2  THEN x.subtotal ELSE 0 END AS danais,
+                    CASE WHEN x.id_asalproduk = 4  THEN x.subtotal ELSE 0 END AS silpa
                     FROM
                         (
                         SELECT kmss.keterangan kegiatan, kmss.kode, kmss.div, km.keterangan subsubkegiatan, ta.tahap, ta.ID, ap.ID AS id_asalproduk, ap.asalproduk, SUM ( kb.subtotal ) subtotal 
@@ -19270,41 +19899,22 @@ public function suratBuktiPengembalian(Request $request)
                             and kb.kdprofile = 30 and kb.statusenabled = true
                             $qtahap
                             and th.tahun = '$request[tahun]' 
-                            AND km.keterangan IN (
-                            SELECT
-                                km.keterangan 
-                            FROM
-                                kegiatananggaran2024_m km
-                                inner join kegiatananggaran2024_m kms on km.headfk = kms.id
-                                inner join kegiatananggaran2024_m kmss on kms.headfk = kmss.id
-                                inner join transaksianggaran2024_t th ON th.objectkegiatanfk = km.id AND th.statusenabled = TRUE
-                                inner join keteranganbelanja_t kb on kb.objecttransaksifk = th.norec
-                                INNER JOIN asalproduk_m ap ON ap.ID = kb.objectasalprodukfk
-                                LEFT JOIN tahapanggaran_m ta ON ta.ID = kb.objecttahapfk 
-                            WHERE
-                                km.kdprofile = 30 
-                                AND km.statusenabled = TRUE 
-                                and kms.kdprofile = 30 and kms.statusenabled = true
-                            and kmss.kdprofile = 30 and kmss.statusenabled = true
-                            and kb.kdprofile = 30 and kb.statusenabled = true
-                                $qterhadap
-                                and th.tahun = '$request[tahun]'
-                            GROUP BY kmss.keterangan, kmss.kode, ap.asalproduk, kmss.div, km.keterangan, ta.tahap, ta.ID 
-                            ) 
                         GROUP BY kmss.keterangan, kmss.kode, ap.asalproduk, ap.ID, kmss.div, km.keterangan, ta.tahap, ta.ID 
                         ) AS x 
                     GROUP BY x.kegiatan, x.tahap, x.asalproduk, x.subtotal, x.kode, x.div, x.id_asalproduk 
                     ) AS y GROUP BY y.kegiatan, y.tahap, y.kode, y.div UNION ALL
-                SELECT y.subkegiatan AS kegiatan, y.tahap, y.kode, y.div, SUM ( y.apbd ) AS apbd, SUM ( y.jasalayanan ) AS jasalayanan, SUM ( y.apbd ) + SUM ( y.jasalayanan ) AS total 
+                SELECT y.subkegiatan AS kegiatan, y.tahap, y.kode, y.div,
+                    SUM ( y.apbd ) AS apbd, SUM ( y.jasalayanan ) AS jasalayanan,
+                    SUM ( y.dak ) AS dak, SUM ( y.danais ) AS danais, SUM ( y.silpa ) AS silpa,
+                    SUM ( y.apbd ) + SUM ( y.jasalayanan ) + SUM ( y.dak ) + SUM ( y.danais ) + SUM ( y.silpa ) AS total 
                 FROM
                     (
                     SELECT x.subkegiatan, x.tahap, x.kode, x.div,
-                    CASE
-                            WHEN x.id_asalproduk = 15 THEN x.subtotal ELSE 0 
-                        END AS apbd,
-                    CASE
-                            WHEN x.id_asalproduk = 18 THEN subtotal ELSE 0 
-                        END AS jasalayanan 
+                    CASE WHEN x.id_asalproduk = 15 THEN x.subtotal ELSE 0 END AS apbd,
+                    CASE WHEN x.id_asalproduk = 18 THEN x.subtotal ELSE 0 END AS jasalayanan,
+                    CASE WHEN x.id_asalproduk = 21 THEN x.subtotal ELSE 0 END AS dak,
+                    CASE WHEN x.id_asalproduk = 2  THEN x.subtotal ELSE 0 END AS danais,
+                    CASE WHEN x.id_asalproduk = 4  THEN x.subtotal ELSE 0 END AS silpa
                     FROM
                         (
                         SELECT kms.keterangan subkegiatan, kms.kode, kms.div, km.keterangan subsubkegiatan, ta.tahap, ta.ID, ap.ID AS id_asalproduk, ap.asalproduk, SUM ( kb.subtotal ) subtotal 
@@ -19324,32 +19934,60 @@ public function suratBuktiPengembalian(Request $request)
                             and kb.kdprofile = 30 and kb.statusenabled = true
                             $qtahap
                                 and th.tahun = '$request[tahun]'
-                            AND km.keterangan IN (
-                            SELECT
-                                km.keterangan 
-                            FROM
-                                kegiatananggaran2024_m km
+                        GROUP BY kms.keterangan, kms.kode, ap.asalproduk, ap.ID, kms.div, km.keterangan, ta.tahap, ta.ID 
+                        ) AS x GROUP BY x.subkegiatan, x.tahap, x.asalproduk, x.subtotal, x.kode, x.div, x.id_asalproduk 
+                    ) AS y GROUP BY y.subkegiatan, y.tahap, y.kode, y.div UNION ALL
+                SELECT y.subkegiatan AS kegiatan, y.tahap, y.kode, y.div,
+                    SUM ( y.apbd ) AS apbd, SUM ( y.jasalayanan ) AS jasalayanan,
+                    SUM ( y.dak ) AS dak, SUM ( y.danais ) AS danais, SUM ( y.silpa ) AS silpa,
+                    SUM ( y.apbd ) + SUM ( y.jasalayanan ) + SUM ( y.dak ) + SUM ( y.danais ) + SUM ( y.silpa ) AS total 
+                FROM
+                    (
+                    SELECT x.subkegiatan, x.tahap, x.kode, x.div,
+                    CASE WHEN x.id_asalproduk = 15 THEN x.subtotal ELSE 0 END AS apbd,
+                    CASE WHEN x.id_asalproduk = 18 THEN x.subtotal ELSE 0 END AS jasalayanan,
+                    CASE WHEN x.id_asalproduk = 21 THEN x.subtotal ELSE 0 END AS dak,
+                    CASE WHEN x.id_asalproduk = 2  THEN x.subtotal ELSE 0 END AS danais,
+                    CASE WHEN x.id_asalproduk = 4  THEN x.subtotal ELSE 0 END AS silpa
+                    FROM
+                        (
+                        SELECT km.keterangan subkegiatan, km.kode, km.div, km.keterangan subsubkegiatan, ta.tahap, ta.ID, ap.ID AS id_asalproduk, ap.asalproduk, SUM ( kb.subtotal ) subtotal 
+                        FROM
+                            kegiatananggaran2024_m km
                             inner join kegiatananggaran2024_m kms on km.headfk = kms.id
                             inner join kegiatananggaran2024_m kmss on kms.headfk = kmss.id
                             inner join transaksianggaran2024_t th ON th.objectkegiatanfk = km.id AND th.statusenabled = TRUE
                             inner join keteranganbelanja_t kb on kb.objecttransaksifk = th.norec
                             INNER JOIN asalproduk_m ap ON ap.ID = kb.objectasalprodukfk
                             LEFT JOIN tahapanggaran_m ta ON ta.ID = kb.objecttahapfk 
-                            WHERE km.kdprofile = 30  AND km.statusenabled = TRUE  
+                        WHERE
+                            km.kdprofile = 30 
+                            AND km.statusenabled = TRUE 
                             and kms.kdprofile = 30 and kms.statusenabled = true
                             and kmss.kdprofile = 30 and kmss.statusenabled = true
                             and kb.kdprofile = 30 and kb.statusenabled = true
-                            $qterhadap 
-                            and th.tahun = '$request[tahun]'
-                            GROUP BY kms.keterangan, kmss.kode, ap.asalproduk, kmss.div, km.keterangan, ta.tahap, ta.ID 
-                            ) GROUP BY kms.keterangan, kms.kode, ap.asalproduk, ap.ID, kms.div, km.keterangan, ta.tahap, ta.ID 
-                        ) AS x GROUP BY x.subkegiatan, x.tahap, x.asalproduk, x.subtotal, x.kode, x.div, x.id_asalproduk 
+                            $qtahap
+                            and th.tahun = '$request[tahun]' 
+                        GROUP BY km.keterangan, km.kode, ap.asalproduk, ap.ID, km.div, km.keterangan, ta.tahap, ta.ID 
+                        ) AS x 
+                    GROUP BY x.subkegiatan, x.tahap, x.asalproduk, x.subtotal, x.kode, x.div, x.id_asalproduk 
                     ) AS y GROUP BY y.subkegiatan, y.tahap, y.kode, y.div 
-                ) AS A ORDER BY A.kode ) AS K ON j.kegiatan = K.kegiatan
+                ) AS A ORDER BY A.kode ) AS K ON j.kegiatan = K.kegiatan AND j.kode = K.kode
+        ORDER BY
+            COALESCE(CAST(NULLIF(split_part(COALESCE(j.kode, K.kode), '.', 1), '') AS integer), 0),
+            COALESCE(CAST(NULLIF(split_part(COALESCE(j.kode, K.kode), '.', 2), '') AS integer), 0),
+            COALESCE(CAST(NULLIF(split_part(COALESCE(j.kode, K.kode), '.', 3), '') AS integer), 0),
+            COALESCE(CAST(NULLIF(split_part(COALESCE(j.kode, K.kode), '.', 4), '') AS integer), 0),
+            COALESCE(CAST(NULLIF(split_part(COALESCE(j.kode, K.kode), '.', 5), '') AS integer), 0),
+            COALESCE(CAST(NULLIF(split_part(COALESCE(j.kode, K.kode), '.', 6), '') AS integer), 0),
+            COALESCE(CAST(NULLIF(split_part(COALESCE(j.kode, K.kode), '.', 7), '') AS integer), 0) ASC
         "));
+        $settingrba = DB::select(DB::raw("select sa.*, pg.reportdisplay as namalengkap, pg.nippns from settinganggaran_t sa
+        inner join pegawai_m pg on pg.id = sa.objectkepalabludfk
+        where sa.statusenabled = true"));
         $pageWidth = 1300;
         //return $this->respond($result);
-        return view('report.spj.cetakrekapanggaransumberdanasebelumsesudah',compact('sebelum', 'pageWidth', 'tanggalcetak'));
+        return view('report.spj.cetakrekapanggaransumberdanasebelumsesudah',compact('sebelum', 'pageWidth', 'tanggalcetak', 'settingrba'));
     }   
 
     public function cetakKGB(Request $request)
@@ -25497,10 +26135,15 @@ public function suratBuktiPengembalian(Request $request)
         //     'tahap' => $tahap
         // ));
 
+        $settingrba = DB::select(DB::raw("select sa.*, pg.reportdisplay as namalengkap, pg.nippns from settinganggaran_t sa
+        inner join pegawai_m pg on pg.id = sa.objectkepalabludfk
+        where sa.statusenabled = true"));
+
         return view('report.spj.cetak-jenisanggaran-sebelumsesudah-v2', [
             'data' => $sesudah,
             'tanggalcetak' => $tanggalcetak,
-            'tahap' => $tahap
+            'tahap' => $tahap,
+            'settingrba' => $settingrba
         ]);
 
     }
@@ -25980,52 +26623,46 @@ public function suratBuktiPengembalian(Request $request)
                 cap_stsd.koderekening,
                 cap_stsd.namarekening,
                 stsd2.totalsetoran as totaldibayarclosing,
-                cap7.id as idlevel7,
-                cap7.koderekening as koderekeninglevel7,
-                cap7.namarekening as namarekeninglevel7,
-                cap6.id as idlevel6,
-                cap6.koderekening as koderekeninglevel6,
-                cap6.namarekening as namarekeninglevel6,
-                cap5.id as idlevel5,
-                cap5.koderekening as koderekeninglevel5,
-                cap5.namarekening as namarekeninglevel5,
-                cap4.id as idlevel4,
-                cap4.koderekening as koderekeninglevel4,
-                cap4.namarekening as namarekeninglevel4,
-                cap3.id as idlevel3,
-                cap3.koderekening as koderekeninglevel3,
-                cap3.namarekening as namarekeninglevel3,
-                cap2.id as idlevel2,
-                cap2.koderekening as koderekeninglevel2,
-                cap2.namarekening as namarekeninglevel2,
-                cap1.id as idlevel1,
-                cap1.koderekening as koderekeninglevel1,
-                cap1.namarekening as namarekeninglevel1
+                cap1.id as idlevel1, cap1.koderekening as koderekeninglevel1, cap1.namarekening as namarekeninglevel1,
+                cap2.id as idlevel2, cap2.koderekening as koderekeninglevel2, cap2.namarekening as namarekeninglevel2,
+                cap3.id as idlevel3, cap3.koderekening as koderekeninglevel3, cap3.namarekening as namarekeninglevel3,
+                cap4.id as idlevel4, cap4.koderekening as koderekeninglevel4, cap4.namarekening as namarekeninglevel4,
+                cap5.id as idlevel5, cap5.koderekening as koderekeninglevel5, cap5.namarekening as namarekeninglevel5,
+                cap6.id as idlevel6, cap6.koderekening as koderekeninglevel6, cap6.namarekening as namarekeninglevel6,
+                cap7.id as idlevel7, cap7.koderekening as koderekeninglevel7, cap7.namarekening as namarekeninglevel7
             FROM surattandasetoran_t sts
             JOIN surattandasetorandetailv2_t stsd2 ON stsd2.objectstsfk = sts.nosts AND stsd2.statusenabled = TRUE AND stsd2.kdprofile = 30
             JOIN char_akun_pendapatan_m cap_stsd ON cap_stsd.id = stsd2.objectakunpendapatanfk AND cap_stsd.statusenabled = TRUE AND cap_stsd.kdprofile = 30
-            LEFT JOIN char_akun_pendapatan_m cap7 ON cap7.id = cap_stsd.headfk
-            LEFT JOIN char_akun_pendapatan_m cap6 ON cap6.id = cap7.headfk
-            LEFT JOIN char_akun_pendapatan_m cap5 ON cap5.id = cap6.headfk
-            LEFT JOIN char_akun_pendapatan_m cap4 ON cap4.id = cap5.headfk
-            LEFT JOIN char_akun_pendapatan_m cap3 ON cap3.id = cap4.headfk
-            LEFT JOIN char_akun_pendapatan_m cap2 ON cap2.id = cap3.headfk
-            LEFT JOIN char_akun_pendapatan_m cap1 ON cap1.id = cap2.headfk
+            LEFT JOIN char_akun_pendapatan_m cap1 ON cap1.koderekening = split_part(cap_stsd.koderekening, '.', 1) AND cap1.level = 1 AND cap1.kdprofile = 30
+            LEFT JOIN char_akun_pendapatan_m cap2 ON cap2.koderekening = split_part(cap_stsd.koderekening, '.', 1) || '.' || split_part(cap_stsd.koderekening, '.', 2) AND cap2.level = 2 AND cap2.kdprofile = 30
+            LEFT JOIN char_akun_pendapatan_m cap3 ON cap3.koderekening = split_part(cap_stsd.koderekening, '.', 1) || '.' || split_part(cap_stsd.koderekening, '.', 2) || '.' || split_part(cap_stsd.koderekening, '.', 3) AND cap3.level = 3 AND cap3.kdprofile = 30
+            LEFT JOIN char_akun_pendapatan_m cap4 ON cap4.koderekening = split_part(cap_stsd.koderekening, '.', 1) || '.' || split_part(cap_stsd.koderekening, '.', 2) || '.' || split_part(cap_stsd.koderekening, '.', 3) || '.' || split_part(cap_stsd.koderekening, '.', 4) AND cap4.level = 4 AND cap4.kdprofile = 30
+            LEFT JOIN char_akun_pendapatan_m cap5 ON cap5.koderekening = split_part(cap_stsd.koderekening, '.', 1) || '.' || split_part(cap_stsd.koderekening, '.', 2) || '.' || split_part(cap_stsd.koderekening, '.', 3) || '.' || split_part(cap_stsd.koderekening, '.', 4) || '.' || split_part(cap_stsd.koderekening, '.', 5) AND cap5.level = 5 AND cap5.kdprofile = 30
+            LEFT JOIN char_akun_pendapatan_m cap6 ON cap6.koderekening = split_part(cap_stsd.koderekening, '.', 1) || '.' || split_part(cap_stsd.koderekening, '.', 2) || '.' || split_part(cap_stsd.koderekening, '.', 3) || '.' || split_part(cap_stsd.koderekening, '.', 4) || '.' || split_part(cap_stsd.koderekening, '.', 5) || '.' || split_part(cap_stsd.koderekening, '.', 6) AND cap6.level = 6 AND cap6.kdprofile = 30
+            LEFT JOIN char_akun_pendapatan_m cap7 ON cap7.koderekening = split_part(cap_stsd.koderekening, '.', 1) || '.' || split_part(cap_stsd.koderekening, '.', 2) || '.' || split_part(cap_stsd.koderekening, '.', 3) || '.' || split_part(cap_stsd.koderekening, '.', 4) || '.' || split_part(cap_stsd.koderekening, '.', 5) || '.' || split_part(cap_stsd.koderekening, '.', 6) || '.' || split_part(cap_stsd.koderekening, '.', 7) AND cap7.level = 7 AND cap7.kdprofile = 30
             WHERE 
                 sts.statusenabled = TRUE
                 AND sts.kdprofile = 30
                 AND sts.nosts = '".$nosts."'
             GROUP BY
                 sts.nosts, stsd2.totalsetoran,
-                cap_stsd.id,cap7.id,cap6.id,cap5.id,cap4.id,cap3.id,cap2.id,cap1.id
+                cap_stsd.id,cap_stsd.koderekening,cap_stsd.namarekening,
+                cap7.id,cap7.koderekening,cap7.namarekening,
+                cap6.id,cap6.koderekening,cap6.namarekening,
+                cap5.id,cap5.koderekening,cap5.namarekening,
+                cap4.id,cap4.koderekening,cap4.namarekening,
+                cap3.id,cap3.koderekening,cap3.namarekening,
+                cap2.id,cap2.koderekening,cap2.namarekening,
+                cap1.id,cap1.koderekening,cap1.namarekening
             ORDER BY
-                COALESCE(NULLIF(split_part(cap1.koderekening, '.', 1), '')::INTEGER, 0) asc,
-                COALESCE(NULLIF(split_part(cap2.koderekening, '.', 2), '')::INTEGER, 0) asc,
-                COALESCE(NULLIF(split_part(cap3.koderekening, '.', 3), '')::INTEGER, 0) asc,
-                COALESCE(NULLIF(split_part(cap4.koderekening, '.', 4), '')::INTEGER, 0) asc,
-                COALESCE(NULLIF(split_part(cap5.koderekening, '.', 5), '')::INTEGER, 0) asc,
-                COALESCE(NULLIF(split_part(cap6.koderekening, '.', 6), '')::INTEGER, 0) asc,
-                cap_stsd.koderekening asc
+                COALESCE(NULLIF(split_part(cap_stsd.koderekening, '.', 1), ''), '0')::DECIMAL,
+                COALESCE(NULLIF(split_part(cap_stsd.koderekening, '.', 2), ''), '0')::DECIMAL,
+                COALESCE(NULLIF(split_part(cap_stsd.koderekening, '.', 3), ''), '0')::DECIMAL,
+                COALESCE(NULLIF(split_part(cap_stsd.koderekening, '.', 4), ''), '0')::DECIMAL,
+                COALESCE(NULLIF(split_part(cap_stsd.koderekening, '.', 5), ''), '0')::DECIMAL,
+                COALESCE(NULLIF(split_part(cap_stsd.koderekening, '.', 6), ''), '0')::DECIMAL,
+                COALESCE(NULLIF(split_part(cap_stsd.koderekening, '.', 7), ''), '0')::DECIMAL,
+                COALESCE(NULLIF(split_part(cap_stsd.koderekening, '.', 8), ''), '0')::DECIMAL ASC
         "));
 
         // check jika punya detailv2
@@ -26036,252 +26673,135 @@ public function suratBuktiPengembalian(Request $request)
     
                 SELECT 
                     x.id as idrekening, x.namarekening, x.koderekening, 
-                    x.idlevel7, x.koderekeninglevel7, x.namarekeninglevel7, 
-                    x.idlevel6, x.koderekeninglevel6, x.namarekeninglevel6,
-                    x.idlevel5, x.koderekeninglevel5, x.namarekeninglevel5,
-                    x.idlevel4, x.koderekeninglevel4, x.namarekeninglevel4,
-                    x.idlevel3, x.koderekeninglevel3, x.namarekeninglevel3,
-                    x.idlevel2, x.koderekeninglevel2, x.namarekeninglevel2,
                     x.idlevel1, x.koderekeninglevel1, x.namarekeninglevel1,
+                    x.idlevel2, x.koderekeninglevel2, x.namarekeninglevel2,
+                    x.idlevel3, x.koderekeninglevel3, x.namarekeninglevel3,
+                    x.idlevel4, x.koderekeninglevel4, x.namarekeninglevel4,
+                    x.idlevel5, x.koderekeninglevel5, x.namarekeninglevel5,
+                    x.idlevel6, x.koderekeninglevel6, x.namarekeninglevel6,
+                    x.idlevel7, x.koderekeninglevel7, x.namarekeninglevel7,
                     SUM(x.totaldibayarclosing)::DECIMAL as totaldibayarclosing
                 FROM (	
+                    -- Branch 1: mapbkuakun_t
                     SELECT
-                        cap.id,
-                        cap.koderekening, 
-                        cap.namarekening,
-                        cap7.id as idlevel7,
-                        cap7.koderekening as koderekeninglevel7,
-                        cap7.namarekening as namarekeninglevel7,
-                        cap6.id as idlevel6,
-                        cap6.koderekening as koderekeninglevel6,
-                        cap6.namarekening as namarekeninglevel6,
-                        cap5.id as idlevel5,
-                        cap5.koderekening as koderekeninglevel5,
-                        cap5.namarekening as namarekeninglevel5,
-                        cap4.id as idlevel4,
-                        cap4.koderekening as koderekeninglevel4,
-                        cap4.namarekening as namarekeninglevel4,
-                        cap3.id as idlevel3,
-                        cap3.koderekening as koderekeninglevel3,
-                        cap3.namarekening as namarekeninglevel3,
-                        cap2.id as idlevel2,
-                        cap2.koderekening as koderekeninglevel2,
-                        cap2.namarekening as namarekeninglevel2,
-                        cap1.id as idlevel1,
-                        cap1.koderekening as koderekeninglevel1,
-                        cap1.namarekening as namarekeninglevel1,
-                        COALESCE(SUM(
-                                    (((COALESCE(pp.hargajual::DECIMAL, 0) - COALESCE(pp.hargadiscount::DECIMAL, 0)) * pp.jumlah::DECIMAL) + COALESCE(pp.jasa::DECIMAL, 0))
-                            ), 0) AS totaldibayarclosing
+                        cap.id, cap.koderekening, cap.namarekening,
+                        cap1.id as idlevel1, cap1.koderekening as koderekeninglevel1, cap1.namarekening as namarekeninglevel1,
+                        cap2.id as idlevel2, cap2.koderekening as koderekeninglevel2, cap2.namarekening as namarekeninglevel2,
+                        cap3.id as idlevel3, cap3.koderekening as koderekeninglevel3, cap3.namarekening as namarekeninglevel3,
+                        cap4.id as idlevel4, cap4.koderekening as koderekeninglevel4, cap4.namarekening as namarekeninglevel4,
+                        cap5.id as idlevel5, cap5.koderekening as koderekeninglevel5, cap5.namarekening as namarekeninglevel5,
+                        cap6.id as idlevel6, cap6.koderekening as koderekeninglevel6, cap6.namarekening as namarekeninglevel6,
+                        cap7.id as idlevel7, cap7.koderekening as koderekeninglevel7, cap7.namarekening as namarekeninglevel7,
+                        COALESCE(SUM((((COALESCE(pp.hargajual::DECIMAL, 0) - COALESCE(pp.hargadiscount::DECIMAL, 0)) * pp.jumlah::DECIMAL) + COALESCE(pp.jasa::DECIMAL, 0))), 0) AS totaldibayarclosing
                     FROM pasiendaftar_t pd 
                     JOIN antrianpasiendiperiksa_t apd ON apd.noregistrasifk = pd.norec AND apd.statusenabled = TRUE AND apd.kdprofile = 30
                     JOIN pelayananpasien_t pp ON pp.noregistrasifk = apd.norec AND pp.statusenabled = TRUE AND pp.kdprofile = 30
-                    JOIN ruangan_m ru ON ru.id = apd.objectruanganfk AND ru.statusenabled = TRUE AND ru.kdprofile = 30
-                    JOIN produk_m pr ON pr.id = pp.produkfk
-                    JOIN detailjenisproduk_m djp ON djp.id = pr.objectdetailjenisprodukfk
                     JOIN strukpelayanan_t sp ON sp.norec = pp.strukfk AND sp.statusenabled = TRUE AND sp.kdprofile = 30
                     JOIN strukbuktipenerimaan_t sbm ON sbm.nostrukfk = sp.norec AND sbm.statusenabled = TRUE AND sbm.kdprofile = 30
-                    JOIN strukbuktipenerimaancarabayar_t sbmcr ON sbmcr.nosbmfk = sbm.norec AND sbmcr.statusenabled = TRUE AND sbmcr.kdprofile = 30
-                    JOIN carabayar_m cb ON cb.id = sbmcr.objectcarabayarfk AND cb.statusenabled = TRUE AND cb.kdprofile = 30
                     JOIN strukclosing_t AS sc ON sc.norec = sbm.noclosingfk AND sc.statusenabled = TRUE AND sc.kdprofile = 30
                     JOIN strukclosingkasir_t sck ON sck.noclosingfk = sc.norec
                     JOIN ststosck_t as ssc on ssc.objectsckfk = sck.norec
                     JOIN surattandasetoran_t as sts on sts.norec = ssc.objectstsfk AND sts.statusenabled = TRUE AND sts.kdprofile = 30
-                    LEFT JOIN mapbkuakun_t mba 
-                        ON pd.objectkelompokpasienlastfk::VARCHAR = ANY(string_to_array(mba.objectkelompokpasienfk, ','))
+                    LEFT JOIN mapbkuakun_t mba ON pd.objectkelompokpasienlastfk::VARCHAR = ANY(string_to_array(mba.objectkelompokpasienfk, ','))
                         AND apd.objectruanganfk::VARCHAR = ANY(string_to_array(mba.objectruanganfk , ','))
                         AND mba.statusenabled = TRUE
                     LEFT JOIN char_akun_pendapatan_m cap ON cap.id = mba.objectakunpendapatanfk
-                    LEFT JOIN char_akun_pendapatan_m cap7 ON cap7.id = cap.headfk
-                    LEFT JOIN char_akun_pendapatan_m cap6 ON cap6.id = cap7.headfk
-                    LEFT JOIN char_akun_pendapatan_m cap5 ON cap5.id = cap6.headfk
-                    LEFT JOIN char_akun_pendapatan_m cap4 ON cap4.id = cap5.headfk
-                    LEFT JOIN char_akun_pendapatan_m cap3 ON cap3.id = cap4.headfk
-                    LEFT JOIN char_akun_pendapatan_m cap2 ON cap2.id = cap3.headfk
-                    LEFT JOIN char_akun_pendapatan_m cap1 ON cap1.id = cap2.headfk
-                    WHERE 
-                        sts.nosts = '".$nosts."'
-                        AND pd.statusenabled = TRUE
-                        AND pd.kdprofile = 30
-                        AND (
-                                (mba.isobat IS NOT TRUE AND pp.isobat IS NULL) 
-                                OR 
-                                (mba.isobat = TRUE AND pp.isobat = TRUE)
-                            )
+                    LEFT JOIN char_akun_pendapatan_m cap1 ON cap1.koderekening = split_part(cap.koderekening, '.', 1) AND cap1.level = 1 AND cap1.kdprofile = 30
+                    LEFT JOIN char_akun_pendapatan_m cap2 ON cap2.koderekening = split_part(cap.koderekening, '.', 1) || '.' || split_part(cap.koderekening, '.', 2) AND cap2.level = 2 AND cap2.kdprofile = 30
+                    LEFT JOIN char_akun_pendapatan_m cap3 ON cap3.koderekening = split_part(cap.koderekening, '.', 1) || '.' || split_part(cap.koderekening, '.', 2) || '.' || split_part(cap.koderekening, '.', 3) AND cap3.level = 3 AND cap3.kdprofile = 30
+                    LEFT JOIN char_akun_pendapatan_m cap4 ON cap4.koderekening = split_part(cap.koderekening, '.', 1) || '.' || split_part(cap.koderekening, '.', 2) || '.' || split_part(cap.koderekening, '.', 3) || '.' || split_part(cap.koderekening, '.', 4) AND cap4.level = 4 AND cap4.kdprofile = 30
+                    LEFT JOIN char_akun_pendapatan_m cap5 ON cap5.koderekening = split_part(cap.koderekening, '.', 1) || '.' || split_part(cap.koderekening, '.', 2) || '.' || split_part(cap.koderekening, '.', 3) || '.' || split_part(cap.koderekening, '.', 4) || '.' || split_part(cap.koderekening, '.', 5) AND cap5.level = 5 AND cap5.kdprofile = 30
+                    LEFT JOIN char_akun_pendapatan_m cap6 ON cap6.koderekening = split_part(cap.koderekening, '.', 1) || '.' || split_part(cap.koderekening, '.', 2) || '.' || split_part(cap.koderekening, '.', 3) || '.' || split_part(cap.koderekening, '.', 4) || '.' || split_part(cap.koderekening, '.', 5) || '.' || split_part(cap.koderekening, '.', 6) AND cap6.level = 6 AND cap6.kdprofile = 30
+                    LEFT JOIN char_akun_pendapatan_m cap7 ON cap7.koderekening = split_part(cap.koderekening, '.', 1) || '.' || split_part(cap.koderekening, '.', 2) || '.' || split_part(cap.koderekening, '.', 3) || '.' || split_part(cap.koderekening, '.', 4) || '.' || split_part(cap.koderekening, '.', 5) || '.' || split_part(cap.koderekening, '.', 6) || '.' || split_part(cap.koderekening, '.', 7) AND cap7.level = 7 AND cap7.kdprofile = 30
+                    WHERE sts.nosts = '".$nosts."' AND pd.statusenabled = TRUE AND pd.kdprofile = 30
+                        AND ((mba.isobat IS NOT TRUE AND pp.isobat IS NULL) OR (mba.isobat = TRUE AND pp.isobat = TRUE))
                         AND pp.kelasfk::VARCHAR = ANY(string_to_array(mba.objectkelasfk , ','))
-                    GROUP BY
-                        cap.id,
-                        cap.koderekening,
-                        cap.namarekening,
-                        pp.isobat,
-                        cap7.id,
-                        cap6.id,
-                        cap5.id,
-                        cap4.id,
-                        cap3.id,
-                        cap2.id,
-                        cap1.id
-                    
-                    -- untuk berdasarkan produk
-                    UNION
+                    GROUP BY cap.id, cap.koderekening, cap.namarekening, cap1.id, cap1.koderekening, cap1.namarekening, cap2.id, cap2.koderekening, cap2.namarekening, cap3.id, cap3.koderekening, cap3.namarekening, cap4.id, cap4.koderekening, cap4.namarekening, cap5.id, cap5.koderekening, cap5.namarekening, cap6.id, cap6.koderekening, cap6.namarekening, cap7.id, cap7.koderekening, cap7.namarekening
+
+                    UNION ALL
+
+                    -- Branch 2: mapbkuakun3_t (produk)
                     SELECT
-                        cap.id,
-                        cap.koderekening, 
-                        cap.namarekening,
-                        cap7.id as idlevel7,
-                        cap7.koderekening as koderekeninglevel7,
-                        cap7.namarekening as namarekeninglevel7,
-                        cap6.id as idlevel6,
-                        cap6.koderekening as koderekeninglevel6,
-                        cap6.namarekening as namarekeninglevel6,
-                        cap5.id as idlevel5,
-                        cap5.koderekening as koderekeninglevel5,
-                        cap5.namarekening as namarekeninglevel5,
-                        cap4.id as idlevel4,
-                        cap4.koderekening as koderekeninglevel4,
-                        cap4.namarekening as namarekeninglevel4,
-                        cap3.id as idlevel3,
-                        cap3.koderekening as koderekeninglevel3,
-                        cap3.namarekening as namarekeninglevel3,
-                        cap2.id as idlevel2,
-                        cap2.koderekening as koderekeninglevel2,
-                        cap2.namarekening as namarekeninglevel2,
-                        cap1.id as idlevel1,
-                        cap1.koderekening as koderekeninglevel1,
-                        cap1.namarekening as namarekeninglevel1,
+                        cap.id, cap.koderekening, cap.namarekening,
+                        cap1.id as idlevel1, cap1.koderekening as koderekeninglevel1, cap1.namarekening as namarekeninglevel1,
+                        cap2.id as idlevel2, cap2.koderekening as koderekeninglevel2, cap2.namarekening as namarekeninglevel2,
+                        cap3.id as idlevel3, cap3.koderekening as koderekeninglevel3, cap3.namarekening as namarekeninglevel3,
+                        cap4.id as idlevel4, cap4.koderekening as koderekeninglevel4, cap4.namarekening as namarekeninglevel4,
+                        cap5.id as idlevel5, cap5.koderekening as koderekeninglevel5, cap5.namarekening as namarekeninglevel5,
+                        cap6.id as idlevel6, cap6.koderekening as koderekeninglevel6, cap6.namarekening as namarekeninglevel6,
+                        cap7.id as idlevel7, cap7.koderekening as koderekeninglevel7, cap7.namarekening as namarekeninglevel7,
                         SUM(((COALESCE(pp.hargajual::DECIMAL, 0) - COALESCE(pp.hargadiscount::DECIMAL, 0)) * pp.jumlah::DECIMAL) + COALESCE(pp.jasa::DECIMAL, 0))
                     FROM pasiendaftar_t pd 
                     JOIN antrianpasiendiperiksa_t apd ON apd.noregistrasifk = pd.norec AND apd.statusenabled = TRUE AND apd.kdprofile = 30
                     JOIN pelayananpasien_t pp ON pp.noregistrasifk = apd.norec AND pp.statusenabled = TRUE AND pp.kdprofile = 30
-                    JOIN ruangan_m ru ON ru.id = apd.objectruanganfk AND ru.statusenabled = TRUE AND ru.kdprofile = 30
-                    JOIN produk_m pr ON pr.id = pp.produkfk
-                    JOIN detailjenisproduk_m djp ON djp.id = pr.objectdetailjenisprodukfk --AND djp.statusenabled = TRUE AND djp.kdprofile = 30
                     JOIN strukpelayanan_t sp ON sp.norec = pp.strukfk AND sp.statusenabled = TRUE AND sp.kdprofile = 30
                     JOIN strukbuktipenerimaan_t sbm ON sbm.nostrukfk = sp.norec AND sbm.statusenabled = TRUE AND sbm.kdprofile = 30
-                    JOIN strukbuktipenerimaancarabayar_t sbmcr ON sbmcr.nosbmfk = sbm.norec AND sbmcr.statusenabled = TRUE AND sbmcr.kdprofile = 30
-                    JOIN carabayar_m cb ON cb.id = sbmcr.objectcarabayarfk AND cb.statusenabled = TRUE AND cb.kdprofile = 30
                     JOIN strukclosing_t AS sc ON sc.norec = sbm.noclosingfk AND sc.statusenabled = TRUE AND sc.kdprofile = 30
                     JOIN strukclosingkasir_t sck ON sck.noclosingfk = sc.norec
                     JOIN ststosck_t as ssc on ssc.objectsckfk = sck.norec
                     JOIN surattandasetoran_t as sts on sts.norec = ssc.objectstsfk AND sts.statusenabled = TRUE AND sts.kdprofile = 30
-                    JOIN mapbkuakun3_t mba3 
-                        ON pp.produkfk::VARCHAR = ANY(string_to_array(mba3.objectprodukfk, ','))
-                        AND pd.objectkelompokpasienlastfk IN (1,12) 
-                        AND mba3.statusenabled = TRUE
+                    JOIN mapbkuakun3_t mba3 ON pp.produkfk::VARCHAR = ANY(string_to_array(mba3.objectprodukfk, ',')) AND pd.objectkelompokpasienlastfk IN (1,12) AND mba3.statusenabled = TRUE
                     JOIN char_akun_pendapatan_m cap ON cap.id = mba3.objectakunpendapatanfk
-                    JOIN char_akun_pendapatan_m cap7 ON cap7.id = cap.headfk
-                    JOIN char_akun_pendapatan_m cap6 ON cap6.id = cap7.headfk
-                    JOIN char_akun_pendapatan_m cap5 ON cap5.id = cap6.headfk
-                    JOIN char_akun_pendapatan_m cap4 ON cap4.id = cap5.headfk
-                    JOIN char_akun_pendapatan_m cap3 ON cap3.id = cap4.headfk
-                    JOIN char_akun_pendapatan_m cap2 ON cap2.id = cap3.headfk
-                    JOIN char_akun_pendapatan_m cap1 ON cap1.id = cap2.headfk
-                    WHERE 
-                        sts.nosts = '".$nosts."'
-                        AND pd.statusenabled = TRUE
-                        AND pd.kdprofile = 30
-                    GROUP BY
-                        cap.id,
-                        cap.koderekening,
-                        cap.namarekening,
-                        pp.isobat,
-                        cap7.id,
-                        cap6.id,
-                        cap5.id,
-                        cap4.id,
-                        cap3.id,
-                        cap2.id,
-                        cap1.id
-                    
-                    -- untuk non layanan
-                    UNION
-                    SELECT DISTINCT
-                        cap.id,
-                        cap.koderekening,
-                        cap.namarekening,
-                        cap7.id as idlevel7,
-                        cap7.koderekening as koderekeninglevel7,
-                        cap7.namarekening as namarekeninglevel7,
-                        cap6.id as idlevel6,
-                        cap6.koderekening as koderekeninglevel6,
-                        cap6.namarekening as namarekeninglevel6,
-                        cap5.id as idlevel5,
-                        cap5.koderekening as koderekeninglevel5,
-                        cap5.namarekening as namarekeninglevel5,
-                        cap4.id as idlevel4,
-                        cap4.koderekening as koderekeninglevel4,
-                        cap4.namarekening as namarekeninglevel4,
-                        cap3.id as idlevel3,
-                        cap3.koderekening as koderekeninglevel3,
-                        cap3.namarekening as namarekeninglevel3,
-                        cap2.id as idlevel2,
-                        cap2.koderekening as koderekeninglevel2,
-                        cap2.namarekening as namarekeninglevel2,
-                        cap1.id as idlevel1,
-                        cap1.koderekening as koderekeninglevel1,
-                        cap1.namarekening as namarekeninglevel1,
+                    LEFT JOIN char_akun_pendapatan_m cap1 ON cap1.koderekening = split_part(cap.koderekening, '.', 1) AND cap1.level = 1 AND cap1.kdprofile = 30
+                    LEFT JOIN char_akun_pendapatan_m cap2 ON cap2.koderekening = split_part(cap.koderekening, '.', 1) || '.' || split_part(cap.koderekening, '.', 2) AND cap2.level = 2 AND cap2.kdprofile = 30
+                    LEFT JOIN char_akun_pendapatan_m cap3 ON cap3.koderekening = split_part(cap.koderekening, '.', 1) || '.' || split_part(cap.koderekening, '.', 2) || '.' || split_part(cap.koderekening, '.', 3) AND cap3.level = 3 AND cap3.kdprofile = 30
+                    LEFT JOIN char_akun_pendapatan_m cap4 ON cap4.koderekening = split_part(cap.koderekening, '.', 1) || '.' || split_part(cap.koderekening, '.', 2) || '.' || split_part(cap.koderekening, '.', 3) || '.' || split_part(cap.koderekening, '.', 4) AND cap4.level = 4 AND cap4.kdprofile = 30
+                    LEFT JOIN char_akun_pendapatan_m cap5 ON cap5.koderekening = split_part(cap.koderekening, '.', 1) || '.' || split_part(cap.koderekening, '.', 2) || '.' || split_part(cap.koderekening, '.', 3) || '.' || split_part(cap.koderekening, '.', 4) || '.' || split_part(cap.koderekening, '.', 5) AND cap5.level = 5 AND cap5.kdprofile = 30
+                    LEFT JOIN char_akun_pendapatan_m cap6 ON cap6.koderekening = split_part(cap.koderekening, '.', 1) || '.' || split_part(cap.koderekening, '.', 2) || '.' || split_part(cap.koderekening, '.', 3) || '.' || split_part(cap.koderekening, '.', 4) || '.' || split_part(cap.koderekening, '.', 5) || '.' || split_part(cap.koderekening, '.', 6) AND cap6.level = 6 AND cap6.kdprofile = 30
+                    LEFT JOIN char_akun_pendapatan_m cap7 ON cap7.koderekening = split_part(cap.koderekening, '.', 1) || '.' || split_part(cap.koderekening, '.', 2) || '.' || split_part(cap.koderekening, '.', 3) || '.' || split_part(cap.koderekening, '.', 4) || '.' || split_part(cap.koderekening, '.', 5) || '.' || split_part(cap.koderekening, '.', 6) || '.' || split_part(cap.koderekening, '.', 7) AND cap7.level = 7 AND cap7.kdprofile = 30
+                    WHERE sts.nosts = '".$nosts."' AND pd.statusenabled = TRUE AND pd.kdprofile = 30
+                    GROUP BY cap.id, cap.koderekening, cap.namarekening, cap1.id, cap1.koderekening, cap1.namarekening, cap2.id, cap2.koderekening, cap2.namarekening, cap3.id, cap3.koderekening, cap3.namarekening, cap4.id, cap4.koderekening, cap4.namarekening, cap5.id, cap5.koderekening, cap5.namarekening, cap6.id, cap6.koderekening, cap6.namarekening, cap7.id, cap7.koderekening, cap7.namarekening
+
+                    UNION ALL
+
+                    -- Branch 3: mapbkuakun2_t (non layanan)
+                    SELECT
+                        cap.id, cap.koderekening, cap.namarekening,
+                        cap1.id as idlevel1, cap1.koderekening as koderekeninglevel1, cap1.namarekening as namarekeninglevel1,
+                        cap2.id as idlevel2, cap2.koderekening as koderekeninglevel2, cap2.namarekening as namarekeninglevel2,
+                        cap3.id as idlevel3, cap3.koderekening as koderekeninglevel3, cap3.namarekening as namarekeninglevel3,
+                        cap4.id as idlevel4, cap4.koderekening as koderekeninglevel4, cap4.namarekening as namarekeninglevel4,
+                        cap5.id as idlevel5, cap5.koderekening as koderekeninglevel5, cap5.namarekening as namarekeninglevel5,
+                        cap6.id as idlevel6, cap6.koderekening as koderekeninglevel6, cap6.namarekening as namarekeninglevel6,
+                        cap7.id as idlevel7, cap7.koderekening as koderekeninglevel7, cap7.namarekening as namarekeninglevel7,
                         SUM(spd.qtyproduk * spd.hargasatuan * spd.qtyoranglast) as totaldibayarclosing
                     FROM strukclosingkasir_t AS sck
                     JOIN strukclosing_t AS sc ON sc.norec = sck.noclosingfk
                     JOIN strukbuktipenerimaan_t AS sbm ON sbm.noclosingfk = sc.norec
-                    JOIN strukbuktipenerimaancarabayar_t sbmcr ON sbmcr.nosbmfk = sbm.norec
                     JOIN strukpelayanan_t AS sp ON sbm.nostrukfk = sp.norec
                     JOIN strukpelayanandetail_t AS spd ON sp.norec = spd.nostrukfk
-                    JOIN produk_m pr ON pr.id = spd.objectprodukfk
-                    JOIN carabayar_m AS cb ON cb.id = sck.carabayarfk
-                    JOIN detailjenisproduk_m djp ON djp.id = pr.objectdetailjenisprodukfk
-                    JOIN jenisproduk_m jpr ON jpr.id = djp.objectjenisprodukfk
-                    left join ruangan_m as ru on ru.id = spd.objectruanganasalfk
-                    left join pasiendaftar_t as pd on sp.noregistrasifk = pd.norec
-                    left join antrianpasiendiperiksa_t apd on pd.norec=apd.noregistrasifk
-                    left join pelayananpasien_t pp on apd.norec=pp.noregistrasifk
                     JOIN ststosck_t as ssc on ssc.objectsckfk = sck.norec
                     JOIN surattandasetoran_t as sts on sts.norec = ssc.objectstsfk AND sts.statusenabled = TRUE AND sts.kdprofile = 30
-                    JOIN mapbkuakun2_t mba2 
-                        ON spd.objectprodukfk::VARCHAR = ANY(string_to_array(mba2.objectprodukfk, ',')) 
-                        AND mba2.statusenabled = TRUE
+                    JOIN mapbkuakun2_t mba2 ON spd.objectprodukfk::VARCHAR = ANY(string_to_array(mba2.objectprodukfk, ',')) AND mba2.statusenabled = TRUE
                     JOIN char_akun_pendapatan_m cap ON cap.id = mba2.objectakunpendapatanfk
-                    LEFT JOIN char_akun_pendapatan_m cap7 ON cap7.id = cap.headfk
-                    LEFT JOIN char_akun_pendapatan_m cap6 ON cap6.id = cap7.headfk
-                    LEFT JOIN char_akun_pendapatan_m cap5 ON cap5.id = cap6.headfk
-                    LEFT JOIN char_akun_pendapatan_m cap4 ON cap4.id = cap5.headfk
-                    LEFT JOIN char_akun_pendapatan_m cap3 ON cap3.id = cap4.headfk
-                    LEFT JOIN char_akun_pendapatan_m cap2 ON cap2.id = cap3.headfk
-                    LEFT JOIN char_akun_pendapatan_m cap1 ON cap1.id = cap2.headfk
-                    WHERE 
-                        sts.nosts = '".$nosts."'
-                    GROUP BY
-                        cap.id,
-                        cap.koderekening,
-                        cap.namarekening,
-                        cap7.id,
-                        cap6.id,
-                        cap5.id,
-                        cap4.id,
-                        cap3.id,
-                        cap2.id,
-                        cap1.id
-                    ) as x
-                    GROUP BY
-                        x.id,
-                        x.koderekening,
-                        x.namarekening,
-                        x.idlevel7, x.koderekeninglevel7, x.namarekeninglevel7, 
-                        x.idlevel6, x.koderekeninglevel6, x.namarekeninglevel6,
-                        x.idlevel5, x.koderekeninglevel5, x.namarekeninglevel5,
-                        x.idlevel4, x.koderekeninglevel4, x.namarekeninglevel4,
-                        x.idlevel3, x.koderekeninglevel3, x.namarekeninglevel3,
-                        x.idlevel2, x.koderekeninglevel2, x.namarekeninglevel2,
-                        x.idlevel1, x.koderekeninglevel1, x.namarekeninglevel1
-                    ORDER BY
-                        split_part(x.koderekening, '.', 3)::DECIMAL,
-                        split_part(x.koderekening, '.', 4)::DECIMAL,
-                        split_part(x.koderekening, '.', 5)::DECIMAL,
-                        split_part(x.koderekening, '.', 6)::DECIMAL,
-                        split_part(x.koderekening, '.', 7)::DECIMAL,
-                        split_part(x.koderekening, '.', 8)::DECIMAL ASC
-            
-            
+                    LEFT JOIN char_akun_pendapatan_m cap1 ON cap1.koderekening = split_part(cap.koderekening, '.', 1) AND cap1.level = 1 AND cap1.kdprofile = 30
+                    LEFT JOIN char_akun_pendapatan_m cap2 ON cap2.koderekening = split_part(cap.koderekening, '.', 1) || '.' || split_part(cap.koderekening, '.', 2) AND cap2.level = 2 AND cap2.kdprofile = 30
+                    LEFT JOIN char_akun_pendapatan_m cap3 ON cap3.koderekening = split_part(cap.koderekening, '.', 1) || '.' || split_part(cap.koderekening, '.', 2) || '.' || split_part(cap.koderekening, '.', 3) AND cap3.level = 3 AND cap3.kdprofile = 30
+                    LEFT JOIN char_akun_pendapatan_m cap4 ON cap4.koderekening = split_part(cap.koderekening, '.', 1) || '.' || split_part(cap.koderekening, '.', 2) || '.' || split_part(cap.koderekening, '.', 3) || '.' || split_part(cap.koderekening, '.', 4) AND cap4.level = 4 AND cap4.kdprofile = 30
+                    LEFT JOIN char_akun_pendapatan_m cap5 ON cap5.koderekening = split_part(cap.koderekening, '.', 1) || '.' || split_part(cap.koderekening, '.', 2) || '.' || split_part(cap.koderekening, '.', 3) || '.' || split_part(cap.koderekening, '.', 4) || '.' || split_part(cap.koderekening, '.', 5) AND cap5.level = 5 AND cap5.kdprofile = 30
+                    LEFT JOIN char_akun_pendapatan_m cap6 ON cap6.koderekening = split_part(cap.koderekening, '.', 1) || '.' || split_part(cap.koderekening, '.', 2) || '.' || split_part(cap.koderekening, '.', 3) || '.' || split_part(cap.koderekening, '.', 4) || '.' || split_part(cap.koderekening, '.', 5) || '.' || split_part(cap.koderekening, '.', 6) AND cap6.level = 6 AND cap6.kdprofile = 30
+                    LEFT JOIN char_akun_pendapatan_m cap7 ON cap7.koderekening = split_part(cap.koderekening, '.', 1) || '.' || split_part(cap.koderekening, '.', 2) || '.' || split_part(cap.koderekening, '.', 3) || '.' || split_part(cap.koderekening, '.', 4) || '.' || split_part(cap.koderekening, '.', 5) || '.' || split_part(cap.koderekening, '.', 6) || '.' || split_part(cap.koderekening, '.', 7) AND cap7.level = 7 AND cap7.kdprofile = 30
+                    WHERE sts.nosts = '".$nosts."'
+                    GROUP BY cap.id, cap.koderekening, cap.namarekening, cap1.id, cap1.koderekening, cap1.namarekening, cap2.id, cap2.koderekening, cap2.namarekening, cap3.id, cap3.koderekening, cap3.namarekening, cap4.id, cap4.koderekening, cap4.namarekening, cap5.id, cap5.koderekening, cap5.namarekening, cap6.id, cap6.koderekening, cap6.namarekening, cap7.id, cap7.koderekening, cap7.namarekening
+                ) as x
+                GROUP BY
+                    x.id, x.namarekening, x.koderekening, 
+                    x.idlevel1, x.koderekeninglevel1, x.namarekeninglevel1,
+                    x.idlevel2, x.koderekeninglevel2, x.namarekeninglevel2,
+                    x.idlevel3, x.koderekeninglevel3, x.namarekeninglevel3,
+                    x.idlevel4, x.koderekeninglevel4, x.namarekeninglevel4,
+                    x.idlevel5, x.koderekeninglevel5, x.namarekeninglevel5,
+                    x.idlevel6, x.koderekeninglevel6, x.namarekeninglevel6,
+                    x.idlevel7, x.koderekeninglevel7, x.namarekeninglevel7
+                ORDER BY
+                    COALESCE(NULLIF(split_part(x.koderekening, '.', 1), ''), '0')::DECIMAL,
+                    COALESCE(NULLIF(split_part(x.koderekening, '.', 2), ''), '0')::DECIMAL,
+                    COALESCE(NULLIF(split_part(x.koderekening, '.', 3), ''), '0')::DECIMAL,
+                    COALESCE(NULLIF(split_part(x.koderekening, '.', 4), ''), '0')::DECIMAL,
+                    COALESCE(NULLIF(split_part(x.koderekening, '.', 5), ''), '0')::DECIMAL,
+                    COALESCE(NULLIF(split_part(x.koderekening, '.', 6), ''), '0')::DECIMAL,
+                    COALESCE(NULLIF(split_part(x.koderekening, '.', 7), ''), '0')::DECIMAL,
+                    COALESCE(NULLIF(split_part(x.koderekening, '.', 8), ''), '0')::DECIMAL ASC
             "));
 
             $data = $detail;
@@ -26409,19 +26929,18 @@ public function suratBuktiPengembalian(Request $request)
                 mp.mataanggaranpermen,
                 ja.id
             ORDER BY
-                CAST(SPLIT_PART(ka.kode, '.', 2) AS INTEGER) ASC,
-                CAST(SPLIT_PART(ka.kode, '.', 3) AS INTEGER) ASC,
-                CAST(SPLIT_PART(ka.kode, '.', 4) AS INTEGER) ASC,
-                CAST(SPLIT_PART(ka.kode, '.', 5) AS INTEGER) ASC,
-                CAST(SPLIT_PART(ka.kode, '.', 6) AS INTEGER) ASC,
-                CAST(SPLIT_PART(ka.kode, '.', 7) AS INTEGER) ASC,
-                SPLIT_PART(ma.kodemataanggaran, '.', 1),
-                SPLIT_PART(ma.kodemataanggaran, '.', 2),
-                SPLIT_PART(ma.kodemataanggaran, '.', 3),
-                case 
-                    when SPLIT_PART(ma.kodemataanggaran, '.', 5) = '' THEN cast(SPLIT_PART(ma.kodemataanggaran, '.', 4) as INTEGER)
-                    else cast(SPLIT_PART(ma.kodemataanggaran, '.', 5) as INTEGER)
-                END asc
+                COALESCE(NULLIF(SPLIT_PART(ka.kode, '.', 2), ''), '0')::INTEGER ASC,
+                COALESCE(NULLIF(SPLIT_PART(ka.kode, '.', 3), ''), '0')::INTEGER ASC,
+                COALESCE(NULLIF(SPLIT_PART(ka.kode, '.', 4), ''), '0')::INTEGER ASC,
+                COALESCE(NULLIF(SPLIT_PART(ka.kode, '.', 5), ''), '0')::INTEGER ASC,
+                COALESCE(NULLIF(SPLIT_PART(ka.kode, '.', 6), ''), '0')::INTEGER ASC,
+                COALESCE(NULLIF(SPLIT_PART(ka.kode, '.', 7), ''), '0')::INTEGER ASC,
+                COALESCE(NULLIF(SPLIT_PART(ma.kodemataanggaran, '.', 1), ''), '0')::INTEGER ASC,
+                COALESCE(NULLIF(SPLIT_PART(ma.kodemataanggaran, '.', 2), ''), '0')::INTEGER ASC,
+                COALESCE(NULLIF(SPLIT_PART(ma.kodemataanggaran, '.', 3), ''), '0')::INTEGER ASC,
+                COALESCE(NULLIF(SPLIT_PART(ma.kodemataanggaran, '.', 4), ''), '0')::INTEGER ASC,
+                COALESCE(NULLIF(SPLIT_PART(ma.kodemataanggaran, '.', 5), ''), '0')::INTEGER ASC,
+                COALESCE(NULLIF(SPLIT_PART(ma.kodemataanggaran, '.', 6), ''), '0')::INTEGER ASC
         "));
 
         $dataSPJ = DB::select(DB::raw("
@@ -26490,7 +27009,7 @@ public function suratBuktiPengembalian(Request $request)
                 sr.statusenabled = TRUE
                 AND sr.kdprofile = 30
                 AND ta.tahun = '".$settingRBA->tahunanggaran."'
-                AND (sr.statusls IS NULL OR sr.statusls = '')
+                AND (sr.objectcarabayarfk IS NULL OR sr.objectcarabayarfk != 3)
                 -- AND sr.objectasalprodukfk IN (".implode(',', $asalProduk).")
                 ".$asalproduk_sr."
             GROUP BY
@@ -26506,19 +27025,18 @@ public function suratBuktiPengembalian(Request $request)
                 mp.mataanggaranpermen,
                 ja.id
             ORDER BY
-                CAST(SPLIT_PART(ka.kode, '.', 2) AS INTEGER) ASC,
-                CAST(SPLIT_PART(ka.kode, '.', 3) AS INTEGER) ASC,
-                CAST(SPLIT_PART(ka.kode, '.', 4) AS INTEGER) ASC,
-                CAST(SPLIT_PART(ka.kode, '.', 5) AS INTEGER) ASC,
-                CAST(SPLIT_PART(ka.kode, '.', 6) AS INTEGER) ASC,
-                CAST(SPLIT_PART(ka.kode, '.', 7) AS INTEGER) ASC,
-                SPLIT_PART(ma.kodemataanggaran, '.', 1) ASC,
-                SPLIT_PART(ma.kodemataanggaran, '.', 2) ASC,
-                SPLIT_PART(ma.kodemataanggaran, '.', 3) ASC,
-                case 
-                    when SPLIT_PART(ma.kodemataanggaran, '.', 5) = '' THEN cast(SPLIT_PART(ma.kodemataanggaran, '.', 4) as INTEGER)
-                    else cast(SPLIT_PART(ma.kodemataanggaran, '.', 5) as INTEGER)
-                END asc
+                COALESCE(NULLIF(SPLIT_PART(ka.kode, '.', 2), ''), '0')::INTEGER ASC,
+                COALESCE(NULLIF(SPLIT_PART(ka.kode, '.', 3), ''), '0')::INTEGER ASC,
+                COALESCE(NULLIF(SPLIT_PART(ka.kode, '.', 4), ''), '0')::INTEGER ASC,
+                COALESCE(NULLIF(SPLIT_PART(ka.kode, '.', 5), ''), '0')::INTEGER ASC,
+                COALESCE(NULLIF(SPLIT_PART(ka.kode, '.', 6), ''), '0')::INTEGER ASC,
+                COALESCE(NULLIF(SPLIT_PART(ka.kode, '.', 7), ''), '0')::INTEGER ASC,
+                COALESCE(NULLIF(SPLIT_PART(ma.kodemataanggaran, '.', 1), ''), '0')::INTEGER ASC,
+                COALESCE(NULLIF(SPLIT_PART(ma.kodemataanggaran, '.', 2), ''), '0')::INTEGER ASC,
+                COALESCE(NULLIF(SPLIT_PART(ma.kodemataanggaran, '.', 3), ''), '0')::INTEGER ASC,
+                COALESCE(NULLIF(SPLIT_PART(ma.kodemataanggaran, '.', 4), ''), '0')::INTEGER ASC,
+                COALESCE(NULLIF(SPLIT_PART(ma.kodemataanggaran, '.', 5), ''), '0')::INTEGER ASC,
+                COALESCE(NULLIF(SPLIT_PART(ma.kodemataanggaran, '.', 6), ''), '0')::INTEGER ASC
         "));
         // dd($dataSPJ);
 
@@ -26588,7 +27106,7 @@ public function suratBuktiPengembalian(Request $request)
                 sr.statusenabled = TRUE
                 AND sr.kdprofile = 30
                 AND ta.tahun = '".$settingRBA->tahunanggaran."'
-                AND sr.statusls IS NOT NULL AND sr.statusls != ''
+                AND sr.objectcarabayarfk = 3
                 -- AND sr.objectasalprodukfk IN (".implode(',', $asalProduk).")
                 ".$asalproduk_sr."
             GROUP BY
@@ -26604,19 +27122,18 @@ public function suratBuktiPengembalian(Request $request)
                 mp.mataanggaranpermen,
                 ja.id
             ORDER BY
-                CAST(SPLIT_PART(ka.kode, '.', 2) AS INTEGER) ASC,
-                CAST(SPLIT_PART(ka.kode, '.', 3) AS INTEGER) ASC,
-                CAST(SPLIT_PART(ka.kode, '.', 4) AS INTEGER) ASC,
-                CAST(SPLIT_PART(ka.kode, '.', 5) AS INTEGER) ASC,
-                CAST(SPLIT_PART(ka.kode, '.', 6) AS INTEGER) ASC,
-                CAST(SPLIT_PART(ka.kode, '.', 7) AS INTEGER) ASC,
-                SPLIT_PART(ma.kodemataanggaran, '.', 1) ASC,
-                SPLIT_PART(ma.kodemataanggaran, '.', 2) ASC,
-                SPLIT_PART(ma.kodemataanggaran, '.', 3) ASC,
-                case 
-                    when SPLIT_PART(ma.kodemataanggaran, '.', 5) = '' THEN cast(SPLIT_PART(ma.kodemataanggaran, '.', 4) as INTEGER)
-                    else cast(SPLIT_PART(ma.kodemataanggaran, '.', 5) as INTEGER)
-                END asc
+                COALESCE(NULLIF(SPLIT_PART(ka.kode, '.', 2), ''), '0')::INTEGER ASC,
+                COALESCE(NULLIF(SPLIT_PART(ka.kode, '.', 3), ''), '0')::INTEGER ASC,
+                COALESCE(NULLIF(SPLIT_PART(ka.kode, '.', 4), ''), '0')::INTEGER ASC,
+                COALESCE(NULLIF(SPLIT_PART(ka.kode, '.', 5), ''), '0')::INTEGER ASC,
+                COALESCE(NULLIF(SPLIT_PART(ka.kode, '.', 6), ''), '0')::INTEGER ASC,
+                COALESCE(NULLIF(SPLIT_PART(ka.kode, '.', 7), ''), '0')::INTEGER ASC,
+                COALESCE(NULLIF(SPLIT_PART(ma.kodemataanggaran, '.', 1), ''), '0')::INTEGER ASC,
+                COALESCE(NULLIF(SPLIT_PART(ma.kodemataanggaran, '.', 2), ''), '0')::INTEGER ASC,
+                COALESCE(NULLIF(SPLIT_PART(ma.kodemataanggaran, '.', 3), ''), '0')::INTEGER ASC,
+                COALESCE(NULLIF(SPLIT_PART(ma.kodemataanggaran, '.', 4), ''), '0')::INTEGER ASC,
+                COALESCE(NULLIF(SPLIT_PART(ma.kodemataanggaran, '.', 5), ''), '0')::INTEGER ASC,
+                COALESCE(NULLIF(SPLIT_PART(ma.kodemataanggaran, '.', 6), ''), '0')::INTEGER ASC
         "));
         // dd($dataSPJLS);
 
@@ -30329,6 +30846,7 @@ public function suratBuktiPengembalian(Request $request)
                     COALESCE ( SUM ( kb.subtotal ), 0 ) AS jumlahanggaran,
                     0 AS panjar,
                     0 AS spj,
+                    0 AS spj_prev, 0 AS spj_current,
                     0 AS panjarspj 
                 FROM
                     keteranganbelanja_t kb
@@ -30395,7 +30913,7 @@ public function suratBuktiPengembalian(Request $request)
                     ma.namamataanggaran,
                     0 AS jumlahanggaran,
                     COALESCE ( SUM ( P.jumlah ), 0 ) - COALESCE ( SUM ( pp.jumlahpengembalian ), 0 ) AS panjar,
-                    0 AS spj,
+                    0 AS spj, 0 AS spj_prev, 0 AS spj_current,
                     0 AS panjarspj 
                 FROM
                     panjar_t P 
@@ -30429,7 +30947,7 @@ public function suratBuktiPengembalian(Request $request)
                     ma.namamataanggaran,
                     0 AS jumlahanggaran,
                     0 AS panjar, 
-                    0 AS spj,
+                    0 AS spj, 0 AS spj_prev, 0 AS spj_current,
                     COALESCE ( SUM ( sp.jumlahspj ), 0 ) AS panjarspj
                 FROM
                     panjar_t P 

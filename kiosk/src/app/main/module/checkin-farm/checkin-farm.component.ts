@@ -99,15 +99,25 @@ export class CheckinFarmComponent implements OnInit , AfterViewInit{
     noRegFarm = '';
   submitNoRegFarm() {
     if (this.noRegFarm) {
-    console.log('Nomor reservasi:', this.noRegFarm);
-    // this.closePopup();
-    window.open(Configuration.get().apiBackend + 'medifirst2000/report/cetak-antrian-farm?noreg='
-            + this.noRegFarm
-            + '&kdprofile=21', '_blank');
+      const url = Configuration.get().apiBackend + 'medifirst2000/report/cetak-antrian-farm?noreg='
+        + this.noRegFarm;
 
-      this.noRegFarm = undefined
+      this.service.get(url, { responseType: 'text' }).subscribe({
+        next: (response) => {
+          if (response === 'Resep tidak ditemukan') {
+            alert('Resep farmasi belum tersedia. Silakan kembali setelah dokter membuat resep.');
+          } else {
+            window.open(url, 'BuktiDaftar', 'width=800,height=800,scrollbars=yes,resizable=yes');
+          }
+        },
+        error: (err) => {
+          alert('Pasien Rawat Inap tidak perlu melakukan check-in farmasi melalui kiosk, silakan hubungi petugas farmasi untuk informasi lebih lanjut.');
+        }
+      });
+
+      // this.noRegFarm = undefined;
     } else {
-    alert('Masukan No Registrasi Terlebih Dahulu.');
+      alert('Masukan No Registrasi Terlebih Dahulu.');
     }
     // jalankan logika pencarian / validasi
     // this.closePopup();

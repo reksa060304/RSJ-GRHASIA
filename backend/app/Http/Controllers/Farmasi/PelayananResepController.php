@@ -2176,7 +2176,14 @@ class PelayananResepController extends ApiController
             $newSR->pasienfk = $r_SR['pasienfk'];
             $newSR->penulisresepfk = $r_SR['penulisresepfk'];
             $newSR->ruanganfk = $r_SR['ruanganfk'];
-            $newSR->status = 0;//$r_SR['status'];;
+            // Jika input manual (noorder kosong),
+            // status langsung = Proses Penyiapan Obat
+            $noorderVal = $r_SR['noorder'] ?? '';
+            if ($noorderVal == '') {
+                $newSR->status = 5; // Proses Penyiapan Obat 
+            } else {
+                $newSR->status = 0; // Menunggu Verifikasi 
+            }
             $newSR->tglresep =  $r_SR['tglresep'];//->format('Y-m-d H:i:s');
             if(isset($r_SR['cito'])){
                 $newSR->cito =  $r_SR['cito'];
@@ -2618,7 +2625,7 @@ class PelayananResepController extends ApiController
                      'pm.namapasien')
             ->where('apd.norec', $r_SR['pasienfk'])
             ->first();
-            if ($r_SR['noorder'] != 'EditResep') {
+            if ($r_SR['noorder'] != 'EditResep' && (int)$dataDetail->objectdepartemenfk != 16) {
                 $historyOrder = StrukOrder::where('noorder', $r_SR['noorder'])->where('kdprofile', $idProfile)->first();                    
                     $noAntri = "";
                     if ($historyOrder != null ){
@@ -2638,16 +2645,21 @@ class PelayananResepController extends ApiController
                             ]);
                         }else{
                             $kelpasien = (int)$dataDetail->objectkelompokpasienlastfk;
-                            $countAntrian = AntrianApotik::where('jenis', $racikanORnonracikan)
-                                ->where('kdprofile', $idProfile)
-                                ->whereBetween('tglresep', [date('Y-m-d 00:00'), date('Y-m-d 23:59')])
-                                ->max('noantri');
-                            
-                            $noAntriApotik = (str_pad((int)$countAntrian + 1, 4, "0", STR_PAD_LEFT));                    
+                            $last = \DB::table('antrianapotik_t')
+                                ->where('jenis', $racikanORnonracikan)
+                                ->whereRaw('DATE(tglresep) = CURRENT_DATE')
+                                ->orderBy('noantri', 'desc')
+                                ->lockForUpdate()
+                                ->first();
+
+                            $countAntrian = $last ? ((int)$last->noantri + 1) : 1;
+
+                            $noAntriApotik = str_pad($countAntrian, 4, "0", STR_PAD_LEFT);
+                
                             $newAA = new AntrianApotik();
                             $norecAA = $newAA->generateNewId();
                             $newAA->norec = $norecAA;
-                            $newAA->kdprofile = $idProfile;
+                            $newAA->kdprofile = 30;
                             $newAA->statusenabled = true;
                             $newAA->noantri = $noAntriApotik;
                             $newAA->keterangan = $dataDetail->namapasien;
@@ -2656,21 +2668,25 @@ class PelayananResepController extends ApiController
                             $newAA->noresep = $noResep;
                             $newAA->noorder = $r_SR['noorder'];
                             $newAA->status = '6';
-                            
+                            $newAA->source = 'VERIF';
                             $newAA->save();                           
                         }    
                     }else{
                         $kelpasien = (int)$dataDetail->objectkelompokpasienlastfk;
-                        $countAntrian = AntrianApotik::where('jenis', $racikanORnonracikan)
-                            ->where('kdprofile', $idProfile)
-                            ->whereBetween('tglresep', [date('Y-m-d 00:00'), date('Y-m-d 23:59')])
-                            ->max('noantri');
-                        
-                        $noAntriApotik = (str_pad((int)$countAntrian + 1, 4, "0", STR_PAD_LEFT));                    
+                         $last = \DB::table('antrianapotik_t')
+                                ->where('jenis', $racikanORnonracikan)
+                                ->whereRaw('DATE(tglresep) = CURRENT_DATE')
+                                ->orderBy('noantri', 'desc')
+                                ->lockForUpdate()
+                                ->first();
+
+                        $countAntrian = $last ? ((int)$last->noantri + 1) : 1;
+
+                        $noAntriApotik = str_pad($countAntrian, 4, "0", STR_PAD_LEFT);                  
                         $newAA = new AntrianApotik();
                         $norecAA = $newAA->generateNewId();
                         $newAA->norec = $norecAA;
-                        $newAA->kdprofile = $idProfile;
+                        $newAA->kdprofile = 30;
                         $newAA->statusenabled = true;
                         $newAA->noantri = $noAntriApotik;
                         $newAA->keterangan = $dataDetail->namapasien;
@@ -2679,7 +2695,7 @@ class PelayananResepController extends ApiController
                         // $newAA->strukresepfk = $norec_SR;
                         $newAA->noresep = $noResep;
                         $newAA->status = '6';
-                        
+                        $newAA->source = 'VERIF';
                         $newAA->save();   
                     }
             }

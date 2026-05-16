@@ -287,6 +287,7 @@ class KasirController extends ApiController
                     'kt.reportdisplay as jenistagihan',
                     'sp.isverifikasi',
                     'keteranganlainnya',
+                    'sp.keterangan',
                     'sp.nosbklastfk',
                     'sp.nosbmlastfk',
                     'kt.id as jenisTagihanId',
@@ -305,6 +306,7 @@ class KasirController extends ApiController
                     'sp.namapasien_klien',
                     'kt.reportdisplay as jenistagihan',
                     'keteranganlainnya',
+                    'sp.keterangan',
                     'sp.nosbklastfk',
                     'sp.nosbmlastfk',
                     'kt.id as jenisTagihanId',
@@ -360,16 +362,23 @@ class KasirController extends ApiController
             if ($item->nosbmlastfk != null || $item->nosbklastfk != null) {
                 $statusBayar = "Lunas";
             }
+
+            $keterangan = '-';
+            if (!empty($item->keteranganlainnya) && $item->keteranganlainnya != '-') {
+                $keterangan = $item->keteranganlainnya;
+            } elseif (!empty($item->keterangan) && $item->keterangan != '-') {
+                $keterangan = $item->keterangan;
+            }
+
             $result[] = array(
                 'noRec' => $item->norec,
                 'tglTransaksi' => $item->tglstruk,
                 'namaPelanggan' => $item->namapasien_klien,
                 'jenisTagihan' => $item->jenistagihan,
                 'totalDibayar' => $item->totalharusdibayar,
-                'keterangan' => $item->keteranganlainnya,
+                'keterangan' => $keterangan,
                 'jenisTagihanId' => $item->jenisTagihanId,
                 'statusBayar' => $statusBayar
-
             );
         }
 

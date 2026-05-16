@@ -3,6 +3,7 @@ import { Component, OnInit, ViewEncapsulation } from '@angular/core';
 import { Router } from '@angular/router';
 import { ToastrService } from 'ngx-toastr';
 import { HttpService } from '../httpService';
+import { Configuration } from '../config';
 
 @Component({
   selector: 'app-self-regis',
@@ -55,13 +56,21 @@ export class SelfRegisComponent implements OnInit {
       "jenis": jenis
     }
     this.httpService.post('medifirst2000/kiosk/save-antrian', antrian).subscribe(response => {
-      this.http.get('http://127.0.0.1:1237/printvb/cetak-antrian?cetak=1&norec=' + response.noRec).subscribe(result => {
-        // do something with response
-      })
+      
+      const url = Configuration.get().apiBackend +
+        'medifirst2000/report/cetak-antrian?norec=' +
+        response.noRec +
+        '&kdprofile=30';
+
+      window.open(url, '_blank');
+
+      setTimeout(() => {
+        this.router.navigate(['/touchscreen/checkin-v2']);
+      }, 2000);
 
     }, error => {
+      console.error('Save antrian gagal', error);
+    });
 
-    })
-    window.history.back()
   }
 }

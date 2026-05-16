@@ -355,7 +355,7 @@ export class ReservasiOnlineComponent implements OnInit {
       { label: 'Jadwal Profesional Pemberi Asuhan', icon: 'fa fa-fw fa-stethoscope' },
       { label: 'Info Tempat Tidur', icon: 'fa fa-fw fa-bed' },
       // { label: 'Master Kemasan', icon: 'fa fa-fw fa-building' },
-      { label: 'Info Jadwal Poliklinik', icon: 'fa fa-fw fa-bed' },
+      // { label: 'Info Jadwal Poliklinik', icon: 'fa fa-fw fa-bed' },
 
       // { label: 'Denah', icon: 'fa fa-fw fa-map-marker' },
     ];
@@ -596,24 +596,27 @@ export class ReservasiOnlineComponent implements OnInit {
 
   }
   hapusHistory(selected) {
-    if(selected.ischeckin == true ){
-      this.messageService.warn('Info', 'Reservasi yg sudah check-in tidak bisa dibatalkan')
-      return
-    }
-    let data = {
-      'norec': selected.norec
-    }
-    this.confirmationService.confirm({
-      message: 'Yakin mau batal reservasi?',
-      accept: () => {
-        this.httpService.post('medifirst2000/reservasionline/delete', data).subscribe(res => {
-          this.findHistory()
+    // if(selected.ischeckin == true ){
+    //   this.messageService.warn('Info', 'Reservasi yg sudah check-in tidak bisa dibatalkan')
+    //   return
+    // }
+    // let data = {
+    //   'norec': selected.norec
+    // }
+    // this.confirmationService.confirm({
+    //   message: 'Yakin mau batal reservasi?',
+    //   accept: () => {
+    //     this.httpService.post('medifirst2000/reservasionline/delete', data).subscribe(res => {
+    //       this.findHistory()
 
-        }, error => {
+    //     }, error => {
 
-        })
-      }
-    })
+    //     })
+    //   }
+    // })
+
+    this.messageService.warn('Info', 'Untuk hapus reservasi silakan hubungi petugas');
+
   }
   cetakHistory(selected) {
     this.kodeReservasi = selected.noreservasi
@@ -1529,8 +1532,10 @@ export class ReservasiOnlineComponent implements OnInit {
                 let hariFix = this.listHari[_hari];
                 element.tanggalreservasi = hariFix + ', ' + 
                   moment(new Date(element.tanggalreservasi)).format('DD/MMM/YYYY HH:mm');
+                // Guard: jika tanggal null, fallback dari tanggalreservasi (ambil tanggal saja)
+                const tglSumber = element.tanggal || element.tanggalreservasi;
                 element.tanggal = hariFix + ', ' + 
-                  moment(new Date(element.tanggal)).format('DD/MMM/YYYY');
+                  moment(new Date(tglSumber)).format('DD/MMM/YYYY');
               }
               
               let tglReserDays = new Date(resultNoReservasi.tanggalreservasi);
@@ -1574,7 +1579,11 @@ export class ReservasiOnlineComponent implements OnInit {
               label: "History"
             };
             
-            this.cetakHistory(resultNoReservasi);
+            // Cari record yang baru disimpan dari dataSource (hasil get-history).
+            const matchedHistoryRecord = this.dataSource.find(
+              item => item.noreservasi === resultNoReservasi.noreservasi
+            );
+            this.cetakHistory(matchedHistoryRecord || resultNoReservasi);
             this.simpanVisible = true;
             
           }, error => {

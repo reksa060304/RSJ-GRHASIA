@@ -429,6 +429,10 @@
             "nameDep": "KategoryDietRevCtrl",
             "urlDep": "module/SysAdmin/KategoryDietRevCtrl"
         },
+         {
+            "nameDep": "KategoryProdukDietCtrl",
+            "urlDep": "module/SysAdmin/KategoryProdukDietCtrl"
+        },
         {
             "nameDep": "MasterSiklusGiziRevCtrl",
             "urlDep": "module/SysAdmin/MasterSiklusGiziRevCtrl"
@@ -1076,6 +1080,10 @@
         {
             "nameDep": "LaporanPerJenisAnggaranCtrl",
             "urlDep": "module/Perencanaan/LaporanPerJenisAnggaranCtrl"
+        },
+        {
+            "nameDep": "CetakNPDCtrl",
+            "urlDep": "module/Perencanaan/CetakNPDCtrl"
         },
         {
             "nameDep": "LaporanPPTKCtrl",

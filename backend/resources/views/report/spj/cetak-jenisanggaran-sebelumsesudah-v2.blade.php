@@ -5,14 +5,36 @@
         <title>
             Rekap RBA Jenis Anggaran
         </title>
+
     
     </head>
     <style>
         @page {
-            size: legal landscape;
-            margin: 10mm;
+            size: 550mm 297mm;
+            margin: 5mm 8mm;
             padding: 0;
-            font-size: 12pt;
+        }
+
+        @page :first {
+            size: 550mm 297mm;
+            margin: 5mm 8mm;
+        }
+
+        @media print {
+            body {
+                margin: 0;
+            }
+        }
+
+        body {
+            font-family: Arial;
+        }
+
+        table {
+            font-family: 'Arial';
+            margin: 0;
+            padding: 0;
+            font-size: 9pt;
         }
 
         #kop {
@@ -31,61 +53,67 @@
         }
         #konten tr td{
             border: 1px solid black;
-            padding: .3em;
+            padding: 4px 5px;
+        }
+        #konten thead td{
+            font-weight: bold;
+            text-transform: uppercase;
         }
     </style>
     <body>
-        
-        {{-- Kop --}}
-        <table id="kop">
-            <tbody>
-                <tr>
-                    <td rowspan="2">
-                        @if(stripos(\Request::url(), 'localhost') !== FALSE)
-                        <img src="{{ asset('img/LOGO GRHASIA.png') }}" style="width: 2.5cm" >
-                        @else
-                            <img src="{{ asset('service/img/LOGO GRHASIA.png') }}" style="width: 2.5cm" >
-                        @endif
-                        {{-- <img src="img/logo_grhasia_com.png" alt="Logo" style="width: "width: 2.5cm"> --}}
-                    </td>
-                    <td align="center" style="padding: 3px;" width="700">
-                        <b style="font-size: 23px;">
-                            RENCANA BISNIS DAN ANGGARAN<br>
-                            BADAN LAYANAN UMUM DAERAH
-                        </b>
-                    </td>
-                    <td rowspan="2">
-                        <b style="font-size: 23px;">
-                            RBA
-                        </b>
-                        <br>
-                        {{ $tahap[0]->tahap }}
-                    </td>
-                </tr>
-                <tr>
-                    <td>
-                        <b>RS Jiwa GRHASIA<br>TAHUN {{ date('Y') }}</b>
-                    </td>
-                </tr>
-                <tr>
-                    <td colspan="3">
-                        <p align="center" style="margin-top: 10px; margin-bottom:10px">
-                            <font style="font-size: 12pt; " color="#000000">
-                                    <b>REKAP ANGGARAN TIAP SUB KEGIATAN (JENIS ANGGARAN) <br> TAHUN ANGGARAN {{ date('Y') }}</b>
-                            </font>
-                            <br>
-                        </p>
-                    </td>
-                </tr>
-            </tbody>
-        </table>
-
-        {{-- data --}}
-        <table id="konten">
+        <table width="100%" cellpadding="0" cellspacing="0" border="0">
+            <tr>
+                <td style="padding: 0;">
+                    {{-- Kop --}}
+                    <table id="kop" cellpadding="0" cellspacing="0" width="100%" border="0">
+                        <tbody>
+                            <tr>
+                                <td style="padding: 5px; width: 15%;">
+                                    <p align="center">
+                                        @if(stripos(\Request::url(), 'localhost') !== FALSE)
+                                        <img src="{{ asset('img/LOGO GRHASIA.png') }}" style="width: 100px" >
+                                        @else
+                                        <img src="{{ asset('service/img/LOGO GRHASIA.png') }}" style="width: 100px" >
+                                        @endif
+                                    </p>
+                                </td>
+                                <td align="center" style="padding: 5px; width: auto;">
+                                    <b style="font-size: 23px;">
+                                        RENCANA BISNIS DAN ANGGARAN<br>
+                                        BADAN LAYANAN UMUM DAERAH<br>
+                                        RS JIWA GRHASIA
+                                    </b>
+                                </td>
+                                <td align="center" style="padding: 5px; width: 15%;">
+                                    <b style="font-size: 23px;">
+                                        RBA
+                                    </b>
+                                    <br>
+                                    {{ $tahap[0]->tahap }}
+                                </td>
+                            </tr>
+                            <tr>
+                                <td colspan="3">
+                                    <p align="center" style="margin-top: 10px; margin-bottom:10px">
+                                        <font style="font-size: 12pt; " color="#000000">
+                                            <b>REKAP ANGGARAN TIAP SUB KEGIATAN (JENIS ANGGARAN) <br> TAHUN ANGGARAN {{ date('Y') }}</b>
+                                        </font>
+                                        <br>
+                                    </p>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </td>
+            </tr>
+            <tr>
+                <td style="padding: 0;">
+                    {{-- data --}}
+                    <table id="konten" width="100%">
             <thead>
                 <tr>
-                    <td rowspan="3">Kode Kegiatan</td>
-                    <td rowspan="3">Nama Kegiatan</td>
+                    <td rowspan="3" style="min-width: 80px;">Kode Kegiatan</td>
+                    <td rowspan="3" style="min-width: 400px;">Nama Kegiatan</td>
                     <td colspan="6">Anggaran Sebelum Perubahan</td>
                     <td colspan="6">Anggaran Sesudah Perubahan</td>
                     <td rowspan="3">Bertambah / Berkurang</td>
@@ -109,7 +137,7 @@
                     <td>Modal Lainnya</td>
                 </tr>
             </thead>
-            <tbody style="font-size: 7pt;">
+            <tbody>
                 @php
                     $kodeKegiatan3 = '';
                     $kodeKegiatan2 = '';
@@ -296,6 +324,8 @@
                         $totalbelanjamodallainnya2 = 0;
                         $totalsemua2 = 0;
 
+                        $totalbertambahberkurang = 0;
+
                         foreach ($data as $tot) {
                             
                             // sesudah
@@ -313,6 +343,9 @@
                             $totalbelanjamodalalatmesin2 = $totalbelanjamodalalatmesin2 + (int)$tot->belanjamodalalatmesin2;
                             $totalbelanjamodallainnya2 = $totalbelanjamodallainnya2 + (int)$tot->belanjamodallainnya2;
                             $totalsemua2 = $totalsemua2 + (int)$tot->total2;
+
+                            // bertambah berkurang per baris
+                            $totalbertambahberkurang = $totalbertambahberkurang + abs((int)$tot->total2 - (int)$tot->total);
                         }
                     @endphp
                     
@@ -333,48 +366,38 @@
                     <td style="font-weight:bold; text-align:right;">{{ $totalsemua == 0 ? '' : number_format($totalsemua, 2, '.', ',') }}</td>
 
                     {{-- bertambah berkurang --}}
-                    <td style="font-weight:bold; text-align:right;">{{ number_format(abs($totalsemua2 - $totalsemua), 2, '.', ',') }}</td>
+                    <td style="font-weight:bold; text-align:right;">{{ $totalbertambahberkurang == 0 ? '' : number_format($totalbertambahberkurang, 2, '.', ',') }}</td>
                 </tr>
             </tbody>
         </table>
 
-        <table style="width:40%; margin-left:auto;">
-            <tr>
-                <td>
-                    <p align="center" style="margin-top: 50px;">
-                        <font style="font-size: 12pt; " color="#000000" face="Arial">
+        <table cellpadding="0" cellspacing="0" width="300" border="0" style="margin-left: auto; margin-right: 0;">
+            <thead>
+                <tr>
+                    <td>
+                        <p align="center" style="margin-top: 20px; margin-bottom: 0;">
+                            <font style="font-size: 12pt;" color="#000000" face="Arial">
                                 Yogyakarta, {{ $tanggalcetak }}
-                        </font>
-                    </p>
-                </td>
-            </tr>
-            <tr>
-                <td>
-                    <p align="center" style="margin-bottom:50px">
-                        <font style="font-size: 12pt; " color="#000000" face="Arial">
-                                Kepala BLUD RS Jiwa GRHASIA
-                        </font>
-                    </p>
-                </td>
-            </tr>
-            <tr>
-                <td style="padding-top: 1.5em;">
-                    <p align="center" style="margin-top: 50px;">
-                        <font style="font-size: 12pt; " color="#000000" face="Arial">
-                            <u>dr. Akhmad Akhadi Syamsudhuha, M.P.H</u>
-                        </font>
-                    </p>
-                </td>
-            </tr>
-            <tr>
-                <td>
-                    <p align="center">
-                        <font style="font-size: 12pt; " color="#000000" face="Arial">
-                        NIP. 19680714 200012 1 002
-                        </font>
-                    </p>
-                </td>
-            </tr>
+                            </font>
+                        </p>
+                        <p align="center" style="margin: 0 0 60px 0;">
+                            <font style="font-size: 12pt;" color="#000000" face="Arial">
+                                Direktur
+                            </font>
+                        </p>
+                        <p align="center" style="margin: 0;">
+                            <font style="font-size: 12pt;" color="#000000" face="Arial">
+                                <u>{{ isset($settingrba[0]) ? $settingrba[0]->namalengkap : '' }}</u>
+                            </font>
+                        </p>
+                        <p align="center" style="margin: 0;">
+                            <font style="font-size: 12pt;" color="#000000" face="Arial">
+                                NIP. {{ isset($settingrba[0]) ? $settingrba[0]->nippns : '' }}
+                            </font>
+                        </p>
+                    </td>
+                </tr>
+            </thead>
         </table>
 
         <script>

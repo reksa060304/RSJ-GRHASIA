@@ -2184,6 +2184,26 @@
       }
     ]
   },
+    {
+    "name": "KategoryProdukDiet",
+    "url": "/S2F0ZWdvcnlQcm9kdWtEaWV0",
+    "templateurl": "module/SysAdmin/KategoryProdukDiet.html",
+    "controller": "KategoryProdukDietCtrl",
+    "deps": [
+      {
+        "module": "Services",
+        "define": "Service"
+      },
+      {
+        "module": "LoginServices",
+        "define": "LoginService"
+      },
+      {
+        "module": "MedifirstService",
+        "define": "MedifirstService"
+      }
+    ]
+  },
   {
     "name": "MasterSiklusGiziRev",
     "url": "/TWFzdGVyU2lrbHVzR2l6aVJldg==",
@@ -6106,6 +6126,26 @@
     "url": "/LaporanPerJenisAnggaran/:parameter",
     "templateurl": "module/Perencanaan/LaporanPerJenisAnggaran.html",
     "controller": "LaporanPerJenisAnggaranCtrl",
+    "deps": [
+      {
+        "module": "Services",
+        "define": "Service"
+      },
+      {
+        "module": "LoginServices",
+        "define": "LoginService"
+      },
+      {
+        "module": "MedifirstService",
+        "define": "MedifirstService"
+      }
+    ]
+  },
+  {
+    "name": "CetakNPD",
+    "url": "/CetakNPD",
+    "templateurl": "module/Perencanaan/CetakNPD.html",
+    "controller": "CetakNPDCtrl",
     "deps": [
       {
         "module": "Services",

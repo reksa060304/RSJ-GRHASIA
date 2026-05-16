@@ -155,6 +155,7 @@ Route::group(['middleware' => 'cors', 'prefix' => 'service'], function () {
 
         // start bendahara pengeluaran
         Route::get('bendaharapengeluaran/get-sppspmspj-byspj', 'BendaharaPengeluaran\BendaharaPengeluaranController@getSPPSPMSPJBySPJ');
+        Route::get('bendaharapengeluaran/get-jenis-bukti-spp', 'BendaharaPengeluaran\BendaharaPengeluaranController@getJenisBuktiSPP');
         Route::get('report/get-cetak-sppspj', 'Report\ReportController@getCetakSPPSPJ');
         Route::get('report/get-cetak-spmspj', 'Report\ReportController@getCetakSPMSPJ');
         Route::get('report/get-cetak-sptjm', 'Report\ReportController@getCetakSPTJM');
@@ -1069,6 +1070,7 @@ Route::group(['middleware' => 'cors', 'prefix' => 'service'], function () {
           Route::post('emr/hapus-delegasi-obat', 'EMR\EMRController@hapusDelegasiObat');
 
           Route::get('emr/get-emr-transaksi-detail-form', 'EMR\EMRController@getEMRTransaksiDetailForm');
+          Route::get('emr/get-emr-transaksi-detail-form-new', 'EMR\EMRController@getEMRTransaksiDetailFormNew');
           Route::post('emr/hapus-emr-transaksi-norec', 'EMR\EMRController@hapusEMRtransaksiNorec');
           Route::post('emr/save-verif-cppt-dokter', 'EMR\EMRController@saveVerifCPPTEmr');
           Route::post('emr/save-kepatuhancuci', 'EMR\EMRController@saveDataKepatuhanCuci');
@@ -1174,6 +1176,7 @@ Route::group(['middleware' => 'cors', 'prefix' => 'service'], function () {
           Route::get('farmasi/get-alergi', 'Farmasi\ResepElektronikController@getAlergi');
           Route::get('farmasi/get-daftar-detail-order', 'Farmasi\ResepElektronikController@getDaftarDetailOrder');
           Route::post('farmasi/save-status-resepelektonik', 'Farmasi\ResepElektronikController@saveStatusResepElektronik');
+          Route::post('farmasi/save-status-panggil-resep', 'Farmasi\ResepElektronikController@saveStatusPanggilResep');
           Route::post('farmasi/update-status-grabexpress', 'Farmasi\ResepElektronikController@updateStatusGrabExpress');
           Route::post('farmasi/cek-stokproduk-farmasi','Farmasi\PelayananResepController@cekStokFarmasi');
           // Route::post('updatebro','Farmasi\PelayananResepController@updatebro');
@@ -1592,6 +1595,7 @@ Route::group(['middleware' => 'cors', 'prefix' => 'service'], function () {
           Route::get('report/get-cetak-keuangan-per-rekening','Report\ReportController@CetakKeuanganPerRekening');
           Route::get('report/get-cetak-keuangan-per-rekening-permen','Report\ReportController@CetakKeuanganPerRekeningPermen');
           Route::get('report/get-cetak-spj-dan-monev','Report\ReportController@CetakSPJMonev');
+          Route::get('report/get-cetak-npd','Report\ReportController@CetakNPD');
           Route::get('report/get-cetak-spj-dan-monev-rba','Report\ReportController@CetakSPJMonevRBA');
           Route::get('report/get-cetak-penyerap-verif','Report\ReportController@CetakPenyerapVerif');
           Route::get('report/get-cetak-penyerap-verif-rba','Report\ReportController@CetakPenyerapVerifRBA');
@@ -2384,6 +2388,7 @@ Route::group(['middleware' => 'cors', 'prefix' => 'service'], function () {
           Route::get('rawatjalan/get-daftar-surat', 'RawatJalan\RawatJalanController@getDaftarSurat');
           Route::get('rawatjalan/get-daftarpasien-by-diagnosa', 'RawatJalan\RawatJalanController@getDaftarSurat');
           Route::get('rawatjalan/get-order-konsul', 'RawatJalan\RawatJalanController@getOrderKonsul');
+          Route::get('rawatjalan/get-order-konsul-new', 'RawatJalan\RawatJalanController@getOrderKonsulNew');
           Route::post('rawatjalan/save-konsul-from-order', 'RawatJalan\RawatJalanController@saveKonsulFromOrder');
           Route::post('rawatjalan/tolak-konsul-from-order', 'RawatJalan\RawatJalanController@tolakKonsulFromOrder');
           Route::get('rawatjalan/get-combo', 'RawatJalan\RawatJalanController@getComboS');
@@ -3473,6 +3478,8 @@ Route::group(['middleware' => 'cors', 'prefix' => 'service'], function () {
                 Route::post('sysadmin/general/save-jenis-kerusakan-simrs','SysAdmin\GeneralController@SaveDataJenisKerusakanSIMRS');
                 Route::post('sysadmin/general/hapus-permohonan-simrs','SysAdmin\GeneralController@HapusPermohonanSIMRS');
                 Route::post('sysadmin/general/save-map-administrasi','SysAdmin\GeneralController@saveMappingAdminstrasiCuy');
+                Route::get('sysadmin/general/get-combo-administrasi-penunjang', 'SysAdmin\GeneralController@getComboAdministrasiPenunjang');
+                Route::post('sysadmin/general/save-map-administrasi-penunjang','SysAdmin\GeneralController@saveMappingAdminPenunjang');
                 Route::post('sysadmin/general/save-map-laporankeuanganlingkuppelayanan','SysAdmin\GeneralController@saveMappingLaporanKeuanganToLingkupPelayanan');
                 Route::get('sysadmin/logging/save-log-meninggal-pasien-rj', 'SysAdmin\LoggingController@saveLogMeninggalPasienRJ');
                 Route::get('sysadmin/logging/save-log-pulang-pasien-rj', 'SysAdmin\LoggingController@saveLogPulangPasienRJ');
@@ -3558,6 +3565,7 @@ Route::group(['middleware' => 'cors', 'prefix' => 'service'], function () {
                 Route::get('sysadmin/master/get-ruanganbyidDepart/{id}', 'SysAdmin\Master\MasterController@getRuanganbyIddepartemen');
                 Route::get('sysadmin/master/list-produk/{limit?}', 'SysAdmin\Master\MasterController@getListProdukMap');
                 Route::get('sysadmin/master/get-kelompok-produk', 'SysAdmin\Master\MasterController@getkelompokproduk');
+                Route::get('sysadmin/master/get-kategory-produk-catering', 'SysAdmin\Master\MasterController@getkategoryprodukcatering');
                 Route::get('sysadmin/master/get-daftar-jenisdiet', 'SysAdmin\Master\MasterController@getDaftarJenisDiet');
                 Route::get('sysadmin/master/get-daftar-jeniswaktu', 'SysAdmin\Master\MasterController@getDaftarJenisWaktu');
                 Route::get('sysadmin/master/get-departemen', 'SysAdmin\Master\MasterController@getDepartemen');
@@ -3625,6 +3633,10 @@ Route::group(['middleware' => 'cors', 'prefix' => 'service'], function () {
                 Route::post('sysadmin/master/delete-kategorydiet', 'SysAdmin\Master\MasterController@deleteKategoryDiet');
                 Route::post('sysadmin/master/save-data-paket', 'SysAdmin\Master\MasterController@saveDataPaket');
                 Route::post('sysadmin/master/save-statusenabled-paket', 'SysAdmin\Master\MasterController@UpdateStatusEnabledPaket');
+
+                Route::post('sysadmin/master/save-kategoryprodukdiet', 'SysAdmin\Master\MasterController@saveKategoryProdukDiet');
+                Route::get('sysadmin/master/get-daftar-kategoryprodukdiet', 'SysAdmin\Master\MasterController@getKategoryProdukDiet');
+                Route::post('sysadmin/master/delete-kategoryprodukdiet', 'SysAdmin\Master\MasterController@deleteKategoryProdukDiet');
 
                 Route::post('sysadmin/master/save-pelayananmutu', 'SysAdmin\Master\MasterController@savePelayananMutu');
                 Route::post('sysadmin/master/delete-pelayananmutu', 'SysAdmin\Master\MasterController@deletePelayananMutu');
@@ -3880,7 +3892,9 @@ Route::group(['middleware' => 'cors', 'prefix' => 'service'], function () {
         Route::get('viewer/get-setting-viewer','Antrian\AntrianController@getSettingViewer');
         Route::get('viewer/get-fotodokter-viewer','Antrian\AntrianController@getFotoDokterViewer');
         Route::get('viewer/get-dipanggil','Antrian\AntrianController@getDipanggil');
+        Route::get('viewer/get-interval-antrian-farmasi','Antrian\AntrianController@getIntervalAntrianFarm');
         Route::get('viewer/get-list-antrian-farmasi','Antrian\AntrianController@getListAntrianFarm');
+        Route::get('viewer/get-list-antrian-farmasi-terlewat','Antrian\AntrianController@getListAntrianFarmTerlewat');
         Route::get('viewer/get-data-viewer-far','Antrian\AntrianController@getViewerFar');
         Route::get('viewer/get-data-status-pelayanan','Antrian\AntrianController@getStatusPelayanan');
 

@@ -401,6 +401,13 @@
     <div kendo-window="popup" k-title="'Penyerahan Obat'" k-visible="false" k-width="550">
         <div class="panel panel-default container_12">
             <div class="grid_12">
+                <div class="grid_12" style="margin-bottom: 10px;">
+                    <button class="k-button k-primary" 
+                            style="width:100%; height: 60px; font-weight: bold; background-color: #ff5722; border-color: #e64a19; color: white; display: flex; align-items: center; justify-content: center;"
+                            ng-click="panggilAntrian()">
+                        <span class="fa fa-volume-up" style="font-size: 25px; margin-right: 15px; vertical-align: middle;"> PANGGIL PASIEN</span>
+                    </button>
+                </div>
                 <div class="grid_12">
                     <div class="grid_6">
                         <label c-label>Rincian</label>
@@ -1486,7 +1493,7 @@
             </div> -->
         </div>
     </div>
-    <div kendo-window="popUpResepDokter" k-title="'Pilih Cetakan Resep Dokter'" k-width="400" k-height="120" k-visible="false"
+    <div kendo-window="popUpResepDokter" k-title="'Pilih Cetakan Resep Dokter'" k-width="500" k-height="250" k-visible="false"
         k-on-open="win2visible = true" k-on-close="win2visible = false">
         <label c-label item="item " c-label-text="Pilih yang ingin dicetak"></label>
         <div class="grid_1">
@@ -1495,11 +1502,15 @@
                 </md-radio-button>
                 <md-radio-button value="2" class="md-primary">Print Skrining
                 </md-radio-button>
+                <md-radio-button value="3" class="md-primary">Print Kesesuaian Obat
+                </md-radio-button>
+                <md-radio-button value="4" class="md-primary">Print Semua
+                </md-radio-button>
             </md-radio-group>
         </div>
         <div class="clear">
             <button class="k-button" ng-click="CETAKRESEPDOKTERREV(cetakResepnya)"
-                style="float:right;margin-top:4%">Cetak </button>
+                style="float:right;margin-top:8%">Cetak </button>
 
         </div>
     </div>

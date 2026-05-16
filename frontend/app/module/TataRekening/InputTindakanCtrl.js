@@ -1529,7 +1529,33 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
 
             $scope.hideSimpan = true
             medifirstService.post('tatarekening/tindakan/save-tindakan', JSON.stringify(objSave)).then(function (e) {
+              //response satu sehat
+              if (e.data.ihsResult) {
+                var resIHS = e.data.ihsResult;
+                var getMsg = function(res) {
+                    if (res && res.issue && res.issue[0]) {
+                        var issue = res.issue[0];
+                        if (issue.details && issue.details.text) return issue.details.text;
+                        if (issue.diagnostics) return issue.diagnostics;
+                        if (issue.code) return issue.code;
+                    }
+                    return null;
+                };
 
+                var msgSR = getMsg(resIHS.ServiceRequest);
+                var msgSP = getMsg(resIHS.Specimen);
+
+                if (msgSR || msgSP) {
+                    var fullError = "";
+                    if (msgSR) fullError += "SR: " + msgSR + ". ";
+                    if (msgSP) fullError += "Specimen: " + msgSP;
+                    toastr.error('Gagal Bridging Satu Sehat: ' + fullError, 'Kesalahan Satu Sehat', { timeOut: 10000 });
+                } else if (resIHS.ServiceRequest && resIHS.ServiceRequest.resourceType !== 'OperationOutcome') {
+                    toastr.success('Berhasil dikirim ke Satu Sehat', 'IHS Sukses');
+                }
+                // console.log('Bridging Result Detail:', resIHS);
+              }
+              // ============================================================
               let params = $scope.item.pasien.noregistrasi
               if ($scope.item.pasien.noreservasi != undefined && $scope.item.pasien.noreservasi != '' && $scope.item.pasien.noreservasi != 'Kios-K') {
                 params = $scope.item.pasien.noreservasi

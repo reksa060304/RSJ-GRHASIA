@@ -330,6 +330,56 @@
             <button class="k-button" ng-click="simpanPanggil()" style="float:right;margin-top:4%">Panggil</button>
         </div>
     </div>
+    <!-- Pop up Jawab Konsul -->
+    <div kendo-window="popUpJawab" k-title="'Jawab Konsultasi'" k-width="650" k-height="480" k-visible="false"
+        k-resizable="false">
+        <div class="panel panel-default container_12">
+            <div class="grid_12">
+                <div class="grid_12">
+                    <div class="grid_4">
+                        <label c-label c-label-text="Ruangan Asal"></label>
+                        <input class="k-textbox" ng-model="itemKonsul.ruanganAsalJawab" disabled style="width: 100%;" />
+                    </div>
+                    <div class="grid_4">
+                        <label c-label c-label-text="Ruangan Tujuan"></label>
+                        <input class="k-textbox" ng-model="itemKonsul.ruanganTujuanJawab" disabled style="width: 100%;" />
+                    </div>
+                    <div class="grid_4">
+                        <label c-label c-label-text="Dokter Tujuan"></label>
+                        <input class="k-textbox" ng-model="itemKonsul.dokterJawab" disabled style="width: 100%;" />
+                    </div>
+                </div>
+                <div class="grid_12" style="margin-top: 15px;">
+                    <label c-label c-label-text="Keterangan Konsul"></label>
+                    <textarea class="k-textbox" ng-model="itemKonsul.keteranganJawab" style="width: 100%; height: 80px; margin-top: 5px;" disabled></textarea>
+                </div>
+                <div class="grid_12" style="margin-top: 15px;">
+                    <label c-label c-label-text="Jawaban Konsul" style="color: #0081ff; font-weight: bold;"></label>
+                    <textarea class="k-textbox" ng-model="itemKonsul.jawaban" style="width: 100%; height: 100px; margin-top: 5px;" placeholder="Isi jawaban di sini..."></textarea>
+                </div>
+            </div>
+            <div class="pull-right" style="margin-top:20px; margin-right: 15px;">
+                <button class="k-button k-primary" ng-click="SaveJawab()" style="width: 100px;">Simpan</button>
+                <button class="k-button" ng-click="batal()" style="width: 100px;">Batal</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Pop up Tolak Order -->
+    <div kendo-window="popUpTolakOrder" k-title="'Tolak Konsultasi'" k-width="400" k-height="250" k-visible="false"
+        k-resizable="false">
+        <div class="panel panel-default container_12">
+            <div class="grid_12">
+                <label cstn-label>Alasan Tolak</label>
+                <textarea ng-model="item.keteranganJawab" style="width: 100%; height: 100px;"></textarea>
+            </div>
+            <div class="pull-right" style="margin-top:10px">
+                <button class="k-button k-primary" ng-click="saveTolakOrder(tolakItem)">Simpan</button>
+                <button class="k-button" ng-click="popUpTolakOrder.close()">Batal</button>
+            </div>
+        </div>
+    </div>
+
     <style>
         .k-window-content .k-content {
             overflow: none

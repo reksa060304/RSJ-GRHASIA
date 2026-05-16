@@ -296,27 +296,23 @@
                 <td>
                     <table style="font-family: Arial;line-height: 12px">
                         <tr>
-                            <td colspan="2" style="font-size: 11pt">Tembusan disampaikan kepada Yth.:</td>
+                            <td colspan="2" style="font-size: 11pt">Tembusan :</td>
                         </tr>
                         <tr>
                             <td style="padding-left: 20px; font-size: 11pt">1. </td>
-                            <td style="font-size: 11pt">Kepala Dinas Kesehatan DIY</td>
+                            <td style="font-size: 11pt">Kepala Dinas Kesehatan DIY;</td>
                         </tr>
                         <tr>
                             <td style="padding-left: 20px; font-size: 11pt">2. </td>
-                            <td style="font-size: 11pt">Kepala Badan Kepegawaian Daerah DIY</td>
+                            <td style="font-size: 11pt">Kepala Badan Kepegawaian Daerah DIY;</td>
                         </tr>
                         <tr>
                             <td style="padding-left: 20px; font-size: 11pt">3. </td>
-                            <td style="font-size: 11pt">Inspektur DIY</td>
+                            <td style="font-size: 11pt">Inspektur DIY;</td>
                         </tr>
                         <tr>
                             <td style="padding-left: 20px; font-size: 11pt">4. </td>
-                            <td style="font-size: 11pt">Ka. Kantor Cabang PT.TASPEN (PERSERO) Yogyakarta</td>
-                        </tr>
-                        <tr>
-                            <td style="padding-left: 20px; font-size: 11pt">5. </td>
-                            <td style="font-size: 11pt">Pertinggal</td>
+                            <td style="font-size: 11pt">Kepala PT.TASPEN (Persero) Kantor Cabang Yogyakarta.</td>
                         </tr>
                     </table>
                 </td>

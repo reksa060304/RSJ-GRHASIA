@@ -249,10 +249,31 @@ class TindakanController extends ApiController
         $idProfile =(int) $kdProfile;
         try{
 
+        $apdObj = AntrianPasienDiperiksa::where('norec',$request['pelayananpasien'][0]['noregistrasifk'])->first();
         $antrian = AntrianPasienDiperiksa::where('norec',$request['pelayananpasien'][0]['noregistrasifk'])
             ->update([
                 'ispelayananpasien' => true
             ]);
+
+        //  bridging radiologi
+        $noOrderBridging = null;
+        $strukOrderFk = null;
+        $isRadiologi = false;
+        if ($apdObj) {
+            $strukOrderFk = $apdObj->objectstrukorderfk;
+            $dataRuangan = DB::table('ruangan_m')->where('id', $apdObj->objectruanganfk)->first();
+            if ($dataRuangan && $dataRuangan->objectdepartemenfk == 27) { // 27 = Radiologi
+                $isRadiologi = true;
+                if ($strukOrderFk && $strukOrderFk != "" && $strukOrderFk != "-") {
+                    $so = StrukOrder::where('norec', $strukOrderFk)->first();
+                    if ($so) {
+                        $noOrderBridging = $so->noorder;
+                    }
+                }
+            }
+        }
+        // End Bridging Radiologi 
+
         $totalJasa=0;
         $totJasa=0;
         $penjumlahanJasa=0;
@@ -312,7 +333,7 @@ class TindakanController extends ApiController
     //        $PelPasien->status =  $New_PP['status'];
     //        $PelPasien->statusorder =  $New_PP['statusorder'];
             $PelPasien->stock =  1;
-    //        $PelPasien->strukorderfk =  $New_PP['strukorderfk'];
+            $PelPasien->strukorderfk =  $strukOrderFk;
             $PelPasien->tglpelayanan =  $item['tglpelayanan'];
             $PelPasien->harganetto =  $item['harganetto'];
     //        $PelPasien->strukfk =  $New_PP['strukfk'];
@@ -350,6 +371,40 @@ class TindakanController extends ApiController
             
             $PelPasien->save();
             $PPnorec = $PelPasien->norec;
+
+            //  create order pelayanan
+            if ($isRadiologi && $strukOrderFk) {
+                $cekOP = OrderPelayanan::where('strukorderfk', $strukOrderFk)
+                    ->where('objectprodukfk', $item['produkfk'])
+                    ->first();
+                
+                if (!$cekOP) {
+                    $ruanganTujuanId = $apdObj->objectruanganfk;
+                    $ruanganAsalId = $apdObj->objectruanganfk;
+                    $so = StrukOrder::where('norec', $strukOrderFk)->first();
+                    if ($so) {
+                        $ruanganAsalId = $so->objectruanganfk;
+                    }
+
+                    $newOP = new OrderPelayanan();
+                    $newOP->norec = $newOP->generateNewId();
+                    $newOP->kdprofile = $idProfile;
+                    $newOP->statusenabled = true;
+                    $newOP->iscito = 0;
+                    $newOP->strukorderfk = $strukOrderFk;
+                    $newOP->noorderfk = $strukOrderFk; 
+                    $newOP->objectprodukfk = $item['produkfk'];
+                    $newOP->qtyproduk = $item['jumlah'];
+                    $newOP->objectkelasfk = $PelPasien->kelasfk;
+                    $newOP->qtyprodukretur = 0;
+                    $newOP->objectruanganfk = $ruanganAsalId; 
+                    $newOP->objectruangantujuanfk = $ruanganTujuanId; 
+                    $newOP->tglpelayanan = $PelPasien->tglpelayanan;
+                    $newOP->save();
+                }
+            }
+            // End Logic
+
             $new_PPP=$item['pelayananpetugas'];
             foreach ($new_PPP as $itemPPP) {
                 $detailItemPPP=$itemPPP['listpegawai'];
@@ -536,9 +591,29 @@ class TindakanController extends ApiController
         if ($transStatus == 'true') {
             $transMessage = "Simpan PelayananPasien Sukses";
             DB::commit();
+
+            // 2. Logic Satu Sehat Bridging (Outside Transaction)
+            $ihsResult = [];
+            if (isset($noOrderBridging) && $noOrderBridging) {
+                try {
+                    $objetoRequest = new \Illuminate\Http\Request();
+                    $objetoRequest->replace(['noorder' => $noOrderBridging]);
+                    $resSR = app('App\Http\Controllers\Bridging\IHSController')->ServiceRequest($objetoRequest, true);
+                    $resSP = app('App\Http\Controllers\Bridging\IHSController')->Specimen($objetoRequest, true);
+                    $ihsResult = [
+                        'ServiceRequest' => $resSR,
+                        'Specimen' => $resSP
+                    ];
+                } catch (\Exception $e) {
+                    $ihsResult = ['error' => $e->getMessage()];
+                }
+            }
+
             $result = array(
                 'status' => 201,
                 'message' => $transMessage,
+                'noorder' => $noOrderBridging ?? null,
+                'ihsResult' => $ihsResult,
                 'dataPP' => $PelPasien,
 //                'dataPPP' => $PelPasienPetugas,
                 'dataPPD' => $PelPasienDetail,

@@ -11,6 +11,7 @@ use Webpatser\Uuid\Uuid;
 use File;
 use App\Transaksi\PasienDaftar;
 use Webklex\PDFMerger\Facades\PDFMergerFacade as PDFMerger;
+// use App\Traits\Valet as PDFMerger;
 use setasign\Fpdi\Fpdi;
 use Symfony\Component\Filesystem\Filesystem;
 use Xthiago\PDFVersionConverter\Converter\GhostscriptConverterCommand;

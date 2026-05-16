@@ -1265,4 +1265,20 @@ class BendaharaPengeluaranController extends ApiController {
 
         return $this->respond($data);
     }
+    
+    public function getJenisBuktiSPP(Request $request)
+    {
+        try {
+            $data = DB::select(DB::raw("
+                SELECT * FROM jenisbukti_m 
+                WHERE kodeexternal = 'SPP' 
+                AND statusenabled = true 
+                AND isbkupengeluaran = true
+            "));
+        } catch (\Exception $e) {
+            $data = [];
+        }
+
+        return $this->respond($data);
+    }
 }

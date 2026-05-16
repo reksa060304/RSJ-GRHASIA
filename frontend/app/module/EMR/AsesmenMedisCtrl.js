@@ -7,6 +7,10 @@ define(['initialize'], function (initialize) {
             $scope.buatBaru = true;
             $scope.hapusButton = true;
             $scope.hapusHide = true
+            $scope.isDokter = false
+            if(medifirstService.getKelompokUser() == 'dokter' ){
+                $scope.isDokter = true
+            }
             if(medifirstService.getKelompokUser() == 'mahasiswadiklat'){
                 $scope.buatBaru = false;
                 $scope.hapusButton = false;
@@ -35,6 +39,7 @@ define(['initialize'], function (initialize) {
             $scope.inputOrder = true
             $scope.CmdOrderPelayanan = true;
             $scope.OrderPelayanan = false;
+            $scope.IdJenisEmr = null;
             $scope.showTombol = false
             // $scope.header = {}
             var myVar = 0
@@ -83,12 +88,23 @@ define(['initialize'], function (initialize) {
                     } else {
                         paramSearch = 'nocm=' + $scope.item.noMr
                     }
+                    $scope.IdJenisEmr = cacheHelper.get('cacheSelectedMenuId');
+                    console.log('IdJenisEmr (dari cache):', $scope.IdJenisEmr);
                     init()
 
                 }
 
 
             }
+
+            $scope.$on('onMenuNavSelected', function(event, data) {
+                cacheHelper.set('cacheSelectedMenuId', data.id);
+                $scope.IdJenisEmr = cacheHelper.get('cacheSelectedMenuId');
+                console.log('IdJenisEmr (dari broadcast):', $scope.IdJenisEmr);
+                
+                init();
+            });
+
             $rootScope.getRekamMedisCheck = function (bool) {
                 if (bool) {
                     paramSearch = 'noregistrasi=' + $scope.item.noregistrasi
@@ -108,7 +124,7 @@ define(['initialize'], function (initialize) {
                 dataAsal = []
                 listData = []
                 // medifirstService.get("emr/get-emr-transaksi?nocm=" + $scope.item.noMr + "&jenisEmr=asesmen", true).then(function (dat) {
-                medifirstService.get("emr/get-emr-transaksi-detail-form?" + paramSearch + "&jenisEmr=asesmen", true).then(function (dat) {
+                medifirstService.get("emr/get-emr-transaksi-detail-form?" + paramSearch + "&jenisEmr=asesmen" + "&idJenisEmr=" + $scope.IdJenisEmr, true).then(function (dat) {
                     $scope.isRouteLoading = false
                     dataAsal = dat.data.data
                     listData = dat.data.data
@@ -138,7 +154,7 @@ define(['initialize'], function (initialize) {
                 var mapemr = "&departemen=" + $scope.item.idDepartemen
                 // if($scope.item.idDepartemen == 18)
                     mapemr += "&ruangan=" + $scope.item.idRuangan
-                medifirstService.get("emr/get-menu-rekam-medis-dynamic?namaemr=asesmen" + mapemr).then(function (e) {
+                medifirstService.get("emr/get-menu-rekam-medis-dynamic?namaemr=asesmen" + mapemr + "&idJenisEmr=" + $scope.IdJenisEmr + "&isDokter=" + $scope.isDokter).then(function (e) {
                     var deptInap = [16, 35, 17]
                     var deptId = localStorage.getItem('departemenPengkajian');
                     var strKode = ''

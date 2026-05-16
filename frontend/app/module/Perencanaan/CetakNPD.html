@@ -1,0 +1,194 @@
+<style>
+    .npd-form-section {
+        background: #f9fafb;
+        border: 1px solid #e2e8f0;
+        border-radius: 6px;
+        padding: 14px 16px 10px 16px;
+        margin-bottom: 12px;
+    }
+
+    .npd-section-title {
+        font-size: 11px;
+        font-weight: 700;
+        color: #333;
+        text-transform: uppercase;
+        letter-spacing: 0.06em;
+        margin-bottom: 10px;
+        display: flex;
+        align-items: center;
+        gap: 6px;
+    }
+
+    .npd-section-title::after {
+        content: '';
+        flex: 1;
+        height: 1px;
+        background: #cbd5e1;
+    }
+
+    .npd-field-group {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 12px;
+        align-items: flex-end;
+    }
+
+    .npd-field {
+        display: flex;
+        flex-direction: column;
+        gap: 4px;
+    }
+
+    .npd-field label {
+        font-size: 11.5px;
+        font-weight: 600;
+        color: #222;
+        margin: 0;
+    }
+
+    .npd-field.w-xs  { flex: 0 0 90px; }
+    .npd-field.w-sm  { flex: 0 0 130px; }
+    .npd-field.w-md  { flex: 1 1 180px; }
+    .npd-field.w-lg  { flex: 1 1 260px; }
+    .npd-field.w-xl  { flex: 2 1 320px; }
+
+    .npd-field input {
+        width: 100%;
+    }
+
+    .npd-cetak-btn {
+        min-width: 130px;
+        height: 32px;
+        font-weight: 600;
+        font-size: 13px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 6px;
+    }
+
+    .npd-cetak-btn i {
+        font-size: 13px;
+    }
+
+    .npd-container {
+        max-width: 960px;
+        margin: 16px auto;
+    }
+</style>
+
+<div ng-show="dataVOloaded">
+    <c-panel item="item" header="'Cetak Nota Pencairan Dana (NPD)'" disabled>
+        <div class="npd-container">
+
+        <!-- Section 1: Parameter Utama -->
+        <div class="npd-form-section">
+            <div class="npd-section-title">Parameter Utama</div>
+            <div class="npd-field-group">
+
+                <div class="npd-field w-xs">
+                    <label>Tahun</label>
+                    <input style="width:100%" k-options="yearUngkul" k-ng-model="item.tahun"
+                           kendo-date-picker placeholer="YYYY" k-format="'yyyy'" />
+                </div>
+
+                <div class="npd-field w-sm">
+                    <label>Bulan</label>
+                    <input kendo-combo-box k-ng-model="item.bulan"
+                           k-data-text-field="'nama'" k-data-value-field="'id'"
+                           k-filter="'contains'" k-auto-bind="false" k-data-source="listBulan" />
+                </div>
+
+                <div class="npd-field w-sm">
+                    <label>Tahap</label>
+                    <input kendo-combo-box k-ng-model="item.tahap"
+                           k-data-text-field="'tahap'" k-data-value-field="'id'"
+                           k-filter="'contains'" k-auto-bind="false" k-data-source="listTahap" />
+                </div>
+
+                <div class="npd-field w-lg">
+                    <label>Sumber Dana</label>
+                    <input kendo-combo-box k-ng-model="item.asalproduk"
+                           k-data-text-field="'asalproduk'" k-data-value-field="'id'"
+                           k-filter="'contains'" k-auto-bind="false" k-data-source="listAsalProduk" />
+                </div>
+
+                <div class="npd-field w-lg">
+                    <label>Jenis Rekening</label>
+                    <input kendo-combo-box k-ng-model="item.jenisrekening"
+                           k-data-text-field="'jenisrekening'" k-data-value-field="'id'"
+                           k-filter="'contains'" k-auto-bind="false" k-data-source="listJenisRekening" />
+                </div>
+
+            </div>
+        </div>
+
+        <!-- Section 2: Kegiatan -->
+        <div class="npd-form-section">
+            <div class="npd-section-title">Kegiatan</div>
+            <div class="npd-field-group">
+
+                <div class="npd-field w-xl">
+                    <label>Sub Kegiatan</label>
+                    <input kendo-combo-box k-ng-model="item.subkegiatan"
+                           k-data-text-field="'keterangan'" k-data-value-field="'id'"
+                           k-filter="'contains'" k-auto-bind="false"
+                           k-data-source="listKegiatanV2" k-on-change="changeSubKegiatan()" />
+                </div>
+
+                <div class="npd-field w-xl">
+                    <label>Sub Sub Kegiatan</label>
+                    <input kendo-combo-box k-ng-model="item.subsubkegiatan"
+                           k-data-text-field="'keterangan'" k-data-value-field="'id'"
+                           k-filter="'contains'" k-auto-bind="false"
+                           k-data-source="listSubSubKegiatan" />
+                </div>
+
+            </div>
+        </div>
+
+        <!-- Section 3: Tanggal & Aksi -->
+        <div class="npd-form-section">
+            <div class="npd-section-title">Tanggal &amp; Cetak</div>
+            <div class="npd-field-group">
+
+                <div class="npd-field w-md">
+                    <label>Tanggal Cetak</label>
+                    <input kendo-date-picker k-ng-model="item.tglCetak"
+                           k-format="'dd-MM-yyyy'" style="width:100%" />
+                </div>
+
+                <div class="npd-field w-md">
+                    <label>Tanggal Lunas</label>
+                    <input kendo-date-picker k-ng-model="item.tglLunas"
+                           k-format="'dd-MM-yyyy'" style="width:100%" />
+                </div>
+
+                <div class="npd-field w-md">
+                    <label>Tanggal Pertanggungjawaban</label>
+                    <input kendo-date-picker k-ng-model="item.tglPertanggungjawaban"
+                           k-format="'dd-MM-yyyy'" style="width:100%" />
+                </div>
+
+                <div class="npd-field w-xl">
+                    <label>Pelaksana</label>
+                    <input kendo-combo-box k-ng-model="item.pelaksana"
+                           k-data-text-field="'namalengkap'" k-data-value-field="'id'"
+                           k-filter="'contains'" k-auto-bind="false"
+                           k-data-source="listPegawai" />
+                </div>
+
+                <div class="npd-field" style="justify-content:flex-end; padding-top:2px;">
+                    <label>&nbsp;</label>
+                    <button class="primary c-button npd-cetak-btn" ng-click="CetakNPD()">
+                        <i class="fa fa-print"></i> Cetak NPD
+                    </button>
+                </div>
+
+            </div>
+        </div>
+
+        </div><!-- /.npd-container -->
+    </c-panel>
+</div>
+<div ng-include='"../app/template/Shared/TemplateLoading"'></div>

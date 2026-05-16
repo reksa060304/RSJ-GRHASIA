@@ -228,6 +228,302 @@ define(['initialize'], function (initialize) {
                   })
                 }
               }
+            // BAGIAN PENUNJANG
+            $scope.itemPenunjang = {};
+            var dataGridAllPenunjang = [];
+
+            $scope.listTipePenunjang = [
+                { id: 3, name: 'Laboratorium' },
+                { id: 27, name: 'Radiologi' }
+            ];
+
+            medifirstService.get("sysadmin/general/get-combo-administrasi-penunjang", true).then(function (dat) {
+                $scope.listRuanganAsalPenunjang = dat.data.ruangan;
+            });
+
+            $scope.onChangeRuanganAsalPenunjang = function () {
+                $scope.itemPenunjang.tipePenunjang = undefined;
+                $scope.itemPenunjang.ruanganTujuan = undefined;
+                $scope.itemPenunjang.produk = undefined;
+                $scope.itemPenunjang.hargaTindakan = 0;
+                $scope.itemPenunjang.maid = undefined;
+                $scope.listRuanganTujuanPenunjang = [];
+                $scope.listProdukPenunjang = [];
+                $scope.dataGridPenunjang = new kendo.data.DataSource({ data: [] });
+                dataGridAllPenunjang = [];
+                loadProdukDanMappingPenunjang();
+            };
+
+            $scope.onChangeTipePenunjang = function () {
+                $scope.itemPenunjang.ruanganTujuan = undefined;
+                $scope.itemPenunjang.produk = undefined;
+                $scope.itemPenunjang.hargaTindakan = 0;
+                $scope.itemPenunjang.maid = undefined;
+                $scope.listRuanganTujuanPenunjang = [];
+                $scope.listProdukPenunjang = [];
+
+                if (!$scope.itemPenunjang.tipePenunjang) {
+                    loadProdukDanMappingPenunjang();
+                    return;
+                }
+                var idTipe = $scope.itemPenunjang.tipePenunjang.id ? $scope.itemPenunjang.tipePenunjang.id : $scope.itemPenunjang.tipePenunjang;
+
+                medifirstService.get(
+                    "sysadmin/general/get-combo-administrasi-penunjang?departemenfk=" + idTipe,
+                    true
+                ).then(function (dat) {
+                    $scope.listRuanganTujuanPenunjang = dat.data.ruangan;
+                    
+                    if (idTipe == 3 || idTipe == 27) { 
+                        var ruanganTujuan = $scope.listRuanganTujuanPenunjang.find(function(x) { 
+                            var nr = x.namaruangan.toLowerCase();
+                            if (idTipe == 3) {
+                                return nr.indexOf('patologi klinik') > -1; 
+                            } else if (idTipe == 27) {
+                                return nr.indexOf('radiologi') > -1;
+                            }
+                            return false;
+                        });
+                        if (ruanganTujuan) {
+                            $scope.itemPenunjang.ruanganTujuan = ruanganTujuan;
+                        }
+                        
+                        if ($scope.listJenisPelayanan) {
+                            for (var x = 0; x < $scope.listJenisPelayanan.length; x++) {
+                                var element = $scope.listJenisPelayanan[x];
+                                if(element.jenispelayanan.toLowerCase().indexOf('reguler') > -1){
+                                    $scope.itemPenunjang.jenisPelayanan = element;
+                                    break;
+                                }
+                            }
+                        }
+                        if ($scope.itemPenunjang.ruanganTujuan) {
+                            $scope.onChangeRuanganPenunjang();
+                        } else {
+                            loadProdukDanMappingPenunjang();
+                        }
+                    } else {
+                        loadProdukDanMappingPenunjang();
+                    }
+                });
+            };
+
+            $scope.onChangeRuanganPenunjang = function () {
+                $scope.itemPenunjang.produk = undefined;
+                $scope.itemPenunjang.hargaTindakan = 0;
+                $scope.itemPenunjang.maid = undefined;
+                $scope.listProdukPenunjang = [];
+                loadProdukDanMappingPenunjang();
+            };
+
+            function loadProdukDanMappingPenunjang() {
+                if (!$scope.itemPenunjang.ruanganAsal || !$scope.itemPenunjang.ruanganAsal.id) return;
+
+                var idTipe = $scope.itemPenunjang.tipePenunjang ? ($scope.itemPenunjang.tipePenunjang.id ? $scope.itemPenunjang.tipePenunjang.id : $scope.itemPenunjang.tipePenunjang) : "";
+                var params = "ruanganasal=" + $scope.itemPenunjang.ruanganAsal.id;
+                
+                if ($scope.itemPenunjang.ruanganTujuan) {
+                    params += "&ruanganpenunjang=" + $scope.itemPenunjang.ruanganTujuan.id;
+                }
+
+                medifirstService.get(
+                    "sysadmin/general/get-combo-administrasi-penunjang?" + params,
+                    true
+                ).then(function (dat) {
+                    if ($scope.itemPenunjang.ruanganTujuan && $scope.itemPenunjang.ruanganTujuan.id) {
+                        $scope.listProdukPenunjang = dat.data.produk;
+                    } else {
+                        $scope.listProdukPenunjang = [];
+                    }
+
+                    var list = dat.data.listmapping || [];
+                    for (var i = list.length - 1; i >= 0; i--) {
+                        list[i].no = i + 1;
+                    }
+                    dataGridAllPenunjang = list;
+                    $scope.searchFilterPenunjang = { namaproduk: '', jenispelayanan: '' };
+                    $scope.dataGridPenunjang = new kendo.data.DataSource({ data: list, pageSize: 10 });
+                });
+            }
+
+            $scope.tambahDataPenunjang = function () {
+                if (!$scope.itemPenunjang.ruanganAsal) {
+                    alert("Pilih Ruangan Asal terlebih dahulu!");
+                    return;
+                }
+                if (!$scope.itemPenunjang.tipePenunjang) {
+                    alert("Pilih Tipe Penunjang terlebih dahulu!");
+                    return;
+                }
+                if (!$scope.itemPenunjang.ruanganTujuan || !$scope.itemPenunjang.ruanganTujuan.id) {
+                    alert("Pilih Ruangan Penunjang terlebih dahulu!");
+                    return;
+                }
+                if (!$scope.itemPenunjang.produk || !$scope.itemPenunjang.produk.id) {
+                    alert("Pilih Produk / Tindakan terlebih dahulu!");
+                    return;
+                }
+                if (!$scope.itemPenunjang.jenisPelayanan || !$scope.itemPenunjang.jenisPelayanan.id) {
+                    alert("Pilih Jenis Pelayanan terlebih dahulu!");
+                    return;
+                }
+
+                $scope.isSavingPenunjang = true;
+
+                var objSave = {
+                    maid: $scope.itemPenunjang.maid || '',
+                    pelayanan: $scope.itemPenunjang.produk.id,
+                    ruanganasal: $scope.itemPenunjang.ruanganAsal.id,
+                    ruanganpenunjang: $scope.itemPenunjang.ruanganTujuan.id,
+                    jenispelayanan: $scope.itemPenunjang.jenisPelayanan.id,
+                    statuspasien: null,
+                    status: 'SIMPAN'
+                };
+
+                medifirstService.post('sysadmin/general/save-map-administrasi-penunjang', objSave).then(function (e) {
+                    $scope.isSavingPenunjang = false;
+                    $scope.kosongkanPenunjang();
+                    loadProdukDanMappingPenunjang();
+                }, function(err) {
+                    $scope.isSavingPenunjang = false;
+                });
+            };
+
+            $scope.hapusDataPenunjang = function () {
+                if (!$scope.itemPenunjang.maid) {
+                    alert("Pilih data yang akan dihapus dari tabel!");
+                    return;
+                }
+
+                var r = confirm("Yakin ingin menghapus mapping ini?");
+                if (r == true) {
+                    $scope.isSavingPenunjang = true;
+                    var objSave = {
+                        maid: $scope.itemPenunjang.maid,
+                        pelayanan: $scope.itemPenunjang.produk ? $scope.itemPenunjang.produk.id : '',
+                        ruanganasal: $scope.itemPenunjang.ruanganAsal ? $scope.itemPenunjang.ruanganAsal.id : '',
+                        ruanganpenunjang: $scope.itemPenunjang.ruanganTujuan ? $scope.itemPenunjang.ruanganTujuan.id : '',
+                        jenispelayanan: $scope.itemPenunjang.jenisPelayanan ? $scope.itemPenunjang.jenisPelayanan.id : '',
+                        status: 'HAPUS'
+                    };
+
+                    medifirstService.post('sysadmin/general/save-map-administrasi-penunjang', objSave).then(function (e) {
+                        $scope.isSavingPenunjang = false;
+                        $scope.kosongkanPenunjang();
+                        loadProdukDanMappingPenunjang();
+                    }, function(err) {
+                        $scope.isSavingPenunjang = false;
+                    });
+                }
+            };
+
+            $scope.kosongkanPenunjang = function () {
+                $scope.itemPenunjang.maid = undefined;
+                $scope.itemPenunjang.produk = undefined;
+                $scope.itemPenunjang.hargaTindakan = 0;
+            };
+
+            $scope.klikGridPenunjang = function (dataSelected) {
+                if (!dataSelected) return;
+
+                $scope.itemPenunjang.maid = dataSelected.maid;
+                
+                // 1. Set Ruangan Asal
+                if (dataSelected.objectruanganfk) {
+                    $scope.itemPenunjang.ruanganAsal = { 
+                        id: dataSelected.objectruanganfk, 
+                        namaruangan: dataSelected.namaruangan_asal 
+                    };
+                }
+
+                // 2. Set Tipe Penunjang (Lab/Rad)
+                var defTipe = null;
+                if (dataSelected.objectkamarfk) {
+                    medifirstService.get("sysadmin/general/get-combo-administrasi-penunjang?idRuanganTujuan=" + dataSelected.objectkamarfk, true).then(function(resDet){
+                        var deptId = resDet.data.ruangan && resDet.data.ruangan.length > 0 ? resDet.data.ruangan[0].objectdepartemenfk : null;
+                        
+                        if (deptId == 3 || deptId == 27) {
+                            $scope.itemPenunjang.tipePenunjang = $scope.listTipePenunjang.find(function(x){ return x.id == deptId; });
+                        }
+
+                        medifirstService.get("sysadmin/general/get-combo-administrasi-penunjang?departemenfk=" + (deptId || ""), true).then(function (dat) {
+                            $scope.listRuanganTujuanPenunjang = dat.data.ruangan;
+                            $scope.itemPenunjang.ruanganTujuan = { 
+                                id: dataSelected.objectkamarfk, 
+                                namaruangan: dataSelected.namaruangan_tujuan 
+                            };
+
+                            var params = "ruanganasal=" + dataSelected.objectruanganfk
+                                       + "&ruanganpenunjang=" + dataSelected.objectkamarfk;
+
+                            medifirstService.get("sysadmin/general/get-combo-administrasi-penunjang?" + params, true).then(function (dat2) {
+                                $scope.listProdukPenunjang = dat2.data.produk;
+                                $scope.itemPenunjang.produk = { 
+                                    id: dataSelected.produkfk, 
+                                    namaproduk: dataSelected.namaproduk 
+                                };                              
+                       
+                                $scope.itemPenunjang.jenisPelayanan = { 
+                                    id: dataSelected.jenispelayananfk, 
+                                    jenispelayanan: dataSelected.jenispelayanan 
+                                };
+                                // $scope.itemPenunjang.tipe = dataSelected.statuspasien;
+                                
+                                $scope.getdetailHargaPenunjang();
+                            });
+                        });
+                    });
+                }
+            };
+
+            $scope.applySearchFilterPenunjang = function () {
+                var namaProduk = $scope.searchFilterPenunjang.namaproduk ? $scope.searchFilterPenunjang.namaproduk.toLowerCase() : '';
+                var jenisPel = $scope.searchFilterPenunjang.jenispelayanan ? $scope.searchFilterPenunjang.jenispelayanan.toLowerCase() : '';
+
+                var filteredData = dataGridAllPenunjang.filter(function (item) {
+                    var matchProduk = item.namaproduk ? item.namaproduk.toLowerCase().indexOf(namaProduk) !== -1 : false;
+                    var matchJenis = item.jenispelayanan ? item.jenispelayanan.toLowerCase().indexOf(jenisPel) !== -1 : false;
+                    return matchProduk && matchJenis;
+                });
+
+                $scope.dataGridPenunjang = new kendo.data.DataSource({ data: filteredData, pageSize: 10 });
+            };
+
+            $scope.resetSearchPenunjang = function () {
+                $scope.searchFilterPenunjang = { namaproduk: '', jenispelayanan: '' };
+                var list = dataGridAllPenunjang || [];
+                for (var i = 0; i < list.length; i++) {
+                    list[i].no = i + 1;
+                }
+                $scope.dataGridPenunjang = new kendo.data.DataSource({ data: list, pageSize: 10 });
+            };
+
+            $scope.getdetailHargaPenunjang = function () {
+                $scope.itemPenunjang.hargaTindakan = 0;
+                
+                if ($scope.itemPenunjang.produk && $scope.itemPenunjang.ruanganTujuan && $scope.itemPenunjang.jenisPelayanan) {
+                    medifirstService.get("tatarekening/tindakan/get-komponenharga?idRuangan="
+                        + $scope.itemPenunjang.ruanganTujuan.id
+                        + "&idKelas=6"  // Non-kelas
+                        + "&idProduk=" + $scope.itemPenunjang.produk.id
+                        + "&idJenisPelayanan=" + $scope.itemPenunjang.jenisPelayanan.id
+                    ).then(function (dat) {
+                        if (dat.data.data2 && dat.data.data2.length > 0) {
+                            $scope.itemPenunjang.hargaTindakan = dat.data.data2[0].hargasatuan;
+                        }
+                    });
+                }
+            };
+
+            $scope.columnGridPenunjang = [
+                { field: "no", title: "No", width: "40px" },
+                { field: "namaruangan_asal", title: "Ruangan Asal", width: "150px" },
+                { field: "namaruangan_tujuan", title: "Ruangan Penunjang", width: "150px" },
+                { field: "namaproduk", title: "Produk / Tindakan", width: "200px" },
+                { field: "jenispelayanan", title: "Jenis Pelayanan", width: "120px" }
+            ];
+            // END PENUNJANG
+
             //***********************************
 
         }

@@ -1,5 +1,6 @@
 define(['initialize', 'Configuration'], function (initialize, configuration) {
     'use strict';
+    var baseTransaksi = configuration.baseApiBackend;
     initialize.controller('RegistrasiRuanganCtrl', ['MedifirstService', '$scope', '$state', '$mdDialog', '$rootScope', 'CacheHelper', 'DateHelper', 'CetakHelper', 'ModelItem',
         function (medifirstService, $scope, $state, $mdDialog, $rootScope, cacheHelper, dateHelper, cetakHelper, ModelItem) {
             $scope.now = new Date();
@@ -439,7 +440,25 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
             $scope.showFind = true;
             $scope.showTindakan = false;
             $scope.dataModelGrid = [];
+
+            $scope.isRuanganHasMapping = false;
+            $scope.$watch('item.ruangan', function(newValue, oldValue) {
+                if(newValue != undefined) {
+                    medifirstService.get("sysadmin/general/get-combo-administrasi-penunjang?ruanganasal=" + newValue.id)
+                        .then(function(res) {
+                            $scope.isRuanganHasMapping = (res.data.listmapping && res.data.listmapping.length > 0);
+                        });
+                } else {
+                    $scope.isRuanganHasMapping = false;
+                }
+            });
+
             $scope.Save = function () {
+                if ($scope.isRuanganHasMapping && ($scope.item.dokter == undefined || $scope.item.dokter == "")) {
+                    messageContainer.error("Pegawai penanggung jawab harus diisi untuk ruangan ini karena terdapat layanan penunjang otomatis yang membutuhkan dokter perujuk.");
+                    return;
+                }
+
                 loadPertama()
                 if ($scope.model.rawatInap == true){
                     $scope.simpanPasienPJ()
@@ -572,6 +591,164 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
                         }
                     })
             }
+
+            $scope.processAutoOrderPenunjang = function (ruanganAsalId, dataPD, dokterId, jenisPel, statusPasien, kelasId, tglOrder) {
+                medifirstService.get("sysadmin/general/get-combo-administrasi-penunjang?ruanganasal=" + ruanganAsalId)
+                    .then(function(res) {
+                        var listMapping = res.data.listmapping;
+                        if (listMapping && listMapping.length > 0) {
+                            var ordersByTujuan = {};
+                            for (var i = 0; i < listMapping.length; i++) {
+                                var map = listMapping[i];
+                                
+                                // Filter jenis pelayanan
+                                if (map.jenispelayananfk && map.jenispelayananfk != jenisPel) {
+                                    continue;
+                                }
+                                // Filter status pasien
+                                if (map.statuspasien && map.statuspasien !== "") {
+                                    if (statusPasien && map.statuspasien.toLowerCase() !== statusPasien.toLowerCase()) {
+                                        continue;
+                                    }
+                                }
+
+                                if (!ordersByTujuan[map.objectkamarfk]) {
+                                    ordersByTujuan[map.objectkamarfk] = {
+                                        ruanganTujuan: map.objectkamarfk,
+                                        departemenTujuan: map.objectdepartemenfk,
+                                        details: []
+                                    };
+                                }
+                                ordersByTujuan[map.objectkamarfk].details.push({
+                                    nourut: ordersByTujuan[map.objectkamarfk].details.length + 1,
+                                    produkfk: map.produkfk,
+                                    namaproduk: map.namaproduk,
+                                    qtyproduk: 1,
+                                    objectruanganfk: ruanganAsalId,
+                                    objectkelasfk: kelasId || 6,
+                                    iscito: 0,
+                                    pemeriksaanluar: 0
+                                });
+                            }
+                            
+                            var keys = Object.keys(ordersByTujuan);
+                            if (keys.length > 0) {
+                                toastr.info('Sedang melakukan order penunjang otomatis... Mohon jangan tutup halaman!', 'Info');
+                            }
+                            
+                            for (var k = 0; k < keys.length; k++) {
+                                var target = ordersByTujuan[keys[k]];
+                                if (target.details.length === 0) continue;
+                                
+                                var objOrder = {
+                                    norec_pd: dataPD.norec,
+                                    norec_so: "",
+                                    qtyproduk: target.details.length,
+                                    objectruanganfk: ruanganAsalId,
+                                    objectruangantujuanfk: target.ruanganTujuan,
+                                    departemenfk: target.departemenTujuan,
+                                    pegawaiorderfk: dokterId,
+                                    tglorder: tglOrder || moment(new Date()).format('YYYY-MM-DD HH:mm:ss'),
+                                    details: target.details
+                                };
+                               
+                                (function(orderObj, targetInfo, klsId, dokterOrderId, norec_pd_val) {
+                                    medifirstService.post('radiologi/save-order-pelayanan', orderObj)
+                                        .then(function(resOrder) {
+                                            if (resOrder.data && resOrder.data.status === 201 && resOrder.data.strukorder) {
+                                                var norec_so = resOrder.data.strukorder.norec;
+                                                var noorder  = resOrder.data.strukorder.noorder;
+
+                                                // Auto-verifikasi: ambil data pelayanan (harga & komponen harga)
+                                                medifirstService.get(
+                                                    "radiologi/get-order-pelayanan?norec_so=" + norec_so +
+                                                    "&objectkelasfk=" + klsId
+                                                ).then(function(resPel) {
+                                                    var dataPelayanan = resPel.data.data;
+                                                   
+                                                    var idDokterVerif = dokterOrderId; 
+                                                    if (targetInfo.departemenTujuan == 27) {
+                                                        idDokterVerif = 2669; // dr. HERRI SYAHBANA, Sp.Rad
+                                                    } else if (targetInfo.departemenTujuan == 3) {
+                                                        idDokterVerif = 2668; // dr. DEA NOVIANA PRAMANTIK, Sp.PK(K).
+                                                    }
+
+                                                    var bridgingData = [];
+
+                                                    if (dataPelayanan && dataPelayanan.length > 0) {
+                                                        for (var pi = 0; pi < dataPelayanan.length; pi++) {
+                                                            var pel = dataPelayanan[pi];
+                                                            bridgingData.push({
+                                                                produkid: pel.prid,
+                                                                hargasatuan: pel.hargasatuan || 0,
+                                                                qtyproduk: pel.qtyproduk || 1,
+                                                                komponenharga: pel.details || [],
+                                                                tglpelayanan: tglOrder || moment(new Date()).format('YYYY-MM-DD HH:mm:ss'),
+                                                                nourut: pi + 1,
+                                                                ihs_service_request: pel.ihs_service_request || null
+                                                            });
+                                                        }
+                                                    } else {
+                                                        console.warn('[AutoVerif] Data harga tidak ditemukan untuk: ' + noorder + ', verifikasi dengan harga 0.');
+                                                        for (var di = 0; di < orderObj.details.length; di++) {
+                                                            var det = orderObj.details[di];
+                                                            bridgingData.push({
+                                                                produkid: det.produkfk,
+                                                                hargasatuan: 0,
+                                                                qtyproduk: det.qtyproduk || 1,
+                                                                komponenharga: [],
+                                                                tglpelayanan: tglOrder || moment(new Date()).format('YYYY-MM-DD HH:mm:ss'),
+                                                                nourut: di + 1,
+                                                                ihs_service_request: null
+                                                            });
+                                                        }
+                                                    }
+
+                                                    if (bridgingData.length === 0) {
+                                                        console.warn('[AutoVerif] Tidak ada data bridging, verifikasi dilewati: ' + noorder);
+                                                        return;
+                                                    }
+
+                                                    // Payload verifikasi
+                                                    var itemVerif = {
+                                                        bridging: bridgingData,
+                                                        norec_pp: "",
+                                                        noorder: noorder,
+                                                        norec_so: norec_so,
+                                                        objectkelasfk: klsId,
+                                                        norec_pd: norec_pd_val,
+                                                        objectruangantujuanfk: targetInfo.ruanganTujuan,
+                                                        objectpegawaiorderfk: dokterOrderId,
+                                                        iddokterverif: idDokterVerif,
+                                                        namadokterverif: "",
+                                                        iddokterorder: dokterOrderId,
+                                                        namadokterorder: "",
+                                                        tglpelayanan: tglOrder || moment(new Date()).format('YYYY-MM-DD HH:mm:ss'),
+                                                        details: bridgingData
+                                                    };
+
+                                                    medifirstService.post('radiologi/save-pelayanan-pasien', itemVerif)
+                                                        .then(function(resVerif) {
+                                                            if (resVerif.data && resVerif.data.status === 201) {
+                                                                console.log('[AutoVerif] Verifikasi otomatis berhasil: ' + noorder);
+                                                                toastr.success('Order pelayanan Penunjang (' + noorder + ') berhasil dibuat dan diverifikasi otomatis!', 'Sukses');
+                                                            } else {
+                                                                console.warn('[AutoVerif] Verifikasi otomatis gagal (status bukan 201): ' + noorder, resVerif.data);
+                                                            }
+                                                        }).catch(function(errVerif) {
+                                                            console.warn('[AutoVerif] Verifikasi otomatis gagal: ' + noorder, errVerif);
+                                                        });
+                                                });
+                                            }
+                                        }).catch(function(err) {
+                                            console.warn("Proses otomatis order penunjang gagal.", err);
+                                        });
+                                })(objOrder, target, kelasId || 6, dokterId, dataPD.norec);
+                            }
+                        }
+                    });
+            };
+
 
             $scope.SimpanRegistrasi = function () {
 
@@ -757,6 +934,9 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
                                     $scope.saveLogging('Edit Registrasi', 'norec Pasien Daftar',
                                         norecPD, 'Edit Registrasi ke ruangan ' + $scope.item.ruangan.namaruangan + ' pada No Registrasi ' + $scope.model.noRegistrasi)
                                 } else {
+                                    // Trigger Auto Order Penunjang Here
+                                    $scope.processAutoOrderPenunjang($scope.item.ruangan.id, $scope.resultPD, dokterId, jenisPel, statusPasien, kelasId, moment($scope.item.tglRegistrasi).format('YYYY-MM-DD HH:mm:ss'));
+
                                     //##log Pasien Daftar
                                     medifirstService.get("sysadmin/logging/save-log-pendaftaran-pasien?norec_pd="
                                         + $scope.model.norec_pd).then(function (x) {
@@ -1336,7 +1516,7 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
                 })
             }
 
-            $scope.nomorAntrian = function () {
+            $scope.nomorAntrianvb = function () {
                 var stt = 'false'
                 if (confirm('View Bukti Pendaftaran? ')) {
                     // Save it!
@@ -1359,6 +1539,28 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
                     });
             }
 
+            $scope.nomorAntrian = function () {
+                let noreg = ''
+                if ($scope.Noregistrasi != undefined) {
+                    noreg = $scope.Noregistrasi
+                } else {
+                    noreg = $scope.cacheNoRegistrasi
+                }
+                if (noreg == '') {
+                    toastr.warning('Nomor registrasi tidak ditemukan');
+                    return;
+                }
+                
+                // Open bukti pendaftaran in print popup
+                var local = JSON.parse(localStorage.getItem('profile'))
+                var nama = medifirstService.getPegawaiLogin().namaLengkap
+
+                var url = baseTransaksi + 'report/cetak-bukti-pendaftaran?noregistrasi=' + noreg +
+                    '&kdprofile=' + local.id +
+                    '&nama=' + nama;
+
+                window.open(url, 'BuktiDaftar', 'width=520,height=800,scrollbars=yes,resizable=yes');
+            }
 
             // function HapusPenanggungJawab(){
             //    $scope.dataItem = {};

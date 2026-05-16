@@ -813,9 +813,12 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
                 
             }
             $scope.TambahSPP = function(){
-                $scope.listJenisBukti = [
-                    { id: 1, jenisbukti: "UP" },
-                ];
+                medifirstService.get("bendaharapengeluaran/get-jenis-bukti-spp").then(function(res) {
+                    $scope.listJenisBukti = res.data;
+                    if (res.data && res.data.length > 0) {
+                        $scope.item.itemJenisBukti = res.data[0];
+                    }
+                });
                 $scope.listBulan = [
                     { id: 1, bulan: "Januari" },
                     { id: 2, bulan: "Februari" },
@@ -830,7 +833,7 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
                     { id: 11, bulan: "November" },
                     { id: 12, bulan: "Desember" },
                 ];
-                $scope.item.itemJenisBukti = { id: 1, jenisbukti: "UP" }
+                
                 $scope.item.radioStatusSPP = "Diterima"
                 $scope.item.nospp = ''
                 $scope.item.dasarPengeluaran = ''
@@ -8508,9 +8511,12 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
 
 				})
 
-                $scope.listJenisBukti = [
-                    { id: 1, jenisbukti: "UP" },
-                ];
+                medifirstService.get("bendaharapengeluaran/get-jenis-bukti-spp").then(function(res) {
+                    $scope.listJenisBukti = res.data;
+                    if (res.data && res.data.length > 0) {
+                        $scope.item.itemJenisBuktiSPM = res.data.find(x => x.jenisbukti == 'UP') || res.data[0];
+                    }
+                });
                 
                 var dataItem = this.dataItem($(e.currentTarget).closest("tr"));
                 $scope.item.nosppspm = dataItem.nospp
@@ -8521,7 +8527,7 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
                 $scope.item.noreg = ''
                 $scope.item.tglSPM = undefined
                 $scope.item.nilaispm = dataItem.nilaispp
-                $scope.item.itemJenisBuktiSPM = { id: 1, jenisbukti: "UP" }
+                
                 $scope.item.radioStatusSPM = "Diterima"
                 loadDataSPM()
                 $scope.popupSPM.center().open()
@@ -8708,11 +8714,14 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
                     console.log(dataSPMSelected)
                     $scope.norecspm = dataSPMSelected.norec
                     $scope.item.nospm = dataSPMSelected.nospm
-                    if(dataSPMSelected.jenisbukti != null){
-                        $scope.item.itemJenisBuktiSPM = { id: 1, jenisbukti: "UP" }
-                    } else{
-                        $scope.item.itemJenisBuktiSPM = {}
-                    }
+                    medifirstService.get("bendaharapengeluaran/get-jenis-bukti-spp").then(function(res) {
+                        $scope.listJenisBukti = res.data;
+                        if(dataSPMSelected.jenisbukti != null){
+                            $scope.item.itemJenisBuktiSPM = res.data.find(x => x.jenisbukti == dataSPMSelected.jenisbukti) || {};
+                        } else{
+                            $scope.item.itemJenisBuktiSPM = {}
+                        }
+                    });
                     $scope.item.untuk = dataSPMSelected.untukpengeluaran
                     $scope.item.radioStatusSPM = dataSPMSelected.status
                     $scope.item.noreg = dataSPMSelected.noreg
@@ -8741,11 +8750,14 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
                     console.log(dataItem)
                     $scope.norecspm = dataItem.norec
                     $scope.item.nospm = dataItem.nospm
-                    if(dataItem.jenisbukti != null){
-                        $scope.item.itemJenisBuktiSPM = { id: 1, jenisbukti: "UP" }
-                    } else{
-                        $scope.item.itemJenisBuktiSPM = {}
-                    }
+                    medifirstService.get("bendaharapengeluaran/get-jenis-bukti-spp").then(function(res) {
+                        $scope.listJenisBukti = res.data;
+                        if(dataItem.jenisbukti != null){
+                            $scope.item.itemJenisBuktiSPM = res.data.find(x => x.jenisbukti == dataItem.jenisbukti) || {};
+                        } else{
+                            $scope.item.itemJenisBuktiSPM = {}
+                        }
+                    });
                     $scope.item.untuk = dataItem.untukpengeluaran
                     $scope.item.radioStatusSPM = dataItem.status
                     $scope.item.noreg = dataItem.noreg
@@ -8776,9 +8788,14 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
                 if (dataItem != undefined) {
                     console.log(dataItem)
 
-                    $scope.listJenisBukti = [
-                        { id: 1, jenisbukti: "UP" },
-                    ];
+                    medifirstService.get("bendaharapengeluaran/get-jenis-bukti-spp").then(function(res) {
+                        $scope.listJenisBukti = res.data;
+                        if(dataItem.jenisbukti != null){
+                            $scope.item.itemJenisBukti = res.data.find(x => x.jenisbukti == dataItem.jenisbukti) || {};
+                        } else{
+                            $scope.item.itemJenisBukti = {}
+                        }
+                    });
                     $scope.listBulan = [
                         { id: 1, bulan: "Januari" },
                         { id: 2, bulan: "Februari" },
@@ -8797,11 +8814,7 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
 
                     $scope.norecspp = dataItem.norec
                     $scope.item.nospp = dataItem.nospp
-                    if(dataItem.jenisbukti != null){
-                        $scope.item.itemJenisBukti = { id: 1, jenisbukti: "UP" }
-                    } else{
-                        $scope.item.itemJenisBukti = {}
-                    }
+                    
                     $scope.item.dasarPengeluaran = dataItem.dasarpengeluaran
                     $scope.item.radioStatusSPP = dataItem.status
                     $scope.item.nospd = dataItem.nospd

@@ -1148,7 +1148,7 @@ class PelayananObatBebasController extends ApiController
             ->LEFTJOIN( 'ruangan_m as ru2', 'ru2.id', '=', 'apd.objectruanganfk')
             ->where('sr.kdprofile', $kdProfile)
             ->WHEREBETWEEN('sr.tglresep', [$tglAwal, $tglAkhir])
-            ->WHERENOTNULL('aa.noantri')
+            // ->WHERENOTNULL('aa.noantri')
             ->SELECT('so.noorder',
                 'sr.noresep',
                 'pm.nocm',
@@ -1176,7 +1176,7 @@ class PelayananObatBebasController extends ApiController
 
         if(isset($request['departemen']) && $request['departemen']!="" && $request['departemen']!="undefined"){
             if($request['departemen'] == 1){
-                $data = $data->where('ru2.objectdepartemenfk', '!=', 16);
+                $data = $data->where('ru2.objectdepartemenfk', '=', 18);
             }
             else{
                 $data = $data->where('ru2.objectdepartemenfk', '=', 16);

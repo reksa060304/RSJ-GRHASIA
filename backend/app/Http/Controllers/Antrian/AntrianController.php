@@ -189,6 +189,11 @@ class AntrianController extends ApiController
         ->first();
         return $this->respond($apd);
     }
+    public function getIntervalAntrianFarm(Request $request){
+        $kdProfile = $this->getDataKdProfile($request);
+        $interval = (int) $this->settingDataFixed('IntervalViewerFarm', $kdProfile);
+        return $interval;
+    }
     public function getListAntrianFarm(Request $request){
         $kdProfile = $this->getDataKdProfile($request);
         $kdJenisTrasnsaksiResep = (int) $this->settingDataFixed('kdKelompokTransaksiOrderResep', $kdProfile);
@@ -222,6 +227,47 @@ class AntrianController extends ApiController
         INNER JOIN antrianapotik_t AS aa ON aa.noresep = sr.noresep
         WHERE sr.kdprofile = $kdProfile AND sr.tglresep between '$tglAwal' and '$tglAkhir'
         AND sr.statusenabled= 't' 
+        AND (sr.ispanggil IS NULL OR sr.ispanggil = false)
+         and sr.tglambilresep is null
+         and aa.status in ('1','2','3')
+        order by sr.tglresep asc
+        "));
+        return $data;
+    }
+    public function getListAntrianFarmTerlewat(Request $request){
+        $kdProfile = $this->getDataKdProfile($request);
+        $kdJenisTrasnsaksiResep = (int) $this->settingDataFixed('kdKelompokTransaksiOrderResep', $kdProfile);
+        $tglAwal =date('Y-m-d 00:00');
+        $tglAkhir =date('Y-m-d 23:59');
+           // $data = \DB::select(DB::raw("
+        //     SELECT noantri,keterangan,jenis,tglresep,noresep,st.status
+        //     FROM  antrianapotiktr AS aa
+        //     WHERE aa.koders = 1 AND aa.tglresep  >= '$tglAwal'AND aa.tglresep <=  '$tglAkhir'
+        //     AND aa.aktif = 't'
+        //     order by noantri asc
+        // "));
+        $data = \DB::select(DB::raw("
+        SELECT sr.noresep,aa.noantri AS aanoantri,aa.jenis AS aajenis,aa.keterangan,sr.tglresep,ru2.namaruangan,ru.namaruangan as ruanganasal,
+        CASE when aa.status ='0'  then 'Verifikasi'
+        when aa.status ='6'  then 'Verifikasi'
+        when aa.status ='1'  then 'Produksi'
+        when aa.status ='2'  then 'Packaging'
+        when aa.status ='3'  then 'Selesai'
+        when aa.status ='4'  then 'Penyerahan Obat'
+        when sr.tglambilresep !=null  then 'Sudah Di Ambil'
+        else ''  end as statusorder,pd.noregistrasi,ps.nocm,ps.namapasien,
+        EXTRACT (YEAR FROM AGE(pd.tglregistrasi,ps.tgllahir )) || ' Thn ' as umur,
+        CASE WHEN ps.objectjeniskelaminfk = 1 THEN 'L' ELSE 'P' END as jk
+        FROM strukresep_t AS sr
+        INNER JOIN antrianpasiendiperiksa_t AS apd ON apd.norec = sr.pasienfk
+        INNER JOIN pasiendaftar_t AS pd ON pd.norec = apd.noregistrasifk
+        INNER JOIN pasien_m AS ps ON ps.id = pd.nocmfk
+        INNER JOIN ruangan_m AS ru2 ON ru2.id = sr.ruanganfk
+        LEFT JOIN ruangan_m AS ru ON ru.id = apd.objectruanganfk
+        INNER JOIN antrianapotik_t AS aa ON aa.noresep = sr.noresep
+        WHERE sr.kdprofile = $kdProfile AND sr.tglresep between '$tglAwal' and '$tglAkhir'
+        AND sr.statusenabled= 't' 
+        AND sr.ispanggil = true
          and sr.tglambilresep is null
          and aa.status in ('1','2','3')
         order by sr.tglresep asc

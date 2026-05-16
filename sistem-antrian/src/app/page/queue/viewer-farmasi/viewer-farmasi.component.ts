@@ -20,6 +20,9 @@ export class ViewerFarmasiComponent implements OnInit {
   dataSource: any[] = []
   dataSourceN: any[] = []
   dataSourceR: any[] = []
+  dataSourceL: any[] = []
+  dataSourceN_L: any[] = []
+  dataSourceR_L: any[] = []
   color = ['white', 'blue', 'gray', 'darkgray', 'orange']
   listKelas = []
   dipanggilN: boolean = false;
@@ -136,7 +139,8 @@ export class ViewerFarmasiComponent implements OnInit {
 
   ngOnInit(): void {
     this.elem = document.documentElement;
-    this.load()
+    // this.load()
+    this.setupIntervalLoad();
 
     // this.loadTable(this.start_otomatis, this.limit_otomatis)
     // this.loadKelas()
@@ -175,6 +179,25 @@ export class ViewerFarmasiComponent implements OnInit {
     }, (5000));
 
   }
+
+  setupIntervalLoad() {
+    this.load();
+    // Interval untuk memuat data setiap 10 detik
+    this.apiService.get('viewer/get-interval-antrian-farmasi').subscribe(e => {
+      debugger
+      let interval = e
+      if (interval) {
+        setInterval(() => {
+          this.load();
+        }, interval * 1000); // interval dalam detik dikonversi ke milidetik
+      } else {
+        setInterval(() => {
+          this.load();
+        }, 10000); // default 10 detik
+      }
+    })
+  }
+
   load() {
     this.dataSource = []
     this.dataSourceN = []
@@ -188,6 +211,22 @@ export class ViewerFarmasiComponent implements OnInit {
           this.dataSourceN.push(element)
         } else {
           this.dataSourceR.push(element)
+        }
+      }
+    })
+
+    this.dataSourceL = []
+    this.dataSourceN_L = []
+    this.dataSourceR_L = []
+    this.apiService.get('viewer/get-list-antrian-farmasi-terlewat').subscribe(e => {
+
+      this.dataSourceL = e
+      for (let i = 0; i < e.length; i++) {
+        const element = e[i];
+        if (element.aajenis == "N") {
+          this.dataSourceN_L.push(element)
+        } else {
+          this.dataSourceR_L.push(element)
         }
       }
     })
