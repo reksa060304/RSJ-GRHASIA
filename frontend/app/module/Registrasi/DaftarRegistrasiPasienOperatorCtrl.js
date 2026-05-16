@@ -279,6 +279,13 @@ define(['initialize', 'Configuration'], function (initialize, config) {
 					"width": "80px"
 				},
 				{
+                        field: "tglcheckin",
+                        title: "Tanggal Checkin",
+
+                        template: "<span class='style-left'>{{formatTanggal('#: tglcheckin #')}}</span>",
+                        width: 120
+                },
+				{
 					hidden: true,
 					"field": "ppkrujukan",
 					"title": "PPK",

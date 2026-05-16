@@ -435,7 +435,7 @@ $ruangdokter = \DB::table('ruangan_m as ru')
 //                'ps.foto',
                 'apd.norec as norec_apd',
                 'pa.prolanisprb',
-                'ru.ipaddress','ps.iskompleks','apd.residencefk','pg2.namalengkap as residence'
+                'ru.ipaddress','ps.iskompleks','apd.residencefk','pg2.namalengkap as residence','pd.tglcheckin'
                 // ,DB::raw('case when pp.noregistrasifk is null then \'false\' else \'true\' end as statuslayanan'))
                 ,DB::raw('case when apd.ispelayananpasien is null then \'false\' else \'true\' end as statuslayanan'))
             // ->whereNull('br.norec')
