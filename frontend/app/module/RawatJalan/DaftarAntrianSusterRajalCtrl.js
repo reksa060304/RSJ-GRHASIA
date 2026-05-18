@@ -379,6 +379,13 @@ define(['initialize'], function (initialize) {
                         "width": "80px"
                     },
                     {
+                        "field": "tglcheckin",
+                        "title": "Tanggal Checkin",
+
+                        "template": "#= tglcheckin ? kendo.toString(new Date(tglcheckin), 'dd-MM-yyyy HH:mm') : '' #",
+                        "width": "120px"
+                    },
+                    {
                         "field": "alamatlengkap",
                         "title": "Alamat",
                         "width": "100px"
