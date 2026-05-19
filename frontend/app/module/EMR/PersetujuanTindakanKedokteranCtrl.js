@@ -18,11 +18,13 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
             $scope.isCetakV = true;
             $scope.cc = {}
             var nomorEMR = '-'
+            var norecEMR = ''
             $scope.cc.emrfk = 3001110
             var dataLoad = []
             var pegawaiInputDetail= ''
             $scope.item.kasusbaru = true
             $scope.item.kasuslama = false
+            var imgDefault = 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAKAAAACgCAYAAACLz2ctAAAEOUlEQVR4AezS0Y7COABD0dH+/0evxBMrAWVpk7jxmQc0ojSxr+8/f/4QWEiAgAvhu/rvj4AsWEqAgEvxu5yAHFhKgIBL8bu8V0DbRxAgYMQMvSEI2Lt9RHMCRszQG4KAvdtHNCdgxAy9IQjYt31UYwJGzdEXhoB9m0c1JmDUHH1hCNi3eVRjAkbN0ReGgH2bRzWeKmBUc2EiCBAwYobeEATs3T6iOQEjZugNQcDe7SOaEzBiht4QBJyyvUveESDgOzK+n0KAgFMwu+QdAQK+I+P7KQQIOAWzS94RIOA7Mr6fQoCAUzD3XnLUnIBHhDwfSoCAQ/E6/IgAAY8IeT6UAAGH4nX4EQECHhHyfCgBAg7F6/AjAvsKeNTc8wgCBIyYoTcEAXu3j2hOwIgZekMQsHf7iOYEjJihNwQB99v+Vo0IeKu59gtLwP02vVUjAt5qrv3CEnC/TW/ViIC3mmu/sATcb9NbNbpUwFs1FzaCAAEjZugNQcDe7SOaEzBiht4QBOzdPqI5ASNm6A1BwEu2d8ivBAj4KznvXUKAgJdgdMivBAj4KznvXUKAgJdgdMivBAj4KznvXUKAgJdg7D3kbHMCniXo/VMECHgKn5fPEiDgWYLeP0WAgKfwefksAQKeJej9UwQIeAqfl88SuK+AZ5t7P4IAASNm6A1BwN7tI5oTMGKG3hAE7N0+ojkBI2boDUHA+22/VWICbjXn/coQ8H6bbZWYgFvNeb8yBLzfZlslJuBWc96vDAHvt9lWif+XgFs1VyaCAAEjZugNQcDe7SOaEzBiht4QBOzdPqI5ASNm6A1BwK+296NRBAg4iqxzvyJAwK8w+dEoAgQcRda5XxEg4FeY/GgUAQKOIuvcrwgQ8CtMvT8a3ZyAowk7/yMBAn7E4+FoAgQcTdj5HwkQ8CMeD0cTIOBows7/SICAH/F4OJpAroCjmzs/ggABI2boDUHA3u0jmhMwYobeEATs3T6iOQEjZugNQcC87asSEbBq7ryyBMzbpCoRAavmzitLwLxNqhIRsGruvLIEzNukKtF/BKxqrmwEAQJGzNAbgoC920c0J2DEDL0hCNi7fURzAkbM0BuCgI/tfawiQMBV5N37IEDABwYfqwgQcBV59z4IEPCBwccqAgRcRd69DwIEfGDo/VjdnICrFyi/n4DlAqyuT8DVC5TfT8ByAVbXJ+DqBcrvJ2C5AKvrrxNwdXP3RxAgYMQMvSEI2Lt9RHMCRszQG4KAvdtHNCdgxAy9IQg4f3s3PhEg4BMM/84nQMD5zN34RICATzD8O58AAeczd+MTAQI+wfDvfAIEnM+898YXzQn4Aoqv5hEg4DzWbnpBgIAvoPhqHgECzmPtphcECPgCiq/mESDgPNZuekGgRMAXzX0VQYCAETP0hiBg7/YRzQkYMUNvCAL2bh/RnIARM/SGIODm26fX+xcAAP//nHXz1AAAAAZJREFUAwCUEwFBguBA8wAAAABJRU5ErkJggg=='
             if(medifirstService.getKelompokUser() == 'mahasiswadiklat'){
                 $scope.tombolSimpanVis = false
             }
@@ -35,9 +37,14 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
             var cacheNomorEMR = cacheHelper.get('cacheNomorEMR');
             if (cacheNomorEMR != undefined) {
                 nomorEMR = cacheNomorEMR[0]
+                norecEMR = cacheNomorEMR[1]
                 $scope.cc.norec_emr = nomorEMR
                 $scope.cc.tanggalEmrl = cacheNomorEMR[2]
             }   
+            var cacheNoREC = cacheHelper.get('cacheNOREC_EMR');
+            if (cacheNoREC != undefined) {
+                norecEMR = cacheNomorEMR[1]
+            } 
             
             var chacePeriode = cacheHelper.get('cacheRekamMedis');
             console.log(chacePeriode)
@@ -152,6 +159,30 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
                     }
 
                 }
+                // load img ttd
+                medifirstService.get("emr/get-emr-transaksi-detail-img?noemr=" + nomorEMR + "&emrfk=" + $scope.cc.emrfk, true).then(function (dat) {
+                    var dataImg = dat.data.data;
+                    
+                    dataImg.forEach(function(item) {
+                        if (parseFloat($scope.cc.emrfk) == parseFloat(item.emrfk)) {
+                            var canvasId = 'signature_' + item.emrdfk;
+                            var sigCanvas = document.getElementById(canvasId);
+
+                            if (sigCanvas) {
+                                var context = sigCanvas.getContext("2d");
+                                context.clearRect(0, 0, sigCanvas.width, sigCanvas.height);
+                                var imagess =  item.image
+                                var background = new Image();
+                                background.src = imagess
+                                background.onload = function() {
+                                    context.drawImage(background, 0, 0, sigCanvas.width, sigCanvas.height);
+                                }
+                            }
+                        }
+                    });
+                }) 
+                // end load 
+
                 // if( $scope.cc.norec_emr !='-' && pegawaiInputDetail !='' && pegawaiInputDetail !=null){
                 //     if(pegawaiInputDetail != medifirstService.getPegawaiLogin().id){
                 //         $scope.allDisabled =true
@@ -686,6 +717,14 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
 
             $scope.Save = function () {
 
+                var arrSaveImg = [];
+                var canvas = document.getElementById('signature_1');
+                var dataURL = canvas.toDataURL();
+                
+                if (imgDefault !== dataURL) {
+                    arrSaveImg.push({ id: 1, values: dataURL });
+                }
+
                 var arrobj = Object.keys($scope.item.obj)
                 var arrSave = []
                 for (var i = arrobj.length - 1; i >= 0; i--) {
@@ -697,13 +736,18 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
                 $scope.cc.jenisemr = 'asesmen'
                 var jsonSave = {
                     head: $scope.cc,
-                    data: arrSave
+                    data: arrSave,
+                    dataimg: arrSaveImg
                 }
                 medifirstService.post('emr/save-emr-dinamis', jsonSave).then(function (e) {
                     // $state.go("RekamMedis.OrderJadwalBedah.ProsedurKeselamatan", {
                     //     namaEMR : $scope.cc.emrfk,
                     //     nomorEMR : e.data.data.noemr 
                     // });
+                    if(norecEMR == '-' || norecEMR == null || norecEMR == ''){
+                        norecEMR = e.data.norecEMR
+                        nomorEMR = e.data.data.noemr
+                    }
                     medifirstService.postLogging('EMR', 'norec emrpasien_t', e.data.data.norec,  
                     'PersetujuanTindakanKedokteranCtrl' + ' dengan No EMR - ' +e.data.data.noemr +  ' pada No Registrasi ' 
                     + $scope.cc.noregistrasi).then(function (res) {
@@ -717,16 +761,133 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
             }
 
             $scope.cetakBlade = function () {
-                if (nomorEMR == '-') return
-
+                if (norecEMR == '') {
+                    toastr.error('Dokumen belum pernah di isi')
+                    return
+                }
                 var local = JSON.parse(localStorage.getItem('profile'))
-                var nama = medifirstService.getPegawaiLogin().namaLengkap
+                // var nama = medifirstService.getPegawaiLogin().namaLengkap
 
-                window.open(configuration.baseApiBackend + 'report/get-cetak-suratketerangandokter?noemr=' + nomorEMR + '&emfk=' + $scope.cc.emrfk +
+                window.open(configuration.baseApiBackend + 'report/get-cetak-surat-man?nocm=' + $scope.cc.nocm +
+                    '&emr=' + norecEMR +
+                    '&noemr=' + nomorEMR +
+                    '&emrfk=' + $scope.cc.emrfk +
                     '&kdprofile=' + local.id +
-                    '&nama=' + nama, '_blank');
+                    '&blade=' + 'persetujuandokter-dom', '_blank');
+                    
+            }
+
+            // func ttd
+            initialize("signature_1")
+            function initialize(id) {
+                var sigCanvas = document.getElementById(id);
+                var context = sigCanvas.getContext("2d");
+                context.strokeStyle = "blue";
+                context.lineJoin = "round";
+                context.lineWidth = 2;
+
+                var is_touch_device = 'ontouchstart' in document.documentElement;
+
+                if (is_touch_device) {
+                var drawer = {
+                    isDrawing: false,
+                    touchstart: function(coors) {
+                        context.beginPath();
+                        context.moveTo(coors.x, coors.y);
+                        this.isDrawing = true;
+                    },
+                    touchmove: function(coors) {
+                        if (this.isDrawing) {
+                            context.lineTo(coors.x, coors.y);
+                            context.stroke();
+                        }
+                    },
+                    touchend: function(coors) {
+                        if (this.isDrawing) {
+                            this.touchmove(coors);
+                            this.isDrawing = false;
+                        }
+                    }
+                };
+
+                function draw(event) {
+                    var coors = {
+                        x: event.targetTouches[0].pageX,
+                        y: event.targetTouches[0].pageY
+                    };
+
+                    var obj = sigCanvas;
+
+                    if (obj.offsetParent) {
+                        do {
+                            coors.x -= obj.offsetLeft;
+                            coors.y -= obj.offsetTop;
+                        }
+
+                        while ((obj = obj.offsetParent) != null);
+                    }
+
+                    drawer[event.type](coors);
+                }
+
+                sigCanvas.addEventListener('touchstart', draw, false);
+                sigCanvas.addEventListener('touchmove', draw, false);
+                sigCanvas.addEventListener('touchend', draw, false);
+
+                sigCanvas.addEventListener('touchmove', function(event) {
+                    event.preventDefault();
+                }, false);
+                } else {
+
+                $(`#${id}`).mousedown(function(mouseEvent) {
+                    var position = getPosition(mouseEvent, sigCanvas);
+                    context.moveTo(position.X, position.Y);
+                    context.beginPath();
+
+                    $(this).mousemove(function(mouseEvent) {
+                        drawLine(mouseEvent, sigCanvas, context);
+                    }).mouseup(function(mouseEvent) {
+                        finishDrawing(mouseEvent, sigCanvas, context);
+                    }).mouseout(function(mouseEvent) {
+                        finishDrawing(mouseEvent, sigCanvas, context);
+                    });
+                });
+
+                }
+            }
+
+            function drawLine(mouseEvent, sigCanvas, context) {
+                var position = getPosition(mouseEvent, sigCanvas);
+                context.lineTo(position.X, position.Y);
+                context.stroke();
+            }
+
+            function finishDrawing(mouseEvent, sigCanvas, context) {
+                drawLine(mouseEvent, sigCanvas, context);
+
+                context.closePath();
+
+                $(sigCanvas).unbind("mousemove")
+                .unbind("mouseup")
+                .unbind("mouseout");
+            }
+
+            $scope.batalTTd = function (canvas) {
+                var sigCanvas = document.getElementById(canvas);
+                var context = sigCanvas.getContext("2d");
+                context.clearRect(0, 0, sigCanvas.width, sigCanvas.height);
+            }
+
+            function getPosition(mouseEvent, sigCanvas) {
+                var rect = sigCanvas.getBoundingClientRect();
+                return {
+                    X: mouseEvent.clientX - rect.left,
+                    Y: mouseEvent.clientY - rect.top
+                };
             }
         }
+
+        // end func ttd
         
     ]);
 });

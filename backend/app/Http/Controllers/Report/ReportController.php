@@ -3170,6 +3170,162 @@ class ReportController extends ApiController{
         // return view('report.EMR.suratketerangangawatdarurat',compact('data','pageWidth'));
     }
 
+    public function CetakSuratMan(Request $request)
+    {   
+        $norec = $request['emr'];
+        $kdProfile = (int) $request['kdprofile'];
+        $kodeAwalSurat = $this->settingDataFixed('KodeAwalSurat', $kdProfile);
+        $kodeAkhirSurat = $this->settingDataFixed('KodeAkhirSurat', $kdProfile);
+        $data = DB::select(DB::raw("
+        SELECT
+            epd.emrdfk,
+            epd.emrfk,
+            ep.noemr,
+            ed.TYPE,
+            pa.namapasien,
+            pa.tgllahir,
+            pa.nohp,
+            pa.nocm,
+            ep.jeniskelamin,
+            ep.umur,
+            al.alamatlengkap,
+            ep.noregistrasifk as noregistrasi ,
+            epd.value,ep.namaruangan,pg.namalengkap as namadokter
+            --case when ed.TYPE = 'datetime' then TO_CHAR(TO_TIMESTAMP(epd.value, 'YYYY-MM-DD HH24:MI:SS'),'YYYY-MM-DD HH24:MI:SS') else epd.value end as value
+        FROM
+            emrpasien_t AS ep
+            INNER JOIN emrpasiend_t AS epd ON ep.noemr = epd.emrpasienfk
+            INNER JOIN emrd_t AS ed ON epd.emrdfk = ed.ID
+                INNER JOIN antrianpasiendiperiksa_t AS pd ON pd.norec = ep.norec_apd
+            left JOIN pegawai_m AS pg ON pg.id = pd.objectpegawaifk
+            left JOIN pasien_m as pa on ep.nocm =  pa.nocm
+            left JOIN alamat_m as al on pa.id = al.nocmfk
+        WHERE
+            ep.norec = '$norec'
+                AND ep.kdprofile = '$kdProfile' 
+            AND epd.statusenabled = TRUE 
+            and epd.emrfk = ".$request['emrfk']."
+        ORDER BY
+            ed.nourut
+            "
+        ));
+        $dataimg = DB::table('emrfoto_t as emrp')
+                ->select('emrp.*')
+                ->where('emrp.statusenabled', true)
+                ->where('emrp.kdprofile', $kdProfile) 
+                ->where('emrp.noemrpasienfk', $request['noemr']) 
+                ->where('emrp.emrfk', $request['emrfk']) 
+                ->get();
+
+        $res['profile'] = Profile::where('id',$request['kdprofile'])->first();
+        $res['d'] = $data;
+        $item =[];   
+        $item2= [];      
+        foreach( $res['d'] as $items){
+                if($items->type  ==  "textbox" ||$items->type  ==  "textarea"  ){
+                    $item[$items->emrdfk] =  $items->value;
+                }
+                if($items->type  ==  "datetime"){
+                    // $item[$items->emrdfk] = $this->tanggal_indonesia(date('Y-m-d H:i:s',strtotime( $items->value))) ;
+                    $item[$items->emrdfk] = date('Y-m-d H:i',strtotime( $items->value));
+                }
+                if($items->type  ==  "time"){
+                    $item[$items->emrdfk] = date('H:i',strtotime( $items->value));
+                }
+                if($items->type  ==  "date"){
+                    $item[$items->emrdfk] = date('Y-m-d',strtotime( $items->value));
+                }
+                if($items->type  ==  "checkboxtextbox"){
+                    $item[$items->emrdfk] =  $items->value;
+                    $item2[$items->emrdfk] =  true;
+                }
+                if($items->type == "checkbox") {
+                    $chekedd = false;
+                    if ($items->value == '1') {
+                        $chekedd = true;
+                    }
+                    $item[$items->emrdfk] = $chekedd;
+                }
+                if($items->type == "combobox") {
+                    $arr = explode('~',$items->value );
+                    $item[$items->emrdfk] = $arr[1];
+                }
+        }
+        $pageWidth = 550;
+
+        $peg = null;
+        $dataSip = null;
+        if(isset($request['pegawaittd']) && $request['pegawaittd'] != '') {
+            $peg = DB::table('pegawai_m')
+                ->where('id',$request['pegawaittd'])
+                ->first();
+            
+            $dataSip = DB::table('masaberlakusipstr_t as mbs')
+                    ->select('pg.id as idpegawai', 'pg.nama', 'mbs.nosip')
+                    ->leftJoin('jenismasaberlakustrsip_m as jmb','jmb.id','=','mbs.jenismasaberlakufk')
+                    ->leftJoin('pegawai_m as pg','pg.id','=', 'mbs.pegawaifk')
+                    ->leftJoin('unitkerjapegawai_m as uk','uk.id','=','pg.objectunitkerjapegawaifk')
+                    ->leftJoin('unitkerjapegawai_m as uk2','uk2.id','=','mbs.subunitkerjafk')
+                    ->where('pg.statusenabled',true)
+                    ->where('mbs.kdprofile', $kdProfile)
+                    ->where('mbs.pegawaifk', $request['pegawaittd'])
+                    ->orderBy('mbs.berakhirstr','desc')
+                    ->first();
+        }
+
+        // Cek apa sudah ada tte
+        if(count($data) > 0) {
+            $cekPdf = DB::table('emr_bsre_t')
+                ->where('statusenabled', true)
+                ->where('noregistrasi', trim($data[0]->noregistrasi))
+                ->where('nocm', $data[0]->nocm)
+                ->where('nomoremr', $data[0]->noemr)
+                ->where('emrfk', $data[0]->emrfk)
+                ->where('status', true)
+                ->get();
+
+            if(count($cekPdf) > 0 && (!isset($request['isttd']) || $request['isttd'] == 'false')){
+                $filePath = storage_path($cekPdf[0]->file);
+                if (file_exists($filePath)) {
+                    $link = '/service/storage_path?path='.$cekPdf[0]->file.'&filename='.$cekPdf[0]->namafile.'&mimetype=application/pdf';
+                    return redirect($link);
+                }
+            }
+        }
+
+        $pdf = PDF::loadView(
+            'report.EMR.'. $request['blade'],
+            array(
+                'res' => $res,
+                'pageWidth' => $pageWidth,
+                'data' => $data,
+                'item'=> $item,
+                'dataimg'=> $dataimg,
+                'peg'=> $peg,
+                'tte' => (isset($request['isttd']) && $request['isttd'] == true) ? 'true' : 'false',
+                'sip' => $dataSip
+            )
+        );
+
+        if(isset($request['isttd']) && $request['isttd'] == true){
+            $objetoRequest = new \Illuminate\Http\Request();
+            $objetoRequest ['emrfk'] = $request['emrfk'];
+            $objetoRequest ['norec_emr'] = $request['emr'];
+            $objetoRequest ['pegawaittd'] = $request['pegawaittd'];
+            $objetoRequest ['nocm'] = $request['nocm'];
+            $objetoRequest ['noregistrasi'] = $request['noregistrasi'];
+            $objetoRequest ['norec_pd'] = $request['norec_pd'];
+            $bsre = app('App\Http\Controllers\Bridging\BridgingBSREController')->pengajuanTTE($objetoRequest,true);
+            if($bsre['status'] == 201){
+                $content = $pdf->download()->getOriginalContent();
+                \Storage::disk('local')->put( 'TTD_BSRE/' . $bsre['dokumen']->id . '/file' . '.pdf' , $content);
+            }
+          
+            return $bsre;
+        }
+
+        return $pdf->stream();
+    }
     public function CetakSKDirawatInap(Request $request)
     {   
         $norec = $request['emr'];

@@ -453,11 +453,23 @@
                     </div>
                     <div class="grid_6"></div>
                     <div class="grid_3">
-                        <textarea c-text-area type="input" filter="'string'" class="k-textbox" ng-model="item.obj[1901308930]"
+                        <div class="grid_12">
+                            <div class="grid_12" style="width: 250px; height: 250px; border-style: solid; margin: auto; float: none;">
+                                <div id="iframe">
+                                    <canvas id="signature_1" width="350px" height="350px"></canvas>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="grid_12" style="text-align:center">
+                            <button class="k-button batal btnKoneng" style="margin-top: 10px"
+                                ng-click="batalTTd('signature_1')">Hapus</button>
+                        </div>
+                        <textarea c-text-area type="input" filter="'string'" class="k-textbox" ng-model="item.obj[1901309791]"
                             k-data-source=""
                             style="height: 30px; width: 100%; " />
                     </div>
                 </div>
+                
 
                 <div class="grid_12" style="margin-top: 50px; text-align: center;">
                     <label item="item" class="margin-bottom" style="color: #000000; font-weight: bold">HAK PASIEN / KELUARGA</u></b> </label>
