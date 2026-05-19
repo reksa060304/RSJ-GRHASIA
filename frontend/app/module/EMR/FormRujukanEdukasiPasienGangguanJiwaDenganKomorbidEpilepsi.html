@@ -1,0 +1,428 @@
+<style type="text/css">
+    .tg {
+        border-collapse: collapse;
+        border-spacing: 0;
+        border-color: #aabcfe;
+    }
+
+    .tg td {
+        font-family: Arial, sans-serif;
+        font-size: 14px;
+        padding: 10px 5px;
+        border-style: solid;
+        border-width: 1px;
+        overflow: hidden;
+        word-break: normal;
+        border-color: #aabcfe;
+        color: #669;
+        background-color: #e8edff;
+    }
+
+    .tg th {
+        font-family: Arial, sans-serif;
+        font-size: 14px;
+        font-weight: normal;
+        padding: 10px 5px;
+        border-style: solid;
+        border-width: 1px;
+        overflow: hidden;
+        word-break: normal;
+        border-color: #aabcfe;
+        color: #039;
+        background-color: #b9c9fe;
+    }
+
+    .tg .tg-yw4l {
+        vertical-align: top
+    }
+
+
+    .rowstyle {
+        border-bottom: 1px dashed lightblue
+    }
+
+    .footer {
+        text-align: center;
+        font-size: 120%;
+        font-weight: 700;
+        margin-bottom: 20px
+    }
+
+    table,
+    th,
+    td {
+        border: 1px solid #777777;
+        border-collapse: collapse;
+    }
+
+    th,
+    td {
+        padding: 5px;
+        text-align: left;
+    }
+
+    /* table {
+        font-family: arial, sans-serif;
+        border-collapse: collapse;
+        width: 40px;
+
+    }
+
+    td,
+    th {
+        border: 1px solid #dddddd;
+        text-align: left;
+        padding: 8px;
+    }
+
+    tr:nth-child(even) {
+        background-color: #dddddd;
+    } */
+    .dot1 {
+        vertical-align: top;
+        height: 50px;
+        width: 50px;
+        background-color: red;
+        border-radius: 50%;
+        display: inline-block;
+    }
+
+    .dot2 {
+        vertical-align: top;
+        height: 50px;
+        width: 50px;
+        background-color: yellow;
+        border-radius: 50%;
+        display: inline-block;
+    }
+
+    .dot3 {
+        vertical-align: top;
+        height: 50px;
+        width: 50px;
+        background-color: green;
+        border-radius: 50%;
+        display: inline-block;
+    }
+
+    .dot4 {
+        vertical-align: top;
+        height: 50px;
+        width: 50px;
+        background-color: black;
+        border-radius: 50%;
+        display: inline-block;
+    }
+  
+       .activeDot:before {
+        content: '\f00c';
+    font-family: 'FontAwesome';
+    display: inline-block;
+    vertical-align: top;
+    line-height: 1em;
+    /* width: 1em; */
+    /* height: 1em; */
+    font-size: 25px;
+    /* margin-right: 0.3em; */
+    text-align: center;
+    color: #ffffff;
+    margin-top: 12px;
+    }
+    .my-disable{
+        pointer-events:none;
+
+    }
+
+    .margin-top{
+        margin-top: 20px;
+    }
+
+    .margin-top-10{
+        margin-top: 10px;
+    }
+
+    .margin-top-30{
+        margin-top: 30px;
+    }
+
+    .text-center{
+        text-align: center;
+    }
+
+    .margin-bottom{
+        margin-bottom: 10px;
+    }
+
+    .text-center{
+        text-align: center;
+    }
+
+    .border-left{
+        border-left: 1px solid black;
+    }
+
+    .border-right{
+        border-right: 1px solid rgba(54, 53, 53, 0.438);
+    }
+
+    .container-edukasi {
+        width: 100%;
+        box-sizing: border-box;
+        line-height: 1.6;
+    }
+
+    .container-edukasi > ol {
+        margin: 0;
+        padding-left: 20px;
+    }
+
+    .container-edukasi > ol > li {
+        font-weight: bold;
+        margin-bottom: 15px;
+    }
+
+    .container-edukasi p {
+        font-weight: normal;
+        margin: 5px 0 10px 0;
+    }
+
+    .container-edukasi ol[type="a"] {
+        font-weight: normal;
+        margin-top: 5px;
+        padding-left: 20px;
+    }
+
+    .container-edukasi ol[type="a"] > li {
+        margin-bottom: 5px;
+    }
+
+    /* Tata letak khusus untuk list ber-icon panah (➢) */
+    .container-edukasi ul.arrow-list {
+        list-style-type: none;
+        padding-left: 20px;
+        margin-top: 5px;
+        margin-bottom: 10px;
+    }
+
+    .container-edukasi ul.arrow-list > li {
+        position: relative;
+        padding-left: 20px;
+        margin-bottom: 3px;
+    }
+
+    .container-edukasi ul.arrow-list > li::before {
+        content: "➢";
+        position: absolute;
+        left: 0;
+        top: 0;
+    }
+
+</style>
+
+ <!-- ng-class="{'my-disable':true}" -->
+<!-- <div class="grid_12"  disable-contents="allDisabled" id="form"> -->
+<div class="grid_12">
+    <div class="grid_12">
+        <div class="grid_12">
+            <fieldset style="margin-top: 50px;">
+                <div class="grid_12 margin-top-30">
+                    <label c-label item="item" style="text-align: center; font-size: 20px;"> <u>RUJUKAN EDUKASI PASIEN DENGAN EPILEPSI</u></label>
+                </div>
+                <div class="grid_12" style="margin-top: 50px;">
+                    <div class="grid_12 margin-top-10 margin-bottom">
+                        <div class="grid_1"></div>
+                        <div class="grid_3">
+                            <label c-label item="item" class="margin-bottom">Rumah Sakit :</label>
+                        </div>
+                        <div class="grid_8">
+                            <label c-label item="item" class="margin-bottom">RSJ Grhasia DIY</label>
+                        </div>
+                    </div>
+                    <div class="grid_12 margin-top-10 margin-bottom">
+                        <div class="grid_1"></div>
+                        <div class="grid_3">
+                            <label c-label item="item" class="margin-bottom">Puskesmas Tujuan :</label>
+                        </div>
+                        <div class="grid_8">
+                            <textarea c-text-area type="input" filter="'string'" class="k-textbox" ng-model="item.obj[1901307000]"
+                            style="height: 30px; width: 100%; "/>
+                        </div>
+                    </div>
+                    <div class="grid_12 margin-top-10 margin-bottom">
+                        <div class="grid_1"></div>
+                        <div class="grid_3">
+                            <label c-label item="item" class="margin-bottom">Tanggal :</label>
+                        </div>
+                        <div class="grid_8">
+                            <input style="width: 100%" k-ng-model="item.obj[1901306000]" kendo-datetimepicker
+                                placeholer="yyyy-MM-dd HH:mm" k-format="'yyyy-MM-dd HH:mm'" parsedate="yyyy-MM-dd HH:mm" />
+                        </div>
+                    </div>
+                    <div class="grid_12 margin-top-10 margin-bottom">
+                        <div class="grid_1"></div>
+                        <div class="grid_3">
+                            <label c-label item="item" class="margin-bottom">Nama Pasien :</label>
+                        </div>
+                        <div class="grid_8">
+                            <textarea c-text-area type="input" filter="'string'" class="k-textbox" ng-model="item.obj[1901306001]"
+                            style="height: 30px; width: 100%; "/>
+                        </div>
+                    </div>
+                    <div class="grid_12 margin-top-10 margin-bottom">
+                        <div class="grid_1"></div>
+                        <div class="grid_3">
+                            <label c-label item="item" class="margin-bottom">Umur :</label>
+                        </div>
+                        <div class="grid_8">
+                            <textarea c-text-area type="input" filter="'string'" class="k-textbox" ng-model="item.obj[1901306002]"
+                            style="height: 30px; width: 100%; "/>
+                        </div>
+                    </div>
+                    <div class="grid_12 margin-top-10 margin-bottom">
+                        <div class="grid_1"></div>
+                        <div class="grid_3">
+                            <label c-label item="item" class="margin-bottom">Jenis Kelamin :</label>
+                        </div>
+                        <div class="grid_3">
+                            <input type="checkbox" class="k-checkbox" id="item.obj[1901306003]"
+                                ng-model="item.obj[1901306003]" ng-change="toggleJenisKelamin(1901306003)">
+                            <label class="k-checkbox-label" for="item.obj[1901306003]">
+                                &nbsp;Laki-Laki</label>
+                        </div>
+                        <div class="grid_5">
+                            <input type="checkbox" class="k-checkbox" id="item.obj[1901306004]"
+                                ng-model="item.obj[1901306004]" ng-change="toggleJenisKelamin(1901306004)">
+                            <label class="k-checkbox-label" for="item.obj[1901306004]">
+                                &nbsp;Perempuan</label>
+                        </div>
+                    </div>
+                    <div class="grid_12 margin-top-10 margin-bottom">
+                        <div class="grid_1"></div>
+                        <div class="grid_3">
+                            <label c-label item="item" class="margin-bottom">Diagnosa :</label>
+                        </div>
+                        <div class="grid_8">
+                            <textarea c-text-area type="input" filter="'string'" class="k-textbox" ng-model="item.obj[1901306005]"
+                            style="height: 30px; width: 100%; "/>
+                        </div>
+                    </div>
+                    <div class="grid_12 margin-top-10 margin-bottom">
+                        <div class="grid_1"></div>
+                        <div class="grid_3">
+                            <label c-label item="item" class="margin-bottom">Riwayat Perawatan :</label>
+                        </div>
+                        <div class="grid_8">
+                            <textarea c-text-area type="input" filter="'string'" class="k-textbox" ng-model="item.obj[1901306006]"
+                            style="height: 70px; width: 100%; "/>
+                        </div>
+                    </div>
+                    <div class="grid_12 margin-top-10 margin-bottom">
+                        <div class="container-edukasi">
+                            <p style="font-size: 1.2em; font-weight: bold; margin-bottom: 20px;">
+                                Rekomendasi Edukasi dan Tindak Lanjut di Puskesmas</p>
+                            <ol>
+                                <li>1. Melanjutkan pengobatan anti kejang
+                                    <p>Pasien agar diberikan edukasi yang jelas dan berkelanjutan tentang pentingnya konsumsi obat anti kejang setiap hari sesuai anjuran, meskipun gejala mulai membaik. Tidak boleh menghentikan obat tiba-tiba karena dapat memicu kejang. Jika lupa minum obat, segera minum begitu teringat. Jangan menggandakan dosis jika sudah mendekati waktu dosis berikutnya.</p>
+                                </li>
+
+                                <li>2. Penjelasan Terkait Tatalaksana Kejang Di Rumah
+                                    <ol type="a">
+                                        <li>a. Hal – hal yang harus dilakukan saat pasien kejang :
+                                            <ul class="arrow-list">
+                                                <li>Tetap tenang, jangan panik</li>
+                                                <li>Singkirkan benda keras/tajam di sekitar pasien</li>
+                                                <li>Longgarkan pakaian, terutama di leher</li>
+                                                <li>Posisikan pasien berbaring miring (posisi pemulihan) bila memungkinkan</li>
+                                                <li>Catat waktu mulai kejang</li>
+                                                <li>Lindungi kepala pasien (alas bantal/lipatan kain)</li>
+                                                <li>Biarkan kejang berhenti secara alami</li>
+                                                <li>Awasi pernapasan pasien</li>
+                                                <li>Setelah kejang berhenti, biarkan pasien istirahat</li>
+                                            </ul>
+                                        </li>
+                                        <li>b. Hal – hal yang tidak boleh dilakukan saat pasien kejang :
+                                            <ul class="arrow-list">
+                                                <li>Jangan memasukkan benda apa pun ke dalam mulut</li>
+                                                <li>Jangan menahan atau mengikat tubuh pasien</li>
+                                                <li>Jangan memberi minum atau obat saat kejang berlangsung</li>
+                                                <li>Jangan melakukan napas buatan saat pasien masih kejang</li>
+                                            </ul>
+                                        </li>
+                                    </ol>
+                                </li>
+
+                                <li>3. Penjelasan tentang pencegahan kekambuhan kejang
+                                    <p>Pasien diberikan edukasi mengenai risiko dan cara mencegah kekambuhan kejang, termasuk:</p>
+                                    <ol type="a">
+                                        <li>a. Kepatuhan minum obat: Pasien perlu diarahkan untuk meminum obat pada waktu yang sama setiap hari.</li>
+                                        <li>b. Pengawasan dosis pemberian obat : pasien dan keluarga diarahkan untuk tidak merubah dosis pemberian tanpa evaluasi dari dokter.</li>
+                                    </ol>
+                                </li>
+
+                                <li>4. Dukungan Psikososial
+                                    <p>Epilepsi atau ayan/sawan sering disalahartikan sebagai penyakit menular, gangguan jiwa, atau akibat hal mistis, sehingga perlunya edukasi terkait :</p>
+                                    <ol type="a">
+                                        <li>a. Edukasi keluarga tentang penyakit epilepsi juga penting untuk mengurangi stigma di rumah dan lingkungan sosial pasien.</li>
+                                        <li>b. Epilepsi dapat menimbulkan stigma sosial, sehingga pasien sering mengalami tekanan psikologis. Puskesmas perlu menyediakan dukungan psikologis atau kelompok dukungan untuk pasien epilepsi agar mereka dapat berbagi pengalaman dan mengurangi kecemasan terkait penyakit ini.</li>
+                                    </ol>
+                                </li>
+
+                                <li>5. Jadwal Pengawasan dan Pemantauan
+                                    <p>Puskesmas perlu menyusun jadwal kontrol rutin untuk memantau perkembangan kesehatan pasien termasuk:</p>
+                                    <ol type="a">
+                                        <li>a. Kunjungan setiap minggu untuk memeriksa kepatuhan terhadap pengobatan dan memantau tanda-tanda efek samping.</li>
+                                        <li>b. Pemantauan kondisi umum, intensitas kejang dan fungsi kognitif pasien setiap kali kunjungan dilakukan.</li>
+                                    </ol>
+                                </li>
+
+                                <li>6. Konseling Nutrisi untuk Mendukung Pengobatan
+                                    <p>Pasien epilepsi sering kali mengalami penurunan berat badan dan kelemahan. Puskesmas perlu memberikan konseling nutrisi untuk memastikan pasien mengonsumsi makanan yang tinggi kalori dan protein, seperti:</p>
+                                    <ol type="a">
+                                        <li>a. Sumber protein: Daging tanpa lemak, ikan, telur, dan kacang-kacangan.</li>
+                                        <li>b. Buah dan sayuran: Untuk membantu meningkatkan daya tahan tubuh.</li>
+                                        <li>c. Vitamin dan suplemen jika diperlukan, seperti vitamin B-kompleks dan asam folat.</li>
+                                    </ol>
+                                </li>
+
+                                <li>7. Rujukan Kembali Jika Terjadi Komplikasi
+                                    <p>Seringnya komplikasi muncul pada pasien epilepsi sehingga perlu pemantauan kondisi dan perlu rujukan ke rumah sakit :</p>
+                                    <ol type="a">
+                                        <li>a. Jika selama pemantauan terdapat tanda-tanda komplikasi seperti peningkatan frekuensi kejang walaupun dengan terapi kejang, penurunan fungsi kognitif, dan penurunan kesadaran, pasien harus segera dirujuk kembali ke rumah sakit untuk penanganan lebih lanjut.</li>
+                                        <li>b. Jika terjadi efek samping dengan gejala serius seperti kejang > 5 menit dan kejang berulang.</li>
+                                    </ol>
+                                </li>
+                            </ol>
+                        </div>
+                    </div>
+                    <div class="grid_12 margin-bottom" style="margin-top: 50px;">
+                        <div class="grid_1"></div>
+                        <div class="grid_5"></div>
+                        <div class="grid_1"></div>
+                        <div class="grid_5">
+                            <label c-label item="item">Yogyakarta, </label>
+                            <input style="width: 100%" k-ng-model="item.obj[1901307160]" kendo-datetimepicker
+                                placeholer="yyyy-MM-dd HH:mm" k-format="'yyyy-MM-dd HH:mm'" parsedate="yyyy-MM-dd HH:mm" />
+                        </div>
+                    </div>
+                    <div class="grid_12 margin-bottom" >
+                        <div class="grid_7"></div>
+                        <div class="grid_5">
+                            <label c-label item="item" style="text-align: center;">Dokter Yang Merujuk</label>
+                            <input style="width: 100%; text-align: center;" kendo-combo-box k-ng-model="item.obj[1901307170]"
+                            k-data-text-field="'text'" k-data-value-field="'value'" k-filter="'contains'"
+                            k-auto-bind="false" k-data-source="listPegawai" />
+                        </div>
+                    </div>
+                    <hr></hr>
+                </div>
+            </fieldset>
+        </div>
+    </div>
+</div>
+
+<br />
+<br />
+<div class="grid_12">
+    <div ng-include='"../app/module/EMR/TemplateButtonDinamis" '></div>
+
+</div>

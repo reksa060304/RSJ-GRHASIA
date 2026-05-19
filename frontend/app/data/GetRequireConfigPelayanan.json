@@ -3079,6 +3079,10 @@
             "urlDep": "module/EMR/FormulirPelayananKerohanianCtrl"
         },
         {
+            "nameDep": "FormRujukanEdukasiPasienGangguanJiwaDenganKomorbidEpilepsiCtrl",
+            "urlDep": "module/EMR/FormRujukanEdukasiPasienGangguanJiwaDenganKomorbidEpilepsiCtrl"
+        },
+        {
             "nameDep": "MonitoringTransfusiDarahCtrl",
             "urlDep": "module/EMR/MonitoringTransfusiDarahCtrl"
         },
