@@ -1608,6 +1608,106 @@ define(['initialize', 'Configuration'], function (initialize, config) {
             }
             $scope.totalSkorAses =0
             //skor morse
+
+            // list diag kep dari emrd_t
+            $scope.diagnosaList = [
+                    { check: 3018218, text: 'Diare', bbd: 3018219, dtd: 3018220 },
+                    { check: 3018221, text: 'Intoleransi Aktifitas', bbd: 3018222, dtd: 3018223 },
+                    { check: 3018224, text: 'Defisit Nutrisi', bbd: 3018225, dtd: 3018226 },
+                    { check: 3018227, text: 'Waham', bbd: 3018228, dtd: 3018229 },
+                    { check: 3018230, text: 'Gangguan Integritas Kulit Jaringan', bbd: 3018231, dtd: 3018232 },
+                    { check: 3018233, text: 'Gangguan Mobilitas Fisik', bbd: 3018234, dtd: 3018235 },
+                    { check: 3018236, text: 'Risiko Bunuh Diri', bbd: 3018237, dtd: 3018238 },
+                    { check: 3018239, text: 'Berduka', bbd: 3018240, dtd: 3018241 },
+                    { check: 3018242, text: 'Risiko Perilaku Kekerasan', bbd: 3018243, dtd: 3018244 },
+                    { check: 3018245, text: 'Risiko Gangguan Intrigitas Kulit / Jaringan', bbd: 3018246, dtd: 3018247 },
+                    { check: 3018248, text: 'Resiko Cidera', bbd: 3018249, dtd: 3018250 },
+                    { check: 3018251, text: 'Pola Nafas Tidak Efektif', bbd: 3018252, dtd: 3018253 },
+                    { check: 3018254, text: 'Ketidakmampuan Koping Keluarga', bbd: 3018255, dtd: 3018256 },
+                    { check: 3018257, text: 'Ketegangan Peran Pemberi Asuhan', bbd: 3018258, dtd: 3018259 },
+                    { check: 3018260, text: 'Ansietas', bbd: 3018261, dtd: 3018262 },
+                    { check: 3018263, text: 'Harga Diri Rendah Situasional', bbd: 3018264, dtd: 3018265 },
+                    { check: 3018266, text: 'Gangguan Persepsi Sensori', bbd: 3018267, dtd: 3018268 },
+                    { check: 3018269, text: 'Ganggguan Citra Tubuh', bbd: 3018270, dtd: 3018271 },
+                    { check: 3018272, text: 'Gangguan Rasa Nyaman', bbd: 3018273, dtd: 3018274 },
+                    { check: 3018275, text: 'Keputusasaan', bbd: 3018276, dtd: 3018277 },
+                    { check: 3018278, text: 'Ketidakberdayaan', bbd: 3018279, dtd: 3018280 },
+                    { check: 3018281, text: 'Distres Spiritual', bbd: 3018282, dtd: 3018283 },
+                    { check: 3018284, text: 'Penampilan Peran Tidak Efektif', bbd: 3018285, dtd: 3018286 },
+                    { check: 3018287, text: 'Gangguan Memori', bbd: 3018288, dtd: 3018289 },
+                    { check: 3018290, text: 'Perilaku Kekerasan', bbd: 3018291, dtd: 3018292 },
+                    { check: 3018293, text: 'Isoloasi Sosial', bbd: 3018294, dtd: 3018295 },
+                    { check: 3018296, text: 'Harga Diri Rendah Kronis', bbd: 3018297, dtd: 3018298 },
+                    { check: 3018299, text: 'Defisit Perawatan Diri', bbd: 3018300, dtd: 3018301 },
+                    { check: 3018302, text: 'Gangguan Komunikasi Verbal', bbd: 3018303, dtd: 3018304 },
+                    { check: 3018305, text: 'Manajemen Kesehatan Tidak Efektif', bbd: 3018306, dtd: 3018307 },
+                    { check: 3018308, text: 'Deprivasitidur', bbd: 3018309, dtd: 3018310 },
+                    { check: 3018311, text: 'Koping Tidak Efektif', bbd: 3018312, dtd: 3018313 },
+                    { check: 3018314, text: 'Kesiapan Peningkatan Manajemen Kesehatan', bbd: 3018315, dtd: 3018316 },
+                    { check: 3018317, text: 'Kesiapan Peningkatan Konsep Diri', bbd: 3018318, dtd: 3018319 },
+                    { check: 3018320, text: 'Defisit Pengetahuan', bbd: 3018321, dtd: 3018322 },
+                    { check: 3018323, text: 'Penurunan Curah Jantung', bbd: 3018324, dtd: 3018325 },
+                    { check: 3018326, text: 'Manajemen Kesehatan Keluarga Tidak Efektif', bbd: 3018327, dtd: 3018328 },
+                    { check: 3018329, text: 'Hipotermia', bbd: 3018330, dtd: 3018331 },
+                    { check: 3018332, text: 'Bersihan Jalan Nafas Tidak Efektif', bbd: 3018333, dtd: 3018334 },
+                    { check: 3018335, text: 'Ketidakstabilan Kadar Glukosa Darah', bbd: 3018336, dtd: 3018337 },
+                    { check: 3018338, text: 'Perfusi Perifer Tidak Efektif', bbd: 3018339, dtd: 3018340 },
+                    { check: 3018341, text: 'Naussea', bbd: 3018342, dtd: 3018343 },
+                    { check: 3018344, text: 'Risiko Infeksi', bbd: 3018345, dtd: 3018346 },
+                    { check: 3018347, text: 'Sindrom Putus Zat Akut', bbd: 3018348, dtd: 3018349 },
+                    { check: 3018350, text: 'Kunfusi Akut', bbd: 3018351, dtd: 3018352 },
+                    { check: 3018353, text: 'Ketidakpatuhan', bbd: 3018354, dtd: 3018355 },
+                    { check: 3018356, text: 'Koping Tidak Efektif', bbd: 3018357, dtd: 3018358 },
+                    { check: 3018359, text: 'Risiko Jatuh', bbd: 3018360, dtd: 3018361 },
+                    { check: 3018362, text: 'Hipovolemia', bbd: 3018363, dtd: 3018364 },
+                    { check: 3018365, text: 'Hipertermia', bbd: 3018366, dtd: 3018367 },
+                    { check: 3018368, text: 'Hipervolemia', bbd: 3018369, dtd: 3018370 },
+                    { check: 3018371, text: 'Nyeri Akut', bbd: 3018372, dtd: 3018373 },
+                    { check: 3018374, text: 'Nyeri Kronis', bbd: 3018375, dtd: 3018376 },
+                    { check: 3018377, text: 'Inkontinensia Urin Fungsional', bbd: 3018378, dtd: 3018379 },
+                    { check: 3018380, text: 'Inkontinensia Fekal', bbd: 3018381, dtd: 3018382 },
+                    { check: 3018383, text: 'Risiko Gangguan Perkembangan', bbd: 3018384, dtd: 3018385 },
+                    { check: 3018386, text: 'Gangguan Tumbuh Kembang', bbd: 3018387, dtd: 3018388 },
+                    { check: 3018389, text: 'Risiko Gangguan Pertumbuhan', bbd: 3018390, dtd: 3018391 }
+            ];
+
+
+            // generate text
+            $scope.updateDiagnosaKeperawatan = function () {
+
+                var hasil = [];
+                angular.forEach($scope.diagnosaList, function(item) {
+                    if ($scope.item.obj[item.check]) {
+                        hasil.push(
+                            item.text +
+                            ' : berhubungan dengan ' +
+                            ($scope.item.obj[item.bbd] || '-') +
+                            ', ditandai dengan ' +
+                            ($scope.item.obj[item.dtd] || '-') +
+                            '.'
+                        );
+                    }
+                });
+
+                // gabungin
+                $scope.item.obj[1901310025] = hasil.join('\n');
+            };
+
+            var watchFields = [];
+            angular.forEach($scope.diagnosaList, function(item) {
+
+                watchFields.push('item.obj[' + item.check + ']');
+                watchFields.push('item.obj[' + item.bbd + ']');
+                watchFields.push('item.obj[' + item.dtd + ']');
+
+            });
+
+            // watch group
+            $scope.$watchGroup(watchFields, function() {
+                $scope.updateDiagnosaKeperawatan();
+            });
+            
+
             $scope.$watch('item.obj[33100323]', function (nilai) {
 
                 if (nilai == undefined) return
