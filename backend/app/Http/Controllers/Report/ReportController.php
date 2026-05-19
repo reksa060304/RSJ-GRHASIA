@@ -30880,6 +30880,7 @@ public function suratBuktiPengembalian(Request $request)
                     0 AS jumlahanggaran,
                     0 AS panjar,
                     COALESCE ( SUM ( rd.subtotal ), 0 ) AS spj,
+                    0 AS spj_prev, 0 AS spj_current,
                     0 AS panjarspj 
                 FROM
                     strukrealisasi_t sr
