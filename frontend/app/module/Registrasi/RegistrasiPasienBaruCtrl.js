@@ -591,9 +591,90 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
 
                     }
 
+                    // Simpan data asli untuk audit log perubahan
+                    $scope.originalData = {
+                        namaPasien: result.namapasien,
+                        tempatLahir: result.tempatlahir,
+                        tglLahir: result.tgllahir ? moment(result.tgllahir).format('YYYY-MM-DD') : null,
+                        jenisKelamin: result.jeniskelamin,
+                        agama: result.agama,
+                        agamaLain: result.agamalain,
+                        statusPerkawinan: result.statusperkawinan,
+                        golonganDarah: result.golongandarah,
+                        pendidikan: result.pendidikan,
+                        pekerjaan: result.pekerjaan,
+                        pekerjaanLain: result.pekerjaanlain,
+                        suku: result.suku,
+                        noIdentitas: result.noidentitas,
+                        noBpjs: result.nobpjs,
+                        noAsuransiLain: result.noidentitaslain,
+                        noHp: result.nohp,
+                        noTelepon: result.notelepon,
+                        alamatLengkap: result.alamatlengkap,
+                        kodePos: result.kodepos,
+                        namaIbu: result.namaibu,
+                        namaAyah: result.namaayah,
+                        namaKeluarga: result.namakeluarga,
+                        namaSuamiIstri: result.namasuamiistri,
+                        PenanggungJawab: result.penanggungjawab,
+                        Hubungan: result.hubungankeluargapj,
+                        alergi: result.alergi,
+                        hambatan: result.hambatankomunikasi,
+                        bahasaP: result.bahasa,
+                        alamatDomisili: result.alamatdomisili,
+                    };
+
                 }, function (error) {
                     $scope.isRouteLoading = false
                 })
+            }
+
+            // bandingkan data lama dan baru
+            function buildChangeLog() {
+                if (!$scope.originalData) return '-';
+                var changes = [];
+                var orig = $scope.originalData;
+                var item = $scope.item;
+
+                function cmpField(label, oldVal, newVal) {
+                    var o = (oldVal == null || oldVal == undefined) ? '' : String(oldVal).trim();
+                    var n = (newVal == null || newVal == undefined) ? '' : String(newVal).trim();
+                    if (o !== n) {
+                        changes.push(label + ': [' + (o || '-') + '] -> [' + (n || '-') + ']');
+                    }
+                }
+
+                cmpField('Nama Pasien',      orig.namaPasien,      item.namaPasien);
+                cmpField('Tempat Lahir',     orig.tempatLahir,     item.tempatLahir);
+                cmpField('Tgl Lahir',        orig.tglLahir,        item.tglLahir ? moment(item.tglLahir).format('YYYY-MM-DD') : null);
+                cmpField('Jenis Kelamin',    orig.jenisKelamin,    item.jenisKelamin ? item.jenisKelamin.jeniskelamin : null);
+                cmpField('Agama',            orig.agama,           item.agama ? item.agama.agama : null);
+                cmpField('Agama Lain',       orig.agamaLain,       item.agamaLain);
+                cmpField('Status Perkawinan',orig.statusPerkawinan,item.statusPerkawinan ? item.statusPerkawinan.statusperkawinan : null);
+                cmpField('Golongan Darah',   orig.golonganDarah,   item.golonganDarah ? item.golonganDarah.golongandarah : null);
+                cmpField('Pendidikan',       orig.pendidikan,      item.pendidikan ? item.pendidikan.pendidikan : null);
+                cmpField('Pekerjaan',        orig.pekerjaan,       item.pekerjaan ? item.pekerjaan.pekerjaan : null);
+                cmpField('Pekerjaan Lain',   orig.pekerjaanLain,   item.pekerjaanLain);
+                cmpField('Suku',             orig.suku,            item.suku ? item.suku.suku : null);
+                cmpField('No Identitas (NIK)',orig.noIdentitas,     item.noIdentitas);
+                cmpField('No BPJS',          orig.noBpjs,          item.noBpjs);
+                cmpField('No Asuransi Lain', orig.noAsuransiLain,  item.noAsuransiLain);
+                cmpField('No HP',            orig.noHp,            item.noHp);
+                cmpField('No Telepon',       orig.noTelepon,       item.noTelepon);
+                cmpField('Alamat Lengkap',   orig.alamatLengkap,   item.alamatLengkap);
+                cmpField('Kode Pos',         orig.kodePos,         item.kodePos);
+                cmpField('Nama Ibu',         orig.namaIbu,         item.namaIbu);
+                cmpField('Nama Ayah',        orig.namaAyah,        item.namaAyah);
+                cmpField('Nama Keluarga',    orig.namaKeluarga,    item.namaKeluarga);
+                cmpField('Nama Suami/Istri', orig.namaSuamiIstri,  item.namaSuamiIstri);
+                cmpField('Penanggung Jawab', orig.PenanggungJawab, item.PenanggungJawab);
+                cmpField('Hubungan PJ',      orig.Hubungan,        item.Hubungan);
+                cmpField('Alergi',           orig.alergi,          item.alergi);
+                cmpField('Hambatan Komunikasi', orig.hambatan,     item.hambatan ? item.hambatan.hambatankomunikasi : null);
+                cmpField('Bahasa',           orig.bahasaP,         item.bahasaP ? item.bahasaP.bahasa : null);
+                cmpField('Alamat Domisili',  orig.alamatDomisili,  item.alamatDomisili);
+
+                return changes.length > 0 ? changes.join(' | ') : 'Tidak ada perubahan data';
             }
 
             function loadCombo() {
@@ -1052,6 +1133,18 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
                                                     }
                                                     // toastr.info($scope.noCm, 'No RM Pasien')
                                                     cacheHelper.set('CacheRegisBayi', undefined);
+
+                                                    // Audit log perubahan data pasien (mode edit)
+                                                    if ($scope.isEditPasien) {
+                                                        var keteranganLog = buildChangeLog();
+                                                        medifirstService.postLogging(
+                                                            'Edit Data Pasien',
+                                                            'pasien_m',
+                                                            res.data.data.nocm,
+                                                            keteranganLog
+                                                        ).then(function (res) {});
+                                                    }
+
                                                     // if ($scope.idPasien == undefined) {
                                                     //     $scope.Next()
                                                     // }
@@ -1230,6 +1323,18 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
                                         }
                                         // toastr.info($scope.noCm, 'No RM Pasien')
                                         cacheHelper.set('CacheRegisBayi', undefined);
+
+                                        // Audit log perubahan data pasien (mode edit)
+                                        if ($scope.isEditPasien) {
+                                            var keteranganLog = buildChangeLog();
+                                            medifirstService.postLogging(
+                                                'Edit Data Pasien',
+                                                'pasien_m',
+                                                res.data.data.nocm,
+                                                keteranganLog
+                                            ).then(function (res) {});
+                                        }
+
                                         // if ($scope.idPasien == undefined) {
                                         //     $scope.Next()
                                         // }
