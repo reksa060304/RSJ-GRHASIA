@@ -3083,6 +3083,10 @@
             "urlDep": "module/EMR/FormRujukanEdukasiPasienGangguanJiwaDenganKomorbidEpilepsiCtrl"
         },
         {
+            "nameDep": "FormRujukanEdukasiPasienGangguanJiwaDenganKomorbidSindromeGeriatriLowIntakeCtrl",
+            "urlDep": "module/EMR/FormRujukanEdukasiPasienGangguanJiwaDenganKomorbidSindromeGeriatriLowIntakeCtrl"
+        },
+        {
             "nameDep": "MonitoringTransfusiDarahCtrl",
             "urlDep": "module/EMR/MonitoringTransfusiDarahCtrl"
         },
