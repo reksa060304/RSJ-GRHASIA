@@ -1,4 +1,4 @@
-define(['initialize'], function (initialize) {
+define(['initialize', 'Configuration'], function (initialize, configuration) {
     'use strict';
     initialize.controller('FormulirEdukasiPasienDanKeluargaTerintegrasiCtrl', ['$q', '$rootScope', '$scope', 'ModelItem', '$state', 'CacheHelper', 'DateHelper', 'MedifirstService',
         function ($q, $rootScope, $scope, ModelItem, $state, cacheHelper, dateHelper, medifirstService) {
@@ -16,6 +16,7 @@ define(['initialize'], function (initialize) {
             $scope.totalSkor4 = 0
             $scope.cc = {}
             var nomorEMR = '-'
+            var norecEMR = ''
             $scope.cc.emrfk = 3000405
             var dataLoad = []
             var pegawaiInputDetail= ''
@@ -25,6 +26,7 @@ define(['initialize'], function (initialize) {
             if(medifirstService.getKelompokUser() == 'mahasiswadiklat'){
                 $scope.tombolSimpanVis = false
             }
+            $scope.isCetakV = true;
 
             medifirstService.getPart('emr/get-datacombo-part-pegawai', true, true, 20).then(function (data) {
                 $scope.listPegawai = data
@@ -146,9 +148,14 @@ define(['initialize'], function (initialize) {
             var cacheNomorEMR = cacheHelper.get('cacheNomorEMR');
             if (cacheNomorEMR != undefined) {
                 nomorEMR = cacheNomorEMR[0]
+                norecEMR = cacheNomorEMR[1]
                 $scope.cc.norec_emr = nomorEMR
                 $scope.cc.tanggalEmrl = cacheNomorEMR[2]
-            }
+            }   
+            var cacheNoREC = cacheHelper.get('cacheNOREC_EMR');
+            if (cacheNoREC != undefined) {
+                norecEMR = cacheNomorEMR[1]
+            } 
 
             $scope.listTinggalBersama = [
                 {
@@ -299,10 +306,10 @@ define(['initialize'], function (initialize) {
                 $scope.item.obj = []
                 $scope.item.obj2 = []
 
-                $scope.item.obj[3000573] = moment($scope.now).format('YYYY-MM-DD HH:mm:ss');
-                $scope.item.obj[3000582] = moment($scope.now).format('YYYY-MM-DD HH:mm:ss');
-                $scope.item.obj[3000585] = moment($scope.now).format('YYYY-MM-DD HH:mm:ss');
-                $scope.item.obj[3000594] = moment($scope.now).format('YYYY-MM-DD HH:mm:ss');
+                // $scope.item.obj[3000573] = moment($scope.now).format('YYYY-MM-DD HH:mm:ss');
+                // $scope.item.obj[3000582] = moment($scope.now).format('YYYY-MM-DD HH:mm:ss');
+                // $scope.item.obj[3000585] = moment($scope.now).format('YYYY-MM-DD HH:mm:ss');
+                // $scope.item.obj[3000594] = moment($scope.now).format('YYYY-MM-DD HH:mm:ss');
                 $scope.item.obj[116062]=$scope.now
                 $scope.item.obj[116068]={text:$scope.cc.namaruangan,value: $scope.cc.objectruanganfk}
 
@@ -951,6 +958,10 @@ define(['initialize'], function (initialize) {
                     //     namaEMR : $scope.cc.emrfk,
                     //     nomorEMR : e.data.data.noemr 
                     // });
+                    if(norecEMR == '-' || norecEMR == null || norecEMR == ''){
+                        norecEMR = e.data.norecEMR
+                        nomorEMR = e.data.data.noemr
+                    }
                     medifirstService.postLogging('EMR', 'norec emrpasien_t', e.data.data.norec,  
                     'FormulirEdukasiPasienDanKeluargaTerintegrasiCtrl ' + ' dengan No EMR - ' +e.data.data.noemr +  ' pada No Registrasi ' 
                     + $scope.cc.noregistrasi).then(function (res) {
@@ -961,6 +972,23 @@ define(['initialize'], function (initialize) {
                     }
                     cacheHelper.set('cacheNomorEMR', arrStr);
                 });
+            }
+
+            $scope.cetakBlade = function () {
+                if (norecEMR == '') {
+                    toastr.error('Dokumen belum pernah di isi')
+                    return
+                }
+                var local = JSON.parse(localStorage.getItem('profile'))
+                // var nama = medifirstService.getPegawaiLogin().namaLengkap
+
+                window.open(configuration.baseApiBackend + 'report/get-cetak-surat-man?nocm=' + $scope.cc.nocm +
+                    '&emr=' + norecEMR +
+                    '&noemr=' + nomorEMR +
+                    '&emrfk=' + $scope.cc.emrfk +
+                    '&kdprofile=' + local.id +
+                    '&blade=' + 'keluarga_terintegrasi-dom', '_blank');
+                    
             }
 
         }
