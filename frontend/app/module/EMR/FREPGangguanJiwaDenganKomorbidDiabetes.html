@@ -1,0 +1,418 @@
+<style type="text/css">
+    .tg {
+        border-collapse: collapse;
+        border-spacing: 0;
+        border-color: #aabcfe;
+    }
+
+    .tg td {
+        font-family: Arial, sans-serif;
+        font-size: 14px;
+        padding: 10px 5px;
+        border-style: solid;
+        border-width: 1px;
+        overflow: hidden;
+        word-break: normal;
+        border-color: #aabcfe;
+        color: #669;
+        background-color: #e8edff;
+    }
+
+    .tg th {
+        font-family: Arial, sans-serif;
+        font-size: 14px;
+        font-weight: normal;
+        padding: 10px 5px;
+        border-style: solid;
+        border-width: 1px;
+        overflow: hidden;
+        word-break: normal;
+        border-color: #aabcfe;
+        color: #039;
+        background-color: #b9c9fe;
+    }
+
+    .tg .tg-yw4l {
+        vertical-align: top
+    }
+
+
+    .rowstyle {
+        border-bottom: 1px dashed lightblue
+    }
+
+    .footer {
+        text-align: center;
+        font-size: 120%;
+        font-weight: 700;
+        margin-bottom: 20px
+    }
+
+    table,
+    th,
+    td {
+        border: 1px solid #777777;
+        border-collapse: collapse;
+    }
+
+    th,
+    td {
+        padding: 5px;
+        text-align: left;
+    }
+
+    /* table {
+        font-family: arial, sans-serif;
+        border-collapse: collapse;
+        width: 40px;
+
+    }
+
+    td,
+    th {
+        border: 1px solid #dddddd;
+        text-align: left;
+        padding: 8px;
+    }
+
+    tr:nth-child(even) {
+        background-color: #dddddd;
+    } */
+    .dot1 {
+        vertical-align: top;
+        height: 50px;
+        width: 50px;
+        background-color: red;
+        border-radius: 50%;
+        display: inline-block;
+    }
+
+    .dot2 {
+        vertical-align: top;
+        height: 50px;
+        width: 50px;
+        background-color: yellow;
+        border-radius: 50%;
+        display: inline-block;
+    }
+
+    .dot3 {
+        vertical-align: top;
+        height: 50px;
+        width: 50px;
+        background-color: green;
+        border-radius: 50%;
+        display: inline-block;
+    }
+
+    .dot4 {
+        vertical-align: top;
+        height: 50px;
+        width: 50px;
+        background-color: black;
+        border-radius: 50%;
+        display: inline-block;
+    }
+  
+       .activeDot:before {
+        content: '\f00c';
+    font-family: 'FontAwesome';
+    display: inline-block;
+    vertical-align: top;
+    line-height: 1em;
+    /* width: 1em; */
+    /* height: 1em; */
+    font-size: 25px;
+    /* margin-right: 0.3em; */
+    text-align: center;
+    color: #ffffff;
+    margin-top: 12px;
+    }
+    .my-disable{
+        pointer-events:none;
+
+    }
+
+    .margin-top{
+        margin-top: 20px;
+    }
+
+    .margin-top-10{
+        margin-top: 10px;
+    }
+
+    .margin-top-30{
+        margin-top: 30px;
+    }
+
+    .text-center{
+        text-align: center;
+    }
+
+    .margin-bottom{
+        margin-bottom: 10px;
+    }
+
+    .text-center{
+        text-align: center;
+    }
+
+    .border-left{
+        border-left: 1px solid black;
+    }
+
+    .border-right{
+        border-right: 1px solid rgba(54, 53, 53, 0.438);
+    }
+
+    .container-edukasi {
+        width: 100%;
+        box-sizing: border-box;
+        line-height: 1.6;
+    }
+
+    .container-edukasi > ol {
+        margin: 0;
+        padding-left: 20px;
+    }
+
+    .container-edukasi > ol > li {
+        font-weight: bold;
+        margin-bottom: 15px;
+    }
+
+    .container-edukasi p {
+        font-weight: normal;
+        margin: 5px 0 10px 0;
+    }
+
+    .container-edukasi ol[type="a"] {
+        font-weight: normal;
+        margin-top: 5px;
+        padding-left: 20px;
+    }
+
+    .container-edukasi ol[type="a"] > li {
+        margin-bottom: 5px;
+    }
+
+</style>
+
+ <!-- ng-class="{'my-disable':true}" -->
+<!-- <div class="grid_12"  disable-contents="allDisabled" id="form"> -->
+<div class="grid_12">
+    <div class="grid_12">
+        <div class="panel panel-default container_12">
+            <div class="panel-heading">RUJUKAN EDUKASI PASIEN DENGAN DIABETES</div>
+        </div>
+        <div class="grid_12">
+            <fieldset style="margin-top: 50px;">
+                <div class="grid_12 margin-top-5">
+                    <label c-label item="item" style="text-align: center; font-size: 20px;"> <u>RUJUKAN EDUKASI PASIEN DENGAN DIABETES</u></label>
+                </div>
+                <div class="grid_12" style="margin-top: 50px;">
+                    <div class="grid_12 margin-top-10 margin-bottom">
+                        <div class="grid_1"></div>
+                        <div class="grid_3">
+                            <label c-label item="item" class="margin-bottom">Rumah Sakit :</label>
+                        </div>
+                        <div class="grid_8">
+                            <label c-label item="item" class="margin-bottom">RSJ Grhasia DIY</label>
+                        </div>
+                    </div>
+                    <div class="grid_12 margin-top-10 margin-bottom">
+                        <div class="grid_1"></div>
+                        <div class="grid_3">
+                            <label c-label item="item" class="margin-bottom">Puskesmas Tujuan :</label>
+                        </div>
+                        <div class="grid_8">
+                            <textarea c-text-area type="input" filter="'string'" class="k-textbox" ng-model="item.obj[1901307000]"
+                            style="height: 30px; width: 100%; "/>
+                        </div>
+                    </div>
+                    <div class="grid_12 margin-top-10 margin-bottom">
+                        <div class="grid_1"></div>
+                        <div class="grid_3">
+                            <label c-label item="item" class="margin-bottom">Tanggal :</label>
+                        </div>
+                        <div class="grid_8">
+                            <input style="width: 100%" k-ng-model="item.obj[1901306000]" kendo-datetimepicker
+                                placeholer="yyyy-MM-dd HH:mm" k-format="'yyyy-MM-dd HH:mm'" parsedate="yyyy-MM-dd HH:mm" />
+                        </div>
+                    </div>
+                    <div class="grid_12 margin-top-10 margin-bottom">
+                        <div class="grid_1"></div>
+                        <div class="grid_3">
+                            <label c-label item="item" class="margin-bottom">Nama Pasien :</label>
+                        </div>
+                        <div class="grid_8">
+                            <textarea c-text-area type="input" filter="'string'" class="k-textbox" ng-model="item.obj[1901306001]"
+                            style="height: 30px; width: 100%; "/>
+                        </div>
+                    </div>
+                    <div class="grid_12 margin-top-10 margin-bottom">
+                        <div class="grid_1"></div>
+                        <div class="grid_3">
+                            <label c-label item="item" class="margin-bottom">Umur :</label>
+                        </div>
+                        <div class="grid_8">
+                            <textarea c-text-area type="input" filter="'string'" class="k-textbox" ng-model="item.obj[1901306002]"
+                            style="height: 30px; width: 100%; "/>
+                        </div>
+                    </div>
+                    <div class="grid_12 margin-top-10 margin-bottom">
+                        <div class="grid_1"></div>
+                        <div class="grid_3">
+                            <label c-label item="item" class="margin-bottom">Jenis Kelamin :</label>
+                        </div>
+                        <div class="grid_3">
+                            <input type="checkbox" class="k-checkbox" id="item.obj[1901306003]"
+                                ng-model="item.obj[1901306003]" ng-change="toggleJenisKelamin(1901306003)">
+                            <label class="k-checkbox-label" for="item.obj[1901306003]">
+                                &nbsp;Laki-Laki</label>
+                        </div>
+                        <div class="grid_5">
+                            <input type="checkbox" class="k-checkbox" id="item.obj[1901306004]"
+                                ng-model="item.obj[1901306004]" ng-change="toggleJenisKelamin(1901306004)">
+                            <label class="k-checkbox-label" for="item.obj[1901306004]">
+                                &nbsp;Perempuan</label>
+                        </div>
+                    </div>
+                    <div class="grid_12 margin-top-10 margin-bottom">
+                        <div class="grid_1"></div>
+                        <div class="grid_3">
+                            <label c-label item="item" class="margin-bottom">Diagnosa :</label>
+                        </div>
+                        <div class="grid_8">
+                            <textarea c-text-area type="input" filter="'string'" class="k-textbox" ng-model="item.obj[1901306005]"
+                            style="height: 30px; width: 100%; "/>
+                        </div>
+                    </div>
+                    <div class="grid_12 margin-top-10 margin-bottom">
+                        <div class="grid_1"></div>
+                        <div class="grid_3">
+                            <label c-label item="item" class="margin-bottom">Riwayat Perawatan :</label>
+                        </div>
+                        <div class="grid_8">
+                            <textarea c-text-area type="input" filter="'string'" class="k-textbox" ng-model="item.obj[1901306006]"
+                            style="height: 70px; width: 100%; "/>
+                        </div>
+                    </div>
+                    <div class="grid_12 margin-top-10 margin-bottom">
+                        <div class="container-edukasi">
+                            <p style="font-size: 1.2em; font-weight: bold; margin-bottom: 20px;">
+                                Rekomendasi Edukasi dan Tindak Lanjut di Puskesmas</p>
+                            <ol>
+                                <li>1. Melanjutkan pengobatan anti Diabetes
+                                    <p>Pasien diberikan edukasi secara jelas dan berkelanjutan mengenai:</p>
+                                    <ul>
+                                        <li>Pentingnya kepatuhan terhadap pengobatan DM sesuai anjuran dokter, baik obat oral maupun insulin bila digunakan.</li>
+                                        <li>Ditekankan bahwa obat harus dikonsumsi secara teratur dan berkesinambungan, meskipun kadar gula darah atau keluhan sudah membaik.</li>
+                                        <li>Tidak menghentikan pengobatan tanpa konsultasi dengan dokter.</li>
+                                    </ul>
+                                </li>
+                                <li>2. Melakukan pemeriksaan gula darah secara rutin dan mandiri
+                                    <p>Pasien dianjurkan untuk:</p>
+                                    <ul>
+                                        <li>Melakukan pemeriksaan gula darah dan tekanan darah secara rutin di Puskesmas sesuai jadwal kontrol</li>
+                                        <li>Melakukan pemantauan mandiri gula darah di rumah bila memungkinkan</li>
+                                        <li>Mencatat hasil pemeriksaan dalam buku kontrol untuk evaluasi berkala</li>
+                                        <li>Segera melapor ke tenaga kesehatan bila gula darah melebihi atau di bawah nilai normal dan disertai keluhan</li>
+                                    </ul>
+                                </li>
+                                <li>3. Penjelasan tentang pencegahan komplikasi
+                                    <p>Pasien diberikan edukasi mengenai risiko komplikasi DM seperti penyakit jantung, stroke, gagal ginjal, neuropati, retinopati, dan luka kaki diabetik, serta upaya pencegahannya, meliputi:</p>
+                                    <ol type="a">
+                                        <li>a. Kepatuhan Minum Obat
+                                            <p>Pasien diarahkan untuk:</p>
+                                            <ul>
+                                                <li>Mengonsumsi obat pada waktu yang sama setiap hari</li>
+                                                <li>Tidak melewatkan dosis</li>
+                                                <li>Jika lupa minum obat, segera minum begitu teringat. Jangan menggandakan dosis jika sudah mendekati waktu dosis berikutnya.</li>
+                                                <li>Menggunakan pengingat bila diperlukan</li>
+                                                <li>Memahami cara penggunaan obat, termasuk insulin bila digunakan</li>
+                                            </ul>
+                                        </li>
+                                        <li>b. Pengawasan Dosis Pemberian Obat
+                                            <p>Pasien dan keluarga diberikan edukasi untuk:</p>
+                                            <ul>
+                                                <li>Tidak mengubah dosis atau jenis obat tanpa evaluasi dokter</li>
+                                                <li>Melaporkan efek samping atau keluhan terkait obat</li>
+                                                <li>Membawa daftar obat saat kontrol rutin</li>
+                                                <li>Edukasi ke pasien bila muncul tanda hipoglikemi seperti keringat dingin, lemas, gemetar, pusing; segera minum manis dan memeriksakan diri ke pusat kesehatan terdekat.</li>
+                                            </ul>
+                                        </li>
+                                    </ol>
+                                </li>
+                                <li>4. Dukungan Psikososial
+                                    <p>Pasien dan keluarga diberikan dukungan psikososial berupa:</p>
+                                    <ul>
+                                        <li>Edukasi bahwa DM merupakan penyakit kronis yang dapat dikendalikan</li>
+                                        <li>Dukungan keluarga dalam kepatuhan minum obat, pemantauan gula darah, dan pola hidup sehat</li>
+                                        <li>Edukasi manajemen stres dan anjuran aktivitas fisik sesuai kemampuan</li>
+                                        <li>Rujukan ke konseling bila ditemukan masalah psikologis atau penurunan kepatuhan terapi</li>
+                                    </ul>
+                                </li>
+                                <li>5. Jadwal Pengawasan dan Pemantauan
+                                    <p>Pasien dianjurkan untuk:</p>
+                                    <ul>
+                                        <li>Kontrol rutin ke Puskesmas sesuai jadwal yang ditentukan</li>
+                                        <li>Evaluasi kadar gula darah, tekanan darah, berat badan, dan kepatuhan terapi secara berkala</li>
+                                        <li>Pemeriksaan penunjang sesuai indikasi (HbA1c, fungsi ginjal, lipid)</li>
+                                        <li>Penyesuaian terapi dilakukan berdasarkan hasil pemantauan klinis</li>
+                                    </ul>
+                                </li>
+                                <li>6. Konseling Nutrisi untuk Mendukung Pengobatan
+                                    <p>Pasien diberikan konseling nutrisi meliputi:</p>
+                                    <ul>
+                                        <li>Pengaturan pola makan seimbang sesuai kebutuhan kalori</li>
+                                        <li>Pembatasan konsumsi gula sederhana dan makanan tinggi indeks glikemik</li>
+                                        <li>Peningkatan konsumsi serat (sayur dan buah)</li>
+                                        <li>Pembagian porsi makan teratur (3 kali makan utama dan 2–3 selingan)</li>
+                                        <li>Edukasi label makanan dan pengaturan berat badan ideal</li>
+                                    </ul>
+                                </li>
+                                <li>7. Rujukan Kembali Jika Terjadi Komplikasi
+                                    <p>Pasien direncanakan untuk dirujuk ke fasilitas kesehatan rujukan apabila ditemukan:</p>
+                                    <ul>
+                                        <li>Kadar gula darah tidak terkendali meskipun terapi optimal</li>
+                                        <li>Hipoglikemia atau hiperglikemia berulang</li>
+                                        <li>Luka diabetik, gangguan penglihatan, gangguan neurologis (neuropati diabetikum) atau penurunan fungsi ginjal</li>
+                                        <li>Tanda komplikasi akut atau kronis lainnya</li>
+                                    </ul>
+                                </li>
+                            </ol>
+                        </div>
+                    </div>
+                    <div class="grid_12 margin-bottom" style="margin-top: 50px;">
+                        <div class="grid_1"></div>
+                        <div class="grid_5"></div>
+                        <div class="grid_1"></div>
+                        <div class="grid_5">
+                            <label c-label item="item">Yogyakarta, </label>
+                            <input style="width: 100%" k-ng-model="item.obj[1901307160]" kendo-datetimepicker
+                                placeholer="yyyy-MM-dd HH:mm" k-format="'yyyy-MM-dd HH:mm'" parsedate="yyyy-MM-dd HH:mm" />
+                        </div>
+                    </div>
+                    <div class="grid_12 margin-bottom" >
+                        <div class="grid_7"></div>
+                        <div class="grid_5">
+                            <label c-label item="item" style="text-align: center;">Dokter Yang Merujuk</label>
+                            <input style="width: 100%; text-align: center;" kendo-combo-box k-ng-model="item.obj[1901307170]"
+                            k-data-text-field="'text'" k-data-value-field="'value'" k-filter="'contains'"
+                            k-auto-bind="false" k-data-source="listPegawai" />
+                        </div>
+                    </div>
+                    <hr></hr>
+                </div>
+            </fieldset>
+        </div>
+    </div>
+</div>
+
+<br />
+<br />
+<div class="grid_12">
+    <div ng-include='"../app/module/EMR/TemplateButtonDinamis" '></div>
+
+</div>

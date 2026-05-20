@@ -17071,6 +17071,52 @@
     ]
   },
   {
+    "name": "RekamMedis.AsesmenMedis.FREPGangguanJiwaDenganKomorbidHipertensi",
+    "url": "/FREPGangguanJiwaDenganKomorbidHipertensi",
+    "templateurl": "module/EMR/FREPGangguanJiwaDenganKomorbidHipertensi.html",
+    "controller": "FREPGangguanJiwaDenganKomorbidHipertensiCtrl",
+    "deps": [
+      {
+        "module": "Services",
+        "define": "Service"
+      },
+      {
+        "module": "LoginServices",
+        "define": "LoginService"
+      },
+      {
+        "module": "MedifirstService",
+        "define": "MedifirstService"
+      },
+      {
+        "define": "RekamMedisCtrl"
+      }
+    ]
+  },
+  {
+    "name": "RekamMedis.AsesmenMedis.FREPGangguanJiwaDenganKomorbidDiabetes",
+    "url": "/FREPGangguanJiwaDenganKomorbidDiabetes",
+    "templateurl": "module/EMR/FREPGangguanJiwaDenganKomorbidDiabetes.html",
+    "controller": "FREPGangguanJiwaDenganKomorbidDiabetesCtrl",
+    "deps": [
+      {
+        "module": "Services",
+        "define": "Service"
+      },
+      {
+        "module": "LoginServices",
+        "define": "LoginService"
+      },
+      {
+        "module": "MedifirstService",
+        "define": "MedifirstService"
+      },
+      {
+        "define": "RekamMedisCtrl"
+      }
+    ]
+  },
+  {
     "name": "RekamMedis.AsesmenMedis.SuratRehabNAPZA",
     "url": "/SuratRehabNAPZA",
     "templateurl": "module/EMR/SuratRehabNAPZA.html",

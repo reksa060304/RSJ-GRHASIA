@@ -3040,6 +3040,14 @@
       "urlDep": "module/EMR/PersetujuanTindakanPengobatanCtrl"
     },
     {
+      "nameDep": "FREPGangguanJiwaDenganKomorbidHipertensiCtrl",
+      "urlDep": "module/EMR/FREPGangguanJiwaDenganKomorbidHipertensiCtrl"
+    },
+    {
+      "nameDep": "FREPGangguanJiwaDenganKomorbidDiabetesCtrl",
+      "urlDep": "module/EMR/FREPGangguanJiwaDenganKomorbidDiabetesCtrl"
+    },
+    {
       "nameDep": "SuratRehabNAPZACtrl",
       "urlDep": "module/EMR/SuratRehabNAPZACtrl"
     },
