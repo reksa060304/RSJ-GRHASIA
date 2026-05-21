@@ -163,9 +163,11 @@
                     <td><b>Jenis Kelamin</b></td>
                     <td>:</td>
                     <td>
-                        @if ($item[1901306003])
+                        @if (!empty($item[1901306003]))
                             Laki-laki
-                        @elseif ($item[1901306004])
+                        @endif
+
+                        @if (!empty($item[1901306004]))
                             Perempuan
                         @endif
                             
