@@ -2368,6 +2368,8 @@ Route::group(['middleware' => 'cors', 'prefix' => 'service'], function () {
 
         // });
         // Route::group(['prefix' => 'rawatjalan'], function () {
+          Route::get('rawatjalan/get-combo-sasaran-mutu-rajal', 'RawatJalan\SasaranMutuRajalController@getCombo');
+          Route::get('rawatjalan/get-data-sasaran-mutu-rajal', 'RawatJalan\SasaranMutuRajalController@getDataGrid');
           Route::get('rawatjalan/get-data-combo-dokter', 'RawatJalan\RawatJalanController@getDataComboDokter');
           Route::get('rawatjalan/get-dokters-combos', 'RawatJalan\RawatJalanController@getDokters');
           Route::get('rawatjalan/get-combo-surat', 'RawatJalan\RawatJalanController@getDataComboSurat');

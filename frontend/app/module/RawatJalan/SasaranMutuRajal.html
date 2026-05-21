@@ -1,0 +1,70 @@
+<div ng-show="dataVOloaded">
+    <div class="grid_12 headerBox">
+        <h1 style="color: white;"><b>Sasaran Mutu Pelayanan Rawat Jalan</b></h1>
+    </div>
+    
+    <div class="grid_12">
+        <div class="grid_3">
+            <div class="grid_12" style="margin-top:5px">
+                <label c-label item="item" c-label-text="Poliklinik/Ruangan"></label>
+            </div>
+            <div class="grid_12">
+                <input style="width: 100%;" kendo-combo-box k-ng-model="item.unitLayanan" k-data-text-field="'namaruangan'" k-data-value-field="'id'" k-filter="'contains'" k-auto-bind="false" k-data-source="listUnitLayanan" />
+            </div>
+        </div>
+
+        <div class="grid_4">
+            <div class="grid_12">
+                <label c-label item="item" c-label-text="Periode"></label>
+            </div>
+            <div class="grid_5">
+                <input style="width: 100%" k-ng-model="item.periodeAwal" kendo-date-picker k-max="now" placeholder="dd-mm-yyyy" k-format="'dd-MM-yyyy'" />
+            </div>
+            <div class="grid_5">
+                <input style="width: 100%" k-ng-model="item.periodeAkhir" kendo-date-picker placeholder="dd-mm-yyyy" k-format="'dd-MM-yyyy'" />
+            </div>
+        </div>
+
+        <div class="grid_2">
+            <div class="grid_12" style="margin-top: 22px">
+                <button class="c-button" ng-click="Cari()">Cari</button>
+            </div>
+        </div>
+        <div class="clear"></div>
+    </div>
+    <div class="clear"></div>
+
+    <div class="grid_12" style="margin-top: 15px;">
+        <div class="grid_12 borderBox">
+            <div id="kGrid" 
+                 kendo-grid 
+                 k-data-source="dataGrid" 
+                 k-selectable="'row'" 
+                 options="columnGrid"
+                 k-pageable="'true'" 
+                 k-sortable="'true'" 
+                 k-ng-model="dataSelected">
+            </div>
+        </div>
+    </div>
+
+    <div class="grid_12" style="margin-top: 20px;">
+        <div style="width: 50%; margin: 0 auto;">
+            <table border="1" style="width: 100%; border-collapse: collapse; border: 1px solid #ccc;">
+                <thead>
+                    <tr style="background-color: #3f51b5; color: white;">
+                        <th colspan="4" style="text-align: center; padding: 10px; font-size: 14px;"><b>Rekapitulasi Sasaran Mutu Layanan (Standar &le; 60 Menit)</b></th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr ng-repeat="list in listRekap" style="border-bottom: 1px solid #ddd;">
+                        <td style="padding: 10px; width: 50%; font-size: 13px;">{{list.nama}}</td>
+                        <td style="padding: 10px; width: 5%; text-align: center; font-size: 13px;">:</td>
+                        <td style="padding: 10px; width: 25%; text-align: right; font-size: 13px; font-weight: bold;">{{list.nilai}}</td>
+                        <td style="padding: 10px; width: 20%; text-align: left; font-size: 13px;">{{list.satuan}}</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
