@@ -3087,6 +3087,10 @@
             "urlDep": "module/EMR/FormRujukanEdukasiPasienGangguanJiwaDenganKomorbidSindromeGeriatriLowIntakeCtrl"
         },
         {
+            "nameDep": "FormRujukanEdukasiPasienGangguanJiwaDenganKomorbidTuberculosisCtrl",
+            "urlDep": "module/EMR/FormRujukanEdukasiPasienGangguanJiwaDenganKomorbidTuberculosisCtrl"
+        },
+        {
             "nameDep": "MonitoringTransfusiDarahCtrl",
             "urlDep": "module/EMR/MonitoringTransfusiDarahCtrl"
         },
