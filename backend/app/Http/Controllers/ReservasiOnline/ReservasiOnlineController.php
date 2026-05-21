@@ -4712,7 +4712,7 @@ SELECT
             return $this->respond($result);
         }
         
-        public function updateTglCheckin(Request $request)
+        public function updateTglCheckin (Request $request)
         {
             DB::beginTransaction();
             try {
@@ -4727,41 +4727,34 @@ SELECT
                     throw new \Exception("Data antrian tidak ditemukan.");
                 }
 
-                // 2. Cek apakah pasien sudah pernah checkin
-                $pasiendaftar = DB::table('pasiendaftar_t')
-                    ->where('statusschedule', $antrian->noreservasi)
-                    ->first();
-
-                if (!$pasiendaftar) {
-                    throw new \Exception("Data pasien tidak ditemukan.");
-                }
-
-                if (!is_null($pasiendaftar->tglcheckin)) {
-                    throw new \Exception("Pasien sudah melakukan Check-in pada " . $pasiendaftar->tglcheckin);
-                }
-
-                // 3. Update tabel pasiendaftar_t menggunakan relasi statusschedule = noreservasi
-                // Kita update tglcheckin di pasiendaftar_t hanya jika tglcheckin masih NULL
+                // 2. Update tabel pasiendaftar_t menggunakan relasi statusschedule = noreservasi
+                // Kita update tglcheckin di pasiendaftar_t
                 $updatePasiendaftar = DB::table('pasiendaftar_t')
                     ->where('statusschedule', $antrian->noreservasi)
-                    ->whereNull('tglcheckin')
                     ->update([
                         'tglcheckin' => $tglSekarang
                     ]);
 
-                DB::commit();
+                // 3. (Opsional namun disarankan) Update juga di tabel antrian sebagai penanda kedatangan
+                // DB::table('antrianpasienregistrasi_t')
+                //     ->where('norec', $request['norec'])
+                //     ->update([
+                //         'tglcheckin' => $tglSekarang
+                //     ]);
 
+                DB::commit();
+                
                 return $this->setStatusCode(201)->respond([
-                    "status"     => 201,
-                    "message"    => "Cek In Berhasil",
+                    "status" => 201,
+                    "message" => "Cek In Berhasil",
                     "tglcheckin" => $tglSekarang,
-                    "as"         => 'ramdan@epic'
+                    "as" => 'ramdan@epic'
                 ], "Cek In Berhasil");
 
             } catch (\Exception $e) {
                 DB::rollBack();
                 return $this->setStatusCode(400)->respond([
-                    "status"  => 400,
+                    "status" => 400,
                     "message" => "Gagal Cek In: " . $e->getMessage()
                 ], "Gagal Cek In");
             }
