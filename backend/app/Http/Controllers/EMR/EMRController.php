@@ -7972,6 +7972,7 @@ class EMRController  extends ApiController
                 left join hasilradiologi_t as hr on hr.pelayananpasienfk = pp.norec
                 inner join orderpelayanan_t as op on op.noorderfk = so.norec 
               -- and op.objectprodukfk = pp.produkfk  --syamsu biar tdk double
+                and (pp.produkfk = op.objectprodukfk or pp.produkfk is null)
                 inner join pasiendaftar_t as pd on pd.norec=so.noregistrasifk
                 inner join pasien_m as ps on ps.id=pd.nocmfk
                 inner join produk_m as pr on pr.id=op.objectprodukfk
