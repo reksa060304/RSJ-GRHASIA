@@ -570,6 +570,31 @@
                     </div>
                 </md-content>
             </md-tab>
+            <md-tab label="Obat">
+                <md-content class="md-padding">
+                    <div class="grid_12" style="max-height: 500px; overflow-y: auto;">
+                        <div class="grid_12 headerBox">
+                            <p>Daftar Riwayat Order Resep Dokter</p>
+                        </div>
+                        <div class="grid_12">
+                            <div class="grid_12 borderBox">
+                                <div id="kGrid" kendo-grid k-data-source="dataGridRiwayatObat" k-selectable="'row'"
+                                    k-columns="columnGridRiwayatObat" k-pageable="'true'" k-sortable="'true'"
+                                    k-ng-model="dataSelectedRiwayatObat" ng-click="kliks(dataSelectedRiwayatObat)">
+                                    <div k-detail-template>
+                                        <kendo-tabstrip>
+                                            <div>
+                                                <div kendo-grid k-options="detailGridOptionsObat(dataItem)"></div>
+                                            </div>
+                                        </kendo-tabstrip>
+                                    </div>
+                                </div>
+                            </div>
+
+                        </div>
+                    </div>
+                </md-content>
+            </md-tab>
         </md-tabs>
     </md-content>
 </div>

@@ -632,6 +632,7 @@ define(['initialize', 'Configuration'], function (initialize, config) {
                 $scope.loadDataSOAP();
                 loadRiwayatLab('noregistrasi=' + $scope.data_sebelumnya.noregistrasi);
                 loadRiwayatRad('noregistrasi=' + $scope.data_sebelumnya.noregistrasi);
+                loadOrderObat('noreg=' + $scope.data_sebelumnya.noregistrasi)
             }
 
             $scope.formatTanggal = function (tanggal) {
@@ -1299,6 +1300,145 @@ define(['initialize', 'Configuration'], function (initialize, config) {
 			}
 
             //end rad
+
+            //start obat
+
+            $scope.columnGridRiwayatObat = [
+                {
+                    "field": "no",
+                    "title": "No",
+                    "width": "20px",
+                },
+                {
+                    "field": "tglorder",
+                    "title": "Tgl Order",
+                    "width": "50px",
+                },
+                {
+                    "field": "noorder",
+                    "title": "No Order",
+                    "width": "60px",
+                },
+                {
+                    "field": "namalengkap",
+                    "title": "Dokter",
+                    "width": "100px"
+                },
+                {
+                    "field": "namaruangan",
+                    "title": "Apotik",
+                    "width": "70px",
+                },
+                {
+                    "field": "statusorder",
+                    "title": "Status",
+                    "width": "70px",
+                },
+                {
+                    "field": "cekreseppulang",
+                    "title": "Resep Pulang",
+                    "width": "50px",
+                },
+                {
+                    "field": "cito",
+                    "title": "Cito",
+                    "width": "50px",
+                },
+                 {
+                    "field": "isambilobat",
+                    "title": "Resep Di Ambil Di RS",
+                    "width": "50px",
+                }
+            ];
+            $scope.detailGridOptionsObat = function (dataItem) {
+                return {
+                    dataSource: new kendo.data.DataSource({
+                        data: dataItem.details,
+                        group: $scope.group
+                    }),
+                    columns: [
+                        {
+                            field: "rke",
+                            title: "Rke",
+                            width: "30px",
+                            groupFooterTemplate: " "
+                        },
+                        {
+                            field: "jeniskemasan",
+                            title: "Jenis Layanan Resep",
+                            width: "100px",
+                        },
+                        {
+                            field: "namaproduk",
+                            title: "Nama Obat / Alkes",
+                            width: "200px"
+                        },
+                        {
+                            field: "satuanstandar",
+                            title: "Sediaan",
+                            width: "100px"
+                        },
+                        {
+                            field: "dosis",
+                            title: "Dosis",
+                            width: "100px"
+                        },
+                        
+                        {
+                            field: "jumlah",
+                            title: "Jumlah",
+                            width: "100px"
+                        },
+                        {
+                            field: "aturanpakai",
+                            title: "Signa",
+                            width: "100px"
+                        },
+                        {
+                            field: "keterangan",
+                            title: "Keterangan",
+                            width: "100px"
+                        },
+                        {
+                            "field": "tglkadaluarsa",
+                            "title": "Tgl Exp",
+                            "width": "90px",                   
+                        }
+                    ]
+                };
+            };
+
+            function loadOrderObat(params){
+                medifirstService.get("emr/get-daftar-detail-order?" + params, true).then(function (e) {
+                    for (var i = e.data.length - 1; i >= 0; i--) {
+                        e.data[i].no = i + 1                        
+                        if (e.data[i].reseppulang == 1) {
+                            e.data[i].cekreseppulang = "✔"                            
+                        }else{
+                            e.data[i].cekreseppulang = "-"
+                        }
+                         if (e.data[i].isambilobat == true) {
+                            e.data[i].isambilobat = "✔"                            
+                        }else{
+                            e.data[i].isambilobat = "✘"
+                        }
+
+                        if (e.data[i].cito == true) {
+                            e.data[i].cito = "✔"                            
+                        }else{
+                            e.data[i].cito = "✘"
+                        }
+                    }
+                    $scope.dataGridRiwayatObat = new kendo.data.DataSource({
+                        data: e.data,
+                        pageSize: 10
+                    });
+
+
+                });
+            }
+
+            //end obat
 
             function cekCloseEmr() {
                 medifirstService.get('registrasi/cek-close-emr?norec_pd='
