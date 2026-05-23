@@ -448,6 +448,7 @@ class RegistrasiController extends ApiController
                 $dataPD->isregistrasilengkap = 0;
                 $dataPD->jenispelayanan = $r_NewPD['tipelayanan'];
                 $dataPD->objectkasuspenyakitlastfk = 1;
+                $isRawatJalan = $r_NewPD['objectdepartemenfk'] == 18;
                 if ($isRawatInap == 'true') {
                     $dataPD->objectkelasfk = $r_NewPD['objectkelasfk'];
                     if ($dataPD->tglpulang === null) { 
@@ -455,10 +456,16 @@ class RegistrasiController extends ApiController
                   }
                 } else {
                     $dataPD->objectkelasfk = (int)$this->settingDataFixed('kdKelasNonKelasRegistrasi', $idProdile);
-                    if ($dataPD->tglpulang === null) {
-                    $dataPD->tglpulang = $r_NewPD['tglregistrasi'];
+                    // untuk pendaftaran pasien rawat jalan saat edit tanggal registrasi ikut terupdate tanggal pulang
+                    if ($isRawatJalan && $r_NewPD['norec_pd'] != '') {
+                        $dataPD->tglpulang = $r_NewPD['tglregistrasi'];
+                    }
+                    // pendaftaran pasien baru
+                    else if ($dataPD->tglpulang === null) {
+                        $dataPD->tglpulang = $r_NewPD['tglregistrasi'];
                     }
                 }
+
                 $dataPD->objectkelompokpasienlastfk = $r_NewPD['objectkelompokpasienlastfk'];
                 $dataPD->nocmfk = $r_NewPD['nocmfk'];
                 $dataPD->objectrekananfk = $r_NewPD['objectrekananfk'];
