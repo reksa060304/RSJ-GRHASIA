@@ -554,7 +554,7 @@ class ReservasiOnlineController extends ApiController
                 'apr.objectpegawaifk','ru.namaruangan','apr.isconfirm','pg.namalengkap as dokter','pm.id as nocmfk', 'pg.kddokterbpjs',
                'pm.namapasien','apr.namapasien','alm.alamatlengkap','pk.pekerjaan','pm.noasuransilain','pm.noidentitas','brk.nosepasalkontrol',
                 'apr.nobpjs','pm.nohp','pdd.pendidikan','apr.type','kps.kelompokpasien','apr.objectkelompokpasienfk','ru.objectdepartemenfk','brk.tglrujukan',
-                'ru.prefixnoantrian','ru.kdinternal as noruangan', 'apr.norujukan','pd.norec as norec_pd','pd.tglregistrasi','apd.norec as norec_apd','pd.noregistrasi', 'apr.norujukan as noreferensi','brk.kdprovperujuk','brk.namaprovperujuk','brk.diagnosa','brk.nosuratkontrol','brk.norujukan','brk.asalrujukan','brk.kodedokter as kddokterskdp','brk.jnspelsepasal','brk.tglrencanakontrol','brk.namadokter as namadokterskdp','apr.objectasalrujukanfk',
+                'ru.prefixnoantrian','ru.kdinternal as noruangan', 'apr.norujukan','pd.norec as norec_pd','pd.tglregistrasi','pd.tglcheckin','apd.norec as norec_apd','pd.noregistrasi', 'apr.norujukan as noreferensi','brk.kdprovperujuk','brk.namaprovperujuk','brk.diagnosa','brk.nosuratkontrol','brk.norujukan','brk.asalrujukan','brk.kodedokter as kddokterskdp','brk.jnspelsepasal','brk.tglrencanakontrol','brk.namadokter as namadokterskdp','apr.objectasalrujukanfk',
                 DB::raw('(case when pm.namapasien is null then apr.namapasien else pm.namapasien end) as namapasien, 
                 (case when apr.isconfirm=true then \'Confirm\' else \'Reservasi\' end) as status,case when pm.tempatlahir is null then apr.tempatlahir else pm.tempatlahir end as tempatlahir,
                 case when jk.jeniskelamin is null then jks.jeniskelamin else jk.jeniskelamin end as jeniskelamin,
@@ -639,6 +639,20 @@ class ReservasiOnlineController extends ApiController
     {
         DB::beginTransaction();
         try {
+            $cek = DB::table('antrianpasienregistrasi_t as apr')
+                ->join('pasiendaftar_t as pd', 'pd.statusschedule', '=', 'apr.noreservasi')
+                ->where('apr.norec', $request['norec'])
+                ->where('pd.statusenabled', true)
+                ->whereNotNull('pd.tglcheckin')
+                ->first();
+            if ($cek) {
+                $result = array(
+                    "status" => 400,
+                    "message" => "Reservasi yang sudah check-in tidak bisa dibatalkan"
+                );
+                return $this->setStatusCode($result['status'])->respond($result, $result['message']);
+            }
+
             AntrianPasienRegistrasi::where('norec',$request['norec'])->update([
                'statusenabled'=>false,
             ]);
