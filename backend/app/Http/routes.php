@@ -2947,6 +2947,7 @@ Route::group(['middleware' => 'cors', 'prefix' => 'service'], function () {
           Route::get('reservasionline/get-dokter','ReservasiOnline\ReservasiOnlineController@getDokterByRuang');
           Route::get('reservasionline/cek-in-kiosk','ReservasiOnline\ReservasiOnlineController@cekINReservasi');
           Route::post('reservasionline/update-tgl-cekin', 'ReservasiOnline\ReservasiOnlineController@updateTglCheckin');
+          Route::post('reservasionline/batal-tgl-cekin', 'ReservasiOnline\ReservasiOnlineController@batalTglCheckin');
 
         // });
         // Route::group(['prefix' => 'sanitasi'], function () {

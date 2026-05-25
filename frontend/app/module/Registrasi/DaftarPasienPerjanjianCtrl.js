@@ -372,6 +372,27 @@ define(['initialize'], function (initialize) {
                    LoadData();            
                 })
             }
+            $scope.batalCekinReservasi = function(){
+                if ($scope.item == undefined){
+                    toastr.error('silahkan pilih data ...')
+                    return
+                }
+                var confirm = $mdDialog.confirm()
+                                .title('Konfirmasi')
+                                .textContent('Yakin ingin membatalkan Cek In data ini?')
+                                .ariaLabel('Lucky day')
+                                .cancel('Tidak')
+                                .ok('Ya')
+                            $mdDialog.show(confirm).then(function () {
+                                $scope.confirmBatalCekin();
+                            })
+            }
+            $scope.confirmBatalCekin = function(){
+                medifirstService.post("reservasionline/batal-tgl-cekin", {"norec": $scope.item.norec})
+                .then(function (data) {
+                    LoadData();
+                })
+            }
 
         }
     ]);

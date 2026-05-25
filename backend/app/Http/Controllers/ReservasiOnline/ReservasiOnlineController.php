@@ -4773,4 +4773,52 @@ SELECT
                 ], "Gagal Cek In");
             }
         }
+
+        public function batalTglCheckin(Request $request)
+        {
+            DB::beginTransaction();
+            try {
+                // 1. Cari data antrian
+                $antrian = DB::table('antrianpasienregistrasi_t')
+                    ->where('norec', $request['norec'])
+                    ->first();
+
+                if (!$antrian) {
+                    throw new \Exception("Data antrian tidak ditemukan.");
+                }
+
+                // 2. Cek apakah tglcheckin memang sudah ada isinya
+                $pasiendaftar = DB::table('pasiendaftar_t')
+                    ->where('statusschedule', $antrian->noreservasi)
+                    ->first();
+
+                if (!$pasiendaftar) {
+                    throw new \Exception("Data pasien tidak ditemukan.");
+                }
+
+                if (is_null($pasiendaftar->tglcheckin)) {
+                    throw new \Exception("Pasien belum melakukan Cek In, tidak bisa dibatalkan.");
+                }
+
+                // 3. Hapus tglcheckin (set ke NULL) hanya jika ada isinya
+                DB::table('pasiendaftar_t')
+                    ->where('statusschedule', $antrian->noreservasi)
+                    ->whereNotNull('tglcheckin')
+                    ->update(['tglcheckin' => null]);
+
+                DB::commit();
+
+                return $this->setStatusCode(201)->respond([
+                    "status"  => 201,
+                    "message" => "Batal Cek In Berhasil",
+                ], "Batal Cek In Berhasil");
+
+            } catch (\Exception $e) {
+                DB::rollBack();
+                return $this->setStatusCode(400)->respond([
+                    "status"  => 400,
+                    "message" => "Gagal Batal Cek In: " . $e->getMessage()
+                ], "Gagal Batal Cek In");
+            }
+        }
 }
