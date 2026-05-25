@@ -29,7 +29,11 @@ class GiziDietTelemedicineController extends ApiController
         $req = $request->all();
         $strukOrder = isset($req['strukorder']) ? $req['strukorder'] : $req;
         $details = $this->getOrderDetails($req, $strukOrder);
-
+        
+        $pasien = \DB::table('pasien_m')
+                    ->where('kdprofile', $kdProfile)
+                    ->where('nocm', $strukOrder['nocm_klien'])
+                    ->first();
         if (count($details) == 0) {
             $result = array(
                 'status' => 400,
@@ -42,7 +46,7 @@ class GiziDietTelemedicineController extends ApiController
         DB::beginTransaction();
         try {
             $norecSo = $this->getValue($strukOrder, array('norec_so', 'norec', 'norec_order'), '');
-
+            
             if ($norecSo == '') {
                 $noOrder = $this->generateCode(new StrukOrder, 'noorder', 11, 'OGT' . $this->getDateTime()->format('ym'), $kdProfile);
                 $dataSO = new StrukOrder;
@@ -78,7 +82,7 @@ class GiziDietTelemedicineController extends ApiController
             $ruanganTujuan = $this->getValue($strukOrder, array('objectruangantujuanfk', 'ruangantujuanfk'), $ruanganGiziDefault != '' ? $ruanganGiziDefault : 784);
             $ruanganAsal = $this->getValue($strukOrder, array('objectruanganfk', 'ruangan_id'), 750);
             $kelasDefault = $this->getValue($strukOrder, array('objectkelasfk', 'kelas_id'), 6);
-
+            
             $dataSO->qtyjenisproduk = count($details);
             $dataSO->qtyproduk = $this->sumQtyProduk($details);
             $dataSO->objectruangantujuanfk = $ruanganTujuan;
@@ -96,8 +100,9 @@ class GiziDietTelemedicineController extends ApiController
             $dataSO->totalharusdibayar = $this->sumTotalDetail($details);
             $dataSO->totalpph = 0;
             $dataSO->totalppn = 0;
+            
             $dataSO->status = 'ORDER';
-            $dataSO->nocmfk = $this->getValue($strukOrder, array('nocmfk', 'pasien_id'));
+            $dataSO->nocmfk = $pasien->id ?? null;
 
             $dataSO->save();
 
@@ -118,7 +123,7 @@ class GiziDietTelemedicineController extends ApiController
                 $dataOP->objectprodukfk = $produkId;
                 $dataOP->keteranganlainnya = $this->getValue($itemDetails, array('keteranganlainnya', 'keterangan', 'menumakanan'), 'Menu Diet Gizi Telemedicine');
                 $dataOP->keteranganlainnya_quo = 'Order Gizi Telemedicine';
-                $dataOP->nocmfk = $this->getValue($itemDetails, array('nocmfk', 'pasien_id'), $this->getValue($strukOrder, array('nocmfk', 'pasien_id'), null));
+                $dataOP->nocmfk = $pasien->id ?? null;
                 $dataOP->noorderfk = $dataSO->norec;
                 $dataOP->qtyproduk = $qty;
                 $dataOP->iscito = $this->getValue($itemDetails, array('iscito'), 0);
