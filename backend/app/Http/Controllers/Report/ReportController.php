@@ -33261,6 +33261,95 @@ public function suratBuktiPengembalian(Request $request)
             // dd($result);
             return view('report.invoice-diklat2', compact('detail', 'mahasiswa', 'profile'));
         }
+        
+    public function CetakCuti(Request $request)
+    {
+        $res['profile'] = Profile::where('id',$request['kdprofile'])->first();
+        // dd($res);
 
+        // $uuid = 'b0923bc0-b574-11f0-8ae4-8f177a5c';
+        $data =\DB::table('planningpegawaistatus_t as pps')
+            ->leftJoin('pegawai_m as pg','pg.id','=','pps.objectpegawaifk')
+            ->leftJoin('sdm_jeniscuti_m as jc','jc.id','=','pps.objectstatuspegawaiplanfk')
+            ->leftJoin('jabatan_m as jb','jb.id','=','pg.objectjabatanstrukturalfk')
+            ->leftJoin('unitkerja_m as ukp','ukp.id','=','pg.objectunitkerjafk')
+            ->select( 'pps.norec','pps.noplanning','pps.tglpengajuan','pps.objectpegawaifk','pps.objectstatuspegawaiplanfk',
+                'pps.deskripsistatuspegawaiplan as desk','pps.keterangan','pg.namalengkap','pg.nip','jc.name as statuspermohonan',
+                'jb.namajabatan','ukp.unitkerja','pps.approvalstatus','pps.totalcuti')
+            ->where('pps.kdprofile', $request['kdprofile'])
+            ->where('pps.statusenabled',true)
+            ->whereNull('pps.totalcuti')
+            ->where('pps.noplanning', $request['noplanning'])
+            ->orderBy('pps.tglpengajuan');
+
+        $data = $data->get();
+        $data2 =[];
+
+        foreach ($data as $item){
+            $norec= $item->norec;
+            $details = DB::select(DB::raw("select *,to_char(tgl, 'Day') as day from listtanggalcuti_t where objectplanningpegawaistatusfk='$norec' and to_char(tgl, 'Day') <> 'Sunday   '"));
+            $tglVerif = [];
+            foreach ($details as $itmde){
+                if( $itmde-> approvalstatus == 1 && $itmde->day != "Sunday   "){
+                    $tglVerif [] = array(
+                        'norec' => $itmde->norec,
+                        'tgl' => $itmde->tgl,
+                        'day' => $itmde->day,
+                        'approvalstatus' => $itmde->approvalstatus,
+                        'objectplanningpegawaistatusfk' => $itmde->objectplanningpegawaistatusfk
+                    );
+                }
+
+            }
+
+            $data2 [] =  array(
+                'norec' => $item->norec,
+                'noplanning' => $item->noplanning,
+                'tglpengajuan' => $item->tglpengajuan,
+                'objectpegawaifk' => $item->objectpegawaifk,
+                'objectstatuspegawaiplanfk' => $item->objectstatuspegawaiplanfk,
+                'desk' => $item->desk,
+                'keterangan' => $item->keterangan,
+                'namalengkap' => $item->namalengkap,
+                'nip' => $item->nip,
+                'statuspermohonan' => $item->statuspermohonan,
+                'namajabatan' => $item->namajabatan,
+                'unitkerja' => $item->unitkerja,
+                'approvalstatus' => $item->approvalstatus,
+                'totalcuti' => $item->totalcuti,
+                'listtanggal' => $details,
+                'listtanggalapprove' => $tglVerif,
+
+            );
+        }
+        $firstData = $data2[0];
+        $dates = collect($firstData['listtanggal'])->pluck('tgl')->sort()->values();
+
+        $startDate = \Carbon\Carbon::parse($dates->first())->format('Y-m-d');
+        $endDate   = \Carbon\Carbon::parse($dates->last())->format('Y-m-d');
+        $tanggal_pengajuan = \Carbon\Carbon::parse($firstData['tglpengajuan'])->format('Y-m-d');
+
+        $totalDays = $dates->count();
+
+        $qrcode = base64_encode(QrCode::format('svg')->size(60)->generate($firstData['norec']));
+
+        $pdf = PDF::loadView(
+            'report.sdm.cetak-cuti',
+            array(
+                'res' => $res,
+                'qrcode'=> $qrcode,
+                'data' => $data2,
+                'firstData'  => $firstData, 
+                'noplanning' => $request['noplanning'],
+                'tanggal_pengajuan' => $tanggal_pengajuan,
+                'startDate' => $startDate,
+                'endDate' => $endDate,
+                'totalDays' => $totalDays,
+            )
+        )->setPaper('A4', 'portrait');
+
+        return $pdf->stream();
+    }
     //batas
+
 }

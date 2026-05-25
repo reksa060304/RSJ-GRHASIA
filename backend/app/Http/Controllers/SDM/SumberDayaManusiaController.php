@@ -74,6 +74,8 @@ use App\Transaksi\PlanningPegawaiStatus;
 use App\Transaksi\StrukBuktiPengeluaran;
 use App\Transaksi\StrukBuktiPengeluaranCaraBayar;
 
+use App\Master\RunningNumber;
+
 class SumberDayaManusiaController extends ApiController {
 
     use Valet;
@@ -801,8 +803,16 @@ class SumberDayaManusiaController extends ApiController {
         ->where("objectpegawaifk",$request['idPegawai'])
         ->get();
 
-        $datacutiawal = \DB::table('planningpegawaistatus_t')->select("*")
-        ->where("objectpegawaifk",$request['idPegawai'])
+        $datacutiawal = DB::table('planningpegawaistatus_t')
+        ->selectRaw("
+            MIN(tglpengajuan) AS tglpengajuan,
+            COALESCE(MAX(totalcuti), 0) AS totalcuti,
+            COALESCE(SUM(CASE WHEN approvalstatus IS NOT NULL THEN jumlahhari ELSE 0 END), 0) AS cuti_terpakai,
+            COALESCE(MAX(totalcuti), 0) - 
+            COALESCE(SUM(CASE WHEN approvalstatus IS NOT NULL THEN jumlahhari ELSE 0 END), 0) AS sisa_cuti
+        ")
+        ->where('objectpegawaifk', $request['idPegawai'])
+        ->groupBy('objectpegawaifk')
         ->get();
 
         $dataRiwayatGajiBerkala = \DB::table("riwayatgajiberkala_t as gb")
@@ -3451,28 +3461,83 @@ class SumberDayaManusiaController extends ApiController {
         return $this->respond($result);
     }
      public function getPegawaiAll (Request $request) {
-         $kdProfile = (int) $this->getDataKdProfile($request);
-        $pegawai = \DB::table('pegawai_m as pg')
+        $kdProfile = (int) $this->getDataKdProfile($request);
+
+        $subQuery = DB::table('planningpegawaistatus_t')
+            ->selectRaw("
+                objectpegawaifk,
+                MIN(tglpengajuan) AS tglpengajuan,
+                COALESCE(MAX(totalcuti), 0) AS totalcuti,
+                COALESCE(SUM(CASE WHEN approvalstatus IS NOT NULL THEN jumlahhari ELSE 0 END), 0) AS cuti_terpakai,
+                COALESCE(MAX(totalcuti), 0) - 
+                COALESCE(SUM(CASE WHEN approvalstatus IS NOT NULL THEN jumlahhari ELSE 0 END), 0) AS sisa_cuti
+            ")
+            ->groupBy('objectpegawaifk')
+            ->toSql(); // ambil SQL query sebagai string
+
+
+        // $pegawai = \DB::table('pegawai_m as pg')
+        //     ->leftJoin('jabatan_m as jb','jb.id','=','pg.objectjabatanfungsionalfk')
+        //     ->leftJoin('subunitkerja_m as sub','sub.id','=','pg.objectsubunitkerjapegawaifk')
+        //     ->select('pg.*','jb.namajabatan','sub.name as subunitkerja')
+        //     ->where('pg.statusenabled',true)
+        //     ->where('pg.namalengkap',"<>","-")
+        //     ->whereNull('pg.usereksternal')
+        //     ->where('pg.kdprofile', $kdProfile)
+        //     ->where('pg.tglkeluar', NULL)
+        //     ->orderBy('pg.namalengkap')
+        //     ->get();
+
+        $pegawai = DB::table('pegawai_m as pg')
             ->leftJoin('jabatan_m as jb','jb.id','=','pg.objectjabatanfungsionalfk')
             ->leftJoin('subunitkerja_m as sub','sub.id','=','pg.objectsubunitkerjapegawaifk')
-            ->leftJoin('kategorypegawai_m as kp','kp.id','=','pg.kategorypegawai')
-            ->select('pg.*','jb.namajabatan','sub.name as subunitkerja','kp.maxsisacuti','kp.maxcutitahunini')
-            ->where('pg.statusenabled',true)
-            ->where('pg.namalengkap',"<>","-")
+            ->leftJoin(DB::raw("($subQuery) as cuti"), 'cuti.objectpegawaifk', '=', 'pg.id')
+            ->select(
+                'pg.*',
+                'jb.namajabatan',
+                'sub.name as subunitkerja',
+                'cuti.tglpengajuan',
+                'cuti.totalcuti'
+            )
+            ->where('pg.statusenabled', true)
+            ->where('pg.namalengkap', '<>', '-')
             ->whereNull('pg.usereksternal')
             ->where('pg.kdprofile', $kdProfile)
+            ->whereNull('pg.tglkeluar')
             ->orderBy('pg.namalengkap')
             ->get();
+
+
+
+        
+        
         $jeniscuti = \DB::table('sdm_jeniscuti_m as pg')
             ->select('pg.*')
             ->where('pg.kdprofile', $kdProfile)
             ->where('pg.statusenabled',true)
+            ->whereIn('pg.id',[1])
             ->orderBy('pg.name')
             ->get();
-
+        $jeniscutimarried = \DB::table('sdm_jeniscuti_m as pg')
+            ->select('pg.*')
+            ->where('pg.kdprofile', $kdProfile)
+            ->where('pg.statusenabled',true)
+            ->whereNotIn('pg.id',[1,2,3,4,5,6,7])
+            ->orderBy('pg.name')
+            ->get();
+        $pegawaiaja = \DB::table('pegawai_m as pg')
+            ->select('pg.*')
+            ->where('pg.statusenabled',true)
+            ->where('pg.kdprofile', $kdProfile)
+            ->where('pg.tglkeluar', NULL)
+            ->whereNotIn('pg.objectjenispegawaifk',[1])
+            ->orderBy('pg.namalengkap')
+            ->get();
          $arrayName = array(
             'pegawai' => $pegawai,
             'jeniscuti' => $jeniscuti,
+            'jeniscutimarried' => $jeniscutimarried,
+            'pegawaiaja' => $pegawaiaja,
          );
         return $this->respond($arrayName);
     }
@@ -3553,7 +3618,7 @@ class SumberDayaManusiaController extends ApiController {
         return $this->setStatusCode($result['status'])->respond($result, $transMessage);
     }
 
-    public function getPermohonanCuti (Request $request) {
+    public function getPermohonanCuti(Request $request) {
         $kdProfile = (int) $this->getDataKdProfile($request);
         $data =\DB::table('planningpegawaistatus_t as pps')
             ->leftJoin('pegawai_m as pg','pg.id','=','pps.objectpegawaifk')
@@ -3562,9 +3627,11 @@ class SumberDayaManusiaController extends ApiController {
             ->leftJoin('unitkerja_m as ukp','ukp.id','=','pg.objectunitkerjafk')
             ->select( 'pps.norec','pps.noplanning','pps.tglpengajuan','pps.objectpegawaifk','pps.objectstatuspegawaiplanfk',
                 'pps.deskripsistatuspegawaiplan as desk','pps.keterangan','pg.namalengkap','jc.name as statuspermohonan',
-                'jb.namajabatan','ukp.unitkerja','pps.approvalstatus')
+                'jb.namajabatan','ukp.unitkerja','pps.approvalstatus','pps.totalcuti')
             ->where('pps.kdprofile', $kdProfile)
             ->where('pps.statusenabled',true)
+            ->whereNull('pps.totalcuti')
+            ->where('pps.tglpengajuan', '>=' ,'2025-01-01')
             ->orderBy('pps.tglpengajuan');
 
         if(isset($request['namaLengkap']) && $request['namaLengkap']!="" && $request['namaLengkap']!="undefined"){
@@ -3636,6 +3703,7 @@ class SumberDayaManusiaController extends ApiController {
                 'namajabatan' => $item->namajabatan,
                 'unitkerja' => $item->unitkerja,
                 'approvalstatus' => $item->approvalstatus,
+                'totalcuti' => $item->totalcuti,
                 'listtanggal' => $details,
                 'listtanggalapprove' => $tglVerif,
 
@@ -7516,7 +7584,7 @@ public function daftarKenaikanGajiBerkala(Request $request){
                     'statusenabled'=> true,
                     'noplanning'=> $this->generateCodeBySeqTable(new PlanningPegawaiStatus, 'noplanning', 11, 'P'.date('ym'), $kdProfile),
                     'objectpegawaifk'=>$request['objectpegawaifk'],
-                    'jumlahhari'=>$request['jumlahhari'],
+                    'totalcuti'=>$request['jumlahhari'],
                     'tglpengajuan'=> $tahun.'-01-01 00:00:00',
                 ]);
                 
@@ -7530,7 +7598,7 @@ public function daftarKenaikanGajiBerkala(Request $request){
                     'kdprofile'=> $kdProfile,
                     'statusenabled'=> true,
                     'objectpegawaifk'=>$request['objectpegawaifk'],
-                    'jumlahhari'=>$request['jumlahhari'],
+                    'totalcuti'=>$request['jumlahhari'],
                     'tglpengajuan'=> $tahun.'-01-01 00:00:00',
                 ]);
             }

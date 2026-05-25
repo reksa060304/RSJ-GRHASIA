@@ -3039,6 +3039,7 @@ Route::group(['middleware' => 'cors', 'prefix' => 'service'], function () {
             Route::get('sdm/get-sisacuti', 'SDM\SumberDayaManusiaController@getSisaCuti');
             Route::get('sdm/get-data-master-pendidikan', 'SDM\SumberDayaManusiaController@getMasterPendidikanPegawai');
             Route::get('sdm/get-thn-bln', 'SDM\SumberDayaManusiaController@getThnBln');
+            Route::get('sdm/get-lap-cuti-karyawan', 'SDM\SumberDayaManusiaController@getLaporanCutiKaryawan');
             //psikologi
             Route::get('psikologi/get-data-psikologi', 'RawatJalan\RawatJalanController@getComboPsikologi');
             Route::get('psikologi/get-daftar-pasien-psikologi', 'RawatJalan\RawatJalanController@getDdaftarRegistrasiPsikologi');

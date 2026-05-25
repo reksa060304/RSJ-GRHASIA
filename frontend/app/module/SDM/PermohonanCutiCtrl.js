@@ -1,12 +1,11 @@
-define(['initialize'], function (initialize) {
+define(['initialize','Configuration'], function (initialize,config) {
     'use strict';
     initialize.controller('PermohonanCutiCtrl', ['$q', '$rootScope', '$scope', 'ModelItem', 'DateHelper', '$mdDialog', 'CetakHelper', '$state', 'MedifirstService', '$timeout',
         function ($q, $rootScope, $scope, ModelItem, DateHelper, $mdDialog, cetakHelper, $state, medifirstService, $timeout) {
-
             $scope.pegawai = JSON.parse(localStorage.getItem('pegawai'));
-            $scope.hidesisacuti = true
-
             $scope.item = {};
+            // getUserLoginData();
+            // $scope.datauserlogin = medifirstService.getUserLogin();
             var urlDaftarPermohonan;
             var listPegawaiAdminSDM = [];
             $scope.item.qRows =100
@@ -21,44 +20,58 @@ define(['initialize'], function (initialize) {
                 isDuplicate: false
             }]
 
+            $scope.formatTanggal = function (tanggal) {
+                return moment(tanggal).format('DD-MMM-YYYY HH:mm');
+            }
             var isLoginSDM = true
             var isNotSDM = false
          
-            if (medifirstService.getKelompokUser() == 'sdm') {
+            if (medifirstService.getKelompokUser() == 'kepala ruangan') {
+                $scope.item.status = 1
                 isLoginSDM = false
                 isNotSDM = true
                 $scope.bukanLoginSDM = false  
-            }else{
+            } 
+            // else if (medifirstService.getKelompokUser() == 'bagianUmum') {
+            //     $scope.item.status = 2
+            //     isLoginSDM = false
+            //     isNotSDM = true
+            //     $scope.bukanLoginSDM = false  
+            // } 
+            else if (medifirstService.getKelompokUser() == 'sdm' || medifirstService.getKelompokUser() == 'direkturUmum'){
+            // else if (medifirstService.getKelompokUser() == 'sdm','direkturUmum') {
+                $scope.item.status = 3
+                isLoginSDM = false
+                isNotSDM = true
+                $scope.bukanLoginSDM = false  
+            } else {
                 $scope.bukanLoginSDM = true
-
             }
+
             $scope.isRouteLoading = false
             $scope.now = new Date();
             $scope.item.tglPengajuan = new Date()
             $scope.titlePelimpahan = ''
             $scope.listApprove = [
-                { id: 0, name: ' Belum diputuskan' },
+                { id: 0, name: 'Belum Diputuskan' },
                 { id: 1, name: 'Disetujui' },
                 { id: 2, name: 'Dibatalkan' }]
             $scope.listTglCekbox = [];
             function twoDaysAfter(date) {
                 var newDate = date;
-
                 newDate.setDate(newDate.getDate() + 2);
-
                 var dd = newDate.getDate(),
                     mm = newDate.getMonth() + 1,
                     yy = newDate.getFullYear();
-
                 if (dd.length < 10) {
                     dd = "0" + dd;
                 }
-
                 return yy + "-" + mm + "-" + dd;
             }
             loadData()
             $scope.cari = function () {
                 loadData()
+                
             }
             $scope.next2days = new Date().setDate(new Date().getDate() + 2);
             $scope.monthSelectorOptions = {
@@ -84,19 +97,67 @@ define(['initialize'], function (initialize) {
             });
             medifirstService.get('sdm/get-pegawai-all').then(function (e) {
                 $scope.listPegawai = e.data.pegawai
-              
                 $scope.listStatusCuti = e.data.jeniscuti
+                $scope.jumlahcuti = e.data.pegawai.jumlahcuti
             })
+            
             $scope.getDetailPegawai = function (data) {
-                $scope.item.nip = data.nip
+                $scope.item.nikintern = data.noidentitas
                 $scope.item.jabatan = data.namajabatan
                 $scope.item.ruangan = data.subunitkerja
+                $scope.item.id = data.id
+                medifirstService.get('sdm/get-penjumlahan-cuti?pgId=' + $scope.item.id).then(function (e) {
+                    $scope.ambilcuti = e.data.datacuti[0].ambilcuti
+                })
+                if($scope.ambilcuti == undefined){
+                    $scope.ambilcuti = 0;
+                } else {
+                    $scope.ambilcuti
+                }
+                $scope.item.jumlahcuti = data.totalcuti - $scope.ambilcuti;
+                $scope.item.jumlahcutihari = $scope.item.jumlahcuti + " Hari";
+                medifirstService.get('sdm/get-permohonan-cuti?pgId=' + $scope.item.id).then(function (e) {
+                    $scope.item.approvalstatus = e.data.data[0].approvalstatus
+                    $scope.item.ambilcuti = e.data.data[0].ambilcuti
+                    $scope.item.totalcuti = e.data.data[0].totalcuti + " Hari";
+                    $scope.item.sumcuti = e.data.data[0].jumlahcuti == undefined ? e.data.data[0].jumlahcuti : 0
+                })     
             }
 
-            $scope.mainGridOptions = {
-                pageable: true,
-                selectable: true,
+            $scope.getDetailPegawai2 = function (data) {
+                $scope.item.nikintern = data.noidentitas
+                $scope.item.jabatan = data.namajabatan
+                $scope.item.ruangan = data.subunitkerja
+                $scope.item.id = data.id
+                medifirstService.get('sdm/get-penjumlahan-cuti?pgId=' + $scope.item.id).then(function (e) {
+                    $scope.ambilcuti = e.data.datacuti[0].ambilcuti
+                })
+                if($scope.ambilcuti == undefined){
+                    $scope.ambilcuti = 0;
+                } else {
+                    $scope.ambilcuti
+                }
+                $scope.item.jumlahcuti = data.totalcuti - $scope.ambilcuti;
+                $scope.item.jumlahcutihari = $scope.item.jumlahcuti + " Hari";
+                $scope.item.sisacuti = $scope.item.jumlahcuti + " Hari";
+                $scope.item.jumlahtotalcutihari = data.totalcuti + " Hari";
+                medifirstService.get('sdm/get-permohonan-cuti?pgId=' + $scope.item.id).then(function (e) {
+                    $scope.item.approvalstatus = e.data.data[0].approvalstatus
+                    $scope.item.ambilcuti = e.data.data[0].ambilcuti
+                    $scope.item.totalcuti = e.data.data[0].totalcuti + " Hari";
+                    $scope.item.sumcuti = e.data.data[0].jumlahcuti == undefined ? e.data.data[0].jumlahcuti : 0
+                })     
+            }
+                           
+            $scope.daftarpegawaiOpt = {
+            pageable: true,
+            dataBound: onDataBound,
+            selectable: 'row',
+            scrollable: true,
+            resizable: true,
+            pageSize: 20,
                 toolbar: [
+                    "excel",
                     {
                         name: "add", text: "Tambah",
                         template: '<button ng-click="tambahCutiBaru()" class="k-button k-button-icontext k-grid-upload" href="\\#"><span class="k-icon k-i-plus"></span>Tambah</button>'
@@ -107,81 +168,142 @@ define(['initialize'], function (initialize) {
                         template: '<button ng-click="tambahCutiBersama()" class="k-button k-button-icontext k-grid-upload" href="\\#"><span class="k-icon k-i-plus"></span>Cuti Bersama</button>'
                     },
                 ],
-                columns: [
+                excel: {
+                    fileName: "Pegawai Cuti.xlsx",
+                    allPages: true,
+                },
+                excelExport: function(e){
+                    var sheet = e.workbook.sheets[0];
+                    sheet.frozenRows = 2;
+                    sheet.mergedCells = ["A1:K1"];
+                    sheet.name = "Page 1";
 
+                    var myHeaders = [{
+                        value:"Pegawai Cuti",
+                        fontSize: 20,
+                        textAlign: "center",
+                        background:"#ffffff",
+                     // color:"#ffffff"
+                 }];
 
-                    {
-                        "field": "noplanning",
-                        "title": "No Permohonan"
-                    },
-                    {
-                        "field": "namalengkap",
-                        "title": "Nama Pegawai"
-                    },
-                    {
-                        "field": "namajabatan",
-                        "title": "Jabatan"
-                    },
-                    {
-                        "field": "unitkerja",
-                        "title": "Sub Unit Kerja"
-                    },
-                    {
-                        "field": "desk",
-                        "title": "Deskripsi "
-                    },
-                    {
-                        "field": "tglpengajuan",
-                        "title": "Tgl Permohonan",
-                        "template": "#= kendo.toString(new Date(tglpengajuan), 'dd-MM-yyyy') #",
-                        width: 100
-                    },
-                    {
-                        "field": "statuspermohonan",
-                        "title": "Status Permohonan"
-                    },
-                    {
-                        "field": "listtanggal",
-                        "title": "Tgl Permohonan",
-                        "template": "# for(var i=0; i < listtanggal.length;i++){# <button class=\"k-button custom-button\" style=\"margin:0 0 5px\">#= kendo.toString(new Date(listtanggal[i].tgl), \"dd-MM-yyyy\") #</button> #}#",
-                    },
-                    {
-                        "field": "listtanggalapprove",
-                        "title": "Tgl Permohonan Disetujui",
-                        "template": "# for(var i=0; i < listtanggalapprove.length;i++){# <button class=\"k-button custom-button\" style=\"margin:0 0 5px\">#= kendo.toString(new Date(listtanggalapprove[i].tgl), \"dd-MM-yyyy\") #</button> #}#",
-                    },
-                    {
-                        "field": "approvalstatus",
-                        "title": "Persetujuan",
-                        "template": "#if(approvalstatus== null){# Belum diputuskan #}  else if(approvalstatus==1) {# Disetujui #} #",
-                        width: 100
-                    },
+                 sheet.rows.splice(0, 0, { cells: myHeaders, type: "header", height: 70});
+             },
+            dataBound: onDataBound,
+            columns: [
+                
+                {
+                    "field": "noplanning",
+                    "title": "No Permohonan",
+                    "width": "100px",
+                    "template": "<span class='style-center'>#: noplanning #</span>"
+                },
+                {
+                    "field": "namalengkap",
+                    "title": "Nama Pegawai",
+                    "width": "180px",
+                },
+                {
+                    "field": "jenispegawai",
+                    "title": "Tugas",
+                    "width": "100px"
+                },
+                {
+                    "field": "unitkerja",
+                    "title": "Unit Kerja",
+                    "width": "100px"
+                },
+                {
+                    "field": "desk",
+                    "title": "Deskripsi",
+                    "width": "100px"
+                },
+                {
+                    "field": "tglpengajuan",
+                    "title": "Tgl Permohonan",
+                    "template": "#= kendo.toString(new Date(tglpengajuan), 'dd-MM-yyyy') #",
+                    "width": "120px"
+                },
+                {
+                    "field": "statuspermohonan",
+                    "title": "Status Permohonan",
+                    "width": "100px",
+                },
+                {
+                    "field": "listtanggal",
+                    "title": "Tanggal Cuti",
+                    "template": "# for(var i=0; i < listtanggal.length;i++){# <button class=\"k-button custom-button\" style=\"margin:0 0 5px\">#= kendo.toString(new Date(listtanggal[i].tgl), \"dd-MM-yyyy\") #</button> #}#",
+                    "width": "150px",
+                },
+                {
+                    "field": "listtanggalapprove",
+                    "title": "Tgl Disetujui",
+                    "template": "# for(var i=0; i < listtanggalapprove.length;i++){# <button class=\"k-button custom-button\"  style=\"margin:0 0 5px\">#= kendo.toString(new Date(listtanggalapprove[i].tgl), \"dd-MM-yyyy\") #</button> #}#",
+                    "width": "150px",
+                },
+                // {
+                //     "field": "approvalstatus",
+                //     "title": "Persetujuan Karu",
+                //     "template": "#if(approvalstatus== null){#Belum Diputuskan#}  else if(approvalstatus==1){#Disetujui#} else if(approvalstatus==2){#Disetujui#} else if(approvalstatus==3) {#Disetujui#} #",
+                //     "width": "150px",
+                //     "attributes": { style: "text-align : center" },
+                // },
+                // {
+                //     "field": "approvalstatus",
+                //     "title": "Persetujuan Kabag Umum & Humas",
+                //     "template": "#if(approvalstatus== null){#Belum Diputuskan#}  else if(approvalstatus==2){#Disetujui#} else if(approvalstatus==3) {#Disetujui#} #",
+                //     "width": "150px",
+                // },
+                {
+                    "field": "approvalstatus",
+                    "title": "Persetujuan SDM/Direktur",
+                    "template": "#if(approvalstatus== null){#Belum Diputuskan#}  else if(approvalstatus==1){#Disetujui#} else if(approvalstatus==1) {#Disetujui#} #",
+                    "width": "150px",
+                    "attributes": { style: "text-align : center" },
+                },
+                {
+                    "command": [
 
+                        { text: "Cetak Cuti", click: cetakSuratPengajuan, imageClass: "k-icon k-i-download" },
+                        // { text: "Edit", click: showDetails, imageClass: "k-icon k-i-pencil" },
+                        // { text: "Hapus", click: hapus, imageClass: "k-icon k-i-close" },
+                    ],
+                    "title": "Tindakan",
+                    "width": "150px",
+                    hidden: isNotSDM
+                  
+                },
 
+                {
+                    "command": [
+                        { text: "Verif", click: setKeputusan, imageClass: "k-icon k-i-pencil", },
+                        { text: "Cetak Verif", click: cetakCuti, imageClass: "k-icon k-i-print", },
+                        { text: "Unverif", click: setUnverifikasi, imageClass: "k-icon k-i-cancel" },
+                        { text: "Edit", click: showDetails, imageClass: "k-icon k-i-pencil" },
+                        { text: "Hapus", click: hapus, imageClass: "k-icon k-i-close" },
+                    ],
+                    "title": "Tindakan",
+                    "width": "150px",
+                    hidden: isLoginSDM
+                    
+                },
+            ],
+           
+            
+            excelExport: function (e) {
+                var columns = e.workbook.sheets[0].columns;
+                columns.forEach(function (column) {
+                    delete column.width;
+                    column.autoWidth = true;
+                });
+            },
+            change: function (e) {
+               
+                var grid = $("#gridDataPegawai").data("kendoGrid");
+                var selectedRows = grid.dataItem(grid.select());
+                $scope.dataItem = selectedRows;
+            }
+        };
 
-                    // {template: '<button class="k-button" ng-click="cetakSuratPengajuan(dataItem)">Cetak</button>' }
-                    {
-                        "command": [
-
-                            { text: "Cetak", click: cetakSuratPengajuan, imageClass: "k-icon k-i-download" },
-                            { text: "Edit", click: showDetails, imageClass: "k-icon k-i-pencil" },
-                            { text: "Hapus", click: hapus, imageClass: "k-icon k-i-close" },
-                        ],
-                        hidden: isNotSDM
-                    },
-
-                    {
-                        "command": [
-                            { text: "Verif", click: setKeputusan, imageClass: "k-icon k-i-pencil", },
-                            { text: "Unverif", click: setUnverifikasi, imageClass: "k-icon k-i-cancel" },
-                            { text: "Edit", click: showDetails, imageClass: "k-icon k-i-pencil" },
-                            { text: "Hapus", click: hapus, imageClass: "k-icon k-i-close" },
-                        ],
-                        hidden: isLoginSDM
-                    },
-
-                ]
-            };
             $scope.tambahCutiBersama = function () {
                 if(medifirstService.getKelompokUser() == 'sdm')
                 $scope.winCutiBersama.center().open()
@@ -229,10 +351,39 @@ define(['initialize'], function (initialize) {
             function setKeputusan(e) {
                 e.preventDefault();
                 var dataItem = this.dataItem($(e.currentTarget).closest("tr"));
-                if (dataItem.approvalstatus == 1) {
-                    toastr.error('Sudah verifikasi')
-                    return
+                // console.log('asdsa', dataItem)
+                // if (medifirstService.getKelompokUser() == 'kepala ruangan') {
+                //     if (dataItem.approvalstatus == 1 || dataItem.approvalstatus == 2 || dataItem.approvalstatus == 3) {
+                //         toastr.error('Sudah verifikasi')
+                //         return
+                //     }
+                // } else if (medifirstService.getKelompokUser() == 'bagianUmum'){
+                //     if (dataItem.approvalstatus != 1){
+                //         toastr.error('Mohon verifikasi karu terlebih dahulu')
+                //         return
+                //     } else if (dataItem.approvalstatus == 2){
+                //         toastr.error('Sudah verifikasi')
+                //         return
+                //     }
+                // } 
+                // else if (medifirstService.getKelompokUser() == 'sdm','direkturUmum'){
+                if (medifirstService.getKelompokUser() == 'sdm' || medifirstService.getKelompokUser() == 'direkturUmum'){
+                    
+                    if (dataItem.approvalstatus == 1){
+                        toastr.error('Sudah verifikasi')
+                        return
+                    }
+
+                    // if (dataItem.approvalstatus != 1){
+                    //     // toastr.error('Mohon verifikasi kabag umum terlebih dahulu')
+                    //     toastr.error('Mohon verifikasi kepala ruangan terlebih dahulu')
+                    //     return
+                    // } else if (dataItem.approvalstatus == 3){
+                    //     toastr.error('Sudah verifikasi')
+                    //     return
+                    // }
                 }
+                
                 $scope.listTglCekbox = [];
                 medifirstService.get('sdm/get-permohonan-cuti?pgId=' + dataItem.objectpegawaifk).then(function (e) {
 
@@ -263,10 +414,31 @@ define(['initialize'], function (initialize) {
 				actions.splice(actions.indexOf("Close"), 1);
 				// Set the new options
 				$scope.winDialogVerif.setOptions({ actions: actions });
+            }            
+            function cetakCuti(e) {
+                e.preventDefault();
+                var dataItem = this.dataItem($(e.currentTarget).closest("tr"));
+                // $scope.item = dataItem;
+                if (!dataItem) {
+                    messageContainer.error("Data Tidak Ditemukan");
+                    return;
+                }
+
+                var local = JSON.parse(localStorage.getItem('profile'))
+                var nama = medifirstService.getPegawaiLogin().namaLengkap
+
+                window.open(config.baseApiBackend + 'report/cetak-cuti?noplanning=' + dataItem.noplanning + '&kdprofile=' + local.id,'_blank');
+
+                // medifirstService.post('sdm/nosurat').then(function (e) {
+                //     window.open(config.baseApiBackend + "report/cetak-cuti?noplanning=" + dataItem.noplanning,  '_blank');
+                //     loadData()
+                // })
+                
             }
             $scope.saveVerif = function () {
                 var data = {
-                    'data': $scope.item.tglPermohonanVerif
+                    'data': $scope.item.tglPermohonanVerif,
+                    'status': $scope.item.status
                 }
                 medifirstService.post('sdm/verifkasi-cuti', data).then(function (e) {
                     loadData()
@@ -323,16 +495,35 @@ define(['initialize'], function (initialize) {
                 })
             }
             function hapus(e) {
+                // e.preventDefault();
+                // var dataItem = this.dataItem($(e.currentTarget).closest("tr"));
+                // if (dataItem.approvalstatus == 1) {
+                //     messageContainer.error("Data tidak dapat dihapus");
+                //     return;
+                // } else {
+                //     medifirstService.post('sdm/delete-permohonan-cuti', { norec: dataItem.norec }).then(function (e) {
+                //         loadData()
+                //     })
+                // }
                 e.preventDefault();
                 var dataItem = this.dataItem($(e.currentTarget).closest("tr"));
                 if (dataItem.approvalstatus == 1) {
-                    messageContainer.error("Data tidak dapat dihapus");
-                    return;
-                } else {
+                    toastr.error('Data tidak dapat dihapus!');
+                    return
+                }
+                var confirm = $mdDialog.confirm()
+                    .title('Peringatan')
+                    .textContent('Yakin Hapus Cuti?')
+                    .ariaLabel('Lucky day')
+                    .cancel('Tidak')
+                    .ok('Ya')
+                $mdDialog.show(confirm).then(function () {
+                    $scope.isRouteLoading = true;
                     medifirstService.post('sdm/delete-permohonan-cuti', { norec: dataItem.norec }).then(function (e) {
                         loadData()
+                        $scope.isRouteLoading = false;
                     })
-                }
+                });
             }
             function showDetails(e) {
                 //debugger;
@@ -346,6 +537,7 @@ define(['initialize'], function (initialize) {
 
                     })
                     $scope.item.norecPlanning = dataItem.norec
+                    $scope.item.norecSPC = dataItem.spc
                     var pegawai = []
                     for (let i = 0; i < $scope.listPegawai.length; i++) {
                         const element = $scope.listPegawai[i];
@@ -383,14 +575,15 @@ define(['initialize'], function (initialize) {
                     })
 
 
-                    // $scope.tanggalPermohonan = dataItem.listtanggal;
+                    $scope.tanggalPermohonan = dataItem.listtanggal;
                     $scope.item.noUsulan = dataItem.noplanning
                     // for (var i = 0; i < $scope.tanggalPermohonan.length; i++) {
                     //     $scope.tanggalPermohonan[i].id = i + 1;
                     // }
                     $scope.item.tglAwalCuti = dataItem.listtanggal[0].tgl
-                    $scope.item.tglAkhirCuti = dataItem.listtanggal[ dataItem.listtanggal.length].tgl
-                    $scope.winDialogBaru.center().open()
+                    $scope.winDialogEdit.center().open()
+                    $scope.item.tglAkhirCuti = dataItem.listtanggal[1].tgl
+                   
 
                 }
 
@@ -398,6 +591,7 @@ define(['initialize'], function (initialize) {
      
             $scope.Batal = function () {
                 $scope.winDialogBaru.close()
+                $scope.winDialogEdit.close()
                 $scope.item = {
                     tglPengajuan: new Date(),
                     qRows:100
@@ -414,10 +608,6 @@ define(['initialize'], function (initialize) {
                 return dateArray;
             }
             $scope.Simpan = function () {
-                if ($scope.item.jumlahHari > $scope.item.totalCutiTahun) {
-                    toastr.error('Jumlah Hari Cuti Melebihi Sisa Cuti Yang Ada')
-                    return
-                }
                 var listRawRequired = [
                     "item.namaPegawai|k-ng-model|Pegawai",
                     "item.tglPengajuan|k-ng-model|Tanggal pengajuan",
@@ -451,16 +641,42 @@ define(['initialize'], function (initialize) {
                     //     }
                     // }
 
-                    var dataSend = {
-                        "norec": $scope.item.norecPlanning != undefined ? $scope.item.norecPlanning : '',
-                        "objectpegawaifk": $scope.item.namaPegawai.id,
-                        "statuspegawaiplan": $scope.item.statusPegawai.id,
-                        "deskripsi": $scope.item.deskripsiUsulan != undefined ? $scope.item.deskripsiUsulan : null,
-                        "keteranganlain": $scope.item.keterangan != undefined ? $scope.item.keteranganlain : null,
-                        "tglpengajuan": moment($scope.item.tglPengajuan).format('YYYY-MM-DD HH:mm'),// DateHelper.getTanggalFormattedNew($scope.item.tglPengajuan),
-                        "listtanggal": listDate,
-                        "jumlah": $scope.item.jumlahHari
+                    if ($scope.item.statusPegawai.id == 1){
+                        if ($scope.item.jumlahcuti < $scope.item.jumlahHari){
+                            toastr.error("Jumlah permintaan cuti melebihi Jumlah Cuti !!")
+                            return;
+                        }
+                        var dataSend = {
+                            "norec": $scope.item.norecPlanning != undefined ? $scope.item.norecPlanning : '',
+                            // "spc": $scope.item.norecSPC != undefined ? $scope.item.norecSPC : '',
+                            "objectpegawaifk": $scope.item.namaPegawai.id,
+                            "statuspegawaiplan": $scope.item.statusPegawai.id,
+                            "deskripsi": $scope.item.deskripsiUsulan != undefined ? $scope.item.deskripsiUsulan : null,
+                            "keteranganlain": $scope.item.keterangan != undefined ? $scope.item.keteranganlain : null,
+                            "tglpengajuan": moment($scope.item.tglPengajuan).format('YYYY-MM-DD HH:mm'),// DateHelper.getTanggalFormattedNew($scope.item.tglPengajuan),
+                            "listtanggal": listDate,
+                            "jumlahcuti": $scope.item.jumlahcuti,
+                            "ambilcuti": listDate.length,                        
+                            "totalcuti": $scope.item.jumlahcuti - listDate.length,
+                            "jumlah": listDate.length
+                        }
+                    } else {
+                        var dataSend = {
+                            "norec": $scope.item.norecPlanning != undefined ? $scope.item.norecPlanning : '',
+                            // "spc": $scope.item.norecSPC != undefined ? $scope.item.norecSPC : '',
+                            "objectpegawaifk": $scope.item.namaPegawai.id,
+                            "statuspegawaiplan": $scope.item.statusPegawai.id,
+                            "deskripsi": $scope.item.deskripsiUsulan != undefined ? $scope.item.deskripsiUsulan : null,
+                            "keteranganlain": $scope.item.keterangan != undefined ? $scope.item.keteranganlain : null,
+                            "tglpengajuan": moment($scope.item.tglPengajuan).format('YYYY-MM-DD HH:mm'),// DateHelper.getTanggalFormattedNew($scope.item.tglPengajuan),
+                            "listtanggal": listDate,
+                            "jumlahcuti": 0,
+                            "ambilcuti": 0,                        
+                            "totalcuti": $scope.item.jumlahcuti - listDate.length,
+                            "jumlah": listDate.length
+                        }
                     }
+                    
                     medifirstService.post('sdm/save-permohonan-cuti', dataSend).then(function (e) {
                         $scope.item = {}
                         $scope.tanggalPermohonan = []
@@ -485,6 +701,18 @@ define(['initialize'], function (initialize) {
             $scope.SearchEnter = function () {
                 loadData()
             }
+
+            var onDataBound = function () {
+                $('td').each(function () {
+                    if ($(this).text() == 'Belum Diputuskan') {
+                        $(this).addClass('red')
+                    }
+                    if ($(this).text() == 'Disetujui') {
+                        $(this).addClass('green')
+                    }   
+                })
+              }
+
             function loadData() {
                 $scope.isRouteLoading = true
                 var namaPegawa = ''
@@ -524,19 +752,44 @@ define(['initialize'], function (initialize) {
                     qRows = '&rows=' + $scope.item.qRows
                 }
                 
-
+                
                 medifirstService.get('sdm/get-permohonan-cuti?' + namaPegawa + qunitKerja +
                     qsubUnitKerja + qkedudukanPegawai + qstatusPegawai + tglMasuk + qstatusApprove
                     + qPermohonan +qRows)
                     .then(function (e) {
+                       
+                        // function getUserLoginData() {
+                        //     medifirstService.get("sdm/get-data-profile-pegawai?get=loginuser&id=" + $scope.datauserlogin.id).then(function (data) {
+                        //     $scope.item = data.data[0];      
+                        // })	}
+                        
                         $scope.isRouteLoading = false
                         var data = e.data.data
                         $scope.dataSource = new kendo.data.DataSource({
-                            pageSize: 10,
-                            data: data,
-                            autoSync: true
+                        pageSize: 10,
+                        data: data,
+                        autoSync: true
                         });
+                        
                     })
+
+                     
+                medifirstService.get("sysadmin/general/get-tgl-7day", true).then(function (dat) {
+                    var tgltgltgltgl = dat.data.mindate[0].max
+                    var tglkpnaja = dat.data.datedate
+                    $scope.minDate = new Date(tgltgltgltgl);
+                    $scope.maxDate = new Date(tgltgltgltgl);
+                    $scope.startDateOptions = {
+                        disableDates: function (date) {
+                            var disabled = tglkpnaja;
+                            if (date && disabled.indexOf(date.getDate()) > -1) {
+                                return true;
+                            } else {
+                                return false;
+                            }
+                        }
+                    };                        
+                });
             }
             function onChangeDate(e) {
                 if ($scope.tanggalPermohonan.length > 1) {
@@ -557,113 +810,40 @@ define(['initialize'], function (initialize) {
                     }
                 }
             }
-            
-            $scope.$watch('item.statusPegawai', function (newVal, oldVal) {
-                if(newVal != oldVal){
-                    if($scope.item.statusPegawai.id == 8 || $scope.item.statusPegawai.id == 1){
-                        var idPegawai = 'idPegawai=' + $scope.item.namaPegawai.id
-                        var tglpengajuan = '&tglpengajuan=' + moment($scope.item.tglPengajuan).format('YYYY')
-                        if ($scope.item.namaPegawai.kategorypegawai == null) {
-                            toastr.error("Status Pegawai Kosong. Isi terlebih dahulu!");
-                            return
-                        }
-                        medifirstService.get('sdm/get-total-sisa-cuti?' + idPegawai + tglpengajuan)
-                        .then(function (e) {
-                            //console.log(e.data)
-                            $scope.item.totalsisacutitahunini = e.data.data.totalcutitahunini
-                            $scope.item.sisacutitahunkemarin = e.data.data.sisacutitahunsebelumnya
-                            $scope.item.totalCutiTahun = e.data.data.sisacutitahunsekarang + e.data.data.sisacutitahunsebelumnya
-                            $scope.item.sisacutitahunini = e.data.data.sisacutitahunsekarang
-                            $scope.hidesisacuti = false
-                        });
-                    } else{
-                        $scope.hidesisacuti = true
+            $scope.$watch('item.tglAwalCuti', function (newVal, oldVal) {
+               if(newVal != oldVal){
+                    if($scope.item.tglAkhirCuti!= undefined){
+                        const oneDay = 24 * 60 * 60 * 1000; // hours*minutes*seconds*milliseconds
+                        const firstDate = new Date(newVal);
+                        const secondDate = new Date($scope.item.tglAkhirCuti);
+                        const diffDays = Math.round(Math.abs((firstDate - secondDate) / oneDay));
+                        $scope.item.jumlahHari = diffDays +1
                     }
-                }
-            });
-
-
+               }
             
-
+            });
             $scope.$watch('item.tglAkhirCuti', function (newVal, oldVal) {
                 if(newVal != oldVal){
-                    var tglAwal = 'tglAwal=' + moment($scope.item.tglAwalCuti).format('YYYY-MM-DD HH:mm')
-                    var tglAkhir = '&tglAkhir=' + moment($scope.item.tglAkhirCuti).format('YYYY-MM-DD HH:mm')
-
-                    medifirstService.get('sdm/get-jumlah-cuti?' + tglAwal + tglAkhir)
-                    .then(function (e) {
-                        $scope.item.jumlahHari = e.data.data[0].jumlahhari
-                        $scope.item.totalSisaCuti = $scope.item.totalCutiTahun - $scope.item.totalsisacutitahunini - $scope.item.jumlahHari
-                        console.log($scope.item.totalCutiTahun , $scope.item.totalsisacutitahunini , $scope.item.jumlahHari);
-                    });
-                }
-            });
-
-            $scope.$watch('item.tglAwalCuti', function (newVal, oldVal) {
-                if(newVal != oldVal){
-                    var tglAwal = 'tglAwal=' + moment($scope.item.tglAwalCuti).format('YYYY-MM-DD HH:mm')
-                    var tglAkhir = '&tglAkhir=' + moment($scope.item.tglAkhirCuti).format('YYYY-MM-DD HH:mm')
-
-                    medifirstService.get('sdm/get-jumlah-cuti?' + tglAwal + tglAkhir)
-                    .then(function (e) {
-                        $scope.item.jumlahHari = e.data.data[0].jumlahhari
-
-                    });
-                }
-            });
-
-            $scope.$watch('item.namaPegawai', function (newVal, oldVal) {
-                if(newVal != oldVal){
-                    if($scope.item.statusPegawai.id == 8 || $scope.item.statusPegawai.id == 1){
-                        var idPegawai = 'idPegawai=' + $scope.item.namaPegawai.id
-                        var tglpengajuan = '&tglpengajuan=' + moment($scope.item.tglPengajuan).format('YYYY')
-                        
-                        medifirstService.get('sdm/get-total-sisa-cuti?' + idPegawai + tglpengajuan)
-                        .then(function (e) {
-                            //console.log(e.data)
-                            $scope.item.totalsisacutitahunini = e.data.data.totalcutitahunini
-                            $scope.item.sisacutitahunkemarin = e.data.data.sisacutitahunsebelumnya
-                            $scope.item.totalCutiTahun = e.data.data.sisacutitahunsekarang + e.data.data.sisacutitahunsebelumnya
-                            $scope.item.sisacutitahunini = e.data.data.sisacutitahunsekarang
-                            $scope.hidesisacuti = false
-                        });
-                    }
-                }
-            });
-
-
-            $scope.$watch('item.tglPengajuan', function (newVal, oldVal) {
-                if(newVal != oldVal){
-                    if($scope.item.statusPegawai.id == 8 || $scope.item.statusPegawai.id == 1){
-                        var idPegawai = 'idPegawai=' + $scope.item.namaPegawai.id
-                        var tglpengajuan = '&tglpengajuan=' + moment($scope.item.tglPengajuan).format('YYYY')
-                        
-                        medifirstService.get('sdm/get-total-sisa-cuti?' + idPegawai + tglpengajuan)
-                        .then(function (e) {
-                            //console.log(e.data)
-                            $scope.item.totalsisacutitahunini = e.data.data.totalcutitahunini
-                            $scope.item.sisacutitahunkemarin = e.data.data.sisacutitahunsebelumnya
-                            $scope.item.totalCutiTahun = e.data.data.sisacutitahunsekarang + e.data.data.sisacutitahunsebelumnya
-                            $scope.item.sisacutitahunini = e.data.data.sisacutitahunsekarang
-                            $scope.hidesisacuti = false
-                        });
-                    }
-                }
-            });
-             
+                     if($scope.item.tglAwalCuti!= undefined){
+                         const oneDay = 24 * 60 * 60 * 1000; // hours*minutes*seconds*milliseconds
+                         const firstDate = new Date($scope.item.tglAwalCuti);
+                         const secondDate = new Date(newVal);
+                         const diffDays = Math.round(Math.abs((firstDate - secondDate) / oneDay));
+                         $scope.item.jumlahHari = diffDays+1
+                     }
+                } 
+             });
  
             function onChangeDate2(e) {
                 if ($scope.tanggalPermohonanBersama.length > 1) {
                     var lastModel = $scope.tanggalPermohonanBersama.length - 1;
                     for (var i = 0; i < $scope.tanggalPermohonanBersama.length; i++) {
                         if (i < lastModel && kendo.toString($scope.tanggalPermohonanBersama[i].tgl, "MM/dd/yyyy") === kendo.toString(this.value(), "MM/dd/yyyy")) {
-
                             toastr.error("Tanggal " + kendo.toString(this.value(), "dd/MM/yyyy") + " sudah diajukan", "Peringatan");
                             $scope.tanggalPermohonanBersama[lastModel].tgl = "";
                             $(this.element).closest('span').addClass("duplicateDate");
                             $(this.element).parent('span').addClass("duplicateDate");
                             this.value("");
-
                         } else {
                             $(this.element).closest('span').removeClass("duplicateDate");
                             $(this.element).parent('span').removeClass("duplicateDate");
@@ -723,8 +903,6 @@ define(['initialize'], function (initialize) {
                         //         jumlahCutiN3=$scope.item.jumlahCutiN3
                         //     }
 
-
-
                         //     var isBolehCuti=false
                         //     if($scope.item.sisaCuti+$scope.item.jumlahCutiN3>24 && $scope.item.isTangguhkanN1==true && $scope.tanggalPermohonan.length<24+$scope.item.sisaCutiN1){
                         //         isBolehCuti=true
@@ -740,8 +918,6 @@ define(['initialize'], function (initialize) {
                         //         toastr.warning('Jumlah tanggal permohonan melebihi jatah cuti tahunan yang ditetapkan !')
                         //         return 
                         //     }    
-
-
 
                         // } else {
                         //     messageContainer.error('Jumlah sisa cuti tidak cukup, Jumlah sisa cuti anda : ' + $scope.item.sisaCuti + ' hari')
@@ -761,8 +937,6 @@ define(['initialize'], function (initialize) {
                         //             }
                         //         }     
                         // }else {
-
-
                         //         if ($scope.tanggalPermohonan.length < 2) {
                         //             var newItemNo = $scope.tanggalPermohonan.length + 1;
                         //             $scope.tanggalPermohonan.push({
@@ -772,11 +946,7 @@ define(['initialize'], function (initialize) {
                         //         } else {
                         //             messageContainer.error('Tanggal terdiri dari tanggal awal dan tanggal akhir (periode)')
                         //         }
-
                         // }
-
-
-
 
                     } else {
 
@@ -846,7 +1016,6 @@ define(['initialize'], function (initialize) {
 
             }
             $scope.tambahCutiBaru = function () {
-                $scope.hidesisacuti = true
                 if( $scope.bukanLoginSDM ==true){
                     for (let x = 0; x < $scope.listPegawai.length; x++) {
                         const element = $scope.listPegawai[x];
@@ -1062,7 +1231,6 @@ define(['initialize'], function (initialize) {
                 $scope.cutiHabis = false;
                 ManageSdmNew.getListData("sdm/get-data-cuti?pegawaiId=" + $scope.item.namaPegawai.id + "&statusPegawaiId=" + $scope.item.statusPegawai.id, true).then(function (dat) {
                     // +$scope.item.kategoriPegawaiId
-
                     $scope.item.jumlahIjin = dat.data.data.jatahCuti;
                     $scope.item.sisaIjin = dat.data.data.sisaCuti;
                     if ($scope.item.jumlahIjin <= 0) {
@@ -1176,6 +1344,7 @@ define(['initialize'], function (initialize) {
                 "sakit": "Rawat Inap"
             }]
             $scope.loadGrid = function () {
+            
                 $scope.isRouteLoading = true;
                 // get daftar permohonan cuti per ruangan
                 // var idSubUnitKerja = '';
@@ -1355,7 +1524,7 @@ define(['initialize'], function (initialize) {
             }
 
 
-
+            
             $scope.cetakCutiAlasanPenting = function (data) {
                 var idKaRuangan = data.kepalaRuangan ? data.kepalaRuangan.id : "";
                 var urlLaporan = cetakHelper.openURLReporting("reporting/lapPermohonanCuti?noRecPlanning=" + data.noRec + "&idAtasan1=" + data.atasanLangsung.id + "&idAtasan2=" + data.pejabatPenilai.id + "&periode=" + DateHelper.formatDate(data.until, "YYYY-MM") + "&idKaRu=" + idKaRuangan + "&idJabatanAtasan1=" + data.jabatanAtasanLangsung.id + "&idJabatanAtasan2=" + data.jabatanPejabatPenilai.id);
@@ -1497,49 +1666,55 @@ define(['initialize'], function (initialize) {
                     messageContainer.error("Data Tidak Ditemukan");
                     return;
                 }
-                if (dataItem.statusPegawaiId == 28) {
-                    if (dataItem.noSuratTugas == undefined || dataItem.noSuratTugas == null) {
-                        messageContainer.error("No Surat Tugas tidak boleh kosong");
-                        return;
-                    }
-                    if (dataItem.noNotaDinas == undefined || dataItem.noNotaDinas == null) {
-                        messageContainer.error("No Nota Dinas tidak boleh kosong");
-                        return;
-                    }
-                    if (dataItem.tglNotaDinas == undefined || dataItem.tglNotaDinas == null) {
-                        messageContainer.error("Tanggal Nota Dinas tidak boleh kosong");
-                        return;
-                    }
-                    if (dataItem.jabatanIdPemberiNotaDinas == undefined || dataItem.jabatanIdPemberiNotaDinas == null) {
-                        messageContainer.error("Pemberi Nota Dinas tidak boleh kosong");
-                        return;
-                    }
-                    if (dataItem.alamatTugas == undefined || dataItem.alamatTugas == null) {
-                        messageContainer.error("Alamat Tugas tidak boleh kosong");
-                        return;
-                    }
-                }
-                if ($scope.loginUser.idSubUnitKerja == 26 || dataItem.pegwaiId == $scope.loginUser.idPegawai) {
-                    ManageSdmNew.getListData("sdm/get-pegawai-atasan/" + dataItem.pegwaiId).then(function (res) {
-                        if (res.data.data.length > 0) {
-                            dataItem.atasanLangsung = {
-                                id: res.data.data[0].idAtasanLangsung,
-                                namaLengkap: res.data.data.namaAtasanLangsung
-                            };
-                            dataItem.pejabatPenilai = {
-                                id: res.data.data[0].idAtasanPejabatPenilai,
-                                namaLengkap: res.data.data.namaAtasanPejabatPenilai
-                            }
-                        }
-                    }, function (error) {
-                        throw error;
-                    }).then(function () {
-                        $scope.loadWindow(dataItem);
-                    })
-                } else {
-                    messageContainer.error("Tidak dapat mencetak Surat Izin Cuti");
-                    return;
-                }
+                var local = JSON.parse(localStorage.getItem('profile'))
+                var nama = medifirstService.getPegawaiLogin().namaLengkap
+                debugger
+                window.open(config.baseApiBackend + 'report/cetak-cuti?noplanning=' + dataItem.noplanning +
+                    '&kdprofile=' + local.id +
+                    '&nama=' + nama, '_blank');
+                // if (dataItem.statusPegawaiId == 28) {
+                //     if (dataItem.noSuratTugas == undefined || dataItem.noSuratTugas == null) {
+                //         messageContainer.error("No Surat Tugas tidak boleh kosong");
+                //         return;
+                //     }
+                //     if (dataItem.noNotaDinas == undefined || dataItem.noNotaDinas == null) {
+                //         messageContainer.error("No Nota Dinas tidak boleh kosong");
+                //         return;
+                //     }
+                //     if (dataItem.tglNotaDinas == undefined || dataItem.tglNotaDinas == null) {
+                //         messageContainer.error("Tanggal Nota Dinas tidak boleh kosong");
+                //         return;
+                //     }
+                //     if (dataItem.jabatanIdPemberiNotaDinas == undefined || dataItem.jabatanIdPemberiNotaDinas == null) {
+                //         messageContainer.error("Pemberi Nota Dinas tidak boleh kosong");
+                //         return;
+                //     }
+                //     if (dataItem.alamatTugas == undefined || dataItem.alamatTugas == null) {
+                //         messageContainer.error("Alamat Tugas tidak boleh kosong");
+                //         return;
+                //     }
+                // }
+                // if ($scope.loginUser.idSubUnitKerja == 26 || dataItem.pegwaiId == $scope.loginUser.idPegawai) {
+                //     ManageSdmNew.getListData("sdm/get-pegawai-atasan/" + dataItem.pegwaiId).then(function (res) {
+                //         if (res.data.data.length > 0) {
+                //             dataItem.atasanLangsung = {
+                //                 id: res.data.data[0].idAtasanLangsung,
+                //                 namaLengkap: res.data.data.namaAtasanLangsung
+                //             };
+                //             dataItem.pejabatPenilai = {
+                //                 id: res.data.data[0].idAtasanPejabatPenilai,
+                //                 namaLengkap: res.data.data.namaAtasanPejabatPenilai
+                //             }
+                //         }
+                //     }, function (error) {
+                //         throw error;
+                //     }).then(function () {
+                //         $scope.loadWindow(dataItem);
+                //     })
+                // } else {
+                //     messageContainer.error("Tidak dapat mencetak Surat Izin Cuti");
+                //     return;
+                // }
             }
 
             $scope.cetakPelimpahanTugas = function (data) {

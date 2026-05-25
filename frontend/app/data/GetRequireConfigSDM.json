@@ -330,6 +330,10 @@
     {
       "nameDep": "InformasiJabatanPegawaiCtrl",
       "urlDep": "module/SDM/InformasiJabatanPegawaiCtrl"
+    },
+    {
+      "nameDep": "LaporanCutiKaryawanCtrl",
+      "urlDep": "module/SDM/LaporanCutiKaryawanCtrl"
     }
   ]
 }
