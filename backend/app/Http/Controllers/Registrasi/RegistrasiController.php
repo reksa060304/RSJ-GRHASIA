@@ -477,7 +477,11 @@ class RegistrasiController extends ApiController
                 //                }else{
                 //                    $statusPasien='BARU';
                 //                }
-
+                if (is_null($dataPD->tglcheckin) || 
+                        $dataPD->tglcheckin == '1970-01-01 00:00:00' || 
+                        $dataPD->tglcheckin == '0000-00-00 00:00:00') {
+                        $dataPD->tglcheckin = \Carbon\Carbon::now()->format('Y-m-d H:i:s');
+                }
                 if (isset($r_NewPD['statusschedule'])) {
                     $dataPD->statusschedule = $r_NewPD['statusschedule'];
                 }
