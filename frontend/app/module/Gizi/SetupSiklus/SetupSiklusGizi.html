@@ -1,0 +1,475 @@
+<style type="text/css">
+    .style-center {
+        display: inline-block;
+        text-align: center;
+        width: 100%;
+    }
+
+    .style-right {
+        display: inline-block;
+        text-align: right;
+        width: 100%;
+    }
+
+    .style-left {
+        display: inline-block;
+        text-align: left;
+        width: 100%;
+    }
+
+    .k-treeview .k-item {
+        background-color: #f9f9f9 !important;
+    }
+
+    .k-checkbox-label:before {
+        margin: 1px 0px 0px 6px;
+    }
+    
+	.k-grid .k-grid-header .k-header .k-link {
+		height: auto;
+	}
+
+	.k-grid .k-grid-header .k-header {
+		white-space: normal;
+	}
+
+	.k-grid .k-grid-header .k-header {
+		text-align: center;
+	}
+
+    fieldset {
+        border-radius: 5px;
+    }
+
+    .siklus-menu-box {
+        height: 285px;
+        overflow-y: auto;
+        padding: 8px;
+    }
+
+    .siklus-menu-item {
+        margin-bottom: 6px;
+    }
+
+    .siklus-selected-table {
+        width: 100%;
+        border-collapse: collapse;
+    }
+
+    .siklus-selected-table th,
+    .siklus-selected-table td {
+        border: 1px solid #ddd;
+        padding: 6px;
+    }
+
+    .siklus-selected-table th {
+        background-color: #f5f5f5;
+        text-align: center;
+    }
+</style>
+
+<div class="panel panel-default container_12">
+    <div class="panel-heading" c-translate>Setup Siklus Gizi</div>
+    <div class="panel-body">
+        <div class="grid_12">
+            <div ng-cloak>
+                <md-content>
+                    <md-tabs md-dynamic-height md-border-bottom md-selected="myVar">
+                        <md-tab label="Daftar Menu" >
+                            <md-content class="md-padding">
+                                <div class="grid_12" style="margin-top: 10px">
+                                    <div class="grid_3">
+                                        <div class="grid_12">
+                                            <label c-label item="item">Nama Menu</label>
+                                        </div>
+                                        <div class="grid_12">
+                                            <input c-text-box type="input" filter="" class="k-textbox" ng-model="item.namaMenu"
+                                                ng-keypress="($event.which == 13)? Search():item.namaMenu" />
+                                        </div>
+                                    </div>
+                                    <div class="grid_1">
+                                        <label c-label c-label-text=""></label>
+                                        <em style="margin-top:6px;" ng-click='Search()' id="iconButton" data-role="button"
+                                            class="k-button k-button-icon k-primary" role="button" aria-disabled="false"
+                                            tabindex="0"><span class="k-sprite k-icon k-i-search">Refresh</span></em>
+                                        <em style="margin-top:6px;" ng-click='Clear()' id="iconButton" data-role="button"
+                                            class="k-button k-button-icon k-primary" role="button" aria-disabled="false"
+                                            tabindex="0"><span class="k-sprite k-icon k-i-cancel">Refresh</span></em>
+
+                                    </div>
+                                </div>
+                                <div class="grid_12" style="margin-top: 10px">
+                                    <div class="grid_12">
+                                        <kendo-grid id="kGrids" data-source="dataSource" options="columnGrid" k-pageable="'true'"
+                                            k-sortable="'true'" k-groupable="'true'" k-resizable="'true'" k-selectable="'row'"
+                                            k-ng-model="dataSelected" ng-click="klikGrid(dataSelected)">
+                                        </kendo-grid>
+                                    </div>
+                                </div>
+                            </md-content>
+                        </md-tab>
+                        <md-tab label="Mapping Produk Diet Ke Menu">
+                            <md-content class="md-padding">
+                                <div class="grid_12" style="margin-top: 10px">
+                                    <div class="grid_3">
+                                        <div class="grid_12">
+                                            <label c-label item="item">Produk Diet</label>
+                                        </div>
+
+                                        <div class="grid_12">
+                                            <input style="width: 100%;" kendo-combo-box k-ng-model="item.produkDiet"
+                                                k-data-text-field="'namaproduk'" k-data-value-field="'id'" k-filter="'contains'"
+                                                k-auto-bind="false" k-data-source="listProdukk" />
+                                        </div>
+                                    </div>
+
+                                    <div class="grid_3">
+                                        <div class="grid_12">
+                                            <label c-label item="item">Menu Makanan</label>
+                                        </div>
+
+                                        <div class="grid_12">
+                                            <input style="width: 100%;" kendo-combo-box k-ng-model="item.menuMakanan"
+                                                k-data-text-field="'menumakanan'" k-data-value-field="'id'" k-filter="'contains'"
+                                                k-auto-bind="false" k-data-source="listMenuMakanan" />
+                                        </div>
+                                    </div>
+
+                                    <div class="grid_1">
+                                        <label c-label c-label-text=""></label>
+                                        <em style="margin-top:6px;" ng-click='Search()' id="iconButton" data-role="button"
+                                            class="k-button k-button-icon k-primary" role="button" aria-disabled="false"
+                                            tabindex="0"><span class="k-sprite k-icon k-i-search">Refresh</span></em>
+                                        <em style="margin-top:6px;" ng-click='Clear()' id="iconButton" data-role="button"
+                                            class="k-button k-button-icon k-primary" role="button" aria-disabled="false"
+                                            tabindex="0"><span class="k-sprite k-icon k-i-cancel">Refresh</span></em>
+
+                                    </div>
+                                </div>
+                                <div class="grid_12" style="margin-top: 10px">
+                                    <div class="grid_12">
+                                        <kendo-grid id="kGrids" data-source="dataSourceMappingProdukMenu" options="columnMappingProdukMenu" k-pageable="'true'"
+                                            k-sortable="'true'" k-groupable="'true'" k-resizable="'true'" k-selectable="'row'"
+                                            k-ng-model="dataSelected" ng-click="klikGrid(dataSelected)">
+                                        </kendo-grid>
+                                    </div>
+                                </div>
+                            </md-content>
+                        </md-tab>
+                        <md-tab label="Siklus Menu">
+                            <md-content class="md-padding">
+                                <div class="grid_12" style="margin-top: 10px">
+                                    <div class="grid_3">
+                                        <div class="grid_12">
+                                            <label c-label item="item">Produk Diet</label>
+                                        </div>
+                                        <div class="grid_12">
+                                            <input c-text-box type="input" filter="" class="k-textbox" ng-model="item.produk"
+                                                ng-keypress="($event.which == 13)? Search():item.produk" />
+                                        </div>
+                                    </div>
+                                    <div class="grid_1">
+                                        <div class="grid_12">
+                                            <label c-label item="item" c-label-text="Siklus"></label>
+                                        </div>
+                                        <div class="grid_12">
+                                            <input c-text-box type="input" filter="" class="k-textbox" ng-model="item.siklus"/>
+                                        </div>
+                                    </div>
+                                    <div class="grid_1">
+                                        <label c-label c-label-text=""></label>
+                                        <em style="margin-top:6px;" ng-click='Search()' id="iconButton" data-role="button"
+                                            class="k-button k-button-icon k-primary" role="button" aria-disabled="false"
+                                            tabindex="0"><span class="k-sprite k-icon k-i-search">Refresh</span></em>
+                                        <em style="margin-top:6px;" ng-click='Clear()' id="iconButton" data-role="button"
+                                            class="k-button k-button-icon k-primary" role="button" aria-disabled="false"
+                                            tabindex="0"><span class="k-sprite k-icon k-i-cancel">Refresh</span></em>
+
+                                    </div>
+                                </div>
+                                <div class="grid_12" style="margin-top: 10px">
+                                    <div class="grid_12">
+                                        <kendo-grid id="kGrids" data-source="dataSourceSiklus" options="columnSiklus" k-pageable="'true'"
+                                            k-sortable="'true'" k-groupable="'true'" k-resizable="'true'" k-selectable="'row'"
+                                            k-ng-model="dataSelected" ng-click="klikGrid(dataSelected)">
+                                        </kendo-grid>
+                                    </div>
+                                </div>
+                            </md-content>
+                        </md-tab>
+                    </md-tabs>
+                </md-content>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div kendo-window="popUps" k-title="'Tambah'" k-width="900" k-height="400" k-visible="false"
+        k-on-close="customClicked()">
+        <div class="panel panel-default container_12" style="padding: 2px 10px;">
+            <fieldset class="effect-shadow" style=" border-radius: 5px">
+                <div class="grid_12">
+                    <div class="grid_12">
+                        <div class="grid_12">
+                            <label c-label item="item">Menu Makanan</label>
+                        </div>
+                        <div class="grid_12">
+                            <input c-text-box type="text" filter="" class="k-textbox" ng-model="itemDaftarMenu.namaMenu" />
+                        </div>
+                    </div>
+                    <div class="grid_12">
+                        <div class="grid_12">
+                            <label c-label item="item" c-label-text="Satuan"></label>
+                        </div>
+
+                        <div class="grid_12">
+                            <input style="width: 100%;" kendo-combo-box k-ng-model="itemDaftarMenu.satuan"
+                                k-data-text-field="'satuanstandar'" k-data-value-field="'id'" k-filter="'contains'"
+                                k-auto-bind="false" k-data-source="listSatuan" />
+                        </div>
+                    </div>
+                    <div class="grid_12">
+                        <div class="grid_12">
+                            <label c-label item="item" class="margin-bottom">Keterangan Menu:</label>
+                        </div>
+                        <div class="grid_12">
+                            <textarea c-text-area type="input" filter="'string'" class="k-textbox" ng-model="itemDaftarMenu.keterangan"
+                            style="height: 100px; width: 100%; "/>
+                        </div>
+                    </div>
+                </div>
+            </fieldset>
+        </div>
+        <div class="k-edit-buttons  k-state-default pull-right" style="margin-top:10px">
+            <button class="k-button  btnAdd k-button-icontext k-primary k-grid-update" ng-click="saveDaftarMenu()"><span
+                    class="k-icon k-update"></span>Simpan</button>
+            <button class="k-button  btnHapus k-button-icontext" ng-click="tutup()"><span
+                    class="k-icon k-cancel"></span>Tutup</button>
+        </div>
+</div>
+
+<div kendo-window="popUpsMenuKeProduk" k-title="'Tambah'" k-width="900" k-height="400" k-visible="false"
+    k-on-close="customClicked()">
+    <div class="panel panel-default container_12" style="padding: 2px 10px;">
+        <fieldset class="effect-shadow" style=" border-radius: 5px">
+            <div class="grid_12">
+                <div class="grid_12">
+                    <div class="grid_12">
+                        <label c-label item="item">Produk Diet</label>
+                    </div>
+
+                    <div class="grid_12">
+                        <input style="width: 100%;" kendo-combo-box k-ng-model="itemMappingMenuKeProduk.produkDiet"
+                            k-data-text-field="'namaproduk'" k-data-value-field="'id'" k-filter="'contains'"
+                            k-auto-bind="false" k-data-source="listProdukk" />
+                    </div>
+                </div>
+            </div>
+        </fieldset>
+        <fieldset class="effect-shadow" style=" border-radius: 4px;margin-top:10px">
+            <legend id="filterData">
+                <a ng-click="showAndHide()">Daftar Menu Makanan</a>
+            </legend>
+            <div class="grid_12 ">
+                <div class="grid_12 headerBox">
+                    <p> <input type="checkbox" class="k-checkbox" id="cekAll" ng-model="itemMappingMenuKeProduk.cekAll"
+                            ng-click="cekAll(itemMappingMenuKeProduk.cekAll)">
+                        <label class="k-checkbox-label" for="cekAll" style="margin-left:5px"><b>Check
+                                All</b></label></p>
+                </div>
+                <div class="grid_12 borderBox containerBorderBox" style="overflow-y: scroll; height:280px;">
+                    <div class="grid_4" ng-repeat="item in listProduk track by $index  ">
+                        <input type="checkbox" ng-checked="item.isChecked" class="k-checkbox"
+                            name="{{item.menumakanan}}" id="{{item.menumakanan}}" ng-model="bool" value="{{item.id}}"
+                            ng-click="ceklisOne(bool,item)">
+
+                        <label class="k-checkbox-label" for="{{item.menumakanan}}">{{item.menumakanan}}</label>
+
+                    </div>
+                </div>
+                <div class="grid_12">
+                    <div class="grid_5">
+                        <div class="grid_4" style="margin-top:10px">
+                            <label c-label item="item">Nama Menu</label>
+                        </div>
+                        <div class="grid_8">
+                            <input c-text-box type="input" filter="" class="k-textbox"
+                                ng-keypress="($event.which == 13)? cariProduk():itemMappingMenuKeProduk.cariProduk"
+                                ng-model="itemMappingMenuKeProduk.cariProduk" />
+                        </div>
+                    </div>
+                    <div class="grid_2" style="margin-top: 10px">
+                        <button class="k-button  btnAdd k-button-icontext k-primary k-grid-update"
+                            ng-click="cariProduk()"><span class="k-icon k-i-search"></span>Cari</button>
+
+                    </div>
+                    <div class="grid_2" style="margin-top: 10px;margin-left: -70px">
+                        <button class="k-button  btnAdd k-button-icontext k-primary k-grid-update"
+                            ng-click="clearProduk()"><span class="k-icon k-cancel"></span>Clear</button>
+                    </div>
+                </div>
+            </div>
+        </fieldset>
+    </div>
+    <div class="k-edit-buttons  k-state-default pull-right" style="margin-top:10px">
+        <button class="k-button  btnAdd k-button-icontext k-primary k-grid-update" ng-click="saveMappingProdukMenu()"><span
+                class="k-icon k-update"></span>Simpan</button>
+        <button class="k-button  btnHapus k-button-icontext" ng-click="tutup()"><span
+                class="k-icon k-cancel"></span>Tutup</button>
+    </div>
+</div>
+
+<div kendo-window="popUpsSiklus" k-title="'Tambah Siklus'" k-width="900" k-height="670" k-visible="false"
+    k-on-close="customClicked()">
+    <div class="panel panel-default container_12" style="padding: 0px 10px;">
+        <fieldset class="effect-shadow" style=" border-radius: 4px">
+
+            <div class="grid_12">
+                <div class="grid_2">
+                    <div class="grid_12">
+                        <label c-label item="item" c-label-text="Siklus"></label>
+                    </div>
+                    <div class="grid_12">
+                        <!-- <input c-text-box type="number" filter="" class="k-textbox" ng-model="itemSiklus.siklusKe" /> -->
+                        <input c-text-box type="input" filter="" class="k-textbox" ng-model="itemSiklus.siklus"/>
+
+                        
+                    </div>
+                </div>
+                <div class="grid_3">
+                    <div class="grid_12">
+                        <label c-label item="item" c-label-text="Produk Diet"></label>
+                    </div>
+
+                    <div class="grid_12">
+                        <input style="width: 100%;" kendo-combo-box k-ng-model="itemSiklus.produkDiet"
+                            k-data-text-field="'namaproduk'" k-data-value-field="'id'" k-filter="'contains'"
+                            k-auto-bind="false" k-data-source="listProdukk" k-on-change="pilihMappingMenuMakanan(itemSiklus.produkDiet)" />
+                    </div>
+                </div>
+                <div class="grid_3">
+                    <div class="grid_12">
+                        <label c-label item="item " >Tanggal Berlaku Awal</label>
+                    </div>
+                    <div class="grid_12">
+                        <input style="width: 100%" k-ng-model="itemSiklus.tanggalAwal" kendo-datepicker
+                            placeholer="yyyy-MM-dd" k-format="'yyyy-MM-dd'" parsedate="yyyy-MM-dd" k-on-change="resetMappingMenuMakanan()"
+                            />
+                    </div>
+                </div>
+                <div class="grid_3">
+                    <div class="grid_12">
+                        <label c-label item="item " >Tanggal Berlaku Akhir</label>
+                    </div>
+                    <div class="grid_12">
+                        <input style="width: 100%" k-ng-model="itemSiklus.tanggalAkhir" kendo-datepicker
+                            placeholer="yyyy-MM-dd" k-format="'yyyy-MM-dd'" parsedate="yyyy-MM-dd" k-on-change="resetMappingMenuMakanan()"
+                            />
+                    </div>
+                </div>
+
+
+            </div>
+            
+        </fieldset>
+        <fieldset class="effect-shadow" style=" border-radius: 4px;margin-top:10px">
+            <legend id="filterData">
+                <a ng-click="showAndHide()">Daftar Menu Makanan</a>
+            </legend>
+            <div class="grid_12">
+                <div class="grid_6">
+                    <div class="grid_12 headerBox">
+                        <p><label style="margin-left:5px"><b>List Menu Makanan</b></label></p>
+                    </div>
+                    <div class="grid_12 borderBox containerBorderBox siklus-menu-box">
+                        <div class="siklus-menu-item" ng-repeat="item in listMenuMakananMapping track by $index">
+                            <button ng-if="item.checked" style="width: 100%; text-align:left"
+                                class="k-button btnAdd k-button-icontext k-primary k-grid-update"
+                                ng-click="setSiklus(item)"><span class="k-icon k-i-plus"></span>{{item.menumakanan}}</button>
+                        </div>
+                    </div>
+                    <div class="grid_12">
+                        <div class="grid_7">
+                            <div class="grid_12" style="margin-top:10px">
+                                <label c-label item="item">Nama Menu Makanan</label>
+                            </div>
+                            <div class="grid_12">
+                                <input c-text-box type="input" filter="" class="k-textbox"
+                                    ng-keypress="($event.which == 13)? cariMenuMakananSiklus():itemSiklus.cariProduk"
+                                    ng-model="itemSiklus.cariProduk" />
+                            </div>
+                        </div>
+                        <div class="grid_2" style="margin-top: 27px">
+                            <button class="k-button btnAdd k-button-icontext k-primary k-grid-update"
+                                ng-click="cariMenuMakananSiklus()"><span class="k-icon k-i-search"></span>Cari</button>
+                        </div>
+                        <div class="grid_3" style="margin-top: 27px">
+                            <button class="k-button btnAdd k-button-icontext k-primary k-grid-update"
+                                ng-click="clearMenuMakananSiklus()"><span class="k-icon k-cancel"></span>Clear</button>
+                        </div>
+                    </div>
+                </div>
+                <div class="grid_6">
+                    <div class="grid_12 headerBox">
+                        <p><label style="margin-left:5px"><b>Menu Makanan Terpilih</b></label></p>
+                    </div>
+                    <div class="grid_12 borderBox containerBorderBox siklus-menu-box">
+                        <table class="siklus-selected-table">
+                            <thead>
+                                <tr>
+                                    <th style="width:40px">No</th>
+                                    <th>Menu Makanan</th>
+                                    <th style="width:80px">Aksi</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr ng-repeat="menu in listSetSiklusProduk track by $index">
+                                    <td class="style-center">{{ $index + 1 }}</td>
+                                    <td>{{ menu.menumakanan }}</td>
+                                    <td class="style-center">
+                                        <button class="k-button btnHapus k-button-icontext" ng-click="hapusMenuSiklus(menu, $index)">
+                                            <span class="k-icon k-delete"></span>Hapus
+                                        </button>
+                                    </td>
+                                </tr>
+                                <tr ng-if="listSetSiklusProduk.length == 0">
+                                    <td colspan="3">Belum ada menu dipilih</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </fieldset>
+        <fieldset class="effect-shadow" style=" border-radius: 4px">
+            <div class="grid_12">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>No</th>
+                            <th>Menu Makanan</th>
+                            <th>Tanggal</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr ng-repeat="siklus in listSetSiklus">
+                            <td>{{ $index + 1 }}</td>
+                            <td>{{ siklus.nama_menu }}</td>
+                            <td>{{ siklus.tanggal | date:'yyyy-MM-dd' }}</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </fieldset>
+    </div>
+    <div class="k-edit-buttons  k-state-default pull-right" style="margin-top:10px">
+        <button class="k-button  btnAdd k-button-icontext k-primary k-grid-update" ng-click="saveSiklus()"><span
+                class="k-icon k-update"></span>Simpan</button>
+        <button class="k-button  btnHapus k-button-icontext" ng-click="tutup()"><span
+                class="k-icon k-cancel"></span>Tutup</button>
+    </div>
+</div>
+
+<div class="grid_12">
+    <div ng-include='"../app/template/Shared/TemplateLoading"'></div>
+</div>

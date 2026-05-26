@@ -21796,6 +21796,66 @@
         "define": "MedifirstService"
       }
     ]
+  },
+  {
+    "name": "OrderGiziTelemedicine",
+    "url": "/OrderGiziTelemedicine",
+    "templateurl": "module/Gizi/OrderGiziTelemedicine/OrderGiziTelemedicine.html",
+    "controller": "OrderGiziTelemedicineCtrl",
+    "deps": [
+      {
+        "module": "Services",
+        "define": "Service"
+      },
+      {
+        "module": "LoginServices",
+        "define": "LoginService"
+      },
+      {
+        "module": "MedifirstService",
+        "define": "MedifirstService"
+      }
+    ]
+  },
+  {
+    "name": "SetupSiklusGizi",
+    "url": "/SetupSiklusGizi",
+    "templateurl": "module/Gizi/SetupSiklus/SetupSiklusGizi.html",
+    "controller": "SetupSiklusGiziCtrl",
+    "deps": [
+      {
+        "module": "Services",
+        "define": "Service"
+      },
+      {
+        "module": "LoginServices",
+        "define": "LoginService"
+      },
+      {
+        "module": "MedifirstService",
+        "define": "MedifirstService"
+      }
+    ]
+  },
+  {
+    "name": "DashboardDietGizi",
+    "url": "/DashboardDietGizi",
+    "templateurl": "module/Gizi/DashboardDietGizi/DashboardDietGizi.html",
+    "controller": "DashboardDietGiziCtrl",
+    "deps": [
+      {
+        "module": "Services",
+        "define": "Service"
+      },
+      {
+        "module": "LoginServices",
+        "define": "LoginService"
+      },
+      {
+        "module": "MedifirstService",
+        "define": "MedifirstService"
+      }
+    ]
   }
 ]
 
