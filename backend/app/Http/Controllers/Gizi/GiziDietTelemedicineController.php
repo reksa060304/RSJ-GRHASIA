@@ -236,8 +236,8 @@ class GiziDietTelemedicineController extends ApiController
         if (isset($request['nama']) && $request['nama'] != '' && $request['nama'] != 'undefined') {
             $data = $data->where('ps.namapasien', 'ilike', '%' . $request['nama'] . '%');
         }
-        if (isset($request['nocmfk']) && $request['nocmfk'] != '' && $request['nocmfk'] != 'undefined') {
-            $data = $data->where('so.nocmfk', '=', $request['nocmfk']);
+        if (isset($request['nocm_klien']) && $request['nocm_klien'] != '' && $request['nocm_klien'] != 'undefined') {
+            $data = $data->where('ps.nocm', '=', $request['nocm_klien']);
         }
         if (isset($request['status']) && $request['status'] != '' && $request['status'] != 'undefined') {
             $status = explode(',', $request['status']);
