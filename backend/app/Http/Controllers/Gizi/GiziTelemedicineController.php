@@ -91,7 +91,7 @@ class GiziTelemedicineController extends ApiController
         ->where('hnp.statusenabled', true)
         ->where('hnp.harganetto1', '>', 0)
         ->where('hnp.objectkelasfk', 6)
-        ->where('hnp.objectpenjaminfk', null)
+        ->whereNull('hnp.objectpenjaminfk')
         ->orderBy('sikluscateringgizi_m.siklus', 'asc')
         ->orderBy('sikluscateringgizi_m.tanggal', 'asc')
         ->get();
