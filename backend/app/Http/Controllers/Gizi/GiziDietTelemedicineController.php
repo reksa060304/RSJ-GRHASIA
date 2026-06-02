@@ -192,6 +192,7 @@ class GiziDietTelemedicineController extends ApiController
             ->leftJoin('ruangan_m as ru2', 'ru2.id', '=', 'so.objectruangantujuanfk')
             ->leftJoin('jeniskelamin_m as jk', 'jk.id', '=', 'ps.objectjeniskelaminfk')
             ->leftJoin('alamat_m as alm', 'alm.nocmfk', '=', 'ps.id')
+            ->leftJoin('strukpelayanan_t as sp', 'sp.norec', '=', 'so.nocmfk')
             ->select(
                 'so.norec as norec_so',
                 'so.noorder',
@@ -440,6 +441,7 @@ class GiziDietTelemedicineController extends ApiController
                 $SP->isapprove = true;
                 $SP->statusenabled = true;
                 $SP->nostruk = $noStruk;
+                $SP->noorderfk = $req['norec_so'];
             }
             $SP->objectkelompoktransaksifk = $req['kelompoktransaksifk'];
         $SP->keteranganlainnya = $req['keteranganlainnya'];
