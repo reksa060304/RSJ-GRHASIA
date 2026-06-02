@@ -441,7 +441,8 @@ $ruangdokter = \DB::table('ruangan_m as ru')
             // ->whereNull('br.norec')
             ->where('apd.kdprofile', $idProfile)
             ->where('pd.statusenabled',true)
-            ->where('ps.statusenabled',true);
+            ->where('ps.statusenabled',true)
+            ->whereNotNull('pd.tglcheckin');
 //            ->whereNotIn('ru.objectdepartemenfk',[27,3]);
         // ->groupBy('pd.tglregistrasi','ps.nocm','pd.noregistrasi','ps.namapasien','ps.tgllahir','jk.jeniskelamin','apd.objectruanganfk','ru.namaruangan','kls.id','kls.namakelas',
         //           'kp.kelompokpasien','rek.namarekanan','apd.objectpegawaifk','pg.namalengkap','br.norec','pd.norec','apd.norec','apd.objectasalrujukanfk',
