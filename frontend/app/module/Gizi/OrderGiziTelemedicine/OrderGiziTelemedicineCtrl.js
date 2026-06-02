@@ -116,7 +116,7 @@ define(['initialize', 'Configuration'], function (initialize, config) {
 				{ "field": "status", "title": "Status", "width": "90px" },
 				{
 					"title": "Aksi", "width": "110px",
-					"template": "<button class='k-button k-primary' style='width:100%' ng-if='dataItem.status != \"VERIFIKASI\" && dataItem.status != \"SUDAH DIBAYAR\"' ng-click='verifikasi(dataItem)'><i class='fa fa-check'></i> Verifikasi</button>"
+					"template": "<button class='k-button k-primary' style='width:100%' ng-if='dataItem.status != \"VERIFIKASI\" && dataItem.status != \"SUDAH DIBAYAR\"' ng-click='verifikasi(dataItem)'><i class='fa fa-check'></i> Verifikasi</button><button class='k-button k-primary' style='width:100%' ng-if='dataItem.status == \"ORDER\" ' ng-click='batalOrder(dataItem)'><i class='fa fa-times'></i> Batal Order</button>"
 				},
 			];
 
@@ -169,6 +169,24 @@ define(['initialize', 'Configuration'], function (initialize, config) {
 						toastr.error('Verifikasi order gagal: ' + (error.statusText || error));
 					});
 			};
+			$scope.batalOrder = function (dataItem) {
+				if (!dataItem) {
+					toastr.error('Pilih data dulu');
+					return;
+				}
+				var obj = {
+					"norec": dataItem.norec_so
+				};
+				medifirstService.post('gizi/telemedicine/batal-order-diet', obj)
+					.then(function () {
+						toastr.success('Batal order berhasil');
+						loadData();
+					})
+					.catch(function (error) {
+						toastr.error('Batal order gagal: ' + (error.statusText || error));
+					});
+			};
+
 
 			$scope.batalVerifikasi = function () {
 				if (!$scope.dataPasienSelected) {
