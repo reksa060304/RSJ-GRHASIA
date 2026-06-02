@@ -116,7 +116,7 @@ define(['initialize', 'Configuration'], function (initialize, config) {
 				{ "field": "status", "title": "Status", "width": "90px" },
 				{
 					"title": "Aksi", "width": "110px",
-					"template": "<button class='k-button k-primary' style='width:100%' ng-if='dataItem.status != \"VERIFIKASI\"' ng-click='verifikasi(dataItem)'><i class='fa fa-check'></i> Verifikasi</button>"
+					"template": "<button class='k-button k-primary' style='width:100%' ng-if='dataItem.status != \"VERIFIKASI\" && dataItem.status != \"SUDAH DIBAYAR\"' ng-click='verifikasi(dataItem)'><i class='fa fa-check'></i> Verifikasi</button>"
 				},
 			];
 
