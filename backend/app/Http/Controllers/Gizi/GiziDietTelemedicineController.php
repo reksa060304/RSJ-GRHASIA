@@ -708,7 +708,7 @@ class GiziDietTelemedicineController extends ApiController
                 ->where('siklusgizidiet_t.statusenabled', true)
                 ->select('so.noorder as noorder','siklusgizidiet_t.*')
                 ->first();
-
+            $so = StrukOrder::where('norec', $norec)->first();
             if (empty($siklusGiziDiet)) {
                 throw new \Exception('Order tidak ditemukan');
             }
@@ -724,7 +724,7 @@ class GiziDietTelemedicineController extends ApiController
 
             Storage::disk('local')->put($path . '/' . $fileName, file_get_contents($file->getRealPath()));
             $filePath = $path . '/' . $fileName;
-            $siklusGiziDiet->url_bukti_bayar = $filePath;
+            $so->url_bukti_bayar = $filePath;
             $siklusGiziDiet->status = 'UPLOAD';
             $siklusGiziDiet->tgl_bukti_bayar = date('Y-m-d H:i:s');
             $siklusGiziDiet->save();
@@ -749,4 +749,48 @@ class GiziDietTelemedicineController extends ApiController
         }
     }
 
+    public function batalOrderDiet(Request $request)
+    {
+        $kdProfile = (int) $this->getDataKdProfile($request);
+        $req = $request->all();
+        try {
+            if (!isset($req['norec']) || $req['norec'] == '') {
+                throw new \Exception('norec tidak boleh kosong');
+            }
+
+            $so = StrukOrder::where('norec', $req['norec'])
+                ->where('kdprofile', $kdProfile)
+                ->first();
+
+            if (empty($so)) {
+                throw new \Exception('Order tidak ditemukan');
+            }
+
+            if ($so->status === 'VERIFIKASI') {
+                throw new \Exception('Order sudah diverifikasi, tidak bisa dibatalkan');
+            }
+
+            // Hapus order pelayanan dan siklus gizi diet terkait
+            OrderPelayanan::where('noorderfk', $so->norec)
+                ->delete();
+            SiklusGiziDiet::where('strukorderfk', $so->norec)
+                ->delete();
+
+            // Hapus order
+            $so->statusenabled = false;
+            $so->save();
+
+            $result = [
+                'status' => 200,
+                'message' => 'Order berhasil dibatalkan',
+            ];
+            return $this->setStatusCode(200)->respond($result, $result['message']);
+        } catch (\Exception $e) {
+            $result = [
+                'status' => 400,
+                'message' => $e->getMessage(),
+            ];
+            return $this->setStatusCode(400)->respond($result, $result['message']);
+        }
+    }
 }

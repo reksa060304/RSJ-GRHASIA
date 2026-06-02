@@ -807,6 +807,8 @@ Route::group(['middleware' => 'cors', 'prefix' => 'service'], function () {
         Route::post('gizi/save-siklus-catering', 'Gizi\MasterGiziController@saveSiklusCatering');
         Route::get('gizi/get-data-siklus-catering', 'Gizi\MasterGiziController@getSiklusCatering');
         Route::delete('gizi/delete-siklus-catering/{id}', 'Gizi\MasterGiziController@deleteSiklusCatering');
+        // Route::post('gizi/save-info-gizi', 'Gizi\MasterGiziController@saveInfoGizi');
+        // Route::get('gizi/get-info-gizi', 'Gizi\MasterGiziController@getInfoGizi');
         Route::get('gizi/telemedicine/get-data-produk-diet', 'Gizi\GiziTelemedicineController@getDataProdukDiet');
         Route::get('gizi/telemedicine/get-data-menu-makanan', 'Gizi\GiziTelemedicineController@getDataMenuMakanan');
         Route::post('gizi/telemedicine/simpan-order-diet', 'Gizi\GiziDietTelemedicineController@simpanOrderDiet');
@@ -816,6 +818,8 @@ Route::group(['middleware' => 'cors', 'prefix' => 'service'], function () {
         Route::post('gizi/telemedicine/batal-verifikasi-order-diet', 'Gizi\GiziDietTelemedicineController@batalVerifikasiOrderDiet');
         Route::post('gizi/telemedicine/update-status-order', 'Gizi\GiziDietTelemedicineController@updateStatusOrderDiet');
         Route::post('gizi/telemedicine/upload-bukti-bayar', 'Gizi\GiziDietTelemedicineController@uploadBuktiBayarDiet');
+        Route::post('gizi/telemedicine/batal-order-diet', 'Gizi\GiziDietTelemedicineController@batalOrderDiet');
+        
         
         Route::group(['prefix' => 'cssd'], function () {
 
