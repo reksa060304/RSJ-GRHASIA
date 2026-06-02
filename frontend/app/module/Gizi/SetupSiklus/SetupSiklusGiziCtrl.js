@@ -409,15 +409,21 @@ define(['initialize'], function (initialize) {
                         "produk_id": $scope.itemMappingMenuKeProduk.produkDiet.id,
                     })
                 }
-                await Promise.all(arraySave.map(element => {
-                    return medifirstService.post('gizi/save-mapping-produk-menu', element);
-                })).then(() => {
+                var objSave = {
+                    "data": arraySave
+                }
+                medifirstService.post('gizi/save-mapping-produk-menu', objSave).then(function (e) {
                     $scope.itemMappingMenuKeProduk = {}
                     $scope.arrayProdukTemp = []
                     $scope.popUpsMenuKeProduk.close();
                     fetchData();
                     loadCombo();
                 })
+                // await Promise.all(arraySave.map(element => {
+                //     return ;
+                // })).then(() => {
+                    
+                // })
                 
 
             }
@@ -715,6 +721,47 @@ define(['initialize'], function (initialize) {
                     loadCombo();
                 });
             }
+            // Info Gizi Functions
+            function getInfoGizi() {
+                medifirstService.get('gizi/get-info-gizi').then(function (data) {
+                    if (data.data.data) {
+                        var dataInfo = data.data.data;
+                        $scope.item.noRekeningPembayaran = dataInfo.noRekPembayaranGizi || "";
+                        $scope.item.noHpAdminGizi = dataInfo.noAdminGizi || "";
+                    }
+                });
+            }
+
+            $scope.saveInfoGizi = function () {
+                var noRekeningPembayaran = $scope.item.noRekeningPembayaran;
+                var noHpAdminGizi = $scope.item.noHpAdminGizi;
+                
+                if (!noRekeningPembayaran && !noHpAdminGizi) {
+                    toastr.error('Minimal satu field harus diisi');
+                    return;
+                }
+
+                var objSave = [
+                    {
+                        "namaField": "noRekPembayaranGizi",
+                        "nilaiField": noRekeningPembayaran || ""
+                    },
+                    {
+                        "namaField": "noAdminGizi",
+                        "nilaiField": noHpAdminGizi || ""
+                    }
+                ]
+
+                medifirstService.post('gizi/save-info-gizi', {data: objSave}).then(function (e) {
+                    toastr.success('Data Info Gizi berhasil disimpan');
+                    getInfoGizi();
+                }).catch(function (error) {
+                    toastr.error('Gagal menyimpan data');
+                });
+            }
+
+            // Load info gizi when controller initializes
+            getInfoGizi();
             // ------------
             //***********************************
 
