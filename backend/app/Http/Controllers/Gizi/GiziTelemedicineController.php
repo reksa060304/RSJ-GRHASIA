@@ -89,7 +89,7 @@ class GiziTelemedicineController extends ApiController
         ->whereRaw("EXTRACT(DOW FROM sikluscateringgizi_m.tanggal) != 0")
         ->where('sikluscateringgizi_m.statusenabled', true)
         ->where('hnp.statusenabled', true)
-        ->where('hnp.harganetto1', '>', 0)
+        // ->where('hnp.harganetto1', '>', 0)
         ->where('hnp.objectkelasfk', 6)
         ->whereNull('hnp.objectpenjaminfk')
         ->orderBy('sikluscateringgizi_m.siklus', 'asc')

@@ -24,6 +24,7 @@ use App\Master\JenisWaktu;
 use App\Master\KategoryDiet;
 use App\Master\MapProdukToMenuMakanan;
 use App\Master\MenuMakanan;
+use App\Master\SettingDataFixed;
 use App\Master\SiklusCateringGizi;
 use App\Transaksi\PasienDaftar;
 use App\Transaksi\AntrianPasienDiperiksa;
@@ -154,22 +155,24 @@ class MasterGiziController extends ApiController
         $kdProfile = (int) $this->getDataKdProfile($request);
         DB::beginTransaction();
         try{
-            $menuMakanan = MapProdukToMenuMakanan::max('id');
-            $menuMakanan= $menuMakanan +1;
-            if ($request['id'] == "") {
+            foreach ($request['data'] as $value) {
+                $menuMakanan = MapProdukToMenuMakanan::max('id');
+                $menuMakanan= $menuMakanan +1;
+                if ($request['id'] == "") {
 
-                $menu = new MapProdukToMenuMakanan();
-                $menu->norec = $menu->generateNewId();
-                $menu->id = $menuMakanan;
-                $menu->kdprofile = $kdProfile;
-                $menu->statusenabled = true;
-            }else{
-                $menu = MapProdukToMenuMakanan::where('id',$request['id'])->where('kdprofile', $kdProfile)->first();
+                    $menu = new MapProdukToMenuMakanan();
+                    $menu->norec = $menu->generateNewId();
+                    $menu->id = $menuMakanan;
+                    $menu->kdprofile = $kdProfile;
+                    $menu->statusenabled = true;
+                }else{
+                    $menu = MapProdukToMenuMakanan::where('id',$value['id'])->where('kdprofile', $kdProfile)->first();
 
+                }
+                $menu->menumakanan_id = $value['menumakanan_id'];
+                $menu->produk_id = $value['produk_id'];
+                $menu->save();
             }
-            $menu->menumakanan_id = $request['menumakanan_id'];
-            $menu->produk_id = $request['produk_id'];
-            $menu->save();
             $transStatus = 'true';
         } catch (\Exception $e) {
             $transStatus = 'false';
@@ -371,6 +374,88 @@ class MasterGiziController extends ApiController
         }
 
         return $this->setStatusCode($result['status'])->respond($result, $transMessage);
+    }
+
+    public function saveInfoGizi(Request $request)
+    {
+        $kdProfile = (int) $this->getDataKdProfile($request);
+        DB::beginTransaction();
+        try{
+            $dataArray = $request['data'];
+            $maxSDF = SettingDataFixed::max('id');
+            foreach ($dataArray as $item) {
+                $namaField = $item['namaField'];
+                $nilaiField = $item['nilaiField'];
+                
+                // Cek apakah field sudah ada di database
+                $SDF = SettingDataFixed::where('kdprofile', $kdProfile)
+                    ->where('namafield', $namaField)
+                    ->first();
+                
+                if (!$SDF) {
+                    // Buat record baru
+                    $SDF = new SettingDataFixed();
+                    $SDF->id =$maxSDF + 1;
+                    $SDF->norec = $SDF->generateNewId();
+                    $SDF->kdprofile = $kdProfile;
+                    $SDF->statusenabled = true;
+                    $SDF->namafield = $namaField;
+                } else {
+                    // Update record yang ada
+                    $SDF->statusenabled = true;
+                }
+                
+                $SDF->nilaifield = $nilaiField;
+                $SDF->save();
+            }
+            
+            $transStatus = 'true';
+        } catch (\Exception $e) {
+            $transStatus = 'false';
+            $errorMessage = $e->getMessage();
+        }
+
+        if ($transStatus == 'true') {
+            $transMessage = "Simpan Info Gizi";
+            DB::commit();
+            $result = array(
+                "status" => 201,
+                "as" => 'inhuman',
+            );
+
+        } else {
+            $transMessage = "Simpan gagal";
+            DB::rollBack();
+            $result = array(
+                "status" => 400,
+                "as" => 'inhuman',
+                "message" => $errorMessage,
+            );
+        }
+
+        return $this->setStatusCode($result['status'])->respond($result, $transMessage);
+    }
+
+    public function getInfoGizi(Request $request)
+    {
+        $kdProfile = (int) $this->getDataKdProfile($request);
+        $data = SiklusGizi::select('siklusgizi_m.namafield','siklusgizi_m.nilaifield')
+        ->where('siklusgizi_m.kdprofile', $kdProfile)
+        ->where('siklusgizi_m.statusenabled', true)
+        ->get();
+        
+        // Convert ke associative array untuk mapping yang mudah
+        $dataAssoc = [];
+        foreach ($data as $item) {
+            $dataAssoc[$item->namafield] = $item->nilaifield;
+        }
+        
+        $result = array(
+            "status" => 200,
+            "data" => $dataAssoc,
+            "as" => 'inhuman',
+        );
+        return $this->setStatusCode($result['status'])->respond($result, 'info gizi');
     }
     
 }

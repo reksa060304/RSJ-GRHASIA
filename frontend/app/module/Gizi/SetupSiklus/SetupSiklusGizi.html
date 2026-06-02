@@ -197,6 +197,33 @@
                                 </div>
                             </md-content>
                         </md-tab>
+                        <md-tab label="Info Gizi">
+                            <md-content class="md-padding">
+                                <div class="grid_12" style="margin-top: 10px">
+                                    <div class="grid_3">
+                                        <div class="grid_12">
+                                            <label c-label item="item">No Rekening Pembayaran</label>
+                                        </div>
+                                        <div class="grid_12">
+                                            <input c-text-box type="input" filter="" class="k-textbox" ng-model="item.noRekeningPembayaran"
+                                                ng-keypress="($event.which == 13)? saveInfoGizi():item.noRekeningPembayaran" />
+                                        </div>
+                                    </div>
+                                    <div class="grid_3">
+                                        <div class="grid_12">
+                                            <label c-label item="item" c-label-text="No HP/Telephone Admin Gizi"></label>
+                                        </div>
+                                        <div class="grid_12">
+                                            <input c-text-box type="input" filter="" class="k-textbox" ng-model="item.noHpAdminGizi"/>
+                                        </div>
+                                    </div>
+                                    <div class="grid_1 k-edit-buttons  k-state-default pull-right" style="margin-top:10px">
+                                        <button class="k-button  btnAdd k-button-icontext k-primary k-grid-update" ng-click="saveInfoGizi()"><span
+                                                class="k-icon k-update"></span>Simpan</button>
+                                    </div>
+                                </div>
+                            </md-content>
+                        </md-tab>
                     </md-tabs>
                 </md-content>
             </div>
