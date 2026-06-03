@@ -21948,6 +21948,26 @@
         "define": "MedifirstService"
       }
     ]
+  },
+    {
+    "name": "DaftarRegistrasiPasienDokter",
+    "url": "/ZGFmdGFyUmVnaXN0cmFzaURva3Rlcg==",
+    "templateurl": "module/TataRekening/DaftarRegistrasiPasienDokter.html",
+    "controller": "DaftarRegistrasiPasienDokterCtrl",
+    "deps": [
+      {
+        "module": "Services",
+        "define": "Service"
+      },
+      {
+        "module": "LoginServices",
+        "define": "LoginService"
+      },
+      {
+        "module": "MedifirstService",
+        "define": "MedifirstService"
+      }
+    ]
   }
 ]
 

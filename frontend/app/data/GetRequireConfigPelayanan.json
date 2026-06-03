@@ -3968,6 +3968,10 @@
         {
             "nameDep": "DashboardDietGiziCtrl",
             "urlDep": "module/Gizi/DashboardDietGizi/DashboardDietGiziCtrl"
+        },
+        {
+            "nameDep": "DaftarRegistrasiPasienDokterCtrl",
+            "urlDep": "module/TataRekening/DaftarRegistrasiPasienDokterCtrl"
         }
     ]
 }
