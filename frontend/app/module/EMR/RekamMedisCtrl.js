@@ -134,14 +134,16 @@ define(['initialize', 'Configuration'], function (initialize, config) {
                 }
                 $scope.header.generate = true;
                 $scope.header = result
-                data_sebelumnya.umur = dateHelper.CountAge(new Date(data_sebelumnya.tgllahir), new Date(data_sebelumnya.tglregistrasi));
-                var bln = data_sebelumnya.umur.month,
-                    thn = data_sebelumnya.umur.year,
-                    day = data_sebelumnya.umur.day
-                usia = (data_sebelumnya.umur.year * 12) + data_sebelumnya.umur.month;
-                departemen = data_sebelumnya.objectdepartemenfk
-                data_sebelumnya.umur = thn + ' thn ' + bln + ' bln ' + day + ' hr '
-                $scope.data_sebelumnya = data_sebelumnya
+                if(data_sebelumnya){
+                    data_sebelumnya.umur = dateHelper.CountAge(new Date(data_sebelumnya.tgllahir), new Date(data_sebelumnya.tglregistrasi));
+                    var bln = data_sebelumnya.umur.month,
+                        thn = data_sebelumnya.umur.year,
+                        day = data_sebelumnya.umur.day
+                    usia = (data_sebelumnya.umur.year * 12) + data_sebelumnya.umur.month;
+                    departemen = data_sebelumnya.objectdepartemenfk
+                    data_sebelumnya.umur = thn + ' thn ' + bln + ' bln ' + day + ' hr '
+                    $scope.data_sebelumnya = data_sebelumnya
+                }
                 if ($scope.header.inacbgtotalgrouper !== null) {
                     $scope.header.plafonBPJS = $scope.formatRupiah($scope.header.inacbgtotalgrouper, 'Rp. ')
                     $scope.header.inacbgtotalgrouperBPJSNominal = parseFloat($scope.header.inacbgtotalgrouper)
