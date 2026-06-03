@@ -21951,7 +21951,7 @@
   },
     {
     "name": "DaftarRegistrasiPasienDokter",
-    "url": "/ZGFmdGFyUmVnaXN0cmFzaURva3Rlcg==",
+    "url": "/RGFmdGFyUmVnaXN0cmFzaVBhc2llbkRva3Rlcg==",
     "templateurl": "module/TataRekening/DaftarRegistrasiPasienDokter.html",
     "controller": "DaftarRegistrasiPasienDokterCtrl",
     "deps": [
