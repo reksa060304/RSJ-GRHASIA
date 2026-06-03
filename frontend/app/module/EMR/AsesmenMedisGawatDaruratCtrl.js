@@ -423,7 +423,7 @@ define(['initialize', 'Configuration'], function (initialize,config) {
                 medifirstService.post('emr/get-emr-inputan-otomatis', payload)
                     .then(function (res) {
                         console.log(res.data);
-                        $scope.item.obj[300000105] = res.data.data[0].data["1901310025"] || 'aaaaaaaaaa';
+                        $scope.item.obj[300000105] = res.data.data[0].data["1901310025"] || '';
                     });
             })
             $scope.$watch('item.obj[116131]', function (nilai) {
