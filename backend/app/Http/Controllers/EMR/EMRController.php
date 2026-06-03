@@ -3539,6 +3539,72 @@ class EMRController  extends ApiController
         return $this->respond($result);
     }
 
+    public function getInputanOtomatis(Request $request)
+    {
+        $kdProfile = $this->getDataKdProfile($request);
+        $payload = $request->all();
+        $result = [];
+
+        foreach ($payload as $item) {
+
+            if (
+                !isset($item['emrfk']) ||
+                !isset($item['objectId'])
+            ) {
+                continue;
+            }
+
+            $objectIds = array_map('trim', explode(',', $item['objectId']));
+
+            // Ambil emrpasienfk terbaru untuk emrfk ini
+            $latestEmrPasienFk = \DB::table('emrpasiend_t')
+                ->where('statusenabled', true)
+                ->where('kdprofile', $kdProfile)
+                ->where('emrfk', $item['emrfk'])
+                ->max('emrpasienfk');
+
+            if (!$latestEmrPasienFk) {
+                $result[] = [
+                    'emrfk' => $item['emrfk'],
+                    'emrpasienfk' => null,
+                    'data' => []
+                ];
+                continue;
+            }
+
+            $data = \DB::table('emrpasiend_t as emrdp')
+                ->where('emrdp.statusenabled', true)
+                ->where('emrdp.kdprofile', $kdProfile)
+                ->where('emrdp.emrfk', $item['emrfk'])
+                ->where('emrdp.emrpasienfk', $latestEmrPasienFk)
+                ->whereIn('emrdp.emrdfk', $objectIds)
+                ->whereNotNull('emrdp.value')
+                ->where('emrdp.value', '!=', 'Invalid date')
+                ->select(
+                    'emrdp.emrdfk',
+                    'emrdp.value'
+                )
+                ->get();
+
+            $groupData = [];
+
+            foreach ($data as $row) {
+                $groupData[$row->emrdfk] = $row->value;
+            }
+
+            $result[] = [
+                'emrfk' => $item['emrfk'],
+                'emrpasienfk' => $latestEmrPasienFk,
+                'data' => $groupData
+            ];
+        }
+
+        return $this->respond([
+            'data' => $result,
+            'message' => 'as@epic'
+        ]);
+    }
+
     public function getEMRTransaksiDetail(Request $request)
     {
         //todo : detail

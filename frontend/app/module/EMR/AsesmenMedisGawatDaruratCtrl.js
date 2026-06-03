@@ -413,6 +413,18 @@ define(['initialize', 'Configuration'], function (initialize,config) {
                 //     }
                 // }
 
+                var payload = [
+                    {
+                        emrfk: 3000544,
+                        objectId: "1901310025,3018100"
+                    },
+                ];
+                
+                medifirstService.post('emr/get-emr-inputan-otomatis', payload)
+                    .then(function (res) {
+                        console.log(res.data);
+                        $scope.item.obj[300000105] = res.data.data[0].data["1901310025"] || 'aaaaaaaaaa';
+                    });
             })
             $scope.$watch('item.obj[116131]', function (nilai) {
 

@@ -935,6 +935,7 @@ Route::group(['middleware' => 'cors', 'prefix' => 'service'], function () {
           Route::get('report/cetak-monitoringjamkes','Report\ReportController@cetakmonitoringJamkes');
           Route::get('report/cetak-monitoringjamkes-perawat','Report\ReportController@cetakmonitoringJamkesPerawat');
           Route::get('emr/get-emr-transaksi', 'EMR\EMRController@getEMRTransaksiRiwayat');
+          Route::post('emr/get-emr-inputan-otomatis', 'EMR\EMRController@getInputanOtomatis');
           Route::get('emr/get-emr-transaksi-detail', 'EMR\EMRController@getEMRTransaksiDetail');
           Route::get('emr/get-emr-transaksi-detail-edit', 'EMR\EMRController@getEMRTransaksiDetailEdit');
           Route::post('emr/get-emr-transaksi-details', 'EMR\EMRController@getEMRTransaksiDetails');
