@@ -819,6 +819,7 @@ Route::group(['middleware' => 'cors', 'prefix' => 'service'], function () {
         Route::post('gizi/telemedicine/update-status-order', 'Gizi\GiziDietTelemedicineController@updateStatusOrderDiet');
         Route::post('gizi/telemedicine/upload-bukti-bayar', 'Gizi\GiziDietTelemedicineController@uploadBuktiBayarDiet');
         Route::post('gizi/telemedicine/batal-order-diet', 'Gizi\GiziDietTelemedicineController@batalOrderDiet');
+        Route::get('gizi/telemedicine/stream-bukti-bayar', 'Gizi\GiziDietTelemedicineController@streamBuktiBayar');
         
         
         Route::group(['prefix' => 'cssd'], function () {
@@ -4056,6 +4057,25 @@ Route::group(['middleware' => 'cors', 'prefix' => 'service'], function () {
     Route::get('storage/berkaspasien', function (Illuminate\Http\Request $request)
     {
         $path = public_path('BerkasPasien/'.$request['nocm'].'/' . $request['filename']);
+
+        if (!File::exists($path)) {
+          echo 'Data tidak ada ';
+          die;
+            // abort(404);
+        }
+
+        $file = File::get($path);
+        $type = File::mimeType($path);
+
+        $response = Response::make($file, 200);
+        $response->header("Content-Type", $type);
+
+        return $response;
+    });
+
+    Route::get('storage/bukti-bayar-gizi', function (Illuminate\Http\Request $request)
+    {
+        $path = storage_path('app/' . $request['file']);
 
         if (!File::exists($path)) {
           echo 'Data tidak ada ';

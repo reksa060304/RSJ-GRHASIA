@@ -34,7 +34,7 @@ define(['initialize', 'Configuration'], function (initialize, config) {
 							serverPaging: false,
 						});
 						$scope.isRouteLoading = false;
-					}).catch(function(error){
+					}).catch(function (error) {
 						$scope.isRouteLoading = false;
 						toastr.error('Gagal memuat daftar diet gizi yang sudah diverifikasi');
 					});
@@ -78,7 +78,7 @@ define(['initialize', 'Configuration'], function (initialize, config) {
 				{
 					field: "status",
 					title: "Status",
-					
+
 				},
 				// {
 				// 	title: "Aksi", 
@@ -88,7 +88,7 @@ define(['initialize', 'Configuration'], function (initialize, config) {
 
 			$scope.terimaOrder = function (dataItem) {
 				console.log(dataItem);
-				
+
 				if (!dataItem) {
 					toastr.error('Pilih data dulu');
 					return;
