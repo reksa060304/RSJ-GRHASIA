@@ -228,81 +228,78 @@ define(['initialize', 'Configuration'], function (initialize, config) {
 					});
 			};
 
-			                var baseUrl = config.baseApiBackend.replace('service/medifirst2000/', '');
-                window.open(baseUrl + "storage/bukti-bayar-gizi?file=" + dataItem.bukti_bayar);;
+			// $scope.EditOrder = function () {
+			// 	if ($scope.dataPasienSelected == undefined) {
+			// 		toastr.error('Pilih data dulu');
+			// 		return;
+			// 	}
+			// 	var select = $scope.dataPasienSelected;
+			// 	select.tglmenu = new Date(select.tglmenu);
+			// 	$scope.pop = select;
+			// 	$scope.pop.jenisDiet = [];
+			// 	$scope.pop.jenisWaktu = { id: select.objectjeniswaktufk, jeniswaktu: select.jeniswaktu };
+			// 	if (select.jenisdiet && select.jenisdiet.length > 0) {
+			// 		for (var i = 0; i < select.jenisdiet.length; i++) {
+			// 			$scope.pop.jenisDiet.push({ id: select.jenisdiet[i].id, jenisdiet: select.jenisdiet[i].jenisdiet });
+			// 		}
+			// 	}
+			// 	$scope.pop.kategoriDiet = { id: select.objectkategorydietfk, kategorydiet: select.kategorydiet };
+			// 	$scope.pop.keterangan = select.keteranganlainnya;
+			// 	$scope.pop.pengorder = select.pegawaiorder;
+			// 	$scope.popUpOrder.center().open();
+			// };
 
-			$scope.EditOrder = function () {
-				if ($scope.dataPasienSelected == undefined) {
-					toastr.error('Pilih data dulu');
-					return;
-				}
-				var select = $scope.dataPasienSelected;
-				select.tglmenu = new Date(select.tglmenu);
-				$scope.pop = select;
-				$scope.pop.jenisDiet = [];
-				$scope.pop.jenisWaktu = { id: select.objectjeniswaktufk, jeniswaktu: select.jeniswaktu };
-				if (select.jenisdiet && select.jenisdiet.length > 0) {
-					for (var i = 0; i < select.jenisdiet.length; i++) {
-						$scope.pop.jenisDiet.push({ id: select.jenisdiet[i].id, jenisdiet: select.jenisdiet[i].jenisdiet });
-					}
-				}
-				$scope.pop.kategoriDiet = { id: select.objectkategorydietfk, kategorydiet: select.kategorydiet };
-				$scope.pop.keterangan = select.keteranganlainnya;
-				$scope.pop.pengorder = select.pegawaiorder;
-				$scope.popUpOrder.center().open();
-			};
+			// $scope.saveEditOrder = function () {
+			// 	if (!$scope.pop.jenisDiet || $scope.pop.jenisDiet.length == 0) {
+			// 		toastr.error('Jenis Diet belum di pilih !');
+			// 		return;
+			// 	}
+			// 	if ($scope.pop.kategoriDiet == undefined) {
+			// 		toastr.error('Kategori Diet belum di pilih !');
+			// 		return;
+			// 	}
+			// 	if ($scope.pop.jenisWaktu == undefined) {
+			// 		toastr.error('Jenis Waktu belum di pilih');
+			// 		return;
+			// 	}
 
-			$scope.saveEditOrder = function () {
-				if (!$scope.pop.jenisDiet || $scope.pop.jenisDiet.length == 0) {
-					toastr.error('Jenis Diet belum di pilih !');
-					return;
-				}
-				if ($scope.pop.kategoriDiet == undefined) {
-					toastr.error('Kategori Diet belum di pilih !');
-					return;
-				}
-				if ($scope.pop.jenisWaktu == undefined) {
-					toastr.error('Jenis Waktu belum di pilih');
-					return;
-				}
+			// 	var jenisDiet = "";
+			// 	var a = "";
+			// 	for (var i = $scope.pop.jenisDiet.length - 1; i >= 0; i--) {
+			// 		a = a + "," + $scope.pop.jenisDiet[i].id;
+			// 	}
+			// 	jenisDiet = a.slice(1);
 
-				var jenisDiet = "";
-				var a = "";
-				for (var i = $scope.pop.jenisDiet.length - 1; i >= 0; i--) {
-					a = a + "," + $scope.pop.jenisDiet[i].id;
-				}
-				jenisDiet = a.slice(1);
+			// 	$scope.tombolSimpanVis = true;
+			// 	var objSave = {
+			// 		'strukorder': {
+			// 			"norec": $scope.pop.norec_so,
+			// 			"tglmenu": moment($scope.pop.tglmenu).format('YYYY-MM-DD HH:mm'),
+			// 		},
+			// 		'orderpelayanan': {
+			// 			"norec": $scope.pop.norec_op,
+			// 			"objectjeniswaktufk": $scope.pop.jenisWaktu.id,
+			// 			"objectkategorydietfk": $scope.pop.kategoriDiet.id,
+			// 			"keterangan": $scope.pop.keterangan || '',
+			// 			"objectjenisdietfk": jenisDiet,
+			// 		}
+			// 	};
 
-				$scope.tombolSimpanVis = true;
-				var objSave = {
-					'strukorder': {
-						"norec": $scope.pop.norec_so,
-						"tglmenu": moment($scope.pop.tglmenu).format('YYYY-MM-DD HH:mm'),
-					},
-					'orderpelayanan': {
-						"norec": $scope.pop.norec_op,
-						"objectjeniswaktufk": $scope.pop.jenisWaktu.id,
-						"objectkategorydietfk": $scope.pop.kategoriDiet.id,
-						"keterangan": $scope.pop.keterangan || '',
-						"objectjenisdietfk": jenisDiet,
-					}
-				};
+			// 	medifirstService.post('gizi/update-peritem-order', objSave).then(function () {
+			// 		$scope.tombolSimpanVis = false;
+			// 		$scope.pop = {};
+			// 		$scope.popUpOrder.close();
+			// 		loadData();
+			// 	}, function () {
+			// 		$scope.tombolSimpanVis = false;
+			// 	});
+			// };
 
-				medifirstService.post('gizi/update-peritem-order', objSave).then(function () {
-					$scope.tombolSimpanVis = false;
-					$scope.pop = {};
-					$scope.popUpOrder.close();
-					loadData();
-				}, function () {
-					$scope.tombolSimpanVis = false;
-				});
-			};
-
-			$scope.batalEdit = function () {
-				$scope.pop = {};
-				$scope.pop.jenisDiet = [];
-				$scope.popUpOrder.close();
-			};
+			// $scope.batalEdit = function () {
+			// 	$scope.pop = {};
+			// 	$scope.pop.jenisDiet = [];
+			// 	$scope.popUpOrder.close();
+			// };
 
 			$scope.hapusOrder = function () {
 				if ($scope.selectedOnCheck.length == 0) {
