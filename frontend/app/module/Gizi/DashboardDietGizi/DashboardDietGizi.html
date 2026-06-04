@@ -1,8 +1,25 @@
 <style>
-	.style-center { display: inline-block; text-align: center; width: 100%; }
-	.style-left { display: inline-block; text-align: left; width: 100%; }
-	.k-grid .k-grid-header .k-header .k-link { height: auto; }
-	.k-grid .k-grid-header .k-header { white-space: normal; text-align: center; }
+	.style-center {
+		display: inline-block;
+		text-align: center;
+		width: 100%;
+	}
+
+	.style-left {
+		display: inline-block;
+		text-align: left;
+		width: 100%;
+	}
+
+	.k-grid .k-grid-header .k-header .k-link {
+		height: auto;
+	}
+
+	.k-grid .k-grid-header .k-header {
+		white-space: normal;
+		text-align: center;
+	}
+
 	.custom-button {
 		margin: 0 0 5px;
 		background: none;
@@ -11,6 +28,7 @@
 		border: 1px solid;
 		background-color: white;
 	}
+
 	.k-multiselect-wrap {
 		position: relative;
 		border-radius: 4px;
@@ -42,7 +60,8 @@
 				<div class="grid_12"><label c-label item="item">Periode Akhir</label></div>
 				<div class="clear"></div>
 				<div class="grid_12">
-					<input style="width: 100%" k-ng-model="item.periodeAkhir" kendo-datepicker k-format="'yyyy-MM-dd'" />
+					<input style="width: 100%" k-ng-model="item.periodeAkhir" kendo-datepicker
+						k-format="'yyyy-MM-dd'" />
 				</div>
 			</div>
 			<div class="grid_2">
@@ -73,7 +92,8 @@
 				<div class="grid_12"><label>&nbsp;</label></div>
 				<div class="clear"></div>
 				<div class="grid_12">
-					<button class="btnTemplate1" style="margin-top: 7px;" ng-click="SearchData()" ng-disabled="isRouteLoading">
+					<button class="btnTemplate1" style="margin-top: 7px;" ng-click="SearchData()"
+						ng-disabled="isRouteLoading">
 						<i class="fa fa-search"></i>
 						<span ng-show="!isRouteLoading">Cari</span>
 						<span ng-show="isRouteLoading">Loading</span>
@@ -86,24 +106,18 @@
 
 	<div class="grid_12">
 		<div class="grid_12 borderBox">
-			<div kendo-grid id="kGridDietVerified"
-				k-data-source="sourceGrid"
-				k-selectable="'row'"
-				k-pageable="'true'"
-				k-columns="columnGrid"
-				k-sortable="'true'"
-				k-resizable="'true'"
-				k-ng-model="dataMenuSelected"
+			<div kendo-grid id="kGridDietVerified" k-data-source="sourceGrid" k-selectable="'row'" k-pageable="'true'"
+				k-columns="columnGrid" k-sortable="'true'" k-resizable="'true'" k-ng-model="dataMenuSelected"
 				class="max-height">
 			</div>
 		</div>
 	</div>
 	<div class="grid_12">
-		<div class="grid_2" style="margin-top: 10px;">
+		<!-- <div class="grid_2" style="margin-top: 10px;">
 			<button class="btnTemplate1" ng-click="terimaOrder(dataMenuSelected)">
 				<i class="fa fa-upload"></i> Upload Bukti Bayar
 			</button>
-		</div>
+		</div> -->
 		<div class="grid_2" style="margin-top: 10px;">
 			<button class="btnTemplate1" ng-click="sedangDisiapkan(dataMenuSelected)">
 				<i class="fa fa-spinner fa-spin"></i> Sedang Disiapkan
@@ -115,7 +129,7 @@
 			</button>
 		</div>
 	</div>
-	
+
 	<div class="grid_12" style="margin-top: 60px">
 		<div ng-include='"../app/template/Shared/TemplateLoading"'></div>
 	</div>
@@ -147,7 +161,7 @@
 		</div>
 
 		<div class="k-edit-buttons k-state-default pull-right" style="margin-top: 15px">
-			<kendo-button class="k-primary" ng-click="saveBuktiBayar()" ng-disabled="isSavingBukti">Simpan</kendo-button>
+			<!-- <kendo-button class="k-primary" ng-click="saveBuktiBayar()" ng-disabled="isSavingBukti">Simpan</kendo-button> -->
 			<kendo-button ng-click="batalBuktiBayar()">Batal</kendo-button>
 		</div>
 	</div>

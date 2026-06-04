@@ -1,7 +1,7 @@
 define(['initialize', 'Configuration'], function (initialize, config) {
 	'use strict';
-	initialize.controller('OrderGiziTelemedicineCtrl', ['$mdDialog', '$timeout', '$state', '$q', '$rootScope', '$scope', 'CacheHelper', 'DateHelper', 'MedifirstService',
-		function ($mdDialog, $timeout, $state, $q, $rootScope, $scope, cacheHelper, dateHelper, medifirstService) {
+	initialize.controller('OrderGiziTelemedicineCtrl', ['$mdDialog', '$timeout', '$state', '$q', '$rootScope', '$scope', 'CacheHelper', 'DateHelper', 'MedifirstService', '$http',
+		function ($mdDialog, $timeout, $state, $q, $rootScope, $scope, cacheHelper, dateHelper, medifirstService, $http) {
 
 			$scope.dataVOloaded = true;
 			$scope.now = new Date();
@@ -11,6 +11,7 @@ define(['initialize', 'Configuration'], function (initialize, config) {
 			$scope.isRouteLoading = false;
 			$scope.listProduk = []
 			$scope.listMenu = []
+			$scope.popUp = {};
 			loadCombo();
 
 			function loadCombo() {
@@ -37,7 +38,7 @@ define(['initialize', 'Configuration'], function (initialize, config) {
 				};
 				medifirstService.post('sysadmin/master/get-data-combo', obj).then(function (data) {
 					console.log(data);
-					
+
 					$scope.listProduk = data.data.produk_m;
 					$scope.listMenu = data.data.menumakanan_m;
 					loadData();
@@ -107,6 +108,7 @@ define(['initialize', 'Configuration'], function (initialize, config) {
 			}
 
 			$scope.columnGrid = [
+
 				{ "field": "no", "title": "No", "width": "40px" },
 				{ "field": "noorder", "title": "Kode Transaksi", "width": "130px" },
 				{ "field": "nocm", "title": "NOCM", "width": "130px" },
@@ -115,16 +117,32 @@ define(['initialize', 'Configuration'], function (initialize, config) {
 				{ "field": "alamatlengkap", "title": "Alamat", "width": "200px" },
 				{ "field": "status", "title": "Status", "width": "90px" },
 				{
-					"title": "Aksi", "width": "110px",
-					"template": "<button class='k-button k-primary' style='width:100%' ng-if='dataItem.status != \"VERIFIKASI\" && dataItem.status != \"SUDAH DIBAYAR\"' ng-click='verifikasi(dataItem)'><i class='fa fa-check'></i> Verifikasi</button><button class='k-button k-primary' style='width:100%' ng-if='dataItem.status == \"ORDER\" ' ng-click='batalOrder(dataItem)'><i class='fa fa-times'></i> Batal Order</button>"
-				},
+					title: "Aksi",
+					width: "350px",
+					template: function (dataItem) {
+						var btn = '';
+
+						if (dataItem.status == "ORDER") {
+							btn += '<button class="k-button" ng-click="verifikasi(dataItem)">Verifikasi</button> ';
+							btn += '<button class="k-button" ng-click="batalOrder(dataItem)">Batal Order</button> ';
+						} else {
+							if (dataItem.bukti_bayar) {
+								btn += '<button class="k-button" ng-click="lihatBuktiBayar(dataItem)">Lihat Bukti Bayar</button>';
+							} else if (!dataItem.bukti_bayar) {
+								btn += '<button class="k-button" ng-click="openBuktiBayar(dataItem)">Upload Bukti Bayar</button> ';
+							}
+						}
+
+						return btn;
+					}
+				}
 			];
 
 			$scope.pop = {};
 			$scope.pop.jenisDiet = [];
 
-			$scope.verifikasi = function(dataItem) {
-				
+			$scope.verifikasi = function (dataItem) {
+
 				if (dataItem == undefined) {
 					toastr.error('Pilih data dulu');
 					return;
@@ -138,7 +156,7 @@ define(['initialize', 'Configuration'], function (initialize, config) {
 					"notelp_klien": dataItem.nohp,
 					"tglstruk": moment(new Date()).format('YYYY-MM-DD HH:mm:ss'),
 					"totalharusdibayar": dataItem.totalharusdibayar || 0,
-					"details": dataItem.details.map(function(item,index) {
+					"details": dataItem.details.map(function (item, index) {
 						return {
 							"no": index + 1,
 							"norec_siklus": item.norec,
@@ -158,14 +176,14 @@ define(['initialize', 'Configuration'], function (initialize, config) {
 					"petugaspelayananambulan": [],
 					"nocm_klien": dataItem.nocm
 				};
-				
+
 
 				medifirstService.post('gizi/telemedicine/verifikasi-order-diet', obj)
-					.then(function(response) {
+					.then(function (response) {
 						toastr.success('Verifikasi order berhasil');
 						loadData();
 					})
-					.catch(function(error) {
+					.catch(function (error) {
 						toastr.error('Verifikasi order gagal: ' + (error.statusText || error));
 					});
 			};
@@ -209,6 +227,9 @@ define(['initialize', 'Configuration'], function (initialize, config) {
 						toastr.error('Batal verifikasi gagal: ' + (error.statusText || error));
 					});
 			};
+
+			                var baseUrl = config.baseApiBackend.replace('service/medifirst2000/', '');
+                window.open(baseUrl + "storage/bukti-bayar-gizi?file=" + dataItem.bukti_bayar);;
 
 			$scope.EditOrder = function () {
 				if ($scope.dataPasienSelected == undefined) {
@@ -313,6 +334,93 @@ define(['initialize', 'Configuration'], function (initialize, config) {
 				window.open(url, '_blank');
 			};
 
+			$scope.closeDialog = function () {
+				$mdDialog.cancel();
+			};
+
+			$scope.isImageFile = function (filePath) {
+				if (!filePath) return false;
+				var imageExtensions = ['jpg', 'jpeg', 'png', 'gif', 'bmp', 'webp'];
+				var path = filePath;
+				if (path.indexOf('?file=') !== -1) {
+					path = path.split('?file=').pop();
+				}
+				var extension = path.split('.').pop().toLowerCase();
+				return imageExtensions.indexOf(extension) !== -1;
+			};
+
+			$scope.downloadBuktiBayar = function (filePath) {
+				if (!filePath) {
+					toastr.error('File tidak ditemukan');
+					return;
+				}
+				var url = filePath;
+				if (url.indexOf('http') === -1) {
+					url = config.baseApiBackend + filePath;
+				}
+				window.open(url, '_blank');
+			};
+
+			$scope.openBuktiBayar = function (dataItem) {
+				$scope.popUpBuktiBayar.center().open();
+				console.log(dataItem);
+
+				if (!dataItem) {
+					toastr.error('Pilih data dulu');
+					return;
+				}
+				$scope.popUp = {
+					noorder: dataItem.noorder,
+					norec: dataItem.norec_so,
+					details: dataItem.details
+				};
+				var fileInput = document.getElementById('fileBuktiBayar');
+				if (fileInput) {
+					fileInput.value = '';
+				}
+			};
+
+			$scope.batalBuktiBayar = function () {
+				$scope.popUp = {};
+				$scope.popUpBuktiBayar.close();
+			};
+			function getAuthorization() {
+				var authorization = '';
+				var arr = document.cookie.split(';');
+				for (var i = 0; i < arr.length; i++) {
+					var element = arr[i].split('=');
+					if (element[0].indexOf('authorization') > -1) {
+						authorization = element[1];
+					}
+				}
+				return authorization;
+			}
+			// function postFormData(url, formData) {
+			// 	return ;
+			// }
+			$scope.saveBuktiBayar = function () {
+				var file = document.getElementById('fileBuktiBayar').files[0];
+				if (!file) { toastr.error('Pilih file bukti bayar'); return; }
+				var formData = new FormData();
+				formData.append('file', file);
+				formData.append('norec', $scope.popUp.norec || '');
+				$scope.isSavingBukti = true;
+				fetch(config.baseApiBackend + 'gizi/telemedicine/upload-bukti-bayar', {
+					method: 'POST',
+					body: formData,
+					headers: {
+						'X-AUTH-TOKEN': getAuthorization()
+					}
+				}).then(function (res) {
+					$scope.isSavingBukti = false;
+					toastr.success('Bukti bayar berhasil diupload');
+					$scope.popUpBuktiBayar.close();
+					loadData();
+				}, function (err) {
+					$scope.isSavingBukti = false;
+					toastr.error('Upload bukti bayar gagal');
+				});
+			};
 		}
 	]);
 });

@@ -210,7 +210,8 @@ class GiziDietTelemedicineController extends ApiController
                 DB::raw('case when ps.nohp is not null then ps.nohp else ps.notelepon end as nohp'),
                 'alm.alamatlengkap',
                 DB::raw("case when sbm.norec is not null then 'SUDAH DIBAYAR' else so.status end as status"),
-                'so.totalharusdibayar'
+                'so.totalharusdibayar',
+                'so.url_bukti_bayar as bukti_bayar'
             )
             ->where('so.kdprofile', $kdProfile)
             ->where('so.statusenabled', true)
@@ -315,6 +316,7 @@ class GiziDietTelemedicineController extends ApiController
             ->join('menumakanan_m as mm', 'mm.id', '=', 'sgd.menumakanan_id')
             ->join('strukorder_t as so', 'so.norec', '=', 'sgd.strukorderfk')
             ->join('strukpelayanan_t as sp', 'sp.norec', '=', 'sgd.strukpelayananfk')
+            ->join('strukbuktipenerimaan_t as sbm', 'sp.norec', '=', 'sbm.nostrukfk')
             ->join('pasien_m as ps', 'ps.id', '=', 'so.nocmfk')
             ->select(
                 'sgd.*',
@@ -327,7 +329,7 @@ class GiziDietTelemedicineController extends ApiController
                 'ps.id as nocmfk',
                 DB::raw('(sgd.jumlah * sgd.hargasatuan) as total'),
                 DB::raw('case when ps.nohp is not null then ps.nohp else ps.notelepon end as nohp'),
-                DB::raw("case when sgd.status = 'UPLOAD' then 'Sudah bayar' when sgd.status = 'DISIAPKAN' then 'Sudah disiapkan' when sgd.status = 'SIAP' then 'Sudah siap diambil' else 'Belum Bayar' end as status"),
+                DB::raw("case when sgd.status = 'DISIAPKAN' then 'Sudah disiapkan' when sgd.status = 'SIAP' then 'Sudah siap diambil' when sbm.norec is not null then 'Sudah bayar' end as status"),
             )
             ->whereBetween('sgd.tanggal', [$request['tglAwal'] . ' 00:00:00', $request['tglAkhir'] . ' 23:59:59'])
             ->where('sgd.kdprofile', $kdProfile)
@@ -679,6 +681,7 @@ class GiziDietTelemedicineController extends ApiController
 
             return $this->setStatusCode(200)->respond($result, $result['message']);
         } catch (\Exception $e) {
+            DB::rollBack();
             $result = array(
                 'status' => 400,
                 'message' => $e->getMessage(),
@@ -690,7 +693,8 @@ class GiziDietTelemedicineController extends ApiController
 
     public function uploadBuktiBayarDiet(Request $request)
     {
-        $kdProfile = (int) $this->getDataKdProfile($request);
+                $kdProfile = (int) $this->getDataKdProfile($request);
+        DB::beginTransaction();
 
         try {
             if (!$request->hasFile('file')) {
@@ -702,20 +706,21 @@ class GiziDietTelemedicineController extends ApiController
                 throw new \Exception('Order tidak ditemukan');
             }
 
-            $siklusGiziDiet = SiklusGiziDiet::where('siklusgizidiet_t.norec', $norec)
-                ->join('strukorder_t as so', 'so.norec', '=', 'siklusgizidiet_t.strukorderfk') 
-                ->where('siklusgizidiet_t.kdprofile', $kdProfile)
-                ->where('siklusgizidiet_t.statusenabled', true)
-                ->select('so.noorder as noorder','siklusgizidiet_t.*')
-                ->first();
-            $so = StrukOrder::where('norec', $norec)->first();
+            $siklusGiziDiet = SiklusGiziDiet::where('strukorderfk', $norec)
+                ->where('kdprofile', $kdProfile)
+                ->where('statusenabled', true)
+                ->get();
             if (empty($siklusGiziDiet)) {
-                throw new \Exception('Order tidak ditemukan');
+                throw new \Exception('Siklus Gizi Diet tidak ditemukan');
+            }
+            $so = StrukOrder::where('norec', $norec)->first();
+            if (empty($so)) {
+                throw new \Exception('Struk Order tidak ditemukan');
             }
 
             $file = $request->file('file');
             $extension = $file->getClientOriginalExtension();
-            $fileName = $siklusGiziDiet->noorder . '_' . date('YmdHis', strtotime($siklusGiziDiet->tanggal)) . ($extension != '' ? '.' . $extension : '');
+            $fileName = $so->noorder . '_' . date('YmdHis', strtotime($so->tglorder)) . ($extension != '' ? '.' . $extension : '');
             $path = 'bukti-bayar-gizi';
 
             if (!Storage::disk('local')->exists($path)) {
@@ -725,9 +730,20 @@ class GiziDietTelemedicineController extends ApiController
             Storage::disk('local')->put($path . '/' . $fileName, file_get_contents($file->getRealPath()));
             $filePath = $path . '/' . $fileName;
             $so->url_bukti_bayar = $filePath;
-            $siklusGiziDiet->status = 'UPLOAD';
-            $siklusGiziDiet->tgl_bukti_bayar = date('Y-m-d H:i:s');
-            $siklusGiziDiet->save();
+            $so->save();
+            // Handle one or many SiklusGiziDiet records
+            if ($siklusGiziDiet instanceof \Illuminate\Support\Collection) {
+                foreach ($siklusGiziDiet as $sgd) {
+                    $sgd->status = 'UPLOAD';
+                    $sgd->tgl_bukti_bayar = date('Y-m-d H:i:s');
+                    $sgd->save();
+                }
+            } else {
+                $siklusGiziDiet->status = 'UPLOAD';
+                $siklusGiziDiet->tgl_bukti_bayar = date('Y-m-d H:i:s');
+                $siklusGiziDiet->save();
+            }
+            DB::commit();
 
             $result = array(
                 'status' => 200,
@@ -740,6 +756,7 @@ class GiziDietTelemedicineController extends ApiController
 
             return $this->setStatusCode(200)->respond($result, $result['message']);
         } catch (\Exception $e) {
+            DB::rollBack();
             $result = array(
                 'status' => 400,
                 'message' => $e->getMessage(),
@@ -747,6 +764,27 @@ class GiziDietTelemedicineController extends ApiController
 
             return $this->setStatusCode(400)->respond($result, $result['message']);
         }
+    }
+
+    public function streamBuktiBayar(Request $request)
+    {
+        $file = $request->get('file');
+        if (strpos($file, 'bukti-bayar-gizi/') !== 0) {
+            return response()->json(['message' => 'Akses ditolak'], 403);
+        }
+
+        $path = storage_path('app/' . $file);
+        if (!file_exists($path)) {
+            return response()->json(['message' => 'File tidak ditemukan'], 404);
+        }
+
+        $content = file_get_contents($path);
+        $type = mime_content_type($path);
+
+        $response = response($content, 200);
+        $response->header("Content-Type", $type);
+
+        return $response;
     }
 
     public function batalOrderDiet(Request $request)
