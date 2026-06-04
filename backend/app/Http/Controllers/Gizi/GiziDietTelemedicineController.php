@@ -705,7 +705,7 @@ class GiziDietTelemedicineController extends ApiController
             //     throw new \Exception('File bukti bayar belum dipilih');
             // }
 
-            $norec = $request->get('norec');
+            $norec = $request->input('norec');
             if ($norec == '' || $norec == null) {
                 throw new \Exception('Order tidak ditemukan');
             }
