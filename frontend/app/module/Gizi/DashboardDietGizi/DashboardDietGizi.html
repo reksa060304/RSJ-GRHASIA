@@ -112,12 +112,12 @@
 			</div>
 		</div>
 	</div>
-	<div class="grid_12">
-		<!-- <div class="grid_2" style="margin-top: 10px;">
+	<!-- <div class="grid_12">
+		<div class="grid_2" style="margin-top: 10px;">
 			<button class="btnTemplate1" ng-click="terimaOrder(dataMenuSelected)">
 				<i class="fa fa-upload"></i> Upload Bukti Bayar
 			</button>
-		</div> -->
+		</div>
 		<div class="grid_2" style="margin-top: 10px;">
 			<button class="btnTemplate1" ng-click="sedangDisiapkan(dataMenuSelected)">
 				<i class="fa fa-spinner fa-spin"></i> Sedang Disiapkan
@@ -128,7 +128,7 @@
 				<i class="fa fa-check-circle"></i> Siap Diambil
 			</button>
 		</div>
-	</div>
+	</div> -->
 
 	<div class="grid_12" style="margin-top: 60px">
 		<div ng-include='"../app/template/Shared/TemplateLoading"'></div>
@@ -136,7 +136,7 @@
 
 </div>
 
-<div kendo-window="popUpBuktiBayar" k-title="'Terima Order / Upload Bukti Pembayaran'" k-width="520" k-visible="false"
+<div kendo-window="popUpAmbil" k-title="'Pengambilan / Penyerahan'" k-width="520" k-visible="false"
 	k-on-open="win2visible = true" k-on-close="win2visible = false">
 	<div class="panel panel-default container_12">
 		<div class="grid_12">
@@ -153,16 +153,22 @@
 				</div>
 			</div>
 			<div class="grid_12" style="margin-bottom: 10px;">
-				<div class="grid_12"><label c-label item="pop" c-label-text="Bukti Pembayaran"></label></div>
 				<div class="grid_12">
-					<input id="fileBuktiBayar" type="file" style="width: 100%;" />
+					<label c-label item="item">Nama Pegawai</label>
+				</div>
+
+				<div class="grid_12">
+					<input style="width: 100%;" kendo-combo-box k-ng-model="pop.pegawai"
+						k-data-text-field="'namalengkap'" k-data-value-field="'id'" k-filter="'contains'"
+						k-auto-bind="false" k-data-source="listPegawai" />
 				</div>
 			</div>
 		</div>
 
 		<div class="k-edit-buttons k-state-default pull-right" style="margin-top: 15px">
-			<!-- <kendo-button class="k-primary" ng-click="saveBuktiBayar()" ng-disabled="isSavingBukti">Simpan</kendo-button> -->
-			<kendo-button ng-click="batalBuktiBayar()">Batal</kendo-button>
+			<kendo-button class="k-primary"
+				ng-click="updateStatus(pop,'SUDAH DIAMBIL','Status Diubah: Sudah diambil')">Ambil</kendo-button>
+			<kendo-button ng-click="batal()">Batal</kendo-button>
 		</div>
 	</div>
 </div>

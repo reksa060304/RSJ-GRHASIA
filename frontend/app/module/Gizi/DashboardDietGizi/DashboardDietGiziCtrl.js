@@ -11,6 +11,7 @@ define(['initialize', 'Configuration'], function (initialize, config) {
 			$scope.isRouteLoading = false;
 			$scope.isSavingBukti = false;
 			$scope.pop = {};
+			$scope.listPegawai = []
 
 			loadData();
 
@@ -78,12 +79,26 @@ define(['initialize', 'Configuration'], function (initialize, config) {
 				{
 					field: "status",
 					title: "Status",
-
+					width: "100px"
 				},
-				// {
-				// 	title: "Aksi", 
-				// 	template:"<button class='k-button' ng-click='terimaOrder(dataItem)'><i class='fa fa-upload'></i> Upload Bukti Bayar</button>"
-				// },
+				{
+					title: "Aksi",
+					width: "350px",
+					template: function (dataItem) {
+						console.log(dataItem);
+
+						var btn = '';
+						if (!dataItem.tgl_disiapkan) {
+							btn = '<button class="k-button" ng-click="updateStatus(dataItem, \'DISIAPKAN\', \'Status diubah: Sedang Disiapkan\')">Sedang Disiapkan</button> ';
+						} else if (!dataItem.tgl_siap_ambil) {
+							btn = '<button class="k-button" ng-click="updateStatus(dataItem, \'SIAP\', \'Status diubah: Siap Diambil\')">Siap Diambil</button> ';
+						} else if (!dataItem.tgl_verifikasi) {
+							btn = '<button class="k-button" ng-click="popUpAmbilFunc(dataItem)">Pengambilan / Penyerahan</button> ';
+						}
+						return btn;
+					},
+				}
+
 			];
 
 			$scope.terimaOrder = function (dataItem) {
@@ -138,14 +153,15 @@ define(['initialize', 'Configuration'], function (initialize, config) {
 				updateStatus(dataItem, 'SIAP', 'Status diubah: Makanan Siap Diambil');
 			};
 
-			function updateStatus(dataItem, status, message) {
+			$scope.updateStatus = function (dataItem, status, message) {
 				if (!dataItem) {
 					toastr.error('Pilih data dulu');
 					return;
 				}
 				medifirstService.post('gizi/telemedicine/update-status-order', {
 					norec: dataItem.norec,
-					status: status
+					status: status,
+					objectpegawaifk: dataItem.pegawai?.id
 				})
 					.then(function () {
 						toastr.success(message);
@@ -191,7 +207,10 @@ define(['initialize', 'Configuration'], function (initialize, config) {
 					jumlah: jumlah,
 					hargasatuan: harga,
 					total: order.total || (jumlah * harga),
-					status: order.status
+					status: order.status,
+					tgl_disiapkan: order.tgl_disiapkan,
+					tgl_siap_ambil: order.tgl_siap_ambil,
+					tgl_verifikasi: order.tgl_verifikasi
 				};
 			}
 
@@ -219,6 +238,34 @@ define(['initialize', 'Configuration'], function (initialize, config) {
 				}
 				return authorization;
 			}
+
+			$scope.popUpAmbilFunc = function (dataItem) {
+				$scope.pop = {
+					noorder: dataItem.noorder,
+					menumakanan: dataItem.menumakanan,
+					norec_so: dataItem.strukorderfk,
+					norec_op: dataItem.strukpelayananfk,
+					norec: dataItem.norec
+				};
+				$scope.popUpAmbil.center().open();
+			}
+			function loadCombo() {
+				var obj = {
+					"tableArr": [
+						{
+							"table": "pegawai_m",
+							"where": [
+								{ 'column': 'statusenabled', 'operator': '=', 'value': true }
+							]
+						},
+					]
+				}
+				medifirstService.post('sysadmin/master/get-data-combo', obj).then(function (data) {
+
+					$scope.listPegawai = data.data.pegawai_m;
+				});
+			}
+			loadCombo()
 
 		}
 	]);

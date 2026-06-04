@@ -318,6 +318,7 @@ class GiziDietTelemedicineController extends ApiController
             ->join('strukpelayanan_t as sp', 'sp.norec', '=', 'sgd.strukpelayananfk')
             ->join('strukbuktipenerimaan_t as sbm', 'sp.norec', '=', 'sbm.nostrukfk')
             ->join('pasien_m as ps', 'ps.id', '=', 'so.nocmfk')
+            ->leftjoin('pegawai_m as pg', 'pg.id', '=', 'sgd.objectpegawaifk')
             ->select(
                 'sgd.*',
                 'mm.menumakanan',
@@ -329,7 +330,7 @@ class GiziDietTelemedicineController extends ApiController
                 'ps.id as nocmfk',
                 DB::raw('(sgd.jumlah * sgd.hargasatuan) as total'),
                 DB::raw('case when ps.nohp is not null then ps.nohp else ps.notelepon end as nohp'),
-                DB::raw("case when sgd.status = 'DISIAPKAN' then 'Sudah disiapkan' when sgd.status = 'SIAP' then 'Sudah siap diambil' when sbm.norec is not null then 'Sudah bayar' end as status"),
+                DB::raw("case when sgd.status = 'DISIAPKAN' then 'Sudah disiapkan' when sgd.status = 'SIAP' then 'Sudah siap diambil' when sgd.status = 'SUDAH DIAMBIL' then 'Sudah diserahkan / diambil oleh petugas: ' || pg.namalengkap  when sbm.norec is not null then 'Sudah bayar' end as status"),
             )
             ->whereBetween('sgd.tanggal', [$request['tglAwal'] . ' 00:00:00', $request['tglAkhir'] . ' 23:59:59'])
             ->where('sgd.kdprofile', $kdProfile)
@@ -646,7 +647,7 @@ class GiziDietTelemedicineController extends ApiController
         $kdProfile = (int) $this->getDataKdProfile($request);
         $req = $request->all();
         $status = isset($req['status']) ? $req['status'] : '';
-        $allowedStatus = array('UPLOAD', 'DISIAPKAN', 'SIAP');
+        $allowedStatus = array('UPLOAD', 'DISIAPKAN', 'SIAP','SUDAH DIAMBIL');
 
         try {
             if (!in_array($status, $allowedStatus)) {
@@ -670,6 +671,9 @@ class GiziDietTelemedicineController extends ApiController
                 $siklusGiziDiet->tgl_disiapkan = date('Y-m-d H:i:s');
             } elseif ($status === 'SIAP') {
                 $siklusGiziDiet->tgl_siap_ambil = date('Y-m-d H:i:s');
+            } elseif($status === 'SUDAH DIAMBIL') {
+                $siklusGiziDiet->tgl_verifikasi = date('Y-m-d H:i:s');
+                $siklusGiziDiet->objectpegawaifk = $req['objectpegawaifk'];
             }
             $siklusGiziDiet->save();
 
