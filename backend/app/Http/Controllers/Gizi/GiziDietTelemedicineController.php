@@ -701,9 +701,9 @@ class GiziDietTelemedicineController extends ApiController
         DB::beginTransaction();
 
         try {
-            if (!$request->hasFile('file')) {
-                throw new \Exception('File bukti bayar belum dipilih');
-            }
+            // if (!$request->hasFile('file')) {
+            //     throw new \Exception('File bukti bayar belum dipilih');
+            // }
 
             $norec = $request->get('norec');
             if ($norec == '' || $norec == null) {
