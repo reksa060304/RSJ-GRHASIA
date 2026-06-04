@@ -706,17 +706,22 @@ class GiziDietTelemedicineController extends ApiController
             // }
 
             $norec = $request->input('norec');
-            if ($norec == '' || $norec == null) {
-                throw new \Exception('Order tidak ditemukan');
-            }
+            // if ($norec == '' || $norec == null) {
+            //     throw new \Exception('Order tidak ditemukan');
+            // }
 
+            \Log::info('UPLOAD BUKTI BAYAR', [
+                'all' => $request->all(),
+                'norec' => $request->input('norec'),
+                'files' => $request->allFiles(),
+            ]);
             $siklusGiziDiet = SiklusGiziDiet::where('strukorderfk', $norec)
                 ->where('kdprofile', $kdProfile)
                 ->where('statusenabled', true)
                 ->get();
-            if (empty($siklusGiziDiet)) {
-                throw new \Exception('Siklus Gizi Diet tidak ditemukan');
-            }
+            // if (empty($siklusGiziDiet)) {
+            //     throw new \Exception('Siklus Gizi Diet tidak ditemukan');
+            // }
             $so = StrukOrder::where('norec', $norec)->first();
             if (empty($so)) {
                 throw new \Exception('Struk Order tidak ditemukan');
