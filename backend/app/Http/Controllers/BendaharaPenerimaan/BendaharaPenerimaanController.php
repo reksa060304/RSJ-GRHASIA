@@ -11014,12 +11014,22 @@ class BendaharaPenerimaanController extends ApiController {
         //ambil daftar akun level 8
         $akunList = DB::select(DB::raw(
             "SELECT id, namarekening, koderekening, nourut
-             FROM char_akun_pendapatan_m p
-             WHERE statusenabled = true 
-             AND NOT EXISTS (
-                SELECT 1 FROM char_akun_pendapatan_m c 
-                WHERE c.headfk = p.id AND c.statusenabled = true
-             )
+                FROM char_akun_pendapatan_m p
+                WHERE statusenabled = true 
+                AND (
+                    -- leaf node normal
+                    NOT EXISTS (
+                        SELECT 1 FROM char_akun_pendapatan_m c 
+                        WHERE c.headfk = p.id AND c.statusenabled = true
+                    )
+                    OR
+                    -- parent yang langsung punya transaksi di STS detail
+                    EXISTS (
+                        SELECT 1 FROM surattandasetorandetailv2_t stsd2
+                        WHERE stsd2.objectakunpendapatanfk = p.id
+                        AND stsd2.statusenabled = true
+                    )
+                )
              ORDER BY 
                 split_part(koderekening, '.', 1) ASC,
                 case when split_part(koderekening, '.', 2) = '' then 0 else split_part(koderekening, '.', 2)::int end ASC,
@@ -11030,6 +11040,7 @@ class BendaharaPenerimaanController extends ApiController {
                 case when split_part(koderekening, '.', 7) = '' then 0 else split_part(koderekening, '.', 7)::int end ASC,
                 case when split_part(koderekening, '.', 8) = '' then 0 else split_part(koderekening, '.', 8)::int end ASC"
         ));
+
 
         //buat case when dan sum dinamis
         $pivotCases = [];
@@ -11118,9 +11129,16 @@ class BendaharaPenerimaanController extends ApiController {
             SELECT id, namarekening, koderekening, nourut
             FROM char_akun_pendapatan_m p
             WHERE statusenabled = true 
-            AND NOT EXISTS (
-                SELECT 1 FROM char_akun_pendapatan_m c 
-                WHERE c.headfk = p.id AND c.statusenabled = true
+            AND (
+                NOT EXISTS (
+                    SELECT 1 FROM char_akun_pendapatan_m c 
+                    WHERE c.headfk = p.id AND c.statusenabled = true
+                )
+                OR EXISTS (
+                    SELECT 1 FROM surattandasetorandetailv2_t stsd2
+                    WHERE stsd2.objectakunpendapatanfk = p.id
+                    AND stsd2.statusenabled = true
+                )
             )
             ORDER BY 
                 split_part(koderekening, '.', 1) ASC,
