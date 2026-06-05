@@ -448,7 +448,7 @@ class RegistrasiController extends ApiController
                 $dataPD->isregistrasilengkap = 0;
                 $dataPD->jenispelayanan = $r_NewPD['tipelayanan'];
                 $dataPD->objectkasuspenyakitlastfk = 1;
-                $isRawatJalan = $r_NewPD['objectdepartemenfk'] == 18;
+                $isRawatJalan = isset($r_NewPD['objectdepartemenfk']) && $r_NewPD['objectdepartemenfk'] == 18;
                 if ($isRawatInap == 'true') {
                     $dataPD->objectkelasfk = $r_NewPD['objectkelasfk'];
                     if ($dataPD->tglpulang === null) { 
