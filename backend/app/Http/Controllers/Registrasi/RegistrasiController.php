@@ -2884,6 +2884,7 @@ class RegistrasiController extends ApiController
             ->where('pd.tglregistrasi', '<=', $request['tglregistrasi'] . ' 23:59')
             ->whereNull('br.pasiendaftarfk')
             ->where('pd.kdprofile', (int)$kdProfile)
+            ->where('pd.statusenabled', true)
             ->orderBy('pd.noregistrasi', 'desc')
             ->get();
 
