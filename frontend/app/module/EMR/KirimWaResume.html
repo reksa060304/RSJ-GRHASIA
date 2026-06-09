@@ -1,0 +1,173 @@
+<style type="text/css">
+    .k-grid .k-grid-header .k-header .k-link {
+        height: auto;
+    }
+    .k-grid .k-grid-header .k-header {
+        white-space: normal;
+    }
+    .k-grid .k-grid-header .k-header {
+        text-align: center;
+    }
+    .btn-wa-kirim {
+        background-color: #25D366;
+        color: #fff;
+        border: none;
+        border-radius: 4px;
+        padding: 5px 14px;
+        cursor: pointer;
+        font-size: 13px;
+    }
+    .btn-wa-kirim:hover { background-color: #1ebe57; }
+    .btn-wa-kirim[disabled] { background-color: #a8e6c3; cursor: not-allowed; }
+    .warn-hp {
+        background: #fff8e1;
+        border: 1px solid #ffe082;
+        border-radius: 3px;
+        padding: 5px 10px;
+        font-size: 12px;
+        color: #795548;
+        margin-top: 4px;
+    }
+</style>
+
+<div>
+    <div class="panel panel-default container_12">
+        <div class="panel-heading"><label class='title' c-label item="item">Kirim WA Resume Medis Pasien</label></div>
+        <div class="panel-body">
+
+            <!-- Filter -->
+            <div class="grid_12">
+                <div class="grid_3" style="margin-top:5px">
+                    <div class="grid_12" style="margin-left:10px">
+                        <label c-label real>Periode Resume</label>
+                    </div>
+                    <div class="grid_12">
+                        <div class="grid_6 padDatePicker">
+                            <input style="width: 100%" k-ng-model="item.periodeAwal" kendo-datetimepicker
+                                placeholer="yyyy-MM-dd HH:mm" k-format="'yyyy-MM-dd HH:mm'"
+                                parsedate="yyyy-MM-dd HH:mm" />
+                        </div>
+                        <div class="grid_6 padDatePicker">
+                            <input style="width: 100%" k-ng-model="item.periodeAkhir" kendo-datetimepicker
+                                placeholer="yyyy-MM-dd HH:mm" k-format="'yyyy-MM-dd HH:mm'" />
+                        </div>
+                    </div>
+                </div>
+
+                <div class="grid_1" style="margin-top:5px">
+                    <label c-label real>No RM</label>
+                    <input c-text-box type="input" filter="'char'" class="k-textbox" ng-model="item.noCm"
+                        ng-keypress="($event.which == 13)? findData():item.noCm" />
+                </div>
+
+                <div class="grid_2" style="margin-top:5px">
+                    <label c-label real>No Registrasi</label>
+                    <input c-text-box type="input" filter="'char'" class="k-textbox" ng-model="item.noRegistrasi"
+                        ng-keypress="($event.which == 13)? findData():item.noRegistrasi" />
+                </div>
+
+                <div class="grid_2" style="margin-top:5px">
+                    <label c-label real>Nama Pasien</label>
+                    <input c-text-box type="input" filter="'char'" class="k-textbox" ng-model="item.namaPasien"
+                        ng-keypress="($event.which == 13)? findData():item.namaPasien" />
+                </div>
+
+                <div class="grid_2" style="margin-top:5px">
+                    <label c-label real>Kelompok Pasien</label>
+                    <input style="width: 100%;" kendo-combo-box k-ng-model="item.kelompokPasien"
+                        k-data-text-field="'kelompokpasien'" k-data-value-field="'id'"
+                        k-filter="'contains'" k-auto-bind="false"
+                        k-data-source="listKelompokPasien" />
+                </div>
+
+                <div class="grid_1" style="margin-top:5px">
+                    <label c-label c-label-text=""></label>
+                    <em style="margin-top:6px;" ng-click='findData()' id="iconButtonCari" data-role="button"
+                        class="k-button k-button-icon" role="button" aria-disabled="false" tabindex="0">
+                        <span class="k-sprite k-icon k-i-search">Cari</span>
+                    </em>
+                </div>
+            </div>
+
+            <!-- Grid -->
+            <div class="grid_12">
+                <div class="grid_12 borderBox">
+                    <kendo-grid id="gridWaResume"
+                        data-source="GridPasienResume"
+                        options="mainGridOptions"
+                        k-pageable="'true'"
+                        k-sortable="'true'"
+                        k-resizable="'true'"
+                        k-selectable="'row'"
+                        k-ng-model="dataSelected"
+                        ng-click="klikGrid(dataSelected)">
+                    </kendo-grid>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+    <!-- Panel Kirim WA (di luar panel utama, seperti tombol di DaftarAntrianSusterRajal) -->
+    <div class="grid_12">
+        <div class="grid_3" style="margin-top:5px">
+            <label c-label real>No HP Tujuan</label>
+            <input c-text-box type="input" filter="'char'" class="k-textbox"
+                ng-model="selectedNomorHP"
+                placeholder="Contoh: 081234567890" />
+            <div class="warn-hp" ng-if="dataSelected && !selectedNomorHP">
+                <i class="fa fa-exclamation-triangle"></i>
+                HP pasien tidak ada di data — isi nomor di atas lalu kirim.
+            </div>
+        </div>
+        <div class="grid_2" style="margin-top:5px">
+            <label c-label real>&nbsp;</label>
+            <button class="btnTemplate1 btn-wa-kirim"
+                    style="margin-left:0; background-color:#25D366; color:#fff;"
+                    ng-click="kirimWaResume()"
+                    ng-disabled="!dataSelected || loadingSend">
+                <i class="fa fa-whatsapp"></i>
+                <span ng-if="!loadingSend">Kirim WA Resume</span>
+                <span ng-if="loadingSend"><i class="fa fa-spinner fa-spin"></i> Mengirim...</span>
+            </button>
+        </div>
+        <div class="grid_2" style="margin-top:5px; padding-top:28px;">
+            <input type="checkbox" id="bypassTte" class="k-checkbox" ng-model="item.bypassTte">
+            <label class="k-checkbox-label" for="bypassTte" style="color:#e74c3c; font-weight:bold; cursor:pointer;">Bypass TTE (Test)</label>
+        </div>
+        <div class="grid_5" style="margin-top:5px; padding-top:28px; color:#555; font-size:13px;">
+            <span ng-if="dataSelected">
+                Dipilih: <b>{{dataSelected.namapasien}}</b>
+                &nbsp;&mdash;&nbsp; No RM: <b>{{dataSelected.nocm}}</b>
+                &nbsp;&mdash;&nbsp; No Reg: <b>{{dataSelected.noregistrasi}}</b>
+            </span>
+            <span ng-if="!dataSelected" style="color:#aaa; font-style:italic">
+                Pilih pasien dari tabel terlebih dahulu
+            </span>
+        </div>
+    </div>
+
+    <!-- Loading -->
+    <div class="grid_12" style="margin-top:40px">
+        <div ng-include='"../app/template/Shared/TemplateLoading"'></div>
+    </div>
+
+    <!-- Popup Konfirmasi Kirim WA -->
+    <div kendo-window="popupKonfirmasi" k-title="'Konfirmasi Kirim WA'" k-width="450" k-visible="false" k-modal="true">
+        <div class="panel-body">
+            <p style="margin-bottom:15px; font-size:14px;">Anda akan mengirimkan dokumen Resume Medis ke WhatsApp berikut:</p>
+            <table style="width:100%; margin-bottom: 20px; font-size:13px;">
+                <tr><td style="width:120px; font-weight:bold; padding:3px 0;">Nama Pasien</td><td>: {{dataSelected.namapasien}}</td></tr>
+                <tr><td style="font-weight:bold; padding:3px 0;">No. RM</td><td>: {{dataSelected.nocm}}</td></tr>
+                <tr><td style="font-weight:bold; padding:3px 0;">Tgl Resume</td><td>: {{dataSelected.tglresume}}</td></tr>
+                <tr><td style="font-weight:bold; padding:3px 0;">No. HP Tujuan</td><td>: {{selectedNomorHP}}</td></tr>
+                <tr><td style="font-weight:bold; padding:3px 0;">Dokumen</td><td>: <a href="" ng-click="previewResume($event)" style="color:#e74c3c; font-weight:bold; text-decoration:underline;"><i class="fa fa-file-pdf-o"></i> ResumeMedis_{{dataSelected.nocm}}.pdf</a></td></tr>
+            </table>
+            
+            <div class="grid_12" style="text-align: right; border-top:1px solid #ccc; padding-top:15px; margin-top:10px;">
+                <button class="k-button" style="background-color: #f1c40f; color: #fff; padding: 5px 15px;" ng-click="tutupKonfirmasi()"><i class="fa fa-times"></i> Batal</button>
+                <button class="k-button" style="background-color: #25D366; color: #fff; margin-left: 10px; padding: 5px 15px;" ng-click="lanjutKirimWa()"><i class="fa fa-paper-plane"></i> Ya, Kirim Sekarang</button>
+            </div>
+        </div>
+    </div>
+</div>

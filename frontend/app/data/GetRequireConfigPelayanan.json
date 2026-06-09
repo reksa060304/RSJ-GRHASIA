@@ -3980,6 +3980,10 @@
         {
             "nameDep": "FormulirMPPRev03Ctrl",
             "urlDep": "module/EMR/FormulirMPPRev03Ctrl"
+        },
+        {
+            "nameDep": "KirimWaResumeCtrl",
+            "urlDep": "module/EMR/KirimWaResumeCtrl"
         }
     ]
 }

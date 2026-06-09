@@ -22010,6 +22010,26 @@
         "define": "RekamMedisCtrl"
       }
     ]
+  },
+  {
+    "name": "KirimWaResume",
+    "url": "/S2lyaW1XYVJlc3VtZQ==",
+    "templateurl": "module/EMR/KirimWaResume.html",
+    "controller": "KirimWaResumeCtrl",
+    "deps": [
+      {
+        "module": "Services",
+        "define": "Service"
+      },
+      {
+        "module": "LoginServices",
+        "define": "LoginService"
+      },
+      {
+        "module": "MedifirstService",
+        "define": "MedifirstService"
+      }
+    ]
   }
 ]
 

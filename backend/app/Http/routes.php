@@ -71,6 +71,10 @@ Route::group(['middleware' => 'cors', 'prefix' => 'service'], function () {
         Route::get('perencanaan/get-pengembalian-belanja', 'Perencanaan\PerencanaanController@getPengembalianBelanja');
         Route::get('perencanaan/get-pengembalian-belanja-bynorec', 'Perencanaan\PerencanaanController@getPengembalianBelanjaByNorec');
         Route::post('perencanaan/hapus-pengembalian-belanja', 'Perencanaan\PerencanaanController@hapusPengembalianBelanja');
+        
+        // ── Kirim WA Resume Medis
+        Route::get('emr/get-daftar-pasien-resume', 'EMR\\WaResumeController@getDaftarPasienResume');
+        Route::post('emr/send-wa-resume', 'EMR\\WaResumeController@sendWaResume');
 
         // Start Verif HAIS Route-------------------------------------------------------------------------------------------
         Route::get('verif-hais/get-bundlehais', 'EMR\BundleHaisController@getBundleHais');
@@ -3901,6 +3905,7 @@ Route::group(['middleware' => 'cors', 'prefix' => 'service'], function () {
         Route::get('report/cetak-cppt-ranap','Report\ReportController@cetakCPPTRanap');
         Route::get('report/get-cetak-suratkgb', 'Report\ReportController@cetakKGB');
         Route::get('report/get-cetak-suratkgblama', 'Report\ReportController@cetakKGBlama');
+        Route::get('report/cetak-resume-medis-v3-publik','Report\ReportController@cetakResumeV3Publik');
 
         Route::get('report/get-cetak-suratkgbPPPK', 'Report\ReportController@cetakKGBPPPK');
 

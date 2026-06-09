@@ -24022,7 +24022,9 @@ public function suratBuktiPengembalian(Request $request)
         return $pdf->stream();
         // return view('report.resume-medis',compact('res','username'));
     }
-    
+
+   
+
     public function pengajuanTTE(Request $request)
     {
         $kdProfile = 30;
@@ -34562,5 +34564,243 @@ public function suratBuktiPengembalian(Request $request)
         return $pdf->stream();
     }
 
+    public function cetakResumeV3Publik(Request $r)
+    {
+        if ($r->has('token')) {
+            $token = $r->input('token');
+            $parts = explode('.', $token);
+            if (count($parts) === 2) {
+                $payload = $parts[0];
+                $signature = $parts[1];
+                $secretKey = env('APP_KEY', 'some-random-fallback-key-123!');
+                $expectedSignature = hash_hmac('sha256', $payload, $secretKey);
+                
+                if (hash_equals($expectedSignature, $signature)) {
+                    $decoded = base64_decode($payload);
+                    $dataParts = explode('|', $decoded);
+                    if (count($dataParts) === 3) {
+                        $norec = $dataParts[0];
+                        $expires = (int)$dataParts[1];
+                        $kdProfile = (int)$dataParts[2];
+                        
+                        if (time() > $expires) {
+                            return response('<html><head><title>Link Kedaluwarsa</title></head><body style="font-family:sans-serif; text-align:center; padding:50px;"><h1 style="color:#e74c3c;">Link Telah Kedaluwarsa</h1><p>Maaf, link akses resume medis ini sudah tidak berlaku lagi (melebihi batas waktu 7 hari).</p></body></html>', 403);
+                        }
+                        
+                        $r->merge([
+                            'norec' => $norec,
+                            'kdprofile' => $kdProfile
+                        ]);
+                    } else {
+                        return response('<h1>Link Tidak Valid (Payload tidak cocok)</h1>', 403);
+                    }
+                } else {
+                    return response('<h1>Link Tidak Valid (Tanda tangan digital tidak cocok)</h1>', 403);
+                }
+            } else {
+                return response('<h1>Link Tidak Valid (Format token salah)</h1>', 403);
+            }
+        } else {
+            return response('<h1>Akses Ditolak</h1><p>Akses memerlukan token valid.</p>', 403);
+        }
+
+        // Dapatkan pegawaittd secara otomatis berdasarkan pembuat resume medis
+        $resumeInfo = \DB::table('resumemedis_t')
+            ->where('norec', $r['norec'])
+            ->where('kdprofile', $r['kdprofile'])
+            ->first();
+        if ($resumeInfo && !empty($resumeInfo->pegawaifk)) {
+            $r->merge(['pegawaittd' => $resumeInfo->pegawaifk]);
+        }
+
+        $res['profile'] = Profile::where('id', $r['kdprofile'])->first();
+        $data = \DB::table('resumemedis_t as rm')
+            ->select('rm.norec', 'rm.tglresume', 'ru.namaruangan', 'pg.namalengkap as namadokter','rm.indikasi','rm.lainlain',
+                'rm.ringkasanriwayatpenyakit', 'rm.pemeriksaanfisik', 'rm.pemeriksaanpenunjang','rm.riwayatlalu',
+                'rm.hasilkonsultasi', 'rm.terapi', 'rm.diagnosisawal', 'rm.diagnosissekunder', 'rm.tindakanprosedur',
+                'rm.tglmasuk', 'rm.tglpulang','rm.ralergi','rm.terapi','rm.edukasi','rm.rkeadaankeluar','rm.rujuk','rm.rcarapulang',
+                'rm.wisma','rm.kelas','rm.hasilfisik','rm.hasilpsikiatri','rm.hasilpenunjang','rm.hasilpenunjang','rm.terapipulang',
+                'rm.axis2','rm.axis3','rm.axis4','rm.axis5','rm.kontrolklinik','rm.kondisiwaktukeluare','rm.instruksianjuran',
+                'rm.kddiagnosisawal', 'rm.diagnosismasuk', 'rm.kddiagnosismasuk', 'rm.diagnosistambahan', 'rm.kddiagnosistambahan', 'rm.kddiagnosistambahan2', 'rm.kddiagnosistambahan3', 'rm.kddiagnosistambahan4', 'rm.alasandirawat',
+                'dg1.kddiagnosa as kddiagnosa1', 'dg1.namadiagnosa as namadiagnosa1',
+                'dg2.kddiagnosa as kddiagnosa2', 'dg2.namadiagnosa as namadiagnosa2',
+                'dg3.kddiagnosa as kddiagnosa3', 'dg3.namadiagnosa as namadiagnosa3',
+                'dg4.kddiagnosa as kddiagnosa4', 'dg4.namadiagnosa as namadiagnosa4',
+                'dg5.kddiagnosa as kddiagnosa5', 'dg5.namadiagnosa as namadiagnosa5',
+                'dg6.kddiagnosa as kddiagnosa6', 'dg6.namadiagnosa as namadiagnosa6',
+                'rm.tglkontrolpoli', 'rm.rumahsakittujuan',
+                'rm.alergi', 'rm.diet', 'rm.instruksianjuran', 'rm.hasillab',
+                'rm.kondisiwaktukeluar', 'rm.pengobatandilanjutkan', 'rm.koderesume',
+                'rm.pegawaifk','rm.pasien',
+                'pd.noregistrasi', 'pd.tglregistrasi', 'ps.nocm', 'rm.noregistrasifk',
+                'ps.namapasien','kp.kelompokpasien','ru.namaruangan','jk.jeniskelamin','ps.tgllahir')
+            ->leftJoin('antrianpasiendiperiksa_t as apd', 'apd.norec', '=', 'rm.noregistrasifk')
+            ->leftJoin('pasiendaftar_t as pd', 'pd.norec', '=', 'apd.noregistrasifk')
+            ->leftJoin('kelompokpasien_m as kp', 'kp.id', '=', 'pd.objectkelompokpasienlastfk')
+            ->leftJoin('pasien_m as ps', 'ps.id', '=', 'pd.nocmfk')
+            ->leftJoin('jeniskelamin_m as jk', 'jk.id', '=', 'ps.objectjeniskelaminfk')
+            ->leftJoin('ruangan_m as ru', 'ru.id', '=', 'apd.objectruanganfk')
+            ->leftJoin('pegawai_m as pg', 'pg.id', '=', 'rm.pegawaifk')
+            ->leftJoin('diagnosa_m as dg1', 'dg1.id', '=', 'rm.kddiagnosismasuk')
+            ->leftJoin('diagnosa_m as dg2', 'dg2.id', '=', 'rm.kddiagnosisawal')
+            ->leftJoin('diagnosa_m as dg3', 'dg3.id', '=', 'rm.kddiagnosistambahan')
+            ->leftJoin('diagnosa_m as dg4', 'dg4.id', '=', 'rm.kddiagnosistambahan2')
+            ->leftJoin('diagnosa_m as dg5', 'dg5.id', '=', 'rm.kddiagnosistambahan3')
+            ->leftJoin('diagnosa_m as dg6', 'dg6.id', '=', 'rm.kddiagnosistambahan4')
+            ->where('rm.kdprofile', $r['kdprofile'])
+            ->where('rm.statusenabled', true)
+            ->where('rm.norec', $r['norec']);
+
+        $data = $data->first();
+        if (!$data) {
+            return response('<h1>Data Resume Medis Tidak Ditemukan</h1><p>Maaf, data resume medis dengan parameter tersebut tidak ditemukan di sistem.</p>', 404);
+        }
+        $item = $data;
+        $data5lab = DB::select(DB::raw("
+        SELECT pp.tglpelayanan, hl.detailpemeriksaan, hl.flag, hl.hasil FROM hasillaboratorium_t hl 
+        inner join pelayananpasien_t pp on pp.norec = hl.norecpelayanan
+        inner join antrianpasiendiperiksa_t apd on apd.norec = pp.noregistrasifk
+        inner join pasiendaftar_t pd on pd.norec = apd.noregistrasifk
+        where pd.noregistrasi = '$item->noregistrasi' and hl.flag = 'Y' and hl.kdprofile = 30 and hl.statusenabled = true and pp.statusenabled = true
+        "));
+        $data5rad = DB::select(DB::raw("
+        SELECT hr.keterangan FROM hasilradiologi_t hr 
+        INNER join pelayananpasien_t pp on pp.norec = hr.pelayananpasienfk
+        inner join antrianpasiendiperiksa_t apd on apd.norec = pp.noregistrasifk
+        inner join pasiendaftar_t pd on pd.norec = apd.noregistrasifk
+        where pd.noregistrasi = '$item->noregistrasi'
+        "));
+
+        $details = DB::select(DB::raw("
+               select * from resumemedisdetail_t
+               where resumefk=:norec"),
+            array(
+                'norec' => $item->norec,
+            )
+        );
+        $diagnosistambahanarray = array($item->kddiagnosa3, $item->kddiagnosa4, $item->kddiagnosa5, $item->kddiagnosa6);
+        $diagnosistambahan = [];
+        $no = 0;
+        foreach ($diagnosistambahanarray as $tambahan){
+            if($tambahan != "") {
+                $diagnosistambahan[$no] = $tambahan;
+                $no++;
+            }
+        }
+
+        $result= array(
+            'norec' => $item->norec,
+            'kelompokpasien' => $item->kelompokpasien,
+            'tglresume' => $item->tglresume,
+            'namaruangan' => $item->namaruangan,
+            'namadokter' => $item->namadokter,
+            'indikasi' => $item->indikasi,
+            'rujuk' => $item->rujuk,
+            'lainlain' => $item->lainlain,
+            'ralergi' => $item->ralergi,
+            'riwayatlalu' => $item->riwayatlalu,
+            'ringkasanriwayatpenyakit' => $item->ringkasanriwayatpenyakit,
+            'pemeriksaanfisik' => $item->pemeriksaanfisik,
+            'pemeriksaanpenunjang' => $item->pemeriksaanpenunjang,
+            'tglmasuk' => $item->tglmasuk,
+            'tglpulang' => $item->tglpulang,
+            'wisma' => $item->wisma,
+            'rcarapulang' => $item->rcarapulang,
+            'kelas' => $item->kelas,
+            'instruksianjuran' => $item->instruksianjuran,
+            'hasilfisik' => $item->hasilfisik,
+            'hasilpsikiatri' => $item->hasilpsikiatri,
+            'hasilpenunjang' => $item->hasilpenunjang,
+            'terapipulang' => $item->terapipulang,
+            'axis2' => $item->axis2,
+            'axis3' => $item->axis3,
+            'axis4' => $item->axis4,
+            'axis5' => $item->axis5,
+            'kontrolklinik' => $item->kontrolklinik,
+            'kondisiwaktukeluare' => $item->kondisiwaktukeluare,
+            'hasilkonsultasi' => $item->hasilkonsultasi,
+            'terapi' => $item->terapi,
+            'rkeadaankeluar' => $item->rkeadaankeluar,
+            'edukasi' => $item->edukasi,
+            'diagnosismasuk' => $item->diagnosismasuk,
+            'kddiagnosismasuk' => array($item->kddiagnosismasuk  != null ? $item->kddiagnosismasuk : '-', $item->kddiagnosa1, $item->namadiagnosa1!= null ? $item->namadiagnosa1 : '-'),
+            'diagnosisawal' => $item->diagnosisawal,
+            'kddiagnosisawal' => array($item->kddiagnosisawal, $item->kddiagnosa2,  $item->namadiagnosa2),
+            'diagnosistambahan' => $item->diagnosistambahan,
+            'kddiagnosistambahan' => array($item->kddiagnosistambahan, $item->kddiagnosa3,  $item->namadiagnosa3),
+            'kddiagnosistambahan2' => array($item->kddiagnosistambahan2, $item->kddiagnosa4,  $item->namadiagnosa4),
+            'kddiagnosistambahan3' => array($item->kddiagnosistambahan3, $item->kddiagnosa5,  $item->namadiagnosa5),
+            'kddiagnosistambahan4' => array($item->kddiagnosistambahan4, $item->kddiagnosa6,  $item->namadiagnosa6),
+            'kddiagnosistambahanall' => implode(", ", $diagnosistambahan),
+            'diagnosissekunder' => $item->diagnosissekunder,
+            'tglkontrolpoli' => $item->tglkontrolpoli,
+            'rumahsakittujuan' => $item->rumahsakittujuan,
+            'tindakanprosedur' => $item->tindakanprosedur,
+            'alasandirawat' => $item->alasandirawat,
+            'alergi' => $item->alergi,
+            'diet' => $item->diet,
+            'instruksianjuran' => $item->instruksianjuran,
+            'hasillab' => $item->hasillab,
+            'kondisiwaktukeluar' => $item->kondisiwaktukeluar,
+            'pengobatandilanjutkan' => $item->pengobatandilanjutkan,
+            'koderesume' => $item->koderesume,
+            'pegawaifk' => $item->pegawaifk,
+            'noregistrasi' => $item->noregistrasi,
+            'nocm' => $item->nocm,
+            'namapasien' => $item->namapasien,
+            'noregistrasifk' => $item->noregistrasifk,
+            'jeniskelamin'=> $item->jeniskelamin,
+            'tgllahir'=> $item->tgllahir,
+            'pasien'=> $item->pasien,
+            'details' => $details,
+            'data5lab'=> $data5lab,
+            'data5rad'=> $data5rad,
+        );
+        $res['terapi'][] = array('tera' => 'asas');
+        $res['d'] =$result;
+        
+        $peg = DB::table('pegawai_m')
+            ->where('id',$r['pegawaittd'])
+            ->first();
+        
+        $dataSip = DB::table('masaberlakusipstr_t as mbs')
+                ->select('pg.id as idpegawai', 'pg.nama', 'mbs.nosip')
+                ->leftJoin('jenismasaberlakustrsip_m as jmb','jmb.id','=','mbs.jenismasaberlakufk')
+                ->leftJoin('pegawai_m as pg','pg.id','=', 'mbs.pegawaifk')
+                ->leftJoin('unitkerjapegawai_m as uk','uk.id','=','pg.objectunitkerjapegawaifk')
+                ->leftJoin('unitkerjapegawai_m as uk2','uk2.id','=','mbs.subunitkerjafk')
+                ->where('pg.statusenabled',true)
+                ->where('mbs.kdprofile', $r['kdprofile'])
+                ->where('mbs.pegawaifk', $r['pegawaittd'])
+                ->orderBy('mbs.berakhirstr','desc')
+                ->first();
+
+        // cari pdf yang sudah di tte
+        $cekPdf = DB::table('emr_bsre_t')
+            ->where('statusenabled', true)
+            ->where('noregistrasi', trim($result['noregistrasi']))
+            ->where('nocm', $result['nocm'])
+            ->where('nomoremr', $result['koderesume'])
+            ->where('status', true)
+            ->get();
+
+        if(count($cekPdf) > 0){
+            $link = '/service/storage_path?path='.$cekPdf[0]->file.'&filename='.$cekPdf[0]->namafile.'&mimetype=application/pdf';
+            return redirect($link);
+        }
+
+        $username ='asa';
+        $pdf = PDF::loadView(
+            'report.resume-medis-v3',
+            array(
+                'res' => $res,
+                'username'=> $username,
+                'tte' => (isset($r['isttd']) && $r['isttd'] == true) ? 'true' : 'false',
+                'peg' => $peg,
+                'sip' => $dataSip
+            ));
+        
+        return $pdf->stream();
+    }
     //batas
 }
