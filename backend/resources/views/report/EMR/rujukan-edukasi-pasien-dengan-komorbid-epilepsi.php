@@ -123,7 +123,7 @@
         }
 
         body {
-            font-family: 'Arial'
+            font-family: 'Tahoma'
         }
 
         td {
@@ -160,13 +160,18 @@
         .container-edukasi {
             width: 100%;
             box-sizing: border-box;
-            line-height: 1.6;
+            line-height: 1;
+            font-family: Tahoma, Arial, sans-serif !important;
+            font-size: 12pt;
+            text-align: justify;
+            padding: 0 20px;
         }
 
         .container-edukasi h2 {
-            font-size: 1.2em;
+            font-size: 12pt;
+            line-height: 1;
             font-weight: bold;
-            margin-bottom: 20px;
+            text-align: left;
         }
 
         .container-edukasi>ol {
@@ -210,7 +215,7 @@
 </head>
 
 <body class="A4" style="font-family:Tahoma;height: auto">
-    <section style="font-family:Arial;padding:5mm 5mm 5mm 5mm;page-break-after: page;">
+    <section style="font-family:Tahoma;padding:5mm 5mm 5mm 5mm;page-break-after: page;">
         <table cellspacing="0" cellpadding="0" border="0" width="100%">
             <tbody>
                 <tr>
@@ -251,7 +256,7 @@
                 </tr>
         </table>
 
-        <table style="width: 100%; margin-top: 20px;">
+        <table style="width: 100%; margin-top: 20px; margin-left: 20px; font-size: 10.5pt !important;">
             <tr>
                 <td style="width: 20%;">Rumah Sakit</td>
                 <td style="width: 2%;">:</td>
@@ -267,6 +272,7 @@
                 <td>:</td>
                 <td>
                     <?php echo date('d/m/Y', strtotime(isset($item[1901306000]) ? $item[1901306000] : '')); ?>
+                </td>
             </tr>
             <tr>
                 <td>Nama Pasien</td>
@@ -283,17 +289,13 @@
                 <td>:</td>
                 <td>
                     <?php
-                    if (isset($item[1901306003])) {
-                        if ($item[1901306003] == 1) {
+                        if (isset($item[1901306003]) && $item[1901306003] === true) {
                             echo 'Laki-laki';
-                        } elseif ($item[1901306004] == 1) {
+                        } else if (isset($item[1901306004]) && $item[1901306004] === true) {
                             echo 'Perempuan';
                         } else {
                             echo '';
                         }
-                    } else {
-                        echo '';
-                    }
                     ?>
                 </td>
             </tr>
@@ -311,7 +313,7 @@
 
         <div class="container-edukasi">
             <h2>Rekomendasi Edukasi dan Tindak Lanjut di Puskesmas</h2>
-            <ol>
+            <ol style="margin-left: 20px;">
                 <li>Melanjutkan pengobatan anti kejang
                     <p>Pasien agar diberikan edukasi yang jelas dan berkelanjutan tentang pentingnya konsumsi obat anti kejang setiap hari sesuai anjuran, meskipun gejala mulai membaik. Tidak boleh menghentikan obat tiba-tiba karena dapat memicu kejang. Jika lupa minum obat, segera minum begitu teringat. Jangan menggandakan dosis jika sudah mendekati waktu dosis berikutnya.</p>
                 </li>
@@ -385,10 +387,10 @@
             </ol>
         </div>
 
-        <table style="width: 100%;">
+        <table style="width: 100%; margin-top: 20px; margin-right: 20px; font-size: 12pt !important;">
             <tr>
-                <td style="width:60%"></td>
-                <td style="width:40%; text-align: right;">Yogyakarta, <span style="border-bottom: 1px dotted #000;"><?php echo htmlspecialchars(isset($item[1901307160]) ? $item[1901307160] : '', ENT_QUOTES, 'UTF-8'); ?></span></td>
+                <td style="width:50%"></td>
+                <td style="width:50%; text-align: right;">Yogyakarta, <span style="border-bottom: 1px dotted #000;"><?php echo htmlspecialchars(isset($item[1901307160]) ? $item[1901307160] : '', ENT_QUOTES, 'UTF-8'); ?></span></td>
             </tr>
             <tr>
                 <td></td>
@@ -396,7 +398,7 @@
             </tr>
             <tr>
                 <td></td>
-                <td style="text-align: center;"><span ><?php echo htmlspecialchars(isset($item[1901307170]) ? $item[1901307170] : '', ENT_QUOTES, 'UTF-8'); ?></span></td>
+                <td style="text-align: center;"><span><?php echo htmlspecialchars(isset($item[1901307170]) ? $item[1901307170] : '', ENT_QUOTES, 'UTF-8'); ?></span></td>
             </tr>
         </table>
 
