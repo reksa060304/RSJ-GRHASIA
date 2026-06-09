@@ -689,7 +689,7 @@ define(['initialize'], function (initialize) {
                     "detail": [{
                             "id": 3,
                             "nama": "Pemeriksa menyebut 3 benda yang berbeda kelompoknya selang 1 detik (misal apel, uang, meja), responden diminta mengulanginya. Nilai 1 untuk tiap nama benda yang benar. Ulangi sampai responden dapat menyebut-kan dengan benar dan catat jumlah pengulangan",
-                            "max": 4,
+                            "max": 3,
                             "detail": [{
                                 id: 310174,
                             }]
