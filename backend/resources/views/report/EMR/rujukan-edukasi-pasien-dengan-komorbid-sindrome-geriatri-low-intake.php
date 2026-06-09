@@ -247,7 +247,7 @@
                     </td>
                 </tr>
                 <tr>
-                    <th colspan="3" style="padding-top: 20px;">RUJUKAN EDUKASI PASIEN JIWA DENGAN SINDROMA GERIATRI <br> DENGAN LOW INTAKE</th>
+                    <th colspan="3" style="padding-top: 20px;">RUJUKAN EDUKASI PASIEN DENGAN SINDROMA GERIATRI <br> DENGAN LOW INTAKE</th>
                 </tr>
         </table>
 
