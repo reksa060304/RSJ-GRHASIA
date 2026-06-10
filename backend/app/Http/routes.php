@@ -1599,6 +1599,7 @@ Route::group(['middleware' => 'cors', 'prefix' => 'service'], function () {
           Route::get('report/cetak-pengkajian-rajal-nonjiwa','Report\ReportController@cetakPengkajianRajalNonJiwa');
           Route::get('report/cetak-pengkajian-igd','Report\ReportController@cetakPengkajianIGDNonJiwa');
           Route::get('report/cetak-pengkajian-rajal','Report\ReportController@cetakPengkajianRajalJiwa');
+          Route::get('report/cetak-rujukan-edukasi-psikiatri','Report\ReportController@cetakRujukanEdukasiPsikiatri');
           Route::get('report/cetak-rujukan-edukasi-pasien-dengan-komorbid-epilepsi','Report\ReportController@cetakRujukanEdukasiPasienGangguanJiwaDenganKomorbidEpilepsi');
           Route::get('report/cetak-rujukan-edukasi-pasien-dengan-komorbid-sindrome-geriatri-low-intake','Report\ReportController@cetakRujukanEdukasiPasienGangguanJiwaDenganKomorbidSindromeGeriatriLowIntake');
           Route::get('report/cetak-rujukan-edukasi-pasien-dengan-komorbid-tuberculosis','Report\ReportController@cetakRujukanEdukasiPasienGangguanJiwaDenganKomorbidTuberculosis');

@@ -3091,6 +3091,10 @@
             "urlDep": "module/EMR/FormRujukanEdukasiPasienGangguanJiwaDenganKomorbidTuberculosisCtrl"
         },
         {
+            "nameDep": "FormRujukanEdukasiPsikiatriCtrl",
+            "urlDep": "module/EMR/FormRujukanEdukasiPsikiatriCtrl"
+        },
+        {
             "nameDep": "MonitoringTransfusiDarahCtrl",
             "urlDep": "module/EMR/MonitoringTransfusiDarahCtrl"
         },

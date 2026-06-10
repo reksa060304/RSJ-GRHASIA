@@ -1,0 +1,532 @@
+<style type="text/css">
+    .tg {
+        border-collapse: collapse;
+        border-spacing: 0;
+        border-color: #aabcfe;
+    }
+
+    .tg td {
+        font-family: Arial, sans-serif;
+        font-size: 14px;
+        padding: 10px 5px;
+        border-style: solid;
+        border-width: 1px;
+        overflow: hidden;
+        word-break: normal;
+        border-color: #aabcfe;
+        color: #669;
+        background-color: #e8edff;
+    }
+
+    .tg th {
+        font-family: Arial, sans-serif;
+        font-size: 14px;
+        font-weight: normal;
+        padding: 10px 5px;
+        border-style: solid;
+        border-width: 1px;
+        overflow: hidden;
+        word-break: normal;
+        border-color: #aabcfe;
+        color: #039;
+        background-color: #b9c9fe;
+    }
+
+    .tg .tg-yw4l {
+        vertical-align: top
+    }
+
+
+    .rowstyle {
+        border-bottom: 1px dashed lightblue
+    }
+
+    .footer {
+        text-align: center;
+        font-size: 120%;
+        font-weight: 700;
+        margin-bottom: 20px
+    }
+
+    table,
+    th,
+    td {
+        border: 1px solid #777777;
+        border-collapse: collapse;
+    }
+
+    th,
+    td {
+        padding: 5px;
+        text-align: left;
+    }
+
+    /* table {
+        font-family: arial, sans-serif;
+        border-collapse: collapse;
+        width: 40px;
+
+    }
+
+    td,
+    th {
+        border: 1px solid #dddddd;
+        text-align: left;
+        padding: 8px;
+    }
+
+    tr:nth-child(even) {
+        background-color: #dddddd;
+    } */
+    .dot1 {
+        vertical-align: top;
+        height: 50px;
+        width: 50px;
+        background-color: red;
+        border-radius: 50%;
+        display: inline-block;
+    }
+
+    .dot2 {
+        vertical-align: top;
+        height: 50px;
+        width: 50px;
+        background-color: yellow;
+        border-radius: 50%;
+        display: inline-block;
+    }
+
+    .dot3 {
+        vertical-align: top;
+        height: 50px;
+        width: 50px;
+        background-color: green;
+        border-radius: 50%;
+        display: inline-block;
+    }
+
+    .dot4 {
+        vertical-align: top;
+        height: 50px;
+        width: 50px;
+        background-color: black;
+        border-radius: 50%;
+        display: inline-block;
+    }
+  
+       .activeDot:before {
+        content: '\f00c';
+    font-family: 'FontAwesome';
+    display: inline-block;
+    vertical-align: top;
+    line-height: 1em;
+    /* width: 1em; */
+    /* height: 1em; */
+    font-size: 25px;
+    /* margin-right: 0.3em; */
+    text-align: center;
+    color: #ffffff;
+    margin-top: 12px;
+    }
+    .my-disable{
+        pointer-events:none;
+
+    }
+
+    .margin-top{
+        margin-top: 20px;
+    }
+
+    .margin-top-10{
+        margin-top: 10px;
+    }
+
+    .margin-top-30{
+        margin-top: 30px;
+    }
+
+    .text-center{
+        text-align: center;
+    }
+
+    .margin-bottom{
+        margin-bottom: 10px;
+    }
+
+    .text-center{
+        text-align: center;
+    }
+
+    .border-left{
+        border-left: 1px solid black;
+    }
+
+    .border-right{
+        border-right: 1px solid rgba(54, 53, 53, 0.438);
+    }
+
+    .container-edukasi {
+        width: 100%;
+        box-sizing: border-box;
+        line-height: 1.6;
+    }
+
+    .container-edukasi > ol {
+        margin: 0;
+        padding-left: 20px;
+    }
+
+    .container-edukasi > ol > li {
+        font-weight: bold;
+        margin-bottom: 15px;
+    }
+
+    .container-edukasi p {
+        font-weight: normal;
+        margin: 5px 0 10px 0;
+    }
+
+    .container-edukasi ol[type="a"] {
+        font-weight: normal;
+        margin-top: 5px;
+        padding-left: 20px;
+    }
+
+    .container-edukasi ol[type="a"] > li {
+        margin-bottom: 5px;
+    }
+
+    /* Tata letak khusus untuk list ber-icon panah (➢) */
+    .container-edukasi ul.arrow-list {
+        list-style-type: none;
+        padding-left: 20px;
+        margin-top: 5px;
+        margin-bottom: 10px;
+    }
+
+    .container-edukasi ul.arrow-list > li {
+        position: relative;
+        padding-left: 20px;
+        margin-bottom: 3px;
+    }
+
+    .container-edukasi ul.arrow-list > li::before {
+        content: "➢";
+        position: absolute;
+        left: 0;
+        top: 0;
+    }
+
+</style>
+
+ <!-- ng-class="{'my-disable':true}" -->
+<!-- <div class="grid_12"  disable-contents="allDisabled" id="form"> -->
+<div class="grid_12">
+    <div class="grid_12">
+        <div class="grid_12">
+            <fieldset style="margin-top: 50px;">
+                <div class="grid_12 margin-top-30">
+                    <label c-label item="item" style="text-align: center; font-size: 20px;"> <u>RUJUKAN EDUKASI PSIKIATRI</u></label>
+                </div>
+                <div class="grid_12" style="margin-top: 50px;">
+                    <div class="grid_12 margin-top-10 margin-bottom">
+                            <div class="grid_1"></div>
+                            <div class="grid_11">
+                                <label c-label item="item" class="margin-bottom">A. Latar Belakang :</label>
+                            </div>
+                    </div>
+                    <div class="grid_12 margin-top-10 margin-bottom">
+                            <div class="grid_2"></div>
+                            <div class="grid_10">
+                                <input type="checkbox" class="k-checkbox" id="item.obj[1901306001]"
+                                ng-model="item.obj[1901306001]">
+                                <label class="k-checkbox-label" for="item.obj[1901306001]">
+                                    &nbsp;Putus Obat Berulang</label>
+                            </div>
+                            <div class="grid_2"></div>
+                            <div class="grid_10">
+                                <input type="checkbox" class="k-checkbox" id="item.obj[1901306002]"
+                                ng-model="item.obj[1901306002]">
+                                <label class="k-checkbox-label" for="item.obj[1901306002]">
+                                    &nbsp;Risiko Kambuh Ulang</label>
+                            </div>
+                            <div class="grid_2"></div>
+                            <div class="grid_10">
+                                <input type="checkbox" class="k-checkbox" id="item.obj[1901306003]"
+                                ng-model="item.obj[1901306003]">
+                                <label class="k-checkbox-label" for="item.obj[1901306003]">
+                                    &nbsp;Riwayat Perilaku Agresif</label>
+                            </div>
+                            <div class="grid_2"></div>
+                            <div class="grid_10">
+                                <input type="checkbox" class="k-checkbox" id="item.obj[1901306004]"
+                                ng-model="item.obj[1901306004]">
+                                <label class="k-checkbox-label" for="item.obj[1901306004]">
+                                    &nbsp;Riwayat Percobaan Bunuh Diri</label>
+                            </div>
+                            <div class="grid_2"></div>
+                            <div class="grid_10">
+                                <input type="checkbox" class="k-checkbox" id="item.obj[1901306005]"
+                                ng-model="item.obj[1901306005]">
+                                <label class="k-checkbox-label" for="item.obj[1901306005]">
+                                    &nbsp;Dukungan Keluarga Kurang</label>
+                            </div>
+                            <div class="grid_2"></div>
+                            <div class="grid_10">
+                                <input type="checkbox" class="k-checkbox" id="item.obj[1901306006]"
+                                ng-model="item.obj[1901306006]">
+                                <label class="k-checkbox-label" for="item.obj[1901306006]">
+                                    &nbsp;Kepatuhan Kontrol Kurang</label>
+                            </div>
+                            <div class="grid_2"></div>
+                            <div class="grid_10">
+                                <input type="checkbox" class="k-checkbox" id="item.obj[1901306007]"
+                                ng-model="item.obj[1901306007]">
+                                <label class="k-checkbox-label" for="item.obj[1901306007]">
+                                    &nbsp;</label>
+                                <textarea c-text-area type="input" filter="'string'" class="k-textbox" ng-model="item.obj[1901306008]"
+                                    style="height: 30px; width: 90%; "/>
+                            </div>
+                    </div>
+                </div>
+                <div class="grid_12" style="margin-top: 50px;">
+                    <div class="grid_12 margin-top-10 margin-bottom">
+                            <div class="grid_1"></div>
+                            <div class="grid_11">
+                                <label c-label item="item" class="margin-bottom">B. Penilaian Kondisi Pasien Saat Ini :</label>
+                            </div>
+                    </div>
+                    <div class="grid_12 margin-top-10 margin-bottom">
+                            <div class="grid_2"></div>
+                            <div class="grid_10">
+                                <input type="checkbox" class="k-checkbox" id="item.obj[1901306011]"
+                                ng-model="item.obj[1901306011]">
+                                <label class="k-checkbox-label" for="item.obj[1901306011]">
+                                    &nbsp;Stabil</label>
+                            </div>
+                            <div class="grid_2"></div>
+                            <div class="grid_10">
+                                <input type="checkbox" class="k-checkbox" id="item.obj[1901306012]"
+                                ng-model="item.obj[1901306012]">
+                                <label class="k-checkbox-label" for="item.obj[1901306012]">
+                                    &nbsp;Perbaikan</label>
+                            </div>
+                            <div class="grid_2"></div>
+                            <div class="grid_10">
+                                <input type="checkbox" class="k-checkbox" id="item.obj[1901306013]"
+                                ng-model="item.obj[1901306013]">
+                                <label class="k-checkbox-label" for="item.obj[1901306013]">
+                                    &nbsp;Masih Melakukan Pengawasan</label>
+                            </div>
+                            <div class="grid_2"></div>
+                            <div class="grid_10">
+                                <input type="checkbox" class="k-checkbox" id="item.obj[1901306014]"
+                                ng-model="item.obj[1901306014]">
+                                <label class="k-checkbox-label" for="item.obj[1901306014]">
+                                    &nbsp;</label>
+                                <textarea c-text-area type="input" filter="'string'" class="k-textbox" ng-model="item.obj[1901306015]"
+                                    style="height: 30px; width: 90%; "/>
+                            </div>
+                    </div>
+                </div>
+                <div class="grid_12" style="margin-top: 50px;">
+                    <div class="grid_12 margin-top-10 margin-bottom">
+                            <div class="grid_1"></div>
+                            <div class="grid_11">
+                                <label c-label item="item" class="margin-bottom">C. Risiko Yang Masih Ditemukan : </label>
+                            </div>
+                    </div>
+                    <div class="grid_12 margin-top-10 margin-bottom">
+                            <div class="grid_2"></div>
+                            <div class="grid_10">
+                                <input type="checkbox" class="k-checkbox" id="item.obj[1901306021]"
+                                ng-model="item.obj[1901306021]">
+                                <label class="k-checkbox-label" for="item.obj[1901306021]">
+                                    &nbsp;Risiko Putus Obat</label>
+                            </div>
+                            <div class="grid_2"></div>
+                            <div class="grid_10">
+                                <input type="checkbox" class="k-checkbox" id="item.obj[1901306022]"
+                                ng-model="item.obj[1901306022]">
+                                <label class="k-checkbox-label" for="item.obj[1901306022]">
+                                    &nbsp;Risiko Kekambuhan</label>
+                            </div>
+                            <div class="grid_2"></div>
+                            <div class="grid_10">
+                                <input type="checkbox" class="k-checkbox" id="item.obj[1901306023]"
+                                ng-model="item.obj[1901306023]">
+                                <label class="k-checkbox-label" for="item.obj[1901306023]">
+                                    &nbsp;Risiko Perilaku Agresif</label>
+                            </div>
+                            <div class="grid_2"></div>
+                            <div class="grid_10">
+                                <input type="checkbox" class="k-checkbox" id="item.obj[1901306024]"
+                                ng-model="item.obj[1901306024]">
+                                <label class="k-checkbox-label" for="item.obj[1901306024]">
+                                    &nbsp;Risiko Bunuh Diri</label>
+                            </div>
+                            <div class="grid_2"></div>
+                            <div class="grid_10">
+                                <input type="checkbox" class="k-checkbox" id="item.obj[1901306025]"
+                                ng-model="item.obj[1901306025]">
+                                <label class="k-checkbox-label" for="item.obj[1901306025]">
+                                    &nbsp;Risiko Menolak Kontrol</label>
+                            </div>
+                            <div class="grid_2"></div>
+                            <div class="grid_10">
+                                <input type="checkbox" class="k-checkbox" id="item.obj[1901306026]"
+                                ng-model="item.obj[1901306026]">
+                                <label class="k-checkbox-label" for="item.obj[1901306026]">
+                                    &nbsp;</label>
+                                <textarea c-text-area type="input" filter="'string'" class="k-textbox" ng-model="item.obj[1901306027]"
+                                    style="height: 30px; width: 90%; "/>
+                            </div>
+                    </div>
+                </div>
+                <div class="grid_12" style="margin-top: 50px;">
+                    <div class="grid_12 margin-top-10 margin-bottom">
+                            <div class="grid_1"></div>
+                            <div class="grid_11">
+                                <label c-label item="item" class="margin-bottom">D. Kemampuan Keluarga Dalam Merawat Pasien : </label>
+                            </div>
+                    </div>
+                    <div class="grid_12 margin-top-10 margin-bottom">
+                            <div class="grid_2"></div>
+                            <div class="grid_10">
+                                <input type="checkbox" class="k-checkbox" id="item.obj[1901306031]"
+                                ng-model="item.obj[1901306031]">
+                                <label class="k-checkbox-label" for="item.obj[1901306031]">
+                                    &nbsp; Baik</label>
+                            </div>
+                            <div class="grid_2"></div>
+                            <div class="grid_10">
+                                <input type="checkbox" class="k-checkbox" id="item.obj[1901306032]"
+                                ng-model="item.obj[1901306032]">
+                                <label class="k-checkbox-label" for="item.obj[1901306032]">
+                                    &nbsp; Cukup</label>
+                            </div>
+                            <div class="grid_2"></div>
+                            <div class="grid_10">
+                                <input type="checkbox" class="k-checkbox" id="item.obj[1901306033]"
+                                ng-model="item.obj[1901306033]">
+                                <label class="k-checkbox-label" for="item.obj[1901306033]">
+                                    &nbsp; Masih Memerlukan Pendampingan</label>
+                            </div>
+                            <div class="grid_2"></div>
+                            <div class="grid_10">
+                                <input type="checkbox" class="k-checkbox" id="item.obj[1901306035]"
+                                ng-model="item.obj[1901306035]">
+                                <label class="k-checkbox-label" for="item.obj[1901306035]">
+                                    &nbsp;</label>
+                                <textarea c-text-area type="input" filter="'string'" class="k-textbox" ng-model="item.obj[1901306036]"
+                                    style="height: 30px; width: 90%; "/>
+                            </div>
+                    </div>
+                </div>
+                <div class="grid_12" style="margin-top: 50px;">
+                    <div class="grid_12 margin-top-10 margin-bottom">
+                            <div class="grid_1"></div>
+                            <div class="grid_11">
+                                <label c-label item="item" class="margin-bottom">E. Rekomendasi</label>
+                            </div>
+                    </div>
+                    <div class="grid_12 margin-top-10 margin-bottom">
+                            <div class="grid_2"></div>
+                            <div class="grid_10">
+                                <label c-label item="item" class="margin-bottom">Mohon bantuan pihak Puskesmas untuk : </label>
+                            </div>
+                            <div class="grid_2"></div>
+                            <div class="grid_10">
+                                <input type="checkbox" class="k-checkbox" id="item.obj[1901306041]"
+                                ng-model="item.obj[1901306041]">
+                                <label class="k-checkbox-label" for="item.obj[1901306041]">
+                                    &nbsp; Monitoring Kepatuhan Minum Obat</label>
+                            </div>
+                            <div class="grid_2"></div>
+                            <div class="grid_10">
+                                <input type="checkbox" class="k-checkbox" id="item.obj[1901306042]"
+                                ng-model="item.obj[1901306042]">
+                                <label class="k-checkbox-label" for="item.obj[1901306042]">
+                                    &nbsp; Monitoring Tanda Kekambuhan</label>
+                            </div>
+                            <div class="grid_2"></div>
+                            <div class="grid_10">
+                                <input type="checkbox" class="k-checkbox" id="item.obj[1901306043]"
+                                ng-model="item.obj[1901306043]">
+                                <label class="k-checkbox-label" for="item.obj[1901306043]">
+                                    &nbsp; Edukasi Kesehatan Jiwa Lanjutan</label>
+                            </div>
+                            <div class="grid_2"></div>
+                            <div class="grid_10">
+                                <input type="checkbox" class="k-checkbox" id="item.obj[1901306044]"
+                                ng-model="item.obj[1901306044]">
+                                <label class="k-checkbox-label" for="item.obj[1901306044]">
+                                    &nbsp; Pendampingan Kontrol Rutin</label>
+                            </div>
+                            <div class="grid_2"></div>
+                            <div class="grid_10">
+                                <input type="checkbox" class="k-checkbox" id="item.obj[1901306045]"
+                                ng-model="item.obj[1901306045]">
+                                <label class="k-checkbox-label" for="item.obj[1901306045]">
+                                    &nbsp; Home Visit Jika Diperlukan</label>
+                            </div>
+                            <div class="grid_2"></div>
+                            <div class="grid_10">
+                                <input type="checkbox" class="k-checkbox" id="item.obj[1901306046]"
+                                ng-model="item.obj[1901306046]">
+                                <label class="k-checkbox-label" for="item.obj[1901306046]">
+                                    &nbsp; Koordinasi Rujukan Kembali Jika Kondisi Memburuk</label>
+                            </div>
+                            <div class="grid_2"></div>
+                            <div class="grid_10">
+                                <input type="checkbox" class="k-checkbox" id="item.obj[1901306047]"
+                                ng-model="item.obj[1901306047]">
+                                <label class="k-checkbox-label" for="item.obj[1901306047]">
+                                    &nbsp;</label>
+                                <textarea c-text-area type="input" filter="'string'" class="k-textbox" ng-model="item.obj[1901306048]"
+                                    style="height: 30px; width: 90%; "/>
+                            </div>
+                            <div class="grid_2"></div>
+                            <div class="grid_10">
+                                <label c-label item="item" class="margin-bottom">Catatan Tambahan : </label>
+                            </div>
+                            <div class="grid_2"></div>
+                            <div class="grid_10">
+                                <textarea c-text-area type="input" filter="'string'" class="k-textbox" ng-model="item.obj[1901306049]"
+                                    style="height: 70px; width: 100%; "/>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="grid_12 margin-bottom" style="margin-top: 50px;">
+                    <div class="grid_1"></div>
+                    <div class="grid_5"></div>
+                    <div class="grid_1"></div>
+                    <div class="grid_5">
+                        <label c-label item="item">Yogyakarta, </label>
+                        <input style="width: 100%" k-ng-model="item.obj[1901307160]" kendo-datetimepicker
+                            placeholer="yyyy-MM-dd HH:mm" k-format="'yyyy-MM-dd HH:mm'" parsedate="yyyy-MM-dd HH:mm" />
+                    </div>
+                </div>
+                <div class="grid_12 margin-bottom" >
+                    <div class="grid_7"></div>
+                    <div class="grid_5">
+                        <label c-label item="item" style="text-align: center;">DPJP</label>
+                        <input style="width: 100%; text-align: center;" kendo-combo-box k-ng-model="item.obj[1901307170]"
+                        k-data-text-field="'text'" k-data-value-field="'value'" k-filter="'contains'"
+                        k-auto-bind="false" k-data-source="listPegawai" />
+                    </div>
+                </div>
+                <hr></hr>
+            </fieldset>
+        </div>
+    </div>
+</div>
+
+<br />
+<br />
+<div class="grid_12">
+    <div ng-include='"../app/module/EMR/TemplateButtonDinamis" '></div>
+
+</div>

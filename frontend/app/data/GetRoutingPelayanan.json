@@ -17324,6 +17324,29 @@
     ]
   },
   {
+    "name": "RekamMedis.AsesmenMedis.FormRujukanEdukasiPsikiatri",
+    "url": "/FormRujukanEdukasiPsikiatri",
+    "templateurl": "module/EMR/FormRujukanEdukasiPsikiatri.html",
+    "controller": "FormRujukanEdukasiPsikiatriCtrl",
+    "deps": [
+      {
+        "module": "Services",
+        "define": "Service"
+      },
+      {
+        "module": "LoginServices",
+        "define": "LoginService"
+      },
+      {
+        "module": "MedifirstService",
+        "define": "MedifirstService"
+      },
+      {
+        "define": "RekamMedisCtrl"
+      }
+    ]
+  },
+  {
     "name": "RekamMedis.AsesmenMedis.MenuIndex.MonitoringTransfusiDarah",
     "url": "/MonitoringTransfusiDarah/:index/:idEMR",
     "templateurl": "module/EMR/MonitoringTransfusiDarah.html",
