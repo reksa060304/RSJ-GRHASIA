@@ -53,6 +53,7 @@ Route::group(['middleware' => 'cors', 'prefix' => 'service'], function () {
 		Route::get('report/cetak-rba-rekap-subsub', 'Report\ReportController@cetakPerjenisAnggaranV2');
     Route::get('report/cetak-cppt-new', 'Report\ReportController@cetakCPPTNew');
     Route::get('report/cetak-cppt-new-tgl', 'Report\ReportController@cetakCPPTNewPerTgl');
+    Route::get('report/cetak-identitas-pasien', 'Report\ReportController@cetakIdentitasPasien');
 
 		// RBA
 		Route::get('perencanaan/get-total-sisa-anggaran', 'Perencanaan\PerencanaanController@getTotalSisaAnggaran');

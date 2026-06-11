@@ -34125,6 +34125,138 @@ public function suratBuktiPengembalian(Request $request)
 
         return $pdf->stream();
     }
+
+
+    public function cetakIdentitasPasien(Request $request)
+    {
+        $nocm = $request->get('nocm');
+        $kdProfile = (int)$request->get('kdprofile');
+
+        $profile = collect(DB::select("
+            select * from profile_m where statusenabled=true limit 1
+        "))->first();
+
+        $data = collect(DB::select("
+            SELECT 
+                pm.id,
+                pm.nocm,
+                pm.namapasien,
+                pm.tempatlahir,
+                pm.tgllahir,
+                COALESCE(sp.statusperkawinan, '-') AS statusperkawinan,
+                COALESCE(ag.agama, '-') AS agama,
+                COALESCE(pk.pekerjaan, '-') AS pekerjaan,
+                alm.alamatlengkap,
+                alm.namadesakelurahan,
+                alm.kecamatan,
+                alm.kotakabupaten,
+                prop.namapropinsi,
+                alm.kodepos,
+                pm.alamatktr,
+                COALESCE(pm.notelepon, '-') AS notelepon,
+                COALESCE(pm.noidentitas, '-') AS noidentitas,
+                COALESCE(gd.golongandarah, '-') AS golongandarah,
+                COALESCE(pen.pendidikan, '-') AS pendidikan,
+                COALESCE(pm.noasuransilain, '-') AS noasuransilain,
+                COALESCE(pm.nobpjs, '-') AS nobpjs,
+                jk.jeniskelamin,
+                pm.penanggungjawab,
+                pm.hubungankeluargapj,
+                pm.pekerjaanpenangggungjawab,
+                pm.ktppenanggungjawab,
+                pm.alamatrmh,
+                kp.kelompokpasien AS carabayar,
+                pm.foto
+            FROM pasien_m AS pm
+            LEFT JOIN statusperkawinan_m AS sp ON sp.id = pm.objectstatusperkawinanfk
+            LEFT JOIN agama_m AS ag ON ag.id = pm.objectagamafk
+            LEFT JOIN pekerjaan_m AS pk ON pk.id = pm.objectpekerjaanfk
+            LEFT JOIN pendidikan_m AS pen ON pen.id = pm.objectpendidikanfk
+            LEFT JOIN alamat_m AS alm ON alm.nocmfk = pm.id
+            LEFT JOIN propinsi_m AS prop ON prop.id = alm.objectpropinsifk
+            LEFT JOIN golongandarah_m AS gd ON gd.id = pm.objectgolongandarahfk
+            LEFT JOIN jeniskelamin_m AS jk ON jk.id = pm.objectjeniskelaminfk
+            LEFT JOIN (
+                SELECT DISTINCT ON (nocmfk) nocmfk, objectkelompokpasienlastfk 
+                FROM pasiendaftar_t 
+                WHERE statusenabled = true 
+                ORDER BY nocmfk, tglregistrasi DESC
+            ) pd ON pd.nocmfk = pm.id
+            LEFT JOIN kelompokpasien_m AS kp ON kp.id = pd.objectkelompokpasienlastfk
+            WHERE pm.nocm = :nocm
+            LIMIT 1
+        ", ['nocm' => $nocm]))->first();
+
+        if (empty($data)) {
+            return "Pasien dengan No. RM $nocm tidak ditemukan.";
+        }
+
+        $ageStr = '-';
+        if ($data && $data->tgllahir) {
+            $birthDate = new \DateTime($data->tgllahir);
+            $today = new \DateTime();
+            $diff = $today->diff($birthDate);
+            $ageStr = $diff->y . ' thn ' . $diff->m . ' bln ' . $diff->d . ' hari';
+        }
+
+        $fotoData = null;
+        if ($data && isset($data->foto) && $data->foto !== null) {
+            $rawFoto = $data->foto;
+
+            // Handle PostgreSQL bytea stream resource
+            if (is_resource($rawFoto)) {
+                $rawFoto = stream_get_contents($rawFoto);
+            }
+
+            if (is_string($rawFoto) && strlen($rawFoto) > 0) {
+                // Case 1: Already a full data URI (e.g. "data:image/jpeg;base64,/9j/...")
+                if (substr($rawFoto, 0, 5) === 'data:') {
+                    $fotoData = $rawFoto;
+                }
+                // Case 2: Already a base64 string (e.g. "/9j/4AAQSkZJRgAB...")
+                // Base64 chars: A-Z a-z 0-9 + / =
+                // JPEG base64 always starts with /9j/
+                else if (preg_match('/^[A-Za-z0-9+\/]+=*$/', trim($rawFoto)) && base64_decode($rawFoto, true) !== false) {
+                    $fotoData = 'data:image/jpeg;base64,' . trim($rawFoto);
+                }
+                // Case 3: PostgreSQL hex format \x...
+                else if (substr($rawFoto, 0, 2) === '\\x') {
+                    $fotoData = 'data:image/jpeg;base64,' . base64_encode(pack('H*', substr($rawFoto, 2)));
+                }
+                // Case 4: Pure hex string (only 0-9 a-f)
+                else if (preg_match('/^[0-9a-fA-F]+$/', $rawFoto)) {
+                    $fotoData = 'data:image/jpeg;base64,' . base64_encode(pack('H*', $rawFoto));
+                }
+                // Case 5: Raw binary data
+                else {
+                    $fotoData = 'data:image/jpeg;base64,' . base64_encode($rawFoto);
+                }
+            }
+        }
+
+        // Temporarily bypass GD warning for interlaced PNGs
+        set_error_handler(function($errno, $errstr, $errfile, $errline) {
+            if (strpos($errstr, 'imagecreatefrompng') !== false || strpos($errstr, 'libpng') !== false) {
+                return true; // Silence warning, do not let Laravel throw an exception
+            }
+            return false; // Fall back to default error handler
+        });
+
+        try {
+            $pdf = PDF::loadView('report.pendaftaran.cetak-identitas-pasien', array(
+                'data' => $data,
+                'profile' => $profile,
+                'ageStr' => $ageStr,
+                'fotoData' => $fotoData
+            ));
+
+            $response = $pdf->stream();
+        } finally {
+            restore_error_handler();
+        }
+
+        return $response;
+    }
     //batas
 
 }
