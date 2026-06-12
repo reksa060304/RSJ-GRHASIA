@@ -400,8 +400,8 @@
 </div>
 
 <!-- popup cetak -->
-<div kendo-window="popUpsCetak" k-title="titleCetak" k-width="1200" k-height="700" k-visible="false" k-on-open="onOpenPopupCetak()" k-on-close="onClosePopupCetak()">
-    <div id="cetakScrollContainer" style="position: relative; height: 650px; overflow-y: auto; overflow-x: hidden;" oncontextmenu="return false;">
+<div kendo-window="popUpsCetak" k-title="titleCetak" k-width="1200" k-height="700" k-visible="false" k-on-open="onOpenPopupCetak()" k-on-close="onClosePopupCetak()" k-actions="['Minimize', 'Maximize', 'Close']">
+    <div id="cetakScrollContainer" style="position: relative; height: 100%; overflow-y: auto; overflow-x: hidden;" oncontextmenu="return false;">
         <!-- blokir klik kanan -->
         <div id="cetakShield" ng-show="!isIframeLoading" 
              style="position: absolute; top: 0; left: 0; width: 100%; height: 5000px; z-index: 5;"
@@ -409,7 +409,7 @@
         </div>
 
         <!-- Overlay Loading Iframe -->
-        <div ng-show="isIframeLoading" style="position: absolute; top: 0; left: 0; width: 100%; height: 650px; background: rgba(255,255,255,0.8); z-index: 10; display: flex; align-items: center; justify-content: center;">
+        <div ng-show="isIframeLoading" style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: rgba(255,255,255,0.8); z-index: 10; display: flex; align-items: center; justify-content: center;">
             <div style="text-align: center;">
                 <i class="fa fa-spinner fa-spin fa-3x" style="color: #41abf2;"></i>
                 <p style="margin-top: 10px; font-weight: bold;">Menyiapkan Cetakan PDF...</p>
