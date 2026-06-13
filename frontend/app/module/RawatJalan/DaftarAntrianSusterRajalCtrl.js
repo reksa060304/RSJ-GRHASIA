@@ -415,6 +415,13 @@ define(['initialize'], function (initialize) {
 
                     },
                     {
+                        "field": "aktivasi_mpp",
+                        "title": "Aktivasi MPP",
+                        "width": "100px",
+                        "template": '# if( aktivasi_mpp != null && aktivasi_mpp != "" ) {# ✔ # } else {#  #} #'
+
+                    },
+                    {
                         "field": "isonline",
                         "title": "Total Billing",
                         "width": "80px"
@@ -1978,6 +1985,30 @@ define(['initialize'], function (initialize) {
                 medifirstService.post('rawatjalan/save-pasien-kompleks', data).then(function (e) {
                     loadData()
                     $scope.item.isKompleks = false
+                })
+            }
+            $scope.showAktivasiMPP = function () {
+                if ($scope.dataPasienSelected == undefined) {
+                    toastr.error('Pilih data dulu')
+                    return
+                }
+                if ($scope.dataPasienSelected.aktivasi_mpp != null && $scope.dataPasienSelected.aktivasi_mpp !== "") {
+                    toastr.warning('Pasien ini sudah diaktivasi MPP!')
+                    return
+                }
+                $scope.item.keteranganMPP = ''
+                $scope.popUpAktivasiMPP.center().open()
+            }
+
+            $scope.saveAktivasiMPP = function (keterangan) {
+                var data = {
+                    'nocm': $scope.dataPasienSelected.nocm,
+                    'keterangan': keterangan
+                }
+                medifirstService.post('rawatjalan/save-pasien-aktivasi-mpp', data).then(function (e) {
+                    loadData()
+                    $scope.item.keteranganMPP = ''
+                    $scope.popUpAktivasiMPP.close()
                 })
             }
             $scope.konsul = function () {

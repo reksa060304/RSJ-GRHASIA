@@ -2440,6 +2440,7 @@ Route::group(['middleware' => 'cors', 'prefix' => 'service'], function () {
           // GetPegawai function ini harus sama dengan function contoller laporanpegawai2controller
           Route::get('toni/LaporanPegawai2', 'Toni\LaporanPegawai2Contrroller@GetPegawai');
           Route::post('toni/LaporanPegawai2', 'Toni\LaporanPegawai2Contrroller@SimpanPegawai');
+          Route::post('rawatjalan/save-pasien-aktivasi-mpp', 'RawatJalan\RawatJalanController@savePasienAktivasiMPP');
         // });
         // Route::group(['prefix' => 'registrasi'], function () {
             // 2019-12 penambahan arif awal

@@ -435,7 +435,7 @@ $ruangdokter = \DB::table('ruangan_m as ru')
 //                'ps.foto',
                 'apd.norec as norec_apd',
                 'pa.prolanisprb',
-                'ru.ipaddress','ps.iskompleks','apd.residencefk','pg2.namalengkap as residence','pd.tglcheckin'
+                'ru.ipaddress','ps.iskompleks','apd.residencefk','pg2.namalengkap as residence','pd.tglcheckin','ps.aktivasi_mpp'
                 // ,DB::raw('case when pp.noregistrasifk is null then \'false\' else \'true\' end as statuslayanan'))
                 ,DB::raw('case when apd.ispelayananpasien is null then \'false\' else \'true\' end as statuslayanan'))
             // ->whereNull('br.norec')
@@ -4175,5 +4175,40 @@ $ruangdokter = \DB::table('ruangan_m as ru')
         ->get();
 
         return $this->respond($data);
+    }
+
+    public function savePasienAktivasiMPP(Request $request){
+        $kdProfile = $this->getDataKdProfile($request);
+        $idProfile = (int) $kdProfile;
+        DB::beginTransaction();
+        try {
+            $pasien = Pasien::where('nocm', $request['nocm'])
+                ->where('kdprofile', $idProfile)
+                ->update([
+                    'aktivasi_mpp' => $request['keterangan'] 
+                ]
+            );
+
+            $transStatus = 'true';
+            $transMessage = "Sukses";
+        } catch (\Exception $e) {
+            $transStatus = 'false';
+            $transMessage = "simpan Gagal";
+        }
+
+        if ($transStatus != 'false') {
+            DB::commit();
+            $result = array(
+                "status" => 201,
+
+            );
+        } else {
+            DB::rollBack();
+            $result = array(
+                "status" => 400,
+            );
+        }
+
+        return $this->setStatusCode($result['status'])->respond($result, $transMessage);
     }
 }
