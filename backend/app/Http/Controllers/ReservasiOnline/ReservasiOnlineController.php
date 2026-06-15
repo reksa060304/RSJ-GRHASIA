@@ -26,6 +26,7 @@ use DB;
 use App\Transaksi\AntrianPasienRegistrasi;
 use Webpatser\Uuid\Uuid;
 use App\Transaksi\ListNotif;
+use App\Transaksi\LoggingUser;
 
 
 class ReservasiOnlineController extends ApiController
@@ -418,6 +419,21 @@ class ReservasiOnlineController extends ApiController
             $newptp->jamreservasi = $request['jamReservasi']['jam'];
             $newptp->alamatlengkap= $request['alamatLengkap'];
             $newptp->save();
+
+            $newId = LoggingUser::max('id');
+            $newId = $newId + 1;
+            $logUser = new LoggingUser();
+            $logUser->id = $newId;
+            $logUser->norec = $logUser->generateNewId();
+            $logUser->kdprofile = (int) $kdProfile;
+            $logUser->statusenabled = true;
+            $logUser->jenislog = 'Simpan Reservasi';
+            $logUser->noreff = $newptp->norec;
+            $logUser->referensi = 'norec antrianpasienregistrasi_t';
+            $logUser->keterangan = 'Simpan Reservasi Online No Reservasi: ' . $newptp->noreservasi . ' / Pasien: ' . $newptp->namapasien;
+            $logUser->objectloginuserfk = isset($userData['userData']['id']) ? $userData['userData']['id'] : null;
+            $logUser->tanggal = date('Y-m-d H:i:s');
+            $logUser->save();
             $newptp->namaruangan =Ruangan::where('id',$newptp->objectruanganfk )
                                 ->where('kdprofile',(int) $kdProfile )
                                 ->first()->namaruangan;
@@ -473,6 +489,13 @@ class ReservasiOnlineController extends ApiController
                 $objetoRequest ['userData'] = $userData['userData'];
                 $regis = app('App\Http\Controllers\Registrasi\RegistrasiController')->saveRegistrasiPasien($objetoRequest);
                 $regis = json_decode($regis->content(), true);
+
+                if (isset($regis['status']) && $regis['status'] != 201) {
+                    throw new \Exception("Gagal Registrasi Pasien: " . $regis['message']);
+                }
+                if (isset($regis['metadata']['code']) && $regis['metadata']['code'] != 200) {
+                    throw new \Exception("Gagal Registrasi Pasien (JKN): " . $regis['metadata']['message']);
+                }
             }
             
             $transStatus = true;
@@ -637,6 +660,11 @@ class ReservasiOnlineController extends ApiController
     }
     public function deleteReservasi(Request $request)
     {
+        $kdProfile = $this->getDataKdProfile($request);
+        $idProfile = (int) $kdProfile;
+        $dataLogin = $request->all();
+        $tglAyeuna = date('Y-m-d H:i:s');
+
         DB::beginTransaction();
         try {
             $cek = DB::table('antrianpasienregistrasi_t as apr')
@@ -653,9 +681,29 @@ class ReservasiOnlineController extends ApiController
                 return $this->setStatusCode($result['status'])->respond($result, $result['message']);
             }
 
+            $reservasi = AntrianPasienRegistrasi::where('norec', $request['norec'])->first();
+
             AntrianPasienRegistrasi::where('norec',$request['norec'])->update([
                'statusenabled'=>false,
             ]);
+
+            if ($reservasi) {
+                $newId = LoggingUser::max('id');
+                $newId = $newId + 1;
+                $logUser = new LoggingUser();
+                $logUser->id = $newId;
+                $logUser->norec = $logUser->generateNewId();
+                $logUser->kdprofile = $idProfile;
+                $logUser->statusenabled = true;
+                $logUser->jenislog = 'Hapus Reservasi';
+                $logUser->noreff = $request['norec'];
+                $logUser->referensi = 'norec antrianpasienregistrasi_t';
+                $logUser->keterangan = 'Hapus Reservasi Online No Reservasi: ' . $reservasi->noreservasi . ' / Pasien: ' . $reservasi->namapasien;
+                $logUser->objectloginuserfk = isset($dataLogin['userData']['id']) ? $dataLogin['userData']['id'] : null;
+                $logUser->tanggal = $tglAyeuna;
+                $logUser->save();
+            }
+            
             $transStatus = 'true';
 
             $transMessage = "Hapus Reservasi Sukses";
