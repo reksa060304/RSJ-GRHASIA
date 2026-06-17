@@ -81,33 +81,33 @@ define(['initialize'], function (initialize) {
                             arrayShiftJaga3.push(datax)
                         }
                     }
-                    if (element.kodeexternal == 'listeuroqol') {
-                        for (let z = 0; z < arrayShiftJaga4.length; z++) {
-                            const element2 = arrayShiftJaga4[z];
-                            if (element2.namaexternal == element.namaexternal) {
-                                detail.push(element)
-                                element2.details = detail
-                                sama = true
-                            }
-                        }
-                        if (sama == false) {
-                            var datax = {
-                                caption: element.caption,
-                                cbotable: element.cbotable,
-                                child: [],
-                                id: element.id,
-                                kodeexternal: element.kodeexternal,
-                                namaemr: element.namaemr,
-                                namaexternal: element.namaexternal,
-                                nourut: element.nourut,
-                                reportdisplay: element.reportdisplay,
-                                style: element.style,
-                                type: element.type,
+                    // if (element.kodeexternal == 'listeuroqol') {
+                    //     for (let z = 0; z < arrayShiftJaga4.length; z++) {
+                    //         const element2 = arrayShiftJaga4[z];
+                    //         if (element2.namaexternal == element.namaexternal) {
+                    //             detail.push(element)
+                    //             element2.details = detail
+                    //             sama = true
+                    //         }
+                    //     }
+                    //     if (sama == false) {
+                    //         var datax = {
+                    //             caption: element.caption,
+                    //             cbotable: element.cbotable,
+                    //             child: [],
+                    //             id: element.id,
+                    //             kodeexternal: element.kodeexternal,
+                    //             namaemr: element.namaemr,
+                    //             namaexternal: element.namaexternal,
+                    //             nourut: element.nourut,
+                    //             reportdisplay: element.reportdisplay,
+                    //             style: element.style,
+                    //             type: element.type,
 
-                            }
-                            arrayShiftJaga4.push(datax)
-                        }
-                    }
+                    //         }
+                    //         arrayShiftJaga4.push(datax)
+                    //     }
+                    // }
                     if (element.kodeexternal == 'listdata') {
                         for (let z = 0; z < arrayShiftJaga.length; z++) {
                             const element2 = arrayShiftJaga[z];
@@ -1033,141 +1033,141 @@ define(['initialize'], function (initialize) {
             ]
 
 
-$scope.listeuroqol = [
-                {
-                    "id": 1,
-                    "nama": "1. MOBILITAS",
-                    "detail": [{
-                            "id": 1,
-                            "nama": "Saya tidak mempunyai masalah untuk berjalan",
-                            "detail": [{
-                                id: 310224,
-                            }]
-                        },
-                        {
-                            "id": 2,
-                            "nama": "Saya ada masalah untuk berjalan",
-                            "detail": [{
-                                id: 310225,
-                            }]
-                        },
-                        {
-                            "id": 3,
-                            "nama": "Saya hanya mampu berbaring",
-                            "detail": [{
-                                id: 310226,
-                            }]
-                        },
-                    ]
-                },
-                {
-                    "id": 2,
-                    "nama": "2. PERAWATAN DIRI SENDIRI",
-                    "detail": [{
-                            "id": 1,
-                            "nama": "Saya tidak mempunyai kesulitan dalam perawatan diri sendiri",
-                            "detail": [{
-                                id: 310228,
-                            }]
-                        },
-                        {
-                            "id": 2,
-                            "nama": "Saya mengalami kesulitan untuk membasuh badan, mandi atau berpakaian",
-                            "detail": [{
-                                id: 310229,
-                            }]
-                        },
-                        {
-                            "id": 3,
-                            "nama": "Saya tidak mampu membasuh badan, mandi atau berpakaian sendiri",
-                            "detail": [{
-                                id: 310230,
-                            }]
-                        },
-                    ]
-                },
-                {
-                    "id": 3,
-                    "nama": "3. AKTIVITAS SEHARI-HARI (misalnya pekerjaan rumah tangga, aktivitas keluarga, bersantai)",
-                    "detail": [{
-                        "id": 1,
-                        "nama": "Saya tak mempunyai kesulitan dalam melaksanakan kegiatan sehari-hari",
-                        "max": 5,
-                        "detail": [{
-                            id: 310232,
-                        }]
-                    },
-                    {
-                        "id": 2,
-                        "nama": "Saya mempunyai keterbatasan dalam melaksanakan kegiatan sehari-hari",
-                        "detail": [{
-                            id: 310233,
-                        }]
-                    },
-                    {
-                        "id": 3,
-                        "nama": "Saya tak mampu melaksanakan kegiatan sehari-hari",
-                        "detail": [{
-                            id: 310234,
-                        }]
-                    },
-                 ]
-                },
-                {
-                    "id": 4,
-                    "nama": "4. RASA NYERI / TAK NYAMAN",
-                    "detail": [{
-                        "id": 1,
-                        "nama": "Saya tidak mempunyai keluhan rasa nyeri atau rasa tak nyaman",
-                        "max": 3,
-                        "detail": [{
-                            id: 310236,
-                        }]
-                    },
-                    {
-                        "id": 2,
-                        "nama": "Saya suka merasakan agak nyeri atau agak kurang nyaman",
-                        "detail": [{
-                            id: 310237,
-                        }]
-                    },
-                    {
-                        "id": 3,
-                        "nama": "Saya menderita karena keluhan rasa nyeri atau tidak nyaman",
-                        "detail": [{
-                            id: 310238,
-                        }]
-                    }, ]
-                },
-                {
-                    "id": 5,
-                    "nama": "5. RASA CEMAS / DEPRESI",
-                    "detail": [{
-                        "id": 1,
-                        "nama": "Saya tidak merasa cemas/gelisah atau depresi (jiwa tertekan)",
-                        "max": 2,
-                        "detail": [{
-                            id: 310240,
-                        }]
-                    }, {
-                        "id": 2,
-                        "nama": "Saya suka merasa agak cemas atau depresi",
-                        "max": 1,
-                        "detail": [{
-                            id: 310241,
-                        }]
-                    },
-                    {
-                        "id": 3,
-                        "nama": "Saya merasa sangat cemas atau sangat depresi",
-                        "max": 3,
-                        "detail": [{
-                            id: 310242,
-                        }]
-                    },
-                ]
-                },
-            ]
+// $scope.listeuroqol = [
+//                 {
+//                     "id": 1,
+//                     "nama": "1. MOBILITAS",
+//                     "detail": [{
+//                             "id": 1,
+//                             "nama": "Saya tidak mempunyai masalah untuk berjalan",
+//                             "detail": [{
+//                                 id: 310224,
+//                             }]
+//                         },
+//                         {
+//                             "id": 2,
+//                             "nama": "Saya ada masalah untuk berjalan",
+//                             "detail": [{
+//                                 id: 310225,
+//                             }]
+//                         },
+//                         {
+//                             "id": 3,
+//                             "nama": "Saya hanya mampu berbaring",
+//                             "detail": [{
+//                                 id: 310226,
+//                             }]
+//                         },
+//                     ]
+//                 },
+//                 {
+//                     "id": 2,
+//                     "nama": "2. PERAWATAN DIRI SENDIRI",
+//                     "detail": [{
+//                             "id": 1,
+//                             "nama": "Saya tidak mempunyai kesulitan dalam perawatan diri sendiri",
+//                             "detail": [{
+//                                 id: 310228,
+//                             }]
+//                         },
+//                         {
+//                             "id": 2,
+//                             "nama": "Saya mengalami kesulitan untuk membasuh badan, mandi atau berpakaian",
+//                             "detail": [{
+//                                 id: 310229,
+//                             }]
+//                         },
+//                         {
+//                             "id": 3,
+//                             "nama": "Saya tidak mampu membasuh badan, mandi atau berpakaian sendiri",
+//                             "detail": [{
+//                                 id: 310230,
+//                             }]
+//                         },
+//                     ]
+//                 },
+//                 {
+//                     "id": 3,
+//                     "nama": "3. AKTIVITAS SEHARI-HARI (misalnya pekerjaan rumah tangga, aktivitas keluarga, bersantai)",
+//                     "detail": [{
+//                         "id": 1,
+//                         "nama": "Saya tak mempunyai kesulitan dalam melaksanakan kegiatan sehari-hari",
+//                         "max": 5,
+//                         "detail": [{
+//                             id: 310232,
+//                         }]
+//                     },
+//                     {
+//                         "id": 2,
+//                         "nama": "Saya mempunyai keterbatasan dalam melaksanakan kegiatan sehari-hari",
+//                         "detail": [{
+//                             id: 310233,
+//                         }]
+//                     },
+//                     {
+//                         "id": 3,
+//                         "nama": "Saya tak mampu melaksanakan kegiatan sehari-hari",
+//                         "detail": [{
+//                             id: 310234,
+//                         }]
+//                     },
+//                  ]
+//                 },
+//                 {
+//                     "id": 4,
+//                     "nama": "4. RASA NYERI / TAK NYAMAN",
+//                     "detail": [{
+//                         "id": 1,
+//                         "nama": "Saya tidak mempunyai keluhan rasa nyeri atau rasa tak nyaman",
+//                         "max": 3,
+//                         "detail": [{
+//                             id: 310236,
+//                         }]
+//                     },
+//                     {
+//                         "id": 2,
+//                         "nama": "Saya suka merasakan agak nyeri atau agak kurang nyaman",
+//                         "detail": [{
+//                             id: 310237,
+//                         }]
+//                     },
+//                     {
+//                         "id": 3,
+//                         "nama": "Saya menderita karena keluhan rasa nyeri atau tidak nyaman",
+//                         "detail": [{
+//                             id: 310238,
+//                         }]
+//                     }, ]
+//                 },
+//                 {
+//                     "id": 5,
+//                     "nama": "5. RASA CEMAS / DEPRESI",
+//                     "detail": [{
+//                         "id": 1,
+//                         "nama": "Saya tidak merasa cemas/gelisah atau depresi (jiwa tertekan)",
+//                         "max": 2,
+//                         "detail": [{
+//                             id: 310240,
+//                         }]
+//                     }, {
+//                         "id": 2,
+//                         "nama": "Saya suka merasa agak cemas atau depresi",
+//                         "max": 1,
+//                         "detail": [{
+//                             id: 310241,
+//                         }]
+//                     },
+//                     {
+//                         "id": 3,
+//                         "nama": "Saya merasa sangat cemas atau sangat depresi",
+//                         "max": 3,
+//                         "detail": [{
+//                             id: 310242,
+//                         }]
+//                     },
+//                 ]
+//                 },
+//             ]
             $scope.listgds = [
                 {
                     "id": 1,
