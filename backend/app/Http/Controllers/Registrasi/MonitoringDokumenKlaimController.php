@@ -73,6 +73,8 @@ class MonitoringDokumenKlaimController extends ApiController
         $depid = 18;
         if($ruangan->objectdepartemenfk == 16){
             $depid = 16;
+        } else if ($ruangan->objectdepartemenfk == 24){
+            $depid = 24;
         }
 
         $dataDokumen = DB::table('dokklaim_t as mk')
