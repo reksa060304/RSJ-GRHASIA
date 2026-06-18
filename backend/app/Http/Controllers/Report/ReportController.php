@@ -3170,6 +3170,162 @@ class ReportController extends ApiController{
         // return view('report.EMR.suratketerangangawatdarurat',compact('data','pageWidth'));
     }
 
+    public function CetakSuratMan(Request $request)
+    {   
+        $norec = $request['emr'];
+        $kdProfile = (int) $request['kdprofile'];
+        $kodeAwalSurat = $this->settingDataFixed('KodeAwalSurat', $kdProfile);
+        $kodeAkhirSurat = $this->settingDataFixed('KodeAkhirSurat', $kdProfile);
+        $data = DB::select(DB::raw("
+        SELECT
+            epd.emrdfk,
+            epd.emrfk,
+            ep.noemr,
+            ed.TYPE,
+            pa.namapasien,
+            pa.tgllahir,
+            pa.nohp,
+            pa.nocm,
+            ep.jeniskelamin,
+            ep.umur,
+            al.alamatlengkap,
+            ep.noregistrasifk as noregistrasi ,
+            epd.value,ep.namaruangan,pg.namalengkap as namadokter
+            --case when ed.TYPE = 'datetime' then TO_CHAR(TO_TIMESTAMP(epd.value, 'YYYY-MM-DD HH24:MI:SS'),'YYYY-MM-DD HH24:MI:SS') else epd.value end as value
+        FROM
+            emrpasien_t AS ep
+            INNER JOIN emrpasiend_t AS epd ON ep.noemr = epd.emrpasienfk
+            INNER JOIN emrd_t AS ed ON epd.emrdfk = ed.ID
+                INNER JOIN antrianpasiendiperiksa_t AS pd ON pd.norec = ep.norec_apd
+            left JOIN pegawai_m AS pg ON pg.id = pd.objectpegawaifk
+            left JOIN pasien_m as pa on ep.nocm =  pa.nocm
+            left JOIN alamat_m as al on pa.id = al.nocmfk
+        WHERE
+            ep.norec = '$norec'
+                AND ep.kdprofile = '$kdProfile' 
+            AND epd.statusenabled = TRUE 
+            and epd.emrfk = ".$request['emrfk']."
+        ORDER BY
+            ed.nourut
+            "
+        ));
+        $dataimg = DB::table('emrfoto_t as emrp')
+                ->select('emrp.*')
+                ->where('emrp.statusenabled', true)
+                ->where('emrp.kdprofile', $kdProfile) 
+                ->where('emrp.noemrpasienfk', $request['noemr']) 
+                ->where('emrp.emrfk', $request['emrfk']) 
+                ->get();
+
+        $res['profile'] = Profile::where('id',$request['kdprofile'])->first();
+        $res['d'] = $data;
+        $item =[];   
+        $item2= [];      
+        foreach( $res['d'] as $items){
+                if($items->type  ==  "textbox" ||$items->type  ==  "textarea"  ){
+                    $item[$items->emrdfk] =  $items->value;
+                }
+                if($items->type  ==  "datetime"){
+                    // $item[$items->emrdfk] = $this->tanggal_indonesia(date('Y-m-d H:i:s',strtotime( $items->value))) ;
+                    $item[$items->emrdfk] = date('Y-m-d H:i',strtotime( $items->value));
+                }
+                if($items->type  ==  "time"){
+                    $item[$items->emrdfk] = date('H:i',strtotime( $items->value));
+                }
+                if($items->type  ==  "date"){
+                    $item[$items->emrdfk] = date('Y-m-d',strtotime( $items->value));
+                }
+                if($items->type  ==  "checkboxtextbox"){
+                    $item[$items->emrdfk] =  $items->value;
+                    $item2[$items->emrdfk] =  true;
+                }
+                if($items->type == "checkbox") {
+                    $chekedd = false;
+                    if ($items->value == '1') {
+                        $chekedd = true;
+                    }
+                    $item[$items->emrdfk] = $chekedd;
+                }
+                if($items->type == "combobox") {
+                    $arr = explode('~',$items->value );
+                    $item[$items->emrdfk] = $arr[1];
+                }
+        }
+        $pageWidth = 550;
+
+        $peg = null;
+        $dataSip = null;
+        if(isset($request['pegawaittd']) && $request['pegawaittd'] != '') {
+            $peg = DB::table('pegawai_m')
+                ->where('id',$request['pegawaittd'])
+                ->first();
+            
+            $dataSip = DB::table('masaberlakusipstr_t as mbs')
+                    ->select('pg.id as idpegawai', 'pg.nama', 'mbs.nosip')
+                    ->leftJoin('jenismasaberlakustrsip_m as jmb','jmb.id','=','mbs.jenismasaberlakufk')
+                    ->leftJoin('pegawai_m as pg','pg.id','=', 'mbs.pegawaifk')
+                    ->leftJoin('unitkerjapegawai_m as uk','uk.id','=','pg.objectunitkerjapegawaifk')
+                    ->leftJoin('unitkerjapegawai_m as uk2','uk2.id','=','mbs.subunitkerjafk')
+                    ->where('pg.statusenabled',true)
+                    ->where('mbs.kdprofile', $kdProfile)
+                    ->where('mbs.pegawaifk', $request['pegawaittd'])
+                    ->orderBy('mbs.berakhirstr','desc')
+                    ->first();
+        }
+
+        // Cek apa sudah ada tte
+        if(count($data) > 0) {
+            $cekPdf = DB::table('emr_bsre_t')
+                ->where('statusenabled', true)
+                ->where('noregistrasi', trim($data[0]->noregistrasi))
+                ->where('nocm', $data[0]->nocm)
+                ->where('nomoremr', $data[0]->noemr)
+                ->where('emrfk', $data[0]->emrfk)
+                ->where('status', true)
+                ->get();
+
+            if(count($cekPdf) > 0 && (!isset($request['isttd']) || $request['isttd'] == 'false')){
+                $filePath = storage_path($cekPdf[0]->file);
+                if (file_exists($filePath)) {
+                    $link = '/service/storage_path?path='.$cekPdf[0]->file.'&filename='.$cekPdf[0]->namafile.'&mimetype=application/pdf';
+                    return redirect($link);
+                }
+            }
+        }
+
+        $pdf = PDF::loadView(
+            'report.EMR.'. $request['blade'],
+            array(
+                'res' => $res,
+                'pageWidth' => $pageWidth,
+                'data' => $data,
+                'item'=> $item,
+                'dataimg'=> $dataimg,
+                'peg'=> $peg,
+                'tte' => (isset($request['isttd']) && $request['isttd'] == true) ? 'true' : 'false',
+                'sip' => $dataSip
+            )
+        );
+
+        if(isset($request['isttd']) && $request['isttd'] == true){
+            $objetoRequest = new \Illuminate\Http\Request();
+            $objetoRequest ['emrfk'] = $request['emrfk'];
+            $objetoRequest ['norec_emr'] = $request['emr'];
+            $objetoRequest ['pegawaittd'] = $request['pegawaittd'];
+            $objetoRequest ['nocm'] = $request['nocm'];
+            $objetoRequest ['noregistrasi'] = $request['noregistrasi'];
+            $objetoRequest ['norec_pd'] = $request['norec_pd'];
+            $bsre = app('App\Http\Controllers\Bridging\BridgingBSREController')->pengajuanTTE($objetoRequest,true);
+            if($bsre['status'] == 201){
+                $content = $pdf->download()->getOriginalContent();
+                \Storage::disk('local')->put( 'TTD_BSRE/' . $bsre['dokumen']->id . '/file' . '.pdf' , $content);
+            }
+          
+            return $bsre;
+        }
+
+        return $pdf->stream();
+    }
     public function CetakSKDirawatInap(Request $request)
     {   
         $norec = $request['emr'];
@@ -21390,6 +21546,768 @@ public function suratBuktiPengembalian(Request $request)
         return $pdf->stream();
         return view('report.EMR.ringkasan-pulangnNonJiwaNew',compact('data','pageWidth'));
     }
+    public function cetakRujukanEdukasiPsikiatri(Request $request)
+    {
+        $norec = $request['emr'];
+        $kdProfile = (int) $request['kdprofile'];
+        
+        // Query Lab Results
+        $labResults = [];
+        if(isset($request['noregistrasi']) && isset($request['umur']) && isset($request['jeniskelamin'])) {
+            $noregistrasi = $request['noregistrasi'];
+            $jeniskelamin = $request['jeniskelamin'];
+            $umur = $request['umur'];
+            
+            $getOrder = collect(DB::select("
+                SELECT st.norec
+                FROM strukorder_t as st
+                inner join pasiendaftar_t as pd on pd.norec = st.noregistrasifk
+                WHERE pd.noregistrasi = '$noregistrasi'
+                AND objectkelompoktransaksifk = 93
+                ORDER BY tglorder DESC
+                LIMIT 1
+            "))->first();
+            
+            if($getOrder) {
+                $norecOrder = $getOrder->norec;
+                $labResults = DB::select(DB::raw("SELECT pp.tglpelayanan, pp.noregistrasifk as norec_apd,djp.detailjenisproduk,pp.produkfk,prd.namaproduk,maps.detailpemeriksaan,maps.memohasil,
+                        maps.nourutdetail,maps.satuanstandarfk,ss.satuanstandar,nn.nilaitext,nn.tipedata,nn.nilaimin,nn.nilaimax,hh.hasil,
+                        maps.id as map_id,hh.norec as norec_hasil,maps.nourutjenispemeriksaan,pp.norec as norecPP,nn.nilaimin || '-' || nn.nilaimax as nilainormalstr,
+                        hh.flag,nn.id as idnn,maps2.jeniskelaminfk,hh.pegawaifk,hh.keterangan,maps.loinc_id,maps.loinc_name
+                        FROM pelayananpasien_t as pp
+                        inner join produk_m as prd on prd.id = pp.produkfk
+                        inner join detailjenisproduk_m as djp on djp.id = prd.objectdetailjenisprodukfk
+                        inner join maphasillab_m as maps on maps.produkfk = prd.id
+                        inner join maphasillabdetail_m as maps2 on maps2.maphasilfk = maps.id 
+                        inner join jeniskelamin_m as jk on maps2.jeniskelaminfk = jk.id and jk.jeniskelamin = '$jeniskelamin'
+                        and maps2.kelompokumurfk in (select id from kelompokumur_m kuu where '$umur' BETWEEN kuu.umurmin and kuu.umurmax) 
+                        inner join nilainormal_m as nn on nn.id = maps2.nilainormalfk
+                        left join satuanstandar_m as ss on ss.id = maps.satuanstandarfk
+                        left join hasillaboratorium_t as hh on hh.norecpelayanan = pp.norec 
+                        and pp.noregistrasifk = hh.noregistrasifk
+                        and maps.detailpemeriksaan = hh.detailpemeriksaan 
+                        where pp.statusenabled = true
+                        AND pp.strukorderfk = '$norecOrder'
+                        order by maps.nourutjenispemeriksaan,maps.nourutdetail asc, pp.tglpelayanan asc"));
+            }
+        }
+        
+        $data = DB::select(DB::raw("
+        SELECT
+            split_part(epd.value, '~', 2) as split,
+            epd.emrdfk,
+            ep.noemr,
+            ed.TYPE,
+            pa.namapasien,
+            pa.tgllahir,
+            pa.nohp,
+            pa.nocm,
+            ep.jeniskelamin,
+            ep.umur,
+            al.alamatlengkap,
+            ep.noregistrasifk as noregistrasi ,
+            epd.value,ep.namaruangan,pg.namalengkap as namadokter
+            --case when ed.TYPE = 'datetime' then TO_CHAR(TO_TIMESTAMP(epd.value, 'YYYY-MM-DD HH24:MI:SS'),'YYYY-MM-DD HH24:MI:SS') else epd.value end as value
+        FROM
+            emrpasien_t AS ep
+            left JOIN emrpasiend_t AS epd ON ep.noemr = epd.emrpasienfk
+            left JOIN emrd_t AS ed ON epd.emrdfk = ed.ID
+            INNER JOIN antrianpasiendiperiksa_t AS pd ON pd.norec = ep.norec_apd
+            left JOIN pegawai_m AS pg ON pg.id = pd.objectpegawaifk
+            left JOIN pasien_m as pa on ep.nocm =  pa.nocm
+            left JOIN alamat_m as al on pa.id = al.nocmfk
+        WHERE
+            ep.norec = '$norec'
+            AND epd.statusenabled = TRUE 
+            AND ep.kdprofile = '$kdProfile' 
+            and epd.emrfk = $request[emrfk]
+        ORDER BY
+            ed.nourut
+            "
+        ));
+        foreach ($data as $z){
+            if ($z->type=="datetime"){
+                $z->value=date('Y-m-d H:i:s',strtotime($z->value));
+            }
+        }
+
+        $res['profile'] = Profile::where('id',$request['kdprofile'])->first();
+        $res['d'] = $data;
+
+        $item =[];   
+        $item2= [];  
+
+        $textInputs = [];
+        $datetimeInputs = [1901307160];
+        $comboboxInputs = [1901307170];
+        $checkboxInputs = [
+            1901306001, 1901306002, 1901306003, 1901306004, 1901306005,
+            1901306006, 1901306007, 1901306011, 1901306012, 1901306013,
+            1901306014, 1901306021, 1901306022, 1901306023, 1901306024,
+            1901306025, 1901306026, 1901306031, 1901306032, 1901306033,
+            1901306035, 1901306041, 1901306042, 1901306043, 1901306044,
+            1901306045, 1901306046, 1901306047,
+        ];
+        $textareaInputs = [
+            1901306008, 1901306015, 1901306027, 1901306036, 1901306048,
+            1901306049,
+        ];
+
+        foreach( $res['d'] as $items){
+                $emrdfk = $items->emrdfk;
+                
+                if(in_array($emrdfk, $textInputs)) {
+                    $item[$emrdfk] = $items->value;
+                } else if(in_array($emrdfk, $datetimeInputs)) {
+                    $item[$emrdfk] = $this->tanggal_indonesia(date('Y-m-d', strtotime($items->value)));
+                } else if(in_array($emrdfk, $comboboxInputs)) {
+                    if($items->value != null && $items->value != ''){
+                        $arr = explode('~', $items->value);
+                        $item[$emrdfk] = $arr[1];
+                    }
+                } else if(in_array($emrdfk, $textareaInputs)) {
+                    $item[$emrdfk] = $items->value;
+                } else if(in_array($emrdfk, $checkboxInputs)) {
+                        $chekedd = false;
+                        if ($items->value == '1') {
+                            $chekedd = true;
+                        }
+                        $item[$items->emrdfk] = $chekedd;
+                } else {
+                    // Fallback to type-based assignment for other types
+                    if($items->type == "textbox" || $items->type == "textarea") {
+                        $item[$items->emrdfk] = $items->value;
+                    }
+                    if($items->type == "datetime") {
+                        $item[$items->emrdfk] = $this->tanggal_indonesia(date('Y-m-d', strtotime($items->value)));
+                    }
+                    if($items->type == "time") {
+                        $item[$items->emrdfk] = date('H:i', strtotime($items->value));
+                    }
+                    if($items->type == "date") {
+                        $item[$items->emrdfk] = date('Y-m-d', strtotime($items->value));
+                    }
+                    if($items->type == "checkboxtextbox") {
+                        $item[$items->emrdfk] = $items->value;
+                        $item2[$items->emrdfk] = true;
+                    }
+                    if($items->type == "checkbox") {
+                        $chekedd = false;
+                        if ($items->value == '1') {
+                            $chekedd = true;
+                        }
+                        $item[$items->emrdfk] = $chekedd;
+                    }
+                    if($items->type == "combobox") {
+                        $arr = explode('~', $items->value);
+                        $item[$items->emrdfk] = $arr[1];
+                    }
+                }
+        }
+        $pageWidth = 950;
+        $peg = null;    
+        if(isset($request['isttd']) && $request['isttd'] == true){
+            $peg = DB::table('pegawai_m')->where('id',$request['pegawaittd'])->first();
+            
+        }
+        // dd($data, $item);
+
+        // var_dump($data);
+        $pdf = PDF::loadView(
+            'report.EMR.rujukan-edukasi-psikiatri',
+            array(
+                'res' => $res,
+                'pageWidth' => $pageWidth,
+                'data' => $data,
+                'item'=> $item,
+                'peg'=> $peg,
+                'labResults' => $labResults
+            )
+        );
+        if(isset($request['isttd']) && $request['isttd'] == true){
+            $objetoRequest = new \Illuminate\Http\Request();
+            $objetoRequest ['emrfk'] = $request['emrfk'];
+            $objetoRequest ['norec_emr'] = $request['emr'];
+            $objetoRequest ['pegawaittd'] = $request['pegawaittd'];
+            $objetoRequest ['nocm'] = $request['nocm'];
+            $objetoRequest ['noregistrasi'] = $request['noregistrasi'];
+            $objetoRequest ['norec_pd'] = $request['norec_pd'];
+            $bsre = app('App\Http\Controllers\Bridging\BridgingBSREController')->pengajuanTTE($objetoRequest,true);
+            if($bsre['status'] == 201){
+                $content = $pdf->download()->getOriginalContent();
+                \Storage::disk('local')->put( 'TTD_BSRE/' . $bsre['dokumen']->id . '/file' . '.pdf' , $content);
+            }
+          
+            return $bsre;
+        }
+
+        return $pdf->stream();
+        return view('report.EMR.rujukan-edukasi-psikiatri',compact('data','pageWidth'));
+    }
+    public function cetakRujukanEdukasiPasienGangguanJiwaDenganKomorbidEpilepsi(Request $request)
+    {
+        $norec = $request['emr'];
+        $kdProfile = (int) $request['kdprofile'];
+        
+        // Query Lab Results
+        $labResults = [];
+        if(isset($request['noregistrasi']) && isset($request['umur']) && isset($request['jeniskelamin'])) {
+            $noregistrasi = $request['noregistrasi'];
+            $jeniskelamin = $request['jeniskelamin'];
+            $umur = $request['umur'];
+            
+            $getOrder = collect(DB::select("
+                SELECT st.norec
+                FROM strukorder_t as st
+                inner join pasiendaftar_t as pd on pd.norec = st.noregistrasifk
+                WHERE pd.noregistrasi = '$noregistrasi'
+                AND objectkelompoktransaksifk = 93
+                ORDER BY tglorder DESC
+                LIMIT 1
+            "))->first();
+            
+            if($getOrder) {
+                $norecOrder = $getOrder->norec;
+                $labResults = DB::select(DB::raw("SELECT pp.tglpelayanan, pp.noregistrasifk as norec_apd,djp.detailjenisproduk,pp.produkfk,prd.namaproduk,maps.detailpemeriksaan,maps.memohasil,
+                        maps.nourutdetail,maps.satuanstandarfk,ss.satuanstandar,nn.nilaitext,nn.tipedata,nn.nilaimin,nn.nilaimax,hh.hasil,
+                        maps.id as map_id,hh.norec as norec_hasil,maps.nourutjenispemeriksaan,pp.norec as norecPP,nn.nilaimin || '-' || nn.nilaimax as nilainormalstr,
+                        hh.flag,nn.id as idnn,maps2.jeniskelaminfk,hh.pegawaifk,hh.keterangan,maps.loinc_id,maps.loinc_name
+                        FROM pelayananpasien_t as pp
+                        inner join produk_m as prd on prd.id = pp.produkfk
+                        inner join detailjenisproduk_m as djp on djp.id = prd.objectdetailjenisprodukfk
+                        inner join maphasillab_m as maps on maps.produkfk = prd.id
+                        inner join maphasillabdetail_m as maps2 on maps2.maphasilfk = maps.id 
+                        inner join jeniskelamin_m as jk on maps2.jeniskelaminfk = jk.id and jk.jeniskelamin = '$jeniskelamin'
+                        and maps2.kelompokumurfk in (select id from kelompokumur_m kuu where '$umur' BETWEEN kuu.umurmin and kuu.umurmax) 
+                        inner join nilainormal_m as nn on nn.id = maps2.nilainormalfk
+                        left join satuanstandar_m as ss on ss.id = maps.satuanstandarfk
+                        left join hasillaboratorium_t as hh on hh.norecpelayanan = pp.norec 
+                        and pp.noregistrasifk = hh.noregistrasifk
+                        and maps.detailpemeriksaan = hh.detailpemeriksaan 
+                        where pp.statusenabled = true
+                        AND pp.strukorderfk = '$norecOrder'
+                        order by maps.nourutjenispemeriksaan,maps.nourutdetail asc, pp.tglpelayanan asc"));
+            }
+        }
+        
+        $data = DB::select(DB::raw("
+        SELECT
+            split_part(epd.value, '~', 2) as split,
+            epd.emrdfk,
+            ep.noemr,
+            ed.TYPE,
+            pa.namapasien,
+            pa.tgllahir,
+            pa.nohp,
+            pa.nocm,
+            ep.jeniskelamin,
+            ep.umur,
+            al.alamatlengkap,
+            ep.noregistrasifk as noregistrasi ,
+            epd.value,ep.namaruangan,pg.namalengkap as namadokter
+            --case when ed.TYPE = 'datetime' then TO_CHAR(TO_TIMESTAMP(epd.value, 'YYYY-MM-DD HH24:MI:SS'),'YYYY-MM-DD HH24:MI:SS') else epd.value end as value
+        FROM
+            emrpasien_t AS ep
+            left JOIN emrpasiend_t AS epd ON ep.noemr = epd.emrpasienfk
+            left JOIN emrd_t AS ed ON epd.emrdfk = ed.ID
+            INNER JOIN antrianpasiendiperiksa_t AS pd ON pd.norec = ep.norec_apd
+            left JOIN pegawai_m AS pg ON pg.id = pd.objectpegawaifk
+            left JOIN pasien_m as pa on ep.nocm =  pa.nocm
+            left JOIN alamat_m as al on pa.id = al.nocmfk
+        WHERE
+            ep.norec = '$norec'
+            AND epd.statusenabled = TRUE 
+            AND ep.kdprofile = '$kdProfile' 
+            and epd.emrfk = $request[emrfk]
+        ORDER BY
+            ed.nourut
+            "
+        ));
+        foreach ($data as $z){
+            if ($z->type=="datetime"){
+                $z->value=date('Y-m-d H:i:s',strtotime($z->value));
+            }
+        }
+
+        $res['profile'] = Profile::where('id',$request['kdprofile'])->first();
+        $res['d'] = $data;
+
+        $item =[];   
+        $item2= [];  
+
+        $textInputs = [3014250, 7890444, 3014252, 3014253];
+        $datetimeInputs = [1901307160];
+        $comboboxInputs = [1901307170];
+        $checkboxInputs = [1901306003, 1901306004];
+        $textareaInputs = [1901306001, 1901306002, 1901306005, 1901306006];
+
+        foreach( $res['d'] as $items){
+                $emrdfk = $items->emrdfk;
+                
+                if(in_array($emrdfk, $textInputs)) {
+                    $item[$emrdfk] = $items->value;
+                } else if(in_array($emrdfk, $datetimeInputs)) {
+                    $item[$emrdfk] = $this->tanggal_indonesia(date('Y-m-d', strtotime($items->value)));
+                } else if(in_array($emrdfk, $comboboxInputs)) {
+                    if($items->value != null && $items->value != ''){
+                        $arr = explode('~', $items->value);
+                        $item[$emrdfk] = $arr[1];
+                    }
+                } else if(in_array($emrdfk, $textareaInputs)) {
+                    $item[$emrdfk] = $items->value;
+                } else if(in_array($emrdfk, $checkboxInputs)) {
+                        $chekedd = false;
+                        if ($items->value == '1') {
+                            $chekedd = true;
+                        }
+                        $item[$items->emrdfk] = $chekedd;
+                } else {
+                    // Fallback to type-based assignment for other types
+                    if($items->type == "textbox" || $items->type == "textarea") {
+                        $item[$items->emrdfk] = $items->value;
+                    }
+                    if($items->type == "datetime") {
+                        $item[$items->emrdfk] = $this->tanggal_indonesia(date('Y-m-d', strtotime($items->value)));
+                    }
+                    if($items->type == "time") {
+                        $item[$items->emrdfk] = date('H:i', strtotime($items->value));
+                    }
+                    if($items->type == "date") {
+                        $item[$items->emrdfk] = date('Y-m-d', strtotime($items->value));
+                    }
+                    if($items->type == "checkboxtextbox") {
+                        $item[$items->emrdfk] = $items->value;
+                        $item2[$items->emrdfk] = true;
+                    }
+                    if($items->type == "checkbox") {
+                        $chekedd = false;
+                        if ($items->value == '1') {
+                            $chekedd = true;
+                        }
+                        $item[$items->emrdfk] = $chekedd;
+                    }
+                    if($items->type == "combobox") {
+                        $arr = explode('~', $items->value);
+                        $item[$items->emrdfk] = $arr[1];
+                    }
+                }
+        }
+        $pageWidth = 950;
+        $peg = null;    
+        if(isset($request['isttd']) && $request['isttd'] == true){
+            $peg = DB::table('pegawai_m')->where('id',$request['pegawaittd'])->first();
+            
+        }
+        // dd($data, $item);
+
+        // var_dump($data);
+        $pdf = PDF::loadView(
+            'report.EMR.rujukan-edukasi-pasien-dengan-komorbid-epilepsi',
+            array(
+                'res' => $res,
+                'pageWidth' => $pageWidth,
+                'data' => $data,
+                'item'=> $item,
+                'peg'=> $peg,
+                'labResults' => $labResults
+            )
+        );
+        if(isset($request['isttd']) && $request['isttd'] == true){
+            $objetoRequest = new \Illuminate\Http\Request();
+            $objetoRequest ['emrfk'] = $request['emrfk'];
+            $objetoRequest ['norec_emr'] = $request['emr'];
+            $objetoRequest ['pegawaittd'] = $request['pegawaittd'];
+            $objetoRequest ['nocm'] = $request['nocm'];
+            $objetoRequest ['noregistrasi'] = $request['noregistrasi'];
+            $objetoRequest ['norec_pd'] = $request['norec_pd'];
+            $bsre = app('App\Http\Controllers\Bridging\BridgingBSREController')->pengajuanTTE($objetoRequest,true);
+            if($bsre['status'] == 201){
+                $content = $pdf->download()->getOriginalContent();
+                \Storage::disk('local')->put( 'TTD_BSRE/' . $bsre['dokumen']->id . '/file' . '.pdf' , $content);
+            }
+          
+            return $bsre;
+        }
+
+        return $pdf->stream();
+        return view('report.EMR.rujukan-edukasi-pasien-dengan-komorbid-epilepsi',compact('data','pageWidth'));
+    }
+    public function cetakRujukanEdukasiPasienGangguanJiwaDenganKomorbidSindromeGeriatriLowIntake(Request $request)
+    {
+        $norec = $request['emr'];
+        $kdProfile = (int) $request['kdprofile'];
+        
+        // Query Lab Results
+        $labResults = [];
+        if(isset($request['noregistrasi']) && isset($request['umur']) && isset($request['jeniskelamin'])) {
+            $noregistrasi = $request['noregistrasi'];
+            $jeniskelamin = $request['jeniskelamin'];
+            $umur = $request['umur'];
+            
+            $getOrder = collect(DB::select("
+                SELECT st.norec
+                FROM strukorder_t as st
+                inner join pasiendaftar_t as pd on pd.norec = st.noregistrasifk
+                WHERE pd.noregistrasi = '$noregistrasi'
+                AND objectkelompoktransaksifk = 93
+                ORDER BY tglorder DESC
+                LIMIT 1
+            "))->first();
+            
+            if($getOrder) {
+                $norecOrder = $getOrder->norec;
+                $labResults = DB::select(DB::raw("SELECT pp.tglpelayanan, pp.noregistrasifk as norec_apd,djp.detailjenisproduk,pp.produkfk,prd.namaproduk,maps.detailpemeriksaan,maps.memohasil,
+                        maps.nourutdetail,maps.satuanstandarfk,ss.satuanstandar,nn.nilaitext,nn.tipedata,nn.nilaimin,nn.nilaimax,hh.hasil,
+                        maps.id as map_id,hh.norec as norec_hasil,maps.nourutjenispemeriksaan,pp.norec as norecPP,nn.nilaimin || '-' || nn.nilaimax as nilainormalstr,
+                        hh.flag,nn.id as idnn,maps2.jeniskelaminfk,hh.pegawaifk,hh.keterangan,maps.loinc_id,maps.loinc_name
+                        FROM pelayananpasien_t as pp
+                        inner join produk_m as prd on prd.id = pp.produkfk
+                        inner join detailjenisproduk_m as djp on djp.id = prd.objectdetailjenisprodukfk
+                        inner join maphasillab_m as maps on maps.produkfk = prd.id
+                        inner join maphasillabdetail_m as maps2 on maps2.maphasilfk = maps.id 
+                        inner join jeniskelamin_m as jk on maps2.jeniskelaminfk = jk.id and jk.jeniskelamin = '$jeniskelamin'
+                        and maps2.kelompokumurfk in (select id from kelompokumur_m kuu where '$umur' BETWEEN kuu.umurmin and kuu.umurmax) 
+                        inner join nilainormal_m as nn on nn.id = maps2.nilainormalfk
+                        left join satuanstandar_m as ss on ss.id = maps.satuanstandarfk
+                        left join hasillaboratorium_t as hh on hh.norecpelayanan = pp.norec 
+                        and pp.noregistrasifk = hh.noregistrasifk
+                        and maps.detailpemeriksaan = hh.detailpemeriksaan 
+                        where pp.statusenabled = true
+                        AND pp.strukorderfk = '$norecOrder'
+                        order by maps.nourutjenispemeriksaan,maps.nourutdetail asc, pp.tglpelayanan asc"));
+            }
+        }
+        
+        $data = DB::select(DB::raw("
+        SELECT
+            split_part(epd.value, '~', 2) as split,
+            epd.emrdfk,
+            ep.noemr,
+            ed.TYPE,
+            pa.namapasien,
+            pa.tgllahir,
+            pa.nohp,
+            pa.nocm,
+            ep.jeniskelamin,
+            ep.umur,
+            al.alamatlengkap,
+            ep.noregistrasifk as noregistrasi ,
+            epd.value,ep.namaruangan,pg.namalengkap as namadokter
+            --case when ed.TYPE = 'datetime' then TO_CHAR(TO_TIMESTAMP(epd.value, 'YYYY-MM-DD HH24:MI:SS'),'YYYY-MM-DD HH24:MI:SS') else epd.value end as value
+        FROM
+            emrpasien_t AS ep
+            left JOIN emrpasiend_t AS epd ON ep.noemr = epd.emrpasienfk
+            left JOIN emrd_t AS ed ON epd.emrdfk = ed.ID
+            INNER JOIN antrianpasiendiperiksa_t AS pd ON pd.norec = ep.norec_apd
+            left JOIN pegawai_m AS pg ON pg.id = pd.objectpegawaifk
+            left JOIN pasien_m as pa on ep.nocm =  pa.nocm
+            left JOIN alamat_m as al on pa.id = al.nocmfk
+        WHERE
+            ep.norec = '$norec'
+            AND epd.statusenabled = TRUE 
+            AND ep.kdprofile = '$kdProfile' 
+            and epd.emrfk = $request[emrfk]
+        ORDER BY
+            ed.nourut
+            "
+        ));
+        foreach ($data as $z){
+            if ($z->type=="datetime"){
+                $z->value=date('Y-m-d H:i:s',strtotime($z->value));
+            }
+        }
+
+        $res['profile'] = Profile::where('id',$request['kdprofile'])->first();
+        $res['d'] = $data;
+
+        $item =[];   
+        $item2= [];  
+
+        $textInputs = [3014250, 7890444, 3014252, 3014253];
+        $datetimeInputs = [1901307160];
+        $comboboxInputs = [1901307170];
+        $checkboxInputs = [1901306003, 1901306004];
+        $textareaInputs = [1901306001, 1901306002, 1901306005, 1901306006];
+
+        foreach( $res['d'] as $items){
+                $emrdfk = $items->emrdfk;
+                
+                if(in_array($emrdfk, $textInputs)) {
+                    $item[$emrdfk] = $items->value;
+                } else if(in_array($emrdfk, $datetimeInputs)) {
+                    $item[$emrdfk] = $this->tanggal_indonesia(date('Y-m-d', strtotime($items->value)));
+                } else if(in_array($emrdfk, $comboboxInputs)) {
+                    if($items->value != null && $items->value != ''){
+                        $arr = explode('~', $items->value);
+                        $item[$emrdfk] = $arr[1];
+                    }
+                } else if(in_array($emrdfk, $textareaInputs)) {
+                    $item[$emrdfk] = $items->value;
+                } else if(in_array($emrdfk, $checkboxInputs)) {
+                        $chekedd = false;
+                        if ($items->value == '1') {
+                            $chekedd = true;
+                        }
+                        $item[$items->emrdfk] = $chekedd;
+                } else {
+                    // Fallback to type-based assignment for other types
+                    if($items->type == "textbox" || $items->type == "textarea") {
+                        $item[$items->emrdfk] = $items->value;
+                    }
+                    if($items->type == "datetime") {
+                        $item[$items->emrdfk] = $this->tanggal_indonesia(date('Y-m-d', strtotime($items->value)));
+                    }
+                    if($items->type == "time") {
+                        $item[$items->emrdfk] = date('H:i', strtotime($items->value));
+                    }
+                    if($items->type == "date") {
+                        $item[$items->emrdfk] = date('Y-m-d', strtotime($items->value));
+                    }
+                    if($items->type == "checkboxtextbox") {
+                        $item[$items->emrdfk] = $items->value;
+                        $item2[$items->emrdfk] = true;
+                    }
+                    if($items->type == "checkbox") {
+                        $chekedd = false;
+                        if ($items->value == '1') {
+                            $chekedd = true;
+                        }
+                        $item[$items->emrdfk] = $chekedd;
+                    }
+                    if($items->type == "combobox") {
+                        $arr = explode('~', $items->value);
+                        $item[$items->emrdfk] = $arr[1];
+                    }
+                }
+        }
+        $pageWidth = 950;
+        $peg = null;    
+        if(isset($request['isttd']) && $request['isttd'] == true){
+            $peg = DB::table('pegawai_m')->where('id',$request['pegawaittd'])->first();
+            
+        }
+        // dd($data, $item);
+
+        // var_dump($data);
+        $pdf = PDF::loadView(
+            'report.EMR.rujukan-edukasi-pasien-dengan-komorbid-sindrome-geriatri-low-intake',
+            array(
+                'res' => $res,
+                'pageWidth' => $pageWidth,
+                'data' => $data,
+                'item'=> $item,
+                'peg'=> $peg,
+                'labResults' => $labResults
+            )
+        );
+        if(isset($request['isttd']) && $request['isttd'] == true){
+            $objetoRequest = new \Illuminate\Http\Request();
+            $objetoRequest ['emrfk'] = $request['emrfk'];
+            $objetoRequest ['norec_emr'] = $request['emr'];
+            $objetoRequest ['pegawaittd'] = $request['pegawaittd'];
+            $objetoRequest ['nocm'] = $request['nocm'];
+            $objetoRequest ['noregistrasi'] = $request['noregistrasi'];
+            $objetoRequest ['norec_pd'] = $request['norec_pd'];
+            $bsre = app('App\Http\Controllers\Bridging\BridgingBSREController')->pengajuanTTE($objetoRequest,true);
+            if($bsre['status'] == 201){
+                $content = $pdf->download()->getOriginalContent();
+                \Storage::disk('local')->put( 'TTD_BSRE/' . $bsre['dokumen']->id . '/file' . '.pdf' , $content);
+            }
+          
+            return $bsre;
+        }
+
+        return $pdf->stream();
+        return view('report.EMR.rujukan-edukasi-pasien-dengan-komorbid-sindrome-geriatri-low-intake',compact('data','pageWidth'));
+    }
+    public function cetakRujukanEdukasiPasienGangguanJiwaDenganKomorbidTuberculosis(Request $request)
+    {
+        $norec = $request['emr'];
+        $kdProfile = (int) $request['kdprofile'];
+        
+        // Query Lab Results
+        $labResults = [];
+        if(isset($request['noregistrasi']) && isset($request['umur']) && isset($request['jeniskelamin'])) {
+            $noregistrasi = $request['noregistrasi'];
+            $jeniskelamin = $request['jeniskelamin'];
+            $umur = $request['umur'];
+            
+            $getOrder = collect(DB::select("
+                SELECT st.norec
+                FROM strukorder_t as st
+                inner join pasiendaftar_t as pd on pd.norec = st.noregistrasifk
+                WHERE pd.noregistrasi = '$noregistrasi'
+                AND objectkelompoktransaksifk = 93
+                ORDER BY tglorder DESC
+                LIMIT 1
+            "))->first();
+            
+            if($getOrder) {
+                $norecOrder = $getOrder->norec;
+                $labResults = DB::select(DB::raw("SELECT pp.tglpelayanan, pp.noregistrasifk as norec_apd,djp.detailjenisproduk,pp.produkfk,prd.namaproduk,maps.detailpemeriksaan,maps.memohasil,
+                        maps.nourutdetail,maps.satuanstandarfk,ss.satuanstandar,nn.nilaitext,nn.tipedata,nn.nilaimin,nn.nilaimax,hh.hasil,
+                        maps.id as map_id,hh.norec as norec_hasil,maps.nourutjenispemeriksaan,pp.norec as norecPP,nn.nilaimin || '-' || nn.nilaimax as nilainormalstr,
+                        hh.flag,nn.id as idnn,maps2.jeniskelaminfk,hh.pegawaifk,hh.keterangan,maps.loinc_id,maps.loinc_name
+                        FROM pelayananpasien_t as pp
+                        inner join produk_m as prd on prd.id = pp.produkfk
+                        inner join detailjenisproduk_m as djp on djp.id = prd.objectdetailjenisprodukfk
+                        inner join maphasillab_m as maps on maps.produkfk = prd.id
+                        inner join maphasillabdetail_m as maps2 on maps2.maphasilfk = maps.id 
+                        inner join jeniskelamin_m as jk on maps2.jeniskelaminfk = jk.id and jk.jeniskelamin = '$jeniskelamin'
+                        and maps2.kelompokumurfk in (select id from kelompokumur_m kuu where '$umur' BETWEEN kuu.umurmin and kuu.umurmax) 
+                        inner join nilainormal_m as nn on nn.id = maps2.nilainormalfk
+                        left join satuanstandar_m as ss on ss.id = maps.satuanstandarfk
+                        left join hasillaboratorium_t as hh on hh.norecpelayanan = pp.norec 
+                        and pp.noregistrasifk = hh.noregistrasifk
+                        and maps.detailpemeriksaan = hh.detailpemeriksaan 
+                        where pp.statusenabled = true
+                        AND pp.strukorderfk = '$norecOrder'
+                        order by maps.nourutjenispemeriksaan,maps.nourutdetail asc, pp.tglpelayanan asc"));
+            }
+        }
+        
+        $data = DB::select(DB::raw("
+        SELECT
+            split_part(epd.value, '~', 2) as split,
+            epd.emrdfk,
+            ep.noemr,
+            ed.TYPE,
+            pa.namapasien,
+            pa.tgllahir,
+            pa.nohp,
+            pa.nocm,
+            ep.jeniskelamin,
+            ep.umur,
+            al.alamatlengkap,
+            ep.noregistrasifk as noregistrasi ,
+            epd.value,ep.namaruangan,pg.namalengkap as namadokter
+            --case when ed.TYPE = 'datetime' then TO_CHAR(TO_TIMESTAMP(epd.value, 'YYYY-MM-DD HH24:MI:SS'),'YYYY-MM-DD HH24:MI:SS') else epd.value end as value
+        FROM
+            emrpasien_t AS ep
+            left JOIN emrpasiend_t AS epd ON ep.noemr = epd.emrpasienfk
+            left JOIN emrd_t AS ed ON epd.emrdfk = ed.ID
+            INNER JOIN antrianpasiendiperiksa_t AS pd ON pd.norec = ep.norec_apd
+            left JOIN pegawai_m AS pg ON pg.id = pd.objectpegawaifk
+            left JOIN pasien_m as pa on ep.nocm =  pa.nocm
+            left JOIN alamat_m as al on pa.id = al.nocmfk
+        WHERE
+            ep.norec = '$norec'
+            AND epd.statusenabled = TRUE 
+            AND ep.kdprofile = '$kdProfile' 
+            and epd.emrfk = $request[emrfk]
+        ORDER BY
+            ed.nourut
+            "
+        ));
+        foreach ($data as $z){
+            if ($z->type=="datetime"){
+                $z->value=date('Y-m-d H:i:s',strtotime($z->value));
+            }
+        }
+
+        $res['profile'] = Profile::where('id',$request['kdprofile'])->first();
+        $res['d'] = $data;
+
+        $item =[];   
+        $item2= [];  
+
+        $textInputs = [3014250, 7890444, 3014252, 3014253];
+        $datetimeInputs = [1901307160];
+        $comboboxInputs = [1901307170];
+        $checkboxInputs = [1901306003, 1901306004];
+        $textareaInputs = [1901306001, 1901306002, 1901306005, 1901306006];
+
+        foreach( $res['d'] as $items){
+                $emrdfk = $items->emrdfk;
+                
+                if(in_array($emrdfk, $textInputs)) {
+                    $item[$emrdfk] = $items->value;
+                } else if(in_array($emrdfk, $datetimeInputs)) {
+                    $item[$emrdfk] = $this->tanggal_indonesia(date('Y-m-d', strtotime($items->value)));
+                } else if(in_array($emrdfk, $comboboxInputs)) {
+                    if($items->value != null && $items->value != ''){
+                        $arr = explode('~', $items->value);
+                        $item[$emrdfk] = $arr[1];
+                    }
+                } else if(in_array($emrdfk, $textareaInputs)) {
+                    $item[$emrdfk] = $items->value;
+                } else if(in_array($emrdfk, $checkboxInputs)) {
+                        $chekedd = false;
+                        if ($items->value == '1') {
+                            $chekedd = true;
+                        }
+                        $item[$items->emrdfk] = $chekedd;
+                } else {
+                    // Fallback to type-based assignment for other types
+                    if($items->type == "textbox" || $items->type == "textarea") {
+                        $item[$items->emrdfk] = $items->value;
+                    }
+                    if($items->type == "datetime") {
+                        $item[$items->emrdfk] = $this->tanggal_indonesia(date('Y-m-d', strtotime($items->value)));
+                    }
+                    if($items->type == "time") {
+                        $item[$items->emrdfk] = date('H:i', strtotime($items->value));
+                    }
+                    if($items->type == "date") {
+                        $item[$items->emrdfk] = date('Y-m-d', strtotime($items->value));
+                    }
+                    if($items->type == "checkboxtextbox") {
+                        $item[$items->emrdfk] = $items->value;
+                        $item2[$items->emrdfk] = true;
+                    }
+                    if($items->type == "checkbox") {
+                        $chekedd = false;
+                        if ($items->value == '1') {
+                            $chekedd = true;
+                        }
+                        $item[$items->emrdfk] = $chekedd;
+                    }
+                    if($items->type == "combobox") {
+                        $arr = explode('~', $items->value);
+                        $item[$items->emrdfk] = $arr[1];
+                    }
+                }
+        }
+        $pageWidth = 950;
+        $peg = null;    
+        if(isset($request['isttd']) && $request['isttd'] == true){
+            $peg = DB::table('pegawai_m')->where('id',$request['pegawaittd'])->first();
+            
+        }
+        // dd($data, $item);
+
+        // var_dump($data);
+        $pdf = PDF::loadView(
+            'report.EMR.rujukan-edukasi-pasien-dengan-komorbid-tuberculosis',
+            array(
+                'res' => $res,
+                'pageWidth' => $pageWidth,
+                'data' => $data,
+                'item'=> $item,
+                'peg'=> $peg,
+                'labResults' => $labResults
+            )
+        );
+        if(isset($request['isttd']) && $request['isttd'] == true){
+            $objetoRequest = new \Illuminate\Http\Request();
+            $objetoRequest ['emrfk'] = $request['emrfk'];
+            $objetoRequest ['norec_emr'] = $request['emr'];
+            $objetoRequest ['pegawaittd'] = $request['pegawaittd'];
+            $objetoRequest ['nocm'] = $request['nocm'];
+            $objetoRequest ['noregistrasi'] = $request['noregistrasi'];
+            $objetoRequest ['norec_pd'] = $request['norec_pd'];
+            $bsre = app('App\Http\Controllers\Bridging\BridgingBSREController')->pengajuanTTE($objetoRequest,true);
+            if($bsre['status'] == 201){
+                $content = $pdf->download()->getOriginalContent();
+                \Storage::disk('local')->put( 'TTD_BSRE/' . $bsre['dokumen']->id . '/file' . '.pdf' , $content);
+            }
+          
+            return $bsre;
+        }
+
+        return $pdf->stream();
+        return view('report.EMR.rujukan-edukasi-pasien-dengan-komorbid-tuberculosis',compact('data','pageWidth'));
+    }
     public function cetakPengkajianRajalJiwa(Request $request)
     {
         $norec = $request['emr'];
@@ -22781,8 +23699,14 @@ public function suratBuktiPengembalian(Request $request)
     }
     public function cetakResumeV3(Request $r)
     {
-        $res['profile'] = Profile::where('id',$r['kdprofile'])->first();
-        $data = \DB::table('resumemedis_t as rm')
+         \DB::table('resumemedis_t')
+                ->where('kdprofile', $r['kdprofile'])
+                ->where('statusenabled', true)
+                ->where('norec', $r['norec'])
+                ->update(['tglresume' => date('Y-m-d H:i:s'), 'tglpulang' => date('Y-m-d H:i:s')]);
+
+            $res['profile'] = Profile::where('id',$r['kdprofile'])->first();
+            $data = \DB::table('resumemedis_t as rm')
             ->select('rm.norec', 'rm.tglresume', 'ru.namaruangan', 'pg.namalengkap as namadokter','rm.indikasi','rm.lainlain',
                 'rm.ringkasanriwayatpenyakit', 'rm.pemeriksaanfisik', 'rm.pemeriksaanpenunjang','rm.riwayatlalu',
                 'rm.hasilkonsultasi', 'rm.terapi', 'rm.diagnosisawal', 'rm.diagnosissekunder', 'rm.tindakanprosedur',
@@ -22992,6 +23916,13 @@ public function suratBuktiPengembalian(Request $request)
             }
           
             return $bsre;
+         //     // GANTI BAGIAN INI: Mengembalikan JSON dengan flag reload
+        //     return response()->json([
+        //     'status' => $bsre['status'],
+        //     'message' => 'Proses TTE berhasil diajukan. Halaman akan dimuat ulang.',
+        //     'data' => $bsre,
+        //     'reload' => true // Tambahkan flag untuk memicu reload
+        // ]);
         }
 
         return $pdf->stream();
@@ -30880,6 +31811,7 @@ public function suratBuktiPengembalian(Request $request)
                     0 AS jumlahanggaran,
                     0 AS panjar,
                     COALESCE ( SUM ( rd.subtotal ), 0 ) AS spj,
+                    0 AS spj_prev, 0 AS spj_current,
                     0 AS panjarspj 
                 FROM
                     strukrealisasi_t sr
@@ -33104,6 +34036,227 @@ public function suratBuktiPengembalian(Request $request)
             // dd($result);
             return view('report.invoice-diklat2', compact('detail', 'mahasiswa', 'profile'));
         }
+        
+    public function CetakCuti(Request $request)
+    {
+        $res['profile'] = Profile::where('id',$request['kdprofile'])->first();
+        // dd($res);
 
+        // $uuid = 'b0923bc0-b574-11f0-8ae4-8f177a5c';
+        $data =\DB::table('planningpegawaistatus_t as pps')
+            ->leftJoin('pegawai_m as pg','pg.id','=','pps.objectpegawaifk')
+            ->leftJoin('sdm_jeniscuti_m as jc','jc.id','=','pps.objectstatuspegawaiplanfk')
+            ->leftJoin('jabatan_m as jb','jb.id','=','pg.objectjabatanstrukturalfk')
+            ->leftJoin('unitkerja_m as ukp','ukp.id','=','pg.objectunitkerjafk')
+            ->select( 'pps.norec','pps.noplanning','pps.tglpengajuan','pps.objectpegawaifk','pps.objectstatuspegawaiplanfk',
+                'pps.deskripsistatuspegawaiplan as desk','pps.keterangan','pg.namalengkap','pg.nip','jc.name as statuspermohonan',
+                'jb.namajabatan','ukp.unitkerja','pps.approvalstatus','pps.totalcuti')
+            ->where('pps.kdprofile', $request['kdprofile'])
+            ->where('pps.statusenabled',true)
+            ->whereNull('pps.totalcuti')
+            ->where('pps.noplanning', $request['noplanning'])
+            ->orderBy('pps.tglpengajuan');
+
+        $data = $data->get();
+        $data2 =[];
+
+        foreach ($data as $item){
+            $norec= $item->norec;
+            $details = DB::select(DB::raw("select *,to_char(tgl, 'Day') as day from listtanggalcuti_t where objectplanningpegawaistatusfk='$norec' and to_char(tgl, 'Day') <> 'Sunday   '"));
+            $tglVerif = [];
+            foreach ($details as $itmde){
+                if( $itmde-> approvalstatus == 1 && $itmde->day != "Sunday   "){
+                    $tglVerif [] = array(
+                        'norec' => $itmde->norec,
+                        'tgl' => $itmde->tgl,
+                        'day' => $itmde->day,
+                        'approvalstatus' => $itmde->approvalstatus,
+                        'objectplanningpegawaistatusfk' => $itmde->objectplanningpegawaistatusfk
+                    );
+                }
+
+            }
+
+            $data2 [] =  array(
+                'norec' => $item->norec,
+                'noplanning' => $item->noplanning,
+                'tglpengajuan' => $item->tglpengajuan,
+                'objectpegawaifk' => $item->objectpegawaifk,
+                'objectstatuspegawaiplanfk' => $item->objectstatuspegawaiplanfk,
+                'desk' => $item->desk,
+                'keterangan' => $item->keterangan,
+                'namalengkap' => $item->namalengkap,
+                'nip' => $item->nip,
+                'statuspermohonan' => $item->statuspermohonan,
+                'namajabatan' => $item->namajabatan,
+                'unitkerja' => $item->unitkerja,
+                'approvalstatus' => $item->approvalstatus,
+                'totalcuti' => $item->totalcuti,
+                'listtanggal' => $details,
+                'listtanggalapprove' => $tglVerif,
+
+            );
+        }
+        $firstData = $data2[0];
+        $dates = collect($firstData['listtanggal'])->pluck('tgl')->sort()->values();
+
+        $startDate = \Carbon\Carbon::parse($dates->first())->format('Y-m-d');
+        $endDate   = \Carbon\Carbon::parse($dates->last())->format('Y-m-d');
+        $tanggal_pengajuan = \Carbon\Carbon::parse($firstData['tglpengajuan'])->format('Y-m-d');
+
+        $totalDays = $dates->count();
+
+        $qrcode = base64_encode(QrCode::format('svg')->size(60)->generate($firstData['norec']));
+
+        $pdf = PDF::loadView(
+            'report.sdm.cetak-cuti',
+            array(
+                'res' => $res,
+                'qrcode'=> $qrcode,
+                'data' => $data2,
+                'firstData'  => $firstData, 
+                'noplanning' => $request['noplanning'],
+                'tanggal_pengajuan' => $tanggal_pengajuan,
+                'startDate' => $startDate,
+                'endDate' => $endDate,
+                'totalDays' => $totalDays,
+            )
+        )->setPaper('A4', 'portrait');
+
+        return $pdf->stream();
+    }
+
+
+    public function cetakIdentitasPasien(Request $request)
+    {
+        $nocm = $request->get('nocm');
+        $kdProfile = (int)$request->get('kdprofile');
+
+        $profile = collect(DB::select("
+            select * from profile_m where statusenabled=true limit 1
+        "))->first();
+
+        $data = collect(DB::select("
+            SELECT 
+                pm.id,
+                pm.nocm,
+                pm.namapasien,
+                pm.tempatlahir,
+                pm.tgllahir,
+                COALESCE(sp.statusperkawinan, '-') AS statusperkawinan,
+                COALESCE(ag.agama, '-') AS agama,
+                COALESCE(pk.pekerjaan, '-') AS pekerjaan,
+                alm.alamatlengkap,
+                alm.namadesakelurahan,
+                alm.kecamatan,
+                alm.kotakabupaten,
+                prop.namapropinsi,
+                alm.kodepos,
+                pm.alamatktr,
+                COALESCE(pm.notelepon, '-') AS notelepon,
+                COALESCE(pm.noidentitas, '-') AS noidentitas,
+                COALESCE(gd.golongandarah, '-') AS golongandarah,
+                COALESCE(pen.pendidikan, '-') AS pendidikan,
+                COALESCE(pm.noasuransilain, '-') AS noasuransilain,
+                COALESCE(pm.nobpjs, '-') AS nobpjs,
+                jk.jeniskelamin,
+                pm.penanggungjawab,
+                pm.hubungankeluargapj,
+                pm.pekerjaanpenangggungjawab,
+                pm.ktppenanggungjawab,
+                pm.alamatrmh,
+                kp.kelompokpasien AS carabayar,
+                pm.foto
+            FROM pasien_m AS pm
+            LEFT JOIN statusperkawinan_m AS sp ON sp.id = pm.objectstatusperkawinanfk
+            LEFT JOIN agama_m AS ag ON ag.id = pm.objectagamafk
+            LEFT JOIN pekerjaan_m AS pk ON pk.id = pm.objectpekerjaanfk
+            LEFT JOIN pendidikan_m AS pen ON pen.id = pm.objectpendidikanfk
+            LEFT JOIN alamat_m AS alm ON alm.nocmfk = pm.id
+            LEFT JOIN propinsi_m AS prop ON prop.id = alm.objectpropinsifk
+            LEFT JOIN golongandarah_m AS gd ON gd.id = pm.objectgolongandarahfk
+            LEFT JOIN jeniskelamin_m AS jk ON jk.id = pm.objectjeniskelaminfk
+            LEFT JOIN (
+                SELECT DISTINCT ON (nocmfk) nocmfk, objectkelompokpasienlastfk 
+                FROM pasiendaftar_t 
+                WHERE statusenabled = true 
+                ORDER BY nocmfk, tglregistrasi DESC
+            ) pd ON pd.nocmfk = pm.id
+            LEFT JOIN kelompokpasien_m AS kp ON kp.id = pd.objectkelompokpasienlastfk
+            WHERE pm.nocm = :nocm
+            LIMIT 1
+        ", ['nocm' => $nocm]))->first();
+
+        if (empty($data)) {
+            return "Pasien dengan No. RM $nocm tidak ditemukan.";
+        }
+
+        $ageStr = '-';
+        if ($data && $data->tgllahir) {
+            $birthDate = new \DateTime($data->tgllahir);
+            $today = new \DateTime();
+            $diff = $today->diff($birthDate);
+            $ageStr = $diff->y . ' thn ' . $diff->m . ' bln ' . $diff->d . ' hari';
+        }
+
+        $fotoData = null;
+        if ($data && isset($data->foto) && $data->foto !== null) {
+            $rawFoto = $data->foto;
+
+            // Handle PostgreSQL bytea stream resource
+            if (is_resource($rawFoto)) {
+                $rawFoto = stream_get_contents($rawFoto);
+            }
+
+            if (is_string($rawFoto) && strlen($rawFoto) > 0) {
+                // Case 1: Already a full data URI (e.g. "data:image/jpeg;base64,/9j/...")
+                if (substr($rawFoto, 0, 5) === 'data:') {
+                    $fotoData = $rawFoto;
+                }
+                // Case 2: Already a base64 string (e.g. "/9j/4AAQSkZJRgAB...")
+                // Base64 chars: A-Z a-z 0-9 + / =
+                // JPEG base64 always starts with /9j/
+                else if (preg_match('/^[A-Za-z0-9+\/]+=*$/', trim($rawFoto)) && base64_decode($rawFoto, true) !== false) {
+                    $fotoData = 'data:image/jpeg;base64,' . trim($rawFoto);
+                }
+                // Case 3: PostgreSQL hex format \x...
+                else if (substr($rawFoto, 0, 2) === '\\x') {
+                    $fotoData = 'data:image/jpeg;base64,' . base64_encode(pack('H*', substr($rawFoto, 2)));
+                }
+                // Case 4: Pure hex string (only 0-9 a-f)
+                else if (preg_match('/^[0-9a-fA-F]+$/', $rawFoto)) {
+                    $fotoData = 'data:image/jpeg;base64,' . base64_encode(pack('H*', $rawFoto));
+                }
+                // Case 5: Raw binary data
+                else {
+                    $fotoData = 'data:image/jpeg;base64,' . base64_encode($rawFoto);
+                }
+            }
+        }
+
+        // Temporarily bypass GD warning for interlaced PNGs
+        set_error_handler(function($errno, $errstr, $errfile, $errline) {
+            if (strpos($errstr, 'imagecreatefrompng') !== false || strpos($errstr, 'libpng') !== false) {
+                return true; // Silence warning, do not let Laravel throw an exception
+            }
+            return false; // Fall back to default error handler
+        });
+
+        try {
+            $pdf = PDF::loadView('report.pendaftaran.cetak-identitas-pasien', array(
+                'data' => $data,
+                'profile' => $profile,
+                'ageStr' => $ageStr,
+                'fotoData' => $fotoData
+            ));
+
+            $response = $pdf->stream();
+        } finally {
+            restore_error_handler();
+        }
+
+        return $response;
+    }
     //batas
+
 }

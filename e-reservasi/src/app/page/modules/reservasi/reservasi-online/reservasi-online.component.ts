@@ -596,27 +596,22 @@ export class ReservasiOnlineComponent implements OnInit {
 
   }
   hapusHistory(selected) {
-    // if(selected.ischeckin == true ){
-    //   this.messageService.warn('Info', 'Reservasi yg sudah check-in tidak bisa dibatalkan')
-    //   return
-    // }
-    // let data = {
-    //   'norec': selected.norec
-    // }
-    // this.confirmationService.confirm({
-    //   message: 'Yakin mau batal reservasi?',
-    //   accept: () => {
-    //     this.httpService.post('medifirst2000/reservasionline/delete', data).subscribe(res => {
-    //       this.findHistory()
-
-    //     }, error => {
-
-    //     })
-    //   }
-    // })
-
-    this.messageService.warn('Info', 'Untuk hapus reservasi silakan hubungi petugas');
-
+    if (selected.tglcheckin) {
+      this.messageService.warn('Peringatan', 'Reservasi tidak bisa dibatalkan karena sudah check-in');
+      return;
+    }
+    let data = {
+      'norec': selected.norec
+    }
+    this.confirmationService.confirm({
+      message: 'Yakin mau batal reservasi?',
+      accept: () => {
+        this.httpService.post('medifirst2000/reservasionline/delete', data).subscribe(res => {
+          this.findHistory();
+        }, error => {
+        });
+      }
+    });
   }
   cetakHistory(selected) {
     this.kodeReservasi = selected.noreservasi

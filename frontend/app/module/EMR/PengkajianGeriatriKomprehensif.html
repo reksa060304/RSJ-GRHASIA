@@ -52,7 +52,7 @@
         <div class="grid_12">
             <div style="border: 0px" ng-repeat="list in listData1 | orderBy:'nourut'" ng-init="jawabIndex = $index">
                 <div class="grid_12">
-                    <div style="border: 0px" ng-repeat="jawab in list.details">
+                    <div style="border: 0px" ng-repeat="jawab in list.details" ng-if="jawab.kodeexternal != 'listeuroqol' && jawab.type != 'euroqol'">
                         <div ng-switch on="jawab.type">
                             <div  ng-switch-when="label">
                                 <div class="grid_12">
@@ -871,7 +871,7 @@
                                                     k-auto-bind="false" k-data-source="listPegawai" />
                                         </div>
                                         <div class="grid_4 margin-top-30 text-center margin-bottom">
-                                            <label c-label item="item" c-label-text="Dokter Pemeriksa/DPJP"></label>
+                                            <label c-label item="item" class="margin-bottom">Dokter Pemeriksa/DPJP</label>
                                             <input style="width: 80%;" kendo-combo-box k-ng-model="item.obj[310296]"
                                                     k-data-text-field="'text'" k-data-value-field="'value'" k-filter="'contains'"
                                                     k-auto-bind="false" k-data-source="listPegawai" />
@@ -885,7 +885,7 @@
                                     </fieldset>
                                 </div>
                             </div>
-                            <div class="grid_12" ng-switch-when="euroqol">
+                            <!-- <div class="grid_12" ng-switch-when="euroqol">
                                 <label class="k-label" style="{{jawab.style}}">
                                     &nbsp;{{jawab.caption}}</label>
                                 <div class="grid_12">
@@ -940,11 +940,11 @@
                                     </div>
                                 </div>
                                 </div>
-                            </div>
+                            </div> -->
                     
                            
                             
-                            <div class="grid_12" ng-switch-when="euol">
+                            <!-- <div class="grid_12" ng-switch-when="euol">
                                 <label class="k-label" style="{{jawab.style}}">
                                     &nbsp;{{jawab.caption}}</label>
                                 <div class="grid_12">
@@ -1004,7 +1004,7 @@
                                         </fieldset>
                                     </div>
                                 </div>
-                            </div>
+                            </div> -->
                         </div>
                     </div> 
                 </div>

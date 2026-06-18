@@ -1719,12 +1719,102 @@ class EMRController  extends ApiController
             ->where('apd.norec', $norecAPD);
 
         $data = $data->first();
+        if ($data) {
+            $registrasiSebelumnya = \DB::table('pasiendaftar_t')
+                ->select('norec as norec_pd', 'noregistrasi')
+                ->where('nocmfk', $data->nocmfk)
+                ->where('tglregistrasi', '<', $data->tglregistrasi)
+                ->orderBy('tglregistrasi', 'desc')
+                ->first();
+
+            $data->norec_pd_sebelumnya = $registrasiSebelumnya ? $registrasiSebelumnya->norec_pd : null;
+            $data->noregistrasi_sebelumnya = $registrasiSebelumnya ? $registrasiSebelumnya->noregistrasi : null;
+        }
+
+        $data_sebelumnya = \DB::table('antrianpasiendiperiksa_t as apd')
+            ->leftjoin('pasiendaftar_t as pd', 'pd.norec', '=', 'apd.noregistrasifk')
+            ->leftJoin('pasien_m as ps', 'ps.id', '=', 'pd.nocmfk')
+            ->leftJoin('kelompokpasien_m as kps', 'kps.id', '=', 'pd.objectkelompokpasienlastfk')
+            ->leftJoin('ruangan_m as ru', 'ru.id', '=', 'apd.objectruanganfk')
+            ->leftJoin('pegawai_m as pg', 'pg.id', '=', 'apd.objectpegawaifk')
+            ->leftJoin('jeniskelamin_m as jk', 'jk.id', '=', 'ps.objectjeniskelaminfk')
+            ->leftJoin('alamat_m as alm', 'alm.nocmfk', '=', 'ps.id')
+            ->leftJoin('pendidikan_m as pdd', 'pdd.id', '=', 'ps.objectpendidikanfk')
+            ->leftjoin('pekerjaan_m as pk', 'pk.id', '=', 'ps.objectpekerjaanfk')
+            ->leftjoin('golongandarah_m as gd', 'gd.id', '=', 'ps.objectgolongandarahfk')
+            ->leftjoin('rekanan_m as rk', 'rk.id', '=', 'pd.objectrekananfk')
+            ->leftjoin('suku_m as sk', 'sk.id', '=', 'ps.objectsukufk')
+            ->leftjoin('kelas_m as kls', 'kls.id', '=', 'apd.objectkelasfk')
+            ->leftJoin('pegawai_m as pg1', 'pg1.id', '=', 'pd.objectpegawaifk')
+            ->leftJoin('agama_m as ag', 'ag.id', '=', 'ps.objectagamafk')
+            ->leftJoin('pemakaianasuransi_t as pa', 'pa.noregistrasifk', '=', 'pd.norec')
+            ->select(
+                'ps.nohp',
+                'apd.norec',
+                'pd.noregistrasi',
+                'pd.tglregistrasi',
+                'ps.nocm',
+                'ps.namapasien',
+                'ps.tgllahir',
+                'ru.objectdepartemenfk',
+                'alm.alamatlengkap',
+                'kps.kelompokpasien',
+                'ru.namaruangan',
+                'pg.namalengkap',
+                'jk.jeniskelamin',
+                'pd.norec as norec_pd',
+                'pdd.pendidikan',
+                'pk.pekerjaan',
+                'ru.objectdepartemenfk',
+                'pd.jenispelayanan',
+                'rk.namarekanan',
+                'kls.namakelas',
+                'pd.nocmfk',
+                'pd.objectkelompokpasienlastfk',
+                'apd.objectruanganfk',
+                'apd.objectpegawaifk',
+                'ps.objectjeniskelaminfk',
+                'apd.objectkelasfk',
+                'ps.objectgolongandarahfk',
+                'gd.golongandarah',
+                'ps.foto',
+                'ps.tempatlahir',
+                "pd.statuspasien",
+                'pa.kodedpjp',
+                'ps.nobpjs',
+                'pa.nosep',
+                'pa.tanggalsep',
+                'ps.pekerjaanlain',
+                //                DB::raw('encode(foto, \'base64\') AS foto'),
+                'pg1.namalengkap as dokterdpjp',
+                'pg1.id as iddpjp',
+                'ps.objectjeniskelaminfk',
+                'pd.statusschedule as noreservasi',
+                'apd.skoriq',
+                'ps.noidentitas as nik',
+                'sk.suku',
+                'ag.agama',
+                'ps.ketalergi',
+                'pd.inacbgtotalgrouper'
+            )
+            ->where('apd.kdprofile', $idProfile)
+            ->orderby('apd.tglmasuk', 'asc')
+            ->where('pd.norec', $data->norec_pd_sebelumnya);
+
+        $data_sebelumnya = $data_sebelumnya->first();
+
+        $catatan = CatatanPasienDaftar::where('noregistrasifk', '=', $data->norec_pd)->where('statusenabled', true)->select('catatan')->first();
+        $data->catatan = '';
+        if ($catatan) {
+            $data->catatan = $catatan->catatan;
+        }
         //        if ($data->foto != null) {
         ////            $data->foto = "data:image/jpeg;base64," . base64_encode($data->foto);
         //            $data->foto = "data:image/jpeg;base64," . $data->foto;
         //        }
         $result = array(
             'result' => $data,
+            'data_sebelumnya' => $data_sebelumnya,
             'message' => 'Inhuman',
         );
         return $this->respond($result);
@@ -3447,6 +3537,72 @@ class EMRController  extends ApiController
             'message' => 'as@epic',
         );
         return $this->respond($result);
+    }
+
+    public function getInputanOtomatis(Request $request)
+    {
+        $kdProfile = $this->getDataKdProfile($request);
+        $payload = $request->all();
+        $result = [];
+
+        foreach ($payload as $item) {
+
+            if (
+                !isset($item['emrfk']) ||
+                !isset($item['objectId'])
+            ) {
+                continue;
+            }
+
+            $objectIds = array_map('trim', explode(',', $item['objectId']));
+
+            // Ambil emrpasienfk terbaru untuk emrfk ini
+            $latestEmrPasienFk = \DB::table('emrpasiend_t')
+                ->where('statusenabled', true)
+                ->where('kdprofile', $kdProfile)
+                ->where('emrfk', $item['emrfk'])
+                ->max('emrpasienfk');
+
+            if (!$latestEmrPasienFk) {
+                $result[] = [
+                    'emrfk' => $item['emrfk'],
+                    'emrpasienfk' => null,
+                    'data' => []
+                ];
+                continue;
+            }
+
+            $data = \DB::table('emrpasiend_t as emrdp')
+                ->where('emrdp.statusenabled', true)
+                ->where('emrdp.kdprofile', $kdProfile)
+                ->where('emrdp.emrfk', $item['emrfk'])
+                ->where('emrdp.emrpasienfk', $latestEmrPasienFk)
+                ->whereIn('emrdp.emrdfk', $objectIds)
+                ->whereNotNull('emrdp.value')
+                ->where('emrdp.value', '!=', 'Invalid date')
+                ->select(
+                    'emrdp.emrdfk',
+                    'emrdp.value'
+                )
+                ->get();
+
+            $groupData = [];
+
+            foreach ($data as $row) {
+                $groupData[$row->emrdfk] = $row->value;
+            }
+
+            $result[] = [
+                'emrfk' => $item['emrfk'],
+                'emrpasienfk' => $latestEmrPasienFk,
+                'data' => $groupData
+            ];
+        }
+
+        return $this->respond([
+            'data' => $result,
+            'message' => 'as@epic'
+        ]);
     }
 
     public function getEMRTransaksiDetail(Request $request)
@@ -7972,6 +8128,7 @@ class EMRController  extends ApiController
                 left join hasilradiologi_t as hr on hr.pelayananpasienfk = pp.norec
                 inner join orderpelayanan_t as op on op.noorderfk = so.norec 
               -- and op.objectprodukfk = pp.produkfk  --syamsu biar tdk double
+                and (pp.produkfk = op.objectprodukfk or pp.produkfk is null)
                 inner join pasiendaftar_t as pd on pd.norec=so.noregistrasifk
                 inner join pasien_m as ps on ps.id=pd.nocmfk
                 inner join produk_m as pr on pr.id=op.objectprodukfk

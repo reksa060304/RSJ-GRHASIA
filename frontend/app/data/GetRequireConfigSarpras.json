@@ -330,6 +330,10 @@
             "urlDep": "module/Farmasi/SasaranMutuCtrl"
         },
         {
+            "nameDep": "SasaranMutuRajalCtrl",
+            "urlDep": "module/RawatJalan/SasaranMutuRajalCtrl"
+        },
+        {
             "nameDep": "Consis_DCtrl",
             "urlDep": "module/Farmasi/Bridging/Consis_DCtrl"
         },

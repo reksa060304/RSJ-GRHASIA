@@ -17,6 +17,7 @@ define(['initialize', 'Configuration'], function (initialize, config) {
             $scope.skorNutrisiAnak = 0
             $scope.skorNutrisiDewasa = 0
             $scope.totalGziDewasa = 0
+            $scope.skorMNA = 0
             $scope.cc = {}
             var nomorEMR = '-'
             var noregEMR = ''
@@ -695,6 +696,66 @@ define(['initialize', 'Configuration'], function (initialize, config) {
                     ]
                 }
             ]
+
+            $scope.listSkriningGiziMNA = [
+                {
+                    nama: 'A. Apakah asupan makanan berkurang selama 3 bulan terakhir?',
+                    detail: [
+                        { id: 3015246, nama: '0 = Asupan makanan sangat berkurang', nilai: 0 },
+                        { id: 3015247, nama: '1 = Asupan makanan agak berkurang', nilai: 1 },
+                        { id: 3015248, nama: '2 = Asupan makanan tidak berkurang', nilai: 2 },
+                    ]
+                },
+                {
+                    nama: 'B. Berat badan turun selama 3 bulan terakhir?',
+                    detail: [
+                        { id: 3015250, nama: '0 = Berat badan turun lebih dari 3 kg', nilai: 0 },
+                        { id: 3015251, nama: '1 = Tidak tahu', nilai: 1 },
+                        { id: 3015252, nama: '2 = Berat badan turun antara 1 hingga 3 kg', nilai: 2 },
+                        { id: 3015253, nama: '3 = Berat badan tidak turun', nilai: 3 },
+                    ]
+                },
+                {
+                    nama: 'C. Pergerakan atau Mobilitas?',
+                    detail: [
+                        { id: 3015255, nama: '0 = Terbatas di tempat tidur atau kursi', nilai: 0 },
+                        { id: 3015256, nama: '1 = Mampu bangun dari tempat tidur/kursi, tapi tidak bisa keluar', nilai: 1 },
+                        { id: 3015257, nama: '2 = Dapat bepergian ke luar rumah', nilai: 2 },
+                    ]
+                },
+                {
+                    nama: 'D. Mengalami tekanan psikologis atau penyakit akut (3 bln terakhir)?',
+                    detail: [
+                        { id: 3015259, nama: '0 = Ya', nilai: 0 },
+                        { id: 3015260, nama: '2 = Tidak', nilai: 2 },
+                    ]
+                },
+                {
+                    nama: 'E. Gangguan neuropsikologis',
+                    detail: [
+                        { id: 3015262, nama: '0 = Demensia berat atau depresi', nilai: 0 },
+                        { id: 3015263, nama: '1 = Demensia ringan', nilai: 1 },
+                        { id: 3015264, nama: '2 = Tidak ada gangguan psikologis', nilai: 2 },
+                    ]
+                },
+                {
+                    nama: 'F1. Indeks Massa Tubuh (IMT)',
+                    detail: [
+                        { id: 3015266, nama: '0 = IMT kurang dari 19', nilai: 0 },
+                        { id: 3015267, nama: '1 = IMT 19 hingga kurang dari 21', nilai: 1 },
+                        { id: 3015268, nama: '2 = IMT 21 hingga kurang dari 23', nilai: 2 },
+                        { id: 3015269, nama: '3 = IMT 23 atau lebih besar', nilai: 3 },
+                    ]
+                },
+                {
+                    nama: 'F2. Lingkar lengan atas (LiLA) - Jika IMT tidak dapat diukur',
+                    detail: [
+                        { id: 3015271, nama: '0,0 = LiLA kurang dari 21', nilai: 0 },
+                        { id: 3015272, nama: '0,5 = LiLA 21 hingga 22', nilai: 0.5 },
+                        { id: 3015273, nama: '1,0 = LiLA lebih dari 22', nilai: 1 },
+                    ]
+                },
+            ]
           
             $scope.listHumpty2 = [
 
@@ -1135,7 +1196,9 @@ define(['initialize', 'Configuration'], function (initialize, config) {
                             if (dataLoad[i].emrdfk ==  3014891)
                                 $scope.skorNutrisiAnak =parseFloat( dataLoad[i].value)
                             if (dataLoad[i].emrdfk ==  3014902)
-                            $scope.skorNutrisiDewasa =parseFloat( dataLoad[i].value)
+                                $scope.skorNutrisiDewasa =parseFloat( dataLoad[i].value)
+                            if (dataLoad[i].emrdfk == 3015274)
+                                $scope.skorMNA = parseFloat(dataLoad[i].value)
                         }
                         if (dataLoad[i].type == "textbox2") {
                             $scope.item.obj[dataLoad[i].emrdfk] = dataLoad[i].value
@@ -1319,7 +1382,40 @@ define(['initialize', 'Configuration'], function (initialize, config) {
                     }
 
                 }
+                // Recalculate MNA score from loaded checkbox states
+                $scope.skorMNA = 0
+                for (var g = 0; g < $scope.listSkriningGiziMNA.length; g++) {
+                    var grpMNA = $scope.listSkriningGiziMNA[g]
+                    for (var k = 0; k < grpMNA.detail.length; k++) {
+                        var optMNA = grpMNA.detail[k]
+                        if ($scope.item.obj[optMNA.id] == true) {
+                            $scope.skorMNA += optMNA.nilai
+                        }
+                    }
+                }
+                $scope.item.obj[3015274] = $scope.skorMNA
             })
+            $scope.getSkorMNA = function (stat, detail) {
+                // Mutual exclusivity: uncheck all other options in this group
+                for (var j = 0; j < detail.length; j++) {
+                    if (detail[j].id !== stat.id) {
+                        $scope.item.obj[detail[j].id] = false
+                    }
+                }
+                // Recalculate total MNA score
+                $scope.skorMNA = 0
+                for (var g = 0; g < $scope.listSkriningGiziMNA.length; g++) {
+                    var grp = $scope.listSkriningGiziMNA[g]
+                    for (var k = 0; k < grp.detail.length; k++) {
+                        var opt = grp.detail[k]
+                        if ($scope.item.obj[opt.id] == true) {
+                            $scope.skorMNA += opt.nilai
+                        }
+                    }
+                }
+                $scope.item.obj[3015274] = $scope.skorMNA
+            }
+
             $scope.skorNutrisi = 0
             $scope.getSkorNutrisi = function (jawab) {
                 var arrobj = Object.keys($scope.item.obj);

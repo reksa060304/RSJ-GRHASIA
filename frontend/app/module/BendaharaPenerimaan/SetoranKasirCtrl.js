@@ -59,7 +59,9 @@ define(['initialize'], function (initialize) {
 					$scope.listBayar = [
 						{ id: 1, carabayar: "TUNAI" },
 						{ id: 3, carabayar: "TRANSFER BANK"},
-                        { id: 12, carabayar: "QRIS" }
+                        { id: 12, carabayar: "QRIS" },
+						{ id: 13, carabayar: "QRIS SI-BANTER" },
+						{ id: 14, carabayar: "VA SI-BANTER" }
 					];
 				});				
 				$scope.listStatus = [{ "id": "1", "namaExternal": "Semua" }, { "id": "2", "namaExternal": "Verifikasi" }, { "id": "3", "namaExternal": "Closing" }]

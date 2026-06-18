@@ -212,7 +212,11 @@ class NoAuthController extends ApiController
 
             ->where('ru.statusenabled', true)
             ->where('pg.statusenabled', true)
-            ->where('slot.statusenabled', true);
+            ->where('slot.statusenabled', true)
+
+            ->whereNotNull('pg.namalengkap')
+            ->where('pg.namalengkap', '!=', '')
+            ->where('pg.namalengkap', '!=', '-');
 
 
         if (isset($request['dokterId']) && $request['dokterId'] != "" && $request['dokterId'] != "undefined") {

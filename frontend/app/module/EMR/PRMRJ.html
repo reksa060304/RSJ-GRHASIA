@@ -47,6 +47,16 @@
     <div class="panel panel-default container_12">
             <div class="panel-heading">PROFIL RINGKAS MEDIS RAWAT JALAN( P R M R J )</div>
     </div>
+
+    <!-- Tab Navigation -->
+    <div class="grid_12" style="margin-top: 8px; margin-bottom: 0;">
+        <button class="k-button" ng-class="{'k-primary': prmrjTab == 'input'}" ng-click="prmrjTab = 'input'" style="margin-right: 4px; margin-top: 10px;">
+            <i class="fa fa-edit" style="padding-right: 5px;"></i> Input PRMRJ
+        </button>
+        <button class="k-button" ng-class="{'k-primary': prmrjTab == 'riwayat'}" ng-click="prmrjTab = 'riwayat'; loadRiwayatPRMRJ()" style="margin-right: 4px; margin-top: 10px;">
+            <i class="fa fa-history" style="padding-right: 5px;"></i> Riwayat PRMRJ
+        </button>
+    </div>
     <!-- div class="grid_12" style="margin-top: 20px">
     <fieldset>
            
@@ -73,7 +83,8 @@
             </div>
     </fieldset>
     </div> -->
-    <div class="grid_12">
+    <!-- ===================== TAB INPUT ===================== -->
+    <div class="grid_12" ng-show="prmrjTab == 'input' || !prmrjTab">
                 <fieldset style="margin-top: 10px; ">
                     <div class="grid_12">
                         <div class="grid_12">
@@ -92,7 +103,7 @@
                                 <th style="text-align: center;width: 200px">Tindakan / Pemeriksaan / Obat - obata</th>
                                <th style="text-align: center;width: 200px">Nama Jelas dan
                                    Tanda Tangan
-                                   Petugas Kesehatan</th>
+                                   DPJP</th>
                             </tr>
                          <!-- 1 -->
                             <tr>
@@ -100,7 +111,8 @@
                                     <input style="width: 100%" k-ng-model="item.obj[21023359]" kendo-datetimepicker placeholer="yyyy-MM-dd HH:mm" k-format="'yyyy-MM-dd HH:mm'" parsedate="yyyy-MM-dd HH:mm" />
                                     </td>
                                 <td>
-                                 <input style="width: 100%;" kendo-combo-box k-ng-model="item.obj[21023361]" k-data-text-field="'text'" k-data-value-field="'value'" k-filter="'contains'" k-auto-bind="false" k-data-source="listDiagnosa" />      
+                                    <textarea style="width: 95%;height: 200px" cols="6" rows="5" c-text-area type="input" filter="'string'" class="k-textbox" style="{{data.style}}"  ng-model="item.obj[21023361]" />
+                                 <!-- <input style="width: 100%;" kendo-combo-box k-ng-model="item.obj[21023361]" k-data-text-field="'text'" k-data-value-field="'value'" k-filter="'contains'" k-auto-bind="false" k-data-source="listDiagnosa" />       -->
                                 </td>
                                 <td>
                                     <textarea style="width: 95%;height: 200px" cols="6" rows="5" c-text-area type="input" filter="'string'" class="k-textbox" style="{{data.style}}"  ng-model="item.obj[21023363]" />
@@ -115,7 +127,8 @@
                                     <input style="width: 100%" k-ng-model="item.obj[21023366]" kendo-datetimepicker placeholer="yyyy-MM-dd HH:mm" k-format="'yyyy-MM-dd HH:mm'" parsedate="yyyy-MM-dd HH:mm" />
                                 </td>
                                 <td>
-                                 <input style="width: 100%;" kendo-combo-box k-ng-model="item.obj[21023368]" k-data-text-field="'text'" k-data-value-field="'value'" k-filter="'contains'" k-auto-bind="false" k-data-source="listDiagnosa" />      
+                                    <textarea style="width: 95%;height: 200px" cols="6" rows="5" c-text-area type="input" filter="'string'" class="k-textbox" style="{{data.style}}"  ng-model="item.obj[21023368]" />
+                                 <!-- <input style="width: 100%;" kendo-combo-box k-ng-model="item.obj[21023368]" k-data-text-field="'text'" k-data-value-field="'value'" k-filter="'contains'" k-auto-bind="false" k-data-source="listDiagnosa" />       -->
                                 </td>
                                 <td>
                                     <textarea style="width: 95%;height: 200px" cols="6" rows="5" c-text-area type="input" filter="'string'" class="k-textbox" style="{{data.style}}"  ng-model="item.obj[21023370]" />
@@ -130,7 +143,8 @@
                                 </td>
                                 
                                 <td>
-                                 <input style="width: 100%;" kendo-combo-box k-ng-model="item.obj[21023375]" k-data-text-field="'text'" k-data-value-field="'value'" k-filter="'contains'" k-auto-bind="false" k-data-source="listDiagnosa" />      
+                                    <textarea style="width: 95%;height: 200px" cols="6" rows="5" c-text-area type="input" filter="'string'" class="k-textbox" style="{{data.style}}"  ng-model="item.obj[21023375]" />
+                                 <!-- <input style="width: 100%;" kendo-combo-box k-ng-model="item.obj[21023375]" k-data-text-field="'text'" k-data-value-field="'value'" k-filter="'contains'" k-auto-bind="false" k-data-source="listDiagnosa" />       -->
                                 </td>
                                 
                                 <td>
@@ -148,7 +162,8 @@
                                     </td>
                                 
                                 <td>
-                                 <input style="width: 100%;" kendo-combo-box k-ng-model="item.obj[21023382]" k-data-text-field="'text'" k-data-value-field="'value'" k-filter="'contains'" k-auto-bind="false" k-data-source="listDiagnosa" />      
+                                    <textarea style="width: 95%;height: 200px" cols="6" rows="5" c-text-area type="input" filter="'string'" class="k-textbox" style="{{data.style}}"  ng-model="item.obj[21023382]" />
+                                 <!-- <input style="width: 100%;" kendo-combo-box k-ng-model="item.obj[21023382]" k-data-text-field="'text'" k-data-value-field="'value'" k-filter="'contains'" k-auto-bind="false" k-data-source="listDiagnosa" />       -->
                                 </td>
                                 
                                 <td>
@@ -166,7 +181,8 @@
                                     </td>
                                 
                                 <td>
-                                 <input style="width: 100%;" kendo-combo-box k-ng-model="item.obj[21023389]" k-data-text-field="'text'" k-data-value-field="'value'" k-filter="'contains'" k-auto-bind="false" k-data-source="listDiagnosa" />      
+                                    <textarea style="width: 95%;height: 200px" cols="6" rows="5" c-text-area type="input" filter="'string'" class="k-textbox" style="{{data.style}}"  ng-model="item.obj[21023389]" />
+                                 <!-- <input style="width: 100%;" kendo-combo-box k-ng-model="item.obj[21023389]" k-data-text-field="'text'" k-data-value-field="'value'" k-filter="'contains'" k-auto-bind="false" k-data-source="listDiagnosa" />       -->
                                 </td>
                                 
                                 <td>
@@ -184,7 +200,8 @@
                                     </td>
                                 
                                 <td>
-                                 <input style="width: 100%;" kendo-combo-box k-ng-model="item.obj[21023396]" k-data-text-field="'text'" k-data-value-field="'value'" k-filter="'contains'" k-auto-bind="false" k-data-source="listDiagnosa" />      
+                                    <textarea style="width: 95%;height: 200px" cols="6" rows="5" c-text-area type="input" filter="'string'" class="k-textbox" style="{{data.style}}"  ng-model="item.obj[21023396]" />
+                                 <!-- <input style="width: 100%;" kendo-combo-box k-ng-model="item.obj[21023396]" k-data-text-field="'text'" k-data-value-field="'value'" k-filter="'contains'" k-auto-bind="false" k-data-source="listDiagnosa" />       -->
                                 </td>
                                 
                                 <td>
@@ -201,7 +218,8 @@
                                     <input style="width: 100%" k-ng-model="item.obj[21023401]" kendo-datetimepicker placeholer="yyyy-MM-dd HH:mm" k-format="'yyyy-MM-dd HH:mm'" parsedate="yyyy-MM-dd HH:mm" />
                                     </td>
                                 <td>
-                                 <input style="width: 100%;" kendo-combo-box k-ng-model="item.obj[21023403]" k-data-text-field="'text'" k-data-value-field="'value'" k-filter="'contains'" k-auto-bind="false" k-data-source="listDiagnosa" />      
+                                    <textarea style="width: 95%;height: 200px" cols="6" rows="5" c-text-area type="input" filter="'string'" class="k-textbox" style="{{data.style}}"  ng-model="item.obj[21023403]" />
+                                 <!-- <input style="width: 100%;" kendo-combo-box k-ng-model="item.obj[21023403]" k-data-text-field="'text'" k-data-value-field="'value'" k-filter="'contains'" k-auto-bind="false" k-data-source="listDiagnosa" />       -->
                                 </td>
                                 
                                 <td>
@@ -219,7 +237,8 @@
                                     </td>
                                 
                                 <td>
-                                 <input style="width: 100%;" kendo-combo-box k-ng-model="item.obj[21023410]" k-data-text-field="'text'" k-data-value-field="'value'" k-filter="'contains'" k-auto-bind="false" k-data-source="listDiagnosa" />      
+                                    <textarea style="width: 95%;height: 200px" cols="6" rows="5" c-text-area type="input" filter="'string'" class="k-textbox" style="{{data.style}}"  ng-model="item.obj[21023410]" />
+                                 <!-- <input style="width: 100%;" kendo-combo-box k-ng-model="item.obj[21023410]" k-data-text-field="'text'" k-data-value-field="'value'" k-filter="'contains'" k-auto-bind="false" k-data-source="listDiagnosa" />       -->
                                 </td>
                                 
                                 <td>
@@ -237,7 +256,8 @@
                                     </td>
                                 
                                 <td>
-                                 <input style="width: 100%;" kendo-combo-box k-ng-model="item.obj[21023417]" k-data-text-field="'text'" k-data-value-field="'value'" k-filter="'contains'" k-auto-bind="false" k-data-source="listDiagnosa" />      
+                                    <textarea style="width: 95%;height: 200px" cols="6" rows="5" c-text-area type="input" filter="'string'" class="k-textbox" style="{{data.style}}"  ng-model="item.obj[21023417]" />
+                                 <!-- <input style="width: 100%;" kendo-combo-box k-ng-model="item.obj[21023417]" k-data-text-field="'text'" k-data-value-field="'value'" k-filter="'contains'" k-auto-bind="false" k-data-source="listDiagnosa" />       -->
                                 </td>
                                 
                                 <td>
@@ -255,7 +275,8 @@
                                     </td>
                                 
                                 <td>
-                                 <input style="width: 100%;" kendo-combo-box k-ng-model="item.obj[21023424]" k-data-text-field="'text'" k-data-value-field="'value'" k-filter="'contains'" k-auto-bind="false" k-data-source="listDiagnosa" />      
+                                    <textarea style="width: 95%;height: 200px" cols="6" rows="5" c-text-area type="input" filter="'string'" class="k-textbox" style="{{data.style}}"  ng-model="item.obj[21023424]" />
+                                 <!-- <input style="width: 100%;" kendo-combo-box k-ng-model="item.obj[21023424]" k-data-text-field="'text'" k-data-value-field="'value'" k-filter="'contains'" k-auto-bind="false" k-data-source="listDiagnosa" />       -->
                                 </td>
                                 
                                 <td>
@@ -273,7 +294,8 @@
                                     </td>
                                
                                 <td>
-                                 <input style="width: 100%;" kendo-combo-box k-ng-model="item.obj[21023431]" k-data-text-field="'text'" k-data-value-field="'value'" k-filter="'contains'" k-auto-bind="false" k-data-source="listDiagnosa" />      
+                                    <textarea style="width: 95%;height: 200px" cols="6" rows="5" c-text-area type="input" filter="'string'" class="k-textbox" style="{{data.style}}"  ng-model="item.obj[21023431]" />
+                                 <!-- <input style="width: 100%;" kendo-combo-box k-ng-model="item.obj[21023431]" k-data-text-field="'text'" k-data-value-field="'value'" k-filter="'contains'" k-auto-bind="false" k-data-source="listDiagnosa" />       -->
                                 </td>
                                
                                 <td>
@@ -291,7 +313,8 @@
                                     </td>
                                
                                 <td>
-                                 <input style="width: 100%;" kendo-combo-box k-ng-model="item.obj[21023438]" k-data-text-field="'text'" k-data-value-field="'value'" k-filter="'contains'" k-auto-bind="false" k-data-source="listDiagnosa" />      
+                                    <textarea style="width: 95%;height: 200px" cols="6" rows="5" c-text-area type="input" filter="'string'" class="k-textbox" style="{{data.style}}"  ng-model="item.obj[21023438]" />
+                                 <!-- <input style="width: 100%;" kendo-combo-box k-ng-model="item.obj[21023438]" k-data-text-field="'text'" k-data-value-field="'value'" k-filter="'contains'" k-auto-bind="false" k-data-source="listDiagnosa" />       -->
                                 </td>
                                 
                                 <td>
@@ -310,7 +333,8 @@
                                     </td>
                                 
                                 <td>
-                                 <input style="width: 100%;" kendo-combo-box k-ng-model="item.obj[21023445]" k-data-text-field="'text'" k-data-value-field="'value'" k-filter="'contains'" k-auto-bind="false" k-data-source="listDiagnosa" />      
+                                    <textarea style="width: 95%;height: 200px" cols="6" rows="5" c-text-area type="input" filter="'string'" class="k-textbox" style="{{data.style}}"  ng-model="item.obj[21023445]" />
+                                 <!-- <input style="width: 100%;" kendo-combo-box k-ng-model="item.obj[21023445]" k-data-text-field="'text'" k-data-value-field="'value'" k-filter="'contains'" k-auto-bind="false" k-data-source="listDiagnosa" />       -->
                                 </td>
                                
                                 <td>
@@ -328,7 +352,8 @@
                                     </td>
                                 
                                 <td>
-                                 <input style="width: 100%;" kendo-combo-box k-ng-model="item.obj[21023452]" k-data-text-field="'text'" k-data-value-field="'value'" k-filter="'contains'" k-auto-bind="false" k-data-source="listDiagnosa" />      
+                                    <textarea style="width: 95%;height: 200px" cols="6" rows="5" c-text-area type="input" filter="'string'" class="k-textbox" style="{{data.style}}"  ng-model="item.obj[21023452]" />
+                                 <!-- <input style="width: 100%;" kendo-combo-box k-ng-model="item.obj[21023452]" k-data-text-field="'text'" k-data-value-field="'value'" k-filter="'contains'" k-auto-bind="false" k-data-source="listDiagnosa" />       -->
                                 </td>
                                 
                                 <td>
@@ -346,7 +371,8 @@
                                     </td>
                                 
                                 <td>
-                                 <input style="width: 100%;" kendo-combo-box k-ng-model="item.obj[21023459]" k-data-text-field="'text'" k-data-value-field="'value'" k-filter="'contains'" k-auto-bind="false" k-data-source="listDiagnosa" />      
+                                    <textarea style="width: 95%;height: 200px" cols="6" rows="5" c-text-area type="input" filter="'string'" class="k-textbox" style="{{data.style}}"  ng-model="item.obj[21023459]" />
+                                 <!-- <input style="width: 100%;" kendo-combo-box k-ng-model="item.obj[21023459]" k-data-text-field="'text'" k-data-value-field="'value'" k-filter="'contains'" k-auto-bind="false" k-data-source="listDiagnosa" />       -->
                                 </td>
                                
                                 <td>
@@ -364,7 +390,8 @@
                                     </td>
                                 
                                 <td>
-                                 <input style="width: 100%;" kendo-combo-box k-ng-model="item.obj[21023466]" k-data-text-field="'text'" k-data-value-field="'value'" k-filter="'contains'" k-auto-bind="false" k-data-source="listDiagnosa" />      
+                                    <textarea style="width: 95%;height: 200px" cols="6" rows="5" c-text-area type="input" filter="'string'" class="k-textbox" style="{{data.style}}"  ng-model="item.obj[21023466]" />
+                                 <!-- <input style="width: 100%;" kendo-combo-box k-ng-model="item.obj[21023466]" k-data-text-field="'text'" k-data-value-field="'value'" k-filter="'contains'" k-auto-bind="false" k-data-source="listDiagnosa" />       -->
                                 </td>
                                 
                                 <td>
@@ -382,7 +409,8 @@
                                     </td>
                                 
                                 <td>
-                                 <input style="width: 100%;" kendo-combo-box k-ng-model="item.obj[21023473]" k-data-text-field="'text'" k-data-value-field="'value'" k-filter="'contains'" k-auto-bind="false" k-data-source="listDiagnosa" />      
+                                    <textarea style="width: 95%;height: 200px" cols="6" rows="5" c-text-area type="input" filter="'string'" class="k-textbox" style="{{data.style}}"  ng-model="item.obj[21023473]" />
+                                 <!-- <input style="width: 100%;" kendo-combo-box k-ng-model="item.obj[21023473]" k-data-text-field="'text'" k-data-value-field="'value'" k-filter="'contains'" k-auto-bind="false" k-data-source="listDiagnosa" />       -->
                                 </td>
                                
                                 <td>
@@ -400,7 +428,8 @@
                                     </td>
                                 
                                 <td>
-                                 <input style="width: 100%;" kendo-combo-box k-ng-model="item.obj[21023480]" k-data-text-field="'text'" k-data-value-field="'value'" k-filter="'contains'" k-auto-bind="false" k-data-source="listDiagnosa" />      
+                                    <textarea style="width: 95%;height: 200px" cols="6" rows="5" c-text-area type="input" filter="'string'" class="k-textbox" style="{{data.style}}"  ng-model="item.obj[21023480]" />
+                                 <!-- <input style="width: 100%;" kendo-combo-box k-ng-model="item.obj[21023480]" k-data-text-field="'text'" k-data-value-field="'value'" k-filter="'contains'" k-auto-bind="false" k-data-source="listDiagnosa" />       -->
                                 </td>
                               
                                 <td>
@@ -418,7 +447,8 @@
                                     </td>
                               
                                 <td>
-                                 <input style="width: 100%;" kendo-combo-box k-ng-model="item.obj[21023487]" k-data-text-field="'text'" k-data-value-field="'value'" k-filter="'contains'" k-auto-bind="false" k-data-source="listDiagnosa" />      
+                                    <textarea style="width: 95%;height: 200px" cols="6" rows="5" c-text-area type="input" filter="'string'" class="k-textbox" style="{{data.style}}"  ng-model="item.obj[21023487]" />
+                                 <!-- <input style="width: 100%;" kendo-combo-box k-ng-model="item.obj[21023487]" k-data-text-field="'text'" k-data-value-field="'value'" k-filter="'contains'" k-auto-bind="false" k-data-source="listDiagnosa" />       -->
                                 </td>
                              
                                 <td>
@@ -436,7 +466,8 @@
                                     </td>
                              
                                 <td>
-                                 <input style="width: 100%;" kendo-combo-box k-ng-model="item.obj[21023494]" k-data-text-field="'text'" k-data-value-field="'value'" k-filter="'contains'" k-auto-bind="false" k-data-source="listDiagnosa" />      
+                                    <textarea style="width: 95%;height: 200px" cols="6" rows="5" c-text-area type="input" filter="'string'" class="k-textbox" style="{{data.style}}"  ng-model="item.obj[21023494]" />
+                                 <!-- <input style="width: 100%;" kendo-combo-box k-ng-model="item.obj[21023494]" k-data-text-field="'text'" k-data-value-field="'value'" k-filter="'contains'" k-auto-bind="false" k-data-source="listDiagnosa" />       -->
                                 </td>
                                
                                 <td>
@@ -454,10 +485,71 @@
                     </div>
                 </fieldset>
             </div>
-        </div>
+    </div>
 
         <div class="grid_12">
             <div ng-include='"../app/module/EMR/TemplateButtonDinamis" '></div>
         </div>
     </div>
+
+    <!-- ===================== TAB RIWAYAT ===================== -->
+    <div class="grid_12" ng-show="prmrjTab == 'riwayat'" style="margin-top: 10px;">
+
+        <!-- Grid pilih riwayat -->
+        <div class="panel panel-default container_12">
+            <div class="panel-heading">Daftar Riwayat PRMRJ</div>
+        </div>
+        <div class="grid_12 borderBox" style="margin-bottom: 12px;">
+            <kendo-grid id="kGridRiwayatPRMRJ"
+                data-source="dataGridRiwayatPRMRJ"
+                options="columnGridRiwayatPRMRJ"
+                k-selectable="'row'"
+                k-sortable="'true'"
+                k-resizable="'true'">
+            </kendo-grid>
+        </div>
+
+        <!-- Detail riwayat yang dipilih (read-only) -->
+        <div class="grid_12" ng-show="selectedRiwayatPRMRJ" style="margin-top: 10px;">
+            <div class="panel panel-default container_12">
+                <div class="panel-heading">Detail Riwayat PRMRJ – <span style="font-weight:normal;">{{selectedRiwayatPRMRJ.tglemr}}</span></div>
+            </div>
+            <div class="grid_12" style="margin-top: 10px;">
+                <fieldset style="margin-top: 10px;">
+                    <div class="grid_12">
+                        <div class="grid_12"><p>Alergi</p></div>
+                        <div class="grid_12">
+                            <input class="k-textbox" ng-model="item.riwPRMRJ[21023362]" type="text" readonly>
+                        </div>
+                    </div>
+                    <div class="grid_12" style="margin-top: 20px;">
+                        <table style="width:100%;color: #4c5356;">
+                            <tr>
+                                <th style="text-align:center;width:200px">Tanggal</th>
+                                <th style="text-align:center;width:200px">Diagnosa</th>
+                                <th style="text-align:center;width:200px">Tindakan / Pemeriksaan / Obat-obatan</th>
+                                <th style="text-align:center;width:200px">Nama Jelas dan Tanda Tangan DPJP</th>
+                            </tr>
+                            <tr ng-repeat="row in prmrjRiwayatRows track by $index" ng-show="item.riwPRMRJ[row.dateId]">
+                                <td>
+                                    <input style="width:100%" k-ng-model="item.riwPRMRJ[row.dateId]" ng-disabled="true" kendo-datetimepicker k-format="'yyyy-MM-dd HH:mm'" parsedate="yyyy-MM-dd HH:mm" />
+                                </td>
+                                <td>
+                                    <textarea style="width:95%;height:200px" class="k-textbox" ng-model="item.riwPRMRJ[row.diagId]" readonly></textarea>
+                                </td>
+                                <td>
+                                    <textarea style="width:95%;height:200px" class="k-textbox" ng-model="item.riwPRMRJ[row.tindId]" readonly></textarea>
+                                </td>
+                                <td>
+                                    <input style="width:100%;" class="k-textbox" ng-model="item.riwPRMRJ[row.dpjpId]" type="text" readonly />
+                                </td>
+                            </tr>
+                        </table>
+                    </div>
+                </fieldset>
+            </div>
+        </div>
+    </div>
+
+</div>
 </div>

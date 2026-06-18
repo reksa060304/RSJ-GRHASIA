@@ -1605,10 +1605,10 @@ define(['initialize'], function (initialize) {
                     var datas = data.data.data;
                     console.log(datas.length);
                     if (datas.length > 0) {
-                    $scope.isRouteLoading = false
-                    medifirstService.getPart('emr/get-datacombo-part-pegawai', true, true, 20).then(function (data) {
-                        $scope.listPegawai = data
-            })
+                        $scope.isRouteLoading = false
+                        medifirstService.getPart('emr/get-datacombo-part-pegawai', true, true, 20).then(function (data) {
+                            $scope.listPegawai = data
+                        })
                         medifirstService.get("emr/get-emr-transaksi-detail?noemr=" + nomorEMR + "&emrfk=" + $scope.cc.emrfk, true).then(function (dat) {
                             $scope.item.obj = []
                             $scope.item.obj2 = []
@@ -1783,6 +1783,18 @@ define(['initialize'], function (initialize) {
                                 value: $scope.cc.objectruanganfk
                             }
 
+                            var payload = [
+                                {
+                                    emrfk: 3000544,
+                                    objectId: "1901310025,3018100"
+                                },
+                            ];
+                            
+                            medifirstService.post('emr/get-emr-inputan-otomatis', payload)
+                                .then(function (res) {
+                                    console.log(res.data);
+                                    $scope.item.obj[120304] = res.data.data[0].data["1901310025"] || '';
+                                });
                             $scope.item.obj[116201] = true
                             $scope.item.obj[116204] = true
                             $scope.item.obj[116207] = true

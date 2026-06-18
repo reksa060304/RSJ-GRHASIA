@@ -74,6 +74,8 @@ use App\Transaksi\PlanningPegawaiStatus;
 use App\Transaksi\StrukBuktiPengeluaran;
 use App\Transaksi\StrukBuktiPengeluaranCaraBayar;
 
+use App\Master\RunningNumber;
+
 class SumberDayaManusiaController extends ApiController {
 
     use Valet;
@@ -801,8 +803,16 @@ class SumberDayaManusiaController extends ApiController {
         ->where("objectpegawaifk",$request['idPegawai'])
         ->get();
 
-        $datacutiawal = \DB::table('planningpegawaistatus_t')->select("*")
-        ->where("objectpegawaifk",$request['idPegawai'])
+        $datacutiawal = DB::table('planningpegawaistatus_t')
+        ->selectRaw("
+            MIN(tglpengajuan) AS tglpengajuan,
+            COALESCE(MAX(totalcuti), 0) AS totalcuti,
+            COALESCE(SUM(CASE WHEN approvalstatus IS NOT NULL THEN jumlahhari ELSE 0 END), 0) AS cuti_terpakai,
+            COALESCE(MAX(totalcuti), 0) - 
+            COALESCE(SUM(CASE WHEN approvalstatus IS NOT NULL THEN jumlahhari ELSE 0 END), 0) AS sisa_cuti
+        ")
+        ->where('objectpegawaifk', $request['idPegawai'])
+        ->groupBy('objectpegawaifk')
         ->get();
 
         $dataRiwayatGajiBerkala = \DB::table("riwayatgajiberkala_t as gb")
@@ -3451,28 +3461,83 @@ class SumberDayaManusiaController extends ApiController {
         return $this->respond($result);
     }
      public function getPegawaiAll (Request $request) {
-         $kdProfile = (int) $this->getDataKdProfile($request);
-        $pegawai = \DB::table('pegawai_m as pg')
+        $kdProfile = (int) $this->getDataKdProfile($request);
+
+        $subQuery = DB::table('planningpegawaistatus_t')
+            ->selectRaw("
+                objectpegawaifk,
+                MIN(tglpengajuan) AS tglpengajuan,
+                COALESCE(MAX(totalcuti), 0) AS totalcuti,
+                COALESCE(SUM(CASE WHEN approvalstatus IS NOT NULL THEN jumlahhari ELSE 0 END), 0) AS cuti_terpakai,
+                COALESCE(MAX(totalcuti), 0) - 
+                COALESCE(SUM(CASE WHEN approvalstatus IS NOT NULL THEN jumlahhari ELSE 0 END), 0) AS sisa_cuti
+            ")
+            ->groupBy('objectpegawaifk')
+            ->toSql(); // ambil SQL query sebagai string
+
+
+        // $pegawai = \DB::table('pegawai_m as pg')
+        //     ->leftJoin('jabatan_m as jb','jb.id','=','pg.objectjabatanfungsionalfk')
+        //     ->leftJoin('subunitkerja_m as sub','sub.id','=','pg.objectsubunitkerjapegawaifk')
+        //     ->select('pg.*','jb.namajabatan','sub.name as subunitkerja')
+        //     ->where('pg.statusenabled',true)
+        //     ->where('pg.namalengkap',"<>","-")
+        //     ->whereNull('pg.usereksternal')
+        //     ->where('pg.kdprofile', $kdProfile)
+        //     ->where('pg.tglkeluar', NULL)
+        //     ->orderBy('pg.namalengkap')
+        //     ->get();
+
+        $pegawai = DB::table('pegawai_m as pg')
             ->leftJoin('jabatan_m as jb','jb.id','=','pg.objectjabatanfungsionalfk')
             ->leftJoin('subunitkerja_m as sub','sub.id','=','pg.objectsubunitkerjapegawaifk')
-            ->leftJoin('kategorypegawai_m as kp','kp.id','=','pg.kategorypegawai')
-            ->select('pg.*','jb.namajabatan','sub.name as subunitkerja','kp.maxsisacuti','kp.maxcutitahunini')
-            ->where('pg.statusenabled',true)
-            ->where('pg.namalengkap',"<>","-")
+            ->leftJoin(DB::raw("($subQuery) as cuti"), 'cuti.objectpegawaifk', '=', 'pg.id')
+            ->select(
+                'pg.*',
+                'jb.namajabatan',
+                'sub.name as subunitkerja',
+                'cuti.tglpengajuan',
+                'cuti.totalcuti'
+            )
+            ->where('pg.statusenabled', true)
+            ->where('pg.namalengkap', '<>', '-')
             ->whereNull('pg.usereksternal')
             ->where('pg.kdprofile', $kdProfile)
+            ->whereNull('pg.tglkeluar')
             ->orderBy('pg.namalengkap')
             ->get();
+
+
+
+        
+        
         $jeniscuti = \DB::table('sdm_jeniscuti_m as pg')
             ->select('pg.*')
             ->where('pg.kdprofile', $kdProfile)
             ->where('pg.statusenabled',true)
+            ->whereIn('pg.id',[1])
             ->orderBy('pg.name')
             ->get();
-
+        $jeniscutimarried = \DB::table('sdm_jeniscuti_m as pg')
+            ->select('pg.*')
+            ->where('pg.kdprofile', $kdProfile)
+            ->where('pg.statusenabled',true)
+            ->whereNotIn('pg.id',[1,2,3,4,5,6,7])
+            ->orderBy('pg.name')
+            ->get();
+        $pegawaiaja = \DB::table('pegawai_m as pg')
+            ->select('pg.*')
+            ->where('pg.statusenabled',true)
+            ->where('pg.kdprofile', $kdProfile)
+            ->where('pg.tglkeluar', NULL)
+            ->whereNotIn('pg.objectjenispegawaifk',[1])
+            ->orderBy('pg.namalengkap')
+            ->get();
          $arrayName = array(
             'pegawai' => $pegawai,
             'jeniscuti' => $jeniscuti,
+            'jeniscutimarried' => $jeniscutimarried,
+            'pegawaiaja' => $pegawaiaja,
          );
         return $this->respond($arrayName);
     }
@@ -3553,7 +3618,7 @@ class SumberDayaManusiaController extends ApiController {
         return $this->setStatusCode($result['status'])->respond($result, $transMessage);
     }
 
-    public function getPermohonanCuti (Request $request) {
+    public function getPermohonanCuti(Request $request) {
         $kdProfile = (int) $this->getDataKdProfile($request);
         $data =\DB::table('planningpegawaistatus_t as pps')
             ->leftJoin('pegawai_m as pg','pg.id','=','pps.objectpegawaifk')
@@ -3562,9 +3627,11 @@ class SumberDayaManusiaController extends ApiController {
             ->leftJoin('unitkerja_m as ukp','ukp.id','=','pg.objectunitkerjafk')
             ->select( 'pps.norec','pps.noplanning','pps.tglpengajuan','pps.objectpegawaifk','pps.objectstatuspegawaiplanfk',
                 'pps.deskripsistatuspegawaiplan as desk','pps.keterangan','pg.namalengkap','jc.name as statuspermohonan',
-                'jb.namajabatan','ukp.unitkerja','pps.approvalstatus')
+                'jb.namajabatan','ukp.unitkerja','pps.approvalstatus','pps.totalcuti')
             ->where('pps.kdprofile', $kdProfile)
             ->where('pps.statusenabled',true)
+            ->whereNull('pps.totalcuti')
+            ->where('pps.tglpengajuan', '>=' ,'2025-01-01')
             ->orderBy('pps.tglpengajuan');
 
         if(isset($request['namaLengkap']) && $request['namaLengkap']!="" && $request['namaLengkap']!="undefined"){
@@ -3636,6 +3703,7 @@ class SumberDayaManusiaController extends ApiController {
                 'namajabatan' => $item->namajabatan,
                 'unitkerja' => $item->unitkerja,
                 'approvalstatus' => $item->approvalstatus,
+                'totalcuti' => $item->totalcuti,
                 'listtanggal' => $details,
                 'listtanggalapprove' => $tglVerif,
 
@@ -7516,7 +7584,7 @@ public function daftarKenaikanGajiBerkala(Request $request){
                     'statusenabled'=> true,
                     'noplanning'=> $this->generateCodeBySeqTable(new PlanningPegawaiStatus, 'noplanning', 11, 'P'.date('ym'), $kdProfile),
                     'objectpegawaifk'=>$request['objectpegawaifk'],
-                    'jumlahhari'=>$request['jumlahhari'],
+                    'totalcuti'=>$request['jumlahhari'],
                     'tglpengajuan'=> $tahun.'-01-01 00:00:00',
                 ]);
                 
@@ -7530,7 +7598,7 @@ public function daftarKenaikanGajiBerkala(Request $request){
                     'kdprofile'=> $kdProfile,
                     'statusenabled'=> true,
                     'objectpegawaifk'=>$request['objectpegawaifk'],
-                    'jumlahhari'=>$request['jumlahhari'],
+                    'totalcuti'=>$request['jumlahhari'],
                     'tglpengajuan'=> $tahun.'-01-01 00:00:00',
                 ]);
             }
@@ -8493,5 +8561,264 @@ where pg.kdprofile = 30 and pg.statusenabled = true and pg.usereksternal is null
        return $this->setStatusCode($result['status'])->respond($result, $transMessage);
    }
 
+    public function noSurat(Request $request){
+        DB::beginTransaction();
+        $kdProfile = (int) $this->getDataKdProfile($request);
+        // return $this->respond($request['status']);
+        try{
+
+            $idRunningNumber = 13541;
+                $runningNumber = RunningNumber::where('id', $idRunningNumber)->first();
+                $extension = $runningNumber->extention;
+                $noSuratTerakhir = $runningNumber->nomer_terbaru + 1;
+
+                RunningNumber::where('id', $idRunningNumber)
+                    ->update([
+                            'nomer_terbaru' => $noSuratTerakhir
+                        ]
+                    );
+
+            $transStatus = 'true';
+        } catch (\Exception $e) {
+            $transStatus = 'false';
+        }
+
+
+        if ($transStatus == 'true') {
+            $transMessage = "Sukses";
+            DB::commit();
+            $result = array(
+                'status' => 201,
+                'message' => $transMessage,
+                // 'result' => $TP,
+                'as' => 'er@epic',
+            );
+        } else {
+            $transMessage = "Simpan Gagal";
+            DB::rollBack();
+            $result = array(
+                'status' => 400,
+                'message'  => $transMessage,
+                'as' => 'er@epic',
+            );
+        }
+        return $this->setStatusCode($result['status'])->respond($result, $transMessage);
+    }
+
+    public function getPenjumlahanCuti (Request $request) {
+        $kdProfile = (int) $this->getDataKdProfile($request);
+        $pgId = $request['pgId'];
+
+        $datacuti = \DB::table('planningpegawaistatus_t as pt')
+            ->select(\DB::raw("pt.objectpegawaifk,SUM(COALESCE(pt.jumlahhari, 0)) AS ambilcuti,SUM(COALESCE(pt.totalcuti, 0)) AS totalcuti"))
+            ->where('pt.objectpegawaifk', $pgId)
+            ->where('pt.statusenabled', true)
+            ->groupBy('pt.objectpegawaifk')
+            ->get();
+
+        $result = array(
+            'datacuti' => $datacuti,
+            'by' => 'er@epic',
+        );
+
+        return $this->respond($result);
+    }
+
+    public function getLaporanCutiKaryawan(Request $request) {
+        $kdProfile = (int) $this->getDataKdProfile($request);
+
+        $subQuery = DB::table('planningpegawaistatus_t')
+            ->selectRaw("
+                objectpegawaifk,
+                MIN(tglpengajuan) AS tglpengajuan,
+                COALESCE(MAX(totalcuti), 0) AS totalcuti,
+                COALESCE(SUM(CASE WHEN approvalstatus IS NOT NULL THEN jumlahhari ELSE 0 END), 0) AS cuti_terpakai,
+                COALESCE(MAX(totalcuti), 0) - 
+                COALESCE(SUM(CASE WHEN approvalstatus IS NOT NULL THEN jumlahhari ELSE 0 END), 0) AS sisa_cuti
+            ")
+            ->groupBy('objectpegawaifk')
+            ->toSql();
+
+        $data =\DB::table('planningpegawaistatus_t as pps')
+            ->leftJoin('pegawai_m as pg','pg.id','=','pps.objectpegawaifk')
+            ->leftJoin('sdm_jeniscuti_m as jc','jc.id','=','pps.objectstatuspegawaiplanfk')
+            ->leftJoin('jabatan_m as jb','jb.id','=','pg.objectjabatanstrukturalfk')
+            ->leftJoin('unitkerja_m as ukp','ukp.id','=','pg.objectunitkerjafk')
+            ->leftJoin(DB::raw("($subQuery) as cuti"), 'cuti.objectpegawaifk', '=', 'pg.id')
+            ->select( 'pps.norec','pps.noplanning','pps.tglpengajuan','pps.objectpegawaifk','pps.objectstatuspegawaiplanfk',
+                'pps.deskripsistatuspegawaiplan as desk','pps.keterangan','pg.namalengkap','jc.name as statuspermohonan',
+                'jb.namajabatan','ukp.unitkerja','pps.approvalstatus','pps.totalcuti','cuti.totalcuti','cuti.cuti_terpakai','cuti.sisa_cuti')
+            ->where('pps.kdprofile', $kdProfile)
+            ->where('pps.statusenabled',true)
+            ->whereNull('pps.totalcuti')
+            ->where('pps.tglpengajuan', '>=' ,'2025-01-01')
+            ->orderBy('pps.tglpengajuan');
+
+        if(isset($request['namaLengkap']) && $request['namaLengkap']!="" && $request['namaLengkap']!="undefined"){
+            $data = $data->where('pg.namalengkap','ilike','%'.$request['namaLengkap'].'%');
+        }
+        if(isset($request['pgId']) && $request['pgId']!="" && $request['pgId']!="undefined"){
+            $data = $data->where('pg.id','=',$request['pgId']);
+        }
+        if(isset($request['unitKerjaId']) && $request['unitKerjaId']!="" && $request['unitKerjaId']!="undefined"){
+            $data = $data->where('ukp.id','=',$request['unitKerjaId']);
+        }
+        if(isset($request['subUnitId']) && $request['subUnitId']!="" && $request['subUnitId']!="undefined"){
+            $data = $data->where('pg.objectsubunitkerjapegawaifk','=',$request['subUnitId']);
+        }
+        if(isset($request['kedudukanId']) && $request['kedudukanId']!="" && $request['kedudukanId']!="undefined"){
+            $data = $data->where('pg.kedudukanfk','=',$request['kedudukanId']);
+        }
+        if(isset($request['statusPegawaiId']) && $request['statusPegawaiId']!="" && $request['statusPegawaiId']!="undefined"){
+            $data = $data->where('pg.objectstatuspegawaifk','=',$request['statusPegawaiId']);
+        }
+        if(isset($request['qstatusApprove']) && $request['qstatusApprove']!="" && $request['qstatusApprove']!="undefined" ){
+            if($request['qstatusApprove'] == 0){
+                $data = $data->whereNull('pps.approvalstatus');
+            }else{
+                $data = $data->where('pps.approvalstatus','=',$request['qstatusApprove']);
+            }
+        }
+        if(isset($request['qPermohonan']) && $request['qPermohonan']!="" && $request['qPermohonan']!="undefined"){
+            $data = $data->where('jc.id','=',$request['qPermohonan']);
+        }
+
+        if(isset($request['tglMasuk']) && $request['tglMasuk']!="" && $request['tglMasuk']!="undefined"){
+            $tgl = $request['tglMasuk'];
+            $data = $data->whereRaw("format(pg.tglmasuk,'yyyy-MM') = '$tgl'");
+        }
+        if(isset($request['rows']) && $request['rows']!="" && $request['rows']!="undefined"){
+            $data = $data->take($request['rows']);
+        }
+        $data = $data->get();
+        $data2 =[];
+
+        foreach ($data as $item){
+            $norec= $item->norec;
+            $details = DB::select(DB::raw("select *,to_char(tgl, 'Day') as day from listtanggalcuti_t where objectplanningpegawaistatusfk='$norec' and to_char(tgl, 'Day') <> 'Sunday   '"));
+            $tglVerif = [];
+            foreach ($details as $itmde){
+                if( $itmde-> approvalstatus == 1 && $itmde->day != "Sunday   "){
+                    $tglVerif [] = array(
+                        'norec' => $itmde->norec,
+                        'tgl' => $itmde->tgl,
+                        'day' => $itmde->day,
+                        'approvalstatus' => $itmde->approvalstatus,
+                        'objectplanningpegawaistatusfk' => $itmde->objectplanningpegawaistatusfk
+                    );
+                }
+
+            }
+
+            $data2 [] =  array(
+                'norec' => $item->norec,
+                'noplanning' => $item->noplanning,
+                'tglpengajuan' => $item->tglpengajuan,
+                'objectpegawaifk' => $item->objectpegawaifk,
+                'objectstatuspegawaiplanfk' => $item->objectstatuspegawaiplanfk,
+                'desk' => $item->desk,
+                'keterangan' => $item->keterangan,
+                'namalengkap' => $item->namalengkap,
+                'statuspermohonan' => $item->statuspermohonan,
+                'namajabatan' => $item->namajabatan,
+                'unitkerja' => $item->unitkerja,
+                'approvalstatus' => $item->approvalstatus,
+                'totalcuti' => $item->totalcuti,
+                'cuti_terpakai' => $item->cuti_terpakai,
+                'sisa_cuti' => $item->sisa_cuti,
+                'listtanggal' => $details,
+                'listtanggalapprove' => $tglVerif,
+
+            );
+        }
+        $result = array(
+            'data'  => $data2,
+            'as' => 'er@epic',
+        );
+        return $this->respond($result);
+    }
+
+    public function getDataJabatanNew(Request $request) {
+        $kdProfile = (int) $this->getDataKdProfile($request);
+        $data = \DB::table('jabatan_m as jb')
+            ->select('jb.id','jb.namajabatan','jb.kualifikasipendidikan','jb.jumlahkebutuhan')
+            ->where('jb.kdprofile', $kdProfile)
+            ->where('jb.statusenabled', true)
+            ->orderBy('jb.id')
+            ->get();
+        $result = array(
+            'data'=> $data,
+            'as'=>'er@epic'
+        );
+        return $this->respond($result);
+    }
+
+    public function saveUpdateDataJabatan(Request $request) {
+        $kdProfile = (int) $this->getDataKdProfile($request);
+        DB::beginTransaction();
+
+        try {
+            $data = $request->all(); 
+            DB::table('jabatan_m')
+                ->where('id', $data['id'])
+                ->where('kdprofile', $kdProfile)
+                ->update([
+                    'namajabatan' => $data['namajabatan'], 
+                    'kualifikasipendidikan' => $data['kualifikasipendidikan'],
+                    'jumlahkebutuhan' => $data['jumlahkebutuhan'] === '' ? null : (int) $data['jumlahkebutuhan'],
+
+                ]);
+
+            DB::commit();
+
+            return $this->respond([
+                'status' => 201,
+                'message' => 'Simpan Jabatan Berhasil',
+                'as' => 'er@epic'
+            ], 'Simpan Jabatan Berhasil');
+
+        } catch (\Throwable $e) {
+            DB::rollBack();
+
+            return $this->respond([
+                'status' => 400,
+                'message' => 'Simpan Gagal',
+                'error' => $e->getMessage(),
+                'as' => 'er@epic'
+            ], 'Simpan Gagal');
+        }
+    }
+
+    public function deleteDataJabatan(Request $request){
+        $kdProfile = (int) $this->getDataKdProfile($request);
+        DB::beginTransaction();
+
+        try {
+            DB::table('jabatan_m')
+                ->where('id', $request['id'])
+                ->where('kdprofile', $kdProfile)
+                ->update([
+                    'statusenabled' => false
+                ]);
+
+            DB::commit();
+
+            return $this->respond([
+                'status' => 201,
+                'message' => 'Hapus Jabatan Berhasil',
+                'as' => 'er@epic'
+            ], 'Hapus Jabatan Berhasil');
+
+        } catch (\Throwable $e) {
+            DB::rollBack();
+
+            return $this->respond([
+                'status' => 400,
+                'message' => 'Hapus Gagal',
+                'error' => $e->getMessage(),
+                'as' => 'er@epic'
+            ], 'Hapus Gagal');
+        }
+    }
 
 }

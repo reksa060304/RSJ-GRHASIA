@@ -1306,6 +1306,57 @@
                         </div>
                     </div>
                     </fieldset>
+                </fieldset>
+            </div>
+
+                <div class="grid_12">
+                    <fieldset style="margin-top: 10px;">
+                        <legend><b>SKRINING GIZI GERIATRI >= 60 TAHUN</b></legend>
+                        <div class="grid_12">
+                            <table style="width:100%">
+                                <thead>
+                                    <tr>
+                                        <th style="width: 50px; text-align: center;">No</th>
+                                        <th>Pertanyaan / Kriteria</th>
+                                        <th style="width: 550px;">Pilihan Jawaban</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr ng-repeat="list in listSkriningGiziMNA">
+                                        <td style="text-align: center; vertical-align: top;">{{list.no}}</td>
+                                        <td style="vertical-align: top;">{{list.nama}}</td>
+                                        <td>
+                                            <div ng-repeat="jawab in list.detail" class="grid_12">
+                                                <input type="checkbox" class="k-checkbox" id="item.obj{{jawab.id}}"
+                                                    ng-model="item.obj[jawab.id]" ng-change="getSkorMNA(jawab, list.detail)">
+                                                <label class="k-checkbox-label" for="item.obj{{jawab.id}}">
+                                                    &nbsp;{{jawab.nama}}</label>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                        <div class="grid_12" style="margin-top: 15px;">
+                            <div class="grid_12">
+                                <div class="grid_7" style="text-align: right; padding-top: 5px;">
+                                    <b>TOTAL SKOR SKRINING (Max. 14):</b>
+                                </div>
+                                <div class="grid_5">
+                                    <input c-text-box type="text" filter="" class="k-textbox"
+                                        ng-model="item.obj[3018093]" style="width: 100%; font-weight: bold; text-align: center;" readonly />
+                                </div>
+                            </div>
+                            <div class="grid_12" style="margin-top: 10px;">
+                                <label c-label item="item">
+                                    <b>KETERANGAN:</b><br>
+                                     12-14 poin: Status gizi normal<br>
+                                     8- 11 poin: Malnutrisi / Risiko malnutrisi <br>
+                                     0- 7 poin: Malnutrisi 
+                                </label>
+                            </div>
+                        </div>
+                    </fieldset>
                 </div>
         <div class="grid_12">
     </div>

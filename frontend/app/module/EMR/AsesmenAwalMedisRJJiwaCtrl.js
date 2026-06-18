@@ -378,6 +378,21 @@ define(['initialize', 'Configuration'], function (initialize,config) {
                 // $scope.item.obj[111056]=$scope.now
                 // $scope.item.obj[14563]={ value: $scope.cc.iddpjp, text: $scope.cc.dokterdpjp }
                 dataLoad = dat.data.data
+
+
+                var payload = [
+                    {
+                        emrfk: 3000544,
+                        objectId: "1901310025,3018100"
+                    },
+                ];
+                
+                medifirstService.post('emr/get-emr-inputan-otomatis', payload)
+                    .then(function (res) {
+                        console.log(res.data);
+                        $scope.item.obj[300000096] = res.data.data[0].data["1901310025"] || '';
+                    });
+
                 // medifirstService.get("emr/get-vital-sign?noregistrasi=" + $scope.cc.noregistrasi + "&objectidawal=4241&objectidakhir=4246&idemr=147", true).then(function (datas) {
                 //     if (datas.data.data.length>0){
                 //         if ($scope.item.obj[111061]== undefined) {

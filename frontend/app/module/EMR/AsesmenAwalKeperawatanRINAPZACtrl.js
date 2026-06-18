@@ -353,6 +353,102 @@ define(['initialize'], function (initialize) {
                 }
             ] 
 
+            // ============================================================
+            // SKRINING GIZI MNA - GERIATRI (USIA > 60 TAHUN)
+            // ID Range: 3010672 - 3010702
+            // ============================================================
+            $scope.listSkriningGiziMNA = [
+                {
+                    "no": "A",
+                    "nama": "Apakah asupan makanan berkurang selama 3 bulan terakhir?",
+                    "detail": [
+                        { "id": 3010672, "nama": "0 = Asupan makanan sangat berkurang", "descNilai": 0 },
+                        { "id": 3010673, "nama": "1 = Asupan makanan agak berkurang", "descNilai": 1 },
+                        { "id": 3010674, "nama": "2 = Asupan makanan tidak berkurang", "descNilai": 2 }
+                    ]
+                },
+                {
+                    "no": "B",
+                    "nama": "Berat badan turun selama 3 bulan terakhir?",
+                    "detail": [
+                        { "id": 3010675, "nama": "0 = Berat badan turun lebih dari 3 kg", "descNilai": 0 },
+                        { "id": 3010676, "nama": "1 = Tidak tahu", "descNilai": 1 },
+                        { "id": 3010677, "nama": "2 = Berat badan turun antara 1 hingga 3 kg", "descNilai": 2 },
+                        { "id": 3010678, "nama": "3 = Berat badan tidak turun", "descNilai": 3 }
+                    ]
+                },
+                {
+                    "no": "C",
+                    "nama": "Pergerakan atau Mobilitas?",
+                    "detail": [
+                        { "id": 3010679, "nama": "0 = Terbatas di tempat tidur atau kursi", "descNilai": 0 },
+                        { "id": 3010680, "nama": "1 = Mampu bangun dari tempat tidur/kursi, tapi tidak bisa keluar", "descNilai": 1 },
+                        { "id": 3010681, "nama": "2 = Dapat bepergian ke luar rumah", "descNilai": 2 }
+                    ]
+                },
+                {
+                    "no": "D",
+                    "nama": "Mengalami tekanan psikologis atau penyakit akut (3 bln terakhir)?",
+                    "detail": [
+                        { "id": 3010682, "nama": "0 = Ya", "descNilai": 0 },
+                        { "id": 3010683, "nama": "2 = Tidak", "descNilai": 2 }
+                    ]
+                },
+                {
+                    "no": "E",
+                    "nama": "Gangguan neuropsikologis",
+                    "detail": [
+                        { "id": 3010684, "nama": "0 = Demensia berat atau depresi", "descNilai": 0 },
+                        { "id": 3010685, "nama": "1 = Demensia ringan", "descNilai": 1 },
+                        { "id": 3010686, "nama": "2 = Tidak ada gangguan psikologis", "descNilai": 2 }
+                    ]
+                },
+                {
+                    "no": "F1",
+                    "nama": "Indeks Massa Tubuh (IMT)",
+                    "detail": [
+                        { "id": 3010687, "nama": "0 = IMT kurang dari 19", "descNilai": 0 },
+                        { "id": 3010688, "nama": "1 = IMT 19 hingga kurang dari 21", "descNilai": 1 },
+                        { "id": 3010689, "nama": "2 = IMT 21 hingga kurang dari 23", "descNilai": 2 },
+                        { "id": 3010690, "nama": "3 = IMT 23 atau lebih besar", "descNilai": 3 }
+                    ]
+                },
+                {
+                    "no": "F2",
+                    "nama": "Lingkar lengan atas (LiLA) - Jika IMT tidak dapat diukur",
+                    "detail": [
+                        { "id": 3010691, "nama": "0,0 = LiLA kurang dari 21", "descNilai": 0 },
+                        { "id": 3010692, "nama": "0,5 = LiLA 21 hingga 22", "descNilai": 0.5 },
+                        { "id": 3010693, "nama": "1,0 = LiLA lebih dari 22", "descNilai": 1 }
+                    ]
+                }
+            ];
+
+            $scope.getSkorMNA = function (opsi, detailOpsi) {
+                // 1. Terapkan Single Selection (Mutual Exclusivity)
+                for (var i = 0; i < detailOpsi.length; i++) {
+                    if (detailOpsi[i].id !== opsi.id) {
+                        $scope.item.obj[detailOpsi[i].id] = false;
+                    }
+                }
+                // 2. Hitung Total Skor dari semua pertanyaan
+                var totalSkor = 0;
+                for (var a = 0; a < $scope.listSkriningGiziMNA.length; a++) {
+                    var pertanyaan = $scope.listSkriningGiziMNA[a];
+                    for (var b = 0; b < pertanyaan.detail.length; b++) {
+                        var pilihan = pertanyaan.detail[b];
+                        if ($scope.item.obj[pilihan.id] === true) {
+                            totalSkor += parseFloat(pilihan.descNilai);
+                        }
+                    }
+                }
+                // 3. Simpan total skor ke model database (ID 3010702)
+                $scope.item.obj[3010702] = totalSkor;
+            };
+            // ============================================================
+            // END SKRINING GIZI MNA
+            // ============================================================
+
             $scope.listRiwayatRehab = [
                 {
                     "id": 1, "nama": "Riwayat Rehabilitasi sebelumnya",

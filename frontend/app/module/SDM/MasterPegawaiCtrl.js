@@ -264,6 +264,7 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
 							var dataCacheHukumanDisiplin = dataCache.datahukumandisiplin;
 							var dataCachePangkatGolongan = dataCache.datapangkatgolongan;
 							var dataCacheCuti = dataCache.datacuti;
+							var dataCutiAwal = dataCache.datacutiawal;
 							var dataCacheGajiBerkala = dataCache.datagajiberkala;
 							var dataCachegajiBerkala = dataCache.gajiBerkala
 							var dataCachePhoto = dataCache.photo;
@@ -574,7 +575,7 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
 
 							// data cuti
 							dataCuti = dataCacheCuti;
-							dataCutiAwal = dataCache.datacutiawal;
+							
 							for (let i = 0; i < dataCuti.length; i++) {
 								dataCuti[i].no = i + 1;
 								var umur = dateHelper.CountAge(new Date(dataCuti[i].tgldari), new Date(dataCuti[i].tglsampai));
@@ -649,6 +650,7 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
 							for(var e =0; e<dataCutiAwal.length; e++){
 								dataCutiAwal[e].no = e+1
 							}
+							// debugger
 							$scope.gridCutiAwal = new kendo.data.DataSource({
 								data: dataCutiAwal
 							})
@@ -1467,8 +1469,16 @@ $scope.formatRupiah = function (value, currency) {
 						"template": "<span class='style-left'>{{formatTahun('#: tglpengajuan #')}}</span>"
 					},
 					{
-						"field": "jumlahhari",
+						"field": "totalcuti",
 						"title": "Jumlah Cuti",
+					},
+					{
+						"field": "cuti_terpakai",
+						"title": "Jumlah Cuti Terpakai",
+					},
+					{
+						"field": "sisa_cuti",
+						"title": "Jumlah Sisa Cuti",
 					},
 					{
 						"command": [{
@@ -2026,7 +2036,7 @@ $scope.formatRupiah = function (value, currency) {
 				$scope.item.nomorIdcutiAwal = dataItem.no;
 				$scope.item.noreccutiAwal = dataItem.norec;
 				$scope.itemCutiAwal.tahun = moment(dataItem.tglpengajuan).format('YYYY');
-				$scope.itemCutiAwal.jumlahcuti = dataItem.jumlahhari;
+				$scope.itemCutiAwal.jumlahcuti = dataItem.totalcuti;
 				$scope.popUpCutiAwal.center().open();
 			}
 			function EditPangkatGolongan(e) {

@@ -1665,6 +1665,26 @@
     ]
   },
   {
+    "name": "SasaranMutuRajal",
+    "url": "/U2FzYXJhbk11dHVSYWphbA==",
+    "templateurl": "module/RawatJalan/SasaranMutuRajal.html",
+    "controller": "SasaranMutuRajalCtrl",
+    "deps": [
+      {
+        "module": "Services",
+        "define": "Service"
+      },
+      {
+        "module": "LoginServices",
+        "define": "LoginService"
+      },
+      {
+        "module": "MedifirstService",
+        "define": "MedifirstService"
+      }
+    ]
+  },
+  {
     "name": "Consis_D",
     "url": "/Q29uc2lzX0Q=",
     "templateurl": "module/Farmasi/Bridging/Consis_D.html",

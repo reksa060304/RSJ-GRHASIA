@@ -1,8 +1,8 @@
 define(['initialize', 'Configuration'], function (initialize, config) {
     'use strict';
     var baseTransaksi = config.baseUrlData;
-    initialize.controller('CpptDinamisDetailCtrl', ['$rootScope', '$scope', '$state', 'CacheHelper', 'MedifirstService','$mdDialog', '$q', '$sce', '$timeout',
-        function ($rootScope, $scope, $state, cacheHelper, medifirstService, $mdDialog, $q, $sce, $timeout) {
+    initialize.controller('CpptDinamisDetailCtrl', ['$rootScope', '$scope', '$state', 'CacheHelper', 'MedifirstService','$mdDialog', '$q', '$sce', '$timeout', "$ocLazyLoad",
+        function ($rootScope, $scope, $state, cacheHelper, medifirstService, $mdDialog, $q, $sce, $timeout, $ocLazyLoad) {
 
             $scope.item = {};
             $scope.cc = {};
@@ -1510,6 +1510,151 @@ define(['initialize', 'Configuration'], function (initialize, config) {
                     toastr.warning('Cetak EMR ini belum tersedia karena belum ada template cetakan yang dikonfigurasi.');
                 }
             }
+            
+            function showPRMRJDialog() {
+                        $mdDialog
+                        .show({
+                            templateUrl: "../app/module/EMR/PRMRJDialog.html",
+                            controller: "PRMRJCtrl",
+                            parent: angular.element(document.body),
+                            clickOutsideToClose: false,
+                            locals: {
+                            isPopupPRMRJ: true
+                            },
+                        })
+                        .finally(function () {
+                            // dialog closed
+                        });
+                }
+
+            $scope.openPRMRJ = function () {
+                    // Tampilkan indikator loading
+                    var loadingToast = document.createElement('div');
+                    loadingToast.id = 'integrasi-loading-toast';
+                    loadingToast.innerHTML = '<i class="fa fa-spinner fa-spin"></i>&nbsp; Memuat Form Integrasi Asuhan...';
+                    loadingToast.style.cssText = 'position:fixed;bottom:24px;left:50%;transform:translateX(-50%);background:#323232;color:#fff;padding:10px 22px;border-radius:4px;z-index:9999;font-size:14px;box-shadow:0 2px 8px rgba(0,0,0,0.3);';
+                    document.body.appendChild(loadingToast);
+
+                    function removeToast() {
+                    var t = document.getElementById('integrasi-loading-toast');
+                    if (t) t.parentNode.removeChild(t);
+                    }
+
+                    // Sync cache nomorEMR agar PRMRJCtrl membaca EMR yang sedang aktif
+                    // sehingga data tersimpan terhubung ke EMR yang sama (bukan norec_emr: "-")
+                    if (nomorEMR && nomorEMR !== '-') {
+                    var arrStr = cacheHelper.get('cacheNomorEMR') || {};
+                    arrStr[0] = nomorEMR;
+                    cacheHelper.set('cacheNomorEMR', arrStr);
+                    }
+
+                    // Collect active CPPT SOAP data
+                    var cpptSoapData = [];
+                    var cpptRows = [
+                        { soapId: 22034963, dateId: 22034961, ppaId: 22034964 },
+                        { soapId: 22034971, dateId: 22034969, ppaId: 22034972 },
+                        { soapId: 22034979, dateId: 22034977, ppaId: 22034980 },
+                        { soapId: 22034987, dateId: 22034985, ppaId: 22034988 },
+                        { soapId: 22034995, dateId: 22034993, ppaId: 22034996 },
+                        { soapId: 22035003, dateId: 22035001, ppaId: 22035004 }
+                    ];
+                    
+                    cpptRows.forEach(function(row) {
+                        var soapText = $scope.item.obj[row.soapId];
+                        if (soapText && soapText.replace(/\s/g, "") !== "" && soapText.replace(/\s/g, "") !== "S::O::A::P:") {
+                            var dateVal = $scope.item.obj[row.dateId];
+                            var ppaVal = $scope.item.obj[row.ppaId];
+                            cpptSoapData.push({
+                                soapText: soapText,
+                                date: dateVal,
+                                ppa: ppaVal
+                            });
+                        }
+                    });
+                    
+                    if (cpptSoapData.length > 0) {
+                        cacheHelper.set('cpptSoapData', cpptSoapData);
+                    } else {
+                        cacheHelper.set('cpptSoapData', undefined);
+                    }
+
+                    require(
+                    ["app/module/EMR/PRMRJCtrl"],
+                    function () {
+                        // Wajib inject ke Angular runtime terlebih dahulu (sama seperti routing.js)
+                        $ocLazyLoad.inject('myApp').then(function () {
+                        removeToast();
+                        showPRMRJDialog();
+                        }, function() {
+                        removeToast();
+                        showPRMRJDialog();
+                        });
+                    },
+                    function (err) {
+                        removeToast();
+                        var confirm = $mdDialog
+                        .confirm()
+                        .title("Informasi")
+                        .textContent("Gagal memuat Form Integrasi Asuhan. Silakan muat ulang halaman.")
+                        .ariaLabel("Informasi")
+                        .ok("OK");
+                        $mdDialog.show(confirm);
+                    }
+                    );
+                };
+
+                $scope.openRujukanEdukasi = function () {
+                    var RUJUKAN_EDUKASI_EMRFK = 3003050;
+                    var nocm = $scope.cc.nocm || '';
+                    var noregistrasi = $scope.cc.noregistrasi || '';
+
+                    $scope.isRouteLoading = true;
+                    var url = 'emr/get-emr-transaksi-detail-form-new?nocm=' + encodeURIComponent(nocm) + '&jenisEmr=asesmen';
+
+                    medifirstService.get(url, true).then(function (e) {
+                        $scope.isRouteLoading = false;
+                        var res = e.data ? e.data : e;
+                        var rawData = (res && Array.isArray(res.data)) ? res.data : [];
+
+                        // Cari form Rujukan Edukasi (3003050) untuk registrasi aktif
+                        var foundNoemr = '-';
+                        var foundNorec = undefined;
+
+                        for (var i = 0; i < rawData.length; i++) {
+                            var parent = rawData[i];
+                            // Filter berdasarkan noregistrasi aktif saja
+                            if (parent.noregistrasi !== noregistrasi) continue;
+                            if (parent.details && Array.isArray(parent.details)) {
+                                for (var j = 0; j < parent.details.length; j++) {
+                                    if (parseInt(parent.details[j].emrfk) === RUJUKAN_EDUKASI_EMRFK) {
+                                        foundNoemr = parent.noemr || parent.norec || '-';
+                                        foundNorec = parent.norec;
+                                        break;
+                                    }
+                                }
+                            }
+                            if (foundNorec) break;
+                        }
+
+                        // Reset dan set cache EMR sebelum navigasi
+                        cacheHelper.set('cacheNomorEMR', undefined);
+                        var arrStr = { 0: foundNoemr, 1: foundNorec };
+                        cacheHelper.set('cacheNomorEMR', arrStr);
+                        cacheHelper.set('cacheNOREC_EMR', arrStr);
+
+                        $state.go('RekamMedis.AsesmenMedis.AsesmenMedisDetail', {
+                            namaEMR: RUJUKAN_EDUKASI_EMRFK,
+                            nomorEMR: foundNoemr
+                        });
+                    }, function () {
+                        $scope.isRouteLoading = false;
+                        toastr.error('Gagal memuat data Rujukan Edukasi');
+                    });
+                };
+
+                $scope.tutupDialog = function() {
+                    $mdDialog.hide();
+                }
 
             //batas
         }

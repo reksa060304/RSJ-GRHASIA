@@ -22,12 +22,14 @@
 						ng-keypress="($event.which == 13)? SearchEnter():item.qnamaPegawai" />
 				</div>
 
-				<!-- <div class="grid_2" ng-disabled="true">
+				 <div class="grid_2" ng-disabled="true">
 					<label c-label item="item" c-label-text="Unit Kerja"></label>
 					<input style="width: 100%;" kendo-combo-box k-ng-model="item.qunitKerja" k-data-text-field="'name'"
 						k-data-value-field="'id'" k-filter="'contains'" k-auto-bind="false"
 						k-data-source="listUnitKerja" k-on-change="getIsiComboSubUnit()" />
 				</div>
+
+				<!--
 			
 				<div class="grid_2">
 					<label c-label item="item" c-label-text="SubUnitKerja"></label>
@@ -36,39 +38,39 @@
 						k-data-source="listSubUnit" />
 				</div> -->
 				<!-- Kedudukan pegawai -->
-				<div class="grid_2">
+				<!-- <div class="grid_2">
 					<label c-label item="item" c-label-text="StatusPegawai"></label>
 					<input style="width: 100%;" kendo-combo-box k-ng-model="item.qkedudukanPegawai"
 						k-data-text-field="'statuspegawai'" k-data-value-field="'id'" k-filter="'contains'"
 						k-auto-bind="false" k-data-source="ListKedudukanPegawai" />
-				</div>
+				</div> -->
 				<!-- status pegawai -->
-				<div class="grid_2">
+				<!-- <div class="grid_2">
 					<label c-label item="item" c-label-text="KategoryPegawai"></label>
 					<input style="width: 100%;" kendo-combo-box k-ng-model="item.qstatusPegawai"
 						k-data-text-field="'kategorypegawai'" k-data-value-field="'id'" k-filter="'contains'"
 						k-auto-bind="false" k-data-source="ListStatusPegawai" />
-				</div>
+				</div> -->
 
 				<!-- Tanggal Masuk -->
-				<div class="grid_1">
+				<!-- <div class="grid_1">
 					<label c-label item="item" c-label-text="TanggalMasuk"></label>
 					<input kendo-date-picker k-ng-model="item.tglMasuk" k-options="monthSelectorOptions"
 						k-format="'MM-yyyy'" style="width: 100%" />
-				</div>
+				</div> -->
 				<div class="grid_2">
 					<label c-label item="item" c-label-text="Status Permohonan"></label>
 					<input style="width: 100%;" kendo-combo-box k-ng-model="item.qPermohonan" k-data-text-field="'name'"
 						k-data-value-field="'id'" k-filter="'contains'" k-auto-bind="false"
 						k-data-source="listStatusCuti" />
 				</div>
-				<div class="grid_1">
+				<div class="grid_2">
 					<label c-label item="item" c-label-text="Persetujuan"></label>
 					<input style="width: 100%;" kendo-combo-box k-ng-model="item.qstatusApprove"
 						k-data-text-field="'name'" k-data-value-field="'id'" k-filter="'contains'" k-auto-bind="false"
 						k-data-source="listApprove" />
 				</div>
-				<div class="grid_1">
+				<div class="grid_2">
 					<label c-label item="item" c-label-text="Rows"></label>
 					<input id="category" c-text-box type="input" filter="'varchar'" class="k-textbox"
 						ng-model="item.qRows"
@@ -89,15 +91,12 @@
 
 	</div>
 
-
-
 	<div class="panel panel-default">
 
 		<!-- <div class="panel-header"><h3>Daftar Pengajuan Cuti</h3></div> -->
 		<div class="panel-body">
-			<div class="grid_12 borderBox">
-				<kendo-grid id="gridPermohonanStatus" options="mainGridOptions" k-scrollable="false"
-					k-data-source="dataSource"></kendo-grid>
+			<div class="grid_12">
+				<div kendo-grid id="gridPermohonanStatus" k-data-source="dataSource" options="daftarpegawaiOpt"></div>
 			</div>
 		</div>
 	</div>
@@ -147,8 +146,19 @@
 					<label c-label item="item" style="margin-top: 10px">NIP</label>
 				</div>
 				<div class="grid_9">
-					<input c-text-box type="input" filter="" class="k-textbox" ng-model="item.nip" disabled="true" />
+					<input c-text-box type="input" filter="" class="k-textbox" ng-model="item.nikintern" disabled="true" />
 				</div>
+			</div>
+			<div class="grid_12" >
+				<div class="grid_3">
+					<label c-label item="item" style="margin-top: 10px">Sisa Cuti</label>
+				</div>
+				<div class="grid_9">
+					<input c-text-box type="input" filter="" class="k-textbox" ng-model="item.jumlahcutihari" disabled="true"/>
+				</div>
+				<!-- <div class="grid_4">
+					<input c-text-box type="input" filter="" class="k-textbox" ng-model="item.totalcuti" disabled="true"/>
+				</div> -->
 			</div>
 			<div class="grid_12" ng-show="isShow">
 				<div class="grid_3">
@@ -213,61 +223,40 @@
 						<label c-label item="item" style="margin-top: 10px">Tanggal Permohonan</label>
 				</div>
 
-				<div class="grid_4">
-					<input style="width: 100%" k-ng-model="item.tglAwalCuti" kendo-datepicker
+				<!-- <div class="grid_4">
+					<input style="width: 100%" k-ng-model="item.tglAwalCuti" kendo-datepicker 
 					placeholer="yyyy-MM-dd" k-format="'yyyy-MM-dd'"  />
+				</div> -->
+
+				<div class="grid_4 padDatePicker">
+					<!-- k-min="minDate" -->
+					<input style="width: 100%" k-ng-model="item.tglAwalCuti" kendo-datepicker
+						k-min="minDate" placeholer="yyyy-MM-dd HH:mm" k-format="'yyyy-MM-dd'"
+						parsedate="yyyy-MM-dd" k-options="startDateOptions" />
 				</div>
 
 				<div class="grid_1">
 					<label c-label item="item" style="margin-top: 10px"> &nbsp; sd</label>
 				</div>
-				<div class="grid_4" >
+				<!-- <div class="grid_4" >
 				
 					<input style="width: 100%" k-ng-model="item.tglAkhirCuti" kendo-datepicker 
 					placeholer="yyyy-MM-dd" k-format="'yyyy-MM-dd'"/>
+				</div> -->
+				<div class="grid_4 padDatePicker">
+					<!-- k-min="minDate" -->
+					<input style="width: 100%" k-ng-model="item.tglAkhirCuti" kendo-datepicker
+						k-min="minDate" placeholer="yyyy-MM-dd HH:mm" k-format="'yyyy-MM-dd'"
+						parsedate="yyyy-MM-dd" k-options="startDateOptions" />
 				</div>
 
 			</div>
-			
-			<div class="grid_12">
+			<div class="grid_12" >
 				<div class="grid_3">
-					<label c-label item="item" style="margin-top: 10px">Sisa Cuti Tahun Kemarin</label>
+					<label c-label item="item" style="margin-top: 10px">Jumlah</label>
 				</div>
 				<div class="grid_9">
-					<input c-text-box type="input" filter="" class="k-textbox" ng-model="item.sisacutitahunkemarin" disabled="true">
-				</div>
-			</div>
-			<div class="grid_12">
-				<div class="grid_3">
-					<label c-label item="item" style="margin-top: 10px">Jumlah Cuti Tahun Ini</label>
-				</div>
-				<div class="grid_9">
-					<input c-text-box type="input" filter="" class="k-textbox" ng-model="item.sisacutitahunini"
-						disabled="true">
-				</div>
-			</div>
-			<div class="grid_12">
-				<div class="grid_3">
-					<label c-label item="item" style="margin-top: 10px">Jumlah Cuti Tahun Berjalan</label>
-				</div>
-				<div class="grid_9">
-					<input c-text-box type="input" filter="" class="k-textbox" ng-model="item.totalCutiTahun" disabled="true" />
-				</div>
-			</div>
-			<div class="grid_12">
-				<div class="grid_3">
-					<label c-label item="item" style="margin-top: 10px">Jumlah Cuti Yang Diajukan</label>
-				</div>
-				<div class="grid_9">
-					<input c-text-box type="input" filter="" class="k-textbox" ng-model="item.jumlahHari">
-				</div>
-			</div>
-			<div class="grid_12">
-				<div class="grid_3">
-					<label c-label item="item" style="margin-top: 10px">Sisa Cuti Tahun Berjalan</label>
-				</div>
-				<div class="grid_9">
-					<input c-text-box type="input" filter="" class="k-textbox" ng-model="item.totalSisaCuti" disabled="true" />
+					<input c-text-box type="input" filter="" class="k-textbox" ng-model="item.jumlahHari" disabled="true" />
 				</div>
 			</div>
 			<div class="grid_12">
@@ -298,6 +287,177 @@
 		</div>
 	
 </div>
+
+<div kendo-window="winDialogEdit" k-title="'Edit Cuti'" k-width="1200" k-visible="false">
+	<div class="panel panel-default container_12" style="padding: 0px 10px;">
+		<div class="grid_6">
+			<div class="grid_12" ng-show="isShow">
+				<div class="grid_3">
+					<label c-label item="item" style="margin-top: 10px">No Permohonan</label>
+				</div>
+				<div class="grid_9">
+					<input c-text-box type="input" filter="" class="k-textbox" ng-model="item.noUsulan"
+						disabled="true" />
+				</div>
+			</div>
+		
+			<div class="grid_12">
+				<div class="grid_3">
+					<label c-label item="item" style="margin-top: 10px">Nama Pegawai</label>
+				</div>
+				<div class="grid_9">
+					<input style="width: 100%;" kendo-combo-box k-ng-model="item.namaPegawai"
+					 k-data-text-field="'namalengkap'" k-data-value-field="'id'" k-filter="'contains'" k-auto-bind="true" k-data-source="listPegawai" 
+					 k-on-change="getDetailPegawai(item.namaPegawai)" ng-disabled="bukanLoginSDM" />
+				</div>
+			</div>
+			<div class="grid_12" >
+				<div class="grid_3">
+					<label c-label item="item" style="margin-top: 10px">NIP</label>
+				</div>
+				<div class="grid_9">
+					<input c-text-box type="input" filter="" class="k-textbox" ng-model="item.nikintern" disabled="true" />
+				</div>
+			</div>
+			<div class="grid_12" >
+				<div class="grid_3">
+					<label c-label item="item" style="margin-top: 10px">Sisa Cuti</label>
+				</div>
+				<div class="grid_9">
+					<input c-text-box type="input" filter="" class="k-textbox" ng-model="item.jumlahcutihari" disabled="true"/>
+				</div>
+				<!-- <div class="grid_4">
+					<input c-text-box type="input" filter="" class="k-textbox" ng-model="item.totalcuti" disabled="true"/>
+				</div> -->
+			</div>
+			<div class="grid_12" ng-show="isShow">
+				<div class="grid_3">
+					<label c-label item="item" style="margin-top: 10px">Jabatan</label>
+				</div>
+				<div class="grid_9">
+					<input c-text-box type="input" filter="" class="k-textbox" ng-model="item.jabatan" disabled="true" />
+				</div>
+			</div>
+			<div class="grid_12" ng-show="isShow">
+				<div class="grid_3">
+					<label c-label item="item" style="margin-top: 10px">Sub Unit Kerja</label>
+				</div>
+				<div class="grid_9">
+					<input c-text-box type="input" filter="" class="k-textbox" ng-model="item.ruangan" disabled="true" />
+				</div>
+			</div>
+		
+			<div class="grid_12">
+				<div class="grid_3">
+					<label c-label item="item" style="margin-top: 10px">Tanggal Pengajuan</label>
+				</div>
+				<div class="grid_9">
+					<input style="width: 100%" kendo-date-picker k-ng-model="item.tglPengajuan" data-k-format="'yyyy-MM-dd'" />
+				</div>
+			</div>
+			<div class="grid_12">
+				<div class="grid_3">
+					<label c-label item="item" style="margin-top: 10px">Deskripsi Permohonan</label>
+				</div>
+				<div class="grid_9">
+					<textarea style="height: 70px" c-text-box type="input" class="k-textbox"
+						ng-model="item.deskripsiUsulan" />
+					</div>
+			</div>
+		</div>
+		<div class="grid_6">
+		
+		
+			<div class="grid_12">
+				<div class="grid_3">
+					<label c-label item="item" style="margin-top: 10px">Status Permohonan</label>
+				</div>
+				<div class="grid_9">
+					<input style="width: 100%;" kendo-combo-box k-ng-model="item.statusPegawai" k-data-text-field="'name'" 
+					k-data-value-field="'id'" k-filter="'contains'" k-auto-bind="false" k-data-source="listStatusCuti" k-on-change="showJumlahCuti()"/>
+				</div>
+			</div>
+		
+			<div class="grid_12" ng-show="isShow">
+				<div class="grid_3">
+					<label c-label item="item" style="margin-top: 10px">Keterangan Lainnya</label>
+				</div>
+				<div class="grid_9">
+					<textarea style="height: 90px" c-text-box type="input" class="k-textbox" ng-model="item.keterangan" />
+				</div>
+			</div>
+		
+			<div class="grid_12">
+				
+				<div class="grid_3"  >
+						<label c-label item="item" style="margin-top: 10px">Tanggal Permohonan</label>
+				</div>
+
+				<!-- <div class="grid_4">
+					<input style="width: 100%" k-ng-model="item.tglAwalCuti" kendo-datepicker 
+					placeholer="yyyy-MM-dd" k-format="'yyyy-MM-dd'"  />
+				</div> -->
+
+				<div class="grid_4 padDatePicker">
+					<!-- k-min="minDate" -->
+					<input style="width: 100%" k-ng-model="item.tglAwalCuti" kendo-datepicker
+						placeholer="yyyy-MM-dd HH:mm" k-format="'yyyy-MM-dd'"
+						parsedate="yyyy-MM-dd" k-options="startDateOptions" />
+				</div>
+
+				<div class="grid_1">
+					<label c-label item="item" style="margin-top: 10px"> &nbsp; sd</label>
+				</div>
+				<!-- <div class="grid_4" >
+				
+					<input style="width: 100%" k-ng-model="item.tglAkhirCuti" kendo-datepicker 
+					placeholer="yyyy-MM-dd" k-format="'yyyy-MM-dd'"/>
+				</div> -->
+				<div class="grid_4 padDatePicker">
+					<!-- k-min="minDate" -->
+					<input style="width: 100%" k-ng-model="item.tglAkhirCuti" kendo-datepicker
+						placeholer="yyyy-MM-dd HH:mm" k-format="'yyyy-MM-dd'"
+						parsedate="yyyy-MM-dd" k-options="startDateOptions" />
+				</div>
+
+			</div>
+			<div class="grid_12" >
+				<div class="grid_3">
+					<label c-label item="item" style="margin-top: 10px">Jumlah</label>
+				</div>
+				<div class="grid_9">
+					<input c-text-box type="input" filter="" class="k-textbox" ng-model="item.jumlahHari" disabled="true" />
+				</div>
+			</div>
+			<div class="grid_12">
+			
+				<!-- <div class="grid_4" data-ng-repeat="tanggal in tanggalPermohonan" > 
+					<div class="grid_8">
+						<input style="width:100%" kendo-date-picker k-ng-model="tanggal.tgl" k-options="datePickerOptions"/>
+					</div>
+					<div class="grid_4" style="margin-top: 6px;">
+						<kendo-button icon="'k-icon k-i-close'" ng-click='removeNewTgl(tanggal.id)'></kendo-button>
+						<kendo-button ng-show='showAddTgl(tanggal)' icon="'k-icon k-i-plus'" ng-click='addNewTgl()'></kendo-button>
+					</div>
+
+					<div class="clearfix"></div>
+					<div class="grid_12" ng-show="{{tanggal.isDuplicate}}">
+						<label class="duplicateDate">tanggal yang diajukan tidak boleh sama</label>
+					</div>
+				</div> -->
+			
+			</div>
+		</div>
+		<div class="k-edit-buttons  k-state-default pull-right" style="margin-top:10px">
+				<button class="k-button  k-button-icontext k-primary k-grid-update" ng-click="Simpan()"><span
+						class="k-icon k-update"></span>Simpan</button>
+				<button class="k-button  btnHapus k-button-icontext" ng-click="Batal()"><span
+						class="k-icon k-cancel"></span>Batal</button>
+			</div>
+		</div>
+	
+</div>
+
 <div kendo-window="winDialogVerif" k-title="'Verifikasi Cuti'" k-width="800" k-visible="false">
 		<div class="panel panel-default container_12" style="padding: 0px 10px;">
 			<fieldset style="border-radius: 10px;">
@@ -305,9 +465,9 @@
 					ng-click="ceklisAllVerif(item.ceklisAll)" ng-model="item.ceklisAll" />
 					<label c-label class="k-checkbox-label" for="cekAll" >Ceklis All</label > </legend>
 				
-				<div class="grid_12">
+					<div class="grid_12">
 						<div class="grid_3">
-							<label c-label item="item" style="margin-top: 10px">Tanggal Permohonan</label>
+							<label c-label item="item" style="margin-top: 10px">Tanggal Cuti</label>
 						</div>
 						<div class="grid_9">
 							<div class="grid_4" ng-repeat="tanggal in listTglCekbox" style="margin:5px 0 10px">
@@ -319,6 +479,35 @@
 							<div class="grid_12"><span class="italic">*<b>Catatan:</b> Pilih tanggal yang akan di verifikasi</span></div>
 						</div>
 					</div>
+					<div class="grid_12">
+						<div class="grid_3">
+							<label c-label item="item" style="margin-top: 10px">Nama Pegawai</label>
+						</div>
+						<div class="grid_9">
+							<input style="width: 100%;" kendo-combo-box k-ng-model="item.namaPegawai"
+							 k-data-text-field="'namalengkap'" k-data-value-field="'id'" k-filter="'contains'" k-auto-bind="true" k-data-source="listPegawai" 
+							 k-on-change="getDetailPegawai2(item.namaPegawai)" ng-disabled="bukanLoginSDM" />
+						</div>
+					</div>
+					<div class="grid_12" >
+						<div class="grid_3">
+							<label c-label item="item" style="margin-top: 10px">Jatah Cuti</label>
+						</div>
+						<div class="grid_9">
+							<input c-text-box type="input" filter="" class="k-textbox" ng-model="item.jumlahtotalcutihari" disabled="true"/>
+						</div>
+					</div>
+					<div class="grid_12" >
+						<div class="grid_3">
+							<label c-label item="item" style="margin-top: 10px">Sisa Cuti</label>
+						</div>
+						<div class="grid_9">
+							<input c-text-box type="input" filter="" class="k-textbox" ng-model="item.sisacuti" disabled="true"/>
+						</div>
+					</div>
+					
+					
+					
 				
 			<div class="k-edit-buttons  k-state-default pull-right" style="margin-top:10px">
 					<button class="k-button  k-button-icontext k-primary k-grid-update" ng-click="saveVerif()"><span

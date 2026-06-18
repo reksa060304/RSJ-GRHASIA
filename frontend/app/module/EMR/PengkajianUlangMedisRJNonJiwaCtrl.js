@@ -1219,6 +1219,18 @@ define(['initialize', 'Configuration'], function (initialize, config) {
                 $scope.item.obj[3017344] = moment($scope.now).format('YYYY-MM-DD HH:mm')
                 dataLoad = dat.data.data                                      
 
+                var payload = [
+                    {
+                        emrfk: 3000544,
+                        objectId: "1901310025,3018100"
+                    },
+                ];
+                
+                medifirstService.post('emr/get-emr-inputan-otomatis', payload)
+                    .then(function (res) {
+                        console.log(res.data);
+                        $scope.item.obj[3017315] = res.data.data[0].data["1901310025"] || '';
+                    });
                 // get datavital sign
                 let datasvitalsign = []
                 medifirstService.get("emr/get-emr-otomatisvitalsign?emrfk=147"+"&noregistrasi="+$scope.cc.noregistrasi).then(function (resvitalsign) {

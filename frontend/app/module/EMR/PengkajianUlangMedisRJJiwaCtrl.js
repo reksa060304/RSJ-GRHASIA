@@ -1127,6 +1127,20 @@ define(['initialize', 'Configuration'], function (initialize, config) {
             medifirstService.get("emr/get-emr-transaksi-detail?noemr=" + nomorEMR + "&emrfk=" + $scope.cc.emrfk, true).then(function (dat) {                
                 $scope.item.obj = []
                 $scope.item.obj2 = []
+
+                var payload = [
+                    {
+                        emrfk: 3000544,
+                        objectId: "1901310025,3018100"
+                    },
+                ];
+                
+                medifirstService.post('emr/get-emr-inputan-otomatis', payload)
+                    .then(function (res) {
+                        console.log(res.data);
+                        $scope.item.obj[3017239] = res.data.data[0].data["1901310025"] || '';
+                    });
+
                 medifirstService.get("emr/get-emr-otomatisvitalsign?emrfk=147"+"&noregistrasi="+$scope.cc.noregistrasi).then(function (dat) {
                     var datas = dat.data.data2
                     $scope.isRouteLoading = false

@@ -17048,6 +17048,75 @@
     ]
   },
   {
+    "name": "RekamMedis.AsesmenMedis.PersetujuanTindakanPengobatan",
+    "url": "/PersetujuanTindakanPengobatan",
+    "templateurl": "module/EMR/PersetujuanTindakanPengobatan.html",
+    "controller": "PersetujuanTindakanPengobatanCtrl",
+    "deps": [
+      {
+        "module": "Services",
+        "define": "Service"
+      },
+      {
+        "module": "LoginServices",
+        "define": "LoginService"
+      },
+      {
+        "module": "MedifirstService",
+        "define": "MedifirstService"
+      },
+      {
+        "define": "RekamMedisCtrl"
+      }
+    ]
+  },
+  {
+    "name": "RekamMedis.AsesmenMedis.FREPGangguanJiwaDenganKomorbidHipertensi",
+    "url": "/FREPGangguanJiwaDenganKomorbidHipertensi",
+    "templateurl": "module/EMR/FREPGangguanJiwaDenganKomorbidHipertensi.html",
+    "controller": "FREPGangguanJiwaDenganKomorbidHipertensiCtrl",
+    "deps": [
+      {
+        "module": "Services",
+        "define": "Service"
+      },
+      {
+        "module": "LoginServices",
+        "define": "LoginService"
+      },
+      {
+        "module": "MedifirstService",
+        "define": "MedifirstService"
+      },
+      {
+        "define": "RekamMedisCtrl"
+      }
+    ]
+  },
+  {
+    "name": "RekamMedis.AsesmenMedis.FREPGangguanJiwaDenganKomorbidDiabetes",
+    "url": "/FREPGangguanJiwaDenganKomorbidDiabetes",
+    "templateurl": "module/EMR/FREPGangguanJiwaDenganKomorbidDiabetes.html",
+    "controller": "FREPGangguanJiwaDenganKomorbidDiabetesCtrl",
+    "deps": [
+      {
+        "module": "Services",
+        "define": "Service"
+      },
+      {
+        "module": "LoginServices",
+        "define": "LoginService"
+      },
+      {
+        "module": "MedifirstService",
+        "define": "MedifirstService"
+      },
+      {
+        "define": "RekamMedisCtrl"
+      }
+    ]
+  },
+  {
     "name": "RekamMedis.AsesmenMedis.SuratRehabNAPZA",
     "url": "/SuratRehabNAPZA",
     "templateurl": "module/EMR/SuratRehabNAPZA.html",
@@ -17167,6 +17236,98 @@
     "url": "/FormulirPelayananKerohanian",
     "templateurl": "module/EMR/FormulirPelayananKerohanian.html",
     "controller": "FormulirPelayananKerohanianCtrl",
+    "deps": [
+      {
+        "module": "Services",
+        "define": "Service"
+      },
+      {
+        "module": "LoginServices",
+        "define": "LoginService"
+      },
+      {
+        "module": "MedifirstService",
+        "define": "MedifirstService"
+      },
+      {
+        "define": "RekamMedisCtrl"
+      }
+    ]
+  },
+  {
+    "name": "RekamMedis.AsesmenMedis.FormRujukanEdukasiPasienGangguanJiwaDenganKomorbidEpilepsi",
+    "url": "/FormRujukanEdukasiPasienGangguanJiwaDenganKomorbidEpilepsi",
+    "templateurl": "module/EMR/FormRujukanEdukasiPasienGangguanJiwaDenganKomorbidEpilepsi.html",
+    "controller": "FormRujukanEdukasiPasienGangguanJiwaDenganKomorbidEpilepsiCtrl",
+    "deps": [
+      {
+        "module": "Services",
+        "define": "Service"
+      },
+      {
+        "module": "LoginServices",
+        "define": "LoginService"
+      },
+      {
+        "module": "MedifirstService",
+        "define": "MedifirstService"
+      },
+      {
+        "define": "RekamMedisCtrl"
+      }
+    ]
+  },
+  {
+    "name": "RekamMedis.AsesmenMedis.FormRujukanEdukasiPasienGangguanJiwaDenganKomorbidSindromeGeriatriLowIntake",
+    "url": "/FormRujukanEdukasiPasienGangguanJiwaDenganKomorbidSindromeGeriatriLowIntake",
+    "templateurl": "module/EMR/FormRujukanEdukasiPasienGangguanJiwaDenganKomorbidSindromeGeriatriLowIntake.html",
+    "controller": "FormRujukanEdukasiPasienGangguanJiwaDenganKomorbidSindromeGeriatriLowIntakeCtrl",
+    "deps": [
+      {
+        "module": "Services",
+        "define": "Service"
+      },
+      {
+        "module": "LoginServices",
+        "define": "LoginService"
+      },
+      {
+        "module": "MedifirstService",
+        "define": "MedifirstService"
+      },
+      {
+        "define": "RekamMedisCtrl"
+      }
+    ]
+  },
+  {
+    "name": "RekamMedis.AsesmenMedis.FormRujukanEdukasiPasienGangguanJiwaDenganKomorbidTuberculosis",
+    "url": "/FormRujukanEdukasiPasienGangguanJiwaDenganKomorbidTuberculosis",
+    "templateurl": "module/EMR/FormRujukanEdukasiPasienGangguanJiwaDenganKomorbidTuberculosis.html",
+    "controller": "FormRujukanEdukasiPasienGangguanJiwaDenganKomorbidTuberculosisCtrl",
+    "deps": [
+      {
+        "module": "Services",
+        "define": "Service"
+      },
+      {
+        "module": "LoginServices",
+        "define": "LoginService"
+      },
+      {
+        "module": "MedifirstService",
+        "define": "MedifirstService"
+      },
+      {
+        "define": "RekamMedisCtrl"
+      }
+    ]
+  },
+  {
+    "name": "RekamMedis.AsesmenMedis.FormRujukanEdukasiPsikiatri",
+    "url": "/FormRujukanEdukasiPsikiatri",
+    "templateurl": "module/EMR/FormRujukanEdukasiPsikiatri.html",
+    "controller": "FormRujukanEdukasiPsikiatriCtrl",
     "deps": [
       {
         "module": "Services",
@@ -21713,6 +21874,66 @@
     "url": "/RL36_V3_Kebidanan",
     "templateurl": "module/Registrasi/Laporan/LaporanRekamMedis/RL36_V3_Kebidanan.html",
     "controller": "RL36_V3_KebidananCtrl",
+    "deps": [
+      {
+        "module": "Services",
+        "define": "Service"
+      },
+      {
+        "module": "LoginServices",
+        "define": "LoginService"
+      },
+      {
+        "module": "MedifirstService",
+        "define": "MedifirstService"
+      }
+    ]
+  },
+  {
+    "name": "OrderGiziTelemedicine",
+    "url": "/OrderGiziTelemedicine",
+    "templateurl": "module/Gizi/OrderGiziTelemedicine/OrderGiziTelemedicine.html",
+    "controller": "OrderGiziTelemedicineCtrl",
+    "deps": [
+      {
+        "module": "Services",
+        "define": "Service"
+      },
+      {
+        "module": "LoginServices",
+        "define": "LoginService"
+      },
+      {
+        "module": "MedifirstService",
+        "define": "MedifirstService"
+      }
+    ]
+  },
+  {
+    "name": "SetupSiklusGizi",
+    "url": "/SetupSiklusGizi",
+    "templateurl": "module/Gizi/SetupSiklus/SetupSiklusGizi.html",
+    "controller": "SetupSiklusGiziCtrl",
+    "deps": [
+      {
+        "module": "Services",
+        "define": "Service"
+      },
+      {
+        "module": "LoginServices",
+        "define": "LoginService"
+      },
+      {
+        "module": "MedifirstService",
+        "define": "MedifirstService"
+      }
+    ]
+  },
+  {
+    "name": "DashboardDietGizi",
+    "url": "/DashboardDietGizi",
+    "templateurl": "module/Gizi/DashboardDietGizi/DashboardDietGizi.html",
+    "controller": "DashboardDietGiziCtrl",
     "deps": [
       {
         "module": "Services",

@@ -612,6 +612,11 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
                                     }
                                 }
 
+                                // Skip jika tidak ada mapping tujuan, produk, atau departemen bukan Lab (3) / Radiologi (27)
+                                if (!map.objectkamarfk || !map.produkfk || (map.objectdepartemenfk != 3 && map.objectdepartemenfk != 27)) {
+                                    continue;
+                                }
+
                                 if (!ordersByTujuan[map.objectkamarfk]) {
                                     ordersByTujuan[map.objectkamarfk] = {
                                         ruanganTujuan: map.objectkamarfk,
@@ -848,6 +853,7 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
                     israwatinap: isRawatInap,
                     statusschedule: isRegisOnline,
                     statuspasien: statusPasien,
+                    catatan: $scope.item.catatan == undefined ? "" : $scope.item.catatan,
                     isjknloket: isMobileJKN,
 
                 }
@@ -935,7 +941,9 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
                                         norecPD, 'Edit Registrasi ke ruangan ' + $scope.item.ruangan.namaruangan + ' pada No Registrasi ' + $scope.model.noRegistrasi)
                                 } else {
                                     // Trigger Auto Order Penunjang Here
-                                    $scope.processAutoOrderPenunjang($scope.item.ruangan.id, $scope.resultPD, dokterId, jenisPel, statusPasien, kelasId, moment($scope.item.tglRegistrasi).format('YYYY-MM-DD HH:mm:ss'));
+                                    if ($scope.isRuanganHasMapping) {
+                                        $scope.processAutoOrderPenunjang($scope.item.ruangan.id, $scope.resultPD, dokterId, jenisPel, statusPasien, kelasId, moment($scope.item.tglRegistrasi).format('YYYY-MM-DD HH:mm:ss'));
+                                    }
 
                                     //##log Pasien Daftar
                                     medifirstService.get("sysadmin/logging/save-log-pendaftaran-pasien?norec_pd="

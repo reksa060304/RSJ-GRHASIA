@@ -3,6 +3,8 @@ define(['ApiService', 'Configuration', 'require', 'config', 'Controller', 'Angul
         'use strict';
         var app = angular
             .module('myApp', ['ApiService', 'ui.router', 'ngAnimate', 'ngRoute', 'core', 'kendo.directives', 'oc.lazyLoad', 'Headers', 'HttpServices', 'ui.router', 'EventRouteState', 'ComponentDirective', 'btford.socket-io', 'angular.filter', 'ngMaterial', 'ngSanitize', 'LoginServices'])
+            .value('isPopupIntegrasiAsuhan', false)
+            .value('isPopupPRMRJ', false)
             .config(config.method).controller('Controller', Controller).controller('HeaderCtrl', header).run(run);
 
         function run($window, socket, $timeout, $rootScope, $http, $location, R, LoginService) {

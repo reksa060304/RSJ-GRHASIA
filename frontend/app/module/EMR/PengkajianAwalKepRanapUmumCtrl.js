@@ -247,6 +247,73 @@ define(['initialize'], function (initialize) {
                     ]
                 }
             ]
+            
+            $scope.listSkriningGiziMNA = [
+                {
+                    "id": 1,
+                    "nama": "A. Apakah asupan makanan berkurang selama 3 bulan terakhir karena kehilangan nafsu makan, gangguan pencernaan, kesulitan mengunyah atau menelan?",
+                    "detail": [
+                        { "id": 3013949, "nama": "0 = Asupan makanan sangat berkurang", "descNilai": "0", "type": "checkbox" },
+                        { "id": 3013950, "nama": "1 = Asupan makanan agak berkurang", "descNilai": "1", "type": "checkbox" },
+                        { "id": 3013951, "nama": "2 = Asupan makanan tidak berkurang", "descNilai": "2", "type": "checkbox" }
+                    ]
+                },
+                {
+                    "id": 2,
+                    "nama": "B. Berat badan turun selama 3 bulan terakhir?",
+                    "detail": [
+                        { "id": 3013953, "nama": "0 = Berat badan turun lebih dari 3 kg", "descNilai": "0", "type": "checkbox" },
+                        { "id": 3013954, "nama": "1 = Tidak tahu", "descNilai": "1", "type": "checkbox" },
+                        { "id": 3013955, "nama": "2 = Berat badan turun antara 1 hingga 3 kg", "descNilai": "2", "type": "checkbox" },
+                        { "id": 3013956, "nama": "3 = Berat badan tidak turun", "descNilai": "3", "type": "checkbox" }
+                    ]
+                },
+                {
+                    "id": 3,
+                    "nama": "C. Pergerakan atau Mobilitas?",
+                    "detail": [
+                        { "id": 3013958, "nama": "0 = Terbatas di tempat tidur atau kursi", "descNilai": "0", "type": "checkbox" },
+                        { "id": 3013959, "nama": "1 = Mampu bangun dari tempat tidur/kursi, tapi tidak bisa keluar rumah", "descNilai": "1", "type": "checkbox" },
+                        { "id": 3013960, "nama": "2 = Dapat bepergian ke luar rumah", "descNilai": "2", "type": "checkbox" }
+                    ]
+                },
+                {
+                    "id": 4,
+                    "nama": "D. Mengalami tekanan psikologis atau penyakit akut (3 bln terakhir)?",
+                    "detail": [
+                        { "id": 3013962, "nama": "0 = Ya", "descNilai": "0", "type": "checkbox" },
+                        { "id": 3013963, "nama": "2 = Tidak", "descNilai": "2", "type": "checkbox" }
+                    ]
+                },
+                {
+                    "id": 5,
+                    "nama": "E. Gangguan neuropsikologis",
+                    "detail": [
+                        { "id": 3013965, "nama": "0 = Demensia berat atau depresi", "descNilai": "0", "type": "checkbox" },
+                        { "id": 3013966, "nama": "1 = Demensia ringan", "descNilai": "1", "type": "checkbox" },
+                        { "id": 3013967, "nama": "2 = Tidak ada gangguan psikologis", "descNilai": "2", "type": "checkbox" }
+                    ]
+                },
+                {
+                    "id": 6,
+                    "nama": "F1. Indeks Massa Tubuh (IMT)",
+                    "detail": [
+                        { "id": 3013969, "nama": "0 = IMT kurang dari 19", "descNilai": "0", "type": "checkbox" },
+                        { "id": 3013970, "nama": "1 = IMT 19 hingga kurang dari 21", "descNilai": "1", "type": "checkbox" },
+                        { "id": 3013971, "nama": "2 = IMT 21 hingga kurang dari 23", "descNilai": "2", "type": "checkbox" },
+                        { "id": 3013972, "nama": "3 = IMT 23 atau lebih besar", "descNilai": "3", "type": "checkbox" }
+                    ]
+                },
+                {
+                    "id": 7,
+                    "nama": "F2. Lingkar lengan atas (LiLA) - Jika IMT tidak dapat diukur",
+                    "detail": [
+                        { "id": 3013974, "nama": "0,0 = LiLA kurang dari 21", "descNilai": "0.0", "type": "checkbox" },
+                        { "id": 3013975, "nama": "0,5 = LiLA 21 hingga 22", "descNilai": "0.5", "type": "checkbox" },
+                        { "id": 3013976, "nama": "1,0 = LiLA lebih dari 22", "descNilai": "1.0", "type": "checkbox" }
+                    ]
+                }
+            ]
             $scope.listDiagnosa = [
                 {
                     "id": 1, "nama": " ",
@@ -409,9 +476,29 @@ define(['initialize'], function (initialize) {
                             //     var datass = { id: dataLoad[i].emrdfk, descNilai: dataLoad[i].reportdisplay }
                             //     $scope.getSkorGizi(datass)
                             // }
-
-
-
+                            
+                            // Load MNA Checkbox
+                            if (dataLoad[i].emrdfk >= 3013949 && dataLoad[i].emrdfk <= 3013976) {
+                                if (chekedd) {
+                                    $scope.item.obj[dataLoad[i].emrdfk] = true;
+                                    var opt = { id: dataLoad[i].emrdfk, descNilai: dataLoad[i].reportdisplay };
+                                    
+                                    // Cari row detail untuk uncheck others
+                                    var parentDetail = [];
+                                    for (var g = 0; g < $scope.listSkriningGiziMNA.length; g++) {
+                                        var found = false;
+                                        for (var h = 0; h < $scope.listSkriningGiziMNA[g].detail.length; h++) {
+                                            if ($scope.listSkriningGiziMNA[g].detail[h].id == dataLoad[i].emrdfk) {
+                                                parentDetail = $scope.listSkriningGiziMNA[g].detail;
+                                                found = true;
+                                                break;
+                                            }
+                                        }
+                                        if(found) break;
+                                    }
+                                    $scope.getSkorMNA(opt, parentDetail);
+                                }
+                            }
                         }
 
                         if (dataLoad[i].type == "datetime") {
@@ -932,6 +1019,31 @@ define(['initialize'], function (initialize) {
                 $scope.item.obj[3001005] = $scope.skorNutrisiAnak
             }
 
+            // Fungsi Hitung Skor MNA
+            $scope.getSkorMNA = function(stat, detail) {
+                var totalSkor = 0;
+                
+                // Uncheck opsi lain di kelompok yang sama
+                if ($scope.item.obj[stat.id] == true) {
+                    for (var i = 0; i < detail.length; i++) {
+                        if (detail[i].id != stat.id) {
+                            $scope.item.obj[detail[i].id] = false;
+                        }
+                    }
+                }
+                
+                // Hitung total dari seluruh listSkriningGiziMNA
+                for (var i = 0; i < $scope.listSkriningGiziMNA.length; i++) {
+                    var dtl = $scope.listSkriningGiziMNA[i].detail;
+                    for (var j = 0; j < dtl.length; j++) {
+                        if ($scope.item.obj[dtl[j].id] == true) {
+                            totalSkor += parseFloat(dtl[j].descNilai);
+                        }
+                    }
+                }
+                
+                $scope.item.obj[3013977] = totalSkor;
+            };
 
             $scope.getSkor2 = function (stat) {
 

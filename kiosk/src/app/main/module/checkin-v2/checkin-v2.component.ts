@@ -156,15 +156,23 @@ export class CheckinV2Component implements OnInit , AfterViewInit{
 
   
 
-  getInfoByNoReservasi(a) {
-    this.isloading = true
+  getInfoByNoReservasi(a?: any) {
     if (!a) {
       a = this.formGroup.get('noReservasi').value
     }
+    if (!a || a.trim() === '') {
+      this.alertService.error('', 'Harap isi No. Reservasi / Kode Booking / Scan QR Code terlebih dahulu!', {
+        toastClass: 'toast ngx-toastr',
+        closeButton: true,
+        positionClass: 'toast-bottom-center'
+      });
+      return;
+    }
+    this.isloading = true
 
     this.httpservice.get('medifirst2000/reservasionline/get-history?noReservasi=' + a).subscribe(e => {
       this.isloading = false
-      if (e.data.length > 0) {
+      if (e && e.data && e.data.length > 0) {
 
         let result = e.data[0]
         let now = new Date();// new Date(new Date(tglRes).setHours(new Date(tglRes).getHours() - 1))
@@ -182,7 +190,7 @@ export class CheckinV2Component implements OnInit , AfterViewInit{
           // this.alertService.error('Info', 'Check-In hanya bisa dilakukan SATU Jam sebelum jam reservasi')
           return
         }
-        if (result.isconfirm != true) {
+        if (result.objectkelompokpasienfk == 2 && result.isconfirm != true) {
           this.alertService.error('', 'Harap melakukan Check-In pada aplikasi mobil JKN terlebih dahulu!', {
             toastClass: 'toast ngx-toastr',
             closeButton: true,
@@ -245,20 +253,55 @@ export class CheckinV2Component implements OnInit , AfterViewInit{
   }
  
   checkIn() {
- 
-    // if (this.item.objectkelompokpasienfk == 2 && this.item.type != "BARU") {
+     // if (this.item.objectkelompokpasienfk == 2 && this.item.type != "BARU") {
+    if (this.item.objectkelompokpasienfk == 2) {
       this.cacheHelper.set('cacheOnlineBPJS', this.item)
       // this.cacheHelper.set('cacheOnlineCheckin', this.dataCheckin)
       // let jsonParam = {
       //   "kodebooking": this.item.noreservasi//"D"
       // }
       // this.httpservice.post('medifirst2000/kiosk/save-antrian', jsonParam).subscribe(response => {
-        this.router.navigate(['touchscreen/self-regis/verif-pasien-bpjs-v2'], { queryParams: { page: 'BPJS' } })
-        return
+      this.router.navigate(['touchscreen/self-regis/verif-pasien-bpjs-v2'], { queryParams: { page: 'BPJS' } })
+      return
       // })
-      
-    // }
- 
+     // }
+    } else {
+      if (this.item.tglcheckin != null) {
+        this.alertService.info('Info', 'Anda Sudah Check-In', {
+            toastClass: 'toast ngx-toastr',
+            closeButton: true,
+            positionClass: 'toast-bottom-center'
+        });
+        let noreg = this.item.noregistrasi;
+        this.cetakAntrian(noreg);
+        return;
+      }
+      this.isloading = true;
+      let jsonParam = {
+        "norec": this.item.norec
+      }
+      this.httpservice.post('medifirst2000/reservasionline/update-tgl-cekin', jsonParam).subscribe((e: any) => {
+        this.isloading = false;
+        this.alertService.success('Sukses', 'Check-In Berhasil', {
+            toastClass: 'toast ngx-toastr',
+            closeButton: true,
+            positionClass: 'toast-bottom-center'
+        });
+        let noreg = e && e.noregistrasi ? e.noregistrasi : this.item.noregistrasi;
+        this.cetakAntrian(noreg);
+      }, error => {
+        this.isloading = false;
+      })
+    }
+  }
+
+  cetakAntrian(noregistrasi?: string) {
+    let noreg = noregistrasi ? noregistrasi : this.item.noregistrasi;
+    window.open(Configuration.get().apiBackend + 'medifirst2000/report/cetak-bukti-pendaftaran?noregistrasi='
+      + noreg
+      + '&kdprofile=30', '_blank');
+    this.formGroup.get('noReservasi').setValue('');
+    this.isInfoPasien = false;
   }
 
 

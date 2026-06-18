@@ -1,0 +1,444 @@
+<style type="text/css">
+    .tg {
+        border-collapse: collapse;
+        border-spacing: 0;
+        border-color: #aabcfe;
+    }
+
+    .tg td {
+        font-family: Arial, sans-serif;
+        font-size: 14px;
+        padding: 10px 5px;
+        border-style: solid;
+        border-width: 1px;
+        overflow: hidden;
+        word-break: normal;
+        border-color: #aabcfe;
+        color: #669;
+        background-color: #e8edff;
+    }
+
+    .tg th {
+        font-family: Arial, sans-serif;
+        font-size: 14px;
+        font-weight: normal;
+        padding: 10px 5px;
+        border-style: solid;
+        border-width: 1px;
+        overflow: hidden;
+        word-break: normal;
+        border-color: #aabcfe;
+        color: #039;
+        background-color: #b9c9fe;
+    }
+
+    .tg .tg-yw4l {
+        vertical-align: top
+    }
+
+
+    .rowstyle {
+        border-bottom: 1px dashed lightblue
+    }
+
+    .footer {
+        text-align: center;
+        font-size: 120%;
+        font-weight: 700;
+        margin-bottom: 20px
+    }
+
+    table,
+    th,
+    td {
+        border: 1px solid #777777;
+        border-collapse: collapse;
+    }
+
+    th,
+    td {
+        padding: 5px;
+        text-align: left;
+    }
+
+    /* table {
+        font-family: arial, sans-serif;
+        border-collapse: collapse;
+        width: 40px;
+
+    }
+
+    td,
+    th {
+        border: 1px solid #dddddd;
+        text-align: left;
+        padding: 8px;
+    }
+
+    tr:nth-child(even) {
+        background-color: #dddddd;
+    } */
+    .dot1 {
+        vertical-align: top;
+        height: 50px;
+        width: 50px;
+        background-color: red;
+        border-radius: 50%;
+        display: inline-block;
+    }
+
+    .dot2 {
+        vertical-align: top;
+        height: 50px;
+        width: 50px;
+        background-color: yellow;
+        border-radius: 50%;
+        display: inline-block;
+    }
+
+    .dot3 {
+        vertical-align: top;
+        height: 50px;
+        width: 50px;
+        background-color: green;
+        border-radius: 50%;
+        display: inline-block;
+    }
+
+    .dot4 {
+        vertical-align: top;
+        height: 50px;
+        width: 50px;
+        background-color: black;
+        border-radius: 50%;
+        display: inline-block;
+    }
+  
+       .activeDot:before {
+        content: '\f00c';
+    font-family: 'FontAwesome';
+    display: inline-block;
+    vertical-align: top;
+    line-height: 1em;
+    /* width: 1em; */
+    /* height: 1em; */
+    font-size: 25px;
+    /* margin-right: 0.3em; */
+    text-align: center;
+    color: #ffffff;
+    margin-top: 12px;
+    }
+    .my-disable{
+        pointer-events:none;
+
+    }
+
+    .margin-top{
+        margin-top: 20px;
+    }
+
+    .margin-top-10{
+        margin-top: 10px;
+    }
+
+    .margin-top-30{
+        margin-top: 30px;
+    }
+
+    .text-center{
+        text-align: center;
+    }
+
+    .margin-bottom{
+        margin-bottom: 10px;
+    }
+
+    .text-center{
+        text-align: center;
+    }
+
+    .border-left{
+        border-left: 1px solid black;
+    }
+
+    .border-right{
+        border-right: 1px solid rgba(54, 53, 53, 0.438);
+    }
+
+    .container-edukasi {
+        width: 100%;
+        box-sizing: border-box;
+        line-height: 1.6;
+    }
+
+    .container-edukasi > ol {
+        margin: 0;
+        padding-left: 20px;
+    }
+
+    .container-edukasi > ol > li {
+        font-weight: bold;
+        margin-bottom: 15px;
+    }
+
+    .container-edukasi p {
+        font-weight: normal;
+        margin: 5px 0 10px 0;
+    }
+
+    .container-edukasi ol[type="a"] {
+        font-weight: normal;
+        margin-top: 5px;
+        padding-left: 20px;
+    }
+
+    .container-edukasi ol[type="a"] > li {
+        margin-bottom: 5px;
+    }
+
+    /* Tata letak khusus untuk list ber-icon panah (➢) */
+    .container-edukasi ul.arrow-list {
+        list-style-type: none;
+        padding-left: 20px;
+        margin-top: 5px;
+        margin-bottom: 10px;
+    }
+
+    .container-edukasi ul.arrow-list > li {
+        position: relative;
+        padding-left: 20px;
+        margin-bottom: 3px;
+    }
+
+    .container-edukasi ul.arrow-list > li::before {
+        content: "➢";
+        position: absolute;
+        left: 0;
+        top: 0;
+    }
+
+</style>
+
+ <!-- ng-class="{'my-disable':true}" -->
+<!-- <div class="grid_12"  disable-contents="allDisabled" id="form"> -->
+<div class="grid_12">
+    <div class="grid_12">
+        <div class="grid_12">
+            <fieldset style="margin-top: 50px;">
+                <div class="grid_12 margin-top-30">
+                    <label c-label item="item" style="text-align: center; font-size: 20px;"> <u>RUJUKAN EDUKASI PASIEN DENGAN TUBERCULOSIS</u></label>
+                </div>
+                <div class="grid_12" style="margin-top: 50px;">
+                    <div class="grid_12 margin-top-10 margin-bottom">
+                        <div class="grid_1"></div>
+                        <div class="grid_3">
+                            <label c-label item="item" class="margin-bottom">Rumah Sakit :</label>
+                        </div>
+                        <div class="grid_8">
+                            <label c-label item="item" class="margin-bottom">RSJ Grhasia DIY</label>
+                        </div>
+                    </div>
+                    <div class="grid_12 margin-top-10 margin-bottom">
+                        <div class="grid_1"></div>
+                        <div class="grid_3">
+                            <label c-label item="item" class="margin-bottom">Puskesmas Tujuan :</label>
+                        </div>
+                        <div class="grid_8">
+                            <textarea c-text-area type="input" filter="'string'" class="k-textbox" ng-model="item.obj[1901307000]"
+                            style="height: 30px; width: 100%; "/>
+                        </div>
+                    </div>
+                    <div class="grid_12 margin-top-10 margin-bottom">
+                        <div class="grid_1"></div>
+                        <div class="grid_3">
+                            <label c-label item="item" class="margin-bottom">Tanggal :</label>
+                        </div>
+                        <div class="grid_8">
+                            <input style="width: 100%" k-ng-model="item.obj[1901306000]" kendo-datetimepicker
+                                placeholer="yyyy-MM-dd HH:mm" k-format="'yyyy-MM-dd HH:mm'" parsedate="yyyy-MM-dd HH:mm" />
+                        </div>
+                    </div>
+                    <div class="grid_12 margin-top-10 margin-bottom">
+                        <div class="grid_1"></div>
+                        <div class="grid_3">
+                            <label c-label item="item" class="margin-bottom">Nama Pasien :</label>
+                        </div>
+                        <div class="grid_8">
+                            <textarea c-text-area type="input" filter="'string'" class="k-textbox" ng-model="item.obj[1901306001]"
+                            style="height: 30px; width: 100%; "/>
+                        </div>
+                    </div>
+                    <div class="grid_12 margin-top-10 margin-bottom">
+                        <div class="grid_1"></div>
+                        <div class="grid_3">
+                            <label c-label item="item" class="margin-bottom">Umur :</label>
+                        </div>
+                        <div class="grid_8">
+                            <textarea c-text-area type="input" filter="'string'" class="k-textbox" ng-model="item.obj[1901306002]"
+                            style="height: 30px; width: 100%; "/>
+                        </div>
+                    </div>
+                    <div class="grid_12 margin-top-10 margin-bottom">
+                        <div class="grid_1"></div>
+                        <div class="grid_3">
+                            <label c-label item="item" class="margin-bottom">Jenis Kelamin :</label>
+                        </div>
+                        <div class="grid_3">
+                            <input type="checkbox" class="k-checkbox" id="item.obj[1901306003]"
+                                ng-model="item.obj[1901306003]" ng-change="toggleJenisKelamin(1901306003)">
+                            <label class="k-checkbox-label" for="item.obj[1901306003]">
+                                &nbsp;Laki-Laki</label>
+                        </div>
+                        <div class="grid_5">
+                            <input type="checkbox" class="k-checkbox" id="item.obj[1901306004]"
+                                ng-model="item.obj[1901306004]" ng-change="toggleJenisKelamin(1901306004)">
+                            <label class="k-checkbox-label" for="item.obj[1901306004]">
+                                &nbsp;Perempuan</label>
+                        </div>
+                    </div>
+                    <div class="grid_12 margin-top-10 margin-bottom">
+                        <div class="grid_1"></div>
+                        <div class="grid_3">
+                            <label c-label item="item" class="margin-bottom">Diagnosa :</label>
+                        </div>
+                        <div class="grid_8">
+                            <textarea c-text-area type="input" filter="'string'" class="k-textbox" ng-model="item.obj[1901306005]"
+                            style="height: 30px; width: 100%; "/>
+                        </div>
+                    </div>
+                    <div class="grid_12 margin-top-10 margin-bottom">
+                        <div class="grid_1"></div>
+                        <div class="grid_3">
+                            <label c-label item="item" class="margin-bottom">Riwayat Perawatan :</label>
+                        </div>
+                        <div class="grid_8">
+                            <textarea c-text-area type="input" filter="'string'" class="k-textbox" ng-model="item.obj[1901306006]"
+                            style="height: 70px; width: 100%; "/>
+                        </div>
+                    </div>
+                    <div class="grid_12 margin-top-10 margin-bottom">
+                        <div class="container-edukasi">
+                            <p style="font-size: 1.2em; font-weight: bold; margin-bottom: 20px;">
+                            Rekomendasi Edukasi dan Tindak Lanjut di Puskesmas</p>
+                            <ol>
+                                <li>Melanjutkan pengobatan OAT (Obat Anti Tuberkulosis)
+                                    <p>Lama pengobatan biasanya: 6 bulan untuk TBC sensitif obat. Bisa lebih lama untuk kasus tertentu (TBC ekstra paru, komplikasi).</p>
+                                    <p>Walaupun sudah merasa sehat, obat harus tetap diminum sampai selesai untuk mencegah resistensi dan kekambuhan. Minum OAT saat perut kosong (1 jam sebelum makan atau 2 jam setelah makan). Obat jiwa umumnya diminum sesudah makan. Minum obat pada jam yang sama setiap hari dan gunakan air putih.</p>
+                                </li>
+
+                                <li>Penjelasan Terkait Efek Samping Obat :
+                                    <p>Efek yang normal:</p>
+                                    <ul class="arrow-list">
+                                        <li>Urine merah/oranye (rifampisin)</li>
+                                        <li>Mual ringan</li>
+                                        <li>Nafsu makan menurun ringan</li>
+                                    </ul>
+                                    <p>Efek yang harus segera dilaporkan:</p>
+                                    <ul class="arrow-list">
+                                        <li>Mata atau kulit kuning</li>
+                                        <li>Mual muntah berat</li>
+                                        <li>Penglihatan kabur</li>
+                                        <li>Ruam berat</li>
+                                        <li>Kesemutan berat</li>
+                                    </ul>
+                                    <div class="instruction-block">
+                                        <strong>Instruksi:</strong>
+                                        <p style="margin-left: 20px; margin-top: 5px;">Jika mual saat minum obat dengan perut kosong → minum obat bersama sedikit makanan ringan (bukan makanan berat) atau geser ke malam hari sebelum tidur untuk meminimalisir rasa tidak nyaman selama beraktivitas.</p>
+                                        <p style="margin-left: 20px;">Jika ada keluhan berat → segera ke Puskesmas atau fasilitas kesehatan.</p>
+                                    </div>
+                                </li>
+
+                                <li>Edukasi pencegahan penularan
+                                    <p>Terutama pada fase awal pengobatan:</p>
+                                    <p>Pasien dianjurkan:</p>
+                                    <ul class="arrow-list">
+                                        <li>Pakai masker saat dekat orang lain</li>
+                                        <li>Tutup mulut saat batuk</li>
+                                        <li>Tidak meludah sembarangan</li>
+                                        <li>Rumah dengan ventilasi baik</li>
+                                        <li>Buka jendela setiap hari</li>
+                                    </ul>
+                                    <p>Biasanya setelah 8 minggu pengobatan,akan dilakukan pengecekan dahak ulang → risiko penularan turun drastis</p>
+                                </li>
+
+                                <li>Edukasi pentingnya kontrol di Puskesmas
+                                    <ul class="arrow-list">
+                                        <li>Pengobatan dilanjutkan di Puskesmas</li>
+                                        <li>Obat diberikan gratis oleh program TBC nasional</li>
+                                        <li>Ketaatan minum obat akan dipantau oleh petugas TBC dan PMO (Pengawas Minum Obat) yaitu anggota keluarga, petugas kesehatan, kader kesehatan</li>
+                                        <li>Tugas PMO: memastikan pasien minum obat setiap hari (memastikan obat tertelan) dan mencatat di kartu kontrol.</li>
+                                    </ul>
+                                </li>
+
+                                <li>Edukasi tambahan penting
+                                    <ol type="a">
+                                        <li>Nutrisi
+                                            <ul class="arrow-list">
+                                                <li>Makan cukup protein : telur, ikan, ayam</li>
+                                                <li>Sayur dan buah</li>
+                                                <li>Tidak ada pantangan khusus</li>
+                                            </ul>
+                                        </li>
+                                        <li>Aktivitas
+                                            <p>Pasien boleh:</p>
+                                            <ul class="arrow-list">
+                                                <li>Aktivitas ringan–sedang sesuai kondisi</li>
+                                                <li>Istirahat cukup</li>
+                                            </ul>
+                                        </li>
+                                    </ol>
+                                </li>
+
+                                <li>Skrining kontak serumah
+                                    <p>Sangat penting:</p>
+                                    <ul class="arrow-list">
+                                        <li>Semua anggota keluarga serumah diperiksa</li>
+                                        <li>Terutama anak-anak dan lansia</li>
+                                        <li>Dilakukan di Puskesmas</li>
+                                    </ul>
+                                </li>
+
+                                <li>Tanda bahaya yang perlu segera ke fasilitas kesehatan
+                                    <ul class="arrow-list">
+                                        <li>Sesak napas berat</li>
+                                        <li>Batuk darah banyak</li>
+                                        <li>Demam tinggi menetap</li>
+                                        <li>Muntah terus</li>
+                                        <li>Mata atau kulit kuning</li>
+                                    </ul>
+                                </li>
+                            </ol>
+                        </div>
+                    </div>
+                    <div class="grid_12 margin-bottom" style="margin-top: 50px;">
+                        <div class="grid_1"></div>
+                        <div class="grid_5"></div>
+                        <div class="grid_1"></div>
+                        <div class="grid_5">
+                            <label c-label item="item">Yogyakarta, </label>
+                            <input style="width: 100%" k-ng-model="item.obj[1901307160]" kendo-datetimepicker
+                                placeholer="yyyy-MM-dd HH:mm" k-format="'yyyy-MM-dd HH:mm'" parsedate="yyyy-MM-dd HH:mm" />
+                        </div>
+                    </div>
+                    <div class="grid_12 margin-bottom" >
+                        <div class="grid_7"></div>
+                        <div class="grid_5">
+                            <label c-label item="item" style="text-align: center;">Dokter Yang Merujuk</label>
+                            <input style="width: 100%; text-align: center;" kendo-combo-box k-ng-model="item.obj[1901307170]"
+                            k-data-text-field="'text'" k-data-value-field="'value'" k-filter="'contains'"
+                            k-auto-bind="false" k-data-source="listPegawai" />
+                        </div>
+                    </div>
+                    <hr></hr>
+                </div>
+            </fieldset>
+        </div>
+    </div>
+</div>
+
+<br />
+<br />
+<div class="grid_12">
+    <div ng-include='"../app/module/EMR/TemplateButtonDinamis" '></div>
+
+</div>

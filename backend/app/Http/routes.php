@@ -53,6 +53,7 @@ Route::group(['middleware' => 'cors', 'prefix' => 'service'], function () {
 		Route::get('report/cetak-rba-rekap-subsub', 'Report\ReportController@cetakPerjenisAnggaranV2');
     Route::get('report/cetak-cppt-new', 'Report\ReportController@cetakCPPTNew');
     Route::get('report/cetak-cppt-new-tgl', 'Report\ReportController@cetakCPPTNewPerTgl');
+    Route::get('report/cetak-identitas-pasien', 'Report\ReportController@cetakIdentitasPasien');
 
 		// RBA
 		Route::get('perencanaan/get-total-sisa-anggaran', 'Perencanaan\PerencanaanController@getTotalSisaAnggaran');
@@ -797,7 +798,30 @@ Route::group(['middleware' => 'cors', 'prefix' => 'service'], function () {
         Route::get('sysadmin/master/get-data-master-bahasa', 'SysAdmin\Master\MasterController@getDataMasterBahasa');
         Route::post('sysadmin/master/save-bahasa', 'SysAdmin\Master\MasterController@saveDataMasterBahasa');
         Route::post('sysadmin/master/delete-master-bahasa', 'SysAdmin\Master\MasterController@deleteMasterBahasa');
-
+        Route::post('sysadmin/master/get-data-combo', 'SysAdmin\Master\MasterController@getDataComboArr');
+        Route::post('gizi/save-menu-makanan', 'Gizi\MasterGiziController@saveMenuMakanan');
+        Route::delete('gizi/delete-menu-makanan/{id}', 'Gizi\MasterGiziController@deleteMenuMakanan');
+        Route::get('gizi/get-data-menu-makanan', 'Gizi\MasterGiziController@getDataMenuMakanan');
+        Route::post('gizi/save-mapping-produk-menu', 'Gizi\MasterGiziController@saveMappingProdukMenu');
+        Route::get('gizi/get-data-mapping-produk-menu', 'Gizi\MasterGiziController@getDataMappingProdukMenu');
+        Route::delete('gizi/delete-mapping-produk-menu/{id}', 'Gizi\MasterGiziController@deleteMappingProdukMenu');
+        Route::post('gizi/save-siklus-catering', 'Gizi\MasterGiziController@saveSiklusCatering');
+        Route::get('gizi/get-data-siklus-catering', 'Gizi\MasterGiziController@getSiklusCatering');
+        Route::delete('gizi/delete-siklus-catering/{id}', 'Gizi\MasterGiziController@deleteSiklusCatering');
+        // Route::post('gizi/save-info-gizi', 'Gizi\MasterGiziController@saveInfoGizi');
+        // Route::get('gizi/get-info-gizi', 'Gizi\MasterGiziController@getInfoGizi');
+        Route::get('gizi/telemedicine/get-data-produk-diet', 'Gizi\GiziTelemedicineController@getDataProdukDiet');
+        Route::get('gizi/telemedicine/get-data-menu-makanan', 'Gizi\GiziTelemedicineController@getDataMenuMakanan');
+        Route::post('gizi/telemedicine/simpan-order-diet', 'Gizi\GiziDietTelemedicineController@simpanOrderDiet');
+        Route::get('gizi/telemedicine/get-order-diet', 'Gizi\GiziDietTelemedicineController@getOrderDiet');
+        Route::get('gizi/telemedicine/get-order-diet-verified', 'Gizi\GiziDietTelemedicineController@getOrderDietVerified');
+        Route::post('gizi/telemedicine/verifikasi-order-diet', 'Gizi\GiziDietTelemedicineController@verifikasiOrderDiet');
+        Route::post('gizi/telemedicine/batal-verifikasi-order-diet', 'Gizi\GiziDietTelemedicineController@batalVerifikasiOrderDiet');
+        Route::post('gizi/telemedicine/update-status-order', 'Gizi\GiziDietTelemedicineController@updateStatusOrderDiet');
+        Route::post('gizi/telemedicine/upload-bukti-bayar', 'Gizi\GiziDietTelemedicineController@uploadBuktiBayarDiet');
+        Route::post('gizi/telemedicine/batal-order-diet', 'Gizi\GiziDietTelemedicineController@batalOrderDiet');
+        Route::get('gizi/telemedicine/stream-bukti-bayar', 'Gizi\GiziDietTelemedicineController@streamBuktiBayar');
+        
         
         Route::group(['prefix' => 'cssd'], function () {
 
@@ -912,6 +936,7 @@ Route::group(['middleware' => 'cors', 'prefix' => 'service'], function () {
           Route::get('report/cetak-monitoringjamkes','Report\ReportController@cetakmonitoringJamkes');
           Route::get('report/cetak-monitoringjamkes-perawat','Report\ReportController@cetakmonitoringJamkesPerawat');
           Route::get('emr/get-emr-transaksi', 'EMR\EMRController@getEMRTransaksiRiwayat');
+          Route::post('emr/get-emr-inputan-otomatis', 'EMR\EMRController@getInputanOtomatis');
           Route::get('emr/get-emr-transaksi-detail', 'EMR\EMRController@getEMRTransaksiDetail');
           Route::get('emr/get-emr-transaksi-detail-edit', 'EMR\EMRController@getEMRTransaksiDetailEdit');
           Route::post('emr/get-emr-transaksi-details', 'EMR\EMRController@getEMRTransaksiDetails');
@@ -1484,6 +1509,9 @@ Route::group(['middleware' => 'cors', 'prefix' => 'service'], function () {
             Route::post('registrasi/post-pasienawal-bangsal','Registrasi\RegistrasiController@savePasienAwalBangsal');
             Route::get('registrasi/get-laporan-sensus-rs','Registrasi\RegistrasiController@getLaporanSensus');
             Route::get('registrasi/get-laporan-sensus-bangsal','Registrasi\RegistrasiController@getLaporanSensusBangsal');
+            Route::get('sdm/get-data-jabatan-new', 'SDM\SumberDayaManusiaController@getDataJabatanNew');
+            Route::post('sdm/save-update-data-jabatan', 'SDM\SumberDayaManusiaController@saveUpdateDataJabatan');
+            Route::post('sdm/delete-data-jabatan', 'SDM\SumberDayaManusiaController@deleteDataJabatan');
               
             // GET
 
@@ -1563,6 +1591,7 @@ Route::group(['middleware' => 'cors', 'prefix' => 'service'], function () {
           Route::get('report/cetak-resep-dokter-harga','Report\ReportController@cetakResepDokterHarga');
           Route::get('report/get-cetak-triaseigd','Report\ReportController@cetakTriaseIGD');
           Route::get('report/get-cetak-suratketerangandokter','Report\ReportController@CetakSKDokter');
+          Route::get('report/get-cetak-surat-man','Report\ReportController@CetakSuratMan');
           Route::get('report/get-cetak-suratketerangangawatdarurat','Report\ReportController@CetakSKGawatDarurat');
           Route::get('report/get-cetak-suratketerangandirawatinap','Report\ReportController@CetakSKDirawatInap');
           Route::get('report/get-cetak-catatan-konseling', 'Report\ReportController@cetakCatatanKonselingNapza');
@@ -1571,6 +1600,10 @@ Route::group(['middleware' => 'cors', 'prefix' => 'service'], function () {
           Route::get('report/cetak-pengkajian-rajal-nonjiwa','Report\ReportController@cetakPengkajianRajalNonJiwa');
           Route::get('report/cetak-pengkajian-igd','Report\ReportController@cetakPengkajianIGDNonJiwa');
           Route::get('report/cetak-pengkajian-rajal','Report\ReportController@cetakPengkajianRajalJiwa');
+          Route::get('report/cetak-rujukan-edukasi-psikiatri','Report\ReportController@cetakRujukanEdukasiPsikiatri');
+          Route::get('report/cetak-rujukan-edukasi-pasien-dengan-komorbid-epilepsi','Report\ReportController@cetakRujukanEdukasiPasienGangguanJiwaDenganKomorbidEpilepsi');
+          Route::get('report/cetak-rujukan-edukasi-pasien-dengan-komorbid-sindrome-geriatri-low-intake','Report\ReportController@cetakRujukanEdukasiPasienGangguanJiwaDenganKomorbidSindromeGeriatriLowIntake');
+          Route::get('report/cetak-rujukan-edukasi-pasien-dengan-komorbid-tuberculosis','Report\ReportController@cetakRujukanEdukasiPasienGangguanJiwaDenganKomorbidTuberculosis');
           Route::get('report/cetak-asesmen-terapi-wicara','Report\ReportController@cetakTerapiWicara');
           Route::get('report/cetak-asesmen-fisioterapi','Report\ReportController@cetakAsesmenFisioterapi');
           Route::get('report/cetak-ringkasan-pulang-nonjiwa','Report\ReportController@cetakRingkasanPulangNonJiwa');
@@ -2364,6 +2397,8 @@ Route::group(['middleware' => 'cors', 'prefix' => 'service'], function () {
 
         // });
         // Route::group(['prefix' => 'rawatjalan'], function () {
+          Route::get('rawatjalan/get-combo-sasaran-mutu-rajal', 'RawatJalan\SasaranMutuRajalController@getCombo');
+          Route::get('rawatjalan/get-data-sasaran-mutu-rajal', 'RawatJalan\SasaranMutuRajalController@getDataGrid');
           Route::get('rawatjalan/get-data-combo-dokter', 'RawatJalan\RawatJalanController@getDataComboDokter');
           Route::get('rawatjalan/get-dokters-combos', 'RawatJalan\RawatJalanController@getDokters');
           Route::get('rawatjalan/get-combo-surat', 'RawatJalan\RawatJalanController@getDataComboSurat');
@@ -3033,6 +3068,7 @@ Route::group(['middleware' => 'cors', 'prefix' => 'service'], function () {
             Route::get('sdm/get-sisacuti', 'SDM\SumberDayaManusiaController@getSisaCuti');
             Route::get('sdm/get-data-master-pendidikan', 'SDM\SumberDayaManusiaController@getMasterPendidikanPegawai');
             Route::get('sdm/get-thn-bln', 'SDM\SumberDayaManusiaController@getThnBln');
+            Route::get('sdm/get-lap-cuti-karyawan', 'SDM\SumberDayaManusiaController@getLaporanCutiKaryawan');
             //psikologi
             Route::get('psikologi/get-data-psikologi', 'RawatJalan\RawatJalanController@getComboPsikologi');
             Route::get('psikologi/get-daftar-pasien-psikologi', 'RawatJalan\RawatJalanController@getDdaftarRegistrasiPsikologi');
@@ -4027,6 +4063,25 @@ Route::group(['middleware' => 'cors', 'prefix' => 'service'], function () {
     Route::get('storage/berkaspasien', function (Illuminate\Http\Request $request)
     {
         $path = public_path('BerkasPasien/'.$request['nocm'].'/' . $request['filename']);
+
+        if (!File::exists($path)) {
+          echo 'Data tidak ada ';
+          die;
+            // abort(404);
+        }
+
+        $file = File::get($path);
+        $type = File::mimeType($path);
+
+        $response = Response::make($file, 200);
+        $response->header("Content-Type", $type);
+
+        return $response;
+    });
+
+    Route::get('storage/bukti-bayar-gizi', function (Illuminate\Http\Request $request)
+    {
+        $path = storage_path('app/' . $request['file']);
 
         if (!File::exists($path)) {
           echo 'Data tidak ada ';

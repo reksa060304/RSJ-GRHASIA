@@ -1,0 +1,174 @@
+<style>
+	.style-center {
+		display: inline-block;
+		text-align: center;
+		width: 100%;
+	}
+
+	.style-left {
+		display: inline-block;
+		text-align: left;
+		width: 100%;
+	}
+
+	.k-grid .k-grid-header .k-header .k-link {
+		height: auto;
+	}
+
+	.k-grid .k-grid-header .k-header {
+		white-space: normal;
+		text-align: center;
+	}
+
+	.custom-button {
+		margin: 0 0 5px;
+		background: none;
+		color: black;
+		border-radius: 0.8em;
+		border: 1px solid;
+		background-color: white;
+	}
+
+	.k-multiselect-wrap {
+		position: relative;
+		border-radius: 4px;
+		background-color: #FFF;
+		min-height: 2.04em;
+		border-width: 1px;
+		border-style: solid;
+		border-color: #228be6;
+	}
+</style>
+
+<div ng-show="dataVOloaded">
+	<div class="grid_12 headerBox">
+		<h1 style="color: white;"><b>Daftar Diet Gizi Sudah Diverifikasi</b></h1>
+	</div>
+	<div class="clear"></div>
+	<br />
+
+	<div class="grid_12">
+		<div class="grid_12 borderBox containerBorderBox">
+			<div class="grid_2">
+				<div class="grid_12"><label c-label item="item">Periode Awal</label></div>
+				<div class="clear"></div>
+				<div class="grid_12">
+					<input style="width: 100%" k-ng-model="item.periodeAwal" kendo-datepicker k-format="'yyyy-MM-dd'" />
+				</div>
+			</div>
+			<div class="grid_2">
+				<div class="grid_12"><label c-label item="item">Periode Akhir</label></div>
+				<div class="clear"></div>
+				<div class="grid_12">
+					<input style="width: 100%" k-ng-model="item.periodeAkhir" kendo-datepicker
+						k-format="'yyyy-MM-dd'" />
+				</div>
+			</div>
+			<div class="grid_2">
+				<div class="grid_12"><label c-label item="item">No Order</label></div>
+				<div class="clear"></div>
+				<div class="grid_12">
+					<input c-text-box type="input" class="k-textbox" ng-model="item.noOrder"
+						ng-keypress="($event.which == 13)? SearchData():item.noOrder" />
+				</div>
+			</div>
+			<div class="grid_2">
+				<div class="grid_12"><label c-label item="item">No RM</label></div>
+				<div class="clear"></div>
+				<div class="grid_12">
+					<input c-text-box type="input" class="k-textbox" ng-model="item.noRm"
+						ng-keypress="($event.which == 13)? SearchData():item.noRm" />
+				</div>
+			</div>
+			<div class="grid_2">
+				<div class="grid_12"><label c-label item="item" c-label-text="Nama Pemesan"></label></div>
+				<div class="clear"></div>
+				<div class="grid_12">
+					<input c-text-box type="input" class="k-textbox" ng-model="item.nama"
+						ng-keypress="($event.which == 13)? SearchData():item.nama" />
+				</div>
+			</div>
+			<div class="grid_1">
+				<div class="grid_12"><label>&nbsp;</label></div>
+				<div class="clear"></div>
+				<div class="grid_12">
+					<button class="btnTemplate1" style="margin-top: 7px;" ng-click="SearchData()"
+						ng-disabled="isRouteLoading">
+						<i class="fa fa-search"></i>
+						<span ng-show="!isRouteLoading">Cari</span>
+						<span ng-show="isRouteLoading">Loading</span>
+					</button>
+				</div>
+			</div>
+		</div>
+	</div>
+
+
+	<div class="grid_12">
+		<div class="grid_12 borderBox">
+			<div kendo-grid id="kGridDietVerified" k-data-source="sourceGrid" k-selectable="'row'" k-pageable="'true'"
+				k-columns="columnGrid" k-sortable="'true'" k-resizable="'true'" k-ng-model="dataMenuSelected"
+				class="max-height">
+			</div>
+		</div>
+	</div>
+	<!-- <div class="grid_12">
+		<div class="grid_2" style="margin-top: 10px;">
+			<button class="btnTemplate1" ng-click="terimaOrder(dataMenuSelected)">
+				<i class="fa fa-upload"></i> Upload Bukti Bayar
+			</button>
+		</div>
+		<div class="grid_2" style="margin-top: 10px;">
+			<button class="btnTemplate1" ng-click="sedangDisiapkan(dataMenuSelected)">
+				<i class="fa fa-spinner fa-spin"></i> Sedang Disiapkan
+			</button>
+		</div>
+		<div class="grid_2" style="margin-top: 10px;">
+			<button class="btnTemplate1" ng-click="makananSiap(dataMenuSelected)">
+				<i class="fa fa-check-circle"></i> Siap Diambil
+			</button>
+		</div>
+	</div> -->
+
+	<div class="grid_12" style="margin-top: 60px">
+		<div ng-include='"../app/template/Shared/TemplateLoading"'></div>
+	</div>
+
+</div>
+
+<div kendo-window="popUpAmbil" k-title="'Pengambilan / Penyerahan'" k-width="520" k-visible="false"
+	k-on-open="win2visible = true" k-on-close="win2visible = false">
+	<div class="panel panel-default container_12">
+		<div class="grid_12">
+			<div class="grid_6" style="margin-bottom: 10px;">
+				<div class="grid_12"><label c-label item="pop" c-label-text="No Order"></label></div>
+				<div class="grid_12">
+					<input c-text-box type="input" class="k-textbox" ng-model="pop.noorder" disabled />
+				</div>
+			</div>
+			<div class="grid_6" style="margin-bottom: 10px;">
+				<div class="grid_12"><label c-label item="pop" c-label-text="Menu Makanan"></label></div>
+				<div class="grid_12">
+					<input c-text-box type="input" class="k-textbox" ng-model="pop.menumakanan" disabled />
+				</div>
+			</div>
+			<div class="grid_12" style="margin-bottom: 10px;">
+				<div class="grid_12">
+					<label c-label item="item">Nama Pegawai</label>
+				</div>
+
+				<div class="grid_12">
+					<input style="width: 100%;" kendo-combo-box k-ng-model="pop.pegawai"
+						k-data-text-field="'namalengkap'" k-data-value-field="'id'" k-filter="'contains'"
+						k-auto-bind="false" k-data-source="listPegawai" />
+				</div>
+			</div>
+		</div>
+
+		<div class="k-edit-buttons k-state-default pull-right" style="margin-top: 15px">
+			<kendo-button class="k-primary"
+				ng-click="updateStatus(pop,'SUDAH DIAMBIL','Status Diubah: Sudah diambil')">Ambil</kendo-button>
+			<kendo-button ng-click="batal()">Batal</kendo-button>
+		</div>
+	</div>
+</div>
