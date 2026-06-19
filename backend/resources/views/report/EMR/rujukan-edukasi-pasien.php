@@ -547,7 +547,7 @@
                         </td>
                     </tr>
                     <tr class="examination-row" style="margin-top: 15px; padding-top: 10px;">
-                        <td>Pengobatan Terakhir</td>
+                        <td>Terapi yang telah kami berikan</td>
                         <td class="colon">:</td>
                         <td>
                             <?php 

@@ -3984,6 +3984,10 @@
         {
             "nameDep": "KirimWaResumeCtrl",
             "urlDep": "module/EMR/KirimWaResumeCtrl"
+        },
+        {
+            "nameDep": "FormRujukanEdukasiPasienCtrl",
+            "urlDep": "module/EMR/FormRujukanEdukasiPasien"
         }
     ]
 }
