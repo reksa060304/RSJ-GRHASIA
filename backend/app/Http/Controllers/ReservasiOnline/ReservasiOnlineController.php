@@ -687,6 +687,31 @@ class ReservasiOnlineController extends ApiController
                'statusenabled'=>false,
             ]);
 
+            // Nonaktifkan pasien daftar & antrian diperiksa yang terhubung dengan reservasi ini
+            if ($reservasi && $reservasi->noreservasi) {
+                // Ambil norec pasiendaftar yang terhubung (untuk nonaktifkan apd)
+                $norecPdList = DB::table('pasiendaftar_t')
+                    ->where('statusschedule', $reservasi->noreservasi)
+                    ->where('statusenabled', true)
+                    ->whereNull('tglcheckin')
+                    ->pluck('norec');
+
+                // Nonaktifkan antrianpasiendiperiksa_t yang terhubung
+                if ($norecPdList->isNotEmpty()) {
+                    DB::table('antrianpasiendiperiksa_t')
+                        ->whereIn('noregistrasifk', $norecPdList)
+                        ->where('statusenabled', true)
+                        ->update(['statusenabled' => false]);
+                }
+
+                // Nonaktifkan pasiendaftar_t
+                DB::table('pasiendaftar_t')
+                    ->where('statusschedule', $reservasi->noreservasi)
+                    ->where('statusenabled', true)
+                    ->whereNull('tglcheckin')
+                    ->update(['statusenabled' => false]);
+            }
+
             if ($reservasi) {
                 $newId = LoggingUser::max('id');
                 $newId = $newId + 1;
@@ -2243,19 +2268,36 @@ class ReservasiOnlineController extends ApiController
                 }
             }
         }
-        if(count($intervals) > 0){
-            $antrian = 1;
-            for ($x = 0; $x <= count($intervalsAwal); $x++) {
-                if($intervals[0]['jam']== $intervalsAwal[$x]['jam']){
-                    $antrian = $x +1;
-                    // dd($antrian);
-                    break;
-                }
-            }
-            return array("antrian"=> $antrian+1,"jamkosong"=>$intervals[0]['jam']);
-        }else{
-            return array("antrian"=> 0,"jamkosong"=>"00:00");
+        // OLD: slot-based - nomor antrian berdasarkan posisi slot jam di jadwal harian
+        // if(count($intervals) > 0){
+        //     $antrian = 1;
+        //     for ($x = 0; $x <= count($intervalsAwal); $x++) {
+        //         if($intervals[0]['jam']== $intervalsAwal[$x]['jam']){
+        //             $antrian = $x +1;
+        //             // dd($antrian);
+        //             break;
+        //         }
+        //     }
+        //     return array("antrian"=> $antrian+1,"jamkosong"=>$intervals[0]['jam']);
+        // }else{
+        //     return array("antrian"=> 0,"jamkosong"=>"00:00");
+        // }
+
+        // NEW: sequential - nomor antrian berdasarkan max(noantrian) + 1 per ruangan per tanggal
+        $jamKosong = count($intervals) > 0 ? $intervals[0]['jam'] : "00:00";
+        if ($jamKosong == "00:00") {
+            return array("antrian" => 0, "jamkosong" => "00:00");
         }
+        $maxAntrian = \DB::table('antrianpasienregistrasi_t')
+            ->where('objectruanganfk', $ruang->id)
+            ->whereRaw("to_char(tanggalreservasi,'yyyy-MM-dd') = '$tgl'")
+            ->where('noreservasi', '!=', '-')
+            ->whereNotNull('noreservasi')
+            ->where('statusenabled', true)
+            ->where('kdprofile', $kdProfile)
+            ->max('noantrian');
+        $antrianBaru = ($maxAntrian ?? 0) + 1;
+        return array("antrian" => $antrianBaru, "jamkosong" => $jamKosong);
 
     }
     public function GetRekapMobileJKN(Request $request)
@@ -4363,19 +4405,35 @@ class ReservasiOnlineController extends ApiController
             }
         }
  
-        if(count($intervals) > 0){
-            $antrian = 0;
-            for ($x = 0; $x <= count($intervalsAwal); $x++) {
-                if($intervals[0]['jam']== $intervalsAwal[$x]['jam']){
-                    $antrian = $x;
-                    break;
-                }
-            }
- 
-            return array("antrian"=> $antrian+1,"jamkosong"=>$intervals[0]['jam']);
-        }else{
-            return array("antrian"=> 0,"jamkosong"=>"00:00");
+        // OLD: slot-based - nomor antrian berdasarkan posisi slot jam di jadwal harian
+        // if(count($intervals) > 0){
+        //     $antrian = 0;
+        //     for ($x = 0; $x <= count($intervalsAwal); $x++) {
+        //         if($intervals[0]['jam']== $intervalsAwal[$x]['jam']){
+        //             $antrian = $x;
+        //             break;
+        //         }
+        //     }
+        //     return array("antrian"=> $antrian+1,"jamkosong"=>$intervals[0]['jam']);
+        // }else{
+        //     return array("antrian"=> 0,"jamkosong"=>"00:00");
+        // }
+
+        // NEW: sequential - nomor antrian berdasarkan max(noantrian) + 1 per ruangan per tanggal
+        $jamKosong = count($intervals) > 0 ? $intervals[0]['jam'] : "00:00";
+        if ($jamKosong == "00:00") {
+            return array("antrian" => 0, "jamkosong" => "00:00");
         }
+        $maxAntrian = \DB::table('antrianpasienregistrasi_t')
+            ->where('objectruanganfk', $kode)
+            ->whereRaw("to_char(tanggalreservasi,'yyyy-MM-dd') = '$tgl'")
+            ->where('noreservasi', '!=', '-')
+            ->whereNotNull('noreservasi')
+            ->where('statusenabled', true)
+            ->where('kdprofile', $kdProfile)
+            ->max('noantrian');
+        $antrianBaru = ($maxAntrian ?? 0) + 1;
+        return array("antrian" => $antrianBaru, "jamkosong" => $jamKosong);
 
     }
 

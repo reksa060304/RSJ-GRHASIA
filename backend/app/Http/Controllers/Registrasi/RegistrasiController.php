@@ -566,6 +566,9 @@ class RegistrasiController extends ApiController
 
                         $noAntrian = $countNoAntrian + 1;
                         $dataAPD->noantrian = $noAntrian;
+                        // FIX: update tglmasuk ke tanggal baru agar perhitungan max(noantrian)
+                        // untuk pendaftaran berikutnya di tanggal baru tidak menghasilkan nomor duplikat
+                        $dataAPD->tglmasuk = $r_NewPD['tglregistrasi'];
                     }
                     //kosongkan
                     if ($isRawatInap == 'true') {
@@ -7534,7 +7537,8 @@ class RegistrasiController extends ApiController
                     //                    'tglpulang' => $request['tanggalpembatalan']
                 ]);
             AntrianPasienDiperiksa::where('noregistrasifk', $request['norec'])
-                ->whereNull('tglkeluar')
+                // whereNull('tglkeluar') dihapus karena rawat jalan sudah memiliki tglkeluar saat registrasi
+                // sehingga kondisi ini mencegah statusenabled diset false untuk pasien rawat jalan
                 ->where('kdprofile', $idProfile)
                 ->update([
                     'statusenabled' => false,
