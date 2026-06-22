@@ -79,6 +79,8 @@ define(['initialize'], function (initialize) {
                     $scope.item.namaRuangan = chacePeriode[12]
                     $scope.item.idDepartemen = chacePeriode[19]
                     $scope.header.DataNoregis = chacePeriode[13]
+                    $scope.header.aktivasi_mpp = chacePeriode[42]
+                    $scope.item.aktivasi_mpp = chacePeriode[42]
                     if ($scope.header.DataNoregis == undefined) {
                         $scope.header.DataNoregis = false;
                     }

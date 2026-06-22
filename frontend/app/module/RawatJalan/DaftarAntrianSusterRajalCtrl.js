@@ -418,7 +418,6 @@ define(['initialize'], function (initialize) {
                         "field": "aktivasi_mpp",
                         "title": "Aktivasi MPP",
                         "width": "100px",
-                        "template": '# if( aktivasi_mpp != null && aktivasi_mpp != "" ) {# ✔ # } else {#  #} #'
 
                     },
                     {

@@ -16,7 +16,7 @@
         <c-panel item="item" header="'Rekam Medis'" disabled>
             <div class=' grid_12 panel panel-default'>
                 <div class='panel-body animated'>
-                    <div class="grid_10 animated fadeIn" ng-show="header.noregistrasi!==undefined">
+                    <div class="grid_8 animated fadeIn" ng-show="header.noregistrasi!==undefined">
                         <div class="grid_1" style="margin-top: 15px;">
                             <fieldset class="effect-shadow" style="border-radius: 10px;">
                                 <div ng-click="showPopUp()">
@@ -205,6 +205,22 @@
                             </div>
                         </div>
 
+                    </div>
+                    <div class='grid_2'>
+                        <fieldset style="min-height:50px !important" align="center">
+                            <legend>
+                                <h2>Aktivasi MPP</h2>
+                            </legend>
+                            <div class="grid_12">
+                                <div class="grid_12">
+                                    <label c-label item="item">Keterangan MPP</label>
+                                </div>
+                                <div class="grid_12">
+                                    <textarea class="k-textbox" style="height: 73px; width: 100%; resize: vertical; overflow-y: auto;"
+                                        ng-model="header.aktivasi_mpp" placeholder="-" disabled></textarea>
+                                </div>
+                            </div>
+                        </fieldset>
                     </div>
                     <div class='grid_2'>
                         <fieldset style="min-height:50px !important" align="center">
