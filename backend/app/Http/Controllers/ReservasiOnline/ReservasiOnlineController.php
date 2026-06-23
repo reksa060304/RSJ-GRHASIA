@@ -487,7 +487,7 @@ class ReservasiOnlineController extends ApiController
                 $objetoRequest ['pasiendaftar'] = $pasiendaftar;
                 $objetoRequest ['antrianpasiendiperiksa'] = $antrianpasiendiperiksa;
                 $objetoRequest ['userData'] = $userData['userData'];
-                $regis = app('App\Http\Controllers\Registrasi\RegistrasiController')->saveRegistrasiPasien($objetoRequest);
+                $regis = app('App\Http\Controllers\Registrasi\RegistrasiController')->saveRegistrasiPasienOnline($objetoRequest);
                 $regis = json_decode($regis->content(), true);
 
                 if (isset($regis['status']) && $regis['status'] != 201) {
