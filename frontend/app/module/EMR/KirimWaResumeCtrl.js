@@ -37,6 +37,11 @@ define(['initialize', 'Configuration'], function (initialize, config) {
                             namaruangan:    { type: 'string' },
                             namadokter:     { type: 'string' },
                             tglresume:      { type: 'string' },
+                            tgldokumen:     { type: 'string' },
+                            jenis_dokumen:  { type: 'string' },
+                            emrfk:          { type: 'number' },
+                            noemr_pasien:   { type: 'string' },
+                            blade:          { type: 'string' },
                             is_tte:         { type: 'number' },
                             tglkirimwa:     { type: 'string' }
                         }
@@ -52,9 +57,10 @@ define(['initialize', 'Configuration'], function (initialize, config) {
                     }},
                     { field: 'nocm',           title: 'No RM',          width: '100px' },
                     { field: 'namapasien',     title: 'Nama Pasien',     width: '180px' },
+                    { field: 'jenis_dokumen',  title: 'Jenis Dokumen',  width: '180px' },
                     { field: 'kelompokpasien', title: 'Kelompok Pasien', width: '130px' },
                     { field: 'noregistrasi',   title: 'No Registrasi',   width: '130px' },
-                    { field: 'tglresume',      title: 'Tgl Resume',      width: '130px' },
+                    { field: 'tgldokumen',     title: 'Tgl Dokumen',     width: '130px' },
                     { field: 'namaruangan',    title: 'Ruangan',         width: '150px' },
                     { field: 'namadokter',     title: 'Dokter',          width: '160px' },
                     { title: 'No HP',          width: '130px',
@@ -168,10 +174,21 @@ define(['initialize', 'Configuration'], function (initialize, config) {
                 var pegawaittd = pegawai.id || '320263';
                 var kdprofile = '30'; 
 
-                var url = config.baseApiBackend + "report/cetak-resume-medis-v3?norec=" + $scope.dataSelected.norec
+                var url = "";
+                if ($scope.dataSelected.emrfk) {
+                    url = config.baseApiBackend + "report/get-cetak-surat-man?nocm=" + $scope.dataSelected.nocm
+                        + "&emr=" + $scope.dataSelected.norec
+                        + "&noemr=" + $scope.dataSelected.noemr_pasien
+                        + "&emrfk=" + $scope.dataSelected.emrfk
+                        + "&kdprofile=" + kdprofile
+                        + "&pegawaittd=" + pegawaittd
+                        + "&blade=" + $scope.dataSelected.blade;
+                } else {
+                    url = config.baseApiBackend + "report/cetak-resume-medis-v3?norec=" + $scope.dataSelected.norec
                         + "&kdprofile=" + kdprofile 
                         + "&nama=" + encodeURIComponent(nama) 
                         + "&pegawaittd=" + pegawaittd;
+                }
 
                 window.open(url, '_blank');
             };
@@ -184,7 +201,8 @@ define(['initialize', 'Configuration'], function (initialize, config) {
                 
                 var payload = {
                     norec: $scope.dataSelected.norec,
-                    noHP:  noHP
+                    noHP:  noHP,
+                    emrfk: $scope.dataSelected.emrfk || null
                 };
 
                 medifirstService.post('emr/send-wa-resume', payload).then(function (res) {
@@ -194,7 +212,7 @@ define(['initialize', 'Configuration'], function (initialize, config) {
                             // Tampilkan warning kuning agar bisa dibaca oleh pihak RM
                             toastr.warning(d.message, 'Peringatan WaBlas', { timeOut: 10000 });
                         } else {
-                            toastr.success(d.message || ('Resume Medis (PDF) berhasil dikirim ke WhatsApp ' + (d.noHP || noHP)));
+                            toastr.success(d.message || ($scope.dataSelected.jenis_dokumen + ' (PDF) berhasil dikirim ke WhatsApp ' + (d.noHP || noHP)));
                         }
                         $scope.findData();
                     } else {

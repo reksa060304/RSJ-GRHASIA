@@ -155,13 +155,13 @@
     <!-- Popup Konfirmasi Kirim WA -->
     <div kendo-window="popupKonfirmasi" k-title="'Konfirmasi Kirim WA'" k-width="450" k-visible="false" k-modal="true">
         <div class="panel-body">
-            <p style="margin-bottom:15px; font-size:14px;">Anda akan mengirimkan dokumen Resume Medis ke WhatsApp berikut:</p>
+            <p style="margin-bottom:15px; font-size:14px;">Anda akan mengirimkan dokumen ke WhatsApp berikut:</p>
             <table style="width:100%; margin-bottom: 20px; font-size:13px;">
                 <tr><td style="width:120px; font-weight:bold; padding:3px 0;">Nama Pasien</td><td>: {{dataSelected.namapasien}}</td></tr>
                 <tr><td style="font-weight:bold; padding:3px 0;">No. RM</td><td>: {{dataSelected.nocm}}</td></tr>
-                <tr><td style="font-weight:bold; padding:3px 0;">Tgl Resume</td><td>: {{dataSelected.tglresume}}</td></tr>
+                <tr><td style="font-weight:bold; padding:3px 0;">Tgl Dokumen</td><td>: {{dataSelected.tgldokumen}}</td></tr>
                 <tr><td style="font-weight:bold; padding:3px 0;">No. HP Tujuan</td><td>: {{selectedNomorHP}}</td></tr>
-                <tr><td style="font-weight:bold; padding:3px 0;">Dokumen</td><td>: <a href="" ng-click="previewResume($event)" style="color:#e74c3c; font-weight:bold; text-decoration:underline;"><i class="fa fa-file-pdf-o"></i> ResumeMedis_{{dataSelected.nocm}}.pdf</a></td></tr>
+                <tr><td style="font-weight:bold; padding:3px 0;">Dokumen</td><td>: <a href="" ng-click="previewResume($event)" style="color:#e74c3c; font-weight:bold; text-decoration:underline;"><i class="fa fa-file-pdf-o"></i> {{dataSelected.jenis_dokumen || 'ResumeMedis'}}_{{dataSelected.nocm}}.pdf</a></td></tr>
             </table>
             
             <div class="grid_12" style="text-align: right; border-top:1px solid #ccc; padding-top:15px; margin-top:10px;">

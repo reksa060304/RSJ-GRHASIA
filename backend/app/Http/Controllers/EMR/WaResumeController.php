@@ -22,10 +22,11 @@ class WaResumeController extends ApiController
         try {
             try { $kdProfile = (int) $this->getDataKdProfile($request) ?: 30; } catch (\Exception $ex) { $kdProfile = 30; }
 
-            $query = DB::table('resumemedis_t as rm')
+            $queryResume = DB::table('resumemedis_t as rm')
                 ->select(
+                    DB::raw("'Resume Medis' as jenis_dokumen"),
                     'rm.norec',
-                    'rm.tglresume',
+                    'rm.tglresume as tgldokumen',
                     'rm.tglkirimwa',
                     'rm.keteranganlainnya',
                     'ps.nocm',
@@ -37,7 +38,10 @@ class WaResumeController extends ApiController
                     'kp.kelompokpasien',
                     'ru.namaruangan',
                     'pg.namalengkap as namadokter',
-                    DB::raw('CASE WHEN eb.id IS NOT NULL THEN 1 ELSE 0 END as is_tte')
+                    DB::raw('CASE WHEN eb.id IS NOT NULL THEN 1 ELSE 0 END as is_tte'),
+                    DB::raw("CAST(NULL as VARCHAR) as noemr_pasien"),
+                    DB::raw("NULL::integer as emrfk"),
+                    DB::raw("CAST(NULL as VARCHAR) as blade")
                 )
                 ->join('antrianpasiendiperiksa_t as apd', 'apd.norec', '=', 'rm.noregistrasifk')
                 ->join('pasiendaftar_t as pd', 'pd.norec', '=', 'apd.noregistrasifk')
@@ -55,35 +59,97 @@ class WaResumeController extends ApiController
                 ->where('rm.kdprofile', $kdProfile)
                 ->where('rm.statusenabled', true);
 
+            $queryEmr = DB::table('emrpasien_t as ep')
+                ->select(
+                    DB::raw("CASE 
+                        WHEN ep.emrfk = 3003043 THEN 'Rujukan Edukasi Psikiatri dengan Komorbid Epilepsi'
+                        WHEN ep.emrfk = 3003044 THEN 'Rujukan Edukasi Psikiatri dengan Komorbid Sindroma Geriatri'
+                        WHEN ep.emrfk = 3003045 THEN 'Rujukan Edukasi Psikiatri dengan Komorbid Hipertensi'
+                        WHEN ep.emrfk = 3003046 THEN 'Rujukan Edukasi Psikiatri dengan Komorbid Diabetes'
+                        WHEN ep.emrfk = 3003047 THEN 'Rujukan Edukasi Psikiatri dengan Komorbid Tuberculosis'
+                        WHEN ep.emrfk = 3003048 THEN 'Rujukan Edukasi Psikiatri'
+                        WHEN ep.emrfk = 3003052 THEN 'Rujukan Edukasi Pasien'
+                        ELSE 'Rujukan Edukasi'
+                    END as jenis_dokumen"),
+                    'ep.norec',
+                    'ep.tglemr as tgldokumen',
+                    'ep.tglkirimwa',
+                    DB::raw("'EMR' as keteranganlainnya"),
+                    'ps.nocm',
+                    'ps.namapasien',
+                    'ps.nohp',
+                    'ps.notelepon',
+                    'pd.noregistrasi',
+                    'pd.tglregistrasi',
+                    'kp.kelompokpasien',
+                    'ru.namaruangan',
+                    'pg.namalengkap as namadokter',
+                    DB::raw('CASE WHEN eb.id IS NOT NULL THEN 1 ELSE 0 END as is_tte'),
+                    'ep.noemr as noemr_pasien',
+                    'ep.emrfk',
+                    DB::raw("CASE 
+                        WHEN ep.emrfk = 3003043 THEN 'rujukan-edukasi-pasien-dengan-komorbid-epilepsi'
+                        WHEN ep.emrfk = 3003044 THEN 'rujukan-edukasi-pasien-dengan-komorbid-sindrome-geriatri-low-intake'
+                        WHEN ep.emrfk = 3003045 THEN 'fred-hipertensi-dom'
+                        WHEN ep.emrfk = 3003046 THEN 'fred-diabetes-dom'
+                        WHEN ep.emrfk = 3003047 THEN 'rujukan-edukasi-pasien-dengan-komorbid-tuberculosis'
+                        WHEN ep.emrfk = 3003048 THEN 'rujukan-edukasi-psikiatri'
+                        WHEN ep.emrfk = 3003052 THEN 'rujukan-edukasi-pasien'
+                        ELSE ''
+                    END as blade")
+                )
+                ->join('antrianpasiendiperiksa_t as apd', 'apd.norec', '=', 'ep.norec_apd')
+                ->join('pasiendaftar_t as pd', 'pd.norec', '=', 'apd.noregistrasifk')
+                ->join('pasien_m as ps', 'ps.id', '=', 'pd.nocmfk')
+                ->join('kelompokpasien_m as kp', 'kp.id', '=', 'pd.objectkelompokpasienlastfk')
+                ->leftJoin('ruangan_m as ru', 'ru.id', '=', 'apd.objectruanganfk')
+                ->leftJoin('pegawai_m as pg', 'pg.id', '=', 'pd.objectpegawaifk')
+                ->leftJoin('emr_bsre_t as eb', function($join) {
+                    $join->on('eb.nocm', '=', 'ps.nocm')
+                         ->on('eb.nomoremr', '=', 'ep.noemr')
+                         ->on('eb.noregistrasi', '=', 'pd.noregistrasi')
+                         ->where('eb.status', '=', true)
+                         ->where('eb.statusenabled', '=', true);
+                })
+                ->where('ep.kdprofile', $kdProfile)
+                ->where('ep.statusenabled', true)
+                ->whereIn('ep.emrfk', [3003043, 3003044, 3003045, 3003046, 3003047, 3003048, 3003052]);
+
             // Filter periode
             if (!empty($request['periodeAwal'])) {
-                $query->where('rm.tglresume', '>=', $request['periodeAwal']);
+                $queryResume->where('rm.tglresume', '>=', $request['periodeAwal']);
+                $queryEmr->where('ep.tglemr', '>=', $request['periodeAwal']);
             }
             if (!empty($request['periodeAkhir'])) {
-                $query->where('rm.tglresume', '<=', $request['periodeAkhir']);
+                $queryResume->where('rm.tglresume', '<=', $request['periodeAkhir']);
+                $queryEmr->where('ep.tglemr', '<=', $request['periodeAkhir']);
             }
 
             // Filter nama pasien
             if (!empty($request['namaPasien'])) {
-                $query->where('ps.namapasien', 'ilike', '%' . $request['namaPasien'] . '%');
+                $queryResume->where('ps.namapasien', 'ilike', '%' . $request['namaPasien'] . '%');
+                $queryEmr->where('ps.namapasien', 'ilike', '%' . $request['namaPasien'] . '%');
             }
 
             // Filter no CM / no RM
             if (!empty($request['noCm'])) {
-                $query->where('ps.nocm', 'ilike', '%' . $request['noCm'] . '%');
+                $queryResume->where('ps.nocm', 'ilike', '%' . $request['noCm'] . '%');
+                $queryEmr->where('ps.nocm', 'ilike', '%' . $request['noCm'] . '%');
             }
 
             // Filter no registrasi
             if (!empty($request['noRegistrasi'])) {
-                $query->where('pd.noregistrasi', 'ilike', '%' . $request['noRegistrasi'] . '%');
+                $queryResume->where('pd.noregistrasi', 'ilike', '%' . $request['noRegistrasi'] . '%');
+                $queryEmr->where('pd.noregistrasi', 'ilike', '%' . $request['noRegistrasi'] . '%');
             }
 
             // Filter jenis/kelompok pasien
             if (!empty($request['kelompokPasien'])) {
-                $query->where('kp.id', (int) $request['kelompokPasien']);
+                $queryResume->where('kp.id', (int) $request['kelompokPasien']);
+                $queryEmr->where('kp.id', (int) $request['kelompokPasien']);
             }
 
-            $data = $query->orderBy('rm.tglresume', 'desc')->get();
+            $data = $queryResume->union($queryEmr)->orderBy('tgldokumen', 'desc')->get();
 
             return response()->json([
                 'status'  => 200,
@@ -108,60 +174,54 @@ class WaResumeController extends ApiController
         try {
             try { $kdProfile = (int) $this->getDataKdProfile($request) ?: 30; } catch (\Exception $ex) { $kdProfile = 30; }
             $norec     = $request['norec'];
+            $emrfk     = $request['emrfk'];
 
-            // ── 1. Ambil data resume medis lengkap ──────────────────────────────
-            $data = DB::table('resumemedis_t as rm')
-                ->select(
-                    'rm.norec', 'rm.tglresume', 'rm.keteranganlainnya',
-                    'rm.ringkasanriwayatpenyakit', 'rm.pemeriksaanfisik', 'rm.pemeriksaanpenunjang',
-                    'rm.hasilkonsultasi', 'rm.terapi', 'rm.diagnosisawal', 'rm.diagnosissekunder',
-                    'rm.tindakanprosedur', 'rm.tglmasuk', 'rm.tglpulang',
-                    'rm.wisma', 'rm.kelas', 'rm.hasilfisik', 'rm.hasilpsikiatri',
-                    'rm.hasilpenunjang', 'rm.terapipulang',
-                    'rm.axis2', 'rm.axis3', 'rm.axis4', 'rm.axis5',
-                    'rm.kontrolklinik', 'rm.kondisiwaktukeluare',
-                    'rm.kddiagnosisawal', 'rm.diagnosismasuk', 'rm.kddiagnosismasuk',
-                    'rm.diagnosistambahan', 'rm.kddiagnosistambahan',
-                    'rm.kddiagnosistambahan2', 'rm.kddiagnosistambahan3', 'rm.kddiagnosistambahan4',
-                    'rm.alasandirawat', 'rm.alergi', 'rm.diet', 'rm.instruksianjuran',
-                    'rm.hasillab', 'rm.kondisiwaktukeluar', 'rm.pengobatandilanjutkan',
-                    'rm.koderesume', 'rm.pegawaifk',
-                    'dg1.kddiagnosa as kddiagnosa1', 'dg1.namadiagnosa as namadiagnosa1',
-                    'dg2.kddiagnosa as kddiagnosa2', 'dg2.namadiagnosa as namadiagnosa2',
-                    'dg3.kddiagnosa as kddiagnosa3', 'dg3.namadiagnosa as namadiagnosa3',
-                    'dg4.kddiagnosa as kddiagnosa4', 'dg4.namadiagnosa as namadiagnosa4',
-                    'dg5.kddiagnosa as kddiagnosa5', 'dg5.namadiagnosa as namadiagnosa5',
-                    'dg6.kddiagnosa as kddiagnosa6', 'dg6.namadiagnosa as namadiagnosa6',
-                    'rm.tglkontrolpoli', 'rm.rumahsakittujuan', 'rm.noregistrasifk',
-                    'pd.noregistrasi', 'pd.tglregistrasi',
-                    'ps.nocm', 'ps.namapasien', 'ps.nohp', 'ps.notelepon', 'ps.tgllahir',
-                    'kp.kelompokpasien',
-                    'ru.namaruangan',
-                    'jk.jeniskelamin',
-                    'pg.namalengkap as namadokter'
-                )
-                ->join('antrianpasiendiperiksa_t as apd', 'apd.norec', '=', 'rm.noregistrasifk')
-                ->join('pasiendaftar_t as pd', 'pd.norec', '=', 'apd.noregistrasifk')
-                ->join('pasien_m as ps', 'ps.id', '=', 'pd.nocmfk')
-                ->join('kelompokpasien_m as kp', 'kp.id', '=', 'pd.objectkelompokpasienlastfk')
-                ->join('jeniskelamin_m as jk', 'jk.id', '=', 'ps.objectjeniskelaminfk')
-                ->leftJoin('ruangan_m as ru', 'ru.id', '=', 'apd.objectruanganfk')
-                ->leftJoin('pegawai_m as pg', 'pg.id', '=', 'pd.objectpegawaifk')
-                ->leftJoin('diagnosa_m as dg1', 'dg1.id', '=', 'rm.kddiagnosismasuk')
-                ->leftJoin('diagnosa_m as dg2', 'dg2.id', '=', 'rm.kddiagnosisawal')
-                ->leftJoin('diagnosa_m as dg3', 'dg3.id', '=', 'rm.kddiagnosistambahan')
-                ->leftJoin('diagnosa_m as dg4', 'dg4.id', '=', 'rm.kddiagnosistambahan2')
-                ->leftJoin('diagnosa_m as dg5', 'dg5.id', '=', 'rm.kddiagnosistambahan3')
-                ->leftJoin('diagnosa_m as dg6', 'dg6.id', '=', 'rm.kddiagnosistambahan4')
-                ->where('rm.kdprofile', $kdProfile)
-                ->where('rm.statusenabled', true)
-                ->where('rm.norec', $norec)
-                ->first();
+            // ── 1. Ambil data lengkap berdasarkan jenis dokumen ─────────────────
+            if (!empty($emrfk)) {
+                // EMR Document
+                $data = DB::table('emrpasien_t as ep')
+                    ->select(
+                        'ep.norec', 'ep.tglemr as tgldokumen', 'ep.noemr as noemr_pasien', 'ep.emrfk',
+                        'ps.nocm', 'ps.namapasien', 'ps.nohp', 'ps.notelepon', 'ps.tgllahir',
+                        'kp.kelompokpasien', 'pd.noregistrasi', 'pd.tglregistrasi',
+                        'ru.namaruangan', 'pg.namalengkap as namadokter'
+                    )
+                    ->join('antrianpasiendiperiksa_t as apd', 'apd.norec', '=', 'ep.norec_apd')
+                    ->join('pasiendaftar_t as pd', 'pd.norec', '=', 'apd.noregistrasifk')
+                    ->join('pasien_m as ps', 'ps.id', '=', 'pd.nocmfk')
+                    ->join('kelompokpasien_m as kp', 'kp.id', '=', 'pd.objectkelompokpasienlastfk')
+                    ->leftJoin('ruangan_m as ru', 'ru.id', '=', 'apd.objectruanganfk')
+                    ->leftJoin('pegawai_m as pg', 'pg.id', '=', 'pd.objectpegawaifk')
+                    ->where('ep.kdprofile', $kdProfile)
+                    ->where('ep.statusenabled', true)
+                    ->where('ep.norec', $norec)
+                    ->where('ep.emrfk', (int) $emrfk)
+                    ->first();
+            } else {
+                // Resume Medis (Default)
+                $data = DB::table('resumemedis_t as rm')
+                    ->select(
+                        'rm.norec', 'rm.tglresume as tgldokumen', 'rm.keteranganlainnya',
+                        'ps.nocm', 'ps.namapasien', 'ps.nohp', 'ps.notelepon', 'ps.tgllahir',
+                        'kp.kelompokpasien', 'pd.noregistrasi', 'pd.tglregistrasi',
+                        'ru.namaruangan', 'pg.namalengkap as namadokter'
+                    )
+                    ->join('antrianpasiendiperiksa_t as apd', 'apd.norec', '=', 'rm.noregistrasifk')
+                    ->join('pasiendaftar_t as pd', 'pd.norec', '=', 'apd.noregistrasifk')
+                    ->join('pasien_m as ps', 'ps.id', '=', 'pd.nocmfk')
+                    ->join('kelompokpasien_m as kp', 'kp.id', '=', 'pd.objectkelompokpasienlastfk')
+                    ->leftJoin('ruangan_m as ru', 'ru.id', '=', 'apd.objectruanganfk')
+                    ->leftJoin('pegawai_m as pg', 'pg.id', '=', 'pd.objectpegawaifk')
+                    ->where('rm.kdprofile', $kdProfile)
+                    ->where('rm.statusenabled', true)
+                    ->where('rm.norec', $norec)
+                    ->first();
+            }
 
             if (!$data) {
                 return response()->json([
                     'status'  => 404,
-                    'message' => 'Data resume medis tidak ditemukan.',
+                    'message' => 'Data dokumen tidak ditemukan.',
                 ], 404);
             }
 
@@ -192,15 +252,63 @@ class WaResumeController extends ApiController
                 $noHP = substr($noHP, 1);
             }
 
-            // ── 3. Buat URL publik view resume medis (Dengan Token Expiring 7 Hari) ──
+            // ── 3. Buat URL publik view (Dengan Token Expiring 7 Hari) ──
             $expires = time() + (7 * 24 * 60 * 60); // 7 hari kedaluwarsa
-            $payload = base64_encode($data->norec . '|' . $expires . '|' . $kdProfile);
-            $secretKey = env('APP_KEY', 'some-random-fallback-key-123!');
-            $signature = hash_hmac('sha256', $payload, $secretKey);
-            $token = $payload . '.' . $signature;
-
             $publicBaseUrl = "https://simrs-grhasia.jogjaprov.go.id/service/medifirst2000/";
-            $viewUrl = $publicBaseUrl . "report/cetak-resume-medis-v3-publik?token=" . urlencode($token);
+
+            if (!empty($emrfk)) {
+                // EMR Document
+                $blade = '';
+                $jenisDokumen = '';
+                switch ((int)$emrfk) {
+                    case 3003043:
+                        $blade = 'rujukan-edukasi-pasien-dengan-komorbid-epilepsi';
+                        $jenisDokumen = 'Rujukan Edukasi Psikiatri dengan Komorbid Epilepsi';
+                        break;
+                    case 3003044:
+                        $blade = 'rujukan-edukasi-pasien-dengan-komorbid-sindrome-geriatri-low-intake';
+                        $jenisDokumen = 'Rujukan Edukasi Psikiatri dengan Komorbid Sindroma Geriatri';
+                        break;
+                    case 3003045:
+                        $blade = 'fred-hipertensi-dom';
+                        $jenisDokumen = 'Rujukan Edukasi Psikiatri dengan Komorbid Hipertensi';
+                        break;
+                    case 3003046:
+                        $blade = 'fred-diabetes-dom';
+                        $jenisDokumen = 'Rujukan Edukasi Psikiatri dengan Komorbid Diabetes';
+                        break;
+                    case 3003047:
+                        $blade = 'rujukan-edukasi-pasien-dengan-komorbid-tuberculosis';
+                        $jenisDokumen = 'Rujukan Edukasi Psikiatri dengan Komorbid Tuberculosis';
+                        break;
+                    case 3003048:
+                        $blade = 'rujukan-edukasi-psikiatri';
+                        $jenisDokumen = 'Rujukan Edukasi Psikiatri';
+                        break;
+                    case 3003052:
+                        $blade = 'rujukan-edukasi-pasien';
+                        $jenisDokumen = 'Rujukan Edukasi Pasien';
+                        break;
+                    default:
+                        $blade = 'rujukan-edukasi-pasien';
+                        $jenisDokumen = 'Rujukan Edukasi';
+                        break;
+                }
+
+                $payload = base64_encode($data->norec . '|' . $data->emrfk . '|' . $blade . '|' . $expires . '|' . $kdProfile);
+                $secretKey = env('APP_KEY', 'some-random-fallback-key-123!');
+                $signature = hash_hmac('sha256', $payload, $secretKey);
+                $token = $payload . '.' . $signature;
+                $viewUrl = $publicBaseUrl . "report/cetak-emr-publik?token=" . urlencode($token);
+            } else {
+                // Resume Medis
+                $jenisDokumen = 'Resume Medis';
+                $payload = base64_encode($data->norec . '|' . $expires . '|' . $kdProfile);
+                $secretKey = env('APP_KEY', 'some-random-fallback-key-123!');
+                $signature = hash_hmac('sha256', $payload, $secretKey);
+                $token = $payload . '.' . $signature;
+                $viewUrl = $publicBaseUrl . "report/cetak-resume-medis-v3-publik?token=" . urlencode($token);
+            }
 
             // ── 4. Ambil konfigurasi WaBlas dari settingdatafixed_m ──────────────
             $getWaSetting = function ($namafield) use ($kdProfile) {
@@ -231,11 +339,11 @@ class WaResumeController extends ApiController
 
             // ── 5. Siapkan Teks Pesan WA ──────────────────────────────────────────
             $message = "Halo, *" . $data->namapasien . "*\n\n"
-                . "Berikut kami kirimkan tautan untuk melihat *Resume Medis* Anda.\n\n"
+                . "Berikut kami kirimkan tautan untuk melihat *" . $jenisDokumen . "* Anda.\n\n"
                 . "No. Rekam Medis : *" . $data->nocm . "*\n"
                 . "No. Registrasi  : *" . $data->noregistrasi . "*\n"
-                . "Tanggal Resume  : *" . $data->tglresume . "*\n\n"
-                . "Silakan lihat dan unduh dokumen Resume Medis Anda melalui tautan berikut:\n"
+                . "Tanggal Dokumen : *" . $data->tgldokumen . "*\n\n"
+                . "Silakan lihat dan unduh dokumen Anda melalui tautan berikut:\n"
                 . $viewUrl . "\n\n"
                 . "*Catatan:* Link di atas hanya berlaku selama *7 hari* demi keamanan data Anda.\n\n"
                 . "Terima kasih telah mempercayakan kesehatan Anda kepada kami.";
@@ -267,7 +375,7 @@ class WaResumeController extends ApiController
             curl_close($curlMsg);
 
             if ($errMsgCurl) {
-                \Log::error("WA Resume Curl error: " . $errMsgCurl);
+                \Log::error("WA Curl error: " . $errMsgCurl);
                 return response()->json([
                     'status'  => 500,
                     'message' => 'Gagal menghubungi server WhatsApp: ' . $errMsgCurl,
@@ -283,9 +391,15 @@ class WaResumeController extends ApiController
                 ], 500);
             }
 
-            DB::table('resumemedis_t')
-                ->where('norec', $norec)
-                ->update(['tglkirimwa' => date('Y-m-d H:i:s')]);
+            if (!empty($emrfk)) {
+                DB::table('emrpasien_t')
+                    ->where('norec', $norec)
+                    ->update(['tglkirimwa' => date('Y-m-d H:i:s')]);
+            } else {
+                DB::table('resumemedis_t')
+                    ->where('norec', $norec)
+                    ->update(['tglkirimwa' => date('Y-m-d H:i:s')]);
+            }
 
             // Logging User Action
             $dataLogin = $request->all();
@@ -296,19 +410,19 @@ class WaResumeController extends ApiController
             $logUser->norec = $logUser->generateNewId();
             $logUser->kdprofile = $kdProfile;
             $logUser->statusenabled = true;
-            $logUser->jenislog = 'Kirim WA Resume';
+            $logUser->jenislog = 'Kirim WA ' . (!empty($emrfk) ? 'EMR' : 'Resume');
             $logUser->noreff = $norec;
-            $logUser->referensi = 'norec resumemedis_t';
-            $logUser->keterangan = 'Kirim WA Resume Pasien: ' . $data->namapasien . ' / No RM: ' . $data->nocm . ' ke HP: ' . $noHP;
+            $logUser->referensi = !empty($emrfk) ? 'norec emrpasien_t' : 'norec resumemedis_t';
+            $logUser->keterangan = 'Kirim WA ' . $jenisDokumen . ' Pasien: ' . $data->namapasien . ' / No RM: ' . $data->nocm . ' ke HP: ' . $noHP;
             $logUser->objectloginuserfk = isset($dataLogin['userData']['id']) ? $dataLogin['userData']['id'] : null;
             $logUser->tanggal = date('Y-m-d H:i:s');
             $logUser->save();
 
-            \Log::info("WA Resume (Teks Link) berhasil dikirim ke $noHP untuk norec=$norec");
+            \Log::info("WA $jenisDokumen (Teks Link) berhasil dikirim ke $noHP untuk norec=$norec");
 
             return response()->json([
                 'status'  => 200,
-                'message' => 'Pesan WhatsApp berisi link Resume Medis berhasil dikirim ke ' . $noHP,
+                'message' => 'Pesan WhatsApp berisi link ' . $jenisDokumen . ' berhasil dikirim ke ' . $noHP,
                 'noHP'    => $noHP,
                 'fileUrl' => $viewUrl,
                 'mode'    => 'text_link',
