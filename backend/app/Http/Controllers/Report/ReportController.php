@@ -1650,6 +1650,23 @@ class ReportController extends ApiController{
         }
 
         if (empty($noresep)){
+            if (!empty($noreg)) {
+                $cekPasien = DB::table('pasiendaftar_t as pt')
+                    ->join('pasien_m as pm', 'pm.id', '=', 'pt.nocmfk')
+                    ->leftJoin('ruangan_m as rm', 'rm.id', '=', 'pt.objectruanganlastfk')
+                    ->where(function ($q) use ($noreg) {
+                        $q->where('pt.noregistrasi', $noreg)
+                          ->orWhere('pm.nocm', $noreg);
+                    })
+                    ->where('pt.statusenabled', true)
+                    ->select('rm.objectdepartemenfk')
+                    ->orderBy('pt.tglregistrasi', 'desc')
+                    ->first();
+
+                if (!empty($cekPasien) && (int)$cekPasien->objectdepartemenfk == 16) {
+                    return "Pasien Rawat Inap tidak perlu melakukan check-in farmasi melalui kiosk, silakan hubungi petugas farmasi untuk informasi lebih lanjut.";
+                }
+            }
             $data = DB::table('antrianapotik_t as at')
             ->join('pasiendaftar_t as pt', 'pt.norec', '=', 'at.noregistrasifk')
             ->join('pasien_m as pm', 'pm.id', '=', 'pt.nocmfk')
