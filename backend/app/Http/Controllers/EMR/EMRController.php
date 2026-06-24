@@ -3557,11 +3557,25 @@ class EMRController  extends ApiController
             $objectIds = array_map('trim', explode(',', $item['objectId']));
 
             // Ambil emrpasienfk terbaru untuk emrfk ini
-            $latestEmrPasienFk = \DB::table('emrpasiend_t')
-                ->where('statusenabled', true)
-                ->where('kdprofile', $kdProfile)
-                ->where('emrfk', $item['emrfk'])
-                ->max('emrpasienfk');
+            $latestEmrPasienFkQuery = \DB::table('emrpasiend_t as epd')
+                ->join('emrpasien_t as ep', 'ep.noemr', '=', 'epd.emrpasienfk')
+                ->where('epd.statusenabled', true)
+                ->where('epd.kdprofile', $kdProfile)
+                ->where('epd.emrfk', $item['emrfk']);
+
+            if ($request->has('noregistrasi') && $request->input('noregistrasi') != '') {
+                $latestEmrPasienFkQuery->where('ep.noregistrasifk', $request->input('noregistrasi'));
+            } elseif ($request->has('nocm') && $request->input('nocm') != '') {
+                $latestEmrPasienFkQuery->where('ep.nocm', $request->input('nocm'));
+            } else {
+                if (isset($item['noregistrasi']) && $item['noregistrasi'] != '') {
+                    $latestEmrPasienFkQuery->where('ep.noregistrasifk', $item['noregistrasi']);
+                } elseif (isset($item['nocm']) && $item['nocm'] != '') {
+                    $latestEmrPasienFkQuery->where('ep.nocm', $item['nocm']);
+                }
+            }
+
+            $latestEmrPasienFk = $latestEmrPasienFkQuery->max('epd.emrpasienfk');
 
             if (!$latestEmrPasienFk) {
                 $result[] = [
