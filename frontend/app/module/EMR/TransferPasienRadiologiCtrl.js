@@ -125,6 +125,19 @@ define(['initialize'], function (initialize) {
                 $scope.listRecommendation = arrRecommendation;
                 $scope.listTtd = arrTtd;
 
+                loadData();
+            });
+
+            function loadData() {
+                var cacheNomorEMR = cacheHelper.get('cacheNomorEMR');
+                var nomorEMR = '-';
+                var norecEMR = '-';
+                if (cacheNomorEMR != undefined && cacheNomorEMR !== '') {
+                    nomorEMR = cacheNomorEMR[0] ? cacheNomorEMR[0] : cacheNomorEMR;
+                    norecEMR = cacheNomorEMR[1] ? cacheNomorEMR[1] : '-';
+                    $scope.cc.norec_emr = nomorEMR;
+                }
+
                 if (nomorEMR != '-') {
                     medifirstService.get("emr/get-emr-transaksi-detail?noemr=" + nomorEMR + "&norec=" + norecEMR + "&emrfk=" + $scope.emrid).then(function (e) {
                         var dataLoad = e.data.data;
@@ -152,9 +165,7 @@ define(['initialize'], function (initialize) {
                                         var res = value.split("~");
                                         $scope.item.obj[fieldId] = { 
                                             value: res[0], 
-                                            text: res[1],
-                                            id: res[0],
-                                            namaruangan: res[1]
+                                            text: res[1]
                                         };
                                     }
                                 }
@@ -214,8 +225,9 @@ define(['initialize'], function (initialize) {
                     cacheHelper.set('cacheNomorEMR', arrStr);
                     cacheHelper.set('cacheNOREC_EMR', arrStr);
 
+                    loadData();
+
                     if ($rootScope.loadRiwayat) $rootScope.loadRiwayat();
-                    window.history.back();
                 }, function (error) {
                     $scope.tombolSimpanVis = true;
                 });
