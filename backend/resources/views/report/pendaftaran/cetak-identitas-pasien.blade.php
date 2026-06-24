@@ -162,7 +162,7 @@
                 @if(stripos(\Request::url(), 'localhost') !== FALSE)
                     <img src="{{ public_path('img/logo_grhasia_new.png') }}" alt="" style="width: 75px;">
                 @else
-                    <img src="{{ public_path('service/img/logo_grhasia_new.png') }}" alt="" style="width: 75px;">
+                    <img src="{{ public_path('img/logo_grhasia_new.png') }}" alt="" style="width: 75px;">
                 @endif
                 <div class="header-logo-text">
                     RS JIWA GRHASIA<br>
@@ -176,7 +176,7 @@
                 @if(stripos(\Request::url(), 'localhost') !== FALSE)
                     <img src="{{ public_path('img/Aksara Jawa_Surat.png') }}" alt="" style="width: 130px; margin: 2px 0;">
                 @else
-                    <img src="{{ public_path('service/img/Aksara Jawa_Surat.png') }}" alt="" style="width: 130px; margin: 2px 0;">
+                    <img src="{{ public_path('img/Aksara Jawa_Surat.png') }}" alt="" style="width: 130px; margin: 2px 0;">
                 @endif
                 <div class="header-address">
                     Jalan Kaliurang KM.17, Duwetsari, Pakembinangun, Kec. Pakem, Kabupaten Sleman, Daerah Istimewa Yogyakarta, 55582
