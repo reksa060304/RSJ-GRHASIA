@@ -1095,7 +1095,8 @@ $ruangdokter = \DB::table('ruangan_m as ru')
             ->select('so.norec','so.noorder','so.tglorder','ru.namaruangan as ruanganasal','pg.namalengkap',
                 'rutuju.namaruangan as ruangantujuan','pet.namalengkap as pengonsul',
                 'pd.noregistrasi','pd.tglregistrasi','ps.nocm','so.keteranganorder','so.keteranganlainnya','so.keterangantolak','so.tgltolak','pd.norec as norec_pd',
-                'ps.namapasien','pg.id as pegawaifk','so.objectruangantujuanfk','so.objectruanganfk','apd.norec as norec_apd')
+                'ps.namapasien','pg.id as pegawaifk','so.objectruangantujuanfk','so.objectruanganfk','apd.norec as norec_apd',
+                \DB::raw('(select cp.soap from cpptemr_t cp join emrpasien_t ep on ep.noemr = cp.emrpasienfk where cp.statusenabled = true and ep.statusenabled = true and cp.noregistrasi = pd.noregistrasi and ep.emrfk in (443, 94, 210222) order by case when (select objectdepartemenfk from ruangan_m where id = pd.objectruanganlastfk) = 16 then (case when ep.emrfk = 443 then 1 else 2 end) else (case when ep.emrfk in (94, 210222) then 1 else 2 end) end asc, cp.tgljam desc limit 1) as soap'))
             ->where('so.kdprofile', $idProfile)
             ->where('so.statusenabled',true)
             ->where('so.objectkelompoktransaksifk',$kelTrans->id)

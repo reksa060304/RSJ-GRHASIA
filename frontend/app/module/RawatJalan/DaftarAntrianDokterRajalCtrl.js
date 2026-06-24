@@ -1819,6 +1819,7 @@ define(['initialize'], function (initialize) {
                     { field: "ruangantujuan", title: "Ruangan Tujuan", width: 150 },
                     { field: "pengonsul", title: "Pengonsul", width: 120 },
                     { field: "keteranganorder", title: "Keterangan", width: 120 },
+                    { field: "soap", title: "SOAP", width: 200, template: "#= soap ? soap.replace(/\\n/g, '<br />') : '' #" },
                     { field: "keterangantolak", title: "Keterangan Tolak", width: 150 },
                     { field: "status", title: "Status", width: 120 },
                     { command: [{ name: "custom_jawab", text: "Jawab", click: jawab }], title: "&nbsp;", width: 100 },
