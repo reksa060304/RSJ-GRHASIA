@@ -8,6 +8,7 @@ use DB;
 use PDF;
 use App\Web\Profile;
 use App\Traits\Valet;
+use App\Transaksi\LoggingUser;
 
 class WaResumeController extends ApiController
 {
@@ -25,6 +26,7 @@ class WaResumeController extends ApiController
                 ->select(
                     'rm.norec',
                     'rm.tglresume',
+                    'rm.tglkirimwa',
                     'rm.keteranganlainnya',
                     'ps.nocm',
                     'ps.namapasien',
@@ -280,6 +282,27 @@ class WaResumeController extends ApiController
                     'message' => 'Gagal mengirim pesan WhatsApp: ' . $errMsg,
                 ], 500);
             }
+
+            DB::table('resumemedis_t')
+                ->where('norec', $norec)
+                ->update(['tglkirimwa' => date('Y-m-d H:i:s')]);
+
+            // Logging User Action
+            $dataLogin = $request->all();
+            $newId = LoggingUser::max('id');
+            $newId = $newId + 1;
+            $logUser = new LoggingUser();
+            $logUser->id = $newId;
+            $logUser->norec = $logUser->generateNewId();
+            $logUser->kdprofile = $kdProfile;
+            $logUser->statusenabled = true;
+            $logUser->jenislog = 'Kirim WA Resume';
+            $logUser->noreff = $norec;
+            $logUser->referensi = 'norec resumemedis_t';
+            $logUser->keterangan = 'Kirim WA Resume Pasien: ' . $data->namapasien . ' / No RM: ' . $data->nocm . ' ke HP: ' . $noHP;
+            $logUser->objectloginuserfk = isset($dataLogin['userData']['id']) ? $dataLogin['userData']['id'] : null;
+            $logUser->tanggal = date('Y-m-d H:i:s');
+            $logUser->save();
 
             \Log::info("WA Resume (Teks Link) berhasil dikirim ke $noHP untuk norec=$norec");
 

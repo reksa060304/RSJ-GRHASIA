@@ -37,7 +37,8 @@ define(['initialize', 'Configuration'], function (initialize, config) {
                             namaruangan:    { type: 'string' },
                             namadokter:     { type: 'string' },
                             tglresume:      { type: 'string' },
-                            is_tte:         { type: 'number' }
+                            is_tte:         { type: 'number' },
+                            tglkirimwa:     { type: 'string' }
                         }
                     }
                 }
@@ -65,6 +66,15 @@ define(['initialize', 'Configuration'], function (initialize, config) {
                                 return '<span style="color:#27ae60; font-weight:bold;"><i class="fa fa-check-circle"></i> Sudah TTE</span>';
                             } else {
                                 return '<span style="color:#c0392b; font-weight:bold;"><i class="fa fa-times-circle"></i> Belum TTE</span>';
+                            }
+                        }
+                    },
+                    { title: 'Status Kirim WA', width: '150px',
+                        template: function (d) {
+                            if (d.tglkirimwa) {
+                                return '<span style="color:#27ae60; font-weight:bold;"><i class="fa fa-check-circle"></i> Sudah Kirim</span><br><small style="color:#7f8c8d; font-weight:normal;">' + d.tglkirimwa + '</small>';
+                            } else {
+                                return '<span style="color:#c0392b; font-weight:bold;"><i class="fa fa-times-circle"></i> Belum Kirim</span>';
                             }
                         }
                     }
@@ -186,6 +196,7 @@ define(['initialize', 'Configuration'], function (initialize, config) {
                         } else {
                             toastr.success(d.message || ('Resume Medis (PDF) berhasil dikirim ke WhatsApp ' + (d.noHP || noHP)));
                         }
+                        $scope.findData();
                     } else {
                         window.messageContainer.error(d.message || 'Terjadi kesalahan saat mengirim WA.');
                     }
