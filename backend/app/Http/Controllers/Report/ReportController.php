@@ -5486,7 +5486,7 @@ class ReportController extends ApiController{
                 LEFT JOIN kegiatananggaran2024_m kg ON kg.id = km.headfk
                 LEFT JOIN kegiatananggaran2024_m kgg ON kgg.id = kg.headfk
                 LEFT JOIN kegiatananggaran2024_m kggg ON kggg.id = kgg.headfk
-                LEFT JOIN transaksianggaran2024_t ta ON ta.objectkegiatanfk = km.id AND ta.statusenabled = TRUE AND ta.tahun = '$tahun'
+                LEFT JOIN transaksianggaran2024_t ta ON ta.objectkegiatanfk = km.id AND ta.statusenabled = TRUE AND ta.tahun = '$tahun' AND ta.objecttahapfk = ".$request['tahap']."
                 LEFT JOIN pegawai_m pg ON pg.id = ta.objectpptkfk
                 WHERE km.id = $subsubk
                 LIMIT 1
@@ -5652,7 +5652,7 @@ class ReportController extends ApiController{
                 SELECT ka.*, ka.keterangan as keterangan2,
                     pg.namalengkap as pptk, pg.nippns as nip_pptk
                 FROM kegiatananggaran_m ka
-                LEFT JOIN transaksianggaran2024_t ta ON ta.objectkegiatanfk = ka.id AND ta.statusenabled = TRUE AND ta.tahun = '$tahun'
+                LEFT JOIN transaksianggaran2024_t ta ON ta.objectkegiatanfk = ka.id AND ta.statusenabled = TRUE AND ta.tahun = '$tahun' AND ta.objecttahapfk = ".$request['tahap']."
                 LEFT JOIN pegawai_m pg ON pg.id = ta.objectpptkfk
                 WHERE ka.id = $subsubk
                 LIMIT 1

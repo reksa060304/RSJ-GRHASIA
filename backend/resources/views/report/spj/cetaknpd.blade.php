@@ -4,7 +4,7 @@
     <style>
         @page {
             margin: 15mm 15mm 20mm 20mm;
-            size: A4 landscape;
+            size: auto;
         }
 
         @media print {
