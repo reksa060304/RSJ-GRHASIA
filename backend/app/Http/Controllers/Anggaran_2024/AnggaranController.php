@@ -2694,16 +2694,21 @@ class AnggaranController extends ApiController {
                 ka2.keterangan keterangansubkegiatan,
                 ap.id as idasalproduk,
                 ap.asalproduk,
-                COALESCE(SUM(stp.jumlahspj), 0) as jumlahspj,
+                COALESCE(stp.jumlahspj, 0) as jumlahspj,
                 COALESCE(SUM(pengpj.jumlahpengembalian), 0) as jumlahpengembalian,
-                COALESCE(SUM(stp.jumlahspj), 0) + COALESCE(SUM(pengpj.jumlahpengembalian), 0) as totalpemakaian,
-                COALESCE(pj.jumlah, 0) - ( COALESCE(SUM(stp.jumlahspj), 0) + COALESCE(SUM(pengpj.jumlahpengembalian), 0) ) as selisih
+                COALESCE(stp.jumlahspj, 0) + COALESCE(SUM(pengpj.jumlahpengembalian), 0) as totalpemakaian,
+                COALESCE(pj.jumlah, 0) - ( COALESCE(stp.jumlahspj, 0) + COALESCE(SUM(pengpj.jumlahpengembalian), 0) ) as selisih
             FROM panjar_t pj
             INNER JOIN mataanggaran_m ma on ma.id = pj.objectmataanggaranfk AND ma.statusenabled = TRUE AND ma.kdprofile = ".$idProfile."
             INNER JOIN kegiatananggaran2024_m ka on ka.id = pj.objectsubsubkegiatanfk AND ka.statusenabled = TRUE AND ka.kdprofile = ".$idProfile."
             LEFT JOIN kegiatananggaran2024_m ka2 on ka2.id = pj.objectsubkegiatanfk AND ka.statusenabled = TRUE AND ka.kdprofile = ".$idProfile."
             INNER JOIN asalproduk_m ap ON ap.id = pj.objectasalprodukfk AND ap.statusenabled = TRUE AND ap.kdprofile = ".$idProfile."
-            LEFT JOIN spjtopanjar_t stp ON stp.objectpanjarfk = pj.norec AND stp.statusenabled = TRUE AND stp.kdprofile = ".$idProfile."
+            LEFT JOIN (
+                SELECT objectpanjarfk, COALESCE(SUM(jumlahspj), 0) as jumlahspj
+                FROM spjtopanjar_t
+                WHERE statusenabled = TRUE AND kdprofile = ".$idProfile."
+                GROUP BY objectpanjarfk
+            ) stp ON stp.objectpanjarfk = pj.norec
             LEFT JOIN pengembalianpanjar_t pengpj ON pengpj.objectpanjarfk = pj.norec AND pengpj.statusenabled = TRUE AND pengpj.kdprofile = ".$idProfile."
             where pj.kdprofile = 30
                 and pj.statusenabled = true
@@ -2718,7 +2723,8 @@ class AnggaranController extends ApiController {
                 ma.id,
                 ka.id,
                 ap.id,
-                ka2.id
+                ka2.id,
+                stp.jumlahspj
             ORDER BY cast(split_part(nopanjar, '/', 1)  as integer) desc
         "));
 
