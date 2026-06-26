@@ -162,6 +162,18 @@ define(['initialize'], function (initialize) {
                         headerAttributes: { style: "text-align : center" },
                     },
                     {
+                        field: "pasienpindahan",
+                        title: "PASIEN PINDAHAN",
+                        width: "80px",
+                        headerAttributes: { style: "text-align : center" },
+                    },
+                    {
+                        field: "pasiendipindahkan",
+                        title: "PASIEN DIPINDAHKAN",
+                        width: "100px",
+                        headerAttributes: { style: "text-align : center" },
+                    },
+                    {
                         field: "pasienkeluarhidup",
                         title: "PASIEN KELUAR HIDUP",
                         width: "80px",
@@ -218,8 +230,8 @@ define(['initialize'], function (initialize) {
                         headerAttributes: { style: "text-align : center" },
                     },
                     {
-                        field: "lamadirawat",
-                        title: "JUMLAH HARI PERAWATAN",
+                        field: "jumlahharidirawat",
+                        title: "Jumlah hari perawatan",
                         width: "80px",
                         headerAttributes: { style: "text-align : center" },
                     },
@@ -265,6 +277,12 @@ define(['initialize'], function (initialize) {
                             },
 
                         ]
+                    },
+                    {
+                        field: "alokasi_tt",
+                        title: "Jumlah alokasi tempat tidur awal bulan",
+                        width: "80px",
+                        headerAttributes: { style: "text-align : center" },
                     }
 
                 ]
