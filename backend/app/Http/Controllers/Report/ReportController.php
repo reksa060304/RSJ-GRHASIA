@@ -34605,6 +34605,39 @@ public function suratBuktiPengembalian(Request $request)
                             $request->merge(['pegawaittd' => $emrInfo->pegawaifk]);
                         }
 
+                        // Blade generik (fred-diabetes-dom, fred-hipertensi-dom, dll) tetap pakai CetakSuratMan.
+                        $dedicatedBlades = [
+                            'rujukan-edukasi-psikiatri'                                      => 'cetakRujukanEdukasiPsikiatri',
+                            'rujukan-edukasi-pasien-dengan-komorbid-epilepsi'                 => 'cetakRujukanEdukasiPasienGangguanJiwaDenganKomorbidEpilepsi',
+                            'rujukan-edukasi-pasien-dengan-komorbid-sindrome-geriatri-low-intake' => 'cetakRujukanEdukasiPasienGangguanJiwaDenganKomorbidSindromeGeriatriLowIntake',
+                            'rujukan-edukasi-pasien-dengan-komorbid-tuberculosis'             => 'cetakRujukanEdukasiPasienGangguanJiwaDenganKomorbidTuberculosis',
+                            'rujukan-edukasi-pasien'                                          => 'cetakRujukanEdukasiPasien',
+                        ];
+
+                        if (isset($dedicatedBlades[$blade])) {
+                            // Ambil norec_apd dan data pasien dari DB agar dedicated endpoint punya semua param
+                            $emrExtra = \DB::table('emrpasien_t as ep')
+                                ->select('ep.umur', 'ep.jeniskelamin', 'ep.noregistrasifk',
+                                         'apd.norec as norec_apd', 'pd.noregistrasi')
+                                ->join('antrianpasiendiperiksa_t as apd', 'apd.norec', '=', 'ep.norec_apd')
+                                ->join('pasiendaftar_t as pd', 'pd.norec', '=', 'apd.noregistrasifk')
+                                ->where('ep.norec', $emrNorec)
+                                ->where('ep.kdprofile', $kdProfile)
+                                ->first();
+
+                            if ($emrExtra) {
+                                $request->merge([
+                                    'norec_apd'   => $emrExtra->norec_apd,
+                                    'noregistrasi' => $emrExtra->noregistrasi,
+                                    'umur'         => $emrExtra->umur,
+                                    'jeniskelamin' => $emrExtra->jeniskelamin,
+                                ]);
+                            }
+
+                            $method = $dedicatedBlades[$blade];
+                            return $this->$method($request);
+                        }
+
                         return $this->CetakSuratMan($request);
                     } else {
                         return response('<h1>Link Tidak Valid (Payload tidak cocok)</h1>', 403);
