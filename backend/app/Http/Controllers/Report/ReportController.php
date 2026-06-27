@@ -1953,6 +1953,19 @@ class ReportController extends ApiController{
             ->where('pd.noregistrasi', $request['noregistrasi'])
             ->first();
 
+        if (!empty($registrasi)) {
+            DB::table('pasiendaftar_t')
+                ->where('noregistrasi', $request['noregistrasi'])
+                ->where('kdprofile', $kdProfile)
+                ->where(function($query) {
+                    $query->whereNull('tglcheckin')
+                        ->orWhere('tglcheckin', '1970-01-01 00:00:00');
+                })
+                ->update([
+                    'tglcheckin' => \Carbon\Carbon::now()->format('Y-m-d H:i:s'),
+                ]);
+        }
+  
         $statusonline = "";
         $status = "";
         if ($registrasi->tanggalreservasi != ''){
