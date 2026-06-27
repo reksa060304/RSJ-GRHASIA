@@ -43,7 +43,10 @@ define(['initialize', 'Configuration'], function (initialize, config) {
                             noemr_pasien:   { type: 'string' },
                             blade:          { type: 'string' },
                             is_tte:         { type: 'number' },
-                            tglkirimwa:     { type: 'string' }
+                            tglkirimwa:     { type: 'string' },
+                            norec_apd:      { type: 'string' },
+                            umur:           { type: 'string' },
+                            jeniskelamin:   { type: 'string' }
                         }
                     }
                 }
@@ -170,24 +173,61 @@ define(['initialize', 'Configuration'], function (initialize, config) {
                 if (!$scope.dataSelected) return;
 
                 var pegawai = JSON.parse(localStorage.getItem('pegawai') || '{}');
-                var nama = pegawai.namaLengkap || 'Admin';
+                var local   = JSON.parse(localStorage.getItem('profile') || '{}');
+                var nama    = pegawai.namaLengkap || 'Admin';
                 var pegawaittd = pegawai.id || '320263';
-                var kdprofile = '30'; 
+                var kdprofile  = local.id || '30';
 
-                var url = "";
-                if ($scope.dataSelected.emrfk) {
-                    url = config.baseApiBackend + "report/get-cetak-surat-man?nocm=" + $scope.dataSelected.nocm
-                        + "&emr=" + $scope.dataSelected.norec
-                        + "&noemr=" + $scope.dataSelected.noemr_pasien
-                        + "&emrfk=" + $scope.dataSelected.emrfk
-                        + "&kdprofile=" + kdprofile
-                        + "&pegawaittd=" + pegawaittd
-                        + "&blade=" + $scope.dataSelected.blade;
+                var d   = $scope.dataSelected;
+                var url = '';
+
+                if (d.emrfk) {
+                    var blade = d.blade || '';
+
+                    // Blade yang punya dedicated endpoint (butuh norec_apd, noregistrasi, umur, jeniskelamin)
+                    var dedicatedRoutes = {
+                        'rujukan-edukasi-psikiatri':
+                            'report/cetak-rujukan-edukasi-psikiatri',
+                        'rujukan-edukasi-pasien-dengan-komorbid-epilepsi':
+                            'report/cetak-rujukan-edukasi-pasien-dengan-komorbid-epilepsi',
+                        'rujukan-edukasi-pasien-dengan-komorbid-sindrome-geriatri-low-intake':
+                            'report/cetak-rujukan-edukasi-pasien-dengan-komorbid-sindrome-geriatri-low-intake',
+                        'rujukan-edukasi-pasien-dengan-komorbid-tuberculosis':
+                            'report/cetak-rujukan-edukasi-pasien-dengan-komorbid-tuberculosis',
+                        'rujukan-edukasi-pasien':
+                            'report/cetak-rujukan-edukasi-pasien'
+                    };
+
+                    if (dedicatedRoutes[blade]) {
+                        // Gunakan dedicated endpoint yang membutuhkan norec_apd, noregistrasi, umur, jeniskelamin
+                        url = config.baseApiBackend + dedicatedRoutes[blade]
+                            + '?nocm='        + d.nocm
+                            + '&norec_apd='   + (d.norec_apd || '')
+                            + '&emr='         + d.norec
+                            + '&emrfk='       + d.emrfk
+                            + '&kdprofile='   + kdprofile
+                            + '&nama='        + encodeURIComponent(nama)
+                            + '&noregistrasi='+ (d.noregistrasi || '')
+                            + '&umur='        + (d.umur || '')
+                            + '&jeniskelamin='+ (d.jeniskelamin || '');
+                    } else {
+                        // Blade generik (fred-diabetes-dom, fred-hipertensi-dom, dll) → get-cetak-surat-man
+                        url = config.baseApiBackend + 'report/get-cetak-surat-man'
+                            + '?nocm='       + d.nocm
+                            + '&emr='        + d.norec
+                            + '&noemr='      + (d.noemr_pasien || '')
+                            + '&emrfk='      + d.emrfk
+                            + '&kdprofile='  + kdprofile
+                            + '&pegawaittd=' + pegawaittd
+                            + '&blade='      + blade;
+                    }
                 } else {
-                    url = config.baseApiBackend + "report/cetak-resume-medis-v3?norec=" + $scope.dataSelected.norec
-                        + "&kdprofile=" + kdprofile 
-                        + "&nama=" + encodeURIComponent(nama) 
-                        + "&pegawaittd=" + pegawaittd;
+                    // Resume Medis biasa
+                    url = config.baseApiBackend + 'report/cetak-resume-medis-v3'
+                        + '?norec='      + d.norec
+                        + '&kdprofile='  + kdprofile
+                        + '&nama='       + encodeURIComponent(nama)
+                        + '&pegawaittd=' + pegawaittd;
                 }
 
                 window.open(url, '_blank');

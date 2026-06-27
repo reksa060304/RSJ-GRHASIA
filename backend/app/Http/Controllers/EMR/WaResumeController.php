@@ -41,7 +41,10 @@ class WaResumeController extends ApiController
                     DB::raw('CASE WHEN eb.id IS NOT NULL THEN 1 ELSE 0 END as is_tte'),
                     DB::raw("CAST(NULL as VARCHAR) as noemr_pasien"),
                     DB::raw("NULL::integer as emrfk"),
-                    DB::raw("CAST(NULL as VARCHAR) as blade")
+                    DB::raw("CAST(NULL as VARCHAR) as blade"),
+                    DB::raw("CAST(NULL as VARCHAR) as norec_apd"),
+                    DB::raw("CAST(NULL as VARCHAR) as umur"),
+                    DB::raw("CAST(NULL as VARCHAR) as jeniskelamin")
                 )
                 ->join('antrianpasiendiperiksa_t as apd', 'apd.norec', '=', 'rm.noregistrasifk')
                 ->join('pasiendaftar_t as pd', 'pd.norec', '=', 'apd.noregistrasifk')
@@ -96,7 +99,10 @@ class WaResumeController extends ApiController
                         WHEN ep.emrfk = 3003048 THEN 'rujukan-edukasi-psikiatri'
                         WHEN ep.emrfk = 3003052 THEN 'rujukan-edukasi-pasien'
                         ELSE ''
-                    END as blade")
+                    END as blade"),
+                    'apd.norec as norec_apd',
+                    'ep.umur',
+                    'ep.jeniskelamin'
                 )
                 ->join('antrianpasiendiperiksa_t as apd', 'apd.norec', '=', 'ep.norec_apd')
                 ->join('pasiendaftar_t as pd', 'pd.norec', '=', 'apd.noregistrasifk')
