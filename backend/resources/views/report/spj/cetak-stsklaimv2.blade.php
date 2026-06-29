@@ -286,8 +286,8 @@
                 $idlevel7 = $rek->idlevel7;
             @endphp
         @endforeach
-        <tr>
-            <td colspan="2">Total</td>
+        <tr style="font-weight:bold;">
+            <td colspan="2">Total Klaim</td>
             <td>
                 @php
                     $jmlsemua = 0;
@@ -296,6 +296,33 @@
                     }
                 @endphp
                 {{ number_format($jmlsemua, 2, ',', '.') }}
+            </td>
+        </tr>
+        <tr>
+            <td colspan="2">Biaya Transfer</td>
+            <td>
+                @php
+                    $biayaTransfer = isset($sts[0]->biayatransfer) ? $sts[0]->biayatransfer : 0;
+                @endphp
+                {{ number_format($biayaTransfer, 2, ',', '.') }}
+            </td>
+        </tr>
+        <tr>
+            <td colspan="2">Rekonsiliasi</td>
+            <td>
+                @php
+                    $biayaRekonsiliasi = isset($sts[0]->biayaadmin) ? $sts[0]->biayaadmin : 0;
+                @endphp
+                {{ number_format($biayaRekonsiliasi, 2, ',', '.') }}
+            </td>
+        </tr>
+        <tr style="font-weight:bold;">
+            <td colspan="2">Total</td>
+            <td>
+                @php
+                    $totalSetelahPotongan = $jmlsemua - $biayaTransfer - $biayaRekonsiliasi;
+                @endphp
+                {{ number_format($totalSetelahPotongan, 2, ',', '.') }}
             </td>
         </tr>
     </table>
