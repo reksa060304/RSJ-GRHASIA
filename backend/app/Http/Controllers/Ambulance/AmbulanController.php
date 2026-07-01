@@ -2755,6 +2755,19 @@ class AmbulanController extends ApiController
             }
             $SP->save();
 
+            if (!isset($req['details']) || !is_array($req['details'])) {
+                throw new \Exception("data tagihan tidak sesuai dengan tagihan detail, mohon di cek kembali");
+            }
+
+            $totalDetail = 0;
+            foreach ($req['details'] as $item) {
+                $totalDetail += (float)$item['harga'] * (float)$item['jumlah'];
+            }
+
+            if (abs((float)$totalDetail - (float)$req['totalharusdibayar']) > 0.1) {
+                throw new \Exception("data tagihan tidak sesuai dengan tagihan detail, mohon di cek kembali");
+            }
+
             // $detail = $req['details']; 
             foreach ($req['details'] as $item) {
                 $SPD = new StrukPelayananDetail();
@@ -2851,6 +2864,7 @@ class AmbulanController extends ApiController
             $transStatus = 'true';
         } catch (\Exception $e) {
             $transStatus = 'false';
+            $transMessage = $e->getMessage();
         }
 
         if ($transStatus == 'true') {
@@ -2871,7 +2885,7 @@ class AmbulanController extends ApiController
                 "as" => 'as@epic',
             );
         } else {
-            $transMessage = "Order Gagal.";
+            $transMessage = !empty($transMessage) ? $transMessage : "Order Gagal.";
             DB::rollBack();
             $result = array(
                 "status" => 400,
