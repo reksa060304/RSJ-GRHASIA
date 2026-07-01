@@ -284,7 +284,16 @@ define(['initialize', 'Configuration'], function (initialize, config) {
             })
 
             $scope.kembali = function () {
-                $rootScope.showRiwayat()
+                try {
+                    var $mdDialog = angular.element(document.body).injector().get('$mdDialog');
+                    if ($mdDialog && jQuery('md-dialog').length > 0) {
+                        $mdDialog.hide();
+                        return;
+                    }
+                } catch (e) {
+                    console.error(e);
+                }
+                $rootScope.showRiwayat();
             }
 
             $scope.Save = function () {

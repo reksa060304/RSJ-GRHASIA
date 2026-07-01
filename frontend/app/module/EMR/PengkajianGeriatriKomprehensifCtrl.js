@@ -1,4 +1,4 @@
-define(['initialize'], function (initialize) {
+define(['initialize', 'Configuration'], function (initialize, config) {
     'use strict';
     initialize.controller('PengkajianGeriatriKomprehensifCtrl', ['$q', '$rootScope', '$scope', 'ModelItem', '$state', 'CacheHelper', 'DateHelper', 'MedifirstService','$mdDialog',
         function ($q, $rootScope, $scope, ModelItem, $state, cacheHelper, dateHelper, medifirstService, $mdDialog) {
@@ -7,6 +7,7 @@ define(['initialize'], function (initialize) {
             $scope.noCM = $state.params.noCM;
             $scope.tombolSimpanVis = true
             $scope.isCetak = false
+            $scope.isCetakV = true
             $scope.noRecPap = cacheHelper.get('noRecPap');
             $scope.totalSkor = 0
             $scope.totalSkor2 = 0
@@ -2932,7 +2933,12 @@ console.log(jawab)
                     cacheHelper.set('cacheNomorEMR', arrStr);
                 });
             }
-           
+            
+            $scope.cetakBlade = function () {
+                var local = JSON.parse(localStorage.getItem('profile') || '{}');
+                var kdprofile = local.id || 30;
+                window.open(config.baseApiBackend + 'report/cetak-pengkajian-geriatri-komprehensif?nocm=' + $scope.cc.nocm + '&noemr=' + $scope.cc.norec_emr + '&emrfk=' + $scope.cc.emrfk + '&kdprofile=' + kdprofile);
+            };
 
         }
     ]);

@@ -34320,6 +34320,183 @@ public function suratBuktiPengembalian(Request $request)
 
         return $response;
     }
-    //batas
 
+    public function CetakMPP(Request $request)
+    {
+        $noemr = $request['noemr'];
+        $kdProfile = (int) $request['kdprofile'];
+        $emrfk = $request['emrfk'];
+        $main = \DB::select(DB::raw("SELECT id, type from emrd_t where emrfk = $emrfk and statusenabled = true and kdprofile = $kdProfile order by id
+        "));
+        $data = \DB::select(DB::raw("SELECT ed.id,epd.value, ed.type
+                FROM emrpasien_t ep
+                        INNER JOIN emrpasiend_t epd ON ep.noemr = epd.emrpasienfk
+                        INNER JOIN emrd_t ed ON ed.ID = epd.emrdfk 
+                        INNER JOIN pegawai_m pg on pg.id = epd.pegawaifk
+                    WHERE ep.kdprofile = $kdProfile AND ep.statusenabled = TRUE 
+                        AND ep.noemr ILIKE '$noemr' 
+                        AND ed.statusenabled = TRUE 
+                        AND ep.emrfk = $emrfk 
+                        AND ed.emrfk = $emrfk
+                ORDER BY ed.ID ASC"));
+        $detail = [];
+        $id=0;
+        $value="";
+        foreach ($main as $m) {
+        $id=0;
+        $value="";
+            foreach ($data as $d) {
+                if ($m->id == $d->id) {
+                    $id = $m->id;
+                    if ($d->type == 'datetime') {
+                        $value=$this->tanggal_indonesia(date('Y-m-d',strtotime($d->value)));
+                    }else{
+                        $value =$d->value;
+                    }
+                    break;
+                }else {
+                    $id = $m->id;
+                    $value = "";
+                }
+                
+            }
+
+            $detail[]= array(
+                "id"=> $id,
+                "value"=>$value,
+                "type"=> $m->type
+            );
+        }
+
+        $pasien = \DB::table('emrpasien_t as ep')
+            ->select('ps.namapasien','ep.nocm','jk.jeniskelamin','ps.tgllahir','ep.namaruangan','ep.noregistrasifk')
+            ->join('pasien_m as ps','ps.nocm','=','ep.nocm')
+            ->leftJoin('jeniskelamin_m as jk','jk.id','=','ps.objectjeniskelaminfk')
+            ->where('ep.noemr', $noemr)
+            ->where('ep.kdprofile', $kdProfile)
+            ->first();
+
+        $profile = \DB::table('profile_m')->where('id', $kdProfile)->first();
+
+        $pageWidth = 950;
+        return view('report.EMR.formulir-mpp', compact('detail','pageWidth','pasien','profile'));
+    }
+
+     public function cetakPengkajianGeriatriKomprehensif(Request $request)
+    {
+        $norec = $request['emr'];
+        $kdProfile = (int) $request['kdprofile'];
+        if ($kdProfile <= 0) {
+            $kdProfile = 30;
+        }
+        $emrfk = isset($request['emrfk']) ? (int)$request['emrfk'] : 3000921;
+        // Support dua mode: emr = norec UUID, atau noemr = noemr string (MR.../...)
+        $noemrParam = isset($request['noemr']) ? trim($request['noemr']) : '';
+        $norecParam  = isset($request['emr'])  ? trim($request['emr'])  : '';
+
+        // Tentukan kondisi WHERE berdasarkan parameter yang tersedia
+        if (!empty($noemrParam) && $noemrParam !== '-') {
+            $whereEmr = "ep.noemr = '$noemrParam'";
+        } else {
+            $whereEmr = "ep.norec = '$norecParam'";
+        }
+
+        $data = DB::select(DB::raw("
+        SELECT
+            split_part(epd.value, '~', 2) as split,
+            epd.emrdfk,
+            ep.noemr,
+            ed.TYPE,
+            pa.namapasien,
+            pa.namaibu,
+            pa.namaayah,
+            pa.tgllahir,
+            pa.nohp,
+            pa.nocm,
+            ep.jeniskelamin,
+            ep.umur,
+            al.alamatlengkap,
+            ep.noregistrasifk as noregistrasi ,
+            epd.value,ep.namaruangan,pg.namalengkap as namadokter
+        FROM
+            emrpasien_t AS ep
+            INNER JOIN emrpasiend_t AS epd ON ep.noemr = epd.emrpasienfk
+            INNER JOIN emrd_t AS ed ON epd.emrdfk = ed.ID
+            INNER JOIN antrianpasiendiperiksa_t AS pd ON pd.norec = ep.norec_apd
+            left JOIN pegawai_m AS pg ON pg.id = pd.objectpegawaifk
+            left JOIN pasien_m as pa on ep.nocm =  pa.nocm
+            left JOIN alamat_m as al on pa.id = al.nocmfk
+        WHERE
+            $whereEmr
+            AND ep.kdprofile = '$kdProfile' 
+            AND epd.statusenabled = TRUE 
+            and epd.emrfk = $emrfk
+        ORDER BY
+            ed.nourut
+            "
+        ));
+        foreach ($data as $z){
+            if ($z->type=="datetime"){
+                $z->value=date('Y-m-d H:i:s',strtotime($z->value));
+            }
+        }
+        $res['profile'] = Profile::where('id', $kdProfile)->first();
+        if (!$res['profile']) {
+            $res['profile'] = Profile::where('id', 30)->first();
+        }
+        if (!$res['profile']) {
+            $res['profile'] = new \stdClass();
+            $res['profile']->baris1 = 'RS JIWA GRHASIA';
+            $res['profile']->baris2 = 'Daerah Istimewa Yogyakarta';
+            $res['profile']->namalengkap = 'RS JIWA GRHASIA';
+            $res['profile']->fixedphone = '-';
+            $res['profile']->website = '-';
+            $res['profile']->alamatemail = '-';
+        }
+        $res['d'] = $data;
+        $item =[];   
+        $item2= [];      
+        foreach( $res['d'] as $items){
+            if($items->type  ==  "textbox" ||$items->type  ==  "textarea" ||$items->type  ==  "textarea2" ||$items->type  ==  "textarea3" || $items->type == "radio" || $items->type == "numeric" ){
+                $item[$items->emrdfk] =  $items->value;
+            }
+            if($items->type  ==  "datetime"){
+                $item[$items->emrdfk] = $this->tanggal_indonesia(date('Y-m-d',strtotime( $items->value))) ;
+            }
+            if($items->type  ==  "time"){
+                $item[$items->emrdfk] = date('H:i',strtotime( $items->value));
+            }
+            if($items->type  ==  "date"){
+                $item[$items->emrdfk] = date('Y-m-d',strtotime( $items->value));
+            }
+            if($items->type  ==  "checkboxtextbox"){
+                $item[$items->emrdfk] =  $items->value;
+                $item2[$items->emrdfk] =  true;
+            }
+            if($items->type == "checkbox" || $items->type == "checkbox2" || $items->type == "checkbox12" || $items->type == "mna") {
+                $chekedd = false;
+                if ($items->value == '1' || $items->value == 'true' || $items->value == 't') {
+                    $chekedd = true;
+                }
+                $item[$items->emrdfk] = $chekedd;
+            }
+            if($items->type == "combobox") {
+                $arr = explode('~',$items->value );
+                $item[$items->emrdfk] = isset($arr[1]) ? $arr[1] : $items->value;
+            }
+        }
+        $pageWidth = 950;
+        $pdf = PDF::loadView(
+            'report.EMR.pengkajian-geriatri-komprehensif',
+            array(
+                'res' => $res,
+                'pageWidth' => $pageWidth,
+                'data' => $data,
+                'item'=> $item
+            )
+        );
+        return $pdf->stream();
+    }
+
+    //batas
 }

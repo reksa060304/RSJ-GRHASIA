@@ -1613,6 +1613,7 @@ Route::group(['middleware' => 'cors', 'prefix' => 'service'], function () {
           Route::get('report/cetak-sep-v3','Report\ReportController@cetakSEPV3');
           Route::get('report/cetak-hasil-lab-manual', 'Report\ReportController@printGetHasilLabManual');
           Route::get('report/billingbpjs','Report\ReportController@cetakBillbpjs');
+          Route::get('report/cetak-pengkajian-geriatri-komprehensif','Report\ReportController@cetakPengkajianGeriatriKomprehensif');
           
           Route::post('report/save-file-lip','Report\ReportController@saveFileLip');
           

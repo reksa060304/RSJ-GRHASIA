@@ -52,7 +52,7 @@
         <div class="grid_12">
             <div style="border: 0px" ng-repeat="list in listData1 | orderBy:'nourut'" ng-init="jawabIndex = $index">
                 <div class="grid_12">
-                    <div style="border: 0px" ng-repeat="jawab in list.details" ng-if="jawab.kodeexternal != 'listeuroqol' && jawab.type != 'euroqol'">
+                    <div style="border: 0px" ng-repeat="jawab in list.details" ng-if="jawab.kodeexternal != 'listeuroqol' && jawab.type != 'euroqol' && jawab.id != 310167 && jawab.id != 310168 && jawab.id != 310169 && jawab.id != 310170">
                         <div ng-switch on="jawab.type">
                             <div  ng-switch-when="label">
                                 <div class="grid_12">
