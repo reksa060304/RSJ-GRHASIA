@@ -27521,7 +27521,8 @@ public function suratBuktiPengembalian(Request $request)
         try {
             $savePath = public_path($path);
             \File::makeDirectory($savePath, 0755, true, true);
-            $namafile = $request['namafile'].'_'.$request['isberkasnoreg'].'.pdf';
+            $cleanNamaFile = str_replace(['/', '\\'], '-', $request['namafile']);
+            $namafile = $cleanNamaFile.'_'.$request['isberkasnoreg'].'.pdf';
             $public_path = $savePath."/".$namafile;
             $pdf->save($public_path);
             
