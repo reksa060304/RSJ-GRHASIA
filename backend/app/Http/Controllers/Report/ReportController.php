@@ -24414,6 +24414,9 @@ public function suratBuktiPengembalian(Request $request)
     }
     public function cetakmonitoringJamkes(Request $request)
     {
+        if (empty($request['noregistrasi']) && !empty($request['isberkasnoreg'])) {
+            $request->merge(['noregistrasi' => $request['isberkasnoreg']]);
+        }
 
         $norec = $request['emr'];
         $kdProfile = (int) $request['kdprofile'];
@@ -24644,6 +24647,9 @@ public function suratBuktiPengembalian(Request $request)
 
     public function cetakmonitoringJamkesPerawat(Request $request)
     {
+        if (empty($request['noregistrasi']) && !empty($request['isberkasnoreg'])) {
+            $request->merge(['noregistrasi' => $request['isberkasnoreg']]);
+        }
 
         $norec = $request['emr'];
         $kdProfile = (int) $request['kdprofile'];
