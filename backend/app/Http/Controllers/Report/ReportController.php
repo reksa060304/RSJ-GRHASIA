@@ -24619,6 +24619,19 @@ public function suratBuktiPengembalian(Request $request)
         // }
 
         // return $pdf->stream();
+        if (isset($request["issimpanberkas"])) {
+            $pdf = PDF::loadView('report.EMR.monitoringjamkes', [
+                'res' => $res,
+                'diagnosa' => $diagnosa,
+                'konsultasi' => $konsultasi,
+                'dataReport' => $pasien,
+                'item'=> $details,
+                'noregistrasi'=> $request['noregistrasi']
+            ]);
+            $pdf->setPaper('A4', 'portrait');
+            return $this->saveDokumenKlaim($pdf, $request);
+        }
+
         return view('report.EMR.monitoringjamkes',[
             'res' => $res,
                 'diagnosa' => $diagnosa,
@@ -24836,6 +24849,19 @@ public function suratBuktiPengembalian(Request $request)
         // }
 
         // return $pdf->stream();
+        if (isset($request["issimpanberkas"])) {
+            $pdf = PDF::loadView('report.EMR.monitoringjamkesperawat', [
+                'res' => $res,
+                'diagnosa' => $diagnosa,
+                'konsultasi' => $konsultasi,
+                'dataReport' => $pasien,
+                'item'=> $details,
+                'noregistrasi'=> $request['noregistrasi']
+            ]);
+            $pdf->setPaper('A4', 'portrait');
+            return $this->saveDokumenKlaim($pdf, $request);
+        }
+
         return view('report.EMR.monitoringjamkesperawat',[
             'res' => $res,
                 'diagnosa' => $diagnosa,
