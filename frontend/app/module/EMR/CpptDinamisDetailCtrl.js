@@ -69,14 +69,39 @@ define(['initialize', 'Configuration'], function (initialize, config) {
                 }
             };
 
+            $scope.iframeHeight = 1500;
+            
+            function onScrollContainer() {
+                var container = document.getElementById('cetakScrollContainer');
+                if (container) {
+                    if (container.scrollTop + container.clientHeight >= container.scrollHeight - 600) {
+                        $scope.$apply(function() {
+                            $scope.iframeHeight += 3000;
+                        });
+                    }
+                }
+            }
+
             $scope.onOpenPopupCetak = function () {
+                $scope.iframeHeight = 1500;
                 window.addEventListener('keydown', blockKeys);
+                $timeout(function() {
+                    var container = document.getElementById('cetakScrollContainer');
+                    if (container) {
+                        container.addEventListener('scroll', onScrollContainer);
+                    }
+                }, 500);
             }
 
             $scope.onClosePopupCetak = function () {
                 $scope.isIframeLoading = false;
                 $scope.cetakanUrl = $sce.trustAsResourceUrl("about:blank");
                 window.removeEventListener('keydown', blockKeys);
+                var container = document.getElementById('cetakScrollContainer');
+                if (container) {
+                    container.removeEventListener('scroll', onScrollContainer);
+                }
+                $scope.iframeHeight = 1500;
             }
             $scope.showbtnadd = [];
             $scope.showbtnremove = [];
