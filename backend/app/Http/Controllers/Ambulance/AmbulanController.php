@@ -2927,13 +2927,13 @@ class AmbulanController extends ApiController
                     END AS status
                 "),
                 DB::raw("
-                    CASE
-                        WHEN spd.jeniskegiatanambulanfk::integer = 1 THEN 'MENJEMPUT PASIEN'
-                        WHEN spd.jeniskegiatanambulanfk::integer = 2 THEN 'Merujuk PASIEN'
-                        WHEN spd.jeniskegiatanambulanfk::integer = 5 THEN 'MENJEMPUT PASIEN PSIKIATRI'
-                        ELSE 'MENJEMPUT PASIEN EMERGENCY'
-                    END AS jenis_kegiatan
-                ")
+                     CASE
+                         WHEN spd.jeniskegiatanambulanfk = '1' THEN 'MENJEMPUT PASIEN'
+                         WHEN spd.jeniskegiatanambulanfk = '2' THEN 'Merujuk PASIEN'
+                         WHEN spd.jeniskegiatanambulanfk = '5' THEN 'MENJEMPUT PASIEN PSIKIATRI'
+                         ELSE 'MENJEMPUT PASIEN EMERGENCY'
+                     END AS jenis_kegiatan
+                 ")
             )
             ->where('sp.kdprofile', $idProfile)
             ->where('sp.statusenabled', true)
