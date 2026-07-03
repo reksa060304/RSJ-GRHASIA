@@ -44,6 +44,8 @@ Route::group(['middleware' => 'cors', 'prefix' => 'service'], function () {
     Route::get('api/get-jadwal-dokter', 'Bridging\NoAuthController@getJadwalDokter');
     Route::get('api/get-ketersediaan-tempat-tidur', 'Bridging\NoAuthController@getKetersediaanTempatTidurPerkelas');
     Route::get('api/get-tarif-layanan', 'Bridging\NoAuthController@getTarifLayanan');
+    Route::get('api/get-jadwal-poli', 'Bridging\NoAuthController@getJadwalPoliklinik');
+    Route::get('api/get-tarif-obat', 'Bridging\NoAuthController@getTarifObat');
         
 		// Cetakan
 		Route::get('report/cetak-label-pilihan', 'Report\ReportController@cetakLabelPilihan');

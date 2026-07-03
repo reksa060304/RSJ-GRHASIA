@@ -516,4 +516,84 @@ class NoAuthController extends ApiController
         );
         return $this->respond($result);
     }
+
+    public function getTarifObat(Request $request)
+    {
+        $kdProfile = 30;
+         //$kdProfile = (int) $this->getDataKdProfile($request);
+
+        // $jumlah = $request->jmlRows ?? 100;
+
+        $namaproduk = '';
+        $produkid = '';
+
+        if (isset($request['produkfk']) && $request['produkfk'] != "" && $request['produkfk'] != "undefined") {
+            $produkid = " AND pr.id = " . $request['produkfk'];
+        }
+
+        if (isset($request['namaproduk']) && $request['namaproduk'] != "" && $request['namaproduk'] != "undefined") {
+            $namaproduk = " AND pr.namaproduk ILIKE '%" . $request['namaproduk'] . "%'";
+        }
+
+    $data = DB::select(DB::raw("
+       SELECT
+            pr.id AS kdproduk,
+            pr.namaproduk,
+            ss.satuanstandar,
+            pr.kekuatan,
+            pr.satuan,
+            ROUND(harga.harganetto1 * 1.25) AS hargajual
+
+        FROM produk_m pr
+
+        INNER JOIN detailjenisproduk_m djp
+            ON djp.id = pr.objectdetailjenisprodukfk
+
+        INNER JOIN jenisproduk_m jp
+            ON jp.id = djp.objectjenisprodukfk
+
+        LEFT JOIN satuanstandar_m ss
+            ON ss.id = pr.objectsatuanstandarfk
+
+        LEFT JOIN LATERAL (
+            SELECT
+                spd.harganetto1
+            FROM stokprodukdetail_t spd
+
+            INNER JOIN ruangan_m ru
+                ON ru.id = spd.objectruanganfk
+
+            WHERE
+                spd.objectprodukfk = pr.id
+                AND spd.statusenabled = TRUE
+                AND spd.kdprofile = $kdProfile
+                AND ru.id IN (59,94)
+
+            ORDER BY
+                spd.tglpelayanan DESC,
+                spd.norec DESC
+
+            LIMIT 1
+        ) harga ON TRUE
+
+        WHERE
+            pr.statusenabled = TRUE
+            AND pr.kdprofile = $kdProfile
+            AND jp.id IN (97,283,1549,112,286,99)
+            AND harga.harganetto1 IS NOT NULL
+            $namaproduk
+            $produkid
+
+        ORDER BY
+            pr.namaproduk
+    "));
+
+    $result = array(
+        'data' => $data,
+        'message' => 'as@epic',
+    );
+
+    return $this->respond($result);
+}
+
 }
