@@ -173,7 +173,7 @@ define(['initialize'], function (initialize) {
                         }
                     });
                 }
-            });
+            }
 
             $scope.Save = function () {
                 var arrSave = [];
