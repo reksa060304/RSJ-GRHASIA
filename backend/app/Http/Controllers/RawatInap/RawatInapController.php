@@ -228,8 +228,23 @@ class RawatInapController extends ApiController
 //            $data = $data->where('ps.namapasien', 'ilike', '%' . $filter['nama'] . '%');
         }
 
-        $data =DB::select(DB::raw("select * from
-                (select pd.tglregistrasi,  ps.id as nocmfk,  ps.nocm,  pd.noregistrasi,  ps.namapasien,  ps.tgllahir, 
+        $data =DB::select(DB::raw("select x.*,
+                coalesce(
+                    (
+                        SELECT (array_agg((split_part(epd.value, '~', 2)) ORDER BY epd.emrdfk DESC))[1]
+                        FROM emrpasien_t ep 
+                        JOIN emrpasiend_t epd ON epd.emrpasienfk = ep.noemr AND epd.statusenabled = TRUE AND epd.kdprofile = 30
+                        JOIN emrd_t ed ON ed.id = epd.emrdfk AND ed.statusenabled = TRUE AND ed.kdprofile = 30
+                        WHERE 
+                            ep.statusenabled = TRUE
+                            AND ep.kdprofile = 30
+                            AND epd.emrfk = 3001060
+                            AND ep.noregistrasifk = x.noregistrasi
+                            AND ed.caption ILIKE '%nama%'
+                    ), x.namadokter
+                ) AS listdpjp
+                from
+                (select pd.tglregistrasi,  ps.id as nocmfk,  ps.nocm, ps.aktivasi_mpp,  pd.noregistrasi,  ps.namapasien,  ps.tgllahir, 
                  jk.jeniskelamin,  apd.objectruanganfk,  ru.objectdepartemenfk,ru.namaruangan,  kls.id as idkelas,kls.namakelas,  kp.kelompokpasien,  rek.namarekanan, 
                  apd.objectpegawaifk,  pg.namalengkap as namadokter,ps.iskompleks, ps.tgl_kompleks,
                   --br.norec, 
@@ -262,33 +277,33 @@ class RawatInapController extends ApiController
         );
 
         // dapatkan formdpjp
-        $idEMRDPJP = 3001060;
-        foreach($data as $row){
+        // $idEMRDPJP = 3001060;
+        // foreach($data as $row){
 
-            $formDPJP = DB::select(DB::raw("
-                SELECT
-                    ep.noregistrasifk,
-                    (array_agg((split_part(epd.value, '~', 2)) ORDER BY epd.emrdfk DESC))[1] AS formdpjp
-                FROM emrpasien_t ep 
-                JOIN emrpasiend_t epd ON epd.emrpasienfk = ep.noemr AND epd.statusenabled = TRUE AND epd.kdprofile = 30
-                JOIN emrd_t ed ON ed.id = epd.emrdfk AND ed.statusenabled = TRUE AND ed.kdprofile = 30
-                WHERE 
-                    ep.statusenabled = TRUE
-                    AND ep.kdprofile = 30
-                    AND epd.emrfk = ".$idEMRDPJP."
-                    AND ep.noregistrasifk ILIKE '%".$row->noregistrasi."%'
-                    AND ed.caption ILIKE '%nama%'
-                GROUP BY
-                    ep.noregistrasifk
-            "));
+        //     $formDPJP = DB::select(DB::raw("
+        //         SELECT
+        //             ep.noregistrasifk,
+        //             (array_agg((split_part(epd.value, '~', 2)) ORDER BY epd.emrdfk DESC))[1] AS formdpjp
+        //         FROM emrpasien_t ep 
+        //         JOIN emrpasiend_t epd ON epd.emrpasienfk = ep.noemr AND epd.statusenabled = TRUE AND epd.kdprofile = 30
+        //         JOIN emrd_t ed ON ed.id = epd.emrdfk AND ed.statusenabled = TRUE AND ed.kdprofile = 30
+        //         WHERE 
+        //             ep.statusenabled = TRUE
+        //             AND ep.kdprofile = 30
+        //             AND epd.emrfk = ".$idEMRDPJP."
+        //             AND ep.noregistrasifk ILIKE '%".$row->noregistrasi."%'
+        //             AND ed.caption ILIKE '%nama%'
+        //         GROUP BY
+        //             ep.noregistrasifk
+        //     "));
 
-            if(count($formDPJP) > 0){
-                $row->listdpjp = $formDPJP[0]->formdpjp;
-            }else{
-                $row->listdpjp = $row->namadokter;
-            }
+        //     if(count($formDPJP) > 0){
+        //         $row->listdpjp = $formDPJP[0]->formdpjp;
+        //     }else{
+        //         $row->listdpjp = $row->namadokter;
+        //     }
 
-        }
+        // }
 
 //        if(count($data) > 0){
 //            foreach ( $data  as $item){
