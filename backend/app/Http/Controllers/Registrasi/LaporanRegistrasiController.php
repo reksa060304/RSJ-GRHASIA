@@ -524,16 +524,32 @@ class LaporanRegistrasiController extends  App\Http\Controllers\ApiController
 
         $data = DB::select(DB::raw("
 select '-' as smf,* from  (
-    select pd.tglregistrasi,apd.tglmasuk,pm.nocm,pd.noregistrasi,pm.namapasien,kp.kelompokpasien,kls.namakelas,ru.namaruangan,apd.norec,ru1.namaruangan as asal,
+    select pd.tglregistrasi,apd.tglmasuk,pm.nocm,pd.noregistrasi,pm.namapasien,kp.kelompokpasien,kls.namakelas,ru.namaruangan,apd.norec,ruangan_sebelum_wisma.ruangan_asal_sebenarnya as asal,
                                           case when ddp.noregistrasifk is not null THEN  cast (dm.kddiagnosa as text) || ', ' || dm.namadiagnosa else '-' end as namadiagnosa,
 
-                                            row_number() over (partition by apd.norec order by ddp.tglinputdiagnosa asc) as rownum
+                                           row_number() over (
+                                                partition by pd.norec 
+                                                order by apd.tglmasuk asc, ddp.tglinputdiagnosa asc
+                                            ) as rownum
                                     FROM pasiendaftar_t as pd
                                     INNER JOIN antrianpasiendiperiksa_t as apd on apd.noregistrasifk = pd.norec
-                                    INNER JOIN registrasipelayananpasien_t as rpp on rpp.noregistrasifk = pd.norec
-                                               and rpp.objectruanganfk = apd.objectruanganfk
-                                               and rpp.tglmasuk = apd.tglmasuk
-                                               and rpp.objectstatuskeluarfk is null
+                                    INNER JOIN (
+                                        SELECT noregistrasifk, objectruanganfk, objectruanganasalfk,
+                                            tglmasuk, objectkelasfk, objectstatuskeluarfk
+                                        FROM (
+                                            SELECT rpp2.*,
+                                                ROW_NUMBER() OVER (
+                                                    PARTITION BY rpp2.noregistrasifk 
+                                                    ORDER BY rpp2.tglmasuk ASC
+                                                ) as urutan
+                                            FROM registrasipelayananpasien_t as rpp2
+                                            INNER JOIN ruangan_m as ru_filter
+                                                on ru_filter.id = rpp2.objectruanganfk
+                                                and ru_filter.namaruangan ILIKE '%wisma%'
+                                        ) as rpp_ranked
+                                        WHERE urutan = 1
+                                    ) as rpp on rpp.noregistrasifk = pd.norec
+                                                and rpp.objectstatuskeluarfk is null
                                     LEFT JOIN detaildiagnosapasien_t as ddp on ddp.noregistrasifk = apd.norec and ddp.objectjenisdiagnosafk = 1
                                     LEFT JOIN diagnosapasien_t as dp on dp.norec = ddp.objectdiagnosapasienfk
                                     LEFT JOIN batalregistrasi_t as br on br.pasiendaftarfk = pd.norec
@@ -542,6 +558,26 @@ select '-' as smf,* from  (
                                     INNER JOIN kelas_m as kls on kls.id = apd.objectkelasfk
                                     INNER JOIN ruangan_m as ru on ru.id = rpp.objectruanganfk
                                     LEFT JOIN ruangan_m as ru1 on ru1.id = rpp.objectruanganasalfk and ru1.objectdepartemenfk NOT IN (25,28)
+                                    LEFT JOIN (
+                                        SELECT DISTINCT ON (apd_before.noregistrasifk)
+                                            apd_before.noregistrasifk,
+                                            ru_before.namaruangan as ruangan_asal_sebenarnya
+                                        FROM antrianpasiendiperiksa_t as apd_before
+                                        INNER JOIN ruangan_m as ru_before 
+                                            on ru_before.id = apd_before.objectruanganfk
+                                            and ru_before.namaruangan NOT ILIKE '%wisma%'
+                                        INNER JOIN (
+                                            SELECT apd_wisma.noregistrasifk, MIN(apd_wisma.tglmasuk) as tgl_wisma_pertama
+                                            FROM antrianpasiendiperiksa_t as apd_wisma
+                                            INNER JOIN ruangan_m as ru_wisma 
+                                                on ru_wisma.id = apd_wisma.objectruanganfk
+                                                and ru_wisma.namaruangan ILIKE '%wisma%'
+                                            GROUP BY apd_wisma.noregistrasifk
+                                        ) as wisma_pertama 
+                                            on wisma_pertama.noregistrasifk = apd_before.noregistrasifk
+                                            and apd_before.tglmasuk < wisma_pertama.tgl_wisma_pertama
+                                        ORDER BY apd_before.noregistrasifk, apd_before.tglmasuk ASC
+                                    ) as ruangan_sebelum_wisma on ruangan_sebelum_wisma.noregistrasifk = pd.norec
                                     LEFT JOIN diagnosa_m as dm on dm.id = ddp.objectdiagnosafk
                                     where pd.kdprofile = $idProfile and apd.tglmasuk  BETWEEN '$tglAwal' and '$tglAkhir' and br.pasiendaftarfk is null
                                     and pm.namapasien ilike '%$namapasien%' $paramNoRm
@@ -550,16 +586,32 @@ select '-' as smf,* from  (
                                     ) as x where x.rownum =1
                                     UNION ALL
                                     select '-' as smf, * from  (
-                                    select pd.tglregistrasi,apd.tglmasuk,pm.nocm,pd.noregistrasi,pm.namapasien,kp.kelompokpasien,kls.namakelas,ru.namaruangan,apd.norec,ru1.namaruangan as asal,
+                                    select pd.tglregistrasi,apd.tglmasuk,pm.nocm,pd.noregistrasi,pm.namapasien,kp.kelompokpasien,kls.namakelas,ru.namaruangan,apd.norec,ruangan_sebelum_wisma.ruangan_asal_sebenarnya as asal,
                                            case when ddp.noregistrasifk is not null THEN  cast (dm.kddiagnosa as text) || ', ' || dm.namadiagnosa else '-' end as namadiagnosa,
 
-                                            row_number() over (partition by apd.norec order by ddp.tglinputdiagnosa asc) as rownum
+                                            row_number() over (
+                                                partition by pd.norec 
+                                                order by apd.tglmasuk asc, ddp.tglinputdiagnosa asc
+                                            ) as rownum
                                     FROM pasiendaftar_t as pd
                                     INNER JOIN antrianpasiendiperiksa_t as apd on apd.noregistrasifk = pd.norec
-                                    INNER JOIN registrasipelayananpasien_t as rpp on rpp.noregistrasifk = pd.norec
-                                               and rpp.objectruanganfk = apd.objectruanganfk
-                                               and rpp.tglmasuk = apd.tglmasuk
-                                               and rpp.objectstatuskeluarfk <> 2
+                                    INNER JOIN (
+                                        SELECT noregistrasifk, objectruanganfk, objectruanganasalfk,
+                                            tglmasuk, objectkelasfk, objectstatuskeluarfk
+                                        FROM (
+                                            SELECT rpp2.*,
+                                                ROW_NUMBER() OVER (
+                                                    PARTITION BY rpp2.noregistrasifk 
+                                                    ORDER BY rpp2.tglmasuk ASC
+                                                ) as urutan
+                                            FROM registrasipelayananpasien_t as rpp2
+                                            INNER JOIN ruangan_m as ru_filter
+                                                on ru_filter.id = rpp2.objectruanganfk
+                                                and ru_filter.namaruangan ILIKE '%wisma%'
+                                        ) as rpp_ranked
+                                        WHERE urutan = 1
+                                    ) as rpp on rpp.noregistrasifk = pd.norec
+                                                and rpp.objectstatuskeluarfk <> 2
                                     LEFT JOIN detaildiagnosapasien_t as ddp on ddp.noregistrasifk = apd.norec and ddp.objectjenisdiagnosafk = 1
                                     LEFT JOIN diagnosapasien_t as dp on dp.norec = ddp.objectdiagnosapasienfk
                                     LEFT JOIN batalregistrasi_t as br on br.pasiendaftarfk = pd.norec
@@ -567,7 +619,27 @@ select '-' as smf,* from  (
                                     INNER JOIN kelompokpasien_m as kp on kp.id = pd.objectkelompokpasienlastfk
                                     INNER JOIN kelas_m as kls on kls.id = apd.objectkelasfk
                                     INNER JOIN ruangan_m as ru on ru.id = rpp.objectruanganfk
-                                    LEFT JOIN ruangan_m as ru1 on ru1.id = rpp.objectruanganasalfk and ru1.objectdepartemenfk NOT IN (25,28)
+
+                                    LEFT JOIN (
+                                        SELECT DISTINCT ON (apd_before.noregistrasifk)
+                                            apd_before.noregistrasifk,
+                                            ru_before.namaruangan as ruangan_asal_sebenarnya
+                                        FROM antrianpasiendiperiksa_t as apd_before
+                                        INNER JOIN ruangan_m as ru_before 
+                                            on ru_before.id = apd_before.objectruanganfk
+                                            and ru_before.namaruangan NOT ILIKE '%wisma%'
+                                        INNER JOIN (
+                                            SELECT apd_wisma.noregistrasifk, MIN(apd_wisma.tglmasuk) as tgl_wisma_pertama
+                                            FROM antrianpasiendiperiksa_t as apd_wisma
+                                            INNER JOIN ruangan_m as ru_wisma 
+                                                on ru_wisma.id = apd_wisma.objectruanganfk
+                                                and ru_wisma.namaruangan ILIKE '%wisma%'
+                                            GROUP BY apd_wisma.noregistrasifk
+                                        ) as wisma_pertama 
+                                            on wisma_pertama.noregistrasifk = apd_before.noregistrasifk
+                                            and apd_before.tglmasuk < wisma_pertama.tgl_wisma_pertama
+                                        ORDER BY apd_before.noregistrasifk, apd_before.tglmasuk ASC
+                                    ) as ruangan_sebelum_wisma on ruangan_sebelum_wisma.noregistrasifk = pd.norec
                                     LEFT JOIN diagnosa_m as dm on dm.id = ddp.objectdiagnosafk
                                     where pd.kdprofile = $idProfile and apd.tglmasuk  BETWEEN '$tglAwal' and '$tglAkhir' and br.pasiendaftarfk is null
                                     and pm.namapasien ilike '%$namapasien%' $paramNoRm
