@@ -753,14 +753,17 @@ class PerencanaanController extends ApiController {
             ->select('pg.namalengkap', 'pg.id')
             ->where('pg.kdprofile', $idProfile)
             ->where('pg.statusenabled', true)
-            ->where('pg.grade', 1)
+            ->where('pg.objectjenispegawaifk', 22)
             ->orderBy('pg.namalengkap')
             ->get();
         $bendahara = \DB::table('pegawai_m as pg')
             ->select('pg.namalengkap as text', 'pg.id as value')
             ->where('pg.kdprofile', $idProfile)
             ->where('pg.statusenabled', true)
-            ->where('pg.objectjabatanfungsionalfk', 1426)
+            ->where(function($query) {
+                $query->where('pg.objectjabatanfungsionalfk', 1426)
+                      ->orWhere('pg.objectjabataninternalfk', 1426);
+            })
             ->orderBy('pg.namalengkap')
             ->get();
         $pegawai_all = \DB::table('pegawai_m as pg')

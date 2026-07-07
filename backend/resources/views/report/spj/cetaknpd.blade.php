@@ -180,9 +180,9 @@
             <td>{{ $signatories->nomordasarpengeluaran ?? '-' }}</td>
         </tr>
         <tr>
-            <td>7. Tahun Anggaran</td>
+            <td>7. Periode Anggaran</td>
             <td>:</td>
-            <td>{{ $tahun }}</td>
+            <td>{{ $namaBulan }} {{ $tahun }}</td>
         </tr>
     </table>
 
