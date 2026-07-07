@@ -2817,32 +2817,47 @@ class TagihanController  extends ApiController
 
 
         // apakah registrasi punya form dpjp
-        $idEMRDPJP = 3001060;
-        foreach($data as $row){
+        $noregistrasis = [];
+        foreach ($data as $row) {
+            if (!empty($row->noregistrasi)) {
+                $noregistrasis[] = trim($row->noregistrasi);
+            }
+        }
 
-            $formDPJP = DB::select(DB::raw("
-                SELECT
+        $dpjps = [];
+        if (!empty($noregistrasis)) {
+            $placeholders = implode(',', array_fill(0, count($noregistrasis), '?'));
+            $idEMRDPJP = 3001060;
+            $formDPJPList = DB::select(DB::raw("
+                SELECT DISTINCT ON (ep.noregistrasifk)
                     ep.noregistrasifk,
-                    (array_agg((split_part(epd.value, '~', 2)) ORDER BY epd.emrdfk DESC))[1] AS formdpjp
+                    split_part(epd.value, '~', 2) AS formdpjp
                 FROM emrpasien_t ep 
                 JOIN emrpasiend_t epd ON epd.emrpasienfk = ep.noemr AND epd.statusenabled = TRUE AND epd.kdprofile = 30
                 JOIN emrd_t ed ON ed.id = epd.emrdfk AND ed.statusenabled = TRUE AND ed.kdprofile = 30
                 WHERE 
                     ep.statusenabled = TRUE
                     AND ep.kdprofile = 30
-                    AND epd.emrfk = ".$idEMRDPJP."
-                    AND ep.noregistrasifk ILIKE '%".$row->noregistrasi."%'
+                    AND epd.emrfk = ?
+                    AND ep.noregistrasifk IN ($placeholders)
                     AND ed.caption ILIKE '%nama%'
-                GROUP BY
-                    ep.noregistrasifk
-            "));
+                ORDER BY
+                    ep.noregistrasifk,
+                    epd.emrdfk DESC
+            "), array_merge([$idEMRDPJP], $noregistrasis));
 
-            if(count($formDPJP) > 0){
-                $row->listdpjp = $formDPJP[0]->formdpjp;
-            }else{
+            foreach ($formDPJPList as $item) {
+                $dpjps[trim($item->noregistrasifk)] = $item->formdpjp;
+            }
+        }
+
+        foreach ($data as $row) {
+            $key = trim($row->noregistrasi);
+            if (isset($dpjps[$key])) {
+                $row->listdpjp = $dpjps[$key];
+            } else {
                 $row->listdpjp = $row->namadokter;
             }
-
         }
 
         return $this->respond($data);
