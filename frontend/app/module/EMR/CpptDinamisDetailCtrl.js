@@ -1938,13 +1938,7 @@ define(['initialize', 'Configuration'], function (initialize, config) {
                         if (t) t.parentNode.removeChild(t);
                     }
 
-                    // Sync cache nomorEMR agar PRMRJ atau form lainnya membaca EMR yang sedang aktif
-                    var EMRno = nomorEMR || $scope.cc.noemr || '-';
-                    if (EMRno && EMRno !== '-') {
-                        var cNomor = cacheHelper.get('cacheNomorEMR') || {};
-                        cNomor[0] = EMRno;
-                        cacheHelper.set('cacheNomorEMR', cNomor);
-                    }
+
 
                     require([form.controller], function () {
                         $ocLazyLoad.inject('myApp').then(function () {
