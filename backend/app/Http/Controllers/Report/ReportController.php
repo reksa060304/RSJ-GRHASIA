@@ -5465,6 +5465,21 @@ class ReportController extends ApiController{
     public function CetakNPD(Request $request){
         $tahun = $request['tahun'];
         $bulan = isset($request['bulan']) ? $request['bulan'] : date('m');
+        $listBulan = array(
+            1 => 'Januari',
+            'Februari',
+            'Maret',
+            'April',
+            'Mei',
+            'Juni',
+            'Juli',
+            'Agustus',
+            'September',
+            'Oktober',
+            'November',
+            'Desember'
+        );
+        $namaBulan = isset($listBulan[(int)$bulan]) ? $listBulan[(int)$bulan] : '';
         $jenisrekening = $request['jenisrekening'];
 
         $qtahun  = '';
@@ -5829,7 +5844,7 @@ class ReportController extends ApiController{
         }
 
         $pageWidth = 1200;
-        return view('report.spj.cetaknpd',compact('data', 'pageWidth', 'tahun', 'subkegiatan', 'subsubkegiatan', 'signatories', 'tglcetak', 'tgllunas', 'tglpj', 'pelaksana'));
+        return view('report.spj.cetaknpd',compact('data', 'pageWidth', 'tahun', 'subkegiatan', 'subsubkegiatan', 'signatories', 'tglcetak', 'tgllunas', 'tglpj', 'pelaksana', 'namaBulan'));
     }
 
 
