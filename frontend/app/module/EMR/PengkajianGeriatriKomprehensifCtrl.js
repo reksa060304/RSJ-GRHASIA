@@ -2083,37 +2083,36 @@ console.log(jawab)
                 $scope.item.obj = []
                 $scope.item.obj2 = []
 
-                var payload = [
-                    {
-                        emrfk: 3000544,
-                        objectId: "1901310025,3018100"
-                    },
-                ];
-                
-                medifirstService.post('emr/get-emr-inputan-otomatis?noregistrasi=' + $scope.cc.noregistrasi, payload)
-                    .then(function (res) {
-                        console.log(res.data);
-                        $scope.item.obj[310274] = res.data.data[0].data["1901310025"] || '';
-                        $scope.item.obj[310277] = res.data.data[0].data["1901310025"] || '';
-                    });
-
-                medifirstService.get("emr/get-emr-otomatisvitalsign?emrfk=147"+"&noregistrasi="+$scope.cc.noregistrasi).then(function (dat) {
-                    var datas = dat.data.data2
-                    $scope.isRouteLoading = false
-                    if(datas.length> 0){
-                        $scope.item.obj[310026]= datas[0].td
-                        $scope.item.obj[310027]= datas[0].nadi
-                        $scope.item.obj[310029]= datas[0].suhu
-                        $scope.item.obj[310028]= datas[0].pernapasan
-                        $scope.item.obj[310031]= datas[0].bb
-                        $scope.item.obj[310030]= datas[0].tb
-
-
-                    }
+                if (nomorEMR === '-' || nomorEMR === 'undefined' || nomorEMR === undefined || nomorEMR === null) {
+                    var payload = [
+                        {
+                            emrfk: 3000544,
+                            objectId: "1901310025,3018100"
+                        },
+                    ];
                     
-                    
-    
-                })
+                    medifirstService.post('emr/get-emr-inputan-otomatis?noregistrasi=' + $scope.cc.noregistrasi, payload)
+                        .then(function (res) {
+                            console.log(res.data);
+                            $scope.item.obj[310274] = res.data.data[0].data["1901310025"] || '';
+                            $scope.item.obj[310277] = res.data.data[0].data["1901310025"] || '';
+                        });
+
+                    medifirstService.get("emr/get-emr-otomatisvitalsign?emrfk=147"+"&noregistrasi="+$scope.cc.noregistrasi).then(function (dat) {
+                        var datas = dat.data.data2
+                        $scope.isRouteLoading = false
+                        if(datas.length> 0){
+                            $scope.item.obj[310026]= datas[0].td
+                            $scope.item.obj[310027]= datas[0].nadi
+                            $scope.item.obj[310029]= datas[0].suhu
+                            $scope.item.obj[310028]= datas[0].pernapasan
+                            $scope.item.obj[310031]= datas[0].bb
+                            $scope.item.obj[310030]= datas[0].tb
+                        }
+                    })
+                } else {
+                    $scope.isRouteLoading = false;
+                }
                 $scope.item.obj[116062] = $scope.now
                 let pegawai = JSON.parse(localStorage.getItem('pegawai'))
                 if(pegawai.jenisPegawai.jenispegawai == 'Dokter'){
@@ -2175,6 +2174,13 @@ console.log(jawab)
                 // })
                 for (var i = 0; i <= dataLoad.length - 1; i++) {
                     if (parseFloat($scope.cc.emrfk) == dataLoad[i].emrfk) {
+
+                        // Explicitly check for MNA checkbox IDs to persist checked states
+                        if (dataLoad[i].emrdfk >= 1901310041 && dataLoad[i].emrdfk <= 1901310062) {
+                            var isTrue = (dataLoad[i].value == '1' || dataLoad[i].value == 'true' || dataLoad[i].value == true);
+                            $scope.item.obj[dataLoad[i].emrdfk] = isTrue;
+                            continue;
+                        }
 
                         if (dataLoad[i].type == "textbox") {
                             $scope.item.obj[dataLoad[i].emrdfk] = dataLoad[i].value
