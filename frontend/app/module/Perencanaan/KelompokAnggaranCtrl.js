@@ -200,6 +200,7 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
                         $scope.dataSourcePermenKelima = e.data.konsolidasikelima
                         $scope.dataSourcePermenKeempat = e.data.konsolidasikeempat
                         $scope.listBendaharaPenerimaan = e.data.bendahara
+                        $scope.listBendaharaPengeluaran = e.data.bendahara
                         loadDataGrid()
                     });
                 })
@@ -341,8 +342,9 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
                         $scope.item.nodasarpengeluaran = e.data.setting[0].nomordasarpengeluaran
                         $scope.item.tglDasarPengeluaran = moment(e.data.setting[0].tanggaldasarpengeluaran).format('YYYY-MM-DD')
 
-                        if($scope.listBendahara.length > 0)  {
-                            $scope.listBendahara.map(function(item){
+                        $scope.listBendaharaPengeluaran = e.data.bendahara
+                        if($scope.listBendaharaPengeluaran && $scope.listBendaharaPengeluaran.length > 0)  {
+                            $scope.listBendaharaPengeluaran.map(function(item){
                                 if(item.value == e.data.setting[0].objectbendpengeluaran){
                                     $scope.item.objectbendpengeluaran = item
                                 }
