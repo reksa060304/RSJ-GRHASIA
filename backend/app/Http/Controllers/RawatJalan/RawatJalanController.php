@@ -435,13 +435,14 @@ $ruangdokter = \DB::table('ruangan_m as ru')
 //                'ps.foto',
                 'apd.norec as norec_apd',
                 'pa.prolanisprb',
-                'ru.ipaddress','ps.iskompleks','apd.residencefk','pg2.namalengkap as residence'
+                'ru.ipaddress','ps.iskompleks','apd.residencefk','pg2.namalengkap as residence','pd.tglcheckin','ps.aktivasi_mpp'
                 // ,DB::raw('case when pp.noregistrasifk is null then \'false\' else \'true\' end as statuslayanan'))
                 ,DB::raw('case when apd.ispelayananpasien is null then \'false\' else \'true\' end as statuslayanan'))
             // ->whereNull('br.norec')
             ->where('apd.kdprofile', $idProfile)
             ->where('pd.statusenabled',true)
-            ->where('ps.statusenabled',true);
+            ->where('ps.statusenabled',true)
+            ->whereNotNull('pd.tglcheckin');
 //            ->whereNotIn('ru.objectdepartemenfk',[27,3]);
         // ->groupBy('pd.tglregistrasi','ps.nocm','pd.noregistrasi','ps.namapasien','ps.tgllahir','jk.jeniskelamin','apd.objectruanganfk','ru.namaruangan','kls.id','kls.namakelas',
         //           'kp.kelompokpasien','rek.namarekanan','apd.objectpegawaifk','pg.namalengkap','br.norec','pd.norec','apd.norec','apd.objectasalrujukanfk',
@@ -1095,7 +1096,8 @@ $ruangdokter = \DB::table('ruangan_m as ru')
             ->select('so.norec','so.noorder','so.tglorder','ru.namaruangan as ruanganasal','pg.namalengkap',
                 'rutuju.namaruangan as ruangantujuan','pet.namalengkap as pengonsul',
                 'pd.noregistrasi','pd.tglregistrasi','ps.nocm','so.keteranganorder','so.keteranganlainnya','so.keterangantolak','so.tgltolak','pd.norec as norec_pd',
-                'ps.namapasien','pg.id as pegawaifk','so.objectruangantujuanfk','so.objectruanganfk','apd.norec as norec_apd')
+                'ps.namapasien','pg.id as pegawaifk','so.objectruangantujuanfk','so.objectruanganfk','apd.norec as norec_apd',
+                \DB::raw('(select cp.soap from cpptemr_t cp join emrpasien_t ep on ep.noemr = cp.emrpasienfk where cp.statusenabled = true and ep.statusenabled = true and cp.noregistrasi = pd.noregistrasi and ep.emrfk in (443, 94, 210222) order by case when (select objectdepartemenfk from ruangan_m where id = pd.objectruanganlastfk) = 16 then (case when ep.emrfk = 443 then 1 else 2 end) else (case when ep.emrfk in (94, 210222) then 1 else 2 end) end asc, cp.tgljam desc limit 1) as soap'))
             ->where('so.kdprofile', $idProfile)
             ->where('so.statusenabled',true)
             ->where('so.objectkelompoktransaksifk',$kelTrans->id)
@@ -4173,5 +4175,40 @@ $ruangdokter = \DB::table('ruangan_m as ru')
         ->get();
 
         return $this->respond($data);
+    }
+
+    public function savePasienAktivasiMPP(Request $request){
+        $kdProfile = $this->getDataKdProfile($request);
+        $idProfile = (int) $kdProfile;
+        DB::beginTransaction();
+        try {
+            $pasien = Pasien::where('nocm', $request['nocm'])
+                ->where('kdprofile', $idProfile)
+                ->update([
+                    'aktivasi_mpp' => $request['keterangan'] 
+                ]
+            );
+
+            $transStatus = 'true';
+            $transMessage = "Sukses";
+        } catch (\Exception $e) {
+            $transStatus = 'false';
+            $transMessage = "simpan Gagal";
+        }
+
+        if ($transStatus != 'false') {
+            DB::commit();
+            $result = array(
+                "status" => 201,
+
+            );
+        } else {
+            DB::rollBack();
+            $result = array(
+                "status" => 400,
+            );
+        }
+
+        return $this->setStatusCode($result['status'])->respond($result, $transMessage);
     }
 }

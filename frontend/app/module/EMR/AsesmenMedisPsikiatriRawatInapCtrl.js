@@ -1790,7 +1790,7 @@ define(['initialize'], function (initialize) {
                                 },
                             ];
                             
-                            medifirstService.post('emr/get-emr-inputan-otomatis', payload)
+                            medifirstService.post('emr/get-emr-inputan-otomatis?noregistrasi=' + $scope.cc.noregistrasi, payload)
                                 .then(function (res) {
                                     console.log(res.data);
                                     $scope.item.obj[120304] = res.data.data[0].data["1901310025"] || '';

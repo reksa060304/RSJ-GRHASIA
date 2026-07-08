@@ -112,6 +112,14 @@
             position="'right'"><i class="fa fa-trash"></i>Hapus</button>
      
     </div>
+    <div class="grid_2" >
+        <button ng-show="!isLoading" kendo-button style="width: 100%" class="primary" ng-click="cekinReservasi()"
+        position="'right'"><i class="fa fa-check"></i>Cek In</button>
+    </div>
+    <div class="grid_2">
+        <button ng-show="!isLoading" kendo-button style="width: 100%" class="error" ng-click="batalCekinReservasi()" 
+        position="'right'"><i class="fa fa-times"></i> Batal Cek In</button>
+    </div>
     <!-- <div class="grid_4">
                 <c-button style="width: 100%; padding:0px, margin:0px;" item="item" position="'right'" is-validate click="CetakLaporan()">
                     <span class="title">Cetak</span>

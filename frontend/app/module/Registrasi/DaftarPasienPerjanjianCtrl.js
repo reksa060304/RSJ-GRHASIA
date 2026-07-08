@@ -151,6 +151,13 @@ define(['initialize'], function (initialize) {
                         width: 100
                     }, 
                     {
+                        field: "tglcheckin",
+                        title: "Tanggal Checkin",
+
+                        template: "<span class='style-left'>{{formatTanggal('#: tglcheckin #')}}</span>",
+                        width: 120
+                    },
+                    {
                         field: "nomorantrean",
                         title: "No Antrean",
                         width: 100
@@ -342,6 +349,48 @@ define(['initialize'], function (initialize) {
                 medifirstService.post( "reservasionline/delete",{"norec":$scope.item.norec})
                 .then(function (data) {               
                    LoadData();            
+                })
+            }
+            $scope.cekinReservasi = function(){
+                if ($scope.item== undefined){
+                    toastr.error('silahkan pilih data ...')
+                    return
+                }
+                var confirm = $mdDialog.confirm()
+                                .title('Konfirmasi')
+                                .textContent('Yakin cek In data ini?')                                
+                                .ariaLabel('Lucky day')
+                                .cancel('Tidak')
+                                .ok('Ya')
+                            $mdDialog.show(confirm).then(function () {
+                                $scope.confirmCekin();
+                            })
+            }
+            $scope.confirmCekin = function(){
+                medifirstService.post( "reservasionline/update-tgl-cekin",{"norec":$scope.item.norec})
+                .then(function (data) {               
+                   LoadData();            
+                })
+            }
+            $scope.batalCekinReservasi = function(){
+                if ($scope.item == undefined){
+                    toastr.error('silahkan pilih data ...')
+                    return
+                }
+                var confirm = $mdDialog.confirm()
+                                .title('Konfirmasi')
+                                .textContent('Yakin ingin membatalkan Cek In data ini?')
+                                .ariaLabel('Lucky day')
+                                .cancel('Tidak')
+                                .ok('Ya')
+                            $mdDialog.show(confirm).then(function () {
+                                $scope.confirmBatalCekin();
+                            })
+            }
+            $scope.confirmBatalCekin = function(){
+                medifirstService.post("reservasionline/batal-tgl-cekin", {"norec": $scope.item.norec})
+                .then(function (data) {
+                    LoadData();
                 })
             }
 

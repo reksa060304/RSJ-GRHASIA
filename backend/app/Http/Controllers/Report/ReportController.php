@@ -1650,6 +1650,23 @@ class ReportController extends ApiController{
         }
 
         if (empty($noresep)){
+            if (!empty($noreg)) {
+                $cekPasien = DB::table('pasiendaftar_t as pt')
+                    ->join('pasien_m as pm', 'pm.id', '=', 'pt.nocmfk')
+                    ->leftJoin('ruangan_m as rm', 'rm.id', '=', 'pt.objectruanganlastfk')
+                    ->where(function ($q) use ($noreg) {
+                        $q->where('pt.noregistrasi', $noreg)
+                          ->orWhere('pm.nocm', $noreg);
+                    })
+                    ->where('pt.statusenabled', true)
+                    ->select('rm.objectdepartemenfk')
+                    ->orderBy('pt.tglregistrasi', 'desc')
+                    ->first();
+
+                if (!empty($cekPasien) && (int)$cekPasien->objectdepartemenfk == 16) {
+                    return "Pasien Rawat Inap tidak perlu melakukan check-in farmasi melalui kiosk, silakan hubungi petugas farmasi untuk informasi lebih lanjut.";
+                }
+            }
             $data = DB::table('antrianapotik_t as at')
             ->join('pasiendaftar_t as pt', 'pt.norec', '=', 'at.noregistrasifk')
             ->join('pasien_m as pm', 'pm.id', '=', 'pt.nocmfk')
@@ -1936,6 +1953,19 @@ class ReportController extends ApiController{
             ->where('pd.noregistrasi', $request['noregistrasi'])
             ->first();
 
+        if (!empty($registrasi)) {
+            DB::table('pasiendaftar_t')
+                ->where('noregistrasi', $request['noregistrasi'])
+                ->where('kdprofile', $kdProfile)
+                ->where(function($query) {
+                    $query->whereNull('tglcheckin')
+                        ->orWhere('tglcheckin', '1970-01-01 00:00:00');
+                })
+                ->update([
+                    'tglcheckin' => \Carbon\Carbon::now()->format('Y-m-d H:i:s'),
+                ]);
+        }
+  
         $statusonline = "";
         $status = "";
         if ($registrasi->tanggalreservasi != ''){
@@ -5469,7 +5499,7 @@ class ReportController extends ApiController{
                 LEFT JOIN kegiatananggaran2024_m kg ON kg.id = km.headfk
                 LEFT JOIN kegiatananggaran2024_m kgg ON kgg.id = kg.headfk
                 LEFT JOIN kegiatananggaran2024_m kggg ON kggg.id = kgg.headfk
-                LEFT JOIN transaksianggaran2024_t ta ON ta.objectkegiatanfk = km.id AND ta.statusenabled = TRUE AND ta.tahun = '$tahun'
+                LEFT JOIN transaksianggaran2024_t ta ON ta.objectkegiatanfk = km.id AND ta.statusenabled = TRUE AND ta.tahun = '$tahun' AND ta.objecttahapfk = ".$request['tahap']."
                 LEFT JOIN pegawai_m pg ON pg.id = ta.objectpptkfk
                 WHERE km.id = $subsubk
                 LIMIT 1
@@ -5635,7 +5665,7 @@ class ReportController extends ApiController{
                 SELECT ka.*, ka.keterangan as keterangan2,
                     pg.namalengkap as pptk, pg.nippns as nip_pptk
                 FROM kegiatananggaran_m ka
-                LEFT JOIN transaksianggaran2024_t ta ON ta.objectkegiatanfk = ka.id AND ta.statusenabled = TRUE AND ta.tahun = '$tahun'
+                LEFT JOIN transaksianggaran2024_t ta ON ta.objectkegiatanfk = ka.id AND ta.statusenabled = TRUE AND ta.tahun = '$tahun' AND ta.objecttahapfk = ".$request['tahap']."
                 LEFT JOIN pegawai_m pg ON pg.id = ta.objectpptkfk
                 WHERE ka.id = $subsubk
                 LIMIT 1
@@ -24384,6 +24414,9 @@ public function suratBuktiPengembalian(Request $request)
     }
     public function cetakmonitoringJamkes(Request $request)
     {
+        if (empty($request['noregistrasi']) && !empty($request['isberkasnoreg'])) {
+            $request->merge(['noregistrasi' => $request['isberkasnoreg']]);
+        }
 
         $norec = $request['emr'];
         $kdProfile = (int) $request['kdprofile'];
@@ -24589,6 +24622,19 @@ public function suratBuktiPengembalian(Request $request)
         // }
 
         // return $pdf->stream();
+        if (isset($request["issimpanberkas"])) {
+            $pdf = PDF::loadView('report.EMR.monitoringjamkes', [
+                'res' => $res,
+                'diagnosa' => $diagnosa,
+                'konsultasi' => $konsultasi,
+                'dataReport' => $pasien,
+                'item'=> $details,
+                'noregistrasi'=> $request['noregistrasi']
+            ]);
+            $pdf->setPaper('A4', 'portrait');
+            return $this->saveDokumenKlaim($pdf, $request);
+        }
+
         return view('report.EMR.monitoringjamkes',[
             'res' => $res,
                 'diagnosa' => $diagnosa,
@@ -24601,6 +24647,9 @@ public function suratBuktiPengembalian(Request $request)
 
     public function cetakmonitoringJamkesPerawat(Request $request)
     {
+        if (empty($request['noregistrasi']) && !empty($request['isberkasnoreg'])) {
+            $request->merge(['noregistrasi' => $request['isberkasnoreg']]);
+        }
 
         $norec = $request['emr'];
         $kdProfile = (int) $request['kdprofile'];
@@ -24806,6 +24855,19 @@ public function suratBuktiPengembalian(Request $request)
         // }
 
         // return $pdf->stream();
+        if (isset($request["issimpanberkas"])) {
+            $pdf = PDF::loadView('report.EMR.monitoringjamkesperawat', [
+                'res' => $res,
+                'diagnosa' => $diagnosa,
+                'konsultasi' => $konsultasi,
+                'dataReport' => $pasien,
+                'item'=> $details,
+                'noregistrasi'=> $request['noregistrasi']
+            ]);
+            $pdf->setPaper('A4', 'portrait');
+            return $this->saveDokumenKlaim($pdf, $request);
+        }
+
         return view('report.EMR.monitoringjamkesperawat',[
             'res' => $res,
                 'diagnosa' => $diagnosa,
@@ -27459,7 +27521,8 @@ public function suratBuktiPengembalian(Request $request)
         try {
             $savePath = public_path($path);
             \File::makeDirectory($savePath, 0755, true, true);
-            $namafile = $request['namafile'].'_'.$request['isberkasnoreg'].'.pdf';
+            $cleanNamaFile = str_replace(['/', '\\'], '-', $request['namafile']);
+            $namafile = $cleanNamaFile.'_'.$request['isberkasnoreg'].'.pdf';
             $public_path = $savePath."/".$namafile;
             $pdf->save($public_path);
             
@@ -34125,6 +34188,315 @@ public function suratBuktiPengembalian(Request $request)
 
         return $pdf->stream();
     }
-    //batas
 
+
+    public function cetakIdentitasPasien(Request $request)
+    {
+        $nocm = $request->get('nocm');
+        $kdProfile = (int)$request->get('kdprofile');
+
+        $profile = collect(DB::select("
+            select * from profile_m where statusenabled=true limit 1
+        "))->first();
+
+        $data = collect(DB::select("
+            SELECT 
+                pm.id,
+                pm.nocm,
+                pm.namapasien,
+                pm.tempatlahir,
+                pm.tgllahir,
+                COALESCE(sp.statusperkawinan, '-') AS statusperkawinan,
+                COALESCE(ag.agama, '-') AS agama,
+                COALESCE(pk.pekerjaan, '-') AS pekerjaan,
+                alm.alamatlengkap,
+                alm.namadesakelurahan,
+                alm.kecamatan,
+                alm.kotakabupaten,
+                prop.namapropinsi,
+                alm.kodepos,
+                pm.alamatktr,
+                COALESCE(pm.notelepon, '-') AS notelepon,
+                COALESCE(pm.noidentitas, '-') AS noidentitas,
+                COALESCE(gd.golongandarah, '-') AS golongandarah,
+                COALESCE(pen.pendidikan, '-') AS pendidikan,
+                COALESCE(pm.noasuransilain, '-') AS noasuransilain,
+                COALESCE(pm.nobpjs, '-') AS nobpjs,
+                jk.jeniskelamin,
+                pm.penanggungjawab,
+                pm.hubungankeluargapj,
+                pm.pekerjaanpenangggungjawab,
+                pm.ktppenanggungjawab,
+                pm.alamatrmh,
+                kp.kelompokpasien AS carabayar,
+                pm.foto
+            FROM pasien_m AS pm
+            LEFT JOIN statusperkawinan_m AS sp ON sp.id = pm.objectstatusperkawinanfk
+            LEFT JOIN agama_m AS ag ON ag.id = pm.objectagamafk
+            LEFT JOIN pekerjaan_m AS pk ON pk.id = pm.objectpekerjaanfk
+            LEFT JOIN pendidikan_m AS pen ON pen.id = pm.objectpendidikanfk
+            LEFT JOIN alamat_m AS alm ON alm.nocmfk = pm.id
+            LEFT JOIN propinsi_m AS prop ON prop.id = alm.objectpropinsifk
+            LEFT JOIN golongandarah_m AS gd ON gd.id = pm.objectgolongandarahfk
+            LEFT JOIN jeniskelamin_m AS jk ON jk.id = pm.objectjeniskelaminfk
+            LEFT JOIN (
+                SELECT DISTINCT ON (nocmfk) nocmfk, objectkelompokpasienlastfk 
+                FROM pasiendaftar_t 
+                WHERE statusenabled = true 
+                ORDER BY nocmfk, tglregistrasi DESC
+            ) pd ON pd.nocmfk = pm.id
+            LEFT JOIN kelompokpasien_m AS kp ON kp.id = pd.objectkelompokpasienlastfk
+            WHERE pm.nocm = :nocm
+            LIMIT 1
+        ", ['nocm' => $nocm]))->first();
+
+        if (empty($data)) {
+            return "Pasien dengan No. RM $nocm tidak ditemukan.";
+        }
+
+        $ageStr = '-';
+        if ($data && $data->tgllahir) {
+            $birthDate = new \DateTime($data->tgllahir);
+            $today = new \DateTime();
+            $diff = $today->diff($birthDate);
+            $ageStr = $diff->y . ' thn ' . $diff->m . ' bln ' . $diff->d . ' hari';
+        }
+
+        $fotoData = null;
+        if ($data && isset($data->foto) && $data->foto !== null) {
+            $rawFoto = $data->foto;
+
+            // Handle PostgreSQL bytea stream resource
+            if (is_resource($rawFoto)) {
+                $rawFoto = stream_get_contents($rawFoto);
+            }
+
+            if (is_string($rawFoto) && strlen($rawFoto) > 0) {
+                // Case 1: Already a full data URI (e.g. "data:image/jpeg;base64,/9j/...")
+                if (substr($rawFoto, 0, 5) === 'data:') {
+                    $fotoData = $rawFoto;
+                }
+                // Case 2: Already a base64 string (e.g. "/9j/4AAQSkZJRgAB...")
+                // Base64 chars: A-Z a-z 0-9 + / =
+                // JPEG base64 always starts with /9j/
+                else if (preg_match('/^[A-Za-z0-9+\/]+=*$/', trim($rawFoto)) && base64_decode($rawFoto, true) !== false) {
+                    $fotoData = 'data:image/jpeg;base64,' . trim($rawFoto);
+                }
+                // Case 3: PostgreSQL hex format \x...
+                else if (substr($rawFoto, 0, 2) === '\\x') {
+                    $fotoData = 'data:image/jpeg;base64,' . base64_encode(pack('H*', substr($rawFoto, 2)));
+                }
+                // Case 4: Pure hex string (only 0-9 a-f)
+                else if (preg_match('/^[0-9a-fA-F]+$/', $rawFoto)) {
+                    $fotoData = 'data:image/jpeg;base64,' . base64_encode(pack('H*', $rawFoto));
+                }
+                // Case 5: Raw binary data
+                else {
+                    $fotoData = 'data:image/jpeg;base64,' . base64_encode($rawFoto);
+                }
+            }
+        }
+
+        // Temporarily bypass GD warning for interlaced PNGs
+        set_error_handler(function($errno, $errstr, $errfile, $errline) {
+            if (strpos($errstr, 'imagecreatefrompng') !== false || strpos($errstr, 'libpng') !== false) {
+                return true; // Silence warning, do not let Laravel throw an exception
+            }
+            return false; // Fall back to default error handler
+        });
+
+        try {
+            $pdf = PDF::loadView('report.pendaftaran.cetak-identitas-pasien', array(
+                'data' => $data,
+                'profile' => $profile,
+                'ageStr' => $ageStr,
+                'fotoData' => $fotoData
+            ));
+
+            $response = $pdf->stream();
+        } finally {
+            restore_error_handler();
+        }
+
+        return $response;
+    }
+
+    public function CetakMPP(Request $request)
+    {
+        $noemr = $request['noemr'];
+        $kdProfile = (int) $request['kdprofile'];
+        $emrfk = $request['emrfk'];
+        $main = \DB::select(DB::raw("SELECT id, type from emrd_t where emrfk = $emrfk and statusenabled = true and kdprofile = $kdProfile order by id
+        "));
+        $data = \DB::select(DB::raw("SELECT ed.id,epd.value, ed.type
+                FROM emrpasien_t ep
+                        INNER JOIN emrpasiend_t epd ON ep.noemr = epd.emrpasienfk
+                        INNER JOIN emrd_t ed ON ed.ID = epd.emrdfk 
+                        INNER JOIN pegawai_m pg on pg.id = epd.pegawaifk
+                    WHERE ep.kdprofile = $kdProfile AND ep.statusenabled = TRUE 
+                        AND ep.noemr ILIKE '$noemr' 
+                        AND ed.statusenabled = TRUE 
+                        AND ep.emrfk = $emrfk 
+                        AND ed.emrfk = $emrfk
+                ORDER BY ed.ID ASC"));
+        $detail = [];
+        $id=0;
+        $value="";
+        foreach ($main as $m) {
+        $id=0;
+        $value="";
+            foreach ($data as $d) {
+                if ($m->id == $d->id) {
+                    $id = $m->id;
+                    if ($d->type == 'datetime') {
+                        $value=$this->tanggal_indonesia(date('Y-m-d',strtotime($d->value)));
+                    }else{
+                        $value =$d->value;
+                    }
+                    break;
+                }else {
+                    $id = $m->id;
+                    $value = "";
+                }
+                
+            }
+
+            $detail[]= array(
+                "id"=> $id,
+                "value"=>$value,
+                "type"=> $m->type
+            );
+        }
+
+        $pasien = \DB::table('emrpasien_t as ep')
+            ->select('ps.namapasien','ep.nocm','jk.jeniskelamin','ps.tgllahir','ep.namaruangan','ep.noregistrasifk')
+            ->join('pasien_m as ps','ps.nocm','=','ep.nocm')
+            ->leftJoin('jeniskelamin_m as jk','jk.id','=','ps.objectjeniskelaminfk')
+            ->where('ep.noemr', $noemr)
+            ->where('ep.kdprofile', $kdProfile)
+            ->first();
+
+        $profile = \DB::table('profile_m')->where('id', $kdProfile)->first();
+
+        $pageWidth = 950;
+        return view('report.EMR.formulir-mpp', compact('detail','pageWidth','pasien','profile'));
+    }
+
+     public function cetakPengkajianGeriatriKomprehensif(Request $request)
+    {
+        $norec = $request['emr'];
+        $kdProfile = (int) $request['kdprofile'];
+        if ($kdProfile <= 0) {
+            $kdProfile = 30;
+        }
+        $emrfk = isset($request['emrfk']) ? (int)$request['emrfk'] : 3000921;
+        // Support dua mode: emr = norec UUID, atau noemr = noemr string (MR.../...)
+        $noemrParam = isset($request['noemr']) ? trim($request['noemr']) : '';
+        $norecParam  = isset($request['emr'])  ? trim($request['emr'])  : '';
+
+        // Tentukan kondisi WHERE berdasarkan parameter yang tersedia
+        if (!empty($noemrParam) && $noemrParam !== '-') {
+            $whereEmr = "ep.noemr = '$noemrParam'";
+        } else {
+            $whereEmr = "ep.norec = '$norecParam'";
+        }
+
+        $data = DB::select(DB::raw("
+        SELECT
+            split_part(epd.value, '~', 2) as split,
+            epd.emrdfk,
+            ep.noemr,
+            ed.TYPE,
+            pa.namapasien,
+            pa.namaibu,
+            pa.namaayah,
+            pa.tgllahir,
+            pa.nohp,
+            pa.nocm,
+            ep.jeniskelamin,
+            ep.umur,
+            al.alamatlengkap,
+            ep.noregistrasifk as noregistrasi ,
+            epd.value,ep.namaruangan,pg.namalengkap as namadokter
+        FROM
+            emrpasien_t AS ep
+            INNER JOIN emrpasiend_t AS epd ON ep.noemr = epd.emrpasienfk
+            INNER JOIN emrd_t AS ed ON epd.emrdfk = ed.ID
+            INNER JOIN antrianpasiendiperiksa_t AS pd ON pd.norec = ep.norec_apd
+            left JOIN pegawai_m AS pg ON pg.id = pd.objectpegawaifk
+            left JOIN pasien_m as pa on ep.nocm =  pa.nocm
+            left JOIN alamat_m as al on pa.id = al.nocmfk
+        WHERE
+            $whereEmr
+            AND ep.kdprofile = '$kdProfile' 
+            AND epd.statusenabled = TRUE 
+            and epd.emrfk = $emrfk
+        ORDER BY
+            ed.nourut
+            "
+        ));
+        foreach ($data as $z){
+            if ($z->type=="datetime"){
+                $z->value=date('Y-m-d H:i:s',strtotime($z->value));
+            }
+        }
+        $res['profile'] = Profile::where('id', $kdProfile)->first();
+        if (!$res['profile']) {
+            $res['profile'] = Profile::where('id', 30)->first();
+        }
+        if (!$res['profile']) {
+            $res['profile'] = new \stdClass();
+            $res['profile']->baris1 = 'RS JIWA GRHASIA';
+            $res['profile']->baris2 = 'Daerah Istimewa Yogyakarta';
+            $res['profile']->namalengkap = 'RS JIWA GRHASIA';
+            $res['profile']->fixedphone = '-';
+            $res['profile']->website = '-';
+            $res['profile']->alamatemail = '-';
+        }
+        $res['d'] = $data;
+        $item =[];   
+        $item2= [];      
+        foreach( $res['d'] as $items){
+            if($items->type  ==  "textbox" ||$items->type  ==  "textarea" ||$items->type  ==  "textarea2" ||$items->type  ==  "textarea3" || $items->type == "radio" || $items->type == "numeric" ){
+                $item[$items->emrdfk] =  $items->value;
+            }
+            if($items->type  ==  "datetime"){
+                $item[$items->emrdfk] = $this->tanggal_indonesia(date('Y-m-d',strtotime( $items->value))) ;
+            }
+            if($items->type  ==  "time"){
+                $item[$items->emrdfk] = date('H:i',strtotime( $items->value));
+            }
+            if($items->type  ==  "date"){
+                $item[$items->emrdfk] = date('Y-m-d',strtotime( $items->value));
+            }
+            if($items->type  ==  "checkboxtextbox"){
+                $item[$items->emrdfk] =  $items->value;
+                $item2[$items->emrdfk] =  true;
+            }
+            if($items->type == "checkbox" || $items->type == "checkbox2" || $items->type == "checkbox12" || $items->type == "mna") {
+                $chekedd = false;
+                if ($items->value == '1' || $items->value == 'true' || $items->value == 't') {
+                    $chekedd = true;
+                }
+                $item[$items->emrdfk] = $chekedd;
+            }
+            if($items->type == "combobox") {
+                $arr = explode('~',$items->value );
+                $item[$items->emrdfk] = isset($arr[1]) ? $arr[1] : $items->value;
+            }
+        }
+        $pageWidth = 950;
+        $pdf = PDF::loadView(
+            'report.EMR.pengkajian-geriatri-komprehensif',
+            array(
+                'res' => $res,
+                'pageWidth' => $pageWidth,
+                'data' => $data,
+                'item'=> $item
+            )
+        );
+        return $pdf->stream();
+    }
+
+    //batas
 }

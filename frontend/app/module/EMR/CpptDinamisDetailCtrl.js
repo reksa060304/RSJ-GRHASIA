@@ -1,8 +1,8 @@
 define(['initialize', 'Configuration'], function (initialize, config) {
     'use strict';
     var baseTransaksi = config.baseUrlData;
-    initialize.controller('CpptDinamisDetailCtrl', ['$rootScope', '$scope', '$state', 'CacheHelper', 'MedifirstService','$mdDialog', '$q', '$sce', '$timeout',
-        function ($rootScope, $scope, $state, cacheHelper, medifirstService, $mdDialog, $q, $sce, $timeout) {
+    initialize.controller('CpptDinamisDetailCtrl', ['$rootScope', '$scope', '$state', 'CacheHelper', 'MedifirstService','$mdDialog', '$q', '$sce', '$timeout', "$ocLazyLoad",
+        function ($rootScope, $scope, $state, cacheHelper, medifirstService, $mdDialog, $q, $sce, $timeout, $ocLazyLoad) {
 
             $scope.item = {};
             $scope.cc = {};
@@ -69,14 +69,39 @@ define(['initialize', 'Configuration'], function (initialize, config) {
                 }
             };
 
+            $scope.iframeHeight = 1500;
+            
+            function onScrollContainer() {
+                var container = document.getElementById('cetakScrollContainer');
+                if (container) {
+                    if (container.scrollTop + container.clientHeight >= container.scrollHeight - 600) {
+                        $scope.$apply(function() {
+                            $scope.iframeHeight += 3000;
+                        });
+                    }
+                }
+            }
+
             $scope.onOpenPopupCetak = function () {
+                $scope.iframeHeight = 1500;
                 window.addEventListener('keydown', blockKeys);
+                $timeout(function() {
+                    var container = document.getElementById('cetakScrollContainer');
+                    if (container) {
+                        container.addEventListener('scroll', onScrollContainer);
+                    }
+                }, 500);
             }
 
             $scope.onClosePopupCetak = function () {
                 $scope.isIframeLoading = false;
                 $scope.cetakanUrl = $sce.trustAsResourceUrl("about:blank");
                 window.removeEventListener('keydown', blockKeys);
+                var container = document.getElementById('cetakScrollContainer');
+                if (container) {
+                    container.removeEventListener('scroll', onScrollContainer);
+                }
+                $scope.iframeHeight = 1500;
             }
             $scope.showbtnadd = [];
             $scope.showbtnremove = [];
@@ -1510,6 +1535,464 @@ define(['initialize', 'Configuration'], function (initialize, config) {
                     toastr.warning('Cetak EMR ini belum tersedia karena belum ada template cetakan yang dikonfigurasi.');
                 }
             }
+            
+            function showPRMRJDialog() {
+                        $mdDialog
+                        .show({
+                            templateUrl: "../app/module/EMR/PRMRJDialog.html",
+                            controller: "PRMRJCtrl",
+                            parent: angular.element(document.body),
+                            clickOutsideToClose: false,
+                            locals: {
+                            isPopupPRMRJ: true
+                            },
+                        })
+                        .finally(function () {
+                            // dialog closed
+                        });
+                }
+
+            $scope.openPRMRJ = function () {
+                    // Tampilkan indikator loading
+                    var loadingToast = document.createElement('div');
+                    loadingToast.id = 'integrasi-loading-toast';
+                    loadingToast.innerHTML = '<i class="fa fa-spinner fa-spin"></i>&nbsp; Memuat Form Integrasi Asuhan...';
+                    loadingToast.style.cssText = 'position:fixed;bottom:24px;left:50%;transform:translateX(-50%);background:#323232;color:#fff;padding:10px 22px;border-radius:4px;z-index:9999;font-size:14px;box-shadow:0 2px 8px rgba(0,0,0,0.3);';
+                    document.body.appendChild(loadingToast);
+
+                    function removeToast() {
+                    var t = document.getElementById('integrasi-loading-toast');
+                    if (t) t.parentNode.removeChild(t);
+                    }
+
+                    // Sync cache nomorEMR agar PRMRJCtrl membaca EMR yang sedang aktif
+                    // sehingga data tersimpan terhubung ke EMR yang sama (bukan norec_emr: "-")
+                    if (nomorEMR && nomorEMR !== '-') {
+                    var arrStr = cacheHelper.get('cacheNomorEMR') || {};
+                    arrStr[0] = nomorEMR;
+                    cacheHelper.set('cacheNomorEMR', arrStr);
+                    }
+
+                    // Collect active CPPT SOAP data
+                    var cpptSoapData = [];
+                    var cpptRows = [
+                        { soapId: 22034963, dateId: 22034961, ppaId: 22034964 },
+                        { soapId: 22034971, dateId: 22034969, ppaId: 22034972 },
+                        { soapId: 22034979, dateId: 22034977, ppaId: 22034980 },
+                        { soapId: 22034987, dateId: 22034985, ppaId: 22034988 },
+                        { soapId: 22034995, dateId: 22034993, ppaId: 22034996 },
+                        { soapId: 22035003, dateId: 22035001, ppaId: 22035004 }
+                    ];
+                    
+                    cpptRows.forEach(function(row) {
+                        var soapText = $scope.item.obj[row.soapId];
+                        if (soapText && soapText.replace(/\s/g, "") !== "" && soapText.replace(/\s/g, "") !== "S::O::A::P:") {
+                            var dateVal = $scope.item.obj[row.dateId];
+                            var ppaVal = $scope.item.obj[row.ppaId];
+                            cpptSoapData.push({
+                                soapText: soapText,
+                                date: dateVal,
+                                ppa: ppaVal
+                            });
+                        }
+                    });
+                    
+                    if (cpptSoapData.length > 0) {
+                        cacheHelper.set('cpptSoapData', cpptSoapData);
+                    } else {
+                        cacheHelper.set('cpptSoapData', undefined);
+                    }
+
+                    require(
+                    ["app/module/EMR/PRMRJCtrl"],
+                    function () {
+                        // Wajib inject ke Angular runtime terlebih dahulu (sama seperti routing.js)
+                        $ocLazyLoad.inject('myApp').then(function () {
+                        removeToast();
+                        showPRMRJDialog();
+                        }, function() {
+                        removeToast();
+                        showPRMRJDialog();
+                        });
+                    },
+                    function (err) {
+                        removeToast();
+                        var confirm = $mdDialog
+                        .confirm()
+                        .title("Informasi")
+                        .textContent("Gagal memuat Form Integrasi Asuhan. Silakan muat ulang halaman.")
+                        .ariaLabel("Informasi")
+                        .ok("OK");
+                        $mdDialog.show(confirm);
+                    }
+                    );
+                };
+
+                $scope.openRujukanEdukasi = function () {
+                    var nocm = $scope.cc.nocm || '';
+                    var noregistrasi = $scope.cc.noregistrasi || '';
+
+                    // Robust fallback jika cc belum terisi di scope induk
+                    if (!nocm || !noregistrasi) {
+                        var cacheRM = cacheHelper.get('cacheRekamMedis');
+                        if (cacheRM) {
+                            if (!nocm) nocm = cacheRM[0] || '';
+                            if (!noregistrasi) noregistrasi = cacheRM[3] || '';
+                        }
+                    }
+
+                    console.log('openRujukanEdukasi - nocm:', nocm, 'noregistrasi:', noregistrasi);
+
+                    $scope.isRouteLoading = true;
+                    var url = 'emr/get-emr-transaksi-detail-form-new?nocm=' + encodeURIComponent(nocm) + '&jenisEmr=asesmen';
+
+                    var p1 = medifirstService.get(url, true);
+                    var p2 = medifirstService.get("sysadmin/settingdatafixed/get/FormRujukanEdukasiConfig").then(function (res) {
+                        return res;
+                    }, function () {
+                        return null;
+                    });
+
+                    $q.all([p1, p2]).then(function (results) {
+                        $scope.isRouteLoading = false;
+                        var res = results[0].data ? results[0].data : results[0];
+                        var rawData = (res && Array.isArray(res.data)) ? res.data : [];
+                        console.log('openRujukanEdukasi - rawData:', rawData);
+
+                        var resConfig = results[1];
+                        var formsConfig = null;
+                        if (resConfig && resConfig.data) {
+                            try {
+                                var val = typeof resConfig.data === 'string' ? resConfig.data : (resConfig.data.value || resConfig.data);
+                                if (typeof val === 'string' && val.trim() !== '') {
+                                    formsConfig = JSON.parse(val);
+                                } else if (Array.isArray(val)) {
+                                    formsConfig = val;
+                                }
+                            } catch (e) {
+                                console.error('Error parsing FormRujukanEdukasiConfig:', e);
+                            }
+                        }
+
+                        if (!formsConfig || !Array.isArray(formsConfig) || formsConfig.length === 0) {
+                            toastr.warning('Formulir Rujukan Edukasi belum dikonfigurasi di data fixed!');
+                            return;
+                        }
+
+                        formsConfig.forEach(function (form) {
+                            form.status = false;
+                            form.noemr = '-';
+                            form.norec = undefined;
+                            form.tglemr = undefined;
+
+                            for (var i = 0; i < rawData.length; i++) {
+                                var parent = rawData[i];
+                                
+                                // Cocokkan registrasi dengan membandingkan properti alternatif (misal: noregistrasi, noregistrasifk)
+                                var parentNoReg = parent.noregistrasi || parent.noregistrasifk || parent.noregistrasi_fk;
+                                if (parentNoReg && noregistrasi) {
+                                    if (String(parentNoReg).trim() != String(noregistrasi).trim()) {
+                                        continue;
+                                    }
+                                }
+
+                                // 1. Cocokkan emrfk langsung di level parent
+                                if (parent.emrfk && parseInt(parent.emrfk) === form.id) {
+                                    form.status = true;
+                                    form.noemr = parent.noemr || parent.norec || '-';
+                                    form.norec = parent.norec;
+                                    form.tglemr = parent.tglemr;
+                                }
+                                // 2. Jika tidak cocok di parent, cek di details (fallback)
+                                else if (parent.details && Array.isArray(parent.details)) {
+                                    for (var j = 0; j < parent.details.length; j++) {
+                                        if (parseInt(parent.details[j].emrfk) === form.id) {
+                                            form.status = true;
+                                            form.noemr = parent.noemr || parent.norec || '-';
+                                            form.norec = parent.norec;
+                                            form.tglemr = parent.tglemr;
+                                            break;
+                                        }
+                                    }
+                                }
+                                if (form.status) break;
+                            }
+                        });
+                        console.log('openRujukanEdukasi - formsConfig mapped:', formsConfig);
+
+                        $mdDialog.show({
+                            templateUrl: "../app/module/EMR/FormRujukanEdukasiListDialog.html",
+                            parent: angular.element(document.body),
+                            clickOutsideToClose: false,
+                            controller: ['$scope', '$mdDialog', 'rujukansData', function ($scopeDialog, $mdDialog, rujukansData) {
+                                $scopeDialog.rujukanEdukasiForms = rujukansData;
+                                $scopeDialog.tutupDialog = function () {
+                                    $mdDialog.hide();
+                                };
+                                $scopeDialog.isiForm = function (form) {
+                                    $mdDialog.hide(form);
+                                };
+                            }],
+                            locals: {
+                                rujukansData: formsConfig
+                            }
+                        }).then(function (selectedForm) {
+                            if (selectedForm) {
+                                openRujukanEdukasiFormPopup(selectedForm);
+                            }
+                        });
+
+                    }, function () {
+                        $scope.isRouteLoading = false;
+                        toastr.error('Gagal memuat data Rujukan Edukasi');
+                    });
+                };
+
+                function openRujukanEdukasiFormPopup(form) {
+                    var arrStr = { 0: form.noemr, 1: form.norec };
+                    cacheHelper.set('cacheNomorEMR', arrStr);
+                    cacheHelper.set('cacheNOREC_EMR', arrStr);
+
+                    // Tampilkan indikator loading
+                    var loadingToast = document.createElement('div');
+                    loadingToast.id = 'rujukan-loading-toast';
+                    loadingToast.innerHTML = '<i class="fa fa-spinner fa-spin"></i>&nbsp; Memuat Form...';
+                    loadingToast.style.cssText = 'position:fixed;bottom:24px;left:50%;transform:translateX(-50%);background:#323232;color:#fff;padding:10px 22px;border-radius:4px;z-index:9999;font-size:14px;box-shadow:0 2px 8px rgba(0,0,0,0.3);';
+                    document.body.appendChild(loadingToast);
+
+                    function removeToast() {
+                        var t = document.getElementById('rujukan-loading-toast');
+                        if (t) t.parentNode.removeChild(t);
+                    }
+
+                    require([form.controller], function () {
+                        $ocLazyLoad.inject('myApp').then(function () {
+                            removeToast();
+                            showActualEmrDialog();
+                        }, function () {
+                            removeToast();
+                            showActualEmrDialog();
+                        });
+                    }, function (err) {
+                        removeToast();
+                        console.error(err);
+                        toastr.error('Gagal memuat file controller: ' + form.controller);
+                    });
+
+                    function showActualEmrDialog() {
+                        var dialogScope = $rootScope.$new();
+                        dialogScope.item = { obj: [], obj2: [] };
+                        dialogScope.cc = {};
+                        dialogScope.templateUrl = '../app/module/EMR/' + form.template;
+                        dialogScope.formTitle = form.title;
+
+                        $mdDialog.show({
+                            templateUrl: '../app/module/EMR/FormRujukanEdukasiDialog.html',
+                            controller: form.controller,
+                            scope: dialogScope,
+                            preserveScope: true,
+                            parent: angular.element(document.body),
+                            clickOutsideToClose: false,
+                            fullscreen: true
+                        }).finally(function () {
+                            // Re-open list dialog
+                            $scope.openRujukanEdukasi();
+                        });
+                    }
+                }
+
+                $scope.openPengkajian = function () {
+                    var nocm = $scope.cc.nocm || '';
+                    var noregistrasi = $scope.cc.noregistrasi || '';
+
+                    // Robust fallback jika cc belum terisi di scope induk
+                    if (!nocm || !noregistrasi) {
+                        var cacheRM = cacheHelper.get('cacheRekamMedis');
+                        if (cacheRM) {
+                            if (!nocm) nocm = cacheRM[0] || '';
+                            if (!noregistrasi) noregistrasi = cacheRM[3] || '';
+                        }
+                    }
+
+                    console.log('openPengkajian - nocm:', nocm, 'noregistrasi:', noregistrasi);
+
+                    $scope.isRouteLoading = true;
+                    var url = 'emr/get-emr-transaksi-detail-form-new?nocm=' + encodeURIComponent(nocm) + '&jenisEmr=asesmen';
+
+                    var p1 = medifirstService.get(url, true);
+                    var p2 = medifirstService.get("sysadmin/settingdatafixed/get/FormulirPengkajianConfig").then(function (res) {
+                        return res;
+                    }, function () {
+                        return null;
+                    });
+
+                    $q.all([p1, p2]).then(function (results) {
+                        $scope.isRouteLoading = false;
+                        var res = results[0].data ? results[0].data : results[0];
+                        var rawData = (res && Array.isArray(res.data)) ? res.data : [];
+                        console.log('openPengkajian - rawData:', rawData);
+
+                        var resConfig = results[1];
+                        var formsConfig = null;
+                        if (resConfig && resConfig.data) {
+                            try {
+                                var val = typeof resConfig.data === 'string' ? resConfig.data : (resConfig.data.value || resConfig.data);
+                                if (typeof val === 'string' && val.trim() !== '') {
+                                    formsConfig = JSON.parse(val);
+                                } else if (Array.isArray(val)) {
+                                    formsConfig = val;
+                                }
+                            } catch (e) {
+                                console.error('Error parsing FormulirPengkajianConfig:', e);
+                            }
+                        }
+
+                        if (!formsConfig || !Array.isArray(formsConfig) || formsConfig.length === 0) {
+                            toastr.warning('Formulir Pengkajian belum dikonfigurasi di data fixed!');
+                            return;
+                        }
+
+                        formsConfig.forEach(function (form) {
+                            form.status = false;
+                            form.noemr = '-';
+                            form.norec = undefined;
+                            form.tglemr = undefined;
+
+                            for (var i = 0; i < rawData.length; i++) {
+                                var parent = rawData[i];
+                                
+                                // Cocokkan registrasi dengan membandingkan properti alternatif (misal: noregistrasi, noregistrasifk)
+                                var parentNoReg = parent.noregistrasi || parent.noregistrasifk || parent.noregistrasi_fk;
+                                if (parentNoReg && noregistrasi) {
+                                    if (String(parentNoReg).trim() != String(noregistrasi).trim()) {
+                                        continue;
+                                    }
+                                }
+
+                                // 1. Cocokkan emrfk langsung di level parent
+                                if (parent.emrfk && parseInt(parent.emrfk) === form.id) {
+                                    form.status = true;
+                                    form.noemr = parent.noemr || parent.norec || '-';
+                                    form.norec = parent.norec;
+                                    form.tglemr = parent.tglemr;
+                                }
+                                // 2. Jika tidak cocok di parent, cek di details (fallback)
+                                else if (parent.details && Array.isArray(parent.details)) {
+                                    for (var j = 0; j < parent.details.length; j++) {
+                                        if (parseInt(parent.details[j].emrfk) === form.id) {
+                                            form.status = true;
+                                            form.noemr = parent.noemr || parent.norec || '-';
+                                            form.norec = parent.norec;
+                                            form.tglemr = parent.tglemr;
+                                            break;
+                                        }
+                                    }
+                                }
+                                if (form.status) break;
+                            }
+                        });
+                        console.log('openPengkajian - formsConfig mapped:', formsConfig);
+
+                        $mdDialog.show({
+                            templateUrl: "../app/module/EMR/FormPengkajianListDialog.html",
+                            parent: angular.element(document.body),
+                            clickOutsideToClose: false,
+                            controller: ['$scope', '$mdDialog', 'pengkajiansData', function ($scopeDialog, $mdDialog, pengkajiansData) {
+                                $scopeDialog.pengkajianForms = pengkajiansData;
+                                $scopeDialog.tutupDialog = function () {
+                                    $mdDialog.hide();
+                                };
+                                $scopeDialog.isiForm = function (form) {
+                                    $mdDialog.hide(form);
+                                };
+                            }],
+                            locals: {
+                                pengkajiansData: formsConfig
+                            }
+                        }).then(function (selectedForm) {
+                            if (selectedForm) {
+                                openPengkajianFormPopup(selectedForm);
+                            }
+                        });
+
+                    }, function () {
+                        $scope.isRouteLoading = false;
+                        toastr.error('Gagal memuat data Pengkajian');
+                    });
+                };
+
+                function openPengkajianFormPopup(form) {
+                    var arrStr = { 0: form.noemr, 1: form.norec };
+                    cacheHelper.set('cacheNomorEMR', arrStr);
+                    cacheHelper.set('cacheNOREC_EMR', arrStr);
+
+                    // Tampilkan indikator loading
+                    var loadingToast = document.createElement('div');
+                    loadingToast.id = 'pengkajian-loading-toast';
+                    loadingToast.innerHTML = '<i class="fa fa-spinner fa-spin"></i>&nbsp; Memuat Form...';
+                    loadingToast.style.cssText = 'position:fixed;bottom:24px;left:50%;transform:translateX(-50%);background:#323232;color:#fff;padding:10px 22px;border-radius:4px;z-index:9999;font-size:14px;box-shadow:0 2px 8px rgba(0,0,0,0.3);';
+                    document.body.appendChild(loadingToast);
+
+                    function removeToast() {
+                        var t = document.getElementById('pengkajian-loading-toast');
+                        if (t) t.parentNode.removeChild(t);
+                    }
+
+
+
+                    require([form.controller], function () {
+                        $ocLazyLoad.inject('myApp').then(function () {
+                            removeToast();
+                            showActualPengkajianEmrDialog();
+                        }, function () {
+                            removeToast();
+                            showActualPengkajianEmrDialog();
+                        });
+                    }, function (err) {
+                        removeToast();
+                        console.error(err);
+                        toastr.error('Gagal memuat file controller: ' + form.controller);
+                    });
+
+                    function showActualPengkajianEmrDialog() {
+                        var dialogScope = $rootScope.$new();
+                        dialogScope.item = { obj: [], obj2: [] };
+                        dialogScope.cc = {};
+                        dialogScope.templateUrl = '../app/module/EMR/' + form.template;
+                        dialogScope.formTitle = form.title;
+                        Object.defineProperty(dialogScope, 'kembali', {
+                            configurable: true,
+                            enumerable: true,
+                            get: function () {
+                                return function () {
+                                    $mdDialog.hide();
+                                };
+                            },
+                            set: function (val) {
+                            }
+                        });
+
+                        $mdDialog.show({
+                            templateUrl: '../app/module/EMR/FormPengkajianDialog.html',
+                            controller: form.controller,
+                            scope: dialogScope,
+                            preserveScope: true,
+                            parent: angular.element(document.body),
+                            clickOutsideToClose: false,
+                            fullscreen: true,
+                            locals: {
+                                isPopupPRMRJ: (form.id === 210051)
+                            }
+                        }).finally(function () {
+                            // Re-open list dialog
+                            $scope.openPengkajian();
+                        });
+                    }
+                }
+
+                $scope.tutupDialog = function() {
+                    $mdDialog.hide();
+                }
 
             //batas
         }

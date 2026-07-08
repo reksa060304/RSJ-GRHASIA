@@ -279,6 +279,13 @@ define(['initialize', 'Configuration'], function (initialize, config) {
 					"width": "80px"
 				},
 				{
+                        field: "tglcheckin",
+                        title: "Tanggal Checkin",
+
+                        template: "<span class='style-left'>{{formatTanggal('#: tglcheckin #')}}</span>",
+                        width: 120
+                },
+				{
 					hidden: true,
 					"field": "ppkrujukan",
 					"title": "PPK",
@@ -1933,7 +1940,8 @@ define(['initialize', 'Configuration'], function (initialize, config) {
 					return
 				}
 				// $scope.popUpIdentitas.center().open();
-				CetakWeh();
+				// CetakWeh(); cetakan pakai ds
+				CetakWeb();
 			}
 
 			$scope.BatalCetak = function () {
@@ -1955,7 +1963,8 @@ define(['initialize', 'Configuration'], function (initialize, config) {
 						$scope.umur = thn + ' thn ' + bln + ' bln ' + day + ' hr '
 						$scope.NocmTea = datas.nocm;
 						if ($scope.dataItem != undefined && datas != undefined) {
-							CetakWeh();
+							// CetakWeh(); cetak ds
+							CetakWeb();
 						} else {
 							toastr.warning("Tidak Ada Data Yang Bisa Dicetak!");
 							return;
@@ -1963,6 +1972,29 @@ define(['initialize', 'Configuration'], function (initialize, config) {
 
 					})
 			}
+
+			function CetakWeb(){
+				// ini cetak pakai web
+				var user = medifirstService.getPegawaiLogin();
+				var NomorRm =""
+				if($scope.dataPasienSelected.nocm != undefined || $scope.dataPasienSelected.nocm != ""){
+					NomorRm = $scope.dataPasienSelected.nocm;
+				}
+				var kelompokPasien = ""
+                if ($scope.dataPasienSelected.kelompokpasien!= undefined || $scope.dataPasienSelected.kelompokpasien != "") {
+                    kelompokPasien = $scope.dataPasienSelected.kelompokpasien ;
+                }
+				var local = JSON.parse(localStorage.getItem('profile'));
+				var profileId = local ? local.id : "";
+				window.open(config.baseApiBackend + 'report/cetak-identitas-pasien?nocm=' + NomorRm + '&kdprofile=' + profileId, '_blank');
+				
+				$scope.NocmTea = null;
+				$scope.dataItem = {};
+				if ($scope.popUpIdentitas) {
+					$scope.popUpIdentitas.close();
+				}
+			}
+
 
 			function CetakWeh() {
 				var user = medifirstService.getPegawaiLogin();

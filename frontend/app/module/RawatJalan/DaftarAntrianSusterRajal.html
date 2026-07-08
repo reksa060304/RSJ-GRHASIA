@@ -282,9 +282,14 @@
             <button class="btnTemplate1 red" style="margin-left: 0;" ng-click="emr()"><i
                     class="fa fa-stethoscope"></i>EMR</button>
         </div>
+         <div class="grid_2" style="margin-top:-10px">
+             <button class="btnTemplate1" style="margin-left: 0;" ng-click="pasienPulang()"><i
+                     class="fa fa-bed"></i>Pulang</button>
+         </div>
         <div class="grid_2" style="margin-top:-10px">
-            <button class="btnTemplate1" style="margin-left: 0;" ng-click="pasienPulang()"><i
-                    class="fa fa-bed"></i>Pulang</button>
+            <button class="btnTemplate1" style="margin-left: 0;" ng-click="showAktivasiMPP()">
+                <i class="fa fa-users"></i>Aktivasi MPP
+            </button>
         </div>
     </div>
 
@@ -527,6 +532,24 @@
                 <!-- </div> -->
                 <!--    <div class="clear">
 <button class="k-button" ng-click="simpanDokter(item, items.pilihDokter)" style="float:right;margin-top:4%">Simpan</button> -->
+            </div>
+        </div>
+    </div>
+    <div kendo-window="popUpAktivasiMPP" k-title="'Aktivasi MPP'" k-width="450" k-visible="false"
+        k-on-open="win2visible = true" k-on-close="win2visible = false">
+        <div class="panel panel-default container_12" style="padding: 10px;">
+            <div class="grid_12">
+                <fieldset>
+                    <legend><b>Keterangan Aktivasi MPP</b></legend>
+                    <div class="grid_12" style="margin-top: 10px;">
+                        <textarea class="k-textbox" style="width: 100%; height: 120px; resize: vertical;" 
+                            ng-model="item.keteranganMPP" placeholder="Masukkan keterangan / alasan Aktivasi MPP..."></textarea>
+                    </div>
+                </fieldset>
+            </div>
+            <div class="grid_12" style="margin-top: 15px;">
+                <button class="k-button" ng-click="saveAktivasiMPP(item.keteranganMPP)"
+                    style="float:right;">Simpan</button>
             </div>
         </div>
     </div>

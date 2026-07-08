@@ -477,7 +477,11 @@ class RegistrasiController extends ApiController
                 //                }else{
                 //                    $statusPasien='BARU';
                 //                }
-
+                if (is_null($dataPD->tglcheckin) || 
+                        $dataPD->tglcheckin == '1970-01-01 00:00:00' || 
+                        $dataPD->tglcheckin == '0000-00-00 00:00:00') {
+                        $dataPD->tglcheckin = \Carbon\Carbon::now()->format('Y-m-d H:i:s');
+                }
                 if (isset($r_NewPD['statusschedule'])) {
                     $dataPD->statusschedule = $r_NewPD['statusschedule'];
                 }
@@ -566,6 +570,9 @@ class RegistrasiController extends ApiController
 
                         $noAntrian = $countNoAntrian + 1;
                         $dataAPD->noantrian = $noAntrian;
+                        // FIX: update tglmasuk ke tanggal baru agar perhitungan max(noantrian)
+                        // untuk pendaftaran berikutnya di tanggal baru tidak menghasilkan nomor duplikat
+                        $dataAPD->tglmasuk = $r_NewPD['tglregistrasi'];
                     }
                     //kosongkan
                     if ($isRawatInap == 'true') {
@@ -7268,6 +7275,7 @@ class RegistrasiController extends ApiController
                 'kps.kelompokpasien',
                 'apr.tglinput',
                 'apr.nocmfk',
+                'pd.tglcheckin',
                 DB::raw('(case when pm.namapasien is null then apr.namapasien else pm.namapasien end) as namapasien,
                 (case when apr.isconfirm=\'true\' then \'Confirm\' else \'Reservasi\' end) as status,apr.jamreservasi,apr.ismobilejkn,apd.noantrian,apr.jenis')
             )
@@ -7534,7 +7542,8 @@ class RegistrasiController extends ApiController
                     //                    'tglpulang' => $request['tanggalpembatalan']
                 ]);
             AntrianPasienDiperiksa::where('noregistrasifk', $request['norec'])
-                ->whereNull('tglkeluar')
+                // whereNull('tglkeluar') dihapus karena rawat jalan sudah memiliki tglkeluar saat registrasi
+                // sehingga kondisi ini mencegah statusenabled diset false untuk pasien rawat jalan
                 ->where('kdprofile', $idProfile)
                 ->update([
                     'statusenabled' => false,
@@ -8170,6 +8179,7 @@ class RegistrasiController extends ApiController
                 'pa.tglcreate',
                 'asu.nmprovider',
                 'ar.asalrujukan',
+                'pd.tglcheckin',
                 DB::raw('coalesce(it.qtytracer,0) as qtytracer'),
                 DB::raw("pd.ismobilejkn,
                 case when pd.ismobilejkn = true then 
@@ -18860,5 +18870,437 @@ GROUP BY y.KET
             ->get();
 
         return $this->respond($data);
+    }
+    public function saveRegistrasiPasienOnline(Request $request)
+    {
+        $kdProfile = $this->getDataKdProfile($request);
+        $idProdile = (int)$kdProfile;
+
+
+        $r_NewPD = $request['pasiendaftar'];
+        $r_NewAPD = $request['antrianpasiendiperiksa'];
+        //        $countNoAntrian = AntrianPasienDiperiksa::where('objectruanganfk',$r_NewPD['objectruanganfk'])
+        //            ->where('tglregistrasi', '>=', $r_NewPD['tglregistrasidate'].' 00:00')
+        //            ->where('tglregistrasi', '<=', $r_NewPD['tglregistrasidate'].' 23:59')
+        //            ->count('norec');
+        //        $noAntrian = $countNoAntrian + 1;
+
+        $cekRiwayatPlafon = PasienDaftar::where('nocmfk', $r_NewPD['nocmfk'])->where('statusenabled', true)->orderBy('tglregistrasi', 'desc')->first();
+        $plafonBpjs = 0;
+        if (!empty($cekRiwayatPlafon)) {
+            $plafonBpjs = (float)$cekRiwayatPlafon->inacbgtotalgrouper;
+        }
+
+        if ($r_NewPD['israwatinap'] == 'true') {
+            $isRawatInap = 'true';
+        } else {
+            $isRawatInap = 'false';
+        }
+        DB::beginTransaction();
+        $cekUdahDaftar = PasienDaftar::where('nocmfk', $r_NewPD['nocmfk'])
+            ->wherenull('tglpulang')
+            ->where('statusenabled', true)
+            ->count();
+        
+        // ada tambahan jika pasien ke lab dan pembiyaan umum maka masih bisa diregistrasi
+        // jika bukan umum maka tidak bisa
+        if (($cekUdahDaftar > 0 && $r_NewPD['norec_pd'] == '' && $r_NewPD['objectruanganfk'] !== 575) || ($cekUdahDaftar > 0 && $r_NewPD['norec_pd'] == '' && $r_NewPD['objectruanganfk'] == 575) && $r_NewPD['objectkelompokpasienlastfk'] !== 1) {
+            $transStatus = 'belumdipulangkan';
+        } else {
+            //menambahkan kondisi pasien statusnya lama atau baru 
+            $isPasienLama = DB::table('pasiendaftar_t')
+                ->where('nocmfk', $r_NewPD['nocmfk'])
+                ->where('statusenabled', true)
+                ->exists();
+            $statusPasien = $isPasienLama ? 'LAMA' : 'BARU';
+            try {
+                //region Save PasienDaftar
+                if ($r_NewPD['norec_pd'] == '') {
+                    $noRegistrasiSeq = $this->generateCodeBySeqTable(new PasienDaftar, 'noregistrasi', 10, date('ym'), $idProdile);
+                    $noAntrian = 0;
+                    if ($noRegistrasiSeq == '') {
+                        $transMessage = "Gagal mengumpukan data, Coba lagi.!";
+                        DB::rollBack();
+                        $result = array(
+                            "status" => 400,
+                            "message"  => $transMessage,
+                            "as" => 'as@epic',
+                        );
+                        return $this->setStatusCode($result['status'])->respond($result, $transMessage);
+                    }
+                    $dataPD = new PasienDaftar();
+                    $dataPD->norec = $dataPD->generateNewId();
+                    $dataPD->kdprofile = $idProdile;
+                    $dataPD->statusenabled = true;
+                    $noRegistrasi = $noRegistrasiSeq; //$this->generateNoReg(new PasienDaftar, 'noregistrasi', 10, date('ym'));//$this->getMaxNoregistrasi();
+                    $dataPD->objectruanganasalfk = $r_NewPD['objectruanganfk'];
+                    if (isset($r_NewPD['statuspasien'])) {
+                        // $dataPD->statuspasien = $r_NewPD['statuspasien'];
+                        $dataPD->statuspasien = $statusPasien;
+                    }
+
+                    //                    $saveAdminstrasi = $this->saveAdministrasi($idProdile);
+                } else {
+                    $dataPD =  PasienDaftar::where('norec', $r_NewPD['norec_pd'])->where('kdprofile', $idProdile)->first();
+                    $noRegistrasi = $dataPD->noregistrasi;
+                    //          $delAntrian = AntrianPasienDiperiksa::where('noregistrasifk', $r_NewPD['norec_pd'])
+                    //                ->delete();
+                    if ($isRawatInap == 'true') {
+                        $delRegistrasiPelPasien = RegistrasiPelayananPasien::where('noregistrasifk', $r_NewPD['norec_pd'])
+                            ->where('objectruanganfk', $r_NewPD['objectruanganfk'])
+                            ->delete();
+                    }
+                }
+                $dataPD->objectruanganlastfk = $r_NewPD['objectruanganfk'];
+                $dataPD->objectdokterpemeriksafk =  isset($r_NewPD['objectpegawaifk']) ? $r_NewPD['objectpegawaifk'] : null;
+                $dataPD->objectpegawaifk = isset($r_NewPD['objectpegawaifk']) ? $r_NewPD['objectpegawaifk'] : null;
+                $dataPD->iskajianawal = false;
+                $dataPD->isonsiteservice = 0;
+                $dataPD->isregistrasilengkap = 0;
+                $dataPD->jenispelayanan = $r_NewPD['tipelayanan'];
+                $dataPD->objectkasuspenyakitlastfk = 1;
+                $isRawatJalan = isset($r_NewPD['objectdepartemenfk']) && $r_NewPD['objectdepartemenfk'] == 18;
+                if ($isRawatInap == 'true') {
+                    $dataPD->objectkelasfk = $r_NewPD['objectkelasfk'];
+                    if ($dataPD->tglpulang === null) { 
+                    $dataPD->tglpulang = null;
+                  }
+                } else {
+                    $dataPD->objectkelasfk = (int)$this->settingDataFixed('kdKelasNonKelasRegistrasi', $idProdile);
+                    // untuk pendaftaran pasien rawat jalan saat edit tanggal registrasi ikut terupdate tanggal pulang
+                    if ($isRawatJalan && $r_NewPD['norec_pd'] != '') {
+                        $dataPD->tglpulang = $r_NewPD['tglregistrasi'];
+                    }
+                    // pendaftaran pasien baru
+                    else if ($dataPD->tglpulang === null) {
+                        $dataPD->tglpulang = $r_NewPD['tglregistrasi'];
+                    }
+                }
+
+                $dataPD->objectkelompokpasienlastfk = $r_NewPD['objectkelompokpasienlastfk'];
+                $dataPD->nocmfk = $r_NewPD['nocmfk'];
+                $dataPD->objectrekananfk = $r_NewPD['objectrekananfk'];
+                $dataPD->statuskasuspenyakit = false;
+                //                $cekStatusPasien=PasienDaftar::where('nocmfk', $r_NewPD['nocmfk'])
+                //                    ->count('nocmfk');
+                //                if ($cekStatusPasien  > 0){
+                //                    $statusPasien='LAMA';
+                //                }else{
+                //                    $statusPasien='BARU';
+                //                }
+                if (isset($r_NewPD['statusschedule'])) {
+                    $dataPD->statusschedule = $r_NewPD['statusschedule'];
+                }
+                if (isset($r_NewPD['ischeckin'])) {
+                    $dataPD->ischeckin = true;
+                }
+                if (isset($r_NewPD['isjknloket'])) {
+                    $dataPD->ismobilejkn = $r_NewPD['isjknloket'];
+                    $dataPD->ischeckin = true;
+                }
+                if (isset($r_NewPD['isjkn'])) {
+                    $dataPD->ismobilejkn = $r_NewPD['isjkn'];
+                    $dataPD->ischeckin = false;
+                }
+                $dataPD->tglregistrasi =  $r_NewPD['tglregistrasi'];
+                //                $dataPD->objectruanganasalfk = $r_NewPD['objectruanganfk'];
+                //region Dibuang Sayang
+                //$dataPD->noregistrasifk = $noRegistrasi;
+                //$dataPD->objectpenyebabkematianfk = true;
+                //$dataPD->objectkondisipasienfk = true;
+                //$dataPD->namalengkapambilpasien = true;
+                //$dataPD->objecthubungankeluargaambilpasienfk = true;
+                //$dataPD->tglpulang = date('Y-m-d H:i:s')
+                //$dataPD->ruangannextschedule = true;
+                //$dataPD->objectstatuskeluarfk = true;
+                //$dataPD->objectstatuspulangfk = true;
+                //$dataPD->totalbiaya = true;
+                //$dataPD->nostruklastfk = true;
+                //$dataPD->nosbmlastfk = true;
+                //$dataPD->emergensi = true;
+                //$dataPD->tglmeninggal = true;
+                //endregion
+                $dataPD->noregistrasi = $noRegistrasi;
+                $dataPD->inacbgtotalgrouper = $plafonBpjs;
+                $dataPD->save();
+                $dataPDnorec = $dataPD->norec;
+                $dataStatusPasien = $dataPD->statuspasien;
+                //endregion
+                //region Save AntrianPasienDiperiksa
+
+
+                if ($r_NewAPD['norec_apd'] == '') {
+                    $countNoAntrian = AntrianPasienDiperiksa::where('objectruanganfk', $r_NewPD['objectruanganfk'])
+                        ->join('pasiendaftar_t as pd', 'pd.norec', '=', 'antrianpasiendiperiksa_t.noregistrasifk')
+                        ->where('antrianpasiendiperiksa_t.kdprofile', $idProdile)
+                        ->where('antrianpasiendiperiksa_t.tglmasuk', '>=', $r_NewPD['tglregistrasidate'] . ' 00:00:00')
+                        ->where('antrianpasiendiperiksa_t.tglmasuk', '<=', $r_NewPD['tglregistrasidate'] . ' 23:59:59')
+                        ->where('antrianpasiendiperiksa_t.statusenabled', true)
+                        ->where('pd.statusenabled', true)
+                        ->max('noantrian');
+                    $noAntrian = $countNoAntrian + 1;
+                    //                    return $noAntrian;
+                    $dataAPD = new AntrianPasienDiperiksa;
+                    $dataAPD->norec = $dataAPD->generateNewId();
+                    $dataAPD->kdprofile = (int)$kdProfile;
+                    $dataAPD->statusenabled = true;
+                    $dataAPD->noantrian = $noAntrian;
+                    $dataAPD->tglmasuk = $r_NewAPD['tglregistrasi'];
+                    //                    $dataAPD->objectruanganfk = $r_NewAPD['objectruanganfk'];
+                } else {
+                    $dataAPD =  AntrianPasienDiperiksa::where('norec', $r_NewAPD['norec_apd'])->where('kdprofile', $idProdile)->first();
+                    if ($r_NewPD['objectruanganfk'] != $dataAPD->objectruanganfk) {
+
+                        $countNoAntrian = AntrianPasienDiperiksa::where('objectruanganfk', $r_NewPD['objectruanganfk'])
+                            ->join('pasiendaftar_t as pd', 'pd.norec', '=', 'antrianpasiendiperiksa_t.noregistrasifk')
+                            ->where('antrianpasiendiperiksa_t.kdprofile', $idProdile)
+                            ->where('antrianpasiendiperiksa_t.tglmasuk', '>=', $r_NewPD['tglregistrasidate'] . ' 00:00:00')
+                            ->where('antrianpasiendiperiksa_t.tglmasuk', '<=', $r_NewPD['tglregistrasidate'] . ' 23:59:59')
+                            ->where('antrianpasiendiperiksa_t.statusenabled', true)
+                            ->where('pd.statusenabled', true)
+                            ->max('noantrian');
+
+                        $noAntrian = $countNoAntrian + 1;
+                        $dataAPD->noantrian = $noAntrian;
+                    }
+                    if ($r_NewPD['tglregistrasi'] != $dataAPD->tglmasuk) {
+
+                        $countNoAntrian = AntrianPasienDiperiksa::where('objectruanganfk', $r_NewPD['objectruanganfk'])
+                            ->join('pasiendaftar_t as pd', 'pd.norec', '=', 'antrianpasiendiperiksa_t.noregistrasifk')
+                            ->where('antrianpasiendiperiksa_t.kdprofile', $idProdile)
+                            ->where('antrianpasiendiperiksa_t.tglmasuk', '>=', $r_NewPD['tglregistrasidate'] . ' 00:00:00')
+                            ->where('antrianpasiendiperiksa_t.tglmasuk', '<=', $r_NewPD['tglregistrasidate'] . ' 23:59:59')
+                            ->where('antrianpasiendiperiksa_t.statusenabled', true)
+                            ->where('pd.statusenabled', true)
+                            ->max('noantrian');
+
+                        $noAntrian = $countNoAntrian + 1;
+                        $dataAPD->noantrian = $noAntrian;
+                    }
+                    //kosongkan
+                    if ($isRawatInap == 'true') {
+                        TempatTidur::where('id', $dataAPD->nobed)->update(['objectstatusbedfk' => 2]);
+                    }
+                }
+                //count tgl pasien perruanga
+                $dataAPD->objectasalrujukanfk =  $r_NewAPD['objectasalrujukanfk'];
+                if (isset($r_NewAPD['objectkamarfk'])) {
+                    $dataAPD->objectkamarfk = $r_NewAPD['objectkamarfk'];
+                }
+                $dataAPD->objectkasuspenyakitfk = null;
+                $dataAPD->objectruanganfk = $r_NewPD['objectruanganfk'];
+                if ($isRawatInap == 'true') {
+                    $dataAPD->objectkelasfk = $r_NewAPD['objectkelasfk'];
+                    $dataAPD->tglkeluar = null;
+                } else {
+                    $dataAPD->objectkelasfk = (int)$this->settingDataFixed('kdKelasNonKelasRegistrasi', (int)$kdProfile);
+                    $dataAPD->tglkeluar = $r_NewPD['tglregistrasi'];
+                }
+                if (isset($r_NewAPD['nobed'])) {
+                    $dataAPD->nobed = $r_NewAPD['nobed'];
+                }
+                $dataAPD->noregistrasifk = $dataPDnorec;
+                $dataAPD->objectpegawaifk = isset($r_NewAPD['objectpegawaifk']) && $r_NewAPD['objectpegawaifk'] != null ? $r_NewAPD['objectpegawaifk'] : (isset($r_NewPD['objectpegawaifk']) ? $r_NewPD['objectpegawaifk'] : null);
+                $dataAPD->statusantrian = 0;
+                $dataAPD->statuskunjungan = $dataStatusPasien;
+                $dataAPD->statuspasien = 1;
+                $dataAPD->tglregistrasi =  $r_NewAPD['tglregistrasi'];
+                // $dataAPD->tglmasuk =$r_NewAPD['tglregistrasi']; dipindahkan ke atas
+                $dataAPD->israwatgabung = null;
+                //region Dibuang Sayang Oge
+                //$dataAPD->tgldipanggildokter = null;
+                //$dataAPD->tgldipanggilsuster = null;
+                //$dataAPD->objectruanganasalfk = $r_NewAPD['objectruanganfk'];
+                //$dataAPD->tglkeluar = null;
+                //$dataAPD->statuspenyakit =null;
+                //$dataAPD->objectstrukorderfk = null;
+                //$dataAPD->objectstrukreturfk = null;
+                //$dataAPD->prefixnoantrian = null;
+                //$dataAPD->nomasuk = '';
+                //$cekRuanganAsal=AntrianPasienDiperiksa::wherenull('objectruanganasalfk')->first();
+                //if($cekRuanganAsal->count >0)
+                //{
+                //    $dataAPD->objectruanganfk = $r_NewAPD['objectruanganfk'];
+                //}
+                //endregion
+                $dataAPD->save();
+                //update statusbed jadi Isi
+                if ($isRawatInap == 'true') {
+                    TempatTidur::where('id', $r_NewAPD['nobed'])->update(['objectstatusbedfk' => 1]);
+                }
+                //endregion
+                //region Save RegistrasiPelayananPasien
+                if ($isRawatInap == 'true') {
+                    $dataRPP = new RegistrasiPelayananPasien();
+                    $dataRPP->norec = $dataRPP->generateNewId();;
+                    $dataRPP->kdprofile = (int)$kdProfile;
+                    $dataRPP->statusenabled = true;
+                    $dataRPP->objectasalrujukanfk = $r_NewAPD['objectasalrujukanfk'];
+                    $dataRPP->israwatgabung = $r_NewAPD['israwatgabung'];
+                    if (isset($r_NewAPD['objectkamarfk'])) {
+                        $dataRPP->objectkamarfk = $r_NewAPD['objectkamarfk'];
+                    }
+                    $dataRPP->objectkelasfk = $r_NewAPD['objectkelasfk'];
+                    $dataRPP->objectkelaskamarfk = $r_NewAPD['objectkelasfk'];
+                    $dataRPP->kdpenjaminpasien = 0;
+                    $dataRPP->objectkelompokpasienfk = $r_NewPD['objectkelompokpasienlastfk'];
+                    $dataRPP->noantrianbydokter = 0;
+                    $dataRPP->nocmfk = $r_NewPD['nocmfk'];
+                    $dataRPP->noregistrasifk = $dataPDnorec;
+                    $dataRPP->objectruanganfk = $r_NewAPD['objectruanganfk'];
+                    $dataRPP->objectstatuskeluarfk = null;
+                    if (isset($r_NewAPD['nobed'])) {
+                        $dataAPD->objecttempattidurfk = $r_NewAPD['nobed'];
+                    }
+                    $dataRPP->tglmasuk = $r_NewAPD['tglregistrasi'];
+                    //region Dibuang Sayang Deui
+                    //            $dataRPP->objectkasuspenyakitfk = null;
+                    //            $dataRPP->kddokter = null;
+                    //            $dataRPP->kddokterperiksanext =  null;
+                    //            $dataRPP->objecthasiltriasefk =null;
+                    //            $dataRPP->objectkelaskamarrencanafk =null;
+                    //            $dataRPP->objectkelaskamartujuanfk =null;
+                    //            $dataRPP->objectkelasrencanafk = null;
+                    //            $dataRPP->objectkelastujuanfk = null;
+                    //            $dataRPP->objectkeadaanumumfk = null;
+                    //            $dataRPP->keteranganlainnyaperiksanext = null;
+                    //            $dataRPP->keteranganlainnyarencana = '';
+                    //            $dataRPP->kodenomorbuktiperjanjian = null;
+                    //            $dataRPP->objectkondisipasienfk = null;
+                    //            $dataRPP->namatempattujuan =null;
+                    //            $dataRPP->noantrian = null;
+                    //            $dataRPP->nobed = null;
+                    //            $dataRPP->nobedtujuan =  null;
+                    //            $dataRPP->prefixnoantrian =  '1';
+                    //            $dataRPP->objectruanganasalfk = $r_NewAPD['objectruanganfk'];
+                    //            $dataRPP->objectruanganperiksanextfk = $r_NewAPD['objectruanganfk'];
+                    //            $dataRPP->objectruanganrencanafk =  null;
+                    //            $dataRPP->objectruangantujuanfk =  null;
+                    //            $dataRPP->objectstatuskeluarrencanafk =  null;
+                    //            $dataRPP->statuspasien =  0;
+                    //            $dataRPP->tglkeluar = null;
+                    //            $dataRPP->tglkeluarrencana = null;
+                    //            $dataRPP->tglperiksanext = null;
+                    //            $dataRPP->tglpindah = $request['tglRegistrasi'];
+                    //                 $dataRPP->objecttransportasifk = null;
+                    //            $dataRPP->objectdetailkamarfk = null;
+                    //endregion
+                    $dataRPP->save();
+                }
+                $kdRuanganTeleme = $this->settingDataFixed('kdRuanganTelemedicine', $kdProfile);
+
+                $strukorder = StrukOrder::where('noregistrasifk', $r_NewPD['norec_pd'])->first();
+                if (isset($strukorder)) {
+                    if ($strukorder->objectruanganfk != $dataAPD->objectruanganfk) {
+                        $strukorder->objectruanganfk = $dataAPD->objectruanganfk;
+                        $strukorder->save();
+                    }
+                }
+
+                // tambah catatan
+                if(isset($r_NewPD['catatan']) && $r_NewPD['catatan']!='' ){
+                    $cp = new CatatanPasienDaftar();
+                    $norec = $cp->generateNewId();
+                    $cp->norec = $norec;
+                    $cp->kdprofile = $kdProfile;
+                    $cp->noregistrasifk = $dataPDnorec;
+                    $cp->statusenabled = true;
+                    $cp->objectpegawaifk = $this->getCurrentUserID() ;//$dataPegawai->objectpegawaifk;
+                    $cp->tglcatatan = date('Y-m-d H:i:s');
+                    $cp->ruangan = "Pendaftaran";
+                    $cp->catatan = $r_NewPD['catatan'];
+                    $cp->save();
+                }
+                // end tambah 
+
+                //endregion
+                $transStatus = 'true';
+            } catch (\Exception $e) {
+                $transStatus = 'false';
+            }
+        }
+        if ($transStatus == 'belumdipulangkan') {
+            $transMessage = 'Pasien Belum Dipulangkan';
+            $result = array(
+                'status' => 400,
+                'message'  => $transMessage,
+                'as' => 'ramdanegie',
+            );
+        } else if ($transStatus == 'true') {
+            if (isset($r_NewPD['isjkn']) && $r_NewPD['isjkn'] == true) {
+                $saveAdminstrasi = $this->saveAdministrasi($request);
+                $data = DB::table('antrianpasienregistrasi_t')
+                    ->where('kdprofile', $kdProfile)
+                    ->where('statusenabled', true)
+                    ->where('noreservasi', $r_NewPD['statusschedule'])
+                    ->update([
+                        'isconfirm' => true,
+                    ]);
+                DB::commit();
+                $transMessage = 'OK';
+                $result = array(
+                    "metadata" => array(
+                        "code" => "200",
+                        'dataAPD' => $dataAPD,
+                        "message" => $transMessage
+                    )
+                );
+                return $this->setStatusCode(200)->respond($result, $transMessage);
+            } else {
+                DB::commit();
+                $antrol = '';
+                if ($r_NewPD['norec_pd'] == '' && $r_NewPD['statusschedule'] != '' && $r_NewPD['statusschedule'] != 'Kios-K') {
+                    $antrol = $this->saveAntrolV2($r_NewPD['statusschedule']);
+                }
+
+                $transMessage = 'SUKSES';
+                $objetoRequest = new \Illuminate\Http\Request();
+                $objetoRequest['noregistrasi'] = $dataPD->noregistrasi;
+                $ihs = app('App\Http\Controllers\Bridging\IHSController')->Encounter($objetoRequest, true);
+                if ($dataPD->ismobilejkn == false && ($dataPD->statusschedule != '' || $dataPD->statusschedule != null)) {
+                    $request['norec'] = $dataPD->norec;
+                    $request['norec_apd'] = $dataAPD->norec;
+                    $this->saveAdministrasi($request);
+                }
+
+                $result = array(
+                    'status' => 201,
+                    'message' => $transMessage,
+                    'dataPD' => $dataPD,
+                    'dataAPD' => $dataAPD,
+                    'antrol' => $antrol,
+                    'Encounter' => isset($ihs) ? $ihs : null,
+                    'as' => 'ramdanegie',
+                );
+            }
+            if ($kdRuanganTeleme == $dataPD->objectruanganlastfk) {
+                $request['norec'] = $dataPD->norec;
+                $request['norec_apd'] = $dataAPD->norec;
+
+                $saveAdminstrasi = $this->saveAdministrasi($request);
+            }
+        } else {
+            DB::rollBack();
+            if (isset($r_NewPD['isjkn']) && $r_NewPD['isjkn'] == true) {
+                $transMessage = 'Gagal';
+                $result = array(
+                    "metadata" => array(
+                        "code" => "201",
+                        "message" => $transMessage
+                    )
+                );
+                return $this->setStatusCode(201)->respond($result, $transMessage);
+            } else {
+                $transMessage = 'Simpan Registrasi Gagal';
+                $result = array(
+                    'status' => 400,
+                    'message' => $transMessage,
+                    'dataPD' => $dataPD,
+                    'e' => $e->getLine() . $e->getMessage(),
+                    'as' => 'ramdanegie',
+                );
+            }
+        }
+        return $this->setStatusCode($result['status'])->respond($result, $transMessage);
     }
 }

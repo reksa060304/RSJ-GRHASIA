@@ -106,12 +106,20 @@ export class CheckinFarmComponent implements OnInit , AfterViewInit{
         next: (response) => {
           if (response === 'Resep tidak ditemukan') {
             alert('Resep farmasi belum tersedia. Silakan kembali setelah dokter membuat resep.');
+          } else if (response && !response.trim().startsWith('<')) {
+            alert(response);
           } else {
             window.open(url, 'BuktiDaftar', 'width=800,height=800,scrollbars=yes,resizable=yes');
           }
         },
         error: (err) => {
-          alert('Pasien Rawat Inap tidak perlu melakukan check-in farmasi melalui kiosk, silakan hubungi petugas farmasi untuk informasi lebih lanjut.');
+          let errorMsg = 'Terjadi kesalahan sistem. Silakan coba lagi atau hubungi petugas.';
+          if (err && err.error) {
+            errorMsg = err.error;
+          } else if (err && err.message) {
+            errorMsg = err.message;
+          }
+          alert(errorMsg);
         }
       });
 

@@ -44,6 +44,8 @@ Route::group(['middleware' => 'cors', 'prefix' => 'service'], function () {
     Route::get('api/get-jadwal-dokter', 'Bridging\NoAuthController@getJadwalDokter');
     Route::get('api/get-ketersediaan-tempat-tidur', 'Bridging\NoAuthController@getKetersediaanTempatTidurPerkelas');
     Route::get('api/get-tarif-layanan', 'Bridging\NoAuthController@getTarifLayanan');
+    Route::get('api/get-jadwal-poli', 'Bridging\NoAuthController@getJadwalPoliklinik');
+    Route::get('api/get-tarif-obat', 'Bridging\NoAuthController@getTarifObat');
         
 		// Cetakan
 		Route::get('report/cetak-label-pilihan', 'Report\ReportController@cetakLabelPilihan');
@@ -53,6 +55,7 @@ Route::group(['middleware' => 'cors', 'prefix' => 'service'], function () {
 		Route::get('report/cetak-rba-rekap-subsub', 'Report\ReportController@cetakPerjenisAnggaranV2');
     Route::get('report/cetak-cppt-new', 'Report\ReportController@cetakCPPTNew');
     Route::get('report/cetak-cppt-new-tgl', 'Report\ReportController@cetakCPPTNewPerTgl');
+    Route::get('report/cetak-identitas-pasien', 'Report\ReportController@cetakIdentitasPasien');
 
 		// RBA
 		Route::get('perencanaan/get-total-sisa-anggaran', 'Perencanaan\PerencanaanController@getTotalSisaAnggaran');
@@ -1610,6 +1613,7 @@ Route::group(['middleware' => 'cors', 'prefix' => 'service'], function () {
           Route::get('report/cetak-sep-v3','Report\ReportController@cetakSEPV3');
           Route::get('report/cetak-hasil-lab-manual', 'Report\ReportController@printGetHasilLabManual');
           Route::get('report/billingbpjs','Report\ReportController@cetakBillbpjs');
+          Route::get('report/cetak-pengkajian-geriatri-komprehensif','Report\ReportController@cetakPengkajianGeriatriKomprehensif');
           
           Route::post('report/save-file-lip','Report\ReportController@saveFileLip');
           
@@ -2437,6 +2441,7 @@ Route::group(['middleware' => 'cors', 'prefix' => 'service'], function () {
           // GetPegawai function ini harus sama dengan function contoller laporanpegawai2controller
           Route::get('toni/LaporanPegawai2', 'Toni\LaporanPegawai2Contrroller@GetPegawai');
           Route::post('toni/LaporanPegawai2', 'Toni\LaporanPegawai2Contrroller@SimpanPegawai');
+          Route::post('rawatjalan/save-pasien-aktivasi-mpp', 'RawatJalan\RawatJalanController@savePasienAktivasiMPP');
         // });
         // Route::group(['prefix' => 'registrasi'], function () {
             // 2019-12 penambahan arif awal
@@ -2945,6 +2950,8 @@ Route::group(['middleware' => 'cors', 'prefix' => 'service'], function () {
           Route::get('reservasionline/get-slotting-rev','ReservasiOnline\ReservasiOnlineController@getSlottingByRuanganDokter');
           Route::get('reservasionline/get-dokter','ReservasiOnline\ReservasiOnlineController@getDokterByRuang');
           Route::get('reservasionline/cek-in-kiosk','ReservasiOnline\ReservasiOnlineController@cekINReservasi');
+          Route::post('reservasionline/update-tgl-cekin', 'ReservasiOnline\ReservasiOnlineController@updateTglCheckin');
+          Route::post('reservasionline/batal-tgl-cekin', 'ReservasiOnline\ReservasiOnlineController@batalTglCheckin');
 
         // });
         // Route::group(['prefix' => 'sanitasi'], function () {

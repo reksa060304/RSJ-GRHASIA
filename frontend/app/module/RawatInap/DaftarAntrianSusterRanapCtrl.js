@@ -401,6 +401,12 @@ define(['initialize'], function (initialize) {
                     "width": "70px",
 
                 },
+                {
+                    "field": "aktivasi_mpp",
+                    "title": "Aktivasi MPP",
+                    "width": "100px",
+                    "template": "<span class='style-center'>#: aktivasi_mpp #</span>"
+                },
                  {
                         "field": "ketklinis", //warnastatus
                         "title": "Kondisi Klinis",

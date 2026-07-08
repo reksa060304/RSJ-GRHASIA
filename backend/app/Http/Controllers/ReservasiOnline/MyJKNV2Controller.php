@@ -1450,21 +1450,36 @@ class MyJKNV2Controller extends ApiController
             }
         }
       
-        if(count($intervals) > 0){
+        // OLD: slot-based - nomor antrian berdasarkan posisi slot jam di jadwal harian
+        // if(count($intervals) > 0){
+        //     $antrian = 1;
+        //     for ($x = 0; $x <= count($intervalsAwal); $x++) {
+        //         if($intervals[0]['jam']== $intervalsAwal[$x]['jam']){
+        //             $antrian = $x +1;
+        //             // dd($antrian);
+        //             break;
+        //         }
+        //     }
+        //     return array("antrian"=> $antrian+1,"jamkosong"=>$intervals[0]['jam'], "kuota" => $quota);
+        // }else{
+        //     return array("antrian"=> 0,"jamkosong"=>"00:00");
+        // }
 
-            $antrian = 1;
-            for ($x = 0; $x <= count($intervalsAwal); $x++) {
-                if($intervals[0]['jam']== $intervalsAwal[$x]['jam']){
-                    $antrian = $x +1;
-                    // dd($antrian);
-                    break;
-                }
-            }
-
-            return array("antrian"=> $antrian+1,"jamkosong"=>$intervals[0]['jam'], "kuota" => $quota);
-        }else{
-            return array("antrian"=> 0,"jamkosong"=>"00:00");
+        // NEW: sequential - nomor antrian berdasarkan max(noantrian) + 1 per ruangan per tanggal
+        $jamKosong = count($intervals) > 0 ? $intervals[0]['jam'] : "00:00";
+        if ($jamKosong == "00:00") {
+            return array("antrian" => 0, "jamkosong" => "00:00");
         }
+        $maxAntrian = DB::table('antrianpasienregistrasi_t')
+            ->where('objectruanganfk', $ruang->id)
+            ->whereRaw("to_char(tanggalreservasi,'yyyy-MM-dd') = '$tgl'")
+            ->where('noreservasi', '!=', '-')
+            ->whereNotNull('noreservasi')
+            ->where('statusenabled', true)
+            ->where('kdprofile', $kdProfile)
+            ->max('noantrian');
+        $antrianBaru = ($maxAntrian ?? 0) + 1;
+        return array("antrian" => $antrianBaru, "jamkosong" => $jamKosong, "kuota" => $quota);
 
     }
 

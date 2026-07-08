@@ -487,7 +487,7 @@ class ReservasiOnlineController extends ApiController
                 $objetoRequest ['pasiendaftar'] = $pasiendaftar;
                 $objetoRequest ['antrianpasiendiperiksa'] = $antrianpasiendiperiksa;
                 $objetoRequest ['userData'] = $userData['userData'];
-                $regis = app('App\Http\Controllers\Registrasi\RegistrasiController')->saveRegistrasiPasien($objetoRequest);
+                $regis = app('App\Http\Controllers\Registrasi\RegistrasiController')->saveRegistrasiPasienOnline($objetoRequest);
                 $regis = json_decode($regis->content(), true);
 
                 if (isset($regis['status']) && $regis['status'] != 201) {
@@ -686,6 +686,31 @@ class ReservasiOnlineController extends ApiController
             AntrianPasienRegistrasi::where('norec',$request['norec'])->update([
                'statusenabled'=>false,
             ]);
+
+            // Nonaktifkan pasien daftar & antrian diperiksa yang terhubung dengan reservasi ini
+            if ($reservasi && $reservasi->noreservasi) {
+                // Ambil norec pasiendaftar yang terhubung (untuk nonaktifkan apd)
+                $norecPdList = DB::table('pasiendaftar_t')
+                    ->where('statusschedule', $reservasi->noreservasi)
+                    ->where('statusenabled', true)
+                    ->whereNull('tglcheckin')
+                    ->pluck('norec');
+
+                // Nonaktifkan antrianpasiendiperiksa_t yang terhubung
+                if ($norecPdList->isNotEmpty()) {
+                    DB::table('antrianpasiendiperiksa_t')
+                        ->whereIn('noregistrasifk', $norecPdList)
+                        ->where('statusenabled', true)
+                        ->update(['statusenabled' => false]);
+                }
+
+                // Nonaktifkan pasiendaftar_t
+                DB::table('pasiendaftar_t')
+                    ->where('statusschedule', $reservasi->noreservasi)
+                    ->where('statusenabled', true)
+                    ->whereNull('tglcheckin')
+                    ->update(['statusenabled' => false]);
+            }
 
             if ($reservasi) {
                 $newId = LoggingUser::max('id');
@@ -2243,19 +2268,36 @@ class ReservasiOnlineController extends ApiController
                 }
             }
         }
-        if(count($intervals) > 0){
-            $antrian = 1;
-            for ($x = 0; $x <= count($intervalsAwal); $x++) {
-                if($intervals[0]['jam']== $intervalsAwal[$x]['jam']){
-                    $antrian = $x +1;
-                    // dd($antrian);
-                    break;
-                }
-            }
-            return array("antrian"=> $antrian+1,"jamkosong"=>$intervals[0]['jam']);
-        }else{
-            return array("antrian"=> 0,"jamkosong"=>"00:00");
+        // OLD: slot-based - nomor antrian berdasarkan posisi slot jam di jadwal harian
+        // if(count($intervals) > 0){
+        //     $antrian = 1;
+        //     for ($x = 0; $x <= count($intervalsAwal); $x++) {
+        //         if($intervals[0]['jam']== $intervalsAwal[$x]['jam']){
+        //             $antrian = $x +1;
+        //             // dd($antrian);
+        //             break;
+        //         }
+        //     }
+        //     return array("antrian"=> $antrian+1,"jamkosong"=>$intervals[0]['jam']);
+        // }else{
+        //     return array("antrian"=> 0,"jamkosong"=>"00:00");
+        // }
+
+        // NEW: sequential - nomor antrian berdasarkan max(noantrian) + 1 per ruangan per tanggal
+        $jamKosong = count($intervals) > 0 ? $intervals[0]['jam'] : "00:00";
+        if ($jamKosong == "00:00") {
+            return array("antrian" => 0, "jamkosong" => "00:00");
         }
+        $maxAntrian = \DB::table('antrianpasienregistrasi_t')
+            ->where('objectruanganfk', $ruang->id)
+            ->whereRaw("to_char(tanggalreservasi,'yyyy-MM-dd') = '$tgl'")
+            ->where('noreservasi', '!=', '-')
+            ->whereNotNull('noreservasi')
+            ->where('statusenabled', true)
+            ->where('kdprofile', $kdProfile)
+            ->max('noantrian');
+        $antrianBaru = ($maxAntrian ?? 0) + 1;
+        return array("antrian" => $antrianBaru, "jamkosong" => $jamKosong);
 
     }
     public function GetRekapMobileJKN(Request $request)
@@ -4363,19 +4405,35 @@ class ReservasiOnlineController extends ApiController
             }
         }
  
-        if(count($intervals) > 0){
-            $antrian = 0;
-            for ($x = 0; $x <= count($intervalsAwal); $x++) {
-                if($intervals[0]['jam']== $intervalsAwal[$x]['jam']){
-                    $antrian = $x;
-                    break;
-                }
-            }
- 
-            return array("antrian"=> $antrian+1,"jamkosong"=>$intervals[0]['jam']);
-        }else{
-            return array("antrian"=> 0,"jamkosong"=>"00:00");
+        // OLD: slot-based - nomor antrian berdasarkan posisi slot jam di jadwal harian
+        // if(count($intervals) > 0){
+        //     $antrian = 0;
+        //     for ($x = 0; $x <= count($intervalsAwal); $x++) {
+        //         if($intervals[0]['jam']== $intervalsAwal[$x]['jam']){
+        //             $antrian = $x;
+        //             break;
+        //         }
+        //     }
+        //     return array("antrian"=> $antrian+1,"jamkosong"=>$intervals[0]['jam']);
+        // }else{
+        //     return array("antrian"=> 0,"jamkosong"=>"00:00");
+        // }
+
+        // NEW: sequential - nomor antrian berdasarkan max(noantrian) + 1 per ruangan per tanggal
+        $jamKosong = count($intervals) > 0 ? $intervals[0]['jam'] : "00:00";
+        if ($jamKosong == "00:00") {
+            return array("antrian" => 0, "jamkosong" => "00:00");
         }
+        $maxAntrian = \DB::table('antrianpasienregistrasi_t')
+            ->where('objectruanganfk', $kode)
+            ->whereRaw("to_char(tanggalreservasi,'yyyy-MM-dd') = '$tgl'")
+            ->where('noreservasi', '!=', '-')
+            ->whereNotNull('noreservasi')
+            ->where('statusenabled', true)
+            ->where('kdprofile', $kdProfile)
+            ->max('noantrian');
+        $antrianBaru = ($maxAntrian ?? 0) + 1;
+        return array("antrian" => $antrianBaru, "jamkosong" => $jamKosong);
 
     }
 
@@ -4652,5 +4710,115 @@ SELECT
                 'as'=> 'Fizi@Epic'
             );
             return $this->respond($result);
+        }
+        
+        public function updateTglCheckin (Request $request)
+        {
+            DB::beginTransaction();
+            try {
+                $tglSekarang = \Carbon\Carbon::now()->format('Y-m-d H:i:s');
+
+                // 1. Ambil data noreservasi dari tabel antrian berdasarkan norec yang dikirim
+                $antrian = DB::table('antrianpasienregistrasi_t')
+                    ->where('norec', $request['norec'])
+                    ->first();
+
+                if (!$antrian) {
+                    throw new \Exception("Data antrian tidak ditemukan.");
+                }
+
+                // 2. Cek apakah pasien sudah pernah checkin
+                $pasiendaftar = DB::table('pasiendaftar_t')
+                    ->where('statusschedule', $antrian->noreservasi)
+                    ->first();
+
+                if (!$pasiendaftar) {
+                    throw new \Exception("Data pasien tidak ditemukan.");
+                }
+
+                if (!is_null($pasiendaftar->tglcheckin)) {
+                    throw new \Exception("Pasien sudah melakukan Check-in pada " . $pasiendaftar->tglcheckin);
+                }
+
+                // 3. Update tabel pasiendaftar_t menggunakan relasi statusschedule = noreservasi
+                // Kita update tglcheckin di pasiendaftar_t hanya jika tglcheckin masih NULL
+                $updatePasiendaftar = DB::table('pasiendaftar_t')
+                    ->where('statusschedule', $antrian->noreservasi)
+                    ->whereNull('tglcheckin')
+                    ->update([
+                        'tglcheckin' => $tglSekarang
+                    ]);
+
+                // 4. (Opsional namun disarankan) Update juga di tabel antrian sebagai penanda kedatangan
+                // DB::table('antrianpasienregistrasi_t')
+                //     ->where('norec', $request['norec'])
+                //     ->update([
+                //         'tglcheckin' => $tglSekarang
+                //     ]);
+
+                DB::commit();
+
+                return $this->setStatusCode(201)->respond([
+                    "status"     => 201,
+                    "message"    => "Cek In Berhasil",
+                    "tglcheckin" => $tglSekarang,
+                    "as"         => 'ramdan@epic'
+                ], "Cek In Berhasil");
+
+            } catch (\Exception $e) {
+                DB::rollBack();
+                return $this->setStatusCode(400)->respond([
+                    "status"  => 400,
+                    "message" => "Gagal Cek In: " . $e->getMessage()
+                ], "Gagal Cek In");
+            }
+        }
+
+        public function batalTglCheckin(Request $request)
+        {
+            DB::beginTransaction();
+            try {
+                // 1. Cari data antrian
+                $antrian = DB::table('antrianpasienregistrasi_t')
+                    ->where('norec', $request['norec'])
+                    ->first();
+
+                if (!$antrian) {
+                    throw new \Exception("Data antrian tidak ditemukan.");
+                }
+
+                // 2. Cek apakah tglcheckin memang sudah ada isinya
+                $pasiendaftar = DB::table('pasiendaftar_t')
+                    ->where('statusschedule', $antrian->noreservasi)
+                    ->first();
+
+                if (!$pasiendaftar) {
+                    throw new \Exception("Data pasien tidak ditemukan.");
+                }
+
+                if (is_null($pasiendaftar->tglcheckin)) {
+                    throw new \Exception("Pasien belum melakukan Cek In, tidak bisa dibatalkan.");
+                }
+
+                // 3. Hapus tglcheckin (set ke NULL) hanya jika ada isinya
+                DB::table('pasiendaftar_t')
+                    ->where('statusschedule', $antrian->noreservasi)
+                    ->whereNotNull('tglcheckin')
+                    ->update(['tglcheckin' => null]);
+
+                DB::commit();
+
+                return $this->setStatusCode(201)->respond([
+                    "status"  => 201,
+                    "message" => "Batal Cek In Berhasil",
+                ], "Batal Cek In Berhasil");
+
+            } catch (\Exception $e) {
+                DB::rollBack();
+                return $this->setStatusCode(400)->respond([
+                    "status"  => 400,
+                    "message" => "Gagal Batal Cek In: " . $e->getMessage()
+                ], "Gagal Batal Cek In");
+            }
         }
 }

@@ -1,4 +1,4 @@
-define(['initialize'], function (initialize) {
+define(['initialize', 'Configuration'], function (initialize, config) {
     'use strict';
     initialize.controller('PengkajianGeriatriKomprehensifCtrl', ['$q', '$rootScope', '$scope', 'ModelItem', '$state', 'CacheHelper', 'DateHelper', 'MedifirstService','$mdDialog',
         function ($q, $rootScope, $scope, ModelItem, $state, cacheHelper, dateHelper, medifirstService, $mdDialog) {
@@ -7,6 +7,7 @@ define(['initialize'], function (initialize) {
             $scope.noCM = $state.params.noCM;
             $scope.tombolSimpanVis = true
             $scope.isCetak = false
+            $scope.isCetakV = true
             $scope.noRecPap = cacheHelper.get('noRecPap');
             $scope.totalSkor = 0
             $scope.totalSkor2 = 0
@@ -81,33 +82,33 @@ define(['initialize'], function (initialize) {
                             arrayShiftJaga3.push(datax)
                         }
                     }
-                    if (element.kodeexternal == 'listeuroqol') {
-                        for (let z = 0; z < arrayShiftJaga4.length; z++) {
-                            const element2 = arrayShiftJaga4[z];
-                            if (element2.namaexternal == element.namaexternal) {
-                                detail.push(element)
-                                element2.details = detail
-                                sama = true
-                            }
-                        }
-                        if (sama == false) {
-                            var datax = {
-                                caption: element.caption,
-                                cbotable: element.cbotable,
-                                child: [],
-                                id: element.id,
-                                kodeexternal: element.kodeexternal,
-                                namaemr: element.namaemr,
-                                namaexternal: element.namaexternal,
-                                nourut: element.nourut,
-                                reportdisplay: element.reportdisplay,
-                                style: element.style,
-                                type: element.type,
+                    // if (element.kodeexternal == 'listeuroqol') {
+                    //     for (let z = 0; z < arrayShiftJaga4.length; z++) {
+                    //         const element2 = arrayShiftJaga4[z];
+                    //         if (element2.namaexternal == element.namaexternal) {
+                    //             detail.push(element)
+                    //             element2.details = detail
+                    //             sama = true
+                    //         }
+                    //     }
+                    //     if (sama == false) {
+                    //         var datax = {
+                    //             caption: element.caption,
+                    //             cbotable: element.cbotable,
+                    //             child: [],
+                    //             id: element.id,
+                    //             kodeexternal: element.kodeexternal,
+                    //             namaemr: element.namaemr,
+                    //             namaexternal: element.namaexternal,
+                    //             nourut: element.nourut,
+                    //             reportdisplay: element.reportdisplay,
+                    //             style: element.style,
+                    //             type: element.type,
 
-                            }
-                            arrayShiftJaga4.push(datax)
-                        }
-                    }
+                    //         }
+                    //         arrayShiftJaga4.push(datax)
+                    //     }
+                    // }
                     if (element.kodeexternal == 'listdata') {
                         for (let z = 0; z < arrayShiftJaga.length; z++) {
                             const element2 = arrayShiftJaga[z];
@@ -603,64 +604,164 @@ define(['initialize'], function (initialize) {
                     { "id": 310117, "nama": "7 - 10", "type": "checkbox", "ket": "= Nyeri Berat" },
                 ]
             }]
-            $scope.listNutrisional = [
+            // =========================================================
+            // [HIDDEN - STANDARISASI MNA] $scope.listNutrisional lama
+            // Diganti dengan $scope.listSkriningGiziMNA (standar NAPZA/Geriatri)
+            // =========================================================
+            // $scope.listNutrisional = [
+            //     {
+            //         "id": 1, "no": 1, "nama": "Apakah anda kehilangan berat badan (BB) secara tidak sengaja ? Jika Ya, berapa banyak atau berapa kg anda kehilangan BB",
+            //         "detail": [
+            //             { "id": 310157, "nama": "a. Tidak(skor 0)", "descNilai" : "0", "type": "checkbox" },
+            //             { "id": 310158, "nama": "b. ragu (skor 2)", "descNilai" : "2", "type": "checkbox" },
+            //         ]
+            //     },
+            //     {
+            //         "nama": "a. 1 - 5kg",
+            //         "detail": [
+            //             { "id": 310159, "nama": "1", "descNilai" : "1", "type": "checkbox" },
+            //         ]
+            //     },
+            //     {
+            //         "nama": "b. 6 - 10kg",
+            //         "detail": [{
+            //             "id": 310160,
+            //             "nama": "2",
+            //             "descNilai": "2",
+            //             "type": "checkbox"
+            //         }, ]
+            //     },
+            //     {
+            //         "nama": "c. 11 - 15kg",
+            //         "detail": [{
+            //             "id": 310161,
+            //             "nama": "3",
+            //             "descNilai": "3",
+            //             "type": "checkbox"
+            //         }, ]
+            //     },
+            //     {
+            //         "nama": "d. > 15kg",
+            //         "detail": [{
+            //             "id": 310162,
+            //             "nama": "4",
+            //             "descNilai": "4",
+            //             "type": "checkbox"
+            //         }, ]
+            //     },
+            //     {
+            //         "nama": "e. Ragu - ragu",
+            //         "detail": [{
+            //             "id": 310163,
+            //             "nama": "2",
+            //             "descNilai": "2",
+            //             "type": "checkbox"
+            //         }, ]
+            //     },
+            //     {
+            //         "id": 2, "no": 2, "nama": "Apakah Anda mengalami penurunan asupan makan karena penurunan nafsu makan atau karena tidak mampu mengunyah / menelan?",
+            //         "detail": [
+            //             { "id": 310164, "nama": "a. Tidak(skor 0)", "descNilai" : "0", "type": "checkbox" },
+            //             { "id": 310165, "nama": "b. ragu (skor 2)", "descNilai" : "2", "type": "checkbox" },
+            //         ]
+            //     },
+            // ]
+
+            // =========================================================
+            // [STANDARISASI MNA] Skrining Gizi Mini Nutritional Assessment
+            // Standar baru sesuai STANDARISASI_EMR_MNA.md
+            // =========================================================
+            $scope.listSkriningGiziMNA = [
                 {
-                    "id": 1, "no": 1, "nama": "Apakah anda kehilangan berat badan (BB) secara tidak sengaja ? Jika Ya, berapa banyak atau berapa kg anda kehilangan BB",
+                    "no": "A",
+                    "nama": "Apakah asupan makanan berkurang selama 3 bulan terakhir?",
                     "detail": [
-                        { "id": 310157, "nama": "a. Tidak(skor 0)", "descNilai" : "0", "type": "checkbox" },
-                        { "id": 310158, "nama": "b. ragu (skor 2)", "descNilai" : "2", "type": "checkbox" },
+                        { "id": 1901310041, "nama": "0 = Asupan makanan sangat berkurang", "descNilai": 0 },
+                        { "id": 1901310042, "nama": "1 = Asupan makanan agak berkurang", "descNilai": 1 },
+                        { "id": 1901310043, "nama": "2 = Asupan makanan tidak berkurang", "descNilai": 2 }
                     ]
                 },
                 {
-                    "nama": "a. 1 - 5kg",
+                    "no": "B",
+                    "nama": "Berat badan turun selama 3 bulan terakhir?",
                     "detail": [
-                        { "id": 310159, "nama": "1", "descNilai" : "1", "type": "checkbox" },
+                        { "id": 1901310044, "nama": "0 = Berat badan turun lebih dari 3 kg", "descNilai": 0 },
+                        { "id": 1901310045, "nama": "1 = Tidak tahu", "descNilai": 1 },
+                        { "id": 1901310046, "nama": "2 = Berat badan turun antara 1 hingga 3 kg", "descNilai": 2 },
+                        { "id": 1901310047, "nama": "3 = Berat badan tidak turun", "descNilai": 3 }
                     ]
                 },
                 {
-                    "nama": "b. 6 - 10kg",
-                    "detail": [{
-                        "id": 310160,
-                        "nama": "2",
-                        "descNilai": "2",
-                        "type": "checkbox"
-                    }, ]
-                },
-                {
-                    "nama": "c. 11 - 15kg",
-                    "detail": [{
-                        "id": 310161,
-                        "nama": "3",
-                        "descNilai": "3",
-                        "type": "checkbox"
-                    }, ]
-                },
-                {
-                    "nama": "d. > 15kg",
-                    "detail": [{
-                        "id": 310162,
-                        "nama": "4",
-                        "descNilai": "4",
-                        "type": "checkbox"
-                    }, ]
-                },
-                {
-                    "nama": "e. Ragu - ragu",
-                    "detail": [{
-                        "id": 310163,
-                        "nama": "2",
-                        "descNilai": "2",
-                        "type": "checkbox"
-                    }, ]
-                },
-                {
-                    "id": 2, "no": 2, "nama": "Apakah Anda mengalami penurunan asupan makan karena penurunan nafsu makan atau karena tidak mampu mengunyah / menelan?",
+                    "no": "C",
+                    "nama": "Pergerakan atau Mobilitas?",
                     "detail": [
-                        { "id": 310164, "nama": "a. Tidak(skor 0)", "descNilai" : "0", "type": "checkbox" },
-                        { "id": 310165, "nama": "b. ragu (skor 2)", "descNilai" : "2", "type": "checkbox" },
+                        { "id": 1901310048, "nama": "0 = Terbatas di tempat tidur atau kursi", "descNilai": 0 },
+                        { "id": 1901310049, "nama": "1 = Mampu bangun dari tempat tidur/kursi, tapi tidak bisa keluar", "descNilai": 1 },
+                        { "id": 1901310050, "nama": "2 = Dapat bepergian ke luar rumah", "descNilai": 2 }
                     ]
                 },
-            ]
+                {
+                    "no": "D",
+                    "nama": "Mengalami tekanan psikologis atau penyakit akut (3 bln terakhir)?",
+                    "detail": [
+                        { "id": 1901310051, "nama": "0 = Ya", "descNilai": 0 },
+                        { "id": 1901310052, "nama": "2 = Tidak", "descNilai": 2 }
+                    ]
+                },
+                {
+                    "no": "E",
+                    "nama": "Gangguan neuropsikologis",
+                    "detail": [
+                        { "id": 1901310053, "nama": "0 = Demensia berat atau depresi", "descNilai": 0 },
+                        { "id": 1901310054, "nama": "1 = Demensia ringan", "descNilai": 1 },
+                        { "id": 1901310055, "nama": "2 = Tidak ada gangguan psikologis", "descNilai": 2 }
+                    ]
+                },
+                {
+                    "no": "F1",
+                    "nama": "Indeks Massa Tubuh (IMT)",
+                    "detail": [
+                        { "id": 1901310056, "nama": "0 = IMT kurang dari 19", "descNilai": 0 },
+                        { "id": 1901310057, "nama": "1 = IMT 19 hingga kurang dari 21", "descNilai": 1 },
+                        { "id": 1901310058, "nama": "2 = IMT 21 hingga kurang dari 23", "descNilai": 2 },
+                        { "id": 1901310059, "nama": "3 = IMT 23 atau lebih besar", "descNilai": 3 }
+                    ]
+                },
+                {
+                    "no": "F2",
+                    "nama": "Lingkar lengan atas (LiLA) - Jika IMT tidak dapat diukur",
+                    "detail": [
+                        { "id": 1901310060, "nama": "0,0 = LiLA kurang dari 21", "descNilai": 0 },
+                        { "id": 1901310061, "nama": "0,5 = LiLA 21 hingga 22", "descNilai": 0.5 },
+                        { "id": 1901310062, "nama": "1,0 = LiLA lebih dari 22", "descNilai": 1 }
+                    ]
+                }
+            ];
+
+            $scope.getSkorMNA = function (opsi, detailOpsi) {
+                // 1. Terapkan Single Selection (Mutual Exclusivity)
+                for (var i = 0; i < detailOpsi.length; i++) {
+                    if (detailOpsi[i].id !== opsi.id) {
+                        $scope.item.obj[detailOpsi[i].id] = false;
+                    }
+                }
+
+                // 2. Hitung Total Skor
+                var totalSkor = 0;
+                for (var a = 0; a < $scope.listSkriningGiziMNA.length; a++) {
+                    var pertanyaan = $scope.listSkriningGiziMNA[a];
+                    for (var b = 0; b < pertanyaan.detail.length; b++) {
+                        var pilihan = pertanyaan.detail[b];
+                        if ($scope.item.obj[pilihan.id] === true) {
+                            totalSkor += parseFloat(pilihan.descNilai);
+                        }
+                    }
+                }
+
+                // 3. Simpan total skor ke input visual & model object database
+                $scope.skorMNA = totalSkor;
+                $scope.item.obj[1901310063] = totalSkor; // ID Total Skor MNA di emrd_t
+            };
             $scope.listmmse = [
                 {
                     "id": 1,
@@ -1033,141 +1134,141 @@ define(['initialize'], function (initialize) {
             ]
 
 
-$scope.listeuroqol = [
-                {
-                    "id": 1,
-                    "nama": "1. MOBILITAS",
-                    "detail": [{
-                            "id": 1,
-                            "nama": "Saya tidak mempunyai masalah untuk berjalan",
-                            "detail": [{
-                                id: 310224,
-                            }]
-                        },
-                        {
-                            "id": 2,
-                            "nama": "Saya ada masalah untuk berjalan",
-                            "detail": [{
-                                id: 310225,
-                            }]
-                        },
-                        {
-                            "id": 3,
-                            "nama": "Saya hanya mampu berbaring",
-                            "detail": [{
-                                id: 310226,
-                            }]
-                        },
-                    ]
-                },
-                {
-                    "id": 2,
-                    "nama": "2. PERAWATAN DIRI SENDIRI",
-                    "detail": [{
-                            "id": 1,
-                            "nama": "Saya tidak mempunyai kesulitan dalam perawatan diri sendiri",
-                            "detail": [{
-                                id: 310228,
-                            }]
-                        },
-                        {
-                            "id": 2,
-                            "nama": "Saya mengalami kesulitan untuk membasuh badan, mandi atau berpakaian",
-                            "detail": [{
-                                id: 310229,
-                            }]
-                        },
-                        {
-                            "id": 3,
-                            "nama": "Saya tidak mampu membasuh badan, mandi atau berpakaian sendiri",
-                            "detail": [{
-                                id: 310230,
-                            }]
-                        },
-                    ]
-                },
-                {
-                    "id": 3,
-                    "nama": "3. AKTIVITAS SEHARI-HARI (misalnya pekerjaan rumah tangga, aktivitas keluarga, bersantai)",
-                    "detail": [{
-                        "id": 1,
-                        "nama": "Saya tak mempunyai kesulitan dalam melaksanakan kegiatan sehari-hari",
-                        "max": 5,
-                        "detail": [{
-                            id: 310232,
-                        }]
-                    },
-                    {
-                        "id": 2,
-                        "nama": "Saya mempunyai keterbatasan dalam melaksanakan kegiatan sehari-hari",
-                        "detail": [{
-                            id: 310233,
-                        }]
-                    },
-                    {
-                        "id": 3,
-                        "nama": "Saya tak mampu melaksanakan kegiatan sehari-hari",
-                        "detail": [{
-                            id: 310234,
-                        }]
-                    },
-                 ]
-                },
-                {
-                    "id": 4,
-                    "nama": "4. RASA NYERI / TAK NYAMAN",
-                    "detail": [{
-                        "id": 1,
-                        "nama": "Saya tidak mempunyai keluhan rasa nyeri atau rasa tak nyaman",
-                        "max": 3,
-                        "detail": [{
-                            id: 310236,
-                        }]
-                    },
-                    {
-                        "id": 2,
-                        "nama": "Saya suka merasakan agak nyeri atau agak kurang nyaman",
-                        "detail": [{
-                            id: 310237,
-                        }]
-                    },
-                    {
-                        "id": 3,
-                        "nama": "Saya menderita karena keluhan rasa nyeri atau tidak nyaman",
-                        "detail": [{
-                            id: 310238,
-                        }]
-                    }, ]
-                },
-                {
-                    "id": 5,
-                    "nama": "5. RASA CEMAS / DEPRESI",
-                    "detail": [{
-                        "id": 1,
-                        "nama": "Saya tidak merasa cemas/gelisah atau depresi (jiwa tertekan)",
-                        "max": 2,
-                        "detail": [{
-                            id: 310240,
-                        }]
-                    }, {
-                        "id": 2,
-                        "nama": "Saya suka merasa agak cemas atau depresi",
-                        "max": 1,
-                        "detail": [{
-                            id: 310241,
-                        }]
-                    },
-                    {
-                        "id": 3,
-                        "nama": "Saya merasa sangat cemas atau sangat depresi",
-                        "max": 3,
-                        "detail": [{
-                            id: 310242,
-                        }]
-                    },
-                ]
-                },
-            ]
+// $scope.listeuroqol = [
+//                 {
+//                     "id": 1,
+//                     "nama": "1. MOBILITAS",
+//                     "detail": [{
+//                             "id": 1,
+//                             "nama": "Saya tidak mempunyai masalah untuk berjalan",
+//                             "detail": [{
+//                                 id: 310224,
+//                             }]
+//                         },
+//                         {
+//                             "id": 2,
+//                             "nama": "Saya ada masalah untuk berjalan",
+//                             "detail": [{
+//                                 id: 310225,
+//                             }]
+//                         },
+//                         {
+//                             "id": 3,
+//                             "nama": "Saya hanya mampu berbaring",
+//                             "detail": [{
+//                                 id: 310226,
+//                             }]
+//                         },
+//                     ]
+//                 },
+//                 {
+//                     "id": 2,
+//                     "nama": "2. PERAWATAN DIRI SENDIRI",
+//                     "detail": [{
+//                             "id": 1,
+//                             "nama": "Saya tidak mempunyai kesulitan dalam perawatan diri sendiri",
+//                             "detail": [{
+//                                 id: 310228,
+//                             }]
+//                         },
+//                         {
+//                             "id": 2,
+//                             "nama": "Saya mengalami kesulitan untuk membasuh badan, mandi atau berpakaian",
+//                             "detail": [{
+//                                 id: 310229,
+//                             }]
+//                         },
+//                         {
+//                             "id": 3,
+//                             "nama": "Saya tidak mampu membasuh badan, mandi atau berpakaian sendiri",
+//                             "detail": [{
+//                                 id: 310230,
+//                             }]
+//                         },
+//                     ]
+//                 },
+//                 {
+//                     "id": 3,
+//                     "nama": "3. AKTIVITAS SEHARI-HARI (misalnya pekerjaan rumah tangga, aktivitas keluarga, bersantai)",
+//                     "detail": [{
+//                         "id": 1,
+//                         "nama": "Saya tak mempunyai kesulitan dalam melaksanakan kegiatan sehari-hari",
+//                         "max": 5,
+//                         "detail": [{
+//                             id: 310232,
+//                         }]
+//                     },
+//                     {
+//                         "id": 2,
+//                         "nama": "Saya mempunyai keterbatasan dalam melaksanakan kegiatan sehari-hari",
+//                         "detail": [{
+//                             id: 310233,
+//                         }]
+//                     },
+//                     {
+//                         "id": 3,
+//                         "nama": "Saya tak mampu melaksanakan kegiatan sehari-hari",
+//                         "detail": [{
+//                             id: 310234,
+//                         }]
+//                     },
+//                  ]
+//                 },
+//                 {
+//                     "id": 4,
+//                     "nama": "4. RASA NYERI / TAK NYAMAN",
+//                     "detail": [{
+//                         "id": 1,
+//                         "nama": "Saya tidak mempunyai keluhan rasa nyeri atau rasa tak nyaman",
+//                         "max": 3,
+//                         "detail": [{
+//                             id: 310236,
+//                         }]
+//                     },
+//                     {
+//                         "id": 2,
+//                         "nama": "Saya suka merasakan agak nyeri atau agak kurang nyaman",
+//                         "detail": [{
+//                             id: 310237,
+//                         }]
+//                     },
+//                     {
+//                         "id": 3,
+//                         "nama": "Saya menderita karena keluhan rasa nyeri atau tidak nyaman",
+//                         "detail": [{
+//                             id: 310238,
+//                         }]
+//                     }, ]
+//                 },
+//                 {
+//                     "id": 5,
+//                     "nama": "5. RASA CEMAS / DEPRESI",
+//                     "detail": [{
+//                         "id": 1,
+//                         "nama": "Saya tidak merasa cemas/gelisah atau depresi (jiwa tertekan)",
+//                         "max": 2,
+//                         "detail": [{
+//                             id: 310240,
+//                         }]
+//                     }, {
+//                         "id": 2,
+//                         "nama": "Saya suka merasa agak cemas atau depresi",
+//                         "max": 1,
+//                         "detail": [{
+//                             id: 310241,
+//                         }]
+//                     },
+//                     {
+//                         "id": 3,
+//                         "nama": "Saya merasa sangat cemas atau sangat depresi",
+//                         "max": 3,
+//                         "detail": [{
+//                             id: 310242,
+//                         }]
+//                     },
+//                 ]
+//                 },
+//             ]
             $scope.listgds = [
                 {
                     "id": 1,
@@ -1989,7 +2090,7 @@ console.log(jawab)
                     },
                 ];
                 
-                medifirstService.post('emr/get-emr-inputan-otomatis', payload)
+                medifirstService.post('emr/get-emr-inputan-otomatis?noregistrasi=' + $scope.cc.noregistrasi, payload)
                     .then(function (res) {
                         console.log(res.data);
                         $scope.item.obj[310274] = res.data.data[0].data["1901310025"] || '';
@@ -2832,7 +2933,12 @@ console.log(jawab)
                     cacheHelper.set('cacheNomorEMR', arrStr);
                 });
             }
-           
+            
+            $scope.cetakBlade = function () {
+                var local = JSON.parse(localStorage.getItem('profile') || '{}');
+                var kdprofile = local.id || 30;
+                window.open(config.baseApiBackend + 'report/cetak-pengkajian-geriatri-komprehensif?nocm=' + $scope.cc.nocm + '&noemr=' + $scope.cc.norec_emr + '&emrfk=' + $scope.cc.emrfk + '&kdprofile=' + kdprofile);
+            };
 
         }
     ]);

@@ -420,7 +420,7 @@ define(['initialize', 'Configuration'], function (initialize,config) {
                     },
                 ];
                 
-                medifirstService.post('emr/get-emr-inputan-otomatis', payload)
+                medifirstService.post('emr/get-emr-inputan-otomatis?noregistrasi=' + $scope.cc.noregistrasi, payload)
                     .then(function (res) {
                         console.log(res.data);
                         $scope.item.obj[300000105] = res.data.data[0].data["1901310025"] || '';

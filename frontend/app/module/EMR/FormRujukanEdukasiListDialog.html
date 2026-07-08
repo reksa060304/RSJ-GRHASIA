@@ -1,0 +1,67 @@
+<md-dialog aria-label="Daftar Rujukan Edukasi" style="width: 90%; max-width: 900px; max-height: 85vh; border-radius: 6px; overflow: hidden; font-family: 'Outfit', 'Inter', sans-serif;">
+    
+    <!-- Header -->
+    <div style="background: linear-gradient(135deg, #1976d2, #1565c0); padding: 14px 20px; display: flex; align-items: center; justify-content: space-between; flex-shrink: 0; box-shadow: 0 2px 4px rgba(0,0,0,0.1);">
+        <div style="display: flex; align-items: center; gap: 10px;">
+            <i class="fa fa-list-alt" style="color: white; font-size: 20px;"></i>
+            <span style="color: white; font-size: 16px; font-weight: 600; letter-spacing: 0.3px;">Daftar Formulir Rujukan Edukasi Pasien</span>
+        </div>
+        <button ng-click="tutupDialog()" 
+                style="background: rgba(255,255,255,0.15); border: 1px solid rgba(255,255,255,0.3); color: white; border-radius: 4px; padding: 6px 14px; cursor: pointer; font-size: 13px; font-weight: 500; transition: background 0.2s;">
+            <i class="fa fa-times"></i> Tutup
+        </button>
+    </div>
+
+    <!-- Content -->
+    <md-dialog-content style="padding: 20px; overflow-y: auto; background-color: #f8f9fa;">
+        <!-- Search Input -->
+        <div style="margin-bottom: 15px; display: flex; align-items: center; position: relative;">
+            <i class="fa fa-search" style="position: absolute; left: 12px; color: #9e9e9e; font-size: 14px;"></i>
+            <input type="text" 
+                   ng-model="searchText" 
+                   placeholder="Cari nama rujukan edukasi..." 
+                   style="width: 100%; padding: 8px 12px 8px 36px; border: 1px solid #ccc; border-radius: 4px; font-size: 14px; font-family: 'Outfit', sans-serif; box-shadow: inset 0 1px 3px rgba(0,0,0,0.05); outline: none; transition: border-color 0.2s;"
+                   onfocus="this.style.borderColor='#1976d2'" 
+                   onblur="this.style.borderColor='#ccc'">
+        </div>
+
+        <div style="background: white; border-radius: 6px; box-shadow: 0 1px 3px rgba(0,0,0,0.05); overflow: hidden; border: 1px solid #e0e0e0;">
+            <table style="width: 100%; border-collapse: collapse; font-size: 14px;">
+                <thead>
+                    <tr style="background-color: #f1f3f5; border-bottom: 2px solid #dee2e6;">
+                        <th style="padding: 12px 15px; text-align: center; width: 6%; color: #495057; font-weight: 600;">No</th>
+                        <th style="padding: 12px 15px; text-align: left; color: #495057; font-weight: 600;">Nama Formulir</th>
+                        <th style="padding: 12px 15px; text-align: center; width: 25%; color: #495057; font-weight: 600;">Status Pengisian</th>
+                        <th style="padding: 12px 15px; text-align: center; width: 20%; color: #495057; font-weight: 600;">Aksi</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr ng-repeat="form in rujukanEdukasiForms | filter: {title: searchText}" style="border-bottom: 1px solid #dee2e6; transition: background-color 0.2s;">
+                        <td style="padding: 12px 15px; text-align: center; color: #6c757d; font-weight: 500;">{{$index + 1}}</td>
+                        <td style="padding: 12px 15px; font-weight: 500; color: #212529;">{{form.title}}</td>
+                        <td style="padding: 12px 15px; text-align: center;">
+                            <span ng-if="form.status" style="background-color: #e8f5e9; color: #2e7d32; padding: 4px 8px; border-radius: 12px; font-size: 12px; font-weight: 600; display: inline-flex; align-items: center; gap: 4px;">
+                                <i class="fa fa-check-circle"></i> Sudah Diisi
+                            </span>
+                            <span ng-if="!form.status" style="background-color: #f5f5f5; color: #757575; padding: 4px 8px; border-radius: 12px; font-size: 12px; font-weight: 600; display: inline-flex; align-items: center; gap: 4px;">
+                                <i class="fa fa-info-circle"></i> Belum Diisi
+                            </span>
+                            <div ng-if="form.status && form.tglemr" style="font-size: 11px; color: #6c757d; margin-top: 4px;">
+                                {{form.tglemr}}
+                            </div>
+                        </td>
+                        <td style="padding: 12px 15px; text-align: center;">
+                            <button ng-click="isiForm(form)" 
+                                    ng-style="form.status ? {'background-color': '#2196f3', 'color': 'white'} : {'background-color': '#4caf50', 'color': 'white'}"
+                                    style="border: none; border-radius: 4px; padding: 6px 14px; font-size: 13px; font-weight: 500; cursor: pointer; transition: opacity 0.2s; box-shadow: 0 1px 3px rgba(0,0,0,0.1); display: inline-flex; align-items: center; gap: 6px;">
+                                <i class="fa" ng-class="form.status ? 'fa-edit' : 'fa-plus'"></i>
+                                {{form.status ? 'Edit / Lihat' : 'Isi Baru'}}
+                            </button>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </md-dialog-content>
+
+</md-dialog>

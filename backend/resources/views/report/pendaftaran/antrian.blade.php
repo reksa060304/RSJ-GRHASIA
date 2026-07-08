@@ -50,7 +50,7 @@
                         <font style="font-size: 10pt;" color="#000000" face="Tahoma">{{$dataReport['alamat']}}</font><br>
                         <hr style="margin-top: 6px;" />
                         <hr />
-                        <table cellspacing="0" cellpadding="0" bgcolor="#FFFFFF" border="0" width="365" style="margin-bottom: 5cm;">
+                        <table cellspacing="0" cellpadding="0" bgcolor="#FFFFFF" border="0" width="365">
                             <tr>
                                 <td style="text-align: left">
                                     <font style="font-size: 12pt;text-align: left;" face="Tahoma">Tanggal : {{$dataReport['tanggal']}}</font>
@@ -88,14 +88,14 @@
                                         Antrian yang belum dipanggil {{$dataReport['jmlantrian']}} Orang</font>
                                     <hr style="margin-top: 6px;" />
                                     <hr />
-                                    <p style="font-size: 12pt;text-align: left; font-family: Tahoma" >Memo :</p>
+                                    <!-- <p style="font-size: 12pt;text-align: left; font-family: Tahoma" >Memo :</p> -->
 
                                 </td>
                             </tr>
                         </table>                        
-                        <span style="text-align: center;">
+                        <!-- <span style="text-align: center;">
                             <p><b>****</b></p>
-                        </span>                   
+                        </span>                    -->
                     </td>
                 </tr>
             </tbody>

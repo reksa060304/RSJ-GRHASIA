@@ -379,6 +379,13 @@ define(['initialize'], function (initialize) {
                         "width": "80px"
                     },
                     {
+                        "field": "tglcheckin",
+                        "title": "Tanggal Checkin",
+
+                        "template": "#= tglcheckin ? kendo.toString(new Date(tglcheckin), 'dd-MM-yyyy HH:mm') : '' #",
+                        "width": "120px"
+                    },
+                    {
                         "field": "alamatlengkap",
                         "title": "Alamat",
                         "width": "100px"
@@ -405,6 +412,12 @@ define(['initialize'], function (initialize) {
                         "title": "Kompleks",
                         "width": "50px",
                         "template": '# if( iskompleks==1 ) {# ✔ # } else {#  #} #'
+
+                    },
+                    {
+                        "field": "aktivasi_mpp",
+                        "title": "Aktivasi MPP",
+                        "width": "100px",
 
                     },
                     {
@@ -1971,6 +1984,30 @@ define(['initialize'], function (initialize) {
                 medifirstService.post('rawatjalan/save-pasien-kompleks', data).then(function (e) {
                     loadData()
                     $scope.item.isKompleks = false
+                })
+            }
+            $scope.showAktivasiMPP = function () {
+                if ($scope.dataPasienSelected == undefined) {
+                    toastr.error('Pilih data dulu')
+                    return
+                }
+                if ($scope.dataPasienSelected.aktivasi_mpp != null && $scope.dataPasienSelected.aktivasi_mpp !== "") {
+                    toastr.warning('Pasien ini sudah diaktivasi MPP!')
+                    return
+                }
+                $scope.item.keteranganMPP = ''
+                $scope.popUpAktivasiMPP.center().open()
+            }
+
+            $scope.saveAktivasiMPP = function (keterangan) {
+                var data = {
+                    'nocm': $scope.dataPasienSelected.nocm,
+                    'keterangan': keterangan
+                }
+                medifirstService.post('rawatjalan/save-pasien-aktivasi-mpp', data).then(function (e) {
+                    loadData()
+                    $scope.item.keteranganMPP = ''
+                    $scope.popUpAktivasiMPP.close()
                 })
             }
             $scope.konsul = function () {

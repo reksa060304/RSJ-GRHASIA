@@ -11467,7 +11467,7 @@ class BendaharaPenerimaanController extends ApiController {
             ),
             -- PRE-FILTER: Ambil semua closing ref
             sbm_filtered AS (
-                SELECT DISTINCT sbm.norec, sbm.nostrukfk, sbm.noclosingfk
+                SELECT DISTINCT sbm.norec, sbm.nostrukfk, sbm.noclosingfk, sbm.totaldibayar
                 FROM strukbuktipenerimaan_t sbm
                 JOIN closing c ON sbm.noclosingfk = c.norec
                 WHERE sbm.statusenabled = TRUE AND sbm.kdprofile = :kdProfile
@@ -11526,6 +11526,46 @@ class BendaharaPenerimaanController extends ApiController {
                     carabayar,
                     namaruangan
                 FROM base_pelayanan_raw
+            ),
+            base_nonlayanan_raw AS (
+                SELECT 
+                    spd.norec as spd_norec,
+                    spd.objectprodukfk,
+                    sp.norec as strukfk,
+                    (COALESCE(spd.qtyproduk,0) * COALESCE(spd.hargasatuan,0) * COALESCE(spd.qtyoranglast, 1)) as subtotal_raw,
+                    pm.namapasien,
+                    cb.id as idcarabayar,
+                    cb.carabayar,
+                    ru.namaruangan,
+                    sp.namapasien_klien as namapelanggan,
+                    sbmcr.norec as sbmcr_norec,
+                    sbm.totaldibayar as sbm_totaldibayar
+                FROM sbm_filtered sbm
+                JOIN strukpelayanan_t sp ON sbm.nostrukfk = sp.norec AND sp.statusenabled = TRUE AND sp.kdprofile = :kdProfile
+                JOIN strukpelayanandetail_t spd ON sp.norec = spd.nostrukfk
+                JOIN strukbuktipenerimaancarabayar_t sbmcr ON sbmcr.nosbmfk = sbm.norec AND sbmcr.statusenabled = TRUE AND sbmcr.kdprofile = :kdProfile
+                JOIN carabayar_m cb ON cb.id = sbmcr.objectcarabayarfk AND cb.statusenabled = TRUE AND cb.kdprofile = :kdProfile
+                LEFT JOIN pasiendaftar_t pd ON pd.norec = sp.noregistrasifk AND pd.kdprofile = :kdProfile
+                LEFT JOIN pasien_m pm ON pm.id = pd.nocmfk
+                LEFT JOIN ruangan_m ru ON ru.id = spd.objectruanganasalfk
+            ),
+            base_nonlayanan AS (
+                SELECT 
+                    spd_norec,
+                    objectprodukfk,
+                    strukfk,
+                    subtotal_raw,
+                    CASE 
+                        WHEN SUM(subtotal_raw) OVER (PARTITION BY sbmcr_norec) > 0 
+                        THEN subtotal_raw * (COALESCE(sbm_totaldibayar,0)::float8 / SUM(subtotal_raw) OVER (PARTITION BY sbmcr_norec))
+                        ELSE 0 
+                    END as subtotal,
+                    namapasien,
+                    idcarabayar,
+                    carabayar,
+                    namaruangan,
+                    namapelanggan
+                FROM base_nonlayanan_raw
             ),
             -- TIPE 2: PRODUK SPECIFIC (prioritas PERTAMA - lebih spesifik)
             tipe2_produk AS (
@@ -11600,28 +11640,21 @@ class BendaharaPenerimaanController extends ApiController {
             ),
             -- TIPE 3: NON-LAYANAN (dari strukpelayanandetail)
             tipe3_nonlayanan AS (
-                SELECT DISTINCT ON (spd.norec)
-                    spd.norec as pp_norec,
+                SELECT DISTINCT ON (bn.spd_norec)
+                    bn.spd_norec as pp_norec,
                     cap.id, cap.koderekening, cap.namarekening,
                     cap1.id idlevel1, cap2.id idlevel2, cap3.id idlevel3,
                     cap4.id idlevel4, cap5.id idlevel5, cap6.id idlevel6, cap7.id idlevel7,
-                    NULL::BOOLEAN isobat_group, sbmcr.objectcarabayarfk idcarabayar,
-                    (COALESCE(spd.qtyproduk,0) * COALESCE(spd.hargasatuan,0) * COALESCE(spd.qtyoranglast, 1))::DECIMAL totaldibayarclosing,
-                    pm.namapasien,
-                    cb.carabayar,
-                    ru.namaruangan,
-                    sp.namapasien_klien as namapelanggan
-                FROM sbm_filtered sbm
-                JOIN strukpelayanan_t sp ON sbm.nostrukfk = sp.norec AND sp.statusenabled = TRUE AND sp.kdprofile = :kdProfile
-                JOIN strukpelayanandetail_t spd ON sp.norec = spd.nostrukfk
-                JOIN strukbuktipenerimaancarabayar_t sbmcr ON sbmcr.nosbmfk = sbm.norec AND sbmcr.statusenabled = TRUE AND sbmcr.kdprofile = :kdProfile
-                JOIN carabayar_m cb ON cb.id = sbmcr.objectcarabayarfk AND cb.statusenabled = TRUE AND cb.kdprofile = :kdProfile
+                    NULL::BOOLEAN isobat_group, bn.idcarabayar,
+                    bn.subtotal::DECIMAL totaldibayarclosing,
+                    bn.namapasien,
+                    bn.carabayar,
+                    bn.namaruangan,
+                    bn.namapelanggan
+                FROM base_nonlayanan bn
                 LEFT JOIN mapbkuakun2_t mba2 ON 
-                    POSITION(','||spd.objectprodukfk||',' IN ','||mba2.objectprodukfk||',') > 0
+                    POSITION(','||bn.objectprodukfk||',' IN ','||mba2.objectprodukfk||',') > 0
                     AND mba2.statusenabled = TRUE
-                LEFT JOIN pasiendaftar_t pd ON pd.norec = sp.noregistrasifk
-                LEFT JOIN pasien_m pm ON pm.id = pd.nocmfk
-                LEFT JOIN ruangan_m ru ON ru.id = spd.objectruanganasalfk
                 LEFT JOIN char_akun_pendapatan_m cap ON cap.id = mba2.objectakunpendapatanfk AND cap.statusenabled = TRUE
                 LEFT JOIN char_akun_pendapatan_m cap7 ON cap7.id = cap.headfk
                 LEFT JOIN char_akun_pendapatan_m cap6 ON cap6.id = cap7.headfk
@@ -11634,9 +11667,9 @@ class BendaharaPenerimaanController extends ApiController {
                 -- Exclude items already in tipe1 or tipe2
                 AND NOT EXISTS (
                     SELECT 1 FROM base_pelayanan bp 
-                    WHERE bp.strukfk = sp.norec
+                    WHERE bp.strukfk = bn.strukfk
                 )
-                ORDER BY spd.norec, mba2.id
+                ORDER BY bn.spd_norec, mba2.id
             ),
             -- TIPE 4: FALLBACK - item yang tidak ter-mapping di tipe manapun
             tipe4_fallback AS (

@@ -59,10 +59,19 @@
                 </div>
                 <div class="grid_12">
                     <div class="grid_2">
-                        <button class="btnTemplate1" ng-click="eResep()"><i class="fa fa-save"></i>E-Resep</button>
+                        <button class="btnTemplate1" ng-click="eResep()"><i class="fa fa-medkit"></i>E-Resep</button>
                     </div>
-                    <div class="grid_3">
-                        <button class="btnTemplate1" ng-click="riwayatPengkajian()"><i class="fa fa-search"></i>Riwayat Pengkajian</button>
+                    <div class="grid_2">
+                        <button class="btnTemplate1" ng-click="riwayatPengkajian()"><i class="fa fa-history"></i>Riwayat Pengkajian</button>
+                    </div>
+                    <div class="grid_2">
+                        <button class="btnTemplate1" ng-click="openPRMRJ()"><i class="fa fa-file-text-o"></i>Input PRMRJ</button>
+                    </div>
+                    <div class="grid_2">
+                        <button class="btnTemplate1" ng-click="openRujukanEdukasi()"><i class="fa fa-stethoscope"></i>Input Rujukan Edukasi</button>
+                    </div>
+                    <div class="grid_2">
+                        <button class="btnTemplate1" ng-click="openPengkajian()"><i class="fa fa-stethoscope"></i>Input Pengkajian</button>
                     </div>
                 </div>
                 <div class="grid_12" style="margin: 20px 0px">
@@ -404,7 +413,8 @@
     <div id="cetakScrollContainer" style="position: relative; height: 100%; overflow-y: auto; overflow-x: hidden;" oncontextmenu="return false;">
         <!-- blokir klik kanan -->
         <div id="cetakShield" ng-show="!isIframeLoading" 
-             style="position: absolute; top: 0; left: 0; width: 100%; height: 5000px; z-index: 5;"
+             ng-style="{ height: iframeHeight + 'px' }"
+             style="position: absolute; top: 0; left: 0; width: 100%; z-index: 5;"
              oncontextmenu="return false;">
         </div>
 
@@ -417,7 +427,8 @@
         </div>
 
         <iframe id="iframeCetak" ng-src="{{cetakanUrl}}" 
-                style="width: 100%; height: 5000px; border: none; pointer-events: none;" 
+                ng-style="{ height: iframeHeight + 'px' }"
+                style="width: 100%; border: none; pointer-events: none;" 
                 onload="angular.element(this).scope().iframeLoaded(this)">
         </iframe>
     </div>

@@ -152,6 +152,7 @@ define(['initialize', 'Configuration'], function (initialize, config) {
                     $scope.header.inacbgtotalgrouperBPJSNominal = parseFloat(0)
                 }
                 $scope.header.tgllahirs = moment($scope.header.tgllahir).format('DD-MM-YYYY')
+                $scope.item.catatanPasien = $scope.header.catatan ?? ''
                 syncItemFromHeader() 
                 $scope.buildKetalergi()
 
@@ -217,6 +218,7 @@ define(['initialize', 'Configuration'], function (initialize, config) {
                     39: $scope.header.nohp,
                     40: $scope.header.ketalergi,
                     41: $scope.header.pekerjaanlain,
+                    42: $scope.header.aktivasi_mpp,
                 }
                 cacheHelper.set('CacheInputDiagnosaDokter', arrStr);
                 cacheHelper.set('InputResepApotikOrderRevCtrl', arrStr);

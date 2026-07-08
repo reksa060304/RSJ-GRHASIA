@@ -853,6 +853,7 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
                     israwatinap: isRawatInap,
                     statusschedule: isRegisOnline,
                     statuspasien: statusPasien,
+                    catatan: $scope.item.catatan == undefined ? "" : $scope.item.catatan,
                     isjknloket: isMobileJKN,
 
                 }

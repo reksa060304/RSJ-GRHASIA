@@ -47,6 +47,16 @@
     <div class="panel panel-default container_12">
             <div class="panel-heading">PROFIL RINGKAS MEDIS RAWAT JALAN( P R M R J )</div>
     </div>
+
+    <!-- Tab Navigation -->
+    <div class="grid_12" style="margin-top: 8px; margin-bottom: 0;">
+        <button class="k-button" ng-class="{'k-primary': prmrjTab == 'input'}" ng-click="prmrjTab = 'input'" style="margin-right: 4px; margin-top: 10px;">
+            <i class="fa fa-edit" style="padding-right: 5px;"></i> Input PRMRJ
+        </button>
+        <button class="k-button" ng-class="{'k-primary': prmrjTab == 'riwayat'}" ng-click="prmrjTab = 'riwayat'; loadRiwayatPRMRJ()" style="margin-right: 4px; margin-top: 10px;">
+            <i class="fa fa-history" style="padding-right: 5px;"></i> Riwayat PRMRJ
+        </button>
+    </div>
     <!-- div class="grid_12" style="margin-top: 20px">
     <fieldset>
            
@@ -73,7 +83,8 @@
             </div>
     </fieldset>
     </div> -->
-    <div class="grid_12">
+    <!-- ===================== TAB INPUT ===================== -->
+    <div class="grid_12" ng-show="prmrjTab == 'input' || !prmrjTab">
                 <fieldset style="margin-top: 10px; ">
                     <div class="grid_12">
                         <div class="grid_12">
@@ -474,10 +485,71 @@
                     </div>
                 </fieldset>
             </div>
-        </div>
+    </div>
 
         <div class="grid_12">
             <div ng-include='"../app/module/EMR/TemplateButtonDinamis" '></div>
         </div>
     </div>
+
+    <!-- ===================== TAB RIWAYAT ===================== -->
+    <div class="grid_12" ng-show="prmrjTab == 'riwayat'" style="margin-top: 10px;">
+
+        <!-- Grid pilih riwayat -->
+        <div class="panel panel-default container_12">
+            <div class="panel-heading">Daftar Riwayat PRMRJ</div>
+        </div>
+        <div class="grid_12 borderBox" style="margin-bottom: 12px;">
+            <kendo-grid id="kGridRiwayatPRMRJ"
+                data-source="dataGridRiwayatPRMRJ"
+                options="columnGridRiwayatPRMRJ"
+                k-selectable="'row'"
+                k-sortable="'true'"
+                k-resizable="'true'">
+            </kendo-grid>
+        </div>
+
+        <!-- Detail riwayat yang dipilih (read-only) -->
+        <div class="grid_12" ng-show="selectedRiwayatPRMRJ" style="margin-top: 10px;">
+            <div class="panel panel-default container_12">
+                <div class="panel-heading">Detail Riwayat PRMRJ – <span style="font-weight:normal;">{{selectedRiwayatPRMRJ.tglemr}}</span></div>
+            </div>
+            <div class="grid_12" style="margin-top: 10px;">
+                <fieldset style="margin-top: 10px;">
+                    <div class="grid_12">
+                        <div class="grid_12"><p>Alergi</p></div>
+                        <div class="grid_12">
+                            <input class="k-textbox" ng-model="item.riwPRMRJ[21023362]" type="text" readonly>
+                        </div>
+                    </div>
+                    <div class="grid_12" style="margin-top: 20px;">
+                        <table style="width:100%;color: #4c5356;">
+                            <tr>
+                                <th style="text-align:center;width:200px">Tanggal</th>
+                                <th style="text-align:center;width:200px">Diagnosa</th>
+                                <th style="text-align:center;width:200px">Tindakan / Pemeriksaan / Obat-obatan</th>
+                                <th style="text-align:center;width:200px">Nama Jelas dan Tanda Tangan DPJP</th>
+                            </tr>
+                            <tr ng-repeat="row in prmrjRiwayatRows track by $index" ng-show="item.riwPRMRJ[row.dateId]">
+                                <td>
+                                    <input style="width:100%" k-ng-model="item.riwPRMRJ[row.dateId]" ng-disabled="true" kendo-datetimepicker k-format="'yyyy-MM-dd HH:mm'" parsedate="yyyy-MM-dd HH:mm" />
+                                </td>
+                                <td>
+                                    <textarea style="width:95%;height:200px" class="k-textbox" ng-model="item.riwPRMRJ[row.diagId]" readonly></textarea>
+                                </td>
+                                <td>
+                                    <textarea style="width:95%;height:200px" class="k-textbox" ng-model="item.riwPRMRJ[row.tindId]" readonly></textarea>
+                                </td>
+                                <td>
+                                    <input style="width:100%;" class="k-textbox" ng-model="item.riwPRMRJ[row.dpjpId]" type="text" readonly />
+                                </td>
+                            </tr>
+                        </table>
+                    </div>
+                </fieldset>
+            </div>
+        </div>
+    </div>
+
+</div>
 </div>
