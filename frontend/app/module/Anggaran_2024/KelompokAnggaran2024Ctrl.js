@@ -1281,20 +1281,29 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
                 //     $scope.isRouteLoading = false
                 //     return
                 // }
-                if($scope.item.subSubKegiatanSPJ == undefined){
+                if($scope.item.subKegiatanSPJ == undefined || $scope.item.subKegiatanSPJ == null || !$scope.item.subKegiatanSPJ.id){
                     $scope.isRouteLoading = false
+                    toastr.error("Pilih sub kegiatan dulu")
                     return
                 }
-                if($scope.item.mataAnggaranSPJ == undefined){
+                if($scope.item.subSubKegiatanSPJ == undefined || $scope.item.subSubKegiatanSPJ == null || !$scope.item.subSubKegiatanSPJ.id){
                     $scope.isRouteLoading = false
+                    toastr.error("Pilih sub sub kegiatan dulu")
                     return
                 }
-                if($scope.item.bendaharaSPJ == undefined){
+                if($scope.item.mataAnggaranSPJ == undefined || $scope.item.mataAnggaranSPJ == null || !$scope.item.mataAnggaranSPJ.kodemataanggaran){
                     $scope.isRouteLoading = false
+                    toastr.error("Pilih rekening dulu")
                     return
                 }
-                if($scope.item.penerimaSPJ == undefined){
+                if($scope.item.bendaharaSPJ == undefined || $scope.item.bendaharaSPJ == null || !$scope.item.bendaharaSPJ.value){
                     $scope.isRouteLoading = false
+                    toastr.error("Pilih bendahara dulu")
+                    return
+                }
+                if($scope.item.sumberDanaSPJ == undefined || $scope.item.sumberDanaSPJ == null || !$scope.item.sumberDanaSPJ.id){
+                    $scope.isRouteLoading = false
+                    toastr.error("Pilih sumber dana dulu")
                     return
                 }
 
@@ -1309,7 +1318,7 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
                     objectkegiatanfk:  $scope.item.subSubKegiatanSPJ.id,
                     objectmataanggaranfk:  $scope.item.mataAnggaranSPJ.kodemataanggaran,
                     bendaharafk:  $scope.item.bendaharaSPJ.value,
-                    penerimafk:  $scope.item.penerimaSPJ.value,
+                    penerimafk:  $scope.item.penerimaSPJ ? $scope.item.penerimaSPJ.value : null,
                     pph:  $scope.item.pph,
                     ppn:  $scope.item.ppn,
                     realisasidetail: DataDetailSPJ,
