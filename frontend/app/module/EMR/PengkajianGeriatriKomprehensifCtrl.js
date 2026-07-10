@@ -2084,19 +2084,6 @@ console.log(jawab)
                 $scope.item.obj2 = []
 
                 if (nomorEMR === '-' || nomorEMR === 'undefined' || nomorEMR === undefined || nomorEMR === null) {
-                    var payload = [
-                        {
-                            emrfk: 3000544,
-                            objectId: "1901310025,3018100"
-                        },
-                    ];
-                    
-                    medifirstService.post('emr/get-emr-inputan-otomatis?noregistrasi=' + $scope.cc.noregistrasi, payload)
-                        .then(function (res) {
-                            console.log(res.data);
-                            $scope.item.obj[310274] = res.data.data[0].data["1901310025"] || '';
-                            $scope.item.obj[310277] = res.data.data[0].data["1901310025"] || '';
-                        });
 
                     medifirstService.get("emr/get-emr-otomatisvitalsign?emrfk=147"+"&noregistrasi="+$scope.cc.noregistrasi).then(function (dat) {
                         var datas = dat.data.data2
@@ -2240,6 +2227,13 @@ console.log(jawab)
                             //     $scope.getSkorGizi(datass)
                             // }
                         }
+                        if (dataLoad[i].type == "checkbox12") {
+                            chekedd = false
+                            if (dataLoad[i].value == '1' || dataLoad[i].value == 'true' || dataLoad[i].value == true) {
+                                chekedd = true
+                            }
+                            $scope.item.obj[dataLoad[i].emrdfk] = chekedd
+                        }
 
                         if (dataLoad[i].type == "datetime") {
                             $scope.item.obj[dataLoad[i].emrdfk] = new Date(dataLoad[i].value)
@@ -2293,6 +2287,25 @@ console.log(jawab)
                 //         // return
                 //     }
                 // }
+
+                var payload = [
+                    {
+                        emrfk: 3000544,
+                        objectId: "1901310025,3018100"
+                    },
+                ];
+                medifirstService.post('emr/get-emr-inputan-otomatis?noregistrasi=' + $scope.cc.noregistrasi, payload)
+                    .then(function (res) {
+                        console.log(res.data);
+                        if (res.data && res.data.data && res.data.data.length > 0 && res.data.data[0].data) {
+                            if (!$scope.item.obj[310274]) {
+                                $scope.item.obj[310274] = res.data.data[0].data["1901310025"] || '';
+                            }
+                            if (!$scope.item.obj[310277]) {
+                                $scope.item.obj[310277] = res.data.data[0].data["1901310025"] || '';
+                            }
+                        }
+                    });
 
             })
 
