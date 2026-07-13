@@ -2001,7 +2001,7 @@ define(['initialize'], function (initialize) {
 
             $scope.saveAktivasiMPP = function (keterangan) {
                 var data = {
-                    'nocm': $scope.dataPasienSelected.nocm,
+                    'noregistrasi': $scope.dataPasienSelected.noregistrasi,
                     'keterangan': keterangan
                 }
                 medifirstService.post('rawatjalan/save-pasien-aktivasi-mpp', data).then(function (e) {
