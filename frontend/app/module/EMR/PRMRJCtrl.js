@@ -327,6 +327,14 @@ define(['initialize'], function (initialize) {
                 if (cacheRekamMedis && cacheRekamMedis[40]) {
                     $scope.item.obj[21023362] = cacheRekamMedis[40];
                 }
+                //cache get alergi
+                 if ($scope.cc.norec) {
+                    medifirstService.get('emr/get-antrian-pasien-norec/' + $scope.cc.norec).then(function (e) {
+                        if (e && e.data && e.data.result && e.data.result.ketalergi) {
+                            $scope.item.obj[21023362] = e.data.result.ketalergi;
+                        }
+                    });
+                }
             })
            
             
