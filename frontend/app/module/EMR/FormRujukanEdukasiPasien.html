@@ -1,0 +1,490 @@
+<style type="text/css">
+    .tg {
+        border-collapse: collapse;
+        border-spacing: 0;
+        border-color: #aabcfe;
+    }
+
+    .tg td {
+        font-family: Arial, sans-serif;
+        font-size: 14px;
+        padding: 10px 5px;
+        border-style: solid;
+        border-width: 1px;
+        overflow: hidden;
+        word-break: normal;
+        border-color: #aabcfe;
+        color: #669;
+        background-color: #e8edff;
+    }
+
+    .tg th {
+        font-family: Arial, sans-serif;
+        font-size: 14px;
+        font-weight: normal;
+        padding: 10px 5px;
+        border-style: solid;
+        border-width: 1px;
+        overflow: hidden;
+        word-break: normal;
+        border-color: #aabcfe;
+        color: #039;
+        background-color: #b9c9fe;
+    }
+
+    .tg .tg-yw4l {
+        vertical-align: top
+    }
+
+
+    .rowstyle {
+        border-bottom: 1px dashed lightblue
+    }
+
+    .footer {
+        text-align: center;
+        font-size: 120%;
+        font-weight: 700;
+        margin-bottom: 20px
+    }
+
+    table,
+    th,
+    td {
+        border: 1px solid #777777;
+        border-collapse: collapse;
+    }
+
+    th,
+    td {
+        padding: 5px;
+        text-align: left;
+    }
+
+    /* table {
+        font-family: arial, sans-serif;
+        border-collapse: collapse;
+        width: 40px;
+
+    }
+
+    td,
+    th {
+        border: 1px solid #dddddd;
+        text-align: left;
+        padding: 8px;
+    }
+
+    tr:nth-child(even) {
+        background-color: #dddddd;
+    } */
+    .dot1 {
+        vertical-align: top;
+        height: 50px;
+        width: 50px;
+        background-color: red;
+        border-radius: 50%;
+        display: inline-block;
+    }
+
+    .dot2 {
+        vertical-align: top;
+        height: 50px;
+        width: 50px;
+        background-color: yellow;
+        border-radius: 50%;
+        display: inline-block;
+    }
+
+    .dot3 {
+        vertical-align: top;
+        height: 50px;
+        width: 50px;
+        background-color: green;
+        border-radius: 50%;
+        display: inline-block;
+    }
+
+    .dot4 {
+        vertical-align: top;
+        height: 50px;
+        width: 50px;
+        background-color: black;
+        border-radius: 50%;
+        display: inline-block;
+    }
+  
+       .activeDot:before {
+        content: '\f00c';
+    font-family: 'FontAwesome';
+    display: inline-block;
+    vertical-align: top;
+    line-height: 1em;
+    /* width: 1em; */
+    /* height: 1em; */
+    font-size: 25px;
+    /* margin-right: 0.3em; */
+    text-align: center;
+    color: #ffffff;
+    margin-top: 12px;
+    }
+    .my-disable{
+        pointer-events:none;
+
+    }
+
+    .margin-top{
+        margin-top: 20px;
+    }
+
+    .margin-top-10{
+        margin-top: 10px;
+    }
+
+    .margin-top-30{
+        margin-top: 30px;
+    }
+
+    .text-center{
+        text-align: center;
+    }
+
+    .margin-bottom{
+        margin-bottom: 10px;
+    }
+
+    .text-center{
+        text-align: center;
+    }
+
+    .border-left{
+        border-left: 1px solid black;
+    }
+
+    .border-right{
+        border-right: 1px solid rgba(54, 53, 53, 0.438);
+    }
+
+    .container-edukasi {
+        width: 100%;
+        box-sizing: border-box;
+        line-height: 1.6;
+    }
+
+    .container-edukasi > ol {
+        margin: 0;
+        padding-left: 20px;
+    }
+
+    .container-edukasi > ol > li {
+        font-weight: bold;
+        margin-bottom: 15px;
+    }
+
+    .container-edukasi p {
+        font-weight: normal;
+        margin: 5px 0 10px 0;
+    }
+
+    .container-edukasi ol[type="a"] {
+        font-weight: normal;
+        margin-top: 5px;
+        padding-left: 20px;
+    }
+
+    .container-edukasi ol[type="a"] > li {
+        margin-bottom: 5px;
+    }
+
+    /* Tata letak khusus untuk list ber-icon panah (➢) */
+    .container-edukasi ul.arrow-list {
+        list-style-type: none;
+        padding-left: 20px;
+        margin-top: 5px;
+        margin-bottom: 10px;
+    }
+
+    .container-edukasi ul.arrow-list > li {
+        position: relative;
+        padding-left: 20px;
+        margin-bottom: 3px;
+    }
+
+    .container-edukasi ul.arrow-list > li::before {
+        content: "➢";
+        position: absolute;
+        left: 0;
+        top: 0;
+    }
+
+</style> <!-- ng-class="{'my-disable':true}" -->
+<!-- <div class="grid_12"  disable-contents="allDisabled" id="form"> -->
+<div class="grid_12">
+    <div class="grid_12">
+        <div class="grid_12">
+            <fieldset style="margin-top: 50px;">
+                <div class="grid_12 margin-top-30">
+                    <label c-label item="item" style="text-align: center; font-size: 20px;"> <u>RUJUKAN EDUKASI PASIEN</u></label>
+                </div>
+                <div class="grid_12" style="margin-top: 50px;">
+                    <!-- Sleman, Tanggal -->
+                    <div class="grid_12 margin-top-10 margin-bottom">
+                        <div class="grid_7"></div>
+                        <div class="grid_5">
+                            <label c-label item="item" style="display: inline-block; width: 60px; vertical-align: middle;">Sleman, </label>
+                            <input style="width: calc(100% - 70px); display: inline-block;" k-ng-model="item.obj[1901310026]" kendo-datetimepicker
+                                placeholer="yyyy-MM-dd HH:mm" k-format="'yyyy-MM-dd HH:mm'" parsedate="yyyy-MM-dd HH:mm" />
+                        </div>
+                    </div>
+
+                    <!-- Kepada Yth -->
+                    <div class="grid_12 margin-top-10 margin-bottom">
+                        <div class="grid_1"></div>
+                        <div class="grid_11">
+                            <label c-label item="item" class="margin-bottom">Kepada :</label>
+                        </div>
+                    </div>
+                    <div class="grid_12 margin-bottom">
+                        <div class="grid_1"></div>
+                        <div class="grid_1">
+                            <label c-label item="item" class="margin-bottom">Yth. :</label>
+                        </div>
+                        <div class="grid_10">
+                            <textarea c-text-area type="input" filter="'string'" class="k-textbox" ng-model="item.obj[1901310027]"
+                            style="height: 30px; width: 100%; "/>
+                        </div>
+                    </div>
+                    <div class="grid_12 margin-bottom">
+                        <div class="grid_1"></div>
+                        <div class="grid_1">
+                            <label c-label item="item" class="margin-bottom">di :</label>
+                        </div>
+                        <div class="grid_10">
+                            <textarea c-text-area type="input" filter="'string'" class="k-textbox" ng-model="item.obj[1901310028]"
+                            style="height: 30px; width: 100%; "/>
+                        </div>
+                    </div>
+
+                    <!-- Body Intro -->
+                    <div class="grid_12 margin-top-30 margin-bottom">
+                        <div class="grid_1"></div>
+                        <div class="grid_11">
+                            <label c-label item="item">Bersama ini kami kirimkan penderita/klien :</label>
+                        </div>
+                    </div>
+
+                    <!-- Nama Pasien -->
+                    <div class="grid_12 margin-top-10 margin-bottom">
+                        <div class="grid_1"></div>
+                        <div class="grid_2">
+                            <label c-label item="item" class="margin-bottom">Nama</label>
+                        </div>
+                        <div class="grid_9">
+                            <textarea c-text-area type="input" filter="'string'" class="k-textbox" ng-model="item.obj[1901310029]"
+                            style="height: 30px; width: 100%; "/>
+                        </div>
+                    </div>
+
+                    <!-- Umur -->
+                    <div class="grid_12 margin-top-10 margin-bottom">
+                        <div class="grid_1"></div>
+                        <div class="grid_2">
+                            <label c-label item="item" class="margin-bottom">Umur</label>
+                        </div>
+                        <div class="grid_9">
+                            <textarea c-text-area type="input" filter="'string'" class="k-textbox" ng-model="item.obj[1901310030]"
+                            style="height: 30px; width: 100%; "/>
+                        </div>
+                    </div>
+
+                    <!-- Pekerjaan -->
+                    <div class="grid_12 margin-top-10 margin-bottom">
+                        <div class="grid_1"></div>
+                        <div class="grid_2">
+                            <label c-label item="item" class="margin-bottom">Pekerjaan</label>
+                        </div>
+                        <div class="grid_9">
+                            <textarea c-text-area type="input" filter="'string'" class="k-textbox" ng-model="item.obj[1901310031]"
+                            style="height: 30px; width: 100%; "/>
+                        </div>
+                    </div>
+
+                    <!-- Alamat -->
+                    <div class="grid_12 margin-top-10 margin-bottom">
+                        <div class="grid_1"></div>
+                        <div class="grid_2">
+                            <label c-label item="item" class="margin-bottom">Alamat</label>
+                        </div>
+                        <div class="grid_9">
+                            <textarea c-text-area type="input" filter="'string'" class="k-textbox" ng-model="item.obj[1901310032]"
+                            style="height: 60px; width: 100%; "/>
+                        </div>
+                    </div>
+
+                    <!-- Mohon pemeriksaan / perawatan lanjutan -->
+                    <div class="grid_12 margin-top-30 margin-bottom">
+                        <div class="grid_1"></div>
+                        <div class="grid_11">
+                            <label c-label item="item"><strong>Mohon pemeriksaan / perawatan lanjutan :</strong></label>
+                        </div>
+                    </div>
+
+                    <!-- Diagnosa sementara -->
+                    <div class="grid_12 margin-top-10 margin-bottom">
+                        <div class="grid_1"></div>
+                        <div class="grid_3">
+                            <label c-label item="item" class="margin-bottom">Diagnosa sementara :</label>
+                        </div>
+                        <div class="grid_8">
+                            <textarea c-text-area type="input" filter="'string'" class="k-textbox" ng-model="item.obj[1901310033]"
+                            style="height: 80px; width: 100%; "/>
+                        </div>
+                    </div>
+
+                    <!-- Terapi yang telah kami berikan -->
+                    <div class="grid_12 margin-top-10 margin-bottom">
+                        <div class="grid_1"></div>
+                        <div class="grid_3">
+                            <label c-label item="item" class="margin-bottom">Terapi yang telah kami berikan :</label>
+                        </div>
+                        <div class="grid_8">
+                            <textarea c-text-area type="input" filter="'string'" class="k-textbox" ng-model="item.obj[1901310034]"
+                            style="height: 80px; width: 100%; "/>
+                        </div>
+                    </div>
+
+                    <!-- Penutup -->
+                    <div class="grid_12 margin-top-30 margin-bottom">
+                        <div class="grid_1"></div>
+                        <div class="grid_11">
+                            <label c-label item="item">Atas bantuan dan perhatiannya kami ucapkan terima kasih.</label>
+                        </div>
+                    </div>
+
+                    <!-- Dokter Pemeriksa -->
+                    <div class="grid_12 margin-bottom" style="margin-top: 50px;">
+                        <div class="grid_7"></div>
+                        <div class="grid_5">
+                            <label c-label item="item" style="text-align: center; display: block; margin-bottom: 50px;">Dokter Pemeriksa,</label>
+                            <input style="width: 100%; text-align: center;" kendo-combo-box k-ng-model="item.obj[1901310035]"
+                            k-data-text-field="'text'" k-data-value-field="'value'" k-filter="'contains'"
+                            k-auto-bind="false" k-data-source="listPegawai" />
+                        </div>
+                    </div>
+                    <hr></hr>
+                </div>
+            </fieldset>
+        </div>
+    </div>
+</div>
+
+<br />
+<br />
+<div class="grid_12">
+    <div ng-include='"../app/module/EMR/TemplateButtonDinamis" '></div>
+</div>
+
+<div kendo-window="winDialog" k-title="'Pilih Pegawai'" k-width="400" k-height="120" k-visible="false"
+    k-on-open="win2visible = true" k-on-close="win2visible = false">
+    <label c-label item="item" c-label-text="pegawaiPenandaTangan"></label>
+    <input style="width: 100%;" kendo-combo-box k-ng-model="item.pegawai" k-data-text-field="'text'"
+        k-filter="'contains'" k-data-value-field="'value'" k-auto-bind="false" k-data-source="listPegawai" />
+    <div class="clear">
+        <button class="k-button" ng-click="savePengajuanTTE(item.pegawai)"
+            style="float:right;margin-top:4%">Simpan</button>
+    </div>
+</div>
+
+<div kendo-window="popUpTTD" k-title="'Tanda Tangani Dokumen'" k-width="800" k-visible="false" k-on-open="win2visible = true"
+    k-on-close="win2visible = false">
+    <div class="panel panel-default container_12" style="padding: 0px 10px;">
+        <fieldset>
+            <legend><label c-label item="item"> Dokumen</label></legend>
+
+            <div class="grid_12">
+                <div class="grid_3"  style=" margin-top: 10px;">
+                    <label c-label item="item">Pegawai</label>
+                </div>
+                <div class="grid_9">
+                    <input style="width: 100%;" kendo-combo-box k-ng-model="item.pegawaiSign"
+                        k-data-text-field="'namalengkap'" k-data-value-field="'id'" k-filter="'contains'"
+                        k-auto-bind="false" k-data-source="listPegawaiCombo" k-on-change="changeTTD(item.pegawaiSign)" disabled/>
+                </div>
+            </div>
+            <div class="grid_12">
+                <div class="grid_3" style=" margin-top: 10px;">
+                    <label c-label item="item">NIK</label>
+                </div>
+                <div class="grid_7">
+                    <input c-text-box type="input" filter="" class="k-textbox" ng-model="item.nik" />
+                </div>
+                <div class="grid_2" style="margin-top: 5px;">
+                    <button class="k-button k-button-icontext k-primary k-grid-update" 
+                        ng-click="cekUser()" id="btnSimpanCek"><span class="k-icon k-update"></span>Cek User</button>
+                </div>
+            </div>
+            <div class="grid_12">
+                <div class="grid_3"  style=" margin-top: 10px;">
+                    <label c-label item="item">Pass Phrase</label>
+                </div>
+                <div class="grid_9">
+                    <input c-text-box type="password" filter="" class="k-textbox" ng-model="item.passphrase" />
+                </div>
+            </div>
+            <div class="grid_12">
+                <div class="grid_3"  style=" margin-top: 10px;">
+                    <label c-label item="item">Nama Dokumen</label>
+                </div>
+                <div class="grid_9">
+                    <input c-text-box type="input" filter="" class="k-textbox" ng-model="item.namadokumen" />
+                </div>
+            </div>
+            <div class="grid_12">
+                <div class="grid_3"  style=" margin-top: 10px;">
+                    <label c-label item="item">No EMR</label>
+                </div>
+                <div class="grid_9">
+                    <input c-text-box type="input" filter="" class="k-textbox" ng-model="item.nomoremr" />
+                </div>
+            </div>
+            <div class="grid_12">
+                <div class="grid_3"  style=" margin-top: 10px;">
+                    <label c-label item="item">Dokumen</label>
+                </div>
+                <div class="grid_9">
+                    <div class="grid_4" style="margin-top: 5px;">
+                        <button class="k-button k-button-icontext k-primary success k-grid-update" 
+                            ng-click="lihatDok()" id="btnSimpanCek"><span class="fa fa-eye"></span>&nbsp;Lihat Dokumen</button>
+                    </div>
+                </div>
+            </div>
+            <div class="grid_12">
+                <div class="grid_3"  style=" margin-top: 10px;">
+                    <label c-label item="item">Halaman</label>
+                </div>
+                <div class="grid_9">
+                    <input style="width: 100%;" kendo-combo-box k-ng-model="item.page"
+                        k-data-text-field="'page'" k-data-value-field="'id'" k-filter="'contains'"
+                        k-auto-bind="false" k-data-source="listPage"/>
+                </div>
+            </div>
+            <div class="grid_12">
+                <div class="grid_3">
+                    <label c-label item="item">Keterangan</label>
+                </div>
+                <div class="grid_9">
+                    <textarea class="k-textbox" style="height: 76px; width: 100%; resize: none;"
+                        ng-model="item.reason"></textarea>
+                </div>
+            </div>
+        </fieldset>
+
+        <div class="k-edit-buttons  k-state-default pull-right" style="margin-top:10px">
+            <button class="k-button k-button-icontext k-primary k-grid-update" ng-disabled="disabledSimpan2"
+                ng-click="SaveUpdate()" id="btnSimpan2"><span class="k-icon k-update"></span>Simpan</button>
+            <button class="k-button  k-button-icontext" ng-disabled="disabledBatal" ng-click="batal()"
+                id="btnBatal2"><span class="k-icon k-cancel"></span>Batal</button>
+        </div>
+
+    </div>
+</div>
