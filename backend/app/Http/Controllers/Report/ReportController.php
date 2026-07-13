@@ -10410,7 +10410,8 @@ class ReportController extends ApiController{
             $qbulan
             $qtahun
             AND bku.statusenabled = TRUE 
-            AND spj.statusenabled = TRUE 
+            AND spj.statusenabled = TRUE
+            AND stp.statusenabled = TRUE 
         ) AS x 
     ORDER BY
         nourut"));
