@@ -321,16 +321,21 @@ define(['initialize', 'Configuration'], function (initialize, config) {
                     data: arrSave
                 }
                 medifirstService.post('emr/save-emr-dinamis', jsonSave).then(function (e) {
+                    norecEMR = e.data.norecEMR;
+                    nomorEMR = e.data.data.noemr;
+                    $scope.cc.norec_emr = e.data.data.noemr;
 
-                    medifirstService.postLogging('EMR', 'norec emrpasien_t', e.data.data.norec,  
+                    medifirstService.postLogging('EMR', 'norec emrpasien_t', e.data.norecEMR,  
                     'FormRujukanEdukasiPsikiatriCtrl' + ' dengan No EMR - ' +e.data.data.noemr +  ' pada No Registrasi ' 
                     + $scope.cc.noregistrasi).then(function (res) {
                     })
 
                     var arrStr = {
-                        0: e.data.data.noemr
+                        0: e.data.data.noemr,
+                        1: e.data.norecEMR
                     }
                     cacheHelper.set('cacheNomorEMR', arrStr);
+                    cacheHelper.set('cacheNOREC_EMR', e.data.norecEMR);
                 });
             }
 
