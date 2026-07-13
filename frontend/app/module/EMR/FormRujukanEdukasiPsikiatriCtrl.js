@@ -156,7 +156,7 @@ define(['initialize', 'Configuration'], function (initialize, config) {
             var chekedd = false;
 
             $scope.textInputs = [];
-            $scope.datetimeInputs = [1901307160];
+            $scope.datetimeInputs = [1901307160, 1901306000];
             $scope.comboboxInputs = [1901307170];
             $scope.checkboxInputs = [
               1901306001, 1901306002, 1901306003, 1901306004, 1901306005,
@@ -165,11 +165,21 @@ define(['initialize', 'Configuration'], function (initialize, config) {
               1901306025, 1901306026, 1901306031, 1901306032, 1901306033,
               1901306035, 1901306041, 1901306042, 1901306043, 1901306044,
               1901306045, 1901306046, 1901306047,
+              1901307240, 1901307250,
             ];
             $scope.textareaInputs = [
               1901306008, 1901306015, 1901306027, 1901306036, 1901306048,
               1901306049,
+              1901307000, 1901307210, 1901307230, 1901307260, 1901307270,
             ];
+
+            $scope.toggleJenisKelamin = function(id) {
+                if (id == 1901307240) {
+                    $scope.item.obj[1901307250] = !$scope.item.obj[1901307240];
+                } else if (id == 1901307250) {
+                    $scope.item.obj[1901307240] = !$scope.item.obj[1901307250];
+                }
+            };
 
             medifirstService.get("emr/get-emr-transaksi-detail?noemr=" + nomorEMR + "&emrfk=" + $scope.cc.emrfk, true).then(function (dat) {
                 $scope.item.obj = []
@@ -177,12 +187,16 @@ define(['initialize', 'Configuration'], function (initialize, config) {
                 $scope.item.obj[116062]=$scope.now
                 $scope.item.obj[116068]={text:$scope.cc.namaruangan,value: $scope.cc.objectruanganfk}
 
-                $scope.item.obj[1901306001]=$scope.cc.namapasien
-                $scope.item.obj[1901306002]=$scope.cc.umur
-                $scope.item.obj[1901307140]=$scope.cc.nocm
-
+                $scope.item.obj[1901306000]=$scope.now
                 $scope.item.obj[1901307210]=$scope.cc.namapasien
                 $scope.item.obj[1901307220]=$scope.cc.nocm
+                $scope.item.obj[1901307230]=$scope.cc.umur
+                if($scope.cc.jeniskelamin == 'LAKI-LAKI'){
+                    $scope.item.obj[1901307240]=true
+                } else {
+                    $scope.item.obj[1901307250]=true
+                }
+                $scope.item.obj[1901307140]=$scope.cc.nocm
                 
 
                 dataLoad = dat.data.data

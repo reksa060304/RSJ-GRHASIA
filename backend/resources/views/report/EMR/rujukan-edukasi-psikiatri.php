@@ -256,6 +256,61 @@
                 </tr>
         </table>
 
+        <table style="width: 100%; margin-top: 20px; margin-left: 20px; font-size: 10.5pt !important; border-collapse: collapse;">
+            <tr>
+                <td style="width: 20%; padding: 3px 0;">Rumah Sakit</td>
+                <td style="width: 2%; padding: 3px 0;">:</td>
+                <td style="width: 78%; padding: 3px 0;">RSJ Grhasia DIY</td>
+            </tr>
+            <tr>
+                <td style="padding: 3px 0;">Puskesmas Tujuan</td>
+                <td style="padding: 3px 0;">:</td>
+                <td style="padding: 3px 0;"><?php echo htmlspecialchars(isset($item[1901307000]) ? $item[1901307000] : '', ENT_QUOTES, 'UTF-8'); ?></td>
+            </tr>
+            <tr>
+                <td style="padding: 3px 0;">Tanggal</td>
+                <td style="padding: 3px 0;">:</td>
+                <td style="padding: 3px 0;">
+                    <?php echo date('d/m/Y H:i', strtotime(isset($item[1901306000]) ? $item[1901306000] : '')); ?>
+                </td>
+            </tr>
+            <tr>
+                <td style="padding: 3px 0;">Nama Pasien</td>
+                <td style="padding: 3px 0;">:</td>
+                <td style="padding: 3px 0;"><?php echo htmlspecialchars(isset($item[1901307210]) ? $item[1901307210] : '', ENT_QUOTES, 'UTF-8'); ?></td>
+            </tr>
+            <tr>
+                <td style="padding: 3px 0;">Umur</td>
+                <td style="padding: 3px 0;">:</td>
+                <td style="padding: 3px 0;"><?php echo htmlspecialchars(isset($item[1901307230]) ? $item[1901307230] : '', ENT_QUOTES, 'UTF-8'); ?></td>
+            </tr>
+            <tr>
+                <td style="padding: 3px 0;">Jenis Kelamin</td>
+                <td style="padding: 3px 0;">:</td>
+                <td style="padding: 3px 0;">
+                    <?php
+                        if (isset($item[1901307240]) && ($item[1901307240] == 1 || $item[1901307240] === true)) {
+                            echo 'Laki-laki';
+                        } else if (isset($item[1901307250]) && ($item[1901307250] == 1 || $item[1901307250] === true)) {
+                            echo 'Perempuan';
+                        } else {
+                            echo '';
+                        }
+                    ?>
+                </td>
+            </tr>
+            <tr>
+                <td style="padding: 3px 0;">Diagnosa</td>
+                <td style="padding: 3px 0;">:</td>
+                <td style="padding: 3px 0;"><?php echo htmlspecialchars(isset($item[1901307260]) ? $item[1901307260] : '', ENT_QUOTES, 'UTF-8'); ?></td>
+            </tr>
+            <tr>
+                <td style="padding: 3px 0;"><b>Riwayat Perawatan</b></td>
+                <td style="padding: 3px 0;">:</td>
+                <td style="padding: 3px 0;"><?php echo nl2br(htmlspecialchars(isset($item[1901307270]) ? $item[1901307270] : '', ENT_QUOTES, 'UTF-8')); ?></td>
+            </tr>
+        </table>
+
         <?php
         if (!function_exists('checkedMark')) {
             function checkedMark($item, $id)

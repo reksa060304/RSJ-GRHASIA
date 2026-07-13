@@ -283,14 +283,10 @@
                 <td>:</td>
                 <td>
                     <?php
-                    if (isset($item[1901306003])) {
-                        if ($item[1901306003] == 1) {
-                            echo 'Laki-laki';
-                        } elseif ($item[1901306004] == 1) {
-                            echo 'Perempuan';
-                        } else {
-                            echo '';
-                        }
+                    if (isset($item[1901306003]) && ($item[1901306003] == 1 || $item[1901306003] === true)) {
+                        echo 'Laki-laki';
+                    } elseif (isset($item[1901306004]) && ($item[1901306004] == 1 || $item[1901306004] === true)) {
+                        echo 'Perempuan';
                     } else {
                         echo '';
                     }
