@@ -1714,7 +1714,7 @@ class EMRController  extends ApiController
                 'ag.agama',
                 'ps.ketalergi',
                 'pd.inacbgtotalgrouper',
-                'ps.aktivasi_mpp'
+                'pd.aktivasi_mpp'
             )
             ->where('apd.kdprofile', $idProfile)
             ->where('apd.norec', $norecAPD);

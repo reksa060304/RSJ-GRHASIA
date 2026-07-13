@@ -230,7 +230,7 @@ class RawatInapController extends ApiController
 
         $data =DB::select(DB::raw("select x.*
                 from
-                (select pd.tglregistrasi,  ps.id as nocmfk,  ps.nocm, ps.aktivasi_mpp,  pd.noregistrasi,  ps.namapasien,  ps.tgllahir, 
+                (select pd.tglregistrasi,  ps.id as nocmfk,  ps.nocm, pd.aktivasi_mpp,  pd.noregistrasi,  ps.namapasien,  ps.tgllahir, 
                  jk.jeniskelamin,  apd.objectruanganfk,  ru.objectdepartemenfk,ru.namaruangan,  kls.id as idkelas,kls.namakelas,  kp.kelompokpasien,  rek.namarekanan, 
                  apd.objectpegawaifk,  pg.namalengkap as namadokter,ps.iskompleks, ps.tgl_kompleks,
                   --br.norec, 

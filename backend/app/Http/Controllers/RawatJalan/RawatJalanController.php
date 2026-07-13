@@ -4182,12 +4182,16 @@ $ruangdokter = \DB::table('ruangan_m as ru')
         $idProfile = (int) $kdProfile;
         DB::beginTransaction();
         try {
-            $pasien = Pasien::where('nocm', $request['nocm'])
+            $pasienDaftar = PasienDaftar::where('noregistrasi', $request['noregistrasi'])
                 ->where('kdprofile', $idProfile)
-                ->update([
-                    'aktivasi_mpp' => $request['keterangan'] 
-                ]
-            );
+                ->first();
+            if ($pasienDaftar) {
+                PasienDaftar::where('norec', $pasienDaftar->norec)
+                    ->where('kdprofile', $idProfile)
+                    ->update([
+                        'aktivasi_mpp' => $request['keterangan']
+                    ]);
+            }
 
             $transStatus = 'true';
             $transMessage = "Sukses";

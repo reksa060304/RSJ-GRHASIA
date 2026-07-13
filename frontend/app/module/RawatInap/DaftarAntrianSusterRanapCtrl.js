@@ -405,7 +405,7 @@ define(['initialize'], function (initialize) {
                     "field": "aktivasi_mpp",
                     "title": "Aktivasi MPP",
                     "width": "100px",
-                    "template": "<span class='style-center'>#: aktivasi_mpp #</span>"
+                    "template": "<span class='style-center'>#: aktivasi_mpp || '' #</span>"
                 },
                  {
                         "field": "ketklinis", //warnastatus
@@ -1358,6 +1358,33 @@ define(['initialize'], function (initialize) {
                  })
 
 
+            }  
+
+            $scope.showAktivasiMPP = function () {
+                if ($scope.item == undefined || $scope.item.nocm == undefined) {
+                    toastr.error('Pilih data dulu')
+                    return
+                }
+                if ($scope.item.aktivasi_mpp != null && $scope.item.aktivasi_mpp !== "") {
+                    toastr.warning('Pasien ini sudah diaktivasi MPP!')
+                    return
+                }
+                $scope.item.keteranganMPP = ''
+                $scope.popUpAktivasiMPP.center().open()
+            }
+
+            $scope.saveAktivasiMPP = function (keterangan) {
+                var data = {
+                    'noregistrasi': $scope.item.noregistrasi,
+                    'keterangan': keterangan
+                }
+                medifirstService.post('rawatjalan/save-pasien-aktivasi-mpp', data).then(function (e) {
+                    if ($scope.item) {
+                        $scope.item.keteranganMPP = ''
+                    }
+                    loadData()
+                    $scope.popUpAktivasiMPP.close()
+                })
             }  
 
             $scope.formatRupiah = function (value, currency = 'Rp') {
