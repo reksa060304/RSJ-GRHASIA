@@ -145,7 +145,7 @@
                     <td>{{ $item[1901307000] ?? '' }}</td>
                 </tr>
                 <tr>
-                    <td><b>Tanggal</b></td>
+                    <td><b>Tanggal Masuk</b></td>
                     <td>:</td>
                     <td>{{ $item[1901306000] ?? '' }}</td>
                 </tr>
@@ -178,7 +178,7 @@
                     <td>{{ $item[1901306005] ?? '' }}</td>
                 </tr>
                 <tr>
-                    <td><b>Riwayat Perawatan</b></td>
+                    <td><b>Pengobatan Terakhir</b></td>
                     <td>:</td>
                     <td>{{ $item[1901306006] ?? '' }}</td>
                 </tr>

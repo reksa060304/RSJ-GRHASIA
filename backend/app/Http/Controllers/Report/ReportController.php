@@ -21652,13 +21652,14 @@ public function suratBuktiPengembalian(Request $request)
             ep.umur,
             al.alamatlengkap,
             ep.noregistrasifk as noregistrasi ,
-            epd.value,ep.namaruangan,pg.namalengkap as namadokter
-            --case when ed.TYPE = 'datetime' then TO_CHAR(TO_TIMESTAMP(epd.value, 'YYYY-MM-DD HH24:MI:SS'),'YYYY-MM-DD HH24:MI:SS') else epd.value end as value
+            epd.value,ep.namaruangan,pg.namalengkap as namadokter,
+            pstd.tglregistrasi as tglregistrasipd, pstd.tglpulang as tglpulangpd
         FROM
             emrpasien_t AS ep
             left JOIN emrpasiend_t AS epd ON ep.noemr = epd.emrpasienfk
             left JOIN emrd_t AS ed ON epd.emrdfk = ed.ID
             INNER JOIN antrianpasiendiperiksa_t AS pd ON pd.norec = ep.norec_apd
+            left JOIN pasiendaftar_t AS pstd ON pstd.norec = pd.noregistrasifk
             left JOIN pegawai_m AS pg ON pg.id = pd.objectpegawaifk
             left JOIN pasien_m as pa on ep.nocm =  pa.nocm
             left JOIN alamat_m as al on pa.id = al.nocmfk
@@ -21707,7 +21708,11 @@ public function suratBuktiPengembalian(Request $request)
                 if(in_array($emrdfk, $textInputs)) {
                     $item[$emrdfk] = $items->value;
                 } else if(in_array($emrdfk, $datetimeInputs)) {
-                    $item[$emrdfk] = $this->tanggal_indonesia(date('Y-m-d', strtotime($items->value)));
+                    if ($emrdfk == 1901306000) {
+                        $item[$emrdfk] = date('d/m/Y H:i', strtotime($items->value));
+                    } else {
+                        $item[$emrdfk] = $this->tanggal_indonesia(date('Y-m-d', strtotime($items->value)));
+                    }
                 } else if(in_array($emrdfk, $comboboxInputs)) {
                     if($items->value != null && $items->value != ''){
                         $arr = explode('~', $items->value);
@@ -21776,7 +21781,18 @@ public function suratBuktiPengembalian(Request $request)
             }
         }
         if (!isset($item[1901306000])) {
-            $item[1901306000] = date('Y-m-d H:i:s');
+            if (count($data) > 0 && isset($data[0]->tglregistrasipd) && $data[0]->tglregistrasipd != null) {
+                $item[1901306000] = date('d/m/Y H:i', strtotime($data[0]->tglregistrasipd));
+            } else {
+                $item[1901306000] = date('d/m/Y H:i');
+            }
+        }
+        if (!isset($item[1901307160])) {
+            if (count($data) > 0 && isset($data[0]->tglpulangpd) && $data[0]->tglpulangpd != null) {
+                $item[1901307160] = $this->tanggal_indonesia(date('Y-m-d', strtotime($data[0]->tglpulangpd)));
+            } else {
+                $item[1901307160] = $this->tanggal_indonesia(date('Y-m-d'));
+            }
         }
 
         $pageWidth = 950;

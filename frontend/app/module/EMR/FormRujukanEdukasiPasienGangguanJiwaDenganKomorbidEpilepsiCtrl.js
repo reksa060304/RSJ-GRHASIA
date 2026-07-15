@@ -150,7 +150,7 @@ define(['initialize', 'Configuration'], function (initialize, config) {
             var chekedd = false;
 
             $scope.textInputs = [3014250, 7890444, 3014252, 3014253];
-            $scope.datetimeInputs = [3014254];
+            $scope.datetimeInputs = [3014254, 1901306000, 1901307160];
             $scope.comboboxInputs = [1901307170];
             $scope.checkboxInputs = [1901306003, 1901306004];
             $scope.textareaInputs = [
@@ -162,6 +162,10 @@ define(['initialize', 'Configuration'], function (initialize, config) {
                 $scope.item.obj2 = []
                 $scope.item.obj[116062]=$scope.now
                 $scope.item.obj[116068]={text:$scope.cc.namaruangan,value: $scope.cc.objectruanganfk}
+
+                // Default tanggal masuk dan tanggal bawah
+                $scope.item.obj[1901306000] = $scope.cc.tglregistrasi ? new Date($scope.cc.tglregistrasi) : $scope.now;
+                $scope.item.obj[1901307160] = $scope.now;
 
                 $scope.item.obj[1901306001]=$scope.cc.namapasien
                 $scope.item.obj[1901306002]=$scope.cc.umur
@@ -279,6 +283,143 @@ define(['initialize', 'Configuration'], function (initialize, config) {
                         }
                     }
                     }
+                }
+
+                // Jika ada data tersimpan untuk 1901306000, sudah dihandle oleh datetimeInputs di atas
+                // Jika tidak ada, default sudah di-set sebelum loop
+
+                // Ambil diagnosa (1901306005) dari CPPT rawat inap terakhir isian dokter bagian A
+                var hasDiagnosa = dataLoad.some(function (d) { return d.emrdfk == 1901306005; });
+                if (!hasDiagnosa) {
+                    var normToUse = $scope.cc.nocm || $scope.noCM;
+                    medifirstService.get("emr/daftar-riwayat-registrasi?norm=" + normToUse).then(function (resReg) {
+                        var ranapRegs = [];
+                        if (resReg && resReg.data && resReg.data.daftar) {
+                            ranapRegs = resReg.data.daftar.filter(function (reg) {
+                                return parseInt(reg.statusinap) == 1;
+                            }).map(function (reg) {
+                                return reg.noregistrasi;
+                            });
+                        }
+                        if (ranapRegs.length > 0) {
+                            medifirstService.get("emr/get-emr-cppt?nocm=" + normToUse).then(function (resCppt) {
+                                if (resCppt && resCppt.data && resCppt.data.data) {
+                                    var cpptList = resCppt.data.data;
+                                    var filtered = cpptList.filter(function (c) {
+                                        var isDokter = c.jenisppa && c.jenisppa.toLowerCase().indexOf('dokter') > -1;
+                                        var isRanap = ranapRegs.indexOf(c.noregistrasi) > -1;
+                                        return isDokter && isRanap;
+                                    });
+                                    if (filtered.length > 0) {
+                                        var latestCppt = filtered[filtered.length - 1];
+                                        if (latestCppt.soap) {
+                                            var match = latestCppt.soap.match(/(?:^|\n)\s*A\s*:\s*([\s\S]*?)(?=(?:\n\s*[P]\s*:|$))/i);
+                                            if (match && match[1]) {
+                                                $scope.item.obj[1901306005] = match[1].trim();
+                                            }
+                                        }
+                                    }
+                                }
+                            });
+                        }
+                    });
+                }
+
+                // Ambil resep terakhir dari order farmasi untuk Riwayat Perawatan (1901306006)
+                var hasPengobatan = dataLoad.some(function (d) { return d.emrdfk == 1901306006; });
+                if (!hasPengobatan) {
+                    var normToUse = $scope.cc.nocm || $scope.noCM;
+                    medifirstService.get("emr/get-daftar-detail-order?nocm=" + normToUse).then(function (resOrder) {
+                        if (resOrder && resOrder.data && resOrder.data.length > 0) {
+                            var orders = resOrder.data;
+                            var targetOrder = null;
+                            
+                            // Kondisi 1: Yang terakhir + resep pulang
+                            for (var idx = 0; idx < orders.length; idx++) {
+                                if (orders[idx].reseppulang == 1 || orders[idx].reseppulang === true) {
+                                    targetOrder = orders[idx];
+                                    break;
+                                }
+                            }
+                            
+                            // Kondisi 2: Jika tidak ketemu, yang terakhir saja (indeks 0 karena terurut desc)
+                            if (!targetOrder) {
+                                targetOrder = orders[0];
+                            }
+                            
+                            if (targetOrder && targetOrder.details && targetOrder.details.length > 0) {
+                                var details = targetOrder.details;
+                                var nonracikList = [];
+                                var racikMap = {};
+                                
+                                for (var k = 0; k < details.length; k++) {
+                                    var item = details[k];
+                                    if (item.jeniskemasan && item.jeniskemasan.toLowerCase().indexOf('racik') > -1 && item.jeniskemasan.toLowerCase().indexOf('non') === -1) {
+                                        // Racikan
+                                        if (!racikMap[item.rke]) {
+                                            racikMap[item.rke] = {
+                                                drugs: []
+                                            };
+                                        }
+                                        racikMap[item.rke].drugs.push(item.namaproduk);
+                                    } else {
+                                        // Non Racikan
+                                        nonracikList.push(item.namaproduk);
+                                    }
+                                }
+                                
+                                var lines = [];
+                                if (nonracikList.length > 0) {
+                                    for (var a = 0; a < nonracikList.length; a++) {
+                                        lines.push((a + 1) + ". " + nonracikList[a]);
+                                    }
+                                }
+                                
+                                var racikKeys = Object.keys(racikMap);
+                                if (racikKeys.length > 0) {
+                                    var startIdx = nonracikList.length + 1;
+                                    for (var b = 0; b < racikKeys.length; b++) {
+                                        var rKey = racikKeys[b];
+                                        var rInfo = racikMap[rKey];
+                                        lines.push((startIdx + b) + ". " + rInfo.drugs.join(" + "));
+                                    }
+                                }
+                                
+                                $scope.item.obj[1901306006] = lines.join("\n");
+                            }
+                        }
+                    });
+                }
+
+                // Teks otomatis Puskesmas [kecamatan] pada field Puskesmas Tujuan (1901307000)
+                var hasPuskesmas = dataLoad.some(function (d) { return d.emrdfk == 1901307000; });
+                if (!hasPuskesmas) {
+                    var normToUse = $scope.cc.nocm || $scope.noCM;
+                    medifirstService.get("registrasi/get-pasien-by-nocm-riwayat-regis?noCm=" + normToUse).then(function (resPsn) {
+                        var kecamatan = "";
+                        if (resPsn && resPsn.data && resPsn.data.datas) {
+                            var pData = resPsn.data.datas;
+                            kecamatan = pData.namakecamatan || pData.kecamatan;
+                        }
+                        
+                        // Fallback jika database kecamatan kosong, parse dari alamatlengkap
+                        if (!kecamatan) {
+                            var alamat = $scope.cc.alamat;
+                            if (alamat) {
+                                var matchKec = alamat.match(/(?:kec\.|kecamatan)\s+([a-zA-Z\s\-]+?)(?=\s*(?:,|kab\.|kabupaten|kota|prov\.|provinsi|$|\d|sleman|bantul|gunung\s*kidul|gunungkidul|kulon\s*progo|kulonprogo|yogyakarta|jogja|jogjakarta))/i);
+                                if (matchKec && matchKec[1]) {
+                                    kecamatan = matchKec[1].replace(/(?:kabupaten|kab\.|kota|provinsi|prov\.)/i, "").trim();
+                                }
+                            }
+                        }
+                        
+                        if (kecamatan) {
+                            kecamatan = kecamatan.replace(/\w\S*/g, function(txt) {
+                                return txt.charAt(0).toUpperCase() + txt.substr(1).toLowerCase();
+                            });
+                            $scope.item.obj[1901307000] = "Puskesmas " + kecamatan;
+                        }
+                    });
                 }
 
             })

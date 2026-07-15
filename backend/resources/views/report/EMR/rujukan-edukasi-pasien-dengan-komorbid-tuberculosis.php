@@ -263,7 +263,7 @@
                 <td><?php echo htmlspecialchars(isset($item[1901307000]) ? $item[1901307000] : '', ENT_QUOTES, 'UTF-8'); ?></td>
             </tr>
             <tr>
-                <td>Tanggal</td>
+                <td>Tanggal Masuk</td>
                 <td>:</td>
                 <td>
                     <?php echo date('d/m/Y', strtotime(isset($item[1901306000]) ? $item[1901306000] : '')); ?>
@@ -299,7 +299,7 @@
                 <td><?php echo htmlspecialchars(isset($item[1901306005]) ? $item[1901306005] : '', ENT_QUOTES, 'UTF-8'); ?></td>
             </tr>
             <tr>
-                <td><b>Riwayat Perawatan</b></td>
+                <td><b>Pengobatan Terakhir</b></td>
                 <td>:</td>
                 <td><?php echo nl2br(htmlspecialchars(isset($item[1901306006]) ? $item[1901306006] : '', ENT_QUOTES, 'UTF-8')); ?></td>
             </tr>

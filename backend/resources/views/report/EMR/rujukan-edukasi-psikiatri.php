@@ -268,10 +268,10 @@
                 <td style="padding: 3px 0;"><?php echo htmlspecialchars(isset($item[1901307000]) ? $item[1901307000] : '', ENT_QUOTES, 'UTF-8'); ?></td>
             </tr>
             <tr>
-                <td style="padding: 3px 0;">Tanggal</td>
+                <td style="padding: 3px 0;">Tanggal Masuk</td>
                 <td style="padding: 3px 0;">:</td>
                 <td style="padding: 3px 0;">
-                    <?php echo date('d/m/Y H:i', strtotime(isset($item[1901306000]) ? $item[1901306000] : '')); ?>
+                    <?php echo htmlspecialchars(isset($item[1901306000]) ? $item[1901306000] : '', ENT_QUOTES, 'UTF-8'); ?>
                 </td>
             </tr>
             <tr>
@@ -305,7 +305,7 @@
                 <td style="padding: 3px 0;"><?php echo htmlspecialchars(isset($item[1901307260]) ? $item[1901307260] : '', ENT_QUOTES, 'UTF-8'); ?></td>
             </tr>
             <tr>
-                <td style="padding: 3px 0;"><b>Riwayat Perawatan</b></td>
+                <td style="padding: 3px 0;"><b>Pengobatan Terakhir</b></td>
                 <td style="padding: 3px 0;">:</td>
                 <td style="padding: 3px 0;"><?php echo nl2br(htmlspecialchars(isset($item[1901307270]) ? $item[1901307270] : '', ENT_QUOTES, 'UTF-8')); ?></td>
             </tr>

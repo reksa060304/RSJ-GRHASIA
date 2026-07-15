@@ -9151,15 +9151,19 @@ class RegistrasiController extends ApiController
                 'ps.tempatlahir',
                 'ps.tgllahir',
                 'alm.alamatlengkap',
+                'alm.namakecamatan',
+                'alm.kecamatan',
                 'ng.namanegara',
                 'jk.jeniskelamin',
-                'kb.name as kebangsaan'
+                'kb.name as kebangsaan',
+                'pk.pekerjaan'
             )
             ->leftJoin('alamat_m as alm', 'alm.nocmfk', '=', 'ps.id')
             ->leftJoin('agama_m as ag', 'ag.id', '=', 'ps.objectagamafk')
             ->leftJoin('jeniskelamin_m as jk', 'jk.id', '=', 'ps.objectjeniskelaminfk')
             ->leftJoin('negara_m as ng', 'ng.id', '=', 'ps.objectnegarafk')
             ->leftJoin('kebangsaan_m as kb', 'kb.id', '=', 'ps.objectkebangsaanfk')
+            ->leftJoin('pekerjaan_m as pk', 'pk.id', '=', 'ps.objectpekerjaanfk')
             ->where('ps.statusenabled', true)
             ->where('ps.kdprofile', $kdProfile);
 
