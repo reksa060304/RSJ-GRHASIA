@@ -44,7 +44,18 @@ class WaResumeController extends ApiController
                     DB::raw("CAST(NULL as VARCHAR) as blade"),
                     DB::raw("CAST(NULL as VARCHAR) as norec_apd"),
                     DB::raw("CAST(NULL as VARCHAR) as umur"),
-                    DB::raw("CAST(NULL as VARCHAR) as jeniskelamin")
+                    DB::raw("CAST(NULL as VARCHAR) as jeniskelamin"),
+                    'rm.nohp_puskesmas',
+                    DB::raw("(SELECT epd.value 
+                              FROM emrpasien_t ep 
+                              JOIN emrpasiend_t epd ON epd.emrpasienfk = ep.noemr 
+                              JOIN antrianpasiendiperiksa_t apd2 ON apd2.norec = ep.norec_apd 
+                              WHERE apd2.noregistrasifk = pd.norec 
+                                AND epd.emrdfk = 1901307000 
+                                AND ep.statusenabled = true 
+                                AND epd.statusenabled = true 
+                                AND ep.emrfk IN (3003043, 3003044, 3003045, 3003046, 3003047, 3003048, 3003052) 
+                              LIMIT 1) as puskesmas_tujuan")
                 )
                 ->join('antrianpasiendiperiksa_t as apd', 'apd.norec', '=', 'rm.noregistrasifk')
                 ->join('pasiendaftar_t as pd', 'pd.norec', '=', 'apd.noregistrasifk')
@@ -102,7 +113,14 @@ class WaResumeController extends ApiController
                     END as blade"),
                     'apd.norec as norec_apd',
                     'ep.umur',
-                    'ep.jeniskelamin'
+                    'ep.jeniskelamin',
+                    'ep.nohp_puskesmas',
+                    DB::raw("(SELECT epd.value 
+                              FROM emrpasiend_t epd 
+                              WHERE epd.emrpasienfk = ep.noemr 
+                                AND epd.emrdfk = 1901307000 
+                                AND epd.statusenabled = true 
+                              LIMIT 1) as puskesmas_tujuan")
                 )
                 ->join('antrianpasiendiperiksa_t as apd', 'apd.norec', '=', 'ep.norec_apd')
                 ->join('pasiendaftar_t as pd', 'pd.norec', '=', 'apd.noregistrasifk')
@@ -187,10 +205,16 @@ class WaResumeController extends ApiController
                 // EMR Document
                 $data = DB::table('emrpasien_t as ep')
                     ->select(
-                        'ep.norec', 'ep.tglemr as tgldokumen', 'ep.noemr as noemr_pasien', 'ep.emrfk',
-                        'ps.nocm', 'ps.namapasien', 'ps.nohp', 'ps.notelepon', 'ps.tgllahir',
+                        'ep.norec', 'ep.tglemr as tgldokumen', 'ep.noemr as noemr_pasien', 'ep.emrfk', 'ep.nohp_puskesmas',
+                        'ps.nocm', 'ps.namapasien', 'ps.nohp', 'ps.notelepon', 'ps.tgllahir', 'ps.teleponpenanggungjawab',
                         'kp.kelompokpasien', 'pd.noregistrasi', 'pd.tglregistrasi',
-                        'ru.namaruangan', 'pg.namalengkap as namadokter'
+                        'ru.namaruangan', 'pg.namalengkap as namadokter', 'alm.alamatlengkap as alamat_lengkap',
+                        DB::raw("(SELECT epd.value 
+                                  FROM emrpasiend_t epd 
+                                  WHERE epd.emrpasienfk = ep.noemr 
+                                    AND epd.emrdfk = 1901307000 
+                                    AND epd.statusenabled = true 
+                                  LIMIT 1) as puskesmas_tujuan")
                     )
                     ->join('antrianpasiendiperiksa_t as apd', 'apd.norec', '=', 'ep.norec_apd')
                     ->join('pasiendaftar_t as pd', 'pd.norec', '=', 'apd.noregistrasifk')
@@ -198,6 +222,7 @@ class WaResumeController extends ApiController
                     ->join('kelompokpasien_m as kp', 'kp.id', '=', 'pd.objectkelompokpasienlastfk')
                     ->leftJoin('ruangan_m as ru', 'ru.id', '=', 'apd.objectruanganfk')
                     ->leftJoin('pegawai_m as pg', 'pg.id', '=', 'pd.objectpegawaifk')
+                    ->leftJoin('alamat_m as alm', 'alm.nocmfk', '=', 'ps.id')
                     ->where('ep.kdprofile', $kdProfile)
                     ->where('ep.statusenabled', true)
                     ->where('ep.norec', $norec)
@@ -207,10 +232,20 @@ class WaResumeController extends ApiController
                 // Resume Medis (Default)
                 $data = DB::table('resumemedis_t as rm')
                     ->select(
-                        'rm.norec', 'rm.tglresume as tgldokumen', 'rm.keteranganlainnya',
-                        'ps.nocm', 'ps.namapasien', 'ps.nohp', 'ps.notelepon', 'ps.tgllahir',
+                        'rm.norec', 'rm.tglresume as tgldokumen', 'rm.keteranganlainnya', 'rm.nohp_puskesmas',
+                        'ps.nocm', 'ps.namapasien', 'ps.nohp', 'ps.notelepon', 'ps.tgllahir', 'ps.teleponpenanggungjawab',
                         'kp.kelompokpasien', 'pd.noregistrasi', 'pd.tglregistrasi',
-                        'ru.namaruangan', 'pg.namalengkap as namadokter'
+                        'ru.namaruangan', 'pg.namalengkap as namadokter', 'alm.alamatlengkap as alamat_lengkap',
+                        DB::raw("(SELECT epd.value 
+                                  FROM emrpasien_t ep 
+                                  JOIN emrpasiend_t epd ON epd.emrpasienfk = ep.noemr 
+                                  JOIN antrianpasiendiperiksa_t apd2 ON apd2.norec = ep.norec_apd 
+                                  WHERE apd2.noregistrasifk = pd.norec 
+                                    AND epd.emrdfk = 1901307000 
+                                    AND ep.statusenabled = true 
+                                    AND epd.statusenabled = true 
+                                    AND ep.emrfk IN (3003043, 3003044, 3003045, 3003046, 3003047, 3003048, 3003052) 
+                                  LIMIT 1) as puskesmas_tujuan")
                     )
                     ->join('antrianpasiendiperiksa_t as apd', 'apd.norec', '=', 'rm.noregistrasifk')
                     ->join('pasiendaftar_t as pd', 'pd.norec', '=', 'apd.noregistrasifk')
@@ -218,6 +253,7 @@ class WaResumeController extends ApiController
                     ->join('kelompokpasien_m as kp', 'kp.id', '=', 'pd.objectkelompokpasienlastfk')
                     ->leftJoin('ruangan_m as ru', 'ru.id', '=', 'apd.objectruanganfk')
                     ->leftJoin('pegawai_m as pg', 'pg.id', '=', 'pd.objectpegawaifk')
+                    ->leftJoin('alamat_m as alm', 'alm.nocmfk', '=', 'ps.id')
                     ->where('rm.kdprofile', $kdProfile)
                     ->where('rm.statusenabled', true)
                     ->where('rm.norec', $norec)
@@ -236,6 +272,8 @@ class WaResumeController extends ApiController
             $noHP = null;
             if (!empty($request['noHP'])) {
                 $noHP = trim($request['noHP']);
+            } elseif (!empty($data->nohp_puskesmas)) {
+                $noHP = trim($data->nohp_puskesmas);
             } elseif (!empty($data->nohp)) {
                 $noHP = trim($data->nohp);
             } elseif (!empty($data->notelepon)) {
@@ -344,15 +382,46 @@ class WaResumeController extends ApiController
             }
 
             // ── 5. Siapkan Teks Pesan WA ──────────────────────────────────────────
-            $message = "Halo, *" . $data->namapasien . "*\n\n"
-                . "Berikut kami kirimkan tautan untuk melihat *" . $jenisDokumen . "* Anda.\n\n"
-                . "No. Rekam Medis : *" . $data->nocm . "*\n"
-                . "No. Registrasi  : *" . $data->noregistrasi . "*\n"
-                . "Tanggal Dokumen : *" . $data->tgldokumen . "*\n\n"
-                . "Silakan lihat dan unduh dokumen Anda melalui tautan berikut:\n"
-                . $viewUrl . "\n\n"
-                . "*Catatan:* Link di atas hanya berlaku selama *7 hari* demi keamanan data Anda.\n\n"
-                . "Terima kasih telah mempercayakan kesehatan Anda kepada kami.";
+            $isPuskesmas = false;
+            if (!empty($data->puskesmas_tujuan)) {
+                $defaultPhones = [];
+                if (!empty($data->nohp)) {
+                    $defaultPhones[] = $this->normalizePhoneNumber($data->nohp);
+                }
+                if (!empty($data->notelepon)) {
+                    $defaultPhones[] = $this->normalizePhoneNumber($data->notelepon);
+                }
+                $normNoHP = $this->normalizePhoneNumber($noHP);
+                if (!in_array($normNoHP, $defaultPhones)) {
+                    $isPuskesmas = true;
+                }
+            }
+
+            if ($isPuskesmas) {
+                $alamat = !empty($data->alamat_lengkap) ? trim($data->alamat_lengkap) : '-';
+                $noHpPJ = !empty($data->teleponpenanggungjawab) ? trim($data->teleponpenanggungjawab) : '-';
+
+                $message = "Yth. Sejawat " . $data->puskesmas_tujuan . "\n"
+                    . "Berikut kami kirimkan tautan untuk melihat Rujukan Edukasi Pasien.\n\n"
+                    . "Pasien :  " . $data->namapasien . "\n"
+                    . "Alamat : " . $alamat . "\n"
+                    . "No HP Penangungjawab : " . $noHpPJ . "\n"
+                    . "Tanggal Dokumen : " . $data->tgldokumen . "\n\n"
+                    . "Silakan lihat dan unduh dokumen Anda melalui tautan berikut:\n"
+                    . $viewUrl . "\n\n"
+                    . "Catatan: Link di atas hanya berlaku selama 7 hari demi keamanan data pasien\n\n"
+                    . "Terima kasih telah mempercayakan kesehatan Anda kepada kami";
+            } else {
+                $message = "Halo, *" . $data->namapasien . "*\n\n"
+                    . "Berikut kami kirimkan tautan untuk melihat *" . $jenisDokumen . "* Anda.\n\n"
+                    . "No. Rekam Medis : *" . $data->nocm . "*\n"
+                    . "No. Registrasi  : *" . $data->noregistrasi . "*\n"
+                    . "Tanggal Dokumen : *" . $data->tgldokumen . "*\n\n"
+                    . "Silakan lihat dan unduh dokumen Anda melalui tautan berikut:\n"
+                    . $viewUrl . "\n\n"
+                    . "*Catatan:* Link di atas hanya berlaku selama *7 hari* demi keamanan data Anda.\n\n"
+                    . "Terima kasih telah mempercayakan kesehatan Anda kepada kami.";
+            }
 
             // ── 6. Kirim Pesan Teks via WaBlas ──────────────────────────────
             $payloadMsg = [
@@ -397,14 +466,53 @@ class WaResumeController extends ApiController
                 ], 500);
             }
 
+            // Check if the sent number is different from patient's original numbers
+            $requestNoHP = !empty($request['noHP']) ? trim($request['noHP']) : null;
+            $isCustomHP = false;
+            if ($requestNoHP) {
+                $normRequest = $this->normalizePhoneNumber($requestNoHP);
+
+                $patientPhones = [];
+                if (!empty($data->nohp)) {
+                    $patientPhones[] = $this->normalizePhoneNumber($data->nohp);
+                }
+                if (!empty($data->notelepon)) {
+                    $patientPhones[] = $this->normalizePhoneNumber($data->notelepon);
+                }
+
+                $matchesPatient = false;
+                foreach ($patientPhones as $pPhone) {
+                    if ($normRequest === $pPhone) {
+                        $matchesPatient = true;
+                        break;
+                    }
+                }
+
+                if (!$matchesPatient) {
+                    $isCustomHP = true;
+                }
+            }
+
             if (!empty($emrfk)) {
+                $updateData = ['tglkirimwa' => date('Y-m-d H:i:s')];
+                if ($isCustomHP) {
+                    $updateData['nohp_puskesmas'] = $requestNoHP;
+                } else {
+                    $updateData['nohp_puskesmas'] = null;
+                }
                 DB::table('emrpasien_t')
                     ->where('norec', $norec)
-                    ->update(['tglkirimwa' => date('Y-m-d H:i:s')]);
+                    ->update($updateData);
             } else {
+                $updateData = ['tglkirimwa' => date('Y-m-d H:i:s')];
+                if ($isCustomHP) {
+                    $updateData['nohp_puskesmas'] = $requestNoHP;
+                } else {
+                    $updateData['nohp_puskesmas'] = null;
+                }
                 DB::table('resumemedis_t')
                     ->where('norec', $norec)
-                    ->update(['tglkirimwa' => date('Y-m-d H:i:s')]);
+                    ->update($updateData);
             }
 
             // Logging User Action
@@ -440,5 +548,13 @@ class WaResumeController extends ApiController
                 'message' => $e->getMessage(),
             ], 500);
         }
+    }
+    private function normalizePhoneNumber($phone)
+    {
+        $phone = preg_replace('/[^0-9]/', '', $phone);
+        if (substr($phone, 0, 2) === '62') {
+            $phone = '0' . substr($phone, 2);
+        }
+        return ltrim($phone, '0');
     }
 }

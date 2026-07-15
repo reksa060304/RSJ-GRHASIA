@@ -9,6 +9,12 @@ define(['initialize', 'Configuration'], function (initialize, config) {
             $scope.selectedNomorHP = '';
             $scope.loadingSend     = false;
             $scope.listKelompokPasien = [];
+            $scope.listStatusKirim = [
+                { id: 'semua', name: 'Semua' },
+                { id: 'belum', name: 'Belum Terkirim' },
+                { id: 'sudah', name: 'Sudah Terkirim' }
+            ];
+            $scope.item.statusKirim = $scope.listStatusKirim[1];
 
             // Default periode: awal bulan ini hingga sekarang
             $scope.item.periodeAwal  = new Date(new Date().getFullYear(), new Date().getMonth(), 1, 0, 0, 0);
@@ -46,18 +52,28 @@ define(['initialize', 'Configuration'], function (initialize, config) {
                             tglkirimwa:     { type: 'string' },
                             norec_apd:      { type: 'string' },
                             umur:           { type: 'string' },
-                            jeniskelamin:   { type: 'string' }
+                            jeniskelamin:   { type: 'string' },
+                            puskesmas_tujuan: { type: 'string' },
+                            nohp_puskesmas: { type: 'string' }
                         }
                     }
                 }
             });
 
             $scope.mainGridOptions = {
+                toolbar: ["excel"],
+                excel: {
+                    fileName: "DaftarKirimWaResume.xlsx",
+                    allPages: true
+                },
                 scrollable: true,
                 columns: [
-                    { title: 'No', width: '45px', template: function (d) {
-                        return ($scope.GridPasienResume.indexOf(d) + 1);
-                    }},
+                    { title: 'No', width: '45px', 
+                        template: function (d) {
+                            return ($scope.GridPasienResume.indexOf(d) + 1);
+                        },
+                        exportable: false
+                    },
                     { field: 'nocm',           title: 'No RM',          width: '100px' },
                     { field: 'namapasien',     title: 'Nama Pasien',     width: '180px' },
                     { field: 'jenis_dokumen',  title: 'Jenis Dokumen',  width: '180px' },
@@ -66,7 +82,13 @@ define(['initialize', 'Configuration'], function (initialize, config) {
                     { field: 'tgldokumen',     title: 'Tgl Dokumen',     width: '130px' },
                     { field: 'namaruangan',    title: 'Ruangan',         width: '150px' },
                     { field: 'namadokter',     title: 'Dokter',          width: '160px' },
-                    { title: 'No HP',          width: '130px',
+                    { title: 'Puskesmas Tujuan', width: '150px',
+                        template: function (d) { return d.puskesmas_tujuan || '-'; }
+                    },
+                    { title: 'No HP Puskesmas', width: '130px',
+                        template: function (d) { return d.nohp_puskesmas || '-'; }
+                    },
+                    { title: 'No HP Pasien',          width: '130px',
                         template: function (d) { return d.nohp || d.notelepon || '-'; }
                     },
                     { title: 'Status TTE',     width: '120px',
@@ -86,6 +108,10 @@ define(['initialize', 'Configuration'], function (initialize, config) {
                                 return '<span style="color:#c0392b; font-weight:bold;"><i class="fa fa-times-circle"></i> Belum Kirim</span>';
                             }
                         }
+                    },
+                    { title: 'Aksi', width: '100px',
+                        template: '<button class="k-button k-button-icontext" style="background-color: \\#3498db; color: \\#fff; border: none; padding: 4px 8px; border-radius: 4px;" ng-click="previewRow(dataItem)"><i class="fa fa-eye"></i> Preview</button>',
+                        exportable: false
                     }
                 ]
             };
@@ -94,8 +120,30 @@ define(['initialize', 'Configuration'], function (initialize, config) {
             $scope.klikGrid = function (selected) {
                 if (!selected || !selected.norec) return;
                 $scope.dataSelected    = selected;
-                $scope.selectedNomorHP = (selected.nohp || selected.notelepon || '').trim();
+                $scope.selectedNomorHP = (selected.nohp_puskesmas || selected.nohp || selected.notelepon || '').trim();
             };
+
+            $scope.filterStatus = function () {
+                var status = $scope.item.statusKirim;
+                if (!status || status.id === 'semua') {
+                    $scope.GridPasienResume.filter([]);
+                } else if (status.id === 'belum') {
+                    $scope.GridPasienResume.filter({
+                        field: "tglkirimwa",
+                        operator: function (val) {
+                            return !val;
+                        }
+                    });
+                } else if (status.id === 'sudah') {
+                    $scope.GridPasienResume.filter({
+                        field: "tglkirimwa",
+                        operator: function (val) {
+                            return !!val;
+                        }
+                    });
+                }
+            };
+
 
             // ── Cari Data ─────────────────────────────────────────────────────
             $scope.findData = function () {
@@ -132,6 +180,7 @@ define(['initialize', 'Configuration'], function (initialize, config) {
                     $scope.isRouteLoading = false;
                     var data = res[0].data.data || [];
                     $scope.GridPasienResume.data(data);
+                    $scope.filterStatus();
                     if (data.length === 0) {
                         window.messageContainer.info('Tidak ada data resume medis yang ditemukan.');
                     }
@@ -168,9 +217,8 @@ define(['initialize', 'Configuration'], function (initialize, config) {
                 $scope.popupKonfirmasi.close();
             };
 
-            $scope.previewResume = function(e) {
-                if (e) e.preventDefault();
-                if (!$scope.dataSelected) return;
+            $scope.previewRow = function (d) {
+                if (!d) return;
 
                 var pegawai = JSON.parse(localStorage.getItem('pegawai') || '{}');
                 var local   = JSON.parse(localStorage.getItem('profile') || '{}');
@@ -178,7 +226,6 @@ define(['initialize', 'Configuration'], function (initialize, config) {
                 var pegawaittd = pegawai.id || '320263';
                 var kdprofile  = local.id || '30';
 
-                var d   = $scope.dataSelected;
                 var url = '';
 
                 if (d.emrfk) {
@@ -231,6 +278,12 @@ define(['initialize', 'Configuration'], function (initialize, config) {
                 }
 
                 window.open(url, '_blank');
+            };
+
+            $scope.previewResume = function(e) {
+                if (e) e.preventDefault();
+                if (!$scope.dataSelected) return;
+                $scope.previewRow($scope.dataSelected, e);
             };
 
             $scope.lanjutKirimWa = function () {

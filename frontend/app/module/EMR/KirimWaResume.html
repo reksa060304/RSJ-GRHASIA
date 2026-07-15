@@ -60,7 +60,7 @@
                         ng-keypress="($event.which == 13)? findData():item.noCm" />
                 </div>
 
-                <div class="grid_2" style="margin-top:5px">
+                <div class="grid_1" style="margin-top:5px">
                     <label c-label real>No Registrasi</label>
                     <input c-text-box type="input" filter="'char'" class="k-textbox" ng-model="item.noRegistrasi"
                         ng-keypress="($event.which == 13)? findData():item.noRegistrasi" />
@@ -78,6 +78,15 @@
                         k-data-text-field="'kelompokpasien'" k-data-value-field="'id'"
                         k-filter="'contains'" k-auto-bind="false"
                         k-data-source="listKelompokPasien" />
+                </div>
+
+                <div class="grid_2" style="margin-top:5px">
+                    <label c-label real>Status Kirim WA</label>
+                    <input style="width: 100%;" kendo-combo-box k-ng-model="item.statusKirim"
+                        k-data-text-field="'name'" k-data-value-field="'id'"
+                        k-filter="'contains'" k-auto-bind="true"
+                        k-data-source="listStatusKirim"
+                        k-on-change="filterStatus()" />
                 </div>
 
                 <div class="grid_1" style="margin-top:5px">
@@ -140,6 +149,7 @@
                 Dipilih: <b>{{dataSelected.namapasien}}</b>
                 &nbsp;&mdash;&nbsp; No RM: <b>{{dataSelected.nocm}}</b>
                 &nbsp;&mdash;&nbsp; No Reg: <b>{{dataSelected.noregistrasi}}</b>
+                <span ng-if="dataSelected.puskesmas_tujuan">&nbsp;&mdash;&nbsp; Puskesmas Tujuan: <b>{{dataSelected.puskesmas_tujuan}}</b></span>
             </span>
             <span ng-if="!dataSelected" style="color:#aaa; font-style:italic">
                 Pilih pasien dari tabel terlebih dahulu
@@ -159,6 +169,7 @@
             <table style="width:100%; margin-bottom: 20px; font-size:13px;">
                 <tr><td style="width:120px; font-weight:bold; padding:3px 0;">Nama Pasien</td><td>: {{dataSelected.namapasien}}</td></tr>
                 <tr><td style="font-weight:bold; padding:3px 0;">No. RM</td><td>: {{dataSelected.nocm}}</td></tr>
+                <tr ng-if="dataSelected.puskesmas_tujuan"><td style="font-weight:bold; padding:3px 0;">Puskesmas Tujuan</td><td>: {{dataSelected.puskesmas_tujuan}}</td></tr>
                 <tr><td style="font-weight:bold; padding:3px 0;">Tgl Dokumen</td><td>: {{dataSelected.tgldokumen}}</td></tr>
                 <tr><td style="font-weight:bold; padding:3px 0;">No. HP Tujuan</td><td>: {{selectedNomorHP}}</td></tr>
                 <tr><td style="font-weight:bold; padding:3px 0;">Dokumen</td><td>: <a href="" ng-click="previewResume($event)" style="color:#e74c3c; font-weight:bold; text-decoration:underline;"><i class="fa fa-file-pdf-o"></i> {{dataSelected.jenis_dokumen || 'ResumeMedis'}}_{{dataSelected.nocm}}.pdf</a></td></tr>
