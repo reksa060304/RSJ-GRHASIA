@@ -338,8 +338,9 @@ define(['initialize', 'Configuration'], function (initialize,config) {
                         b = ", " + c
                         a = a + b
                     }
-                    $scope.item.obj[300000096
-                    ] = a.slice(1, a.length)
+                    if (!$scope.item.obj[300000096]) {
+                        $scope.item.obj[300000096] = a.slice(1, a.length)
+                    }
                     // console.log($scope.bro);
                     $scope.isRouteLoading = false
 
