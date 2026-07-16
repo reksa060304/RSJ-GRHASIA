@@ -344,22 +344,49 @@ define(['initialize', 'Configuration'], function (initialize,config) {
                     $scope.isRouteLoading = false
 
                     for (let i = 0; i < datas.length; i++) {
-                        if(datas[i].type == 'textbox'){
-                            $scope.item.obj[datas[i].idtujuan]= datas[i].value   
-                        }    
-                        if (datas[i].type == "checkbox") {
-                            if (datas[i].value == "1") {
-                                $scope.item.obj[datas[i].idtujuan] = datas[i].value 
-                                console.log(datas[i].type);
+                        if (!$scope.item.obj[datas[i].idtujuan]) {
+                            if(datas[i].type == 'textbox'){
+                                $scope.item.obj[datas[i].idtujuan]= datas[i].value   
+                            }    
+                            if (datas[i].type == "checkbox") {
+                                if (datas[i].value == "1") {
+                                    $scope.item.obj[datas[i].idtujuan] = datas[i].value 
+                                }
+                            }       
+                            if (datas[i].type == "textarea") {
+                                $scope.item.obj[datas[i].idtujuan] = datas[i].value
                             }
-                        }       
-                        if (datas[i].type == "textarea") {
-                            $scope.item.obj[datas[i].idtujuan] = datas[i].value
                         }                         
                     }
                     
                     
     
+
+                    var masalahKeperawatan = ''
+                    for (let i = 0; i < datas.length; i++) {
+                        var idAsal = parseInt(datas[i].idasal)
+                        var idData = parseInt(datas[i].id)
+                        if ((idAsal === 1901309835 || idData === 1901309835) && datas[i].value != null && datas[i].value !== '') {
+                            masalahKeperawatan = datas[i].value
+                            break
+                        }
+                    }
+                    if (masalahKeperawatan !== '') {
+                        if (!$scope.item.obj[300000096]) {
+                            $scope.item.obj[300000096] = masalahKeperawatan
+                        }
+                    }
+                })
+                medifirstService.get("emr/get-emr-transaksi-detail?noemr=" + nomorEMR + "&emrfk=3000556", true).then(function (resAskep) {
+                    var dataAskep = (resAskep && resAskep.data && resAskep.data.data) ? resAskep.data.data : []
+                    for (let i = 0; i < dataAskep.length; i++) {
+                        if (parseInt(dataAskep[i].emrdfk) === 1901309835 && dataAskep[i].value != null && dataAskep[i].value !== '') {
+                            if (!$scope.item.obj[300000096]) {
+                                $scope.item.obj[300000096] = dataAskep[i].value
+                            }
+                            break;
+                        }
+                    }
                 })
                 $scope.item.obj[116062]=$scope.now
                 $scope.item.obj[116068]={text:$scope.cc.namaruangan,value: $scope.cc.objectruanganfk}
@@ -390,7 +417,11 @@ define(['initialize', 'Configuration'], function (initialize,config) {
                 medifirstService.post('emr/get-emr-inputan-otomatis?noregistrasi=' + $scope.cc.noregistrasi, payload)
                     .then(function (res) {
                         console.log(res.data);
-                        $scope.item.obj[300000096] = res.data.data[0].data["1901310025"] || '';
+                        if (!$scope.item.obj[300000096]) {
+                            if (res.data && res.data.data && res.data.data[0] && res.data.data[0].data) {
+                                $scope.item.obj[300000096] = res.data.data[0].data["1901310025"] || '';
+                            }
+                        }
                     });
 
                 // medifirstService.get("emr/get-vital-sign?noregistrasi=" + $scope.cc.noregistrasi + "&objectidawal=4241&objectidakhir=4246&idemr=147", true).then(function (datas) {
