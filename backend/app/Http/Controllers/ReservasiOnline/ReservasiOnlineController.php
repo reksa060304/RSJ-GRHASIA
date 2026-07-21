@@ -697,7 +697,7 @@ class ReservasiOnlineController extends ApiController
                     ->pluck('norec');
 
                 // Nonaktifkan antrianpasiendiperiksa_t yang terhubung
-                if ($norecPdList->isNotEmpty()) {
+                if (count($norecPdList) > 0) {
                     DB::table('antrianpasiendiperiksa_t')
                         ->whereIn('noregistrasifk', $norecPdList)
                         ->where('statusenabled', true)
@@ -732,9 +732,11 @@ class ReservasiOnlineController extends ApiController
             $transStatus = 'true';
 
             $transMessage = "Hapus Reservasi Sukses";
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             $transStatus = 'false';
             $transMessage = "Hapus Reservasi Gagal";
+            // opsional: log biar gampang debug
+            \Log::error('deleteReservasi error: ' . $e->getMessage());
         }
 
         if ($transStatus != 'false') {
