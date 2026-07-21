@@ -409,6 +409,149 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
                 });
             }
 
+            $scope.isTTD_E = true;
+
+            medifirstService.get('bsre-esign/get-combo').then(function (data) {
+                $scope.listPegawaiCombo = data.data.pegawai;
+            });
+
+            $scope.listPage = [
+                {id:1,page:'Halaman 1'},
+                {id:2,page:'Halaman 2'},
+                {id:3,page:'Halaman 3'},
+                {id:4,page:'Halaman 4'},
+                {id:5,page:'Halaman 5'},
+                {id:6,page:'Halaman 6'},
+                {id:7,page:'Halaman 7'},
+                {id:8,page:'Halaman 8'},
+                {id:9,page:'Halaman 9'},
+                {id:10,page:'Halaman 10'},
+                {id:11,page:'Halaman 11'},
+                {id:12,page:'Halaman 12'},
+            ];
+
+            $scope.changeTTD = function (e) {
+                $scope.item.nik = e.noidentitas;
+            };
+
+            $scope.cekUser = function () {
+                if ($scope.item.nik == undefined) {
+                    toastr.warning('Pilih pegawai dahulu!');
+                    return;
+                }
+                $scope.isRouteLoading = true;
+                medifirstService.get('bsre-esign/cek-status-user/' + $scope.item.nik).then(function (e) {
+                    $scope.isRouteLoading = false;
+                    if (e.data.status == 200) {
+                        toastr.info(e.data.message);
+                    } else {
+                        toastr.error(e.data.message);
+                    }
+                });
+            };
+
+            $scope.lihatDok = function () {
+                var local = JSON.parse(localStorage.getItem('profile'));
+                window.open(configuration.baseApiBackend + 'report/get-cetak-surat-man?nocm=' + $scope.cc.nocm +
+                    '&emr=' + norecEMR +
+                    '&noemr=' + nomorEMR +
+                    '&emrfk=' + $scope.cc.emrfk +
+                    '&kdprofile=' + local.id +
+                    '&blade=' + 'fred-hipertensi-dom', '_blank');
+            };
+
+            $scope.batal = function () {
+                $scope.popUpTTD.close();
+            };
+
+            $scope.ttdElek = function () {
+                if (norecEMR == '') {
+                    toastr.error('Dokumen belum pernah di isi');
+                    return;
+                }
+
+                if ($scope.item.obj[1901307170] != undefined) {
+                    $scope.listPegawai.add($scope.item.obj[1901307170]);
+                    $scope.item.pegawai = $scope.item.obj[1901307170];
+                }
+                $scope.winDialog.center().open();
+            };
+
+            $scope.savePengajuanTTE = function (pegawai) {
+                if (pegawai == undefined) {
+                    toastr.error('Pilih pegawai dulu');
+                    return;
+                }
+                var local = JSON.parse(localStorage.getItem('profile'));
+                var nama = medifirstService.getPegawaiLogin().namaLengkap;
+                $scope.isRouteLoading = true;
+                medifirstService.get('report/get-cetak-surat-man?nocm=' + $scope.cc.nocm +
+                    '&emr=' + norecEMR +
+                    '&noemr=' + nomorEMR +
+                    '&emrfk=' + $scope.cc.emrfk +
+                    '&kdprofile=' + local.id +
+                    '&nama=' + nama +
+                    '&isttd=' + $scope.isTTD_E +
+                    '&pegawaittd=' + pegawai.value +
+                    '&noregistrasi=' + $scope.cc.noregistrasi +
+                    '&norec_pd=' + $scope.cc.norec_pd +
+                    '&blade=' + 'fred-hipertensi-dom'
+                ).then(function (e) {
+                    $scope.isRouteLoading = false;
+                    if (e.data.status == 201) {
+                        toastr.success(e.data.message);
+                        $scope.winDialog.close();
+
+                        var selectedPegawai = $scope.listPegawaiCombo.find(function (item) {
+                            return item.id === pegawai.value;
+                        });
+
+                        if (selectedPegawai) {
+                            $scope.item.pegawaiSign = selectedPegawai;
+                            $scope.item.nik = selectedPegawai.noidentitas;
+                        } else {
+                            $scope.item.pegawaiSign = { id: pegawai.value, namalengkap: pegawai.text };
+                            $scope.item.nik = '';
+                        }
+
+                        $scope.item.namadokumen = e.data.dokumen.namadokumen;
+                        $scope.item.nomoremr = e.data.dokumen.nomoremr;
+                        $scope.item.reason = e.data.dokumen.deskripsi;
+                        $scope.item.page = { id: 1, page: '1' };
+                        $scope.item.norec = e.data.dokumen.id;
+
+                        $scope.popUpTTD.center().open();
+                    } else {
+                        toastr.error(e.data.message);
+                    }
+                });
+            };
+
+            $scope.SaveUpdate = function () {
+                if ($scope.item.passphrase == undefined || $scope.item.passphrase == '') {
+                    toastr.warning('Pass Phrase belum diisi!');
+                    return;
+                }
+                var body = {
+                    norec: $scope.item.norec,
+                    passphrase: $scope.item.passphrase,
+                    nik: $scope.item.nik,
+                    reason: $scope.item.reason,
+                    page: $scope.item.page.page,
+                    iduser: medifirstService.getPegawaiLogin().id,
+                };
+                $scope.isRouteLoading = true;
+                medifirstService.post('bsre-esign/save-ttd-pengajuan', body).then(function (e) {
+                    $scope.isRouteLoading = false;
+                    if (e.data.status == 201) {
+                        toastr.success(e.data.message);
+                        $scope.popUpTTD.close();
+                    } else {
+                        toastr.error(e.data.message);
+                    }
+                });
+            };
+
             $scope.cetakBlade = function () {
                 if (norecEMR == '') {
                     toastr.error('Dokumen belum pernah di isi')
