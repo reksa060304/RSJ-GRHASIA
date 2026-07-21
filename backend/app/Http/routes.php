@@ -2842,6 +2842,7 @@ Route::group(['middleware' => 'cors', 'prefix' => 'service'], function () {
               Route::post('registrasi/hapus-skrining-awal-pasien','Registrasi\RegistrasiController@deleteSkringAwalPasien');
               Route::get('registrasi/cek-sep-by-regis', 'Registrasi\RegistrasiController@getSEPByNoreg');
 
+              Route::post('registrasi/save-registrasipasien-online', 'Registrasi\RegistrasiController@saveRegistrasiPasienOnline');
         // });
         // Route::group(['prefix' => 'remunerasi'], function () {
         Route::get('remunerasi/get-combo','Remunerasi\RemunerasiController@getCombo');
