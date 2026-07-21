@@ -4,6 +4,8 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
     initialize.controller('FREPGangguanJiwaDenganKomorbidDiabetesCtrl', ['$q', '$rootScope', '$scope', 'ModelItem', '$state', 'CacheHelper', 'DateHelper', 'MedifirstService',
         function ($q, $rootScope, $scope, ModelItem, $state, cacheHelper, dateHelper, medifirstService) {
 
+            $scope.now = new Date();
+            $scope.item = $scope.item || {};
             $scope.myVar = true
             $scope.noCM = $state.params.noCM;
             $scope.tombolSimpanVis = true
@@ -68,14 +70,13 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
                 {value: 2, text: 'Perempuan'},
             ]
 
-            $scope.toggleJenisKelamin = function (kode) {
-                if (kode === 1901306003 && $scope.item.obj[1901306003]) {
-                    $scope.item.obj[1901306004] = false;
+            $scope.toggleJenisKelamin = function(id) {
+                if (id == 1901307240) {
+                    $scope.item.obj[1901307250] = !$scope.item.obj[1901307240];
+                } else if (id == 1901307250) {
+                    $scope.item.obj[1901307240] = !$scope.item.obj[1901307250];
                 }
-                if (kode === 1901306004 && $scope.item.obj[1901306004]) {
-                    $scope.item.obj[1901306003] = false;
-                }
-            }
+            };
 
             $scope.$watch('item.obj[1901307060]', function(newValue,oldValue){
                 if(newValue!=oldValue){
@@ -152,139 +153,81 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
             $scope.textInputs = [3014250, 7890444, 3014252, 3014253];
             $scope.datetimeInputs = [3014254, 1901306000, 1901307160];
             $scope.comboboxInputs = [1901307170];
-            $scope.checkboxInputs = [1901306003, 1901306004];
+            $scope.checkboxInputs = [1901307240, 1901307250];
             $scope.textareaInputs = [
-                1901306001, 1901306002, 1901306005, 1901306006
+                1901307000, 1901307210, 1901307230, 1901307260, 1901307270
             ];
 
             medifirstService.get("emr/get-emr-transaksi-detail?noemr=" + nomorEMR + "&emrfk=" + $scope.cc.emrfk, true).then(function (dat) {
-                $scope.item.obj = []
-                $scope.item.obj2 = []
-                // $scope.item.obj[116062]=$scope.now
-                // $scope.item.obj[116068]={text:$scope.cc.namaruangan,value: $scope.cc.objectruanganfk}
-                // Default tanggal masuk dan tanggal bawah
-                $scope.item.obj[1901306000] = $scope.cc.tglregistrasi ? new Date($scope.cc.tglregistrasi) : $scope.now;
-                $scope.item.obj[1901307160] = $scope.now;
-                $scope.item.obj[1901306001]=$scope.cc.namapasien
-                $scope.item.obj[1901306002]=$scope.cc.umur
-                $scope.item.obj[1901307140]=$scope.cc.nocm
-                if($scope.cc.jeniskelamin == 'LAKI-LAKI'){
-                    $scope.item.obj[1901306003]=true
-                } else {
-                    $scope.item.obj[1901306004]=true
-                }
+                $scope.item.obj = $scope.item.obj || []
+                $scope.item.obj2 = $scope.item.obj2 || []
 
-                $scope.item.obj[1901307210]=$scope.cc.namapasien
-                $scope.item.obj[1901307220]=$scope.cc.nocm
-                
+                $scope.item.obj[1901306000] = $scope.now;
+                $scope.item.obj[1901307210] = $scope.cc.namapasien;
+                $scope.item.obj[1901307220] = $scope.cc.nocm;
+                $scope.item.obj[1901307230] = $scope.cc.umur;
+                if ($scope.cc.jeniskelamin == 'LAKI-LAKI') {
+                    $scope.item.obj[1901307240] = true;
+                } else {
+                    $scope.item.obj[1901307250] = true;
+                }
+                $scope.item.obj[1901307140] = $scope.cc.nocm;
+                $scope.item.obj[1901307160] = $scope.now;
 
                 dataLoad = dat.data.data
                 for (var i = 0; i <= dataLoad.length - 1; i++) {
                     if (parseFloat($scope.cc.emrfk) == dataLoad[i].emrfk) {
-                    var emrdfk = dataLoad[i].emrdfk;
+                        var emrdfk = dataLoad[i].emrdfk;
+                        var val = dataLoad[i].value;
 
-                    if ($scope.textInputs.includes(emrdfk)) {
-                        $scope.item.obj[emrdfk] = dataLoad[i].value;
-                    } else if ($scope.datetimeInputs.includes(emrdfk)) {
-                        $scope.item.obj[emrdfk] = new Date(dataLoad[i].value);
-                    } else if ($scope.comboboxInputs.includes(emrdfk)) {
-                        var str = dataLoad[i].value;
-                        if (str != undefined) {
-                        var res = str.split("~");
-                        $scope.item.obj[emrdfk] = { value: res[0], text: res[1] };
+                        if (val != null && val !== "" && val !== "null") {
+                            if ($scope.textInputs.includes(emrdfk)) {
+                                $scope.item.obj[emrdfk] = val;
+                            } else if ($scope.datetimeInputs.includes(emrdfk)) {
+                                $scope.item.obj[emrdfk] = new Date(val);
+                            } else if ($scope.comboboxInputs.includes(emrdfk)) {
+                                var str = val;
+                                if (str != undefined) {
+                                    var res = str.split("~");
+                                    $scope.item.obj[emrdfk] = { value: res[0], text: res[1] };
+                                }
+                            } else if ($scope.textareaInputs.includes(emrdfk)) {
+                                $scope.item.obj[emrdfk] = val;
+                            } else if ($scope.checkboxInputs.includes(emrdfk)) {
+                                chekedd = (val == "1" || val === true || val == "true");
+                                $scope.item.obj[emrdfk] = chekedd;
+                            } else {
+                                if (dataLoad[i].type == "textbox") {
+                                    $scope.item.obj[emrdfk] = val;
+                                }
+                                if (dataLoad[i].type == "checkbox") {
+                                    chekedd = (val == "1" || val === true || val == "true");
+                                    $scope.item.obj[emrdfk] = chekedd;
+                                }
+                                if (dataLoad[i].type == "datetime" || dataLoad[i].type == "datetime2" || dataLoad[i].type == "time" || dataLoad[i].type == "date") {
+                                    $scope.item.obj[emrdfk] = new Date(val);
+                                }
+                                if (dataLoad[i].type == "checkboxtextbox" || dataLoad[i].type == "checkboxtextarea") {
+                                    $scope.item.obj[emrdfk] = val;
+                                    $scope.item.obj2[emrdfk] = true;
+                                }
+                                if (dataLoad[i].type == "textarea") {
+                                    $scope.item.obj[emrdfk] = val;
+                                }
+                                if (dataLoad[i].type == "combobox2" || dataLoad[i].type == "combobox" || dataLoad[i].type == "combobox3") {
+                                    var str = val;
+                                    if (str != undefined) {
+                                        var res = str.split("~");
+                                        $scope.item.obj[emrdfk] = { value: res[0], text: res[1] };
+                                    }
+                                }
+                            }
                         }
-                    } else if ($scope.textareaInputs.includes(emrdfk)) {
-                        $scope.item.obj[emrdfk] = dataLoad[i].value;
-                    } else if ($scope.checkboxInputs.includes(emrdfk)) {
-                        $scope.item.obj[emrdfk] = dataLoad[i].value;
-                        chekedd = false;
-                        if (dataLoad[i].value == "1") {
-                            chekedd = true;
-                        }
-                        $scope.item.obj[dataLoad[i].emrdfk] = chekedd;
-
-                    } else {
-                        // Fallback to original type-based assignment for other types
-                        if (dataLoad[i].type == "textbox") {
-                        $scope.item.obj[dataLoad[i].emrdfk] = dataLoad[i].value;
-                        }
-                        if (dataLoad[i].type == "checkbox") {
-                        chekedd = false;
-                        if (dataLoad[i].value == "1") {
-                            chekedd = true;
-                        }
-                        $scope.item.obj[dataLoad[i].emrdfk] = chekedd;
-                        }
-
-                        if (dataLoad[i].type == "datetime") {
-                        $scope.item.obj[dataLoad[i].emrdfk] = new Date(
-                            dataLoad[i].value,
-                        );
-                        }
-                        if (dataLoad[i].type == "datetime2") {
-                        $scope.item.obj[dataLoad[i].emrdfk] = new Date(
-                            dataLoad[i].value,
-                        );
-                        }
-                        if (dataLoad[i].type == "time") {
-                        $scope.item.obj[dataLoad[i].emrdfk] = new Date(
-                            dataLoad[i].value,
-                        );
-                        }
-                        if (dataLoad[i].type == "date") {
-                        $scope.item.obj[dataLoad[i].emrdfk] = new Date(
-                            dataLoad[i].value,
-                        );
-                        }
-
-                        if (dataLoad[i].type == "checkboxtextbox") {
-                        $scope.item.obj[dataLoad[i].emrdfk] = dataLoad[i].value;
-                        $scope.item.obj2[dataLoad[i].emrdfk] = true;
-                        }
-                        if (dataLoad[i].type == "checkboxtextarea") {
-                        $scope.item.obj[dataLoad[i].emrdfk] = dataLoad[i].value;
-                        $scope.item.obj2[dataLoad[i].emrdfk] = true;
-                        }
-                        if (dataLoad[i].type == "textarea") {
-                        $scope.item.obj[dataLoad[i].emrdfk] = dataLoad[i].value;
-                        }
-                        if (dataLoad[i].type == "combobox2") {
-                        var str = dataLoad[i].value;
-                        if (str != undefined) {
-                            var res = str.split("~");
-                            $scope.item.obj[dataLoad[i].emrdfk] = {
-                            value: res[0],
-                            text: res[1],
-                            };
-                        }
-                        }
-                        if (dataLoad[i].type == "combobox") {
-                        var str = dataLoad[i].value;
-                        if (str != undefined) {
-                            var res = str.split("~");
-                            $scope.item.obj[dataLoad[i].emrdfk] = {
-                            value: res[0],
-                            text: res[1],
-                            };
-                        }
-                        }
-
-                        if (dataLoad[i].type == "combobox3") {
-                        var str = dataLoad[i].value;
-                        if (str != undefined) {
-                            var res = str.split("~");
-                            $scope.item.obj[dataLoad[i].emrdfk] = {
-                            value: res[0],
-                            text: res[1],
-                            };
-                        }
-                        }
-                    }
                     }
                 }
 
-                // Ambil diagnosa (1901306005) dari CPPT rawat inap terakhir isian dokter bagian A
-                var hasDiagnosa = dataLoad.some(function (d) { return d.emrdfk == 1901306005; });
+                // Ambil diagnosa (1901307260) dari CPPT rawat inap terakhir isian dokter bagian A
+                var hasDiagnosa = dataLoad.some(function (d) { return d.emrdfk == 1901307260 && d.value != null && d.value !== "" && d.value !== "null"; });
                 if (!hasDiagnosa) {
                     var normToUse = $scope.cc.nocm || $scope.noCM;
                     medifirstService.get("emr/daftar-riwayat-registrasi?norm=" + normToUse).then(function (resReg) {
@@ -310,7 +253,7 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
                                         if (latestCppt.soap) {
                                             var match = latestCppt.soap.match(/(?:^|\n)\s*A\s*:\s*([\s\S]*?)(?=(?:\n\s*[P]\s*:|$))/i);
                                             if (match && match[1]) {
-                                                $scope.item.obj[1901306005] = match[1].trim();
+                                                $scope.item.obj[1901307260] = match[1].trim();
                                             }
                                         }
                                     }
@@ -320,8 +263,8 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
                     });
                 }
 
-                // Ambil resep terakhir dari order farmasi untuk Riwayat Perawatan (1901306006)
-                var hasPengobatan = dataLoad.some(function (d) { return d.emrdfk == 1901306006; });
+                // Ambil resep terakhir dari order farmasi untuk Riwayat Perawatan (1901307270)
+                var hasPengobatan = dataLoad.some(function (d) { return d.emrdfk == 1901307270 && d.value != null && d.value !== "" && d.value !== "null"; });
                 if (!hasPengobatan) {
                     var normToUse = $scope.cc.nocm || $scope.noCM;
                     medifirstService.get("emr/get-daftar-detail-order?nocm=" + normToUse).then(function (resOrder) {
@@ -380,14 +323,14 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
                                     }
                                 }
                                 
-                                $scope.item.obj[1901306006] = lines.join("\n");
+                                $scope.item.obj[1901307270] = lines.join("\n");
                             }
                         }
                     });
                 }
 
                 // Teks otomatis Puskesmas [kecamatan] pada field Puskesmas Tujuan (1901307000)
-                var hasPuskesmas = dataLoad.some(function (d) { return d.emrdfk == 1901307000; });
+                var hasPuskesmas = dataLoad.some(function (d) { return d.emrdfk == 1901307000 && d.value != null && d.value !== "" && d.value !== "null"; });
                 if (!hasPuskesmas) {
                     var normToUse = $scope.cc.nocm || $scope.noCM;
                     medifirstService.get("registrasi/get-pasien-by-nocm-riwayat-regis?noCm=" + normToUse).then(function (resPsn) {

@@ -3095,6 +3095,14 @@
             "urlDep": "module/EMR/FormRujukanEdukasiPsikiatriCtrl"
         },
         {
+            "nameDep": "FREPGangguanJiwaDenganKomorbidHipertensiCtrl",
+            "urlDep": "module/EMR/FREPGangguanJiwaDenganKomorbidHipertensiCtrl"
+        },
+        {
+            "nameDep": "FREPGangguanJiwaDenganKomorbidDiabetesCtrl",
+            "urlDep": "module/EMR/FREPGangguanJiwaDenganKomorbidDiabetesCtrl"
+        },
+        {
             "nameDep": "MonitoringTransfusiDarahCtrl",
             "urlDep": "module/EMR/MonitoringTransfusiDarahCtrl"
         },
