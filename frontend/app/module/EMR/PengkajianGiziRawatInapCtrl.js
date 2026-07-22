@@ -275,7 +275,7 @@ define(['initialize'], function (initialize) {
                     "detail": [
                         // {"id": 3019719, "nama": "Rontgen","type": "textbox"},
                         // {"id": 3019720, "nama": "Lain-lain","type": "textbox"},
-                        {"id": 3019738, "nama": "Status Generalis","type": "textarea"},
+                        // {"id": 3019738, "nama": "Status Generalis","type": "textarea"},
                     ]
                 },
             ]
