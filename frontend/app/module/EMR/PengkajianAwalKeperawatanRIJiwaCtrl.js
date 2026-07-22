@@ -1338,6 +1338,107 @@ define(['initialize', 'Configuration'], function (initialize, config) {
                     }
 
                 }
+                
+                // Recalculate MNA total after all data loaded
+                $scope.getSkorMNA();
+
+                // Autoload MNA if not saved yet in this EMR document
+                var hasMnaSaved = false;
+                if (dataLoad && dataLoad.length > 0) {
+                    for (var i = 0; i < dataLoad.length; i++) {
+                        var fid = parseInt(dataLoad[i].emrdfk);
+                        if (fid >= 3019658 && fid <= 3019686) {
+                            hasMnaSaved = true;
+                            break;
+                        }
+                    }
+                }
+                
+                if (!hasMnaSaved && $scope.cc.nocm) {
+                    medifirstService.get("emr/get-emr-transaksi?nocm=" + $scope.cc.nocm + "&jenisEmr=asesmen", true).then(function (resTx) {
+                        var listTx = resTx.data.data;
+                        if (listTx && listTx.length > 0) {
+                            // Sort by tglemr desc to get the most recent first
+                            listTx.sort(function (a, b) {
+                                return new Date(b.tglemr.replace(/-/g, "/")) - new Date(a.tglemr.replace(/-/g, "/"));
+                            });
+                            
+                            // Find the first transaction that matches IGD, NAPZA, or Geriatri EMR forms
+                            var targetTx = null;
+                            var targetEmrFks = [3000543, 3000553, 3000921, 3003051];
+                            for (var j = 0; j < listTx.length; j++) {
+                                if (targetEmrFks.indexOf(listTx[j].emrfk) !== -1) {
+                                    targetTx = listTx[j];
+                                    break;
+                                }
+                            }
+                            
+                            if (targetTx) {
+                                medifirstService.get("emr/get-emr-transaksi-detail?noemr=" + targetTx.noemr + "&emrfk=" + targetTx.emrfk, true).then(function (resDetail) {
+                                    var details = resDetail.data.data;
+                                    if (details && details.length > 0) {
+                                        var mapped = false;
+                                        var geriatriMnaIds = [
+                                            1901310041, 1901310042, 1901310043,
+                                            1901310044, 1901310045, 1901310046, 1901310047,
+                                            1901310048, 1901310049, 1901310050,
+                                            1901310051, 1901310052,
+                                            1901310053, 1901310054, 1901310055,
+                                            1901310056, 1901310057, 1901310058, 1901310059,
+                                            1901310060, 1901310061, 1901310062,
+                                            1901310063
+                                        ];
+                                        var riNonJiwaMnaIds = [
+                                            3019658, 3019659, 3019660,
+                                            3019662, 3019663, 3019664, 3019665,
+                                            3019667, 3019668, 3019669,
+                                            3019671, 3019672,
+                                            3019674, 3019675, 3019676,
+                                            3019678, 3019679, 3019680, 3019681,
+                                            3019683, 3019684, 3019685,
+                                            3019686
+                                        ];
+                                        
+                                        for (var k = 0; k < details.length; k++) {
+                                            var entry = details[k];
+                                            var emrdfk = parseInt(entry.emrdfk);
+                                            var targetId = null;
+                                            
+                                            if (targetTx.emrfk == 3000543) { // IGD
+                                                if (emrdfk >= 3018065 && emrdfk <= 3018093) {
+                                                    targetId = emrdfk + 1593;
+                                                }
+                                            } else if (targetTx.emrfk == 3000553) { // NAPZA
+                                                if (emrdfk >= 3019658 && emrdfk <= 3019686) {
+                                                    targetId = emrdfk;
+                                                }
+                                            } else if (targetTx.emrfk == 3000921 || targetTx.emrfk == 3003051) { // Geriatri
+                                                var idx = geriatriMnaIds.indexOf(emrdfk);
+                                                if (idx !== -1) {
+                                                    targetId = riNonJiwaMnaIds[idx];
+                                                }
+                                            }
+                                            
+                                            if (targetId) {
+                                                if (targetId == 3019686) {
+                                                    $scope.skorMNA = parseFloat(entry.value) || 0;
+                                                    $scope.item.obj[3019686] = entry.value;
+                                                } else {
+                                                    var isChecked = (entry.value == '1' || entry.value == 1 || entry.value === true || entry.value === 'true');
+                                                    $scope.item.obj[targetId] = isChecked;
+                                                }
+                                                mapped = true;
+                                            }
+                                        }
+                                        if (mapped) {
+                                            $scope.getSkorMNA();
+                                        }
+                                    }
+                                });
+                            }
+                        }
+                    });
+                }
             })
             $scope.skorNutrisi = 0
             $scope.getSkorNutrisi = function (jawab) {
@@ -1463,9 +1564,11 @@ define(['initialize', 'Configuration'], function (initialize, config) {
 
             $scope.getSkorMNA = function (opsi, detailOpsi) {
                 // 1. Terapkan Single Selection (Mutual Exclusivity)
-                for (var i = 0; i < detailOpsi.length; i++) {
-                    if (detailOpsi[i].id !== opsi.id) {
-                        $scope.item.obj[detailOpsi[i].id] = false;
+                if (opsi && detailOpsi) {
+                    for (var i = 0; i < detailOpsi.length; i++) {
+                        if (detailOpsi[i].id !== opsi.id) {
+                            $scope.item.obj[detailOpsi[i].id] = false;
+                        }
                     }
                 }
 
