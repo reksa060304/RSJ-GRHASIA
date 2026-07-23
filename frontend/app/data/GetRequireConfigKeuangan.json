@@ -461,6 +461,10 @@
             "urlDep": "module/BendaharaPenerimaan/STSPertanggalV2Ctrl"
         }, 
         {
+            "nameDep": "RekapCaraBayarPerBulanCtrl",
+            "urlDep": "module/BendaharaPenerimaan/RekapCaraBayarPerBulanCtrl"
+        },
+        {
             "nameDep": "MapSTStoRuanganCtrl",
             "urlDep": "module/BendaharaPenerimaan/MapSTStoRuanganCtrl"
         }, 

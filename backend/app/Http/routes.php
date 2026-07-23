@@ -332,6 +332,7 @@ Route::group(['middleware' => 'cors', 'prefix' => 'service'], function () {
 
           Route::get('bendaharapenerimaan/get-sts-pertanggal-v2', 'BendaharaPenerimaan\BendaharaPenerimaanController@getSTSPertanggalV2');
           Route::get('bendaharapenerimaan/get-detail-sts-pertanggal-v2', 'BendaharaPenerimaan\BendaharaPenerimaanController@getDetailSTSPertanggalV2');
+          Route::get('bendaharapenerimaan/get-rekap-carabayar-per-bulan', 'BendaharaPenerimaan\BendaharaPenerimaanController@getRekapCaraBayarPerBulan');
 
           //**GET**//
 

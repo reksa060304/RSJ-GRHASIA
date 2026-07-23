@@ -13151,4 +13151,269 @@ class BendaharaPenerimaanController extends ApiController {
 
         return $this->respond($response);
     }
+     public function getRekapCaraBayarPerBulan(Request $request)
+    {
+        $kdProfile = $this->getDataKdProfile($request);
+        $idProfile = (int) $kdProfile;
+
+        $tahunx = (int) $request['tahun'];
+        $bulanx = (int) $request['bulan'];
+
+        // ===== Filter kategori cara bayar =====
+        $kategoriBayar = isset($request['kategoribayar']) ? strtolower($request['kategoribayar']) : 'semua';
+
+        $filterKategori = "kategori IN ('QRIS', 'TRANSFER', 'TUNAI')"; // default: semua
+        if ($kategoriBayar === 'tunai') {
+            $filterKategori = "kategori = 'TUNAI'";
+        } elseif ($kategoriBayar === 'transfer') {
+            $filterKategori = "kategori = 'TRANSFER'";
+        } elseif ($kategoriBayar === 'qris') {
+            $filterKategori = "kategori = 'QRIS'";
+        }
+
+        $data = DB::select(DB::raw("
+            WITH param AS (
+                SELECT {$tahunx} AS thn, {$bulanx} AS bln
+            ),
+            date_range AS (
+                SELECT make_date(thn, bln, 1) AS start_date,
+                    make_date(thn, bln, 1) + INTERVAL '1 month' AS end_date
+                FROM param
+            ),
+
+            -- ===== Pecah mapping cara bayar 1 (mapbkuakun_t) jadi baris per kombinasi =====
+            mba_expanded AS (
+                SELECT
+                    mba.objectakunpendapatanfk,
+                    mba.isobat,
+                    kp::integer AS kelompokpasien,
+                    ru::integer AS ruangan,
+                    kl::integer AS kelas
+                FROM mapbkuakun_t mba
+                CROSS JOIN LATERAL unnest(string_to_array(mba.objectkelompokpasienfk, ',')) AS kp
+                CROSS JOIN LATERAL unnest(string_to_array(mba.objectruanganfk, ',')) AS ru
+                CROSS JOIN LATERAL unnest(string_to_array(mba.objectkelasfk, ',')) AS kl
+                WHERE mba.statusenabled = TRUE
+            ),
+
+            -- Branch 1 (OPTIMASI unnest): layanan pasien
+            branch1 AS (
+                SELECT
+                    cap.koderekening, cap.namarekening, sck.carabayarfk,
+                    COALESCE(SUM((((COALESCE(pp.hargajual::DECIMAL, 0) - COALESCE(pp.hargadiscount::DECIMAL, 0)) * pp.jumlah::DECIMAL) + COALESCE(pp.jasa::DECIMAL, 0))), 0) AS total
+                FROM pasiendaftar_t pd
+                CROSS JOIN date_range dr
+                JOIN antrianpasiendiperiksa_t apd ON apd.noregistrasifk = pd.norec AND apd.statusenabled = TRUE AND apd.kdprofile = {$idProfile}
+                JOIN pelayananpasien_t pp ON pp.noregistrasifk = apd.norec AND pp.statusenabled = TRUE AND pp.kdprofile = {$idProfile}
+                JOIN strukpelayanan_t sp ON sp.norec = pp.strukfk AND sp.statusenabled = TRUE AND sp.kdprofile = {$idProfile}
+                JOIN strukbuktipenerimaan_t sbm ON sbm.nostrukfk = sp.norec AND sbm.statusenabled = TRUE AND sbm.kdprofile = {$idProfile}
+                JOIN strukclosing_t sc ON sc.norec = sbm.noclosingfk AND sc.statusenabled = TRUE AND sc.kdprofile = {$idProfile}
+                JOIN strukclosingkasir_t sck ON sck.noclosingfk = sc.norec
+                JOIN mba_expanded mba ON pd.objectkelompokpasienlastfk = mba.kelompokpasien
+                    AND apd.objectruanganfk = mba.ruangan
+                    AND pp.kelasfk = mba.kelas
+                LEFT JOIN char_akun_pendapatan_m cap ON cap.id = mba.objectakunpendapatanfk
+                WHERE pd.statusenabled = TRUE AND pd.kdprofile = {$idProfile}
+                AND sc.tglclosing >= dr.start_date AND sc.tglclosing < dr.end_date
+                AND ((mba.isobat IS NOT TRUE AND pp.isobat IS NULL) OR (mba.isobat = TRUE AND pp.isobat = TRUE))
+                GROUP BY cap.koderekening, cap.namarekening, sck.carabayarfk
+            ),
+
+            -- ===== Pecah mapping produk (mapbkuakun3_t) jadi baris per produk =====
+            mba3_expanded AS (
+                SELECT
+                    mba3.objectakunpendapatanfk,
+                    pr::integer AS produkfk
+                FROM mapbkuakun3_t mba3
+                CROSS JOIN LATERAL unnest(string_to_array(mba3.objectprodukfk, ',')) AS pr
+                WHERE mba3.statusenabled = TRUE
+            ),
+
+            -- Branch 2 (OPTIMASI unnest): produk
+            branch2 AS (
+                SELECT
+                    cap.koderekening, cap.namarekening, sck.carabayarfk,
+                    SUM(((COALESCE(pp.hargajual::DECIMAL, 0) - COALESCE(pp.hargadiscount::DECIMAL, 0)) * pp.jumlah::DECIMAL) + COALESCE(pp.jasa::DECIMAL, 0)) AS total
+                FROM pasiendaftar_t pd
+                CROSS JOIN date_range dr
+                JOIN antrianpasiendiperiksa_t apd ON apd.noregistrasifk = pd.norec AND apd.statusenabled = TRUE AND apd.kdprofile = {$idProfile}
+                JOIN pelayananpasien_t pp ON pp.noregistrasifk = apd.norec AND pp.statusenabled = TRUE AND pp.kdprofile = {$idProfile}
+                JOIN strukpelayanan_t sp ON sp.norec = pp.strukfk AND sp.statusenabled = TRUE AND sp.kdprofile = {$idProfile}
+                JOIN strukbuktipenerimaan_t sbm ON sbm.nostrukfk = sp.norec AND sbm.statusenabled = TRUE AND sbm.kdprofile = {$idProfile}
+                JOIN strukclosing_t sc ON sc.norec = sbm.noclosingfk AND sc.statusenabled = TRUE AND sc.kdprofile = {$idProfile}
+                JOIN strukclosingkasir_t sck ON sck.noclosingfk = sc.norec
+                JOIN mba3_expanded mba3 ON pp.produkfk = mba3.produkfk
+                JOIN char_akun_pendapatan_m cap ON cap.id = mba3.objectakunpendapatanfk
+                WHERE pd.statusenabled = TRUE AND pd.kdprofile = {$idProfile}
+                AND sc.tglclosing >= dr.start_date AND sc.tglclosing < dr.end_date
+                AND pd.objectkelompokpasienlastfk IN (1,12)
+                GROUP BY cap.koderekening, cap.namarekening, sck.carabayarfk
+            ),
+
+            -- Branch 3: non-layanan (mapbkuakun2_t) — tidak diubah, sudah cukup cepat
+            branch3 AS (
+                SELECT
+                    cap.koderekening, cap.namarekening, sck.carabayarfk,
+                    SUM(spd.qtyproduk * spd.hargasatuan * spd.qtyoranglast) AS total
+                FROM strukclosingkasir_t sck
+                CROSS JOIN date_range dr
+                JOIN strukclosing_t sc ON sc.norec = sck.noclosingfk AND sc.statusenabled = TRUE AND sc.kdprofile = {$idProfile}
+                JOIN strukbuktipenerimaan_t sbm ON sbm.noclosingfk = sc.norec
+                JOIN strukpelayanan_t sp ON sbm.nostrukfk = sp.norec
+                JOIN strukpelayanandetail_t spd ON sp.norec = spd.nostrukfk
+                JOIN mapbkuakun2_t mba2 ON spd.objectprodukfk::VARCHAR = ANY(string_to_array(mba2.objectprodukfk, ',')) AND mba2.statusenabled = TRUE
+                JOIN char_akun_pendapatan_m cap ON cap.id = mba2.objectakunpendapatanfk
+                WHERE sc.tglclosing >= dr.start_date AND sc.tglclosing < dr.end_date
+                GROUP BY cap.koderekening, cap.namarekening, sck.carabayarfk
+            ),
+
+            raw_all AS (
+                SELECT * FROM branch1
+                UNION ALL
+                SELECT * FROM branch2
+                UNION ALL
+                SELECT * FROM branch3
+            ),
+
+            categorized AS (
+                SELECT
+                    koderekening,
+                    namarekening,
+                    CASE
+                        WHEN carabayarfk = 1 THEN 'TUNAI'
+                        WHEN carabayarfk IN (12, 13) THEN 'QRIS'
+                        ELSE 'TRANSFER'
+                    END AS kategori,
+                    total
+                FROM raw_all
+            ),
+
+            categorized_filtered AS (
+                SELECT * FROM categorized
+                WHERE {$filterKategori}
+            ),
+
+            source_grouped AS (
+                SELECT
+                    koderekening,
+                    MAX(namarekening) AS namarekening,
+                    SUM(CASE WHEN kategori = 'QRIS' THEN total ELSE 0 END) AS qris,
+                    SUM(CASE WHEN kategori = 'TRANSFER' THEN total ELSE 0 END) AS transfer,
+                    SUM(CASE WHEN kategori = 'TUNAI' THEN total ELSE 0 END) AS tunai
+                FROM categorized_filtered
+                GROUP BY koderekening
+            ),
+
+            with_levels AS (
+                SELECT
+                    sg.koderekening, sg.namarekening, sg.qris, sg.transfer, sg.tunai,
+                    cap1.koderekening AS lv1k, cap1.namarekening AS lv1n,
+                    cap2.koderekening AS lv2k, cap2.namarekening AS lv2n,
+                    cap3.koderekening AS lv3k, cap3.namarekening AS lv3n,
+                    cap4.koderekening AS lv4k, cap4.namarekening AS lv4n,
+                    cap5.koderekening AS lv5k, cap5.namarekening AS lv5n,
+                    cap6.koderekening AS lv6k, cap6.namarekening AS lv6n,
+                    cap7.koderekening AS lv7k, cap7.namarekening AS lv7n
+                FROM source_grouped sg
+                LEFT JOIN char_akun_pendapatan_m cap1 ON cap1.koderekening = split_part(sg.koderekening, '.', 1) AND cap1.level = 1 AND cap1.kdprofile = {$idProfile}
+                LEFT JOIN char_akun_pendapatan_m cap2 ON cap2.koderekening = split_part(sg.koderekening, '.', 1) || '.' || split_part(sg.koderekening, '.', 2) AND cap2.level = 2 AND cap2.kdprofile = {$idProfile}
+                LEFT JOIN char_akun_pendapatan_m cap3 ON cap3.koderekening = split_part(sg.koderekening, '.', 1) || '.' || split_part(sg.koderekening, '.', 2) || '.' || split_part(sg.koderekening, '.', 3) AND cap3.level = 3 AND cap3.kdprofile = {$idProfile}
+                LEFT JOIN char_akun_pendapatan_m cap4 ON cap4.koderekening = split_part(sg.koderekening, '.', 1) || '.' || split_part(sg.koderekening, '.', 2) || '.' || split_part(sg.koderekening, '.', 3) || '.' || split_part(sg.koderekening, '.', 4) AND cap4.level = 4 AND cap4.kdprofile = {$idProfile}
+                LEFT JOIN char_akun_pendapatan_m cap5 ON cap5.koderekening = split_part(sg.koderekening, '.', 1) || '.' || split_part(sg.koderekening, '.', 2) || '.' || split_part(sg.koderekening, '.', 3) || '.' || split_part(sg.koderekening, '.', 4) || '.' || split_part(sg.koderekening, '.', 5) AND cap5.level = 5 AND cap5.kdprofile = {$idProfile}
+                LEFT JOIN char_akun_pendapatan_m cap6 ON cap6.koderekening = split_part(sg.koderekening, '.', 1) || '.' || split_part(sg.koderekening, '.', 2) || '.' || split_part(sg.koderekening, '.', 3) || '.' || split_part(sg.koderekening, '.', 4) || '.' || split_part(sg.koderekening, '.', 5) || '.' || split_part(sg.koderekening, '.', 6) AND cap6.level = 6 AND cap6.kdprofile = {$idProfile}
+                LEFT JOIN char_akun_pendapatan_m cap7 ON cap7.koderekening = split_part(sg.koderekening, '.', 1) || '.' || split_part(sg.koderekening, '.', 2) || '.' || split_part(sg.koderekening, '.', 3) || '.' || split_part(sg.koderekening, '.', 4) || '.' || split_part(sg.koderekening, '.', 5) || '.' || split_part(sg.koderekening, '.', 6) || '.' || split_part(sg.koderekening, '.', 7) AND cap7.level = 7 AND cap7.kdprofile = {$idProfile}
+            ),
+
+            per_level_raw AS (
+                SELECT lv1k AS kode, lv1n AS uraian, qris, transfer, tunai FROM with_levels WHERE lv1k IS NOT NULL
+                UNION ALL
+                SELECT lv2k, lv2n, qris, transfer, tunai FROM with_levels WHERE lv2k IS NOT NULL
+                UNION ALL
+                SELECT lv3k, lv3n, qris, transfer, tunai FROM with_levels WHERE lv3k IS NOT NULL
+                UNION ALL
+                SELECT lv4k, lv4n, qris, transfer, tunai FROM with_levels WHERE lv4k IS NOT NULL
+                UNION ALL
+                SELECT lv5k, lv5n, qris, transfer, tunai FROM with_levels WHERE lv5k IS NOT NULL
+                UNION ALL
+                SELECT lv6k, lv6n, qris, transfer, tunai FROM with_levels WHERE lv6k IS NOT NULL
+                UNION ALL
+                SELECT lv7k, lv7n, qris, transfer, tunai FROM with_levels WHERE lv7k IS NOT NULL
+                UNION ALL
+                SELECT koderekening, namarekening, qris, transfer, tunai
+                FROM with_levels
+                WHERE array_length(regexp_split_to_array(koderekening, '\.'), 1) > 7
+            ),
+
+            per_level AS (
+                SELECT
+                    kode,
+                    MAX(uraian) AS uraian,
+                    SUM(qris) AS qris,
+                    SUM(transfer) AS transfer,
+                    SUM(tunai) AS tunai
+                FROM per_level_raw
+                GROUP BY kode
+            )
+
+            SELECT
+                kode AS koderekening,
+                uraian AS namarekening,
+                ROUND(qris::numeric, 2) AS qris,
+                ROUND(transfer::numeric, 2) AS transfer,
+                ROUND(tunai::numeric, 2) AS tunai,
+                ROUND((qris + transfer + tunai)::numeric, 2) AS jumlah,
+                COALESCE(NULLIF(split_part(kode, '.', 1), ''), '0')::DECIMAL AS s1,
+                COALESCE(NULLIF(split_part(kode, '.', 2), ''), '0')::DECIMAL AS s2,
+                COALESCE(NULLIF(split_part(kode, '.', 3), ''), '0')::DECIMAL AS s3,
+                COALESCE(NULLIF(split_part(kode, '.', 4), ''), '0')::DECIMAL AS s4,
+                COALESCE(NULLIF(split_part(kode, '.', 5), ''), '0')::DECIMAL AS s5,
+                COALESCE(NULLIF(split_part(kode, '.', 6), ''), '0')::DECIMAL AS s6,
+                COALESCE(NULLIF(split_part(kode, '.', 7), ''), '0')::DECIMAL AS s7,
+                COALESCE(NULLIF(split_part(kode, '.', 8), ''), '0')::DECIMAL AS s8
+            FROM per_level
+            ORDER BY s1, s2, s3, s4, s5, s6, s7, s8
+        "));
+
+       // Cari level paling atas yang benar-benar muncul di data (jumlah titik paling sedikit)
+        $minDepth = null;
+        foreach ($data as $row) {
+            $depth = substr_count($row->koderekening, '.');
+            if ($minDepth === null || $depth < $minDepth) {
+                $minDepth = $depth;
+            }
+        }
+
+        // Jumlahkan hanya baris di level paling atas itu
+        $totalQris = $totalTransfer = $totalTunai = $totalJumlah = 0;
+        foreach ($data as $row) {
+            if (substr_count($row->koderekening, '.') === $minDepth) {
+                $totalQris     += $row->qris;
+                $totalTransfer += $row->transfer;
+                $totalTunai    += $row->tunai;
+                $totalJumlah   += $row->jumlah;
+            }
+        }
+
+        $result = [
+            'detail' => $data,
+            'total'  => [
+                'koderekening' => 'Total',
+                'namarekening' => '',
+                'qris'         => round($totalQris, 2),
+                'transfer'     => round($totalTransfer, 2),
+                'tunai'        => round($totalTunai, 2),
+                'jumlah'       => round($totalJumlah, 2),
+            ],
+            'columns' => [
+                ['field' => 'koderekening', 'label' => 'Kode Rekening'],
+                ['field' => 'namarekening', 'label' => 'Uraian'],
+                ['field' => 'qris',         'label' => 'QRIS'],
+                ['field' => 'transfer',     'label' => 'TRANSFER'],
+                ['field' => 'tunai',        'label' => 'TUNAI'],
+                ['field' => 'jumlah',       'label' => 'Jumlah'],
+            ],
+        ];
+
+        return $this->setStatusCode(201)->respond($result, 'tes msg');
+    }
 }

@@ -2279,6 +2279,26 @@
     ]
   },
   {
+    "name": "RekapCaraBayarPerBulan",
+    "url": "/UmVrYXBDYXJhQmF5YXJQZXJCdWxhbg==",
+    "templateurl": "module/BendaharaPenerimaan/RekapCaraBayarPerBulan.html",
+    "controller": "RekapCaraBayarPerBulanCtrl",
+    "deps": [
+        {
+            "module": "Services",
+            "define": "Service"
+        },
+        {
+            "module": "LoginServices",
+            "define": "LoginService"
+        },
+        {
+            "module": "MedifirstService",
+            "define": "MedifirstService"
+        }
+    ]
+  },
+  {
     "name": "MapSTStoRuangan",
     "url": "/TWFwcGluZ1VyYWlhblNUU2tlUnVhbmdhbg==",
     "templateurl": "module/BendaharaPenerimaan/MapSTStoRuangan.html",

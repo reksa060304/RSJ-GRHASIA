@@ -1,0 +1,133 @@
+<style>
+    .k-grid .k-grid-header .k-header .k-link {
+        height: auto;
+    }
+
+    .k-grid .k-grid-header .k-header {
+        white-space: normal;
+    }
+
+    .k-grid .k-grid-header .k-header {
+        text-align: center;
+    }
+
+    .k-window-content .k-content {
+        overflow: none
+    }
+
+    legend {
+        cursor: pointer;
+        padding: 10px;
+    }
+
+    .effect-shadow {
+        -webkit-box-shadow: 2px 2px 5px #b6b6b6;
+        -moz-box-shadow: 2px 2px 5px #b6b6b6;
+        box-shadow: 2px 2px 5px #b6b6b6;
+    }
+
+    .warnaa {
+        color: black
+    }
+
+    .align-right{
+        text-align: right;
+    }
+
+    hr {
+        border: 1px solid black;
+        margin-top: 0px;
+        margin-bottom: 0px;
+        display: inline-block;
+        width: 100%;
+    }
+
+    h1 {
+        color: black;
+        display: block;
+        font-size: 14px;
+        margin-block-start: 0px;
+        margin-block-end: 0;
+        margin-inline-start: 0px;
+        margin-inline-end: 0px;
+        font-weight: bold;
+    }
+
+    h2 {
+        color: black;
+        display: block;
+        font-size: 14px;
+        margin-block-start: 0px;
+        margin-block-end: 0;
+        margin-inline-start: 0px;
+        margin-inline-end: 0px;
+        font-weight: bold;
+    }
+
+    .row-total {
+        font-weight: bold;
+        background-color: #f2f2f2;
+    }
+</style>
+<div class="grid_12">
+    <div class="panel panel-default container_12">
+        <div class="panel-heading" c-translate>Rekapitulasi Transaksi Pembayaran Lunas per Bulan</div>
+    </div>
+    <div class="panel panel-default panel-white" ng-hide="isMasuk">
+        <fieldset class="effect-shadow" style=" border-radius: 4px">
+            <legend id="filterData">
+                <a ng-click="showAndHide()">
+                    <h2><span class="fa fa-plus warnaa">
+                        </span> &nbsp;Pencarian</h2>
+                </a>
+            </legend>
+            <div class="grid_12" id="contentPencarian">
+                <div class="grid_6" style="margin-top: 15px;">
+                    <div class="grid_12">
+                        <label c-label item="item" c-label-text="Periode"></label>
+                    </div>
+                    <div class="grid_12">
+                        <!-- AwalPeriode -->
+                        <div class="grid_2">
+                            <div class="grid_12">
+                                <div class="grid_12">
+                                    <input style="width: 100%" k-options="monthUngkul" k-ng-model="item.bulan"
+                                        kendo-date-picker placeholer="MMMM" k-format="'MMMM'" />
+                                </div>
+                            </div>
+                        </div>
+                        <div class="grid_2">
+                            <div class="grid_12">
+                                <div class="grid_12">
+                                    <input style="width: 100%" k-options="yearUngkul" k-ng-model="item.tahun" kendo-date-picker
+                                        placeholer="YYYY" k-format="'yyyy'" />
+                                </div>
+                            </div>
+                        </div>
+                        <div class="grid_3" style="margin-top: -15px;">
+                            <label c-label item="item" c-label-text="Kategori Cara Bayar"></label>
+                            <input style="width: 100%;" kendo-combo-box k-ng-model="item.kategoriBayar"
+                                k-data-text-field="'text'" k-data-value-field="'value'" k-filter="'contains'"
+                                k-auto-bind="true" k-data-source="listKategoriBayar" />
+                        </div>
+                        <div class="grid_2" style="margin-top: 5px;">
+                            <button class="c-button" ng-click="cariFilter()">Cari</button>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+        </fieldset>
+
+        <!-- Tabel Hasil Pencarian -->
+        <div class="grid_12" style="margin-top:50px;">
+            <div class="grid_12 borderBox">
+                <kendo-grid id="grid" options="columnGrid"
+                    k-pageable="'true'" k-sortable="'true'" k-groupable="'false'" k-resizable="'true'"
+                    k-selectable="'row'" k-ng-model="dataSelected" ng-click="klikGrid(dataSelected)"
+                    style="min-height: 0px; max-height: 1500px;">
+                </kendo-grid>
+            </div>
+        </div>
+    </div>
+</div>
