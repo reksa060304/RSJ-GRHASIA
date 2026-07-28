@@ -3298,33 +3298,50 @@ class ReportController extends ApiController{
         $item =[];   
         $item2= [];      
         foreach( $res['d'] as $items){
-                if($items->type  ==  "textbox" ||$items->type  ==  "textarea"  ){
-                    $item[$items->emrdfk] =  $items->value;
-        }
-                if($items->type  ==  "datetime"){
-                    // $item[$items->emrdfk] = $this->tanggal_indonesia(date('Y-m-d H:i',strtotime( $items->value))) ;
-                    $item[$items->emrdfk] = date('Y-m-d H:i',strtotime( $items->value));
+                $type = $items->type;
+
+                // Handle semua textbox (textbox, textbox3, dll)
+                if ($type == 'textbox' || str_starts_with($type, 'textbox')) {
+                    $item[$items->emrdfk] = $items->value;
                 }
-                if($items->type  ==  "time"){
-                    $item[$items->emrdfk] = date('H:i',strtotime( $items->value));
+
+                if ($type == 'textarea') {
+                    $item[$items->emrdfk] = $items->value;
                 }
-                if($items->type  ==  "date"){
-                    $item[$items->emrdfk] = date('Y-m-d',strtotime( $items->value));
+
+                if ($type == 'datetime') {
+                    $item[$items->emrdfk] = date('Y-m-d H:i', strtotime($items->value));
                 }
-                if($items->type  ==  "checkboxtextbox"){
-                    $item[$items->emrdfk] =  $items->value;
-                    $item2[$items->emrdfk] =  true;
+
+                if ($type == 'time') {
+                    $item[$items->emrdfk] = date('H:i', strtotime($items->value));
                 }
-                if($items->type == "checkbox") {
-                    $chekedd = false;
-                    if ($items->value == '1') {
-                        $chekedd = true;
-                    }
+
+                if ($type == 'date') {
+                    $item[$items->emrdfk] = date('Y-m-d', strtotime($items->value));
+                }
+
+                if ($type == 'checkboxtextbox') {
+                    $item[$items->emrdfk] = $items->value;
+                    $item2[$items->emrdfk] = true;
+                }
+
+                if ($type !== 'checkboxtextbox' && ($type == 'checkbox' || str_starts_with($type, 'checkbox'))) {
+                    $chekedd = ($items->value == '1' || $items->value === true || $items->value === 'true');
                     $item[$items->emrdfk] = $chekedd;
                 }
-                if($items->type == "combobox") {
-                    $arr = explode('~',$items->value );
-                    $item[$items->emrdfk] = $arr[1];
+
+                if ($type == 'number' || $type == 'integer') {
+                    $item[$items->emrdfk] = $items->value;
+                }
+
+                if ($type == 'combobox') {
+                    $arr = explode('~', $items->value);
+                    $item[$items->emrdfk] = isset($arr[1]) ? $arr[1] : $items->value;
+                }
+
+                if ($type == 'radiobutton') {
+                    $item[$items->emrdfk] = $items->value;
                 }
         }
         $pageWidth = 550;

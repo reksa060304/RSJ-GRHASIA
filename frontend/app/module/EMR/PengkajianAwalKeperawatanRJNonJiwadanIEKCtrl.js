@@ -2165,25 +2165,36 @@ define(['initialize', 'Configuration'], function (initialize, config) {
                     'PengkajianAwalKeperawatanRJNonJiwadanIEKCtrl' + ' dengan No EMR - ' +e.data.data.noemr +  ' pada No Registrasi ' 
                     + $scope.cc.noregistrasi).then(function (res) {
                     })
-                    $scope.cc.norec_emr = e.data.data.noemr
+
+                    $scope.cc.norec_emr = res.data.data.noemr;
+                    norecEMR = res.data.data.norec
+                    nomorEMR = res.data.data.noemr
                     var arrStr = {
-                        0: e.data.data.noemr
-                    }
-                    cacheHelper.set('cacheNomorEMR', arrStr);
+                    0: res.data.data.noemr,
+                    1: res.data.data.norec,
+                    2: res.data.data.tglemr,
+                    };
+                    cacheHelper.set("cacheNomorEMR", arrStr);
                 });
             }
-            $scope.cetakBlade = function(){
-                if (norecEMR == '') return
-            
-              var local =JSON.parse(localStorage.getItem('profile')) 
-              var nama = medifirstService.getPegawaiLogin().namaLengkap
-          
-               window.open(config.baseApiBackend + 'report/cetak-asesmen-keperawatan-inap?nocm='
-                   + $scope.cc.nocm + '&norec_apd='+  $scope.cc.norec +'&emr=' + norecEMR
-                   + '&emrfk='+  $scope.cc.emrfk
-                   +'&kdprofile='+local.id 
-                   +'&nama='+nama,  '_blank');
-            } 
+
+            $scope.cetakBlade = function () {
+                if (norecEMR == '') {
+                toastr.error('Dokumen belum pernah di isi')
+                return
+                }
+                var local = JSON.parse(localStorage.getItem('profile'))
+                // var nama = medifirstService.getPegawaiLogin().namaLengkap
+
+                window.open(config.baseApiBackend + 'report/get-cetak-surat-man?nocm=' + $scope.cc.nocm +
+                '&emr=' + norecEMR +
+                '&noemr=' + nomorEMR +
+                '&emrfk=' + $scope.cc.emrfk +
+                // '&index=' + $scope.cc.index +
+                '&kdprofile=' + local.id +
+                '&blade=' + 'ass-awl-nonjiwa-eval-dom', '_blank');
+
+            }
 
         }
     ]);
