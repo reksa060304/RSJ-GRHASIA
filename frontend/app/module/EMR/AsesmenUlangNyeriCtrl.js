@@ -1,4 +1,4 @@
-define(['initialize'], function (initialize) {
+define(["initialize", "Configuration"], function (initialize, config) {
     'use strict';
     initialize.controller('AsesmenUlangNyeriCtrl', ['$q', '$rootScope', '$scope', 'ModelItem', '$state', 'CacheHelper', 'DateHelper', 'MedifirstService',
         function ($q, $rootScope, $scope, ModelItem, $state, cacheHelper, dateHelper, medifirstService) {
@@ -8,11 +8,16 @@ define(['initialize'], function (initialize) {
             $scope.noCM = $state.params.noCM;
             $scope.tombolSimpanVis = true
             $scope.isCetak = false
+            $scope.isCetakV = true;
+            var norecEMR = "";
+            var nomorEMR = "-";
             $scope.noRecPap = cacheHelper.get('noRecPap');
             $scope.totalSkor = 0
             $scope.totalSkor2 = 0
             $scope.totalSkor4 = 0
-            $scope.cc = {}
+            $scope.cc = {
+                index: $state.params.index,
+            };
             var nomorEMR = '-'
             if(medifirstService.getKelompokUser() == 'mahasiswadiklat'){
                 $scope.tombolSimpanVis = false
@@ -582,11 +587,12 @@ define(['initialize'], function (initialize) {
                 $scope.listData10 = arrayShiftJaga10
             })
 
-            var cacheNomorEMR = cacheHelper.get('cacheNomorEMR');
+            const cacheNomorEMR = cacheHelper.get("cacheNomorEMR");
             if (cacheNomorEMR != undefined) {
-                nomorEMR = cacheNomorEMR[0]
-                $scope.cc.norec_emr = nomorEMR
-                $scope.cc.tanggalEmrl = cacheNomorEMR[2]
+                $scope.cc.norec_emr =
+                cacheNomorEMR && cacheNomorEMR[0] == "-" ? null : cacheNomorEMR[0];
+                nomorEMR = cacheNomorEMR[0];
+                norecEMR = cacheNomorEMR[1];
             }
 
             var chacePeriode = cacheHelper.get('cacheRekamMedis');
@@ -724,6 +730,23 @@ define(['initialize'], function (initialize) {
             })
 
 
+            $scope.cetakBlade = function () {
+                if (norecEMR == '') {
+                toastr.error('Dokumen belum pernah di isi')
+                return
+                }
+                var local = JSON.parse(localStorage.getItem('profile'))
+                // var nama = medifirstService.getPegawaiLogin().namaLengkap
+
+                window.open(config.baseApiBackend + 'report/get-cetak-surat-man?nocm=' + $scope.cc.nocm +
+                '&emr=' + norecEMR +
+                '&noemr=' + nomorEMR +
+                '&emrfk=' + $scope.cc.emrfk +
+                '&index=' + $scope.cc.index +
+                '&kdprofile=' + local.id +
+                '&blade=' + 'ass-ulang-nyeri-dom', '_blank');
+
+            }
 
 
 
@@ -755,15 +778,19 @@ define(['initialize'], function (initialize) {
                     //     namaEMR : $scope.cc.emrfk,
                     //     nomorEMR : e.data.data.noemr 
                     // });
+                    $scope.cc.norec_emr = res.data.data.noemr;
+                    norecEMR = res.data.data.norec
+                    nomorEMR = res.data.data.noemr
+                    var arrStr = {
+                    0: res.data.data.noemr,
+                    1: res.data.data.norec,
+                    2: res.data.data.tglemr,
+                    };
+                    cacheHelper.set("cacheNomorEMR", arrStr);
+
                     medifirstService.postLogging('EMR', 'norec emrpasien_t', e.data.data.norec,
                         'AsesmenUlangNyeriCtrl ' + ' dengan No EMR - ' + e.data.data.noemr + ' pada No Registrasi ' +
                         $scope.cc.noregistrasi).then(function (res) {})
-
-                    var arrStr = {
-                        0: e.data.data.noemr
-                    }
-                    cacheHelper.set('cacheNomorEMR', arrStr);
-                    console.log(cacheHelper.get('cacheNomorEMR'))
 
 
                 });

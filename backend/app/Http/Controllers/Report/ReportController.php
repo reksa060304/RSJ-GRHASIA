@@ -3204,41 +3204,87 @@ class ReportController extends ApiController{
     {   
         $norec = $request['emr'];
         $kdProfile = (int) $request['kdprofile'];
-        $kodeAwalSurat = $this->settingDataFixed('KodeAwalSurat', $kdProfile);
-        $kodeAkhirSurat = $this->settingDataFixed('KodeAkhirSurat', $kdProfile);
-        $data = DB::select(DB::raw("
-        SELECT
-            epd.emrdfk,
-            epd.emrfk,
-            ep.noemr,
-            ed.TYPE,
-            pa.namapasien,
-            pa.tgllahir,
-            pa.nohp,
-            pa.nocm,
-            ep.jeniskelamin,
-            ep.umur,
-            al.alamatlengkap,
-            ep.noregistrasifk as noregistrasi ,
-            epd.value,ep.namaruangan,pg.namalengkap as namadokter
-            --case when ed.TYPE = 'datetime' then TO_CHAR(TO_TIMESTAMP(epd.value, 'YYYY-MM-DD HH24:MI:SS'),'YYYY-MM-DD HH24:MI:SS') else epd.value end as value
-        FROM
-            emrpasien_t AS ep
-            INNER JOIN emrpasiend_t AS epd ON ep.noemr = epd.emrpasienfk
-            INNER JOIN emrd_t AS ed ON epd.emrdfk = ed.ID
+
+
+        if ($request['index'] != '') {
+             $data = DB::select(DB::raw("
+            SELECT
+                epd.emrdfk,
+                epd.emrfk,
+                ep.noemr,
+                ed.TYPE,
+                pa.namapasien,
+                pa.tgllahir,
+                pa.nohp,
+                pa.nocm,
+                ep.jeniskelamin,
+                ep.umur,
+                al.alamatlengkap,
+                pd.tglregistrasi,
+                ep.noregistrasifk as noregistrasi,
+                epd.value,ep.namaruangan,pg.namalengkap as namadokter
+            FROM
+                emrpasien_t AS ep
+                INNER JOIN emrpasiend_t AS epd ON ep.noemr = epd.emrpasienfk
                 INNER JOIN antrianpasiendiperiksa_t AS pd ON pd.norec = ep.norec_apd
-            left JOIN pegawai_m AS pg ON pg.id = pd.objectpegawaifk
-            left JOIN pasien_m as pa on ep.nocm =  pa.nocm
-            left JOIN alamat_m as al on pa.id = al.nocmfk
-        WHERE
-            ep.norec = '$norec'
+                INNER JOIN emrd_t AS ed ON epd.emrdfk = ed.ID
+                left JOIN pegawai_m AS pg ON pg.id = pd.objectpegawaifk
+                left JOIN pasien_m as pa on ep.nocm =  pa.nocm
+                left JOIN alamat_m as al on pa.id = al.nocmfk
+            WHERE
+                ep.norec = '$norec'
                 AND ep.kdprofile = '$kdProfile' 
-            AND epd.statusenabled = TRUE 
-            and epd.emrfk = ".$request['emrfk']."
-        ORDER BY
-            ed.nourut
-            "
-        ));
+                AND epd.statusenabled = TRUE 
+                AND epd.index = ".$request['index']."
+                and epd.emrfk = ".$request['emrfk']."
+            ORDER BY
+                epd.emrdfk
+                "
+            ));
+        } else {
+            $data = DB::select(DB::raw("
+            SELECT
+                epd.emrdfk,
+                epd.emrfk,
+                ep.noemr,
+                ed.TYPE,
+                pa.namapasien,
+                pa.tgllahir,
+                pa.nohp,
+                pa.nocm,
+                ep.jeniskelamin,
+                ep.umur,
+                al.alamatlengkap,
+                pd.tglregistrasi,
+                ep.noregistrasifk as noregistrasi,
+                epd.value,ep.namaruangan,pg.namalengkap as namadokter
+                --case when ed.TYPE = 'datetime' then TO_CHAR(TO_TIMESTAMP(epd.value, 'YYYY-MM-DD HH24:MI:SS'),'YYYY-MM-DD HH24:MI:SS') else epd.value end as value
+            FROM
+                emrpasien_t AS ep
+                INNER JOIN emrpasiend_t AS epd ON ep.noemr = epd.emrpasienfk
+                INNER JOIN emrd_t AS ed ON epd.emrdfk = ed.ID
+                    INNER JOIN antrianpasiendiperiksa_t AS pd ON pd.norec = ep.norec_apd
+                left JOIN pegawai_m AS pg ON pg.id = pd.objectpegawaifk
+                left JOIN pasien_m as pa on ep.nocm =  pa.nocm
+                left JOIN alamat_m as al on pa.id = al.nocmfk
+            WHERE
+                ep.norec = '$norec'
+                    AND ep.kdprofile = '$kdProfile' 
+                AND epd.statusenabled = TRUE 
+                and epd.emrfk = ".$request['emrfk']."
+            ORDER BY
+                ed.nourut
+                "
+            ));
+        }
+
+        if (count($data) == 0) {
+            return response()->json([
+                'status' => 400,
+                'message' => 'Data tidak ditemukan'
+            ], 400);
+        }
+        
         $dataimg = DB::table('emrfoto_t as emrp')
                 ->select('emrp.*')
                 ->where('emrp.statusenabled', true)
@@ -3254,9 +3300,9 @@ class ReportController extends ApiController{
         foreach( $res['d'] as $items){
                 if($items->type  ==  "textbox" ||$items->type  ==  "textarea"  ){
                     $item[$items->emrdfk] =  $items->value;
-                }
+        }
                 if($items->type  ==  "datetime"){
-                    // $item[$items->emrdfk] = $this->tanggal_indonesia(date('Y-m-d H:i:s',strtotime( $items->value))) ;
+                    // $item[$items->emrdfk] = $this->tanggal_indonesia(date('Y-m-d H:i',strtotime( $items->value))) ;
                     $item[$items->emrdfk] = date('Y-m-d H:i',strtotime( $items->value));
                 }
                 if($items->type  ==  "time"){
