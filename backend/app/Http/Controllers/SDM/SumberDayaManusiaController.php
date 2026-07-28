@@ -415,7 +415,7 @@ class SumberDayaManusiaController extends ApiController {
                               gp.golonganpegawai, uk.name as unitkerja, sp.statuspegawai,
                               kj.namakelompokjabatan, spp.statusperkawinan, ese.eselon,
                               kp.kategorypegawai as namakategorypegawai, pend.pendidikan,
-                              jk.jeniskelamin, gol.namaexternal || ', ' || gol.name as golongan,
+                              jk.jeniskelamin, COALESCE(gol.namaexternal, '') || CASE WHEN gol.namaexternal IS NOT NULL THEN ', ' ELSE '' END || gol.name AS golongan,
                               nkj.detailkelompokjabatan, nkj.grade, ks.kelompokshiftkerja,
                               kdd.name as kedudukan, jp.jenispegawai,
                               mbs.berakhirsip, mbs.berakhirstr"))
@@ -785,7 +785,7 @@ class SumberDayaManusiaController extends ApiController {
         ->get();
 
         $dataPangkatGolongan = \DB::select(DB::raw("SELECT gol.level, rg.pejabatpenandatangan, rg.masakerjagolongan,
-            rg.nominal,rg.objectgolonganfk,rgb.tgltmt as tglawal, rg.norec,rg.tglsk::date, rg.tgltmt::date, gol.name, gol.namaexternal,gol.namaexternal || ', ' || gol.name as golongan, rg.nosk, rg.pejabatmenetapkan
+            rg.nominal,rg.objectgolonganfk,rgb.tgltmt as tglawal, rg.norec,rg.tglsk::date, rg.tgltmt::date, gol.name, gol.namaexternal, COALESCE(gol.namaexternal, '') || CASE WHEN gol.namaexternal IS NOT NULL THEN ', ' ELSE '' END || gol.name AS golongan, rg.nosk, rg.pejabatmenetapkan
             -- rg.nosk, rg.tglsk,gol.reportdisplay, rg.tgltmt,EXTRACT(year from age(rg.tgltmt,rgb.tgltmt)), age(rg.tgltmt,rgb.tgltmt), rgb.tgltmt as tglawal,rg.nominal 
             FROM riwayatgolongan_t rg 
             inner join sdm_golongan_m as gol on gol.id = rg.objectgolonganfk 
