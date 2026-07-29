@@ -1332,7 +1332,7 @@
                     <!-- A -->
                     <tr>
                         <td class="text-center text-bold" style="vertical-align: middle;">A</td>
-                        <td>Apakah asupan makanan berkurang selama 3 month terakhir?</td>
+                        <td>Apakah asupan makanan berkurang selama 3 bulan terakhir?</td>
                         <td style="vertical-align: top; padding: 4px 6px;">
                             <div class="cb-container">
                                 <div class="cb-cell-box"><span class="check-box">{!! !empty($item[1901310041]) ? $checkmark : '&nbsp;' !!}</span></div>
