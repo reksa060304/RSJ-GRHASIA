@@ -36,6 +36,10 @@ define(["initialize", "Configuration"], function (initialize, config) {
             $scope.listData9 = []
             $scope.listData10 = []
 
+            medifirstService.getPart('emr/get-datacombo-part-pegawai', true, true, 20).then(function (data) {
+                $scope.listPegawai = data;
+            });
+
             medifirstService.get("emr/get-rekam-medis-dynamic?emrid=" + 3000444).then(function (e) {
 
                 var datas = e.data.kolom4
@@ -652,7 +656,20 @@ define(["initialize", "Configuration"], function (initialize, config) {
                     if (parseFloat($scope.cc.emrfk) == dataLoad[i].emrfk && paramsIndex == dataLoad[i].index) {
 
                         if (dataLoad[i].type == "textbox") {
-                            $scope.item.obj[dataLoad[i].emrdfk] = dataLoad[i].value
+                            if (dataLoad[i].emrdfk >= 1901300519 && dataLoad[i].emrdfk <= 1901300524) {
+                                var str = dataLoad[i].value;
+                                if (str != undefined && str.indexOf('~') > -1) {
+                                    var res = str.split("~");
+                                    $scope.item.obj[dataLoad[i].emrdfk] = {
+                                        value: res[0],
+                                        text: res[1]
+                                    };
+                                } else {
+                                    $scope.item.obj[dataLoad[i].emrdfk] = dataLoad[i].value;
+                                }
+                            } else {
+                                $scope.item.obj[dataLoad[i].emrdfk] = dataLoad[i].value;
+                            }
                             if (dataLoad[i].emrdfk == 115952)
                                 $scope.totalSkor4 = parseFloat(dataLoad[i].value)
                             if (dataLoad[i].emrdfk == 21020955)
