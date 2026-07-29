@@ -664,6 +664,7 @@
                         <tr><td style="border: none; padding: 0;">5 - 8</td><td style="border: none; padding: 0;">: Ketergantungan berat</td></tr>
                         <tr><td style="border: none; padding: 0;">0 - 4</td><td style="border: none; padding: 0;">: Ketergantungan total</td></tr>
                     </table>
+                    <div style="margin-top: 4px; font-weight: bold;">Skor &lt;= 11 lapor DPJP untuk penanganan lebih lanjut</div>
                 </td>
             </tr>
         </table>
@@ -743,9 +744,9 @@
                         <span style="padding-left: 10px; display: block;">Perlu bantuan untuk semua perawatan rumah sehari-hari</span>
                         <span style="padding-left: 10px; display: block;">Tidak berpartisipasi dalam perawatan rumah</span>
                     </td>
-                    <td class="text-center" style="vertical-align: top;">1<br>1<br>1<br>0</td>
+                    <td class="text-center" style="vertical-align: top;">1<br>1<br>1<br>1</td>
                     <td class="text-center" style="vertical-align: middle; font-weight: bold;">
-                        {!! !empty($item[310082]) ? '1' : (!empty($item[310083]) ? '1' : (!empty($item[310084]) ? '1' : (!empty($item[310085]) ? '0' : ''))) !!}
+                        {!! !empty($item[310082]) ? '1' : (!empty($item[310083]) ? '1' : (!empty($item[310084]) ? '1' : (!empty($item[310085]) ? '1' : ''))) !!}
                     </td>
                 </tr>
                 <!-- 6. Mencuci pakaian -->
@@ -891,48 +892,85 @@
         <!-- Wong Baker scale -->
         <div style="text-align: center; font-weight: bold; font-style: italic; text-decoration: underline; margin-top: 10px; font-size: 9pt;">WONG BAKER FACES</div>
         
-        <table style="width: 100%; border-collapse: collapse; border: none; margin-top: 10px; margin-bottom: 15px; table-layout: fixed;">
-            <!-- Row 1: Images -->
+        <table style="width: 100%; border-collapse: collapse; border: none; margin-top: 10px; margin-bottom: 15px;">
             <tr>
-                <td style="width: 13%; text-align: center; border: none; padding: 0;"><img style="height: 35px; width: auto;" src="{{ public_path('img/skalanyeri/1.png') }}"></td>
-                <td style="width: 4.4%; border: none;"></td>
-                <td style="width: 13%; text-align: center; border: none; padding: 0;"><img style="height: 35px; width: auto;" src="{{ public_path('img/skalanyeri/2.png') }}"></td>
-                <td style="width: 4.4%; border: none;"></td>
-                <td style="width: 13%; text-align: center; border: none; padding: 0;"><img style="height: 35px; width: auto;" src="{{ public_path('img/skalanyeri/3.png') }}"></td>
-                <td style="width: 4.4%; border: none;"></td>
-                <td style="width: 13%; text-align: center; border: none; padding: 0;"><img style="height: 35px; width: auto;" src="{{ public_path('img/skalanyeri/4.png') }}"></td>
-                <td style="width: 4.4%; border: none;"></td>
-                <td style="width: 13%; text-align: center; border: none; padding: 0;"><img style="height: 35px; width: auto;" src="{{ public_path('img/skalanyeri/5.png') }}"></td>
-                <td style="width: 4.4%; border: none;"></td>
-                <td style="width: 13%; text-align: center; border: none; padding: 0;"><img style="height: 35px; width: auto;" src="{{ public_path('img/skalanyeri/6.png') }}"></td>
-            </tr>
-            <!-- Row 2: Numbers -->
-            <tr>
-                <td style="text-align: center; font-size: 8.5pt; font-weight: bold; border: none; padding: 2px 0 0 0;">0</td>
-                <td style="text-align: center; font-size: 8.5pt; font-weight: bold; border: none; padding: 2px 0 0 0;">1</td>
-                <td style="text-align: center; font-size: 8.5pt; font-weight: bold; border: none; padding: 2px 0 0 0;">2</td>
-                <td style="text-align: center; font-size: 8.5pt; font-weight: bold; border: none; padding: 2px 0 0 0;">3</td>
-                <td style="text-align: center; font-size: 8.5pt; font-weight: bold; border: none; padding: 2px 0 0 0;">4</td>
-                <td style="text-align: center; font-size: 8.5pt; font-weight: bold; border: none; padding: 2px 0 0 0;">5</td>
-                <td style="text-align: center; font-size: 8.5pt; font-weight: bold; border: none; padding: 2px 0 0 0;">6</td>
-                <td style="text-align: center; font-size: 8.5pt; font-weight: bold; border: none; padding: 2px 0 0 0;">7</td>
-                <td style="text-align: center; font-size: 8.5pt; font-weight: bold; border: none; padding: 2px 0 0 0;">8</td>
-                <td style="text-align: center; font-size: 8.5pt; font-weight: bold; border: none; padding: 2px 0 0 0;">9</td>
-                <td style="text-align: center; font-size: 8.5pt; font-weight: bold; border: none; padding: 2px 0 0 0;">10</td>
-            </tr>
-            <!-- Row 3: Labels -->
-            <tr>
-                <td style="text-align: center; font-size: 7.5pt; line-height: 1.1; border: none; padding: 2px 0 0 0; vertical-align: top;">Tidak Nyeri</td>
-                <td style="border: none;"></td>
-                <td style="text-align: center; font-size: 7.5pt; line-height: 1.1; border: none; padding: 2px 0 0 0; vertical-align: top;">Sedikit Nyeri</td>
-                <td style="border: none;"></td>
-                <td style="text-align: center; font-size: 7.5pt; line-height: 1.1; border: none; padding: 2px 0 0 0; vertical-align: top;">Agak<br>Mengganggu</td>
-                <td style="border: none;"></td>
-                <td style="text-align: center; font-size: 7.5pt; line-height: 1.1; border: none; padding: 2px 0 0 0; vertical-align: top;">Mengganggu<br>Aktivitas</td>
-                <td style="border: none;"></td>
-                <td style="text-align: center; font-size: 7.5pt; line-height: 1.1; border: none; padding: 2px 0 0 0; vertical-align: top;">Sangat<br>Mengganggu</td>
-                <td style="border: none;"></td>
-                <td style="text-align: center; font-size: 7.5pt; line-height: 1.1; border: none; padding: 2px 0 0 0; vertical-align: top;">Tak Tertahankan</td>
+                <!-- Left: Faces -->
+                <td style="width: 62%; border: none; vertical-align: middle; padding: 0;">
+                    <table style="width: 100%; border-collapse: collapse; border: none; table-layout: fixed;">
+                        <!-- Row 1: Images -->
+                        <tr>
+                            <td style="width: 13%; text-align: center; border: none; padding: 0;"><img style="height: 30px; width: auto;" src="{{ public_path('img/skalanyeri/1.png') }}"></td>
+                            <td style="width: 4.4%; border: none;"></td>
+                            <td style="width: 13%; text-align: center; border: none; padding: 0;"><img style="height: 30px; width: auto;" src="{{ public_path('img/skalanyeri/2.png') }}"></td>
+                            <td style="width: 4.4%; border: none;"></td>
+                            <td style="width: 13%; text-align: center; border: none; padding: 0;"><img style="height: 30px; width: auto;" src="{{ public_path('img/skalanyeri/3.png') }}"></td>
+                            <td style="width: 4.4%; border: none;"></td>
+                            <td style="width: 13%; text-align: center; border: none; padding: 0;"><img style="height: 30px; width: auto;" src="{{ public_path('img/skalanyeri/4.png') }}"></td>
+                            <td style="width: 4.4%; border: none;"></td>
+                            <td style="width: 13%; text-align: center; border: none; padding: 0;"><img style="height: 30px; width: auto;" src="{{ public_path('img/skalanyeri/5.png') }}"></td>
+                            <td style="width: 4.4%; border: none;"></td>
+                            <td style="width: 13%; text-align: center; border: none; padding: 0;"><img style="height: 30px; width: auto;" src="{{ public_path('img/skalanyeri/6.png') }}"></td>
+                        </tr>
+                        <!-- Row 2: Numbers -->
+                        <tr>
+                            <td style="text-align: center; font-size: 8pt; font-weight: bold; border: none; padding: 2px 0 0 0;">0</td>
+                            <td style="text-align: center; font-size: 8pt; font-weight: bold; border: none; padding: 2px 0 0 0;">1</td>
+                            <td style="text-align: center; font-size: 8pt; font-weight: bold; border: none; padding: 2px 0 0 0;">2</td>
+                            <td style="text-align: center; font-size: 8pt; font-weight: bold; border: none; padding: 2px 0 0 0;">3</td>
+                            <td style="text-align: center; font-size: 8pt; font-weight: bold; border: none; padding: 2px 0 0 0;">4</td>
+                            <td style="text-align: center; font-size: 8pt; font-weight: bold; border: none; padding: 2px 0 0 0;">5</td>
+                            <td style="text-align: center; font-size: 8pt; font-weight: bold; border: none; padding: 2px 0 0 0;">6</td>
+                            <td style="text-align: center; font-size: 8pt; font-weight: bold; border: none; padding: 2px 0 0 0;">7</td>
+                            <td style="text-align: center; font-size: 8pt; font-weight: bold; border: none; padding: 2px 0 0 0;">8</td>
+                            <td style="text-align: center; font-size: 8pt; font-weight: bold; border: none; padding: 2px 0 0 0;">9</td>
+                            <td style="text-align: center; font-size: 8pt; font-weight: bold; border: none; padding: 2px 0 0 0;">10</td>
+                        </tr>
+                        <!-- Row 3: Labels -->
+                        <tr>
+                            <td style="text-align: center; font-size: 7pt; line-height: 1.1; border: none; padding: 2px 0 0 0; vertical-align: top;">Tidak Nyeri</td>
+                            <td style="border: none;"></td>
+                            <td style="text-align: center; font-size: 7pt; line-height: 1.1; border: none; padding: 2px 0 0 0; vertical-align: top;">Sedikit Nyeri</td>
+                            <td style="border: none;"></td>
+                            <td style="text-align: center; font-size: 7pt; line-height: 1.1; border: none; padding: 2px 0 0 0; vertical-align: top;">Agak<br>Mengganggu</td>
+                            <td style="border: none;"></td>
+                            <td style="text-align: center; font-size: 7pt; line-height: 1.1; border: none; padding: 2px 0 0 0; vertical-align: top;">Mengganggu<br>Aktivitas</td>
+                            <td style="border: none;"></td>
+                            <td style="text-align: center; font-size: 7pt; line-height: 1.1; border: none; padding: 2px 0 0 0; vertical-align: top;">Sangat<br>Mengganggu</td>
+                            <td style="border: none;"></td>
+                            <td style="text-align: center; font-size: 7pt; line-height: 1.1; border: none; padding: 2px 0 0 0; vertical-align: top;">Tak<br>Tertahankan</td>
+                        </tr>
+                    </table>
+                </td>
+                <!-- Right: Checkboxes -->
+                <td style="width: 38%; border: none; vertical-align: top; padding-left: 15px;">
+                    <div style="font-weight: bold; font-size: 8pt; margin-bottom: 4px;">Score :</div>
+                    <table style="width: 100%; border-collapse: collapse; border: none; font-size: 8pt; line-height: 1.35;">
+                        <tr>
+                            <td style="width: 15px; padding: 2px 0; vertical-align: middle;"><span class="check-box">{!! !empty($item[310108]) ? $checkmark : '&nbsp;' !!}</span></td>
+                            <td style="padding: 2px 0; vertical-align: middle;">0 = Tidak Ada Nyeri</td>
+                        </tr>
+                        <tr>
+                            <td style="width: 15px; padding: 2px 0; vertical-align: middle;"><span class="check-box">{!! !empty($item[310109]) ? $checkmark : '&nbsp;' !!}</span></td>
+                            <td style="padding: 2px 0; vertical-align: middle;">1 - 2 - 3 = Sedikit Nyeri</td>
+                        </tr>
+                        <tr>
+                            <td style="width: 15px; padding: 2px 0; vertical-align: middle;"><span class="check-box">{!! !empty($item[310110]) ? $checkmark : '&nbsp;' !!}</span></td>
+                            <td style="padding: 2px 0; vertical-align: middle;">4 = Agak mengganggu</td>
+                        </tr>
+                        <tr>
+                            <td style="width: 15px; padding: 2px 0; vertical-align: middle;"><span class="check-box">{!! !empty($item[310111]) ? $checkmark : '&nbsp;' !!}</span></td>
+                            <td style="padding: 2px 0; vertical-align: middle;">5 - 6 - 7 = Mengganggu aktivitas</td>
+                        </tr>
+                        <tr>
+                            <td style="width: 15px; padding: 2px 0; vertical-align: middle;"><span class="check-box">{!! !empty($item[310112]) ? $checkmark : '&nbsp;' !!}</span></td>
+                            <td style="padding: 2px 0; vertical-align: middle;">8 = Sangat mengganggu</td>
+                        </tr>
+                        <tr>
+                            <td style="width: 15px; padding: 2px 0; vertical-align: middle;"><span class="check-box">{!! !empty($item[310113]) ? $checkmark : '&nbsp;' !!}</span></td>
+                            <td style="padding: 2px 0; vertical-align: middle;">9 - 10 = Tak Tertahankan</td>
+                        </tr>
+                    </table>
+                </td>
             </tr>
         </table>
 
@@ -940,8 +978,31 @@
         <div style="text-align: center; font-weight: bold; font-style: italic; text-decoration: underline; margin-top: 15px; font-size: 9pt;">NUMERIC</div>
         <table style="width: 100%; border-collapse: collapse; border: none; margin-top: 10px; margin-bottom: 10px;">
             <tr>
-                <td style="text-align: center; border: none; padding: 0;">
-                    <img style="width: 620px; height: auto;" src="{{ public_path('img/skalanyeri/numericPainRatingScale2.png') }}">
+                <!-- Left: Scale image -->
+                <td style="width: 62%; border: none; text-align: center; vertical-align: middle; padding: 0;">
+                    <img style="width: 360px; height: auto;" src="{{ public_path('img/skalanyeri/numericPainRatingScale2.png') }}">
+                </td>
+                <!-- Right: Checkboxes -->
+                <td style="width: 38%; border: none; vertical-align: top; padding-left: 15px;">
+                    <div style="font-weight: bold; font-size: 8pt; margin-bottom: 4px;">Score :</div>
+                    <table style="width: 100%; border-collapse: collapse; border: none; font-size: 8pt; line-height: 1.4;">
+                        <tr>
+                            <td style="width: 15px; padding: 3px 0; vertical-align: middle;"><span class="check-box">{!! !empty($item[310114]) ? $checkmark : '&nbsp;' !!}</span></td>
+                            <td style="padding: 3px 0; vertical-align: middle;">0 = Tidak Nyeri</td>
+                        </tr>
+                        <tr>
+                            <td style="width: 15px; padding: 3px 0; vertical-align: middle;"><span class="check-box">{!! !empty($item[310115]) ? $checkmark : '&nbsp;' !!}</span></td>
+                            <td style="padding: 3px 0; vertical-align: middle;">1 - 3 = Nyeri Ringan</td>
+                        </tr>
+                        <tr>
+                            <td style="width: 15px; padding: 3px 0; vertical-align: middle;"><span class="check-box">{!! !empty($item[310116]) ? $checkmark : '&nbsp;' !!}</span></td>
+                            <td style="padding: 3px 0; vertical-align: middle;">4 - 6 = Nyeri Sedang</td>
+                        </tr>
+                        <tr>
+                            <td style="width: 15px; padding: 3px 0; vertical-align: middle;"><span class="check-box">{!! !empty($item[310117]) ? $checkmark : '&nbsp;' !!}</span></td>
+                            <td style="padding: 3px 0; vertical-align: middle;">7 - 10 = Nyeri Berat</td>
+                        </tr>
+                    </table>
                 </td>
             </tr>
         </table>
@@ -1024,6 +1085,21 @@
             </tr>
         </table>
 
+        @php
+            $idEdukasi = \DB::table('emrd_t')
+                ->where('emrfk', 3000921)
+                ->where('caption', 'Edukasi')
+                ->value('id');
+            $idTanda = \DB::table('emrd_t')
+                ->where('emrfk', 3000921)
+                ->where('caption', 'Pemberian Tanda Risiko Jatuh')
+                ->value('id');
+            $idDuduk = \DB::table('emrd_t')
+                ->where('emrfk', 3000921)
+                ->where('caption', 'Pemberian Tempat Duduk Prioritas')
+                ->value('id');
+        @endphp
+
         <table style="width: 100%; margin-top: 4px; font-size: 8.5pt; border-collapse: collapse; line-height: 1.35;">
             <tr>
                 <td style="width: 65px; font-weight: bold; vertical-align: top; padding: 2px 0;">Tindakan :</td>
@@ -1031,19 +1107,19 @@
                     <table style="width: 100%; border-collapse: collapse;">
                         <tr>
                             <td style="width: 20px; padding: 1px 0; vertical-align: middle;">
-                                <span class="check-box">&nbsp;</span>
+                                <span class="check-box">{!! !empty($idEdukasi) && !empty($item[$idEdukasi]) ? $checkmark : '&nbsp;' !!}</span>
                             </td>
                             <td style="padding: 1px 0;">Edukasi</td>
                         </tr>
                         <tr>
                             <td style="width: 20px; padding: 1px 0; vertical-align: middle;">
-                                <span class="check-box">&nbsp;</span>
+                                <span class="check-box">{!! !empty($idTanda) && !empty($item[$idTanda]) ? $checkmark : '&nbsp;' !!}</span>
                             </td>
                             <td style="padding: 1px 0;">Pemberian Tanda Risiko Jatuh</td>
                         </tr>
                         <tr>
                             <td style="width: 20px; padding: 1px 0; vertical-align: middle;">
-                                <span class="check-box">&nbsp;</span>
+                                <span class="check-box">{!! !empty($idDuduk) && !empty($item[$idDuduk]) ? $checkmark : '&nbsp;' !!}</span>
                             </td>
                             <td style="padding: 1px 0;">Pemberian Tempat Duduk Prioritas</td>
                         </tr>
@@ -2051,13 +2127,13 @@
                     </thead>
                     <tbody>
                         <tr>
-                            <td style="vertical-align: top; padding: 6px; font-size: 8.5pt; font-style: italic; line-height: 1.4;">
-                                <div style="min-height: 100px;">
+                            <td style="vertical-align: top; padding: 6px; font-size: 8.5pt; font-style: italic; line-height: 1.5; word-wrap: break-word; white-space: pre-wrap;">
+                                <div style="min-height: 150px;">
                                     {!! !empty($item[310276]) ? nl2br(e($item[310276])) : '&nbsp;' !!}
                                 </div>
                             </td>
-                            <td style="vertical-align: top; padding: 6px; font-size: 8.5pt; font-style: italic; line-height: 1.4;">
-                                <div style="min-height: 100px;">
+                            <td style="vertical-align: top; padding: 6px; font-size: 8.5pt; font-style: italic; line-height: 1.5; word-wrap: break-word; white-space: pre-wrap;">
+                                <div style="min-height: 150px;">
                                     {!! !empty($item[310277]) ? nl2br(e($item[310277])) : '&nbsp;' !!}
                                 </div>
                             </td>
@@ -2106,7 +2182,7 @@
                 $foundLain = false;
                 $foundLainKet = '';
                 foreach ($res['d'] as $items) {
-                    if ($items->emrdfk == 300000082 && !empty($items->value)) {
+                    if (($items->emrdfk == 1901310174 || $items->emrdfk == 300000082) && !empty($items->value)) {
                         $foundKeluar = $items->value;
                     }
                     if ($items->emrdfk == 300000067 && ($items->value == '1' || $items->value == 'true' || $items->value == 't')) {

@@ -1,4 +1,4 @@
-define(['initialize', 'Configuration'], function (initialize, config) {
+﻿define(['initialize', 'Configuration'], function (initialize, config) {
     'use strict';
     initialize.controller('PengkajianGeriatriKomprehensifCtrl', ['$q', '$rootScope', '$scope', 'ModelItem', '$state', 'CacheHelper', 'DateHelper', 'MedifirstService','$mdDialog',
         function ($q, $rootScope, $scope, ModelItem, $state, cacheHelper, dateHelper, medifirstService, $mdDialog) {
@@ -46,7 +46,6 @@ define(['initialize', 'Configuration'], function (initialize, config) {
 
                 var datas = e.data.kolom4
 
-                var detail = []
                 var arrayShiftJaga = []
                 var arrayShiftJaga2 = []
                 var arrayShiftJaga3 = []
@@ -59,8 +58,7 @@ define(['initialize', 'Configuration'], function (initialize, config) {
                         for (let z = 0; z < arrayShiftJaga3.length; z++) {
                             const element2 = arrayShiftJaga3[z];
                             if (element2.namaexternal == element.namaexternal) {
-                                detail.push(element)
-                                element2.details = detail
+                                element2.details.push(element)
                                 sama = true
                             }
                         }
@@ -77,7 +75,7 @@ define(['initialize', 'Configuration'], function (initialize, config) {
                                 reportdisplay: element.reportdisplay,
                                 style: element.style,
                                 type: element.type,
-
+                                details: [element]
                             }
                             arrayShiftJaga3.push(datax)
                         }
@@ -86,8 +84,7 @@ define(['initialize', 'Configuration'], function (initialize, config) {
                     //     for (let z = 0; z < arrayShiftJaga4.length; z++) {
                     //         const element2 = arrayShiftJaga4[z];
                     //         if (element2.namaexternal == element.namaexternal) {
-                    //             detail.push(element)
-                    //             element2.details = detail
+                    //             element2.details.push(element)
                     //             sama = true
                     //         }
                     //     }
@@ -104,7 +101,7 @@ define(['initialize', 'Configuration'], function (initialize, config) {
                     //             reportdisplay: element.reportdisplay,
                     //             style: element.style,
                     //             type: element.type,
-
+                    //             details: [element]
                     //         }
                     //         arrayShiftJaga4.push(datax)
                     //     }
@@ -113,8 +110,7 @@ define(['initialize', 'Configuration'], function (initialize, config) {
                         for (let z = 0; z < arrayShiftJaga.length; z++) {
                             const element2 = arrayShiftJaga[z];
                             if (element2.namaexternal == element.namaexternal) {
-                                detail.push(element)
-                                element2.details = detail
+                                element2.details.push(element)
                                 sama = true
                             }
                         }
@@ -136,7 +132,7 @@ define(['initialize', 'Configuration'], function (initialize, config) {
                                 statusenabled: element.statusenabled,
                                 style: element.style,
                                 type: element.type,
-
+                                details: [element]
                             }
                             arrayShiftJaga.push(datax)
                         }
@@ -145,8 +141,7 @@ define(['initialize', 'Configuration'], function (initialize, config) {
                         for (let z = 0; z < arrayShiftJaga2.length; z++) {
                             const element2 = arrayShiftJaga2[z];
                             if (element2.namaexternal == element.namaexternal) {
-                                detail.push(element)
-                                element2.details = detail
+                                element2.details.push(element)
                                 sama = true
                             }
                         }
@@ -168,7 +163,7 @@ define(['initialize', 'Configuration'], function (initialize, config) {
                                 statusenabled: element.statusenabled,
                                 style: element.style,
                                 type: element.type,
-
+                                details: [element]
                             }
                             arrayShiftJaga2.push(datax)
                         }
@@ -176,67 +171,10 @@ define(['initialize', 'Configuration'], function (initialize, config) {
                     
                     //END ARRAY GEJALA
                 }
-                // ARRAY GEJALA
-                var gejalaKosongKeun = []
-                for (let k = 0; k < arrayShiftJaga.length; k++) {
-                    const element = arrayShiftJaga[k];
-                    for (let l = 0; l < datas.length; l++) {
-                        const element2 = datas[l];
-                        if (element2.namaexternal == element.namaexternal) {
-                            gejalaKosongKeun.push(element2)
-                            element.details = gejalaKosongKeun
-                        } else {
-                            gejalaKosongKeun = []
-                        }
-                    }
-                }
                 $scope.listData1 = arrayShiftJaga
-
-                var gejalaKosongKeun = []
-                for (let k = 0; k < arrayShiftJaga2.length; k++) {
-                    const element = arrayShiftJaga2[k];
-                    for (let l = 0; l < datas.length; l++) {
-                        const element2 = datas[l];
-                        if (element2.namaexternal == element.namaexternal) {
-                            gejalaKosongKeun.push(element2)
-                            element.details = gejalaKosongKeun
-                        } else {
-                            gejalaKosongKeun = []
-                        }
-                    }
-                }
                 $scope.listBaker = arrayShiftJaga2
-                
-                var gejalaKosongKeun = []
-                for (let k = 0; k < arrayShiftJaga3.length; k++) {
-                    const element = arrayShiftJaga3[k];
-                    for (let l = 0; l < datas.length; l++) {
-                        const element2 = datas[l];
-                        if (element2.namaexternal == element.namaexternal) {
-                            gejalaKosongKeun.push(element2)
-                            element.details = gejalaKosongKeun
-                        } else {
-                            gejalaKosongKeun = []
-                        }
-                    }
-                }
                 $scope.listNorton = arrayShiftJaga3
-
-                var gejalaKosongKeun = []
-                for (let k = 0; k < arrayShiftJaga4.length; k++) {
-                    const element = arrayShiftJaga4[k];
-                    for (let l = 0; l < datas.length; l++) {
-                        const element2 = datas[l];
-                        if (element2.namaexternal == element.namaexternal) {
-                            gejalaKosongKeun.push(element2)
-                            element.details = gejalaKosongKeun
-                        } else {
-                            gejalaKosongKeun = []
-                        }
-                    }
-                }
                 $scope.listEuroqol = arrayShiftJaga4
-                
             })
             $scope.listSkorWong = [{
                 "id": 9, "nama": "Score ",
@@ -285,7 +223,7 @@ define(['initialize', 'Configuration'], function (initialize, config) {
                         },
                         {
                             "id": 2,
-                            "nama": "Kadang-kadang tak terkendali",
+                            "nama": "Kadang-kadang tak terkendali (1x dalam seminggu)",
                             "descNilai": "1",
                             "ket": 1,
                             "detail": [{
@@ -310,7 +248,7 @@ define(['initialize', 'Configuration'], function (initialize, config) {
                     "nama": "Mengendalikan Rangsang BAK",
                     "detail": [{
                             "id": 1,
-                            "nama": "Tak terkendali pakai kateter",
+                            "nama": "Tak terkendali atau pakai kateter",
                             "descNilai": "0",
                             "detail": [{
                                 id: 310038,
@@ -802,7 +740,7 @@ define(['initialize', 'Configuration'], function (initialize, config) {
                     "nama": "ATENSI DAN KALKULASI",
                     "detail": [{
                         "id": 4,
-                        "nama": "Pengurangan 100 dengan 7 secara berurutan. Nilai 1 untuk tiap jawaban yang benar.Hentikan setelah 5 jawaban.Atau responden diminta mengeja terbalik kata“ W A H Y U”(nilai diberi pada huruf yang benar sebelum kesalahan; misalnya uyahw = 2 nilai) ",
+                        "nama": "Pengurangan 100 dengan 7 secara berurutan. Nilai 1 untuk tiap jawaban yang benar.Hentikan setelah 5 jawaban.Atau responden diminta mengeja terbalik kataâ€œ W A H Y Uâ€(nilai diberi pada huruf yang benar sebelum kesalahan; misalnya uyahw = 2 nilai) ",
                         "max": 5,
                         "detail": [{
                             id: 310175,
@@ -833,7 +771,7 @@ define(['initialize', 'Configuration'], function (initialize, config) {
                         }]
                     }, {
                         "id": 7,
-                        "nama": "Responden diminta mengulang kalimat : “tanpa kalau dan atau tetapi”",
+                        "nama": "Responden diminta mengulang kalimat : â€œtanpa kalau dan atau tetapiâ€",
                         "max": 1,
                         "detail": [{
                             id: 310178,
@@ -841,7 +779,7 @@ define(['initialize', 'Configuration'], function (initialize, config) {
                     },
                     {
                         "id": 8,
-                        "nama": "Responden diminta melakukan perintah : “Ambil kertas ini dengan tangan anda, lipatlah menjadi dua dan letakkan di lantai”. ",
+                        "nama": "Responden diminta melakukan perintah : â€œAmbil kertas ini dengan tangan anda, lipatlah menjadi dua dan letakkan di lantaiâ€. ",
                         "max": 3,
                         "detail": [{
                             id: 310179,
@@ -849,7 +787,7 @@ define(['initialize', 'Configuration'], function (initialize, config) {
                     },
                     {
                         "id": 9,
-                        "nama": "Responden diminta membaca dan melakukan yang dibacanya :“ Pejamkanlah mata anda” ", 
+                        "nama": "Responden diminta membaca dan melakukan yang dibacanya :â€œ Pejamkanlah mata andaâ€ ", 
                         "max": 1,
                         "detail": [{
                             id: 310180,
@@ -2191,7 +2129,7 @@ console.log(jawab)
                         }
                         if (dataLoad[i].type == "checkbox") {
                             chekedd = false
-                            if (dataLoad[i].value == '1') {
+                            if (dataLoad[i].value == '1' || dataLoad[i].value == 'true' || dataLoad[i].value == true) {
                                 chekedd = true
                             }
                             $scope.item.obj[dataLoad[i].emrdfk] = chekedd
