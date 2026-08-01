@@ -11432,17 +11432,14 @@ if ($rowChanged) {
         ->where('statusenabled', 1)
         ->update(['statusenabled' => 0]);
 
-    // 2) merge field lama & baru
-    $merged = $existingMap;
-    foreach ($incomingMap as $k => $v) {
-        if ($v !== null) $merged[$k] = $v; // overwrite
-    }
+    // 2) gunakan incomingMap (field aktif yang dikirim dari frontend)
+    $merged = $incomingMap;
 
-    // 3) insert ulang semua field
+    // 3) insert ulang semua field aktif
     foreach ($merged as $emrdfk => $val) {
         $oldVal   = $existingMap[$emrdfk] ?? null;
         $oldOwner = $existingOwners[$emrdfk] ?? $this->getCurrentUserID();
-        $newVal   = $incomingMap[$emrdfk] ?? $oldVal;
+        $newVal   = $val;
 
         $EMRD = new EMRPasienD();
         $EMRD->norec     = $EMRD->generateNewId();

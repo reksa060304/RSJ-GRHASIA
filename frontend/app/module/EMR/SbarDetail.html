@@ -1,0 +1,228 @@
+<style type="text/css">
+    .tablecppt,
+    .tablecppt th,
+    .tablecppt td {
+        border: 1px solid #cccccc;
+        border-collapse: collapse;
+        padding: 5px;
+    }
+
+    .tablecppt th,
+    .tablecppt td {
+        padding: 5px;
+        text-align: left;
+    }
+
+    .txt-primary {
+        color: #363940;
+        font-size: 15pt;
+    }
+    .txt-danger {
+        color: #c53938;
+        font-size: 15pt;
+    }
+    .btn-custom-ck {
+        padding: 0;
+        background-color: none;
+        border: none;
+    }
+</style>
+<div class="container_12">
+    <!-- Loading Overlay -->
+    <div ng-show="isRouteLoading" class="grid_12" style="position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(255,255,255,0.7); z-index: 9999; display: flex; align-items: center; justify-content: center;">
+        <div style="text-align: center;">
+            <i class="fa fa-spinner fa-spin fa-3x" style="color: #41abf2;"></i>
+            <p style="margin-top: 10px; font-weight: bold;">Memuat Data...</p>
+        </div>
+    </div>
+
+    <div class="grid_12">
+        <div class="container_12">
+            <div class="grid_12">
+                <div class="grid_12 headerBox">
+                    <p>Daftar Riwayat Komunikasi Efektif SBAR</p>
+                </div>
+                <div class="grid_12 borderBox">
+                    <kendo-grid id="kGrid" data-source="dataGridRiwayatSbar" options="columnGridRiwayatSbar"
+                        k-selectable="'row'" k-sortable="'true'" k-resizable="'true'"
+                        k-ng-model="dataSelectedRiwayatSbar" k-on-change="onSelectionGrid(kendoEvent)">
+                    </kendo-grid>
+                </div>
+            </div>
+            <div class="grid_12">
+                <br>
+            </div>
+            <div class="grid_12">
+                <div class="panel panel-default container_12">
+                        <div class="panel-heading" c-translate>RM 45.08 Komunikasi Efektif SBAR</div>
+                </div>
+                
+                <div class="grid_12" style="margin: 20px 0px">
+                    <table style="width:100%;" class="tablecppt">
+                        <tr style="background-color: #363940;color: #f3f3f4;">
+                            <td style="width: 2%">#</td>
+                            <td style="text-align: center;width: 15%"><b>TANGGAL DAN PUKUL</b></td>
+                            <td style="text-align: center;width: 15%"><b>PROFESIONAL<br>PEMBERI<br>ASUHAN</b></td>
+                            <td style="text-align: center;width: 40%">
+                                <b>Materi Konsultasi (SBAR)</b>
+                            </td>
+                            <td style="text-align: center;width: 26%">
+                                <b>Verifikasi DPJP</b>
+                            </td>
+                            <td style="text-align: center;width: 2%">#</td>
+                        </tr>
+                        <tr ng-repeat="list in listDataSbar" ng-show="show.obj[list.id]">
+                            <td>
+                                <button class="k-button k-primary" ng-click="openHistoryFromFormEdit(list.id)">History Edit</button>
+                            </td>
+                            <td ng-repeat="jawab in list.detail | filter:{type: '!intruksi'} | orderBy:'id'">
+                                <div ng-switch on="jawab.type">
+                                    <div ng-switch-when="tgl/jam">
+                                        <input style="width: 100%" k-ng-model="item.obj[jawab.id]" ng-disabled="item.obj2[jawab.id]" kendo-datetimepicker placeholer="yyyy-MM-dd HH:mm" k-format="'yyyy-MM-dd HH:mm'" parsedate="yyyy-MM-dd HH:mm" />
+                                    </div>
+                                    <div ng-switch-when="ppa">
+                                        <input style="width: 100%;" kendo-combo-box k-ng-model="item.obj[jawab.id]" ng-disabled="item.obj2[jawab.id]" k-data-text-field="'text'" k-data-value-field="'value'" k-filter="'contains'" k-auto-bind="false" k-data-source="listJenisPegawai" /> 
+                                    </div>
+                                    <div ng-switch-when="soap">
+                                        <textarea cols="6" rows="10" c-text-area type="input" filter="'string'" class="k-textbox"
+                                            ng-model="item.obj[jawab.id]" ng-disabled="item.obj2[jawab.id]" />
+                                        <input style="width: 100%;" kendo-combo-box k-ng-model="item.obj[jawab.id2]" ng-disabled="item.obj2[jawab.id2]" k-data-text-field="'text'" k-data-value-field="'value'" k-filter="'contains'" k-auto-bind="false" k-data-source="listPegawai" />  
+                                    </div>
+                                    <div ng-switch-when="review">
+                                        <textarea rows="10" c-text-area type="input" filter="'string'" class="k-textbox"
+                                            ng-model="item.obj[jawab.id]" ng-disabled="item.obj2[jawab.id]" />
+                                    </div>
+                                </div>
+                            </td>
+                            <td style="text-align: center;">
+                                <button class="btn-custom-ck" ng-if="list.id != 22035003" ng-show="showbtnadd[list.id]" ng-click="addobj(list.id, listDataSbar[$index + 1].id)"><i class="fa fa-plus-circle txt-primary" aria-hidden="true"></i></button>
+                                <button class="btn-custom-ck" ng-if="list.id != 22034963" ng-show="showbtnremove[list.id]" ng-click="removeobj(list.id, listDataSbar[$index - 1].id)"><i class="fa fa-minus-circle txt-danger" aria-hidden="true"></i></button>
+                            </td>
+                        </tr>
+                    </table>
+                </div>
+            </div>
+            <div class="grid_12">
+                <div ui-view></div>
+            </div>
+            
+        </div>
+        <div class="grid_12" style="margin-top: 22px;">
+            <div class="pull-right">
+                <button class="btnTemplate1" style="width: auto; margin-left: 8px; display: inline-block;" ng-show="tombolSimpanVis" ng-click="Save()"><i class="fa fa-save" style="margin-right: 6px;"></i>Simpan SBAR</button>
+                <button class="btnTemplate1" style="width: auto; margin-left: 8px; display: inline-block;" ng-click="cetak()"><i class="fa fa-print" style="margin-right: 6px;"></i>Cetak</button>
+                <button class="btnTemplate1" style="width: auto; margin-left: 8px; display: inline-block;" ng-click="Batal()"><i class="fa fa-refresh" style="margin-right: 6px;"></i>Batal</button>
+                <button class="btnTemplate1 cancel" style="width: auto; margin-left: 8px; display: inline-block;" ng-click="kembali()"><i class="fa fa-arrow-left" style="margin-right: 6px;"></i>Kembali</button>
+            </div>
+        </div>
+    </div>
+    </div>
+</div>
+<div kendo-window="popUps" k-title="'Detail Riwayat SBAR'" k-width="1200" k-visible="false">
+    <div class="panel panel-default container_12">
+        <!-- Riwayat SBAR Baru -->
+        <div ng-show="RiwayatSbarBaru">
+            <table style="width:100%;" class="tablecppt">
+                <tr style="background-color: #363940;color: #f3f3f4;">
+                    <td style="text-align: center;width: 15%"><b>TANGGAL DAN PUKUL</b></td>
+                    <td style="text-align: center;width: 15%"><b>PROFESIONAL<br>PEMBERI<br>ASUHAN</b></td>
+                    <td style="text-align: center;width: 40%">
+                        <b>Materi Konsultasi (SBAR)</b>
+                    </td>
+                    <td style="text-align: center;width: 30%"><b>Verifikasi DPJP</b></td>
+                </tr>
+                <tr ng-repeat="list in listDataSbar" ng-show="item.rcppt[list.id]!=undefined">
+                    <td ng-repeat="jawab in list.detail | filter:{type: '!intruksi'} | orderBy:'id'">
+                        <div ng-switch on="jawab.type">
+                            <div ng-switch-when="tgl/jam">
+                                <input style="width: 100%" k-ng-model="item.rcppt[jawab.id]" ng-disabled="true" kendo-datetimepicker placeholer="yyyy-MM-dd HH:mm" k-format="'yyyy-MM-dd HH:mm'" parsedate="yyyy-MM-dd HH:mm" />
+                            </div>
+                            <div ng-switch-when="ppa">
+                                <input style="width: 100%;" ng-model="item.rcppt[jawab.id].text || item.rcppt[jawab.id]" ng-disabled="true" type="text" class="k-textbox" /> 
+                            </div>
+                            <div ng-switch-when="soap">
+                                <textarea cols="6" rows="10" c-text-area type="input" filter="'string'" class="k-textbox"
+                                    ng-model="item.rcppt[jawab.id]" ng-disabled="true" />
+                                <input style="width: 100%;" ng-model="item.rcppt[jawab.id2].text || item.rcppt[jawab.id2]" ng-disabled="true" type="text" class="k-textbox" />  
+                            </div>
+                            <div ng-switch-when="review">
+                                <textarea rows="10" c-text-area type="input" filter="'string'" class="k-textbox"
+                                    ng-model="item.rcppt[jawab.id]" ng-disabled="true" />
+                            </div>
+                        </div>
+                    </td>
+                </tr>
+            </table>
+        </div>
+    </div>
+    <div class="k-edit-buttons  k-state-default pull-right" style="margin-top:10px">
+        <button class="k-button k-button-icontext k-primary" ng-click="tutupcppt()"><span
+                class="k-icon k-cancel"></span>Kembali</button>
+    </div>
+</div>
+<div kendo-window="popUpsEdit" k-title="'Riwayat Edit SBAR'" k-width="1200" k-visible="false">
+    <div class="panel panel-default container_12">
+        <!-- Riwayat SBAR Baru -->
+        <div ng-show="RiwayatSbarBaru">
+            <table style="width:100%;" class="tablecppt">
+                <tr style="background-color: #363940;color: #f3f3f4;">
+                    <td style="text-align: center;width: 15%"><b>TANGGAL DAN PUKUL</b></td>
+                    <td style="text-align: center;width: 15%"><b>PROFESIONAL<br>PEMBERI<br>ASUHAN</b></td>
+                    <td style="text-align: center;width: 40%">
+                        <b>Materi Konsultasi (SBAR)</b>
+                    </td>
+                    <td style="text-align: center;width: 30%"><b>Verifikasi DPJP</b></td>
+                </tr>
+                <!-- Loop semua snapshot -->
+                <tbody ng-repeat="snap in item.rcpptEdits track by $index">
+                <!-- Tampilkan satu set baris CPPT lengkap per snapshot -->
+                <tr ng-repeat="list in listDataSbar" ng-show="snap[list.id] != undefined">
+                    <td ng-repeat="jawab in list.detail | filter:{type: '!intruksi'} | orderBy:'id'">
+                    <div ng-switch on="jawab.type">
+                        <div ng-switch-when="tgl/jam">
+                        <input style="width: 100%"
+                                k-ng-model="snap[jawab.id]"
+                                ng-disabled="true"
+                                kendo-datetimepicker
+                                placeholer="yyyy-MM-dd HH:mm"
+                                k-format="'yyyy-MM-dd HH:mm'"
+                                parsedate="yyyy-MM-dd HH:mm" />
+                        </div>
+
+                        <div ng-switch-when="ppa">
+                        <input style="width: 100%;"
+                                ng-model="snap[jawab.id].text || snap[jawab.id]"
+                                ng-disabled="true"
+                                type="text"
+                                class="k-textbox" />
+                        </div>
+
+                        <div ng-switch-when="soap">
+                        <textarea cols="6" rows="10" c-text-area type="input" filter="'string'"
+                                    class="k-textbox"
+                                    ng-model="snap[jawab.id]" ng-disabled="true"></textarea>
+                        <input style="width: 100%;"
+                                ng-model="snap[jawab.id2].text || snap[jawab.id2]" ng-disabled="true"
+                                type="text" class="k-textbox" />
+                        </div>
+
+                        <div ng-switch-when="review">
+                        <textarea rows="10" c-text-area type="input" filter="'string'"
+                                    class="k-textbox"
+                                    ng-model="snap[jawab.id]" ng-disabled="true"></textarea>
+                        </div>
+                    </div>
+                    </td>
+                </tr>
+
+                <!-- pemisah antar snapshot (opsional) -->
+                <tr><td colspan="4" style="height:8px;background:#f6f7f9"></td></tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+    <div class="k-edit-buttons  k-state-default pull-right" style="margin-top:10px">
+        <button class="k-button k-button-icontext k-primary" ng-click="tutupcpptedit()"><span
+                class="k-icon k-cancel"></span>Kembali</button>
+    </div>
+</div>

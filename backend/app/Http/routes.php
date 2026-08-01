@@ -3913,6 +3913,7 @@ Route::group(['middleware' => 'cors', 'prefix' => 'service'], function () {
         Route::get('report/get-cetak-suratkgbPPPK', 'Report\ReportController@cetakKGBPPPK');
 
         Route::get('report/cetak-catatan-klinik','Report\ReportController@cetakCatatanKlinik');
+        Route::get('report/cetak-catatan-sbar','Report\ReportController@cetakCatatanSbar');
         Route::get('report/cetak-resume-medis2','Report\ReportController@cetakResume2');
         Route::get('report/diklat-kwitansi', 'Report\ReportController@cetakKwitansiDiklat');
         Route::get('report/cetak-antrian','Report\ReportController@cetakAntrianKiosk');

@@ -2681,6 +2681,59 @@ class ReportController extends ApiController{
 
         return view('report.catatanklinik',compact('res','pageWidth'));
     }
+    public function cetakCatatanSbar(Request $request){
+        $norec = $request['emr'];
+        $kdProfile = (int) $request['kdprofile'];
+        $data = DB::select(DB::raw("
+                   SELECT
+                        epd.emrdfk,
+                        ep.noemr,
+                        ed.TYPE,
+                        pa.namapasien,
+                        pa.tgllahir,
+                        pa.nohp,
+                        pa.nocm,
+                        ep.jeniskelamin,
+                        ep.umur,
+                        al.alamatlengkap,
+                        ep.noregistrasifk as noregistrasi ,
+                        epd.value,ep.namaruangan,pg.namalengkap as namadokter,
+                        jpg.jenispegawai,
+                        to_char(ep.tglemr,'dd-MM-yyyy hh24:mi:ss') as tglemr
+                    FROM
+                        emrpasien_t AS ep
+                        INNER JOIN emrpasiend_t AS epd ON ep.noemr = epd.emrpasienfk
+                        INNER JOIN emrd_t AS ed ON epd.emrdfk = ed.ID
+                        INNER JOIN antrianpasiendiperiksa_t AS pd ON pd.norec = ep.norec_apd
+                        left JOIN pegawai_m AS pg ON pg.id = pd.objectpegawaifk
+                        left JOIN jenispegawai_m as jpg on pg.objectjenispegawaifk = jpg.id
+                        left JOIN pasien_m as pa on ep.nocm =  pa.nocm
+                        left JOIN alamat_m as al on pa.id = al.nocmfk
+                    WHERE
+                        ep.norec = '$norec'
+                        AND ep.kdprofile = '$kdProfile' 
+                        AND epd.statusenabled = TRUE 
+                        and epd.emrfk = $request[emrfk]
+                        ORDER BY
+                        ed.nourut
+                     "
+        ));
+
+        foreach ($data as $z){
+            if ($z->type=="datetime"){
+                $z->value=date('Y-m-d H:i:s',strtotime($z->value));
+            }
+        }
+        $pageWidth = 500;
+        $res['profile'] = Profile::where('id',$request['kdprofile'])->first();
+        $res['d'] = $data;
+        $res['pegawai']= array(
+            'id'=> $request['id_nama'],
+            'pegawai'=> $request['nama']
+        );
+
+        return view('report.catatansbar',compact('res','pageWidth'));
+    }
     public function cetakResume2(Request $r)
     {
         $res['profile'] = Profile::where('id',$r['kdprofile'])->first();
