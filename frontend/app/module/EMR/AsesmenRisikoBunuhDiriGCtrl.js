@@ -10,6 +10,9 @@ define(['initialize'], function (initialize) {
             $scope.noRecPap = cacheHelper.get('noRecPap');
             $scope.totalSkor = 0
             $scope.totalSkor2 = 0
+            $scope.item = {}
+            $scope.item.obj = {}
+            $scope.item.obj2 = {}
             $scope.cc = {}
             var nomorEMR = '-'
             $scope.cc.emrfk = 3000413
