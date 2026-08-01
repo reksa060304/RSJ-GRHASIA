@@ -1191,7 +1191,7 @@ define(['initialize', 'Configuration'], function (initialize, config) {
                         b = ", " + c
                         a = a + b
                     }
-                    $scope.item.obj[3017315] = a.slice(1, a.length)
+                    // $scope.item.obj[3017315] = a.slice(1, a.length)
                     // console.log($scope.bro);
                     $scope.isRouteLoading = false
 
@@ -1228,8 +1228,20 @@ define(['initialize', 'Configuration'], function (initialize, config) {
                 
                 medifirstService.post('emr/get-emr-inputan-otomatis?noregistrasi=' + $scope.cc.noregistrasi, payload)
                     .then(function (res) {
-                        console.log(res.data);
-                        $scope.item.obj[3017315] = res.data.data[0].data["1901310025"] || '';
+                        var valNoReg = res.data && res.data.data && res.data.data[0] && res.data.data[0].data && res.data.data[0].data["1901310025"];
+                        if (valNoReg) {
+                            if (!$scope.item.obj[3017315]) {
+                                $scope.item.obj[3017315] = valNoReg;
+                            }
+                        } else {
+                            medifirstService.post('emr/get-emr-inputan-otomatis?nocm=' + $scope.cc.nocm, payload)
+                                .then(function (resCm) {
+                                    var valNoCm = resCm.data && resCm.data.data && resCm.data.data[0] && resCm.data.data[0].data && resCm.data.data[0].data["1901310025"];
+                                    if (valNoCm && !$scope.item.obj[3017315]) {
+                                        $scope.item.obj[3017315] = valNoCm;
+                                    }
+                                });
+                        }
                     });
                 // get datavital sign
                 let datasvitalsign = []
