@@ -22053,6 +22053,78 @@
         "define": "RekamMedisCtrl"
       }
     ]
+  },
+  {
+    "name": "RekamMedis.AsesmenMedis.FormulirMPPRev03",
+    "url": "/FormulirMPPRev03",
+    "templateurl": "module/EMR/FormulirMPPRev03.html",
+    "controller": "FormulirMPPRev03Ctrl",
+    "deps": [{
+        "module": "Services",
+        "define": "Service"
+      },
+      {
+        "module": "LoginServices",
+        "define": "LoginService"
+      },
+      {
+        "module": "MedifirstService",
+        "define": "MedifirstService"
+      },
+      {
+        "define": "RekamMedisCtrl"
+      }
+    ]
+  },   
+  {
+    "name": "RekamMedis.SbarDinamis",
+    "url": "/SbarDinamis",
+    "templateurl": "module/EMR/SbarDinamis.html",
+    "controller": "SbarDinamisCtrl",
+    "deps": [
+      {
+        "module": "Services",
+        "define": "Service"
+      },
+      {
+        "module": "LoginServices",
+        "define": "LoginService"
+      },
+      {
+        "module": "MedifirstService",
+        "define": "MedifirstService"
+      },
+      {
+        "define": "RekamMedisCtrl"
+      }
+    ]
+  },
+  {
+    "name": "RekamMedis.SbarDinamis.SbarDetail",
+    "url": "/SbarDetail/:namaEMR/:nomorEMR",
+    "params": {
+      "namaEMR": "435",
+      "nomorEMR": "-"
+    },
+    "templateurl": "module/EMR/SbarDetail.html",
+    "controller": "SbarDetailCtrl",
+    "deps": [
+      {
+        "module": "Services",
+        "define": "Service"
+      },
+      {
+        "module": "LoginServices",
+        "define": "LoginService"
+      },
+      {
+        "module": "MedifirstService",
+        "define": "MedifirstService"
+      },
+      {
+        "define": "RekamMedisCtrl"
+      }
+    ]
   }
 ]
 

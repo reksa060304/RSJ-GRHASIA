@@ -3996,6 +3996,18 @@
         {
             "nameDep": "FormRujukanEdukasiPasienCtrl",
             "urlDep": "module/EMR/FormRujukanEdukasiPasien"
+        },
+        {
+            "nameDep": "FormulirMPPRev03Ctrl",
+            "urlDep": "module/EMR/FormulirMPPRev03Ctrl"
+        },
+        {
+            "nameDep": "SbarDetailCtrl",
+            "urlDep": "module/EMR/SbarDetailCtrl"
+        },
+        {
+            "nameDep": "SbarDinamisCtrl",
+            "urlDep": "module/EMR/SbarDinamisCtrl"
         }
     ]
 }
