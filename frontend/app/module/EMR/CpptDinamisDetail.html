@@ -226,12 +226,12 @@
                                 <input style="width: 100%" k-ng-model="item.rcppt[jawab.id]" ng-disabled="true" kendo-datetimepicker placeholer="yyyy-MM-dd HH:mm" k-format="'yyyy-MM-dd HH:mm'" parsedate="yyyy-MM-dd HH:mm" />
                             </div>
                             <div ng-switch-when="ppa">
-                                <input style="width: 100%;" ng-model="item.rcppt[jawab.id]" ng-disabled="true" type="text" class="k-textbox" /> 
+                                <input style="width: 100%;" ng-model="item.rcppt[jawab.id].text || item.rcppt[jawab.id]" ng-disabled="true" type="text" class="k-textbox" /> 
                             </div>
                             <div ng-switch-when="soap">
                                 <textarea cols="6" rows="10" c-text-area type="input" filter="'string'" class="k-textbox"
                                     ng-model="item.rcppt[jawab.id]" ng-disabled="true" />
-                                <input style="width: 100%;" ng-model="item.rcppt[jawab.id2]" ng-disabled="true" type="text" class="k-textbox" />  
+                                <input style="width: 100%;" ng-model="item.rcppt[jawab.id2].text || item.rcppt[jawab.id2]" ng-disabled="true" type="text" class="k-textbox" />  
                             </div>
                             <div ng-switch-when="intruksi">
                                 <textarea cols="6" rows="13" c-text-area type="input" filter="'string'" class="k-textbox" style="{{jawab.style}}"
@@ -241,7 +241,7 @@
                                 <textarea rows="8" c-text-area type="input" filter="'string'" class="k-textbox"
                                     ng-model="item.rcppt[jawab.id]" ng-disabled="true" />
                                 <input style="width: 100%" k-ng-model="item.rcppt[jawab.id2]" ng-disabled="true" kendo-datetimepicker placeholer="yyyy-MM-dd HH:mm" k-format="'yyyy-MM-dd HH:mm'" parsedate="yyyy-MM-dd HH:mm" />
-                                <input style="width: 100%;" ng-model="item.rcppt[jawab.id3]" ng-disabled="true" type="text" class="k-textbox" /> 
+                                <input style="width: 100%;" ng-model="item.rcppt[jawab.id3].text || item.rcppt[jawab.id3]" ng-disabled="true" type="text" class="k-textbox" /> 
                             </div>
                         </div>
                     </td>
@@ -334,7 +334,7 @@
 
                         <div ng-switch-when="ppa">
                         <input style="width: 100%;"
-                                ng-model="snap[jawab.id]"
+                                ng-model="snap[jawab.id].text || snap[jawab.id]"
                                 ng-disabled="true"
                                 type="text"
                                 class="k-textbox" />
@@ -345,7 +345,7 @@
                                     class="k-textbox"
                                     ng-model="snap[jawab.id]" ng-disabled="true"></textarea>
                         <input style="width: 100%;"
-                                ng-model="snap[jawab.id2]" ng-disabled="true"
+                                ng-model="snap[jawab.id2].text || snap[jawab.id2]" ng-disabled="true"
                                 type="text" class="k-textbox" />
                         </div>
 
@@ -364,7 +364,7 @@
                                 kendo-datetimepicker placeholer="yyyy-MM-dd HH:mm"
                                 k-format="'yyyy-MM-dd HH:mm'" parsedate="yyyy-MM-dd HH:mm" />
                         <input style="width: 100%;"
-                                ng-model="snap[jawab.id3]" ng-disabled="true"
+                                ng-model="snap[jawab.id3].text || snap[jawab.id3]" ng-disabled="true"
                                 type="text" class="k-textbox" />
                         </div>
                     </div>
