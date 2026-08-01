@@ -3654,6 +3654,9 @@ class EMRController  extends ApiController
         if (isset($request['emrfk']) && $request['emrfk'] != '') {
             $data = $data->where('emrdp.emrfk', $request['emrfk']);
         }
+         if (isset($request['index']) && $request['index'] != '') {
+        $data = $data->where('emrdp.index', $request['index']);
+        }
         //        if (isset($request['norec']) && $request['norec'] != '') {
         //            $data = $data->where('emrp.norec', $request['norec']);
         //        }

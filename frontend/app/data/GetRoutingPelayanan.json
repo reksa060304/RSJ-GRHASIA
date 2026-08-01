@@ -17371,7 +17371,7 @@
   },
   {
     "name": "RekamMedis.AsesmenMedis.MenuIndex.MonitoringFiksasi",
-    "url": "/MonitoringFiksasi",
+    "url": "/MonitoringFiksasi/:index/:idEMR",
     "templateurl": "module/EMR/MonitoringFiksasi.html",
     "controller": "MonitoringFiksasiCtrl",
     "deps": [
