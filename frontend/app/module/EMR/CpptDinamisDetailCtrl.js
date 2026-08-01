@@ -528,7 +528,8 @@ define(['initialize', 'Configuration'], function (initialize, config) {
                                 var str = dataLoadrcppt[i].value
                                 if(str != undefined){
                                     var res = str.split("~");
-                                    $scope.item.rcppt[dataLoadrcppt[i].emrdfk] = res[1] ? res[1] : res[0];
+                                    $scope.item.rcppt[dataLoadrcppt[i].emrdfk] = res[1]
+                                    // $scope.item.rcppt[dataLoadrcppt[i].emrdfk] = { value: res[0], text: res[1] }
                                 }   
 
                             }
@@ -536,7 +537,9 @@ define(['initialize', 'Configuration'], function (initialize, config) {
                                 var str = dataLoadrcppt[i].value
                                 if(str != undefined){
                                     var res = str.split("~");
-                                    $scope.item.rcppt[dataLoadrcppt[i].emrdfk] = res[1] ? res[1] : res[0];
+                                    // $scope.item.rcpptcbo[dataLoadrcppt[i].emrdfk]= {value:res[0],text:res[1]}
+                                    $scope.item.rcppt[dataLoadrcppt[i].emrdfk] = res[1]   
+                                    // $scope.item.rcppt[dataLoadrcppt[i].emrdfk] = { value: res[0], text: res[1] }
                                 }  
                             }
                     
@@ -544,7 +547,9 @@ define(['initialize', 'Configuration'], function (initialize, config) {
                                 var str = dataLoadrcppt[i].value
                                 if(str != undefined){
                                     var res = str.split("~");
-                                    $scope.item.rcppt[dataLoadrcppt[i].emrdfk] = res[1] ? res[1] : res[0];
+                                    // $scope.item.rcpptcbo[dataLoadrcppt[i].emrdfk]= {value:res[0],text:res[1]}
+                                    $scope.item.rcppt[dataLoadrcppt[i].emrdfk] = res[1]
+                                    // $scope.item.rcppt[dataLoadrcppt[i].emrdfk] = { value: res[0], text: res[1] }
                                 }  
                             }
                         }
