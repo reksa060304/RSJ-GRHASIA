@@ -65,6 +65,12 @@ define(['initialize'], function (initialize) {
                     if (type == "date" || type == "datetime" || type == "time") {
                         $scope.item.obj[datas[i].id] = new Date();
                     }
+                    if (datas[i].caption) {
+                        datas[i].caption = datas[i].caption.replace(/\s*\(Perawat\)/gi, '').replace(/\s*\(Radiografer\)/gi, '');
+                    }
+                    if (datas[i].namaexternal) {
+                        datas[i].namaexternal = datas[i].namaexternal.replace(/\s*\(Perawat\)/gi, '').replace(/\s*\(Radiografer\)/gi, '');
+                    }
                 }
 
                 var arrSituation = [];
@@ -118,6 +124,31 @@ define(['initialize'], function (initialize) {
                 groupDataByKode('r_recommendation', arrRecommendation);
                 groupDataByKode('ttd_petugas', arrTtd);
                 groupDataByKode('ttd_penerima', arrTtd);
+
+                function fixHeaderCaption(arr, defaultCaption) {
+                    if (arr && arr.length > 0) {
+                        var found = false;
+                        for (var i = 0; i < arr.length; i++) {
+                            for (var j = 0; j < arr[i].details.length; j++) {
+                                var item = arr[i].details[j];
+                                if (item.caption && item.caption.toUpperCase().indexOf(defaultCaption.toUpperCase()) !== -1) {
+                                    arr[0].caption = item.caption;
+                                    found = true;
+                                    break;
+                                }
+                            }
+                            if (found) break;
+                        }
+                        if (!found && defaultCaption) {
+                            arr[0].caption = defaultCaption;
+                        }
+                    }
+                }
+
+                fixHeaderCaption(arrSituation, 'S (SITUATION)');
+                fixHeaderCaption(arrBackground, 'B (BACKGROUND)');
+                fixHeaderCaption(arrAssessment, 'A (ASSESSMENT)');
+                fixHeaderCaption(arrRecommendation, 'R (RECOMMENDATION)');
 
                 $scope.listSituation = arrSituation;
                 $scope.listBackground = arrBackground;
