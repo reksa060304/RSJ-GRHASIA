@@ -14,11 +14,7 @@
     <style>
         @page {
             size: A4;
-            margin-top: 5mm;
-        }
-
-        @page: first {
-            size: A4
+            margin: 10mm 15mm 10mm 15mm;
         }
 
         @media print {
@@ -122,8 +118,28 @@
             bottom: 0;
         }
 
+        body, table, td, th, div, span, p, li {
+            font-family: Tahoma, Geneva, sans-serif;
+            font-size: 10.5pt;
+            line-height: 1.4;
+            color: #000;
+        }
+
         body {
-            font-family: 'Arial'
+            font-family: Tahoma, Geneva, sans-serif;
+            font-size: 10.5pt;
+            text-align: justify;
+        }
+
+        .info-table td,
+        .signature-table td {
+            font-size: 10.5pt !important;
+        }
+
+        p, li, .container-edukasi, .container-edukasi h2, .container-edukasi div {
+            font-family: Tahoma, Geneva, sans-serif !important;
+            font-size: 10.5pt !important;
+            text-align: justify;
         }
 
         td {
@@ -160,11 +176,13 @@
         .container-edukasi {
             width: 100%;
             box-sizing: border-box;
-            line-height: 1.6;
+            line-height: 1.4;
+            font-family: Tahoma, Geneva, sans-serif !important;
+            font-size: 10.5pt !important;
         }
 
         .container-edukasi h2 {
-            font-size: 1.2em;
+            font-size: 11pt !important;
             font-weight: bold;
             margin-bottom: 20px;
         }
@@ -191,6 +209,7 @@
         }
 
         .container-edukasi ol[type="a"]>li {
+            font-weight: normal;
             margin-bottom: 5px;
         }
 
@@ -201,61 +220,51 @@
             padding-left: 30px;
             margin-top: 5px;
             margin-bottom: 10px;
+            font-weight: normal;
         }
 
-        .container-edukasi ul.arrow-list>li {
+        .container-edukasi ul.arrow-list > li {
+            font-weight: normal;
+            position: relative;
+            padding-left: 25px;
             margin-bottom: 3px;
         }
     </style>
 </head>
 
 <body class="A4" style="font-family:Tahoma;height: auto">
-    <section style="font-family:Arial;padding:5mm 5mm 5mm 5mm;page-break-after: page;">
-        <table cellspacing="0" cellpadding="0" border="0" width="100%">
-            <tbody>
-                <tr>
-                    <td style="text-align: center;" width="10%">
-                        <img src="img/diy.png" alt="Logo" style="width: 100px; margin: 0 !important;
-                        padding: 0 !important;">
-                    </td>
-                    <td style="text-align: center;vertical-align: top" width="55%">
-                        <b>
-                            <span style="font-size: 9pt;"><?php echo htmlspecialchars($res['profile']->baris1, ENT_QUOTES, 'UTF-8'); ?></span>
-                            <br>
-                            <span style="font-size: 10pt;"><?php echo htmlspecialchars($res['profile']->baris2, ENT_QUOTES, 'UTF-8'); ?></span>
-                            <br>
-                            <span style="font-size: 10pt;"><?php echo htmlspecialchars(strtoupper($res['profile']->namalengkap), ENT_QUOTES, 'UTF-8'); ?></span>
-                            <br>
-                            <img src="img/aksara_jawa-com.png" alt="Logo" style="width: 140px;">
-                            <br>
-                            <span style="font-size: 7pt; font-weight: normal">Jalan Kaliurang KM 17 Sleman Kode Pos 55582, Telepon:
-                                <?php echo htmlspecialchars($res['profile']->fixedphone, ENT_QUOTES, 'UTF-8'); ?>
-                                <br style="margin: 0px">
-                                Laman: <?php echo htmlspecialchars($res['profile']->website, ENT_QUOTES, 'UTF-8'); ?>, Surel: <?php echo htmlspecialchars($res['profile']->alamatemail, ENT_QUOTES, 'UTF-8'); ?>
-                            </span>
-
-                        </b>
-                    </td>
-                    <td width="35%" style="vertical-align: middle">
-                        <img src="img/logo_grhasia_full.png" alt="Logo" style="width: 180px; margin: 0 !important;
-                        padding: 0 !important;">
-                    </td>
-                </tr>
-                <tr>
-                    <td colspan="3">
-                        <hr>
-                    </td>
-                </tr>
-                <tr>
-                    <th colspan="3" style="padding-top: 20px;">RUJUKAN EDUKASI PASIEN DENGAN SINDROMA GERIATRI <br> DENGAN LOW INTAKE</th>
-                </tr>
+    <section style="padding:0;page-break-after: page;">
+        <table cellspacing="0" cellpadding="0" border="0" style="width: 100%; border-bottom: 2px solid #000; margin-bottom: 6px; padding-bottom: 5px;">
+            <tr>
+                <td style="text-align: left; vertical-align: middle; border: none;" width="12%">
+                    <img src="img/diy.png" alt="Logo DIY" style="width: 75px; height: auto; margin: 0; padding: 0;">
+                </td>
+                <td style="text-align: center; vertical-align: middle; padding: 0 5px; border: none;" width="73%">
+                    <span style="font-size: 12pt; font-weight: bold; color: #000;">PEMERINTAH DAERAH DAERAH ISTIMEWA YOGYAKARTA</span><br>
+                    <span style="font-size: 12pt; font-weight: bold; color: #000;">DINAS KESEHATAN</span><br>
+                    <span style="font-size: 12pt; font-weight: bold; color: #000;">RUMAH SAKIT JIWA GRHASIA</span><br>
+                    <img src="img/aksara_jawa-com.png" alt="Aksara Jawa" style="width: 140px; height: auto; margin-top: 1px; margin-bottom: 1px;"><br>
+                    <span style="font-size: 8pt; font-weight: normal; line-height: 1.2; color: #000;">
+                        Jalan Kaliurang Km 17 Sleman 55582, Telepon: (0274) 895143/895297, Faksimile: (0274) 895142<br>
+                        Pos-el: grhasiamentalhospital@jogjaprov.go.id&nbsp;&nbsp;Laman: grhasia.jogjaprov.go.id
+                    </span>
+                </td>
+                <td style="text-align: right; vertical-align: middle; border: none;" width="15%">
+                    <img src="img/logo_grhasia_full.png" alt="Logo Grhasia" style="width: 120px; height: auto; margin: 0; padding: 0;">
+                </td>
+            </tr>
+        </table>
+        <table cellspacing="0" cellpadding="0" border="0" style="width: 100%;">
+            <tr>
+                <th colspan="3" style="padding-top: 12px; padding-bottom: 12px; border: none; text-align: center; font-size: 12pt; font-weight: bold;">RUJUKAN EDUKASI PASIEN DENGAN SINDROMA GERIATRI <br> DENGAN LOW INTAKE</th>
+            </tr>
         </table>
 
         <table style="width: 100%; margin-top: 20px;">
             <tr>
-                <td style="width: 20%;">Rumah Sakit</td>
+                <td style="width: 26%;">Rumah Sakit</td>
                 <td style="width: 2%;">:</td>
-                <td style="width: 78%;">RSJ Grhasia DIY</td>
+                <td style="width: 72%;">RSJ Grhasia DIY</td>
             </tr>
             <tr>
                 <td>Puskesmas Tujuan</td>
@@ -299,7 +308,7 @@
                 <td><?php echo htmlspecialchars(isset($item[1901306005]) ? $item[1901306005] : '', ENT_QUOTES, 'UTF-8'); ?></td>
             </tr>
             <tr>
-                <td><b>Pengobatan Terakhir</b></td>
+                <td>Pengobatan Terakhir</td>
                 <td>:</td>
                 <td><?php echo nl2br(htmlspecialchars(isset($item[1901306006]) ? $item[1901306006] : '', ENT_QUOTES, 'UTF-8')); ?></td>
             </tr>

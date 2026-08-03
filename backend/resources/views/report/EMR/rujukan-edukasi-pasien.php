@@ -4,591 +4,199 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta http-equiv="X-UA-Compatible" content="ie=edge">
-    <title>Rujukan Edukasi Pasien</title>
+    <title>SURAT KETERANGAN RUJUKAN</title>
     <style>
         @page {
             size: A4;
-            margin: 0;
+            margin: 10mm 15mm 10mm 15mm;
         }
 
-        @media print {
-            body {
-                margin: 0;
-                padding: 0;
-            }
-
-            table {
-                page-break-after: auto;
-            }
-        }
-
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
+        body, table, td, th, div, span, p {
+            font-family: Tahoma, Geneva, sans-serif;
+            font-size: 10.5pt;
+            line-height: 1.4;
+            color: #000;
         }
 
         body {
-            font-family: Tahoma, Geneva, sans-serif;
-            font-size: 10pt;
-            line-height: 1.35;
-            color: #000;
+            margin: 0;
+            padding: 0;
             background: #fff;
         }
 
-        .page {
-            width: 100%;
-            height: auto;
-            margin: 0 auto;
-            padding: 10mm 12mm 10mm 12mm;
-            background: white;
-            position: relative;
-        }
-
-        /* Header Section */
-        .header-section {
-            width: 100%;
-            margin-bottom: 6px;
-            padding-bottom: 5px;
-            border-bottom: 2px solid #000;
-        }
-
-        .header-table {
-            width: 100%;
-            text-align: center;
-        }
-
-        .header-table td {
-            padding: 0;
-            vertical-align: middle;
-        }
-
-        .logo-cell {
-            width: 13%;
-            text-align: center;
-        }
-
-        .logo-cell img {
-            width: 70px;
-            height: auto;
-            margin: 0;
-            padding: 0;
-        }
-
-        .title-cell {
-            width: 74%;
-            padding: 0 8px;
-            text-align: center;
-        }
-
-        .title-cell b {
-            display: block;
-            font-weight: bold;
-            line-height: 1.3;
-        }
-
-        .title-cell .hospital-name {
-            display: block;
-            font-size: 11pt;
-            font-weight: bold;
-            margin: 1px 0;
-        }
-
-        .title-cell .gov-name,
-        .title-cell .dept-name {
-            display: block;
-            font-size: 10pt;
-            font-weight: bold;
-            margin: 0.5px 0;
-            letter-spacing: 0.3px;
-        }
-
-        .title-cell .javanese-script {
-            margin: 0.5px 0;
-        }
-
-        .title-cell .javanese-script img {
-            width: 100px;
-            height: auto;
-        }
-
-        .title-cell .address-info {
-            font-size: 7pt;
-            font-weight: normal;
-            line-height: 1.1;
-            margin-top: 0.5px;
-        }
-
-        .title-cell a {
-            color: blue;
-            text-decoration: underline;
-        }
-
-        .logo-right {
-            width: 13%;
-            text-align: center;
-        }
-
-        .logo-right img {
-            width: 100px;
-            height: auto;
-            margin: 0;
-            padding: 0;
-        }
-
-        /* Content Section */
-        .content-section {
-            width: 100%;
-            margin-top: 8px;
-        }
-
-        /* Tanggal dan Tempat */
-        .date-info {
-            margin-bottom: 8px;
-            font-size: 10pt;
-        }
-
-        .date-info .label {
-            display: inline-block;
-            width: 50px;
-            font-weight: normal;
-        }
-
-        .date-line {
-            display: inline-block;
-            width: 200px;
-            text-align: center;
-        }
-
-        /* Kepada Yth */
-        .recipient-section {
-            margin-bottom: 10px;
-            font-size: 10pt;
-        }
-
-        .recipient-label {
-            /* font-weight: bold; */
-            margin-bottom: 2px;
-        }
-
-        .recipient-table {
-            margin-left: 0;
+        table {
             width: 100%;
             border-collapse: collapse;
         }
 
-        .recipient-table tr {
-            height: auto;
-        }
-
-        .recipient-table tr td:first-child {
-            width: 35px;
-            font-weight: normal;
-            padding-right: 5px;
-            padding-top: 3px;
-            padding-bottom: 3px;
-            vertical-align: top;
-            white-space: nowrap;
-        }
-
-        .recipient-table tr td:last-child {
-            padding-bottom: 4px;
-            padding-top: 3px;
-            min-height: 20px;
-        }
-
-        .recipient-table tr td.colon {
-            width: 15px;
-            text-align: center;
-            padding: 0;
-            vertical-align: top;
-            padding-top: 3px;
-        }
-
-        /* Judul Laporan */
         .report-title {
             text-align: center;
-            margin: 12px 0 12px 0;
-            font-size: 11pt;
-            font-weight: bold;
+            margin: 15px 0 15px 0;
         }
 
         .report-title .main-title {
+            font-size: 12pt;
+            font-weight: bold;
             text-decoration: underline;
             display: block;
-            letter-spacing: 0.5px;
-            margin-bottom: 3px;
         }
 
         .report-title .no-title {
+            font-size: 10.5pt;
             display: block;
-            font-size: 10pt;
-            margin-top: 3px;
-        }
-
-        .no-line {
-            display: inline-block;
-            width: 350px;
-            text-align: center;
-        }
-
-        /* Detail Pasien */
-        .patient-section {
-            margin-bottom: 20px;
-            font-size: 10pt;
-            line-height: 1.4;
-        }
-
-        .patient-intro {
-            margin-bottom: 2px;
-            font-weight: normal;
-            font-size: 10pt;
-        }
-
-        .patient-table {
-            margin-left: 0;
-            width: 100%;
-            font-size: 10pt;
-            border-collapse: collapse;
-        }
-
-        .patient-table tr td:first-child {
-            width: 90px;
-            padding-right: 5px;
-            padding-top: 0;
-            padding-bottom: 0;
-        }
-
-        .patient-table tr td.colon {
-            width: 12px;
-            text-align: center;
-            padding: 0;
-        }
-
-        .patient-table tr td:last-child {
-            width: calc(100% - 102px);
-            padding-bottom: 0;
-            padding-top: 0;
-            min-height: 15px;
-        }
-
-        .patient-table tr {
-            height: 30px;
-        }
-
-        /* Pemeriksaan / Perawatan */
-        .examination-section {
-            margin-top: 15px;
-            margin-bottom: 20px;
-            font-size: 10pt;
-            line-height: 1.4;
-        }
-
-        .examination-title {
-            /* font-weight: bold; */
-            margin-bottom: 5px;
-        }
-
-        .examination-table {
-            width: 100%;
-            margin: 0;
-            padding: 0;
-            border-collapse: collapse;
-        }
-
-        .examination-table tr td:first-child {
-            width: 175px;
-            vertical-align: top;
-            padding-top: 0;
-            padding-right: 5px;
-            padding-bottom: 10px;
-            font-size: 10pt;
-            white-space: nowrap;
-        }
-
-        .examination-table tr td.colon {
-            width: 12px;
-            text-align: center;
-            vertical-align: top;
-            padding: 0 0 10px 0;
-        }
-
-        .examination-table tr td:last-child {
-            vertical-align: top;
-            padding-top: 0;
-            padding-bottom: 10px;
-        }
-
-        .examination-row {
-            margin-bottom: 3px;
-        }
-
-        .diagnosis-line {
-            display: block;
-            margin-bottom: 1px;
-            min-height: 12px;
-            line-height: 1.4;
-        }
-
-        .therapy-line {
-            display: block;
-            margin-bottom: 1px;
-            min-height: 12px;
-            line-height: 1.4;
-        }
-
-        /* Penutup */
-        .closing-section {
-            margin-top: 15px;
-            margin-bottom: 20px;
-            font-size: 10pt;
-            line-height: 1.3;
-        }
-
-        /* Tanda Tangan */
-        .signature-section {
-            width: 100%;
-            margin-top: 25px;
-            font-size: 10pt;
-        }
-
-        .signature-table {
-            width: 100%;
-            padding: 0;
-            margin: 0;
-        }
-
-        .signature-table tr {
-            height: auto;
-        }
-
-        .signature-left {
-            width: 50%;
-            text-align: left;
-        }
-
-        .signature-right {
-            width: 50%;
-            text-align: center;
-            padding-left: 20px;
-        }
-
-        .signature-box {
-            min-width: 240px;
-            max-width: 100%;
-            margin-left: auto;
-            margin-right: 0;
-            text-align: center;
-        }
-
-        .signature-title {
-            font-weight: normal;
-            margin-bottom: 40px;
-            display: block;
-            font-size: 10pt;
-            color: #000;
-        }
-
-        .signature-name {
-            border-bottom: 1px solid #000;
-            min-height: 20px;
-            line-height: 20px;
-            margin-bottom: 2px;
-            font-size: 10pt;
-            color: #000;
-            padding: 0 5px;
-            white-space: nowrap;
-        }
-
-        .nip-line {
-            text-align: left;
-            font-size: 10pt;
-            margin-top: 2px;
-            color: #000;
-        }
-
-        /* Utility Classes */
-        .dotted-line {
-            display: inline-block;
-        }
-
-        .empty-space {
-            min-height: 60px;
-        }
-
-        input[type="checkbox"] {
-            vertical-align: middle;
-            transform: scale(0.8);
-            margin-right: 5px;
-            accent-color: #000;
-        }
-
-        label {
-            vertical-align: middle;
-            margin-left: 3px;
+            margin-top: 4px;
         }
     </style>
 </head>
 
-<body>
-    <div class="page">
-        <!-- Header Section -->
-        <div class="header-section">
-            <table class="header-table" cellspacing="0" cellpadding="0" border="0">
-                <tr>
-                    <td class="logo-cell">
-                        <img src="img/diy.png" alt="Logo DIY">
-                    </td>
-                    <td class="title-cell">
-                        <span class="gov-name">PEMERINTAH DAERAH DAERAH ISTIMEWA YOGYAKARTA</span>
-                        <span class="dept-name">DINAS KESEHATAN</span>
-                        <span class="hospital-name">RUMAH SAKIT JIWA GRHASIA</span>
-                        <div class="javanese-script">
-                            <img src="img/aksara_jawa-com.png" alt="Aksara Jawa">
-                        </div>
-                        <div class="address-info">
-                            Jalan Kaliurang KM 17 Sleman, Kode Pos 55582, Telepon: (0274) 895297<br>
-                            Faksimile: (0274) 895142, Pos-el: <a href="mailto:grhasiamentalhospital@jogjaprov.go.id">grhasiamentalhospital@jogjaprov.go.id</a><br>
-                            Laman: <a href="http://grhasia.jogjaprov.go.id" style="text-decoration: none; color: #000;">grhasia.jogjaprov.go.id</a>
-                        </div>
-                    </td>
-                    <td class="logo-right">
-                        <img src="img/logo_grhasia_full.png" alt="Logo Grhasia">
-                    </td>
-                </tr>
-            </table>
+<body class="A4">
+    <section style="padding: 0; page-break-after: page;">
+        <!-- Kop Header -->
+        <table cellspacing="0" cellpadding="0" border="0" style="border-bottom: 2px solid #000; margin-bottom: 6px; padding-bottom: 5px;">
+            <tr>
+                <td style="text-align: left; vertical-align: middle; border: none;" width="12%">
+                    <img src="img/diy.png" alt="Logo DIY" style="width: 75px; height: auto; margin: 0; padding: 0;">
+                </td>
+                <td style="text-align: center; vertical-align: middle; padding: 0 5px; border: none;" width="73%">
+                    <span style="font-size: 12pt; font-weight: bold; color: #000;">PEMERINTAH DAERAH DAERAH ISTIMEWA YOGYAKARTA</span><br>
+                    <span style="font-size: 12pt; font-weight: bold; color: #000;">DINAS KESEHATAN</span><br>
+                    <span style="font-size: 12pt; font-weight: bold; color: #000;">RUMAH SAKIT JIWA GRHASIA</span><br>
+                    <img src="img/aksara_jawa-com.png" alt="Aksara Jawa" style="width: 140px; height: auto; margin-top: 1px; margin-bottom: 1px;"><br>
+                    <span style="font-size: 8pt; font-weight: normal; line-height: 1.2; color: #000;">
+                        Jalan Kaliurang Km 17 Sleman 55582, Telepon: (0274) 895143/895297, Faksimile: (0274) 895142<br>
+                        Pos-el: grhasiamentalhospital@jogjaprov.go.id&nbsp;&nbsp;Laman: grhasia.jogjaprov.go.id
+                    </span>
+                </td>
+                <td style="text-align: right; vertical-align: middle; border: none;" width="15%">
+                    <img src="img/logo_grhasia_full.png" alt="Logo Grhasia" style="width: 120px; height: auto; margin: 0; padding: 0;">
+                </td>
+            </tr>
+        </table>
+
+        <!-- Tanggal -->
+        <table style="margin-top: 10px;">
+            <tr>
+                <td style="width: 60%;"></td>
+                <td style="width: 40%; text-align: left;">
+                    Sleman, <?php echo isset($item[1901310026]) ? htmlspecialchars($item[1901310026], ENT_QUOTES, 'UTF-8') : '........................'; ?>
+                </td>
+            </tr>
+        </table>
+
+        <!-- Kepada Yth -->
+        <table style="margin-top: 10px;">
+            <tr>
+                <td colspan="3">Kepada :</td>
+            </tr>
+            <tr>
+                <td style="width: 8%; vertical-align: top; padding: 2px 0;">Yth.</td>
+                <td style="width: 2%; vertical-align: top; padding: 2px 0;">:</td>
+                <td style="width: 90%; vertical-align: top; padding: 2px 0;">
+                    <?php 
+                    if (isset($item[1901310027]) && trim($item[1901310027]) !== '') {
+                        echo nl2br(htmlspecialchars($item[1901310027], ENT_QUOTES, 'UTF-8'));
+                    } else {
+                        echo '....................................................................................';
+                    }
+                    ?>
+                </td>
+            </tr>
+            <tr>
+                <td style="vertical-align: top; padding: 2px 0;">di</td>
+                <td style="vertical-align: top; padding: 2px 0;">:</td>
+                <td style="vertical-align: top; padding: 2px 0;">
+                    <?php echo isset($item[1901310028]) && trim($item[1901310028]) !== '' ? htmlspecialchars($item[1901310028], ENT_QUOTES, 'UTF-8') : '....................................................................................'; ?>
+                </td>
+            </tr>
+        </table>
+
+        <!-- Judul Laporan -->
+        <div class="report-title">
+            <span class="main-title">SURAT KETERANGAN RUJUKAN</span>
+            <span class="no-title">Nomor : </span>
         </div>
 
-        <!-- Content Section -->
-        <div class="content-section">
-            <!-- Tanggal -->
-            <div class="date-info">
-                <span class="label">Sleman,</span>
-                <span class="date-line"><?php echo isset($item[1901310026]) ? htmlspecialchars($item[1901310026], ENT_QUOTES, 'UTF-8') : '&nbsp;'; ?></span>
-            </div>
+        <!-- Detail Pasien -->
+        <table style="margin-top: 10px;">
+            <tr>
+                <td colspan="3" style="padding-bottom: 6px;">Bersama ini kami kirimkan penderita/klien :</td>
+            </tr>
+            <tr>
+                <td style="width: 25%; padding: 3px 0;">Nama</td>
+                <td style="width: 3%; padding: 3px 0;">:</td>
+                <td style="width: 72%; padding: 3px 0;"><?php echo htmlspecialchars(isset($item[1901310029]) ? $item[1901310029] : '', ENT_QUOTES, 'UTF-8'); ?></td>
+            </tr>
+            <tr>
+                <td style="padding: 3px 0;">Umur</td>
+                <td style="padding: 3px 0;">:</td>
+                <td style="padding: 3px 0;"><?php echo htmlspecialchars(isset($item[1901310030]) ? $item[1901310030] : '', ENT_QUOTES, 'UTF-8'); ?></td>
+            </tr>
+            <tr>
+                <td style="padding: 3px 0;">Pekerjaan</td>
+                <td style="padding: 3px 0;">:</td>
+                <td style="padding: 3px 0;"><?php echo htmlspecialchars(isset($item[1901310031]) ? $item[1901310031] : '', ENT_QUOTES, 'UTF-8'); ?></td>
+            </tr>
+            <tr>
+                <td style="padding: 3px 0;">Alamat</td>
+                <td style="padding: 3px 0;">:</td>
+                <td style="padding: 3px 0;"><?php echo htmlspecialchars(isset($item[1901310032]) ? $item[1901310032] : '', ENT_QUOTES, 'UTF-8'); ?></td>
+            </tr>
+        </table>
 
-            <!-- Kepada Yth -->
-            <div class="recipient-section">
-                <div class="recipient-label">Kepada :</div>
-                <table class="recipient-table" cellspacing="0" cellpadding="0" border="0">
-                    <tr>
-                        <td>Yth.</td>
-                        <td class="colon">:</td>
-                        <td>
-                            <?php 
-                            if (isset($item[1901310027]) && trim($item[1901310027]) !== '') {
-                                echo nl2br(htmlspecialchars($item[1901310027], ENT_QUOTES, 'UTF-8'));
-                            } else {
-                                echo '&nbsp;';
-                            }
-                            ?>
-                        </td>
-                    </tr>
-                    <tr>
-                        <td>di</td>
-                        <td class="colon">:</td>
-                        <td>
-                            <?php echo isset($item[1901310028]) && trim($item[1901310028]) !== '' ? htmlspecialchars($item[1901310028], ENT_QUOTES, 'UTF-8') : '&nbsp;'; ?>
-                        </td>
-                    </tr>
-                </table>
-            </div>
+        <!-- Pemeriksaan / Perawatan Lanjutan -->
+        <table style="margin-top: 15px;">
+            <tr>
+                <td colspan="3" style="padding-bottom: 6px;">Mohon pemeriksaan / perawatan lanjutan :</td>
+            </tr>
+            <tr>
+                <td style="width: 25%; vertical-align: top; padding: 4px 0;">Diagnosa sementara</td>
+                <td style="width: 3%; vertical-align: top; padding: 4px 0;">:</td>
+                <td style="width: 72%; vertical-align: top; padding: 4px 0;">
+                    <?php 
+                    if(isset($item[1901310033]) && trim($item[1901310033]) !== '') {
+                        echo nl2br(htmlspecialchars($item[1901310033], ENT_QUOTES, 'UTF-8'));
+                    } else {
+                        echo '-';
+                    }
+                    ?>
+                </td>
+            </tr>
+            <tr>
+                <td style="vertical-align: top; padding: 4px 0;">Pengobatan Terakhir</td>
+                <td style="vertical-align: top; padding: 4px 0;">:</td>
+                <td style="vertical-align: top; padding: 4px 0;">
+                    <?php 
+                    if(isset($item[1901310034]) && trim($item[1901310034]) !== '') {
+                        echo nl2br(htmlspecialchars($item[1901310034], ENT_QUOTES, 'UTF-8'));
+                    } else {
+                        echo '-';
+                    }
+                    ?>
+                </td>
+            </tr>
+        </table>
 
-            <!-- Judul Laporan -->
-            <div class="report-title">
-                <span class="main-title">SURAT KETERANGAN RUJUKAN</span>
-                <span class="no-title">Nomor : </span>
-            </div>
-
-            <!-- Detail Pasien -->
-            <div class="patient-section">
-                <div class="patient-intro">Bersama ini kami kirimkan penderita/klien :</div>
-                <table class="patient-table" cellspacing="0" cellpadding="3" border="0">
-                    <tr>
-                        <td>Nama</td>
-                        <td class="colon">:</td>
-                        <td><?php echo htmlspecialchars(isset($item[1901310029]) ? $item[1901310029] : '', ENT_QUOTES, 'UTF-8'); ?></td>
-                    </tr>
-                    <tr>
-                        <td>Umur</td>
-                        <td class="colon">:</td>
-                        <td><?php echo htmlspecialchars(isset($item[1901310030]) ? $item[1901310030] : '', ENT_QUOTES, 'UTF-8'); ?></td>
-                    </tr>
-                    <tr>
-                        <td>Pekerjaan</td>
-                        <td class="colon">:</td>
-                        <td><?php echo htmlspecialchars(isset($item[1901310031]) ? $item[1901310031] : '', ENT_QUOTES, 'UTF-8'); ?></td>
-                    </tr>
-                    <tr>
-                        <td>Alamat</td>
-                        <td class="colon">:</td>
-                        <td><?php echo htmlspecialchars(isset($item[1901310032]) ? $item[1901310032] : '', ENT_QUOTES, 'UTF-8'); ?></td>
-                    </tr>
-                </table>
-            </div>
-
-            <!-- Pemeriksaan / Perawatan Lanjutan -->
-            <div class="examination-section">
-                <div class="examination-title">Mohon pemeriksaan / perawatan lanjutan :</div>
-                <table class="examination-table" cellspacing="0" cellpadding="0" border="0">
-                    <tr class="examination-row">
-                        <td>Diagnosa sementara</td>
-                        <td class="colon">:</td>
-                        <td>
-                            <?php 
-                            if(isset($item[1901310033]) && trim($item[1901310033]) !== '') {
-                                echo '<span class="diagnosis-line">' . nl2br(htmlspecialchars($item[1901310033], ENT_QUOTES, 'UTF-8')) . '</span>';
-                            } else {
-                                echo '<span class="diagnosis-line"></span>';
-                                echo '<span class="diagnosis-line"></span>';
-                            }
-                            ?>
-                        </td>
-                    </tr>
-                    <tr class="examination-row" style="margin-top: 15px; padding-top: 10px;">
-                        <td>Terapi yang telah kami berikan</td>
-                        <td class="colon">:</td>
-                        <td>
-                            <?php 
-                            if(isset($item[1901310034]) && trim($item[1901310034]) !== '') {
-                                echo '<span class="therapy-line">' . nl2br(htmlspecialchars($item[1901310034], ENT_QUOTES, 'UTF-8')) . '</span>';
-                            } else {
-                                echo '<span class="therapy-line"></span>';
-                                echo '<span class="therapy-line"></span>';
-                            }
-                            ?>
-                        </td>
-                    </tr>
-                </table>
-            </div>
-
-            <!-- Penutup -->
-            <div class="closing-section">
-                Atas bantuan dan perhatiannya kami ucapkan terima kasih.
-            </div>
-
-            <!-- Tanda Tangan -->
-            <div class="signature-section">
-                <table class="signature-table" cellspacing="0" cellpadding="0" border="0">
-                    <tr>
-                        <td class="signature-left"></td>
-                        <td class="signature-right">
-                            <div class="signature-box">
-                                <span class="signature-title">Dokter Pemeriksa,</span>
-                                <div class="signature-name">
-                                    ( <?php echo htmlspecialchars(isset($item[1901310035]) ? $item[1901310035] : '', ENT_QUOTES, 'UTF-8'); ?> )
-                                </div>
-                                <div class="nip-line">
-                                    NIP. <?php echo htmlspecialchars(isset($data[0]->nip_dokter) ? $data[0]->nip_dokter : '', ENT_QUOTES, 'UTF-8'); ?>
-                                </div>
-                            </div>
-                        </td>
-                    </tr>
-                </table>
-            </div>
+        <!-- Penutup -->
+        <div style="margin-top: 20px;">
+            Atas bantuan dan perhatiannya kami ucapkan terima kasih.
         </div>
-    </div>
+
+        <!-- Tanda Tangan Dokter -->
+        <table style="margin-top: 30px;">
+            <tr>
+                <td style="width: 50%;"></td>
+                <td style="width: 50%; text-align: center;">
+                    Dokter Pemeriksa,
+                    <br><br><br><br><br>
+                    <span style="text-decoration: underline; font-weight: bold;">
+                        ( <?php echo htmlspecialchars(isset($item[1901310035]) ? $item[1901310035] : '', ENT_QUOTES, 'UTF-8'); ?> )
+                    </span>
+                    <br>
+                    NIP. <?php echo htmlspecialchars(isset($data[0]->nip_dokter) ? $data[0]->nip_dokter : '', ENT_QUOTES, 'UTF-8'); ?>
+                </td>
+            </tr>
+        </table>
+    </section>
 </body>
 
 </html>

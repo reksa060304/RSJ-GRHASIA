@@ -33,14 +33,53 @@
     <style>
         @page {
             size: A4;
-            margin: 5mm 5mm 6mm 5mm;
+            margin: 10mm 15mm 10mm 15mm;
+        }
+
+        body, table, td, th, div, span, p, li {
+            font-family: Tahoma, Geneva, sans-serif;
+            font-size: 10.5pt;
+            line-height: 1.4;
+            color: #000;
         }
 
         body {
             margin: 0 !important;
             padding: 0 !important;
-            font-family: Arial, sans-serif;
-            font-size: 11px;
+            text-align: justify;
+        }
+
+        .content-section, .content-section h2, .content-section div, .content-section p, .content-section li {
+            font-family: Tahoma, Geneva, sans-serif !important;
+            font-size: 10.5pt !important;
+            text-align: justify;
+        }
+
+        .no-break {
+            display: block !important;
+            page-break-inside: avoid !important;
+            break-inside: avoid !important;
+        }
+
+        ul.arrow-list {
+            list-style-type: none;
+            padding-left: 0;
+            margin: 4px 0 0 20px;
+        }
+
+        ul.arrow-list > li {
+            position: relative;
+            padding-left: 20px;
+            margin-bottom: 3px;
+        }
+
+        ul.arrow-list > li::before {
+            content: "➢";
+            font-family: "DejaVu Sans", sans-serif !important;
+            font-size: 10pt !important;
+            position: absolute;
+            left: 0;
+            top: 2px;
         }
 
         .page {
@@ -102,65 +141,62 @@
 
 </head>
 <body>
-    <section class="block" style="font-family:Arial;">
+    <section style="padding: 0; page-break-after: page;">
         <!-- HEADER -->
-        <table cellspacing="0" cellpadding="0" border="0" class="header-table">
+        <table cellspacing="0" cellpadding="0" border="0" class="header-table" style="width: 100%; border-bottom: 2px solid #000; margin-bottom: 6px; padding-bottom: 5px;">
             <tr>
-                <td style="text-align: center;" width="10%">
-                        <img src="img/diy.png" alt="Logo" style="width: 100px; margin: 0 !important;
-                        padding: 0 !important;">
+                <td style="text-align: left; vertical-align: middle; border: none;" width="12%">
+                    <img src="img/diy.png" alt="Logo DIY" style="width: 75px; height: auto; margin: 0; padding: 0;">
                 </td>
-                <td style="text-align: center;vertical-align: top" width="55%">
-                    <p style="margin:0; padding:0; font-size: 10px; font-weight: bold;">{{ $res['profile']->baris1 }}</p>
-                    <p style="margin:0; padding:0; font-size: 11px; font-weight:bold;">{{ $res['profile']->baris2 }}</p>
-                    <p style="margin:0; padding:0; font-size: 11px; font-weight:bold;">{{ strtoupper($res['profile']->namalengkap) }}</p>
-                    <img src="img/aksara_jawa-com.png" alt="Logo" style="width: 140px;"><br>
-                    <p style="font-size:8pt; margin:0;">Jalan Kaliurang Km 17 Sleman, Kode Pos {{ $res['profile']->kodepos }}</p>
-                    <p style="font-size:8pt; margin:0;">Telp: (0274) 895143, 895297 | Faks: {{ $res['profile']->faksimile }}</p>
+                <td style="text-align: center; vertical-align: middle; padding: 0 5px; border: none;" width="73%">
+                    <span style="font-size: 12pt; font-weight: bold; color: #000;">PEMERINTAH DAERAH DAERAH ISTIMEWA YOGYAKARTA</span><br>
+                    <span style="font-size: 12pt; font-weight: bold; color: #000;">DINAS KESEHATAN</span><br>
+                    <span style="font-size: 12pt; font-weight: bold; color: #000;">RUMAH SAKIT JIWA GRHASIA</span><br>
+                    <img src="img/aksara_jawa-com.png" alt="Aksara Jawa" style="width: 140px; height: auto; margin-top: 1px; margin-bottom: 1px;"><br>
+                    <span style="font-size: 8pt; font-weight: normal; line-height: 1.2; color: #000;">
+                        Jalan Kaliurang Km 17 Sleman 55582, Telepon: (0274) 895143/895297, Faksimile: (0274) 895142<br>
+                        Pos-el: grhasiamentalhospital@jogjaprov.go.id&nbsp;&nbsp;Laman: grhasia.jogjaprov.go.id
+                    </span>
                 </td>
-                <td width="35%" style="vertical-align: middle">
-                            <img src="img/logo_grhasia_full.png" alt="Logo" style="width: 180px; margin: 0 !important;
-                            padding: 0 !important;">
+                <td style="text-align: right; vertical-align: middle; border: none;" width="15%">
+                    <img src="img/logo_grhasia_full.png" alt="Logo Grhasia" style="width: 120px; height: auto; margin: 0; padding: 0;">
                 </td>
             </tr>
+        </table>
+        <table cellspacing="0" cellpadding="0" border="0" class="header-table" style="width: 100%;">
             <tr>
-                    <td colspan="3">
-                        <hr>
-                    </td>
-                </tr>
-                <tr>
-                    <th style=" font-size: 15px; padding-bottom: 8px; padding-top: 5px; border: none; text-align: center;" colspan="6">RUJUKAN EDUKASI PASIEN DENGAN DIABETES</th>
+                <th style="font-size: 12pt; font-weight: bold; padding-bottom: 12px; padding-top: 12px; border: none; text-align: center;" colspan="6">RUJUKAN EDUKASI PASIEN DENGAN DIABETES</th>
             </tr>
         </table>
         <div style="padding: 10px;">
             <table width="100%" cellspacing="0" cellpadding="2" style="font-size:11px;" border="0" class="header-table">
                 <tr>
-                    <td width="18%"><b>Rumah Sakit</b></td>
+                    <td width="26%">Rumah Sakit</td>
                     <td width="2%">:</td>
-                    <td width="80%">{{ strtoupper($res['profile']->namalengkap) }}</td>
+                    <td width="72%">{{ strtoupper($res['profile']->namalengkap) }}</td>
                 </tr>
                 <tr>
-                    <td><b>Puskesmas Tujuan</b></td>
+                    <td>Puskesmas Tujuan</td>
                     <td>:</td>
                     <td>{{ $item[1901307000] ?? '' }}</td>
                 </tr>
                 <tr>
-                    <td><b>Tanggal Masuk</b></td>
+                    <td>Tanggal Masuk</td>
                     <td>:</td>
                     <td>{{ $item[1901306000] ?? '' }}</td>
                 </tr>
                 <tr>
-                    <td><b>Nama Pasien</b></td>
+                    <td>Nama Pasien</td>
                     <td>:</td>
                     <td>{{ $item[1901306001] ?? '' }}</td>
                 </tr>
                 <tr>
-                    <td><b>Umur</b></td>
+                    <td>Umur</td>
                     <td>:</td>
                     <td>{{ $item[1901306002] ?? '' }}</td>
                 </tr>
                 <tr>
-                    <td><b>Jenis Kelamin</b></td>
+                    <td>Jenis Kelamin</td>
                     <td>:</td>
                     <td>
                         @if (!empty($item[1901306003]))
@@ -174,12 +210,12 @@
                     </td>
                 </tr>
                 <tr>
-                    <td><b>Diagnosa</b></td>
+                    <td>Diagnosa</td>
                     <td>:</td>
                     <td>{{ $item[1901306005] ?? '' }}</td>
                 </tr>
                 <tr>
-                    <td><b>Pengobatan Terakhir</b></td>
+                    <td>Pengobatan Terakhir</td>
                     <td>:</td>
                     <td>{{ $item[1901306006] ?? '' }}</td>
                 </tr>
