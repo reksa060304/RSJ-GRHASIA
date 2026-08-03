@@ -155,9 +155,9 @@
         </div>
         <div class="grid_2" ng-hide="validasiruangan == 14">
             <button class="btnTemplate1" style="margin-left: 0;" ng-click="UbahDokter()"><i class="fa fa-user"></i>Pilih
-                Dokter</button>
+                PPA</button>
             <!-- <c-button style="width: 100%; padding:0px;margin:0px;" item="item" position="'right'" is-validate click="UbahDokter">
-                <span class="title">Pilih Dokter</span>
+                <span class="title">Pilih PPA</span>
             </c-button> -->
         </div>
 
@@ -342,9 +342,9 @@
             <button class="k-button" ng-click="simpanPanggil()" style="float:right;margin-top:4%">Panggil</button>
         </div>
     </div>
-    <div kendo-window="winDialogss" k-title="'Pilih Dokter'" k-width="400" k-height="120" k-visible="false"
+    <div kendo-window="winDialogss" k-title="'Pilih PPA'" k-width="400" k-height="120" k-visible="false"
         k-on-open="win2visible = true" k-on-close="win2visible = false">
-        <label c-label item="item " c-label-text="dokterPemeriksaan "></label>
+        <label c-label item="item" style="font-weight: bold; margin-bottom: 5px;">Pegawai / PPA</label>
         <input style="width: 100%; " kendo-combo-box k-ng-model="item.pilihDokter" k-data-text-field="'namalengkap'"
             k-filter=" 'contains' " k-data-value-field=" 'id' " k-auto-bind="false " k-data-source="listDokter" />
         <div class="clear">

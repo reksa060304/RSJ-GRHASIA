@@ -1366,10 +1366,10 @@ define(['initialize'], function (initialize) {
                     return
                 }
                 if ($scope.item.aktivasi_mpp != null && $scope.item.aktivasi_mpp !== "") {
-                    toastr.warning('Pasien ini sudah diaktivasi MPP!')
-                    return
+                    $scope.item.keteranganMPP = $scope.item.aktivasi_mpp
+                } else {
+                    $scope.item.keteranganMPP = ''
                 }
-                $scope.item.keteranganMPP = ''
                 $scope.popUpAktivasiMPP.center().open()
             }
 

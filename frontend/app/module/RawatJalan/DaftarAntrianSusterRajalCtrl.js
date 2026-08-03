@@ -99,8 +99,8 @@ define(['initialize'], function (initialize) {
                 });
 
 
-                medifirstService.get("rawatjalan/get-dokters-combos", false).then(function (data) {
-                    $scope.listDokter = data.data.dokter;
+                medifirstService.getPart("registrasi/get-daftar-combo-pegawai-all", true, true, 20).then(function (data) {
+                    $scope.listDokter = data;
                 });
 
                 medifirstService.get("rawatjalan/get-combo-surat").then(function (data) {
@@ -109,7 +109,6 @@ define(['initialize'], function (initialize) {
                 });
 
                 medifirstService.get("rawatjalan/get-data-combo-operator", false).then(function (data) {
-                    $scope.listDokter = data.data.dokter;
                     $scope.username = data.data.pegawaiLogin;
                     $scope.userID = data.data.datalogin.userData.id;
                     $scope.listPilihRuang = data.data.ruangperawat;
@@ -1992,10 +1991,10 @@ define(['initialize'], function (initialize) {
                     return
                 }
                 if ($scope.dataPasienSelected.aktivasi_mpp != null && $scope.dataPasienSelected.aktivasi_mpp !== "") {
-                    toastr.warning('Pasien ini sudah diaktivasi MPP!')
-                    return
+                    $scope.item.keteranganMPP = $scope.dataPasienSelected.aktivasi_mpp
+                } else {
+                    $scope.item.keteranganMPP = ''
                 }
-                $scope.item.keteranganMPP = ''
                 $scope.popUpAktivasiMPP.center().open()
             }
 
