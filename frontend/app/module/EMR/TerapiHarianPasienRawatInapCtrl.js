@@ -1,4 +1,4 @@
-define(['initialize'], function (initialize) {
+define(["initialize", "Configuration"], function (initialize, config) {
     'use strict';
     initialize.controller('TerapiHarianPasienRawatInapCtrl', ['$q', '$rootScope', '$scope', 'ModelItem', '$state', 'CacheHelper', 'DateHelper', 'MedifirstService',
         function ($q, $rootScope, $scope, ModelItem, $state, cacheHelper, dateHelper, medifirstService) {
@@ -12,8 +12,12 @@ define(['initialize'], function (initialize) {
             $scope.noRecPap = cacheHelper.get('noRecPap');
             $scope.totalSkor = 0
             $scope.totalSkor2 = 0
-            $scope.cc = {}
-            var nomorEMR = '-'
+            $scope.cc = {
+                index: $state.params.index,
+            };
+            $scope.isCetakV = true;
+            var norecEMR = "";
+            var nomorEMR = "-";
             $scope.cc.emrfk = 3000443
             $scope.now = new Date()
             var dataLoad = []
@@ -8060,10 +8064,11 @@ define(['initialize'], function (initialize) {
 
 
             var chekedd = false
-            var chacePeriode = cacheHelper.get('cacheNomorEMR');
-            if (chacePeriode != undefined) {
-                nomorEMR = chacePeriode[0]
+            var cacheNomorEMR = cacheHelper.get('cacheNomorEMR');
+            if (cacheNomorEMR != undefined) {
+                nomorEMR = cacheNomorEMR[0]
                 $scope.cc.norec_emr = nomorEMR
+                $scope.cc.tanggalEmrl = cacheNomorEMR[2]
 
 
                 medifirstService.get("emr/get-emr-transaksi-detail?noemr=" + nomorEMR + "&emrfk=" + $scope.cc.emrfk, true).then(function (dat) {
@@ -8166,6 +8171,10 @@ define(['initialize'], function (initialize) {
                     }
                 }, true);
             });
+
+
+
+            var chacePeriode = cacheHelper.get('cacheRekamMedis');
 
             if (chacePeriode != undefined) {
                 $scope.cc.nocm = chacePeriode[0]
@@ -8351,6 +8360,24 @@ define(['initialize'], function (initialize) {
                 $rootScope.showRiwayat()
             }
 
+            $scope.cetakBlade = function () {
+                if (norecEMR == '') {
+                toastr.error('Dokumen belum pernah di isi')
+                return
+                }
+                var local = JSON.parse(localStorage.getItem('profile'))
+                // var nama = medifirstService.getPegawaiLogin().namaLengkap
+
+                window.open(config.baseApiBackend + 'report/get-cetak-surat-man?nocm=' + $scope.cc.nocm +
+                '&emr=' + norecEMR +
+                '&noemr=' + nomorEMR +
+                '&emrfk=' + $scope.cc.emrfk +
+                '&index=' + $scope.cc.index +
+                '&kdprofile=' + local.id +
+                '&blade=' + 'terapi-harian-ri-dom', '_blank');
+
+            }
+
             $scope.Save = function () {
 
                 var arrobj = Object.keys($scope.item.obj)
@@ -8372,14 +8399,19 @@ define(['initialize'], function (initialize) {
                     //     namaEMR : $scope.cc.emrfk,
                     //     nomorEMR : e.data.data.noemr 
                     // });
+                    $scope.cc.norec_emr = e.data.data.noemr;
+                    norecEMR = e.data.norecEMR
+                    nomorEMR = e.data.data.noemr
+                    var arrStr = {
+                    0: e.data.data.noemr,
+                    1: e.data.data.norec,
+                    2: e.data.data.tglemr,
+                    };
+                    cacheHelper.set("cacheNomorEMR", arrStr);
+
                     medifirstService.postLogging('EMR', 'norec emrpasien_t', e.data.data.norec,
                         'Terapi Harian Pasien Rawat Inap ' + ' dengan No EMR - ' + e.data.data.noemr + ' pada No Registrasi ' +
                         $scope.cc.noregistrasi).then(function (res) {})
-
-                    var arrStr = {
-                        0: e.data.data.noemr
-                    }
-                    cacheHelper.set('cacheNomorEMR', arrStr);
                 });
             }
 
