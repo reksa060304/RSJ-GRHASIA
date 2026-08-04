@@ -131,29 +131,29 @@
             </fieldset>
         </div>
     </div>
-    <div class="grid_12">
-        <div class="grid_3"></div>
-        <div class="grid_9">
-            <div class="grid_2"></div>
-            <div class="grid_2" style="margin-top: 22px" ng-show='tombolSimpanVis'>
-                <button class="btnTemplate1" ng-click="Save()" ng-disabled="disabledSimpan"><i
-                        class="fa fa-save"></i>Simpan</button>
-            </div>
-            <div class="grid_2" style="margin-top: 22px">
-                <button class="btnTemplate1" ng-click="Batal()" ng-disabled="disabledBatal"><i
-                        class="fa fa-refresh"></i>Batal</button>
-            </div>
-            <div class="grid_2" style="margin-top: 22px">
-                <button class="btnTemplate1" ng-click="kembali()" ng-disabled="disabledBatal"><i
-                        class="fa fa-arrow-left"></i>Kembali</button>
-            </div>
-            <div class="grid_2" ng-show="isCetak" style="margin-top: 22px">
-                <button class="btnTemplate1 success" ng-click="cetakPdf()"><i class="fa fa-print"></i>Cetak</button>
-            </div>
-            <div class="grid_2" ng-show="isCetakV" style="margin-top: 22px">
-                <button class="btnTemplate1 success" ng-click="cetakBlade()"><i class="fa fa-print"></i>Cetak
-                    View</button>
-            </div>
+    <div class="grid_12" style="margin-top: 20px;">
+        <div style="display: flex; flex-wrap: wrap; justify-content: flex-end; gap: 10px; align-items: center;">
+            <button class="btnTemplate1" ng-click="IntegrasiAsuhan()" style="flex: 1; min-width: 140px; margin: 0;">
+                <i class="fa fa-th-list"></i>Integrasi Asuhan
+            </button>
+            <button class="btnTemplate1" ng-click="openRujukanEdukasi()" style="flex: 1; min-width: 140px; margin: 0;">
+                <i class="fa fa-stethoscope"></i>Rujukan Edukasi
+            </button>
+            <button class="btnTemplate1" ng-click="Save()" ng-disabled="disabledSimpan" ng-show='tombolSimpanVis' style="flex: 1; min-width: 100px; margin: 0;">
+                <i class="fa fa-save"></i>Simpan
+            </button>
+            <button class="btnTemplate1" ng-click="Batal()" ng-disabled="disabledBatal" style="flex: 1; min-width: 100px; margin: 0;">
+                <i class="fa fa-refresh"></i>Batal
+            </button>
+            <button class="btnTemplate1" ng-click="kembali()" ng-disabled="disabledBatal" style="flex: 1; min-width: 100px; margin: 0;">
+                <i class="fa fa-arrow-left"></i>Kembali
+            </button>
+            <button class="btnTemplate1 success" ng-click="cetakPdf()" ng-show="isCetak" style="flex: 1; min-width: 100px; margin: 0;">
+                <i class="fa fa-print"></i>Cetak
+            </button>
+            <button class="btnTemplate1 success" ng-click="cetakBlade()" ng-show="isCetakV" style="flex: 1; min-width: 120px; margin: 0;">
+                <i class="fa fa-print"></i>Cetak View
+            </button>
         </div>
     </div>
 </div>

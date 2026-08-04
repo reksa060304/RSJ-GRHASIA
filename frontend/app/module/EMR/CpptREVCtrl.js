@@ -1656,6 +1656,249 @@ define(["initialize", "Configuration"], function (initialize, config) {
         },
         // {id: 111469, child : [111469,111471,111468]},
       ];
+
+      function showIntegrasiAsuhanDialog() {
+            $mdDialog
+              .show({
+                templateUrl: "../app/module/EMR/RencanaIntegrasiAsuhanDialog.html",
+                controller: "RencanaIntegrasiAsuhanCtrl",
+                parent: angular.element(document.body),
+                clickOutsideToClose: false,
+                locals: {
+                  isPopupIntegrasiAsuhan: true
+                },
+              })
+              .finally(function () {
+                // dialog closed
+              });
+      }
+
+      $scope.IntegrasiAsuhan = function () {
+        // Tampilkan indikator loading
+        var loadingToast = document.createElement('div');
+        loadingToast.id = 'integrasi-loading-toast';
+        loadingToast.innerHTML = '<i class="fa fa-spinner fa-spin"></i>&nbsp; Memuat Form Integrasi Asuhan...';
+        loadingToast.style.cssText = 'position:fixed;bottom:24px;left:50%;transform:translateX(-50%);background:#323232;color:#fff;padding:10px 22px;border-radius:4px;z-index:9999;font-size:14px;box-shadow:0 2px 8px rgba(0,0,0,0.3);';
+        document.body.appendChild(loadingToast);
+
+        function removeToast() {
+          var t = document.getElementById('integrasi-loading-toast');
+          if (t) t.parentNode.removeChild(t);
+        }
+
+        // Sync cache nomorEMR agar RencanaIntegrasiAsuhanCtrl membaca EMR yang sedang aktif
+        // sehingga data tersimpan terhubung ke EMR yang sama (bukan norec_emr: "-")
+        if (nomorEMR && nomorEMR !== '-') {
+          var arrStr = cacheHelper.get('cacheNomorEMR') || {};
+          arrStr[0] = nomorEMR;
+          cacheHelper.set('cacheNomorEMR', arrStr);
+        }
+
+        require(
+          ["app/module/EMR/RencanaIntegrasiAsuhanCtrl"],
+          function () {
+            // Wajib inject ke Angular runtime terlebih dahulu (sama seperti routing.js)
+            $ocLazyLoad.inject('myApp').then(function () {
+              removeToast();
+              showIntegrasiAsuhanDialog();
+            }, function() {
+              removeToast();
+              showIntegrasiAsuhanDialog();
+            });
+          },
+          function (err) {
+            removeToast();
+            var confirm = $mdDialog
+              .confirm()
+              .title("Informasi")
+              .textContent("Gagal memuat Form Integrasi Asuhan. Silakan muat ulang halaman.")
+              .ariaLabel("Informasi")
+              .ok("OK");
+            $mdDialog.show(confirm);
+          }
+        );
+      };
+
+      $scope.openRujukanEdukasi = function () {
+        var nocm = $scope.cc.nocm || '';
+        var noregistrasi = $scope.cc.noregistrasi || '';
+
+        // Robust fallback jika cc belum terisi di scope induk
+        if (!nocm || !noregistrasi) {
+          var cacheRM = cacheHelper.get('cacheRekamMedis');
+          if (cacheRM) {
+            if (!nocm) nocm = cacheRM[0] || '';
+            if (!noregistrasi) noregistrasi = cacheRM[3] || '';
+          }
+        }
+
+        // Tampilkan indikator loading
+        var loadingToast = document.createElement('div');
+        loadingToast.id = 'rujukan-loading-toast';
+        loadingToast.innerHTML = '<i class="fa fa-spinner fa-spin"></i>&nbsp; Memuat Data Rujukan Edukasi...';
+        loadingToast.style.cssText = 'position:fixed;bottom:24px;left:50%;transform:translateX(-50%);background:#323232;color:#fff;padding:10px 22px;border-radius:4px;z-index:9999;font-size:14px;box-shadow:0 2px 8px rgba(0,0,0,0.3);';
+        document.body.appendChild(loadingToast);
+
+        function removeToast() {
+          var t = document.getElementById('rujukan-loading-toast');
+          if (t) t.parentNode.removeChild(t);
+        }
+
+        var url = 'emr/get-emr-transaksi-detail-form-new?nocm=' + encodeURIComponent(nocm) + '&jenisEmr=asesmen';
+
+        var p1 = medifirstService.get(url, true);
+        var p2 = medifirstService.get("sysadmin/settingdatafixed/get/FormRujukanEdukasiConfig").then(function (res) {
+          return res;
+        }, function () {
+          return null;
+        });
+
+        $q.all([p1, p2]).then(function (results) {
+          removeToast();
+          var res = results[0].data ? results[0].data : results[0];
+          var rawData = (res && Array.isArray(res.data)) ? res.data : [];
+
+          var resConfig = results[1];
+          var formsConfig = null;
+          if (resConfig && resConfig.data) {
+            try {
+              var val = typeof resConfig.data === 'string' ? resConfig.data : (resConfig.data.value || resConfig.data);
+              if (typeof val === 'string' && val.trim() !== '') {
+                formsConfig = JSON.parse(val);
+              } else if (Array.isArray(val)) {
+                formsConfig = val;
+              }
+            } catch (e) {
+              console.error('Error parsing FormRujukanEdukasiConfig:', e);
+            }
+          }
+
+          if (!formsConfig || !Array.isArray(formsConfig) || formsConfig.length === 0) {
+            toastr.warning('Formulir Rujukan Edukasi belum dikonfigurasi di data fixed!');
+            return;
+          }
+
+          formsConfig.forEach(function (form) {
+            form.status = false;
+            form.noemr = '-';
+            form.norec = undefined;
+            form.tglemr = undefined;
+
+            for (var i = 0; i < rawData.length; i++) {
+              var parent = rawData[i];
+
+              var parentNoReg = parent.noregistrasi || parent.noregistrasifk || parent.noregistrasi_fk;
+              if (parentNoReg && noregistrasi) {
+                if (String(parentNoReg).trim() != String(noregistrasi).trim()) {
+                  continue;
+                }
+              }
+
+              // 1. Cocokkan emrfk langsung di level parent
+              if (parent.emrfk && parseInt(parent.emrfk) === form.id) {
+                form.status = true;
+                form.noemr = parent.noemr || parent.norec || '-';
+                form.norec = parent.norec;
+                form.tglemr = parent.tglemr;
+              }
+              // 2. Jika tidak cocok di parent, cek di details (fallback)
+              else if (parent.details && Array.isArray(parent.details)) {
+                for (var j = 0; j < parent.details.length; j++) {
+                  if (parseInt(parent.details[j].emrfk) === form.id) {
+                    form.status = true;
+                    form.noemr = parent.noemr || parent.norec || '-';
+                    form.norec = parent.norec;
+                    form.tglemr = parent.tglemr;
+                    break;
+                  }
+                }
+              }
+              if (form.status) break;
+            }
+          });
+
+          $mdDialog.show({
+            templateUrl: "../app/module/EMR/FormRujukanEdukasiListDialog.html",
+            parent: angular.element(document.body),
+            clickOutsideToClose: false,
+            controller: ['$scope', '$mdDialog', 'rujukansData', function ($scopeDialog, $mdDialog, rujukansData) {
+              $scopeDialog.rujukanEdukasiForms = rujukansData;
+              $scopeDialog.tutupDialog = function () {
+                $mdDialog.hide();
+              };
+              $scopeDialog.isiForm = function (form) {
+                $mdDialog.hide(form);
+              };
+            }],
+            locals: {
+              rujukansData: formsConfig
+            }
+          }).then(function (selectedForm) {
+            if (selectedForm) {
+              openRujukanEdukasiFormPopup(selectedForm);
+            }
+          });
+
+        }, function () {
+          removeToast();
+          toastr.error('Gagal memuat data Rujukan Edukasi');
+        });
+      };
+
+      function openRujukanEdukasiFormPopup(form) {
+        var arrStr = { 0: form.noemr, 1: form.norec };
+        cacheHelper.set('cacheNomorEMR', arrStr);
+        cacheHelper.set('cacheNOREC_EMR', arrStr);
+
+        var loadingToast = document.createElement('div');
+        loadingToast.id = 'rujukan-loading-toast';
+        loadingToast.innerHTML = '<i class="fa fa-spinner fa-spin"></i>&nbsp; Memuat Form...';
+        loadingToast.style.cssText = 'position:fixed;bottom:24px;left:50%;transform:translateX(-50%);background:#323232;color:#fff;padding:10px 22px;border-radius:4px;z-index:9999;font-size:14px;box-shadow:0 2px 8px rgba(0,0,0,0.3);';
+        document.body.appendChild(loadingToast);
+
+        function removeToast() {
+          var t = document.getElementById('rujukan-loading-toast');
+          if (t) t.parentNode.removeChild(t);
+        }
+
+        require([form.controller], function () {
+          $ocLazyLoad.inject('myApp').then(function () {
+            removeToast();
+            showActualEmrDialog();
+          }, function () {
+            removeToast();
+            showActualEmrDialog();
+          });
+        }, function (err) {
+          removeToast();
+          console.error(err);
+          toastr.error('Gagal memuat file controller: ' + form.controller);
+        });
+
+        function showActualEmrDialog() {
+          var dialogScope = $rootScope.$new();
+          dialogScope.item = { obj: [], obj2: [] };
+          dialogScope.cc = {};
+          dialogScope.templateUrl = '../app/module/EMR/' + form.template;
+          dialogScope.formTitle = form.title;
+
+          $mdDialog.show({
+            templateUrl: '../app/module/EMR/FormRujukanEdukasiDialog.html',
+            controller: form.controller,
+            scope: dialogScope,
+            preserveScope: true,
+            parent: angular.element(document.body),
+            clickOutsideToClose: false,
+            fullscreen: true
+          }).finally(function () {
+            $scope.openRujukanEdukasi();
+          });
+        }
+      }
+
+      $scope.tutupDialog = function() {
+        $mdDialog.hide();
+      }
     },
   ]);
 });
