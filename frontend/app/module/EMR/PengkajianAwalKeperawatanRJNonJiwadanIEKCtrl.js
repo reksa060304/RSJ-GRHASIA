@@ -2166,13 +2166,13 @@ define(['initialize', 'Configuration'], function (initialize, config) {
                     + $scope.cc.noregistrasi).then(function (res) {
                     })
 
-                    $scope.cc.norec_emr = res.data.data.noemr;
-                    norecEMR = res.data.data.norec
-                    nomorEMR = res.data.data.noemr
+                    $scope.cc.norec_emr = e.data.data.noemr;
+                    norecEMR = e.data.norecEMR
+                    nomorEMR = e.data.data.noemr
                     var arrStr = {
-                    0: res.data.data.noemr,
-                    1: res.data.data.norec,
-                    2: res.data.data.tglemr,
+                    0: e.data.data.noemr,
+                    1: e.data.data.norec,
+                    2: e.data.data.tglemr,
                     };
                     cacheHelper.set("cacheNomorEMR", arrStr);
                 });

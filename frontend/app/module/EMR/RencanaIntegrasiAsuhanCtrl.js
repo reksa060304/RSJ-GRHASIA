@@ -1,4 +1,4 @@
-define(['initialize'], function (initialize) {
+define(["initialize", "Configuration"], function (initialize, config) {
     'use strict';
     initialize.controller('RencanaIntegrasiAsuhanCtrl', ['$q', '$rootScope', '$scope', 'ModelItem', '$state', 'CacheHelper', 'DateHelper', 'MedifirstService','$mdDialog',
         function ($q, $rootScope, $scope, ModelItem, $state, cacheHelper, dateHelper, medifirstService, $mdDialog) {
@@ -15,8 +15,9 @@ define(['initialize'], function (initialize) {
             var peagawaiLogin = medifirstService.getPegawaiLogin()
             $scope.cc.emrfk = 3000436
             var dataLoad = []
-            $scope.isCetak = true
+            $scope.isCetak = false
             var norecEMR = ''
+            $scope.isCetakV = true;
             if(medifirstService.getKelompokUser() == 'mahasiswadiklat'){
                 $scope.tombolSimpanVis = false
             }
@@ -67,11 +68,11 @@ define(['initialize'], function (initialize) {
         
             
             
-            var cacheNomorEMR = cacheHelper.get('cacheNomorEMR');
-            if (cacheNomorEMR != undefined) {
-                nomorEMR = cacheNomorEMR[0]
-                $scope.cc.norec_emr = nomorEMR
-            }
+            // var cacheNomorEMR = cacheHelper.get('cacheNomorEMR');
+            // if (cacheNomorEMR != undefined) {
+            //     nomorEMR = cacheNomorEMR[0]
+            //     $scope.cc.norec_emr = nomorEMR
+            // }
 
             // var chacePeriode = cacheHelper.get('cacheHeader');
             // if (chacePeriode != undefined) {
@@ -511,6 +512,24 @@ define(['initialize'], function (initialize) {
                 $rootScope.showRiwayat()
             }
 
+            $scope.cetakBlade = function () {
+                if (norecEMR == '') {
+                toastr.error('Dokumen belum pernah di isi')
+                return
+                }
+                var local = JSON.parse(localStorage.getItem('profile'))
+                // var nama = medifirstService.getPegawaiLogin().namaLengkap
+
+                window.open(config.baseApiBackend + 'report/get-cetak-surat-man?nocm=' + $scope.cc.nocm +
+                '&emr=' + norecEMR +
+                '&noemr=' + nomorEMR +
+                '&emrfk=' + $scope.cc.emrfk +
+                // '&index=' + $scope.cc.index +
+                '&kdprofile=' + local.id +
+                '&blade=' + 'rencana-integrasi-asuhan-dom', '_blank');
+
+            }
+
             $scope.Save = function () {
 
                 var arrobj = Object.keys($scope.item.obj)
@@ -524,6 +543,16 @@ define(['initialize'], function (initialize) {
                     data: arrSave
                 }
                 medifirstService.post('emr/save-emr-dinamis', jsonSave).then(function (e) {
+                    $scope.cc.norec_emr = e.data.data.noemr;
+                    norecEMR = e.data.norecEMR
+                    nomorEMR = e.data.data.noemr
+                    var arrStr = {
+                    0: e.data.data.noemr,
+                    1: e.data.data.norec,
+                    2: e.data.data.tglemr,
+                    };
+                    cacheHelper.set("cacheNomorEMR", arrStr);
+
                     var confirm = $mdDialog.confirm()
                         .title('Informasi')
                         .textContent('EMR SUDAH TERSIMPAN, KLIK YA UNTUK KONFIRMASI')
@@ -542,10 +571,6 @@ define(['initialize'], function (initialize) {
                     + $scope.cc.noregistrasi).then(function (res) {
                     })
                     $rootScope.loadRiwayat()
-                    var arrStr = {
-                        0: e.data.data.noemr
-                    }
-                    cacheHelper.set('cacheNomorEMR', arrStr);
                 });
             }
 
