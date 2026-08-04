@@ -1,4 +1,4 @@
-define(['initialize'], function (initialize) {
+define(["initialize", "Configuration"], function (initialize, config) {
     'use strict';
     initialize.controller('MonitoringVitalSignRawatIntensifCtrl', ['$q', '$rootScope', '$scope', 'ModelItem', '$state', 'CacheHelper', 'DateHelper', 'MedifirstService',
         function ($q, $rootScope, $scope, ModelItem, $state, cacheHelper, dateHelper, medifirstService) {
@@ -20,8 +20,12 @@ define(['initialize'], function (initialize) {
             }
             $scope.listItem =[ {id:1901305901,inuse:true},{id:1901305921},{id:1901305941},{id:1901305961},{id:1901305981},{id:1901306001},{id:1901306021},
               {id:1901306041},{id:1901306061},{id:1901306081},{id:1901306101},{id:1901306121}]
-            $scope.cc = {}
-            var nomorEMR = '-'
+            $scope.cc = {
+                index: $state.params.index,
+            };
+            $scope.isCetakV = true;
+            var norecEMR = "";
+            var nomorEMR = "-";
             $scope.cc.emrfk = 3000901
             var dataLoad = []
             $scope.item.kasusbaru = true
@@ -989,6 +993,25 @@ define(['initialize'], function (initialize) {
 
                 }
             })
+
+            $scope.cetakBlade = function () {
+                if (norecEMR == '') {
+                toastr.error('Dokumen belum pernah di isi')
+                return
+                }
+                var local = JSON.parse(localStorage.getItem('profile'))
+                // var nama = medifirstService.getPegawaiLogin().namaLengkap
+
+                window.open(config.baseApiBackend + 'report/get-cetak-surat-man?nocm=' + $scope.cc.nocm +
+                '&emr=' + norecEMR +
+                '&noemr=' + nomorEMR +
+                '&emrfk=' + $scope.cc.emrfk +
+                '&index=' + $scope.cc.index +
+                '&kdprofile=' + local.id +
+                '&blade=' + 'mon-vital-sign-dom', '_blank');
+
+            }
+
             $scope.kembali = function () {
                 $rootScope.showRiwayat()
             }
@@ -1017,14 +1040,20 @@ define(['initialize'], function (initialize) {
                     //     namaEMR : $scope.cc.emrfk,
                     //     nomorEMR : e.data.data.noemr 
                     // });
+
+                    $scope.cc.norec_emr = e.data.data.noemr;
+                    norecEMR = e.data.norecEMR
+                    nomorEMR = e.data.data.noemr
+                    var arrStr = {
+                    0: e.data.data.noemr,
+                    1: e.data.data.norec,
+                    2: e.data.data.tglemr,
+                    };
+                    cacheHelper.set("cacheNomorEMR", arrStr);
+
                     medifirstService.postLogging('EMR', 'norec emrpasien_t', e.data.data.norec,
                         'FormulirTransferPasienAntarRuanganIGDCtrl ' + ' dengan No EMR - ' + e.data.data.noemr + ' pada No Registrasi ' +
                         $scope.cc.noregistrasi).then(function (res) {})
-                    $scope.cc.norec_emr = e.data.data.noemr
-                    var arrStr = {
-                        0: e.data.data.noemr
-                    }
-                    cacheHelper.set('cacheNomorEMR', arrStr);
                 });
             }
 
