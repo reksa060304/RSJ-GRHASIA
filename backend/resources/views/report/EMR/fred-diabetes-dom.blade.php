@@ -183,41 +183,42 @@
                 <tr>
                     <td>Tanggal Masuk</td>
                     <td>:</td>
-                    <td>{{ $item[1901306000] ?? '' }}</td>
+                    <td>{{ !empty($data[0]->tglregistrasi) ? date('Y-m-d', strtotime($data[0]->tglregistrasi)) : ($item[1901306000] ?? '') }}</td>
                 </tr>
                 <tr>
                     <td>Nama Pasien</td>
                     <td>:</td>
-                    <td>{{ $item[1901306001] ?? '' }}</td>
+                    <td>{{ !empty($data[0]->namapasien) ? $data[0]->namapasien : ($item[1901307210] ?? ($item[1901306001] ?? '')) }}</td>
                 </tr>
                 <tr>
                     <td>Umur</td>
                     <td>:</td>
-                    <td>{{ $item[1901306002] ?? '' }}</td>
+                    <td>{{ !empty($data[0]->umur) ? $data[0]->umur : ($item[1901307230] ?? ($item[1901306002] ?? '')) }}</td>
                 </tr>
                 <tr>
                     <td>Jenis Kelamin</td>
                     <td>:</td>
                     <td>
-                        @if (!empty($item[1901306003]))
-                            Laki-laki
+                        @if (!empty($data[0]->jeniskelamin))
+                            {{ $data[0]->jeniskelamin }}
+                        @else
+                            @if (!empty($item[1901307240]) || !empty($item[1901306003]))
+                                Laki-laki
+                            @elseif (!empty($item[1901307250]) || !empty($item[1901306004]))
+                                Perempuan
+                            @endif
                         @endif
-
-                        @if (!empty($item[1901306004]))
-                            Perempuan
-                        @endif
-                            
                     </td>
                 </tr>
                 <tr>
                     <td>Diagnosa</td>
                     <td>:</td>
-                    <td>{{ $item[1901306005] ?? '' }}</td>
+                    <td>{{ $item[1901307260] ?? ($item[1901306005] ?? '') }}</td>
                 </tr>
                 <tr>
-                    <td>Pengobatan Terakhir</td>
-                    <td>:</td>
-                    <td>{{ $item[1901306006] ?? '' }}</td>
+                    <td style="vertical-align: top;">Pengobatan Terakhir</td>
+                    <td style="vertical-align: top;">:</td>
+                    <td style="white-space: pre-line;">{!! nl2br(e(preg_replace('/(?<=\S)\s+(?=\d+\.)/', "\n", $item[1901307270] ?? ''))) !!}</td>
                 </tr>
             </table>
             <div style="margin-top: 12px;">

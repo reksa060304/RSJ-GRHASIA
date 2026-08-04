@@ -269,21 +269,29 @@
             <tr>
                 <td>Nama Pasien</td>
                 <td>:</td>
-                <td><?php echo htmlspecialchars(isset($item[1901307210]) ? $item[1901307210] : '', ENT_QUOTES, 'UTF-8'); ?></td>
+                <td><?php echo htmlspecialchars(!empty($data[0]->namapasien) ? $data[0]->namapasien : (isset($item[1901307210]) ? $item[1901307210] : (isset($item[1901306001]) ? $item[1901306001] : '')), ENT_QUOTES, 'UTF-8'); ?></td>
             </tr>
             <tr>
                 <td>Umur</td>
                 <td>:</td>
-                <td><?php echo htmlspecialchars(isset($item[1901307230]) ? $item[1901307230] : '', ENT_QUOTES, 'UTF-8'); ?></td>
+                <td><?php echo htmlspecialchars(!empty($data[0]->umur) ? $data[0]->umur : (isset($item[1901307230]) ? $item[1901307230] : (isset($item[1901306002]) ? $item[1901306002] : '')), ENT_QUOTES, 'UTF-8'); ?></td>
             </tr>
             <tr>
                 <td>Jenis Kelamin</td>
                 <td>:</td>
                 <td>
                     <?php
-                        if (isset($item[1901307240]) && ($item[1901307240] == 1 || $item[1901307240] === true)) {
+                        if (!empty($data[0]->jeniskelamin)) {
+                            echo htmlspecialchars($data[0]->jeniskelamin, ENT_QUOTES, 'UTF-8');
+                        } else if (isset($_GET['jeniskelamin']) && $_GET['jeniskelamin'] != 'undefined' && $_GET['jeniskelamin'] != '') {
+                            echo htmlspecialchars($_GET['jeniskelamin'], ENT_QUOTES, 'UTF-8');
+                        } else if (isset($item[1901307240]) && ($item[1901307240] == 1 || $item[1901307240] === true)) {
                             echo 'Laki-laki';
                         } else if (isset($item[1901307250]) && ($item[1901307250] == 1 || $item[1901307250] === true)) {
+                            echo 'Perempuan';
+                        } else if (isset($item[1901306003]) && ($item[1901306003] == 1 || $item[1901306003] === true)) {
+                            echo 'Laki-laki';
+                        } else if (isset($item[1901306004]) && ($item[1901306004] == 1 || $item[1901306004] === true)) {
                             echo 'Perempuan';
                         } else {
                             echo '';

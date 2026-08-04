@@ -166,9 +166,12 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
                 $scope.item.obj[1901307210] = $scope.cc.namapasien;
                 $scope.item.obj[1901307220] = $scope.cc.nocm;
                 $scope.item.obj[1901307230] = $scope.cc.umur;
-                if ($scope.cc.jeniskelamin == 'LAKI-LAKI') {
+                var jk = ($scope.cc.jeniskelamin || '').toUpperCase();
+                if (jk.indexOf('LAKI') > -1 || jk === 'L') {
                     $scope.item.obj[1901307240] = true;
-                } else {
+                    $scope.item.obj[1901307250] = false;
+                } else if (jk.indexOf('PEREMPUAN') > -1 || jk.indexOf('WANITA') > -1 || jk === 'P') {
+                    $scope.item.obj[1901307240] = false;
                     $scope.item.obj[1901307250] = true;
                 }
                 $scope.item.obj[1901307140] = $scope.cc.nocm;
@@ -223,6 +226,18 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
                                 }
                             }
                         }
+                    }
+                }
+
+                // Enforce mutually exclusive Jenis Kelamin checkboxes (clean up legacy data if both true)
+                if ($scope.item.obj[1901307240] && $scope.item.obj[1901307250]) {
+                    var jk = ($scope.cc.jeniskelamin || '').toUpperCase();
+                    if (jk.indexOf('LAKI') > -1 || jk === 'L') {
+                        $scope.item.obj[1901307240] = true;
+                        $scope.item.obj[1901307250] = false;
+                    } else {
+                        $scope.item.obj[1901307240] = false;
+                        $scope.item.obj[1901307250] = true;
                     }
                 }
 

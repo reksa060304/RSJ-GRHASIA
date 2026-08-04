@@ -152,7 +152,7 @@ define(['initialize', 'Configuration'], function (initialize, config) {
             $scope.textInputs = [3014250, 7890444, 3014252, 3014253];
             $scope.datetimeInputs = [3014254, 1901306000, 1901307160];
             $scope.comboboxInputs = [1901307170];
-            $scope.checkboxInputs = [1901306003, 1901306004];
+            $scope.checkboxInputs = []; // 1901306003 & 1901306004 dihandle dari data pasien (cache), bukan dari dataLoad
             $scope.textareaInputs = [
                 1901306001, 1901306002, 1901306005, 1901306006
             ];
@@ -170,9 +170,12 @@ define(['initialize', 'Configuration'], function (initialize, config) {
                 $scope.item.obj[1901306001]=$scope.cc.namapasien
                 $scope.item.obj[1901306002]=$scope.cc.umur
                 $scope.item.obj[1901307140]=$scope.cc.nocm
-                if($scope.cc.jeniskelamin == 'LAKI-LAKI'){
+                var jk = ($scope.cc.jeniskelamin || '').toUpperCase();
+                if(jk == 'LAKI-LAKI' || jk == 'L'){
                     $scope.item.obj[1901306003]=true
-                } else {
+                    $scope.item.obj[1901306004]=false
+                } else if(jk == 'PEREMPUAN' || jk == 'P'){
+                    $scope.item.obj[1901306003]=false
                     $scope.item.obj[1901306004]=true
                 }
 
