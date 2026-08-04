@@ -12,6 +12,7 @@ define(["initialize", "Configuration"], function (initialize, config) {
     "$mdDialog",
     "$interval",
     "socket",
+    "$ocLazyLoad",
     function (
       $q,
       $rootScope,
@@ -23,7 +24,8 @@ define(["initialize", "Configuration"], function (initialize, config) {
       medifirstService,
       $mdDialog,
       $interval,
-      socket
+      socket,
+      $ocLazyLoad
     ) {
 
       // socket.on('set-server-socket', function (e) {
