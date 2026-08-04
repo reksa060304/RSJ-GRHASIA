@@ -509,6 +509,22 @@ define(["initialize", "Configuration"], function (initialize, config) {
                 }
             })
             $scope.kembali = function () {
+                try {
+                    var dialogs = document.getElementsByTagName('md-dialog');
+                    if (dialogs.length > 0) {
+                        if ($mdDialog && typeof $mdDialog.hide === 'function') {
+                            $mdDialog.hide();
+                            return;
+                        }
+                        var mdDialogService = angular.element(document.body).injector().get('$mdDialog');
+                        if (mdDialogService && typeof mdDialogService.hide === 'function') {
+                            mdDialogService.hide();
+                            return;
+                        }
+                    }
+                } catch (e) {
+                    console.error(e);
+                }
                 $rootScope.showRiwayat()
             }
 
