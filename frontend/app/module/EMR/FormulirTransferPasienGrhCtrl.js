@@ -1,4 +1,4 @@
-define(['initialize'], function (initialize) {
+define(["initialize", "Configuration"], function (initialize, config) {
     'use strict';
     initialize.controller('FormulirTransferPasienGrhCtrl', ['$q', '$rootScope', '$scope', 'ModelItem', '$state', 'CacheHelper', 'DateHelper', 'MedifirstService','$mdDialog',
         function ($q, $rootScope, $scope, ModelItem, $state, cacheHelper, dateHelper, medifirstService, $mdDialog) {
@@ -15,8 +15,12 @@ define(['initialize'], function (initialize) {
             $scope.SkorSkalaFlacc = [];
             $scope.totalSkor2 = 0
             $scope.totalSkor4 = 0
-            $scope.cc = {}
-            var nomorEMR = '-'
+            $scope.cc = {
+                index: $state.params.index,
+            };
+            $scope.isCetakV = true;
+            var norecEMR = "";
+            var nomorEMR = "-";
             if(medifirstService.getKelompokUser() == 'mahasiswadiklat'){
                 $scope.tombolSimpanVis = false
             }
@@ -1178,6 +1182,23 @@ define(['initialize'], function (initialize) {
                  
                 }
             })
+            $scope.cetakBlade = function () {
+                if (norecEMR == '') {
+                toastr.error('Dokumen belum pernah di isi')
+                return
+                }
+                var local = JSON.parse(localStorage.getItem('profile'))
+                // var nama = medifirstService.getPegawaiLogin().namaLengkap
+
+                window.open(config.baseApiBackend + 'report/get-cetak-surat-man?nocm=' + $scope.cc.nocm +
+                '&emr=' + norecEMR +
+                '&noemr=' + nomorEMR +
+                '&emrfk=' + $scope.cc.emrfk +
+                '&index=' + $scope.cc.index +
+                '&kdprofile=' + local.id +
+                '&blade=' + 'form-tf-pasien-dom', '_blank');
+
+            }
             $scope.kembali = function () {
                 $rootScope.showRiwayat()
             }
@@ -1221,11 +1242,15 @@ define(['initialize'], function (initialize) {
                     'RM.36.02 Formulir Transfer Pasien Non Jiwa ' + ' dengan No EMR - ' +e.data.data.noemr +  ' pada No Registrasi ' 
                     + $scope.cc.noregistrasi).then(function (res) {
                     })
-                    $scope.cc.norec_emr = e.data.data.noemr
+                    $scope.cc.norec_emr = e.data.data.noemr;
+                    norecEMR = e.data.norecEMR
+                    nomorEMR = e.data.data.noemr
                     var arrStr = {
-                        0: e.data.data.noemr
-                    }
-                    cacheHelper.set('cacheNomorEMR', arrStr);
+                    0: e.data.data.noemr,
+                    1: e.data.data.norec,
+                    2: e.data.data.tglemr,
+                    };
+                    cacheHelper.set("cacheNomorEMR", arrStr);
                 });
             }
 
