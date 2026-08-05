@@ -171,8 +171,6 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
             
             // Load data combo
             function loadDataCombo() {                
-                $scope.item.tahunAnggaran = moment($scope.settingAnggaran).add(1, 'y').format('YYYY')
-
                 $scope.dataVOloaded = true
 
                 medifirstService.get("perencanaan/get-combo-perencanaan-belanja?" 
@@ -185,7 +183,12 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
                         $scope.listSatuan = e.data.satuan                        
                         $scope.listProduk = e.data.dataProdukAll
                         $scope.settingAnggaran = e.data.settinganggaran
-
+                        
+                        if ($scope.settingAnggaran && $scope.settingAnggaran.length > 0) {
+                            $scope.item.tahunAnggaran = new Date($scope.settingAnggaran[0].tahun)
+                        } else {
+                            $scope.item.tahunAnggaran = new Date()
+                        }
                     })
                 
                 loadPerencanaan()
@@ -255,7 +258,13 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
                     + "produkfk=" + $scope.item.produk.id, true)
                     .then(function (e) {
                         $scope.dataVOloaded = false
-                        $scope.item.stokProduk = e.data[0].qtyproduk
+                        if (e.data && e.data.length > 0 && e.data[0].qtyproduk > 0) {
+                            $scope.item.stokProduk = e.data[0].qtyproduk
+                        } else {
+                            $scope.item.stokProduk = 0
+                            let namaRuangan = $scope.item.idRuanganLoginUser ? $scope.item.idRuanganLoginUser.namaruangan : 'Ruangan Anda'
+                            toastr.warning('Stok produk "' + $scope.item.produk.namaproduk + '" adalah 0 di ruangan ' + namaRuangan)
+                        }
                     })
                 $scope.item.kodeBmn = $scope.item.produk.kodebmn
             }
@@ -589,7 +598,7 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
                         $scope.item.tglPengajuan = moment(result.tgldokumen).format('YYYY-MM-DD HH:mm:ss')
                         $scope.item.subSubKegiatanRencana = result.subsub
                         $scope.item.idRuanganLoginUser = result.ruangan
-                        $scope.item.tahunAnggaran = moment(result.tahunanggaran).format('YYYY')
+                        $scope.item.tahunAnggaran = new Date(result.tahunanggaran)
                         $scope.item.keterangan = $scope.cariDariList($scope.listKeterangan, result.objectketeranganfk)
 
                         result.details.map(function(data, index){

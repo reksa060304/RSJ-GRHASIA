@@ -54,6 +54,16 @@ class RBAController extends ApiController
             AND lu.id = ".$request['idLogin']."
         "));
 
+        if (empty($subSubKegiatan)) {
+            $subSubKegiatan = DB::select(DB::raw("
+                SELECT ka.id, ka.kode || ' - ' || ka.keterangan as keterangan
+                FROM kegiatananggaran2024_m AS ka
+                WHERE ka.kdprofile = ".$idProfile."
+                AND ka.statusenabled = TRUE
+                AND ka.div = 4
+            "));
+        }
+
         // Asal Produk
         $asalProduk = DB::table('asalproduk_m as ap')
             ->select('ap.id','ap.asalproduk')
@@ -150,6 +160,9 @@ class RBAController extends ApiController
 
         // Query id ruangan yang hanya digudang
         $kdRuanganDepoRajal = $this->settingDataFixed('kdruanganperencanaan', $idProfile);
+        if (empty($kdRuanganDepoRajal)) {
+            $kdRuanganDepoRajal = "0";
+        }
 
         // Query stok produk
         $sql = DB::select(DB::raw("
