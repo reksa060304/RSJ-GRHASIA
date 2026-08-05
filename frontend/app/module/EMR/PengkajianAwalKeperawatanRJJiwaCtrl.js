@@ -309,9 +309,12 @@ define(['initialize', 'Configuration'], function (initialize, config) {
                     var perawatIndex = -1;
                     for (var j = 0; j < details.length; j++) {
                         var item = details[j];
-                        if (item.id == 3020161) {
-                            item.type = "mna";
-                        } else if (item.id > 3020161 && item.id <= 3020189) {
+                        // if (item.id == 3020161) {
+                        //     item.type = "mna";
+                        // } else if (item.id > 3020161 && item.id <= 3020189) {
+                        //     item.type = "hidden";
+                        // }
+                        if (item.id >= 3020161 && item.id <= 3020189) {
                             item.type = "hidden";
                         } else if (item.id == 3020089) {
                             item.type = "humpty";
@@ -1555,7 +1558,7 @@ define(['initialize', 'Configuration'], function (initialize, config) {
                     }
 
                 }
-                $scope.getSkorMNA();
+                // $scope.getSkorMNA();
             })
             $scope.skorNutrisi = 0
             $scope.getSkorNutrisi = function (jawab) {
