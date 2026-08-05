@@ -22895,7 +22895,7 @@ public function suratBuktiPengembalian(Request $request)
         return $pdf->stream();
         return view('report.EMR.rujukan-edukasi-pasien',compact('data','pageWidth'));
     }
-    public function cetakPengkajianRajalJiwa(Request $request)
+    public function cetakPengkajianRajalJiwaOld(Request $request)
     {
         $norec = $request['emr'];
         $kdProfile = (int) $request['kdprofile'];
