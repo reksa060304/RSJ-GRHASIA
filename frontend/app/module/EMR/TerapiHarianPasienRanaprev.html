@@ -108,6 +108,7 @@
                     <th rowspan="2" style="text-align: center;background-color: #dedfe2d3;">No</th>
                     <th rowspan="2" style="text-align: center;background-color: #dedfe2d3; width: 100px;">Obat Oral</th>
                     <th rowspan="2" style="text-align: center;background-color: #dedfe2d3; width: 100px;">Aturan Pakai</th>
+                    <th rowspan="2" style="text-align: center;background-color: #dedfe2d3;">High Alert</th>
                     <td colspan="4" style="text-align: center; background-color: #dedfe2d3;"
                         ng-repeat="jawab in list.details">
                         <div class="grid_12">
@@ -684,7 +685,59 @@
                     </td>
                 </tr>
                 <tr ng-repeat="list in listData16 | orderBy:'id'" ng-init="jawabIndex = $index">
-                    <td colspan="3" style="text-align: center"><b>Paraf Perawat</b></td>
+                    <td colspan="3" style="text-align: center"><b>Paraf Perawat 1</b></td>
+                    <td style="text-align: center;" ng-repeat="jawab in list.details">
+                        <div class="grid_12">
+                            <div ng-switch on="jawab.type">
+                                <div ng-switch-when="textbox">
+                                    <input class="k-textbox" ng-model="item.obj[jawab.id]" type="text">
+                                </div>
+                                <div ng-switch-when="checkbox">
+                                    <input type="checkbox" class="k-checkbox" id="item.obj{{jawab.id}}"
+                                        ng-model="item.obj[jawab.id]">
+                                    <label class="k-checkbox-label" for="item.obj{{jawab.id}}">
+                                    </label>
+                                </div>
+                                <div ng-switch-when="combobox">
+                                    <div class="grid_12">
+                                        <input style="width: 100%;" kendo-combo-box k-ng-model="item.obj[jawab.id]"
+                                            k-data-text-field="'text'" k-data-value-field="'value'" k-filter="'contains'"
+                                            k-auto-bind="false" k-data-source="listPegawai" />
+
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </td>
+                </tr>
+                <tr ng-repeat="list in listData17 | orderBy:'id'" ng-init="jawabIndex = $index">
+                    <td colspan="3" style="text-align: center"><b>Paraf Perawat 2</b></td>
+                    <td style="text-align: center;" ng-repeat="jawab in list.details">
+                        <div class="grid_12">
+                            <div ng-switch on="jawab.type">
+                                <div ng-switch-when="textbox">
+                                    <input class="k-textbox" ng-model="item.obj[jawab.id]" type="text">
+                                </div>
+                                <div ng-switch-when="checkbox">
+                                    <input type="checkbox" class="k-checkbox" id="item.obj{{jawab.id}}"
+                                        ng-model="item.obj[jawab.id]">
+                                    <label class="k-checkbox-label" for="item.obj{{jawab.id}}">
+                                    </label>
+                                </div>
+                                <div ng-switch-when="combobox">
+                                    <div class="grid_12">
+                                        <input style="width: 100%;" kendo-combo-box k-ng-model="item.obj[jawab.id]"
+                                            k-data-text-field="'text'" k-data-value-field="'value'" k-filter="'contains'"
+                                            k-auto-bind="false" k-data-source="listPegawai" />
+
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </td>
+                </tr>
+                <tr ng-repeat="list in listData18 | orderBy:'id'" ng-init="jawabIndex = $index">
+                    <td colspan="3" style="text-align: center"><b>Paraf High Alert</b></td>
                     <td style="text-align: center;" ng-repeat="jawab in list.details">
                         <div class="grid_12">
                             <div ng-switch on="jawab.type">
@@ -713,6 +766,7 @@
                     <th style="text-align: center;background-color: #dedfe2d3;">No</th>
                     <th style="text-align: center;background-color: #dedfe2d3;">Obat Topikal</th>
                     <th style="text-align: center;background-color: #dedfe2d3;">Aturan Pakai</th>
+                    <th style="text-align: center;background-color: #dedfe2d3;">High Alert</th>
                     <th style="text-align: center;background-color: #dedfe2d3;">P</th>
                     <th style="text-align: center;background-color: #dedfe2d3;">S</th>
                     <th style="text-align: center;background-color: #dedfe2d3;">SR</th>
@@ -773,7 +827,59 @@
                     </td>
                 </tr>
                 <tr ng-repeat="list in listDataObatTopikal2 | orderBy:'id'" ng-init="jawabIndex = $index">
-                    <td colspan="3" style="text-align: center"><b>Paraf Perawat</b></td>
+                    <td colspan="3" style="text-align: center"><b>Paraf Perawat 1</b></td>
+                    <td style="text-align: center;" ng-repeat="jawab in list.details">
+                        <div class="grid_12">
+                            <div ng-switch on="jawab.type">
+                                <div ng-switch-when="textbox">
+                                    <input class="k-textbox" ng-model="item.obj[jawab.id]" type="text">
+                                </div>
+                                <div ng-switch-when="checkbox">
+                                    <input type="checkbox" class="k-checkbox" id="item.obj{{jawab.id}}"
+                                        ng-model="item.obj[jawab.id]">
+                                    <label class="k-checkbox-label" for="item.obj{{jawab.id}}">
+                                    </label>
+                                </div>
+                                <div ng-switch-when="combobox">
+                                    <div class="grid_12">
+                                        <input style="width: 100%;" kendo-combo-box k-ng-model="item.obj[jawab.id]"
+                                            k-data-text-field="'text'" k-data-value-field="'value'" k-filter="'contains'"
+                                            k-auto-bind="false" k-data-source="listPegawai" />
+
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </td>
+                </tr>
+                <tr ng-repeat="list in listDataObatTopikal3 | orderBy:'id'" ng-init="jawabIndex = $index">
+                    <td colspan="3" style="text-align: center"><b>Paraf Perawat 2</b></td>
+                    <td style="text-align: center;" ng-repeat="jawab in list.details">
+                        <div class="grid_12">
+                            <div ng-switch on="jawab.type">
+                                <div ng-switch-when="textbox">
+                                    <input class="k-textbox" ng-model="item.obj[jawab.id]" type="text">
+                                </div>
+                                <div ng-switch-when="checkbox">
+                                    <input type="checkbox" class="k-checkbox" id="item.obj{{jawab.id}}"
+                                        ng-model="item.obj[jawab.id]">
+                                    <label class="k-checkbox-label" for="item.obj{{jawab.id}}">
+                                    </label>
+                                </div>
+                                <div ng-switch-when="combobox">
+                                    <div class="grid_12">
+                                        <input style="width: 100%;" kendo-combo-box k-ng-model="item.obj[jawab.id]"
+                                            k-data-text-field="'text'" k-data-value-field="'value'" k-filter="'contains'"
+                                            k-auto-bind="false" k-data-source="listPegawai" />
+
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </td>
+                </tr>
+                <tr ng-repeat="list in listDataObatTopikal4 | orderBy:'id'" ng-init="jawabIndex = $index">
+                    <td colspan="3" style="text-align: center"><b>Paraf High Alert</b></td>
                     <td style="text-align: center;" ng-repeat="jawab in list.details">
                         <div class="grid_12">
                             <div ng-switch on="jawab.type">
@@ -802,6 +908,7 @@
                     <th rowspan="2" style="text-align: center;background-color: #dedfe2d3;">No</th>
                     <th rowspan="2" style="text-align: center;background-color: #dedfe2d3;">Obat Injeksi</th>
                     <th rowspan="2" style="text-align: center;background-color: #dedfe2d3;">Aturan Pakai</th>
+                    <th rowspan="2" style="text-align: center;background-color: #dedfe2d3;">High Alert</th>
                     <td colspan="4" style="text-align: center; background-color: #dedfe2d3;"
                         ng-repeat="jawab in list.details">
                         <div class="grid_12">
@@ -1002,7 +1109,59 @@
                     </td>
                 </tr>
                 <tr ng-repeat="list in listDataOI6 | orderBy:'id'" ng-init="jawabIndex = $index">
-                    <td colspan="3" style="text-align: center"><b>Paraf Perawat</b></td>
+                    <td colspan="3" style="text-align: center"><b>Paraf Perawat 1</b></td>
+                    <td style="text-align: center;" ng-repeat="jawab in list.details">
+                        <div class="grid_12">
+                            <div ng-switch on="jawab.type">
+                                <div ng-switch-when="textbox">
+                                    <input class="k-textbox" ng-model="item.obj[jawab.id]" type="text">
+                                </div>
+                                <div ng-switch-when="checkbox">
+                                    <input type="checkbox" class="k-checkbox" id="item.obj{{jawab.id}}"
+                                        ng-model="item.obj[jawab.id]">
+                                    <label class="k-checkbox-label" for="item.obj{{jawab.id}}">
+                                    </label>
+                                </div>
+                                <div ng-switch-when="combobox">
+                                    <div class="grid_12">
+                                        <input style="width: 100%;" kendo-combo-box k-ng-model="item.obj[jawab.id]"
+                                            k-data-text-field="'text'" k-data-value-field="'value'" k-filter="'contains'"
+                                            k-auto-bind="false" k-data-source="listPegawai" />
+
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </td>
+                </tr>
+                <tr ng-repeat="list in listDataOI7 | orderBy:'id'" ng-init="jawabIndex = $index">
+                    <td colspan="3" style="text-align: center"><b>Paraf Perawat 2</b></td>
+                    <td style="text-align: center;" ng-repeat="jawab in list.details">
+                        <div class="grid_12">
+                            <div ng-switch on="jawab.type">
+                                <div ng-switch-when="textbox">
+                                    <input class="k-textbox" ng-model="item.obj[jawab.id]" type="text">
+                                </div>
+                                <div ng-switch-when="checkbox">
+                                    <input type="checkbox" class="k-checkbox" id="item.obj{{jawab.id}}"
+                                        ng-model="item.obj[jawab.id]">
+                                    <label class="k-checkbox-label" for="item.obj{{jawab.id}}">
+                                    </label>
+                                </div>
+                                <div ng-switch-when="combobox">
+                                    <div class="grid_12">
+                                        <input style="width: 100%;" kendo-combo-box k-ng-model="item.obj[jawab.id]"
+                                            k-data-text-field="'text'" k-data-value-field="'value'" k-filter="'contains'"
+                                            k-auto-bind="false" k-data-source="listPegawai" />
+
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </td>
+                </tr>
+                <tr ng-repeat="list in listDataOI8 | orderBy:'id'" ng-init="jawabIndex = $index">
+                    <td colspan="3" style="text-align: center"><b>Paraf High Alert</b></td>
                     <td style="text-align: center;" ng-repeat="jawab in list.details">
                         <div class="grid_12">
                             <div ng-switch on="jawab.type">
@@ -1031,6 +1190,7 @@
                     <th style="text-align: center;background-color: #dedfe2d3;">No</th>
                     <th style="text-align: center;background-color: #dedfe2d3;">Obat Inhalasi</th>
                     <th style="text-align: center;background-color: #dedfe2d3;">Aturan Pakai</th>
+                    <th style="text-align: center;background-color: #dedfe2d3;">High Alert</th>
                     <th style="text-align: center;background-color: #dedfe2d3;">P</th>
                     <th style="text-align: center;background-color: #dedfe2d3;">S</th>
                     <th style="text-align: center;background-color: #dedfe2d3;">SR</th>
@@ -1165,7 +1325,59 @@
                     </td>
                 </tr>
                 <tr ng-repeat="list in listDataInhalasi4 | orderBy:'id'" ng-init="jawabIndex = $index">
-                    <td colspan="3" style="text-align: center"><b>Paraf Perawat</b></td>
+                    <td colspan="3" style="text-align: center"><b>Paraf Perawat 1</b></td>
+                    <td style="text-align: center;" ng-repeat="jawab in list.details">
+                        <div class="grid_12">
+                            <div ng-switch on="jawab.type">
+                                <div ng-switch-when="textbox">
+                                    <input class="k-textbox" ng-model="item.obj[jawab.id]" type="text">
+                                </div>
+                                <div ng-switch-when="checkbox">
+                                    <input type="checkbox" class="k-checkbox" id="item.obj{{jawab.id}}"
+                                        ng-model="item.obj[jawab.id]">
+                                    <label class="k-checkbox-label" for="item.obj{{jawab.id}}">
+                                    </label>
+                                </div>
+                                <div ng-switch-when="combobox">
+                                    <div class="grid_12">
+                                        <input style="width: 100%;" kendo-combo-box k-ng-model="item.obj[jawab.id]"
+                                            k-data-text-field="'text'" k-data-value-field="'value'" k-filter="'contains'"
+                                            k-auto-bind="false" k-data-source="listPegawai" />
+
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </td>
+                </tr>
+                <tr ng-repeat="list in listDataInhalasi5 | orderBy:'id'" ng-init="jawabIndex = $index">
+                    <td colspan="3" style="text-align: center"><b>Paraf Perawat 2</b></td>
+                    <td style="text-align: center;" ng-repeat="jawab in list.details">
+                        <div class="grid_12">
+                            <div ng-switch on="jawab.type">
+                                <div ng-switch-when="textbox">
+                                    <input class="k-textbox" ng-model="item.obj[jawab.id]" type="text">
+                                </div>
+                                <div ng-switch-when="checkbox">
+                                    <input type="checkbox" class="k-checkbox" id="item.obj{{jawab.id}}"
+                                        ng-model="item.obj[jawab.id]">
+                                    <label class="k-checkbox-label" for="item.obj{{jawab.id}}">
+                                    </label>
+                                </div>
+                                <div ng-switch-when="combobox">
+                                    <div class="grid_12">
+                                        <input style="width: 100%;" kendo-combo-box k-ng-model="item.obj[jawab.id]"
+                                            k-data-text-field="'text'" k-data-value-field="'value'" k-filter="'contains'"
+                                            k-auto-bind="false" k-data-source="listPegawai" />
+
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </td>
+                </tr>
+                <tr ng-repeat="list in listDataInhalasi6 | orderBy:'id'" ng-init="jawabIndex = $index">
+                    <td colspan="3" style="text-align: center"><b>Paraf High Alert</b></td>
                     <td style="text-align: center;" ng-repeat="jawab in list.details">
                         <div class="grid_12">
                             <div ng-switch on="jawab.type">

@@ -12,6 +12,9 @@ define(['initialize'], function (initialize) {
             $scope.noRecPap = cacheHelper.get('noRecPap');
             $scope.totalSkor = 0
             $scope.totalSkor2 = 0
+            $scope.item = {}
+            $scope.item.obj = {}
+            $scope.item.obj2 = {}
             $scope.cc = {}
             var nomorEMR = '-'
             $scope.cc.emrfk = 3002052
@@ -35,18 +38,26 @@ define(['initialize'], function (initialize) {
             $scope.listData14 = []
             $scope.listData15 = []
             $scope.listData16 = []
+            $scope.listData17 = []
+            $scope.listData18 = []
             $scope.listDataObatTopikal1 = []
             $scope.listDataObatTopikal2 = []
+            $scope.listDataObatTopikal3 = []
+            $scope.listDataObatTopikal4 = []
             $scope.ListDataOI1 = []
             $scope.ListDataOI2 = []
             $scope.ListDataOI3 = []
             $scope.ListDataOI4 = []
             $scope.ListDataOI5 = []
             $scope.ListDataOI6 = []
+            $scope.listDataOI7 = []
+            $scope.listDataOI8 = []
             $scope.listDataInhalasi1 = []
             $scope.listDataInhalasi2 = []
             $scope.listDataInhalasi3 = []
             $scope.listDataInhalasi4 = []
+            $scope.listDataInhalasi5 = []
+            $scope.listDataInhalasi6 = []
             // $scope.listSkor = []
             $scope.loading = true
             if(medifirstService.getKelompokUser() == 'mahasiswadiklat'){
@@ -82,18 +93,26 @@ define(['initialize'], function (initialize) {
                 var arrayListData14 = []
                 var arrayListData15 = []
                 var arrayListData16= []
+                var arrayListData17 = []
+                var arrayListData18 = []
                 var arrayListDataObatTopikal1 = []
                 var arrayListDataObatTopikal2 = []
+                var arrayListDataObatTopikal3 = []
+                var arrayListDataObatTopikal4 = []
                 var arrayListDataOI1 = []
                 var arrayListDataOI2 = []
                 var arrayListDataOI3 = []
                 var arrayListDataOI4 = []
                 var arrayListDataOI5 = []
                 var arrayListDataOI6 = []
+                var arrayListDataOI7 = []
+                var arrayListDataOI8 = []
                 var arrayListDataInhalasi1 = []
                 var arrayListDataInhalasi2 = []
                 var arrayListDataInhalasi3 = []
                 var arrayListDataInhalasi4 = []
+                var arrayListDataInhalasi5 = []
+                var arrayListDataInhalasi6 = []
                 var sama = false
 
 
@@ -664,6 +683,72 @@ define(['initialize'], function (initialize) {
                             arrayListData16.push(datax)
                         }
                     }
+                    if (element.kodeexternal == 'listdata17') {
+                        for (let i = 0; i < arrayListData17.length; i++) {
+                            const element2 = arrayListData17[i];
+                            if (element2.namaexternal == element.namaexternal && element2.kodeexternal == element.kodeexternal) {
+                                detail.push(element)
+                                element2.details = detail
+                                sama = true
+                            }
+
+                        }
+                        if (sama == false) {
+                            var datax = {
+                                caption: element.caption,
+                                cbotable: element.cbotable,
+                                child: [],
+                                emrfk: element.emrfk,
+                                headfk: element.headfk,
+                                id: element.id,
+                                kdprofile: element.kdprofile,
+                                kodeexternal: element.kodeexternal,
+                                namaemr: element.namaemr,
+                                namaexternal: element.namaexternal,
+                                nourut: element.nourut,
+                                reportdisplay: element.reportdisplay,
+                                satuan: element.satuan,
+                                statusenabled: element.statusenabled,
+                                style: element.style,
+                                type: element.type,
+
+                            }
+                            arrayListData17.push(datax)
+                        }
+                    }
+                    if (element.kodeexternal == 'listdata18') {
+                        for (let i = 0; i < arrayListData18.length; i++) {
+                            const element2 = arrayListData18[i];
+                            if (element2.namaexternal == element.namaexternal && element2.kodeexternal == element.kodeexternal) {
+                                detail.push(element)
+                                element2.details = detail
+                                sama = true
+                            }
+
+                        }
+                        if (sama == false) {
+                            var datax = {
+                                caption: element.caption,
+                                cbotable: element.cbotable,
+                                child: [],
+                                emrfk: element.emrfk,
+                                headfk: element.headfk,
+                                id: element.id,
+                                kdprofile: element.kdprofile,
+                                kodeexternal: element.kodeexternal,
+                                namaemr: element.namaemr,
+                                namaexternal: element.namaexternal,
+                                nourut: element.nourut,
+                                reportdisplay: element.reportdisplay,
+                                satuan: element.satuan,
+                                statusenabled: element.statusenabled,
+                                style: element.style,
+                                type: element.type,
+
+                            }
+                            arrayListData18.push(datax)
+                        }
+                    }
                     if (element.kodeexternal == 'listdataobattopikal1') {
                         for (let i = 0; i < arrayListDataObatTopikal1.length; i++) {
                             const element2 = arrayListDataObatTopikal1[i];
@@ -766,6 +851,72 @@ define(['initialize'], function (initialize) {
                         }
                     }
 
+                    if (element.kodeexternal == 'listdataobattopikal3') {
+                        for (let i = 0; i < arrayListDataObatTopikal3.length; i++) {
+                            const element2 = arrayListDataObatTopikal3[i];
+                            if (element2.namaexternal == element.namaexternal && element2.kodeexternal == element.kodeexternal) {
+                                detail.push(element)
+                                element2.details = detail
+                                sama = true
+                            }
+
+                        }
+                        if (sama == false) {
+                            var datax = {
+                                caption: element.caption,
+                                cbotable: element.cbotable,
+                                child: [],
+                                emrfk: element.emrfk,
+                                headfk: element.headfk,
+                                id: element.id,
+                                kdprofile: element.kdprofile,
+                                kodeexternal: element.kodeexternal,
+                                namaemr: element.namaemr,
+                                namaexternal: element.namaexternal,
+                                nourut: element.nourut,
+                                reportdisplay: element.reportdisplay,
+                                satuan: element.satuan,
+                                statusenabled: element.statusenabled,
+                                style: element.style,
+                                type: element.type,
+
+                            }
+                            arrayListDataObatTopikal3.push(datax)
+                        }
+                    }
+                    if (element.kodeexternal == 'listdataobattopikal4') {
+                        for (let i = 0; i < arrayListDataObatTopikal4.length; i++) {
+                            const element2 = arrayListDataObatTopikal4[i];
+                            if (element2.namaexternal == element.namaexternal && element2.kodeexternal == element.kodeexternal) {
+                                detail.push(element)
+                                element2.details = detail
+                                sama = true
+                            }
+
+                        }
+                        if (sama == false) {
+                            var datax = {
+                                caption: element.caption,
+                                cbotable: element.cbotable,
+                                child: [],
+                                emrfk: element.emrfk,
+                                headfk: element.headfk,
+                                id: element.id,
+                                kdprofile: element.kdprofile,
+                                kodeexternal: element.kodeexternal,
+                                namaemr: element.namaemr,
+                                namaexternal: element.namaexternal,
+                                nourut: element.nourut,
+                                reportdisplay: element.reportdisplay,
+                                satuan: element.satuan,
+                                statusenabled: element.statusenabled,
+                                style: element.style,
+                                type: element.type,
+
+                            }
+                            arrayListDataObatTopikal4.push(datax)
+                        }
+                    }
                     if (element.kodeexternal == 'listdataoi1') {
                         for (let i = 0; i < arrayListDataOI1.length; i++) {
                             const element2 = arrayListDataOI1[i];
@@ -964,6 +1115,72 @@ define(['initialize'], function (initialize) {
                             arrayListDataOI6.push(datax)
                         }
                     }
+                    if (element.kodeexternal == 'listdataoi7') {
+                        for (let i = 0; i < arrayListDataOI7.length; i++) {
+                            const element2 = arrayListDataOI7[i];
+                            if (element2.namaexternal == element.namaexternal && element2.kodeexternal == element.kodeexternal) {
+                                detail.push(element)
+                                element2.details = detail
+                                sama = true
+                            }
+
+                        }
+                        if (sama == false) {
+                            var datax = {
+                                caption: element.caption,
+                                cbotable: element.cbotable,
+                                child: [],
+                                emrfk: element.emrfk,
+                                headfk: element.headfk,
+                                id: element.id,
+                                kdprofile: element.kdprofile,
+                                kodeexternal: element.kodeexternal,
+                                namaemr: element.namaemr,
+                                namaexternal: element.namaexternal,
+                                nourut: element.nourut,
+                                reportdisplay: element.reportdisplay,
+                                satuan: element.satuan,
+                                statusenabled: element.statusenabled,
+                                style: element.style,
+                                type: element.type,
+
+                            }
+                            arrayListDataOI7.push(datax)
+                        }
+                    }
+                    if (element.kodeexternal == 'listdataoi8') {
+                        for (let i = 0; i < arrayListDataOI8.length; i++) {
+                            const element2 = arrayListDataOI8[i];
+                            if (element2.namaexternal == element.namaexternal && element2.kodeexternal == element.kodeexternal) {
+                                detail.push(element)
+                                element2.details = detail
+                                sama = true
+                            }
+
+                        }
+                        if (sama == false) {
+                            var datax = {
+                                caption: element.caption,
+                                cbotable: element.cbotable,
+                                child: [],
+                                emrfk: element.emrfk,
+                                headfk: element.headfk,
+                                id: element.id,
+                                kdprofile: element.kdprofile,
+                                kodeexternal: element.kodeexternal,
+                                namaemr: element.namaemr,
+                                namaexternal: element.namaexternal,
+                                nourut: element.nourut,
+                                reportdisplay: element.reportdisplay,
+                                satuan: element.satuan,
+                                statusenabled: element.statusenabled,
+                                style: element.style,
+                                type: element.type,
+
+                            }
+                            arrayListDataOI8.push(datax)
+                        }
+                    }
                     if (element.kodeexternal == 'listdatainh1') {
                         for (let i = 0; i < arrayListDataInhalasi1.length; i++) {
                             const element2 = arrayListDataInhalasi1[i];
@@ -1094,6 +1311,72 @@ define(['initialize'], function (initialize) {
 
                             }
                             arrayListDataInhalasi4.push(datax)
+                        }
+                    }
+                    if (element.kodeexternal == 'listdatainh5') {
+                        for (let i = 0; i < arrayListDataInhalasi5.length; i++) {
+                            const element2 = arrayListDataInhalasi5[i];
+                            if (element2.namaexternal == element.namaexternal && element2.kodeexternal == element.kodeexternal) {
+                                detail.push(element)
+                                element2.details = detail
+                                sama = true
+                            }
+
+                        }
+                        if (sama == false) {
+                            var datax = {
+                                caption: element.caption,
+                                cbotable: element.cbotable,
+                                child: [],
+                                emrfk: element.emrfk,
+                                headfk: element.headfk,
+                                id: element.id,
+                                kdprofile: element.kdprofile,
+                                kodeexternal: element.kodeexternal,
+                                namaemr: element.namaemr,
+                                namaexternal: element.namaexternal,
+                                nourut: element.nourut,
+                                reportdisplay: element.reportdisplay,
+                                satuan: element.satuan,
+                                statusenabled: element.statusenabled,
+                                style: element.style,
+                                type: element.type,
+
+                            }
+                            arrayListDataInhalasi5.push(datax)
+                        }
+                    }
+                    if (element.kodeexternal == 'listdatainh6') {
+                        for (let i = 0; i < arrayListDataInhalasi6.length; i++) {
+                            const element2 = arrayListDataInhalasi6[i];
+                            if (element2.namaexternal == element.namaexternal && element2.kodeexternal == element.kodeexternal) {
+                                detail.push(element)
+                                element2.details = detail
+                                sama = true
+                            }
+
+                        }
+                        if (sama == false) {
+                            var datax = {
+                                caption: element.caption,
+                                cbotable: element.cbotable,
+                                child: [],
+                                emrfk: element.emrfk,
+                                headfk: element.headfk,
+                                id: element.id,
+                                kdprofile: element.kdprofile,
+                                kodeexternal: element.kodeexternal,
+                                namaemr: element.namaemr,
+                                namaexternal: element.namaexternal,
+                                nourut: element.nourut,
+                                reportdisplay: element.reportdisplay,
+                                satuan: element.satuan,
+                                statusenabled: element.statusenabled,
+                                style: element.style,
+                                type: element.type,
+
+                            }
+                            arrayListDataInhalasi6.push(datax)
                         }
                     }
 
@@ -1373,6 +1656,38 @@ define(['initialize'], function (initialize) {
                       }
                       $scope.listData16= arrayListData16
                    
+                // ARRAY listdata17
+                var listData17KosongKeun = []
+                for (let k = 0; k < arrayListData17.length; k++) {
+                    const element = arrayListData17[k];
+                    for (let l = 0; l < datas.length; l++) {
+                        const element2 = datas[l];
+                        if (element2.namaexternal == element.namaexternal && element2.kodeexternal == element.kodeexternal) {
+                            listData17KosongKeun.push(element2)
+                            element.details = listData17KosongKeun
+                        } else {
+                            listData17KosongKeun = []
+                        }
+                    }
+                }
+                $scope.listData17 = arrayListData17
+
+                // ARRAY listdata18
+                var listData18KosongKeun = []
+                for (let k = 0; k < arrayListData18.length; k++) {
+                    const element = arrayListData18[k];
+                    for (let l = 0; l < datas.length; l++) {
+                        const element2 = datas[l];
+                        if (element2.namaexternal == element.namaexternal && element2.kodeexternal == element.kodeexternal) {
+                            listData18KosongKeun.push(element2)
+                            element.details = listData18KosongKeun
+                        } else {
+                            listData18KosongKeun = []
+                        }
+                    }
+                }
+                $scope.listData18 = arrayListData18
+
                 // ARRAY listDataObatTopikal1
                 var listDataObatTopikal1KosongKeun = []
                 for (let k = 0; k < arrayListDataObatTopikal1.length; k++) {
@@ -1404,6 +1719,38 @@ define(['initialize'], function (initialize) {
                     }
                 }
                 $scope.listDataObatTopikal2 = arrayListDataObatTopikal2
+
+                // ARRAY listDataObatTopikal3
+                var listDataObatTopikal3KosongKeun = []
+                for (let k = 0; k < arrayListDataObatTopikal3.length; k++) {
+                    const element = arrayListDataObatTopikal3[k];
+                    for (let l = 0; l < datas.length; l++) {
+                        const element2 = datas[l];
+                        if (element2.namaexternal == element.namaexternal && element2.kodeexternal == element.kodeexternal) {
+                            listDataObatTopikal3KosongKeun.push(element2)
+                            element.details = listDataObatTopikal3KosongKeun
+                        } else {
+                            listDataObatTopikal3KosongKeun = []
+                        }
+                    }
+                }
+                $scope.listDataObatTopikal3 = arrayListDataObatTopikal3
+
+                // ARRAY listDataObatTopikal4
+                var listDataObatTopikal4KosongKeun = []
+                for (let k = 0; k < arrayListDataObatTopikal4.length; k++) {
+                    const element = arrayListDataObatTopikal4[k];
+                    for (let l = 0; l < datas.length; l++) {
+                        const element2 = datas[l];
+                        if (element2.namaexternal == element.namaexternal && element2.kodeexternal == element.kodeexternal) {
+                            listDataObatTopikal4KosongKeun.push(element2)
+                            element.details = listDataObatTopikal4KosongKeun
+                        } else {
+                            listDataObatTopikal4KosongKeun = []
+                        }
+                    }
+                }
+                $scope.listDataObatTopikal4 = arrayListDataObatTopikal4
 
                 // ARRAY tanggal2
                 var gejalaKosongKeun = []
@@ -1515,6 +1862,38 @@ define(['initialize'], function (initialize) {
                 }
                 $scope.listDataOI6 = arrayListDataOI6
 
+                // ARRAY listdataOI7
+                var listDataOI7KosongKeun = []
+                for (let k = 0; k < arrayListDataOI7.length; k++) {
+                    const element = arrayListDataOI7[k];
+                    for (let l = 0; l < datas.length; l++) {
+                        const element2 = datas[l];
+                        if (element2.namaexternal == element.namaexternal && element2.kodeexternal == element.kodeexternal) {
+                            listDataOI7KosongKeun.push(element2)
+                            element.details = listDataOI7KosongKeun
+                        } else {
+                            listDataOI7KosongKeun = []
+                        }
+                    }
+                }
+                $scope.listDataOI7 = arrayListDataOI7
+
+                // ARRAY listdataOI8
+                var listDataOI8KosongKeun = []
+                for (let k = 0; k < arrayListDataOI8.length; k++) {
+                    const element = arrayListDataOI8[k];
+                    for (let l = 0; l < datas.length; l++) {
+                        const element2 = datas[l];
+                        if (element2.namaexternal == element.namaexternal && element2.kodeexternal == element.kodeexternal) {
+                            listDataOI8KosongKeun.push(element2)
+                            element.details = listDataOI8KosongKeun
+                        } else {
+                            listDataOI8KosongKeun = []
+                        }
+                    }
+                }
+                $scope.listDataOI8 = arrayListDataOI8
+
                 // ARRAY listdatainhalasi1
                 var listDataInhalasi1KosongKeun = []
                 for (let k = 0; k < arrayListDataInhalasi1.length; k++) {
@@ -1580,6 +1959,39 @@ define(['initialize'], function (initialize) {
                      }
                  }
                  $scope.listDataInhalasi4 = arrayListDataInhalasi4
+
+                // ARRAY listdatainhalasi5
+                var listDataInhalasi5KosongKeun = []
+                for (let k = 0; k < arrayListDataInhalasi5.length; k++) {
+                    const element = arrayListDataInhalasi5[k];
+                    for (let l = 0; l < datas.length; l++) {
+                        const element2 = datas[l];
+                        if (element2.namaexternal == element.namaexternal && element2.kodeexternal == element.kodeexternal) {
+                            listDataInhalasi5KosongKeun.push(element2)
+                            element.details = listDataInhalasi5KosongKeun
+                        } else {
+                            listDataInhalasi5KosongKeun = []
+                        }
+                    }
+                }
+                $scope.listDataInhalasi5 = arrayListDataInhalasi5
+
+                // ARRAY listdatainhalasi6
+                var listDataInhalasi6KosongKeun = []
+                for (let k = 0; k < arrayListDataInhalasi6.length; k++) {
+                    const element = arrayListDataInhalasi6[k];
+                    for (let l = 0; l < datas.length; l++) {
+                        const element2 = datas[l];
+                        if (element2.namaexternal == element.namaexternal && element2.kodeexternal == element.kodeexternal) {
+                            listDataInhalasi6KosongKeun.push(element2)
+                            element.details = listDataInhalasi6KosongKeun
+                        } else {
+                            listDataInhalasi6KosongKeun = []
+                        }
+                    }
+                }
+                $scope.listDataInhalasi6 = arrayListDataInhalasi6
+
 
 
             })
