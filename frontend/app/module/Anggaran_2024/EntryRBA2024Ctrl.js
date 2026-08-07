@@ -307,7 +307,7 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
                         $scope.dataSourceKegiatan = e.data.kegiatan
                     })
 
-                    medifirstService.getPart('emr/get-datacombo-part-pegawai', true, true, 20).then(function (data) {
+                    medifirstService.getPart('emr/get-datacombo-part-pegawai', true, true, 1000).then(function (data) {
                         $scope.listBendahara = data
                         $scope.listPenerima = data
                     })
@@ -2881,12 +2881,304 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
                 
             }
 
+            var clearEditForm = function () {
+                $scope.dataEditMasterSelected = undefined;
+                $scope.item.kodeEdit = "";
+                $scope.item.keteranganEdit = "";
+                $scope.item.idEdit = undefined;
+                $scope.item.norecEdit = undefined;
+                $scope.item.pptkEdit = undefined;
+                $scope.item.jenisBelanjaEdit = undefined;
+                $scope.item.tahapEdit = undefined;
+                $scope.item.subKegiatanEdit = undefined;
+                $scope.item.kegiatanDiv2Edit = undefined;
+                $scope.item.kegiatanDiv1Edit = undefined;
+                $scope.item.kegiatanDiv0Edit = undefined;
+            };
+
+            $scope.EditMaster = function () {
+                $scope.item.divEdit = undefined;
+                $scope.item.pptkFilterEdit = undefined;
+                
+                // Samakan dengan filter utama di halaman utama
+                $scope.item.tahapFilterEdit = $scope.item.searchtahapkeg ? {
+                    id: $scope.item.searchtahapkeg.id,
+                    tahap: $scope.item.searchtahapkeg.tahap
+                } : undefined;
+                
+                $scope.item.tahunFilterEdit = $scope.item.tahun ? new Date(moment($scope.item.tahun).format('YYYY-MM-DD')) : new Date();
+                
+                $scope.item.searchEditMaster = "";
+                $scope.dataSourceEditMaster = [];
+                $scope.rawEditMasterData = [];
+                clearEditForm();
+                
+                $scope.popupEdit.center().open();
+            };
+
+            $scope.onChangeDivEdit = function () {
+                clearEditForm();
+                if (!$scope.item.divEdit) {
+                    $scope.dataSourceEditMaster = [];
+                    $scope.rawEditMasterData = [];
+                    return;
+                }
+                $scope.isRouteLoading = true;
+                
+                var queryParams = "?div=" + $scope.item.divEdit.id;
+                
+                if ($scope.item.divEdit.id == 4) {
+                    if ($scope.item.pptkFilterEdit) {
+                        queryParams += "&pegawai=" + $scope.item.pptkFilterEdit.value;
+                    }
+                    if ($scope.item.tahapFilterEdit) {
+                        queryParams += "&tahap=" + $scope.item.tahapFilterEdit.id;
+                    }
+                    if ($scope.item.tahunFilterEdit) {
+                        queryParams += "&tahun=" + moment($scope.item.tahunFilterEdit).format('YYYY');
+                    }
+                }
+
+                medifirstService.get("anggaran/get-daftar-master-kegiatanRBA" + queryParams).then(function (e) {
+                    $scope.isRouteLoading = false;
+                    $scope.rawEditMasterData = e.data.kegiatan || [];
+                    
+                    var searchVal = $scope.item.searchEditMaster ? $scope.item.searchEditMaster.toLowerCase() : "";
+                    var filtered = $scope.rawEditMasterData;
+                    if (searchVal) {
+                        filtered = $scope.rawEditMasterData.filter(function (element) {
+                            var matchKeterangan = element.keterangan ? element.keterangan.toLowerCase().indexOf(searchVal) > -1 : false;
+                            var matchKode = element.kode ? element.kode.toLowerCase().indexOf(searchVal) > -1 : false;
+                            return matchKeterangan || matchKode;
+                        });
+                    }
+
+                    $scope.dataSourceEditMaster = new kendo.data.DataSource({
+                        data: filtered,
+                        pageSize: 10
+                    });
+                }, function () {
+                    $scope.isRouteLoading = false;
+                });
+            };
+
+            $scope.$watch('item.divEdit', function (newValue, oldValue) {
+                if (newValue != oldValue) {
+                    $scope.item.searchEditMaster = "";
+                    $scope.item.pptkFilterEdit = undefined;
+                    // Biarkan tahapFilterEdit dan tahunFilterEdit tetap terisi sesuai filter utama
+                    $scope.onChangeDivEdit();
+                }
+            });
+
+            $scope.$watch('item.searchEditMaster', function (newValue, oldValue) {
+                if (newValue != oldValue) {
+                    if (!$scope.rawEditMasterData) return;
+                    var searchVal = newValue ? newValue.toLowerCase() : "";
+                    var filtered = $scope.rawEditMasterData.filter(function (element) {
+                        var matchKeterangan = element.keterangan ? element.keterangan.toLowerCase().indexOf(searchVal) > -1 : false;
+                        var matchKode = element.kode ? element.kode.toLowerCase().indexOf(searchVal) > -1 : false;
+                        return matchKeterangan || matchKode;
+                    });
+                    $scope.dataSourceEditMaster = new kendo.data.DataSource({
+                        data: filtered,
+                        pageSize: 10
+                    });
+                }
+            });
+
+            $scope.klikEditMaster = function (data) {
+                if (!data) return;
+                $scope.item.kodeEdit = data.kode;
+                $scope.item.keteranganEdit = data.keterangan;
+                $scope.item.norecEdit = data.norec;
+                $scope.item.idEdit = data.id;
+
+                // Reset parents
+                $scope.item.subKegiatanEdit = undefined;
+                $scope.item.kegiatanDiv2Edit = undefined;
+                $scope.item.kegiatanDiv1Edit = undefined;
+                $scope.item.kegiatanDiv0Edit = undefined;
+                
+                $scope.item.pptkEdit = undefined;
+                $scope.item.jenisBelanjaEdit = undefined;
+                $scope.item.tahapEdit = undefined;
+
+                if ($scope.item.divEdit.id == 4) {
+                    // Set dropdown parent (Sub Kegiatan)
+                    $scope.listDataDivSubsubkg.map(function (item) {
+                        if (item.id == data.headfk) {
+                            $scope.item.subKegiatanEdit = item;
+                        }
+                    });
+
+                    $scope.isRouteLoading = true;
+                    medifirstService.get("anggaran/get-detail-kegiatan?norec=" + data.norec).then(function (e) {
+                        $scope.isRouteLoading = false;
+                        var detail = e.data.kegiatan[0];
+                        
+                        $scope.item.tahunEdit = moment(data.tahun).format('YYYY');
+                        
+                        // Set Tahap
+                        $scope.listTahap.map(function (item) {
+                            if (item.id == detail.idtahap) {
+                                $scope.item.tahapEdit = item;
+                            }
+                        });
+
+                        // Set Jenis Belanja
+                        if (e.data.jenisbelanja && e.data.jenisbelanja[0]) {
+                            $scope.item.jenisBelanjaEdit = {
+                                id: e.data.jenisbelanja[0].id,
+                                jenisbelanja: e.data.jenisbelanja[0].jenisbelanja
+                            };
+                        }
+
+                        // Set PPTK (value field)
+                        if (data.idpptk) {
+                            $scope.item.pptkEdit = {
+                                value: data.idpptk,
+                                text: data.namalengkap
+                            };
+                            setTimeout(function () {
+                                if ($scope.pptkComboBox) {
+                                    $scope.pptkComboBox.value(data.idpptk);
+                                    $scope.pptkComboBox.text(data.namalengkap);
+                                }
+                            }, 100);
+                        } else {
+                            $scope.item.pptkEdit = undefined;
+                            setTimeout(function () {
+                                if ($scope.pptkComboBox) {
+                                    $scope.pptkComboBox.value("");
+                                    $scope.pptkComboBox.text("");
+                                }
+                            }, 100);
+                        }
+
+                        $scope.item.tolokUkurMasukanEdit = 'Dana';
+                        $scope.item.targetKinerjaMasukanEdit = data.targetmasuk;
+                        $scope.item.tolokUkurKeluaranEdit = data.indikatorkeluaran;
+                        $scope.item.targetKinerjaKeluaranEdit = data.targetkeluaran;
+                        $scope.item.tolokUkurHasilEdit = data.indikatorhasil;
+                        $scope.item.targetKinerjaHasilEdit = data.targethasil;
+                    }, function () {
+                        $scope.isRouteLoading = false;
+                    });
+                } else if ($scope.item.divEdit.id == 3) {
+                    $scope.listDataDivSubkg.map(function (item) {
+                        if (item.id == data.headfk) {
+                            $scope.item.kegiatanDiv2Edit = item;
+                        }
+                    });
+                } else if ($scope.item.divEdit.id == 2) {
+                    $scope.listDataDivProg.map(function (item) {
+                        if (item.id == data.headfk) {
+                            $scope.item.kegiatanDiv1Edit = item;
+                        }
+                    });
+                } else if ($scope.item.divEdit.id == 1) {
+                    $scope.listDataDivUsulan.map(function (item) {
+                        if (item.id == data.headfk) {
+                            $scope.item.kegiatanDiv0Edit = item;
+                        }
+                    });
+                }
+            };
+
+            $scope.simpanEditMaster = function () {
+                if (!$scope.item.idEdit) {
+                    toastr.error("Pilih data terlebih dahulu");
+                    return;
+                }
+
+                if (!$scope.item.kodeEdit || !$scope.item.keteranganEdit) {
+                    toastr.error("Kode dan Nama tidak boleh kosong");
+                    return;
+                }
+
+                $scope.isRouteLoading = true;
+                
+                var headfk = null;
+                if ($scope.item.divEdit.id == 4) {
+                    headfk = $scope.item.subKegiatanEdit ? $scope.item.subKegiatanEdit.id : null;
+                } else if ($scope.item.divEdit.id == 3) {
+                    headfk = $scope.item.kegiatanDiv2Edit ? $scope.item.kegiatanDiv2Edit.id : null;
+                } else if ($scope.item.divEdit.id == 2) {
+                    headfk = $scope.item.kegiatanDiv1Edit ? $scope.item.kegiatanDiv1Edit.id : null;
+                } else if ($scope.item.divEdit.id == 1) {
+                    headfk = $scope.item.kegiatanDiv0Edit ? $scope.item.kegiatanDiv0Edit.id : null;
+                }
+
+                // 1. Simpan perubahan master ke kegiatan
+                var objSaveMaster = {
+                    id: $scope.item.idEdit,
+                    kode: $scope.item.kodeEdit,
+                    keterangan: $scope.item.keteranganEdit,
+                    div: $scope.item.divEdit.id,
+                    headfk: headfk
+                };
+
+                medifirstService.post('anggaran/save-kegiatan-anggaran', objSaveMaster).then(function (e) {
+                    
+                    if ($scope.item.divEdit.id == 4) {
+                        // 2. Simpan detail transaksi jika div = 4
+                        var objSaveTransaksi = {
+                            norec: $scope.item.norecEdit,
+                            tahun: moment($scope.item.tahunEdit).format('YYYY'),
+                            idtahap: $scope.item.tahapEdit ? $scope.item.tahapEdit.id : null,
+                            jenisbelanja: $scope.item.jenisBelanjaEdit ? $scope.item.jenisBelanjaEdit.id : null,
+                            pptk: $scope.item.pptkEdit ? $scope.item.pptkEdit.value : null,
+                            indikatormasuk: $scope.item.tolokUkurMasukanEdit,
+                            indikatorkeluaran: $scope.item.tolokUkurKeluaranEdit,
+                            indikatorhasil: $scope.item.tolokUkurHasilEdit,
+                            targetmasuk: $scope.item.targetKinerjaMasukanEdit,
+                            targetkeluaran: $scope.item.targetKinerjaKeluaranEdit,
+                            targethasil: $scope.item.targetKinerjaHasilEdit
+                        };
+
+                        medifirstService.post('anggaran/save-kegiatan-transaksi-anggaran', objSaveTransaksi).then(function (res) {
+                            toastr.success("Perubahan Berhasil Disimpan");
+                            $scope.isRouteLoading = false;
+                            $scope.onChangeDivEdit(); // Reload grid inside popup
+                            $scope.findKegiatan();     // Reload main grid
+                        }, function (err) {
+                            $scope.isRouteLoading = false;
+                        });
+                    } else {
+                        toastr.success("Perubahan Berhasil Disimpan");
+                        $scope.isRouteLoading = false;
+                        $scope.onChangeDivEdit(); // Reload grid inside popup
+                        $scope.findKegiatan();     // Reload main grid
+                    }
+                }, function (err) {
+                    $scope.isRouteLoading = false;
+                });
+            };
+
+            $scope.columnEditMaster = {
+                pageable: true,
+                selectable: "row",
+                columns: [
+                    { field: "kode", title: "Kode", width: "150px" },
+                    { field: "keterangan", title: "Keterangan", width: "350px" },
+                    { field: "namalengkap", title: "PPTK", width: "200px" },
+                    { field: "tahap", title: "Tahap", width: "100px" },
+                    { field: "tahun", title: "Tahun", width: "100px" }
+                ]
+            };
+
             $scope.columnKegiatan = {
 				toolbar:[
                     {
                         name: "add", 
                         text: "Tambah",
                         template: '<div class="grid_1"><button ng-hide="disidpegawai" ng-click="Tambah()" class="k-button k-button-icontext k-grid-upload" href="\\#"><span class="k-icon k-i-plus"></span>Tambah</button></div>'                    
+                    }, 
+                    {
+                        name: "editMaster", 
+                        text: "Edit Master",
+                        template: '<div class="grid_1"><button ng-hide="disidpegawai" ng-click="EditMaster()" class="k-button k-button-icontext k-grid-upload" href="\\#"><span class="k-icon k-i-pencil"></span>Edit Master</button></div>'                    
                     }, 
                     {
                         name: "add",
@@ -2896,7 +3188,7 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
                     {
                         name: "ads", 
                         text: "asd",
-                        template: '<div class="grid_5"></div>'
+                        template: '<div class="grid_4"></div>'
                     },
                     {
                         name: "src", 

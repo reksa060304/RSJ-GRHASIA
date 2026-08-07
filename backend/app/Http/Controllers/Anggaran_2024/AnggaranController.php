@@ -295,7 +295,7 @@ class AnggaranController extends ApiController {
             // $MA->targethasil = $request['targethasil'];
             // $MA->objectjenisbelanjafk = $request['jenisbelanja'];
             // $MA->objectpptkfk = $request['pptk'];
-            // $MA->headfk = (isset($request['headfk'])) ? $request['headfk'] : null;
+            $MA->headfk = (isset($request['headfk'])) ? $request['headfk'] : null;
             // if(isset($request['tahap'])){
             //     $KB = new KeteranganBelanja();
             //     $KB->norec = $KB->generateNewId();
@@ -570,38 +570,44 @@ class AnggaranController extends ApiController {
         $idProfile = (int) $kdProfile;
         // $dataLogin = $request->all();
 
-        $div = '';
+        $isDiv4 = true;
+        $divVal = 4;
         if (isset($request['div']) && $request['div'] != "" && $request['div'] != "undefined") {
-            $div =  "and ka.div = '".$request['div']."'";
-        }else{
-            $div = "and ka.div = 4";
+            $divVal = (int) $request['div'];
+            if ($divVal < 4) {
+                $isDiv4 = false;
+            }
         }
 
+        $div = "and ka.div = '" . $divVal . "'";
+
         $tahap = '';
-        if (isset($request['tahap']) && $request['tahap'] != "" && $request['tahap'] != "undefined") {
+        if ($isDiv4 && isset($request['tahap']) && $request['tahap'] != "" && $request['tahap'] != "undefined") {
             $tahap =  "and ta.objecttahapfk = ".$request['tahap'];
         }
         
         $tahun = '';
-        if (isset($request['tahun']) && $request['tahun'] != "" && $request['tahun'] != "undefined") {
+        if ($isDiv4 && isset($request['tahun']) && $request['tahun'] != "" && $request['tahun'] != "undefined") {
             $tahun =  "and ta.tahun = '".$request['tahun']."'";
         }
 
         $pegawai = '';
-        if (isset($request['pegawai']) && $request['pegawai'] != "" && $request['pegawai'] != "undefined") {
+        if ($isDiv4 && isset($request['pegawai']) && $request['pegawai'] != "" && $request['pegawai'] != "undefined") {
             $pegawai =  "and ta.objectpptkfk = ".$request['pegawai'];
         }
 
+        $joinType = $isDiv4 ? "INNER JOIN" : "LEFT JOIN";
+
         $kegiatan = DB::select(DB::raw("
             SELECT
-                ka.id, ka.kode,ka.keterangan,ta.tahun,pg.id as idpptk,pg.namalengkap,jb.jenisbelanja,tp.tahap,ta.targetmasuk as targetkinerja,dk.div as namadiv,dk.id as div,ta.norec,
+                ka.id, ka.kode,ka.keterangan,ka.headfk,ta.tahun,pg.id as idpptk,pg.namalengkap,jb.jenisbelanja,tp.tahap,ta.targetmasuk as targetkinerja,dk.div as namadiv,dk.id as div,ta.norec,
                 ta.indikatormasuk,ta.indikatorkeluaran,ta.indikatorhasil,ta.targetmasuk,ta.targetkeluaran,ta.targethasil, ta.islock, ta.islockrba, ta.islockangkas
             FROM
                 kegiatananggaran2024_m AS ka
-                INNER JOIN transaksianggaran2024_t AS ta ON ta.objectkegiatanfk = ka.id AND ta.statusenabled = TRUE
+                $joinType transaksianggaran2024_t AS ta ON ta.objectkegiatanfk = ka.id AND ta.statusenabled = TRUE
                 LEFT JOIN pegawai_m as pg on pg.id = ta.objectpptkfk
                 LEFT JOIN jenisbelanja_m as jb on jb.id = ta.objectjenisbelanjafk
-                INNER JOIN tahapanggaran_m as tp on tp.id = ta.objecttahapfk
+                $joinType tahapanggaran_m as tp on tp.id = ta.objecttahapfk
                 INNER JOIN divkegiatan2024_m as dk on dk.id = ka.div
             WHERE
                 ka.statusenabled = TRUE 

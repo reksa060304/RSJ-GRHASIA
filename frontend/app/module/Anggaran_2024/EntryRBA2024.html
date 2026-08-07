@@ -798,6 +798,192 @@
 	</div>
 </div>
 
+<div kendo-window="popupEdit" k-title="'EDIT MASTER ANGGARAN'" k-visible="false" k-width="1200" k-height="700">
+	<div class="panel panel-default container_12">
+		<div class="grid_12">
+			<div class="grid_3">
+				<div class="grid_12">
+					<label c-label item="item" c-label-text="Divisi"></label>
+				</div>
+				<div class="grid_12">
+					<input style="width: 100%;" kendo-combo-box k-ng-model="item.divEdit" k-data-text-field="'div'"
+						k-data-value-field="'id'" k-filter="'contains'" k-auto-bind="false" k-data-source="listDiv" 
+						k-on-change="onChangeDivEdit()"/>
+				</div>
+			</div>
+			
+			<div class="grid_3" ng-show="item.divEdit.id == 4">
+				<div class="grid_12">
+					<label c-label item="item" c-label-text="PPTK"></label>
+				</div>
+				<div class="grid_12">
+					<input kendo-combo-box k-ng-model="item.pptkFilterEdit" k-data-text-field="'text'" k-data-value-field="'value'"
+						k-filter="'contains'" k-auto-bind="false" k-data-source="listPenerima" k-on-change="onChangeDivEdit()" />
+				</div>
+			</div>
+			
+			<div class="grid_3" ng-show="item.divEdit.id == 4">
+				<div class="grid_12">
+					<label c-label item="item" c-label-text="Tahap"></label>
+				</div>
+				<div class="grid_12">
+					<input kendo-combo-box k-ng-model="item.tahapFilterEdit" k-data-text-field="'tahap'" k-data-value-field="'id'"
+						k-filter="'contains'" k-auto-bind="false" k-data-source="listTahap" k-on-change="onChangeDivEdit()" />
+				</div>
+			</div>
+			
+			<div class="grid_3" ng-show="item.divEdit.id == 4">
+				<div class="grid_12">
+					<label c-label item="item" c-label-text="Tahun"></label>
+				</div>
+				<div class="grid_12">
+					<input style="width: 100%;" k-options="yearUngkul" k-ng-model="item.tahunFilterEdit" kendo-date-picker
+						placeholer="YYYY" k-format="'yyyy'" k-on-change="onChangeDivEdit()" />
+				</div>
+			</div>
+		</div>
+
+		<!-- Row 2: Search Input & Search Button -->
+		<div class="grid_12" ng-show="item.divEdit" style="margin-top: 10px;">
+			<div class="grid_10">
+				<div class="grid_12">
+					<label c-label item="item" c-label-text="Pencarian (Kode / Keterangan)"></label>
+				</div>
+				<div class="grid_12">
+					<input c-text-box type="input" class="k-textbox" ng-model="item.searchEditMaster" placeholder="Ketik Kode atau Nama Kegiatan untuk mencari..." />
+				</div>
+			</div>
+			<div class="grid_2" style="margin-top: 22px;">
+				<button class="btnTemplate1" ng-click="onChangeDivEdit()">Search</button>
+			</div>
+		</div>
+		<div class="grid_12">
+			<!-- Grid showing data of selected Div -->
+			<div class="grid_12 borderBox" style="margin-top: 15px;">
+				<div id="gridEditMaster" kendo-grid k-data-source="dataSourceEditMaster" k-selectable="'row'" style="height: 380px;"
+					k-options="columnEditMaster" k-ng-model="dataEditMasterSelected" ng-click="klikEditMaster(dataEditMasterSelected)">
+				</div>
+			</div>
+		</div>
+		
+		<!-- Edit Form (Only visible when a row is selected) -->
+		<div class="grid_12" ng-show="item.divEdit" style="margin-top: 20px; border-top: 1px solid #ccc; padding-top: 15px;">
+			<div class="grid_12">
+				<!-- Parent selection based on Div -->
+				<div class="grid_3" ng-if="item.divEdit.id == 4">
+					<div class="grid_12">
+						<label c-label item="item">Sub Kegiatan</label>
+					</div>
+					<div class="grid_12">
+						<input style="width: 100%;" kendo-combo-box k-ng-model="item.subKegiatanEdit"
+							k-data-text-field="'keterangan'" k-data-value-field="'id'" k-filter="'contains'" k-auto-bind="false"
+							k-data-source="listDataDivSubsubkg" />
+					</div>
+				</div>	
+
+				<div class="grid_3" ng-if="item.divEdit.id == 3">
+					<div class="grid_12">
+						<label c-label item="item">Kegiatan</label>
+					</div>
+					<div class="grid_12">
+						<input style="width: 100%;" kendo-combo-box k-ng-model="item.kegiatanDiv2Edit"
+							k-data-text-field="'kode_keterangan'" k-data-value-field="'id'" k-filter="'contains'" k-auto-bind="false"
+							k-data-source="listDataDivSubkg" />
+					</div>
+				</div>
+				
+				<div class="grid_3" ng-if="item.divEdit.id == 2">
+					<div class="grid_12">
+						<label c-label item="item">Program</label>
+					</div>
+					<div class="grid_12">
+						<input style="width: 100%;" kendo-combo-box k-ng-model="item.kegiatanDiv1Edit"
+							k-data-text-field="'kode_keterangan'" k-data-value-field="'id'" k-filter="'contains'" k-auto-bind="false"
+							k-data-source="listDataDivProg" />
+					</div>
+				</div>
+				
+				<div class="grid_3" ng-if="item.divEdit.id == 1">
+					<div class="grid_12">
+						<label c-label item="item">Urusan Pemerintah</label>
+					</div>
+					<div class="grid_12">
+						<input style="width: 100%;" kendo-combo-box k-ng-model="item.kegiatanDiv0Edit"
+							k-data-text-field="'kode_keterangan'" k-data-value-field="'id'" k-filter="'contains'" k-auto-bind="false"
+							k-data-source="listDataDivUsulan" />
+					</div>
+				</div>
+	
+				<div class="grid_3">
+					<div class="grid_12">
+						<label c-label item="item" c-label-text="Kode Kegiatan"></label>
+					</div>
+					<div class="grid_12">
+						<input c-text-box type="input" class="k-textbox" ng-model="item.kodeEdit" />
+					</div>
+				</div>
+	
+				<div class="grid_6" ng-class="{'grid_9': item.divEdit.id == 0}">
+					<div class="grid_12">
+						<label c-label item="item" c-label-text="Nama Kegiatan"></label>
+					</div>
+					<div class="grid_12">
+						<textarea class="k-textbox" ng-model="item.keteranganEdit" style="width: 100%; height: 50px; resize: vertical;"></textarea>
+					</div>
+				</div>
+			</div>
+			
+			<div class="grid_12" style="margin-top: 10px;">
+				<div class="grid_3" ng-hide="item.divEdit.id !== 4">
+					<div class="grid_12">
+						<label c-label item="item" c-label-text="PPTK" real></label>
+					</div>
+					<div class="grid_12">
+						<input kendo-combo-box="pptkComboBox" k-ng-model="item.pptkEdit" k-data-text-field="'text'" k-data-value-field="'value'"
+							k-filter="'contains'" k-auto-bind="false" k-data-source="listPenerima" />
+					</div>
+				</div>
+
+				<div class="grid_3" ng-hide="item.divEdit.id !== 4">
+					<div class="grid_12">
+						<label c-label item="item" c-label-text="Jenis Belanja" real></label>
+					</div>
+					<div class="grid_12">
+						<input style="width: 100%;" kendo-combo-box k-ng-model="item.jenisBelanjaEdit" k-data-text-field="'jenisbelanja'"
+							k-data-value-field="'id'" k-filter="'contains'" k-auto-bind="false" k-data-source="listJenisBelanja" />
+					</div>
+				</div>
+
+				<div class="grid_2" ng-hide="item.divEdit.id !== 4">
+					<div class="grid_12">
+						<label c-label item="item" c-label-text="Tahun"></label>
+					</div>
+					<div class="grid_12">
+						<input style="width: 100%;" k-options="yearUngkul" k-ng-model="item.tahunEdit" kendo-date-picker
+							placeholer="YYYY" k-format="'yyyy'" />
+					</div>
+				</div>
+
+				<div class="grid_3" ng-hide="item.divEdit.id !== 4">
+					<div class="grid_12">
+						<label c-label item="item" c-label-text="Tahap"></label>
+					</div>
+					<div class="grid_12" >
+						<input style="width: 100%;" kendo-combo-box k-ng-model="item.tahapEdit" k-data-text-field="'tahap'"
+							k-data-value-field="'id'" k-filter="'contains'" k-auto-bind="false" k-data-source="listTahap" />
+					</div>
+				</div>
+			</div>
+			
+			<div class="grid_12" style="margin-top: 15px;">
+				<div class="grid_2">
+					<button class="btnTemplate1" ng-click="simpanEditMaster()">Simpan Perubahan</button>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
+
 <div kendo-window="popupProgram" k-title="'Detail Program'" k-visible="false" k-width="1000" k-height="600">
 	<div class="panel panel-default container_12">
 		<div class="grid_12">
