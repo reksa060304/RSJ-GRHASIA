@@ -22,6 +22,7 @@ define(['initialize', 'Configuration'], function (initialize,config) {
             var dataLoad = []
             var norecEMR = ''
             var pegawaiInputDetail= ''
+            var imgDefault = '';
             if(medifirstService.getKelompokUser() == 'mahasiswadiklat'){
                 $scope.tombolSimpanVis = false
             }
@@ -405,6 +406,18 @@ define(['initialize', 'Configuration'], function (initialize,config) {
                     }
 
                 }
+
+                medifirstService.get("emr/get-emr-transaksi-detail-img?noemr=" + nomorEMR + "&emrfk=" + $scope.cc.emrfk).then(function (data) {
+                    if (data.data.data.length > 0) {
+                        $scope.dataGambar = data.data.data;
+                        for (var i = 0; i < $scope.dataGambar.length; i++) {
+                            if ($scope.dataGambar[i].keterangan == "signature_1" || $scope.dataGambar[i].emrdfk == "1") {
+                                $scope.dataGambar[i].base64 = $scope.dataGambar[i].image;
+                                drawImgOld("signature_1", $scope.dataGambar[i].base64);
+                            }
+                        }
+                    }
+                });
                 // if( $scope.cc.norec_emr !='-' && pegawaiInputDetail !='' && pegawaiInputDetail !=null){
                 //     if(pegawaiInputDetail != medifirstService.getPegawaiLogin().id){
                 //         $scope.allDisabled =true
@@ -951,6 +964,14 @@ define(['initialize', 'Configuration'], function (initialize,config) {
            
            
             $scope.Save = function () {
+                var arrSaveImg = [];
+                var canvas = document.getElementById('signature_1');
+                if (canvas) {
+                    var dataURL = canvas.toDataURL();
+                    if (imgDefault !== dataURL) {
+                        arrSaveImg.push({ id: 1, values: dataURL });
+                    }
+                }
 
                 var arrobj = Object.keys($scope.item.obj)
                 var arrSave = []
@@ -963,7 +984,8 @@ define(['initialize', 'Configuration'], function (initialize,config) {
                 $scope.cc.jenisemr = 'asesmen'
                 var jsonSave = {
                     head: $scope.cc,
-                    data: arrSave
+                    data: arrSave,
+                    dataimg: arrSaveImg
                 }
                 medifirstService.post('emr/save-emr-dinamis', jsonSave).then(function (e) {
                     var confirm = $mdDialog.confirm()
@@ -989,9 +1011,14 @@ define(['initialize', 'Configuration'], function (initialize,config) {
                     })
 
                     var arrStr = {
-                        0: e.data.data.noemr
+                        0: e.data.data.noemr,
+                        1: e.data.norecEMR || e.data.data.norec,
+                        2: $scope.cc.noregistrasi
                     }
                     cacheHelper.set('cacheNomorEMR', arrStr);
+                    nomorEMR = e.data.data.noemr;
+                    norecEMR = e.data.norecEMR || e.data.data.norec;
+                    $scope.cc.norec_emr = e.data.data.noemr;
                 });
             }
             window.addEventListener("scroll", function() {
@@ -999,6 +1026,105 @@ define(['initialize', 'Configuration'], function (initialize,config) {
                 var scrollTop = window.scrollY;
                 scrollMarker.style.top = scrollTop + "px";
             });
+
+            $scope.batalTTd = function(id) {
+                var canvas = document.getElementById(id);
+                if (canvas) {
+                    var context = canvas.getContext("2d");
+                    context.clearRect(0, 0, canvas.width, canvas.height);
+                }
+            };
+
+            function drawImgOld(id, base64, retries) {
+                if (retries === undefined) retries = 10;
+                var canvas = document.getElementById(id);
+                if (canvas) {
+                    var context = canvas.getContext("2d");
+                    context.clearRect(0, 0, canvas.width, canvas.height);
+                    var img = new Image();
+                    img.src = base64;
+                    img.onload = function() {
+                        context.drawImage(img, 0, 0, canvas.width, canvas.height);
+                    };
+                } else if (retries > 0) {
+                    setTimeout(function() {
+                        drawImgOld(id, base64, retries - 1);
+                    }, 200);
+                }
+            }
+
+            function initializeCanvas(id) {
+                var canvas = document.getElementById(id);
+                if (!canvas) return false;
+                var ctx = canvas.getContext("2d");
+                ctx.strokeStyle = "#000000";
+                ctx.lineWidth = 2;
+                imgDefault = canvas.toDataURL();
+
+                var isDrawing = false;
+                var lastPos = { x: 0, y: 0 };
+
+                function getPos(e) {
+                    var rect = canvas.getBoundingClientRect();
+                    var clientX = e.clientX;
+                    var clientY = e.clientY;
+                    if (e.touches && e.touches.length > 0) {
+                        clientX = e.touches[0].clientX;
+                        clientY = e.touches[0].clientY;
+                    } else if (e.changedTouches && e.changedTouches.length > 0) {
+                        clientX = e.changedTouches[0].clientX;
+                        clientY = e.changedTouches[0].clientY;
+                    }
+                    return {
+                        x: clientX - rect.left,
+                        y: clientY - rect.top
+                    };
+                }
+
+                function startDrawing(e) {
+                    isDrawing = true;
+                    lastPos = getPos(e);
+                    ctx.beginPath();
+                    ctx.moveTo(lastPos.x, lastPos.y);
+                }
+
+                function draw(e) {
+                    if (!isDrawing) return;
+                    e.preventDefault();
+                    var currentPos = getPos(e);
+                    ctx.lineTo(currentPos.x, currentPos.y);
+                    ctx.stroke();
+                    lastPos = currentPos;
+                }
+
+                function stopDrawing() {
+                    isDrawing = false;
+                }
+
+                canvas.addEventListener("mousedown", startDrawing, { passive: false });
+                canvas.addEventListener("mousemove", draw, { passive: false });
+                canvas.addEventListener("mouseup", stopDrawing, { passive: true });
+                canvas.addEventListener("mouseleave", stopDrawing, { passive: true });
+
+                canvas.addEventListener("touchstart", startDrawing, { passive: false });
+                canvas.addEventListener("touchmove", draw, { passive: false });
+                canvas.addEventListener("touchend", stopDrawing, { passive: true });
+
+                return true;
+            }
+
+            function initSignatureWithRetry(id) {
+                var attempts = 0;
+                var interval = setInterval(function() {
+                    attempts++;
+                    var success = initializeCanvas(id);
+                    if (success || attempts > 20) {
+                        clearInterval(interval);
+                    }
+                }, 500);
+            }
+
+            initSignatureWithRetry('signature_1');
            
 
         }

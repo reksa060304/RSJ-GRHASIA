@@ -2011,6 +2011,16 @@ define(['initialize','Configuration'], function (initialize, configuration) {
                         }
                     }
                 }
+                medifirstService.get("emr/get-emr-transaksi-detail-img?noemr=" + nomorEMR + "&emrfk=" + $scope.cc.emrfk, true).then(function (dat) {
+                    var dataImg = dat.data.data;
+                    
+                    dataImg.forEach(function(item) {
+                        if (parseFloat($scope.cc.emrfk) == parseFloat(item.emrfk)) {
+                            var canvasId = 'signature_' + item.emrdfk;
+                            drawImgOld(canvasId, item.image);
+                        }
+                    });
+                })
             })
         } else {
             medifirstService.get("emr/get-emr-otomatis?noemr=" + nomorEMR + "&emrfk=3000403" + "&emrid=" + $scope.cc.emrfk).then(function (data) {
@@ -2737,6 +2747,16 @@ define(['initialize','Configuration'], function (initialize, configuration) {
 
             $scope.Save = function () {
                 $scope.isRouteLoading = true
+                
+                var arrSaveImg = [];
+                var canvas = document.getElementById('signature_1');
+                if (canvas) {
+                    var dataURL = canvas.toDataURL();
+                    if (imgDefault !== dataURL) {
+                        arrSaveImg.push({ id: 1, values: dataURL });
+                    }
+                }
+
                 var arrobj = Object.keys($scope.item.obj)
                 var arrSave = []
                 for (var i = arrobj.length - 1; i >= 0; i--) {
@@ -2751,7 +2771,8 @@ define(['initialize','Configuration'], function (initialize, configuration) {
                 $scope.cc.jenisemr = 'asesmen'
                 var jsonSave = {
                     head: $scope.cc,
-                    data: arrSave
+                    data: arrSave,
+                    dataimg: arrSaveImg
                 }
                 medifirstService.post('emr/save-emr-dinamis', jsonSave).then(function (e) {
                     var confirm = $mdDialog.confirm()
@@ -2772,10 +2793,14 @@ define(['initialize','Configuration'], function (initialize, configuration) {
                         $scope.cc.noregistrasi).then(function (res) {})
                     $scope.isRouteLoading = false
                     var arrStr = {
-                        0: e.data.data.noemr
+                        0: e.data.data.noemr,
+                        1: e.data.norecEMR || e.data.data.norec,
+                        2: $scope.cc.noregistrasi
                     }
                     $scope.cc.norec_emr = e.data.data.noemr
                     cacheHelper.set('cacheNomorEMR', arrStr);
+                    nomorEMR = e.data.data.noemr;
+                    norecEMR = e.data.norecEMR || e.data.data.norec;
                     var objSave = {
                         data: $scope.listItemREV
                     }
@@ -3012,6 +3037,116 @@ define(['initialize','Configuration'], function (initialize, configuration) {
                     // '&pegawaittd=' + pegawai.value +
                     '&noregistrasi=' + $scope.cc.noregistrasi +
                     '&norec_pd=' + $scope.cc.norec_pd, '_blank');
+            }
+            
+            //tanda tangan
+            var imgDefault = 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAKAAAACgCAYAAACLz2ctAAAEOUlEQVR4AezS0Y7COABD0dH+/0evxBMrAWVpk7jxmQc0ojSxr+8/f/4QWEiAgAvhu/rvj4AsWEqAgEvxu5yAHFhKgIBL8bu8V0DbRxAgYMQMvSEI2Lt9RHMCRszQG4KAvdtHNCdgxAy9IQjYt31UYwJGzdEXhoB9m0c1JmDUHH1hCNi3eVRjAkbN0ReGgH2bRzWeKmBUc2EiCBAwYobeEATs3T6iOQEjZugNQcDe7SOaEzBiht4QBJyyvUveESDgOzK+n0KAgFMwu+QdAQK+I+P7KQQIOAWzS94RIOA7Mr6fQoCAUzD3XnLUnIBHhDwfSoCAQ/E6/IgAAY8IeT6UAAGH4nX4EQECHhHyfCgBAg7F6/AjAvsKeNTc8wgCBIyYoTcEAXu3j2hOwIgZekMQsHf7iOYEjJihNwQB99v+Vo0IeKu59gtLwP02vVUjAt5qrv3CEnC/TW/ViIC3mmu/sATcb9NbNbpUwFs1FzaCAAEjZugNQcDe7SOaEzBiht4QBOzdPqI5ASNm6A1BwEu2d8ivBAj4KznvXUKAgJdgdMivBAj4KznvXUKAgJdgdMivBAj4KznvXUKAgJdg7D3kbHMCniXo/VMECHgKn5fPEiDgWYLeP0WAgKfwefksAQKeJej9UwQIeAqfl88SuK+AZ5t7P4IAASNm6A1BwN7tI5oTMGKG3hAE7N0+ojkBI2boDUHA+22/VWICbjXn/coQ8H6bbZWYgFvNeb8yBLzfZlslJuBWc96vDAHvt9lWif+XgFs1VyaCAAEjZugNQcDe7SOaEzBiht4QBOzdPqI5ASNm6A1BwK+296NRBAg4iqxzvyJAwK8w+dEoAgQcRda5XxEg4FeY/GgUAQKOIuvcrwgQ8CtMvT8a3ZyAowk7/yMBAn7E4+FoAgQcTdj5HwkQ8CMeD0cTIOBows7/SICAH/F4OJpAroCjmzs/ggABI2boDUHA3u0jmhMwYobeEATs3T6iOQEjZugNQcC87asSEbBq7ryyBMzbpCoRAavmzitLwLxNqhIRsGruvLIEzNukKtF/BKxqrmwEAQJGzNAbgoC920c0J2DEDL0hCNi7fURzAkbM0BuCgI/tfawiQMBV5N37IEDABwYfqwgQcBV59z4IEPCBwccqAgRcRd69DwIEfGDo/VjdnICrFyi/n4DlAqyuT8DVC5TfT8ByAVbXJ+DqBcrvJ2C5AKvrrxNwdXP3RxAgYMQMvSEI2Lt9RHMCRszQG4KAvdtHNCdgxAy9IQg4f3s3PhEg4BMM/84nQMD5zN34RICATzD8O58AAeczd+MTAQI+wfDvfAIEnM+898YXzQn4Aoqv5hEg4DzWbnpBgIAvoPhqHgECzmPtphcECPgCiq/mESDgPNZuekGgRMAXzX0VQYCAETP0hiBg7/YRzQkYMUNvCAL2bh/RnIARM/SGIODm26fX+xcAAP//nHXz1AAAAAZJREFUAwCUEwFBguBA8wAAAABJRU5ErkJggg==';
+
+            function initSignatureWithRetry(id, retries) {
+                var sigCanvas = document.getElementById(id);
+                if (sigCanvas) {
+                    initializeCanvas(id);
+                } else if (retries > 0) {
+                    setTimeout(function() {
+                        initSignatureWithRetry(id, retries - 1);
+                    }, 200);
+                }
+            }
+            initSignatureWithRetry("signature_1", 10);
+
+            function initializeCanvas(id) {
+                var sigCanvas = document.getElementById(id);
+                if (!sigCanvas) return;
+                var context = sigCanvas.getContext("2d");
+                context.strokeStyle = "black";
+                context.lineJoin = "round";
+                context.lineWidth = 2;
+
+                var isDrawing = false;
+
+                function getCoords(e) {
+                    var rect = sigCanvas.getBoundingClientRect();
+                    var clientX, clientY;
+                    
+                    if (e.targetTouches && e.targetTouches.length > 0) {
+                        clientX = e.targetTouches[0].clientX;
+                        clientY = e.targetTouches[0].clientY;
+                    } else if (e.changedTouches && e.changedTouches.length > 0) {
+                        clientX = e.changedTouches[0].clientX;
+                        clientY = e.changedTouches[0].clientY;
+                    } else {
+                        clientX = e.clientX;
+                        clientY = e.clientY;
+                    }
+                    
+                    return {
+                        x: clientX - rect.left,
+                        y: clientY - rect.top
+                    };
+                }
+
+                function startDrawing(e) {
+                    var coords = getCoords(e);
+                    context.beginPath();
+                    context.moveTo(coords.x, coords.y);
+                    isDrawing = true;
+                    if (e.type === 'touchstart') {
+                        if (e.cancelable) e.preventDefault();
+                    }
+                }
+
+                function draw(e) {
+                    if (!isDrawing) return;
+                    var coords = getCoords(e);
+                    context.lineTo(coords.x, coords.y);
+                    context.stroke();
+                    if (e.type === 'touchmove') {
+                        if (e.cancelable) e.preventDefault();
+                    }
+                }
+
+                function stopDrawing(e) {
+                    if (isDrawing) {
+                        draw(e);
+                        context.closePath();
+                        isDrawing = false;
+                    }
+                }
+
+                sigCanvas.addEventListener('touchstart', startDrawing, { passive: false });
+                sigCanvas.addEventListener('touchmove', draw, { passive: false });
+                sigCanvas.addEventListener('touchend', stopDrawing, { passive: true });
+
+                sigCanvas.addEventListener('mousedown', startDrawing, false);
+                sigCanvas.addEventListener('mousemove', draw, false);
+                sigCanvas.addEventListener('mouseup', stopDrawing, false);
+                sigCanvas.addEventListener('mouseleave', stopDrawing, false);
+            }
+
+            function drawImgOld(id, base64, retries) {
+                if (retries === undefined) retries = 10;
+                var canvas = document.getElementById(id);
+                if (canvas) {
+                    var context = canvas.getContext("2d");
+                    context.clearRect(0, 0, canvas.width, canvas.height);
+                    var img = new Image();
+                    img.src = base64;
+                    img.onload = function() {
+                        context.drawImage(img, 0, 0, canvas.width, canvas.height);
+                    };
+                } else if (retries > 0) {
+                    setTimeout(function() {
+                        drawImgOld(id, base64, retries - 1);
+                    }, 200);
+                }
+            }
+
+            $scope.batalTTd = function (canvas) {
+                var sigCanvas = document.getElementById(canvas);
+                if (sigCanvas) {
+                    var context = sigCanvas.getContext("2d");
+                    context.clearRect(0, 0, sigCanvas.width, sigCanvas.height);
+                }
             }
 
         }

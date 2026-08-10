@@ -1033,9 +1033,22 @@
         <div class="grid_12">
             <fieldset style="margin-top: 10px;">
                 <div class="grid_4 margin-top-30 text-center margin-bottom">
-                    <label c-label item="item" class="margin-bottom">Penanggung Jawab Pasien</label>
-                    <textarea c-text-area type="input" filter="'string'" class="k-textbox" ng-model="item.obj[1901300422]"
-                        style="height: 30px; width: 98%; "/>
+                    <div class="grid_12">
+                        <label c-label item="item" class="margin-bottom">Penanggung Jawab Pasien</label>
+                        <textarea c-text-area type="input" filter="'string'" class="k-textbox" ng-model="item.obj[1901300422]"
+                            style="height: 30px; width: 98%; "/>
+                    </div>
+                    <div class="grid_12" style="margin-top: 10px;">
+                        <div class="grid_12" style="width: 200px; height: 200px; border: 1px solid #929191; margin: 10px auto; float: none;">
+                            <div id="iframe">
+                                <canvas id="signature_1" width="200" height="200"></canvas>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="grid_12" style="text-align:center">
+                        <button class="k-button batal btnKoneng" style="margin-top: 5px"
+                            ng-click="batalTTd('signature_1')">Hapus</button>
+                    </div>
                 </div>
                 <div class="grid_4 margin-top-30 text-center margin-bottom">
                     <label c-label item="item" c-label-text="Dokter Pemeriksa/DPJP"></label>

@@ -930,11 +930,15 @@
                                       <td style="text-align:center;">Dokter Pemeriksa/DPJP</td>
                                      
                                     </tr>
-                                    <tr >
-                                        <td style="height:60px"></td>
-                                        <td style="height:60px"></td>
-                                       
-                                      </tr>
+                                     <tr >
+                                         <td style="text-align:center; height:60px; vertical-align:middle; padding:5px 0;">
+                                             @if(isset($fotoMap[1]))
+                                                 <img src="{{ $fotoMap[1] }}" style="max-height:60px; max-width:150px; display:inline-block; vertical-align:middle;">
+                                             @endif
+                                         </td>
+                                         <td style="height:60px"></td>
+                                        
+                                       </tr>
                                     <tr >
                                       <td style="text-align:center;">
                                         (  @foreach ($res['d'] as $item)

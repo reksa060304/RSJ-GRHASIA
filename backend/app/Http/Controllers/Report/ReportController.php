@@ -21189,7 +21189,7 @@ public function suratBuktiPengembalian(Request $request)
             emrpasien_t AS ep
             INNER JOIN emrpasiend_t AS epd ON ep.noemr = epd.emrpasienfk
             INNER JOIN emrd_t AS ed ON epd.emrdfk = ed.ID
-                INNER JOIN antrianpasiendiperiksa_t AS pd ON pd.norec = ep.norec_apd
+            LEFT JOIN antrianpasiendiperiksa_t AS pd ON pd.norec = ep.norec_apd
             left JOIN pegawai_m AS pg ON pg.id = pd.objectpegawaifk
             left JOIN pasien_m as pa on ep.nocm =  pa.nocm
             left JOIN alamat_m as al on pa.id = al.nocmfk
@@ -21202,6 +21202,9 @@ public function suratBuktiPengembalian(Request $request)
             ed.nourut
             "
         ));
+        if (count($data) == 0) {
+            return 'Data EMR tidak ditemukan atau belum disimpan.';
+        }
         foreach ($data as $z){
             if ($z->type=="datetime"){
                 $z->value=date('Y-m-d H:i:s',strtotime($z->value));
@@ -21250,6 +21253,22 @@ public function suratBuktiPengembalian(Request $request)
                     $item[$items->emrdfk] = $arr[1];
                 }
         }
+        $noemr = '';
+        if (count($data) > 0) {
+            $noemr = $data[0]->noemr;
+        }
+        $listFoto = [];
+        if ($noemr != '') {
+            $listFoto = DB::table('emrfoto_t')
+                ->where('noemrpasienfk', $noemr)
+                ->where('statusenabled', true)
+                ->get();
+        }
+        $fotoMap = [];
+        foreach ($listFoto as $f) {
+            $fotoMap[$f->emrdfk] = $f->image;
+        }
+
         $pageWidth = 950;
         $peg = null;    
         if(isset($request['isttd']) && $request['isttd'] == true){
@@ -21266,7 +21285,8 @@ public function suratBuktiPengembalian(Request $request)
                 'pageWidth' => $pageWidth,
                 'data' => $data,
                 'item'=> $item,
-                'peg'=> $peg
+                'peg'=> $peg,
+                'fotoMap' => $fotoMap
             )
         );
         if(isset($request['isttd']) && $request['isttd'] == true){
@@ -21295,7 +21315,8 @@ public function suratBuktiPengembalian(Request $request)
                     'data' => $data,
                     'item'=> $item,
                     'peg'=> $peg,
-                    'r' => $request
+                    'r' => $request,
+                    'fotoMap' => $fotoMap
                 )
             );
             return $this->saveDokumenKlaim($pdf, $request);
@@ -23422,7 +23443,7 @@ public function suratBuktiPengembalian(Request $request)
           emrpasien_t AS ep
           INNER JOIN emrpasiend_t AS epd ON ep.noemr = epd.emrpasienfk
           INNER JOIN emrd_t AS ed ON epd.emrdfk = ed.ID
-              INNER JOIN antrianpasiendiperiksa_t AS pd ON pd.norec = ep.norec_apd
+          LEFT JOIN antrianpasiendiperiksa_t AS pd ON pd.norec = ep.norec_apd
           left JOIN pegawai_m AS pg ON pg.id = pd.objectpegawaifk
           left JOIN pasien_m as pa on ep.nocm =  pa.nocm
           left JOIN alamat_m as al on pa.id = al.nocmfk
@@ -23435,6 +23456,9 @@ public function suratBuktiPengembalian(Request $request)
           ed.nourut
           "
       ));
+      if (count($data) == 0) {
+          return 'Data EMR tidak ditemukan atau belum disimpan.';
+      }
       foreach ($data as $z){
           if ($z->type=="datetime"){
               $z->value=date('Y-m-d H:i:s',strtotime($z->value));
@@ -23483,6 +23507,22 @@ public function suratBuktiPengembalian(Request $request)
                   $item[$items->emrdfk] = $arr[1];
               }
       }
+      $noemr = '';
+      if (count($data) > 0) {
+          $noemr = $data[0]->noemr;
+      }
+      $listFoto = [];
+      if ($noemr != '') {
+          $listFoto = DB::table('emrfoto_t')
+              ->where('noemrpasienfk', $noemr)
+              ->where('statusenabled', true)
+              ->get();
+      }
+      $fotoMap = [];
+      foreach ($listFoto as $f) {
+          $fotoMap[$f->emrdfk] = $f->image;
+      }
+
       $pageWidth = 950;
       $peg = null;    
       if(isset($request['isttd']) && $request['isttd'] == true){
@@ -23499,7 +23539,8 @@ public function suratBuktiPengembalian(Request $request)
               'pageWidth' => $pageWidth,
               'data' => $data,
               'item'=> $item,
-              'peg'=> $peg
+              'peg'=> $peg,
+              'fotoMap' => $fotoMap
           )
       );
       if(isset($request['isttd']) && $request['isttd'] == true){
