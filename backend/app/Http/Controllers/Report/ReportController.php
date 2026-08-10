@@ -21261,6 +21261,7 @@ public function suratBuktiPengembalian(Request $request)
         if ($noemr != '') {
             $listFoto = DB::table('emrfoto_t')
                 ->where('noemrpasienfk', $noemr)
+                ->where('emrfk', $request['emrfk'])
                 ->where('statusenabled', true)
                 ->get();
         }
@@ -23515,6 +23516,7 @@ public function suratBuktiPengembalian(Request $request)
       if ($noemr != '') {
           $listFoto = DB::table('emrfoto_t')
               ->where('noemrpasienfk', $noemr)
+              ->where('emrfk', $request['emrfk'])
               ->where('statusenabled', true)
               ->get();
       }
