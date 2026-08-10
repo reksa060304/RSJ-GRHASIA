@@ -1848,6 +1848,10 @@ define(["initialize", "Configuration"], function (initialize, config) {
       };
 
       function openRujukanEdukasiFormPopup(form) {
+        // Simpan cache asli sebelum ditimpa, agar bisa di-restore setelah dialog tutup
+        var originalCacheNomorEMR = cacheHelper.get('cacheNomorEMR');
+        var originalCacheNOREC_EMR = cacheHelper.get('cacheNOREC_EMR');
+
         var arrStr = { 0: form.noemr, 1: form.norec };
         cacheHelper.set('cacheNomorEMR', arrStr);
         cacheHelper.set('cacheNOREC_EMR', arrStr);
@@ -1893,6 +1897,9 @@ define(["initialize", "Configuration"], function (initialize, config) {
             clickOutsideToClose: false,
             fullscreen: true
           }).finally(function () {
+            // Restore cache EMR pasien utama yang sebelumnya disimpan
+            cacheHelper.set('cacheNomorEMR', originalCacheNomorEMR);
+            cacheHelper.set('cacheNOREC_EMR', originalCacheNOREC_EMR);
             $scope.openRujukanEdukasi();
           });
         }
