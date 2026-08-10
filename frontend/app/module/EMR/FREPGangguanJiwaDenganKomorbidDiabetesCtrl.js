@@ -176,6 +176,24 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
                 }
                 $scope.item.obj[1901307140] = $scope.cc.nocm;
                 $scope.item.obj[1901307160] = $scope.now;
+                $scope.item.obj[1901306001]=$scope.cc.namapasien
+                $scope.item.obj[1901306002]=$scope.cc.umur
+                $scope.item.obj[1901307140]=$scope.cc.nocm
+                if ($scope.cc.jeniskelamin && $scope.cc.jeniskelamin.toUpperCase() == 'LAKI-LAKI') {
+                    $scope.item.obj[1901306003] = true;
+                    $scope.item.obj[1901306004] = false;
+                } else {
+                    $scope.item.obj[1901306004] = true;
+                    $scope.item.obj[1901306003] = false;
+                }
+
+                $scope.item.obj[1901307210]=$scope.cc.namapasien
+                $scope.item.obj[1901307220]=$scope.cc.nocm
+                
+                var loginPegawai = medifirstService.getPegawaiLogin();
+                if (loginPegawai) {
+                    $scope.item.obj[1901307170] = { value: loginPegawai.id, text: loginPegawai.namaLengkap };
+                }
 
                 dataLoad = dat.data.data
                 for (var i = 0; i <= dataLoad.length - 1; i++) {
@@ -241,9 +259,10 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
                     }
                 }
 
-                // Ambil diagnosa (1901307260) dari CPPT rawat inap terakhir isian dokter bagian A
-                var hasDiagnosa = dataLoad.some(function (d) { return d.emrdfk == 1901307260 && d.value != null && d.value !== "" && d.value !== "null"; });
-                if (!hasDiagnosa) {
+                // Ambil diagnosa (1901306005) dari CPPT rawat inap terakhir isian dokter bagian A dan Pengobatan Terakhir (1901306006) dari CPPT bagian P
+                var hasDiagnosa = dataLoad.some(function (d) { return d.emrdfk == 1901306005; });
+                var hasPengobatan = dataLoad.some(function (d) { return d.emrdfk == 1901306006; });
+                if (!hasDiagnosa || !hasPengobatan) {
                     var normToUse = $scope.cc.nocm || $scope.noCM;
                     medifirstService.get("emr/daftar-riwayat-registrasi?norm=" + normToUse).then(function (resReg) {
                         var ranapRegs = [];
@@ -258,17 +277,41 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
                             medifirstService.get("emr/get-emr-cppt?nocm=" + normToUse).then(function (resCppt) {
                                 if (resCppt && resCppt.data && resCppt.data.data) {
                                     var cpptList = resCppt.data.data;
+                                    var loginPegawai = medifirstService.getPegawaiLogin();
+                                    var loginPegawaiId = loginPegawai ? loginPegawai.id : null;
                                     var filtered = cpptList.filter(function (c) {
                                         var isDokter = c.jenisppa && c.jenisppa.toLowerCase().indexOf('dokter') > -1;
                                         var isRanap = ranapRegs.indexOf(c.noregistrasi) > -1;
-                                        return isDokter && isRanap;
+                                        var isCurrentDoctor = false;
+                                        if (loginPegawaiId && c.tenagamedis) {
+                                            var splitTm = c.tenagamedis.split('~');
+                                            if (splitTm[0] && parseInt(splitTm[0]) === parseInt(loginPegawaiId)) {
+                                                isCurrentDoctor = true;
+                                            }
+                                        }
+                                        return isDokter && isRanap && isCurrentDoctor;
                                     });
+                                    if (filtered.length === 0) {
+                                        filtered = cpptList.filter(function (c) {
+                                            var isDokter = c.jenisppa && c.jenisppa.toLowerCase().indexOf('dokter') > -1;
+                                            var isRanap = ranapRegs.indexOf(c.noregistrasi) > -1;
+                                            return isDokter && isRanap;
+                                        });
+                                    }
                                     if (filtered.length > 0) {
                                         var latestCppt = filtered[filtered.length - 1];
                                         if (latestCppt.soap) {
-                                            var match = latestCppt.soap.match(/(?:^|\n)\s*A\s*:\s*([\s\S]*?)(?=(?:\n\s*[P]\s*:|$))/i);
-                                            if (match && match[1]) {
-                                                $scope.item.obj[1901307260] = match[1].trim();
+                                            if (!hasDiagnosa) {
+                                                var match = latestCppt.soap.match(/(?:^|\n)\s*A\s*:\s*([\s\S]*?)(?=(?:\n\s*[P]\s*:|$))/i);
+                                                if (match && match[1]) {
+                                                    $scope.item.obj[1901306005] = match[1].trim();
+                                                }
+                                            }
+                                            if (!hasPengobatan) {
+                                                var matchP = latestCppt.soap.match(/(?:^|\n)\s*P\s*:\s*([\s\S]*?)$/i);
+                                                if (matchP && matchP[1]) {
+                                                    $scope.item.obj[1901306006] = matchP[1].trim();
+                                                }
                                             }
                                         }
                                     }
@@ -278,8 +321,8 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
                     });
                 }
 
-                // Ambil resep terakhir dari order farmasi untuk Riwayat Perawatan (1901307270)
-                var hasPengobatan = dataLoad.some(function (d) { return d.emrdfk == 1901307270 && d.value != null && d.value !== "" && d.value !== "null"; });
+                // Ambil resep terakhir dari order farmasi untuk Riwayat Perawatan (1901306006)
+                var hasPengobatan = dataLoad.some(function (d) { return d.emrdfk == 1901306006; });
                 if (!hasPengobatan) {
                     var normToUse = $scope.cc.nocm || $scope.noCM;
                     medifirstService.get("emr/get-daftar-detail-order?nocm=" + normToUse).then(function (resOrder) {
@@ -338,7 +381,7 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
                                     }
                                 }
                                 
-                                $scope.item.obj[1901307270] = lines.join("\n");
+                                $scope.item.obj[1901306006] = lines.join("\n");
                             }
                         }
                     });
