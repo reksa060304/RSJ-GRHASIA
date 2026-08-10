@@ -2461,6 +2461,7 @@ Route::group(['middleware' => 'cors', 'prefix' => 'service'], function () {
           Route::get('toni/LaporanPegawai2', 'Toni\LaporanPegawai2Contrroller@GetPegawai');
           Route::post('toni/LaporanPegawai2', 'Toni\LaporanPegawai2Contrroller@SimpanPegawai');
           Route::post('rawatjalan/save-pasien-aktivasi-mpp', 'RawatJalan\RawatJalanController@savePasienAktivasiMPP');
+          Route::get('rawatjalan/cek-kunjungan-30-hari', 'RawatJalan\RawatJalanController@cekKunjungan30Hari');
         // });
         // Route::group(['prefix' => 'registrasi'], function () {
             // 2019-12 penambahan arif awal

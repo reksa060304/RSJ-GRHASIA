@@ -531,6 +531,67 @@ $ruangdokter = \DB::table('ruangan_m as ru')
 //        }
         return $this->respond($data);
     }
+    public function cekKunjungan30Hari(Request $request)
+    {
+        $kdProfile = $this->getDataKdProfile($request);
+        $idProfile  = (int) $kdProfile;
+        $filter     = $request->all();
+
+        $nocmList = [];
+        if (isset($filter['nocmArr']) && $filter['nocmArr'] != '' && $filter['nocmArr'] != 'undefined') {
+            $arr = explode(',', $filter['nocmArr']);
+            foreach ($arr as $item) {
+                $trimmed = trim($item);
+                if ($trimmed !== '') {
+                    $nocmList[] = $trimmed;
+                }
+            }
+        }
+
+        if (empty($nocmList)) {
+            return $this->respond([]);
+        }
+
+        // Ambil tanggal kunjungan terakhir sebelum hari ini untuk setiap nocm
+        $lastVisit = \DB::table('pasiendaftar_t as pd')
+            ->join('pasien_m as ps', 'ps.id', '=', 'pd.nocmfk')
+            ->select('ps.nocm', \DB::raw('MAX(pd.tglregistrasi) as last_registrasi'))
+            ->where('pd.kdprofile', $idProfile)
+            ->where('pd.statusenabled', true)
+            ->whereIn('ps.nocm', $nocmList)
+            ->whereRaw('DATE(pd.tglregistrasi) < CURRENT_DATE')
+            ->groupBy('ps.nocm')
+            ->get();
+
+        $result    = [];
+        $foundNocm = [];
+
+        foreach ($lastVisit as $item) {
+            $lastTgl      = Carbon::parse($item->last_registrasi);
+            $selisihHari  = Carbon::now()->diffInDays($lastTgl, false);
+            $isLebih30Hari = abs($selisihHari) > 30;
+
+            $result[] = [
+                'nocm'           => $item->nocm,
+                'lastRegistrasi' => $item->last_registrasi,
+                'isLebih30Hari'  => $isLebih30Hari,
+            ];
+            $foundNocm[] = $item->nocm;
+        }
+
+        // Pasien yang tidak ada riwayat sebelumnya (kunjungan pertama)
+        foreach ($nocmList as $nocm) {
+            if (!in_array($nocm, $foundNocm)) {
+                $result[] = [
+                    'nocm'           => $nocm,
+                    'lastRegistrasi' => null,
+                    'isLebih30Hari'  => false,
+                ];
+            }
+        }
+
+        return $this->respond($result);
+    }
     public function pasienBatalPanggil(Request $request){
         $kdProfile = $this->getDataKdProfile($request);
         $idProfile = (int) $kdProfile;

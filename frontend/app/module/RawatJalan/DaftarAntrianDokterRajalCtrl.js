@@ -169,7 +169,6 @@ define(['initialize'], function (initialize) {
                         + dokId + ruangId+
                         "&ruanganArr=" + listRuangan),
                 ]).then(function (data) {
-                    $scope.isRouteLoading = false;
                     var datas = data[0].data;
                     for (var i = 0; i < datas.length; i++) {
                         datas[i].no = i + 1
@@ -229,28 +228,43 @@ define(['initialize'], function (initialize) {
                             }
                         }
                     }
-                    $scope.GridPasien = new kendo.data.DataSource({
-                        data: datas,
-                        group: $scope.group,
-                        pageSize: 50,
-                        total: data.length,
-                        serverPaging: false,
-                        schema: {
-                            model: {
-                                fields: {
+                    // Cek kunjungan pasien > 30 hari dari kunjungan sebelumnya
+                    var nocmArr = datas.map(function(d) { return d.nocm; }).join(',');
+                    return medifirstService.get("rawatjalan/cek-kunjungan-30-hari?nocmArr=" + encodeURIComponent(nocmArr))
+                        .then(function(res30) {
+                            $scope.isRouteLoading = false;
+                            var map30Hari = {};
+                            if (res30 && res30.data) {
+                                for (var j = 0; j < res30.data.length; j++) {
+                                    map30Hari[res30.data[j].nocm] = res30.data[j].isLebih30Hari;
                                 }
                             }
-                        }
-                    });
-                    var chacePeriode = {
-                        0: tglAwal,
-                        1: tglAkhir,
-                        2: $scope.item.ruangan != undefined ? $scope.item.ruangan.id : null,
-                        3: $scope.item.ruangan != undefined ? $scope.item.ruangan.namaruangan : null,
-                        4: $scope.item.ruanganMulti,
-                    }
-                // var chacePeriode = tglAwal + "~" + tglAkhir + "~" + $scope.item.ruangan.id + "~" + $scope.item.ruangan.namaruangan + '~' + listRuangan;
-                    cacheHelper.set('DaftarAntrianDokterRajalCtrl', chacePeriode);
+                            for (var i = 0; i < datas.length; i++) {
+                                datas[i].isLebih30Hari = map30Hari[datas[i].nocm] || false;
+                            }
+                            $scope.GridPasien = new kendo.data.DataSource({
+                                data: datas,
+                                group: $scope.group,
+                                pageSize: 50,
+                                total: datas.length,
+                                serverPaging: false,
+                                schema: {
+                                    model: {
+                                        fields: {
+                                        }
+                                    }
+                                }
+                            });
+                            var chacePeriode = {
+                                0: tglAwal,
+                                1: tglAkhir,
+                                2: $scope.item.ruangan != undefined ? $scope.item.ruangan.id : null,
+                                3: $scope.item.ruangan != undefined ? $scope.item.ruangan.namaruangan : null,
+                                4: $scope.item.ruanganMulti,
+                            }
+                        // var chacePeriode = tglAwal + "~" + tglAkhir + "~" + $scope.item.ruangan.id + "~" + $scope.item.ruangan.namaruangan + '~' + listRuangan;
+                            cacheHelper.set('DaftarAntrianDokterRajalCtrl', chacePeriode);
+                        });
                 });
             }
             function loadKonsul() {
@@ -339,6 +353,10 @@ define(['initialize'], function (initialize) {
                         var dataItem = grid.dataItem(this);
                         if (dataItem.prolanisprb) {
                             $(this).addClass('koneng');
+                        }
+                        // Warna orange pada kolom Tgl Registrasi jika kunjungan terakhir > 30 hari
+                        if (dataItem.isLebih30Hari) {
+                            $(this).find('td').eq(1).addClass('orange');
                         }
 
                         $(this).find('td').each(function () {
