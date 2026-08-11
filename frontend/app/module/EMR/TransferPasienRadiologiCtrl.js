@@ -12,6 +12,12 @@ define(['initialize'], function (initialize) {
             var EMR_ID_TRANSFER_RADIOLOGI = 3003034;
             $scope.emrid = EMR_ID_TRANSFER_RADIOLOGI;
 
+            // ID field checkbox "Pemeriksaan ditunda" pada section TRANSFER BALIK
+            // RADIOLOGI (emrd_t.id = 300303482). Dipakai untuk kontrol ng-show
+            // textarea "Keterangan Penundaan" — satu-satunya bagian yang butuh
+            // logic kondisional di luar mekanisme render generic.
+            $scope.idTransferBalikDitunda = 300303482;
+
             $scope.cc = {};
             $scope.cc.emrfk = EMR_ID_TRANSFER_RADIOLOGI;
             $scope.cc.norec_emr = '-';
@@ -78,6 +84,7 @@ define(['initialize'], function (initialize) {
                 var arrAssessment = [];
                 var arrRecommendation = [];
                 var arrTtd = [];
+                var arrTransferBalik = [];
                 
                 // Helper untuk grouping Parent-Child berdasarkan kodeexternal
                 function groupDataByKode(kodeTarget, arrayTarget) {
@@ -124,6 +131,7 @@ define(['initialize'], function (initialize) {
                 groupDataByKode('r_recommendation', arrRecommendation);
                 groupDataByKode('ttd_petugas', arrTtd);
                 groupDataByKode('ttd_penerima', arrTtd);
+                groupDataByKode('transfer_balik', arrTransferBalik);
 
                 function fixHeaderCaption(arr, defaultCaption) {
                     if (arr && arr.length > 0) {
@@ -149,12 +157,14 @@ define(['initialize'], function (initialize) {
                 fixHeaderCaption(arrBackground, 'B (BACKGROUND)');
                 fixHeaderCaption(arrAssessment, 'A (ASSESSMENT)');
                 fixHeaderCaption(arrRecommendation, 'R (RECOMMENDATION)');
+                fixHeaderCaption(arrTransferBalik, 'TRANSFER BALIK RADIOLOGI');
 
                 $scope.listSituation = arrSituation;
                 $scope.listBackground = arrBackground;
                 $scope.listAssessment = arrAssessment;
                 $scope.listRecommendation = arrRecommendation;
                 $scope.listTtd = arrTtd;
+                $scope.listTransferBalik = arrTransferBalik;
 
                 loadData();
             });

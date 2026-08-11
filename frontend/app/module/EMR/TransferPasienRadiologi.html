@@ -17,7 +17,7 @@
 <div class="grid_12" disable-contents="allDisabled">
     <div class="grid_12">
         <div class="panel panel-default container_12">
-            <div class="panel-heading" c-translate>Transfer Pasien / dari Radiologi (SBAR)</div>
+            <div class="panel-heading" c-translate>Transfer Pasien Ke / Dari Radiologi (SBAR)</div>
         </div>
 
         <div class="grid_12" style="margin-top: 10px;">
@@ -226,6 +226,49 @@
                             </div>
                             <div class="grid_{{jawab.style||6}}" ng-switch-when="label" ng-if="stat.details.length > 1 && jawab.caption != stat.caption">
                                 <label c-label item="item" style="font-weight: bold; margin-top: 10px;">{{jawab.caption}}</label>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </fieldset>
+
+             <!-- TRANSFER BALIK RADIOLOGI -->
+            <fieldset ng-if="listTransferBalik.length > 0">
+                <legend><b>{{listTransferBalik[0].caption}}</b></legend>
+                <div class="grid_12">
+                    <div ng-repeat="stat in listTransferBalik">
+                        <div ng-repeat="jawab in stat.details | orderBy:'nourut'" ng-switch on="jawab.type">
+                            <div class="grid_{{jawab.style||12}}" ng-switch-when="label" ng-if="jawab.caption != stat.caption && jawab.caption != listTransferBalik[0].caption">
+                                <label c-label item="item" style="font-weight: bold; margin-top: 10px;">{{jawab.caption}}</label>
+                            </div>
+                            <div class="grid_{{jawab.style||12}}" ng-switch-when="label_bold" ng-if="jawab.caption != stat.caption && jawab.caption != listTransferBalik[0].caption">
+                                <label c-label item="item" style="font-weight: bold; margin-top: 10px; font-size: 14px;">{{jawab.caption}}</label>
+                            </div>
+                            <div class="grid_{{jawab.style||6}}" ng-switch-when="textbox">
+                                <label c-label item="item" ng-show="jawab.caption">{{jawab.caption}}</label>
+                                <input class="k-textbox" ng-model="item.obj[jawab.id]" type="text">
+                            </div>
+                            <div class="grid_{{jawab.style||12}}" ng-switch-when="textarea" ng-show="jawab.caption != 'Keterangan Penundaan' || item.obj[idTransferBalikDitunda]">
+                                <label c-label item="item" ng-show="jawab.caption">{{jawab.caption}}</label>
+                                <textarea c-text-area class="k-textbox" style="min-height: 80px;" ng-model="item.obj[jawab.id]"></textarea>
+                            </div>
+                            <div class="grid_{{jawab.style||4}}" ng-switch-when="checkbox" style="margin-top: 10px;">
+                                <input type="checkbox" class="k-checkbox" id="check_{{jawab.id}}" ng-model="item.obj[jawab.id]">
+                                <label class="k-checkbox-label" for="check_{{jawab.id}}">{{jawab.caption}}</label>
+                            </div>
+                            <div class="grid_{{jawab.style||6}}" ng-switch-when="combobox">
+                                <label c-label item="item" ng-show="jawab.caption">{{jawab.caption}}</label>
+                                <input kendo-combo-box style="width:100%;"
+                                    k-data-source="jawab.cbotable == 'listRuangan' ? listRuangan : listPegawai"
+                                    k-ng-model="item.obj[jawab.id]"
+                                    k-data-text-field="'text'"
+                                    k-data-value-field="'value'"
+                                    k-filter="'contains'"
+                                    k-auto-bind="false" />
+                            </div>
+                            <div class="grid_{{jawab.style||6}}" ng-switch-when="datetime">
+                                <label c-label item="item" ng-show="jawab.caption">{{jawab.caption}}</label>
+                                <input kendo-date-time-picker k-ng-model="item.obj[jawab.id]" style="width: 100%" />
                             </div>
                         </div>
                     </div>
