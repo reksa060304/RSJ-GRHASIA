@@ -627,7 +627,16 @@ Route::group(['middleware' => 'cors', 'prefix' => 'service'], function () {
 
             // });
             // Route::group(['prefix' => 'penunjang'], function () {
+              // API PACS THENA
+              Route::post('bridging/radiologi/sendorders', 'Bridging\IntegrasiRadiologiController@RadsToolsSendOrders');
+              Route::post('bridging/radiologi/cancelorders', 'Bridging\IntegrasiRadiologiController@RadsToolsCancelOrders');
+              Route::get('bridging/radiologi/get-hasil', 'Bridging\IntegrasiRadiologiController@RadsToolsGetOrder');
+              Route::get('bridging/radiologi/get-report', 'Bridging\IntegrasiRadiologiController@RadsToolsGetReport');
+              Route::get('bridging/radiologi/get-status-order', 'Bridging\IntegrasiRadiologiController@RadsToolsGetStatus');
+              // END API PACS THENA
+
               Route::post('bridging/penunjang/save-bridging-zeta', 'Bridging\BridgingPenunjangController@saveBridgingZeta');
+              Route::get('bridging/penunjang/get-bridging-zeta', 'Bridging\BridgingPenunjangController@getBridgingZeta');
               Route::post('bridging/penunjang/save-bridging-sysmex', 'Bridging\BridgingPenunjangController@saveBridgingSysmex');
               Route::post('bridging/penunjang/save-bridging-vans-lab', 'Bridging\BridgingPenunjangController@saveBridgingVansLab');
               Route::post('bridging/penunjang/save-hapus-order-lab', 'Bridging\BridgingPenunjangController@saveHapusOrderLab');
