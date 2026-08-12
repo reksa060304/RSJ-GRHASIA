@@ -188,6 +188,15 @@ class BridgingBPDController extends ApiController
                 ->whereNull('pp.strukfk')
                 ->count();
 
+            // Validasi: Jika pasien memiliki tagihan yang belum diverifikasi petugas kasir,
+            // dan belum ada tagihan terverifikasi yang aktif (unpaid)
+            if ($pelayananBelumBayar > 0 && !($pasienDaftar->nostruklastfk != null && $pasienDaftar->nosbmlastfk == null)) {
+                return response()->json([
+                    'response_code' => '87',
+                    'response_message' => 'Tagihan belum di verifikasi petugas kasir. Silahkan ke Kasir untuk verifikasi tagihan anda terlebih dahulu. Terimakasih'
+                ], 400);
+            }
+
             // Sudah verifikasi tapi belum bayar: nostruklastfk ada, nosbmlastfk masih null
             // Langsung tampilkan data bill yang sudah diverifikasi tanpa simpan verifikasi lagi
             if ($pasienDaftar->nostruklastfk != null && $pasienDaftar->nosbmlastfk == null) {
