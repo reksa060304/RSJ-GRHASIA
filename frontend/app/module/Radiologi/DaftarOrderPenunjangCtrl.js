@@ -1223,56 +1223,12 @@ define(['initialize'], function (initialize) {
                        
                     } else if (departemen == 27 &&  $scope.dataSelected.objectruangantujuanfk !=    $scope.ruanganIdElektromedik ) {
                         medifirstService.post('bridging/penunjang/save-bridging-zeta', itemsave).then(function (e) {
-                                let procedures = e.data.zeta;
-                                var promises = procedures.map(function (item, i) {
-                                    let jsonPacsThena = {
-                                        "admitDate": item.order_date,
-                                        "admittingDoctorId": { id: $scope.item.dokterVerif.id, name: $scope.item.dokterVerif.namalengkap },
-                                        "aeTitle": null,
-                                        "ambulatoryStatus": $scope.dataSelected.cito == '✔' ? 'Y' : 'N', 
-                                        "assignedPatientLocation": null,
-                                        "attendingDoctor": { id: $scope.item.dokterVerif.id, name: $scope.item.dokterVerif.namalengkap },
-                                        "birthDate": item.patient_birth_date,
-                                        "bodyPart": null,
-                                        "clinicalInfo": $scope.dataSelected.keteranganlainnya,
-                                        "comments": $scope.item.catatanLab ? $scope.item.catatanLab : '-',
-                                        "consultingDoctor": null,
-                                        "effectiveDate": item.order_date,
-                                        "enteringOganization": $scope.dataSelected.namaruangan,
-                                        "name": $scope.dataSelected.namapasien,
-                                        "nameAlias": $scope.dataSelected.namapasien,
-                                        "orderNumber": item.accession_num,
-                                        "patientClass": item.io_date,
-                                        "patientID": $scope.dataSelected.nocm,
-                                        "extendModality": item.order_modality,
-                                        "procedure": item.order_code,
-                                        "procedureName": item.order_name,
-                                        "referringDoctor": { id: $scope.item.dokterOrder.id, name: $scope.item.dokterOrder.namalengkap },
-                                        "scheduledDateTime": item.order_date,
-                                        "sex": item.patient_sex,
-                                    };
-                                    return medifirstService.post('bridging/radiologi/sendorders', jsonPacsThena);
-                                });
-
-                                Promise.all(promises).then(function () {
-                                     toastr.info('Berhasil dikirim ke PACS', 'Informasi')
-                                    medifirstService.post('radiologi/save-pelayanan-pasien',itemsave)
-                                    .then(function (e) {
-                                            medifirstService.postLogging('Verifikasi Order Rad', 'Norec strukorder_t', e.data.dataPP.strukorderfk,
-                                            'Verif Rad No Order - ' + $scope.item.noOrder + ' dengan No Registrasi ' + $scope.dataSelected.noregistrasi).then(function (res) {
-                                            })
-                                        init()
-                                    });
-                            }).catch(function(err){
-                                console.error('Error sending PACS orders', err);
-                                // still try to save pelayanan to keep UX flow
-                                medifirstService.post('radiologi/save-pelayanan-pasien',itemsave)
-                                .then(function (e) {
-                                        medifirstService.postLogging('Verifikasi Order Rad', 'Norec strukorder_t', e.data.dataPP.strukorderfk,
-                                        'Verif Rad No Order - ' + $scope.item.noOrder + ' dengan No Registrasi ' + $scope.dataSelected.noregistrasi).then(function (res) {
-                                        })
-                                    init()
-                                });
+                            medifirstService.post('radiologi/save-pelayanan-pasien',itemsave)
+                            .then(function (e) {
+                                    medifirstService.postLogging('Verifikasi Order Rad', 'Norec strukorder_t', e.data.dataPP.strukorderfk,
+                                    'Verif Rad No Order - ' + $scope.item.noOrder + ' dengan No Registrasi ' + $scope.dataSelected.noregistrasi).then(function (res) {
+                                    })
+                                init()
                             });
                         });
                         //dimatiin bikin error desktop service

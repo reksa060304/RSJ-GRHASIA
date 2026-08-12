@@ -266,32 +266,6 @@
             <!-- <button class="c-button" ng-click="BridgingZeta()" ng-disabled="disableRad"> Kirim ke RIS</button> -->
         </div>
     </div>
-    
-    <div class="grid_2">
-        <div class="grid_12" style="margin-top: 22px">
-            <button class="btnTemplate1" style="margin-left: 0;" ng-disabled="disableRad" ng-click="kirimKePacs()"><i
-                    class="fa fa-send"></i>Kirim Ulang Ke PACS</button>
-        </div>
-    </div>
-    <!-- <div class="grid_2">
-        <div class="grid_12" style="margin-top: 22px">
-            <button class="btnTemplate1" style="margin-left: 0;" ng-disabled="disableRad" ng-click="LihatStatusOrderPacs()"><i
-                    class="fa fa-info"></i>Status Order PACS</button>
-        </div>
-    </div> -->
-    <div class="grid_2">
-        <div class="grid_12" style="margin-top: 22px">
-            <button class="btnTemplate1" style="margin-left: 0;" ng-disabled="disableRad" ng-click="lihatGambar()"><i
-                    class="fa fa-print"></i> Lihat Gambar PACS</button>
-        </div>
-    </div>
-    <div class="grid_2">
-        <div class="grid_12" style="margin-top: 22px">
-            <button class="btnTemplate1" style="margin-left: 0;" ng-disabled="disableRad" ng-click="LihatEkpertise()"><i
-                    class="fa fa-list"></i> Ekspertise</button>
-            <!-- <kendo-button class="c-button" ng-click="LihatEkpertise()"><span class="title">Ekspertise</span></kendo-button> -->
-        </div>
-    </div>
     <div class="grid_2">
         <div class="grid_12" style="margin-top: 22px">
             <!-- <kendo-button class="k-primary c-button" ng-click="simpanAtasan()" ng-show="!isLoading" ng-disabled="!disableLab"><span class="title">Simpan Atasan</span></kendo-button> -->
@@ -304,7 +278,7 @@
         </div>
     </div>
     <div class="grid_2">
-        <div class="grid_12" style="margin-top: 2px">
+        <div class="grid_12" style="margin-top: 22px">
             <!-- <kendo-button class="c-button" ng-click="CetakBuktiLayananPerTindakan()"><span class="title">Bukti Layanan
                 </span></kendo-button> -->
             <button class="btnTemplate1" style="margin-left: 0;" ng-click="CetakBuktiLayananPerTindakan()"><i
@@ -313,7 +287,7 @@
         </div>
     </div>
     <div class="grid_2">
-        <div class="grid_12" style="margin-top: 2px">
+        <div class="grid_12" style="margin-top: 22px">
             <!-- <kendo-button class="c-button" ng-click="CetakBuktiLayananPerTindakan()"><span class="title">Bukti Layanan
                 </span></kendo-button> -->
             <button class="btnTemplate1" style="margin-left: 0;" ng-click="cetakBuktiLayanan()"><i
@@ -321,9 +295,8 @@
             <!-- <button class="c-button" ng-click="CetakBuktiLayananPerTindakan()">Bukti Layanan Pertindakan</button> -->
         </div>
     </div>
-    
     <div class="grid_2">
-        <div class="grid_12" style="margin-top: 2px">
+        <div class="grid_12" style="margin-top: 22px">
             <!-- <kendo-button class="c-button" ng-click="HapusTindakan()"><span class="title">Hapus</span></kendo-button> -->
             <button class="btnTemplate1 cancel" style="margin-left: 0;" ng-click="HapusTindakan()" ng-hide="hideHapusTindakan"><i
                     class="fa fa-trash"></i> Hapus</button>
@@ -339,14 +312,27 @@
         </div>
     </div>
     <!--   <div class="grid_2" ng-show='CmdOrderPelayanan' >
-                <div class="grid_12" style="margin-top: 2px">
+                <div class="grid_12" style="margin-top: 22px">
                     <button class="c-button" ng-click="cetakBuktiLayanan()">Bukti Layanan</button>
                 </div>
             </div> -->
 
 
 
-    
+    <div class="grid_2">
+        <div class="grid_12" style="margin-top: 2px">
+            <button class="btnTemplate1" style="margin-left: 0;" ng-click="LihatHasil()"><i
+                    class="fa fa-th-list"></i>Lihat Hasil</button>
+            <!-- <kendo-button class="c-button" ng-click="LihatHasil()"><span class="title">Lihat Hasil</span></kendo-button> -->
+        </div>
+    </div>
+    <div class="grid_2">
+        <div class="grid_12" style="margin-top: 2px">
+            <button class="btnTemplate1" style="margin-left: 0;" ng-disabled="disableRad" ng-click="LihatEkpertise()"><i
+                    class="fa fa-list"></i> Ekspertise</button>
+            <!-- <kendo-button class="c-button" ng-click="LihatEkpertise()"><span class="title">Ekspertise</span></kendo-button> -->
+        </div>
+    </div>
     <div class="grid_2">
         <div class="grid_12" style="margin-top: 2px">
             <button class="btnTemplate1" style="margin-left: 0;" ng-disabled="disableRad"
@@ -546,11 +532,7 @@
                 k-data-value-field="'norec'" k-filter="'contains'" k-auto-bind="false" k-data-source="listNamaGambar"
                 k-on-change='selectImage()' />
             <button style="margin-top: 4px;" class="k-button k-button-icontext k-primary k-grid-update"
-                ng-hide="hideExper" ng-click="lihatGambar()"><span class="k-icon k-update"></span>Lihat Gambar</button>
-            <button style="margin-top: 4px;" class="k-button k-button-icontext k-primary k-grid-update"
-                ng-hide="hideExper" ng-click="getEkpertisePacs()"><span class="k-icon k-update"></span>Get Ekspertise</button>
-            <!-- <button style="margin-top: 4px;" class="k-button k-button-icontext k-primary k-grid-update"
-                ng-hide="hideExper" ng-click="CheckImage()"><span class="k-icon k-update"></span>Lihat Gambar</button> -->
+                ng-hide="hideExper" ng-click="CheckImage()"><span class="k-icon k-update"></span>Lihat Gambar</button>
         </div>
         <div class="k-edit-buttons  k-state-default pull-right" style="margin-top:10px">
             <button class="k-button k-button-icontext k-primary k-grid-update" ng-hide="hideExper"

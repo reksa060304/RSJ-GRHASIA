@@ -231,23 +231,6 @@ class BridgingPenunjangController extends ApiController
 //        return $this->respond($noorder);
     }
 
-    public function getBridgingZeta(Request $request)
-    {
-        $accNum = $request->input('acc');
-
-        $data = DB::table('ris_order')
-            ->where('accession_num', $accNum)
-            ->get();
-
-        $result = [
-            'status' => 200,
-            'message' => 'Ok',
-            'zeta' => $data,
-            'as' => 'maman',
-        ];
-
-        return $this->respond($result);
-    }
     public function saveBridgingZeta(Request $request)
     {
         $dataLogin =$request->all();
@@ -314,7 +297,7 @@ class BridgingPenunjangController extends ApiController
         select * from (
 
              select op.norec, op.kdprofile as kdprofile,
-		     op.iscito as cito,  op.tglpelayanan, prd.id as produkid , op.nourut, prd.namaproduk, prd.modality,
+		     op.iscito as cito,  op.tglpelayanan, prd.id as produkid , op.nourut, prd.namaproduk,
              ps.nocm,  so.noorderintern, so.noorder as noorder, ps.namapasien,  ps.tgllahir,  jk.jeniskelamin, 
              alm.alamatlengkap, ru.id as ruanganid, ru.namaruangan, pd.noregistrasi,
          
@@ -336,7 +319,7 @@ class BridgingPenunjangController extends ApiController
 
 			 left join pasiendaftar_t as pd on pd.norec=so.noregistrasifk
 			 left join kelompokpasien_m as kps on kps.id=pd.objectkelompokpasienlastfk
-			 left join ruangan_m as ru on ru.id=op.objectruanganfk
+			 left join ruangan_m as ru on ru.id=pd.objectruanganlastfk
 			 left join pegawai_m as pg on pg.id=so.objectpegawaiorderfk
 			 left join departemen_m as dp on dp.id=ru.objectdepartemenfk
 			 left join golongandarah_m as gdr on gdr.id=ps.objectgolongandarahfk
@@ -354,18 +337,30 @@ class BridgingPenunjangController extends ApiController
        
 
 //            try {
-            $procedures = [];
             foreach ($raw as $item) {
                 $getAccNumber = $this->getAccNumber($item->kodeexternaldjp , $item->namaexternaljp);
 
-                $modality = null;
-                if ($item->modality){
-                  $modality = str_limit(trim($item->modality), 5);
-                } else if ($item->namaexternaljp){
-                  $modality = str_limit(trim($item->namaexternaljp), 5);
-                } else {
-                   return $this->setStatusCode(400)->respond('', 'Modality Produk '.$item->namaproduk. ' Kosong');
+                if($item->namaexternaljp == null){
+                  // $errorrr = "Modality belum disetting";
+                  $modality = null;
+//                    return $this->setStatusCode(400)->respond('', 'Kode External Bridging Produk '.$item->namaproduk. ' Kosong');
+                }else{
+                    if (strlen(trim($item->namaexternaljp)) > 4) {
+                      // $errorrr = "Modality tidak dikenal";
+                      $modality = null;
+                    } else {
+                      $modality = str_limit(trim($item->namaexternaljp), 5);
+                    }                    
                 }
+
+                // if ($modality == null) {
+                //   break;
+                // }
+
+                // if (empty($item->nourut)) {
+                //   $errorrr = "Tidak ada nomor urut order pelayanan";
+                //   break;
+                // }
 
                 $newBRG = new RisOrder();
 //                    if (is_null($item->order_key)) {
@@ -415,16 +410,12 @@ class BridgingPenunjangController extends ApiController
                 $newBRG->group2 = '-';
                 $newBRG->group3 = '-';
                 /*
-                * - 18 : R. Jalan - 16 : R. Inap - 24 IGD
+                * - 18 : R. Jalan - 16 : R. Inap
                 */
                 if ($raw[0]->departemenid == 18) {
-                    $io_date = 'O'; 
-                } else if ($raw[0]->departemenid == 16) {
+                    $io_date = 'E'; // AWALNYA O HARUSNYA E
+                } else{
                     $io_date = 'I';
-                } else if ($raw[0]->departemenid == 24) {
-                    $io_date = 'E';
-                } else {
-                    $io_date = '-';
                 }
                 $newBRG->io_date = $io_date;
                 //            $newBRG->last_name = '';
@@ -432,7 +423,7 @@ class BridgingPenunjangController extends ApiController
                 $newBRG->order_bodypart = '-';
                 $newBRG->order_code = $item->produkid;
                 $newBRG->order_comment = '-';
-                $newBRG->order_date = (string)date('YmdHis',strtotime($item->tglorder));;
+                $newBRG->order_date = (string)date('YmdHi',strtotime($item->tglorder));;
                 $newBRG->order_dept = $request['objectruangantujuanfk'];
                 //            $newBRG->order_diag = $item->namaexternaljp;
 
@@ -475,12 +466,6 @@ class BridgingPenunjangController extends ApiController
                 $newBRG->kelas = $request['objectkelasfk'];
 
                 $newBRG->save();
-                // collect all fields from the saved RisOrder model to return to client for PACS/Thena
-                try {
-                    $procedures[] = $newBRG->toArray();
-                } catch (\Exception $ex) {
-                    $procedures =[];
-                }
             }
 
             $transStatus = (empty( $errorrr)) ? 'true' : 'false';
@@ -501,7 +486,7 @@ class BridgingPenunjangController extends ApiController
             $result = array(
                 "status" => 201,
                 "message" => $transMessage,
-                "zeta" => $procedures,
+                "zeta" => $newBRG,
                 "as" => 'inhuman',
             );
         } else {
@@ -510,7 +495,7 @@ class BridgingPenunjangController extends ApiController
             $result = array(
                 "status" => 400,
                 "message" => $transMessage,
-                "zeta" => isset($procedures) ? $procedures : [],
+                // "zeta" => $newBRG,
                 "as" => 'inhuman',
             );
         }

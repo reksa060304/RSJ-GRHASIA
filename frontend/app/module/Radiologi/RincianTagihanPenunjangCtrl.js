@@ -1314,167 +1314,30 @@ define(['initialize', 'Configuration'], function (initialize, config) {
                         $scope.item.jumlahPengulanganFoto = 0
                         
                     }
-                    if ($scope.norecHasilRadiologi == '') {
-                        $scope.getEkpertisePacs($scope.dataSelected.idbridging)
-                    } 
                     $scope.popUpEkpertise.center().open();
                 })
 
-                // medifirstService.get('radiologi/get-ekspertise?norec_pp=' + $scope.dataSelected.norec_pp).then(function (e) {
-                //     if (e.data.status) {
-                //         if (e.data.data.list.length > 0) {
-                //             $scope.cekhasilrad = false;
-                //             $scope.listNamaGambar = e.data.data.list;
-                //             $scope.itemimg.gambar = { norec: e.data.data.list[0].norec, filename: e.data.data.list[0].filename }
-                //             $scope.itemimg.keterangan = e.data.data.list[0].keterangan
-                //             //$scope.item.jumlahPengulanganFoto = e.data.data.list[0].jumlahpengulanganfoto
-                //             var temp = e.data.data.list[0].filename.slice(0, e.data.data.list[0].filename.indexOf('.'))
-                //             $scope.itemimg.img = config.urlPACSJpeg + "/service/medifirst2000/radiologi/images/pacs/" + temp + "/jpg"
-                //         }
-                //     } else {
-                //         $scope.cekhasilrad = true;
-                //         $scope.itemimg.img = "./images/noimage.png"
-                //         window.messageContainer.error("Belum Ada Ekspertise.");
-                //     }
-                // }).error(function (err) {
-                //     $scope.item.img = "./images/noimage.png"
-                // });
-
-            }
-            $scope.getEkpertisePacs = function (idbridging) {
-                var idbridging = $scope.dataSelected.idbridging ? $scope.dataSelected.idbridging : idbridging
-                if (idbridging == undefined ) {
-                    window.messageContainer.error("Data belum dikirim ke RIS!");
-                    return;
-                }
-                medifirstService
-                            .get("bridging/radiologi/get-report?accesNumber=" + idbridging)
-                            .then(function (response) {
-                            $scope.item.keteranganlainnya =
-                                $scope.dataSelected.keteranganlainnya;
-                            $scope.item.tglInput =
-                                response.data.data.approveTime == "" ?
-                                new Date() :
-                                new Date(response.data.data.approveTime);
-                            $scope.item.keterangan =
-                                (response.data.data.finding == "" ?
-                                "" :
-                                response.data.data.finding) +
-                                "\n\n\nKesan : \n" +
-                                (response.data.data.conclusion == "" ?
-                                "" :
-                                response.data.data.conclusion) +
-                                (response.data.data.recommendation == "" ?
-                                "" :
-                                "\n\nRekomendasi : \n" +
-                                response.data.data.recommendation);
-
-                                 toastr.info(
-                                "Sudah Ada Ekspertise dari PACS, Harap Klick Simpan untuk Update Data!",
-                                "Informasi"
-                            );
-                            })
-                            .catch(function (error) {
-                            window.messageContainer.error("Belum Ada Ekspertise dari PACS!");
-                            });
-            }
-            $scope.kirimKePacs = function () {
-                if ($scope.dataSelected.idbridging == undefined) {
-                    window.messageContainer.error("Data belum dikirim ke RIS!");
-                    return;
-                }
-
-                medifirstService.get('bridging/penunjang/get-bridging-zeta?acc=' + $scope.dataSelected.idbridging).then(function (e) {
-                            if (e.data.zeta) {
-                                let procedures = e.data.zeta;
-                                var promises = procedures.map(function (item, i) {
-                                    let jsonPacsThena = {
-                                        "admitDate": item.order_date,
-                                        "admittingDoctorId": { id: $scope.dataSelected.dokterid, name: $scope.dataSelected.dokter },
-                                        "aeTitle": null,
-                                        "ambulatoryStatus": item.patient_io  == 'E' ? 'Y' : 'N', // cito
-                                        "assignedPatientLocation": null,
-                                        "attendingDoctor": { id: $scope.dataSelected.dokterid, name: $scope.dataSelected.dokter },
-                                        "birthDate": item.patient_birth_date,
-                                        "bodyPart": null,
-                                        "clinicalInfo": $scope.dataSelected.keteranganlainnya,
-                                        "comments": '-',
-                                        "consultingDoctor": null,
-                                        "effectiveDate": item.order_date,
-                                        "enteringOganization": $scope.dataSelected.ruangan,
-                                        "name": $scope.dataSelected.namapasien,
-                                        "nameAlias": $scope.dataSelected.namapasien,
-                                        "orderNumber": item.accession_num,
-                                        "patientClass": item.io_date,
-                                        "patientID": $scope.dataSelected.nocm,
-                                        "extendModality": item.order_modality,
-                                        "procedure": item.order_code,
-                                        "procedureName": item.order_name,
-                                        "referringDoctor": { id: $scope.dataSelected.dokterid, name: $scope.dataSelected.dokter },
-                                        "scheduledDateTime": item.order_date,
-                                        "sex": item.patient_sex,
-                                    };
-                                    return medifirstService.post('bridging/radiologi/sendorders', jsonPacsThena);
-                                });
-                                Promise.all(promises)
-                                    .then(function (results) {
-                                        toastr.info('Berhasil dikirim ke PACS', 'Informasi')
-                                    })
-                                    .catch(function (error) {
-                                        toastr.warning('Gagal dikirim ke PACS', 'Peringatan')
-                                    });
-                            }   else {
-                                window.messageContainer.error("Belum Ada Data RIS.");
-                            }
-                }).error(function (err) {
-                    window.messageContainer.error("Belum Ada Data RIS.");
-                });
-
-            }
-
-            function openInNewTab(href) {
-                Object.assign(document.createElement('a'), {
-                    target: '_blank',
-                    rel: 'noopener noreferrer',
-                    href: href,
-                }).click();
-            }
-
-            $scope.lihatGambar = function () {
-
-               if ($scope.dataSelected.idbridging == undefined) {
-                    window.messageContainer.error("Data belum dikirim ke RIS!");
-                    return;
-                }
-
-                medifirstService.get("bridging/radiologi/get-hasil?accesNumber=" + $scope.dataSelected.idbridging)
-                    .then(function (response) {
-                        let hostname = location.hostname
-                        let hasilThenaPublic = response.data.data.publicFilmBox;
-                        let hasilThena = response.data.data.filmBox;
-                        if (hasilThenaPublic && /^(?:https?:\/\/)?(?:\d{1,3}\.){3}\d{1,3}:\d+$/.test(hasilThenaPublic)) {
-                                openInNewTab(hasilThenaPublic);
-                        } else {
-                                openInNewTab(hasilThena);
+                medifirstService.get('radiologi/get-ekspertise?norec_pp=' + $scope.dataSelected.norec_pp).then(function (e) {
+                    if (e.data.status) {
+                        if (e.data.data.list.length > 0) {
+                            $scope.cekhasilrad = false;
+                            $scope.listNamaGambar = e.data.data.list;
+                            $scope.itemimg.gambar = { norec: e.data.data.list[0].norec, filename: e.data.data.list[0].filename }
+                            $scope.itemimg.keterangan = e.data.data.list[0].keterangan
+                            //$scope.item.jumlahPengulanganFoto = e.data.data.list[0].jumlahpengulanganfoto
+                            var temp = e.data.data.list[0].filename.slice(0, e.data.data.list[0].filename.indexOf('.'))
+                            $scope.itemimg.img = config.urlPACSJpeg + "/service/medifirst2000/radiologi/images/pacs/" + temp + "/jpg"
                         }
-                    })
-                    .catch(function (error) {
-                        toastr.warning('Hasil Belum Ada !', 'Peringatan')
-                    });
-            }
-
-            $scope.LihatStatusOrderPacs = function () {
-                if ($scope.dataSelected.idbridging == undefined) {
-                    window.messageContainer.error("Data belum dikirim ke RIS!");
-                    return;
-                }
-                medifirstService
-                .get("bridging/radiologi/get-status-order?accesNumber=" + $scope.dataSelected.idbridging)
-                .then(function (response) {
-                    $scope.hasilThena = response;
+                    } else {
+                        $scope.cekhasilrad = true;
+                        $scope.itemimg.img = "./images/noimage.png"
+                        window.messageContainer.error("Belum Ada Ekspertise.");
+                    }
+                }).error(function (err) {
+                    $scope.item.img = "./images/noimage.png"
                 });
-            };
-            
+
+            }
             $scope.cetakEks = function () {
 
                 if ($scope.norecHasilRadiologi != '') {
