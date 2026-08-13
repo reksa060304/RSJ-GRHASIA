@@ -795,18 +795,36 @@ define(['initialize', 'Configuration'], function (initialize,config) {
                 
             })
 
-            $scope.cetakBlade = function(){
-                if (norecEMR == '') return
+            // $scope.cetakBlade = function(){
+            //     if (norecEMR == '') return
             
-              var local =JSON.parse(localStorage.getItem('profile')) 
-              var nama = medifirstService.getPegawaiLogin().namaLengkap
+            //   var local =JSON.parse(localStorage.getItem('profile')) 
+            //   var nama = medifirstService.getPegawaiLogin().namaLengkap
           
-               window.open(config.baseApiBackend + 'report/cetak-pengkajian-rajal?nocm='
-                   + $scope.cc.nocm + '&norec_apd='+  $scope.cc.norec +'&emr=' + norecEMR
-                   + '&emrfk='+  $scope.cc.emrfk
-                   +'&kdprofile='+local.id 
-                   +'&nama='+nama,  '_blank');
-            } 
+            //    window.open(config.baseApiBackend + 'report/cetak-pengkajian-rajal?nocm='
+            //        + $scope.cc.nocm + '&norec_apd='+  $scope.cc.norec +'&emr=' + norecEMR
+            //        + '&emrfk='+  $scope.cc.emrfk
+            //        +'&kdprofile='+local.id 
+            //        +'&nama='+nama,  '_blank');
+            // } 
+
+            $scope.cetakBlade = function () {
+                if (norecEMR == '') {
+                toastr.error('Dokumen belum pernah di isi')
+                return
+                }
+                var local = JSON.parse(localStorage.getItem('profile'))
+                // var nama = medifirstService.getPegawaiLogin().namaLengkap
+
+                window.open(config.baseApiBackend + 'report/get-cetak-surat-man?nocm=' + $scope.cc.nocm +
+                '&emr=' + norecEMR +
+                '&noemr=' + nomorEMR +
+                '&emrfk=' + $scope.cc.emrfk +
+                // '&index=' + $scope.cc.index +
+                '&kdprofile=' + local.id +
+                '&blade=' + 'ass-awal-medis-jwa-dom', '_blank');
+
+            }
             
                 
 
@@ -1068,6 +1086,15 @@ define(['initialize', 'Configuration'], function (initialize,config) {
                     data: arrSave
                 }
                 medifirstService.post('emr/save-emr-dinamis', jsonSave).then(function (e) {
+                    $scope.cc.norec_emr = e.data.data.noemr;
+                    norecEMR = e.data.norecEMR
+                    nomorEMR = e.data.data.noemr
+                    var arrStr = {
+                    0: e.data.data.noemr,
+                    1: e.data.data.norec,
+                    2: e.data.data.tglemr,
+                    };
+                    cacheHelper.set("cacheNomorEMR", arrStr);
                     var confirm = $mdDialog.confirm()
                         .title('Informasi')
                         .textContent('EMR SUDAH TERSIMPAN, KLIK YA UNTUK KONFIRMASI')
@@ -1089,10 +1116,6 @@ define(['initialize', 'Configuration'], function (initialize,config) {
                     + $scope.cc.noregistrasi).then(function (res) {
                     })
 
-                    var arrStr = {
-                        0: e.data.data.noemr
-                    }
-                    cacheHelper.set('cacheNomorEMR', arrStr);
                 });
             }
 
