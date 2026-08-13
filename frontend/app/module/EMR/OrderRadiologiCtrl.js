@@ -508,6 +508,7 @@ define(['initialize', 'Configuration'], function (initialize, config) {
                 var tr = $(e.target).closest("tr");
                 var dataItem = this.dataItem(tr);
                 $scope.norecHasilRadiologi = ''
+                $scope.acc_number = ''
                 $scope.dataSelectedDetail = {}
                 $scope.dataSelectedDetail = dataItem
                 medifirstService.get('radiologi/get-pelayananpasien-radiologi?norec=' + dataItem.norec_pp + '&produkfk=' + dataItem.id).then(function (re) {
@@ -517,6 +518,7 @@ define(['initialize', 'Configuration'], function (initialize, config) {
                         return;
                     }
                     $scope.norecHasilRadiologi = re.data.data.norec;
+                    $scope.acc_number = re.data.data.accession_num;
                     $scope.item.nofoto = re.data.data.nofoto;
                     $scope.item.namalengkap = re.data.data.namalengkap;
                     $scope.item.tglInput = re.data.data.tanggal;
@@ -565,6 +567,29 @@ define(['initialize', 'Configuration'], function (initialize, config) {
             medifirstService.get("radiologi/get-data-combo-labrad").then(function (dat) {
                 $scope.listDokter = dat.data.dokter;
             })
+
+            $scope.lihatGambar = function () {
+
+               if ($scope.acc_number == undefined) {
+                    window.messageContainer.error("acc number tidak ditemukan!");
+                    return;
+                }
+
+                medifirstService.get("bridging/radiologi/get-hasil?accesNumber=" + $scope.acc_number)
+                    .then(function (response) {
+                        let hostname = location.hostname
+                        let hasilThenaPublic = response.data.data.publicFilmBox;
+                        let hasilThena = response.data.data.filmBox;
+                        if (hasilThenaPublic && /^(?:https?:\/\/)?(?:\d{1,3}\.){3}\d{1,3}:\d+$/.test(hasilThenaPublic)) {
+                                openInNewTab(hasilThenaPublic);
+                        } else {
+                                openInNewTab(hasilThena);
+                        }
+                    })
+                    .catch(function (error) {
+                        toastr.warning('Hasil Belum Ada !', 'Peringatan')
+                    });
+            }
 
             // $scope.LihatEkpertise = function () {
             //     if($scope.dataSelectedRiwayat == undefined)

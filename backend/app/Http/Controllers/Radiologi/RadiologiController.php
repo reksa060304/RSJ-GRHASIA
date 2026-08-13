@@ -2964,7 +2964,10 @@ class RadiologiController extends ApiController
 
         $data2 = DB::table('hasilradiologi_t as hr')
             ->leftjoin('pegawai_m as pg', 'pg.id', '=', 'hr.pegawaifk')
-            ->select('hr.*','pg.namalengkap')
+            ->leftjoin('pelayananpasien_t as pp', 'pp.norec', '=', 'hr.pelayananpasienfk')
+            ->leftjoin('strukorder_t as so', 'so.norec', '=', 'pp.strukorderfk')
+            ->leftjoin('ris_order as ro', 'ro.order_no', '=', 'so.noorder')
+            ->select('hr.*','pg.namalengkap', 'ro.accession_num')
             // ->where('ar.kdprofile', '=', 0)
             ->where('hr.statusenabled',true)
             ->where('hr.pelayananpasienfk', '=', $request['norec'])

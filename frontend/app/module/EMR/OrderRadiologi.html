@@ -363,8 +363,10 @@
             <input style="width: 65%;" kendo-combo-box k-ng-model="itemimg.gambar" k-data-text-field="'filename'"
                 k-data-value-field="'norec'" k-filter="'contains'" k-auto-bind="false" k-data-source="listNamaGambar"
                 k-on-change='selectImage()' />
+            <!-- <button style="margin-top: 4px;" class="k-button k-button-icontext k-primary k-grid-update"
+                ng-hide="hideExper" ng-click="CheckImage()"><span class="k-icon k-update"></span>Lihat Gambar</button> -->
             <button style="margin-top: 4px;" class="k-button k-button-icontext k-primary k-grid-update"
-                ng-hide="hideExper" ng-click="CheckImage()"><span class="k-icon k-update"></span>Lihat Gambar</button>
+                ng-hide="hideExper" ng-click="lihatGambar()"><span class="k-icon k-update"></span>Lihat Gambar</button>
         </div>
         <div class="k-edit-buttons  k-state-default pull-right" style="margin-top:10px">            
             <button class="k-button k-button-icontext k-primary k-grid-update" ng-click="cetakEks()"><span class="k-icon k-print"></span>Cetak</button>            
