@@ -14554,7 +14554,7 @@ if ($rowChanged) {
                         $jmlstok = $item2->qtyproduk;
                         //                        $hargasatuan = $harganetto;//$item2->harganetto;
                         $hargadiscount = $item2->hargadiscount;
-                        $total = (((float)ceil($item->qtyproduk) * ((float)$hargasatuan - (float)$hargadiscount)) * $item->hasilkonversi) + $tarifjasa;
+                        $total = (float)ceil(((float)$item->qtyproduk * ((float)$hargasatuan - (float)$hargadiscount)) * $item->hasilkonversi) + $tarifjasa;
                         break;
                     }
                 }
@@ -14602,7 +14602,7 @@ if ($rowChanged) {
                 'satuanviewfk' => $item->satuanviewfk,
                 'satuanview' => $item->ssview,
                 'jmlstok' => $item->qtystokcurrent,
-                'jumlah' => ceil($item->qtyproduk),
+                'jumlah' => $item->qtyproduk,
                 'jumlahobat' => $item->qtyproduk,
                 'jumlahracikan' => $item->jumlahracikan,
                 'dosis' => $item->dosis,
