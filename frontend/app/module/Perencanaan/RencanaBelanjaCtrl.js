@@ -493,7 +493,7 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
                         idSubSubKegiatan: $scope.item.subSubKegiatanRencana.id,
                         idLogin: $scope.pegawai.id,
                         idRuangan: $scope.item.idRuanganLoginUser.id,
-                        tahunanggaran: $scope.item.tahunAnggaran,
+                        tahunanggaran: $scope.item.tahunAnggaran ? moment($scope.item.tahunAnggaran).format('YYYY') : moment($scope.now).format('YYYY'),
                         keterangan: $scope.item.keterangan.id,
 
                         // detail
