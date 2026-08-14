@@ -564,7 +564,7 @@ define(['initialize', 'Configuration'], function (initialize, config) {
                     if (parseFloat($scope.item.jumlah * parseFloat($scope.item.nilaiKonversi)) >0){// <= parseFloat(dataProdukDetail[i].qtyproduk)) {
                         hrg1 = Math.round(parseFloat(dataProdukDetail[i].hargajual) * parseFloat($scope.item.nilaiKonversi))
                         $scope.item.hargaSatuan = parseFloat(hrg1)
-                        $scope.item.total = parseFloat((parseFloat($scope.item.jumlah) * (hrg1)))//+tarifJasa
+                        $scope.item.total = Math.ceil(parseFloat((parseFloat($scope.item.jumlah) * (hrg1))))//+tarifJasa
                         noTerima = dataProdukDetail[i].norec
                         ada = true;
                         break;

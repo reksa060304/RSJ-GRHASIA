@@ -1511,7 +1511,7 @@ class ReportController extends ApiController{
                         $jmlstok = $item2->qtyproduk;
 //                        $hargasatuan = $harganetto;//$item2->harganetto;
                         $hargadiscount = $item2->hargadiscount;
-                        $total = (((float)ceil($item->qtyproduk) * ((float)$hargasatuan-(float)$hargadiscount))*$item->hasilkonversi) + $tarifjasa;
+                        $total = (float)ceil(((float)$item->qtyproduk * ((float)$hargasatuan - (float)$hargadiscount)) * $item->hasilkonversi) + $tarifjasa;
                         break;
                     }
                 }
@@ -1560,7 +1560,7 @@ class ReportController extends ApiController{
                 'satuanviewfk' => $item->satuanviewfk,
                 'satuanview' => $item->ssview,
                 'jmlstok' => $item->qtystokcurrent,
-                'jumlah' => ceil($item->qtyproduk),
+                'jumlah' => $item->qtyproduk,
                 'jumlahobat' => $item->qtyproduk,
                 'jumlahracikan' => $item->jumlahracikan,
                 'dosis' => $item->dosis,
@@ -35458,5 +35458,472 @@ public function suratBuktiPengembalian(Request $request)
         
         return $pdf->stream();
     }
+
+    public function cetakSeleksiRehabilitasiPsikologi(Request $request)
+    {
+        $kdProfile = (int) $request['kdprofile'];
+        if ($kdProfile <= 0) {
+            $kdProfile = 30;
+        }
+
+        $noemrParam = isset($request['emr']) ? trim($request['emr']) : '';
+        $norecParam  = isset($request['emrfk'])  ? trim($request['emrfk'])  : '';
+
+        if (!empty($norecParam) && $norecParam !== '-') {
+            $whereEmr = "ep.noemr = '$norecParam'";
+        } else if (!empty($noemrParam) && $noemrParam !== '-') {
+            $whereEmr = "ep.norec = '$noemrParam'";
+        } else {
+            $whereEmr = "1 = 0";
+        }
+
+        try {
+            $data = DB::select(DB::raw("
+                SELECT
+                    epd.emrdfk,
+                    epd.value,
+                    pa.namapasien,
+                    pa.tgllahir,
+                    pa.nocm,
+                    pa.tempatlahir,
+                    al.alamatlengkap AS alamat,
+                    ag.agama,
+                    sp.statusperkawinan,
+                    ep.jeniskelamin,
+                    ep.umur,
+                    ep.namaruangan
+                FROM
+                    emrpasien_t AS ep
+                    INNER JOIN emrpasiend_t AS epd ON (epd.emrpasienfk = ep.noemr OR epd.emrpasienfk = ep.norec)
+                    LEFT JOIN pasien_m as pa on ep.nocm = pa.nocm
+                    LEFT JOIN alamat_m as al on pa.id = al.nocmfk
+                    LEFT JOIN agama_m as ag on ag.id = pa.objectagamafk
+                    LEFT JOIN statusperkawinan_m as sp on sp.id = pa.objectstatusperkawinanfk
+                WHERE
+                    $whereEmr
+                    AND ep.kdprofile = '$kdProfile' 
+                    AND epd.statusenabled = TRUE 
+                ORDER BY
+                    epd.emrdfk
+            "));
+        } catch (\Exception $e) {
+            $data = [];
+        }
+
+        $res = [];
+        $res['datapasien'] = new \stdClass();
+        $res['datapasien']->nocm = '';
+        $res['datapasien']->namapasien = '';
+        $res['datapasien']->jeniskelamin = '';
+        $res['datapasien']->tgllahir = '';
+        $res['datapasien']->umur = '';
+        $res['datapasien']->agama = '';
+        $res['datapasien']->statusperkawinan = '';
+        $res['datapasien']->tempatlahir = '';
+        $res['datapasien']->alamat = '';
+
+        // Default EMR Fields
+        $res['caregiver_nama'] = '';
+        $res['caregiver_hubungan'] = '';
+        $res['caregiver_alamat'] = '';
+        $res['caregiver_telp'] = '';
+        $res['caregiver_status_perkawinan'] = '';
+        $res['caregiver_pendidikan'] = '';
+        $res['caregiver_pekerjaan'] = '';
+        $res['motivasi_pasien'] = '';
+        $res['motivasi_keluarga'] = '';
+        $res['kemampuan_kognitif_iq'] = '';
+        $res['kemampuan_kognitif_detail'] = '';
+        $res['kemampuan_kognitif_image'] = null;
+        $res['potensi_pasien'] = '';
+        $res['kerentanan_pasien'] = '';
+        $res['aktivitas_sehari_hari'] = '';
+        $res['relasi_di_dalam_keluarga'] = '';
+        $res['relasi_di_luar_keluarga'] = '';
+        $res['tgl_pemeriksaan'] = '';
+        $res['psikolog'] = '';
+
+        if (!empty($data)) {
+            $res['datapasien']->nocm = isset($data[0]->nocm) ? $data[0]->nocm : '';
+            $res['datapasien']->namapasien = isset($data[0]->namapasien) ? $data[0]->namapasien : '';
+            $res['datapasien']->jeniskelamin = isset($data[0]->jeniskelamin) ? $data[0]->jeniskelamin : '';
+            $res['datapasien']->tgllahir = isset($data[0]->tgllahir) ? $data[0]->tgllahir : '';
+            $res['datapasien']->umur = isset($data[0]->umur) ? $data[0]->umur : '';
+            $res['datapasien']->agama = isset($data[0]->agama) ? $data[0]->agama : '';
+            $res['datapasien']->statusperkawinan = isset($data[0]->statusperkawinan) ? $data[0]->statusperkawinan : '';
+            $res['datapasien']->tempatlahir = isset($data[0]->tempatlahir) ? $data[0]->tempatlahir : '';
+            $res['datapasien']->alamat = isset($data[0]->alamat) ? $data[0]->alamat : '';
+
+            foreach ($data as $item) {
+                $emrdfk = (int)$item->emrdfk;
+                $val = $item->value;
+
+                if ($emrdfk == 1901310410) $res['caregiver_nama'] = $val;
+                if ($emrdfk == 1901310411) $res['caregiver_hubungan'] = $val;
+                if ($emrdfk == 1901310412) $res['caregiver_alamat'] = $val;
+                if ($emrdfk == 1901310413) $res['caregiver_telp'] = $val;
+                if ($emrdfk == 1901310414) $res['caregiver_status_perkawinan'] = $val;
+                if ($emrdfk == 1901310415) $res['caregiver_pendidikan'] = $val;
+                if ($emrdfk == 1901310416) $res['caregiver_pekerjaan'] = $val;
+                if ($emrdfk == 1901310417) $res['motivasi_pasien'] = $val;
+                if ($emrdfk == 1901310418) $res['motivasi_keluarga'] = $val;
+                if ($emrdfk == 1901310419) $res['kemampuan_kognitif_iq'] = $val;
+                if ($emrdfk == 1901310420) $res['kemampuan_kognitif_detail'] = $val;
+                if ($emrdfk == 1901310421) $res['kemampuan_kognitif_image'] = $val;
+                if ($emrdfk == 1901310422) $res['potensi_pasien'] = $val;
+                if ($emrdfk == 1901310423) $res['kerentanan_pasien'] = $val;
+                if ($emrdfk == 1901310424) $res['aktivitas_sehari_hari'] = $val;
+                if ($emrdfk == 1901310425) $res['relasi_di_dalam_keluarga'] = $val;
+                if ($emrdfk == 1901310426) $res['relasi_di_luar_keluarga'] = $val;
+                if ($emrdfk == 1901310427) $res['tgl_pemeriksaan'] = $val;
+                if ($emrdfk == 1901310428) { $p = explode('~', $val); $res['psikolog'] = isset($p[1]) ? $p[1] : $val; }
+            }
+        }
+
+        $reportController = new \App\Http\Controllers\Report\ReportController;
+        $res['datapasien']->tgllahir_formatted = $res['datapasien']->tgllahir ? $reportController->tanggal_indonesia(date('Y-m-d', strtotime($res['datapasien']->tgllahir))) : '';
+        $res['tgl_pemeriksaan_formatted'] = $res['tgl_pemeriksaan'] ? $reportController->tanggal_indonesia(date('Y-m-d', strtotime($res['tgl_pemeriksaan']))) : '';
+
+        $pdf = PDF::loadView('report.cetak-seleksi-rehabilitasi-psikologi', array('res' => $res));
+        return $pdf->stream();
+    }
+
+    private function getNestedItem($categories, $targetIdx)
+    {
+        $count = 0;
+        foreach ($categories as $cat) {
+            foreach ($cat->items as $sub) {
+                if ($count === $targetIdx) {
+                    return $sub;
+                }
+                $count++;
+            }
+        }
+        return null;
+    }
+
+    public function getCetakRincianBiaya(Request $request)
+    {
+        $noRegister = $request->get('strNoregistrasi');
+        $user       = $request->get('strIdPegawai');
+
+        if (empty($noRegister)) {
+            return response()->json(['message' => 'Parameter strNoregistrasi wajib diisi!'], 400);
+        }
+
+        //Header pasien
+        $head = DB::select("
+            select
+                pd.noregistrasi,
+                pas.nocm,
+                pas.namapasien || ' ( ' || coalesce(jkel.reportdisplay, '') || ' )' as namapasienjk,
+                ru2.namaruangan as unit,
+                kls2.namakelas as namakelas,
+                pgpj.namalengkap as dokterpj,
+                pd.tglregistrasi,
+                pd.tglpulang,
+                rk.namarekanan,
+                kp.kelompokpasien as tipepasien,
+                (
+                    select alm.alamatlengkap
+                    from alamat_m as alm
+                    where alm.nocmfk = pas.id
+                    limit 1
+                ) as alamat
+            from pasiendaftar_t as pd
+            join pasien_m as pas on pas.id = pd.nocmfk
+            join ruangan_m as ru2 on ru2.id = pd.objectruanganlastfk
+            left join kelas_m as kls2 on kls2.id = pd.objectkelasfk
+            left join jeniskelamin_m as jkel on jkel.id = pas.objectjeniskelaminfk
+            left join pegawai_m as pgpj on pgpj.id = pd.objectpegawaifk
+            left join rekanan_m as rk on rk.id = pd.objectrekananfk
+            left join kelompokpasien_m as kp on kp.id = pd.objectkelompokpasienlastfk
+            where pd.noregistrasi = ?
+            limit 1
+        ", [$noRegister]);
+
+        if (empty($head)) {
+            return response()->json(['message' => 'Data registrasi tidak ditemukan!'], 404);
+        }
+        $header = $head[0];
+
+        // Ambil No Struk & Total dari strukpelayanan
+        $dataStruk = DB::select("
+            select
+                sp.nostruk as nokwitansi,
+                sp.tglstruk,
+                sp.totalharusdibayar,
+                coalesce(sp.totalprekanan, 0) as totalprekanan,
+                coalesce(sp.totalbiayatambahan, 0) as totalbiayatambahan
+            from pasiendaftar_t pd
+            join antrianpasiendiperiksa_t apd on apd.noregistrasifk = pd.norec
+            join pelayananpasien_t pp on pp.noregistrasifk = apd.norec
+            join strukpelayanan_t sp on sp.norec = pp.strukfk
+            where pd.noregistrasi = ?
+            order by sp.tglstruk desc
+            limit 1
+        ", [$noRegister]);
+
+        if (!empty($dataStruk)) {
+            $header->nokwitansi        = $dataStruk[0]->nokwitansi;
+            $header->tglstruk          = $dataStruk[0]->tglstruk;
+            $header->totalharusdibayar = (float)$dataStruk[0]->totalharusdibayar;
+            $header->totalprekanan     = (float)$dataStruk[0]->totalprekanan;
+            $header->totalbiayatambahan = (float)$dataStruk[0]->totalbiayatambahan;
+        } else {
+            $header->nokwitansi        = null;
+            $header->tglstruk          = null;
+            $header->totalharusdibayar = 0;
+            $header->totalprekanan     = 0;
+            $header->totalbiayatambahan = 0;
+        }
+
+        //Item pelayanan (query langsung, logika = detailTagihan)
+        $rows = DB::select("
+            select
+                pp.tglpelayanan,
+                pp.rke,
+                pr.namaproduk,
+                coalesce(pp.jumlah, 0) as jumlah,
+                coalesce(pp.hargajual, 0) as hargajual,
+                coalesce(pp.hargadiscount, 0) as hargadiscount,
+                coalesce(pp.jasa, 0) as jasa,
+                pp.aturanpakai,
+                sr.noresep,
+                coalesce(ru.namaruangan, ru2.namaruangan, '') as namaruangan,
+                coalesce(rusr.namaruangan, '') as ruanganfarmasi,
+                coalesce(pgsr.namalengkap, '') as penulisresep,
+                coalesce(pg.namalengkap, '') as dokter,
+                coalesce(kl.namakelas, kls2.namakelas, 'Non Kelas') as namakelas,
+                coalesce(jp.jenisproduk, 'Akomodasi') as jenisproduk,
+                kpBpjs.kelompokprodukbpjs,
+                pd.objectkelompokpasienlastfk as kpid
+            from pasiendaftar_t as pd
+            join antrianpasiendiperiksa_t as apd on apd.noregistrasifk = pd.norec
+            join pelayananpasien_t as pp on pp.noregistrasifk = apd.norec
+            join produk_m as pr on pr.id = pp.produkfk
+            left join detailjenisproduk_m as djp on djp.id = pr.objectdetailjenisprodukfk
+            left join jenisproduk_m as jp on jp.id = djp.objectjenisprodukfk
+            left join kelompokprodukbpjs_m as kpBpjs on kpBpjs.id = pr.objectkelompokprodukbpjsfk
+            left join kelas_m as kl on kl.id = apd.objectkelasfk
+            left join kelas_m as kls2 on kls2.id = pd.objectkelasfk
+            left join pegawai_m as pg on pg.id = apd.objectpegawaifk
+            left join ruangan_m as ru on ru.id = apd.objectruanganfk
+            join ruangan_m as ru2 on ru2.id = pd.objectruanganlastfk
+            left join strukresep_t as sr on sr.norec = pp.strukresepfk
+            left join ruangan_m as rusr on rusr.id = sr.ruanganfk
+            left join pegawai_m as pgsr on pgsr.id = sr.penulisresepfk
+            where pd.noregistrasi = ?
+              and pp.produkfk <> 402611
+              and pr.namaproduk not in ('Biaya Administrasi','Biaya Materai')
+            order by coalesce(kpBpjs.kelompokprodukbpjs, jp.jenisproduk, 'Akomodasi') asc,
+                     pp.tglpelayanan asc,
+                     case when pp.rke ~ '^[0-9]+$' then cast(pp.rke as integer) else 0 end asc,
+                     pr.namaproduk asc
+        ", [$noRegister]);
+
+        $groupedBilling = [];
+        $dataBilling    = [];
+        $rawTotal       = 0;
+        $grandTotalRow  = 0;
+        $noCounter      = 1;
+
+        foreach ($rows as $v) {
+            $harga  = (float)$v->hargajual;
+            $diskon = (float)$v->hargadiscount;
+            $jasa   = (float)$v->jasa;
+            $itemTotalRaw = (($harga - $diskon) * (float)$v->jumlah) + $jasa;
+            $itemTotal    = $itemTotalRaw;
+            if (!empty($v->aturanpakai) || !empty($v->noresep)) {
+                $itemTotal = (float)ceil($itemTotal);
+            }
+
+            $rawTotal      += $itemTotalRaw;
+            $grandTotalRow += $itemTotal;
+
+            $namaproduk = $v->namaproduk;
+            if (!empty($v->rke)) {
+                $namaproduk = 'R/' . $v->rke . ' ' . $v->namaproduk;
+            }
+
+            $isResep = !empty($v->noresep);
+            if ($isResep) {
+                $ruanganKey      = 'RESEP_' . $v->noresep . '_' . $v->ruanganfarmasi;
+                $ruanganTindakan = $v->ruanganfarmasi . '     Resep No: ' . $v->noresep;
+                $dokterHeader    = $v->penulisresep;
+            } else {
+                $ruanganKey      = 'RUANG_' . $v->namaruangan;
+                $ruanganTindakan = $v->namaruangan;
+                $dokterHeader    = '';
+            }
+
+            $isBpjsGroup = in_array((int)$v->kpid, [2, 10, 21, 22, 23, 24, 16, 25]);
+            $jenisName = ($isBpjsGroup && !empty($v->kelompokprodukbpjs)) 
+                ? $v->kelompokprodukbpjs 
+                : (!empty($v->jenisproduk) ? $v->jenisproduk : 'Akomodasi');
+
+            $item = (object)[
+                'no'              => $noCounter++,
+                'tglpelayanan'    => $v->tglpelayanan,
+                'ruangantindakan' => $ruanganTindakan,
+                'namaproduk'      => $namaproduk,
+                'namakelas'       => $isResep ? '-' : (!empty($v->namakelas) ? $v->namakelas : 'Non Kelas'),
+                'dokter'          => $isResep ? '-' : (!empty($v->dokter) ? $v->dokter : '-'),
+                'jumlah'          => $v->jumlah,
+                'hargajual'       => $harga,
+                'diskon'          => $diskon,
+                'total'           => $itemTotal,
+                'jenisproduk'     => $jenisName,
+                'isResep'         => $isResep,
+            ];
+
+            $dataBilling[] = $item;
+
+            if (!isset($groupedBilling[$jenisName])) {
+                $groupedBilling[$jenisName] = [
+                    'jenis'       => $jenisName,
+                    'totalJenis'  => 0,
+                    'ruanganList' => [],
+                ];
+            }
+            $groupedBilling[$jenisName]['totalJenis'] += $itemTotal;
+
+            if (!isset($groupedBilling[$jenisName]['ruanganList'][$ruanganKey])) {
+                $groupedBilling[$jenisName]['ruanganList'][$ruanganKey] = [
+                    'ruangan'      => $ruanganTindakan,
+                    'isResep'      => $isResep,
+                    'dokterHeader' => $dokterHeader,
+                    'totalRuangan' => 0,
+                    'items'        => [],
+                ];
+            }
+            $groupedBilling[$jenisName]['ruanganList'][$ruanganKey]['totalRuangan'] += $itemTotal;
+            $groupedBilling[$jenisName]['ruanganList'][$ruanganKey]['items'][] = $item;
+        }
+
+        // Sort Jenis alphabetically
+        ksort($groupedBilling);
+
+        if (empty($dataBilling)) {
+            return response()->json(['message' => 'Data tagihan tidak ditemukan untuk registrasi ini.'], 404);
+        }
+
+        if ($header->totalharusdibayar == 0) {
+            $header->totalharusdibayar = $grandTotalRow;
+        }
+
+        $pembulatan = 0;
+        if (!empty($header->totalbiayatambahan) && (float)$header->totalbiayatambahan > 0) {
+            $pembulatan = (float)$header->totalbiayatambahan;
+        } else {
+            $pembulatan = (float)round($grandTotalRow - $rawTotal);
+            if ($pembulatan < 0) {
+                $pembulatan = 0;
+            }
+        }
+
+        //No SEP
+        $dataSep = DB::select("
+            select
+                coalesce(pa.nosep, '-') as sep,
+                pd.objectkelompokpasienlastfk as kelompokpasien
+            from pemakaianasuransi_t as pa
+            left join pasiendaftar_t as pd on pd.norec = pa.noregistrasifk
+            where pd.noregistrasi = ?
+            limit 1
+        ", [$noRegister]);
+
+        // Total Deposit
+        $dataDeposit = DB::select("
+            select coalesce(sum(pp.hargajual), 0) as totaldeposit
+            from pasiendaftar_t pd
+            join antrianpasiendiperiksa_t apd on apd.noregistrasifk = pd.norec
+            join pelayananpasien_t pp on pp.noregistrasifk = apd.norec
+            where pd.noregistrasi = ? and pp.produkfk = 402611
+        ", [$noRegister]);
+        $totalDeposit = !empty($dataDeposit) ? (float)$dataDeposit[0]->totaldeposit : 0;
+
+        // Diskon Jasa Medis & Umum
+        $dataDiskonDetail = DB::select("
+            select sum(ppd.hargadiscount) as hargadiscount, ppd.komponenhargafk
+            from pasiendaftar_t pd
+            join antrianpasiendiperiksa_t apd on apd.noregistrasifk = pd.norec
+            join pelayananpasien_t pp on pp.noregistrasifk = apd.norec
+            join pelayananpasiendetail_t ppd on ppd.pelayananpasien = pp.norec
+            where pd.noregistrasi = ? and pp.produkfk <> 402611
+            group by ppd.komponenhargafk
+        ", [$noRegister]);
+
+        $dataTotalDiskon = DB::select("
+            select coalesce(sum(sp.totaldiscount), 0) as totaldiskon
+            from pasiendaftar_t as pd
+            join antrianpasiendiperiksa_t apd on apd.noregistrasifk = pd.norec
+            join pelayananpasien_t pp on pp.noregistrasifk = apd.norec
+            join strukpelayanan_t as sp on sp.norec = pp.strukfk
+            where pd.noregistrasi = ?
+        ", [$noRegister]);
+
+        $totalDiskonMedis = 0;
+        $totalDiskonUmum  = 0;
+        foreach ($dataDiskonDetail as $disk) {
+            if ($disk->komponenhargafk == 35) {
+                $totalDiskonMedis += (float)$disk->hargadiscount;
+            } else {
+                $totalDiskonUmum  += (float)$disk->hargadiscount;
+            }
+        }
+        if (!empty($dataTotalDiskon)) {
+            $totalDiskonUmum += (float)$dataTotalDiskon[0]->totaldiskon;
+        }
+
+        $dataAdminMaterai = DB::select("
+            select
+                coalesce(sum(case when pr.namaproduk = 'Biaya Administrasi' then (pp.hargajual - coalesce(pp.hargadiscount, 0)) * pp.jumlah else 0 end), 0) as totaladmin,
+                coalesce(sum(case when pr.namaproduk = 'Biaya Materai' then (pp.hargajual - coalesce(pp.hargadiscount, 0)) * pp.jumlah else 0 end), 0) as totalmaterai
+            from pasiendaftar_t pd
+            join antrianpasiendiperiksa_t apd on apd.noregistrasifk = pd.norec
+            join pelayananpasien_t pp on pp.noregistrasifk = apd.norec
+            join produk_m pr on pr.id = pp.produkfk
+            where pd.noregistrasi = ?
+        ", [$noRegister]);
+
+        $totalAdmin   = !empty($dataAdminMaterai) ? (float)$dataAdminMaterai[0]->totaladmin : 0;
+        $totalMaterai = !empty($dataAdminMaterai) ? (float)$dataAdminMaterai[0]->totalmaterai : 0;
+
+        $terbilang = $this->terbilang($header->totalharusdibayar);
+
+        $ditanggungPerusahaan = (float)$header->totalprekanan;
+        $ditanggungSendiri    = max(0, (float)$header->totalharusdibayar - $ditanggungPerusahaan);
+
+        $isPdf = $request->get('pdf') === 'true' || $request->get('pdf') === '1';
+
+        $viewData = [
+            'dataBilling'          => $dataBilling,
+            'groupedBilling'       => $groupedBilling,
+            'header'               => $header,
+            'sep'                  => !empty($dataSep) ? $dataSep[0]->sep : '-',
+            'isSepVisible'         => !empty($dataSep) && in_array($dataSep[0]->kelompokpasien, [2, 4]),
+            'totalDeposit'         => $totalDeposit,
+            'totalDiskonMedis'     => $totalDiskonMedis,
+            'totalDiskonUmum'      => $totalDiskonUmum,
+            'pembulatan'           => $pembulatan,
+            'ditanggungPerusahaan' => $ditanggungPerusahaan,
+            'ditanggungSendiri'    => $ditanggungSendiri,
+            'totalAdmin'           => $totalAdmin,
+            'totalMaterai'         => $totalMaterai,
+            'user'                 => strtoupper($user),
+            'terbilang'            => $terbilang,
+            'tglCetak'             => date('d-m-Y H:i'),
+            'isPdf'                => $isPdf,
+        ];
+
+        if ($isPdf) {
+            $pdf = PDF::loadView('report.kasir.cetak-rincian-biaya', $viewData);
+            return $pdf->stream('rincian-biaya-' . $noRegister . '.pdf');
+        }
+
+        return view('report.kasir.cetak-rincian-biaya', $viewData);
+    }
+    
     //batas
 }

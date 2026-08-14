@@ -1277,7 +1277,7 @@ Which will check for empty strings (""), null, undefined, false and the numbers 
                 // debugger
                 if (newValue != oldValue) {
                     hrgsdk = $scope.item.hargadiskon
-                    $scope.item.total = Math.round((parseFloat($scope.item.jumlahbulat) * (hrg1 - hrgsdk)) + parseFloat(tarifJasa),4)
+                    $scope.item.total = Math.ceil((parseFloat($scope.item.jumlahbulat) * (hrg1 - hrgsdk)) + parseFloat(tarifJasa))
                 }
             })
 
@@ -1352,7 +1352,7 @@ Which will check for empty strings (""), null, undefined, false and the numbers 
                             } else {
                                 hrgsdk = $scope.item.hargadiskon
                             }
-                            $scope.item.total =Math.round((parseFloat($scope.item.jumlahbulat) * (hrg1 - hrgsdk)) + parseFloat(tarifJasa),4)
+                            $scope.item.total = Math.ceil((parseFloat($scope.item.jumlahbulat) * (hrg1 - hrgsdk)) + parseFloat(tarifJasa))
                             noTerima = dataProdukDetail[i].norec
                             $scope.item.asal = { id: dataProdukDetail[i].objectasalprodukfk, asalproduk: dataProdukDetail[i].asalproduk }
                             ada = true;

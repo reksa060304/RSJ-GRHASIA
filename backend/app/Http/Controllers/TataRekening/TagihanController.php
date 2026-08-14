@@ -843,6 +843,10 @@ class TagihanController  extends ApiController
 
                 $harga = (float)$value->hargajual;
                 $diskon = (float)$value->hargadiscount;
+                $itemTotal = (($harga - $diskon) * $value->jumlah) + $jasa;
+                if (!is_null($value->aturanpakai) || !is_null($value->noresep)) {
+                    $itemTotal = (float)ceil($itemTotal);
+                }
                 $detail = array(
                     //'data' => $value,
                     'norec' => $value->norec,
@@ -854,7 +858,7 @@ class TagihanController  extends ApiController
                     'ruanganTindakan' => @$value->namaruangan,
                     'harga' => $harga,
                     'diskon' => $diskon,
-                    'total' => (($harga - $diskon) * $value->jumlah) + $jasa,
+                    'total' => $itemTotal,
                     'jppid' => '',
                     'jenispetugaspe' => '',
                     'strukfk' => $value->nostruk . ' / ' . $value->nosbm,
@@ -877,15 +881,15 @@ class TagihanController  extends ApiController
                 );
 
                 if (is_null($value->nosbm) == true) {
-                    $dibayar = $dibayar + (($harga - $diskon) * $value->jumlah) + $jasa;
+                    $dibayar = $dibayar + $itemTotal;
                 }
                 if (is_null($value->nostruk) == true) {
-                    $diverif = $diverif + (($harga - $diskon) * $value->jumlah) + $jasa;
+                    $diverif = $diverif + $itemTotal;
                 }
                 $norecAPD = $value->norec_apd;
                 $norecSP = $value->norec_sp;
-                $totalBilling = $totalBilling + (($harga - $diskon) * $value->jumlah) + $value->jasa;
-                $total =  (($harga - $diskon) * $value->jumlah) + $value->jasa;
+                $totalBilling = $totalBilling + $itemTotal;
+                $total = $itemTotal;
                 $details[] = $detail;
 
 //                $totototol = $totototol + $total;
@@ -1002,7 +1006,7 @@ class TagihanController  extends ApiController
                         $temp->jumlah = $value->jumlah;#
                         $temp->hargajual = $value->hargajual;#
                         $temp->diskon = $hargadiscount;#
-                        $temp->total = $total;#
+                        $temp->total = $itemTotal;#
                         $temp->namakamar = $namakamar;#
                         $temp->tipepasien = $value->kelompokpasien;#
                         $temp->totalharusdibayar = $totalharusdibayar;#
@@ -1038,8 +1042,8 @@ class TagihanController  extends ApiController
                 'noregistrasi' => $noRegister ,
             )
         );
-        $totalBilling=0;
-        $totalBilling = $dataTotalBill[0]->total;
+        //$totalBilling=0;
+        //$totalBilling = $dataTotalBill[0]->total;
 
         //**    DATA TOTAL DIBAYAR BARU 28 APRIL 2021                                            */
         $dataTotaldibayar = DB::select(DB::raw("
@@ -4632,7 +4636,7 @@ class TagihanController  extends ApiController
             ->join('pelayananpasien_t as pp', 'apd.norec', '=', 'pp.noregistrasifk')
             // ->leftjoin('strukpelayanan_t as sp', 'sp.norec', '=', 'pp.strukfk')
             // ->leftjoin('strukpelayananpenjamin_t as spp', 'spp.nostrukfk', '=', 'sp.norec')
-            ->select(DB::raw("sum(((case when pp.hargajual is null then 0 else pp.hargajual::float8  end - case when pp.hargadiscount is null then 0 else pp.hargadiscount::float8 end) * pp.jumlah) + case when pp.jasa is null then 0 else pp.jasa::float8 end)::int as totaltagihan"),'pd.norec AS norec_pd','pd.tglregistrasi', 'p.nocm', 'pd.noregistrasi', 'ru.namaruangan', 'p.namapasien', 'kp.kelompokpasien',
+            ->select(DB::raw("sum(case when pp.aturanpakai is not null or pp.strukresepfk is not null then ceil((case when pp.hargajual is null then 0 else pp.hargajual::float8 end - case when pp.hargadiscount is null then 0 else pp.hargadiscount::float8 end) * pp.jumlah) + case when pp.jasa is null then 0 else pp.jasa::float8 end else ((case when pp.hargajual is null then 0 else pp.hargajual::float8 end - case when pp.hargadiscount is null then 0 else pp.hargadiscount::float8 end) * pp.jumlah) + case when pp.jasa is null then 0 else pp.jasa::float8 end end)::int as totaltagihan"),'pd.norec AS norec_pd','pd.tglregistrasi', 'p.nocm', 'pd.noregistrasi', 'ru.namaruangan', 'p.namapasien', 'kp.kelompokpasien',
                 'pd.tglpulang', 'pd.statuspasien','pd.nostruklastfk', 'pd.nosbmlastfk','pd.tglmeninggal','p.nosuratkematian',
                 // 'spp.noverifikasi',
                 'dept.id as deptid',
@@ -5333,6 +5337,10 @@ class TagihanController  extends ApiController
 
                 $harga = (float)$value->hargajual;
                 $diskon = (float)$value->hargadiscount;
+                $itemTotal = (($harga - $diskon) * $value->jumlah) + $jasa;
+                if (!is_null($value->aturanpakai)) {
+                    $itemTotal = (float)ceil($itemTotal);
+                }
                 $detail = array(
                     'norec' => $value->norec,
                     'tglPelayanan' => $value->tglpelayanan,
@@ -5343,7 +5351,7 @@ class TagihanController  extends ApiController
                     'ruanganTindakan' => @$value->namaruangan,
                     'harga' => $harga,
                     'diskon' => $diskon,
-                    'total' => (($harga - $diskon) * $value->jumlah) + $jasa,
+                    'total' => $itemTotal,
                     'jppid' => '',
                     'jenispetugaspe' => '',
                     'strukfk' => $value->nostruk . ' / ' . $value->nosbm,
@@ -15157,7 +15165,8 @@ $result = array(
        
         $data = DB::select(DB::raw("
         select * from (
-            SELECT row_number()over(partition by noregistrasi order by sts.nosts asc), SUM
+        /*
+    SELECT row_number()over(partition by noregistrasi order by sts.nosts asc), SUM
 	(
 		(
 			(
@@ -15179,6 +15188,16 @@ $result = array(
 				0 ELSE pp.jasa :: float8 
 			END 
 			) :: INT AS totaltagihan,
+            */
+            SELECT row_number()over(partition by noregistrasi order by sts.nosts asc), sum(
+                case when pp.aturanpakai is not null or pp.strukresepfk is not null then 
+                    ceil(
+                        (case when pp.hargajual is null then 0 else pp.hargajual::float8 end - case when pp.hargadiscount is null then 0 else pp.hargadiscount::float8 end) * pp.jumlah
+                    ) + case when pp.jasa is null then 0 else pp.jasa::float8 end
+                else 
+                    ((case when pp.hargajual is null then 0 else pp.hargajual::float8 end - case when pp.hargadiscount is null then 0 else pp.hargadiscount::float8 end) * pp.jumlah) + case when pp.jasa is null then 0 else pp.jasa::float8 end
+                end
+            )::int as totaltagihan,
 			pd.norec AS norec_pd,
 			pd.tglregistrasi,
 			p.nocm,
