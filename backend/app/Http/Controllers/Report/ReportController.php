@@ -35,6 +35,36 @@ class ReportController extends ApiController{
         parent::__construct($skip_authentication = true);
     }
 
+    private function parseUmurToTahun($umur)
+    {
+        if (is_numeric($umur)) {
+            return (float)$umur;
+        }
+        
+        $years = 0;
+        $months = 0;
+        $days = 0;
+        
+        if (preg_match('/(\d+)\s*(?:thn|tahun|th)/i', $umur, $matches)) {
+            $years = (int)$matches[1];
+        }
+        if (preg_match('/(\d+)\s*(?:bln|bulan)/i', $umur, $matches)) {
+            $months = (int)$matches[1];
+        }
+        if (preg_match('/(\d+)\s*(?:hr|hari)/i', $umur, $matches)) {
+            $days = (int)$matches[1];
+        }
+        
+        if ($years === 0 && $months === 0 && $days === 0) {
+            if (preg_match('/^\s*(\d+)/', $umur, $matches)) {
+                return (float)$matches[1];
+            }
+            return 0.0;
+        }
+        
+        return $years + ($months / 12) + ($days / 365);
+    }
+
     public function getDataHasilLabCetak(Request $request){
 //        $kdProfile = (int) $this->getDataKdProfile($request);
         $umur = $request['umur'];
@@ -22187,6 +22217,7 @@ public function suratBuktiPengembalian(Request $request)
             $noregistrasi = $request['noregistrasi'];
             $jeniskelamin = $request['jeniskelamin'];
             $umur = $request['umur'];
+            $umurQuery = $this->parseUmurToTahun($umur);
             
             $getOrder = collect(DB::select("
                 SELECT st.norec
@@ -22210,7 +22241,7 @@ public function suratBuktiPengembalian(Request $request)
                         inner join maphasillab_m as maps on maps.produkfk = prd.id
                         inner join maphasillabdetail_m as maps2 on maps2.maphasilfk = maps.id 
                         inner join jeniskelamin_m as jk on maps2.jeniskelaminfk = jk.id and jk.jeniskelamin = '$jeniskelamin'
-                        and maps2.kelompokumurfk in (select id from kelompokumur_m kuu where '$umur' BETWEEN kuu.umurmin and kuu.umurmax) 
+                        and maps2.kelompokumurfk in (select id from kelompokumur_m kuu where '$umurQuery' BETWEEN kuu.umurmin and kuu.umurmax) 
                         inner join nilainormal_m as nn on nn.id = maps2.nilainormalfk
                         left join satuanstandar_m as ss on ss.id = maps.satuanstandarfk
                         left join hasillaboratorium_t as hh on hh.norecpelayanan = pp.norec 
