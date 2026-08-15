@@ -35133,7 +35133,17 @@ public function suratBuktiPengembalian(Request $request)
 
     public function cetakEmrPublik(Request $request)
     {
-        if ($request->has('token')) {
+        $emrNorec = null;
+        $emrfk = null;
+        $blade = null;
+        $kdProfile = null;
+
+        if ($request->has(['emr', 'emrfk', 'blade'])) {
+            $emrNorec = $request->input('emr');
+            $emrfk = (int)$request->input('emrfk');
+            $blade = $request->input('blade');
+            $kdProfile = (int)$request->input('kdprofile', 30);
+        } elseif ($request->has('token')) {
             $token = $request->input('token');
             $parts = explode('.', $token);
             if (count($parts) === 2) {
@@ -35155,57 +35165,6 @@ public function suratBuktiPengembalian(Request $request)
                         if (time() > $expires) {
                             return response('<html><head><title>Link Kedaluwarsa</title></head><body style="font-family:sans-serif; text-align:center; padding:50px;"><h1 style="color:#e74c3c;">Link Telah Kedaluwarsa</h1><p>Maaf, link akses dokumen edukasi ini sudah tidak berlaku lagi (melebihi batas waktu 7 hari).</p></body></html>', 403);
                         }
-                        
-                        $request->merge([
-                            'emr' => $emrNorec,
-                            'emrfk' => $emrfk,
-                            'blade' => $blade,
-                            'kdprofile' => $kdProfile
-                        ]);
-
-                        // Dapatkan pegawaittd secara otomatis berdasarkan pembuat EMR
-                        $emrInfo = \DB::table('emrpasien_t')
-                            ->where('norec', $emrNorec)
-                            ->where('kdprofile', $kdProfile)
-                            ->first();
-                        if ($emrInfo && !empty($emrInfo->pegawaifk)) {
-                            $request->merge(['pegawaittd' => $emrInfo->pegawaifk]);
-                        }
-
-                        // Blade generik (fred-diabetes-dom, fred-hipertensi-dom, dll) tetap pakai CetakSuratMan.
-                        $dedicatedBlades = [
-                            'rujukan-edukasi-psikiatri'                                      => 'cetakRujukanEdukasiPsikiatri',
-                            'rujukan-edukasi-pasien-dengan-komorbid-epilepsi'                 => 'cetakRujukanEdukasiPasienGangguanJiwaDenganKomorbidEpilepsi',
-                            'rujukan-edukasi-pasien-dengan-komorbid-sindrome-geriatri-low-intake' => 'cetakRujukanEdukasiPasienGangguanJiwaDenganKomorbidSindromeGeriatriLowIntake',
-                            'rujukan-edukasi-pasien-dengan-komorbid-tuberculosis'             => 'cetakRujukanEdukasiPasienGangguanJiwaDenganKomorbidTuberculosis',
-                            'rujukan-edukasi-pasien'                                          => 'cetakRujukanEdukasiPasien',
-                        ];
-
-                        if (isset($dedicatedBlades[$blade])) {
-                            // Ambil norec_apd dan data pasien dari DB agar dedicated endpoint punya semua param
-                            $emrExtra = \DB::table('emrpasien_t as ep')
-                                ->select('ep.umur', 'ep.jeniskelamin', 'ep.noregistrasifk',
-                                         'apd.norec as norec_apd', 'pd.noregistrasi')
-                                ->join('antrianpasiendiperiksa_t as apd', 'apd.norec', '=', 'ep.norec_apd')
-                                ->join('pasiendaftar_t as pd', 'pd.norec', '=', 'apd.noregistrasifk')
-                                ->where('ep.norec', $emrNorec)
-                                ->where('ep.kdprofile', $kdProfile)
-                                ->first();
-
-                            if ($emrExtra) {
-                                $request->merge([
-                                    'norec_apd'   => $emrExtra->norec_apd,
-                                    'noregistrasi' => $emrExtra->noregistrasi,
-                                    'umur'         => $emrExtra->umur,
-                                    'jeniskelamin' => $emrExtra->jeniskelamin,
-                                ]);
-                            }
-
-                            $method = $dedicatedBlades[$blade];
-                            return $this->$method($request);
-                        }
-
-                        return $this->CetakSuratMan($request);
                     } else {
                         return response('<h1>Link Tidak Valid (Payload tidak cocok)</h1>', 403);
                     }
@@ -35216,13 +35175,75 @@ public function suratBuktiPengembalian(Request $request)
                 return response('<h1>Link Tidak Valid (Format token salah)</h1>', 403);
             }
         } else {
-            return response('<h1>Akses Ditolak</h1><p>Akses memerlukan token valid.</p>', 403);
+            return response('<h1>Akses Ditolak</h1><p>Akses memerlukan token valid atau parameter lengkap.</p>', 403);
         }
+
+        $request->merge([
+            'emr' => $emrNorec,
+            'emrfk' => $emrfk,
+            'blade' => $blade,
+            'kdprofile' => $kdProfile
+        ]);
+
+        // Dapatkan pegawaittd secara otomatis berdasarkan pembuat EMR
+        $emrInfo = \DB::table('emrpasien_t')
+            ->where('norec', $emrNorec)
+            ->where('kdprofile', $kdProfile)
+            ->first();
+        if ($emrInfo && !empty($emrInfo->pegawaifk)) {
+            $request->merge(['pegawaittd' => $emrInfo->pegawaifk]);
+        }
+
+        // Blade generik (fred-diabetes-dom, fred-hipertensi-dom, dll) tetap pakai CetakSuratMan.
+        $dedicatedBlades = [
+            'rujukan-edukasi-psikiatri'                                      => 'cetakRujukanEdukasiPsikiatri',
+            'rujukan-edukasi-pasien-dengan-komorbid-epilepsi'                 => 'cetakRujukanEdukasiPasienGangguanJiwaDenganKomorbidEpilepsi',
+            'rujukan-edukasi-pasien-dengan-komorbid-sindrome-geriatri-low-intake' => 'cetakRujukanEdukasiPasienGangguanJiwaDenganKomorbidSindromeGeriatriLowIntake',
+            'rujukan-edukasi-pasien-dengan-komorbid-tuberculosis'             => 'cetakRujukanEdukasiPasienGangguanJiwaDenganKomorbidTuberculosis',
+            'rujukan-edukasi-pasien'                                          => 'cetakRujukanEdukasiPasien',
+        ];
+
+        if (isset($dedicatedBlades[$blade])) {
+            // Ambil norec_apd dan data pasien dari DB agar dedicated endpoint punya semua param
+            $emrExtra = \DB::table('emrpasien_t as ep')
+                ->select('ep.umur', 'ep.jeniskelamin', 'ep.noregistrasifk',
+                         'apd.norec as norec_apd', 'pd.noregistrasi')
+                ->join('antrianpasiendiperiksa_t as apd', 'apd.norec', '=', 'ep.norec_apd')
+                ->join('pasiendaftar_t as pd', 'pd.norec', '=', 'apd.noregistrasifk')
+                ->where('ep.norec', $emrNorec)
+                ->where('ep.kdprofile', $kdProfile)
+                ->first();
+
+            if ($emrExtra) {
+                $request->merge([
+                    'norec_apd'   => $emrExtra->norec_apd,
+                    'noregistrasi' => $emrExtra->noregistrasi,
+                    'umur'         => $emrExtra->umur,
+                    'jeniskelamin' => $emrExtra->jeniskelamin,
+                ]);
+            }
+
+            $method = $dedicatedBlades[$blade];
+            return $this->$method($request);
+        }
+
+        return $this->CetakSuratMan($request);
     }
 
     public function cetakResumeV3Publik(Request $r)
     {
-        if ($r->has('token')) {
+        $norec = null;
+        $kdProfile = null;
+
+        if ($r->has('norec')) {
+            $norec = $r->input('norec');
+            $kdProfile = (int)$r->input('kdprofile', 30);
+            
+            $r->merge([
+                'norec' => $norec,
+                'kdprofile' => $kdProfile
+            ]);
+        } elseif ($r->has('token')) {
             $token = $r->input('token');
             $parts = explode('.', $token);
             if (count($parts) === 2) {
@@ -35257,7 +35278,7 @@ public function suratBuktiPengembalian(Request $request)
                 return response('<h1>Link Tidak Valid (Format token salah)</h1>', 403);
             }
         } else {
-            return response('<h1>Akses Ditolak</h1><p>Akses memerlukan token valid.</p>', 403);
+            return response('<h1>Akses Ditolak</h1><p>Akses memerlukan token atau parameter valid.</p>', 403);
         }
 
         // Dapatkan pegawaittd secara otomatis berdasarkan pembuat resume medis
