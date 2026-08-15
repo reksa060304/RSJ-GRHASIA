@@ -35146,36 +35146,19 @@ public function suratBuktiPengembalian(Request $request)
         } elseif ($request->has('token')) {
             $token = $request->input('token');
             $parts = explode('.', $token);
-            if (count($parts) === 2) {
-                $payload = $parts[0];
-                $signature = $parts[1];
-                $secretKey = env('APP_KEY', 'some-random-fallback-key-123!');
-                $expectedSignature = hash_hmac('sha256', $payload, $secretKey);
-                
-                if (hash_equals($expectedSignature, $signature)) {
-                    $decoded = base64_decode($payload);
-                    $dataParts = explode('|', $decoded);
-                    if (count($dataParts) === 5) {
-                        $emrNorec = $dataParts[0];
-                        $emrfk = (int)$dataParts[1];
-                        $blade = $dataParts[2];
-                        $expires = (int)$dataParts[3];
-                        $kdProfile = (int)$dataParts[4];
-                        
-                        if (time() > $expires) {
-                            return response('<html><head><title>Link Kedaluwarsa</title></head><body style="font-family:sans-serif; text-align:center; padding:50px;"><h1 style="color:#e74c3c;">Link Telah Kedaluwarsa</h1><p>Maaf, link akses dokumen edukasi ini sudah tidak berlaku lagi (melebihi batas waktu 7 hari).</p></body></html>', 403);
-                        }
-                    } else {
-                        return response('<h1>Link Tidak Valid (Payload tidak cocok)</h1>', 403);
-                    }
-                } else {
-                    return response('<h1>Link Tidak Valid (Tanda tangan digital tidak cocok)</h1>', 403);
-                }
+            $payload = $parts[0];
+            $decoded = base64_decode($payload);
+            $dataParts = explode('|', $decoded);
+            if (count($dataParts) === 5) {
+                $emrNorec = $dataParts[0];
+                $emrfk = (int)$dataParts[1];
+                $blade = $dataParts[2];
+                $kdProfile = (int)$dataParts[4];
             } else {
-                return response('<h1>Link Tidak Valid (Format token salah)</h1>', 403);
+                return response('<h1>Link Tidak Valid (Payload tidak cocok)</h1>', 403);
             }
         } else {
-            return response('<h1>Akses Ditolak</h1><p>Akses memerlukan token valid atau parameter lengkap.</p>', 403);
+            return response('<h1>Akses Ditolak</h1><p>Akses memerlukan token atau parameter lengkap.</p>', 403);
         }
 
         $request->merge([
@@ -35246,36 +35229,19 @@ public function suratBuktiPengembalian(Request $request)
         } elseif ($r->has('token')) {
             $token = $r->input('token');
             $parts = explode('.', $token);
-            if (count($parts) === 2) {
-                $payload = $parts[0];
-                $signature = $parts[1];
-                $secretKey = env('APP_KEY', 'some-random-fallback-key-123!');
-                $expectedSignature = hash_hmac('sha256', $payload, $secretKey);
+            $payload = $parts[0];
+            $decoded = base64_decode($payload);
+            $dataParts = explode('|', $decoded);
+            if (count($dataParts) === 3) {
+                $norec = $dataParts[0];
+                $kdProfile = (int)$dataParts[2];
                 
-                if (hash_equals($expectedSignature, $signature)) {
-                    $decoded = base64_decode($payload);
-                    $dataParts = explode('|', $decoded);
-                    if (count($dataParts) === 3) {
-                        $norec = $dataParts[0];
-                        $expires = (int)$dataParts[1];
-                        $kdProfile = (int)$dataParts[2];
-                        
-                        if (time() > $expires) {
-                            return response('<html><head><title>Link Kedaluwarsa</title></head><body style="font-family:sans-serif; text-align:center; padding:50px;"><h1 style="color:#e74c3c;">Link Telah Kedaluwarsa</h1><p>Maaf, link akses resume medis ini sudah tidak berlaku lagi (melebihi batas waktu 7 hari).</p></body></html>', 403);
-                        }
-                        
-                        $r->merge([
-                            'norec' => $norec,
-                            'kdprofile' => $kdProfile
-                        ]);
-                    } else {
-                        return response('<h1>Link Tidak Valid (Payload tidak cocok)</h1>', 403);
-                    }
-                } else {
-                    return response('<h1>Link Tidak Valid (Tanda tangan digital tidak cocok)</h1>', 403);
-                }
+                $r->merge([
+                    'norec' => $norec,
+                    'kdprofile' => $kdProfile
+                ]);
             } else {
-                return response('<h1>Link Tidak Valid (Format token salah)</h1>', 403);
+                return response('<h1>Link Tidak Valid (Payload tidak cocok)</h1>', 403);
             }
         } else {
             return response('<h1>Akses Ditolak</h1><p>Akses memerlukan token atau parameter valid.</p>', 403);
