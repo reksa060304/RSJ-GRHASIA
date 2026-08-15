@@ -356,7 +356,7 @@ define(['initialize'], function (initialize) {
                         }
                         // Warna orange pada kolom Tgl Registrasi jika kunjungan terakhir > 30 hari
                         if (dataItem.isLebih30Hari) {
-                            $(this).find('td').eq(1).addClass('orange');
+                            $(this).find('td').eq(2).addClass('orange');
                         }
 
                         $(this).find('td').each(function () {

@@ -824,19 +824,25 @@ class KasirController extends ApiController
         $deposit = 0;
         $detailTagihan = array();
 
+        $totalJumlahBayar = 0;
         foreach ($pelayanan_pasien as $value) {
             $harga = ($value->hargajual == null) ? 0 : $value->hargajual;
             $diskon = ($value->hargadiscount == null) ? 0 : $value->hargadiscount;
             if ($value->nilainormal == -1) {
                 $deposit += $harga;
             } else {
+                $itemTotal = ($harga - $diskon) * $value->jumlah;
+                if (!is_null($value->aturanpakai) || !is_null($value->strukresepfk)) {
+                    $itemTotal = (float)ceil($itemTotal);
+                }
+                $totalJumlahBayar += $itemTotal;
                 $detailTagihan[] = array(
                     'namaLayanan'  => $value->produk->namaproduk,
                     "ruangan" => @$value->antrian_pasien_diperiksa->ruangan->reportdisplay,
                     'jumlah'  => $value->jumlah,
                     'harga'  => $harga,
                     'diskon'  => $diskon,
-                    'total'  => ($harga - $diskon) * $value->jumlah,
+                    'total'  => $itemTotal,
                 );
             }
         }
@@ -851,7 +857,7 @@ class KasirController extends ApiController
             "jenisKelamin"  => $strukPelayanan->pasien_daftar->pasien->jenis_kelamin->jeniskelamin,
             "umur"  => $strukPelayanan->pasien_daftar->pasien->Umur,
             "totalDeposit"  => $this->getDepositPasien($noregistasi), // $deposit,
-            "jumlahBayar"  => $strukPelayanan->totalharusdibayar, //+ $this->getDepositPasien($noregistasi),
+            "jumlahBayar"  => $totalJumlahBayar, //$strukPelayanan->totalharusdibayar, //+ $this->getDepositPasien($noregistasi),
             "totalPenjamin" => ($strukPelayanan->totalprekanan == null) ? 0 : $strukPelayanan->totalprekanan,
             "detailTagihan"  => $detailTagihan,
 

@@ -1108,15 +1108,19 @@
                                       <td style="text-align:center;">Dokter Pemeriksa/DPJP</td>
                                      
                                     </tr>
-                                     <tr >
-                                         <td style="text-align:center; height:60px; vertical-align:middle; padding:5px 0;">
-                                             @if(isset($fotoMap[1]))
-                                                 <img src="{{ $fotoMap[1] }}" style="max-height:60px; max-width:150px; display:inline-block; vertical-align:middle;">
-                                             @endif
-                                         </td>
-                                         <td style="height:60px"></td>
-                                        
-                                       </tr>
+                                      <tr >
+                                          <td style="text-align:center; height:90px; vertical-align:middle; padding:5px 0;">
+                                              @if(isset($fotoMap[1]))
+                                                  <img src="{{ $fotoMap[1] }}" style="max-height:90px; max-width:200px; display:inline-block; vertical-align:middle;">
+                                              @endif
+                                          </td>
+                                          <td style="text-align:center; height:90px; vertical-align:middle; padding:5px 0;">
+                                              @if(isset($data[0]->noregistrasi))
+                                                  <img src="data:image/svg+xml;base64,{!! base64_encode(QrCode::format('svg')->size(75)->margin(0)->generate(url('/service/medifirst2000/report/cetak-dokter?reg=' . $data[0]->noregistrasi))) !!}" style="width: 75px; height: 75px;">
+                                              @endif
+                                          </td>
+                                         
+                                        </tr>
                                     <tr >
                                       <td style="text-align:center;">( {{isset($item[310594]) ?$item[310594] : ""  }} )</td>
                                       <td style="text-align:center;">( {{isset($item[310595]) ?$item[310595] : ""  }} )</td>

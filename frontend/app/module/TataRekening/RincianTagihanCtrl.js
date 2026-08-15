@@ -1,4 +1,4 @@
-define(['initialize'], function (initialize) {
+define(['initialize', 'Configuration'], function (initialize, config) {
 	'use strict';
 	initialize.controller('RincianTagihanCtrl', ['MedifirstService', '$state', '$q', '$scope', '$window', '$mdDialog','DateHelper',
 		function (medifirstService, $state, $q, $scope, window, $mdDialog, dateHelper) {
@@ -641,6 +641,22 @@ define(['initialize'], function (initialize) {
 					//               });
 					//           	})
 					// }
+				});
+			}
+
+			$scope.CetakV2 = function () {
+				$scope.isRouteLoading = true;
+				medifirstService.get("tatarekening/detail-tagihan/" + $scope.item.noRegistrasi + '?jenisdata=bill').then(function (dat) {
+					$scope.isRouteLoading = false;
+					var stt = 'false';
+					if (confirm('View Rincian Biaya? ')) {
+						stt = 'true';
+					} else {
+						stt = 'false';
+					}
+					var user = medifirstService.getPegawaiLogin();
+					var url = config.baseApiBackend + 'report/cetak-rincian-biaya?strNoregistrasi=' + $scope.item.noRegistrasi + '&strIdPegawai=' + user.namaLengkap + '&pdf=' + (stt === 'true' ? 'true' : 'false');
+					window.open(url, '_blank');
 				});
 			}
 

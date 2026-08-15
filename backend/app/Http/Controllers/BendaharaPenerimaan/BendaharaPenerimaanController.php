@@ -11484,7 +11484,11 @@ class BendaharaPenerimaanController extends ApiController {
                     pp.hargadiscount,
                     pp.jumlah,
                     pp.jasa,
-                    (((COALESCE(pp.hargajual,0) - COALESCE(pp.hargadiscount,0)) * COALESCE(pp.jumlah,0)) + COALESCE(pp.jasa,0)) as subtotal_raw,
+                    CASE WHEN pp.aturanpakai IS NOT NULL OR pp.strukresepfk IS NOT NULL THEN
+                        ceil((COALESCE(pp.hargajual,0) - COALESCE(pp.hargadiscount,0)) * COALESCE(pp.jumlah,0)) + COALESCE(pp.jasa,0)
+                    ELSE
+                        ((COALESCE(pp.hargajual,0) - COALESCE(pp.hargadiscount,0)) * COALESCE(pp.jumlah,0)) + COALESCE(pp.jasa,0)
+                    END as subtotal_raw,
                     pd.objectkelompokpasienlastfk,
                     apd.objectruanganfk,
                     pm.namapasien,

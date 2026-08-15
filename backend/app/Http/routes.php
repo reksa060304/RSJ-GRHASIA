@@ -1997,6 +1997,7 @@ Route::group(['middleware' => 'cors', 'prefix' => 'service'], function () {
             Route::get('report/get-cetak-rincian-spp', 'Report\ReportController@getCetakRincianSPP');
             Route::get('report/get-cetak-rincian-spp2', 'Report\ReportController@getCetakRincianSPP2');
             Route::get('report/get-cetak-sts-pdf', 'Report\ReportController@getCetakSTSPdf');
+            Route::get('report/cetak-rincian-biaya', 'Report\ReportController@getCetakRincianBiaya');
             Route::get('report/get-cetak-sts-manual-pdf', 'Report\ReportController@getCetakSTSManualPdf');
             Route::get('report/get-cetak-sts-klaim-pdf', 'Report\ReportController@getCetakSTSKlaimPdf');
             Route::get('report/get-cetak-sts-keuangan', 'Report\ReportController@getCetakSTSKeuangan');
