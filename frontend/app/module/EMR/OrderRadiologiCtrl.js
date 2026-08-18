@@ -568,6 +568,14 @@ define(['initialize', 'Configuration'], function (initialize, config) {
                 $scope.listDokter = dat.data.dokter;
             })
 
+            function openInNewTab(href) {
+                Object.assign(document.createElement('a'), {
+                    target: '_blank',
+                    rel: 'noopener noreferrer',
+                    href: href,
+                }).click();
+            }
+
             $scope.lihatGambar = function () {
 
                if ($scope.acc_number == undefined) {
