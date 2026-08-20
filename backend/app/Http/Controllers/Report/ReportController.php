@@ -22213,10 +22213,12 @@ public function suratBuktiPengembalian(Request $request)
         
         // Query Lab Results
         $labResults = [];
-        if(isset($request['noregistrasi']) && isset($request['umur']) && isset($request['jeniskelamin'])) {
+        $umur = $request['umur'] ?? null;
+        $umurValid = isset($umur) && $umur !== 'undefined' && $umur !== 'null' && is_numeric($umur);
+
+        if(isset($request['noregistrasi']) && $umurValid && isset($request['jeniskelamin'])) {
             $noregistrasi = $request['noregistrasi'];
             $jeniskelamin = $request['jeniskelamin'];
-            $umur = $request['umur'];
             
             $getOrder = collect(DB::select("
                 SELECT st.norec
