@@ -22206,6 +22206,252 @@ public function suratBuktiPengembalian(Request $request)
         return $pdf->stream();
         return view('report.EMR.rujukan-edukasi-psikiatri',compact('data','pageWidth'));
     }
+    public function cetakRujukanEdukasiPsikiatri(Request $request)
+    {
+        $norec = $request['emr'];
+        $kdProfile = (int) $request['kdprofile'];
+        
+        // Query Lab Results
+        $labResults = [];
+        if(isset($request['noregistrasi']) && isset($request['umur']) && isset($request['jeniskelamin'])) {
+            $noregistrasi = $request['noregistrasi'];
+            $jeniskelamin = $request['jeniskelamin'];
+            $umur = $request['umur'];
+            
+            $getOrder = collect(DB::select("
+                SELECT st.norec
+                FROM strukorder_t as st
+                inner join pasiendaftar_t as pd on pd.norec = st.noregistrasifk
+                WHERE pd.noregistrasi = '$noregistrasi'
+                AND objectkelompoktransaksifk = 93
+                ORDER BY tglorder DESC
+                LIMIT 1
+            "))->first();
+            
+            if($getOrder) {
+                $norecOrder = $getOrder->norec;
+                $labResults = DB::select(DB::raw("SELECT pp.tglpelayanan, pp.noregistrasifk as norec_apd,djp.detailjenisproduk,pp.produkfk,prd.namaproduk,maps.detailpemeriksaan,maps.memohasil,
+                        maps.nourutdetail,maps.satuanstandarfk,ss.satuanstandar,nn.nilaitext,nn.tipedata,nn.nilaimin,nn.nilaimax,hh.hasil,
+                        maps.id as map_id,hh.norec as norec_hasil,maps.nourutjenispemeriksaan,pp.norec as norecPP,nn.nilaimin || '-' || nn.nilaimax as nilainormalstr,
+                        hh.flag,nn.id as idnn,maps2.jeniskelaminfk,hh.pegawaifk,hh.keterangan,maps.loinc_id,maps.loinc_name
+                        FROM pelayananpasien_t as pp
+                        inner join produk_m as prd on prd.id = pp.produkfk
+                        inner join detailjenisproduk_m as djp on djp.id = prd.objectdetailjenisprodukfk
+                        inner join maphasillab_m as maps on maps.produkfk = prd.id
+                        inner join maphasillabdetail_m as maps2 on maps2.maphasilfk = maps.id 
+                        inner join jeniskelamin_m as jk on maps2.jeniskelaminfk = jk.id and jk.jeniskelamin = '$jeniskelamin'
+                        and maps2.kelompokumurfk in (select id from kelompokumur_m kuu where '$umur' BETWEEN kuu.umurmin and kuu.umurmax) 
+                        inner join nilainormal_m as nn on nn.id = maps2.nilainormalfk
+                        left join satuanstandar_m as ss on ss.id = maps.satuanstandarfk
+                        left join hasillaboratorium_t as hh on hh.norecpelayanan = pp.norec 
+                        and pp.noregistrasifk = hh.noregistrasifk
+                        and maps.detailpemeriksaan = hh.detailpemeriksaan 
+                        where pp.statusenabled = true
+                        AND pp.strukorderfk = '$norecOrder'
+                        order by maps.nourutjenispemeriksaan,maps.nourutdetail asc, pp.tglpelayanan asc"));
+            }
+        }
+        
+        $data = DB::select(DB::raw("
+        SELECT
+            split_part(epd.value, '~', 2) as split,
+            epd.emrdfk,
+            ep.noemr,
+            ed.TYPE,
+            pa.namapasien,
+            pa.tgllahir,
+            pa.nohp,
+            pa.nocm,
+            ep.jeniskelamin,
+            ep.umur,
+            al.alamatlengkap,
+            ep.noregistrasifk as noregistrasi ,
+            epd.value,ep.namaruangan,pg.namalengkap as namadokter,
+            pstd.tglregistrasi as tglregistrasipd, pstd.tglpulang as tglpulangpd
+        FROM
+            emrpasien_t AS ep
+            left JOIN emrpasiend_t AS epd ON ep.noemr = epd.emrpasienfk
+            left JOIN emrd_t AS ed ON epd.emrdfk = ed.ID
+            INNER JOIN antrianpasiendiperiksa_t AS pd ON pd.norec = ep.norec_apd
+            left JOIN pasiendaftar_t AS pstd ON pstd.norec = pd.noregistrasifk
+            left JOIN pegawai_m AS pg ON pg.id = pd.objectpegawaifk
+            left JOIN pasien_m as pa on ep.nocm =  pa.nocm
+            left JOIN alamat_m as al on pa.id = al.nocmfk
+        WHERE
+            ep.norec = '$norec'
+            AND epd.statusenabled = TRUE 
+            AND ep.kdprofile = '$kdProfile' 
+            and epd.emrfk = $request[emrfk]
+        ORDER BY
+            ed.nourut
+            "
+        ));
+        foreach ($data as $z){
+            if ($z->type=="datetime"){
+                $z->value=date('Y-m-d H:i:s',strtotime($z->value));
+            }
+        }
+
+        $res['profile'] = Profile::where('id',$request['kdprofile'])->first();
+        $res['d'] = $data;
+
+        $item =[];   
+        $item2= [];  
+
+        $textInputs = [];
+        $datetimeInputs = [1901307160, 1901306000];
+        $comboboxInputs = [1901307170];
+        $checkboxInputs = [
+            1901306001, 1901306002, 1901306003, 1901306004, 1901306005,
+            1901306006, 1901306007, 1901306011, 1901306012, 1901306013,
+            1901306014, 1901306021, 1901306022, 1901306023, 1901306024,
+            1901306025, 1901306026, 1901306031, 1901306032, 1901306033,
+            1901306035, 1901306041, 1901306042, 1901306043, 1901306044,
+            1901306045, 1901306046, 1901306047,
+            1901307240, 1901307250,
+        ];
+        $textareaInputs = [
+            1901306008, 1901306015, 1901306027, 1901306036, 1901306048,
+            1901306049,
+            1901307000, 1901307210, 1901307230, 1901307260, 1901307270,
+        ];
+
+        foreach( $res['d'] as $items){
+                $emrdfk = $items->emrdfk;
+                
+                if(in_array($emrdfk, $textInputs)) {
+                    $item[$emrdfk] = $items->value;
+                } else if(in_array($emrdfk, $datetimeInputs)) {
+                    if ($emrdfk == 1901306000) {
+                        $item[$emrdfk] = date('d/m/Y H:i', strtotime($items->value));
+                    } else {
+                        $item[$emrdfk] = $this->tanggal_indonesia(date('Y-m-d', strtotime($items->value)));
+                    }
+                } else if(in_array($emrdfk, $comboboxInputs)) {
+                    if($items->value != null && $items->value != ''){
+                        $arr = explode('~', $items->value);
+                        $item[$emrdfk] = $arr[1];
+                    }
+                } else if(in_array($emrdfk, $textareaInputs)) {
+                    $item[$emrdfk] = $items->value;
+                } else if(in_array($emrdfk, $checkboxInputs)) {
+                        $chekedd = false;
+                        if ($items->value == '1' || $items->value == 'true' || $items->value == 't' || $items->value === true) {
+                            $chekedd = true;
+                        }
+                        $item[$items->emrdfk] = $chekedd;
+                } else {
+                    // Fallback to type-based assignment for other types
+                    if($items->type == "textbox" || $items->type == "textarea") {
+                        $item[$items->emrdfk] = $items->value;
+                    }
+                    if($items->type == "datetime") {
+                        $item[$items->emrdfk] = $this->tanggal_indonesia(date('Y-m-d', strtotime($items->value)));
+                    }
+                    if($items->type == "time") {
+                        $item[$items->emrdfk] = date('H:i', strtotime($items->value));
+                    }
+                    if($items->type == "date") {
+                        $item[$items->emrdfk] = date('Y-m-d', strtotime($items->value));
+                    }
+                    if($items->type == "checkboxtextbox") {
+                        $item[$items->emrdfk] = $items->value;
+                        $item2[$items->emrdfk] = true;
+                    }
+                    if($items->type == "checkbox") {
+                        $chekedd = false;
+                        if ($items->value == '1' || $items->value == 'true' || $items->value == 't' || $items->value === true) {
+                            $chekedd = true;
+                        }
+                        $item[$items->emrdfk] = $chekedd;
+                    }
+                    if($items->type == "combobox") {
+                        $arr = explode('~', $items->value);
+                        $item[$items->emrdfk] = $arr[1];
+                    }
+                }
+        }
+
+        if (!isset($item[1901307240]) && !isset($item[1901307250])) {
+            if (isset($request['jeniskelamin'])) {
+                if (strtoupper($request['jeniskelamin']) == 'LAKI-LAKI') {
+                    $item[1901307240] = true;
+                } else if (strtoupper($request['jeniskelamin']) == 'PEREMPUAN') {
+                    $item[1901307250] = true;
+                }
+            }
+        }
+        if (!isset($item[1901307210]) && count($data) > 0) {
+            $item[1901307210] = $data[0]->namapasien;
+        }
+        if (!isset($item[1901307220]) && count($data) > 0) {
+            $item[1901307220] = $data[0]->nocm;
+        }
+        if (!isset($item[1901307230])) {
+            if (isset($request['umur']) && $request['umur'] != 'undefined') {
+                $item[1901307230] = $request['umur'];
+            } elseif (count($data) > 0) {
+                $item[1901307230] = $data[0]->umur;
+            }
+        }
+        if (!isset($item[1901306000])) {
+            if (count($data) > 0 && isset($data[0]->tglregistrasipd) && $data[0]->tglregistrasipd != null) {
+                $item[1901306000] = date('d/m/Y H:i', strtotime($data[0]->tglregistrasipd));
+            } else {
+                $item[1901306000] = date('d/m/Y H:i');
+            }
+        }
+        if (!isset($item[1901307160])) {
+            if (count($data) > 0 && isset($data[0]->tglpulangpd) && $data[0]->tglpulangpd != null) {
+                $item[1901307160] = $this->tanggal_indonesia(date('Y-m-d', strtotime($data[0]->tglpulangpd)));
+            } else {
+                $item[1901307160] = $this->tanggal_indonesia(date('Y-m-d'));
+            }
+        }
+
+        $pageWidth = 950;
+        $peg = null;    
+        if(isset($request['isttd']) && $request['isttd'] == true){
+            $peg = DB::table('pegawai_m')->where('id',$request['pegawaittd'])->first();
+            
+        }
+        file_put_contents(public_path('test_item.json'), json_encode([
+            'request' => $request->all(),
+            'item' => $item
+        ], JSON_PRETTY_PRINT));
+
+        // var_dump($data);
+        $pdf = PDF::loadView(
+            'report.EMR.rujukan-edukasi-psikiatri',
+            array(
+                'res' => $res,
+                'pageWidth' => $pageWidth,
+                'data' => $data,
+                'item'=> $item,
+                'peg'=> $peg,
+                'labResults' => $labResults
+            )
+        );
+        if(isset($request['isttd']) && $request['isttd'] == true){
+            $objetoRequest = new \Illuminate\Http\Request();
+            $objetoRequest ['emrfk'] = $request['emrfk'];
+            $objetoRequest ['norec_emr'] = $request['emr'];
+            $objetoRequest ['pegawaittd'] = $request['pegawaittd'];
+            $objetoRequest ['nocm'] = $request['nocm'];
+            $objetoRequest ['noregistrasi'] = $request['noregistrasi'];
+            $objetoRequest ['norec_pd'] = $request['norec_pd'];
+            $bsre = app('App\Http\Controllers\Bridging\BridgingBSREController')->pengajuanTTE($objetoRequest,true);
+            if($bsre['status'] == 201){
+                $content = $pdf->download()->getOriginalContent();
+                \Storage::disk('local')->put( 'TTD_BSRE/' . $bsre['dokumen']->id . '/file' . '.pdf' , $content);
+            }
+          
+            return $bsre;
+        }
+
+        return $pdf->stream();
+        return view('report.EMR.rujukan-edukasi-psikiatri',compact('data','pageWidth'));
+    }
     public function cetakRujukanEdukasiPasienGangguanJiwaDenganKomorbidEpilepsi(Request $request)
     {
         $norec = $request['emr'];
