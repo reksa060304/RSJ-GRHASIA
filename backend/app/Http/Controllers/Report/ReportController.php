@@ -21960,7 +21960,8 @@ public function suratBuktiPengembalian(Request $request)
         return $pdf->stream();
         return view('report.EMR.pemantauan-terapi-obat',compact('data','pageWidth'));
     }
-    public function cetakPengkajianRajalJiwa(Request $request)
+    //Ubah nama fungsi ke cetakRujukanEdukasiPsikiatri karena sebelumnya kerubah jadi cetakPengkajianRajalJiwa (salah isi fungsi yang betul fungsi untuk cetakRujukanEdukasiPsikiatri)
+    public function cetakRujukanEdukasiPsikiatri(Request $request)
     {
         $norec = $request['emr'];
         $kdProfile = (int) $request['kdprofile'];
