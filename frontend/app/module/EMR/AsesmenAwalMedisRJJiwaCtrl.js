@@ -403,7 +403,7 @@ define(['initialize', 'Configuration'], function (initialize,config) {
                 // $scope.item.obj[111056]=$scope.now
                 // $scope.item.obj[14563]={ value: $scope.cc.iddpjp, text: $scope.cc.dokterdpjp }
                 dataLoad = dat.data.data
-
+                isiFormDariRiwayat(dataLoad)   
 
                 var payload = [
                     {
@@ -439,70 +439,71 @@ define(['initialize', 'Configuration'], function (initialize,config) {
 
                 //     }
                 // })
-                for (var i = 0; i <= dataLoad.length - 1; i++) {
-                    if (parseFloat($scope.cc.emrfk) == dataLoad[i].emrfk) {
+                
+                // for (var i = 0; i <= dataLoad.length - 1; i++) {
+                //     if (parseFloat($scope.cc.emrfk) == dataLoad[i].emrfk) {
 
-                        if (dataLoad[i].type == "textbox") {
-                            $scope.item.obj[dataLoad[i].emrdfk] = dataLoad[i].value
-                            if(dataLoad[i].emrdfk == 115952)
-                                $scope.totalSkor4 = parseFloat(dataLoad[i].value)
-                              if(dataLoad[i].emrdfk == 3152)
-                                $scope.totalSkor = parseFloat(dataLoad[i].value)
-                              if(dataLoad[i].emrdfk == 115928)
-                                $scope.skorGizi = parseFloat(dataLoad[i].value)
+                //         if (dataLoad[i].type == "textbox") {
+                //             $scope.item.obj[dataLoad[i].emrdfk] = dataLoad[i].value
+                //             if(dataLoad[i].emrdfk == 115952)
+                //                 $scope.totalSkor4 = parseFloat(dataLoad[i].value)
+                //               if(dataLoad[i].emrdfk == 3152)
+                //                 $scope.totalSkor = parseFloat(dataLoad[i].value)
+                //               if(dataLoad[i].emrdfk == 115928)
+                //                 $scope.skorGizi = parseFloat(dataLoad[i].value)
                                
-                        }
-                        if (dataLoad[i].type == "checkbox") {
-                            chekedd = false
-                            if (dataLoad[i].value == '1') {
-                                chekedd = true
-                            }
-                            $scope.item.obj[dataLoad[i].emrdfk] = chekedd
-                            // if (dataLoad[i].emrdfk >= 14464 && dataLoad[i].emrdfk <= 14469 && chekedd) {
-                            //     $scope.getSkalaNyeri(1, { descNilai: dataLoad[i].reportdisplay })
-                            // }
-                            // if (dataLoad[i].emrdfk >= 5053 && dataLoad[i].emrdfk <= 5084 && dataLoad[i].reportdisplay != null) {
-                            //     var datass = { id: dataLoad[i].emrdfk, descNilai: dataLoad[i].reportdisplay }
-                            //     $scope.getSkor2(datass)
-                            // }
-                            // if (dataLoad[i].emrdfk >= 14424 && dataLoad[i].emrdfk <= 14431 && dataLoad[i].reportdisplay != null) {
-                            //     var datass = { id: dataLoad[i].emrdfk, descNilai: dataLoad[i].reportdisplay }
-                            //     $scope.getSkorGizi(datass)
-                            // }
+                //         }
+                //         if (dataLoad[i].type == "checkbox") {
+                //             chekedd = false
+                //             if (dataLoad[i].value == '1') {
+                //                 chekedd = true
+                //             }
+                //             $scope.item.obj[dataLoad[i].emrdfk] = chekedd
+                //             // if (dataLoad[i].emrdfk >= 14464 && dataLoad[i].emrdfk <= 14469 && chekedd) {
+                //             //     $scope.getSkalaNyeri(1, { descNilai: dataLoad[i].reportdisplay })
+                //             // }
+                //             // if (dataLoad[i].emrdfk >= 5053 && dataLoad[i].emrdfk <= 5084 && dataLoad[i].reportdisplay != null) {
+                //             //     var datass = { id: dataLoad[i].emrdfk, descNilai: dataLoad[i].reportdisplay }
+                //             //     $scope.getSkor2(datass)
+                //             // }
+                //             // if (dataLoad[i].emrdfk >= 14424 && dataLoad[i].emrdfk <= 14431 && dataLoad[i].reportdisplay != null) {
+                //             //     var datass = { id: dataLoad[i].emrdfk, descNilai: dataLoad[i].reportdisplay }
+                //             //     $scope.getSkorGizi(datass)
+                //             // }
 
 
-                        }
+                //         }
 
-                        if (dataLoad[i].type == "datetime") {
-                            $scope.item.obj[dataLoad[i].emrdfk] = new Date(dataLoad[i].value)
-                        }
-                        if (dataLoad[i].type == "time") {
-                            $scope.item.obj[dataLoad[i].emrdfk] = new Date(dataLoad[i].value)
-                        }
-                        if (dataLoad[i].type == "date") {
-                            $scope.item.obj[dataLoad[i].emrdfk] = new Date(dataLoad[i].value)
-                        }
+                //         if (dataLoad[i].type == "datetime") {
+                //             $scope.item.obj[dataLoad[i].emrdfk] = new Date(dataLoad[i].value)
+                //         }
+                //         if (dataLoad[i].type == "time") {
+                //             $scope.item.obj[dataLoad[i].emrdfk] = new Date(dataLoad[i].value)
+                //         }
+                //         if (dataLoad[i].type == "date") {
+                //             $scope.item.obj[dataLoad[i].emrdfk] = new Date(dataLoad[i].value)
+                //         }
 
-                        if (dataLoad[i].type == "checkboxtextbox") {
-                            $scope.item.obj[dataLoad[i].emrdfk] = dataLoad[i].value
-                            $scope.item.obj2[dataLoad[i].emrdfk] = true
-                        }
-                        if (dataLoad[i].type == "textarea") {
-                            $scope.item.obj[dataLoad[i].emrdfk] = dataLoad[i].value
-                        }
-                        if (dataLoad[i].type == "combobox") {
-                            var str = dataLoad[i].value
-                            if(str != undefined){
-                                var res = str.split("~");
-                                // $scope.item.objcbo[dataLoad[i].emrdfk]= {value:res[0],text:res[1]}
-                                $scope.item.obj[dataLoad[i].emrdfk] = { value: res[0], text: res[1] }        
-                            }
+                //         if (dataLoad[i].type == "checkboxtextbox") {
+                //             $scope.item.obj[dataLoad[i].emrdfk] = dataLoad[i].value
+                //             $scope.item.obj2[dataLoad[i].emrdfk] = true
+                //         }
+                //         if (dataLoad[i].type == "textarea") {
+                //             $scope.item.obj[dataLoad[i].emrdfk] = dataLoad[i].value
+                //         }
+                //         if (dataLoad[i].type == "combobox") {
+                //             var str = dataLoad[i].value
+                //             if(str != undefined){
+                //                 var res = str.split("~");
+                //                 // $scope.item.objcbo[dataLoad[i].emrdfk]= {value:res[0],text:res[1]}
+                //                 $scope.item.obj[dataLoad[i].emrdfk] = { value: res[0], text: res[1] }        
+                //             }
 
-                        }
-                        // pegawaiInputDetail = dataLoad[i].pegawaifk
-                    }
+                //         }
+                //         // pegawaiInputDetail = dataLoad[i].pegawaifk
+                //     }
 
-                }
+                // }
                 // if( $scope.cc.norec_emr !='-' && pegawaiInputDetail !='' && pegawaiInputDetail !=null){
                 //     if(pegawaiInputDetail != medifirstService.getPegawaiLogin().id){
                 //         $scope.allDisabled =true
@@ -1068,6 +1069,67 @@ define(['initialize', 'Configuration'], function (initialize,config) {
             })
             $scope.kembali = function () {
                 $rootScope.showRiwayat()
+            }
+
+            function isiFormDariRiwayat(dataArr) {
+                for (var i = 0; i <= dataArr.length - 1; i++) {
+                    if (parseFloat($scope.cc.emrfk) == dataArr[i].emrfk) {
+                        if (dataArr[i].type == "textbox") {
+                            $scope.item.obj[dataArr[i].emrdfk] = dataArr[i].value
+                            if (dataArr[i].emrdfk == 115952) $scope.totalSkor4 = parseFloat(dataArr[i].value)
+                            if (dataArr[i].emrdfk == 3152) $scope.totalSkor = parseFloat(dataArr[i].value)
+                            if (dataArr[i].emrdfk == 115928) $scope.skorGizi = parseFloat(dataArr[i].value)
+                        }
+                        if (dataArr[i].type == "checkbox") {
+                            $scope.item.obj[dataArr[i].emrdfk] = (dataArr[i].value == '1')
+                        }
+                        if (dataArr[i].type == "datetime" || dataArr[i].type == "time" || dataArr[i].type == "date") {
+                            $scope.item.obj[dataArr[i].emrdfk] = new Date(dataArr[i].value)
+                        }
+                        if (dataArr[i].type == "checkboxtextbox") {
+                            $scope.item.obj[dataArr[i].emrdfk] = dataArr[i].value
+                            $scope.item.obj2[dataArr[i].emrdfk] = true
+                        }
+                        if (dataArr[i].type == "textarea") {
+                            $scope.item.obj[dataArr[i].emrdfk] = dataArr[i].value
+                        }
+                        if (dataArr[i].type == "combobox") {
+                            var str = dataArr[i].value
+                            if (str != undefined) {
+                                var res = str.split("~")
+                                $scope.item.obj[dataArr[i].emrdfk] = { value: res[0], text: res[1] }
+                            }
+                        }
+                    }
+                }
+            }
+
+            $scope.cekRiwayatTerakhir = function () {
+                medifirstService.get(
+                    "emr/get-riwayat-terakhir-form?nocm=" + $scope.cc.nocm +
+                    "&emrfk=" + $scope.cc.emrfk +
+                    "&excludenoemr=" + nomorEMR, true
+                ).then(function (res) {
+                    if (res.data.ada) {
+                        var head = res.data.head
+                        var confirm = $mdDialog.confirm()
+                            .title('Riwayat Ditemukan')
+                            .textContent('Ditemukan riwayat pengisian sebelumnya pada ' +
+                                moment(head.tglemr).format('DD-MM-YYYY HH:mm') +
+                                (head.namalengkap ? ' oleh ' + head.namalengkap : '') +
+                                '. Muat data tersebut ke form ini?')
+                            .ariaLabel('Muat Riwayat')
+                            .cancel('Tidak')
+                            .ok('Ya, Muat')
+
+                        $mdDialog.show(confirm).then(function () {
+                            isiFormDariRiwayat(res.data.detail)
+                            toastr.success('Data riwayat terakhir berhasil dimuat', 'Berhasil')
+                        })
+                    } else {
+                        toastr.warning('Tidak ada riwayat pengisian sebelumnya untuk pasien ini', 'Informasi')
+                    }
+                })
             }
 
             $scope.Save = function () {

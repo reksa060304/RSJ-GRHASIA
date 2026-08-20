@@ -169,16 +169,21 @@
  <!-- ng-class="{'my-disable':true}" -->
 <!-- <div class="grid_12"  disable-contents="allDisabled" id="form"> -->
 <div class="grid_12">
-    <div class="grid_12">
-        <div class="panel panel-default container_12">
-            <div class="panel-heading">Pengkajian Awal Medis Rawat Jalan Jiwa CM.RM.05.01.Rev02</div>
-        </div>
-        <div class="grid_12 margin-top-30">
-            <label c-label item="item">Tanggal</label>
+        <div class="grid_12">
+            <div class="panel panel-default container_12">
+                <div class="panel-heading">Pengkajian Awal Medis Rawat Jalan Jiwa CM.RM.05.01.Rev02</div>
+            </div>
+            <div class="grid_12 margin-top-30">
+              <label c-label item="item">Tanggal</label>
             </div>
             <div class="grid_4">
                 <input style="width: 100%" k-ng-model="item.obj[300000001]" kendo-datetimepicker
                     placeholer="yyyy-MM-dd HH:mm" k-format="'yyyy-MM-dd HH:mm'" parsedate="yyyy-MM-dd HH:mm" />
+            </div>
+            <div class="grid_8" style="text-align: right;">
+                <button type="button" class="k-button" style="margin-top: 4px;" ng-click="cekRiwayatTerakhir()">
+                    <i class="k-sprite fa fa-history"></i>Muat Riwayat Terakhir
+                </button>
             </div>
         </div>
 

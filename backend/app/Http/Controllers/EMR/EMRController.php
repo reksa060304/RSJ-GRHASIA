@@ -17045,4 +17045,125 @@ if ($rowChanged) {
         return $this->respond($result);
     }
 
+    public function uploadEMRImage(\Illuminate\Http\Request $request)
+    {
+        $kdProfile = $this->getDataKdProfile($request);
+        $nocm = $request->input('nocm');
+        if (empty($nocm)) {
+            return $this->respondFailed("NOCM is required");
+        }
+
+        // Clean NOCM to remove slashes if any (preventing directory transversal)
+        $nocmClean = str_replace(['/', '\\'], '_', $nocm);
+        $path = 'EMRImages';
+        $fullPath = public_path($path);
+        if (!file_exists($fullPath)) {
+            mkdir($fullPath, 0777, true);
+        }
+
+        // Support base64 image input
+        $base64Image = $request->input('image');
+        if (!empty($base64Image)) {
+            // Parse base64 string
+            if (preg_match('/^data:image\/(\w+);base64,/', $base64Image, $type)) {
+                $base64Image = substr($base64Image, strpos($base64Image, ',') + 1);
+                $type = strtolower($type[1]); // jpb, png, gif etc.
+                if (!in_array($type, ['jpg', 'jpeg', 'gif', 'png'])) {
+                    return $this->respondFailed("Invalid image type");
+                }
+                $base64Image = base64_decode($base64Image);
+                if ($base64Image === false) {
+                    return $this->respondFailed("Base64 decode failed");
+                }
+            } else {
+                return $this->respondFailed("Invalid base64 format");
+            }
+            
+            $filename = 'emr_' . $nocmClean . '_' . $request->input('emrdfk', 'img') . '_' . date('YmdHis') . '.' . $type;
+            file_put_contents($fullPath . '/' . $filename, $base64Image);
+            return $this->respond([
+                'status' => 200,
+                'url' => $path . '/' . $filename,
+                'message' => 'Upload success'
+            ]);
+        }
+
+        $file = $request->file('file');
+        if (empty($file)) {
+            return $this->respondFailed("File or image is required");
+        }
+
+        $extension = $file->getClientOriginalExtension();
+        $filename = 'emr_' . $nocmClean . '_' . $request->input('emrdfk', 'img') . '_' . date('YmdHis') . '.' . $extension;
+        
+        $file->move($fullPath, $filename);
+
+        return $this->respond([
+            'status' => 200,
+            'url' => $path . '/' . $filename,
+            'message' => 'Upload success'
+        ]);
+    }
+        /**
+     * Endpoint khusus: cek & ambil riwayat pengisian TERAKHIR untuk SATU jenis form EMR tertentu.
+     * Dibuat terpisah dari getEMRTransaksiRiwayat/getEMRTransaksiDetail supaya bisa
+     * disesuaikan khusus per form tanpa mengganggu endpoint yang sudah dipakai form lain.
+     */
+    public function getRiwayatTerakhirFormEMR(Request $request)
+    {
+        $kdProfile = $this->getDataKdProfile($request);
+        $idProfile = (int) $kdProfile;
+
+        // --- 1. Cari header emrpasien_t TERAKHIR untuk nocm + emrfk ini ---
+        $head = \DB::table('emrpasien_t as emrp')
+            ->select('emrp.noemr', 'emrp.tglemr', 'emrp.pegawaifk', 'emrp.namaruangan')
+            ->leftJoin('pegawai_m as pg', 'pg.id', '=', 'emrp.pegawaifk')
+            ->addSelect('pg.namalengkap')
+            ->where('emrp.statusenabled', true)
+            ->where('emrp.kdprofile', $idProfile)
+            ->where('emrp.emrfk', $request['emrfk']);
+
+        if (isset($request['nocm']) && $request['nocm'] != '') {
+            $head = $head->where('emrp.nocm', $request['nocm']);
+        }
+
+        // jangan hitung dokumen EMR yang sedang dibuka sekarang (kalau mode edit)
+        if (isset($request['excludenoemr']) && $request['excludenoemr'] != '' && $request['excludenoemr'] != '-') {
+            $head = $head->where('emrp.noemr', '!=', $request['excludenoemr']);
+        }
+
+        $head = $head->orderBy('emrp.tglemr', 'desc')->first();
+
+        if (!$head) {
+            $result = array(
+                'ada' => false,
+                'head' => null,
+                'detail' => [],
+                'message' => 'as@epic',
+            );
+            return $this->respond($result);
+        }
+
+        // --- 2. Ambil detail isian (emrpasiend_t) untuk noemr terakhir tsb ---
+        $detail = \DB::table('emrpasiend_t as emrdp')
+            ->leftJoin('emrd_t as emrd', 'emrd.id', '=', 'emrdp.emrdfk')
+            ->select('emrdp.*', 'emrd.caption', 'emrd.type', 'emrd.nourut', 'emrd.reportdisplay')
+            ->where('emrdp.statusenabled', true)
+            ->where('emrdp.kdprofile', $idProfile)
+            ->where('emrdp.emrfk', $request['emrfk'])
+            ->where('emrdp.emrpasienfk', $head->noemr)
+            ->whereNotNull('emrdp.value')
+            ->where('emrdp.value', '!=', 'Invalid date')
+            ->orderBy('emrd.nourut')
+            ->get();
+
+        $result = array(
+            'ada' => true,
+            'head' => $head,
+            'detail' => $detail,
+            'message' => 'as@epic',
+        );
+        return $this->respond($result);
+    }
+
 }

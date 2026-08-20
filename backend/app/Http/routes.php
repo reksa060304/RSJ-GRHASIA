@@ -1168,6 +1168,7 @@ Route::group(['middleware' => 'cors', 'prefix' => 'service'], function () {
           Route::post('emr/hapus-emr-bundlehai', 'EMR\EMRController@hapusTransBundleHai');
           Route::get('emr/get-data-trans-bundlehais', 'EMR\EMRController@getDataTransBundleHais');
           Route::get('emr/get-data-trans-bundlehais-detail', 'EMR\EMRController@getDataTransBundleHaisDetail');
+          Route::get('emr/get-riwayat-terakhir-form', 'EMR\EMRController@getRiwayatTerakhirFormEMR');
 
           Route::post('bsre-esign/sign/pdf', 'Bridging\BridgingBSREController@signDokumen');
           Route::get('bsre-esign/sign/download/{id_dokumen}', 'Bridging\BridgingBSREController@downloadDokumen');
