@@ -22417,10 +22417,10 @@ public function suratBuktiPengembalian(Request $request)
             $peg = DB::table('pegawai_m')->where('id',$request['pegawaittd'])->first();
             
         }
-        file_put_contents(public_path('test_item.json'), json_encode([
-            'request' => $request->all(),
-            'item' => $item
-        ], JSON_PRETTY_PRINT));
+        // file_put_contents(public_path('test_item.json'), json_encode([
+        //     'request' => $request->all(),
+        //     'item' => $item
+        // ], JSON_PRETTY_PRINT));
 
         // var_dump($data);
         $pdf = PDF::loadView(
