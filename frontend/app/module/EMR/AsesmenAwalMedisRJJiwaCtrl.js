@@ -310,6 +310,7 @@ define(['initialize', 'Configuration'], function (initialize,config) {
                 // console.log(pegawai);
                 if (pegawai.jenisPegawai.jenispegawai == 'Dokter') {
                     $scope.item.obj[300000079] = { value: pegawai.id, text: pegawai.namaLengkap }
+                    $scope.item.obj[300000080] = { value: pegawai.id, text: pegawai.namaLengkap }
                 }
                 medifirstService.get("emr/get-emr-otomatisvitalsign?emrfk=147"+"&noregistrasi="+$scope.cc.noregistrasi).then(function (dat) {
                     var datas = dat.data.data2
@@ -439,7 +440,7 @@ define(['initialize', 'Configuration'], function (initialize,config) {
 
                 //     }
                 // })
-                
+
                 // for (var i = 0; i <= dataLoad.length - 1; i++) {
                 //     if (parseFloat($scope.cc.emrfk) == dataLoad[i].emrfk) {
 
@@ -1071,9 +1072,23 @@ define(['initialize', 'Configuration'], function (initialize,config) {
                 $rootScope.showRiwayat()
             }
 
-            function isiFormDariRiwayat(dataArr) {
+            function isExcludedField(emrdfk, excludedFields) {
+                for (var x = 0; x < excludedFields.length; x++) {
+                    if (excludedFields[x] == emrdfk) return true
+                }
+                return false
+            }
+
+            function isiFormDariRiwayat(dataArr, isDariRiwayat) {
+                // field ini TIDAK ikut diisi dari data riwayat saat tombol "Muat Riwayat Terakhir" dipakai,
+                // biar tetap pakai default (tanggal sekarang / dokter yang sedang login)
+                var excludedFields = isDariRiwayat
+                    ? [300000001, 300000079, 300000080, 300000081, 300000033, 300000034, 300000035, 300000036]: []
+
                 for (var i = 0; i <= dataArr.length - 1; i++) {
                     if (parseFloat($scope.cc.emrfk) == dataArr[i].emrfk) {
+                        if (isExcludedField(dataArr[i].emrdfk, excludedFields)) continue
+
                         if (dataArr[i].type == "textbox") {
                             $scope.item.obj[dataArr[i].emrdfk] = dataArr[i].value
                             if (dataArr[i].emrdfk == 115952) $scope.totalSkor4 = parseFloat(dataArr[i].value)
@@ -1123,7 +1138,7 @@ define(['initialize', 'Configuration'], function (initialize,config) {
                             .ok('Ya, Muat')
 
                         $mdDialog.show(confirm).then(function () {
-                            isiFormDariRiwayat(res.data.detail)
+                            isiFormDariRiwayat(res.data.detail, true)   // ⬅️ parameter kedua: true
                             toastr.success('Data riwayat terakhir berhasil dimuat', 'Berhasil')
                         })
                     } else {

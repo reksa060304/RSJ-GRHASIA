@@ -1260,8 +1260,8 @@ define(['initialize', 'Configuration'], function (initialize, config) {
                     }
                 })
                 
-                isiFormDariRiwayat(dataLoad)    
-                
+                isiFormDariRiwayat(dataLoad) 
+
                 // for (var i = 0; i <= dataLoad.length - 1; i++) {
                 //     if (parseFloat($scope.cc.emrfk) == dataLoad[i].emrfk) {
 
@@ -1915,9 +1915,24 @@ define(['initialize', 'Configuration'], function (initialize, config) {
                 $rootScope.showRiwayat()
             }
 
-            function isiFormDariRiwayat(dataArr) {
+            function isExcludedField(emrdfk, excludedFields) {
+                for (var x = 0; x < excludedFields.length; x++) {
+                    if (excludedFields[x] == emrdfk) return true
+                }
+                return false
+            }
+
+            function isiFormDariRiwayat(dataArr, isDariRiwayat) {
+                // sesuai field id emrfk=3000541 di emrd_t:
+                // 3017300 = Mulai Pemeriksaan Tanggal, 3017344 = tanggal pukul (selesai pemeriksaan),
+                // 3017325 = Dokter (combo), 3017346 = Dokter Pemeriksa DPJP (combo)
+                var excludedFields = isDariRiwayat
+                    ? [3017300, 3017344, 3017325, 3017346]
+                    : []
+
                 for (var i = 0; i <= dataArr.length - 1; i++) {
                     if (parseFloat($scope.cc.emrfk) == dataArr[i].emrfk) {
+                        if (isExcludedField(dataArr[i].emrdfk, excludedFields)) continue
 
                         if (dataArr[i].type == "textbox" || dataArr[i].type == "textbox2" ||
                             dataArr[i].type == "textbox3" || dataArr[i].type == "textbox12" ||
@@ -1948,7 +1963,6 @@ define(['initialize', 'Configuration'], function (initialize, config) {
                                 $scope.skorNutrisiDewasa(datass)
                             }
                         }
-                        // note: "checkbo" (typo asli) sengaja tidak diisi ke item.obj, sesuai perilaku loop lama
 
                         if (dataArr[i].type == "datetime" || dataArr[i].type == "time" || dataArr[i].type == "date") {
                             $scope.item.obj[dataArr[i].emrdfk] = new Date(dataArr[i].value)
@@ -1990,7 +2004,7 @@ define(['initialize', 'Configuration'], function (initialize, config) {
                             .ok('Ya, Muat')
 
                         $mdDialog.show(confirm).then(function () {
-                            isiFormDariRiwayat(res.data.detail)
+                            isiFormDariRiwayat(res.data.detail, true)   // ⬅️ parameter kedua: true
                             toastr.success('Data riwayat terakhir berhasil dimuat', 'Berhasil')
                         })
                     } else {
