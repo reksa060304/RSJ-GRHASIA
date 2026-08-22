@@ -41,6 +41,23 @@
         background-color: #10c4b2;
         color: #ffffff;
     }
+
+     .btn-riwayat-terakhir {
+        background-color: #2e8ee0;
+        border-color: #2e8ee0;
+        color: #ffffff;
+    }
+    .btn-riwayat-terakhir:hover {
+        background-color: #24486b;
+        border-color: #24486b;
+        color: #ffffff;
+    }
+    .btn-riwayat-terakhir:active,
+    .btn-riwayat-terakhir.k-state-active {
+        background-color: #000000;
+        border-color: #000000;
+        color: #ffffff;
+    }
 </style>
 
 <div class="grid_12">
@@ -48,6 +65,12 @@
             <div class="panel-heading">Pengkajian Awal Medis Rawat Jalan Non Jiwa CM.RM.06.01.Rev01</div>
     </div>
    
+    <div class="grid_12" style="text-align: right; margin-top: 10px;">
+        <button type="button" class="k-button" style="margin-top: 4px;" ng-click="cekRiwayatTerakhir()">
+            <i class="fa fa-history" style="margin-right: 5px;"></i>Muat Riwayat Terakhir
+        </button>
+    </div>
+
     <div class="grid_12" style="margin-top: 10px;"></div>
         
     <div class="grid_12">

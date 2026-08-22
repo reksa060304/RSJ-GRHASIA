@@ -1259,227 +1259,229 @@ define(['initialize', 'Configuration'], function (initialize, config) {
 
                     }
                 })
+                
+                isiFormDariRiwayat(dataLoad)    
+                
+                // for (var i = 0; i <= dataLoad.length - 1; i++) {
+                //     if (parseFloat($scope.cc.emrfk) == dataLoad[i].emrfk) {
 
-                for (var i = 0; i <= dataLoad.length - 1; i++) {
-                    if (parseFloat($scope.cc.emrfk) == dataLoad[i].emrfk) {
+                //         if (dataLoad[i].type == "textbox") {
 
-                        if (dataLoad[i].type == "textbox") {
+                //             // check jika ada value
+                //             if(dataLoad[i].value){
+                //                 $scope.item.obj[dataLoad[i].emrdfk] = dataLoad[i].value
+                //             }
 
-                            // check jika ada value
-                            if(dataLoad[i].value){
-                                $scope.item.obj[dataLoad[i].emrdfk] = dataLoad[i].value
-                            }
-
-                            // check jika datavitalsign kosong
-                            // gunakan vitalsign di emr
+                //             // check jika datavitalsign kosong
+                //             // gunakan vitalsign di emr
                             
 
-                              if(dataLoad[i].emrdfk == 36100777)
-                                $scope.totalSkor2 = parseFloat(dataLoad[i].value)
-                              if(dataLoad[i].emrdfk == 33100323)
-                                $scope.totalSkor3 = parseFloat(dataLoad[i].value)
-                              if(dataLoad[i].emrdfk == 33100282)
-                                $scope.totalSkor4 = parseFloat(dataLoad[i].value)
-                              if(dataLoad[i].emrdfk == 31410474)
-                                $scope.totalSkor5 = parseFloat(dataLoad[i].value)
-                              if(dataLoad[i].emrdfk == 33100308)
-                                $scope.totaladl = parseFloat(dataLoad[i].value)
-                            if(dataLoad[i].emrdfk == 36100349)
-                                $scope.skorNutrisi = parseFloat(dataLoad[i].value)
-                            if(dataLoad[i].emrdfk == 33100373)
-                                $scope.totalGziDewasa = parseFloat(dataLoad[i].value)
-                            if (dataLoad[i].emrdfk ==  36100380)
-                                $scope.totalSkorAses =parseFloat( dataLoad[i].value)
-                            if (dataLoad[i].emrdfk ==  3014891)
-                                $scope.skorNutrisiAnak =parseFloat( dataLoad[i].value)
-                            if (dataLoad[i].emrdfk ==  3014902)
-                            $scope.skorNutrisiDewasa =parseFloat( dataLoad[i].value)
-                        }
-                        if (dataLoad[i].type == "textbox2") {
-                            $scope.item.obj[dataLoad[i].emrdfk] = dataLoad[i].value
-                            if (dataLoad[i].emrdfk ==  3014891)
-                                $scope.skorNutrisiAnak =parseFloat( dataLoad[i].value)
-                            if (dataLoad[i].emrdfk ==  3014902)
-                            $scope.skorNutrisiDewasa =parseFloat( dataLoad[i].value)
-                        }
-                        if (dataLoad[i].type == "textbox3") {
-                            $scope.item.obj[dataLoad[i].emrdfk] = dataLoad[i].value
-                            if (dataLoad[i].emrdfk ==  3014891)
-                                $scope.skorNutrisiAnak =parseFloat( dataLoad[i].value)
-                            if (dataLoad[i].emrdfk ==  3014902)
-                            $scope.skorNutrisiDewasa =parseFloat( dataLoad[i].value)
-                        }
-                        if (dataLoad[i].type == "textbox12") {
-                            $scope.item.obj[dataLoad[i].emrdfk] = dataLoad[i].value
-                            if (dataLoad[i].emrdfk ==  3014891)
-                                $scope.skorNutrisiAnak =parseFloat( dataLoad[i].value)
-                            if (dataLoad[i].emrdfk ==  3014902)
-                            $scope.skorNutrisiDewasa =parseFloat( dataLoad[i].value)
-                        }
-                        if (dataLoad[i].type == "textboxr") {
-                            $scope.item.obj[dataLoad[i].emrdfk] = dataLoad[i].value
-                            if (dataLoad[i].emrdfk ==  3014891)
-                                $scope.skorNutrisiAnak =parseFloat( dataLoad[i].value)
-                            if (dataLoad[i].emrdfk ==  3014902)
-                            $scope.skorNutrisiDewasa =parseFloat( dataLoad[i].value)
-                        }
-                        if (dataLoad[i].type == "checkbox") {
-                            chekedd = false
-                            if (dataLoad[i].value == '1') {
-                                chekedd = true
-                            }
-                            $scope.item.obj[dataLoad[i].emrdfk] = chekedd
-                           // if (dataLoad[i].emrdfk >= 7590 && dataLoad[i].emrdfk <= 7593 && chekedd) {
-                             //   $scope.getSkalaNyeri(1, { descNilai: dataLoad[i].reportdisplay })
-                            //}
-                            if (dataLoad[i].emrdfk >= 5085 && dataLoad[i].emrdfk <= 5093 && dataLoad[i].reportdisplay != null) {
-                                var datass = { id: dataLoad[i].emrdfk, descNilai: dataLoad[i].reportdisplay }
-                                $scope.getSkorNutrisiAnak(datass)
-                            }
-                            if (dataLoad[i].emrdfk >= 5085 && dataLoad[i].emrdfk <= 5093 && dataLoad[i].reportdisplay != null) {
-                                var datass = { id: dataLoad[i].emrdfk, descNilai: dataLoad[i].reportdisplay }
-                                $scope.skorNutrisiDewasa(datass)
-                            }
-                            
-
-
-                        }
-                        if (dataLoad[i].type == "checkbox2") {
-                            chekedd = false
-                            if (dataLoad[i].value == '1') {
-                                chekedd = true
-                            }
-                            $scope.item.obj[dataLoad[i].emrdfk] = chekedd
-                           // if (dataLoad[i].emrdfk >= 7590 && dataLoad[i].emrdfk <= 7593 && chekedd) {
-                             //   $scope.getSkalaNyeri(1, { descNilai: dataLoad[i].reportdisplay })
-                            //}
-                            if (dataLoad[i].emrdfk >= 5085 && dataLoad[i].emrdfk <= 5093 && dataLoad[i].reportdisplay != null) {
-                                var datass = { id: dataLoad[i].emrdfk, descNilai: dataLoad[i].reportdisplay }
-                                $scope.getSkorNutrisiAnak(datass)
-                            }
-                            if (dataLoad[i].emrdfk >= 5085 && dataLoad[i].emrdfk <= 5093 && dataLoad[i].reportdisplay != null) {
-                                var datass = { id: dataLoad[i].emrdfk, descNilai: dataLoad[i].reportdisplay }
-                                $scope.skorNutrisiDewasa(datass)
-                            }
+                //               if(dataLoad[i].emrdfk == 36100777)
+                //                 $scope.totalSkor2 = parseFloat(dataLoad[i].value)
+                //               if(dataLoad[i].emrdfk == 33100323)
+                //                 $scope.totalSkor3 = parseFloat(dataLoad[i].value)
+                //               if(dataLoad[i].emrdfk == 33100282)
+                //                 $scope.totalSkor4 = parseFloat(dataLoad[i].value)
+                //               if(dataLoad[i].emrdfk == 31410474)
+                //                 $scope.totalSkor5 = parseFloat(dataLoad[i].value)
+                //               if(dataLoad[i].emrdfk == 33100308)
+                //                 $scope.totaladl = parseFloat(dataLoad[i].value)
+                //             if(dataLoad[i].emrdfk == 36100349)
+                //                 $scope.skorNutrisi = parseFloat(dataLoad[i].value)
+                //             if(dataLoad[i].emrdfk == 33100373)
+                //                 $scope.totalGziDewasa = parseFloat(dataLoad[i].value)
+                //             if (dataLoad[i].emrdfk ==  36100380)
+                //                 $scope.totalSkorAses =parseFloat( dataLoad[i].value)
+                //             if (dataLoad[i].emrdfk ==  3014891)
+                //                 $scope.skorNutrisiAnak =parseFloat( dataLoad[i].value)
+                //             if (dataLoad[i].emrdfk ==  3014902)
+                //             $scope.skorNutrisiDewasa =parseFloat( dataLoad[i].value)
+                //         }
+                //         if (dataLoad[i].type == "textbox2") {
+                //             $scope.item.obj[dataLoad[i].emrdfk] = dataLoad[i].value
+                //             if (dataLoad[i].emrdfk ==  3014891)
+                //                 $scope.skorNutrisiAnak =parseFloat( dataLoad[i].value)
+                //             if (dataLoad[i].emrdfk ==  3014902)
+                //             $scope.skorNutrisiDewasa =parseFloat( dataLoad[i].value)
+                //         }
+                //         if (dataLoad[i].type == "textbox3") {
+                //             $scope.item.obj[dataLoad[i].emrdfk] = dataLoad[i].value
+                //             if (dataLoad[i].emrdfk ==  3014891)
+                //                 $scope.skorNutrisiAnak =parseFloat( dataLoad[i].value)
+                //             if (dataLoad[i].emrdfk ==  3014902)
+                //             $scope.skorNutrisiDewasa =parseFloat( dataLoad[i].value)
+                //         }
+                //         if (dataLoad[i].type == "textbox12") {
+                //             $scope.item.obj[dataLoad[i].emrdfk] = dataLoad[i].value
+                //             if (dataLoad[i].emrdfk ==  3014891)
+                //                 $scope.skorNutrisiAnak =parseFloat( dataLoad[i].value)
+                //             if (dataLoad[i].emrdfk ==  3014902)
+                //             $scope.skorNutrisiDewasa =parseFloat( dataLoad[i].value)
+                //         }
+                //         if (dataLoad[i].type == "textboxr") {
+                //             $scope.item.obj[dataLoad[i].emrdfk] = dataLoad[i].value
+                //             if (dataLoad[i].emrdfk ==  3014891)
+                //                 $scope.skorNutrisiAnak =parseFloat( dataLoad[i].value)
+                //             if (dataLoad[i].emrdfk ==  3014902)
+                //             $scope.skorNutrisiDewasa =parseFloat( dataLoad[i].value)
+                //         }
+                //         if (dataLoad[i].type == "checkbox") {
+                //             chekedd = false
+                //             if (dataLoad[i].value == '1') {
+                //                 chekedd = true
+                //             }
+                //             $scope.item.obj[dataLoad[i].emrdfk] = chekedd
+                //            // if (dataLoad[i].emrdfk >= 7590 && dataLoad[i].emrdfk <= 7593 && chekedd) {
+                //              //   $scope.getSkalaNyeri(1, { descNilai: dataLoad[i].reportdisplay })
+                //             //}
+                //             if (dataLoad[i].emrdfk >= 5085 && dataLoad[i].emrdfk <= 5093 && dataLoad[i].reportdisplay != null) {
+                //                 var datass = { id: dataLoad[i].emrdfk, descNilai: dataLoad[i].reportdisplay }
+                //                 $scope.getSkorNutrisiAnak(datass)
+                //             }
+                //             if (dataLoad[i].emrdfk >= 5085 && dataLoad[i].emrdfk <= 5093 && dataLoad[i].reportdisplay != null) {
+                //                 var datass = { id: dataLoad[i].emrdfk, descNilai: dataLoad[i].reportdisplay }
+                //                 $scope.skorNutrisiDewasa(datass)
+                //             }
                             
 
 
-                        }
-                        if (dataLoad[i].type == "checkbox4") {
-                            chekedd = false
-                            if (dataLoad[i].value == '1') {
-                                chekedd = true
-                            }
-                            $scope.item.obj[dataLoad[i].emrdfk] = chekedd
-                           // if (dataLoad[i].emrdfk >= 7590 && dataLoad[i].emrdfk <= 7593 && chekedd) {
-                             //   $scope.getSkalaNyeri(1, { descNilai: dataLoad[i].reportdisplay })
-                            //}
-                            if (dataLoad[i].emrdfk >= 5085 && dataLoad[i].emrdfk <= 5093 && dataLoad[i].reportdisplay != null) {
-                                var datass = { id: dataLoad[i].emrdfk, descNilai: dataLoad[i].reportdisplay }
-                                $scope.getSkorNutrisiAnak(datass)
-                            }
-                            if (dataLoad[i].emrdfk >= 5085 && dataLoad[i].emrdfk <= 5093 && dataLoad[i].reportdisplay != null) {
-                                var datass = { id: dataLoad[i].emrdfk, descNilai: dataLoad[i].reportdisplay }
-                                $scope.skorNutrisiDewasa(datass)
-                            }
+                //         }
+                //         if (dataLoad[i].type == "checkbox2") {
+                //             chekedd = false
+                //             if (dataLoad[i].value == '1') {
+                //                 chekedd = true
+                //             }
+                //             $scope.item.obj[dataLoad[i].emrdfk] = chekedd
+                //            // if (dataLoad[i].emrdfk >= 7590 && dataLoad[i].emrdfk <= 7593 && chekedd) {
+                //              //   $scope.getSkalaNyeri(1, { descNilai: dataLoad[i].reportdisplay })
+                //             //}
+                //             if (dataLoad[i].emrdfk >= 5085 && dataLoad[i].emrdfk <= 5093 && dataLoad[i].reportdisplay != null) {
+                //                 var datass = { id: dataLoad[i].emrdfk, descNilai: dataLoad[i].reportdisplay }
+                //                 $scope.getSkorNutrisiAnak(datass)
+                //             }
+                //             if (dataLoad[i].emrdfk >= 5085 && dataLoad[i].emrdfk <= 5093 && dataLoad[i].reportdisplay != null) {
+                //                 var datass = { id: dataLoad[i].emrdfk, descNilai: dataLoad[i].reportdisplay }
+                //                 $scope.skorNutrisiDewasa(datass)
+                //             }
                             
 
 
-                        }
-                        if (dataLoad[i].type == "checkbox6") {
-                            chekedd = false
-                            if (dataLoad[i].value == '1') {
-                                chekedd = true
-                            }
-                            $scope.item.obj[dataLoad[i].emrdfk] = chekedd
-                           // if (dataLoad[i].emrdfk >= 7590 && dataLoad[i].emrdfk <= 7593 && chekedd) {
-                             //   $scope.getSkalaNyeri(1, { descNilai: dataLoad[i].reportdisplay })
-                            //}
-                            if (dataLoad[i].emrdfk >= 5085 && dataLoad[i].emrdfk <= 5093 && dataLoad[i].reportdisplay != null) {
-                                var datass = { id: dataLoad[i].emrdfk, descNilai: dataLoad[i].reportdisplay }
-                                $scope.getSkorNutrisiAnak(datass)
-                            }
-                            if (dataLoad[i].emrdfk >= 5085 && dataLoad[i].emrdfk <= 5093 && dataLoad[i].reportdisplay != null) {
-                                var datass = { id: dataLoad[i].emrdfk, descNilai: dataLoad[i].reportdisplay }
-                                $scope.skorNutrisiDewasa(datass)
-                            }
+                //         }
+                //         if (dataLoad[i].type == "checkbox4") {
+                //             chekedd = false
+                //             if (dataLoad[i].value == '1') {
+                //                 chekedd = true
+                //             }
+                //             $scope.item.obj[dataLoad[i].emrdfk] = chekedd
+                //            // if (dataLoad[i].emrdfk >= 7590 && dataLoad[i].emrdfk <= 7593 && chekedd) {
+                //              //   $scope.getSkalaNyeri(1, { descNilai: dataLoad[i].reportdisplay })
+                //             //}
+                //             if (dataLoad[i].emrdfk >= 5085 && dataLoad[i].emrdfk <= 5093 && dataLoad[i].reportdisplay != null) {
+                //                 var datass = { id: dataLoad[i].emrdfk, descNilai: dataLoad[i].reportdisplay }
+                //                 $scope.getSkorNutrisiAnak(datass)
+                //             }
+                //             if (dataLoad[i].emrdfk >= 5085 && dataLoad[i].emrdfk <= 5093 && dataLoad[i].reportdisplay != null) {
+                //                 var datass = { id: dataLoad[i].emrdfk, descNilai: dataLoad[i].reportdisplay }
+                //                 $scope.skorNutrisiDewasa(datass)
+                //             }
                             
 
 
-                        }
-                        if (dataLoad[i].type == "checkbox12") {
-                            chekedd = false
-                            if (dataLoad[i].value == '1') {
-                                chekedd = true
-                            }
-                            $scope.item.obj[dataLoad[i].emrdfk] = chekedd
-                           // if (dataLoad[i].emrdfk >= 7590 && dataLoad[i].emrdfk <= 7593 && chekedd) {
-                             //   $scope.getSkalaNyeri(1, { descNilai: dataLoad[i].reportdisplay })
-                            //}
-                            if (dataLoad[i].emrdfk >= 5085 && dataLoad[i].emrdfk <= 5093 && dataLoad[i].reportdisplay != null) {
-                                var datass = { id: dataLoad[i].emrdfk, descNilai: dataLoad[i].reportdisplay }
-                                $scope.getSkorNutrisiAnak(datass)
-                            }
-                            if (dataLoad[i].emrdfk >= 5085 && dataLoad[i].emrdfk <= 5093 && dataLoad[i].reportdisplay != null) {
-                                var datass = { id: dataLoad[i].emrdfk, descNilai: dataLoad[i].reportdisplay }
-                                $scope.skorNutrisiDewasa(datass)
-                            }
+                //         }
+                //         if (dataLoad[i].type == "checkbox6") {
+                //             chekedd = false
+                //             if (dataLoad[i].value == '1') {
+                //                 chekedd = true
+                //             }
+                //             $scope.item.obj[dataLoad[i].emrdfk] = chekedd
+                //            // if (dataLoad[i].emrdfk >= 7590 && dataLoad[i].emrdfk <= 7593 && chekedd) {
+                //              //   $scope.getSkalaNyeri(1, { descNilai: dataLoad[i].reportdisplay })
+                //             //}
+                //             if (dataLoad[i].emrdfk >= 5085 && dataLoad[i].emrdfk <= 5093 && dataLoad[i].reportdisplay != null) {
+                //                 var datass = { id: dataLoad[i].emrdfk, descNilai: dataLoad[i].reportdisplay }
+                //                 $scope.getSkorNutrisiAnak(datass)
+                //             }
+                //             if (dataLoad[i].emrdfk >= 5085 && dataLoad[i].emrdfk <= 5093 && dataLoad[i].reportdisplay != null) {
+                //                 var datass = { id: dataLoad[i].emrdfk, descNilai: dataLoad[i].reportdisplay }
+                //                 $scope.skorNutrisiDewasa(datass)
+                //             }
                             
 
 
-                        }
-                        if (dataLoad[i].type == "checkbo") {
-                            chekedd = false
-                            if (dataLoad[i].value == '1') {
-                                chekedd = true
-                            }
-                         //   $scope.item.obj[dataLoad[i].emrdfk] = chekedd
-                          //  if (dataLoad[i].emrdfk >= 7590 && dataLoad[i].emrdfk <= 7593 && chekedd) {
-                           //     $scope.getSkalaNyeri(1, { descNilai: dataLoad[i].reportdisplay })
-                          //  }
+                //         }
+                //         if (dataLoad[i].type == "checkbox12") {
+                //             chekedd = false
+                //             if (dataLoad[i].value == '1') {
+                //                 chekedd = true
+                //             }
+                //             $scope.item.obj[dataLoad[i].emrdfk] = chekedd
+                //            // if (dataLoad[i].emrdfk >= 7590 && dataLoad[i].emrdfk <= 7593 && chekedd) {
+                //              //   $scope.getSkalaNyeri(1, { descNilai: dataLoad[i].reportdisplay })
+                //             //}
+                //             if (dataLoad[i].emrdfk >= 5085 && dataLoad[i].emrdfk <= 5093 && dataLoad[i].reportdisplay != null) {
+                //                 var datass = { id: dataLoad[i].emrdfk, descNilai: dataLoad[i].reportdisplay }
+                //                 $scope.getSkorNutrisiAnak(datass)
+                //             }
+                //             if (dataLoad[i].emrdfk >= 5085 && dataLoad[i].emrdfk <= 5093 && dataLoad[i].reportdisplay != null) {
+                //                 var datass = { id: dataLoad[i].emrdfk, descNilai: dataLoad[i].reportdisplay }
+                //                 $scope.skorNutrisiDewasa(datass)
+                //             }
                             
 
 
-                        }
+                //         }
+                //         if (dataLoad[i].type == "checkbo") {
+                //             chekedd = false
+                //             if (dataLoad[i].value == '1') {
+                //                 chekedd = true
+                //             }
+                //          //   $scope.item.obj[dataLoad[i].emrdfk] = chekedd
+                //           //  if (dataLoad[i].emrdfk >= 7590 && dataLoad[i].emrdfk <= 7593 && chekedd) {
+                //            //     $scope.getSkalaNyeri(1, { descNilai: dataLoad[i].reportdisplay })
+                //           //  }
+                            
 
-                        if (dataLoad[i].type == "datetime") {
-                            $scope.item.obj[dataLoad[i].emrdfk] = new Date(dataLoad[i].value)
-                        }
-                        if (dataLoad[i].type == "time") {
-                            $scope.item.obj[dataLoad[i].emrdfk] = new Date(dataLoad[i].value)
-                        }
-                        if (dataLoad[i].type == "date") {
-                            $scope.item.obj[dataLoad[i].emrdfk] = new Date(dataLoad[i].value)
-                        }
 
-                        if (dataLoad[i].type == "checkboxtextbox") {
-                            $scope.item.obj[dataLoad[i].emrdfk] = dataLoad[i].value
-                            $scope.item.obj2[dataLoad[i].emrdfk] = true
-                        }
-                        if (dataLoad[i].type == "textarea") {
-                            $scope.item.obj[dataLoad[i].emrdfk] = dataLoad[i].value
-                        }
-                        if (dataLoad[i].type == "textarea2") {
-                            $scope.item.obj[dataLoad[i].emrdfk] = dataLoad[i].value
-                        }
-                        if (dataLoad[i].type == "textarea3") {
-                            $scope.item.obj[dataLoad[i].emrdfk] = dataLoad[i].value
-                        }
-                        if (dataLoad[i].type == "combobox") {
-                            var str = dataLoad[i].value
-                            if(str != undefined){
-                                var res = str.split("~");
-                                // $scope.item.objcbo[dataLoad[i].emrdfk]= {value:res[0],text:res[1]}
-                                $scope.item.obj[dataLoad[i].emrdfk] = { value: res[0], text: res[1] }        
-                            }   
-                            // var res = str.split("~");
-                            // // $scope.item.objcbo[dataLoad[i].emrdfk]= {value:res[0],text:res[1]}
-                            // $scope.item.obj[dataLoad[i].emrdfk] = { value: res[0], text: res[1] }
+                //         }
 
-                        }
-                    }
+                //         if (dataLoad[i].type == "datetime") {
+                //             $scope.item.obj[dataLoad[i].emrdfk] = new Date(dataLoad[i].value)
+                //         }
+                //         if (dataLoad[i].type == "time") {
+                //             $scope.item.obj[dataLoad[i].emrdfk] = new Date(dataLoad[i].value)
+                //         }
+                //         if (dataLoad[i].type == "date") {
+                //             $scope.item.obj[dataLoad[i].emrdfk] = new Date(dataLoad[i].value)
+                //         }
 
-                }
+                //         if (dataLoad[i].type == "checkboxtextbox") {
+                //             $scope.item.obj[dataLoad[i].emrdfk] = dataLoad[i].value
+                //             $scope.item.obj2[dataLoad[i].emrdfk] = true
+                //         }
+                //         if (dataLoad[i].type == "textarea") {
+                //             $scope.item.obj[dataLoad[i].emrdfk] = dataLoad[i].value
+                //         }
+                //         if (dataLoad[i].type == "textarea2") {
+                //             $scope.item.obj[dataLoad[i].emrdfk] = dataLoad[i].value
+                //         }
+                //         if (dataLoad[i].type == "textarea3") {
+                //             $scope.item.obj[dataLoad[i].emrdfk] = dataLoad[i].value
+                //         }
+                //         if (dataLoad[i].type == "combobox") {
+                //             var str = dataLoad[i].value
+                //             if(str != undefined){
+                //                 var res = str.split("~");
+                //                 // $scope.item.objcbo[dataLoad[i].emrdfk]= {value:res[0],text:res[1]}
+                //                 $scope.item.obj[dataLoad[i].emrdfk] = { value: res[0], text: res[1] }        
+                //             }   
+                //             // var res = str.split("~");
+                //             // // $scope.item.objcbo[dataLoad[i].emrdfk]= {value:res[0],text:res[1]}
+                //             // $scope.item.obj[dataLoad[i].emrdfk] = { value: res[0], text: res[1] }
+
+                //         }
+                //     }
+
+                // }
             })
             
             $scope.skorNutrisi = 0
@@ -1911,6 +1913,90 @@ define(['initialize', 'Configuration'], function (initialize, config) {
             }
             $scope.kembali = function () {
                 $rootScope.showRiwayat()
+            }
+
+            function isiFormDariRiwayat(dataArr) {
+                for (var i = 0; i <= dataArr.length - 1; i++) {
+                    if (parseFloat($scope.cc.emrfk) == dataArr[i].emrfk) {
+
+                        if (dataArr[i].type == "textbox" || dataArr[i].type == "textbox2" ||
+                            dataArr[i].type == "textbox3" || dataArr[i].type == "textbox12" ||
+                            dataArr[i].type == "textboxr") {
+                            if (dataArr[i].value) {
+                                $scope.item.obj[dataArr[i].emrdfk] = dataArr[i].value
+                            }
+                            if (dataArr[i].emrdfk == 36100777) $scope.totalSkor2 = parseFloat(dataArr[i].value)
+                            if (dataArr[i].emrdfk == 33100323) $scope.totalSkor3 = parseFloat(dataArr[i].value)
+                            if (dataArr[i].emrdfk == 33100282) $scope.totalSkor4 = parseFloat(dataArr[i].value)
+                            if (dataArr[i].emrdfk == 31410474) $scope.totalSkor5 = parseFloat(dataArr[i].value)
+                            if (dataArr[i].emrdfk == 33100308) $scope.totaladl = parseFloat(dataArr[i].value)
+                            if (dataArr[i].emrdfk == 36100349) $scope.skorNutrisi = parseFloat(dataArr[i].value)
+                            if (dataArr[i].emrdfk == 33100373) $scope.totalGziDewasa = parseFloat(dataArr[i].value)
+                            if (dataArr[i].emrdfk == 36100380) $scope.totalSkorAses = parseFloat(dataArr[i].value)
+                            if (dataArr[i].emrdfk == 3014891) $scope.skorNutrisiAnak = parseFloat(dataArr[i].value)
+                            if (dataArr[i].emrdfk == 3014902) $scope.skorNutrisiDewasa = parseFloat(dataArr[i].value)
+                        }
+
+                        if (dataArr[i].type == "checkbox" || dataArr[i].type == "checkbox2" ||
+                            dataArr[i].type == "checkbox4" || dataArr[i].type == "checkbox6" ||
+                            dataArr[i].type == "checkbox12") {
+                            var chekedd = (dataArr[i].value == '1')
+                            $scope.item.obj[dataArr[i].emrdfk] = chekedd
+                            if (dataArr[i].emrdfk >= 5085 && dataArr[i].emrdfk <= 5093 && dataArr[i].reportdisplay != null) {
+                                var datass = { id: dataArr[i].emrdfk, descNilai: dataArr[i].reportdisplay }
+                                $scope.getSkorNutrisiAnak(datass)
+                                $scope.skorNutrisiDewasa(datass)
+                            }
+                        }
+                        // note: "checkbo" (typo asli) sengaja tidak diisi ke item.obj, sesuai perilaku loop lama
+
+                        if (dataArr[i].type == "datetime" || dataArr[i].type == "time" || dataArr[i].type == "date") {
+                            $scope.item.obj[dataArr[i].emrdfk] = new Date(dataArr[i].value)
+                        }
+                        if (dataArr[i].type == "checkboxtextbox") {
+                            $scope.item.obj[dataArr[i].emrdfk] = dataArr[i].value
+                            $scope.item.obj2[dataArr[i].emrdfk] = true
+                        }
+                        if (dataArr[i].type == "textarea" || dataArr[i].type == "textarea2" || dataArr[i].type == "textarea3") {
+                            $scope.item.obj[dataArr[i].emrdfk] = dataArr[i].value
+                        }
+                        if (dataArr[i].type == "combobox") {
+                            var str = dataArr[i].value
+                            if (str != undefined) {
+                                var res = str.split("~")
+                                $scope.item.obj[dataArr[i].emrdfk] = { value: res[0], text: res[1] }
+                            }
+                        }
+                    }
+                }
+            }
+
+            $scope.cekRiwayatTerakhir = function () {
+                medifirstService.get(
+                    "emr/get-riwayat-terakhir-form?nocm=" + $scope.cc.nocm +
+                    "&emrfk=" + $scope.cc.emrfk +
+                    "&excludenoemr=" + nomorEMR, true
+                ).then(function (res) {
+                    if (res.data.ada) {
+                        var head = res.data.head
+                        var confirm = $mdDialog.confirm()
+                            .title('Riwayat Ditemukan')
+                            .textContent('Ditemukan riwayat pengisian sebelumnya pada ' +
+                                moment(head.tglemr).format('DD-MM-YYYY HH:mm') +
+                                (head.namalengkap ? ' oleh ' + head.namalengkap : '') +
+                                '. Muat data tersebut ke form ini?')
+                            .ariaLabel('Muat Riwayat')
+                            .cancel('Tidak')
+                            .ok('Ya, Muat')
+
+                        $mdDialog.show(confirm).then(function () {
+                            isiFormDariRiwayat(res.data.detail)
+                            toastr.success('Data riwayat terakhir berhasil dimuat', 'Berhasil')
+                        })
+                    } else {
+                        toastr.warning('Tidak ada riwayat pengisian sebelumnya untuk pasien ini', 'Informasi')
+                    }
+                })
             }
 
             $scope.Save = function () {
