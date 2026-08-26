@@ -1407,6 +1407,7 @@ define(['initialize', 'Configuration'], function (initialize, config) {
                                         "orderNumber": item.accession_num,
                                         "patientClass": item.io_date,
                                         "patientID": $scope.dataSelected.nocm,
+                                        "PhoneNumber": $scope.dataSelected.nohp,
                                         "extendModality": item.order_modality,
                                         "procedure": item.order_code,
                                         "procedureName": item.order_name,

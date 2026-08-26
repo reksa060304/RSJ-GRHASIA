@@ -191,7 +191,8 @@ class RadiologiController extends ApiController
                         'dp.namadepartemen', 'ps.id as psid', 'apd.norec as norec_apd', 'sp.norec as norec_sp', 'pp.norec as norec_pp',
                         'ru.objectdepartemenfk', 'so.noorder', 'ris.accession_num as idbridging', 'op.ihs_id as idbridging_ihs', 'apd.objectruanganfk','pp.iscito','pp.jasa','so.keteranganlainnya',
                         'ps.objectjeniskelaminfk','ps.tgllahir','sbm.nosbm','pmi.pmi',  'ris.order_cnt as nourutrad', // syamsu tambahan
-                        DB::raw("case when ris.order_key is not null or op.ihs_id is not null then 'Sudah Dikirim' else '-' end as statusbridging,hr.norec as  hr_norec,pp.tglpanggil"))
+                        DB::raw("case when ris.order_key is not null or op.ihs_id is not null then 'Sudah Dikirim' else '-' end as statusbridging,hr.norec as  hr_norec,pp.tglpanggil"),
+                        DB::raw("case when ps.nohp is not null then ps.nohp else ps.notelepon end as nohp"))
                     ->where('pp.kdprofile',$idProfile)
                     ->whereNull('pp.isobat')
                     ->where('ru.objectdepartemenfk', $this->settingDataFixed('KdDepartemenInstalasiRadiologi', $idProfile))
@@ -328,6 +329,7 @@ class RadiologiController extends ApiController
 //                    }
                     $result[] = array(
                         'nocm' => $item->nocm,
+                        'nohp' => $item->nohp ? $item->nohp : null,
                         'namapasien' => $item->namapasien,
                         'jeniskelamin' => $item->jeniskelamin,
                         'tglpelayanan' => $item->tglpelayanan,
@@ -1322,6 +1324,7 @@ class RadiologiController extends ApiController
                     'so.keteranganlainnya','so.cito','pd.isclosing as closing',
 //                    (DB::raw("case when pp.ono is null then 'MASUK' else
 //                                    'SELESAI' end as status")))
+                    DB::raw("case when ps.nohp is not null then ps.nohp else ps.notelepon end as nohp"),
                     (DB::raw("case 
                     when so.statusorder is null and so.isverifikasidokter is null and so.objectruangantujuanfk = 575 then 'MASUK'
                     when so.statusorder is not null and so.isverifikasidokter is null and so.objectruangantujuanfk = 575 then 'PROSES' 
@@ -1384,6 +1387,7 @@ class RadiologiController extends ApiController
                         'ru.namaruangan', 'ru2.namaruangan as ruangantujuan',     'so.keteranganlainnya','apd.norec as norec_apd',
                         // 'apd.norec as norec_apd',
                         'ru.id as ruid','so.cito','pd.isclosing as closing',
+                        DB::raw("case when ps.nohp is not null then ps.nohp else ps.notelepon end as nohp")
                         (DB::raw("case 
                         when so.statusorder is null then 'MASUK'
                         else 'SELESAI' end as status")))
@@ -1434,6 +1438,7 @@ class RadiologiController extends ApiController
                         // 'apd.norec as norec_apd',
                         'ru.namaruangan', 'ru2.namaruangan as ruangantujuan',
                              'so.keteranganlainnya','so.cito','pd.isclosing as closing',
+                        DB::raw("case when ps.nohp is not null then ps.nohp else ps.notelepon end as nohp"),
                         (DB::raw("case when so.statusorder is null and pp.order_no is null then 'MASUK' else
                                     'SELESAI' end as status")))
                     ->where('so.kdprofile', $idProfile)
@@ -1498,6 +1503,7 @@ class RadiologiController extends ApiController
                     // 'apd.norec as norec_apd',
                     'ru.namaruangan', 'ru2.namaruangan as ruangantujuan',
                          'so.keteranganlainnya','so.cito','pd.isclosing as closing',
+                    DB::raw("case when ps.nohp is not null then ps.nohp else ps.notelepon end as nohp"),
                     (DB::raw("case when so.statusorder is null then 'MASUK' else
                                     'SELESAI' end as status")))
                 ->where('so.kdprofile', $idProfile)
@@ -1535,6 +1541,7 @@ class RadiologiController extends ApiController
                     'so.objectruanganfk', 'pd.objectkelompokpasienlastfk', 'ru.objectdepartemenfk', 'ru2.objectdepartemenfk as iddeptujuan',
                     'so.objectpegawaiorderfk', 'pg.namalengkap as pegawaiorder','so.tglorder',
                     'ru.namaruangan', 'ru2.namaruangan as ruangantujuan','so.tglpelayananakhir','pg2.namalengkap as dpjp','apd.norec as norec_apd','so.cito','pd.isclosing as closing',
+                    DB::raw("case when ps.nohp is not null then ps.nohp else ps.notelepon end as nohp"),
                     (DB::raw("case when pp.strukorderfk is null then 'MASUK' else
                                     'Sudah Verifikasi' end as status,'' as kddiagnosa")))
                 ->where('so.kdprofile', $idProfile)
