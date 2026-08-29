@@ -873,16 +873,20 @@
                     <tr>
                         <td></td>
                         <td></td>
-                        <td height="60px"> </td>
+                        <td height="60px" style="text-align:center">
+                            @if(isset($qrcode) && !empty($qrcode))
+                                <img src="data:image/svg+xml;base64,{{ $qrcode }}" style="width:65px;height:65px;">
+                            @endif
+                        </td>
                     </tr>
                     <tr>
                         <td style="text-align: center"></td>
                         <td style="text-align: center">&nbsp;</td>
                         <td width="33%">
+                            <span style="font-weight: bold;color: #ccc;font-size:8pt;">Ditandatangani secara elektronik</span><br>
                             {{isset($item[30006370]) ? $item[30006370]:''}}
                         </td>
                     </tr>
-                  
                 </tbody>
             </table>
         </div>

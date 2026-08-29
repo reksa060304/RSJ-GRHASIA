@@ -25841,7 +25841,17 @@ public function suratBuktiPengembalian(Request $request)
                 if($items->type == "combobox") {
                     $arr = explode('~',$items->value );
                     $item[$items->emrdfk] = $arr[1];
+                    $item[$items->emrdfk . '_id'] = $arr[0] ?? null;
                 }
+        }
+        $idPetugas = $item['30006370_id'] ?? null;
+        $pegPenandatangan = null;
+        if ($idPetugas) {
+            $pegPenandatangan = DB::table('pegawai_m as pg')
+                ->leftJoin('jeniskelamin_m as jk', 'jk.id', '=', 'pg.objectjeniskelaminfk')
+                ->select('pg.nip', 'pg.nosip', 'pg.namalengkap', 'jk.jeniskelamin')
+                ->where('pg.id', $idPetugas)
+                ->first();
         }
         $pageWidth = 950;
         $peg = null;    
@@ -25849,6 +25859,70 @@ public function suratBuktiPengembalian(Request $request)
             $peg = DB::table('pegawai_m')->where('id',$request['pegawaittd'])->first();
             
         }
+        $dataVerifikasi = [
+            'nip'          => $pegPenandatangan->nip ?? '-',
+            'nosip'        => $pegPenandatangan->nosip ?? '-',
+            'namapetugas'  => $pegPenandatangan->namalengkap ?? ($item[30006370] ?? '-'),
+            'jeniskelamin' => $pegPenandatangan->jeniskelamin ?? '-',
+            'namaform'     => 'FORMULIR TRIASE IGD',
+            'tglditulis'   => date('d-m-Y'),
+        ];
+
+        // cek record terakhir untuk dokumen (pasien + registrasi + jenis) ini
+        $nocmClean  = trim($res['d'][0]->nocm ?? '');
+        $noregClean = trim($res['d'][0]->noregistrasi ?? '');
+        $norecEmrClean = trim($norec ?? '');   // <-- $norec sudah ada di baris paling atas fungsi
+
+        $existing = DB::table('verifikasi_dokumen_t')
+            ->where('norec_emr', $norecEmrClean)     // <-- kunci utama sekarang ini
+            ->where('jenis_dokumen', 'triase-igd')
+            ->orderBy('tgl_cetak', 'desc')
+            ->first();
+
+        $dataBerubah = true;
+        if ($existing) {
+            $dataLama = json_decode($existing->data_verifikasi, true);
+            if (
+                trim((string)($dataLama['nip'] ?? ''))          === trim((string)$dataVerifikasi['nip']) &&
+                trim((string)($dataLama['nosip'] ?? ''))        === trim((string)$dataVerifikasi['nosip']) &&
+                trim((string)($dataLama['namapetugas'] ?? ''))  === trim((string)$dataVerifikasi['namapetugas']) &&
+                trim((string)($dataLama['jeniskelamin'] ?? '')) === trim((string)$dataVerifikasi['jeniskelamin'])
+            ) {
+                $dataBerubah = false;
+            }
+        }
+
+        if ($dataBerubah) {
+            // penandatangan baru / berubah → insert record baru
+            $verifId = sprintf(
+                '%04x%04x-%04x-%04x-%04x-%04x%04x%04x',
+                mt_rand(0, 0xffff), mt_rand(0, 0xffff),
+                mt_rand(0, 0xffff),
+                mt_rand(0, 0x0fff) | 0x4000,
+                mt_rand(0, 0x3fff) | 0x8000,
+                mt_rand(0, 0xffff), mt_rand(0, 0xffff), mt_rand(0, 0xffff)
+            );
+
+            DB::table('verifikasi_dokumen_t')->insert([
+                'id'              => $verifId,
+                'jenis_dokumen'   => 'triase-igd',
+                'norec_emr'       => $norecEmrClean,   // <-- tambahan
+                'nocm'            => $nocmClean,
+                'noregistrasi'    => $noregClean,
+                'data_verifikasi' => json_encode($dataVerifikasi),
+                'dicetak_oleh'    => $dataVerifikasi['namapetugas'],
+                'tgl_cetak'       => date('Y-m-d H:i:s'),
+            ]);
+        } else {
+            // penandatangan sama seperti terakhir kali → pakai record lama, tidak insert baru
+            $verifId = $existing->id;
+        }
+
+        $qrcode = base64_encode(
+            QrCode::format('svg')->size(75)->generate(
+                url('/service/medifirst2000/report/verifikasi-dokumen?id=' . $verifId)
+            )
+        );
         // var_dump($data);
         // dd(array(
         //     'res' => $res,
@@ -25864,7 +25938,8 @@ public function suratBuktiPengembalian(Request $request)
                 'pageWidth' => $pageWidth,
                 'data' => $data,
                 'item'=> $item,
-                'peg'=> $peg
+                'peg'=> $peg,
+                'qrcode' => $qrcode   // <-- tambahan
             )
         );
         $pdf->setPaper('A4', 'portrait');
@@ -25894,6 +25969,7 @@ public function suratBuktiPengembalian(Request $request)
                     'data' => $data,
                     'item'=> $item,
                     'peg'=> $peg,
+                    'qrcode' => $qrcode,   // <-- tambahan
                     'r' => $request
                 )
             );

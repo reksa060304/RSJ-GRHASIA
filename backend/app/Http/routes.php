@@ -3943,6 +3943,8 @@ Route::group(['middleware' => 'cors', 'prefix' => 'service'], function () {
         Route::get('report/cetak-bukti-usulan-barang','Report\ReportController@cetakBuktiUsulanBarang');
         Route::get('report/cetak-gaji-inpassing', 'Report\ReportController@cetakGajiInpassing');
         Route::get('report/cetak-bukti-order-barang-asset','Report\ReportController@cetakBuktiOrderBarangAsset');
+        Route::get('report/verifikasi-dokumen', 'Report\ReportController@verifikasiDokumen');
+
 
         // Cetakan Asset
         Route::get('report/cetak-daftar-barang-asset', 'Report\ReportController@cetakDaftarBarangAsset');
