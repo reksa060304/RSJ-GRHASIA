@@ -36236,5 +36236,29 @@ public function suratBuktiPengembalian(Request $request)
         return view('report.kasir.cetak-rincian-biaya', $viewData);
     }
     
+    public function verifikasiDokumen(Request $r) {
+        $doc = DB::table('verifikasi_dokumen_t')->where('id', $r['id'])->first();
+
+        if (empty($doc)) {
+            echo 'Dokumen tidak ditemukan atau link sudah tidak berlaku';
+            return;
+        }
+
+        $data = json_decode($doc->data_verifikasi, true);
+
+        $raw = new \stdClass();
+        $raw->nip          = $data['nip'] ?? '-';
+        $raw->nosip        = $data['nosip'] ?? '-';
+        $raw->namalengkap  = $data['namapetugas'] ?? '-';
+        $raw->jeniskelamin = $data['jeniskelamin'] ?? '-';
+        $raw->tglresume    = $data['tglditulis'] ?? date('d-m-Y');
+
+        $cetakan   = $data['namaform'] ?? 'DOKUMEN';
+        $pageWidth = 950;
+        $now       = $this->getDateTime();
+
+        return view('report.pdf.verifikasidokumen', compact('raw', 'pageWidth', 'r', 'now', 'cetakan'));
+    }
+
     //batas
 }
