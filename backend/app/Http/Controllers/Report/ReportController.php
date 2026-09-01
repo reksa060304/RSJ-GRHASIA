@@ -23252,6 +23252,10 @@ public function suratBuktiPengembalian(Request $request)
         // dd($res);
         $item =[];   
         $item2= [];      
+        $textInputs = [];
+        $datetimeInputs = [];
+        $comboboxInputs = [];
+        $textareaInputs = [];
         foreach( $res['d'] as $items){
                 if($items->type  ==  "textbox" ||$items->type  ==  "textarea"  ){
                     $item[$items->emrdfk] =  $items->value;

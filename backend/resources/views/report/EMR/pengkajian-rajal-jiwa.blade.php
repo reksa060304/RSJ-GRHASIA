@@ -2137,7 +2137,7 @@
                                     @endphp
                                     @foreach ($res['d'] as $item)
                                     @if ($item->emrdfk == 300000078 && !empty($item->value))
-                                    {!! $item->value !!} hari
+                                    {!! $item->value !!}
                                     @php
                                     $found = true;
                                     @endphp
@@ -2152,7 +2152,7 @@
                                     @endphp
                                     @foreach ($res['d'] as $item)
                                     @if ($item->emrdfk == 300000079 && !empty($item->value))
-                                    {!! $item->value !!} hari
+                                    {!! $item->split !!}
                                     @php
                                     $found = true;
                                     @endphp
