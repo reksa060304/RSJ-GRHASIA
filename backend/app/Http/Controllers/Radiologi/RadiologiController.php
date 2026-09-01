@@ -231,7 +231,8 @@ class RadiologiController extends ApiController
                         'ru.objectdepartemenfk', 'so.noorder',
                         'lis.no_lab as idbridging','op.ihs_id as idbridging_ihs','so.keteranganlainnya',
                         'apd.objectruanganfk','pp.iscito','pp.jasa','ps.objectjeniskelaminfk','ps.tgllahir','sbm.nosbm','pmi.pmi','so.keteranganlainnya'
-                        ,DB::raw("case when lis.no_lab is not null or op.ihs_id is not null then 'Sudah Dikirim' else '-' end as statusbridging,'' as hr_norec , null as nourutrad,pp.tglpanggil") // syamsu tambahan
+                        ,DB::raw("case when lis.no_lab is not null or op.ihs_id is not null then 'Sudah Dikirim' else '-' end as statusbridging,'' as hr_norec , null as nourutrad,pp.tglpanggil"),
+                        DB::raw("case when ps.nohp is not null then ps.nohp else ps.notelepon end as nohp") // syamsu tambahan
                     )
                     ->where('pp.kdprofile',$idProfile)
                     ->whereNull('pp.isobat')
@@ -259,7 +260,8 @@ class RadiologiController extends ApiController
                         'dp.namadepartemen', 'ps.id as psid', 'apd.norec as norec_apd', 'sp.norec as norec_sp', 'pp.norec as norec_pp',
                         'ru.objectdepartemenfk', 'so.noorder', 'apd.objectruanganfk','pp.iscito','pp.jasa','ps.objectjeniskelaminfk','ps.tgllahir','so.keteranganlainnya',
                         'sbm.nosbm','pmi.pmi', 
-                        DB::raw("'-' as statusbridging, null as idbridging,'' as hr_norec , '' as nourutrad,pp.tglpanggil")) // syamsu tambahan
+                        DB::raw("'-' as statusbridging, null as idbridging,'' as hr_norec , '' as nourutrad,pp.tglpanggil"),
+                        DB::raw("case when ps.nohp is not null then ps.nohp else ps.notelepon end as nohp")) // syamsu tambahan
                     ->where('pp.kdprofile',$idProfile)
                     ->where('ru.objectdepartemenfk', $this->settingDataFixed('kdDepartemenElektromedik', $idProfile))
                     ->orderBy('pp.tglpelayanan');
