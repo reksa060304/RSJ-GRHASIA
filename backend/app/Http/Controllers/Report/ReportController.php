@@ -672,6 +672,96 @@ class ReportController extends ApiController{
         //     compact('data','raw', 'pageWidth','r','footer','order_lab'));
 
     }
+
+    public function cetakDokterRadiologi(Request $r)
+    {
+        $kdProfile = (int) $r['kdprofile'];
+
+        $raw = collect(DB::select("
+        SELECT pg.nip, pg.nosip,pg.namalengkap, jk.jeniskelamin, pg.tgllahir, ps.namapasien, ps.nocm, to_char( apd.tglmasuk, 'dd-MM-yyyy') AS tglresume
+            FROM hasilradiologi_t AS so
+            INNER JOIN pasiendaftar_t AS pd ON pd.norec = so.noregistrasifk
+            LEFT  JOIN antrianpasiendiperiksa_t AS apd ON apd.noregistrasifk=pd.norec
+            LEFT JOIN pegawai_m AS pg ON pg.id=so.pegawaifk 
+            LEFT  JOIN jeniskelamin_m AS jk ON jk.id=pg.objectjeniskelaminfk 
+            LEFT  JOIN pasien_m AS ps ON ps.id=pd.nocmfk
+
+            WHERE so.norec = '{$r['norec']}' 
+                AND so.kdprofile = {$kdProfile}
+                AND so.statusenabled = TRUE
+                LIMIT 1
+        "))->first();
+
+        if (!$raw) {
+        return 'Data Tidak ada';
+    }
+
+    $raw->umur = $this->getAge(
+        $raw->tgllahir,
+        date('Y-m-d')
+    );
+
+    $pageWidth = 950;
+    $now = $this->getDateTime();
+
+    $cetakan = 'HASIL PEMERIKSAAN RADIOLOGI';
+
+    return view(
+        'report.pdf.infodokter',
+        compact(
+            'raw',
+            'pageWidth',
+            'r',
+            'now',
+            'cetakan'
+        )
+    );
+    }
+
+    public function cetakValidatorHasilLab(Request $r)
+    {
+        $pegawai = $r->input('pegawai');
+        $norec = $r->input('norec');
+
+        $raw = collect(DB::select("
+        SELECT pg.nip, pg.nosip,pg.namalengkap, jk.jeniskelamin, pg.tgllahir, ps.namapasien, ps.nocm, to_char( apd.tglmasuk, 'dd-MM-yyyy') AS tglresume
+            FROM antrianpasiendiperiksa_t AS apd
+            INNER JOIN pasiendaftar_t AS pd ON pd.norec = apd.noregistrasifk
+            LEFT JOIN pegawai_m AS pg ON pg.namalengkap= '{$pegawai}' 
+            LEFT  JOIN jeniskelamin_m AS jk ON jk.id=pg.objectjeniskelaminfk 
+            LEFT  JOIN pasien_m AS ps ON ps.id=pd.nocmfk
+
+            WHERE apd.norec = '{$r['norec']}' 
+                AND pg.statusenabled = TRUE
+                LIMIT 1
+        "))->first();
+
+        if (!$raw) {
+        return 'Data Tidak ada';
+    }
+
+    $raw->umur = $this->getAge(
+        $raw->tgllahir,
+        date('Y-m-d')
+    );
+
+    $pageWidth = 950;
+    $now = $this->getDateTime();
+
+    $cetakan = 'HASIL PEMERIKSAAN LABORATORIUM';
+
+    return view(
+        'report.pdf.infodokter',
+        compact(
+            'raw',
+            'pageWidth',
+            'r',
+            'now',
+            'cetakan'
+        )
+    );
+    }
+
     public function cetakEkspertise(Request $r) {
         $kdProfile = (int)$r['kdprofile'];
         //$dataSO =  HasilRadiologi::where('norec',$r[norec])->first();
@@ -731,8 +821,10 @@ class ReportController extends ApiController{
             return;
         }
 //        dd($raw);
-        $qrcode2 = base64_encode(QrCode::format('svg')->size(50)->generate($raw->dokterrad));
-        $qrcode = QrCode::format('svg')->size(50)->generate($raw->dokterrad);
+        $qrcode2 = base64_encode(QrCode::format('svg')->size(80)->generate($raw->dokterrad));
+        $qrcode = QrCode::format('svg')->size(80)->generate(
+            url('/service/medifirst2000/report/cetak-dokter-radiologi' . '?norec=' . $r['norec']
+            . '&kdprofile=' . $kdProfile));
         $pageWidth = 950;
 
         if(isset($r["issimpanberkas"])) {
@@ -34357,6 +34449,14 @@ public function suratBuktiPengembalian(Request $request)
         $grouped = $data->groupBy('detailjenisproduk');
         $header = $data->first();
 
+
+       $qrcodeValidator = base64_encode(QrCode::format('svg')->size(80)->generate(
+        url('/service/medifirst2000/report/cetak-validator-hasil-lab' 
+        . '?norec=' . $norec . '&pegawai=' . urlencode($r['strIdPegawai']))
+        ));
+
+      
+
         // Cek apakah TTE sudah ada
         $tte = (isset($r['isttd']) && $r['isttd'] == true) ? 'true' : 'false';
 
@@ -34387,7 +34487,8 @@ public function suratBuktiPengembalian(Request $request)
             'user' => $r['nama'] ?? $r['strIdPegawai'] ?? 'Programmer Administrator',
             'catatan' => $catatan,
             'dokterr' => $dokterr,
-            'tte' => $tte
+            'tte' => $tte,
+            'qrcodeValidator' => $qrcodeValidator
         ]);
 
         //Proses TTE (kalau aktif)
@@ -34417,7 +34518,8 @@ public function suratBuktiPengembalian(Request $request)
                 'user' => $r['nama'] ?? $r['strIdPegawai'] ?? 'Programmer Administrator',
                 'catatan' => $catatan,
                 'dokterr' => $dokterr,
-                'tte' => $tte
+                'tte' => $tte,
+                'qrcodeValidator' => $qrcodeValidator
             ]);
             return $this->saveDokumenKlaim($pdf, $r);
         }else if(isset($r["issimpanberkasfarmasi"])) {
@@ -34428,7 +34530,8 @@ public function suratBuktiPengembalian(Request $request)
                 'user' => $r['nama'] ?? $r['strIdPegawai'] ?? 'Programmer Administrator',
                 'catatan' => $catatan,
                 'dokterr' => $dokterr,
-                'tte' => $tte
+                'tte' => $tte,
+                'qrcodeValidator' => $qrcodeValidator
             ]);
             return $this->saveDokumenKlaimFarmasi($pdf, $r);
         }

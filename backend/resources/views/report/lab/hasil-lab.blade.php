@@ -270,12 +270,23 @@
                 </td>
                 <td width="50%" class="center">
                     <strong>Validator</strong>
-                    <div class="sign-space">
+                    {{-- <div class="sign-space">
                        @if(!empty($data->ttd_validator))
                         <img src="{{ $data->ttd_validator }}" alt="TTD Validator" height="80">
                     @endif
+                    </div> --}}
+                    <div style="height: 8px;"></div>
+                    <div style="display:inline-block; width:75px; height:75px; margin:5px auto;">
+                       <img src="data:image/svg+xml;base64,{{ $qrcodeValidator }}"
+                        width="75"
+                        height="75">
                     </div>
-                    <strong><u>{{ $user ?? '-' }}</u></strong>
+                         <div style="margin-top:5px;"></div>
+                    <div>
+                        <b><u>{{ $user }}</u></b>
+                    </div>
+                    <br>
+                        <span style="font-weight: bold;color: #ccc">Ditandatangani secara elektronik</span>
                 </td>
             </tr>
         </table>

@@ -164,7 +164,7 @@
                     </tr>
                     <tr>
                         <td ></td>
-                        <td style="text-align: center">
+                        <td width="250" style="text-align: center; vertical-align:top;">
                             <font style="font-size: 12pt" face="Arial">Sleman, {{ App\Traits\Valet::getDateIndo(date('Y-m-d'))   }}</font>
                             <br>
                             <font style="font-size: 12pt;" face="Arial">Pemeriksa</font>
@@ -173,13 +173,20 @@
 
                     <tr>
                         <td height="200"></td>
-                        <td >
+                        <td width="300" style="text-align: center; vertical-align:top;">
                             @if (file_exists(public_path('img/radiologi/'.$raw->pgid.'.jpeg')))
                             <img src="{{ asset('service/img/radiologi/'.$raw->pgid.'.jpeg') }}"
                                  style="max-width:200px;height:100px;margin-top: -40px;" border="0">
                             @endif
                         <br>
+                        <div style="display:inline-block; width:75px; height:75px; margin:5px auto;">
+                        {!! $qrcode !!}
+                        </div>
+                        <div style="margin-top:5px;"></div>
+                        <br>
                             <font face="Arial" style="font-size: 12pt"><b>{{ '( '. $raw->dokterrad .' )'}} </b><br><i>NIP :  {{ $raw->nippns != null? $raw->nippns:'-' }} </i></font>
+                        <br>
+                            <span style="font-weight: bold;color: #ccc">Ditandatangani secara elektronik</span>
                         </td>
                     </tr>
                 </table>
