@@ -1144,19 +1144,21 @@ define(['initialize', 'Configuration'], function (initialize, config) {
                 }
             })
 
-            // medifirstService.get("emr/get-emr-otomatisvitalsign?emrfk=147" + "&noregistrasi=" + $scope.cc.noregistrasi).then(function (dat) {
-            //     var datas = dat.data.data2
-            //     $scope.isRouteLoading = false
-            //     if (datas.length > 0) {
-            //         $scope.pemeriksaanfisik = "Tekanan Darah = " + datas[0].td + "mm/Hg" + ", " +
-            //             "Nadi = " + datas[0].nadi + "x/menit" + ", " +
-            //             "Suhu =" + datas[0].suhu + "°C" + ", " +
-            //             "Pernapasan =" + datas[0].pernapasan + "x/menit" + ", " +
-            //             "Tinggi Badan =" + datas[0].tb + "cm" + ", " +
-            //             "Berat Badan =" + datas[0].bb + "kg" + ", "
-
-            //     }
-            // })
+            medifirstService.get("emr/get-emr-otomatisvitalsign?emrfk=147&noregistrasi=" + $scope.cc.noregistrasi).then(function (dat) {
+                var datas = dat.data.data2;
+                $scope.isRouteLoading = false;
+                if (datas && datas.length > 0) {
+                    $scope.pemeriksaanfisik = "Tekanan Darah = " + (datas[0].td || '-') + " mm/Hg, " +
+                        "Nadi = " + (datas[0].nadi || '-') + " x/menit, " +
+                        "Suhu = " + (datas[0].suhu || '-') + " °C, " +
+                        "Pernapasan = " + (datas[0].pernapasan || '-') + " x/menit, " +
+                        "Tinggi Badan = " + (datas[0].tb || '-') + " cm, " +
+                        "Berat Badan = " + (datas[0].bb || '-') + " kg";
+                    
+                    // Masukkan ke objek EMR target
+                    $scope.item.obj[3017312] = $scope.pemeriksaanfisik;
+                }
+            });
 
             medifirstService.get("emr/get-emr-transaksi-detail?noemr=" + nomorEMR + "&emrfk=" + $scope.cc.emrfk, true).then(function (dat) {                
                 $scope.item.obj = []

@@ -12725,12 +12725,12 @@ if ($rowChanged) {
         case when epd.emrdfk = 901308930 and epd.value <> '-' then epd.value end as imt, 
         epd.tgl 
         FROM emrpasien_t ep inner join emrpasiend_t epd on epd.emrpasienfk = ep.noemr 
-        where ep.statusenabled = TRUE AND ep.emrfk = 147 and ep.noregistrasifk= '$request[noregistrasi]'
+        where ep.statusenabled = TRUE AND ep.emrfk = 147 and ep.noregistrasifk= '$request[noregistrasi]' AND ep.kdprofile = $kdProfile
         
         
         )as x
         GROUP BY x.noemr, x.tgl
-        -- ORDER BY x.tgl desc limit 1
+        ORDER BY x.tgl desc limit 1
         "));
 
         // $detail = [];
