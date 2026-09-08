@@ -43,8 +43,9 @@ function (initialize, factory) {
                 var sumjumlahpasienkeluarrs = 0
                 var sumpasienlbh48 = 0
                 var sumjumlahpasienmeninggal = 0
+                var sumTTHarian = 0;   // <-- BARU: total TT-hari (bed-days), bukan TT flat x jumlah hari
                 var jumlahtt = data.data.jumlahtt[0].totalperperiode
-                $scope.item.ttlTempatTidur = jumlahtt
+                $scope.item.ttlTempatTidur = jumlahtt   // <-- tetap ditampilkan apa adanya (TT di akhir bulan), TIDAK dipakai lagi buat hitung BOR/TOI/BTO
                 for (let i = 0; i < datas.length; i++) {
                     const element = datas[i];
                     sumhariperawatan += element.hariperawatan
@@ -52,11 +53,12 @@ function (initialize, factory) {
                     sumjumlahpasienkeluarrs += element.jumlahpasienkeluarrs
                     sumjumlahpasienmeninggal += element.jumlahpasienmeninggal
                     sumpasienlbh48 += element.pasienlbh48
+                    sumTTHarian += element.tt_hari   // <-- BARU
                 }
-                $scope.item.bortt = (sumhariperawatan / ($scope.item.ttlTempatTidur * datas.length)* 100).toFixed(2) + '%'
+                $scope.item.bortt = (sumhariperawatan / sumTTHarian * 100).toFixed(2) + '%'
                 $scope.item.los = ((sumlos/sumjumlahpasienkeluarrs)).toFixed(2)
-                $scope.item.toi = ((($scope.item.ttlTempatTidur*datas.length) - sumhariperawatan)/sumjumlahpasienkeluarrs).toFixed(2)
-                $scope.item.bto = (sumjumlahpasienkeluarrs/$scope.item.ttlTempatTidur).toFixed(2)
+                $scope.item.toi = ((sumTTHarian - sumhariperawatan)/sumjumlahpasienkeluarrs).toFixed(2)
+                $scope.item.bto = (sumjumlahpasienkeluarrs/(sumTTHarian/datas.length)).toFixed(2)
                 $scope.item.ndr = (sumpasienlbh48 / sumjumlahpasienkeluarrs).toFixed(2) + 'permil'
                 $scope.item.gdr = (sumjumlahpasienmeninggal / sumjumlahpasienkeluarrs).toFixed(2) + 'permil'
                 $scope.dataSourcePendidikan = new kendo.data.DataSource({
@@ -76,6 +78,16 @@ function (initialize, factory) {
                     {
                         "title": "1",
                         "field": "tgl"
+                    }
+                ]
+            },
+            {
+                "title": "TT",
+                "width": "50px",
+                "columns": [
+                    { 
+                        "title": "", 
+                        "field": "tt_hari" 
                     }
                 ]
             },

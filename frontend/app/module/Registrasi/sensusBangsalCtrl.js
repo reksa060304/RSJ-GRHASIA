@@ -52,6 +52,7 @@ function (initialize) {
                 var sumjumlahpasienkeluar = 0
                 var sumpasienlbh48 = 0
                 var sumjumlahpasienmeninggal = 0
+                var sumTTHarian = 0;   // <-- TAMBAHAN: total TT-hari (bed-days), bukan TT flat
                 var jumlahtt = data.data.jumlahtt[0].totalperperiode
                 $scope.item.ttlTempatTidur = jumlahtt
                 for (let i = 0; i < datas.length; i++) {
@@ -62,9 +63,10 @@ function (initialize) {
                     sumjumlahpasienkeluar += element.jumlahpasienkeluar
                     sumjumlahpasienmeninggal += element.jumlahpasienmeninggal
                     sumpasienlbh48 += element.pasienlbh48
+                    sumTTHarian += element.tt_hari   // <-- TAMBAHAN
                     // element.lamadirawat = element.pasiendipindahkan + element.jumlahpasienkeluarrs + element.pasienmkhs
                 }
-                
+
                 // $scope.item.bortt = '0%'
                 $scope.item.los = '0'
                 $scope.item.toi = '0'
@@ -76,13 +78,13 @@ function (initialize) {
                     $scope.item.bortt = '0%'
                 }
 
-                if ($scope.item.ttlTempatTidur !== null && sumhariperawatan > 0) {
-                    $scope.item.bortt = (sumhariperawatan / ($scope.item.ttlTempatTidur * datas.length)* 100).toFixed(2) + '%'
+                if (sumTTHarian > 0 && sumhariperawatan > 0) {
+                    $scope.item.bortt = (sumhariperawatan / sumTTHarian * 100).toFixed(2) + '%'
                 }
                 if (sumjumlahpasienkeluarrs ||  sumjumlahpasienkeluar > 0) {                    
                     $scope.item.los = ((sumlos / sumjumlahpasienkeluar)).toFixed(2)             
-                    $scope.item.toi = ((($scope.item.ttlTempatTidur*datas.length) - sumhariperawatan)/sumjumlahpasienkeluar).toFixed(2)
-                    $scope.item.bto = (sumjumlahpasienkeluarrs/datas.length).toFixed(2)
+                    $scope.item.toi = ((sumTTHarian - sumhariperawatan)/sumjumlahpasienkeluar).toFixed(2)
+                    $scope.item.bto = (sumjumlahpasienkeluarrs/(sumTTHarian/datas.length)).toFixed(2)
                     $scope.item.ndr = (sumpasienlbh48 / sumjumlahpasienkeluarrs).toFixed(2) + 'permil'
                     $scope.item.gdr = (sumjumlahpasienmeninggal / sumjumlahpasienkeluarrs).toFixed(2) + 'permil'
                 }
@@ -106,6 +108,11 @@ function (initialize) {
                         "field": "tgl"
                     }
                 ]
+            },
+            {
+                "title": "TT",
+                "width": "50px",
+                "columns": [{ "title": "", "field": "tt_hari" }]
             },
             {
                 "title": "Pasien Awal",
