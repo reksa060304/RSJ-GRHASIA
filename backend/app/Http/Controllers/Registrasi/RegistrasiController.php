@@ -15346,6 +15346,24 @@ GROUP BY y.KET
                 where rm.kdprofile = 30 and rm.statusenabled = true
                 "));
 
+        $riwayatHarian = DB::select(DB::raw("
+            select date_part('day', gs.tgl)::integer as tgl, coalesce(sum(rm.jumlah_tt), 0) as tt_hari
+            from generate_series('$arrmin[0]'::date, '$arrmin[0]'::date + interval '1 month - 1 day', '1 day'::interval) gs(tgl)
+            left join lateral (
+                select rm2.objectruanganfk, rm2.objectkamarfk, max(rm2.tanggalawal) as tgl_max
+                from riwayatkamar_m rm2
+                where gs.tgl between rm2.tanggalawal and coalesce(rm2.tanggalakhir, gs.tgl)
+                and rm2.kdprofile = 30 and rm2.statusenabled = true
+                group by rm2.objectruanganfk, rm2.objectkamarfk
+            ) x on true
+            left join riwayatkamar_m rm 
+                on rm.objectruanganfk = x.objectruanganfk 
+                and rm.objectkamarfk = x.objectkamarfk 
+                and rm.tanggalawal = x.tgl_max
+            group by gs.tgl
+            order by gs.tgl
+        "));
+
         $date_series = DB::select(DB::raw("
         WITH date_series AS (
         SELECT generate_series('$arrmin[0]'::date, '$arrmin[0]'::date + INTERVAL '1 month - 1 day', '1 day')::date AS series_date
@@ -15423,6 +15441,7 @@ GROUP BY y.KET
         $pasienMKHS = 0;
         $hariPerawatan = 0;
         $LOS = 0;
+        $ttHari = 0; 
 
         $tgl = 0;
         $detail = [];
@@ -15443,6 +15462,7 @@ GROUP BY y.KET
             $pasienMKHS = 0;
             $hariPerawatan = 0;
             $LOS = 0;
+            $ttHari = 0; 
             $jumlah = 0;
             foreach ($pasienawalRS as $psa) {
                 if ($date->date == $psa->tgl) {
@@ -15499,6 +15519,11 @@ GROUP BY y.KET
                     $LOS = $l->jml;
                 }
             }
+            foreach ($riwayatHarian as $rh) {
+                if ($date->date == $rh->tgl) {
+                    $ttHari = $rh->tt_hari;
+                }
+            }
             $jumlah = $pasienAwal + $pasienMasuk;
             $jumlahpasienpulang = $pasienAPS + $pasienAPD + $pasienRujuk + $pasienLari + $pasienDropping;
             $jumlahpasienmeninggal = $pasienKRG48 + $pasienLBH48;
@@ -15524,6 +15549,7 @@ GROUP BY y.KET
                 'pasienmkhs' => $pasienMKHS,
                 'hariperawatan' => $hariPerawatan,
                 'los' => $LOS,
+                'tt_hari' => $ttHari,
 
             );
         }
