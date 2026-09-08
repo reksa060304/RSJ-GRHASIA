@@ -5443,6 +5443,17 @@ class MasterController extends ApiController{
                 $JD = Ruangan::where('id',$request['id'])->where('kdprofile', $kdProfile)->first();
                 $JD->statusenabled = $request['status'];
                 $JD->save();
+
+                if ($request['status'] == false) {
+                    \DB::table('riwayatkamar_m')
+                        ->where('objectruanganfk', $request['id'])
+                        ->where('kdprofile', $kdProfile)
+                        ->where('statusenabled', true)
+                        ->where(function($q){
+                            $q->whereNull('tanggalakhir')->orWhere('tanggalakhir', '>=', date('Y-m-d H:i:s'));
+                        })
+                        ->update(['tanggalakhir' => date('Y-m-d H:i:s')]);
+                }
                 $transMessage = "Ubah Status";
             $transStatus = 'true';
         } catch (\Exception $e) {
@@ -5558,6 +5569,17 @@ class MasterController extends ApiController{
                 $JD = Kamar::where('id',$request['id'])->where('kdprofile', $kdProfile)->first();
                 $JD->statusenabled = $request['status'];
                 $JD->save();
+
+                if ($request['status'] == false) {
+                    \DB::table('riwayatkamar_m')
+                        ->where('objectkamarfk', $request['id'])
+                        ->where('kdprofile', $kdProfile)
+                        ->where('statusenabled', true)
+                        ->where(function($q){
+                            $q->whereNull('tanggalakhir')->orWhere('tanggalakhir', '>=', date('Y-m-d H:i:s'));
+                        })
+                        ->update(['tanggalakhir' => date('Y-m-d H:i:s')]);
+                }
                 $transMessage = "Ubah Status";
             $transStatus = 'true';
         } catch (\Exception $e) {
@@ -6047,7 +6069,7 @@ class MasterController extends ApiController{
         if(isset($request['ruangan'])){
             $tempruangan = "and ru.id =". $request['ruangan'];
         }
-        $riwayatkamar = \DB::select(DB::raw("SELECT ru.namaruangan, ke.namakelas, ka.namakamar, rk.statusenabled, rk.jumlah_tt, rk.jumlah_ttl, rk.jumlah_ttp, rk.tanggalawal, rk.tanggalakhir, rk.nosk, rk.keterangan, rk.tanggaldokumen FROM riwayatkamar_m rk 
+        $riwayatkamar = \DB::select(DB::raw("SELECT rk.id, rk.objectruanganfk, rk.objectkamarfk, rk.objectkelasfk, ru.namaruangan, ke.namakelas, ka.namakamar, rk.statusenabled, rk.jumlah_tt, rk.jumlah_ttl, rk.jumlah_ttp, rk.tanggalawal, rk.tanggalakhir, rk.nosk, rk.keterangan, rk.tanggaldokumen FROM riwayatkamar_m rk 
         inner join ruangan_m ru on ru.id = rk.objectruanganfk
         inner join kelas_m ke on ke.id = rk.objectkelasfk
         inner join kamar_m ka on ka.id = rk.objectkamarfk 
@@ -6069,6 +6091,15 @@ class MasterController extends ApiController{
                 $idJenis = \DB::table('riwayatkamar_m')->max('id');
                 $idJenis= $idJenis +1;
                 if ($data['id'] == "") {
+                    $cekDuplikat = \DB::table('riwayatkamar_m')
+                        ->where('objectkamarfk', $data['objectkamarfk'])
+                        ->where('kdprofile', $kdProfile)
+                        ->where('tanggalawal', $data['tanggalawal'])
+                        ->where('statusenabled', true)
+                        ->exists();
+                    if ($cekDuplikat) {
+                        throw new \Exception('Sudah ada riwayat kamar dengan tanggal mulai yang sama untuk kamar ini. Silakan cek data yang sudah ada atau gunakan tanggal lain.');
+                    }
                     $TT = \DB::table('riwayatkamar_m')->insert([
                         'id'=>$idJenis,
                         'kdprofile'=> $kdProfile,
@@ -6089,7 +6120,22 @@ class MasterController extends ApiController{
                     $transMessage = "Tambah";
                 }else{
                     $transMessage = "Ubah";
-                    
+                    \DB::table('riwayatkamar_m')
+                        ->where('id', $data['id'])
+                        ->where('kdprofile', $kdProfile)
+                        ->update([
+                            'objectruanganfk'=> $data['objectruanganfk'],
+                            'objectkelasfk'=> $data['objectkelasfk'],
+                            'objectkamarfk'=> $data['objectkamarfk'],
+                            'jumlah_tt'=> $data['jumlah_tt'],
+                            'jumlah_ttl'=> $data['jumlah_ttl'],
+                            'jumlah_ttp'=> $data['jumlah_ttp'],
+                            'tanggalawal'=> $data['tanggalawal'],
+                            'tanggalakhir'=> $data['tanggalakhir'],
+                            'nosk'=> $data['nosk'],
+                            'keterangan'=> $data['keterangan'],
+                            'tanggaldokumen'=> $data['tanggaldokumen'],
+                        ]);
                 }
             }
             if($request['method']== 'delete'){

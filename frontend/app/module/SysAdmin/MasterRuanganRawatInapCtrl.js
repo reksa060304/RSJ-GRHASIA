@@ -888,6 +888,48 @@ define(['initialize'], function (initialize) {
                     ModelItem.showMessages(isValid.messages);
                 }
             }
+            $scope.editRiwayatKamar = function(){
+                if ($scope.dataRiwayatKamarSelected == undefined) {
+                    toastr.error('Data Riwayat Kamar Belum dipilih')
+                    return
+                }
+                var selected = $scope.dataRiwayatKamarSelected
+
+                function cariById(list, id){
+                    if (!list) return undefined
+                    for (var i = 0; i < list.length; i++) {
+                        if (list[i].id == id) return list[i]
+                    }
+                    return undefined
+                }
+
+                // Cari object Ruangan ASLI dari listRuangan (biar bawa nested .kamar-nya)
+                $scope.itemRiwayatKamar.ruangan = cariById($scope.listRuangan, selected.objectruanganfk)
+
+                // Trigger cascading: isi ulang daftar kamar sesuai ruangan yang dipilih
+                $scope.getIsiComboKamarRiwayatKamar()
+
+                // Cari object Kamar ASLI dari daftar kamar yang baru saja di-populate
+                $scope.itemRiwayatKamar.kamar = cariById($scope.listKamarRuanganRiwayatKamar, selected.objectkamarfk)
+
+                // Cari object Kelas ASLI dari listKelas
+                $scope.itemRiwayatKamar.kelas = cariById($scope.listKelas, selected.objectkelasfk)
+
+                $scope.itemRiwayatKamar.tanggaldokumen = selected.tanggaldokumen
+                $scope.itemRiwayatKamar.periodeAwal = selected.tanggalawal
+                $scope.itemRiwayatKamar.periodeAkhir = selected.tanggalakhir
+                $scope.itemRiwayatKamar.nosk = selected.nosk
+                $scope.itemRiwayatKamar.keterangan = selected.keterangan
+                $scope.itemRiwayatKamar.jumlahtt = selected.jumlah_tt
+                $scope.itemRiwayatKamar.jumlahttl = selected.jumlah_ttl
+                $scope.itemRiwayatKamar.jumlahttp = selected.jumlah_ttp
+                $scope.idRiwayatKamar = selected.id
+
+                $scope.popUpDataRiwayatKamar.center().open()
+            }
+            $scope.gotoRekonsiliasi = function(){
+                $state.go('RekonsiliasiRiwayatKamar')
+            }
             $scope.batalDataRiwayatKamar = function(){
                 $scope.idRiwayatKamar = ""
                 $scope.itemRiwayatKamar = {}
