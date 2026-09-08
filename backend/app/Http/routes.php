@@ -1213,6 +1213,9 @@ Route::group(['middleware' => 'cors', 'prefix' => 'service'], function () {
           Route::get('cp/get-kegiatan-uraian', 'ClinicalPathway\CPController@getKegiatanDanUraiannya');
           Route::post('sysadmin/master/save-data-riwayatkamar','SysAdmin\Master\MasterController@saveMasterRiwayatKamar');
           Route::get('sysadmin/master/get-data-riwayatkamar', 'SysAdmin\Master\MasterController@getLoadRiwayatKamarDll');
+          Route::get('sysadmin/master/get-rekonsiliasi-riwayat-kamar', 'SysAdmin\Master\MasterController@getRekonsiliasiRiwayatKamar');
+          Route::post('sysadmin/master/post-tutup-riwayat-kamar-non-aktif', 'SysAdmin\Master\MasterController@postTutupRiwayatKamarNonAktif');
+          Route::post('sysadmin/master/post-tutup-semua-riwayat-kamar-non-aktif', 'SysAdmin\Master\MasterController@postTutupSemuaRiwayatKamarNonAktif');
         // Route::group(['prefix' => 'farmasi'], function () {
           Route::get('farmasi/get-daftar-order', 'Farmasi\ResepElektronikController@getDaftarOrder');
           Route::post('farmasi/disable-notif','Farmasi\ResepElektronikController@disabledNotif');
@@ -3945,6 +3948,7 @@ Route::group(['middleware' => 'cors', 'prefix' => 'service'], function () {
         Route::get('report/cetak-bukti-usulan-barang','Report\ReportController@cetakBuktiUsulanBarang');
         Route::get('report/cetak-gaji-inpassing', 'Report\ReportController@cetakGajiInpassing');
         Route::get('report/cetak-bukti-order-barang-asset','Report\ReportController@cetakBuktiOrderBarangAsset');
+        Route::get('report/cetak-bukti-kirim-barang-asset','Report\ReportController@cetakBuktiKirimBarangAsset');
         Route::get('report/verifikasi-dokumen', 'Report\ReportController@verifikasiDokumen');
 
 
