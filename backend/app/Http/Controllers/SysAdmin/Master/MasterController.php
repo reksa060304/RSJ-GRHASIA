@@ -6166,6 +6166,154 @@ class MasterController extends ApiController{
         return $this->setStatusCode($result['status'])->respond($result, $transMessage);
     }
         
+    public function getRekonsiliasiRiwayatKamar(Request $request)
+    {
+        $kdProfile = (int) $this->getDataKdProfile($request);
+    
+        // A. Kamar/ruangan yang AKTIF di master data, tapi TIDAK ADA riwayat SK 
+        //    yang aktif mencakup hari ini -> perlu ditambahkan riwayat baru
+        $kamarTanpaRiwayat = DB::select(DB::raw("
+            select ru.id as idruangan, ru.namaruangan, k.id as idkamar, k.namakamar
+            from kamar_m k
+            inner join ruangan_m ru on ru.id = k.objectruanganfk
+            where k.kdprofile = $kdProfile 
+            and k.statusenabled = true 
+            and ru.statusenabled = true
+            and not exists (
+                select 1 from riwayatkamar_m rm
+                where rm.objectkamarfk = k.id
+                and rm.kdprofile = $kdProfile
+                and rm.statusenabled = true
+                and CURRENT_DATE BETWEEN rm.tanggalawal and COALESCE(rm.tanggalakhir, CURRENT_DATE)
+            )
+            order by ru.namaruangan, k.namakamar
+        "));
+    
+        // B. Riwayat SK yang masih terbuka/aktif, tapi kamar/ruangan-nya SUDAH 
+        //    nonaktif di master data -> ini yang harus ditutup (kasus 202 vs 199 kemarin)
+        $riwayatKamarNonAktif = DB::select(DB::raw("
+            select rm.id as idriwayat, ru.namaruangan, k.namakamar, rm.jumlah_tt, 
+                rm.tanggalawal, rm.tanggalakhir, rm.nosk,
+                ru.statusenabled as ruangan_aktif, k.statusenabled as kamar_aktif
+            from riwayatkamar_m rm
+            inner join ruangan_m ru on ru.id = rm.objectruanganfk
+            inner join kamar_m k on k.id = rm.objectkamarfk
+            where rm.kdprofile = $kdProfile
+            and rm.statusenabled = true
+            and CURRENT_DATE BETWEEN rm.tanggalawal and COALESCE(rm.tanggalakhir, CURRENT_DATE)
+            and (ru.statusenabled = false or k.statusenabled = false)
+            order by ru.namaruangan, k.namakamar
+        "));
+    
+        // C. Cek total TT sekarang (harus sama dengan jumlah bed aktual di Ketersediaan Tempat Tidur)
+        // CATATAN: perbandingan ini sengaja pakai status LIVE (ru/k.statusenabled) karena kita 
+        // membandingkan kondisi HARI INI saja, bukan laporan historis - beda konteks dengan 
+        // getLaporanSensus yang harus tetap akurat untuk periode lampau.
+        $totalRiwayatAktif = DB::select(DB::raw("
+            select sum(rm.jumlah_tt) as total
+            from riwayatkamar_m rm
+            inner join ruangan_m ru on ru.id = rm.objectruanganfk
+            inner join kamar_m k on k.id = rm.objectkamarfk
+            inner join(
+                select objectruanganfk,objectkamarfk,max(tanggalawal) as tanggal from riwayatkamar_m
+                where CURRENT_DATE BETWEEN tanggalawal and COALESCE(tanggalakhir,CURRENT_DATE)
+                and kdprofile = $kdProfile
+                group by objectruanganfk,objectkamarfk
+            ) as x	
+            on rm.objectruanganfk=x.objectruanganfk and rm.objectkamarfk=x.objectkamarfk and rm.tanggalawal = x.tanggal
+            where rm.kdprofile = $kdProfile and rm.statusenabled = true
+            and ru.statusenabled = true and k.statusenabled = true
+        "));
+    
+        $totalBedAktual = DB::select(DB::raw("
+            select count(*) as total
+            from tempattidur_m tt
+            inner join kamar_m k on k.id = tt.objectkamarfk
+            inner join ruangan_m ru on ru.id = k.objectruanganfk
+            where tt.kdprofile = $kdProfile
+            and tt.statusenabled = true
+            and k.statusenabled = true
+            and ru.statusenabled = true
+        "));
+    
+        $result = array(
+            'kamar_tanpa_riwayat' => $kamarTanpaRiwayat,
+            'riwayat_kamar_non_aktif' => $riwayatKamarNonAktif,
+            'total_riwayat_aktif' => $totalRiwayatAktif[0]->total ?? 0,
+            'total_bed_aktual' => $totalBedAktual[0]->total ?? 0,
+            'status_sinkron' => ($totalRiwayatAktif[0]->total ?? 0) == ($totalBedAktual[0]->total ?? 0) 
+                && count($kamarTanpaRiwayat) == 0 
+                && count($riwayatKamarNonAktif) == 0,
+        );
+        return $this->respond($result);
+    }
+            
+    public function postTutupRiwayatKamarNonAktif(Request $request)
+    {
+        $kdProfile = (int) $this->getDataKdProfile($request);
+        $idRiwayat = $request['id']; // id baris riwayatkamar_m yang mau ditutup (dari tombol per-baris)
+
+        DB::beginTransaction();
+        try {
+            \DB::table('riwayatkamar_m')
+                ->where('id', $idRiwayat)
+                ->where('kdprofile', $kdProfile)
+                ->update(['tanggalakhir' => date('Y-m-d H:i:s')]);
+            $transStatus = 'true';
+            $transMessage = "Riwayat berhasil ditutup";
+        } catch (\Exception $e) {
+            $transStatus = 'false';
+            $transMessage = "Gagal menutup riwayat";
+        }
+
+        if ($transStatus == 'true') {
+            DB::commit();
+            $result = array("status" => 201, "as" => 'Feezy');
+        } else {
+            DB::rollBack();
+            $result = array("status" => 400, "e" => $e->getMessage(), "as" => 'Feezy');
+        }
+        return $this->setStatusCode($result['status'])->respond($result, $transMessage);
+    }
+
+    /**
+     * Versi "Tutup Semua Sekaligus" - 1 tombol nutup semua riwayat kamar nonaktif 
+     * yang ketemu, bukan satu-satu
+     * Route: Route::post('sysadmin/master/post-tutup-semua-riwayat-kamar-non-aktif', 'MasterController@postTutupSemuaRiwayatKamarNonAktif');
+     */
+    public function postTutupSemuaRiwayatKamarNonAktif(Request $request)
+    {
+        $kdProfile = (int) $this->getDataKdProfile($request);
+
+        DB::beginTransaction();
+        try {
+            $affected = \DB::table('riwayatkamar_m as rm')
+                ->join('ruangan_m as ru', 'ru.id', '=', 'rm.objectruanganfk')
+                ->join('kamar_m as k', 'k.id', '=', 'rm.objectkamarfk')
+                ->where('rm.kdprofile', $kdProfile)
+                ->where('rm.statusenabled', true)
+                ->whereRaw("CURRENT_DATE BETWEEN rm.tanggalawal and COALESCE(rm.tanggalakhir, CURRENT_DATE)")
+                ->where(function($q){
+                    $q->where('ru.statusenabled', false)->orWhere('k.statusenabled', false);
+                })
+                ->update(['tanggalakhir' => date('Y-m-d H:i:s')]);
+
+            $transStatus = 'true';
+            $transMessage = $affected . " riwayat berhasil ditutup";
+        } catch (\Exception $e) {
+            $transStatus = 'false';
+            $transMessage = "Gagal menutup riwayat";
+        }
+
+        if ($transStatus == 'true') {
+            DB::commit();
+            $result = array("status" => 201, "as" => 'Feezy');
+        } else {
+            DB::rollBack();
+            $result = array("status" => 400, "e" => $e->getMessage(), "as" => 'Feezy');
+        }
+        return $this->setStatusCode($result['status'])->respond($result, $transMessage);
+    }
     function getDataMasterBahasa(Request $request){
         // dd('ppp');
         // $bahasa = \DB::table('bahasa_m')->where('statusenabled',true);

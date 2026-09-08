@@ -1,0 +1,97 @@
+<div ng-controller="RekonsiliasiRiwayatKamarCtrl" style="padding: 0 15px;">
+    <div class="grid_12 headerBox">
+        <h1 style="color: white;"><b>Rekonsiliasi Riwayat Kamar vs Master Data</b></h1>
+    </div>
+
+    <!-- Toolbar -->
+    <div class="grid_12" style="margin-top: 15px; margin-bottom: 5px;">
+        <div class="grid_2">
+            <button class="primary c-button" ng-click="refreshData()">
+                <span>⟳</span> Refresh Data
+            </button>
+        </div>
+    </div>
+
+    <!-- Kartu ringkasan -->
+    <div class="grid_12" style="margin-top: 15px;">
+        <div class="grid_4">
+            <div style="border: 1px solid #ddd; border-left: 5px solid #337ab7; border-radius: 4px; padding: 15px; background: #fff;">
+                <div style="font-size: 13px; color: #777; font-weight: bold; text-transform: uppercase;">Total TT (Riwayat Aktif)</div>
+                <div style="font-size: 32px; font-weight: bold; color: #333; margin-top: 5px;">{{ totalRiwayatAktif }}</div>
+            </div>
+        </div>
+        <div class="grid_4">
+            <div style="border: 1px solid #ddd; border-left: 5px solid #5bc0de; border-radius: 4px; padding: 15px; background: #fff;">
+                <div style="font-size: 13px; color: #777; font-weight: bold; text-transform: uppercase;">Total TT (Bed Aktual)</div>
+                <div style="font-size: 32px; font-weight: bold; color: #333; margin-top: 5px;">{{ totalBedAktual }}</div>
+            </div>
+        </div>
+        <div class="grid_4">
+            <div style="border-radius: 4px; padding: 15px; height: 100%; box-sizing: border-box; color: white; display: flex; flex-direction: column; justify-content: center; align-items: center; text-align: center;"
+                ng-class="statusSinkron ? 'bgGreen' : 'bgRed'">
+                <div style="font-size: 28px;">{{ statusSinkron ? '✓' : '✗' }}</div>
+                <div style="font-size: 15px; font-weight: bold; margin-top: 5px;">
+                    {{ statusSinkron ? 'DATA SUDAH SINKRON' : 'DATA BELUM SINKRON' }}
+                </div>
+                <div ng-if="!statusSinkron" style="font-size: 12px; margin-top: 3px;">Cek tabel di bawah</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Section A: Kamar aktif tanpa riwayat -->
+    <div class="grid_12" style="margin-top: 35px;">
+        <div style="background-color: #f0ad4e; border-radius: 4px 4px 0 0; padding: 12px 15px; display: flex; justify-content: space-between; align-items: center;">
+            <span style="color: white; font-weight: bold; font-size: 16px;">Kamar Aktif Tanpa Riwayat SK Berlaku</span>
+            <span style="background: white; color: #f0ad4e; font-weight: bold; border-radius: 12px; padding: 2px 12px; font-size: 13px;">
+                {{ dataKamarTanpaRiwayat.length }}
+            </span>
+        </div>
+        <div style="border: 1px solid #ddd; border-top: none; padding: 12px 15px; background: #fdf6ec; font-size: 13px; color: #8a6d3b;">
+            Kamar ini aktif di Master Data, tapi belum punya riwayat SK yang mencakup hari ini — perlu ditambahkan lewat menu Riwayat Kamar.
+        </div>
+
+        <div ng-if="dataKamarTanpaRiwayat.length > 0" class="grid_12 borderBox" style="margin-top: 10px;">
+            <kendo-grid options="{ columns: columnKamarTanpaRiwayat, pageable: true, sortable: true, scrollable: true }"
+                k-data-source="gridSourceKamarTanpaRiwayat">
+            </kendo-grid>
+        </div>
+        <div ng-if="dataKamarTanpaRiwayat.length == 0" class="grid_12"
+            style="margin-top: 10px; padding: 15px; background: #f4f9f0; border: 1px solid #d6e9c6; border-radius: 4px; color: #3c763d; text-align: center;">
+            ✓ Semua kamar aktif sudah punya riwayat SK yang berlaku.
+        </div>
+    </div>
+
+    <!-- Section B: Riwayat Kamar Nonaktif -->
+    <div class="grid_12" style="margin-top: 35px; margin-bottom: 30px;">
+        <div style="background-color: #d9534f; border-radius: 4px 4px 0 0; padding: 12px 15px; display: flex; justify-content: space-between; align-items: center;">
+            <span style="color: white; font-weight: bold; font-size: 16px;">Riwayat Kamar Nonaktif</span>
+            <span style="background: white; color: #d9534f; font-weight: bold; border-radius: 12px; padding: 2px 12px; font-size: 13px;">
+                {{ dataRiwayatKamarNonAktif.length }}
+            </span>
+        </div>
+        <div style="border: 1px solid #ddd; border-top: none; padding: 12px 15px; background: #fdf2f2; font-size: 13px; color: #a94442; display: flex; justify-content: space-between; align-items: center;">
+            <span>Kamar/ruangan sudah nonaktif, tapi riwayat masih terbuka dan masih dihitung di Laporan Sensus — sebaiknya ditutup.</span>
+        </div>
+        <div class="grid_12" style="margin-top: 15px; margin-bottom: 5px;">
+            <div class="grid_2">
+                <button ng-if="dataRiwayatKamarNonAktif.length > 0" class="c-button" style="background-color: #d9534f; color: white; white-space: nowrap;"
+                    ng-click="tutupSemua()">
+                    Tutup Semua Sekaligus
+                </button>
+            </div>
+        </div>
+        <div ng-if="dataRiwayatKamarNonAktif.length > 0" class="grid_12 borderBox" style="margin-top: 10px;">
+            <kendo-grid options="{ columns: columnRiwayatKamarNonAktif, pageable: true, sortable: true, scrollable: true }"
+                k-data-source="gridSourceRiwayatKamarNonAktif">
+            </kendo-grid>
+        </div>
+        <div ng-if="dataRiwayatKamarNonAktif.length == 0" class="grid_12"
+            style="margin-top: 10px; padding: 15px; background: #f4f9f0; border: 1px solid #d6e9c6; border-radius: 4px; color: #3c763d; text-align: center;">
+            ✓ Tidak ada riwayat kamar nonaktif yang masih terbuka.
+        </div>
+    </div>
+
+    <div class="grid_12" style="margin-top:60px">
+        <div ng-include='"../app/template/Shared/TemplateLoading"'></div>
+    </div>
+</div>

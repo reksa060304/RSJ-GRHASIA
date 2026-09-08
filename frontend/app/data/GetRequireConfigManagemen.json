@@ -67,6 +67,10 @@
         {
             "nameDep": "MasterRuanganAssetCtrl",
             "urlDep": "module/SysAdmin/MasterRuanganAssetCtrl"
+        },
+        {
+            "nameDep": "RekonsiliasiRiwayatKamarCtrl",
+            "urlDep": "module/SysAdmin/RekonsiliasiRiwayatKamarCtrl"
         }
 
     ]

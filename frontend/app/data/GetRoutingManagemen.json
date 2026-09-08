@@ -325,5 +325,24 @@
           "define": "MedifirstService"
         }
       ]
-    }
+    },
+    {
+      "name": "RekonsiliasiRiwayatKamar",
+      "url": "/UmVrb25zaWxpYXNpUml3YXlhdEthbWFy",
+      "templateurl": "module/SysAdmin/RekonsiliasiRiwayatKamar.html",
+      "controller": "RekonsiliasiRiwayatKamarCtrl",
+      "deps": [{
+              "module": "Services",
+              "define": "Service"
+          },
+          {
+              "module": "LoginServices",
+              "define": "LoginService"
+          },
+          {
+              "module": "MedifirstService",
+              "define": "MedifirstService"
+          }
+      ]
+  }
   ]
