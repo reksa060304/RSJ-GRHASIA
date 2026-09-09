@@ -429,6 +429,8 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
                     // $scope.item.kebangsaan = { id: $scope.listKebangsaan._data[1].id, name: $scope.listKebangsaan._data[1].name }
                     if (result.kodepos)
                         $scope.item.kodePos = result.kodepos;
+                    if (result.rtrw)
+                         $scope.item.rtrw = result.rtrw;
                     // $scope.idIbu = result.nocmfk;
                     if (result.namaibu)
                         $scope.item.namaIbu = result.namaibu
