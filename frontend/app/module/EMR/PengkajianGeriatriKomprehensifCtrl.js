@@ -1,4 +1,4 @@
-﻿define(['initialize', 'Configuration'], function (initialize, config) {
+define(['initialize', 'Configuration'], function (initialize, config) {
     'use strict';
     initialize.controller('PengkajianGeriatriKomprehensifCtrl', ['$q', '$rootScope', '$scope', 'ModelItem', '$state', 'CacheHelper', 'DateHelper', 'MedifirstService','$mdDialog',
         function ($q, $rootScope, $scope, ModelItem, $state, cacheHelper, dateHelper, medifirstService, $mdDialog) {
@@ -1468,24 +1468,66 @@
 
             $scope.SkorNorton = 0;
             $scope.getSkorNorton = function (jawab) {
-                var arrobj = Object.keys($scope.item.obj);
-                var arrSave = []
-console.log(jawab)
-                for (var i = arrobj.length - 1; i >= 0; i--) {
-                    if (arrobj[i] == jawab.id) {
-                        if ($scope.item.obj[parseFloat(arrobj[i])] == true) {
-                            $scope.SkorNorton = $scope.SkorNorton + parseFloat(jawab.reportdisplay)
-                            break
-                        } else {
-                            $scope.SkorNorton = $scope.SkorNorton - parseFloat(jawab.reportdisplay)
-                            break
+                if (jawab && $scope.item.obj && $scope.item.obj[jawab.id] === true) {
+                    if ($scope.listNorton && $scope.listNorton.length > 0) {
+                        for (var r = 0; r < $scope.listNorton.length; r++) {
+                            var row = $scope.listNorton[r];
+                            if (row.details && row.details.length > 0) {
+                                var containsJawab = false;
+                                for (var d = 0; d < row.details.length; d++) {
+                                    if (row.details[d].id === jawab.id) {
+                                        containsJawab = true;
+                                        break;
+                                    }
+                                }
+                                if (containsJawab) {
+                                    for (var d = 0; d < row.details.length; d++) {
+                                        if (row.details[d].type === 'checkbox' && row.details[d].id !== jawab.id) {
+                                            $scope.item.obj[row.details[d].id] = false;
+                                        }
+                                    }
+                                    break;
+                                }
+                            }
                         }
-                    } else {}
+                    }
                 }
 
-                $scope.item.obj[310155] = $scope.SkorNorton
-                // setSkorNorton()
-            }
+                var totalSkor = 0;
+                if ($scope.listNorton && $scope.listNorton.length > 0) {
+                    for (var i = 0; i < $scope.listNorton.length; i++) {
+                        var row = $scope.listNorton[i];
+                        if (row.details && row.details.length > 0) {
+                            var cbIndex = 0;
+                            for (var j = 0; j < row.details.length; j++) {
+                                var item = row.details[j];
+                                if (item.type === 'checkbox') {
+                                    cbIndex++;
+                                    if ($scope.item.obj && ($scope.item.obj[item.id] === true || $scope.item.obj[item.id] === 'true' || $scope.item.obj[item.id] === 1)) {
+                                        var itemScore = 0;
+                                        if (item.reportdisplay && !isNaN(item.reportdisplay) && parseFloat(item.reportdisplay) >= 1 && parseFloat(item.reportdisplay) <= 4) {
+                                            itemScore = parseFloat(item.reportdisplay);
+                                        } else if (item.descNilai && !isNaN(item.descNilai) && parseFloat(item.descNilai) >= 1 && parseFloat(item.descNilai) <= 4) {
+                                            itemScore = parseFloat(item.descNilai);
+                                        } else if (item.caption && !isNaN(item.caption) && parseFloat(item.caption) >= 1 && parseFloat(item.caption) <= 4) {
+                                            itemScore = parseFloat(item.caption);
+                                        } else {
+                                            itemScore = 5 - cbIndex;
+                                            if (itemScore < 1) itemScore = 1;
+                                        }
+                                        totalSkor += itemScore;
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+
+                $scope.SkorNorton = totalSkor;
+                if ($scope.item.obj) {
+                    $scope.item.obj[310155] = totalSkor;
+                }
+            };
             $scope.SkorGDS = 0;
             $scope.getSkorGDS = function (jawab) {
                 var arrobj = Object.keys($scope.item.obj);
@@ -2218,6 +2260,8 @@ console.log(jawab)
                     }
 
                 }
+
+                $scope.getSkorNorton();
                 // if( $scope.cc.norec_emr !='-' && pegawaiInputDetail !='' && pegawaiInputDetail !=null){
                 //     if(pegawaiInputDetail != medifirstService.getPegawaiLogin().id){
                 //         $scope.allDisabled =true
