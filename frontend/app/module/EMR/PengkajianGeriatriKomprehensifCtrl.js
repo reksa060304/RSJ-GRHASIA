@@ -175,6 +175,9 @@ define(['initialize', 'Configuration'], function (initialize, config) {
                 $scope.listBaker = arrayShiftJaga2
                 $scope.listNorton = arrayShiftJaga3
                 $scope.listEuroqol = arrayShiftJaga4
+                if (typeof $scope.getSkorNorton === 'function') {
+                    $scope.getSkorNorton();
+                }
             })
             $scope.listSkorWong = [{
                 "id": 9, "nama": "Score ",
@@ -1503,7 +1506,7 @@ define(['initialize', 'Configuration'], function (initialize, config) {
                                 var item = row.details[j];
                                 if (item.type === 'checkbox') {
                                     cbIndex++;
-                                    if ($scope.item.obj && ($scope.item.obj[item.id] === true || $scope.item.obj[item.id] === 'true' || $scope.item.obj[item.id] === 1)) {
+                                    if ($scope.item.obj && ($scope.item.obj[item.id] === true || $scope.item.obj[item.id] === 'true' || $scope.item.obj[item.id] === 1 || $scope.item.obj[item.id] === '1' || $scope.item.obj[item.id] === 't')) {
                                         var itemScore = 0;
                                         if (item.reportdisplay && !isNaN(item.reportdisplay) && parseFloat(item.reportdisplay) >= 1 && parseFloat(item.reportdisplay) <= 4) {
                                             itemScore = parseFloat(item.reportdisplay);
