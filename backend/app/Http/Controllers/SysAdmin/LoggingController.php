@@ -2018,7 +2018,7 @@ class LoggingController extends ApiController
                 from logginguser_t as lg
                 inner join loginuser_s as lu on lu.id = lg.objectloginuserfk
                 inner join pegawai_m as pg on pg.id = lu.objectpegawaifk
-                where lg.kdprofile = $kdProfile and lg.tanggal between '$tglAwal' and '$tglAkhir'
+                where lg.kdprofile = $kdProfile and lg.tanggal between '$tglAwal' and '$tglAkhir' and lg.statusenabled = true
                 --and lg.kdprofile=11
                  $JenisLoging 
                  $UserId

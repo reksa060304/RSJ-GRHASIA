@@ -12290,6 +12290,7 @@ if ($rowChanged) {
             ->join('loginuser_s as ls', 'ls.id', '=', 'lg.objectloginuserfk')
             ->join('pegawai_m as pm', 'pm.id', '=', 'ls.objectpegawaifk')
             ->where('lg.kdprofile', $idProfile)
+            ->where('lg.statusenabled', true)
             ->where('lg.keterangan', 'ilike', '%' . $request['noemr'] . '%')
             ->orderBy('lg.tanggal', 'desc')
             ->get();
