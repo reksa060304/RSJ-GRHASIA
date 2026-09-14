@@ -314,7 +314,7 @@ define(['initialize', 'Configuration'], function (initialize, config) {
                         // } else if (item.id > 3020161 && item.id <= 3020189) {
                         //     item.type = "hidden";
                         // }
-                        if (item.id >= 3020161 && item.id <= 3020189) {
+                        if (item.id >= 3020159 && item.id <= 3020189) {
                             item.type = "hidden";
                         } else if (item.id == 3020089) {
                             item.type = "humpty";
