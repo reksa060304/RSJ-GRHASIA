@@ -55,8 +55,8 @@
                     <table style="border: 0px">
 
                         <tr>
-                            <th style="width: 65%">Tanggal & Jam</th>
-                            <!-- <th style="width: 25%">Jam</th> -->
+                            <th style="width: 40%">Tanggal</th>
+                            <th style="width: 25%">Jam</th>
                             <th style="width: 15%">Tanda Vital</th>
                             <th style="width: 15%">Tanda Cedera/Luka</th>
                             <th style="width: 15%">Lingkup Gerak Sendiri/Range of Motion</th>
@@ -77,14 +77,16 @@
                                         </div>
                                         <div ng-switch-when="date">
                                             <div class="grid_12 padDatePicker"style="margin-top: 0px;margin-bottom: 5px;margin-left: 0px; width: 150px;">
-                                                <input k-ng-model="item.obj[jawab.id]" k-max="now" kendo-datetimepicker placeholer="yyyy-MM-dd HH:mm" k-format="'yyyy-MM-dd HH:mm'" style="width:100%"/>
+                                                <input k-ng-model="item.obj[jawab.id]" kendo-date-picker k-max="now"
+                                                    placeholer="yyyy-MM-dd" k-format="'yyyy-MM-dd'" parsedate="yyyy-MM-dd" style="width:100%"
+                                                    />
                                             </div>
                                         </div>
-                                        <!-- <div ng-switch-when="time">
+                                        <div ng-switch-when="time">
                                             <div class="grid_12 padDatePicker"  style="margin-top: 0px;margin-bottom: 5px;margin-left: 0px;  width: 100px;"> 
                                                 <input  k-ng-model="item.obj[jawab.id]"  kendo-timepicker k-max="now" placeholer="HH:mm" k-format="'HH:mm'" style="width:75%" />
                                             </div>
-                                        </div> -->
+                                        </div>
                                     </div>
 
                                 </div>
