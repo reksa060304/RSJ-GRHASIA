@@ -16,6 +16,7 @@ define(['initialize'], function (initialize) {
             var nomorEMR = '-'
             $scope.cc.emrfk = 3000900
             var dataLoad = []
+            var fieldTypes = {}
             var pegawaiInputDetail= ''
             $scope.item.kasusbaru = true
             $scope.item.kasuslama = false
@@ -35,6 +36,7 @@ define(['initialize'], function (initialize) {
                 var sama = false
                 for (let i = 0; i < datas.length; i++) {
                     const element = datas[i];
+                    fieldTypes[element.id] = element.type
                     sama = false
 
                     // ARRAY GEJALA
@@ -139,6 +141,7 @@ define(['initialize'], function (initialize) {
                 $scope.item.obj[116222] = true
                 dataLoad = dat.data.data
                 for (var i = 0; i <= dataLoad.length - 1; i++) {
+                    fieldTypes[dataLoad[i].emrdfk] = dataLoad[i].type
                     if (parseFloat($scope.cc.emrfk) == dataLoad[i].emrfk &&
                         parseInt(dataLoad[i].index) === paramsIndex
                         ) {
@@ -167,7 +170,8 @@ define(['initialize'], function (initialize) {
                             $scope.item.obj[dataLoad[i].emrdfk] = new Date(dataLoad[i].value)
                         }
                         if (dataLoad[i].type == "time") {
-                            $scope.item.obj[dataLoad[i].emrdfk] = new Date(dataLoad[i].value)
+                            var timeValue = moment(dataLoad[i].value, ['HH:mm', 'HH:mm:ss', 'YYYY-MM-DD HH:mm', 'YYYY-MM-DD HH:mm:ss'], true)
+                            $scope.item.obj[dataLoad[i].emrdfk] = timeValue.isValid() ? timeValue.toDate() : null
                         }
                         if (dataLoad[i].type == "date") {
                             $scope.item.obj[dataLoad[i].emrdfk] = new Date(dataLoad[i].value)
@@ -712,10 +716,13 @@ define(['initialize'], function (initialize) {
                 var arrobj = Object.keys($scope.item.obj)
                 var arrSave = []
                 for (var i = arrobj.length - 1; i >= 0; i--) {
-                    if ($scope.item.obj[parseInt(arrobj[i])] instanceof Date)
-                        $scope.item.obj[parseInt(arrobj[i])] = moment($scope.item.obj[parseInt(arrobj[i])]).format('YYYY-MM-DD HH:mm')
-                     // $scope.item.obj[parseInt(arrobj[i])] = moment($scope.item.obj[parseInt(arrobj[i])]).format('HH:mm')
-                    arrSave.push({ id: arrobj[i], values: $scope.item.obj[parseInt(arrobj[i])] })
+                    var fieldId = arrobj[i]
+                    var fieldValue = $scope.item.obj[parseInt(fieldId)]
+                    if (fieldValue instanceof Date) {
+                        var fieldFormat = fieldTypes[fieldId] == 'time' ? 'HH:mm' : 'YYYY-MM-DD HH:mm'
+                        fieldValue = moment(fieldValue).format(fieldFormat)
+                    }
+                    arrSave.push({ id: fieldId, values: fieldValue })
                 }
                 $scope.cc.jenisemr = 'asesmen'
                 $scope.cc.index = $state.params.index
