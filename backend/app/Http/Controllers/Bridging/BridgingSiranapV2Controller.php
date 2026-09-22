@@ -1345,49 +1345,38 @@ WHERE X.rownum = 1"))->first();
     }
     public function getTTeuy($kdProfile)
     {
-     
-        $q = collect(DB::select("SELECT  case when kmr.kodesirs is not null then  kmr.kodesirs else  kl.kodesirs end AS id_tt,
-        ru.namaruangan as ruang,count(tt.id ) as jumlah, 0 as jumlah_ruang,
-        sum(case when sb.id=1 then 1 else 0  end) as terpakai,
-        case when ru.jenis='covid' then 1 else 0 end as covid
-        FROM tempattidur_m AS tt
-        INNER JOIN statusbed_m AS sb ON sb. ID = tt.objectstatusbedfk
-        INNER JOIN kamar_m AS kmr ON kmr. ID = tt.objectkamarfk
-        INNER JOIN kelas_m AS kl ON kl. ID = kmr.objectkelasfk
-        INNER JOIN ruangan_m AS ru ON ru. ID = kmr.objectruanganfk
-        WHERE tt.statusenabled = TRUE
-        and tt.kdprofile = $kdProfile
-        AND kmr.statusenabled = TRUE
-        and  (kmr.kodesirs is not null or kl.kodesirs is not null ) 
-        GROUP BY kmr.kodesirs,kl.kodesirs,ru.namaruangan,ru.jenis
-    
-    "));
-    $jmlruangn = collect(DB::select("select x.ruang,count(x.ruang) as jumlah_ruang from (
-        SELECT 
-        ru.namaruangan as ruang,
-         case when kmr.kodesirs is not null then  kmr.kodesirs else  kl.kodesirs end AS id_tt
-        
-        FROM tempattidur_m AS tt
-        INNER JOIN statusbed_m AS sb ON sb. ID = tt.objectstatusbedfk
-        INNER JOIN kamar_m AS kmr ON kmr. ID = tt.objectkamarfk
-        INNER JOIN kelas_m AS kl ON kl. ID = kmr.objectkelasfk
-        INNER JOIN ruangan_m AS ru ON ru. ID = kmr.objectruanganfk
-        WHERE tt.statusenabled = TRUE
-        AND kmr.statusenabled = TRUE
-        and tt.kdprofile = $kdProfile
-        and  (kmr.kodesirs is not null or kl.kodesirs is not null) 
-        GROUP BY ru.namaruangan,kmr.kodesirs ,kl.kodesirs
-        
-        ) as x GROUP BY x.ruang
-        "));
-        foreach ($q as $v){
-            foreach ($jmlruangn as $dd) {
-                if ($v->ruang == $dd->ruang) {
-                    $v->jumlah_ruang = $dd->jumlah_ruang;
-                }
-            }
+        $idProfile = (int) $kdProfile;
+        $kdRanapICU = explode(',', $this->settingDataFixed('KdDeptRanapICU', $idProfile));
+        $kdListRanapICU = [];
+        foreach ($kdRanapICU as $item) {
+            $kdListRanapICU[] = (int) $item;
         }
-        return $q;
+        $kdListRanapICUSql = implode(',', $kdListRanapICU ?: [0]);
+
+        return collect(DB::select("SELECT
+            CASE WHEN kmr.kodesirs IS NOT NULL THEN kmr.kodesirs ELSE kl.kodesirs END AS id_tt,
+            -- ru.namaruangan AS ruang,
+            kmr.namakamar AS ruang,
+            COUNT(DISTINCT tt.id) AS jumlah,
+            COUNT(DISTINCT kmr.id) AS jumlah_ruang,
+            SUM(CASE WHEN sb.id = 1 THEN 1 ELSE 0 END) AS terpakai,
+            CASE WHEN ru.jenis = 'covid' THEN 1 ELSE 0 END AS covid
+        FROM tempattidur_m AS tt
+        INNER JOIN statusbed_m AS sb ON sb.id = tt.objectstatusbedfk
+        INNER JOIN kamar_m AS kmr ON kmr.id = tt.objectkamarfk
+        INNER JOIN kelas_m AS kl ON kl.id = kmr.objectkelasfk
+        INNER JOIN ruangan_m AS ru ON ru.id = kmr.objectruanganfk
+        WHERE tt.kdprofile = $idProfile
+            AND tt.statusenabled = TRUE
+            AND kmr.statusenabled = TRUE
+            AND ru.statusenabled = TRUE
+            AND ru.objectdepartemenfk IN ($kdListRanapICUSql)
+            AND (kmr.kodesirs IS NOT NULL OR kl.kodesirs IS NOT NULL)
+        GROUP BY
+            CASE WHEN kmr.kodesirs IS NOT NULL THEN kmr.kodesirs ELSE kl.kodesirs END,
+            -- ru.namaruangan,
+            kmr.namakamar,
+            ru.jenis"));
 
     }
     public function Fasyankes($method, Request $request)
@@ -1398,6 +1387,7 @@ WHERE X.rownum = 1"))->first();
      
         if($method == 'post'){
             $q= $this->getTTeuy($kdProfile);
+            // return $this->respond($q);
       
             $methods ='POST';
             $tt = [];
