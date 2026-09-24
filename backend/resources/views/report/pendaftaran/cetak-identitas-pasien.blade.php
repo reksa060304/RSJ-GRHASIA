@@ -253,7 +253,7 @@
                         <td class="colon-col">:</td>
                         <td class="value-col">{{ $data->carabayar ?? '-' }}</td>
                     </tr>
-                    <tr>
+                    {{-- <tr>
                         <td class="label-col">Nmr Cara Bayar</td>
                         <td class="colon-col">:</td>
                         <td class="value-col">
@@ -261,6 +261,19 @@
                                 {{ $data->nobpjs }}
                             @else
                                 {{ $data->noasuransilain != '-' ? $data->noasuransilain : '' }}
+                            @endif
+                        </td>
+                    </tr> --}}
+                    <tr>
+                        <td class="label-col">Nmr Cara Bayar</td>
+                        <td class="colon-col">:</td>
+                        <td class="value-col">
+                            @if(!empty($data->nobpjs) && $data->nobpjs != '-')
+                                {{ $data->nobpjs }}
+                            @elseif($data->noasuransilain != '-')
+                                {{ $data->noasuransilain }}
+                            @else
+                                -
                             @endif
                         </td>
                     </tr>
@@ -346,7 +359,7 @@
         <tr>
             <td>Telepon</td>
             <td>:</td>
-            <td>{{ $data->notelepon }}</td>
+            <td>{{ $data->teleponpenanggungjawab }}</td>
         </tr>
     </table>
 

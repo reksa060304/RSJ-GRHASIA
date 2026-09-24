@@ -35292,6 +35292,7 @@ public function suratBuktiPengembalian(Request $request)
                 pm.pekerjaanpenangggungjawab,
                 pm.ktppenanggungjawab,
                 pm.alamatrmh,
+                COALESCE(pm.teleponpenanggungjawab, '-') AS teleponpenanggungjawab,
                 kp.kelompokpasien AS carabayar,
                 pm.foto
             FROM pasien_m AS pm
