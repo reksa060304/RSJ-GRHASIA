@@ -162,173 +162,176 @@
                 </tr>
                 <tr>
                     <td style="width: 25%;"><strong>A. Diperoleh dari</strong></td>
-                    <td colspan="3">{{ $item[300000002] ?? '' }}</td>
+                    <td style="width: 25%;">{{ $item[300000002] ?? '' }}</td>
+                    <td style="width: 25%;"><strong>Hubungan dengan pasien</strong></td>
+                    <td style="width: 25%;">{{ $item[300000003] ?? '' }}</td>
                 </tr>
                 <tr>
-                    <td><strong>Hubungan dengan pasien</strong></td>
-                    <td colspan="3">{{ $item[300000003] ?? '' }}</td>
+                    <td colspan="4" style="background-color: #f9f9f9;"><strong>B. Riwayat Penyakit</strong></td>
                 </tr>
                 <tr>
-                    <td colspan="4"><strong>B. Riwayat Penyakit</strong></td>
+                    <td colspan="4"><strong>1. Keluhan Utama / Keluhan Saat Ini:</strong> {{ $item[300000004] ?? '' }}</td>
                 </tr>
                 <tr>
-                    <td colspan="4"><strong>1. Keluhan Utama / Keluhan Saat Ini</strong><br>{{ $item[300000004] ?? '' }}</td>
+                    <td colspan="4"><strong>2. Sejak kapan terjadi perubahan tingkah laku / peningkatan gejala?:</strong> {{ $item[300000005] ?? '' }}</td>
                 </tr>
                 <tr>
-                    <td colspan="4"><strong>2. Sejak kapan terjadi perubahan tingkah laku / peningkatan gejala?</strong><br>{{ $item[300000005] ?? '' }}</td>
+                    <td colspan="4"><strong>3. Gejala yang ditunjukkan:</strong> {{ $item[300000006] ?? '' }}</td>
                 </tr>
                 <tr>
-                    <td colspan="4"><strong>3. Gejala yang ditunjukkan</strong><br>{{ $item[300000006] ?? '' }}</td>
-                </tr>
-                <tr>
-                    <td colspan="4"><strong>4. Riwayat Penyakit Jiwa Sebelumnya</strong><br>
-                        {{ getCheckBox($item[300000007] ?? '') }} Pernah<br>
-                        {{ getCheckBox($item[300000008] ?? '') }} Tidak Pernah
+                    <td colspan="4" style="padding: 0;">
+                        <table style="width:100%; border:none; margin:0; padding:0;">
+                            <tr>
+                                <td style="border:none; padding:4px; vertical-align:top; width: 35%; border-right: 1px solid #000;">
+                                    <strong>4. Riwayat Penyakit Jiwa Sebelumnya</strong><br>
+                                    {{ getCheckBox($item[300000007] ?? '') }} Pernah &nbsp;
+                                    {{ getCheckBox($item[300000008] ?? '') }} Tidak Pernah
+                                </td>
+                                <td style="border:none; padding:4px; vertical-align:top; width: 30%; border-right: 1px solid #000;">
+                                    <strong>Pertama kali (kapan):</strong> {{ $item[300000009] ?? '' }}<br>
+                                    <strong>Berapa kali:</strong> {{ $item[300000010] ?? '' }}
+                                </td>
+                                <td style="border:none; padding:4px; vertical-align:top; width: 35%;">
+                                    <strong>Pernah Sembuh:</strong> 
+                                    {{ getCheckBox($item[300000011] ?? '') }} Ya 
+                                    {{ getCheckBox($item[300000012] ?? '') }} Tidak<br>
+                                    <strong>Berobat Jalan:</strong> 
+                                    {{ getCheckBox($item[300000013] ?? '') }} Teratur 
+                                    {{ getCheckBox($item[300000014] ?? '') }} Tidak Teratur 
+                                    {{ getCheckBox($item[300000015] ?? '') }} Tidak Pernah
+                                </td>
+                            </tr>
+                        </table>
                     </td>
                 </tr>
                 <tr>
-                    <td><strong>Pertama kali (kapan)</strong></td>
-                    <td colspan="3">{{ $item[300000009] ?? '' }}</td>
-                </tr>
-                <tr>
-                    <td><strong>Berapa kali</strong></td>
-                    <td colspan="3">{{ $item[300000010] ?? '' }}</td>
-                </tr>
-                <tr>
-                    <td colspan="4"><strong>Pernah Sembuh</strong><br>
-                        {{ getCheckBox($item[300000011] ?? '') }} Ya<br>
-                        {{ getCheckBox($item[300000012] ?? '') }} Tidak
+                    <td colspan="4"><strong>5. Riwayat Penggunaan Obat:</strong> &nbsp;
+                        <strong>Obat Rutin:</strong> {{ $item[300000093] ?? '' }} &nbsp; | &nbsp;
+                        <strong>Obat Sekarang:</strong> {{ $item[300000094] ?? '' }}
                     </td>
                 </tr>
                 <tr>
-                    <td colspan="4"><strong>Berobat Jalan</strong><br>
-                        {{ getCheckBox($item[300000013] ?? '') }} Teratur<br>
-                        {{ getCheckBox($item[300000014] ?? '') }} Tidak Teratur<br>
-                        {{ getCheckBox($item[300000015] ?? '') }} Tidak Pernah
-                    </td>
-                </tr>
-                <tr>
-                    <td colspan="4"><strong>5. Riwayat Penggunaan Obat</strong><br>
-                        <strong>Obat Rutin Dikonsumsi:</strong> {{ $item[300000093] ?? '' }}<br>
-                        <strong>Obat yang Digunakan Sekarang:</strong> {{ $item[300000094] ?? '' }}
-                    </td>
-                </tr>
-                <tr>
-                    <td colspan="4"><strong>6. Faktor yang mendahului</strong><br>
-                        <strong>Organik:</strong><br>
-                        {{ getCheckBox($item[300000016]?? '') }} Panas<br>
-                        {{ getCheckBox($item[300000017]?? '') }} Kejang<br>
-                        {{ getCheckBox($item[300000018]?? '') }} Keracunan<br>
-                        {{ getCheckBox($item[300000019]?? '') }} Rudapaksa<br>
+                    <td colspan="4"><strong>6. Faktor yang mendahului:</strong><br>
+                        <strong>Organik:</strong> 
+                        {{ getCheckBox($item[300000016]?? '') }} Panas &nbsp;
+                        {{ getCheckBox($item[300000017]?? '') }} Kejang &nbsp;
+                        {{ getCheckBox($item[300000018]?? '') }} Keracunan &nbsp;
+                        {{ getCheckBox($item[300000019]?? '') }} Rudapaksa &nbsp;
                         {{ getCheckBox($item[300000020]?? '') }} Herediter<br>
-                        <strong>Spiritual:</strong> {{ $item[300000021] ?? '' }}<br>
-                        <strong>Psikososial:</strong> {{ $item[300000095] ?? '' }}<br>
-                        <strong>Ekonomi:</strong> {{ $item[300000022] ?? '' }}<br>
+                        <strong>Spiritual:</strong> {{ $item[300000021] ?? '' }} &nbsp; | &nbsp;
+                        <strong>Psikososial:</strong> {{ $item[300000095] ?? '' }} &nbsp; | &nbsp;
+                        <strong>Ekonomi:</strong> {{ $item[300000022] ?? '' }} &nbsp; | &nbsp;
                         <strong>Lain-lain:</strong> {{ $item[300000023] ?? '' }}
                     </td>
                 </tr>
                 <tr>
-                    <td colspan="4"><strong>7. Riwayat gangguan jiwa dalam keluarga</strong><br>{{ $item[300000024] ?? '' }}</td>
+                    <td colspan="4">
+                        <strong>7. Riwayat gangguan jiwa dalam keluarga:</strong> {{ $item[300000024] ?? '' }}<br>
+                        <strong>8. Silsilah keluarga:</strong> {{ $item[300000025] ?? '' }}
+                    </td>
                 </tr>
                 <tr>
-                    <td colspan="4"><strong>8. Silsilah keluarga</strong><br>{{ $item[300000025] ?? '' }}</td>
-                </tr>
-                <tr>
-                    <td colspan="4"><strong>9. Riwayat Pribadi</strong><br>
-                        <strong>Kepribadian sebelum sakit:</strong> {{ $item[300000026] ?? '' }}<br>
-                        <strong>Pola Asuh:</strong> {{ $item[300000027] ?? '' }}<br>
-                        <strong>Pendidikan:</strong> {{ $item[300000028] ?? '' }}<br>
-                        <strong>Pekerjaan:</strong> {{ $item[300000029] ?? '' }}<br>
-                        <strong>Perkawinan:</strong> {{ $item[300000030] ?? '' }}<br>
-                        <strong>10. Riwayat Penyalahgunaan NAPZA:</strong> {{ $item[300000031] ?? '' }}<br>
-                        <strong>11. Riwayat Alergi:</strong> {{ $item[300000032] ?? '' }}
+                    <td colspan="4" style="padding: 0;">
+                        <table style="width:100%; border:none; margin:0; padding:0;">
+                            <tr>
+                                <td style="border:none; padding:4px; vertical-align:top; width: 60%; border-right: 1px solid #000;">
+                                    <strong>9. Riwayat Pribadi:</strong><br>
+                                    <strong>Kepribadian sebelum sakit:</strong> {{ $item[300000026] ?? '' }} &nbsp; | &nbsp;
+                                    <strong>Pola Asuh:</strong> {{ $item[300000027] ?? '' }} &nbsp; | &nbsp;
+                                    <strong>Pendidikan:</strong> {{ $item[300000028] ?? '' }}<br>
+                                    <strong>Pekerjaan:</strong> {{ $item[300000029] ?? '' }} &nbsp; | &nbsp;
+                                    <strong>Perkawinan:</strong> {{ $item[300000030] ?? '' }}
+                                </td>
+                                <td style="border:none; padding:4px; vertical-align:top; width: 40%;">
+                                    <strong>10. Riwayat Penyalahgunaan NAPZA:</strong> {{ $item[300000031] ?? '' }}<br>
+                                    <strong>11. Riwayat Alergi:</strong> {{ $item[300000032] ?? '' }}
+                                </td>
+                            </tr>
+                        </table>
                     </td>
                 </tr>
                 <tr style="background-color: #f2f2f2;">
                     <th colspan="4">PEMERIKSAAN FISIK</th>
                 </tr>
                 <tr>
-                    <td><strong>A. Vital Sign</strong></td>
+                    <td style="width: 25%;"><strong>A. Vital Sign</strong></td>
                     <td colspan="3">
-                        Tekanan Darah: {{ $item[300000033] ?? '' }} mmHg<br>
-                        Nadi: {{ $item[300000034] ?? '' }} x/menit<br>
-                        Suhu: {{ $item[300000035] ?? '' }} °C<br>
+                        TD: {{ $item[300000033] ?? '' }} mmHg &nbsp; | &nbsp; 
+                        Nadi: {{ $item[300000034] ?? '' }} x/menit &nbsp; | &nbsp; 
+                        Suhu: {{ $item[300000035] ?? '' }} °C &nbsp; | &nbsp; 
                         Respirasi: {{ $item[300000036] ?? '' }} x/menit
                     </td>
                 </tr>
                 <tr>
-                    <td><strong>B. Status Generalis dan Neurologis</strong></td>
+                    <td><strong>B. Status Generalis & Neurologis</strong></td>
                     <td colspan="3">{{ $item[300000037] ?? '' }}</td>
                 </tr>
                 <tr style="background-color: #f2f2f2;">
                     <th colspan="4">PEMERIKSAAN PSIKIATRIK</th>
                 </tr>
                 <tr>
-                    <td><strong>1. Kesan Umum</strong></td>
-                    <td colspan="3">{{ $item[300000038] ?? '' }}</td>
-                </tr>
-                <tr>
-                    <td><strong>2. Kesadaran</strong></td>
-                    <td colspan="3">
-                        Kuantitatif: {{ $item[300000039] ?? '' }}<br>
-                        Kualitatif: {{ $item[300000040] ?? '' }}
+                    <td colspan="4" style="padding: 0;">
+                        <table style="width:100%; border:none; margin:0; padding:0;">
+                            <tr>
+                                <td style="border:none; padding:4px; vertical-align:top; width: 25%; border-right: 1px solid #000; border-bottom: 1px solid #000;"><strong>1. Kesan Umum</strong></td>
+                                <td style="border:none; padding:4px; vertical-align:top; border-bottom: 1px solid #000;" colspan="3">{{ $item[300000038] ?? '' }}</td>
+                            </tr>
+                            <tr>
+                                <td style="border:none; padding:4px; vertical-align:top; border-right: 1px solid #000; border-bottom: 1px solid #000;"><strong>2. Kesadaran</strong></td>
+                                <td style="border:none; padding:4px; vertical-align:top; border-right: 1px solid #000; border-bottom: 1px solid #000; width: 37%;">Kuantitatif: {{ $item[300000039] ?? '' }}</td>
+                                <td style="border:none; padding:4px; vertical-align:top; border-bottom: 1px solid #000;" colspan="2">Kualitatif: {{ $item[300000040] ?? '' }}</td>
+                            </tr>
+                            <tr>
+                                <td style="border:none; padding:4px; vertical-align:top; border-right: 1px solid #000; border-bottom: 1px solid #000;"><strong>3. Orientasi</strong></td>
+                                <td style="border:none; padding:4px; vertical-align:top; border-bottom: 1px solid #000;" colspan="3">
+                                    Waktu: {{ $item[300000041] ?? '' }} &nbsp; | &nbsp; 
+                                    Tempat: {{ $item[300000042] ?? '' }} &nbsp; | &nbsp; 
+                                    Orang: {{ $item[300000043] ?? '' }} &nbsp; | &nbsp; 
+                                    Situasi: {{ $item[300000044] ?? '' }}
+                                </td>
+                            </tr>
+                            <tr>
+                                <td style="border:none; padding:4px; vertical-align:top; border-right: 1px solid #000; border-bottom: 1px solid #000;"><strong>4. Sikap & Tingkah Laku</strong></td>
+                                <td style="border:none; padding:4px; vertical-align:top; border-bottom: 1px solid #000;" colspan="3">{{ $item[300000045] ?? '' }}</td>
+                            </tr>
+                            <tr>
+                                <td style="border:none; padding:4px; vertical-align:top; border-right: 1px solid #000; border-bottom: 1px solid #000;"><strong>5. Proses Pikir</strong></td>
+                                <td style="border:none; padding:4px; vertical-align:top; border-bottom: 1px solid #000;" colspan="3">
+                                    a. Bentuk: {{ $item[300000046] ?? '' }} &nbsp; | &nbsp; 
+                                    b. Isi: {{ $item[300000047] ?? '' }} &nbsp; | &nbsp; 
+                                    c. Progresi (Kuantitatif): {{ $item[300000048] ?? '' }} &nbsp; | &nbsp; 
+                                    c. Progresi (Kualitatif): {{ $item[300000049] ?? '' }}
+                                </td>
+                            </tr>
+                            <tr>
+                                <td style="border:none; padding:4px; vertical-align:top; border-right: 1px solid #000; border-bottom: 1px solid #000;"><strong>6. Mood</strong></td>
+                                <td style="border:none; padding:4px; vertical-align:top; border-right: 1px solid #000; border-bottom: 1px solid #000;">{{ $item[300000050] ?? '' }}</td>
+                                <td style="border:none; padding:4px; vertical-align:top; border-right: 1px solid #000; border-bottom: 1px solid #000; width: 15%;"><strong>7. Afek</strong></td>
+                                <td style="border:none; padding:4px; vertical-align:top; border-bottom: 1px solid #000;">{{ $item[300000051] ?? '' }}</td>
+                            </tr>
+                            <tr>
+                                <td style="border:none; padding:4px; vertical-align:top; border-right: 1px solid #000; border-bottom: 1px solid #000;"><strong>8. Gangguan Persepsi</strong></td>
+                                <td style="border:none; padding:4px; vertical-align:top; border-right: 1px solid #000; border-bottom: 1px solid #000;">{{ $item[300000052] ?? '' }}</td>
+                                <td style="border:none; padding:4px; vertical-align:top; border-right: 1px solid #000; border-bottom: 1px solid #000;"><strong>9. Ggn Memori</strong></td>
+                                <td style="border:none; padding:4px; vertical-align:top; border-bottom: 1px solid #000;">{{ $item[300000053] ?? '' }}</td>
+                            </tr>
+                            <tr>
+                                <td style="border:none; padding:4px; vertical-align:top; border-right: 1px solid #000; border-bottom: 1px solid #000;"><strong>10. Ggn Intelegensi</strong></td>
+                                <td style="border:none; padding:4px; vertical-align:top; border-right: 1px solid #000; border-bottom: 1px solid #000;">{{ $item[300000054] ?? '' }}</td>
+                                <td style="border:none; padding:4px; vertical-align:top; border-right: 1px solid #000; border-bottom: 1px solid #000;"><strong>11. Perhatian</strong></td>
+                                <td style="border:none; padding:4px; vertical-align:top; border-bottom: 1px solid #000;">{{ $item[300000055] ?? '' }}</td>
+                            </tr>
+                            <tr>
+                                <td style="border:none; padding:4px; vertical-align:top; border-right: 1px solid #000;"><strong>Hubungan Jiwa</strong></td>
+                                <td style="border:none; padding:4px; vertical-align:top; border-right: 1px solid #000;">
+                                    {{ getCheckBox($item[300000056] ?? '') }} Sukar &nbsp; 
+                                    {{ getCheckBox($item[300000057] ?? '') }} Mudah
+                                </td>
+                                <td style="border:none; padding:4px; vertical-align:top; border-right: 1px solid #000;"><strong>12. Insight</strong></td>
+                                <td style="border:none; padding:4px; vertical-align:top;">{{ $item[300000058] ?? '' }}</td>
+                            </tr>
+                        </table>
                     </td>
-                </tr>
-                <tr>
-                    <td><strong>3. Orientasi</strong></td>
-                    <td colspan="3">
-                        Waktu: {{ $item[300000041] ?? '' }}<br>
-                        Tempat: {{ $item[300000042] ?? '' }}<br>
-                        Orang: {{ $item[300000043] ?? '' }}<br>
-                        Situasi: {{ $item[300000044] ?? '' }}
-                    </td>
-                </tr>
-                <tr>
-                    <td><strong>4. Sikap dan Tingkah Laku</strong></td>
-                    <td colspan="3">{{ $item[300000045] ?? '' }}</td>
-                </tr>
-                <tr>
-                    <td><strong>5. Proses Pikir</strong></td>
-                    <td colspan="3">
-                        a. Bentuk pikir: {{ $item[300000046] ?? '' }}<br>
-                        b. Isi pikir: {{ $item[300000047] ?? '' }}<br>
-                        c. Progresi pikir (Kuantitatif): {{ $item[300000048] ?? '' }}<br>
-                        c. Progresi pikir (Kualitatif): {{ $item[300000049] ?? '' }}
-                    </td>
-                </tr>
-                <tr>
-                    <td><strong>6. Mood</strong></td>
-                    <td colspan="3">{{ $item[300000050] ?? '' }}</td>
-                </tr>
-                <tr>
-                    <td><strong>7. Afek</strong></td>
-                    <td colspan="3">{{ $item[300000051] ?? '' }}</td>
-                </tr>
-                <tr>
-                    <td><strong>8. Gangguan Persepsi</strong></td>
-                    <td colspan="3">{{ $item[300000052] ?? '' }}</td>
-                </tr>
-                <tr>
-                    <td><strong>9. Gangguan Memori</strong></td>
-                    <td colspan="3">{{ $item[300000053] ?? '' }}</td>
-                </tr>
-                <tr>
-                    <td><strong>10. Gangguan Intelegensi</strong></td>
-                    <td colspan="3">{{ $item[300000054] ?? '' }}</td>
-                </tr>
-                <tr>
-                    <td><strong>11. Perhatian</strong></td>
-                    <td colspan="3">{{ $item[300000055] ?? '' }}</td>
-                </tr>
-                <tr>
-                    <td colspan="4"><strong>Hubungan Jiwa</strong><br>
-                        {{ getCheckBox($item[300000056] ?? '') }} Sukar<br>
-                        {{ getCheckBox($item[300000057] ?? '') }} Mudah
-                    </td>
-                </tr>
-                <tr>
-                    <td><strong>12. Insight</strong></td>
-                    <td colspan="3">{{ $item[300000058] ?? '' }}</td>
                 </tr>
                 <tr style="background-color: #f2f2f2;">
                     <th colspan="4">PEMERIKSAAN PENUNJANG</th>
@@ -340,26 +343,28 @@
                     <th colspan="4">DIAGNOSIS</th>
                 </tr>
                 <tr>
-                    <td><strong>a. Axis I</strong></td>
-                    <td colspan="3">{{ $item[300000060] ?? '' }}</td>
-                </tr>
-                <tr>
-                    <td><strong>b. Axis II</strong></td>
-                    <td colspan="3">{{ $item[300000061] ?? '' }}</td>
-                </tr>
-                <tr>
-                    <td><strong>c. Axis III</strong></td>
-                    <td colspan="3">{{ $item[300000062] ?? '' }}</td>
-                </tr>
-                <tr>
-                    <td><strong>d. Axis IV</strong></td>
-                    <td colspan="3">{{ $item[300000063] ?? '' }}</td>
-                </tr>
-                <tr>
-                    <td><strong>e. Axis V</strong></td>
-                    <td colspan="3">
-                        GAF scale saat ini: {{ $item[300000064] ?? '' }}<br>
-                        GAF scale 1 tahun terakhir: {{ $item[300000065] ?? '' }}
+                    <td colspan="4" style="padding: 0;">
+                        <table style="width:100%; border:none; margin:0; padding:0;">
+                            <tr>
+                                <td style="border:none; padding:4px; vertical-align:top; width: 15%; border-right: 1px solid #000; border-bottom: 1px solid #000;"><strong>a. Axis I</strong></td>
+                                <td style="border:none; padding:4px; vertical-align:top; width: 35%; border-right: 1px solid #000; border-bottom: 1px solid #000;">{{ $item[300000060] ?? '' }}</td>
+                                <td style="border:none; padding:4px; vertical-align:top; width: 15%; border-right: 1px solid #000; border-bottom: 1px solid #000;"><strong>b. Axis II</strong></td>
+                                <td style="border:none; padding:4px; vertical-align:top; border-bottom: 1px solid #000;">{{ $item[300000061] ?? '' }}</td>
+                            </tr>
+                            <tr>
+                                <td style="border:none; padding:4px; vertical-align:top; border-right: 1px solid #000; border-bottom: 1px solid #000;"><strong>c. Axis III</strong></td>
+                                <td style="border:none; padding:4px; vertical-align:top; border-right: 1px solid #000; border-bottom: 1px solid #000;">{{ $item[300000062] ?? '' }}</td>
+                                <td style="border:none; padding:4px; vertical-align:top; border-right: 1px solid #000; border-bottom: 1px solid #000;"><strong>d. Axis IV</strong></td>
+                                <td style="border:none; padding:4px; vertical-align:top; border-bottom: 1px solid #000;">{{ $item[300000063] ?? '' }}</td>
+                            </tr>
+                            <tr>
+                                <td style="border:none; padding:4px; vertical-align:top; border-right: 1px solid #000;"><strong>e. Axis V</strong></td>
+                                <td style="border:none; padding:4px; vertical-align:top;" colspan="3">
+                                    GAF scale saat ini: {{ $item[300000064] ?? '' }} &nbsp; | &nbsp; 
+                                    GAF scale 1 tahun terakhir: {{ $item[300000065] ?? '' }}
+                                </td>
+                            </tr>
+                        </table>
                     </td>
                 </tr>
                 <tr style="background-color: #f2f2f2;">
@@ -377,50 +382,90 @@
                     </td>
                 </tr>
                 <tr style="background-color: #f2f2f2;">
-                    <th colspan="2">EDUKASI DIAGNOSIS</th>
-                    <th colspan="2">INTEGRASI ASUHAN</th>
+                    <th colspan="4">EDUKASI DIAGNOSIS</th>
                 </tr>
                 <tr>
-                    <td colspan="2">
+                    <td colspan="4">
                         {{ getCheckBox($item[300000067] ?? '') }} Pasien<br>
                         {{ getCheckBox($item[300000068] ?? '') }} Keluarga pasien: {{ $item[1901300427] ?? '' }}<br>
                         {{ getCheckBox($item[300000069] ?? '') }} Tidak dapat memberi edukasi: {{ $item[1901300428] ?? '' }}
                     </td>
-                    <td colspan="2">
-                        {{ getCheckBox($item[300000070] ?? '') }} Dokter: {{ $item[1901300429] ?? '' }}<br>
-                        {{ getCheckBox($item[300000071] ?? '') }} Perawat: {{ $item[1901300430] ?? '' }}<br>
-                        {{ getCheckBox($item[300000072] ?? '') }} PPA lain: {{ $item[1901300431] ?? '' }}
+                </tr>
+                <tr>
+                    <td colspan="2" style="vertical-align: top; padding: 0; width: 50%;">
+                        <div style="padding: 4px;">
+                            <div style="text-align: center; text-decoration: underline; font-weight: bold; margin-bottom: 10px;">INTEGRASI ASUHAN</div>
+                            <table style="width: 100%; border: none;">
+                                <tr>
+                                    <td style="border: none; padding: 2px; width: 25px;">{{ getCheckBox($item[300000070] ?? '') }}</td>
+                                    <td style="border: none; padding: 2px; width: 60px;">Dokter</td>
+                                    <td style="border: none; padding: 2px;">: {{ $item[1901300429] ?? '' }}</td>
+                                </tr>
+                                <tr>
+                                    <td style="border: none; padding: 2px;">{{ getCheckBox($item[300000071] ?? '') }}</td>
+                                    <td style="border: none; padding: 2px;">Perawat</td>
+                                    <td style="border: none; padding: 2px;">: {{ $item[1901300430] ?? '' }}</td>
+                                </tr>
+                                <tr>
+                                    <td style="border: none; padding: 2px;">{{ getCheckBox($item[300000072] ?? '') }}</td>
+                                    <td style="border: none; padding: 2px;">PPA lain</td>
+                                    <td style="border: none; padding: 2px;">: {{ $item[1901300431] ?? '' }}</td>
+                                </tr>
+                            </table>
+                            <div style="margin-top: 10px; padding: 2px;">
+                                Catatan / Notasi DPJP : <br>
+                                {{ $item[300000073] ?? '' }}
+                            </div>
+                            <div style="margin-top: 60px; text-align: right; padding-right: 10px;">
+                                Paraf DPJP :  {{ !empty($item[300000080]) ? $item[300000080] : '.........................................' }}
+                            </div>
+                        </div>
                     </td>
-                </tr>
-                <tr>
-                    <td colspan="4"><strong>Catatan / Notasi DPJP:</strong><br>{{ $item[300000073] ?? '' }}</td>
-                </tr>
-                <tr style="background-color: #f2f2f2;">
-                    <th colspan="4">RENCANA PEMULANGAN PASIEN</th>
-                </tr>
-                <tr>
-                    <td colspan="4">
-                        {{ getCheckBox($item[300000074] ?? '') }} Pulang, konsultasi selesai: {{ $item[1901300432] ?? '' }}<br>
-                        {{ getCheckBox($item[300000075] ?? '') }} Pulang, kontrol ulang: {{ $item[1901300433] ?? '' }}<br>
-                        {{ getCheckBox($item[300000076] ?? '') }} Rujuk ke: {{ $item[1901300434] ?? '' }} {{ $item[1901300435] ?? '' }}
+                    <td colspan="2" style="vertical-align: top; padding: 0; width: 50%;">
+                        <div style="padding: 4px;">
+                            <div style="text-align: center; text-decoration: underline; font-weight: bold; margin-bottom: 10px;">RENCANA PEMULANGAN PASIEN</div>
+                            <table style="width: 100%; border: none; margin-bottom: 5px;">
+                                <tr>
+                                    <td style="border: none; padding: 2px; width: 20px; vertical-align: top;">{{ getCheckBox(!empty($item[300000074]) || !empty($item[300000075]) ? '1' : '') }}</td>
+                                    <td style="border: none; padding: 2px; width: 50px; vertical-align: top;">Pulang :</td>
+                                    <td style="border: none; padding: 2px; vertical-align: top;">
+                                        {{ getCheckBox($item[300000074] ?? '') }} Konsultasi Selesai : {{ $item[1901300432] ?? '' }}<br>
+                                        <div style="margin-top: 4px;">
+                                            {{ getCheckBox($item[300000075] ?? '') }} Kontrol Ulang : {{ !empty($item[1901300433]) ? $item[1901300433] : '..........' }} hari
+                                        </div>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td style="border: none; padding: 2px; vertical-align: top;">{{ getCheckBox($item[300000076] ?? '') }}</td>
+                                    <td style="border: none; padding: 2px;" colspan="2">Rujuk ke : {{ !empty($item[1901300434]) ? $item[1901300434] : '.......................................................................' }}</td>
+                                </tr>
+                                <tr>
+                                    <td style="border: none; padding: 2px; vertical-align: top;">{{ getCheckBox($item[1901300435] ?? '') }}</td>
+                                    <td style="border: none; padding: 2px;" colspan="2">{{ !empty($item[1901300435]) ? $item[1901300435] : '.......................................................................' }}</td>
+                                </tr>
+                            </table>
+                        </div>
+                        <div style="border-top: 1px solid #000; padding: 4px;">
+                            <div style="margin-bottom: 15px;">
+                                Pemeriksaan selesai, Pukul : {{ !empty($item[300000081]) ? date('H:i', strtotime($item[300000081])) : '..........' }}
+                            </div>
+                            <table style="width: 100%; border: none; text-align: center;">
+                                <tr>
+                                    <td style="border: none; padding: 2px; width: 50%;">Penanggung Jawab Pasien</td>
+                                    <td style="border: none; padding: 2px; width: 50%;">Dokter Pemeriksa/DPJP</td>
+                                </tr>
+                                <tr>
+                                    <td style="border: none; padding: 2px; height: 60px; vertical-align: bottom;">( {{ !empty($item[300000078]) ? $item[300000078] : '.........................................' }} )</td>
+                                    <td style="border: none; padding: 2px; height: 60px; vertical-align: bottom;">( {{ !empty($item[300000079]) ? $item[300000079] : '.........................................' }} )</td>
+                                </tr>
+                            </table>
+                        </div>
                     </td>
-                </tr>
-                <tr style="background-color: #f2f2f2;">
-                    <th colspan="4">PENANGGUNG JAWAB</th>
-                </tr>
-                <tr>
-                    <td><strong>Penanggung Jawab Pasien</strong></td>
-                    <td colspan="3">{{ $item[300000078] ?? '' }}</td>
-                </tr>
-                <tr>
-                    <td><strong>Dokter Pemeriksa/DPJP</strong></td>
-                    <td colspan="3">{{ $item[300000079] ?? '' }}</td>
-                </tr>
-                <tr>
-                    <td><strong>Selesai Pemeriksaan Pukul</strong></td>
-                    <td colspan="3">{{ !empty($item[300000081]) ? date('d-m-Y H:i', strtotime($item[300000081])) : '' }}</td>
                 </tr>
             </table>
+            <div style="text-align: right; font-weight: bold; font-size: 11px; margin-top: 4px;">
+                CM.RM.05.02.Rev02
+            </div>
     </section>
 </body>
 </html>
