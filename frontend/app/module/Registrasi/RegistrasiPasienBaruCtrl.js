@@ -452,7 +452,7 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
                         $scope.item.noHp = result.nohp;
                     if (result.objectstatusperkawinanfk)
                         $scope.item.statusPerkawinan = { id: result.objectstatusperkawinanfk, statusperkawinan: result.statusperkawinan }
-                    if (result.objectpendidikanfk)
+                    if (result.objectpendidikanfk != null)
                         $scope.item.pendidikan = { id: result.objectpendidikanfk, pendidikan: result.pendidikan }
                     if (result.objectpekerjaanfk)
                         $scope.item.pekerjaan = { id: result.objectpekerjaanfk, pekerjaan: result.pekerjaan }
